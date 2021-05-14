@@ -7,7 +7,7 @@
     angular
         .module('firebotApp')
         .factory('chatMessagesService', function ($rootScope, logger, listenerService, settingsService,
-            soundService, connectionService, $timeout, $interval, $http, backendCommunicator) {
+            soundService, connectionService, $timeout, $interval, $http, backendCommunicator, $q) {
             let service = {};
 
             // Chat Message Queue
@@ -310,7 +310,9 @@
             });
 
             backendCommunicator.on("twitch:chat:user-joined", user => {
-                service.chatUserJoined(user);
+                $q.resolve().then(() => {
+                    service.chatUserJoined(user);
+                });
             });
 
             backendCommunicator.on("twitch:chat:user-left", id => {

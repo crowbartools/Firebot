@@ -22,8 +22,6 @@
             $scope.compactDisplay = settingsService.isChatCompactMode();
             $scope.alternateBackgrounds = settingsService.chatAlternateBackgrounds();
             $scope.hideDeletedMessages = settingsService.chatHideDeletedMessages();
-            $scope.showGifs = settingsService.chatShowGifs();
-            $scope.showStickers = settingsService.chatShowStickers();
 
             $scope.chatMessage = "";
             $scope.chatSender = "Streamer";

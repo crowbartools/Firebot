@@ -27,17 +27,6 @@
 
             $scope.filteredCommands = filterCommands();
 
-            // $scope.$watchGroup(
-            //     [
-            //         'sortTagsService.getSelectedSortTag("commands")',
-            //         'commandsService.customCommandSearch',
-            //         'commandsService.commandsCache.customCommands'
-            //     ],
-            //     function (_newVal, _oldVal, scope) {
-            //         scope.filteredCommands = filterCommands();
-            //     },
-            //     true);
-
             $scope.getPermissionType = command => {
 
                 let permissions = command.restrictionData && command.restrictionData.restrictions &&

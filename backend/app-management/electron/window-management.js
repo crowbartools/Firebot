@@ -81,6 +81,9 @@ function createMainWindow() {
                 },
                 {
                     role: 'paste'
+                },
+                {
+                    role: "selectAll"
                 }
             ]
         },
@@ -92,6 +95,9 @@ function createMainWindow() {
                 },
                 {
                     role: 'close'
+                },
+                {
+                    role: 'quit'
                 },
                 {
                     type: 'separator'

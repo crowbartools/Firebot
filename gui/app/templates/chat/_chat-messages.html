@@ -73,7 +73,12 @@
       </div>
     </div>
     <div class="text-input-wrapper">
-      <div class="text-input">
+      <div
+        class="text-input"
+        chat-auto-complete-menu
+        ng-model="chatMessage"
+        input-id="chatMessageInput"
+      >
         <div class="dropup">
           <span
             class="dropdown-toggle chatter-dropdown"
@@ -107,9 +112,9 @@
           ng-maxlength="360"
           ng-model="chatMessage"
           ng-change="onMessageFieldUpdate()"
-          ng-keyup="onMessageFieldKeypress($event)"
+          ng-keydown="onMessageFieldKeypress($event)"
+          ng-trim="false"
           ng-disabled="!chatFeedIsEnabled()"
-          chat-auto-complete-menu
         />
       </div>
       <div class="settings-btn-wrapper">

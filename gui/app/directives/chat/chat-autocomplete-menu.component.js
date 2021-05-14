@@ -1,6 +1,40 @@
 "use strict";
 (function() {
 
+    function debounce(func, timeout = 300) {
+        let timer;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                func.apply(this, args);
+            }, timeout);
+        };
+    }
+
+    function getWordByPosition(str, pos) {
+        let leftSideString = str.substr(0, pos);
+        let rightSideString = str.substr(pos);
+
+        let leftMatch = leftSideString.match(/[^.,\s]*$/);
+        let rightMatch = rightSideString.match(/^[^.,\s]*/);
+
+        let resultStr = '';
+
+        if (leftMatch) {
+            resultStr += leftMatch[0];
+        }
+
+        if (rightMatch) {
+            resultStr += rightMatch[0];
+        }
+
+        return {
+            index: leftMatch.index,
+            endIndex: leftMatch.index + resultStr.length,
+            text: resultStr
+        };
+    }
+
     angular.module("firebotApp")
         .directive("chatAutoCompleteMenu", function($compile, $document) {
             return {
@@ -8,15 +42,12 @@
                 restrict: "A",
                 scope: {
                     modelValue: '=ngModel',
+                    inputId: "@",
                     onAutocomplete: "&?",
                     menuPosition: "@"
                 },
                 controller: function($scope, $element, $q, backendCommunicator, $timeout,
-                    commandsService) {
-
-
-                    const insertAt = (str, sub, pos) => `${str.slice(0, pos)}${sub}${str.slice(pos)}`;
-
+                    commandsService, chatMessagesService) {
 
                     const firebotCommandMenuItems = [
                         ...commandsService.getCustomCommands(),
@@ -35,6 +66,12 @@
                                 text: `${c.trigger} ${sc.arg}`
                             })) : [])
                         ]).flat();
+
+                    const chatUsersCategory = {
+                        onlyStart: false,
+                        token: "@",
+                        items: []
+                    };
 
                     const categories = [
                         {
@@ -62,8 +99,22 @@
                                     text: "/mods"
                                 }
                             ]
-                        }
+                        },
+                        chatUsersCategory
                     ];
+
+                    function buildChatUserItems() {
+                        chatUsersCategory.items = chatMessagesService.chatUsers.map(user => ({
+                            display: user.username,
+                            text: `@${user.username}`
+                        }));
+                    }
+                    buildChatUserItems();
+
+                    $scope.chatMessagesService = chatMessagesService;
+                    $scope.$watchCollection("chatMessagesService.chatUsers", () => {
+                        buildChatUserItems();
+                    });
 
                     function ensureMenuItemVisible() {
                         const autocompleteMenu = $(".chat-autocomplete-menu");
@@ -74,8 +125,10 @@
                         });
                     }
 
+                    let currentWord = {};
+
                     $scope.selectedIndex = 0;
-                    $element.bind("keyup", function (event) {
+                    $(`#${$scope.inputId}`).bind("keydown", function (event) {
                         if (!$scope.menuOpen) return;
                         const key = event.key;
                         if (key === "ArrowUp" && $scope.selectedIndex > 0) {
@@ -87,7 +140,10 @@
                             $scope.$apply();
                             ensureMenuItemVisible();
                         } else if (key === "Enter" || key === "Tab") {
-                            console.log($scope.menuItems[$scope.selectedIndex]);
+                            $scope.modelValue = $scope.modelValue.substring(0, currentWord.index)
+                                + $scope.menuItems[$scope.selectedIndex].text
+                                + $scope.modelValue.substring(currentWord.endIndex, $scope.modelValue.length) + " ";
+                            $scope.$apply();
                         }
                         if (key === "ArrowUp" || key === "ArrowDown" || key === "Enter" || key === "Tab") {
                             event.stopPropagation();
@@ -97,30 +153,33 @@
                     });
 
                     $scope.menuOpen = false;
-
                     $scope.menuItems = [];
 
-                    $scope.$watch('modelValue', function(value) {
+                    $scope.$watch("modelValue", debounce((value) => {
                         let matchingMenuItems = [];
-                        if (value) {
-                            const endsInSpace = value.endsWith(" ");
-                            const oneWordSoFar = !value.trim().includes(" ");
-                            if (!endsInSpace || oneWordSoFar) {
-                                const isFirstWorld = !value.includes(" ");
-                                const words = value.trim().split(" ");
-                                const currentWord = words[words.length - 1];
-                                categories.forEach(c => {
-                                    if (((c.onlyStart && isFirstWorld) || !c.onlyStart) &&
-                                    currentWord.startsWith(c.token)) {
-                                        matchingMenuItems = c.items.filter(i => i.text.startsWith(currentWord));
-                                    }
-                                });
-                            }
+
+                        if (value && value.length > 0) {
+                            const cursorIndex = $(`#${$scope.inputId}`).prop("selectionStart");
+
+                            currentWord = getWordByPosition(value, cursorIndex);
+
+                            const token = currentWord.text[0];
+
+                            categories.forEach(c => {
+                                if (token === c.token && (!c.onlyStart || currentWord.index === 0)) {
+                                    debugger;
+                                    matchingMenuItems = c.items.filter(i => i.text.startsWith(currentWord.text));
+                                }
+                            });
                         }
-                        $scope.menuItems = matchingMenuItems;
-                        $scope.selectedIndex = 0;
-                        $scope.setMenuOpen(!!matchingMenuItems.length);
-                    });
+
+                        if ($scope.menuItems.length > 0 || matchingMenuItems.length > 0) {
+                            $scope.menuItems = matchingMenuItems;
+                            $scope.selectedIndex = 0;
+                            $scope.setMenuOpen(!!matchingMenuItems.length);
+                            $scope.$apply();
+                        }
+                    }, 150));
 
                     $scope.toggleMenu = () => {
                         $scope.setMenuOpen(!$scope.menuOpen);
@@ -132,10 +191,6 @@
                             $timeout(() => {
                                 $element.focus();
                             }, 10);
-                        } else {
-                            $timeout(() => {
-                                //$element.next(".variable-menu").find("#variable-search").focus();
-                            }, 5);
                         }
                     };
                 },
