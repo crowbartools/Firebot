@@ -217,11 +217,6 @@ settings.setMaxBackupCount = function(maxBackupCount) {
     pushDataToFile("/settings/maxBackupCount", maxBackupCount);
 };
 
-settings.getViewerListPagesizeSetting = function() {
-    let viewerListPageSize = getDataFromFile("/settings/viewerListDatabase/pageSize");
-    return viewerListPageSize != null ? viewerListPageSize : 10;
-};
-
 settings.getAllowQuoteCSVDownloads = function() {
     return getDataFromFile("/settings/allowQuoteCSVDownloads") !== false;
 };

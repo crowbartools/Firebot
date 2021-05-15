@@ -205,6 +205,15 @@
                 pushDataToFile("/settings/legacySortTagsImported", enabled === true);
             };
 
+            service.getViewerListPageSize = function() {
+                let viewerListPageSize = getDataFromFile("/settings/viewerListDatabase/pageSize");
+                return viewerListPageSize != null ? viewerListPageSize : 10;
+            };
+
+            service.setViewerListPageSize = function(viewerListPageSize = 10) {
+                pushDataToFile("/settings/viewerListDatabase/pageSize", viewerListPageSize);
+            };
+
             service.isBetaTester = function() {
                 let betaTester = getDataFromFile("/settings/beta");
                 return betaTester != null ? betaTester : "No";
@@ -451,10 +460,6 @@
 
             service.setActiveMixplayUserListTimeout = function(inactiveTimer) {
                 pushDataToFile("/settings/activeMixplayUsers/inactiveTimer", inactiveTimer);
-            };
-
-            service.setViewerListPagesizeSetting = function(pageSize) {
-                pushDataToFile("/settings/viewerListDatabase/pageSize", pageSize);
             };
 
             /*
