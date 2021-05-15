@@ -1,12 +1,12 @@
 "use strict";
 
+const uuid = require("uuid/v4");
 const logger = require("../logwrapper");
 const accountAccess = require("../common/account-access");
 const twitchClient = require("../twitch-api/client");
 const bttv = require("./third-party/bttv");
 const ffz = require("./third-party/ffz");
-const pronouns = require("./third-party/pronouns");
-const uuid = require("uuid/v4");
+const frontendCommunicator = require("../common/frontend-communicator");
 
 /**
  * @typedef FirebotChatMessage
@@ -19,7 +19,6 @@ const uuid = require("uuid/v4");
  * @property {string} customRewardId
  * @property {string} color
  * @property {string} rawText
- * @property {string} [pronoun]
  * @property {import('twitch-chat-client/lib/Toolkit/EmoteTools').ParsedMessagePart[]} parts
  * @property {boolean} whisper
  * @property {boolean} action
@@ -45,6 +44,27 @@ exports.cacheBadges = async () => {
         badgeCache = await client.badges.getChannelBadges(streamer.userId, true);
     }
 };
+
+let streamerData = {
+    color: "white",
+    badges: new Map()
+};
+exports.setStreamerData = function(newStreamerData) {
+    streamerData = newStreamerData;
+};
+
+/**@type {import('twitch/lib/API/Kraken/Channel/EmoteSetList').EmoteSetList} */
+let streamerEmotes = null;
+
+exports.cacheStreamerEmotes = async () => {
+    const client = twitchClient.getClient();
+    const streamer = accountAccess.getAccounts().streamer;
+
+    if (client == null || !streamer.loggedIn) return;
+
+    streamerEmotes = await client.kraken.users.getUserEmotes(streamer.userId);
+};
+
 
 
 /**
@@ -76,9 +96,16 @@ exports.handleChatConnect = async () => {
 
     await exports.cacheThirdPartyEmotes();
 
-    await pronouns.retrieveAllPronouns();
-
-    pronouns.resetUserPronounCache();
+    frontendCommunicator.send("all-emotes", [
+        ...Object.values(streamerEmotes && streamerEmotes._data || {})
+            .flat()
+            .map(e => ({
+                url: `https://static-cdn.jtvnw.net/emoticons/v1/${e.id}/1.0`,
+                origin: "Twitch",
+                code: e.code
+            })),
+        ...thirdPartyEmotes
+    ]);
 };
 
 const profilePicUrlCache = {};
@@ -106,18 +133,6 @@ exports.getUserProfilePicUrl = getUserProfilePicUrl;
 exports.setUserProfilePicUrl = (userId, url) => {
     if (userId == null || url == null) return;
     profilePicUrlCache[userId] = url;
-};
-
-/**@type {import('twitch/lib/API/Kraken/Channel/EmoteSetList').default} */
-let streamerEmotes = null;
-
-exports.cacheStreamerEmotes = async () => {
-    const client = twitchClient.getClient();
-    const streamer = accountAccess.getAccounts().streamer;
-
-    if (client == null || !streamer.loggedIn) return;
-
-    streamerEmotes = await client.kraken.users.getUserEmotes(streamer.userId);
 };
 
 const URL_REGEX = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)/i;
@@ -205,6 +220,7 @@ exports.buildFirebotChatMessageFromText = async (text = "") => {
         action: action,
         tagged: false,
         isBroadcaster: true,
+        color: streamerData.color,
         badges: [],
         parts: [],
         roles: [
@@ -217,7 +233,12 @@ exports.buildFirebotChatMessageFromText = async (text = "") => {
         for (const word of words) {
             let emoteId = null;
             try {
-                emoteId = await streamerEmotes.findEmoteId(word);
+                const foundEmote = Object.values(streamerEmotes && streamerEmotes._data || {})
+                    .flat()
+                    .find(e => e.code === word);
+                if (foundEmote) {
+                    emoteId = foundEmote.id;
+                }
             } catch (err) {
                 //logger.silly(`Failed to find emote id for ${word}`, err);
             }
@@ -248,8 +269,25 @@ exports.buildFirebotChatMessageFromText = async (text = "") => {
 
     streamerFirebotChatMessage.parts = parseMessageParts(streamerFirebotChatMessage, streamerFirebotChatMessage.parts);
 
-    const pronoun = await pronouns.getUserPronoun(streamer.username);
-    streamerFirebotChatMessage.pronoun = pronoun;
+    if (badgeCache != null) {
+        for (const [setName, version] of streamerData.badges.entries()) {
+
+            const set = badgeCache.getBadgeSet(setName);
+            if (set._data == null) continue;
+
+            const setVersion = set.getVersion(version);
+            if (setVersion._data == null) continue;
+
+            try {
+                streamerFirebotChatMessage.badges.push({
+                    title: setVersion.title,
+                    url: setVersion.getImageUrl(2)
+                });
+            } catch (err) {
+                logger.debug(`Failed to find badge ${setName} v:${version}`, err);
+            }
+        }
+    }
 
     return streamerFirebotChatMessage;
 };
@@ -279,9 +317,6 @@ exports.buildFirebotChatMessage = async (msg, msgText, whisper = false, action =
 
     const profilePicUrl = await getUserProfilePicUrl(firebotChatMessage.userId);
     firebotChatMessage.profilePicUrl = profilePicUrl;
-
-    const pronoun = await pronouns.getUserPronoun(msg.userInfo.userName);
-    firebotChatMessage.pronoun = pronoun;
 
     const { streamer, bot } = accountAccess.getAccounts();
 

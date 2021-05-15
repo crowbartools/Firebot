@@ -53,23 +53,32 @@
                         ...commandsService.getCustomCommands(),
                         ...commandsService.getSystemCommands()
                     ]
-                        .filter(c => c.active)
+                        .filter(c => c.active && !c.triggerIsRegex)
                         .map(c => [
                             {
                                 display: c.trigger,
                                 description: c.description,
                                 text: c.trigger
                             },
-                            ...(c.subCommands ? c.subCommands.map(sc => ({
-                                display: `${c.trigger} ${sc.usage ? sc.usage : sc.arg}`,
-                                description: sc.description,
-                                text: `${c.trigger} ${sc.arg}`
-                            })) : [])
+                            ...(c.subCommands ? c.subCommands
+                                .filter(sc => !sc.regex)
+                                .map(sc => ({
+                                    display: `${c.trigger} ${sc.usage ? sc.usage : sc.arg}`,
+                                    description: sc.description,
+                                    text: `${c.trigger} ${sc.arg}`
+                                })) : [])
                         ]).flat();
 
                     const chatUsersCategory = {
                         onlyStart: false,
                         token: "@",
+                        items: []
+                    };
+
+                    const emotesCategory = {
+                        onlyStart: false,
+                        token: ":",
+                        minQueryLength: 3,
                         items: []
                     };
 
@@ -84,36 +93,81 @@
                             token: "/",
                             items: [
                                 {
-                                    display: "/ban [username]",
+                                    display: "/ban @username",
                                     description: "Ban a user",
                                     text: "/ban"
                                 },
                                 {
-                                    display: "/mod [username]",
+                                    display: "/unban @username",
+                                    description: "Unban a user",
+                                    text: "/unban"
+                                },
+                                {
+                                    display: "/clear",
+                                    description: "Clear the chat feed",
+                                    text: "/clear"
+                                },
+                                {
+                                    display: "/mod @username",
                                     description: "Mod a user",
                                     text: "/mod"
                                 },
                                 {
-                                    display: "/mods",
-                                    description: "Display mods in this channel",
-                                    text: "/mods"
+                                    display: "/unmod @username",
+                                    description: "Unmod a user",
+                                    text: "/unmod"
+                                },
+                                {
+                                    display: "/timeout @username [duration] [reason]",
+                                    description: "Temporarily ban a user from Chat",
+                                    text: "/timeout"
+                                },
+                                {
+                                    display: "/untimeout @username",
+                                    description: "Remove a timeout on a user",
+                                    text: "/untimeout"
+                                },
+                                {
+                                    display: "/vip @username",
+                                    description: "Grant VIP status to a user",
+                                    text: "/vip"
+                                },
+                                {
+                                    display: "/unvip @username",
+                                    description: "Revoke VIP status from a user",
+                                    text: "/unvip"
                                 }
                             ]
                         },
-                        chatUsersCategory
+                        chatUsersCategory,
+                        emotesCategory
                     ];
 
+                    $scope.chatMessagesService = chatMessagesService;
+
                     function buildChatUserItems() {
-                        chatUsersCategory.items = chatMessagesService.chatUsers.map(user => ({
+                        return chatMessagesService.chatUsers.map(user => ({
                             display: user.username,
                             text: `@${user.username}`
                         }));
                     }
-                    buildChatUserItems();
 
-                    $scope.chatMessagesService = chatMessagesService;
+                    chatUsersCategory.items = buildChatUserItems();
                     $scope.$watchCollection("chatMessagesService.chatUsers", () => {
-                        buildChatUserItems();
+                        chatUsersCategory.items = buildChatUserItems();
+                    });
+
+                    function buildEmoteItems() {
+                        return chatMessagesService.allEmotes.map(emote => ({
+                            display: emote.code,
+                            text: emote.code,
+                            url: emote.url
+                        }));
+                    }
+
+                    emotesCategory.items = buildEmoteItems();
+                    $scope.$watchCollection("chatMessagesService.allEmotes", () => {
+                        emotesCategory.items = buildEmoteItems();
                     });
 
                     function ensureMenuItemVisible() {
@@ -125,7 +179,16 @@
                         });
                     }
 
+
+
                     let currentWord = {};
+
+                    $scope.selectItem = (index) => {
+                        $scope.modelValue = $scope.modelValue.substring(0, currentWord.index)
+                                + $scope.menuItems[index].text
+                                + $scope.modelValue.substring(currentWord.endIndex, $scope.modelValue.length) + " ";
+                        $scope.$apply();
+                    };
 
                     $scope.selectedIndex = 0;
                     $(`#${$scope.inputId}`).bind("keydown", function (event) {
@@ -140,10 +203,7 @@
                             $scope.$apply();
                             ensureMenuItemVisible();
                         } else if (key === "Enter" || key === "Tab") {
-                            $scope.modelValue = $scope.modelValue.substring(0, currentWord.index)
-                                + $scope.menuItems[$scope.selectedIndex].text
-                                + $scope.modelValue.substring(currentWord.endIndex, $scope.modelValue.length) + " ";
-                            $scope.$apply();
+                            $scope.selectItem($scope.selectedIndex);
                         }
                         if (key === "ArrowUp" || key === "ArrowDown" || key === "Enter" || key === "Tab") {
                             event.stopPropagation();
@@ -167,8 +227,11 @@
 
                             categories.forEach(c => {
                                 if (token === c.token && (!c.onlyStart || currentWord.index === 0)) {
-                                    debugger;
-                                    matchingMenuItems = c.items.filter(i => i.text.startsWith(currentWord.text));
+                                    const minQueryLength = c.minQueryLength || 0;
+                                    if (currentWord.text.length >= minQueryLength) {
+                                        const searchRegex = new RegExp(`^${c.token}?${currentWord.text.replace(c.token, "")}`, "i");
+                                        matchingMenuItems = c.items.filter(i => searchRegex.test(i.text));
+                                    }
                                 }
                             });
                         }
@@ -208,9 +271,14 @@
 
                     const menu = angular.element(`
                         <div class="chat-autocomplete-menu" ng-show="menuOpen" ng-class="menuPosition">
-                            <div class="autocomplete-menu-item" ng-class="{ selected: selectedIndex == $index }" ng-repeat="item in menuItems track by item.text">
-                                <div class="item-display">{{item.display}}</div>
-                                <div ng-show="item.description != null" class="item-description">{{item.description}}</div>
+                            <div ng-click="selectItem($index)" class="autocomplete-menu-item" ng-class="{ selected: selectedIndex == $index }" ng-repeat="item in menuItems track by item.text">
+                                <div class="item-image" ng-show="item.url != null">
+                                    <img ng-src="{{item.url}}" />
+                                </div>
+                                <div style="width: 100%; display: flex; flex-direction: column; justify-content: center;">
+                                    <div class="item-display">{{item.display}}</div>
+                                    <div ng-show="item.description != null" class="item-description">{{item.description}}</div>
+                                </div>
                             </div>
                         </div>`
                     );

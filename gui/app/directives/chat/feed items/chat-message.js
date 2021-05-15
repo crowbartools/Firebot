@@ -64,8 +64,8 @@
                                 uib-tooltip="Pronouns" 
                                 tooltip-append-to-body="true" 
                                 ng-click="$root.openLinkExternally('https://pronouns.alejo.io/')" 
-                                ng-show="$ctrl.message.pronoun"
-                            >{{$ctrl.message.pronoun}}</span>
+                                ng-show="$ctrl.pronouns.pronounCache[$ctrl.message.username] != null"
+                            >{{$ctrl.pronouns.pronounCache[$ctrl.message.username]}}</span>
                             <b ng-style="{'color': $ctrl.message.color}">{{$ctrl.message.username}}</b>
                             <span 
                                 ng-if="$ctrl.compactDisplay && !$ctrl.message.action" 
@@ -96,9 +96,11 @@
                     </div>
                 </div>
             `,
-            controller: function(chatMessagesService, utilityService, connectionService) {
+            controller: function(chatMessagesService, utilityService, connectionService, pronounsService) {
 
                 const $ctrl = this;
+
+                $ctrl.pronouns = pronounsService;
 
                 $ctrl.showUserDetailsModal = (userId) => {
                     if (userId == null) return;

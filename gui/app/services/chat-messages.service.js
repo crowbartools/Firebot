@@ -7,7 +7,7 @@
     angular
         .module('firebotApp')
         .factory('chatMessagesService', function ($rootScope, logger, listenerService, settingsService,
-            soundService, connectionService, $timeout, $interval, $http, backendCommunicator, $q) {
+            soundService, backendCommunicator, $q, pronounsService) {
             let service = {};
 
             // Chat Message Queue
@@ -328,6 +328,8 @@
                     soundService.playChatNotification();
                 }
 
+                pronounsService.getUserPronoun(chatMessage.username);
+
                 const now = moment();
                 chatMessage.timestamp = now;
                 chatMessage.timestampDisplay = now.format('h:mm A');
@@ -359,6 +361,11 @@
 
                     service.pruneChatQueue();
                 }
+            });
+
+            service.allEmotes = [];
+            backendCommunicator.on("all-emotes", (emotes) => {
+                service.allEmotes = emotes;
             });
 
             // Watches for an chat update from main process
