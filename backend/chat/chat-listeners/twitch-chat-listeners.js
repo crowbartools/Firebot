@@ -7,6 +7,7 @@ const activeUserHandler = require("./active-user-handler");
 const accountAccess = require("../../common/account-access");
 const chatModerationManager = require("../moderation/chat-moderation-manager");
 const twitchEventsHandler = require("../../events/twitch-events");
+const logger = require("../../logwrapper");
 
 const events = require("events");
 
@@ -90,6 +91,18 @@ exports.setupChatListeners = (streamerChatClient) => {
         twitchEventsHandler.host.triggerHost(byChannel, auto, viewers);
         const logger = require("../../logwrapper");
         logger.debug(`Host triggered by ${byChannel}. Is auto: ${auto}`);
+    });
+
+    streamerChatClient.onResub(async (_channel, _user, subInfo, msg) => {
+        try {
+            const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, subInfo.message);
+
+            frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
+
+            exports.events.emit("chat-message", firebotChatMessage);
+        } catch (error) {
+            logger.error("Failed to parse resub message", error);
+        }
     });
 
     streamerChatClient.onSubGift((_channel, _user, giftSubInfo, msg) => {
