@@ -4,8 +4,10 @@
 
     angular
         .module("firebotApp")
-        .controller("viewersController", function($scope, viewersService, currencyService, utilityService) {
-            //This handles the Viewers tab
+        .controller("viewersController", function($scope, viewersService, currencyService,
+            utilityService, settingsService) {
+
+            $scope.viewerTablePageSize = settingsService.getViewerListPageSize();
 
             $scope.showUserDetailsModal = (userId) => {
                 let closeFunc = () => {
