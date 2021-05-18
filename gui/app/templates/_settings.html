@@ -383,6 +383,42 @@
                 View Purge Options
               </button>
             </div>
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Viewers Table Page Size</div>
+              <div class="setting-description">
+                Select the page size for the Viewers table.
+              </div>
+              <div class="dropdown options-emulation-dropdown">
+                <div
+                  class="dropdown options-viewerListPagesize-dropdown"
+                  style="display: inline-block"
+                >
+                  <button
+                    class="btn btn-default dropdown-toggle"
+                    type="button"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="true"
+                  >
+                    <span class="dropdown-text"
+                      >{{settings.getViewerListPageSize()}}
+                    </span>
+                    <span class="caret"></span>
+                  </button>
+                  <ul
+                    class="dropdown-menu"
+                    aria-labelledby="options-viewerListPagesize"
+                  >
+                    <li ng-repeat="n in [10,15,20,25,30,35,40,45,50,55,60]">
+                      <a href ng-click="settings.setViewerListPageSize(n)"
+                        >{{n}}</a
+                      >
+                    </li>
+                  </ul>
+                  <span> viewers per page</span>
+                </div>
+              </div>
+            </div>
           </div>
         </uib-tab>
 
