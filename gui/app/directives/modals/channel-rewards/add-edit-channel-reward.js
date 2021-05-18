@@ -30,6 +30,7 @@
                                 id="name" 
                                 name="name" 
                                 ng-maxlength="45"
+                                ui-validate="'!$ctrl.rewardNameExists($value)'"
                                 required 
                                 class="form-control input-lg" 
                                 placeholder="Give your reward a name" 
@@ -219,9 +220,20 @@
                         && $scope.rewardSettings[fieldName].$invalid;
                 };
 
+                $ctrl.rewardNameExists = (name) => {
+                    if (name == null) {
+                        return false;
+                    }
+
+                    return channelRewardsService.channelRewards.some(r => r
+                        .twitchData.title.toLowerCase() === name.toLowerCase()
+                        && r.id !== $ctrl.reward.id);
+                };
+
                 $ctrl.validationErrors = {};
 
                 $ctrl.isNewReward = true;
+
 
                 /**
                  * @type {import('../../../../../backend/channel-rewards/channel-reward-manager').SavedChannelReward}

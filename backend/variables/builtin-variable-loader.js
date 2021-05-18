@@ -86,6 +86,7 @@ exports.loadReplaceVariables = () => {
         'stream-title',
         'streamer',
         'sub-count',
+        'sub-message',
         'sub-months',
         'sub-streak',
         'sub-type',

@@ -29,6 +29,7 @@ exports.triggerSub = (subInfo) => {
         subPlan: subInfo.subPlan,
         subType: subType,
         totalMonths: totalMonths || 1,
+        subMessage: subInfo.message.message || "",
         streak: streak,
         isPrime: isPrime,
         isResub: subInfo.isResub

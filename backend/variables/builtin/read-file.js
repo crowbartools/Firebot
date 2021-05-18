@@ -34,7 +34,8 @@ const model = {
     },
     evaluator: (_, filePath, lineOrRandom) => {
 
-        if (filePath === null || (!filePath.endsWith(".txt") && !filePath.endsWith(".json"))) return "[File Path Error]";
+        if (filePath === null) return "[File Path Error]";
+
         try {
             const contents = fs.readFileSync(filePath, "utf8");
             let lines = [];
