@@ -310,9 +310,7 @@
             });
 
             backendCommunicator.on("twitch:chat:user-joined", user => {
-                $q.resolve().then(() => {
-                    service.chatUserJoined(user);
-                });
+                service.chatUserJoined(user);
             });
 
             backendCommunicator.on("twitch:chat:user-left", id => {
@@ -321,6 +319,20 @@
 
             backendCommunicator.on("twitch:chat:clear-user-list", () => {
                 service.clearUserList();
+            });
+
+            backendCommunicator.on("twitch:chat:user-active", id => {
+                const user = service.chatUsers.find(u => u.id === id);
+                if (user != null) {
+                    user.active = true;
+                }
+            });
+
+            backendCommunicator.on("twitch:chat:user-inactive", id => {
+                const user = service.chatUsers.find(u => u.id === id);
+                if (user != null) {
+                    user.active = false;
+                }
             });
 
             backendCommunicator.on("twitch:chat:message", chatMessage => {

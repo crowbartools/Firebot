@@ -32,6 +32,8 @@
                     .then(resp => {
                         if (resp.status === 200) {
                             const userPronounData = resp.data[0];
+                            if (userPronounData == null) return;
+
                             const pronoun = pronouns.find(p => p.name
                                 === userPronounData.pronoun_id);
                             if (pronoun != null) {
@@ -64,7 +66,6 @@
 
             $rootScope.$on("connection:update", (_, { type, status }) => {
                 if (type === "chat" && status === "connected") {
-                    console.log("GETTING ALL PRONOUNS");
                     service.retrieveAllPronouns();
                 }
             });

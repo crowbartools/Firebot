@@ -1,20 +1,13 @@
 <div class="chat-tab-content">
   <div class="viewer-list-column" ng-show="getChatViewerListSetting()">
     <div class="viewer-list-header">
-      <span> VIEWERS </span>
-      <!-- <span ng-show="getChatViewCountSetting()">
-                <i class="fas fa-eye" style="font-size:12px"></i>
-                <b>{{currentViewers}}</b>
-            </span> -->
+      <span> CHAT USERS </span>
     </div>
-    <div class="chat-users">
-      <div
-        class="chatUser clickable"
-        ng-click="showUserDetailsModal(user.id)"
-        ng-repeat="user in getChatUsers() track by user.id"
-      >
-        {{user.username}}
-      </div>
+    <div class="chat-users" style="margin-top: 5px">
+      <chat-user-category category="Moderators" role-key="mod" />
+      <chat-user-category category="VIPs" role-key="vip" />
+      <chat-user-category category="Viewers" role-key="viewer" />
+      <chat-user-category category="Broadcaster" role-key="broadcaster" />
     </div>
   </div>
   <div class="chat-window-column">

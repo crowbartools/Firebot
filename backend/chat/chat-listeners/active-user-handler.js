@@ -85,10 +85,18 @@ async function updateUserOnlineStatus(userDetails, updateDb = false) {
     } else {
         logger.debug(`Marking user ${userDetails.displayName} as online with ttl of ${ONLINE_TIMEOUT} secs`);
         onlineUsers.set(userDetails.id, true, ONLINE_TIMEOUT);
+
+        const twitchUsers = require("../../twitch-api/resource/users");
+        const roles = await twitchUsers.getUsersChatRoles(userDetails.id);
+
         frontendCommunicator.send("twitch:chat:user-joined", {
             id: userDetails.id,
-            username: userDetails.displayName
+            username: userDetails.displayName,
+            roles: roles,
+            profilePicUrl: userDetails.profilePicUrl,
+            active: exports.userIsActive(userDetails.id)
         });
+
         if (updateDb) {
             await userDatabase.setChatUserOnline(userDetails);
         }
@@ -190,11 +198,13 @@ exports.addActiveUser = async (chatUser, includeInOnline = false, forceActive = 
         logger.debug(`Marking user ${chatUser.displayName} as active with ttl of ${ttl} secs`, ttl);
         activeUsers.set(chatUser.userId, chatUser.userName, ttl);
         activeUsers.set(chatUser.userName, chatUser.userId, ttl);
+        frontendCommunicator.send("twitch:chat:user-active", chatUser.userId);
     } else {
         // user is still active reset ttl
         logger.debug(`Updating user ${chatUser.displayName}'s "active" ttl to ${ttl} secs`, ttl);
         activeUsers.ttl(chatUser.userId, ttl);
         activeUsers.ttl(chatUser.userName, ttl);
+        frontendCommunicator.send("twitch:chat:user-active", chatUser.userId);
     }
 };
 
@@ -206,7 +216,14 @@ exports.removeActiveUser = async (usernameOrId) => {
     const other = activeUsers.get(usernameOrId);
     if (other == null) return;
     activeUsers.del([usernameOrId, other]);
+    frontendCommunicator.send("twitch:chat:user-inactive", isUsername ? other : usernameOrId);
 };
+
+activeUsers.on("expired", usernameOrId => {
+    if (!isNaN(usernameOrId)) {
+        frontendCommunicator.send("twitch:chat:user-inactive", usernameOrId);
+    }
+});
 
 exports.clearAllActiveUsers = () => {
     activeUsers.flushAll();
