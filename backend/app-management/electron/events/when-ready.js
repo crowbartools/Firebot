@@ -166,6 +166,9 @@ exports.whenReady = async () => {
     // load activity feed manager
     require("../../../events/activity-feed-manager");
 
+    const streamInfoPoll = require("../../../twitch-api/stream-info-poll");
+    streamInfoPoll.startStreamInfoPoll();
+
     windowManagement.createMainWindow();
 
     // forward backend logs to front end
