@@ -36,7 +36,7 @@
                             <label for="game" class="control-label">Game</label>
                             <ui-select ng-model="$ctrl.selectedGame" required input-id="game" theme="bootstrap" spinner-enabled="true" on-select="$ctrl.gameSelected($item)" style="margin-bottom:10px;">
                                 <ui-select-match placeholder="Search for game">
-                                    <div style="height: 21px; display:flex; flex-direction: row; align-items: center;">
+                                    <div style="height: 25px; display:flex; flex-direction: row; align-items: center;">
                                         <img style="height: 21px; width: 21px; border-radius: 5px; margin-right:5px;" ng-src="{{$select.selected.boxArtUrl}}">
                                         <div style="font-weight: 100;font-size: 17px;">{{$select.selected.name}}</div>
                                     </div>

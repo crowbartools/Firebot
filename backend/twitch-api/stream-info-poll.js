@@ -30,12 +30,10 @@ async function handleStreamInfo() {
 
     const logger = require("../logwrapper");
 
-    //const stream = await client.helix.streams.getStreamByUserId(streamer.userId);
-    const stream = await client.helix.streams.getStreamByUserName("TessaDee");
+    const stream = await client.helix.streams.getStreamByUserId(streamer.userId);
 
     let streamInfoChanged = false;
     if (stream == null) {
-        logger.debug(`Couldn't get stream info - channel isn't live.`);
         if (streamInfo.isLive) {
             streamInfoChanged = true;
         }
