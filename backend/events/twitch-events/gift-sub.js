@@ -1,7 +1,6 @@
 "use strict";
 
 const NodeCache = require("node-cache");
-const { PubSubSubscriptionMessage } = require("twitch-pubsub-client/lib");
 
 const { settings } = require("../../common/settings-access");
 const eventManager = require("../../events/EventManager");
@@ -19,7 +18,7 @@ exports.triggerCommunitySubGift = (gifterUsername, subPlan, subCount) => {
     });
 };
 
-/** @param {PubSubSubscriptionMessage} subInfo */
+/** @param {import("twitch-pubsub-client").PubSubSubscriptionMessage} subInfo */
 exports.triggerSubGift = (subInfo) => {
 
     if (settings.ignoreSubsequentSubEventsAfterCommunitySub()) {
