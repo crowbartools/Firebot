@@ -105,12 +105,6 @@ exports.setupChatListeners = (streamerChatClient) => {
         }
     });
 
-    streamerChatClient.onSubGift((_channel, _user, giftSubInfo, msg) => {
-        twitchEventsHandler.giftSub.triggerSubGift(giftSubInfo.gifterDisplayName,
-            giftSubInfo.displayName, giftSubInfo.plan, giftSubInfo.planName,
-            giftSubInfo.giftDuration);
-    });
-
     streamerChatClient.onCommunitySub((_channel, _user, subInfo, msg) => {
         twitchEventsHandler.giftSub.triggerCommunitySubGift(subInfo.gifterDisplayName,
             subInfo.plan, subInfo.count);
