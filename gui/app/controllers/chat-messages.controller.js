@@ -4,24 +4,16 @@
     angular
         .module("firebotApp")
         .controller("chatMessagesController", function(
-            logger,
-            $rootScope,
             $scope,
             chatMessagesService,
             connectionService,
-            listenerService,
             settingsService,
-            soundService,
             utilityService,
-            activityFeedService
+            activityFeedService,
         ) {
             $scope.settings = settingsService;
 
             $scope.afs = activityFeedService;
-
-            $scope.compactDisplay = settingsService.isChatCompactMode();
-            $scope.alternateBackgrounds = settingsService.chatAlternateBackgrounds();
-            $scope.hideDeletedMessages = settingsService.chatHideDeletedMessages();
 
             $scope.chatMessage = "";
             $scope.chatSender = "Streamer";
@@ -31,13 +23,22 @@
 
             $scope.selectedUserData = {};
 
-            $scope.currentViewers = 0;
-
             $scope.botLoggedIn = connectionService.accounts.bot.loggedIn;
 
             // the number of messages to show visually, we have to make the number negative so angular knows to limit
             // from the end of the array instead of the front
             $scope.messageDisplayLimit = chatMessagesService.chatMessageDisplayLimit * -1;
+
+            function getUpdatedChatSettings() {
+                $scope.compactDisplay = settingsService.isChatCompactMode();
+                $scope.alternateBackgrounds = settingsService.chatAlternateBackgrounds();
+                $scope.hideDeletedMessages = settingsService.chatHideDeletedMessages();
+                $scope.showAvatars = settingsService.getShowAvatars();
+                $scope.showTimestamps = settingsService.getShowTimestamps();
+                $scope.showThirdPartyEmotes = settingsService.getShowThirdPartyEmotes();
+                $scope.showPronouns = settingsService.getShowPronouns();
+            }
+            getUpdatedChatSettings();
 
             function focusMessageInput() {
                 angular.element("#chatMessageInput").trigger("focus");
@@ -57,131 +58,27 @@
                 });
             };
 
+            $scope.showChatSettingsModal = () => {
+                utilityService.showModal({
+                    component: "chatSettingsModal",
+                    size: "sm",
+                    backdrop: true,
+                    dismissCallback: getUpdatedChatSettings,
+                    closeCallback: getUpdatedChatSettings
+                });
+            };
+
             $scope.updateChatInput = function(text) {
                 $scope.chatMessage = text;
                 focusMessageInput();
             };
 
-            $scope.toggleCompactMode = function() {
-                $scope.compactDisplay = !$scope.compactDisplay;
-                settingsService.setChatCompactMode($scope.compactDisplay);
-            };
-
-            $scope.toggleAlternateBackgrounds = function() {
-                $scope.alternateBackgrounds = !$scope.alternateBackgrounds;
-                settingsService.setChatAlternateBackgrounds($scope.alternateBackgrounds);
-            };
-
-            $scope.toggleHideDeletedMessages = function() {
-                $scope.hideDeletedMessages = !$scope.hideDeletedMessages;
-                settingsService.setChatHideDeletedMessages($scope.hideDeletedMessages);
-            };
-
-            $scope.toggleShowGifs = function() {
-                $scope.showGifs = !$scope.showGifs;
-                settingsService.setChatShowGifs($scope.showGifs);
-            };
-
-            $scope.toggleShowStickers = function() {
-                $scope.showStickers = !$scope.showStickers;
-                settingsService.setChatShowStickers($scope.showStickers);
-            };
-
-            // Gets all chat messages from chat message service.
-            $scope.getMessages = function() {
-                return chatMessagesService.chatQueue;
-            };
-
-            // Gets all chat users we have from the message service.
-            $scope.getChatUsers = function() {
-                return chatMessagesService.getChatUsers();
-            };
-
-            // Takes a complete message packet and checks to see if it's a whisper.
-            $scope.isWhisper = function(data) {
-                return data.whisper;
-            };
-
-            // Takes a complete message packet and checks to see if it's a /me.
-            $scope.isAction = function(data) {
-                return data.action;
-            };
-
-            // Takes a compelete message packet and checks to see if it's deleted.
-            $scope.isDeleted = function(data) {
-                if (data.deleted != null) {
-                    return true;
-                }
-                return false;
-            };
-
-            $scope.skillHasGif = function(skill) {
-                return chatMessagesService.skillHasGifUrl(skill.execution_id);
-            };
-
-            $scope.getSkillGifUrl = function(skill) {
-                return chatMessagesService.getGifUrlForSkill(skill.execution_id);
-            };
-
-            // Returns first role in set of roles which should be their primary.
-            // Filters out subscriber, because we have a separate function for that and it doesnt have it's own chat color.
-            $scope.getRole = function(data) {
-                return data.mainColorRole;
-            };
-
-            // Returns first role in set of roles which should be their primary.
-            // Filters out subscriber, because we have a separate function for that and it doesnt have it's own chat color.
-            $scope.getUserRole = function(user) {
-                // Because mixer chat user packets and api user packets are different, we check for both formats of user_role.
-                return user.user_roles.find(r => r !== "Subscriber");
-            };
-
-            // Returns true if user is a sub.
-            $scope.isSubscriber = function(data) {
-                return data.subscriber;
-            };
-
-            // Returns sub icon url if there is one, else returns false.
-            $scope.getSubIcon = function() {
-                return chatMessagesService.getSubIcon();
-            };
-
-            // Returns the message id of the message.
-            $scope.getMessageId = function(data) {
-                return data.id;
-            };
-
-            $scope.getTimeStamp = function(message) {
-                //Todo: create setting to allow user to switch to 24 hr time
-                return message.timestamp;
-            };
-
-            $scope.getUserRankStyle = (rank) => {
-                let level = chatMessagesService.levels[`${rank}`];
-                return level ? {
-                    background: `url(${level.assetsUrl.replace("{variant}", "cutout.png")}) 2px center / 10px no-repeat, ${level.color}`
-                } : { background: "gray" };
-            };
-
-            // This tells us if the chat feed is on or not.
-            $scope.getChatFeed = function() {
-                return chatMessagesService.getChatFeed();
-            };
-
             $scope.chatFeedIsEnabled = function() {
-                // if chat feed is disabled in settings
-                if (!chatMessagesService.getChatFeed()) {
-                    $scope.disabledMessage = "The chat feed is currently disabled. Click the gear in the bottom right corner to enable.";
-                    return false;
-                } else if (connectionService.connections['chat'] !== 'connected') {
+                if (connectionService.connections['chat'] !== 'connected') {
                     $scope.disabledMessage = "The chat feed will enable once a connection to Chat has been made.";
                     return false;
                 }
                 return true;
-            };
-
-            $scope.getChatViewCountSetting = function() {
-                return chatMessagesService.getChatViewCountSetting();
             };
 
             $scope.getChatViewerListSetting = function() {
@@ -234,53 +131,5 @@
                     $scope.submitChat();
                 }
             };
-
-            $scope.playNotification = function() {
-                soundService.playChatNotification();
-            };
-
-            $scope.selectedNotificationSound = settingsService.getTaggedNotificationSound();
-
-            $scope.notificationVolume = settingsService.getTaggedNotificationVolume();
-
-            $scope.volumeUpdated = function() {
-                logger.debug("Updating noti volume: " + $scope.notificationVolume);
-                settingsService.setTaggedNotificationVolume($scope.notificationVolume);
-            };
-
-            $scope.sliderOptions = {
-                floor: 1,
-                ceil: 10,
-                hideLimitLabels: true,
-                onChange: $scope.volumeUpdated
-            };
-
-            $scope.notificationOptions = soundService.notificationSoundOptions;
-
-            $scope.selectNotification = function(n) {
-                $scope.selectedNotificationSound = n;
-                $scope.saveSelectedNotification();
-            };
-
-            $scope.setCustomNotiPath = function(filepath) {
-                $scope.selectedNotificationSound.path = filepath;
-                $scope.saveSelectedNotification();
-            };
-
-            $scope.saveSelectedNotification = function() {
-                let sound = $scope.selectedNotificationSound;
-
-                settingsService.setTaggedNotificationSound({
-                    name: sound.name,
-                    path: sound.name === "Custom" ? sound.path : undefined
-                });
-            };
-
-            listenerService.registerListener(
-                { type: listenerService.ListenerType.CURRENT_VIEWERS_UPDATE },
-                data => {
-                    $scope.currentViewers = data.viewersCurrent;
-                }
-            );
         });
 }());

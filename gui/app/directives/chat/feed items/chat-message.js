@@ -7,6 +7,10 @@
                 message: "=",
                 compactDisplay: "<",
                 hideDeletedMessages: "<",
+                showAvatar: "<",
+                showTimestamp: "<",
+                showThirdPartyEmotes: "<",
+                showPronoun: "<",
                 updateChatInput: "&"
             },
             template: `
@@ -27,6 +31,7 @@
                 >
                     <div 
                         ng-if="!$ctrl.compactDisplay"
+                        ng-show="$ctrl.showAvatar"
                         class="chat-user-avatar-wrapper" 
                         context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
                         context-menu-on="click"
@@ -35,13 +40,14 @@
                     </div>
                     <div>
 
-                        <span ng-if="$ctrl.compactDisplay" class="muted chat-timestamp">
+                        <span ng-if="$ctrl.compactDisplay" ng-show="$ctrl.showTimestamp" class="muted chat-timestamp">
                             {{$ctrl.message.timestampDisplay}}
                         </span>
 
                         <div 
                             ng-if="$ctrl.compactDisplay"
                             class="chat-user-avatar-wrapper" 
+                            ng-show="$ctrl.showAvatar"
                             context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
                             context-menu-on="click"
                         >
@@ -64,14 +70,14 @@
                                 uib-tooltip="Pronouns" 
                                 tooltip-append-to-body="true" 
                                 ng-click="$root.openLinkExternally('https://pronouns.alejo.io/')" 
-                                ng-show="$ctrl.pronouns.pronounCache[$ctrl.message.username] != null"
+                                ng-show="$ctrl.showPronoun && $ctrl.pronouns.pronounCache[$ctrl.message.username] != null"
                             >{{$ctrl.pronouns.pronounCache[$ctrl.message.username]}}</span>
                             <b ng-style="{'color': $ctrl.message.color}">{{$ctrl.message.username}}</b>
                             <span 
                                 ng-if="$ctrl.compactDisplay && !$ctrl.message.action" 
                                 style="color:white;font-weight:200;"
                             >:</span>
-                            <span ng-if="!$ctrl.compactDisplay" class="muted chat-timestamp">
+                            <span ng-if="!$ctrl.compactDisplay" ng-show="$ctrl.showTimestamp" class="muted chat-timestamp">
                                 {{$ctrl.message.timestampDisplay}}
                             </span>
                         </div>
@@ -83,7 +89,7 @@
                                 <a ng-if="part.type === 'link'" ng-href="{{part.url}}" target="_blank">{{part.text}}</a>
 
                                 <span 
-                                    ng-if="part.type === 'emote' || part.type === 'third-party-emote'" 
+                                    ng-if="part.type === 'emote'" 
                                     class="chatEmoticon"
                                     uib-tooltip="{{part.origin}}: {{part.name}}"
                                     tooltip-append-to-body="true"
@@ -91,6 +97,15 @@
                                     <img ng-src="{{part.url}}" style="height: 100%;">
                                 </span>
 
+                                <span 
+                                    ng-if="part.type === 'third-party-emote' && $ctrl.showThirdPartyEmotes" 
+                                    class="chatEmoticon"
+                                    uib-tooltip="{{part.origin}}: {{part.name}}"
+                                    tooltip-append-to-body="true"
+                                >
+                                    <img ng-src="{{part.url}}" style="height: 100%;" />
+                                </span>
+                                <span ng-if="part.type === 'third-party-emote' && !$ctrl.showThirdPartyEmotes">{{part.name}}</span>
                             </span>
                         </div>
                     </div>

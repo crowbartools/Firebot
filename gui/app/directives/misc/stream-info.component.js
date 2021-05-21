@@ -8,13 +8,13 @@
         .component("streamInfo", {
             bindings: {},
             template: `
-                <div ng-if="sis.streamInfo.isLive" style="display: flex; align-items: center; justify-content: center; width: 100%">
-                    <div style="background: rgba(0, 0, 0, 0.25);border-radius: 6px;padding: 7px;font-size: 17px;">
-                        <span style="background: red;display: inline-block;width: 12px;height: 12px;border-radius: 15px;"></span>
+                <div ng-if="sis.streamInfo.isLive" class="stream-info-stats-wrapper">
+                    <div class="stream-info-stat">
+                        <span style="margin-right: 5px; background: red;display: inline-block;width: 12px;height: 12px;border-radius: 15px;"></span>
                         <span>{{sessionTimeDisplay}}</span>
                     </div>
 
-                    <div style="display: flex; align-items: center; margin-left: 10px; background: rgba(0, 0, 0, 0.25);border-radius: 6px;padding: 7px;font-size: 17px;">
+                    <div class="stream-info-stat" style="margin-left:10px">
                         <i class="fas fa-user" style="margin-right: 5px; font-size: 12px;" />
                         <span>{{sis.streamInfo.viewers}}</span>
                     </div>
