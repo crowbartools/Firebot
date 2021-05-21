@@ -43,7 +43,6 @@ exports.triggerSubGift = (subInfo) => {
         giftSubMonths: subInfo._data["cumulative_months"] || 1,
         gifteeUsername: subInfo.userDisplayName,
         gifterUsername: subInfo.gifterDisplayName,
-        subPlan: subInfo.subPlan,
-        subType: subInfo.subType
+        subPlan: subInfo.subPlan
     });
 };
