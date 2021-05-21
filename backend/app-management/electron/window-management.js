@@ -1,7 +1,7 @@
 "use strict";
 
 const electron = require("electron");
-const { BrowserWindow, Menu, shell } = electron;
+const { BrowserWindow, BrowserView, Menu, shell } = electron;
 const path = require("path");
 const url = require("url");
 const windowStateKeeper = require("electron-window-state");
@@ -58,9 +58,63 @@ function createMainWindow() {
                     parent: mainWindow,
                     width: 250,
                     height: 400,
-                    javascript: false
+                    javascript: false,
+                    webPreferences: {
+                        webviewTag: true
+                    }
+
                 });
                 event.newGuest = new BrowserWindow(options);
+            } else if (frameName === 'stream-preview') {
+                // open window as stream-preview
+                event.preventDefault();
+
+                const accountAccess = require("../../common/account-access");
+                const streamer = accountAccess.getAccounts().streamer;
+                if (!streamer.loggedIn) return;
+
+                Object.assign(options, {
+                    frame: false,
+                    alwaysOnTop: true,
+                    titleBarStyle: "hidden",
+                    backgroundColor: "#1E2023",
+                    //parent: mainWindow,
+                    width: 640,
+                    height: 480,
+                    javascript: false,
+                    webPreferences: {}
+
+                });
+
+                const newWindow = new BrowserWindow(options);
+
+                const view = new BrowserView();
+                newWindow.setBrowserView(view);
+                view.setBounds({ x: 0, y: 0, width: 640, height: 480 });
+                view.setAutoResize({
+                    width: true,
+                    height: true
+                });
+                view.webContents.on('new-window', (vEvent) => {
+                    vEvent.preventDefault();
+                });
+
+                view.webContents.on("dom-ready", async () => {
+                    console.log(await view.webContents.insertCSS(`
+                        .top-bar {
+                            -webkit-app-region: drag;
+                        }
+                        .player-controls {
+                            -webkit-app-region: no-drag !important;
+                        }
+                    `, { cssOrigin: "user" }));
+                    view.webContents.openDevTools();
+                });
+
+
+                view.webContents.loadURL(`https://player.twitch.tv/?channel=${streamer.username}&parent=firebot&muted=true`);
+
+                event.newGuest = newWindow;
             }
         });
 

@@ -1,10 +1,34 @@
 <div class="chat-tab-content">
   <div class="quick-actions-column">
-    <button class="quick-action-btn" ng-click="showEditStreamInfoModal()">
+    <button
+      class="quick-action-btn"
+      ng-click="showEditStreamInfoModal()"
+      uib-tooltip="Edit Stream Info"
+      append-tooltip-to-body="true"
+      tooltip-placement="right"
+    >
       <i class="fas fa-pencil"></i>
     </button>
-    <button style="margin-top: 10px" class="quick-action-btn">
-      <i class="fas fa-money-bill"></i>
+
+    <button
+      style="margin-top: 10px"
+      class="quick-action-btn"
+      uib-tooltip="Give Currency"
+      append-tooltip-to-body="true"
+      tooltip-placement="right"
+    >
+      <i class="fas fa-coins"></i>
+    </button>
+
+    <button
+      style="margin-top: 10px"
+      class="quick-action-btn"
+      uib-tooltip="Open Stream Preview"
+      append-tooltip-to-body="true"
+      tooltip-placement="right"
+      ng-click="popoutStreamPreview()"
+    >
+      <i class="fas fa-tv-alt"></i>
     </button>
   </div>
 

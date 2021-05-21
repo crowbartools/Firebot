@@ -80,6 +80,23 @@
                 focusMessageInput();
             };
 
+            $scope.popoutStreamPreview = () => {
+                const modal = window.open('', 'stream-preview');
+
+                // modal.document.head.insertAdjacentHTML("beforeend", `
+                //     <style>
+                //         body {
+                //             -webkit-app-region: drag;
+                //         }
+                //         button, a {
+                //             -webkit-app-region: no-drag;
+                //         }
+                //     </style>
+                // `);
+
+                modal.document.title = `Stream Preview`;
+            };
+
             $scope.chatFeedIsEnabled = function() {
                 if (connectionService.connections['chat'] !== 'connected') {
                     $scope.disabledMessage = "The chat feed will enable once a connection to Chat has been made.";
