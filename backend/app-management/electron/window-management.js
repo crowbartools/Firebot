@@ -48,7 +48,7 @@ function createMainWindow() {
     });
 
     mainWindow.webContents.on('new-window',
-        (event, _url, frameName, _disposition, options, _) => {
+        (event, _url, frameName, _disposition, options) => {
             if (frameName === 'modal') {
                 // open window as modal
                 event.preventDefault();
@@ -81,6 +81,12 @@ function createMainWindow() {
                 },
                 {
                     role: 'paste'
+                },
+                {
+                    role: "undo"
+                },
+                {
+                    role: "redo"
                 },
                 {
                     role: "selectAll"

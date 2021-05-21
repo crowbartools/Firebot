@@ -68,6 +68,13 @@
                 });
             };
 
+            $scope.showEditStreamInfoModal = () => {
+                utilityService.showModal({
+                    component: "editStreamInfoModal",
+                    size: "md"
+                });
+            };
+
             $scope.updateChatInput = function(text) {
                 $scope.chatMessage = text;
                 focusMessageInput();
