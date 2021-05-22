@@ -17,6 +17,11 @@ let chatModerationSettings = {
         enabled: false,
         max: 10
     },
+    urlModeration: {
+        enabled: false,
+        viewTimeEnabled: false,
+        viewTime: 0
+    },
     exemptRoles: []
 };
 
