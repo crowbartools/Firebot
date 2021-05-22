@@ -112,20 +112,21 @@
                       font-size="32"
                     />
                   </div>
-                </div>
-                <div
-                  style="margin-top: 15px; margin-left: 15px;"
-                  ng-show="cms.chatModerationData.settings.urlModeration.enabled && cms.chatModerationData.settings.urlModeration.viewTimeEnabled"
-                >
-                  <div class="muted" style="margin-bottom: 15px; margin-left: 15px;">All viewers with a higher view time will be exempt from url moderation.</div>
-                  <firebot-input
-                    input-title="View time"
-                    placeholder-text="Enter amount of hours"
-                    input-type="number"
-                    disable-variables="true"
-                    model="cms.chatModerationData.settings.urlModeration.viewTime"
-                    on-input-update="cms.saveChatModerationSettings()"
-                  />
+
+                  <div
+                    style="margin-top: 15px; width: 100%;"
+                    ng-show="cms.chatModerationData.settings.urlModeration.enabled && cms.chatModerationData.settings.urlModeration.viewTimeEnabled"
+                  >
+                    <div class="muted" style="margin-bottom: 15px; margin-left: 15px;">All viewers with a higher view time will be exempt from url moderation.</div>
+                    <firebot-input
+                      input-title="View time"
+                      placeholder-text="Enter amount of hours"
+                      input-type="number"
+                      disable-variables="true"
+                      model="cms.chatModerationData.settings.urlModeration.viewTime"
+                      on-input-update="cms.saveChatModerationSettings()"
+                    />
+                  </div>
                 </div>
               </div>
             </div>

@@ -38,6 +38,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        flex-wrap: wrap;
 
         .moderation-feature-title {
             font-weight: 600; 
