@@ -81,18 +81,47 @@
             </div>
 
             <div class="content-block" style="width: 50%; margin-top: 15px;">
-                <div class="content-block-body">
-                  <div style="display: flex;align-items: center;justify-content: space-between;">
-                      <div style="font-weight: 600;font-size: 20px;" ng-class="{ muted: !cms.chatModerationData.settings.urlModeration.enabled }">Url moderation</div>
-                      <div style="width: 150px; flex-shrink: 0;text-align: right;">
-                          <toggle-button
-                            toggle-model="cms.chatModerationData.settings.urlModeration.enabled"
-                            on-toggle="cms.saveChatModerationSettings()"
-                            auto-update-value="true"
-                            font-size="40" />
-                      </div> 
-                  </div>        
+              <div class="content-block-body">
+                <div style="display: flex;align-items: center;justify-content: space-between;">
+                  <div style="font-weight: 600;font-size: 20px;" ng-class="{ muted: !cms.chatModerationData.settings.urlModeration.enabled }">Url Moderation</div>
+                  <div style="width: 150px; flex-shrink: 0;text-align: right;">
+                    <toggle-button
+                      toggle-model="cms.chatModerationData.settings.urlModeration.enabled"
+                      on-toggle="cms.saveChatModerationSettings()"
+                      auto-update-value="true"
+                      font-size="40" />
+                  </div>
                 </div>
+
+                <div 
+                  style="margin-top: 15px; margin-left: 15px; display: flex; align-items: center; justify-content: space-between;" 
+                  ng-show="cms.chatModerationData.settings.urlModeration.enabled"
+                >
+                  <div style="font-weight: 600; font-size: 16px;" ng-class="{ muted: !cms.chatModerationData.settings.urlModeration.viewTimeEnabled }">View Time</div>
+                  <div style="width: 150px; flex-shrink: 0; text-align: right;">
+                    <toggle-button
+                      toggle-model="cms.chatModerationData.settings.urlModeration.viewTimeEnabled"
+                      on-toggle="cms.saveChatModerationSettings()"
+                      auto-update-value="true"
+                      font-size="32"
+                    />
+                  </div>
+                </div>
+                <div
+                  style="margin-top: 15px; margin-left: 15px;"
+                  ng-show="cms.chatModerationData.settings.urlModeration.enabled && cms.chatModerationData.settings.urlModeration.viewTimeEnabled"
+                >
+                  <div class="muted" style="margin-bottom: 15px; margin-left: 15px;">All viewers with a higher view time will be exempt from url moderation.</div>
+                  <firebot-input
+                    input-title="View time"
+                    placeholder-text="Enter amount of hours"
+                    input-type="number"
+                    disable-variables="true"
+                    model="cms.chatModerationData.settings.urlModeration.viewTime"
+                    on-input-update="cms.saveChatModerationSettings()"
+                  />
+                </div>
+              </div>
             </div>
             
         </div>

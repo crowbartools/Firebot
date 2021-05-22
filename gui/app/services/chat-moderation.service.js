@@ -19,7 +19,9 @@
                         max: 10
                     },
                     urlModeration: {
-                        enabled: false
+                        enabled: false,
+                        viewTimeEnabled: false,
+                        viewTime: 0
                     },
                     exemptRoles: []
                 },
