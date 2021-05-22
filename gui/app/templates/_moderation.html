@@ -42,7 +42,8 @@
                   <div class="toggle-button-container">
                     <toggle-button 
                       toggle-model="cms.chatModerationData.settings.bannedWordList.enabled"
-                      on-toggle="toggleBannedWordsFeature()"
+                      auto-update-value="true"
+                      on-toggle="cms.saveChatModerationSettings()"
                       font-size="40"
                     />
                   </div> 
