@@ -20,7 +20,6 @@
                     },
                     urlModeration: {
                         enabled: false,
-                        permitDurationInSeconds: 0,
                         viewTime: {
                             enabled: false,
                             viewTimeInHours: 0

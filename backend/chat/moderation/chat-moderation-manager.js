@@ -20,7 +20,6 @@ let chatModerationSettings = {
     },
     urlModeration: {
         enabled: false,
-        permitDurationInSeconds: 0,
         viewTime: {
             enabled: false,
             viewTimeInHours: 0
@@ -142,7 +141,7 @@ async function moderateMessage(chatMessage) {
         }
 
         if (chatModerationSettings.urlModeration.enabled) {
-            if (chatModerationSettings.urlModeration.viewTime.enabled) {
+            if (chatModerationSettings.urlModeration.viewTime && chatModerationSettings.urlModeration.viewTime.enabled) {
                 const viewerDB = require('../../database/userDatabase');
                 const viewer = await viewerDB.getUserByUsername(chatMessage.username);
                 

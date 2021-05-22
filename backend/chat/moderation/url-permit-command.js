@@ -1,8 +1,8 @@
 "use strict";
 
 const util = require("../../utility");
-const twitchChat = require("../../chat/twitch-chat");
-const commandManager = require("../../chat/commands/CommandManager");
+const twitchChat = require("../twitch-chat");
+const commandManager = require("../commands/CommandManager");
 
 const PERMIT_COMMAND_ID = "firebot:moderation:url:permit";
 
@@ -18,6 +18,11 @@ const permitCommand = {
         scanWholeMessage: false,
         hideCooldowns: true,
         options: {
+            permitDurationTemplate: {
+                type: "number",
+                title: "Duration in seconds",
+                description: "The amount of time the viewer has to post a link after the !permit command is used."
+            },
             permitDisplayTemplate: {
                 type: "string",
                 title: "Output Template",
@@ -29,7 +34,13 @@ const permitCommand = {
         }
     },
     onTriggerEvent: async event => {
-        // To do
+        const { commandOptions } = event;
+        const target = event.userCommand.args[0];
+        const message = commandOptions.permitDisplayTemplate.replace("{target}", target).replace("{duration}", commandOptions.permitDurationTemplate);
+
+        console.log(event);
+
+        twitchChat.sendChatMessage(message);
     }
 };
 
