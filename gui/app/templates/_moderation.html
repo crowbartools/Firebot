@@ -79,6 +79,18 @@
                   </div>         
                 </div>
             </div>
+
+            <div class="content-block" style="width: 50%; margin-top: 15px;">
+                <div class="content-block-body">
+                  <div style="display: flex;align-items: center;justify-content: space-between;">
+                      <div style="font-weight: 600;font-size: 20px;" ng-class="{ muted: !cms.chatModerationData.settings.urlModeration.enabled }">Url moderation</div>
+                      <div style="width: 150px; flex-shrink: 0;text-align: right;">
+                          <toggle-button toggle-model="cms.chatModerationData.settings.urlModeration.enabled" 
+                          on-toggle="toggleUrlModerationFeature()" font-size="40"></toggle-button>
+                      </div> 
+                  </div>        
+                </div>
+            </div>
             
         </div>
         <div ng-show="activeTab === 1">
