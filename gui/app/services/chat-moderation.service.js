@@ -18,6 +18,9 @@
                         enabled: false,
                         max: 10
                     },
+                    urlModeration: {
+                        enabled: false
+                    },
                     exemptRoles: []
                 },
                 bannedWords: []
