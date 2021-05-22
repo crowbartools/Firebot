@@ -19,8 +19,10 @@ let chatModerationSettings = {
     },
     urlModeration: {
         enabled: false,
-        viewTimeEnabled: false,
-        viewTime: 0
+        viewTime: {
+            enabled: false,
+            hours: 0
+        }
     },
     exemptRoles: []
 };
@@ -137,13 +139,13 @@ async function moderateMessage(chatMessage) {
         }
 
         if (chatModerationSettings.urlModeration.enabled) {
-            const viewerDB = require('../../database/userDatabase');
-            const viewer = await viewerDB.getUserByUsername(chatMessage.username);
-            
-            const viewerViewTime = viewer.minutesInChannel / 60;
-            const viewTime = chatModerationSettings.urlModeration.viewTime;
-            
-            if (chatModerationSettings.urlModeration.viewTimeEnabled) {
+            if (chatModerationSettings.urlModeration.viewTime.enabled) {
+                const viewerDB = require('../../database/userDatabase');
+                const viewer = await viewerDB.getUserByUsername(chatMessage.username);
+                
+                const viewerViewTime = viewer.minutesInChannel / 60;
+                const viewTime = chatModerationSettings.urlModeration.viewTime.hours;
+
                 if (viewerViewTime < viewTime) {
                     const chat = require("../twitch-chat");
                     chat.deleteMessage(chatMessage.id);

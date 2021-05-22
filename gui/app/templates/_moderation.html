@@ -103,10 +103,10 @@
                   class="title-toggle-button-container"
                   ng-show="cms.chatModerationData.settings.urlModeration.enabled"
                 >
-                  <div class="moderation-feature-title" ng-class="{ muted: !cms.chatModerationData.settings.urlModeration.viewTimeEnabled }">View Time</div>
+                  <div class="moderation-feature-title" ng-class="{ muted: !cms.chatModerationData.settings.urlModeration.viewTime.enabled }">View Time</div>
                   <div class="toggle-button-container">
                     <toggle-button
-                      toggle-model="cms.chatModerationData.settings.urlModeration.viewTimeEnabled"
+                      toggle-model="cms.chatModerationData.settings.urlModeration.viewTime.enabled"
                       on-toggle="cms.saveChatModerationSettings()"
                       auto-update-value="true"
                       font-size="32"
@@ -115,7 +115,7 @@
 
                   <div
                     style="margin-top: 15px; width: 100%;"
-                    ng-show="cms.chatModerationData.settings.urlModeration.enabled && cms.chatModerationData.settings.urlModeration.viewTimeEnabled"
+                    ng-show="cms.chatModerationData.settings.urlModeration.enabled && cms.chatModerationData.settings.urlModeration.viewTime.enabled"
                   >
                     <div class="muted" style="margin-bottom: 15px; margin-left: 15px;">All viewers with a higher view time will be exempt from url moderation.</div>
                     <firebot-input
@@ -123,7 +123,7 @@
                       placeholder-text="Enter amount of hours"
                       input-type="number"
                       disable-variables="true"
-                      model="cms.chatModerationData.settings.urlModeration.viewTime"
+                      model="cms.chatModerationData.settings.urlModeration.viewTime.hours"
                       on-input-update="cms.saveChatModerationSettings()"
                     />
                   </div>
