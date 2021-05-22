@@ -103,11 +103,16 @@ const countEmojis = (str) => {
  *
  * @param {import("../chat-helpers").FirebotChatMessage} chatMessage
  */
-function moderateMessage(chatMessage) {
+async function moderateMessage(chatMessage) {
     if (chatMessage == null) return;
 
-    if (!chatModerationSettings.bannedWordList.enabled
-        && !chatModerationSettings.emoteLimit.enabled) return;
+    if (
+        !chatModerationSettings.bannedWordList.enabled
+        && !chatModerationSettings.emoteLimit.enabled
+        && !chatModerationSettings.urlModeration.enabled
+    ) {
+        return;
+    }
 
     let moderateMessage = false;
 
@@ -119,7 +124,6 @@ function moderateMessage(chatMessage) {
     }
 
     if (moderateMessage) {
-
         if (chatModerationSettings.emoteLimit.enabled && !!chatModerationSettings.emoteLimit.max) {
             const emoteCount = chatMessage.parts.filter(p => p.type === "emote").length;
             const emojiCount = chatMessage.parts
@@ -132,6 +136,21 @@ function moderateMessage(chatMessage) {
             }
         }
 
+        if (chatModerationSettings.urlModeration.enabled) {
+            const viewerDB = require('../../database/userDatabase');
+            const viewer = await viewerDB.getUserByUsername(chatMessage.username);
+            
+            const viewerViewTime = viewer.minutesInChannel / 60;
+            const viewTime = chatModerationSettings.urlModeration.viewTime;
+            
+            if (chatModerationSettings.urlModeration.viewTimeEnabled) {
+                if (viewerViewTime < viewTime) {
+                    const chat = require("../twitch-chat");
+                    chat.deleteMessage(chatMessage.id);
+                    return;
+                }
+            }
+        }
 
         const message = chatMessage.rawText;
         const messageId = chatMessage.id;
