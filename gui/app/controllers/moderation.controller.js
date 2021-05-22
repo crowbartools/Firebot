@@ -73,11 +73,11 @@
 
             $scope.toggleUrlModerationFeature = () => {
                 if (!chatModerationService.chatModerationData.settings.urlModeration.enabled) {
-                    chatModerationService.chatModerationData.settings.urlModeration.enabled = false;
-                    chatModerationService.unregisterPermitCommand();
-                } else {
                     chatModerationService.chatModerationData.settings.urlModeration.enabled = true;
                     chatModerationService.registerPermitCommand();
+                } else {
+                    chatModerationService.chatModerationData.settings.urlModeration.enabled = false;
+                    chatModerationService.unregisterPermitCommand();
                 }
                     
                 chatModerationService.saveChatModerationSettings();
