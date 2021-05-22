@@ -4,6 +4,7 @@ const profileManager = require("../../common/profile-manager");
 const { Worker } = require("worker_threads");
 const frontendCommunicator = require("../../common/frontend-communicator");
 const rolesManager = require("../../roles/custom-roles-manager");
+const permitCommand = require("./url-permit-command");
 
 let getChatModerationSettingsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/chat-moderation-settings");
 let getBannedWordsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-words", false);
@@ -218,6 +219,14 @@ frontendCommunicator.on("getChatModerationData", () => {
         settings: chatModerationSettings,
         bannedWords: bannedWords.words
     };
+});
+
+frontendCommunicator.on("registerPermitCommand", () => {
+    permitCommand.registerPermitCommand();
+});
+
+frontendCommunicator.on("unregisterPermitCommand", () => {
+    permitCommand.unregisterPermitCommand();
 });
 
 function load() {

@@ -71,6 +71,18 @@
 
             $scope.cms = chatModerationService;
 
+            $scope.toggleUrlModerationFeature = () => {
+                if (!chatModerationService.chatModerationData.settings.urlModeration.enabled) {
+                    chatModerationService.chatModerationData.settings.urlModeration.enabled = false;
+                    chatModerationService.unregisterPermitCommand();
+                } else {
+                    chatModerationService.chatModerationData.settings.urlModeration.enabled = true;
+                    chatModerationService.registerPermitCommand();
+                }
+                    
+                chatModerationService.saveChatModerationSettings();
+            };
+
             $scope.showEditBannedWordsModal = () => {
                 utilityService.showModal({
                     component: "editBannedWordsModal",
