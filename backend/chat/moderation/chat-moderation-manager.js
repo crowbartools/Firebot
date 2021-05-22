@@ -19,10 +19,10 @@ let chatModerationSettings = {
     },
     urlModeration: {
         enabled: false,
-        permitDuration: 0,
+        permitDurationInSeconds: 0,
         viewTime: {
             enabled: false,
-            hours: 0
+            viewTimeInHours: 0
         }
     },
     exemptRoles: []
@@ -127,13 +127,14 @@ async function moderateMessage(chatMessage) {
     }
 
     if (moderateMessage) {
+        const chat = require("../twitch-chat");
+
         if (chatModerationSettings.emoteLimit.enabled && !!chatModerationSettings.emoteLimit.max) {
             const emoteCount = chatMessage.parts.filter(p => p.type === "emote").length;
             const emojiCount = chatMessage.parts
                 .filter(p => p.type === "text")
                 .reduce((acc, part) => acc + countEmojis(part.text), 0);
             if ((emoteCount + emojiCount) > chatModerationSettings.emoteLimit.max) {
-                const chat = require("../twitch-chat");
                 chat.deleteMessage(chatMessage.id);
                 return;
             }
@@ -148,7 +149,6 @@ async function moderateMessage(chatMessage) {
                 const viewTime = chatModerationSettings.urlModeration.viewTime.hours;
 
                 if (viewerViewTime < viewTime) {
-                    const chat = require("../twitch-chat");
                     chat.deleteMessage(chatMessage.id);
                     return;
                 }

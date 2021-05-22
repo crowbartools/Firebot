@@ -20,10 +20,10 @@
                     },
                     urlModeration: {
                         enabled: false,
-                        permitDuration: 0,
+                        permitDurationInSeconds: 0,
                         viewTime: {
                             enabled: false,
-                            hours: 0
+                            viewTimeInHours: 0
                         }
                     },
                     exemptRoles: []
