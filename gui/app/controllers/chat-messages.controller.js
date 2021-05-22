@@ -10,6 +10,7 @@
             settingsService,
             utilityService,
             activityFeedService,
+            backendCommunicator
         ) {
             $scope.settings = settingsService;
 
@@ -81,8 +82,7 @@
             };
 
             $scope.popoutStreamPreview = () => {
-                const modal = window.open('', 'stream-preview');
-
+                // const modal = window.open('', 'stream-preview');
                 // modal.document.head.insertAdjacentHTML("beforeend", `
                 //     <style>
                 //         body {
@@ -93,8 +93,8 @@
                 //         }
                 //     </style>
                 // `);
-
-                modal.document.title = `Stream Preview`;
+                // modal.document.title = `Stream Preview`;
+                backendCommunicator.send("show-twitch-preview");
             };
 
             $scope.chatFeedIsEnabled = function() {

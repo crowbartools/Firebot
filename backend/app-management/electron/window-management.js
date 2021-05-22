@@ -43,7 +43,7 @@ function createMainWindow() {
         frame: false,
         webPreferences: {
             nodeIntegration: true,
-            nativeWindowOpen: true
+            nativeWindowOpen: false
         }
     });
 
@@ -65,56 +65,6 @@ function createMainWindow() {
 
                 });
                 event.newGuest = new BrowserWindow(options);
-            } else if (frameName === 'stream-preview') {
-                // open window as stream-preview
-                event.preventDefault();
-
-                const accountAccess = require("../../common/account-access");
-                const streamer = accountAccess.getAccounts().streamer;
-                if (!streamer.loggedIn) return;
-
-                Object.assign(options, {
-                    frame: false,
-                    alwaysOnTop: true,
-                    titleBarStyle: "hidden",
-                    backgroundColor: "#1E2023",
-                    //parent: mainWindow,
-                    width: 640,
-                    height: 480,
-                    javascript: false,
-                    webPreferences: {}
-
-                });
-
-                const newWindow = new BrowserWindow(options);
-
-                const view = new BrowserView();
-                newWindow.setBrowserView(view);
-                view.setBounds({ x: 0, y: 0, width: 640, height: 480 });
-                view.setAutoResize({
-                    width: true,
-                    height: true
-                });
-                view.webContents.on('new-window', (vEvent) => {
-                    vEvent.preventDefault();
-                });
-
-                view.webContents.on("dom-ready", async () => {
-                    console.log(await view.webContents.insertCSS(`
-                        .top-bar {
-                            -webkit-app-region: drag;
-                        }
-                        .player-controls {
-                            -webkit-app-region: no-drag !important;
-                        }
-                    `, { cssOrigin: "user" }));
-                    view.webContents.openDevTools();
-                });
-
-
-                view.webContents.loadURL(`https://player.twitch.tv/?channel=${streamer.username}&parent=firebot&muted=true`);
-
-                event.newGuest = newWindow;
             }
         });
 
@@ -257,5 +207,69 @@ function createSplashScreen() {
         }));
 }
 
+/**
+ * Firebot's main window
+ * Keeps a global reference of the window object, if you don't, the window will
+ * be closed automatically when the JavaScript object is garbage collected.
+ *@type {Electron.BrowserWindow}
+ */
+let streamPreview = null;
+
+function createStreamPreviewWindow() {
+
+    if (streamPreview != null && !streamPreview.isDestroyed()) {
+        if (streamPreview.isMinimized()) {
+            streamPreview.restore();
+        }
+        streamPreview.focus();
+        return;
+    }
+
+    const accountAccess = require("../../common/account-access");
+    const streamer = accountAccess.getAccounts().streamer;
+
+    if (!streamer.loggedIn) return;
+
+    const streamPreviewWindowState = windowStateKeeper({
+        defaultWidth: 815,
+        defaultHeight: 480,
+        file: "stream-preview-window-state.json"
+    });
+
+    streamPreview = new BrowserWindow({
+        frame: true,
+        alwaysOnTop: true,
+        backgroundColor: "#1E2023",
+        title: "Stream Preview",
+        parent: exports.mainWindow,
+        width: streamPreviewWindowState.width,
+        height: streamPreviewWindowState.height,
+        x: streamPreviewWindowState.x,
+        y: streamPreviewWindowState.y,
+        javascript: false,
+        webPreferences: {}
+    });
+
+    const view = new BrowserView();
+    streamPreview.setBrowserView(view);
+    view.setBounds({
+        x: 0,
+        y: 0,
+        width: streamPreviewWindowState.width,
+        height: streamPreviewWindowState.height - 10
+    });
+    view.setAutoResize({
+        width: true,
+        height: true
+    });
+    view.webContents.on('new-window', (vEvent) => {
+        vEvent.preventDefault();
+    });
+
+    view.webContents.loadURL(`https://player.twitch.tv/?channel=${streamer.username}&parent=firebot&muted=true`);
+
+    streamPreviewWindowState.manage(streamPreview);
+}
+exports.createStreamPreviewWindow = createStreamPreviewWindow;
 exports.createMainWindow = createMainWindow;
 exports.createSplashScreen = createSplashScreen;
