@@ -103,7 +103,7 @@
                   class="title-toggle-button-container"
                   ng-show="cms.chatModerationData.settings.urlModeration.enabled"
                 >
-                  <div class="moderation-feature-title" ng-class="{ muted: !cms.chatModerationData.settings.urlModeration.viewTime.enabled }">View Time</div>
+                  <div class="moderation-feature-subtitle" ng-class="{ muted: !cms.chatModerationData.settings.urlModeration.viewTime.enabled }">View Time</div>
                   <div class="toggle-button-container">
                     <toggle-button
                       toggle-model="cms.chatModerationData.settings.urlModeration.viewTime.enabled"
@@ -124,6 +124,30 @@
                       input-type="number"
                       disable-variables="true"
                       model="cms.chatModerationData.settings.urlModeration.viewTime.hours"
+                      on-input-update="cms.saveChatModerationSettings()"
+                    />
+                  </div>
+                </div>
+
+                <div 
+                  style="margin-top: 25px; margin-left: 15px;"
+                  class="title-toggle-button-container"
+                  ng-show="cms.chatModerationData.settings.urlModeration.enabled"
+                >
+                  <div class="moderation-feature-subtitle">Permit duration</div>
+                  <div
+                    style="margin-top: 15px; width: 100%;"
+                    ng-show="cms.chatModerationData.settings.urlModeration.enabled"
+                  >
+                    <div class="muted" style="margin-bottom: 15px; margin-left: 15px;">
+                      The amount of time the viewer has to post a link after the !permit command is used (found in system commands).
+                    </div>
+                    <firebot-input
+                      input-title="Duration in seconds"
+                      placeholder-text="Enter amount of seconds"
+                      input-type="number"
+                      disable-variables="true"
+                      model="cms.chatModerationData.settings.urlModeration.permitDuration"
                       on-input-update="cms.saveChatModerationSettings()"
                     />
                   </div>
