@@ -141,14 +141,23 @@ async function moderateMessage(chatMessage) {
         }
 
         if (chatModerationSettings.urlModeration.enabled) {
+            const message = chatMessage.rawText;
+            const urlRegex = /[\w][.][a-zA-Z]/;
+            const regex = new RegExp(urlRegex, "gi");
+
+            if (!regex.test(message)) return;
+
+            logger.debug("Url moderation: Found url in message...");
+
             if (chatModerationSettings.urlModeration.viewTime && chatModerationSettings.urlModeration.viewTime.enabled) {
                 const viewerDB = require('../../database/userDatabase');
                 const viewer = await viewerDB.getUserByUsername(chatMessage.username);
                 
                 const viewerViewTime = viewer.minutesInChannel / 60;
-                const viewTime = chatModerationSettings.urlModeration.viewTime.hours;
+                const viewTime = chatModerationSettings.urlModeration.viewTime.viewTimeInHours;
 
                 if (viewerViewTime < viewTime) {
+                    logger.debug("Url moderation: Not enough view time...");
                     chat.deleteMessage(chatMessage.id);
                     return;
                 }
