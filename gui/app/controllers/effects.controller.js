@@ -37,6 +37,12 @@
                     icon: "fa-user",
                     cellTemplate: `{{data.name}}`,
                     cellController: () => {}
+                },
+                {
+                    name: "EFFECTS",
+                    icon: "fa-magic",
+                    cellTemplate: `{{data.effects ? data.effects.list.length : 0}}`,
+                    cellControler: () => {}
                 }
             ];
 
