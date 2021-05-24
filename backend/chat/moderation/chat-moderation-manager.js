@@ -114,9 +114,7 @@ async function moderateMessage(chatMessage) {
         !chatModerationSettings.bannedWordList.enabled
         && !chatModerationSettings.emoteLimit.enabled
         && !chatModerationSettings.urlModeration.enabled
-    ) {
-        return;
-    }
+    ) return;
 
     let moderateMessage = false;
 
@@ -155,7 +153,7 @@ async function moderateMessage(chatMessage) {
             if (chatModerationSettings.urlModeration.viewTime && chatModerationSettings.urlModeration.viewTime.enabled) {
                 const viewerDB = require('../../database/userDatabase');
                 const viewer = await viewerDB.getUserByUsername(chatMessage.username);
-                
+
                 const viewerViewTime = viewer.minutesInChannel / 60;
                 const minimumViewTime = chatModerationSettings.urlModeration.viewTime.viewTimeInHours;
 
@@ -261,7 +259,7 @@ function load() {
                         viewTimeInHours: 0
                     },
                     outputMessage: ""
-                }
+                };
             }
 
             if (settings.urlModeration.enabled) {

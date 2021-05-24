@@ -79,7 +79,7 @@
                     chatModerationService.chatModerationData.settings.urlModeration.enabled = false;
                     chatModerationService.unregisterPermitCommand();
                 }
-                    
+
                 chatModerationService.saveChatModerationSettings();
             };
 

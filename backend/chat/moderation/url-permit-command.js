@@ -28,7 +28,7 @@ const permitCommand = {
             permitDisplayTemplate: {
                 type: "string",
                 title: "Output Template",
-                description: "How the permit message is formatted",
+                description: "The chat message shown when the permit command is used (leave empty for no message).",
                 tip: "Variables: {target}, {duration}",
                 default: `{target}, you have {duration} seconds to post your url in the chat.`,
                 useTextArea: true
@@ -43,8 +43,10 @@ const permitCommand = {
         tempPermittedUser = target;
         logger.debug(`Url moderation: ${target} has been temporary permitted to post a url...`);
 
-        const twitchChat = require("../twitch-chat");
-        twitchChat.sendChatMessage(message);
+        if (message) {
+            const twitchChat = require("../twitch-chat");
+            twitchChat.sendChatMessage(message);
+        }
 
         setTimeout(() => {
             tempPermittedUser = "";
