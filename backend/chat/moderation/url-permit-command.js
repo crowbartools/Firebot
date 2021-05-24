@@ -18,6 +18,19 @@ const permitCommand = {
         autoDeleteTrigger: false,
         scanWholeMessage: false,
         hideCooldowns: true,
+        restrictionData: {
+            restrictions: [
+                {
+                    id: "sys-cmd-mods-only-perms",
+                    type: "firebot:permissions",
+                    mode: "roles",
+                    roleIds: [
+                        "broadcaster",
+                        "mod"
+                    ]
+                }
+            ]
+        },
         options: {
             permitDuration: {
                 type: "number",
