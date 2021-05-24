@@ -249,6 +249,10 @@ function load() {
             if (settings.emoteLimit == null) {
                 settings.emoteLimit = { enabled: false, max: 10 };
             }
+
+            if (settings.urlModeration.enabled) {
+                permitCommand.registerPermitCommand();
+            }
         }
 
         let words = getBannedWordsDb().getData("/");
