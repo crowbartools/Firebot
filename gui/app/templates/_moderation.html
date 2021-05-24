@@ -93,7 +93,8 @@
                     <toggle-button
                       toggle-model="cms.chatModerationData.settings.urlModeration.enabled"
                       on-toggle="toggleUrlModerationFeature()"
-                      font-size="40" />
+                      font-size="40"
+                    />
                   </div>
                 </div>
                 <div class="muted" style="margin-bottom: 15px;">
@@ -143,6 +144,7 @@
                       input-type="string"
                       disable-variables="true"
                       use-text-area="true"
+                      placeholder-text="Enter text"
                       model="cms.chatModerationData.settings.urlModeration.outputMessage"
                       on-input-update="cms.saveChatModerationSettings()"
                     />
