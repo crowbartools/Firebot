@@ -49,15 +49,21 @@ const permitCommand = {
         }
     },
     onTriggerEvent: async event => {
+        const twitchChat = require("../twitch-chat");
         const { commandOptions } = event;
         const target = event.userCommand.args[0];
-        const message = commandOptions.permitDisplayTemplate.replace("{target}", target).replace("{duration}", commandOptions.permitDuration);
+
+        if (!target) {
+            twitchChat.sendChatMessage("Please specify a user to permit.");
+            return;
+        }
 
         tempPermittedUser = target;
         logger.debug(`Url moderation: ${target} has been temporary permitted to post a url...`);
 
-        if (message) {
-            const twitchChat = require("../twitch-chat");
+        const message = commandOptions.permitDisplayTemplate.replace("{target}", target).replace("{duration}", commandOptions.permitDuration);
+
+        if (message) {    
             twitchChat.sendChatMessage(message);
         }
 
