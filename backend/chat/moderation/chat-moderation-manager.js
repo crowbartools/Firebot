@@ -23,7 +23,8 @@ let chatModerationSettings = {
         viewTime: {
             enabled: false,
             viewTimeInHours: 0
-        }
+        },
+        outputMessage: ""
     },
     exemptRoles: []
 };
@@ -142,6 +143,7 @@ async function moderateMessage(chatMessage) {
 
         if (chatModerationSettings.urlModeration.enabled) {
             const message = chatMessage.rawText;
+            let outputMessage = chatModerationSettings.urlModeration.outputMessage || "";
             const regex = new RegExp(/[\w][.][a-zA-Z]/, "gi");
 
             if (!regex.test(message)) return;
@@ -157,12 +159,19 @@ async function moderateMessage(chatMessage) {
 
                 if (viewerViewTime > minimumViewTime) return;
 
+                outputMessage = outputMessage.replace("{viewTime}", minimumViewTime.toString());
+
                 logger.debug("Url moderation: Not enough view time...");
             } else {
                 logger.debug("Url moderation: User does not have exempt role...");
             }
 
             chat.deleteMessage(chatMessage.id);
+
+            if (outputMessage) {
+                outputMessage = outputMessage.replace("{userName}", chatMessage.username);
+                chat.sendChatMessage(outputMessage);
+            }
         }
 
         const message = chatMessage.rawText;

@@ -23,7 +23,8 @@
                         viewTime: {
                             enabled: false,
                             viewTimeInHours: 0
-                        }
+                        },
+                        outputMessage: ""
                     },
                     exemptRoles: []
                 },
