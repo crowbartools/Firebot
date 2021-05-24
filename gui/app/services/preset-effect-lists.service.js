@@ -9,18 +9,21 @@
             let service = {};
 
             let presetEffectLists = {};
+            service.presetEffectLists = [];
 
             service.loadPresetEffectLists = async function() {
                 const presetLists = await backendCommunicator
                     .fireEventAsync("getPresetEffectLists");
                 if (presetLists != null) {
                     presetEffectLists = presetLists;
+                    service.presetEffectLists = Object.values(presetLists);
                 }
             };
 
             backendCommunicator.on("all-preset-lists", presetLists => {
                 if (presetLists != null) {
                     presetEffectLists = presetLists;
+                    service.presetEffectLists = Object.values(presetEffectLists);
                 }
             });
 
@@ -37,6 +40,12 @@
                 presetEffectLists[presetList.id] = presetList;
                 backendCommunicator.fireEvent("savePresetEffectList", presetList);
             };
+
+            service.saveAllPresetEffectLists = (presetEffectLists) => {
+                service.presetEffectLists = presetEffectLists;
+                backendCommunicator.fireEvent("saveAllPresetEffectLists", presetEffectLists);
+            };
+
 
             service.deletePresetEffectList = function(presetListId) {
                 if (!presetListId) return;

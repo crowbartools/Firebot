@@ -90,6 +90,14 @@ frontendCommunicator.on("savePresetEffectList", (presetList) => {
     savePresetEffectList(presetList);
 });
 
+frontendCommunicator.on("saveAllPresetEffectLists", (presetLists) => {
+    for (const presetList of presetLists) {
+        savePresetEffectList(presetList);
+    }
+
+    triggerUiRefresh();
+});
+
 frontendCommunicator.on("deletePresetEffectList", (presetListId) => {
     deletePresetEffectList(presetListId);
 });
