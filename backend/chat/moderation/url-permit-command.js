@@ -5,7 +5,7 @@ const commandManager = require("../commands/CommandManager");
 const frontendCommunicator = require("../../common/frontend-communicator");
 
 const PERMIT_COMMAND_ID = "firebot:moderation:url:permit";
-let tempPermittedUser = "";
+let tempPermittedUsers = [];
 
 const permitCommand = {
     definition: {
@@ -58,7 +58,7 @@ const permitCommand = {
             return;
         }
 
-        tempPermittedUser = target;
+        tempPermittedUsers.push(target);
         logger.debug(`Url moderation: ${target} has been temporary permitted to post a url...`);
 
         const message = commandOptions.permitDisplayTemplate.replace("{target}", target).replace("{duration}", commandOptions.permitDuration);
@@ -68,14 +68,14 @@ const permitCommand = {
         }
 
         setTimeout(() => {
-            tempPermittedUser = "";
+            tempPermittedUsers = tempPermittedUsers.filter(user => user !== target);
             logger.debug(`Url moderation: Temporary url permission for ${target} expired.`);
         }, commandOptions.permitDuration * 1000);
     }
 };
 
 function hasTemporaryPermission(username) {
-    return username === tempPermittedUser;
+    return tempPermittedUsers.includes(username);
 }
 
 function registerPermitCommand() {
