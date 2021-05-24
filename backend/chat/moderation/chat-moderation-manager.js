@@ -142,6 +142,8 @@ async function moderateMessage(chatMessage) {
         }
 
         if (chatModerationSettings.urlModeration.enabled) {
+            if (permitCommand.hasTemporaryPermission(chatMessage.username)) return;
+
             const message = chatMessage.rawText;
             let outputMessage = chatModerationSettings.urlModeration.outputMessage || "";
             const regex = new RegExp(/[\w][.][a-zA-Z]/, "gi");
@@ -161,9 +163,9 @@ async function moderateMessage(chatMessage) {
 
                 outputMessage = outputMessage.replace("{viewTime}", minimumViewTime.toString());
 
-                logger.debug("Url moderation: Not enough view time...");
+                logger.debug("Url moderation: Not enough view time.");
             } else {
-                logger.debug("Url moderation: User does not have exempt role...");
+                logger.debug("Url moderation: User does not have exempt role.");
             }
 
             chat.deleteMessage(chatMessage.id);
@@ -239,14 +241,6 @@ frontendCommunicator.on("getChatModerationData", () => {
     };
 });
 
-frontendCommunicator.on("registerPermitCommand", () => {
-    permitCommand.registerPermitCommand();
-});
-
-frontendCommunicator.on("unregisterPermitCommand", () => {
-    permitCommand.unregisterPermitCommand();
-});
-
 function load() {
     try {
         let settings = getChatModerationSettingsDb().getData("/");
@@ -257,6 +251,17 @@ function load() {
             }
             if (settings.emoteLimit == null) {
                 settings.emoteLimit = { enabled: false, max: 10 };
+            }
+
+            if (settings.urlModeration == null) {
+                settings.urlModeration = {
+                    enabled: false,
+                    viewTime: {
+                        enabled: false,
+                        viewTimeInHours: 0
+                    },
+                    outputMessage: ""
+                }
             }
 
             if (settings.urlModeration.enabled) {

@@ -1,8 +1,11 @@
 "use strict";
 
+const logger = require("../../logwrapper");
 const commandManager = require("../commands/CommandManager");
+const frontendCommunicator = require("../../common/frontend-communicator");
 
 const PERMIT_COMMAND_ID = "firebot:moderation:url:permit";
+let tempPermittedUser = "";
 
 const permitCommand = {
     definition: {
@@ -19,6 +22,7 @@ const permitCommand = {
             permitDuration: {
                 type: "number",
                 title: "Duration in seconds",
+                default: 30,
                 description: "The amount of time the viewer has to post a link after the !permit command is used."
             },
             permitDisplayTemplate: {
@@ -36,10 +40,22 @@ const permitCommand = {
         const target = event.userCommand.args[0];
         const message = commandOptions.permitDisplayTemplate.replace("{target}", target).replace("{duration}", commandOptions.permitDuration);
 
+        tempPermittedUser = target;
+        logger.debug(`Url moderation: ${target} has been temporary permitted to post a url...`);
+
         const twitchChat = require("../twitch-chat");
         twitchChat.sendChatMessage(message);
+
+        setTimeout(() => {
+            tempPermittedUser = "";
+            logger.debug(`Url moderation: Temporary url permission for ${target} expired.`);
+        }, commandOptions.permitDuration * 1000);
     }
 };
+
+function hasTemporaryPermission(username) {
+    return username === tempPermittedUser;
+}
 
 function registerPermitCommand() {
     if (!commandManager.hasSystemCommand(PERMIT_COMMAND_ID)) {
@@ -51,5 +67,14 @@ function unregisterPermitCommand() {
     commandManager.unregisterSystemCommand(PERMIT_COMMAND_ID);
 }
 
+frontendCommunicator.on("registerPermitCommand", () => {
+    registerPermitCommand();
+});
+
+frontendCommunicator.on("unregisterPermitCommand", () => {
+    unregisterPermitCommand();
+});
+
+exports.hasTemporaryPermission = hasTemporaryPermission;
 exports.registerPermitCommand = registerPermitCommand;
 exports.unregisterPermitCommand = unregisterPermitCommand;
