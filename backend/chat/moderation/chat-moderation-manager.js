@@ -158,6 +158,8 @@ async function moderateMessage(chatMessage) {
                 if (viewerViewTime > minimumViewTime) return;
 
                 logger.debug("Url moderation: Not enough view time...");
+            } else {
+                logger.debug("Url moderation: User does not have exempt role...");
             }
 
             chat.deleteMessage(chatMessage.id);
