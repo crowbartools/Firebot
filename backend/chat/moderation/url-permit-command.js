@@ -63,7 +63,7 @@ const permitCommand = {
 
         const message = commandOptions.permitDisplayTemplate.replace("{target}", target).replace("{duration}", commandOptions.permitDuration);
 
-        if (message) {    
+        if (message) {
             twitchChat.sendChatMessage(message);
         }
 
