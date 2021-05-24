@@ -142,8 +142,7 @@ async function moderateMessage(chatMessage) {
 
         if (chatModerationSettings.urlModeration.enabled) {
             const message = chatMessage.rawText;
-            const urlRegex = /[\w][.][a-zA-Z]/;
-            const regex = new RegExp(urlRegex, "gi");
+            const regex = new RegExp(/[\w][.][a-zA-Z]/, "gi");
 
             if (!regex.test(message)) return;
 
@@ -154,14 +153,14 @@ async function moderateMessage(chatMessage) {
                 const viewer = await viewerDB.getUserByUsername(chatMessage.username);
                 
                 const viewerViewTime = viewer.minutesInChannel / 60;
-                const viewTime = chatModerationSettings.urlModeration.viewTime.viewTimeInHours;
+                const minimumViewTime = chatModerationSettings.urlModeration.viewTime.viewTimeInHours;
 
-                if (viewerViewTime < viewTime) {
-                    logger.debug("Url moderation: Not enough view time...");
-                    chat.deleteMessage(chatMessage.id);
-                    return;
-                }
+                if (viewerViewTime > minimumViewTime) return;
+
+                logger.debug("Url moderation: Not enough view time...");
             }
+
+            chat.deleteMessage(chatMessage.id);
         }
 
         const message = chatMessage.rawText;
