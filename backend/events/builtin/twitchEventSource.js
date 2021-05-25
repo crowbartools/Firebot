@@ -64,7 +64,6 @@ module.exports = {
             manualMetadata: {
                 username: "Firebot",
                 subPlan: "1000",
-                subType: "Tier 1",
                 totalMonths: 10,
                 streak: 8,
                 isPrime: false,
