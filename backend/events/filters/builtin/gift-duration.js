@@ -14,7 +14,7 @@ module.exports = {
         let { comparisonType, value } = filterSettings;
         let { eventMeta } = eventData;
 
-        let giftDuration = eventMeta.giftDuration || 0;
+        let giftDuration = eventMeta.giftDuration || 1;
 
         switch (comparisonType) {
         case "is": {
