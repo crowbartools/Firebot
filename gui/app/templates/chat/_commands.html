@@ -27,6 +27,25 @@
   </div>
 
   <div style="overflow-y: scroll; height: 100%">
+    <!-- <div ng-if="activeCmdTab === 0">
+      <firebot-item-table
+        items="commandsService.getCustomCommands()"
+        on-items-update="onRewardsUpdated(items)"
+        headers="headers"
+        sort-tag-context="commands"
+        orderable="true"
+        add-new-button-disabled="channelRewardsService.channelRewards.length >= 50"
+        add-new-button-text="New Custom Command"
+        on-add-new-clicked="openAddOrEditCustomCommandModal()"
+        context-menu-options="commandMenuOptions(item)"
+        no-data-message="No custom commands saved. You should make one! :)"
+        none-found-message="No custom commands found."
+        search-placeholder="Search custom commands"
+        test-button="true"
+        on-test-button-clicked="channelRewardsService.manuallyTriggerReward(itemId)"
+        status-field="twitchData.isEnabled"
+      ></firebot-item-table>
+    </div> -->
     <div ng-if="activeCmdTab === 0">
       <scroll-sentinel element-class="custom-cmd-header"></scroll-sentinel>
       <div
@@ -91,7 +110,10 @@
               <th></th>
             </tr>
           </thead>
-          <tbody ui-sortable="sortableOptions" ng-model="filteredCommands">
+          <tbody
+            ui-sortable="sortableOptions"
+            ng-model="commandsService.commandsCache.customCommands"
+          >
             <tr
               ng-repeat="command in (commandsService.commandsCache.customCommands | sortTagSearch:sts.getSelectedSortTag('commands') | triggerSearch:commandsService.customCommandSearch) as filteredCommands track by command.id"
               context-menu="commandMenuOptions(command)"
@@ -204,7 +226,7 @@
                   <span
                     class="dragHandle"
                     ng-click="$event.stopPropagation();"
-                    ng-show="commandsService.selectedSortTag == null && (commandsService.customCommandSearch == null || commandsService.customCommandSearch.length < 1)"
+                    ng-show="sts.getSelectedSortTag('commands') == null && (commandsService.customCommandSearch == null || commandsService.customCommandSearch.length < 1)"
                   >
                     <i class="fal fa-bars" aria-hidden="true"></i>
                   </span>
