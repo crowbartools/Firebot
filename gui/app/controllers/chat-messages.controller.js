@@ -76,6 +76,13 @@
                 });
             };
 
+            $scope.showGiveCurrencyModal = () => {
+                utilityService.showModal({
+                    component: "giveCurrencyModal",
+                    size: "md"
+                });
+            };
+
             $scope.updateChatInput = function(text) {
                 $scope.chatMessage = text;
                 focusMessageInput();

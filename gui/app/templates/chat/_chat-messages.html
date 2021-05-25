@@ -16,6 +16,7 @@
       uib-tooltip="Give Currency"
       append-tooltip-to-body="true"
       tooltip-placement="right"
+      ng-click="showGiveCurrencyModal();"
     >
       <i class="fas fa-coins"></i>
     </button>
@@ -189,7 +190,7 @@
           style="color: white; font-size: 20px; line-height: 1"
           aria-label="Activity feed options"
         >
-          <i class="far fa-ellipsis-h"></i>
+          <i class="far fa-ellipsis-v"></i>
         </a>
         <ul class="dropdown-menu right-justified-dropdown" uib-dropdown-menu>
           <li ng-class="{'disabled': afs.activities.length < 1}">
