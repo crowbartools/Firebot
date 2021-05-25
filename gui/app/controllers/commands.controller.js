@@ -160,11 +160,12 @@
             $scope.sortableOptions = {
                 handle: ".dragHandle",
                 'ui-preserve-size': true,
-                stop: () => {
-                    if (commandsService.selectedSortTag != null &&
+                stop: (e, ui) => {
+                    console.log(e, ui);
+                    if (sortTagsService.getSelectedSortTag("commands") != null &&
                         (commandsService.customCommandSearch == null ||
                             commandsService.customCommandSearch.length < 1)) return;
-                    commandsService.saveAllCustomCommands($scope.filteredCommands);
+                    commandsService.saveAllCustomCommands(commandsService.commandsCache.customCommands);
                 }
             };
 
