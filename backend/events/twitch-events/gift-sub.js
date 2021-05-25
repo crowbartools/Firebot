@@ -18,10 +18,11 @@ exports.triggerCommunitySubGift = (gifterUsername, subPlan, subCount) => {
     });
 };
 
-exports.triggerSubGift = (gifterUsername, gifteeUsername, subPlan, subType, months) => {
+/** @param {import("twitch-pubsub-client").PubSubSubscriptionMessage} subInfo */
+exports.triggerSubGift = (subInfo) => {
 
     if (settings.ignoreSubsequentSubEventsAfterCommunitySub()) {
-        const cacheKey = `${gifterUsername}:${subPlan}`;
+        const cacheKey = `${subInfo.gifterDisplayName}:${subInfo.subPlan}`;
 
         const communityCount = communitySubCache.get(cacheKey);
         if (communityCount != null) {
@@ -38,11 +39,10 @@ exports.triggerSubGift = (gifterUsername, gifteeUsername, subPlan, subType, mont
     }
 
     eventManager.triggerEvent("twitch", "subs-gifted", {
-        username: gifteeUsername,
-        giftSubMonths: months,
-        gifteeUsername,
-        gifterUsername,
-        subPlan,
-        subType
+        username: subInfo.userDisplayName,
+        giftSubMonths: subInfo._data["cumulative_months"] || 1,
+        gifteeUsername: subInfo.userDisplayName,
+        gifterUsername: subInfo.gifterDisplayName,
+        subPlan: subInfo.subPlan
     });
 };
