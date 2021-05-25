@@ -7,7 +7,8 @@ module.exports = {
     name: "Anonymous",
     description: "Filter by whether the event was triggered by an anonymous user",
     events: [
-        { eventSourceId: "twitch", eventId: "cheer" }
+        { eventSourceId: "twitch", eventId: "cheer" },
+        { eventSourceId: "twitch", eventId: "subs-gifted" }
     ],
     comparisonTypes: [ComparisonType.IS],
     valueType: "preset",

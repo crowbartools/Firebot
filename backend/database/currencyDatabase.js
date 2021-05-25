@@ -8,6 +8,7 @@ const customRolesManager = require("../roles/custom-roles-manager");
 const teamRolesManager = require("../roles/team-roles-manager");
 const twitchRolesManager = require("../../shared/twitch-roles");
 const firebotRolesManager = require("../roles/firebot-roles-manager");
+const frontendCommunicator = require("../common/frontend-communicator");
 const util = require("../utility");
 
 let currencyCache = {};
@@ -127,7 +128,7 @@ async function adjustCurrencyForUser(username, currencyId, value, adjustType = "
     // Okay, it passes... let's try to add it.
     let user = await userDatabase.getUserByUsername(username);
 
-    if (user !== false) {
+    if (user !== false && user != null) {
         await adjustCurrency(user, currencyId, value, adjustType);
         return true;
     }
@@ -417,6 +418,43 @@ function deleteCurrencyById(currencyId) {
 
 //////////////////
 // Event Listeners
+
+/**
+ * @typedef CurrencyInfo
+ * @property {string} currencyId
+ * @property {"allOnline" | "individual"} targetType
+ * @property {string} [username]
+ * @property {boolean} sendChatMessage
+ * @property {number} amount
+ */
+
+frontendCommunicator.on("give-currency", async (/** @type {CurrencyInfo} */ {
+    currencyId,
+    amount,
+    sendChatMessage,
+    targetType,
+    username
+}) => {
+    if (targetType === "allOnline") {
+        await addCurrencyToOnlineUsers(currencyId, amount);
+    } else if (targetType === "individual") {
+        await adjustCurrencyForUser(
+            username,
+            currencyId,
+            amount
+        );
+    }
+    if (sendChatMessage) {
+        const twitchChat = require("../chat/twitch-chat");
+        if (!twitchChat.chatIsConnected()) return;
+
+        const currency = getCurrencyById(currencyId);
+        if (currency == null) return;
+
+        const message = `${amount < 0 ? "Removed" : "Gave"} ${util.commafy(amount)} ${currency.name} to ${targetType === "allOnline" ? "everyone" : `@${username}`}!`;
+        twitchChat.sendChatMessage(message);
+    }
+});
 
 // Refresh Currency Cache
 // This gets a message from front end when a currency needs to be created.

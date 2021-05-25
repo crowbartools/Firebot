@@ -460,6 +460,27 @@
         };
     });
 
+    app.filter("chatUserRole", function() {
+        return function(users, role) {
+            if (users == null || role == null) return users;
+            return users.filter(u => {
+                if (role === "broadcaster") {
+                    return u.roles.includes("broadcaster");
+                } else if (role === "viewer") {
+                    return !u.roles.includes("broadcaster")
+                        && !u.roles.includes("mod")
+                        && !u.roles.includes("vip");
+                } else if (role === "mod") {
+                    return u.roles.includes("mod");
+                } else if (role === "vip") {
+                    return u.roles.includes("vip");
+                }
+                return true;
+            }
+            );
+        };
+    });
+
 
     // This adds a filter that we can use for searching variables
     app.filter("variableSearch", function() {

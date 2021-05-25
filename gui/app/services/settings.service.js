@@ -265,16 +265,14 @@
 
             // Used for the app itself.
             service.getRealChatFeed = function() {
-                return getDataFromFile("/settings/chatFeed");
+                return true;
             };
 
             service.chatFeedEnabled = function() {
-                return getDataFromFile("/settings/chatFeed");
+                return true;
             };
 
-            service.setChatFeed = function(chatFeed) {
-                pushDataToFile("/settings/chatFeed", chatFeed === true);
-            };
+            service.setChatFeed = function() {};
 
             // Used for settings menu.
             service.getChatViewCount = function() {
@@ -369,6 +367,38 @@
 
             service.setChatCompactMode = function(compact) {
                 pushDataToFile("/settings/chatCompactMode", compact === true);
+            };
+
+            service.getShowAvatars = function() {
+                const value = getDataFromFile("/settings/chatAvatars");
+                return value != null ? value : true;
+            };
+            service.setShowAvatars = function(value) {
+                pushDataToFile("/settings/chatAvatars", value === true);
+            };
+
+            service.getShowTimestamps = function() {
+                const value = getDataFromFile("/settings/chatTimestamps");
+                return value != null ? value : true;
+            };
+            service.setShowTimestamps = function(value) {
+                pushDataToFile("/settings/chatTimestamps", value === true);
+            };
+
+            service.getShowThirdPartyEmotes = function() {
+                const value = getDataFromFile("/settings/chatThirdPartyEmotes");
+                return value != null ? value : true;
+            };
+            service.setShowThirdPartyEmotes = function(value) {
+                pushDataToFile("/settings/chatThirdPartyEmotes", value === true);
+            };
+
+            service.getShowPronouns = function() {
+                const value = getDataFromFile("/settings/chatPronouns");
+                return value != null ? value : true;
+            };
+            service.setShowPronouns = function(value) {
+                pushDataToFile("/settings/chatPronouns", value === true);
             };
 
             service.chatAlternateBackgrounds = function() {

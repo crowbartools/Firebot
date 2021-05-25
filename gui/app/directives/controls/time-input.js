@@ -17,7 +17,6 @@
                     <div class="input-group">
                         <input type="number" ng-disabled="$ctrl.disabled" ng-model="$ctrl.display" ng-change="$ctrl.valueChange()" class="form-control {{$ctrl.large ? 'input-lg' : ''}}" placeholder="Enter #">
                         <div class="input-group-btn">
-                        $ctrl.display = $ctrl.ngModel / timeScale;$ctrl.selectedTimeUnit
                             <button type="button" style="height: 42px;" ng-disabled="$ctrl.disabled" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{$ctrl.selectedTimeUnit}} <span class="caret"></span></button>
                             <ul class="dropdown-menu dropdown-menu-right">
                                 <li ng-repeat="unit in $ctrl.timeUnits" ng-click="$ctrl.updateTimeScale(unit)"><a href>{{unit}}</a></li>

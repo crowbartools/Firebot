@@ -147,6 +147,7 @@ body > .select2-container.open {
 
 .ui-select-bootstrap .ui-select-toggle {
   position: relative;
+  height: 42px;
 }
 
 .ui-select-bootstrap .ui-select-toggle > .caret {
@@ -212,11 +213,15 @@ body > .ui-select-bootstrap.open {
   padding: 3px 3px 0 3px;
 }
 
+.ui-select-bootstrap input.ui-select-search {
+  height: 42px;
+}
+
 .ui-select-multiple.ui-select-bootstrap input.ui-select-search {
   background-color: transparent !important; /* To prevent double background when disabled */
   border: none;
   outline: none;
-  height: 1.666666em;
+  height: 1.6666666em;
   margin-bottom: 3px;
 }
 
