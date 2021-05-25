@@ -26,3 +26,35 @@
         padding:0px;
     }
 }
+
+.moderation-feature-block {
+    width: 50%;
+
+    &:not(:first-child) {
+        margin-top: 15px;
+    }
+
+    .title-toggle-button-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+
+        .moderation-feature-title {
+            font-weight: 600; 
+            font-size: 20px;
+        }
+
+        .moderation-feature-subtitle {
+            font-weight: 600; 
+            font-size: 16px;
+        }
+    
+        .toggle-button-container {
+            width: 150px; 
+            flex-shrink: 0;
+            text-align: right;
+        }
+    }
+}
+

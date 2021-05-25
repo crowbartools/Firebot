@@ -16,68 +16,140 @@
     <div style="padding: 15px;">
         <div ng-show="activeTab === 0">
 
-          <div class="content-block" style="width: 50%;">
+          <div class="content-block moderation-feature-block">
             <div class="content-block-body">
               <div style="font-weight: 600;font-size: 20px;">Exempt Roles <tooltip text="'These roles are exempt from all Moderation features.'" /></div>
 
               <div style="margin-top: 15px">
                 <div class="role-bar" ng-repeat="role in getExemptRoles() track by role.id">
-                    <span>{{role.name}}</span>
-                    <span class="clickable" style="padding-left: 10px;" ng-click="removeExemptRole(role.id)" uib-tooltip="Remove role" tooltip-append-to-body="true">
-                        <i class="far fa-times"></i>
-                    </span>
+                  <span>{{role.name}}</span>
+                  <span class="clickable" style="padding-left: 10px;" ng-click="removeExemptRole(role.id)" uib-tooltip="Remove role" tooltip-append-to-body="true">
+                    <i class="far fa-times"></i>
+                  </span>
                 </div>
                 <div class="role-bar clickable" ng-click="openAddExemptRoleModal()" uib-tooltip="Add role" tooltip-append-to-body="true">
-                    <i class="far fa-plus"></i> 
+                  <i class="far fa-plus"></i> 
                 </div> 
               </div>
             </div>
           </div>
 
 
-            <div class="content-block" style="width: 50%; margin-top: 15px;">
-                <div class="content-block-body">
-                  <div style="display: flex;align-items: center;justify-content: space-between;">
-                      <div style="font-weight: 600;font-size: 20px;" ng-class="{ muted: !cms.chatModerationData.settings.bannedWordList.enabled }">Banned Word List</div>
-                      <div style="width: 150px; flex-shrink: 0;text-align: right;">
-                          <toggle-button toggle-model="cms.chatModerationData.settings.bannedWordList.enabled" 
-                          on-toggle="toggleBannedWordsFeature()" font-size="40"></toggle-button>
-                      </div> 
+            <div class="content-block moderation-feature-block">
+              <div class="content-block-body">
+                <div class="title-toggle-button-container">
+                  <div class="moderation-feature-title" ng-class="{ muted: !cms.chatModerationData.settings.bannedWordList.enabled }">Banned Word List</div>
+                  <div class="toggle-button-container">
+                    <toggle-button 
+                      toggle-model="cms.chatModerationData.settings.bannedWordList.enabled"
+                      auto-update-value="true"
+                      on-toggle="cms.saveChatModerationSettings()"
+                      font-size="40"
+                    />
                   </div> 
+                </div> 
 
-                  <div style="margin-top: 15px" ng-show="cms.chatModerationData.settings.bannedWordList.enabled">
-                    <div id="roles" class="mixplay-header" style="padding: 0 0 4px 0">
-                        Words
-                    </div>
-                    <button ng-click="showEditBannedWordsModal()" class="btn btn-default">Edit Word List</button>
-                  </div>         
-                </div>
+                <div style="margin-top: 15px" ng-show="cms.chatModerationData.settings.bannedWordList.enabled">
+                  <div id="roles" class="mixplay-header" style="padding: 0 0 4px 0">
+                      Words
+                  </div>
+                  <button ng-click="showEditBannedWordsModal()" class="btn btn-default">Edit Word List</button>
+                </div>         
+              </div>
             </div>
 
-            <div class="content-block" style="width: 50%; margin-top: 15px;">
-                <div class="content-block-body">
-                  <div style="display: flex;align-items: center;justify-content: space-between;">
-                      <div style="font-weight: 600;font-size: 20px;" ng-class="{ muted: !cms.chatModerationData.settings.emoteLimit.enabled }">Emote/Emoji Limit</div>
-                      <div style="width: 150px; flex-shrink: 0;text-align: right;">
-                          <toggle-button 
-                            toggle-model="cms.chatModerationData.settings.emoteLimit.enabled"
-                            auto-update-value="true"
-                            on-toggle="cms.saveChatModerationSettings()" 
-                            font-size="40" />
-                      </div> 
+            <div class="content-block moderation-feature-block">
+              <div class="content-block-body">
+                <div class="title-toggle-button-container">
+                  <div class="moderation-feature-title" ng-class="{ muted: !cms.chatModerationData.settings.emoteLimit.enabled }">Emote/Emoji Limit</div>
+                  <div class="toggle-button-container">
+                    <toggle-button 
+                      toggle-model="cms.chatModerationData.settings.emoteLimit.enabled"
+                      auto-update-value="true"
+                      on-toggle="cms.saveChatModerationSettings()" 
+                      font-size="40"
+                    />
                   </div> 
+                </div> 
 
-                  <div style="margin-top: 15px" ng-show="cms.chatModerationData.settings.emoteLimit.enabled">
+                <div style="margin-top: 15px" ng-show="cms.chatModerationData.settings.emoteLimit.enabled">
+                  <firebot-input
+                    input-title="Max Per Message" 
+                    placeholder-text="Enter number" 
+                    input-type="number" 
+                    disable-variables="true" 
+                    model="cms.chatModerationData.settings.emoteLimit.max"
+                    on-input-update="cms.saveChatModerationSettings()"
+                  />
+                </div>         
+              </div>
+            </div>
+
+            <div class="content-block moderation-feature-block">
+              <div class="content-block-body">
+                <div class="title-toggle-button-container">
+                  <div class="moderation-feature-title" ng-class="{ muted: !cms.chatModerationData.settings.urlModeration.enabled }">Url Moderation</div>
+                  <div class="toggle-button-container">
+                    <toggle-button
+                      toggle-model="cms.chatModerationData.settings.urlModeration.enabled"
+                      on-toggle="toggleUrlModerationFeature()"
+                      font-size="40"
+                    />
+                  </div>
+                </div>
+                <div class="muted" style="margin-bottom: 15px;">
+                  A !permit command is automatically added to System Commands.
+                </div>
+
+                <div 
+                  style="margin-top: 15px; margin-left: 15px;"
+                  class="title-toggle-button-container"
+                  ng-show="cms.chatModerationData.settings.urlModeration.enabled"
+                >
+                  <div class="moderation-feature-subtitle" ng-class="{ muted: !cms.chatModerationData.settings.urlModeration.viewTime.enabled }">View Time</div>
+                  <div class="toggle-button-container">
+                    <toggle-button
+                      toggle-model="cms.chatModerationData.settings.urlModeration.viewTime.enabled"
+                      on-toggle="cms.saveChatModerationSettings()"
+                      auto-update-value="true"
+                      font-size="32"
+                    />
+                  </div>
+
+                  <div
+                    style="margin-top: 15px; width: 100%;"
+                    ng-show="cms.chatModerationData.settings.urlModeration.enabled && cms.chatModerationData.settings.urlModeration.viewTime.enabled"
+                  >
+                    <div class="muted" style="margin-bottom: 10px; margin-left: 15px;">All viewers with a higher view time will be exempt from url moderation.</div>
                     <firebot-input
-                      input-title="Max Per Message" 
-                      placeholder-text="Enter number" 
-                      input-type="number" 
-                      disable-variables="true" 
-                      model="cms.chatModerationData.settings.emoteLimit.max"
+                      input-title="View time in hours"
+                      placeholder-text="Enter amount of hours"
+                      input-type="number"
+                      disable-variables="true"
+                      model="cms.chatModerationData.settings.urlModeration.viewTime.viewTimeInHours"
                       on-input-update="cms.saveChatModerationSettings()"
                     />
-                  </div>         
+                  </div>
                 </div>
+
+                <div
+                    style="margin-top: 20px; width: 100%;"
+                    ng-show="cms.chatModerationData.settings.urlModeration.enabled"
+                  >
+                  <div class="muted">The chat message shown when a message containing a url is moderated (leave empty for no message).</div>
+                    <div class="muted" style="margin-bottom: 10px; font-weight: 800;">
+                      Variables: {userName}<span ng-show="cms.chatModerationData.settings.urlModeration.viewTime.enabled">, {viewTime}</span>
+                    </div>
+                    <firebot-input
+                      input-type="string"
+                      disable-variables="true"
+                      use-text-area="true"
+                      placeholder-text="Enter text"
+                      model="cms.chatModerationData.settings.urlModeration.outputMessage"
+                      on-input-update="cms.saveChatModerationSettings()"
+                    />
+                  </div>
+              </div>
             </div>
             
         </div>
