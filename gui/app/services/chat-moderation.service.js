@@ -18,6 +18,14 @@
                         enabled: false,
                         max: 10
                     },
+                    urlModeration: {
+                        enabled: false,
+                        viewTime: {
+                            enabled: false,
+                            viewTimeInHours: 0
+                        },
+                        outputMessage: ""
+                    },
                     exemptRoles: []
                 },
                 bannedWords: []
@@ -79,6 +87,14 @@
             service.removeAllBannedWords = () => {
                 service.chatModerationData.bannedWords = [];
                 backendCommunicator.fireEvent("removeAllBannedWords");
+            };
+
+            service.registerPermitCommand = () => {
+                backendCommunicator.fireEvent("registerPermitCommand");
+            };
+
+            service.unregisterPermitCommand = () => {
+                backendCommunicator.fireEvent("unregisterPermitCommand");
             };
 
             return service;

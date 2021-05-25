@@ -14,7 +14,7 @@ module.exports = {
         const timerManager = require("../../../timers/timer-manager");
 
         //Send to chat moderation service
-        chatModerationManager.moderateMessage(data);
+        await chatModerationManager.moderateMessage(data);
 
         // Send to command router to see if we need to act on a command.
         commandHandler.handleChatEvent(data).catch(reason => {

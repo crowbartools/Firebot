@@ -28,7 +28,7 @@ exports.setupChatListeners = (streamerChatClient) => {
     streamerChatClient.onPrivmsg(async (_channel, user, messageText, msg) => {
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText);
 
-        chatModerationManager.moderateMessage(firebotChatMessage);
+        await chatModerationManager.moderateMessage(firebotChatMessage);
 
         // send to the frontend
         if (firebotChatMessage.isHighlighted) {
