@@ -88,8 +88,7 @@ module.exports = {
                 giftSubMonths: 1,
                 gifteeUsername: "MageEnclave",
                 gifterUsername: "Firebot",
-                subPlan: "1000",
-                subType: "Tier 1"
+                subPlan: "1000"
             },
             activityFeed: {
                 icon: "fad fa-gift",
