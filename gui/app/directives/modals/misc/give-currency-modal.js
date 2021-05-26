@@ -26,7 +26,7 @@
                         </div>
 
                         <div class="form-group" ng-class="{'has-error': $ctrl.formFieldHasError('username')}">
-                            <label for="targetType" class="control-label">Target Type</label>
+                            <label for="targetType" class="control-label">Target</label>
                             <div class="permission-type controls-fb-inline">
                                 <label class="control-fb control--radio">All Online Chat Users
                                     <input type="radio" ng-model="$ctrl.currencyInfo.targetType" value="allOnline"/>

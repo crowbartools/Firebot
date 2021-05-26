@@ -8,7 +8,7 @@
         .component("streamInfo", {
             bindings: {},
             template: `
-                <div ng-if="sis.streamInfo.isLive" class="stream-info-stats-wrapper">
+                <div ng-if="sis.streamInfo.isLive && settings.getShowLiveStats()" class="stream-info-stats-wrapper">
                     <div class="stream-info-stat">
                         <span style="margin-right: 5px; background: red;display: inline-block;width: 12px;height: 12px;border-radius: 15px;"></span>
                         <span>{{sessionTimeDisplay}}</span>
@@ -20,10 +20,12 @@
                     </div>
                 </div>
             `,
-            controller: function($scope, streamInfoService, $interval) {
+            controller: function($scope, streamInfoService, settingsService, $interval) {
                 const $ctrl = this;
 
                 $scope.sis = streamInfoService;
+
+                $scope.settings = settingsService;
 
                 let totalSeconds = 0;
                 $scope.sessionTimeDisplay = "00:00:00";

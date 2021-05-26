@@ -426,6 +426,14 @@
                 pushDataToFile('/settings/chatAlternateBackgrounds', alternate === true);
             };
 
+            service.getShowLiveStats = function() {
+                const value = getDataFromFile("/settings/showLiveStats");
+                return value != null ? value : true;
+            };
+            service.setShowLiveStats = function(value) {
+                pushDataToFile("/settings/showLiveStats", value === true);
+            };
+
             service.setChatShowGifs = function(showGifs) {
                 pushDataToFile('/settings/chatShowGifs', showGifs === true);
             };
