@@ -164,33 +164,31 @@
           </div>
           <div class="row">
             <div class="setting col-sm-6">
-              <div class="setting-heading">Show Stream Info When Live</div>
+              <div class="setting-heading">Live Stream Stats</div>
               <div class="setting-description">
-                When live, show stream info in the top bar for stats such as
-                Uptime and Current Viewer Count
+                Select which stream stats show in the top bar when live
               </div>
-              <div class="dropdown options-sounds-dropdown">
-                <button
-                  class="btn btn-default dropdown-toggle"
-                  type="button"
-                  id="options-sounds"
-                  data-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="true"
-                >
-                  <span class="dropdown-text"
-                    >{{settings.getShowLiveStats() ? "On" : "Off"}}</span
-                  >
-                  <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="options-sounds">
-                  <li>
-                    <a href ng-click="settings.setShowLiveStats(true)">On</a>
-                  </li>
-                  <li>
-                    <a href ng-click="settings.setShowLiveStats(false)">Off</a>
-                  </li>
-                </ul>
+              <div class="effect-setting-container">
+                <label class="control-fb control--checkbox"
+                  >Uptime
+                  <input
+                    type="checkbox"
+                    ng-click="settings.setShowUptimeStat(!settings.getShowUptimeStat())"
+                    ng-checked="settings.getShowUptimeStat()"
+                    aria-label="..."
+                  />
+                  <div class="control__indicator"></div>
+                </label>
+                <label class="control-fb control--checkbox"
+                  >Viewer count
+                  <input
+                    type="checkbox"
+                    ng-click="settings.setShowViewerCountStat(!settings.getShowViewerCountStat())"
+                    ng-checked="settings.getShowViewerCountStat()"
+                    aria-label="..."
+                  />
+                  <div class="control__indicator"></div>
+                </label>
               </div>
             </div>
           </div>

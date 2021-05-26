@@ -426,12 +426,19 @@
                 pushDataToFile('/settings/chatAlternateBackgrounds', alternate === true);
             };
 
-            service.getShowLiveStats = function() {
-                const value = getDataFromFile("/settings/showLiveStats");
+            service.getShowUptimeStat = function() {
+                const value = getDataFromFile("/settings/showUptimeStat");
                 return value != null ? value : true;
             };
-            service.setShowLiveStats = function(value) {
-                pushDataToFile("/settings/showLiveStats", value === true);
+            service.setShowUptimeStat = function(value) {
+                pushDataToFile("/settings/showUptimeStat", value === true);
+            };
+            service.getShowViewerCountStat = function() {
+                const value = getDataFromFile("/settings/showViewerCountStat");
+                return value != null ? value : true;
+            };
+            service.setShowViewerCountStat = function(value) {
+                pushDataToFile("/settings/showViewerCountStat", value === true);
             };
 
             service.setChatShowGifs = function(showGifs) {

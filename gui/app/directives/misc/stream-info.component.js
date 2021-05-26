@@ -8,13 +8,13 @@
         .component("streamInfo", {
             bindings: {},
             template: `
-                <div ng-if="sis.streamInfo.isLive && settings.getShowLiveStats()" class="stream-info-stats-wrapper">
-                    <div class="stream-info-stat">
+                <div ng-if="sis.streamInfo.isLive" class="stream-info-stats-wrapper">
+                    <div class="stream-info-stat" ng-show="settings.getShowUptimeStat()">
                         <span style="margin-right: 5px; background: red;display: inline-block;width: 12px;height: 12px;border-radius: 15px;"></span>
                         <span>{{sessionTimeDisplay}}</span>
                     </div>
 
-                    <div class="stream-info-stat" style="margin-left:10px">
+                    <div class="stream-info-stat" ng-show="settings.getShowViewerCountStat()" style="margin-left:10px">
                         <i class="fas fa-user" style="margin-right: 5px; font-size: 12px;" />
                         <span>{{sis.streamInfo.viewers}}</span>
                     </div>
