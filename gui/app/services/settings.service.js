@@ -401,6 +401,22 @@
                 pushDataToFile("/settings/chatPronouns", value === true);
             };
 
+            service.getChatCustomFontSizeEnabled = function() {
+                const value = getDataFromFile("/settings/chatCustomFontSizeEnabled");
+                return value != null ? value : false;
+            };
+            service.setChatCustomFontSizeEnabled = function(value) {
+                pushDataToFile("/settings/chatCustomFontSizeEnabled", value === true);
+            };
+
+            service.getChatCustomFontSize = function() {
+                const value = getDataFromFile("/settings/chatCustomFontSize");
+                return value != null ? value : 17;
+            };
+            service.setChatCustomFontSize = function(value) {
+                pushDataToFile("/settings/chatCustomFontSize", value);
+            };
+
             service.chatAlternateBackgrounds = function() {
                 let alternate = getDataFromFile('/settings/chatAlternateBackgrounds');
                 return alternate != null ? alternate : true;

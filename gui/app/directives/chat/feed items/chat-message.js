@@ -11,7 +11,8 @@
                 showTimestamp: "<",
                 showThirdPartyEmotes: "<",
                 showPronoun: "<",
-                updateChatInput: "&"
+                updateChatInput: "&",
+                chatSizeStyle: "@?"
             },
             template: `
                 <div class="chat-message"
@@ -84,7 +85,7 @@
                         <div class="chatContent">
                             <span ng-repeat="part in $ctrl.message.parts" class="chat-content-wrap">
 
-                                <span ng-if="part.type === 'text'">{{part.text}}</span>
+                                <span ng-if="part.type === 'text'" style="{{$ctrl.chatSizeStyle}}">{{part.text}}</span>
 
                                 <a ng-if="part.type === 'link'" ng-href="{{part.url}}" target="_blank">{{part.text}}</a>
 
@@ -105,7 +106,7 @@
                                 >
                                     <img ng-src="{{part.url}}" style="height: 100%;" />
                                 </span>
-                                <span ng-if="part.type === 'third-party-emote' && !$ctrl.showThirdPartyEmotes">{{part.name}}</span>
+                                <span ng-if="part.type === 'third-party-emote' && !$ctrl.showThirdPartyEmotes" style="{{$ctrl.chatSizeStyle}}">{{part.name}}</span>
                             </span>
                         </div>
                     </div>

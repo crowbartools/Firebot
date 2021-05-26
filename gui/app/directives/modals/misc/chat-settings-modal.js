@@ -125,6 +125,19 @@
                             </span>
                         </div>
 
+                        <div style="display: flex;align-items: center;justify-content: space-between;">
+                            <span style="font-weight: 900;">Custom Font Size</span>
+                            <span>
+                                <input class="tgl tgl-light" id="cb15" type="checkbox"
+                                    ng-checked="settings.getChatCustomFontSizeEnabled()"
+                                    ng-click="toggleCustomFontEnabled()"/>
+                                <label class="tgl-btn" for="cb15"></label>
+                            </span>
+                        </div>
+                        <div class="volume-slider-wrapper" ng-show="settings.getChatCustomFontSizeEnabled()">
+                            <rzslider rz-slider-model="customFontSize" rz-slider-options="fontSliderOptions"></rzslider>
+                        </div>
+
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -184,6 +197,25 @@
                         name: sound.name,
                         path: sound.name === "Custom" ? sound.path : undefined
                     });
+                };
+
+
+                $scope.toggleCustomFontEnabled = () => {
+                    settingsService.setChatCustomFontSizeEnabled(!settingsService.getChatCustomFontSizeEnabled());
+                    $timeout(() => {
+                        $rootScope.$broadcast("rzSliderForceRender");
+                    }, 50);
+                };
+
+                $scope.customFontSize = settingsService.getChatCustomFontSize();
+                $scope.fontSizeUpdated = function() {
+                    settingsService.setChatCustomFontSize($scope.customFontSize);
+                };
+                $scope.fontSliderOptions = {
+                    floor: 10,
+                    ceil: 30,
+                    translate: value => `${value}px`,
+                    onChange: $scope.fontSizeUpdated
                 };
 
                 $ctrl.$onInit = () => {
