@@ -50,7 +50,6 @@
             </div>
             
             <div class="modal-footer sticky-footer">
-                <button type="button" class="btn btn-danger pull-left" ng-show="!$ctrl.isNewPresetList && !$ctrl.hideDeleteButton" ng-click="$ctrl.delete()">Delete Preset List</button>
                 <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
                 <button type="button" class="btn btn-primary" ng-click="$ctrl.save()">Save</button>
             </div>
@@ -65,8 +64,6 @@
             const $ctrl = this;
 
             $ctrl.isNewPresetList = true;
-
-            $ctrl.hideDeleteButton = false;
 
             $ctrl.presetList = {
                 name: "",
@@ -143,16 +140,6 @@
 
                 $scope.$on("modal.closing", function() {
                     utilityService.removeSlidingModal();
-                });
-            };
-
-            $ctrl.delete = function() {
-                if ($ctrl.isNewPresetList) return;
-                $ctrl.close({
-                    $value: {
-                        presetList: $ctrl.presetList,
-                        action: "delete"
-                    }
                 });
             };
 
