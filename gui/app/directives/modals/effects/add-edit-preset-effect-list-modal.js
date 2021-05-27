@@ -61,7 +61,7 @@
             dismiss: "&",
             modalInstance: "<"
         },
-        controller: function(ngToast, utilityService, $scope) {
+        controller: function(ngToast, utilityService, $scope, presetEffectListsService) {
             const $ctrl = this;
 
             $ctrl.isNewPresetList = true;
@@ -162,10 +162,11 @@
                     return;
                 }
 
-                $ctrl.close({
-                    $value: {
-                        presetList: $ctrl.presetList,
-                        action: $ctrl.isNewPresetList ? "add" : "update"
+                presetEffectListsService.savePresetEffectList($ctrl.presetList).then(successful => {
+                    if (successful) {
+                        $ctrl.dismiss();
+                    } else {
+                        ngToast.create("Failed to save preset effect list. Please try again or view logs for details.");
                     }
                 });
             };

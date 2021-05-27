@@ -42,7 +42,7 @@ function loadPresetEffectLists() {
     }
 }
 
-function savePresetEffectList(presetList) {
+async function savePresetEffectList(presetList) {
     if (presetList == null) return;
 
     presetEffectLists[presetList.id] = presetList;
@@ -53,8 +53,11 @@ function savePresetEffectList(presetList) {
         presetEffectListDb.push("/" + presetList.id, presetList);
 
         logger.debug(`Saved preset effect list ${presetList.id} to file.`);
+
+        return presetList;
     } catch (err) {
         logger.warn(`There was an error saving a preset effect list.`, err);
+        return null;
     }
 }
 
@@ -86,9 +89,8 @@ function triggerUiRefresh() {
 
 frontendCommunicator.onAsync("getPresetEffectLists", async () => presetEffectLists);
 
-frontendCommunicator.on("savePresetEffectList", (presetList) => {
-    savePresetEffectList(presetList);
-});
+frontendCommunicator.onAsync("savePresetEffectList", 
+    (presetList) => savePresetEffectList(presetList));
 
 frontendCommunicator.on("saveAllPresetEffectLists", (presetLists) => {
     for (const presetList of presetLists) {

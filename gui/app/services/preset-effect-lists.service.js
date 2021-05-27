@@ -4,12 +4,21 @@
 
     angular
         .module("firebotApp")
-        .factory("presetEffectListsService", function(logger, backendCommunicator,
+        .factory("presetEffectListsService", function($q, logger, backendCommunicator,
             utilityService) {
             let service = {};
 
             let presetEffectLists = {};
             service.presetEffectLists = [];
+
+            function updatePresetEffectList(presetList) {
+                const index = service.presetEffectLists.findIndex(r => r.id === presetList.id);
+                if (index > -1) {
+                    service.presetEffectLists[index] = presetList;
+                } else {
+                    service.presetEffectLists.push(presetList);
+                }
+            }
 
             service.loadPresetEffectLists = async function() {
                 const presetLists = await backendCommunicator
@@ -36,9 +45,14 @@
             };
 
             service.savePresetEffectList = function(presetList) {
-                if (!presetList) return;
-                presetEffectLists[presetList.id] = presetList;
-                backendCommunicator.fireEvent("savePresetEffectList", presetList);
+                return $q.when(backendCommunicator.fireEventAsync("savePresetEffectList", presetList))
+                    .then(savedPresetList => {
+                        if (savedPresetList) {
+                            updatePresetEffectList(savedPresetList);
+                            return true;
+                        }
+                        return false;
+                    });
             };
 
             service.saveAllPresetEffectLists = (presetEffectLists) => {
