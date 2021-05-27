@@ -22,7 +22,7 @@ const model = {
 
         let evalulation;
         try {
-            evalulation = mathjs.eval(exp);
+            evalulation = mathjs.evaluate(exp);
         } catch (err) {
             logger.warn("error parsing math expression", err);
             evalulation = -1;
