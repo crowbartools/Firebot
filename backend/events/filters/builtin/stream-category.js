@@ -24,7 +24,7 @@ module.exports = {
             return eventCategory === filterCategory;
         case ComparisonType.IS_NOT:
             return eventCategory !== filterCategory;
-            case ComparisonType.CONTAINS:
+        case ComparisonType.CONTAINS:
             return eventCategory.includes(filterCategory);
         case ComparisonType.MATCHES_REGEX: {
             let regex = new RegExp(filterCategory, "gi");
