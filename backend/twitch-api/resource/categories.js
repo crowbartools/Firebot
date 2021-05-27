@@ -15,6 +15,7 @@ async function getCategoryById(gameId, size = "285x380") {
     const client = twitchApi.getClient();
     try {
         const game = await client.helix.games.getGameById(gameId);
+        if (game == null) return null;
         return mapTwitchGame(game._data, size);
     } catch (error) {
         logger.error("Failed to get twitch game", error);

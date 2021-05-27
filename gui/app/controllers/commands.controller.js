@@ -27,17 +27,6 @@
 
             $scope.filteredCommands = filterCommands();
 
-            // $scope.$watchGroup(
-            //     [
-            //         'sortTagsService.getSelectedSortTag("commands")',
-            //         'commandsService.customCommandSearch',
-            //         'commandsService.commandsCache.customCommands'
-            //     ],
-            //     function (_newVal, _oldVal, scope) {
-            //         scope.filteredCommands = filterCommands();
-            //     },
-            //     true);
-
             $scope.getPermissionType = command => {
 
                 let permissions = command.restrictionData && command.restrictionData.restrictions &&
@@ -160,11 +149,12 @@
             $scope.sortableOptions = {
                 handle: ".dragHandle",
                 'ui-preserve-size': true,
-                stop: () => {
-                    if (commandsService.selectedSortTag != null &&
+                stop: (e, ui) => {
+                    console.log(e, ui);
+                    if (sortTagsService.getSelectedSortTag("commands") != null &&
                         (commandsService.customCommandSearch == null ||
                             commandsService.customCommandSearch.length < 1)) return;
-                    commandsService.saveAllCustomCommands($scope.filteredCommands);
+                    commandsService.saveAllCustomCommands(commandsService.commandsCache.customCommands);
                 }
             };
 

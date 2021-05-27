@@ -12,25 +12,14 @@ triggers[EffectTrigger.MANUAL] = true;
 
 const model = {
     definition: {
-        handle: "subType",
-        description: "The type of sub (ie Tier 1, 2, 3, etc).",
+        handle: "subMessage",
+        description: "The message included with a resubscription.",
         triggers: triggers,
         categories: [VariableCategory.COMMON],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
-        switch (trigger.metadata.eventData.subPlan) {
-        case "Prime":
-            return "Prime";
-        case "1000":
-            return "Tier 1";
-        case "2000":
-            return "Tier 2";
-        case "3000":
-            return "Tier 3";
-        }
-
-        return "";
+        return trigger.metadata.eventData.message || "";
     }
 };
 

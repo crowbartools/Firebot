@@ -38,8 +38,19 @@ async function loadChannelRewards() {
         const twitchChannelRewards = await twitchApi.channelRewards.getCustomChannelRewards();
 
         if (twitchChannelRewards == null) {
+            logger.error("Manageable twitch channel rewards return null!");
             return;
         }
+
+        const newManageableChannelRewards = twitchChannelRewards
+            .filter(nr => rewards.every(r => r.id !== nr.id))
+            .map(nr => {
+                return {
+                    id: nr.id,
+                    manageable: true,
+                    twitchData: nr
+                };
+            });
 
         const twitchUnmanageableRewards = await twitchApi.channelRewards.getUnmanageableCustomChannelRewards();
 
@@ -60,6 +71,7 @@ async function loadChannelRewards() {
             return r;
         })
             .filter(r => r.twitchData != null)
+            .concat(newManageableChannelRewards)
             .concat(newTwitchUnmanageableRewards)
             .reduce((acc, current) => {
                 acc[current.id] = current;

@@ -7,6 +7,7 @@ const activeUserHandler = require("./active-user-handler");
 const accountAccess = require("../../common/account-access");
 const chatModerationManager = require("../moderation/chat-moderation-manager");
 const twitchEventsHandler = require("../../events/twitch-events");
+const logger = require("../../logwrapper");
 
 const events = require("events");
 
@@ -27,7 +28,7 @@ exports.setupChatListeners = (streamerChatClient) => {
     streamerChatClient.onPrivmsg(async (_channel, user, messageText, msg) => {
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText);
 
-        chatModerationManager.moderateMessage(firebotChatMessage);
+        await chatModerationManager.moderateMessage(firebotChatMessage);
 
         // send to the frontend
         if (firebotChatMessage.isHighlighted) {
@@ -92,10 +93,16 @@ exports.setupChatListeners = (streamerChatClient) => {
         logger.debug(`Host triggered by ${byChannel}. Is auto: ${auto}`);
     });
 
-    streamerChatClient.onSubGift((_channel, _user, giftSubInfo, msg) => {
-        twitchEventsHandler.giftSub.triggerSubGift(giftSubInfo.gifterDisplayName,
-            giftSubInfo.displayName, giftSubInfo.plan, giftSubInfo.planName,
-            giftSubInfo.giftDuration);
+    streamerChatClient.onResub(async (_channel, _user, subInfo, msg) => {
+        try {
+            const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, subInfo.message);
+
+            frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
+
+            exports.events.emit("chat-message", firebotChatMessage);
+        } catch (error) {
+            logger.error("Failed to parse resub message", error);
+        }
     });
 
     streamerChatClient.onCommunitySub((_channel, _user, subInfo, msg) => {

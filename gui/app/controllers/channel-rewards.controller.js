@@ -36,6 +36,12 @@
                     },
                     cellTemplate: `{{data.twitchData.title}} <i ng-hide="data.manageable" class="fas fa-lock muted" style="font-size: 12px;" uib-tooltip="This reward was created outside of Firebot, it's settings are locked from changes." />`,
                     cellController: () => {}
+                },
+                {
+                    name: "COST",
+                    icon: "fa-coin",
+                    cellTemplate: `{{data.twitchData.cost}}`,
+                    cellController: () => {}
                 }
             ];
 

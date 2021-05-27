@@ -7,7 +7,7 @@
     angular
         .module('firebotApp')
         .factory('chatMessagesService', function ($rootScope, logger, listenerService, settingsService,
-            soundService, connectionService, $timeout, $interval, $http, backendCommunicator) {
+            soundService, backendCommunicator, $q, pronounsService) {
             let service = {};
 
             // Chat Message Queue
@@ -321,10 +321,26 @@
                 service.clearUserList();
             });
 
+            backendCommunicator.on("twitch:chat:user-active", id => {
+                const user = service.chatUsers.find(u => u.id === id);
+                if (user != null) {
+                    user.active = true;
+                }
+            });
+
+            backendCommunicator.on("twitch:chat:user-inactive", id => {
+                const user = service.chatUsers.find(u => u.id === id);
+                if (user != null) {
+                    user.active = false;
+                }
+            });
+
             backendCommunicator.on("twitch:chat:message", chatMessage => {
                 if (chatMessage.tagged) {
                     soundService.playChatNotification();
                 }
+
+                pronounsService.getUserPronoun(chatMessage.username);
 
                 const now = moment();
                 chatMessage.timestamp = now;
@@ -357,6 +373,11 @@
 
                     service.pruneChatQueue();
                 }
+            });
+
+            service.allEmotes = [];
+            backendCommunicator.on("all-emotes", (emotes) => {
+                service.allEmotes = emotes;
             });
 
             // Watches for an chat update from main process

@@ -103,6 +103,8 @@ async function createClient() {
         const subsListener = await pubSubClient.onSubscription(streamer.userId, (subInfo) => {
             if (!subInfo.isGift) {
                 twitchEventsHandler.sub.triggerSub(subInfo);
+            } else {
+                twitchEventsHandler.giftSub.triggerSubGift(subInfo);
             }
         });
         listeners.push(subsListener);

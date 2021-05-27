@@ -16,6 +16,7 @@ exports.loadFilters = () => {
     const subType = require("./builtin/sub-type");
     const subKind = require("./builtin/sub-kind");
     const giftCount = require("./builtin/gift-count");
+    const giftDuration = require("./builtin/gift-duration");
 
     const hostType = require("./builtin/host-type");
     const hostViewerCount = require("./builtin/host-viewer-count");
@@ -42,6 +43,7 @@ exports.loadFilters = () => {
     filterManager.registerFilter(subType);
     filterManager.registerFilter(subKind);
     filterManager.registerFilter(giftCount);
+    filterManager.registerFilter(giftDuration);
 
     filterManager.registerFilter(hostType);
     filterManager.registerFilter(hostViewerCount);

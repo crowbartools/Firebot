@@ -520,6 +520,13 @@ label {
     }
   }
 
+a {
+    color: #41a7ff;
+    &:hover {
+        opacity: 0.8;
+    }
+}
+
 .command-trigger-cell {
     max-width: 100px;
     min-width: 100px;

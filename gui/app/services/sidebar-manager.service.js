@@ -14,8 +14,8 @@
                 settingsService.setSidebarExpanded(service.navExpanded);
             };
 
-            service.currentTab = "commands";
-            service.currentTabName = "Commands";
+            service.currentTab = "chat feed";
+            service.currentTabName = "Dashboard";
 
             service.setTab = function(tabId, name) {
                 service.currentTab = tabId.toLowerCase();
@@ -71,8 +71,13 @@
                 })
 
                 .when("/", {
-                    templateUrl: "./templates/chat/_commands.html",
-                    controller: "commandsController"
+                    templateUrl: "./templates/chat/_chat-messages.html",
+                    controller: "chatMessagesController"
+                })
+
+                .when("/chat-feed", {
+                    templateUrl: "./templates/chat/_chat-messages.html",
+                    controller: "chatMessagesController"
                 })
 
                 .when("/commands", {
@@ -84,12 +89,6 @@
                     templateUrl: "./templates/_effects.html",
                     controller: "effectsController"
                 })
-
-                .when("/chat-feed", {
-                    templateUrl: "./templates/chat/_chat-messages.html",
-                    controller: "chatMessagesController"
-                })
-
 
                 .when("/channel-rewards", {
                     templateUrl: "./templates/_channel-rewards.html",
