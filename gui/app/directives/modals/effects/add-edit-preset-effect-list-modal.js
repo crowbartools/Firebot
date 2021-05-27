@@ -6,7 +6,8 @@
 
     angular.module("firebotApp").component("addOrEditPresetEffectListModal", {
         template: `
-            <div class="modal-header sticky-header">
+            <scroll-sentinel element-class="edit-preset-effect-list-header"></scroll-sentinel>
+            <div class="modal-header sticky-header edit-preset-effect-list-header">
                 <button type="button" class="close" ng-click="$ctrl.dismiss()">&times;</span></button>
                 <h4 class="modal-title">
                     {{$ctrl.isNewPresetList ? 'Add Preset Effect List' : 'Edit Preset Effect List' }}
@@ -19,7 +20,7 @@
                 </div>
 
                 <div>
-                    <h3>Args</h3>
+                    <h3>Arguments</h3>
                     <p>Allow data to be passed to this preset effect list.</p>
 
                     <div class="role-bar" ng-repeat="arg in $ctrl.presetList.args track by $index">
@@ -60,7 +61,7 @@
             dismiss: "&",
             modalInstance: "<"
         },
-        controller: function(ngToast, utilityService, $scope, presetEffectListsService) {
+        controller: function(ngToast, utilityService, presetEffectListsService) {
             const $ctrl = this;
 
             $ctrl.isNewPresetList = true;
@@ -122,25 +123,6 @@
                 if ($ctrl.isNewPresetList && $ctrl.presetList.id == null) {
                     $ctrl.presetList.id = uuidv1();
                 }
-
-                $ctrl.hideDeleteButton = $ctrl.resolve.hideDeleteButton;
-
-                const modalId = $ctrl.resolve.modalId;
-                utilityService.addSlidingModal(
-                    $ctrl.modalInstance.rendered.then(() => {
-                        const modalElement = $("." + modalId).children();
-                        return {
-                            element: modalElement,
-                            name: "Edit Preset Effect List",
-                            id: modalId,
-                            instance: $ctrl.modalInstance
-                        };
-                    })
-                );
-
-                $scope.$on("modal.closing", function() {
-                    utilityService.removeSlidingModal();
-                });
             };
 
             $ctrl.save = function() {
