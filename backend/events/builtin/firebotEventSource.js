@@ -60,6 +60,15 @@ const firebotEventSource = {
                 username: "Firebot",
                 messageText: "Test message"
             }
+        },
+        {
+            id: "category-changed",
+            name: "Category Changed",
+            description: "When you change the stream category in the dashboard.",
+            cached: false,
+            manualMetadata: {
+                category: "Just Chatting"
+            }
         }
     ]
 };

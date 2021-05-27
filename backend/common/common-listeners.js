@@ -68,6 +68,11 @@ exports.setupCommonListeners = () => {
         eventsManager.triggerEvent("firebot", "highlight-message", data);
     });
 
+    frontendCommunicator.on("category-changed", category => {
+        const eventsManager = require("../events/EventManager");
+        eventsManager.triggerEvent("firebot", "category-changed", {category: category});
+    });
+
     // Front old main
 
     // restarts the app
