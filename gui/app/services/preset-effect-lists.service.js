@@ -62,8 +62,7 @@
 
 
             service.deletePresetEffectList = function(presetListId) {
-                if (!presetListId) return;
-                delete presetEffectLists[presetListId];
+                service.presetEffectLists = service.presetEffectLists.filter(cr => cr.id !== presetListId);
                 backendCommunicator.fireEvent("deletePresetEffectList", presetListId);
             };
 
