@@ -203,7 +203,7 @@ const quotesManagement = {
             let args = event.userCommand.args;
 
             const getFormattedQuoteString = (quote) => {
-                let prettyDate = moment(quote.createdAt).format('L');
+                let prettyDate = quote.createdAt != null ? moment(quote.createdAt).format('L') : "No Date";
                 return commandOptions.quoteDisplayTemplate
                     .replace("{id}", quote._id)
                     .replace("{text}", quote.text)
