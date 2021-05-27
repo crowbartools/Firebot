@@ -8,7 +8,6 @@
             utilityService) {
             let service = {};
 
-            let presetEffectLists = {};
             service.presetEffectLists = [];
 
             function updatePresetEffectList(presetList) {
@@ -21,12 +20,12 @@
             }
 
             service.loadPresetEffectLists = async function() {
-                const presetLists = await backendCommunicator
-                    .fireEventAsync("getPresetEffectLists");
-                if (presetLists != null) {
-                    presetEffectLists = presetLists;
-                    service.presetEffectLists = Object.values(presetLists);
-                }
+                $q.when(backendCommunicator.fireEventAsync("getPresetEffectLists"))
+                    .then(presetEffectLists => {
+                        if (presetEffectLists) {
+                            service.presetEffectLists = Object.values(presetEffectLists);
+                        }
+                    });
             };
 
             backendCommunicator.on("all-preset-lists", presetLists => {
@@ -37,11 +36,11 @@
             });
 
             service.getPresetEffectLists = function() {
-                return Object.values(presetEffectLists);
+                return Object.values(service.presetEffectLists);
             };
 
             service.getPresetEffectList = function(presetListId) {
-                return presetEffectLists[presetListId];
+                return service.presetEffectLists[presetListId];
             };
 
             service.savePresetEffectList = function(presetList) {

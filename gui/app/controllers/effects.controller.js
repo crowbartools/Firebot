@@ -51,7 +51,7 @@
                     {
                         html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
                         click: function () {
-                            presetEffectListsService.showAddEditPresetEffectListModal(item.id);
+                            presetEffectListsService.showAddEditPresetEffectListModal(item);
                         }
                     },
                     {
