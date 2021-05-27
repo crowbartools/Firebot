@@ -159,7 +159,7 @@ async function moderateMessage(chatMessage) {
                 const viewerViewTime = viewer.minutesInChannel / 60;
                 const minimumViewTime = settings.viewTime.viewTimeInHours;
 
-                if (viewerViewTime > minimumViewTime) return;
+                if (viewerViewTime >= minimumViewTime) return;
 
                 outputMessage = outputMessage.replace("{viewTime}", minimumViewTime.toString());
 
