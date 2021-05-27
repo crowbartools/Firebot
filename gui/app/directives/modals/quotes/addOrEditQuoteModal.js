@@ -117,7 +117,7 @@
                     });
                 };
 
-                $ctrl.textError = false
+                $ctrl.textError = false;
                 $ctrl.authorError = false;
                 $ctrl.save = () => {
                     $ctrl.textError = false;
@@ -131,11 +131,10 @@
                         $ctrl.authorError = true;
                     }
 
-                    
-                    if ($ctrl.textError ) return;
-                    
+                    if ($ctrl.textError) return;
+
                     $ctrl.quote.createdAt = $ctrl.createdAtDate != null ? moment($ctrl.createdAtDate).toISOString() : null;
-                    
+
                     let action = $ctrl.isNewQuote ? "add" : "update";
                     $ctrl.close({
                         $value: {
