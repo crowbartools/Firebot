@@ -99,27 +99,6 @@
                 });
             };
 
-            service.showDeletePresetEffectListModal = function(presetListId) {
-                if (presetListId == null) return Promise.resolve(false);
-
-                const presetList = service.getPresetEffectList(presetListId);
-                if (presetList == null) return Promise.resolve(false);
-
-                return utilityService
-                    .showConfirmationModal({
-                        title: "Delete Preset Effect List",
-                        question: `Are you sure you want to delete the preset effect list "${presetList.name}"?`,
-                        confirmLabel: "Delete",
-                        confirmBtnType: "btn-danger"
-                    })
-                    .then(confirmed => {
-                        if (confirmed) {
-                            service.deletePresetEffectList(presetListId);
-                        }
-                        return confirmed;
-                    });
-            };
-
             return service;
         });
 }());
