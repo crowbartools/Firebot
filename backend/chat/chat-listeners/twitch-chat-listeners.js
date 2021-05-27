@@ -28,7 +28,7 @@ exports.setupChatListeners = (streamerChatClient) => {
     streamerChatClient.onPrivmsg(async (_channel, user, messageText, msg) => {
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText);
 
-        chatModerationManager.moderateMessage(firebotChatMessage);
+        await chatModerationManager.moderateMessage(firebotChatMessage);
 
         // send to the frontend
         if (firebotChatMessage.isHighlighted) {
@@ -103,12 +103,6 @@ exports.setupChatListeners = (streamerChatClient) => {
         } catch (error) {
             logger.error("Failed to parse resub message", error);
         }
-    });
-
-    streamerChatClient.onSubGift((_channel, _user, giftSubInfo, msg) => {
-        twitchEventsHandler.giftSub.triggerSubGift(giftSubInfo.gifterDisplayName,
-            giftSubInfo.displayName, giftSubInfo.plan, giftSubInfo.planName,
-            giftSubInfo.giftDuration);
     });
 
     streamerChatClient.onCommunitySub((_channel, _user, subInfo, msg) => {

@@ -141,12 +141,14 @@
     <script type="text/javascript" src="./services/overlay-url-helper.service.js"></script>
     <script type="text/javascript" src="./services/preset-effect-lists.service.js"></script>
     <script type="text/javascript" src="./services/profile-manager.service.js"></script>
+    <script type="text/javascript" src="./services/pronouns.service.js"></script>
     <script type="text/javascript" src="./services/quotes.service.js"></script>
     <script type="text/javascript" src="./services/settings.service.js"></script>
     <script type="text/javascript" src="./services/sidebar-manager.service.js"></script>
     <script type="text/javascript" src="./services/sort-tags.service.js"></script>
     <script type="text/javascript" src="./services/sound.service.js"></script>
     <script type="text/javascript" src="./services/startup-scripts.service.js"></script>
+    <script type="text/javascript" src="./services/stream-info.service.js"></script>
     <script type="text/javascript" src="./services/timer.service.js"></script>
     <script type="text/javascript" src="./services/tts.service.js"></script>
     <script type="text/javascript" src="./services/updates.service.js"></script>
@@ -157,9 +159,11 @@
     <!-- /include -->
 
     <!-- include: "type": "js", "files": "directives/**/*.js" -->
-    <script type="text/javascript" src="./directives/chat/chat-alert.js"></script>
-    <script type="text/javascript" src="./directives/chat/chat-message.js"></script>
-    <script type="text/javascript" src="./directives/chat/reward-redemption.js"></script>
+    <script type="text/javascript" src="./directives/chat/chat-autocomplete-menu.component.js"></script>
+    <script type="text/javascript" src="./directives/chat/chat-user-category.js"></script>
+    <script type="text/javascript" src="./directives/chat/feed%20items/chat-alert.js"></script>
+    <script type="text/javascript" src="./directives/chat/feed%20items/chat-message.js"></script>
+    <script type="text/javascript" src="./directives/chat/feed%20items/reward-redemption.js"></script>
     <script type="text/javascript" src="./directives/commands/commandOption.js"></script>
     <script type="text/javascript" src="./directives/commands/simple-command-options.js"></script>
     <script type="text/javascript" src="./directives/conditional-effect/conditionDisplay.js"></script>
@@ -226,6 +230,7 @@
     <script type="text/javascript" src="./directives/misc/sortable-table-cell.js"></script>
     <script type="text/javascript" src="./directives/misc/sortable-table.js"></script>
     <script type="text/javascript" src="./directives/misc/status-indicator.component.js"></script>
+    <script type="text/javascript" src="./directives/misc/stream-info.component.js"></script>
     <script type="text/javascript" src="./directives/misc/subcommandRow.js"></script>
     <script type="text/javascript" src="./directives/misc/sysCommandRow.js"></script>
     <script type="text/javascript" src="./directives/misc/toggleButton.js"></script>
@@ -250,17 +255,21 @@
     <script type="text/javascript" src="./directives/modals/integrations/editIntegrationSettingsModal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/aboutModal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/botLoginModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/misc/chat-settings-modal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/connectionPanelModal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/copyShareCodeModal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/dateModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/misc/edit-stream-info-modal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/editBannedWordsModal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/errorDetailModal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/fontManagementModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/misc/give-currency-modal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/idEntryModal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/inputModal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/manage-sort-tags.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/selectModal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/setupWizardModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/misc/stream-preview-modal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/txtFileWordImportModal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/viewerSearchModal.js"></script>
     <script type="text/javascript" src="./directives/modals/quotes/addOrEditQuoteModal.js"></script>
@@ -297,87 +306,99 @@
 
       <div class="fb-tab-content">
         <div class="tab-header">
-          <span style="width: 100%" class="noselect"
-            >{{sbm.currentTabName}}</span
-          >
-          <notification-center></notification-center>
+          <span class="noselect" style="flex: 1">{{sbm.currentTabName}}</span>
+          <div style="flex: 1">
+            <stream-info />
+          </div>
           <div
-            class="logins-wrapper noselect"
-            uib-dropdown
-            uib-dropdown-toggle
-            aria-label="Login & Profile Management"
+            style="
+              flex: 1;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            "
           >
-            <img
-              class="login-thumbnail noselect"
-              ng-src="{{cs.getAccountAvatar('streamer')}}"
-            />
-            <img
-              class="login-thumbnail noselect"
-              ng-src="{{cs.getAccountAvatar('bot')}}"
-            />
-            <div class="fb-arrow down login-arrow"></div>
-            <ul class="dropdown-menu accounts-dropdown" uib-dropdown-menu>
-              <li>
-                <a
-                  href
-                  ng-click="showManageLoginsModal()"
-                  aria-label="Manage Logins"
-                >
-                  <span>
-                    <i class="fal fa-sign-in-alt"></i>
-                  </span>
-                  Manage Logins
-                </a>
-              </li>
-              <li class="divider"></li>
-              <li class="dropdown-header">Profiles</li>
-              <li
-                ng-repeat="profile in cs.profiles"
-                ng-class="{'noclick': currentProfileId == profile.profileId}"
-                uib-tooltip="Current profile"
-                tooltip-enable="currentProfileId == profile.profileId"
-                tooltip-append-to-body="true"
-              >
-                <a
-                  href
-                  ng-click="switchProfiles(profile.profileId)"
-                  ng-class="{'menunoclick': currentProfileId == profile.profileId}"
-                  aria-label="{{currentProfileId == profile.profileId ? 'Current profile ('+ profile.profileId +')' : 'Switch to ' + profile.profileId + ' profile'}}"
-                >
-                  <span class="accounts-image"
-                    ><img ng-src="{{profile.avatar}}"
-                  /></span>
-                  <span class="accounts-info" style="text-transform: unset"
-                    >{{profile.profileId}}</span
+            <notification-center
+              style="margin-left: auto"
+            ></notification-center>
+            <div
+              class="logins-wrapper noselect"
+              uib-dropdown
+              uib-dropdown-toggle
+              aria-label="Login & Profile Management"
+            >
+              <img
+                class="login-thumbnail noselect"
+                ng-src="{{cs.getAccountAvatar('streamer')}}"
+              />
+              <img
+                class="login-thumbnail noselect"
+                ng-src="{{cs.getAccountAvatar('bot')}}"
+              />
+              <div class="fb-arrow down login-arrow"></div>
+              <ul class="dropdown-menu accounts-dropdown" uib-dropdown-menu>
+                <li>
+                  <a
+                    href
+                    ng-click="showManageLoginsModal()"
+                    aria-label="Manage Logins"
                   >
-                </a>
-              </li>
-              <li class="divider"></li>
-              <li>
-                <a href ng-click="showNewProfileModal()">
-                  <span>
-                    <i class="fal fa-user-plus"></i>
-                  </span>
-                  Add New Profile
-                </a>
-              </li>
-              <li>
-                <a href ng-click="showRenameProfileModal()">
-                  <span>
-                    <i class="fal fa-pencil"></i>
-                  </span>
-                  Rename This Profile
-                </a>
-              </li>
-              <li>
-                <a href ng-click="showDeleteProfileModal()">
-                  <span>
-                    <i class="fal fa-user-minus"></i>
-                  </span>
-                  Delete This Profile
-                </a>
-              </li>
-            </ul>
+                    <span>
+                      <i class="fal fa-sign-in-alt"></i>
+                    </span>
+                    Manage Logins
+                  </a>
+                </li>
+                <li class="divider"></li>
+                <li class="dropdown-header">Profiles</li>
+                <li
+                  ng-repeat="profile in cs.profiles"
+                  ng-class="{'noclick': currentProfileId == profile.profileId}"
+                  uib-tooltip="Current profile"
+                  tooltip-enable="currentProfileId == profile.profileId"
+                  tooltip-append-to-body="true"
+                >
+                  <a
+                    href
+                    ng-click="switchProfiles(profile.profileId)"
+                    ng-class="{'menunoclick': currentProfileId == profile.profileId}"
+                    aria-label="{{currentProfileId == profile.profileId ? 'Current profile ('+ profile.profileId +')' : 'Switch to ' + profile.profileId + ' profile'}}"
+                  >
+                    <span class="accounts-image"
+                      ><img ng-src="{{profile.avatar}}"
+                    /></span>
+                    <span class="accounts-info" style="text-transform: unset"
+                      >{{profile.profileId}}</span
+                    >
+                  </a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                  <a href ng-click="showNewProfileModal()">
+                    <span>
+                      <i class="fal fa-user-plus"></i>
+                    </span>
+                    Add New Profile
+                  </a>
+                </li>
+                <li>
+                  <a href ng-click="showRenameProfileModal()">
+                    <span>
+                      <i class="fal fa-pencil"></i>
+                    </span>
+                    Rename This Profile
+                  </a>
+                </li>
+                <li>
+                  <a href ng-click="showDeleteProfileModal()">
+                    <span>
+                      <i class="fal fa-user-minus"></i>
+                    </span>
+                    Delete This Profile
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
         <div

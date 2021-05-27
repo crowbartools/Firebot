@@ -29,7 +29,8 @@
             $scope.getExemptRoles = () => {
                 return [
                     ...viewerRolesService.getTwitchRoles(),
-                    ...viewerRolesService.getCustomRoles()
+                    ...viewerRolesService.getCustomRoles(),
+                    ...viewerRolesService.getTeamRoles()
                 ].filter(r => chatModerationService.chatModerationData.settings.exemptRoles.includes(r.id));
             };
 
@@ -38,7 +39,8 @@
                 const options =
                     [
                         ...viewerRolesService.getTwitchRoles(),
-                        ...viewerRolesService.getCustomRoles()
+                        ...viewerRolesService.getCustomRoles(),
+                        ...viewerRolesService.getTeamRoles()
                     ]
                         .filter(r =>
                             !chatModerationService.chatModerationData.settings.exemptRoles.includes(r.id))
@@ -69,9 +71,15 @@
 
             $scope.cms = chatModerationService;
 
-            $scope.toggleBannedWordsFeature = () => {
-                chatModerationService.chatModerationData.settings.bannedWordList.enabled =
-                    !chatModerationService.chatModerationData.settings.bannedWordList.enabled;
+            $scope.toggleUrlModerationFeature = () => {
+                if (!chatModerationService.chatModerationData.settings.urlModeration.enabled) {
+                    chatModerationService.chatModerationData.settings.urlModeration.enabled = true;
+                    chatModerationService.registerPermitCommand();
+                } else {
+                    chatModerationService.chatModerationData.settings.urlModeration.enabled = false;
+                    chatModerationService.unregisterPermitCommand();
+                }
+
                 chatModerationService.saveChatModerationSettings();
             };
 

@@ -65,6 +65,8 @@ $change-board-dropdown-color: darkgray;
 $navbar-collapse-btn: orange;
 $downarrow-color: darkgray;
 
+$toggle-button-off-bg-color: white;
+
 // Chat Window
 $usercolor: #37aad5;
 $bannedcolor: red;
@@ -78,8 +80,10 @@ $chatWhisperColor: #e660f2;
 $chatDeletedColor: gray;
 $chatTextColor: white;
 $chatBorder: #cecece;
-$chat-message-alternate-bg: #393e51;
+$chat-message-alternate-bg: #333748;
 $sticker-bg-color:#29374a;
+$chat-input-bg-color: #4D5266;
+$activity-bg-color: #232325;
 
 // Connection panel
 $connection-tile-bg: #3e4356;

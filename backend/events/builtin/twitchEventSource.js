@@ -64,7 +64,6 @@ module.exports = {
             manualMetadata: {
                 username: "Firebot",
                 subPlan: "1000",
-                subType: "Tier 1",
                 totalMonths: 10,
                 streak: 8,
                 isPrime: false,
@@ -88,8 +87,7 @@ module.exports = {
                 giftSubMonths: 1,
                 gifteeUsername: "MageEnclave",
                 gifterUsername: "Firebot",
-                subPlan: "1000",
-                subType: "Tier 1"
+                subPlan: "1000"
             },
             activityFeed: {
                 icon: "fad fa-gift",

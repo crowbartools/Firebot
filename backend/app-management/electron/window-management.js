@@ -1,7 +1,7 @@
 "use strict";
 
 const electron = require("electron");
-const { BrowserWindow, Menu, shell } = electron;
+const { BrowserWindow, BrowserView, Menu, shell } = electron;
 const path = require("path");
 const url = require("url");
 const windowStateKeeper = require("electron-window-state");
@@ -43,12 +43,12 @@ function createMainWindow() {
         frame: false,
         webPreferences: {
             nodeIntegration: true,
-            nativeWindowOpen: true
+            nativeWindowOpen: false
         }
     });
 
     mainWindow.webContents.on('new-window',
-        (event, _url, frameName, _disposition, options, _) => {
+        (event, _url, frameName, _disposition, options) => {
             if (frameName === 'modal') {
                 // open window as modal
                 event.preventDefault();
@@ -58,7 +58,11 @@ function createMainWindow() {
                     parent: mainWindow,
                     width: 250,
                     height: 400,
-                    javascript: false
+                    javascript: false,
+                    webPreferences: {
+                        webviewTag: true
+                    }
+
                 });
                 event.newGuest = new BrowserWindow(options);
             }
@@ -81,6 +85,15 @@ function createMainWindow() {
                 },
                 {
                     role: 'paste'
+                },
+                {
+                    role: "undo"
+                },
+                {
+                    role: "redo"
+                },
+                {
+                    role: "selectAll"
                 }
             ]
         },
@@ -92,6 +105,9 @@ function createMainWindow() {
                 },
                 {
                     role: 'close'
+                },
+                {
+                    role: 'quit'
                 },
                 {
                     type: 'separator'
@@ -191,5 +207,75 @@ function createSplashScreen() {
         }));
 }
 
+/**
+ * Firebot's main window
+ * Keeps a global reference of the window object, if you don't, the window will
+ * be closed automatically when the JavaScript object is garbage collected.
+ *@type {Electron.BrowserWindow}
+ */
+let streamPreview = null;
+
+function createStreamPreviewWindow() {
+
+    if (streamPreview != null && !streamPreview.isDestroyed()) {
+        if (streamPreview.isMinimized()) {
+            streamPreview.restore();
+        }
+        streamPreview.focus();
+        return;
+    }
+
+    const accountAccess = require("../../common/account-access");
+    const streamer = accountAccess.getAccounts().streamer;
+
+    if (!streamer.loggedIn) return;
+
+    const streamPreviewWindowState = windowStateKeeper({
+        defaultWidth: 815,
+        defaultHeight: 480,
+        file: "stream-preview-window-state.json"
+    });
+
+    streamPreview = new BrowserWindow({
+        frame: true,
+        alwaysOnTop: true,
+        backgroundColor: "#1E2023",
+        title: "Stream Preview",
+        parent: exports.mainWindow,
+        width: streamPreviewWindowState.width,
+        height: streamPreviewWindowState.height,
+        x: streamPreviewWindowState.x,
+        y: streamPreviewWindowState.y,
+        javascript: false,
+        webPreferences: {}
+    });
+
+    const view = new BrowserView();
+    streamPreview.setBrowserView(view);
+    view.setBounds({
+        x: 0,
+        y: 0,
+        width: streamPreviewWindowState.width,
+        height: streamPreviewWindowState.height - 10
+    });
+    view.setAutoResize({
+        width: true,
+        height: true
+    });
+    view.webContents.on('new-window', (vEvent) => {
+        vEvent.preventDefault();
+    });
+
+    view.webContents.loadURL(`https://player.twitch.tv/?channel=${streamer.username}&parent=firebot&muted=true`);
+
+    streamPreviewWindowState.manage(streamPreview);
+
+    streamPreview.on("close", () => {
+        if (!view.isDestroyed()) {
+            view.destroy();
+        }
+    });
+}
+exports.createStreamPreviewWindow = createStreamPreviewWindow;
 exports.createMainWindow = createMainWindow;
 exports.createSplashScreen = createSplashScreen;

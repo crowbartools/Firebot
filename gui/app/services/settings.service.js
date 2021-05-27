@@ -265,16 +265,14 @@
 
             // Used for the app itself.
             service.getRealChatFeed = function() {
-                return getDataFromFile("/settings/chatFeed");
+                return true;
             };
 
             service.chatFeedEnabled = function() {
-                return getDataFromFile("/settings/chatFeed");
+                return true;
             };
 
-            service.setChatFeed = function(chatFeed) {
-                pushDataToFile("/settings/chatFeed", chatFeed === true);
-            };
+            service.setChatFeed = function() {};
 
             // Used for settings menu.
             service.getChatViewCount = function() {
@@ -289,25 +287,17 @@
                 pushDataToFile("/settings/chatViewCount", chatViewCount === true);
             };
 
-            service.showViewerCount = function() {
+            service.getViewerCount = function() {
                 return getDataFromFile("/settings/chatViewCount");
             };
 
-            // Used for settings menu.
-            service.getChatViewerList = function() {
-                let chatViewerList = getDataFromFile("/settings/chatViewerList");
-                if (chatViewerList === true) {
-                    return "On";
-                }
-                return "Off";
+            service.getShowChatViewerList = function() {
+                const value = getDataFromFile("/settings/chatUsersList");
+                return value == null ? true : value;
             };
 
-            service.showViewerList = function() {
-                return getDataFromFile("/settings/chatViewerList");
-            };
-
-            service.setChatViewerList = function(chatViewerList) {
-                pushDataToFile("/settings/chatViewerList", chatViewerList === true);
+            service.setShowChatViewerList = function(chatViewerList) {
+                pushDataToFile("/settings/chatUsersList", chatViewerList === true);
             };
 
             service.showActivityFeed = function() {
@@ -371,6 +361,54 @@
                 pushDataToFile("/settings/chatCompactMode", compact === true);
             };
 
+            service.getShowAvatars = function() {
+                const value = getDataFromFile("/settings/chatAvatars");
+                return value != null ? value : true;
+            };
+            service.setShowAvatars = function(value) {
+                pushDataToFile("/settings/chatAvatars", value === true);
+            };
+
+            service.getShowTimestamps = function() {
+                const value = getDataFromFile("/settings/chatTimestamps");
+                return value != null ? value : true;
+            };
+            service.setShowTimestamps = function(value) {
+                pushDataToFile("/settings/chatTimestamps", value === true);
+            };
+
+            service.getShowThirdPartyEmotes = function() {
+                const value = getDataFromFile("/settings/chatThirdPartyEmotes");
+                return value != null ? value : true;
+            };
+            service.setShowThirdPartyEmotes = function(value) {
+                pushDataToFile("/settings/chatThirdPartyEmotes", value === true);
+            };
+
+            service.getShowPronouns = function() {
+                const value = getDataFromFile("/settings/chatPronouns");
+                return value != null ? value : true;
+            };
+            service.setShowPronouns = function(value) {
+                pushDataToFile("/settings/chatPronouns", value === true);
+            };
+
+            service.getChatCustomFontSizeEnabled = function() {
+                const value = getDataFromFile("/settings/chatCustomFontSizeEnabled");
+                return value != null ? value : false;
+            };
+            service.setChatCustomFontSizeEnabled = function(value) {
+                pushDataToFile("/settings/chatCustomFontSizeEnabled", value === true);
+            };
+
+            service.getChatCustomFontSize = function() {
+                const value = getDataFromFile("/settings/chatCustomFontSize");
+                return value != null ? value : 17;
+            };
+            service.setChatCustomFontSize = function(value) {
+                pushDataToFile("/settings/chatCustomFontSize", value);
+            };
+
             service.chatAlternateBackgrounds = function() {
                 let alternate = getDataFromFile('/settings/chatAlternateBackgrounds');
                 return alternate != null ? alternate : true;
@@ -378,6 +416,21 @@
 
             service.setChatAlternateBackgrounds = function(alternate) {
                 pushDataToFile('/settings/chatAlternateBackgrounds', alternate === true);
+            };
+
+            service.getShowUptimeStat = function() {
+                const value = getDataFromFile("/settings/showUptimeStat");
+                return value != null ? value : true;
+            };
+            service.setShowUptimeStat = function(value) {
+                pushDataToFile("/settings/showUptimeStat", value === true);
+            };
+            service.getShowViewerCountStat = function() {
+                const value = getDataFromFile("/settings/showViewerCountStat");
+                return value != null ? value : true;
+            };
+            service.setShowViewerCountStat = function(value) {
+                pushDataToFile("/settings/showViewerCountStat", value === true);
             };
 
             service.setChatShowGifs = function(showGifs) {

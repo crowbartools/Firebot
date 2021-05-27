@@ -80,6 +80,20 @@ class TwitchChat extends EventEmitter {
                 this.emit("connected");
             });
 
+            this._streamerChatClient.onAnyMessage((message) => {
+                if (message.constructor.name === "UserState") {
+                    const userData = message.tags;
+
+                    const color = userData.get("color");
+                    const badges = new Map(userData.get("badges").split(',').map(b => b.split('/', 2)));
+
+                    chatHelpers.setStreamerData({
+                        color,
+                        badges
+                    });
+                }
+            });
+
             this._streamerChatClient.onDisconnect((manual, reason) => {
                 if (!manual) {
                     logger.error("Chat not disconnected", manual, reason);
@@ -89,9 +103,7 @@ class TwitchChat extends EventEmitter {
 
             await this._streamerChatClient.connect();
 
-            await chatHelpers.cacheBadges();
-
-            await chatHelpers.cacheStreamerEmotes();
+            await chatHelpers.handleChatConnect();
 
             twitchChatListeners.setupChatListeners(this._streamerChatClient);
 

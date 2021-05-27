@@ -22,7 +22,7 @@ $left-nav-link-text-color: white;
 $left-nav-link-text-hover-color:#1E2023 + 4%;
 $left-nav-link-text-selected-color: whitesmoke;
 $nav-link-bg: #181a1d;
-$sidebar-bg: linear-gradient(-140deg, #1e2023 30%, #2e2f30 98%);
+$sidebar-bg: #1e2023;
 
 // editor column
 $editor-column-bg: linear-gradient(to right, #2b2d2e 0%, #292a2c 100%);
@@ -65,6 +65,8 @@ $change-board-dropdown-color: darkgray;
 $navbar-collapse-btn: orange;
 $downarrow-color: darkgray;
 
+$toggle-button-off-bg-color: white;
+
 // Chat Window
 $usercolor: #37aad5;
 $bannedcolor: red;
@@ -80,6 +82,8 @@ $chatTextColor: white;
 $chatBorder: #cecece;
 $chat-message-alternate-bg: #4c4d52;
 $sticker-bg-color:#2F3136;
+$chat-input-bg-color: #535459;
+$activity-bg-color: #232325;
 
 // Connection panel
 $connection-tile-bg: #43454A;
