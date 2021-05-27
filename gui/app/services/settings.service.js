@@ -287,25 +287,17 @@
                 pushDataToFile("/settings/chatViewCount", chatViewCount === true);
             };
 
-            service.showViewerCount = function() {
+            service.getViewerCount = function() {
                 return getDataFromFile("/settings/chatViewCount");
             };
 
-            // Used for settings menu.
-            service.getChatViewerList = function() {
-                let chatViewerList = getDataFromFile("/settings/chatViewerList");
-                if (chatViewerList === true) {
-                    return "On";
-                }
-                return "Off";
+            service.getShowChatViewerList = function() {
+                const value = getDataFromFile("/settings/chatUsersList");
+                return value == null ? true : value;
             };
 
-            service.showViewerList = function() {
-                return getDataFromFile("/settings/chatViewerList");
-            };
-
-            service.setChatViewerList = function(chatViewerList) {
-                pushDataToFile("/settings/chatViewerList", chatViewerList === true);
+            service.setShowChatViewerList = function(chatViewerList) {
+                pushDataToFile("/settings/chatUsersList", chatViewerList === true);
             };
 
             service.showActivityFeed = function() {

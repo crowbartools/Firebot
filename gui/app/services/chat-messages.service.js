@@ -239,11 +239,7 @@
 
             // Gets view count setting for ui.
             service.getChatViewerListSetting = function() {
-                let viewerList = settingsService.getChatViewerList();
-                if (viewerList === "On") {
-                    return true;
-                }
-                return false;
+                return settingsService.getShowChatViewerList();
             };
 
             function markMessageAsDeleted(messageId) {

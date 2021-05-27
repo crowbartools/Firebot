@@ -266,7 +266,7 @@ function createStreamPreviewWindow() {
         vEvent.preventDefault();
     });
 
-    view.webContents.loadURL(`https://player.twitch.tv/?channel=ginger_crush&parent=firebot&muted=true`);
+    view.webContents.loadURL(`https://player.twitch.tv/?channel=${streamer.username}&parent=firebot&muted=true`);
 
     streamPreviewWindowState.manage(streamPreview);
 
