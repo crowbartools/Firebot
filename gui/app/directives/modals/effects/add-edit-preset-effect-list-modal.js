@@ -6,7 +6,7 @@
 
     angular.module("firebotApp").component("addOrEditPresetEffectListModal", {
         template: `
-            <div class="modal-header">
+            <div class="modal-header sticky-header">
                 <button type="button" class="close" ng-click="$ctrl.dismiss()">&times;</span></button>
                 <h4 class="modal-title">
                     {{$ctrl.isNewPresetList ? 'Add Preset Effect List' : 'Edit Preset Effect List' }}
@@ -49,7 +49,7 @@
                 </div>
             </div>
             
-            <div class="modal-footer">
+            <div class="modal-footer sticky-footer">
                 <button type="button" class="btn btn-danger pull-left" ng-show="!$ctrl.isNewPresetList && !$ctrl.hideDeleteButton" ng-click="$ctrl.delete()">Delete Preset List</button>
                 <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
                 <button type="button" class="btn btn-primary" ng-click="$ctrl.save()">Save</button>
