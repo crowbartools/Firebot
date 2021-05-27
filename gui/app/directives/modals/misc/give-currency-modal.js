@@ -26,7 +26,7 @@
                         </div>
 
                         <div class="form-group" ng-class="{'has-error': $ctrl.formFieldHasError('username')}">
-                            <label for="targetType" class="control-label">Target Type</label>
+                            <label for="targetType" class="control-label">Target</label>
                             <div class="permission-type controls-fb-inline">
                                 <label class="control-fb control--radio">All Online Chat Users
                                     <input type="radio" ng-model="$ctrl.currencyInfo.targetType" value="allOnline"/>
@@ -55,21 +55,22 @@
                         <div class="form-group" ng-class="{'has-error': $ctrl.formFieldHasError('amount')}">
                             <label for="amount" class="control-label">Amount</label>
                             <input 
-                            type="number" 
-                            id="amount" 
-                            name="amount" 
-                            class="form-control input-lg" 
-                            placeholder="Enter amount"
-                            ng-model="$ctrl.currencyInfo.amount" 
-                            required
+                                type="number" 
+                                id="amount" 
+                                name="amount" 
+                                class="form-control input-lg" 
+                                placeholder="Enter amount"
+                                ng-model="$ctrl.currencyInfo.amount"
+                                ui-validate="'$value > 0 || $value < 0'" 
+                                required
                             />
-                            <p class="help-block">Enter a negative amount to remove currency.</p>
+                            <p class="help-block">Tip: You can enter a negative amount to remove currency.</p>
                         </div>
 
                         <div class="form-group flex-row jspacebetween" style="margin-bottom: 0;">
                             <div>
                                 <label class="control-label" style="margin:0;">Send Chat Message</label>
-                                <p class="help-block">Send a message in chat detailing the currency given</p>
+                                <p class="help-block">Send a message to chat detailing the currency given</p>
                             </div>
                             <div>
                                 <toggle-button toggle-model="$ctrl.currencyInfo.sendChatMessage" auto-update-value="true" font-size="32"></toggle-button>
@@ -101,7 +102,7 @@
                     currencyId: $ctrl.currencies.length > 0 ? $ctrl.currencies[0].id : null,
                     targetType: "allOnline",
                     username: "",
-                    amount: 0,
+                    amount: 1,
                     sendChatMessage: true
                 };
 

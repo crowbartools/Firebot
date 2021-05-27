@@ -42,14 +42,13 @@
                             CREATED DATE
                         </div>
                         <div style="width: 100%; position: relative;">
-                            <div class="form-group" ng-class="{'has-error': $ctrl.createdDateError}">
+                            <div class="form-group">
                                 <div class="input-group">
                                     <input type="text" class="form-control" uib-datepicker-popup="{{$ctrl.dateFormat}}" ng-model="$ctrl.createdAtDate" is-open="$ctrl.datePickerOpen" datepicker-options="$ctrl.dateOptions" ng-required="true" show-button-bar="false" placeholder="Enter created date" aria-describedby="dateHelpBlock"/>
                                     <span class="input-group-btn">
                                         <button type="button" class="btn btn-default" ng-click="$ctrl.datePickerOpen = true"><i class="fas fa-calendar"></i></button>
                                     </span>
                                 </div>
-                                <span id="dateHelpBlock" class="help-block" ng-show="$ctrl.createdDateError">Please provide a date.</span>
                             </div>
                         </div>
                     </div>
@@ -119,11 +118,9 @@
                 };
 
                 $ctrl.textError = false;
-                $ctrl.createdDateError = false;
                 $ctrl.authorError = false;
                 $ctrl.save = () => {
                     $ctrl.textError = false;
-                    $ctrl.createdDateError = false;
                     $ctrl.authorError = false;
 
                     if ($ctrl.quote.text == null || $ctrl.quote.text.trim() === "") {
@@ -134,13 +131,9 @@
                         $ctrl.authorError = true;
                     }
 
-                    if ($ctrl.createdAtDate == null) {
-                        $ctrl.createdDateError = true;
-                    }
+                    if ($ctrl.textError) return;
 
-                    if ($ctrl.textError || $ctrl.createdDateError) return;
-
-                    $ctrl.quote.createdAt = moment($ctrl.createdAtDate).toISOString();
+                    $ctrl.quote.createdAt = $ctrl.createdAtDate != null ? moment($ctrl.createdAtDate).toISOString() : null;
 
                     let action = $ctrl.isNewQuote ? "add" : "update";
                     $ctrl.close({

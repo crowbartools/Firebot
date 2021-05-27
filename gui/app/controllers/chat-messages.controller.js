@@ -38,6 +38,10 @@
                 $scope.showTimestamps = settingsService.getShowTimestamps();
                 $scope.showThirdPartyEmotes = settingsService.getShowThirdPartyEmotes();
                 $scope.showPronouns = settingsService.getShowPronouns();
+                $scope.customFontSizeEnabled = settingsService.getChatCustomFontSizeEnabled();
+                $scope.customFontSize = settingsService.getChatCustomFontSize();
+                $scope.customFontSizeStyle = $scope.customFontSizeEnabled ?
+                    `font-size: ${$scope.customFontSize}px !important;` : "";
             }
             getUpdatedChatSettings();
 

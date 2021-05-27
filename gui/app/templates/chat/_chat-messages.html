@@ -7,7 +7,7 @@
       append-tooltip-to-body="true"
       tooltip-placement="right"
     >
-      <i class="fas fa-pencil"></i>
+      <i class="far fa-pencil"></i>
     </button>
 
     <button
@@ -18,7 +18,7 @@
       tooltip-placement="right"
       ng-click="showGiveCurrencyModal();"
     >
-      <i class="fas fa-coins"></i>
+      <i class="far fa-coins"></i>
     </button>
 
     <button
@@ -29,7 +29,7 @@
       tooltip-placement="right"
       ng-click="popoutStreamPreview()"
     >
-      <i class="fas fa-tv-alt"></i>
+      <i class="far fa-tv-alt"></i>
     </button>
   </div>
 
@@ -73,6 +73,7 @@
         class="chat-window"
         ng-init="scrollGlued = true"
         scroll-glue="scrollGlued"
+        style="{{customFontSizeStyle}}"
       >
         <div
           ng-repeat="chatItem in cms.chatQueue | limitTo:messageDisplayLimit track by chatItem.id"
@@ -91,6 +92,7 @@
             show-third-party-emotes="showThirdPartyEmotes"
             show-pronoun="showPronouns"
             update-chat-input="updateChatInput(text)"
+            chat-size-style="{{customFontSizeStyle}}"
           />
           <reward-redemption
             ng-if="chatItem.type === 'redemption'"
