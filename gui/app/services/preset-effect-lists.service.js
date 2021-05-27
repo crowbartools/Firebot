@@ -66,36 +66,14 @@
                 backendCommunicator.fireEvent("deletePresetEffectList", presetListId);
             };
 
-            service.showAddEditPresetEffectListModal = function(presetListId, hideDeleteButton = false) {
-                return new Promise(resolve => {
-                    let presetList;
-                    if (presetListId != null) {
-                        presetList = service.getPresetEffectList(presetListId);
-                    }
-
-                    utilityService.showModal({
-                        component: "addOrEditPresetEffectListModal",
-                        resolveObj: {
-                            presetList: () => presetList,
-                            hideDeleteButton: () => hideDeleteButton
-                        },
-                        dismissCallback: () => {
-                            resolve(null);
-                        },
-                        closeCallback: resp => {
-                            let { presetList, action } = resp;
-
-                            switch (action) {
-                            case "delete":
-                                service.deletePresetEffectList(presetList.id);
-                                break;
-                            default:
-                                service.savePresetEffectList(presetList);
-                            }
-
-                            resolve(presetList);
-                        }
-                    });
+            service.showAddEditPresetEffectListModal = function(presetList) {
+                utilityService.showModal({
+                    component: "addOrEditPresetEffectListModal",
+                    size: "md",
+                    resolveObj: {
+                        presetList: () => presetList
+                    },
+                    closeCallback: () => {}
                 });
             };
 
