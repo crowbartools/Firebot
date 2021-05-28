@@ -117,6 +117,6 @@
     "winston": "^2.4.4",
     "winston-daily-rotate-file": "^1.4.6",
     "winston-raven-sentry": "^1.0.1",
-    "ws": "^5.2.2"
+    "ws": "^7.4.6"
   }
 }
