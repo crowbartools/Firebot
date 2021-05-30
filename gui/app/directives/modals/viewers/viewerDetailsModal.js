@@ -32,6 +32,7 @@
                                 class="clickable" 
                                 style="line-height: 1;margin-left: 5px;background: #9147FF;padding: 5px;border-radius: 100%;color: white;font-size: 15px;"
                                 uib-tooltip="View Twitch Profile"
+                                aria-label="View Twitch Profile"
                                 tooltip-append-to-body="true">
                                     <i class="fab fa-twitch" style="transform: translateY(2px);" />
                             </a>
@@ -43,7 +44,7 @@
                             <div ng-repeat="role in $ctrl.roles | orderBy : 'rank'" uib-tooltip="{{role.tooltip}}" ng-style="role.style" style="margin-right: 10px;font-size: 13px;text-transform: uppercase;font-weight: bold;font-family: "Roboto";">{{role.name}}</div>
                         </div>
                         <div ng-show="$ctrl.viewerDetails.firebotData.twitch && $ctrl.viewerDetails.twitchData" style="display:flex;margin-top:10px;">
-                            <div ng-repeat="action in $ctrl.actions" ng-click="action.onClick()" class="clickable" uib-tooltip="{{action.name}}" style="margin-right: 10px; display:flex; width: 30px; height:30px; align-items:center; justify-content: center; border-radius: 18px; border: 1.5px solid whitesmoke;">            
+                            <div ng-repeat="action in $ctrl.actions" ng-click="action.onClick()" class="clickable" aria-label="{{action.name}}" uib-tooltip="{{action.name}}" style="margin-right: 10px; display:flex; width: 30px; height:30px; align-items:center; justify-content: center; border-radius: 18px; border: 1.5px solid whitesmoke;">            
                                 <i ng-class="action.icon"></i>
                             </div>
                         </div>             
@@ -51,11 +52,11 @@
                     <div style="margin-top: 45px;margin-left: 10px;">
                         <div style="display:flex;margin-bottom:5px;">
                             <div style="font-size:13px;font-weight: bold;opacity:0.9;">FIREBOT DATA</div>
-                            <span ng-show="$ctrl.hasFirebotData" ng-click="$ctrl.removeViewer()" style="color:#f96f6f;margin-left: 10px;font-size:12px;" class="clickable" uib-tooltip="Remove this viewer's Firebot data"><i class="far fa-trash-alt"></i></span>
+                            <span ng-show="$ctrl.hasFirebotData" ng-click="$ctrl.removeViewer()" style="color:#f96f6f;margin-left: 10px;font-size:12px;" class="clickable" uib-tooltip="Remove this viewer's Firebot data" aria-label="Remove viewer's firebot data"><i class="far fa-trash-alt"></i></span>
                         </div>
                         
                         <div class="viewer-detail-data" ng-show="$ctrl.hasFirebotData" style="margin-top: 10px;">
-                            <div class="detail-data clickable" ng-repeat="dataPoint in $ctrl.dataPoints" ng-click="dataPoint.onClick()">
+                            <div class="detail-data clickable" ng-repeat="dataPoint in $ctrl.dataPoints" ng-click="dataPoint.onClick()" aria-label="Edit {{dataPoint.name}}">
                                 <div class="data-title">
                                     <i class="far" ng-class="dataPoint.icon"></i> {{dataPoint.name}}
                                 </div>
