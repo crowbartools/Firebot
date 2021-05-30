@@ -43,7 +43,8 @@ function createMainWindow() {
         frame: false,
         webPreferences: {
             nodeIntegration: true,
-            nativeWindowOpen: false
+            nativeWindowOpen: false,
+            backgroundThrottling: false
         }
     });
 
