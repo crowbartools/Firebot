@@ -143,16 +143,18 @@ const URL_REGEX = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\.[a-z
  */
 function parseMessageParts(firebotChatMessage, parts) {
     if (firebotChatMessage == null || parts == null) return [];
-    const streamer = accountAccess.getAccounts().streamer;
+    const { streamer, bot } = accountAccess.getAccounts();
     return parts.flatMap(p => {
         if (p.type === "text" && p.text != null) {
 
-            //check if tagged
-            if (!firebotChatMessage.whisper &&
+            if (firebotChatMessage.username !== streamer.displayName &&
+                (!bot.loggedIn || firebotChatMessage.username !== bot.displayName)) {
+                if (!firebotChatMessage.whisper &&
                 !firebotChatMessage.tagged &&
                 streamer.loggedIn &&
                 p.text.includes(streamer.username)) {
-                firebotChatMessage.tagged = true;
+                    firebotChatMessage.tagged = true;
+                }
             }
 
             const subParts = [];

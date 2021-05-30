@@ -179,8 +179,6 @@
                         });
                     }
 
-
-
                     let currentWord = {};
 
                     $scope.selectItem = (index) => {
@@ -229,8 +227,9 @@
                                 if (token === c.token && (!c.onlyStart || currentWord.index === 0)) {
                                     const minQueryLength = c.minQueryLength || 0;
                                     if (currentWord.text.length >= minQueryLength) {
-                                        const searchRegex = new RegExp(`^${c.token}?${currentWord.text.replace(c.token, "")}`, "i");
-                                        matchingMenuItems = c.items.filter(i => searchRegex.test(i.text));
+                                        const tokenAndWord = `${c.token}?${currentWord.text.replace(c.token, "")}`;
+                                        const searchRegex = new RegExp(`^${tokenAndWord}`, "i");
+                                        matchingMenuItems = c.items.filter(i => searchRegex.test(i.text) && i.text !== currentWord.text);
                                     }
                                 }
                             });

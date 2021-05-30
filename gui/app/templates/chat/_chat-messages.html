@@ -6,6 +6,7 @@
       uib-tooltip="Edit Stream Info"
       append-tooltip-to-body="true"
       tooltip-placement="right"
+      aria-label="Edit Stream Info"
     >
       <i class="far fa-pencil"></i>
     </button>
@@ -17,6 +18,7 @@
       append-tooltip-to-body="true"
       tooltip-placement="right"
       ng-click="showGiveCurrencyModal();"
+      aria-label="Give Currency"
     >
       <i class="far fa-coins"></i>
     </button>
@@ -28,6 +30,7 @@
       append-tooltip-to-body="true"
       tooltip-placement="right"
       ng-click="popoutStreamPreview()"
+      aria-label="Open Stream Preview"
     >
       <i class="far fa-tv-alt"></i>
     </button>
@@ -264,6 +267,7 @@
             uib-tooltip="Retrigger event"
             tooltip-placement="top-right"
             tooltip-append-to-body="true"
+            aria-label="Retrigger {{activity.event.name}}"
           ></i>
 
           <i
@@ -273,6 +277,7 @@
             uib-tooltip="{{activity.acknowledged ? 'Acknowledged' : 'Acknowledge'}}"
             tooltip-placement="top-right"
             tooltip-append-to-body="true"
+            aria-label="Acknowledge {{activity.event.name}}"
           ></i>
         </div>
       </div>
