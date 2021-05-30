@@ -38,7 +38,8 @@ async function loadChannelRewards() {
         const twitchChannelRewards = await twitchApi.channelRewards.getCustomChannelRewards();
 
         if (twitchChannelRewards == null) {
-            logger.error("Manageable twitch channel rewards return null!");
+            logger.error("Manageable twitch channel rewards returned null!");
+            channelRewards = channelRewardsData;
             return;
         }
 
@@ -53,6 +54,12 @@ async function loadChannelRewards() {
             });
 
         const twitchUnmanageableRewards = await twitchApi.channelRewards.getUnmanageableCustomChannelRewards();
+
+        if (twitchUnmanageableRewards == null) {
+            logger.error("Unmanageable twitch channel rewards returned null!");
+            channelRewards = channelRewardsData;
+            return;
+        }
 
         /** @type {SavedChannelReward[]}*/
         const newTwitchUnmanageableRewards = twitchUnmanageableRewards
