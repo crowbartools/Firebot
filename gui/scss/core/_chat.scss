@@ -113,6 +113,7 @@
         .chatContent{
             color: $chatWhisperColor;
         }
+        background-color: $chat-message-alternate-bg - 15%;
     }
 
     &.isTagged {

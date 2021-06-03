@@ -106,9 +106,12 @@ async function getCustomChannelRewards(onlyManageable = false) {
         });
         if (response && response.data) {
             rewards = response.data;
+        } else {
+            return null;
         }
     } catch (err) {
         logger.error("Failed to get twitch custom channel rewards", err);
+        return null;
     }
     return rewards.map(r => camelKeys(r, { recursive: true }));
 }
@@ -116,12 +119,14 @@ async function getCustomChannelRewards(onlyManageable = false) {
 async function getUnmanageableCustomChannelRewards() {
     const allRewards = await getCustomChannelRewards();
     const onlyManageable = await getCustomChannelRewards(true);
+    if (allRewards == null || onlyManageable == null) return null;
     const onlyUnmanageable = allRewards.filter(r => onlyManageable.every(mr => mr.id !== r.id));
     return onlyUnmanageable;
 }
 
 async function getTotalChannelRewardCount() {
     const rewards = await getCustomChannelRewards();
+    if (rewards == null) return 0;
     return rewards.length;
 }
 

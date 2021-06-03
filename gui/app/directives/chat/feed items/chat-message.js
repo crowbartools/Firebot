@@ -109,6 +109,7 @@
                                 <span ng-if="part.type === 'third-party-emote' && !$ctrl.showThirdPartyEmotes" style="{{$ctrl.chatSizeStyle}}">{{part.name}}</span>
                             </span>
                         </div>
+                        <div ng-show="$ctrl.message.whisper" class="muted">(Whispered to you)</div>
                     </div>
                 </div>
             `,
