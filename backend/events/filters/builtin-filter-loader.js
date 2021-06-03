@@ -13,6 +13,8 @@ exports.loadFilters = () => {
     const previousViewTime = require("./builtin/previous-view-time");
     const newViewTime = require("./builtin/new-view-time");
 
+    const streamCategory = require("./builtin/stream-category");
+
     const subType = require("./builtin/sub-type");
     const subKind = require("./builtin/sub-kind");
     const giftCount = require("./builtin/gift-count");
@@ -39,6 +41,8 @@ exports.loadFilters = () => {
 
     filterManager.registerFilter(previousViewTime);
     filterManager.registerFilter(newViewTime);
+
+    filterManager.registerFilter(streamCategory);
 
     filterManager.registerFilter(subType);
     filterManager.registerFilter(subKind);
