@@ -417,6 +417,15 @@
             };
 
 
+
+            $scope.simulateEventsByType = function() {
+
+                utilityService.showModal({
+                    component: "simulateGroupEventsModal",
+                    size: "sm"
+                });
+            };
+
             /**
              * Returns an integer of total number of effects in an event.
              */
@@ -432,6 +441,7 @@
              */
 
             let sources = listenerService.fireEventSync("getAllEventSources");
+
             $scope.friendlyEventTypeName = function(sourceId, eventId) {
                 let source = sources.find(s => s.id === sourceId);
                 if (source != null) {

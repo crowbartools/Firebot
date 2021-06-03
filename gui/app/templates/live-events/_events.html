@@ -202,13 +202,22 @@
         <div>
           <scroll-sentinel element-class="events-sticky"></scroll-sentinel>
           <div class="events-tab-header events-sticky sticky-top">
-            <button
-              ng-click="showAddOrEditEventModal()"
-              class="btn btn-primary"
-            >
-              <i class="fas fa-plus-circle" style="margin-right: 5px"></i> New
-              Event
-            </button>
+            <div>
+              <button
+                ng-click="showAddOrEditEventModal()"
+                class="btn btn-primary"
+              >
+                <i class="fas fa-plus-circle" style="margin-right: 5px"></i> New
+                Event
+              </button>
+              <button
+                ng-click="simulateEventsByType()"
+                class="btn btn-default"
+              >
+                <i class="fas fa-play-circle" style="margin-left: 5px"></i> Simulate 
+                Event
+              </button>
+            </div>
 
             <div
               ng-hide="getSelectedEvents().length < 1"
