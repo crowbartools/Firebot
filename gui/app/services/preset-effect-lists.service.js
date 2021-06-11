@@ -10,12 +10,12 @@
 
             service.presetEffectLists = [];
 
-            function updatePresetEffectList(presetList) {
-                const index = service.presetEffectLists.findIndex(pel => pel.id === presetList.id);
+            function updatePresetEffectList(presetEffectList) {
+                const index = service.presetEffectLists.findIndex(pel => pel.id === presetEffectList.id);
                 if (index > -1) {
-                    service.presetEffectLists[index] = presetList;
+                    service.presetEffectLists[index] = presetEffectList;
                 } else {
-                    service.presetEffectLists.push(presetList);
+                    service.presetEffectLists.push(presetEffectList);
                 }
             }
 
@@ -38,15 +38,15 @@
                 return Object.values(service.presetEffectLists);
             };
 
-            service.getPresetEffectList = function(presetListId) {
-                return service.presetEffectLists[presetListId];
+            service.getPresetEffectList = function(presetEffectListId) {
+                return service.presetEffectLists[presetEffectListId];
             };
 
-            service.savePresetEffectList = function(presetList) {
-                return $q.when(backendCommunicator.fireEventAsync("savePresetEffectList", presetList))
-                    .then(savedPresetList => {
-                        if (savedPresetList) {
-                            updatePresetEffectList(savedPresetList);
+            service.savePresetEffectList = function(presetEffectList) {
+                return $q.when(backendCommunicator.fireEventAsync("savePresetEffectList", presetEffectList))
+                    .then(savedPresetEffectList => {
+                        if (savedPresetEffectList) {
+                            updatePresetEffectList(savedPresetEffectList);
                             return true;
                         }
                         return false;
@@ -86,17 +86,17 @@
                 });
             };
 
-            service.deletePresetEffectList = function(presetListId) {
-                service.presetEffectLists = service.presetEffectLists.filter(pel => pel.id !== presetListId);
-                backendCommunicator.fireEvent("deletePresetEffectList", presetListId);
+            service.deletePresetEffectList = function(presetEffectListId) {
+                service.presetEffectLists = service.presetEffectLists.filter(pel => pel.id !== presetEffectListId);
+                backendCommunicator.fireEvent("deletePresetEffectList", presetEffectListId);
             };
 
-            service.showAddEditPresetEffectListModal = function(presetList) {
+            service.showAddEditPresetEffectListModal = function(presetEffectList) {
                 utilityService.showModal({
                     component: "addOrEditPresetEffectListModal",
                     size: "md",
                     resolveObj: {
-                        presetList: () => presetList
+                        presetList: () => presetEffectList
                     },
                     closeCallback: () => {}
                 });
