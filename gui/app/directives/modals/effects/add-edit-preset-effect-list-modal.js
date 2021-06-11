@@ -69,7 +69,8 @@
             $ctrl.presetList = {
                 name: "",
                 effects: null,
-                args: []
+                args: [],
+                sortTags: []
             };
 
             $ctrl.effectListUpdated = function(effects) {

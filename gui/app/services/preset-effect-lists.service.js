@@ -28,9 +28,8 @@
                     });
             };
 
-            backendCommunicator.on("all-preset-lists", presetLists => {
-                if (presetLists != null) {
-                    presetEffectLists = presetLists;
+            backendCommunicator.on("all-preset-lists", presetEffectLists => {
+                if (presetEffectLists != null) {
                     service.presetEffectLists = Object.values(presetEffectLists);
                 }
             });
