@@ -27,7 +27,7 @@
         <div ng-transclude="toolbar"></div>
       </div>
 
-      <div style="display: flex; flex-direction: row; align-items: center; flex-basis: 410px;" ng-show="$ctrl.items.length > 0">
+      <div style="display: flex; flex-direction: row; align-items: center;" ng-show="$ctrl.items.length > 0">
         <sort-tag-dropdown
           context="{{$ctrl.sortTagContext}}"
           style="margin-right: 10px"
@@ -35,7 +35,7 @@
         <searchbar
           placeholder-text="{{$ctrl.searchPlaceholder}}"
           query="searchQuery"
-          style="flex-basis: 250px"
+          style="flex-basis: 250px; min-width: 217px;"
         ></searchbar>
       </div>
     </div>
