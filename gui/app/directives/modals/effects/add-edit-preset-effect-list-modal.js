@@ -7,7 +7,7 @@
     angular.module("firebotApp").component("addOrEditPresetEffectListModal", {
         template: `
             <scroll-sentinel element-class="edit-preset-effect-list-header"></scroll-sentinel>
-            <div class="modal-header sticky-header edit-preset-effect-list-header">
+            <div class="modal-header edit-preset-effect-list-header">
                 <button type="button" class="close" ng-click="$ctrl.dismiss()">&times;</span></button>
                 <h4 class="modal-title">
                     {{$ctrl.isNewPresetList ? 'Add Preset Effect List' : 'Edit Preset Effect List' }}
