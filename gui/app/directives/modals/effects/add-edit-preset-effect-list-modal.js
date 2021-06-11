@@ -134,7 +134,11 @@
 
                 presetEffectListsService.savePresetEffectList($ctrl.presetList).then(successful => {
                     if (successful) {
-                        $ctrl.dismiss();
+                        $ctrl.close({
+                            $value: {
+                                presetEffectList: $ctrl.presetList
+                            }
+                        });
                     } else {
                         ngToast.create("Failed to save preset effect list. Please try again or view logs for details.");
                     }

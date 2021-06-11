@@ -86,8 +86,8 @@ const effectGroup = {
         };
 
         $scope.editSelectedPresetList = () => {
-            if ($scope.effect.presetListId == null) return;
-            presetEffectListsService.showAddEditPresetEffectListModal($scope.effect.presetListId, true)
+            if ($scope.selectedPresetList == null) return;
+            presetEffectListsService.showAddEditPresetEffectListModal($scope.selectedPresetList)
                 .then(presetList => {
                     if (presetList) {
                         $scope.selectedPresetList = presetList;

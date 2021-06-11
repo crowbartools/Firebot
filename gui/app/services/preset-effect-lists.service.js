@@ -92,13 +92,17 @@
             };
 
             service.showAddEditPresetEffectListModal = function(presetEffectList) {
-                utilityService.showModal({
-                    component: "addOrEditPresetEffectListModal",
-                    size: "md",
-                    resolveObj: {
-                        presetList: () => presetEffectList
-                    },
-                    closeCallback: () => {}
+                return new Promise(resolve => {
+                    utilityService.showModal({
+                        component: "addOrEditPresetEffectListModal",
+                        size: "md",
+                        resolveObj: {
+                            presetList: () => presetEffectList
+                        },
+                        closeCallback: response => {
+                            resolve(response.presetEffectList);
+                        }
+                    });
                 });
             };
 
