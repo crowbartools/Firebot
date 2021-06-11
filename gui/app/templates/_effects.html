@@ -10,8 +10,8 @@
         </ul>
     </div>
 
-    <div style="overflow-y: scroll;height:100%;"> 
-        <div ng-if="activeTab === 0">
+    <div style="height:100%;"> 
+        <div ng-if="activeTab === 0" style="height: 100%; overflow-y: scroll;">
             <scroll-sentinel element-class="effect-queue-header"></scroll-sentinel>      
             <div class="light-bg sticky-top effect-queue-header" style="padding: 15px; margin: 15px 0;display: flex;flex-direction: row;justify-content: space-between;">
                 <button ng-click="addOrEditQueue()" class="btn btn-primary hvr-icon-grow"><i class="fas fa-plus-circle hvr-icon" style="margin-right:5px;"></i> New Effect Queue</button>
@@ -65,7 +65,7 @@
                 </table>
             </div>
         </div>
-        <div ng-if="activeTab === 1">
+        <div ng-if="activeTab === 1" style="height:100%;">
             <firebot-item-table
                 items="presetEffectListsService.presetEffectLists"
                 on-items-update="onPresetEffectListsUpdated(items)"
