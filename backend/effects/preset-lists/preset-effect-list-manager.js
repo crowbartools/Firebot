@@ -74,7 +74,7 @@ async function savePresetEffectList(presetEffectList) {
  *
  * @param {SavedPresetEffectList[]} allPresetEffectLists
  */
- async function saveAllPresetEffectLists(allPresetEffectLists) {
+async function saveAllPresetEffectLists(allPresetEffectLists) {
     /** @type {Record<string,SavedPresetEffectList>} */
     const presetEffectListsObject = allPresetEffectLists.reduce((acc, current) => {
         acc[current.id] = current;
