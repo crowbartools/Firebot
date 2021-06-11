@@ -33,9 +33,12 @@
 
             $scope.headers = [
                 {
+                    headerStyles: {
+                        "padding-left": "20px"
+                    },
                     name: "NAME",
                     icon: "fa-user",
-                    cellTemplate: `{{data.name}}`,
+                    cellTemplate: `<span style="padding-left: 20px;">{{data.name}}</span>`,
                     cellController: () => {}
                 },
                 {

@@ -100,7 +100,7 @@
             style="width: 100%"
             context-menu="$ctrl.getContextMenu(item)"
           >
-            <td ng-show="$ctrl.testButton == true" style="text-align: center">
+            <td ng-if="$ctrl.testButton == true" style="text-align: center">
               <span
                 style="color: #2aa1c0; font-size: 20px"
                 ng-click="$ctrl.onTestButtonClicked({ itemId: item.id })"
