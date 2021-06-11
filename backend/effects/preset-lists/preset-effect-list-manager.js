@@ -45,7 +45,13 @@ function loadPresetEffectLists() {
 async function savePresetEffectList(presetList) {
     if (presetList == null) return;
 
-    presetEffectLists[presetList.id] = presetList;
+    if (presetList.id != null) {
+        presetEffectLists[presetList.id] = presetList;
+    } else {
+        const uuidv1 = require("uuid/v1");
+        presetList.id = uuidv1();
+        presetEffectLists[presetList.id] = presetList;
+    }
 
     try {
         const presetEffectListDb = getPresetEffectListDb();

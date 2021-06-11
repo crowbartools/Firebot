@@ -5,13 +5,13 @@
     angular
         .module("firebotApp")
         .factory("presetEffectListsService", function($q, logger, backendCommunicator,
-            utilityService) {
+            utilityService, objectCopyHelper, ngToast) {
             let service = {};
 
             service.presetEffectLists = [];
 
             function updatePresetEffectList(presetList) {
-                const index = service.presetEffectLists.findIndex(r => r.id === presetList.id);
+                const index = service.presetEffectLists.findIndex(pel => pel.id === presetList.id);
                 if (index > -1) {
                     service.presetEffectLists[index] = presetList;
                 } else {
@@ -58,9 +58,36 @@
                 backendCommunicator.fireEvent("saveAllPresetEffectLists", presetEffectLists);
             };
 
+            service.presetEffectListNameExists = (name) => {
+                return service.presetEffectLists.some(pel => pel.name === name);
+            };
+
+            service.duplicatePresetEffectList = (presetEffectListId) => {
+                const presetEffectList = service.presetEffectLists.find(pel => pel.id === presetEffectListId);
+                if (presetEffectList == null) {
+                    return;
+                }
+                const copiedPresetEffectList = objectCopyHelper.copyObject("preset_effect_list", presetEffectList);
+                copiedPresetEffectList.id = null;
+
+                while (service.presetEffectListNameExists(copiedPresetEffectList.name)) {
+                    copiedPresetEffectList.name += " copy";
+                }
+
+                service.savePresetEffectList(copiedPresetEffectList).then(successful => {
+                    if (successful) {
+                        ngToast.create({
+                            className: 'success',
+                            content: 'Successfully duplicated a preset effect list!'
+                        });
+                    } else {
+                        ngToast.create("Unable to duplicate preset effect list.");
+                    }
+                });
+            };
 
             service.deletePresetEffectList = function(presetListId) {
-                service.presetEffectLists = service.presetEffectLists.filter(cr => cr.id !== presetListId);
+                service.presetEffectLists = service.presetEffectLists.filter(pel => pel.id !== presetListId);
                 backendCommunicator.fireEvent("deletePresetEffectList", presetListId);
             };
 

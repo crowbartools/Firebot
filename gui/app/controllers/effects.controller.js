@@ -55,6 +55,12 @@
                         }
                     },
                     {
+                        html: `<a href ><i class="far fa-clone" style="margin-right: 10px;"></i> Duplicate</a>`,
+                        click: function () {
+                            presetEffectListsService.duplicatePresetEffectList(item.id);
+                        }
+                    },
+                    {
                         html: `<a href style="color: #fb7373;"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>`,
                         click: function () {
                             utilityService
