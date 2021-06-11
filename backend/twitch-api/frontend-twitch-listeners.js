@@ -36,8 +36,9 @@ exports.setupListeners = () => {
         }
     });
 
-    frontendCommunicator.onAsync("get-channel-rewards", () => {
-        return channelRewards.getCustomChannelRewards();
+    frontendCommunicator.onAsync("get-channel-rewards", async () => {
+        const rewards = await channelRewards.getCustomChannelRewards();
+        return rewards || [];
     });
 
 };

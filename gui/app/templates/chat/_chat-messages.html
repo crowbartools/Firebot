@@ -267,6 +267,7 @@
             uib-tooltip="Retrigger event"
             tooltip-placement="top-right"
             tooltip-append-to-body="true"
+            aria-label="Retrigger {{activity.event.name}}"
           ></i>
 
           <i
@@ -276,6 +277,7 @@
             uib-tooltip="{{activity.acknowledged ? 'Acknowledged' : 'Acknowledge'}}"
             tooltip-placement="top-right"
             tooltip-append-to-body="true"
+            aria-label="Acknowledge {{activity.event.name}}"
           ></i>
         </div>
       </div>
