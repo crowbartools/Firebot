@@ -95,7 +95,7 @@ function triggerUiRefresh() {
 
 frontendCommunicator.onAsync("getPresetEffectLists", async () => presetEffectLists);
 
-frontendCommunicator.onAsync("savePresetEffectList", 
+frontendCommunicator.onAsync("savePresetEffectList",
     (presetList) => savePresetEffectList(presetList));
 
 frontendCommunicator.on("saveAllPresetEffectLists", (presetLists) => {
