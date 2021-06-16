@@ -6,7 +6,8 @@
 
     angular.module("firebotApp").component("addOrEditPresetEffectListModal", {
         template: `
-            <div class="modal-header">
+            <scroll-sentinel element-class="edit-preset-effect-list-header"></scroll-sentinel>
+            <div class="modal-header edit-preset-effect-list-header">
                 <button type="button" class="close" ng-click="$ctrl.dismiss()">&times;</span></button>
                 <h4 class="modal-title">
                     {{$ctrl.isNewPresetList ? 'Add Preset Effect List' : 'Edit Preset Effect List' }}
@@ -19,7 +20,7 @@
                 </div>
 
                 <div>
-                    <h3>Args</h3>
+                    <h3>Arguments</h3>
                     <p>Allow data to be passed to this preset effect list.</p>
 
                     <div class="role-bar" ng-repeat="arg in $ctrl.presetList.args track by $index">
@@ -49,8 +50,7 @@
                 </div>
             </div>
             
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger pull-left" ng-show="!$ctrl.isNewPresetList && !$ctrl.hideDeleteButton" ng-click="$ctrl.delete()">Delete Preset List</button>
+            <div class="modal-footer sticky-footer">
                 <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
                 <button type="button" class="btn btn-primary" ng-click="$ctrl.save()">Save</button>
             </div>
@@ -61,17 +61,16 @@
             dismiss: "&",
             modalInstance: "<"
         },
-        controller: function(ngToast, utilityService, $scope) {
+        controller: function(ngToast, utilityService, presetEffectListsService) {
             const $ctrl = this;
 
             $ctrl.isNewPresetList = true;
 
-            $ctrl.hideDeleteButton = false;
-
             $ctrl.presetList = {
                 name: "",
                 effects: null,
-                args: []
+                args: [],
+                sortTags: []
             };
 
             $ctrl.effectListUpdated = function(effects) {
@@ -125,35 +124,6 @@
                 if ($ctrl.isNewPresetList && $ctrl.presetList.id == null) {
                     $ctrl.presetList.id = uuidv1();
                 }
-
-                $ctrl.hideDeleteButton = $ctrl.resolve.hideDeleteButton;
-
-                const modalId = $ctrl.resolve.modalId;
-                utilityService.addSlidingModal(
-                    $ctrl.modalInstance.rendered.then(() => {
-                        const modalElement = $("." + modalId).children();
-                        return {
-                            element: modalElement,
-                            name: "Edit Preset Effect List",
-                            id: modalId,
-                            instance: $ctrl.modalInstance
-                        };
-                    })
-                );
-
-                $scope.$on("modal.closing", function() {
-                    utilityService.removeSlidingModal();
-                });
-            };
-
-            $ctrl.delete = function() {
-                if ($ctrl.isNewPresetList) return;
-                $ctrl.close({
-                    $value: {
-                        presetList: $ctrl.presetList,
-                        action: "delete"
-                    }
-                });
             };
 
             $ctrl.save = function() {
@@ -162,10 +132,15 @@
                     return;
                 }
 
-                $ctrl.close({
-                    $value: {
-                        presetList: $ctrl.presetList,
-                        action: $ctrl.isNewPresetList ? "add" : "update"
+                presetEffectListsService.savePresetEffectList($ctrl.presetList).then(successful => {
+                    if (successful) {
+                        $ctrl.close({
+                            $value: {
+                                presetEffectList: $ctrl.presetList
+                            }
+                        });
+                    } else {
+                        ngToast.create("Failed to save preset effect list. Please try again or view logs for details.");
                     }
                 });
             };

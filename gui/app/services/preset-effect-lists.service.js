@@ -4,98 +4,106 @@
 
     angular
         .module("firebotApp")
-        .factory("presetEffectListsService", function(logger, backendCommunicator,
-            utilityService) {
+        .factory("presetEffectListsService", function($q, logger, backendCommunicator,
+            utilityService, objectCopyHelper, ngToast) {
             let service = {};
 
-            let presetEffectLists = {};
+            service.presetEffectLists = [];
+
+            function updatePresetEffectList(presetEffectList) {
+                const index = service.presetEffectLists.findIndex(pel => pel.id === presetEffectList.id);
+                if (index > -1) {
+                    service.presetEffectLists[index] = presetEffectList;
+                } else {
+                    service.presetEffectLists.push(presetEffectList);
+                }
+            }
 
             service.loadPresetEffectLists = async function() {
-                const presetLists = await backendCommunicator
-                    .fireEventAsync("getPresetEffectLists");
-                if (presetLists != null) {
-                    presetEffectLists = presetLists;
-                }
+                $q.when(backendCommunicator.fireEventAsync("getPresetEffectLists"))
+                    .then(presetEffectLists => {
+                        if (presetEffectLists) {
+                            service.presetEffectLists = Object.values(presetEffectLists);
+                        }
+                    });
             };
 
-            backendCommunicator.on("all-preset-lists", presetLists => {
-                if (presetLists != null) {
-                    presetEffectLists = presetLists;
+            backendCommunicator.on("all-preset-lists", presetEffectLists => {
+                if (presetEffectLists != null) {
+                    service.presetEffectLists = Object.values(presetEffectLists);
                 }
             });
 
             service.getPresetEffectLists = function() {
-                return Object.values(presetEffectLists);
+                return Object.values(service.presetEffectLists);
             };
 
-            service.getPresetEffectList = function(presetListId) {
-                return presetEffectLists[presetListId];
+            service.getPresetEffectList = function(presetEffectListId) {
+                return service.presetEffectLists[presetEffectListId];
             };
 
-            service.savePresetEffectList = function(presetList) {
-                if (!presetList) return;
-                presetEffectLists[presetList.id] = presetList;
-                backendCommunicator.fireEvent("savePresetEffectList", presetList);
-            };
-
-            service.deletePresetEffectList = function(presetListId) {
-                if (!presetListId) return;
-                delete presetEffectLists[presetListId];
-                backendCommunicator.fireEvent("deletePresetEffectList", presetListId);
-            };
-
-            service.showAddEditPresetEffectListModal = function(presetListId, hideDeleteButton = false) {
-                return new Promise(resolve => {
-                    let presetList;
-                    if (presetListId != null) {
-                        presetList = service.getPresetEffectList(presetListId);
-                    }
-
-                    utilityService.showModal({
-                        component: "addOrEditPresetEffectListModal",
-                        resolveObj: {
-                            presetList: () => presetList,
-                            hideDeleteButton: () => hideDeleteButton
-                        },
-                        dismissCallback: () => {
-                            resolve(null);
-                        },
-                        closeCallback: resp => {
-                            let { presetList, action } = resp;
-
-                            switch (action) {
-                            case "delete":
-                                service.deletePresetEffectList(presetList.id);
-                                break;
-                            default:
-                                service.savePresetEffectList(presetList);
-                            }
-
-                            resolve(presetList);
+            service.savePresetEffectList = function(presetEffectList) {
+                return $q.when(backendCommunicator.fireEventAsync("savePresetEffectList", presetEffectList))
+                    .then(savedPresetEffectList => {
+                        if (savedPresetEffectList) {
+                            updatePresetEffectList(savedPresetEffectList);
+                            return true;
                         }
+                        return false;
                     });
+            };
+
+            service.saveAllPresetEffectLists = (presetEffectLists) => {
+                service.presetEffectLists = presetEffectLists;
+                backendCommunicator.fireEvent("saveAllPresetEffectLists", presetEffectLists);
+            };
+
+            service.presetEffectListNameExists = (name) => {
+                return service.presetEffectLists.some(pel => pel.name === name);
+            };
+
+            service.duplicatePresetEffectList = (presetEffectListId) => {
+                const presetEffectList = service.presetEffectLists.find(pel => pel.id === presetEffectListId);
+                if (presetEffectList == null) {
+                    return;
+                }
+                const copiedPresetEffectList = objectCopyHelper.copyObject("preset_effect_list", presetEffectList);
+                copiedPresetEffectList.id = null;
+
+                while (service.presetEffectListNameExists(copiedPresetEffectList.name)) {
+                    copiedPresetEffectList.name += " copy";
+                }
+
+                service.savePresetEffectList(copiedPresetEffectList).then(successful => {
+                    if (successful) {
+                        ngToast.create({
+                            className: 'success',
+                            content: 'Successfully duplicated a preset effect list!'
+                        });
+                    } else {
+                        ngToast.create("Unable to duplicate preset effect list.");
+                    }
                 });
             };
 
-            service.showDeletePresetEffectListModal = function(presetListId) {
-                if (presetListId == null) return Promise.resolve(false);
+            service.deletePresetEffectList = function(presetEffectListId) {
+                service.presetEffectLists = service.presetEffectLists.filter(pel => pel.id !== presetEffectListId);
+                backendCommunicator.fireEvent("deletePresetEffectList", presetEffectListId);
+            };
 
-                const presetList = service.getPresetEffectList(presetListId);
-                if (presetList == null) return Promise.resolve(false);
-
-                return utilityService
-                    .showConfirmationModal({
-                        title: "Delete Preset Effect List",
-                        question: `Are you sure you want to delete the preset effect list "${presetList.name}"?`,
-                        confirmLabel: "Delete",
-                        confirmBtnType: "btn-danger"
-                    })
-                    .then(confirmed => {
-                        if (confirmed) {
-                            service.deletePresetEffectList(presetListId);
+            service.showAddEditPresetEffectListModal = function(presetEffectList) {
+                return new Promise(resolve => {
+                    utilityService.showModal({
+                        component: "addOrEditPresetEffectListModal",
+                        size: "md",
+                        resolveObj: {
+                            presetList: () => presetEffectList
+                        },
+                        closeCallback: response => {
+                            resolve(response.presetEffectList);
                         }
-                        return confirmed;
                     });
+                });
             };
 
             return service;
