@@ -41,10 +41,23 @@ exports.triggerSubGift = (subInfo) => {
     eventManager.triggerEvent("twitch", "subs-gifted", {
         username: subInfo.userDisplayName,
         giftSubMonths: subInfo._data["cumulative_months"] || 1,
-        gifteeUsername: subInfo.userDisplayName,
+        gifteeUsername: getGifteeDisplayName(subInfo),
         gifterUsername: subInfo.gifterDisplayName,
         subPlan: subInfo.subPlan,
         isAnonymous: subInfo.isAnonymous,
         giftDuration: subInfo.giftDuration
     });
 };
+
+// Workaround since the package only checks for the subgift context
+function getGifteeDisplayName(subInfo) {
+    switch (subInfo._data["context"]) {
+    case "subgift":
+    case "resubgift":
+    case "anonsubgift":
+    case "anonresubgift":
+        return subInfo._data["recipient_display_name"];
+    default:
+        return subInfo._data["display_name"];
+    }
+}
