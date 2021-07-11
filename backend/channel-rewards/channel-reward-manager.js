@@ -8,7 +8,7 @@ const { EffectTrigger } = require("../effects/models/effectModels");
 
 /**
  * @typedef SavedChannelReward
- * @property {string} id - the id of the preset effect list
+ * @property {string} id - the id of the channel reward
  * @property {import('../twitch-api/resource/channel-rewards').CustomReward} twitchData - twitch data for channel reward
  * @property {boolean} manageable - whether or not this reward is manageable by Firebot
  * @property {object} effects - the saved effects in the list
