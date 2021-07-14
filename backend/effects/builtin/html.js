@@ -168,7 +168,7 @@ const html = {
             name: "html",
             onOverlayEvent: event => {
 
-                let element = $(event.html);
+                const element = $(event.html);
 
                 element.hide();
 

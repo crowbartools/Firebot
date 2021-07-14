@@ -137,6 +137,7 @@ const effectGroup = {
 
             let processEffectsRequest = {};
 
+            let effectList;
             if (effect.listType === "preset") {
                 const presetList = presetEffectListManager.getPresetEffectList(effect.presetListId);
                 if (presetList == null) {
@@ -147,22 +148,24 @@ const effectGroup = {
                 trigger.type = EffectTrigger.PRESET_LIST;
                 trigger.metadata.presetListArgs = effect.presetListArgs;
 
+                effectList = presetList.effects;
+
                 processEffectsRequest = {
-                    trigger: trigger,
+                    trigger: JSON.parse(JSON.stringify(trigger)),
                     effects: presetList.effects
                 };
             } else {
-                const effectList = effect.effectList;
+                effectList = effect.effectList;
 
                 if (!effectList || !effectList.list) {
                     return resolve(true);
                 }
-
-                processEffectsRequest = {
-                    trigger: trigger,
-                    effects: effectList
-                };
             }
+
+            processEffectsRequest = {
+                trigger: JSON.parse(JSON.stringify(trigger)),
+                effects: effectList
+            };
 
             const effectExecutionPromise = effectRunner.processEffects(processEffectsRequest);
 
