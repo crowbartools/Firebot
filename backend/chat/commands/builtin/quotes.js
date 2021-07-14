@@ -37,6 +37,12 @@ const quotesManagement = {
                     "DD/MM/YYYY"
                 ],
                 default: "MM/DD/YYYY"
+            },
+            useTTS: {
+                type: "boolean",
+                title: "Read Quotes via TTS",
+                description: "Have quotes read by TTS whenever one is created or looked up.",
+                default: false
             }
         },
         subCommands: [
@@ -197,6 +203,7 @@ const quotesManagement = {
             const logger = require("../../../logwrapper");
             const twitchChat = require("../../twitch-chat");
             const twitchChannels = require("../../../twitch-api/resource/channels");
+            const frontendCommunicator = require("../../../common/frontend-communicator");
 
             let { commandOptions } = event;
 
@@ -212,6 +219,15 @@ const quotesManagement = {
                     .replace("{date}", prettyDate);
             };
 
+            const sendToTTS = (quote) => {
+                if (commandOptions.useTTS) {
+                    //Send to TTS
+                    frontendCommunicator.send("read-tts", {
+                        text: quote
+                    });
+                }
+            };
+
             if (args.length === 0) {
                 // no args, only "!quote" was issued
                 const quote = await quotesManager.getRandomQuote();
@@ -219,6 +235,8 @@ const quotesManagement = {
                 if (quote) {
                     let formattedQuote = getFormattedQuoteString(quote);
                     twitchChat.sendChatMessage(formattedQuote);
+                    sendToTTS(formattedQuote);
+
                     logger.debug('We pulled a quote by id: ' + formattedQuote);
                 } else {
                     twitchChat.sendChatMessage(`Could not find a random quote!`);
@@ -234,6 +252,7 @@ const quotesManagement = {
                 if (quote) {
                     let formattedQuote = getFormattedQuoteString(quote);
                     twitchChat.sendChatMessage(formattedQuote);
+                    sendToTTS(formattedQuote);
                     logger.debug('We pulled a quote using an id: ' + formattedQuote);
                 } else {
                     // If we get here, it's likely the command was used wrong. Tell the sender they done fucked up
@@ -266,6 +285,7 @@ const quotesManagement = {
                 twitchChat.sendChatMessage(
                     `Added ${formattedQuote}`
                 );
+                sendToTTS(formattedQuote);
                 logger.debug(`Quote #${newQuoteId} added!`);
                 return resolve();
             }
@@ -317,6 +337,7 @@ const quotesManagement = {
 
                     // send to chat
                     twitchChat.sendChatMessage(formattedQuote);
+                    sendToTTS(formattedQuote);
 
                     // log (Maybe move this to the manager?)
                     logger.debug('We pulled a quote using an id: ' + formattedQuote);
@@ -338,7 +359,7 @@ const quotesManagement = {
                 if (quote != null) {
 
                     const formattedQuote = getFormattedQuoteString(quote);
-
+                    sendToTTS(formattedQuote);
                     twitchChat.sendChatMessage(formattedQuote);
                 } else {
                     twitchChat.sendChatMessage(`Sorry! We couldn't find a quote by ${username}`);
@@ -351,6 +372,7 @@ const quotesManagement = {
                 if (quote != null) {
                     const formattedQuote = getFormattedQuoteString(quote);
                     twitchChat.sendChatMessage(formattedQuote);
+                    sendToTTS(formattedQuote);
                 } else {
                     twitchChat.sendChatMessage(`Sorry! We couldn't find a quote with game ${searchTerm}`);
                 }
@@ -376,6 +398,7 @@ const quotesManagement = {
                 if (quote != null) {
                     const formattedQuote = getFormattedQuoteString(quote);
                     twitchChat.sendChatMessage(formattedQuote);
+                    sendToTTS(formattedQuote);
                 } else {
                     twitchChat.sendChatMessage(`Sorry! We couldn't find a quote with date ${day}/${month}/${year || "*"}`);
                 }
@@ -411,6 +434,7 @@ const quotesManagement = {
                 }
 
                 let formattedQuote = getFormattedQuoteString(quote);
+
                 twitchChat.sendChatMessage(
                     `Edited ${formattedQuote}`
                 );
