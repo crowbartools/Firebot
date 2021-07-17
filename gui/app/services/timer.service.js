@@ -6,10 +6,19 @@
 
     angular
         .module("firebotApp")
-        .factory("timerService", function(logger, connectionService, backendCommunicator, $q) {
+        .factory("timerService", function(logger, connectionService, backendCommunicator, $q, utilityService) {
             let service = {};
 
             service.timers = [];
+
+            function updateTimer(timer) {
+                const index = service.timers.findIndex(t => t.id === timer.id);
+                if (index > -1) {
+                    service.timers[index] = timer;
+                } else {
+                    service.timers.push(timer);
+                }
+            }
 
             service.loadTimers = function() {
                 $q.when(backendCommunicator.fireEventAsync("getTimers"))
@@ -27,26 +36,15 @@
 
             service.getTimers = () => service.timers;
 
-            service.saveTimer = function(timer, notifyBackend = true) {
-                logger.debug("saving timer: " + timer.name);
-                if (timer.id == null || timer.id === "") {
-                    timer.id = uuid();
-                    timer.createdBy = connectionService.accounts.streamer.username;
-                    timer.createdAt = moment().format();
-                }
-
-                const cleanedTimer = JSON.parse(angular.toJson(timer));
-
-                if (notifyBackend) {
-                    backendCommunicator.fireEvent("saveTimer", cleanedTimer);
-                }
-
-                const currentIndex = service.timers.findIndex(t => t.id === cleanedTimer.id);
-                if (currentIndex < 0) {
-                    service.timers.push(cleanedTimer);
-                } else {
-                    service.timers[currentIndex] = cleanedTimer;
-                }
+            service.saveTimer = function(timer) {
+                return $q.when(backendCommunicator.fireEventAsync("saveTimer", timer))
+                .then(savedTimer => {
+                    if (savedTimer) {
+                        updateTimer(savedTimer);
+                        return true;
+                    }
+                    return false;
+                });
             };
 
             // Deletes a timer.
@@ -56,6 +54,21 @@
                 service.timers = service.timers.filter(t => t.id !== timer.id);
 
                 backendCommunicator.fireEvent("deleteTimer", timer.id);
+            };
+
+            service.showAddEditTimerModal = function(timer) {
+                return new Promise(resolve => {
+                    utilityService.showModal({
+                        component: "addOrEditTimerModal",
+                        size: "md",
+                        resolveObj: {
+                            timer: () => timer
+                        },
+                        closeCallback: response => {
+                            resolve(response.timer);
+                        }
+                    });
+                });
             };
 
             return service;

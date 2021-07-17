@@ -56,7 +56,7 @@
                     {
                         html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
                         click: function () {
-                            $scope.openAddOrEditTimerModal(item);
+                            timerService.showAddEditTimerModal(item);
                         }
                     },
                     {
