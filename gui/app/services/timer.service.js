@@ -1,9 +1,5 @@
 "use strict";
 (function() {
-
-    const moment = require("moment");
-    const uuid = require("uuid/v4");
-
     angular
         .module("firebotApp")
         .factory("timerService", function(logger, backendCommunicator, $q, utilityService, objectCopyHelper, ngToast) {
@@ -29,11 +25,6 @@
                     });
             };
 
-            backendCommunicator.on("timerUpdate", timer => {
-                if (timer == null || timer.id == null) return;
-                service.saveTimer(timer, false);
-            });
-
             service.getTimers = () => service.timers;
 
             service.saveTimer = function(timer) {
@@ -45,6 +36,12 @@
                         }
                         return false;
                     });
+            };
+
+            service.toggleTimerActiveState = function(timer) {
+                if (timer == null) return;
+                timer.active = !timer.active;
+                service.saveTimer(timer);
             };
 
             service.timerNameExists = (name) => {

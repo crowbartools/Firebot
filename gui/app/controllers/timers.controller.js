@@ -10,15 +10,6 @@
 
             $scope.timerService = timerService;
 
-            /*
-            * TIMERS
-            */
-            $scope.toggleTimerActiveState = timer => {
-                if (timer == null) return;
-                timer.active = !timer.active;
-                timerService.saveTimer(timer);
-            };
-
             $scope.onTimersUpdated = (timers) => {
                 timerService.saveAllTimers(timers);
             };
@@ -54,9 +45,8 @@
                     },
                     {
                         html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> Toggle Enabled</a>`,
-                        click: function ($itemScope) {
-                            let timer = $itemScope.timer;
-                            $scope.toggleTimerActiveState(timer);
+                        click: function () {
+                            timerService.toggleTimerActiveState(item);
                         }
                     },
                     {
