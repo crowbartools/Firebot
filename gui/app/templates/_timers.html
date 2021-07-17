@@ -1,55 +1,15 @@
-<div style="margin: 0 0 15px;display: flex;flex-direction: row;justify-content: space-between;">
-    <button ng-click="openAddOrEditTimerModal()" class="btn btn-primary"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> New Timer</button>
-    <searchbar ng-show="timerService.getTimers().length > 0" placeholder-text="Search timers" query="timerSearch" style="flex-basis: 250px;"></searchbar>
-</div>
-<div ng-if="timerService.getTimers().length === 0" class="noselect muted" style="padding-left: 13px">
-    <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span><span style="margin-left:8px">No timers saved. You should make one! :)</span>
-</div>
-<table ng-show="timerService.getTimers().length > 0" class="fb-table">
-    <thead>
-        <tr style="font-size: 11px;">
-            <th class="muted" style="padding-left: 15px;width: 25%"><i class="fas fa-tag"></i> NAME</th> 
-            <th class="muted"><i class="fas fa-stopwatch"></i> INTERVAL</th> 
-            <th class="muted"><i class="fas fa-magic"></i> EFFECTS</th>
-            <th></th> 
-            <th></th> 
-        </tr> 
-    </thead> 
-    <tbody> 
-        <tr ng-repeat="timer in timerService.getTimers() | filter:timerSearch track by timer.id"  context-menu="timerMenuOptions">
-            <td style="padding-left: 15px;">{{timer.name}}</td>
-            <td>
-                {{timer.interval + "s"}}                          
-            </td>
-            <td>
-                {{timer.effects ? timer.effects.list.length : 0}}
-            </td>
-            <td>
-                <div style="min-width: 75px">
-                    <span class="status-dot" ng-class="{'active': timer.active, 'notactive': !timer.active}"></span> {{timer.active ? "Enabled" : "Disabled"}}
-                </div>                            
-            </td>  
-            <td>
-                <div style="text-align: right;">
-                    <div uib-dropdown uib-dropdown-toggle class="pull-right">
-                        <span class="noselect clickable" style="font-size: 30px"><i class="fal fa-ellipsis-h"></i></span>
-                        <ul class="dropdown-menu" uib-dropdown-menu>
-                            <li>
-                                <a href ng-click="openAddOrEditTimerModal(timer)">Edit</a>
-                            </li>
-                            <li>
-                                <a href ng-click="toggleTimerActiveState(timer)">{{timer.active ? 'Disable' : 'Enable'}}</a>
-                            </li>
-                            <li>
-                                <a href ng-click="duplicateTimer(timer)">Duplicate</a>
-                            </li>
-                            <li>
-                                <a href ng-click="deleteTimer(timer)" style="color: #fb7373;">Delete</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>                       
-            </td> 
-        </tr>
-    </tbody>
-</table>
+<firebot-item-table
+    items="timerService.timers"
+    on-items-update="onTimerUpdated(items)"
+    headers="headers"
+    sort-tag-context="timers"
+    orderable="true"
+    add-new-button-text="New Timer"
+    on-add-new-clicked="openAddOrEditTimerModal()"
+    context-menu-options="timerOptions(item)"
+    no-data-message="No timers saved. You should make one! :)"
+    none-found-message="No timers found."
+    search-placeholder="Search timers"
+    test-button="false"
+    status-field="active"
+></firebot-item-table>
