@@ -38,6 +38,11 @@
                     });
             };
 
+            service.saveAllTimers = function(timers) {
+                service.timers = timers;
+                backendCommunicator.fireEvent("saveAllTimers", timers);
+            }
+
             service.toggleTimerActiveState = function(timer) {
                 if (timer == null) return;
                 timer.active = !timer.active;
