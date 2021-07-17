@@ -54,7 +54,7 @@
                         'width': '50px'
                     },
                     sortable: false,
-                    cellTemplate: `<img ng-src="{{data.twitch ? data.profilePicUrl : '../images/placeholders/mixer-icon.png'}}"  style="width: 25px;height: 25px;border-radius: 25px;"/>`,
+                    cellTemplate: `<img ng-src="{{data.twitch ? data.profilePicUrl : '../images/placeholders/default-profile-pic.png'}}"  style="width: 25px;height: 25px;border-radius: 25px;"/>`,
                     cellController: () => {}
                 },
                 {

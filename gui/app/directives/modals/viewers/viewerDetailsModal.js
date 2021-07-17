@@ -21,7 +21,7 @@
                     </div>
                 </div>
                 <div ng-if="!$ctrl.loading">
-                    <img ng-src="{{ $ctrl.viewerDetails.firebotData.twitch && $ctrl.viewerDetails.twitchData ? $ctrl.viewerDetails.twitchData.iconUrl : '../images/placeholders/mixer-icon.png'}}" 
+                    <img ng-src="{{ $ctrl.viewerDetails.firebotData.twitch && $ctrl.viewerDetails.twitchData ? $ctrl.viewerDetails.twitchData.iconUrl : '../images/placeholders/default-profile-pic.png'}}" 
                         style="width: 200px;height: 200px;border-radius: 200px;position: absolute;left: -50px;top: -50px;"/>
                     <div style="padding-left: 150px;min-height: 125px;">
                         <div style="display:flex;align-items: center;">
@@ -79,7 +79,7 @@
                         </div>
 
                         <div ng-hide="$ctrl.hasFirebotData" style="padding: left: 15px;">
-                            <p class="muted">There is no Firebot data saved for this Mixer user.</p>
+                            <p class="muted">There is no Firebot data saved for this Twitch user.</p>
                             <button type="button" class="btn btn-default" ng-click="$ctrl.saveUser()">Save User in Firebot</button>
                         </div>
                     </div>
