@@ -83,13 +83,13 @@ class TimerAccess extends EventEmitter {
 
     updateTimerActiveStatus(timerId, active = false) {
         const timer = this._timers[timerId];
-    
+
         if (timer == null) return;
-    
+
         timer.active = active;
-    
+
         this.saveTimer(timer);
-    
+
         this.emit("timerUpdate", timer);
     }
 }
