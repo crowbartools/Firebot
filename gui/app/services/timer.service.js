@@ -6,7 +6,7 @@
 
     angular
         .module("firebotApp")
-        .factory("timerService", function(logger, connectionService, backendCommunicator, $q, utilityService) {
+        .factory("timerService", function(logger, backendCommunicator, $q, utilityService, objectCopyHelper, ngToast) {
             let service = {};
 
             service.timers = [];
@@ -45,6 +45,34 @@
                         }
                         return false;
                     });
+            };
+
+            service.timerNameExists = (name) => {
+                return service.timers.some(t => t.name === name);
+            };
+
+            service.duplicateTimer = (timerId) => {
+                const timer = service.timers.find(t => t.id === timerId);
+                if (timer == null) {
+                    return;
+                }
+                const copiedTimer = objectCopyHelper.copyObject("timer", timer);
+                copiedTimer.id = null;
+
+                while (service.timerNameExists(copiedTimer.name)) {
+                    copiedTimer.name += " copy";
+                }
+
+                service.saveTimer(copiedTimer).then(successful => {
+                    if (successful) {
+                        ngToast.create({
+                            className: 'success',
+                            content: 'Successfully duplicated a timer!'
+                        });
+                    } else {
+                        ngToast.create("Unable to duplicate timer.");
+                    }
+                });
             };
 
             // Deletes a timer.

@@ -5,8 +5,7 @@
         .controller("timersController", function(
             $scope,
             timerService,
-            utilityService,
-            objectCopyHelper
+            utilityService
         ) {
 
             $scope.timerService = timerService;
@@ -18,12 +17,6 @@
                 if (timer == null) return;
                 timer.active = !timer.active;
                 timerService.saveTimer(timer);
-            };
-
-            $scope.duplicateTimer = timer => {
-                let copiedTimer = objectCopyHelper.copyObject("timer", timer);
-                copiedTimer.name += " copy";
-                timerService.saveTimer(copiedTimer);
             };
 
             $scope.onTimersUpdated = (timers) => {
@@ -69,7 +62,7 @@
                     {
                         html: `<a href ><i class="far fa-clone" style="margin-right: 10px;"></i> Duplicate</a>`,
                         click: function () {
-                            $scope.duplicateTimer(item);
+                            timerService.duplicateTimer(item.id);
                         }
                     },
                     {
