@@ -41,25 +41,30 @@ class TimerAccess extends EventEmitter {
         }
     }
 
-    saveTimer(timer, emitUpdateEventToFrontEnd = true) {
+    async saveTimer(timer) {
         if (timer == null) return;
 
-        this._timers[timer.id] = timer;
-
+        if (timer.id != null) {
+            this._timers[timer.id] = timer;
+        } else {
+            const uuidv1 = require("uuid/v1");
+            timer.id = uuidv1();
+            this._timers[timer.id] = timer;
+        }
+    
         try {
-            const timerDb = getTimersDb();
-
-            timerDb.push("/" + timer.id, timer);
-
+            const timersDb = getTimersDb();
+    
+            timersDb.push("/" + timer.id, timer);
+    
             logger.debug(`Saved timer ${timer.id} to file.`);
 
-            if (emitUpdateEventToFrontEnd) {
-                frontendCommunicator.send("timerUpdate", timer);
-            }
-
             this.emit("timer-save", timer);
+
+            return timer;
         } catch (err) {
-            logger.warn(`There was an error saving an timer.`, err);
+            logger.warn(`There was an error saving a timer.`, err);
+            return null;
         }
     }
 
@@ -86,9 +91,7 @@ const timerAccess = new TimerAccess();
 
 frontendCommunicator.onAsync("getTimers", async () => timerAccess.getTimers());
 
-frontendCommunicator.on("saveTimer", (timer) => {
-    timerAccess.saveTimer(timer, false);
-});
+frontendCommunicator.onAsync("saveTimer", (timer) => timerAccess.saveTimer(timer));
 
 frontendCommunicator.on("deleteTimer", (timerId) => {
     timerAccess.deleteTimer(timerId);

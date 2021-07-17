@@ -38,13 +38,13 @@
 
             service.saveTimer = function(timer) {
                 return $q.when(backendCommunicator.fireEventAsync("saveTimer", timer))
-                .then(savedTimer => {
-                    if (savedTimer) {
-                        updateTimer(savedTimer);
-                        return true;
-                    }
-                    return false;
-                });
+                    .then(savedTimer => {
+                        if (savedTimer) {
+                            updateTimer(savedTimer);
+                            return true;
+                        }
+                        return false;
+                    });
             };
 
             // Deletes a timer.
