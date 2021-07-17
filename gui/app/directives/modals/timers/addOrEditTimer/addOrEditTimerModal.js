@@ -66,7 +66,8 @@
                 randomize: false,
                 name: "",
                 interval: 0,
-                requiredChatLines: 5
+                requiredChatLines: 5,
+                sortTags: []
             };
 
             $ctrl.$onInit = function() {

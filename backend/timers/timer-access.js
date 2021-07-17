@@ -92,12 +92,12 @@ class TimerAccess extends EventEmitter {
             return acc;
         }, {});
 
-        timers = timersObject;
+        this._timers = timersObject;
 
         try {
             const timersDb = getTimersDb();
 
-            timersDb.push("/", timers);
+            timersDb.push("/", this._timers);
 
             logger.debug(`Saved all timers to file.`);
 
@@ -134,7 +134,7 @@ frontendCommunicator.onAsync("saveTimer", (timer) => timerAccess.saveTimer(timer
 
 frontendCommunicator.onAsync("saveAllTimers",
     async (/** @type {SavedTimer[]} */ allTimers) => {
-        saveAllTimers(allTimers);
+        timerAccess.saveAllTimers(allTimers);
     }
 );
 
