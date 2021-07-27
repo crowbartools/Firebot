@@ -115,7 +115,7 @@ function getCounterByName(counterName) {
 
 async function updateCounterValue(counterId, value, overridePreviousValue = false) {
     if (counterId == null || value === undefined || isNaN(value)) {
-        logger.warning("Could not update counter, invalid values: ", counterId, value);
+        logger.warn("Could not update counter, invalid values: ", counterId, value);
         return;
     }
 
