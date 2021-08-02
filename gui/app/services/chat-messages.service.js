@@ -257,6 +257,15 @@
 
             backendCommunicator.on("twitch:chat:message:deleted", markMessageAsDeleted);
 
+            function markUserMessagesAsDeleted(username) {
+                service.chatQueue
+                    .filter(i => i.type === "message" && i.data.username.toLowerCase() === username)
+                    .map(i => i.data.id)
+                    .forEach(markMessageAsDeleted);
+            }
+
+            backendCommunicator.on("twitch:chat:user:delete-messages", markUserMessagesAsDeleted);
+
             service.changeModStatus = (username, shouldBeMod) => {
                 backendCommunicator.send("update-user-mod-status", {
                     username,
