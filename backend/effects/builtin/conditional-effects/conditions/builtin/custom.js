@@ -34,14 +34,14 @@ module.exports = {
         case "contains":
             return leftSideValue.toString().includes(rightSideValue);
         case "does not contain":
-            return leftSideValue.toString().includes(rightSideValue);
+            return !leftSideValue.toString().includes(rightSideValue);
         case "matches regex": {
             let regex = new RegExp(rightSideValue, "gi");
             return regex.test(leftSideValue);
         }
         case "does not match regex": {
             let regex = new RegExp(rightSideValue, "gi");
-            return regex.text(leftSideValue);
+            return !regex.test(leftSideValue);
         }
         default:
             return false;
