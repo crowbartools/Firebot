@@ -41,12 +41,27 @@
                     </div>
 
                     <div class="controls-fb-inline effect-setting-container">
-                        <label class="control-fb control--checkbox">Enabled
+                        <label class="control-fb control--checkbox">Is Enabled
                             <input type="checkbox" ng-model="$ctrl.event.active" aria-label="..." checked>
                             <div class="control__indicator"></div>
                         </label>
                     </div>
                 </div>
+                <div class="cooldown-title">
+                    <div class="controls-fb-inline effect-custom-cooldown-container">
+                        <label class="control-fb control--checkbox">Custom Cooldown
+                            <input type="checkbox" ng-model="$ctrl.event.customCooldown" aria-label="..." >
+                            <div class="control__indicator"></div>
+                        </label>
+                        <div id="cooldown-options" ng-if="$ctrl.event.customCooldown" class="nav-body-wrapper" style="padding-left: 29px;">
+                            <input type="number" class="form-control event-id" aria-describedby="basic-addon3" placeholder="Enter time in seconds" ng-model="$ctrl.event.customCooldownSecs" style="margin-bottom: 6px;">
+                            <label class="control-fb control--checkbox">Apply Cooldown Per User
+                                <input type="checkbox" ng-model="$ctrl.event.customCooldownPerUser" aria-label="..." >
+                                <div class="control__indicator"></div>
+                            </label>
+                        </div>
+                    </div>
+            </div>
             </div>
             <div ng-if="$ctrl.event.eventId != null" class="effect-setting-container setting-padtop">
                 <effect-list header="What should this event do?" effects="$ctrl.event.effects" trigger="event" trigger-meta="$ctrl.triggerMeta" update="$ctrl.effectListUpdated(effects)" modalId="{{modalId}}" is-array="true"></effect-list>      
@@ -77,7 +92,8 @@
 
             $ctrl.event = {
                 name: "",
-                active: true
+                active: true,
+                cached: true
             };
 
             $ctrl.triggerMeta = {};
