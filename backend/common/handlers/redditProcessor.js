@@ -33,7 +33,7 @@ async function getSubredditData(subName) {
             return response.data.data.children;
         })
         .catch(function(err) {
-            logger.warning(`Error getting subreddit ${subName}`, err);
+            logger.warn(`Error getting subreddit ${subName}`, err);
         });
 }
 
