@@ -41,6 +41,23 @@ const toggleConnection = {
                 </div>
             </div>
 
+            <label class="control-fb control--checkbox">Update Paused
+                <input type="checkbox" ng-click="effect.rewardSettings.paused.update = !effect.rewardSettings.paused.update" ng-checked="effect.rewardSettings.paused.update"  aria-label="Toggle paused" >
+                <div class="control__indicator"></div>
+            </label>
+            <div ng-show="effect.rewardSettings.paused.update" style="margin-bottom: 15px;">
+                <div class="btn-group" uib-dropdown>
+                    <button id="single-button" type="button" class="btn btn-default" uib-dropdown-toggle>
+                    {{getTogglePausedDisplay(effect.rewardSettings.paused.newValue)}} <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                        <li role="menuitem" ng-click="effect.rewardSettings.paused.newValue = true"><a href>Paused</a></li>
+                        <li role="menuitem" ng-click="effect.rewardSettings.paused.newValue = false"><a href>Unpaused</a></li>
+                        <li role="menuitem" ng-click="effect.rewardSettings.paused.newValue = 'toggle'"><a href>Toggle</a></li>
+                    </ul>
+                </div>
+            </div>
+
             <label class="control-fb control--checkbox">Update Name
                 <input 
                     type="checkbox" 
@@ -98,6 +115,16 @@ const toggleConnection = {
             return "Disable";
         };
 
+        $scope.getTogglePausedDisplay = (action) => {
+            if (action === "toggle") {
+                return "Toggle";
+            }
+            if (action === true) {
+                return "Pause";
+            }
+            return "Unpause";
+        };
+
         if ($scope.effect.rewardSettings == null) {
             $scope.effect.rewardSettings = {
                 name: {
@@ -113,6 +140,10 @@ const toggleConnection = {
                     newValue: 1
                 },
                 enabled: {
+                    update: false,
+                    newValue: 'toggle'
+                },
+                paused: {
                     update: false,
                     newValue: 'toggle'
                 }
@@ -175,9 +206,14 @@ const toggleConnection = {
             channelReward.twitchData.cost = parseInt(effect.rewardSettings.cost.newValue);
         }
         if (effect.rewardSettings.enabled.update) {
-            channelReward.twitchData.isEnabled = effect.rewardSettings.enabled.newValue === 'toggled' ?
+            channelReward.twitchData.isEnabled = effect.rewardSettings.enabled.newValue === 'toggle' ?
                 !channelReward.twitchData.isEnabled :
                 effect.rewardSettings.enabled.newValue === true;
+        }
+        if (effect.rewardSettings.paused.update) {
+            channelReward.twitchData.isPaused = effect.rewardSettings.paused.newValue === 'toggle' ?
+                !channelReward.twitchData.isPaused :
+                effect.rewardSettings.paused.newValue === true;
         }
         channelRewardsManager.saveChannelReward(channelReward, true);
     }
