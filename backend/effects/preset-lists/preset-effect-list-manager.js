@@ -5,7 +5,7 @@ const profileManager = require("../../common/profile-manager");
 const frontendCommunicator = require("../../common/frontend-communicator");
 
 /**
- * @typedef PresetEffectList
+ * @typedef SavedPresetEffectList
  * @property {string} id - the id of the preset effect list
  * @property {name} name - the name of the effect list
  * @property {object} effects - the saved effects in the list
@@ -14,7 +14,7 @@ const frontendCommunicator = require("../../common/frontend-communicator");
  */
 
 /**
- * @type {Object.<string, PresetEffectList>}
+ * @type {Object.<string, SavedPresetEffectList>}
  */
 let presetEffectLists = {};
 
@@ -42,42 +42,80 @@ function loadPresetEffectLists() {
     }
 }
 
-function savePresetEffectList(presetList) {
-    if (presetList == null) return;
+/**
+ * @param {SavedPresetEffectList} presetEffectList
+ */
+async function savePresetEffectList(presetEffectList) {
+    if (presetEffectList == null) return;
 
-    presetEffectLists[presetList.id] = presetList;
+    if (presetEffectList.id != null) {
+        presetEffectLists[presetEffectList.id] = presetEffectList;
+    } else {
+        const uuidv1 = require("uuid/v1");
+        presetEffectList.id = uuidv1();
+        presetEffectLists[presetEffectList.id] = presetEffectList;
+    }
 
     try {
         const presetEffectListDb = getPresetEffectListDb();
 
-        presetEffectListDb.push("/" + presetList.id, presetList);
+        presetEffectListDb.push("/" + presetEffectList.id, presetEffectList);
 
-        logger.debug(`Saved preset effect list ${presetList.id} to file.`);
+        logger.debug(`Saved preset effect list ${presetEffectList.id} to file.`);
+
+        return presetEffectList;
     } catch (err) {
         logger.warn(`There was an error saving a preset effect list.`, err);
+        return null;
     }
 }
 
-function deletePresetEffectList(presetListId) {
-    if (presetListId == null) return;
+/**
+ *
+ * @param {SavedPresetEffectList[]} allPresetEffectLists
+ */
+async function saveAllPresetEffectLists(allPresetEffectLists) {
+    /** @type {Record<string,SavedPresetEffectList>} */
+    const presetEffectListsObject = allPresetEffectLists.reduce((acc, current) => {
+        acc[current.id] = current;
+        return acc;
+    }, {});
 
-    delete presetEffectLists[presetListId];
+    presetEffectLists = presetEffectListsObject;
 
     try {
         const presetEffectListDb = getPresetEffectListDb();
 
-        presetEffectListDb.delete("/" + presetListId);
+        presetEffectListDb.push("/", presetEffectLists);
 
-        logger.debug(`Deleted preset effect list: ${presetListId}`);
+        logger.debug(`Saved all preset effect lists to file.`);
+
+    } catch (err) {
+        logger.warn(`There was an error saving all preset effect lists.`, err);
+        return null;
+    }
+}
+
+function deletePresetEffectList(presetEffectListId) {
+    if (presetEffectListId == null) return;
+
+    delete presetEffectLists[presetEffectListId];
+
+    try {
+        const presetEffectListDb = getPresetEffectListDb();
+
+        presetEffectListDb.delete("/" + presetEffectListId);
+
+        logger.debug(`Deleted preset effect list: ${presetEffectListId}`);
 
     } catch (err) {
         logger.warn(`There was an error deleting a preset effect list.`, err);
     }
 }
 
-function getPresetEffectList(presetListId) {
-    if (presetListId == null) return null;
-    return presetEffectLists[presetListId];
+function getPresetEffectList(presetEffectListId) {
+    if (presetEffectListId == null) return null;
+    return presetEffectLists[presetEffectListId];
 }
 
 function triggerUiRefresh() {
@@ -86,12 +124,17 @@ function triggerUiRefresh() {
 
 frontendCommunicator.onAsync("getPresetEffectLists", async () => presetEffectLists);
 
-frontendCommunicator.on("savePresetEffectList", (presetList) => {
-    savePresetEffectList(presetList);
-});
+frontendCommunicator.onAsync("savePresetEffectList",
+    (/** @type {SavedPresetEffectList} */ presetEffectList) => savePresetEffectList(presetEffectList));
 
-frontendCommunicator.on("deletePresetEffectList", (presetListId) => {
-    deletePresetEffectList(presetListId);
+frontendCommunicator.onAsync("saveAllPresetEffectLists",
+    async (/** @type {SavedPresetEffectList[]} */ allPresetEffectLists) => {
+        saveAllPresetEffectLists(allPresetEffectLists);
+    }
+);
+
+frontendCommunicator.on("deletePresetEffectList", (presetEffectListId) => {
+    deletePresetEffectList(presetEffectListId);
 });
 
 exports.loadPresetEffectLists = loadPresetEffectLists;

@@ -17,8 +17,8 @@ function cacheNewEvent(sourceId, eventId, eventSettingId, ttlInSecs = undefined,
     /**
     Example of cache storage.
       {
-          "constellation:FOLLOWED:9f7a8640-3e59-11ea-ae88-19476d11930a:Firebottle": true,
-          "constellation:FOLLOWED:9f7a8640-3e59-11ea-ae88-19476d11930a:ebiggz": true
+          "twitch:FOLLOWED:9f7a8640-3e59-11ea-ae88-19476d11930a:Mage": true,
+          "twitch:FOLLOWED:9f7a8640-3e59-11ea-ae88-19476d11930a:ebiggz": true
       }
     **/
 
@@ -106,26 +106,32 @@ function addEventToQueue(eventPacket) {
 
 async function onEventTriggered(event, source, meta, isManual = false, isRetrigger = false) {
 
-    let effects = null,
-        eventSettings;
+    let effects = null;
 
     if (meta == null) {
         meta = {};
     }
 
-    eventSettings = eventsAccess.getAllActiveEvents().filter(
+    const eventSettings = eventsAccess.getAllActiveEvents().filter(
         es => es.sourceId === source.id && es.eventId === event.id
     );
 
     for (let eventSetting of eventSettings) {
 
-        if (!isRetrigger && !isManual && event.cached) {
+        if (!isRetrigger && !isManual && (eventSetting.customCooldown || event.cached)) {
+            let cacheTtlInSecs;
             let cacheMetaKey;
-            if (event.cacheMetaKey && meta) {
-                cacheMetaKey = meta[event.cacheMetaKey];
+
+            if (eventSetting.customCooldown) {
+                cacheTtlInSecs = eventSetting.customCooldownSecs;
+                cacheMetaKey = eventSetting.customCooldownPerUser ? meta["username"] : null;
+            } else {
+                cacheTtlInSecs = event.cacheTtlInSecs;
+                cacheMetaKey = event.cacheMetaKey && meta ? meta[event.cacheMetaKey] : null;
             }
-            let previouslyCached = cacheNewEvent(source.id, event.id, eventSetting.id, event.cacheTtlInSecs, cacheMetaKey);
-            if (previouslyCached) {
+
+            let alreadyCached = cacheNewEvent(source.id, event.id, eventSetting.id, cacheTtlInSecs, cacheMetaKey);
+            if (alreadyCached) {
                 return;
             }
         }

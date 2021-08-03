@@ -116,9 +116,11 @@ exports.setupChatListeners = (streamerChatClient) => {
 
     streamerChatClient.onBan((_, username) => {
         twitchEventsHandler.viewerBanned.triggerBanned(username);
+        frontendCommunicator.send("twitch:chat:user:delete-messages", username);
     });
 
     streamerChatClient.onTimeout((_, username, duration) => {
         twitchEventsHandler.viewerTimeout.triggerTimeout(username, duration);
+        frontendCommunicator.send("twitch:chat:user:delete-messages", username);
     });
 };

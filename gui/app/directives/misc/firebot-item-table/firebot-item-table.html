@@ -27,16 +27,15 @@
         <div ng-transclude="toolbar"></div>
       </div>
 
-      <div style="display: flex; flex-direction: row; align-items: center">
+      <div style="display: flex; flex-direction: row; align-items: center;" ng-show="$ctrl.items.length > 0">
         <sort-tag-dropdown
           context="{{$ctrl.sortTagContext}}"
           style="margin-right: 10px"
         />
         <searchbar
-          ng-show="$ctrl.items.length > 0"
           placeholder-text="{{$ctrl.searchPlaceholder}}"
           query="searchQuery"
-          style="flex-basis: 250px"
+          style="flex-basis: 250px; min-width: 217px;"
         ></searchbar>
       </div>
     </div>
@@ -100,7 +99,7 @@
             style="width: 100%"
             context-menu="$ctrl.getContextMenu(item)"
           >
-            <td ng-show="$ctrl.testButton == true" style="text-align: center">
+            <td ng-if="$ctrl.testButton == true">
               <span
                 style="color: #2aa1c0; font-size: 20px"
                 ng-click="$ctrl.onTestButtonClicked({ itemId: item.id })"

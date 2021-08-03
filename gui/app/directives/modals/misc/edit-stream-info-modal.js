@@ -71,7 +71,8 @@
 
                 $ctrl.streamInfo = {
                     title: "",
-                    gameId: 0
+                    gameId: 0,
+                    gameName: ""
                 };
 
                 $ctrl.selectedGame = null;
@@ -109,11 +110,13 @@
                 $ctrl.gameSelected = function(game) {
                     if (game != null) {
                         $ctrl.streamInfo.gameId = game.id;
+                        $ctrl.streamInfo.gameName = game.name;
                     }
                 };
 
                 $ctrl.save = () => {
                     backendCommunicator.fireEventAsync("set-channel-info", $ctrl.streamInfo);
+                    backendCommunicator.fireEvent("category-changed", $ctrl.streamInfo.gameName);
                     ngToast.create({
                         className: 'success',
                         content: "Updated stream info!"
