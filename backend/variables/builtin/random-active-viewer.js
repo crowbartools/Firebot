@@ -17,12 +17,16 @@ const model = {
             {
                 usage: "randomActiveViewer[roleName]",
                 description: "Filter to an active viewer in a specific role."
+            },
+            {
+                usage: "randomActiveViewer[null, ignoreUser]",
+                description: "Get a random active user that is NOT the ignore user"
             }
         ],
         categories: [VariableCategory.USER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: async (_, roleName) => {
+    evaluator: async (_, roleName, ignoreUser) => {
         logger.debug("Getting random active viewer...");
 
         const activeViewerCount = activeUserHandler.getActiveUserCount();
@@ -31,8 +35,9 @@ const model = {
             return "[Unable to get random active user]";
         }
 
-        if (roleName == null) {
-            return activeUserHandler.getRandomActiveUser().username;
+        if (ignoreUser != null) {
+            const randomViewer = activeUserHandler.getRandomActiveUser(ignoreUser);
+            return randomViewer ? randomViewer.username : "[Unable to get random active user]";
         }
 
         if (roleName != null) {
