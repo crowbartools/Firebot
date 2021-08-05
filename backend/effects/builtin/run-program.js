@@ -108,7 +108,7 @@ const model = {
             }
 
             child.on('error', function(err) {
-                logger.warning(`spawned program error:`, err);
+                logger.warn(`spawned program error:`, err);
                 child.kill();
                 return resolve();
             });
