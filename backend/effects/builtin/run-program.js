@@ -91,7 +91,7 @@ const model = {
                 args = argString.split(" ");
             }
 
-            const child = spawn(`"${programPath}"`, args, options);
+            const child = spawn(programPath, args, options);
 
             if (!waitForFinish) {
                 child.unref();
@@ -108,7 +108,7 @@ const model = {
             }
 
             child.on('error', function(err) {
-                logger.warn(`spawned program error:`, err);
+                logger.warn(`spawned program error:`, err, programPath, args, options);
                 child.kill();
                 return resolve();
             });
