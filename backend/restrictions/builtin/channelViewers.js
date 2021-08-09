@@ -75,7 +75,7 @@ const model = {
                 const stream = await client.helix.streams.getStreamByUserId(streamer.userId);
                 currentViewers = stream.viewers;
             } catch (error) {
-                logger.warning("unable to get stream viewer count", error);
+                logger.warn("unable to get stream viewer count", error);
             }
 
             if (currentViewers) {

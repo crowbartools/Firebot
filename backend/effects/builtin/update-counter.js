@@ -97,7 +97,7 @@ const model = {
         }
 
         if (isNaN(effect.value)) {
-            logger.warning(`Failed to update Counter ${effect.counterId} because ${effect.value} is not a number.`);
+            logger.warn(`Failed to update Counter ${effect.counterId} because ${effect.value} is not a number.`);
             return true;
         }
 

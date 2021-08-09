@@ -48,7 +48,7 @@ exports.getStreamerCanClip = async broadcastId => {
         await mixerClient.streamer.request("get", `clips/broadcasts/${broadcastId}/canClip`);
         return true;
     } catch (error) {
-        logger.warning(error);
+        logger.warn(error);
         return false;
     }
 };
@@ -70,7 +70,7 @@ exports.createClip = async clipRequest => {
         }
         return response.body;
     } catch (error) {
-        logger.warning(error);
+        logger.warn(error);
         return null;
     }
 };

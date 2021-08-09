@@ -6,6 +6,7 @@ const EventEmitter = require("events");
 const util = require("../utility");
 const eventsRouter = require("./events-router");
 const eventsAccess = require("./events-access");
+const frontendCommuncator = require("../common/frontend-communicator");
 
 /**@extends NodeJS.EventEmitter */
 class EventManager extends EventEmitter {
@@ -127,6 +128,10 @@ ipcMain.on("triggerManualEvent", function(_, data) {
     if (eventSettings == null) return;
 
     eventsRouter.runEventEffects(eventSettings.effects, event, source, meta, true);
+});
+
+frontendCommuncator.on("simulateEvent", ({eventSourceId, eventId}) => {
+    manager.triggerEvent(eventSourceId, eventId, null, true);
 });
 
 module.exports = manager;

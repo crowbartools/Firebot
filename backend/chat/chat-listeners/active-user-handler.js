@@ -49,10 +49,21 @@ exports.getActiveUserCount = () => {
     return activeUsers.keys().length / 2;
 };
 
-exports.getRandomActiveUser = () => {
+exports.getRandomActiveUser = (ignoreUser = "") => {
     const allActiveUsers = exports.getAllActiveUsers();
-    const randomIndex = utils.getRandomInt(0, allActiveUsers.length - 1);
-    return allActiveUsers[randomIndex];
+
+    /**@type {User} */
+    let randomUser;
+    do {
+        const randomIndex = utils.getRandomInt(0, allActiveUsers.length - 1);
+        randomUser = allActiveUsers[randomIndex];
+    } while (randomUser.username.toLowerCase() === ignoreUser.toLowerCase() && allActiveUsers.length > 1);
+
+    if (ignoreUser && randomUser.username.toLowerCase() === ignoreUser.toLowerCase()) {
+        return null;
+    }
+
+    return randomUser;
 };
 
 

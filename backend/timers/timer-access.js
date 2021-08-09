@@ -32,7 +32,7 @@ class TimerAccess extends EventEmitter {
     }
 
     getTimer(timerId) {
-        return this.getTimers().find(t => t.timerId === timerId);
+        return this.getTimers().find(t => t.id === timerId);
     }
 
     loadTimers() {
@@ -123,6 +123,18 @@ class TimerAccess extends EventEmitter {
         } catch (err) {
             logger.warn(`There was an error deleting a timer.`, err);
         }
+    }
+
+    updateTimerActiveStatus(timerId, active = false) {
+        const timer = this._timers[timerId];
+
+        if (timer == null) return;
+
+        timer.active = active;
+
+        this.saveTimer(timer);
+
+        this.emit("timerUpdate", timer);
     }
 }
 
