@@ -62,6 +62,11 @@
                 return service.presetEffectLists.some(pel => pel.name === name);
             };
 
+            service.manuallyTriggerPresetEffectList = (presetEffectListId) => {
+                const presetEffectList = service.presetEffectLists.find(pel => pel.id === presetEffectListId);
+                ipcRenderer.send('runEffectsManually', presetEffectList.effects);
+            };
+
             service.duplicatePresetEffectList = (presetEffectListId) => {
                 const presetEffectList = service.presetEffectLists.find(pel => pel.id === presetEffectListId);
                 if (presetEffectList == null) {
