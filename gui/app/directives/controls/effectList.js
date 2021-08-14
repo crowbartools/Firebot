@@ -132,8 +132,12 @@
                                         <span class="dragHandle" style="height: 38px; width: 15px; align-items: center; justify-content: center; display: flex" ng-class="{'hiddenHandle': !hovering}" ng-click="$event.stopPropagation()">
                                             <i class="fal fa-bars"></i>
                                         </span> 
-                                        <div class="clickable" style="font-size: 20px;height: 38px;width: 35px;text-align: center;display: flex;align-items: center;justify-content: center;" uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" ng-click="$event.stopPropagation()">
-                                            <span class="noselect pointer"> <i class="fal fa-ellipsis-v"></i> </span>
+                                        <div
+                                            uib-dropdown
+                                            style="font-size: 20px;height: 38px;width: 35px;text-align: center;display: flex;align-items: center;justify-content: center;" 
+                                            ng-click="$event.stopPropagation()"
+                                        >
+                                            <a class="noselect pointer effects-actions-btn clickable" uib-dropdown-toggle aria-label="Open effect menu" uib-tooltip="Open effect menu" tooltip-append-to-body="true"> <i class="fal fa-ellipsis-v"></i> </a>
                                             <ul class="dropdown-menu" uib-dropdown-menu style="transform: translateY(-205px);">
                                                 <li><a href ng-click="$ctrl.editLabelForEffectAtIndex($index)"><i class="fal fa-tag" style="margin-right: 10px;"></i>  {{$ctrl.getLabelButtonTextForLabel(effect.effectLabel)}}</a></li>
                                                 <li><a href ng-click="$ctrl.openEditEffectModal(effect, $index, $ctrl.trigger)"><i class="fal fa-edit" style="margin-right: 10px;"></i>  Edit</a></li>
