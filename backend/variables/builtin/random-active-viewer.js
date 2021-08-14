@@ -48,17 +48,22 @@ const model = {
 
             const customRoleUsers = customRole.viewers;
             if (customRoleUsers.length === 0) {
-                return "[Unable to get random active user]";
+                return "[Unable to get random active user, customroles]";
             }
 
             const usersWithRole = activeUserHandler.getAllActiveUsers().filter(user => customRoleUsers.includes(user.username));
             if (usersWithRole.length === 0) {
-                return "[Unable to get random active user]";
+                return "[Unable to get random active users]";
             }
             const randIndex = util.getRandomInt(0, usersWithRole.length - 1);
             return usersWithRole[randIndex].username;
         }
-
+        
+        if(activeViewerCount > 0) { 
+            const randomViewer = activeUserHandler.getRandomActiveUser();
+            return randomViewer ? randomViewer.username : "[Unable to get random active user]";  
+        }
+        
         return "[Unable to get random active user]";
     }
 };
