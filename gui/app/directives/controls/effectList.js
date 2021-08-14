@@ -92,25 +92,82 @@
                         </div>
                         
                         <div uib-dropdown>
-                            <a href uib-dropdown-toggle class="pointer effects-actions-btn clickable" uib-tooltip="Open effects menu" tooltip-append-to-body="true" aria-label="Open effects menu">
+                            <a
+                                href
+                                role="button"
+                                uib-dropdown-toggle
+                                class="pointer effects-actions-btn clickable"
+                                uib-tooltip="Open effects menu"
+                                tooltip-append-to-body="true"
+                                aria-label="Open effects menu"
+                            >
                                 <i class="fal fa-ellipsis-v"></i>
                             </a>
-                            <ul class="dropdown-menu" uib-dropdown-menu>
-                                <li ng-class="{'disabled': !$ctrl.effectsData.list.length > 0}" ng-click="!$ctrl.effectsData.list > 0 ? $event.stopPropagation() : null">
-                                    <a href ng-click="$ctrl.copyEffects()"><i class="far fa-copy" style="margin-right: 10px;" aria-label="Copy all effects"></i> Copy all effects</a>
+                            <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+                                <li 
+                                    role="menuitem"
+                                    ng-class="{'disabled': !$ctrl.effectsData.list.length > 0}"
+                                    ng-click="!$ctrl.effectsData.list > 0 ? $event.stopPropagation() : null"
+                                >
+                                    <a 
+                                        href
+                                        ng-click="$ctrl.copyEffects()"
+                                        role="button"
+                                        aria-disabled="{{!$ctrl.effectsData.list.length > 0}}"
+                                    >
+                                        <i class="far fa-copy" style="margin-right: 10px;"></i> Copy all effects
+                                    </a>
                                 </li>
-                                <li ng-class="{'disabled': !$ctrl.hasCopiedEffects()}" ng-click="!$ctrl.hasCopiedEffects() ? $event.stopPropagation() : null">
-                                    <a href ng-click="$ctrl.pasteEffects(true)"><i class="far fa-paste" style="margin-right: 10px;" aria-label="Paste effects"></i> Paste effects</a>
+                                <li
+                                    role="menuitem"
+                                    ng-class="{'disabled': !$ctrl.hasCopiedEffects()}"
+                                    ng-click="!$ctrl.hasCopiedEffects() ? $event.stopPropagation() : null"
+                                >
+                                    <a
+                                        href
+                                        ng-click="$ctrl.pasteEffects(true)"
+                                        role="button"
+                                        aria-disabled="{{!$ctrl.hasCopiedEffects()}}"
+                                    >
+                                        <i class="far fa-paste" style="margin-right: 10px;"></i> Paste effects
+                                    </a>
                                 </li>
-                                <li ng-class="{'disabled': !$ctrl.effectsData.list.length > 0}" ng-click="!$ctrl.effectsData.list > 0 ? $event.stopPropagation() : null">
-                                    <a href ng-click="$ctrl.removeAllEffects()" style="color: #fb7373;"><i class="far fa-trash-alt" style="margin-right: 10px;" aria-label="Delete all effects"></i> Delete all effects</a>
+                                <li
+                                    role="menuitem"
+                                    ng-class="{'disabled': !$ctrl.effectsData.list.length > 0}"
+                                    ng-click="!$ctrl.effectsData.list > 0 ? $event.stopPropagation() : null"
+                                >
+                                    <a
+                                        href
+                                        ng-click="$ctrl.removeAllEffects()" role="button"
+                                        aria-disabled="{{!$ctrl.effectsData.list.length > 0}}"
+                                        style="color: #fb7373;"
+                                    >
+                                        <i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete all effects
+                                    </a>
                                 </li>
                                 <li class="divider"></li>
-                                <li ng-class="{'disabled': !$ctrl.effectsData.list.length > 0}" ng-click="!$ctrl.effectsData.list > 0 ? $event.stopPropagation() : null">
-                                    <a href ng-click="$ctrl.shareEffects();"><i class="far fa-share-alt" style="margin-right: 10px;" aria-label="Share effects"></i> Share effects</a>
+                                <li
+                                    role="menuitem"
+                                    ng-class="{'disabled': !$ctrl.effectsData.list.length > 0}"
+                                    ng-click="!$ctrl.effectsData.list > 0 ? $event.stopPropagation() : null"
+                                >
+                                    <a
+                                        href
+                                        ng-click="$ctrl.shareEffects();" role="button"
+                                        aria-disabled="{{!$ctrl.effectsData.list.length > 0}}"
+                                    >
+                                        <i class="far fa-share-alt" style="margin-right: 10px;"></i> Share effects
+                                    </a>
                                 </li>
-                                <li>
-                                    <a href ng-click="$ctrl.importSharedEffects();"><i class="far fa-cloud-download-alt" style="margin-right: 5px;" aria-label="Import shared effects"></i> Import shared effects</a>
+                                <li role="menuitem">
+                                    <a
+                                        href
+                                        ng-click="$ctrl.importSharedEffects();"
+                                        role="button"
+                                    >
+                                        <i class="far fa-cloud-download-alt" style="margin-right: 5px;"></i> Import shared effect
+                                    </a>
                                 </li>
                             </ul>
                         </div>
