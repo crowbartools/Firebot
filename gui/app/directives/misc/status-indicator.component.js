@@ -11,7 +11,7 @@
             template: `
                 <div
                     style="
-                        min-width: 75px;
+                        min-width: 100px;
                         display: flex;
                         align-items: center;
                     "

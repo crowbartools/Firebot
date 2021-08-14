@@ -18,18 +18,36 @@
                 {
                     name: "NAME",
                     icon: "fa-user",
+                    headerStyles: {
+                        'min-width': '175px'
+                    },
                     cellTemplate: `{{data.name}}`,
                     cellController: () => {}
                 },
                 {
                     name: "INTERVAL",
                     icon: "fa-stopwatch",
+                    headerStyles: {
+                        'min-width': '100px'
+                    },
                     cellTemplate: `{{data.interval}}`,
+                    cellController: () => {}
+                },
+                {
+                    name: "REQUIRED CHAT LINES",
+                    icon: "fa-align-center",
+                    headerStyles: {
+                        'min-width': '175px'
+                    },
+                    cellTemplate: `{{data.requiredChatLines}}`,
                     cellController: () => {}
                 },
                 {
                     name: "EFFECTS",
                     icon: "fa-magic",
+                    headerStyles: {
+                        'min-width': '100px'
+                    },
                     cellTemplate: `{{data.effects ? data.effects.list.length : 0}}`,
                     cellControler: () => {}
                 }
