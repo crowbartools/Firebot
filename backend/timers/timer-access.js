@@ -64,12 +64,12 @@ class TimerAccess extends EventEmitter {
             timer.id = uuidv1();
             this._timers[timer.id] = timer;
         }
-    
+
         try {
             const timersDb = getTimersDb();
-    
+
             timersDb.push("/" + timer.id, timer);
-    
+
             logger.debug(`Saved timer ${timer.id} to file.`);
 
             this.emit("timerSaved", timer);

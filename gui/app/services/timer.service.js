@@ -45,7 +45,7 @@
             service.saveAllTimers = function(timers) {
                 service.timers = timers;
                 backendCommunicator.fireEventAsync("saveAllTimers", timers);
-            }
+            };
 
             service.toggleTimerActiveState = function(timer) {
                 if (timer == null) return;
