@@ -30,19 +30,28 @@
 
                         <div style="margin-right: 17px;" ng-if="$ctrl.getSelectedQueueModeIsCustom()">
                             <div style="font-size: 10px;opacity: 0.8;text-align: right;">EFFECTS DURATION <tooltip text="'The total duration (in secs) the queue should wait after triggering this effect list before running the next one'"></tooltip></div>
-                            <div style="display: flex; justify-content: flex-end; align-items: center;font-size: 12px;" class="clickable" ng-click="$ctrl.openEditQueueDurationModal()"><b>{{$ctrl.effectsData.queueDuration || 0}}</b><span>s</span><span class="muted" style="font-size: 9px; margin-left: 5px;"><i class="fal fa-edit"></i></span></div>
+                            <div 
+                                style="display: flex; justify-content: flex-end; align-items: center;font-size: 12px;"
+                                ng-click="$ctrl.openEditQueueDurationModal()"
+                                aria-label="Effects duration: {{$ctrl.effectsData.queueDuration || 0}} seconds"
+                                role="button"
+                            >
+                                <b>{{$ctrl.effectsData.queueDuration || 0}}</b>s<span class="muted" style="font-size: 9px; margin-left: 5px;"><i class="fal fa-edit"></i></span>
+                            </div>
                         </div>
 
                         <div style="margin-right: 17px;" ng-if="$ctrl.validQueueSelected()">
                             <div style="font-size: 10px;opacity: 0.8;text-align: right;">QUEUE PRIORITY <tooltip text="'If an effect list has priority, it will get added in front of other lists in the queue that do not have priority.'"></tooltip></div>
                             <div class="text-dropdown filter-mode-dropdown" uib-dropdown uib-dropdown-toggle>
-                                <div class="noselect pointer ddtext" style="font-size: 12px;">{{$ctrl.getSelectedQueuePriority()}}<span class="fb-arrow down ddtext"></span></div>
-                                <ul class="dropdown-menu" style="z-index: 10000000;" uib-dropdown-menu>
-                                    <li ng-click="$ctrl.effectsData.queuePriority = 'high'">
-                                        <a href style="padding-left: 10px;" aria-label="Yes">Yes</a>   
+                                <a href role="button" class="ddtext" style="font-size: 12px;" aria-label="Selected: {{$ctrl.getSelectedQueuePriority() === 'Yes' ? 'high queue priority' : 'no queue priority'}}">
+                                    {{$ctrl.getSelectedQueuePriority()}}<span class="fb-arrow down ddtext"></span>
+                                </a>
+                                <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+                                    <li role="none">
+                                        <a href ng-click="$ctrl.effectsData.queuePriority = 'high'" style="padding-left: 10px;" role="menuitem" aria-label="High priority">Yes</a>
                                     </li>
-                                    <li ng-click="$ctrl.effectsData.queuePriority = 'none'">
-                                        <a href style="padding-left: 10px;" aria-label="No">No</a>   
+                                    <li role="none">
+                                        <a href ng-click="$ctrl.effectsData.queuePriority = 'none'" style="padding-left: 10px;" role="menuitem" aria-label="No priority">No</a>
                                     </li>
                                 </ul>
                             </div>
@@ -51,54 +60,47 @@
                         <div style="margin-right: 20px;display: flex;flex-direction: column;align-items: flex-end;">
                             <div style="font-size: 10px;opacity: 0.8;text-align: right;">QUEUE<tooltip text="'Effect queues allow you to queue up effects so they don\\'t overlap each other. Particularly useful for events!'"></tooltip></div>
                             <div class="text-dropdown filter-mode-dropdown" uib-dropdown uib-dropdown-toggle>
-                                <div class="noselect pointer ddtext" style="font-size: 12px;">{{$ctrl.getSelectedEffectQueueName()}}<span class="fb-arrow down ddtext"></span></div>
-                                <ul class="dropdown-menu" style="z-index: 10000000;" uib-dropdown-menu>
-
-                                    <li ng-click="$ctrl.effectsData.queue = null">
-                                        <a href style="padding-left: 10px;" aria-label="Unset">Unset <tooltip text="'Effects will always play immediately when triggered.'"></tooltip>
+                                <a href role="button" class="ddtext" style="font-size: 12px;">{{$ctrl.getSelectedEffectQueueName()}}<span class="fb-arrow down ddtext"></span></a>
+                                <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+                                    <li role="none">
+                                        <a href style="padding-left: 10px;" ng-click="$ctrl.effectsData.queue = null" role="menuitem">Unset <tooltip text="'Effects will always play immediately when triggered.'"></tooltip>
                                         <span ng-show="$ctrl.effectsData.queue == null" style="color:green;display: inline-block;"><i class="fas fa-check"></i></span>
                                         </a>   
                                     </li>
 
-                                    <li ng-repeat="queue in $ctrl.eqs.getEffectQueues() track by queue.id" ng-click="$ctrl.toggleQueueSelection(queue.id)">
-                                        <a href style="padding-left: 10px;" aria-label="Queue: {{queue.name}}">
+                                    <li ng-repeat="queue in $ctrl.eqs.getEffectQueues() track by queue.id" role="none">
+                                        <a href style="padding-left: 10px;" ng-click="$ctrl.toggleQueueSelection(queue.id)" role="menuitem" aria-label="Queue: {{queue.name}}">
                                             <span>{{queue.name}}</span>
                                             <span ng-show="$ctrl.effectsData.queue === queue.id" style="color:green;display: inline-block;"><i class="fas fa-check"></i></span>      
                                         </a>
                                     </li>
 
-                                    <li ng-show="$ctrl.eqs.getEffectQueues().length < 1">
-                                        <a href style="padding-left: 10px;" class="muted" aria-label="No queues created.">No queues created.</a>
+                                    <li ng-show="$ctrl.eqs.getEffectQueues().length < 1" role="none">
+                                        <a style="padding-left: 10px;" class="muted" role="menuitem">No queues created.</a>
                                     </li>
 
                                     <li role="separator" class="divider"></li>
-                                    <li ng-click="$ctrl.showAddEditEffectQueueModal()">
-                                        <a href style="padding-left: 10px;" aria-label="Create new queue">Create new queue</a>
+                                    <li role="none">
+                                        <a href style="padding-left: 10px;" ng-click="$ctrl.showAddEditEffectQueueModal()" role="menuitem">Create new queue</a>
                                     </li>
 
-                                    <li ng-show="$ctrl.validQueueSelected()" ng-click="$ctrl.showAddEditEffectQueueModal($ctrl.effectsData.queue)">
-                                        <a href style="padding-left: 10px;" aria-label="Edit">Edit "{{$ctrl.getSelectedEffectQueueName()}}"</a>
+                                    <li role="none" ng-show="$ctrl.validQueueSelected()">
+                                        <a href style="padding-left: 10px;" ng-click="$ctrl.showAddEditEffectQueueModal($ctrl.effectsData.queue)" role="menuitem">Edit "{{$ctrl.getSelectedEffectQueueName()}}"</a>
                                     </li>
 
-                                    <li ng-show="$ctrl.validQueueSelected()" ng-click="$ctrl.showDeleteEffectQueueModal($ctrl.effectsData.queue)">
-                                        <a href style="padding-left: 10px;" aria-label="Delete">Delete "{{$ctrl.getSelectedEffectQueueName()}}"</a>
+                                    <li role="none" ng-show="$ctrl.validQueueSelected()">
+                                        <a href style="padding-left: 10px;" ng-click="$ctrl.showDeleteEffectQueueModal($ctrl.effectsData.queue)" role="menuitem">Delete "{{$ctrl.getSelectedEffectQueueName()}}"</a>
                                     </li>
                                 </ul>
                             </div>
                         </div>
 
-                        <div class="test-effects-btn clickable" uib-tooltip="Test Effects" aria-label="Test effects">
-                            <i class="far fa-play-circle" style="cursor: pointer;" ng-click="$ctrl.testEffects()" aria-label="Test effects"></i>
+                        <div class="test-effects-btn" uib-tooltip="Test Effects" aria-label="Test effects" ng-click="$ctrl.testEffects()" role="button">
+                            <i class="far fa-play-circle"></i>
                         </div>
                         
-                        <div uib-dropdown uib-tooltip="Open effects menu" tooltip-append-to-body="true" aria-label="Open effects menu">
-                            <a
-                                href
-                                role="button"
-                                uib-dropdown-toggle
-                                class="pointer effects-actions-btn clickable"
-                                
-                            >
+                        <div uib-dropdown uib-dropdown-toggle uib-tooltip="Open effects menu" tooltip-append-to-body="true">
+                            <a href role="button" aria-label="Open effects menu" class="effects-actions-btn">
                                 <i class="fal fa-ellipsis-v"></i>
                             </a>
                             <ul class="dropdown-menu" uib-dropdown-menu role="menu">
@@ -137,14 +139,15 @@
                                 >
                                     <a
                                         href
-                                        ng-click="$ctrl.removeAllEffects()" role="button"
+                                        ng-click="$ctrl.removeAllEffects()"
+                                        role="button"
                                         aria-disabled="{{!$ctrl.effectsData.list.length > 0}}"
                                         style="color: #fb7373;"
                                     >
                                         <i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete all effects
                                     </a>
                                 </li>
-                                <li class="divider"></li>
+                                <li class="divider" role="separator"></li>
                                 <li
                                     role="menuitem"
                                     ng-class="{'disabled': !$ctrl.effectsData.list.length > 0}"
@@ -174,7 +177,9 @@
                 <div class="{{$ctrl.effectContainerClasses}}" style="margin-left: 15px;margin-right: 15px;padding-bottom: 15px;">
                     <div ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.effectsData.list">
                         <div ng-repeat="effect in $ctrl.effectsData.list track by $index" context-menu="$ctrl.effectMenuOptions">
-                            <div class="effect-bar clickable-dark"
+                            <div
+                                role="button"
+                                class="effect-bar clickable-dark"
                                 ng-click="$ctrl.openEditEffectModal(effect, $index, $ctrl.trigger)"
                                 ng-mouseenter="hovering = true"
                                 ng-mouseleave="hovering = false">
@@ -183,7 +188,7 @@
                                         {{$ctrl.getEffectNameById(effect.type)}}
                                         <span ng-if="effect.effectLabel" class="muted"> ({{effect.effectLabel}})</span>
                                     </span>
-                                    <span class="flex-row-center ">
+                                    <span class="flex-row-center">
                                         <span class="dragHandle" style="height: 38px; width: 15px; align-items: center; justify-content: center; display: flex" ng-class="{'hiddenHandle': !hovering}" ng-click="$event.stopPropagation()">
                                             <i class="fal fa-bars"></i>
                                         </span> 
@@ -191,11 +196,11 @@
                                             uib-dropdown
                                             style="font-size: 20px;height: 38px;width: 35px;text-align: center;display: flex;align-items: center;justify-content: center;" 
                                             ng-click="$event.stopPropagation()"
+                                            uib-dropdown-toggle
                                         >
                                             <a
                                                 href
-                                                class="pointer effects-actions-btn clickable"
-                                                uib-dropdown-toggle
+                                                class="effects-actions-btn"
                                                 aria-label="Open effect menu"
                                                 uib-tooltip="Open effect menu"
                                                 tooltip-append-to-body="true"
