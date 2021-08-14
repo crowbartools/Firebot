@@ -91,15 +91,13 @@
                             <i class="far fa-play-circle" style="cursor: pointer;" ng-click="$ctrl.testEffects()" aria-label="Test effects"></i>
                         </div>
                         
-                        <div uib-dropdown>
+                        <div uib-dropdown uib-tooltip="Open effects menu" tooltip-append-to-body="true" aria-label="Open effects menu">
                             <a
                                 href
                                 role="button"
                                 uib-dropdown-toggle
                                 class="pointer effects-actions-btn clickable"
-                                uib-tooltip="Open effects menu"
-                                tooltip-append-to-body="true"
-                                aria-label="Open effects menu"
+                                
                             >
                                 <i class="fal fa-ellipsis-v"></i>
                             </a>
@@ -194,14 +192,74 @@
                                             style="font-size: 20px;height: 38px;width: 35px;text-align: center;display: flex;align-items: center;justify-content: center;" 
                                             ng-click="$event.stopPropagation()"
                                         >
-                                            <a class="noselect pointer effects-actions-btn clickable" uib-dropdown-toggle aria-label="Open effect menu" uib-tooltip="Open effect menu" tooltip-append-to-body="true"> <i class="fal fa-ellipsis-v"></i> </a>
-                                            <ul class="dropdown-menu" uib-dropdown-menu style="transform: translateY(-205px);">
-                                                <li><a href ng-click="$ctrl.editLabelForEffectAtIndex($index)"><i class="fal fa-tag" style="margin-right: 10px;"></i>  {{$ctrl.getLabelButtonTextForLabel(effect.effectLabel)}}</a></li>
-                                                <li><a href ng-click="$ctrl.openEditEffectModal(effect, $index, $ctrl.trigger)"><i class="fal fa-edit" style="margin-right: 10px;"></i>  Edit</a></li>
-                                                <li><a href ng-click="$ctrl.duplicateEffectAtIndex($index)"><i class="fal fa-clone" style="margin-right: 10px;"></i>  Duplicate</a></li>
-                                                <li><a href ng-click="$ctrl.copyEffectAtIndex($index)"><i class="fal fa-copy" style="margin-right: 10px;"></i>  Copy</a></li>
-                                                <li ng-class="{'disabled': !$ctrl.hasCopiedEffects()}" ng-click="!$ctrl.hasCopiedEffects() ? $event.stopPropagation() : null"><a href ng-click="$ctrl.pasteEffectsAtIndex($index, false)"><i class="fal fa-paste" style="margin-right: 10px;"></i>  Paste After</a></li>
-                                                <li><a href ng-click="$ctrl.removeEffectAtIndex($index)" style="color: #fb7373;"><i class="far fa-trash-alt" style="margin-right: 10px;"></i>  Delete</a></li>
+                                            <a
+                                                href
+                                                class="pointer effects-actions-btn clickable"
+                                                uib-dropdown-toggle
+                                                aria-label="Open effect menu"
+                                                uib-tooltip="Open effect menu"
+                                                tooltip-append-to-body="true"
+                                                role="button"
+                                            >
+                                                <i class="fal fa-ellipsis-v"></i>
+                                            </a>
+                                            <ul class="dropdown-menu" uib-dropdown-menu style="transform: translateY(-205px);" role="menu">
+                                                <li role="menuitem">
+                                                    <a
+                                                        href
+                                                        role="button"
+                                                        ng-click="$ctrl.editLabelForEffectAtIndex($index)"
+                                                    >
+                                                        <i class="fal fa-tag" style="margin-right: 10px;"></i>  {{$ctrl.getLabelButtonTextForLabel(effect.effectLabel)}}
+                                                    </a>
+                                                </li>
+                                                <li role="menuitem">
+                                                    <a
+                                                        href
+                                                        role="button"
+                                                        ng-click="$ctrl.openEditEffectModal(effect, $index, $ctrl.trigger)"
+                                                    >
+                                                        <i class="fal fa-edit" style="margin-right: 10px;"></i>  Edit
+                                                    </a>
+                                                </li>
+                                                <li role="menuitem">
+                                                    <a
+                                                        href
+                                                        ng-click="$ctrl.duplicateEffectAtIndex($index)"
+                                                        role="button"
+                                                    >
+                                                        <i class="fal fa-clone" style="margin-right: 10px;"></i>  Duplicate
+                                                    </a>
+                                                </li>
+                                                <li role="menuitem">
+                                                    <a
+                                                        href
+                                                        role="button"
+                                                        ng-click="$ctrl.copyEffectAtIndex($index)"
+                                                    >
+                                                        <i class="fal fa-copy" style="margin-right: 10px;"></i>  Copy
+                                                    </a>
+                                                </li>
+                                                <li role="menuitem" ng-class="{'disabled': !$ctrl.hasCopiedEffects()}" ng-click="!$ctrl.hasCopiedEffects() ? $event.stopPropagation() : null">
+                                                    <a
+                                                        href
+                                                        role="button"
+                                                        ng-click="$ctrl.pasteEffectsAtIndex($index, false)"
+                                                        aria-disabled={{!$ctrl.hasCopiedEffects()}}
+                                                    >
+                                                        <i class="fal fa-paste" style="margin-right: 10px;"></i>  Paste After
+                                                    </a>
+                                                </li>
+                                                <li role="menuitem">
+                                                    <a
+                                                        href
+                                                        role="button"
+                                                        ng-click="$ctrl.removeEffectAtIndex($index)"
+                                                        style="color: #fb7373;"
+                                                    >
+                                                        <i class="far fa-trash-alt" style="margin-right: 10px;"></i>  Delete
+                                                    </a>
+                                                </li>
                                             </ul>
                                         </div>
                                     </span> 
