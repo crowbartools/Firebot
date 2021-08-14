@@ -58,12 +58,12 @@ const model = {
             const randIndex = util.getRandomInt(0, usersWithRole.length - 1);
             return usersWithRole[randIndex].username;
         }
-        
-        if(activeViewerCount > 0) { 
+
+        if (activeViewerCount > 0) {
             const randomViewer = activeUserHandler.getRandomActiveUser();
-            return randomViewer ? randomViewer.username : "[Unable to get random active user]";  
+            return randomViewer ? randomViewer.username : "[Unable to get random active user]";
         }
-        
+
         return "[Unable to get random active user]";
     }
 };
