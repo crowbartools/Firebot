@@ -16,6 +16,10 @@
                 }
             }
 
+            backendCommunicator.on("timerUpdate", timer => {
+                updateTimer(timer);
+            });
+
             service.loadTimers = function() {
                 $q.when(backendCommunicator.fireEventAsync("getTimers"))
                     .then(timers => {

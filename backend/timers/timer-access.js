@@ -134,7 +134,7 @@ class TimerAccess extends EventEmitter {
 
         this.saveTimer(timer);
 
-        this.emit("timerUpdate", timer);
+        frontendCommunicator.send("timerUpdate", timer);
     }
 }
 
