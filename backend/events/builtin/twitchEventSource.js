@@ -64,6 +64,7 @@ module.exports = {
             manualMetadata: {
                 username: "Firebot",
                 subPlan: "1000",
+                subMessage: "Test message",
                 totalMonths: 10,
                 streak: 8,
                 isPrime: false,
@@ -124,7 +125,8 @@ module.exports = {
                 username: "Firebot",
                 isAnonymous: false,
                 bits: 100,
-                totalBits: 1200
+                totalBits: 1200,
+                cheerMessage: "cheer100 Test message"
             },
             activityFeed: {
                 icon: "fad fa-diamond",
