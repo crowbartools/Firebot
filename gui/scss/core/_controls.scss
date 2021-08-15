@@ -568,6 +568,22 @@ table.fb-table-alt {
     align-items: center;
 }
 
+.paused-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 10px;
+    display: inline-block;
+    &.unpaused {
+        background: lightgreen;
+    }
+    &.paused {
+        background: orange;
+    }
+    &.hidden {
+        opacity: 0;
+    }
+}
+
 .status-dot {
     width: 10px;
     height: 10px;
