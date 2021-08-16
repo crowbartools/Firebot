@@ -37,7 +37,7 @@ const model = {
                     }
                 });
             }
-        } catch {
+        } catch (err) {
             logger.error("Error while fetching streamer subscriptions", err);
         }
 
