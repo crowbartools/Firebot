@@ -39,7 +39,7 @@
             };
 
             service.getPresetEffectList = function(presetEffectListId) {
-                return service.presetEffectLists[presetEffectListId];
+                return service.presetEffectLists.find(pel => pel.id === presetEffectListId);
             };
 
             service.savePresetEffectList = function(presetEffectList) {
