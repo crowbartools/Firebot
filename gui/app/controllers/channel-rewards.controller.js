@@ -42,6 +42,10 @@
                     icon: "fa-coin",
                     cellTemplate: `{{data.twitchData.cost}}`,
                     cellController: () => {}
+                },
+                {
+                    cellTemplate: `<span class="paused-dot" style="margin-right: 5px" ng-class="{'paused': data.twitchData.isPaused, 'unpaused': !data.twitchData.isPaused}"></span>{{data.twitchData.isPaused ? 'Paused' : 'Unpaused' }}`,
+                    cellController: () => {}
                 }
             ];
 
@@ -55,9 +59,18 @@
                         }
                     },
                     {
-                        html: `<a href uib-tooltip="This reward was created outside of Firebot, it's enabled status cannot be edited." tooltip-enable="${!item.manageable}"><i class="far fa-toggle-off" style="margin-right: 10px;"></i> Toggle Enabled</a>`,
+                        html: `<a href uib-tooltip="This reward was created outside of Firebot, its enabled status cannot be edited." tooltip-enable="${!item.manageable}"><i class="far fa-toggle-off" style="margin-right: 10px;"></i> Toggle Enabled</a>`,
                         click: function () {
                             item.twitchData.isEnabled = !item.twitchData.isEnabled;
+                            channelRewardsService.saveChannelReward(item);
+                        },
+                        compile: true,
+                        enabled: item.manageable
+                    },
+                    {
+                        html: `<a href uib-tooltip="This reward was created outside of Firebot, its paused status cannot be edited." tooltip-enable="${!item.manageable}"><i class="far fa-toggle-off" style="margin-right: 10px;"></i> Toggle Paused</a>`,
+                        click: function () {
+                            item.twitchData.isPaused = !item.twitchData.isPaused;
                             channelRewardsService.saveChannelReward(item);
                         },
                         compile: true,
