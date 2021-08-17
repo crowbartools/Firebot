@@ -39,7 +39,7 @@
             };
 
             service.getPresetEffectList = function(presetEffectListId) {
-                return service.presetEffectLists[presetEffectListId];
+                return service.presetEffectLists.find(pel => pel.id === presetEffectListId);
             };
 
             service.savePresetEffectList = function(presetEffectList) {
@@ -60,6 +60,11 @@
 
             service.presetEffectListNameExists = (name) => {
                 return service.presetEffectLists.some(pel => pel.name === name);
+            };
+
+            service.manuallyTriggerPresetEffectList = (presetEffectListId) => {
+                const presetEffectList = service.presetEffectLists.find(pel => pel.id === presetEffectListId);
+                ipcRenderer.send('runEffectsManually', presetEffectList.effects);
             };
 
             service.duplicatePresetEffectList = (presetEffectListId) => {

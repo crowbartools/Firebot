@@ -19,7 +19,7 @@ const model = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
-        return trigger.metadata.eventData.message || "";
+        return trigger.metadata.eventData.subMessage || "";
     }
 };
 

@@ -152,11 +152,11 @@ function startTimers() {
     buildIntervalsForTimers(timers);
 }
 
-timerAccess.on("timer-save", timer => {
+timerAccess.on("timerSaved", timer => {
     updateIntervalForTimer(timer);
 });
 
-timerAccess.on("timer-delete", timerId => {
+timerAccess.on("timerDeleted", timerId => {
     clearIntervalForTimerId(timerId);
 });
 
