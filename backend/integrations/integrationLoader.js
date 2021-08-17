@@ -10,6 +10,7 @@ exports.loadIntegrations = () => {
     const hue = require("./builtin/philips-hue/hue");
     const discord = require("./builtin/discord/discord");
     const streamelements = require("./builtin/streamelements/streamelements");
+    const aws = require("./builtin/aws/aws");
 
     // register them
     integrationManager.registerIntegration(streamlabs);
@@ -18,4 +19,5 @@ exports.loadIntegrations = () => {
     integrationManager.registerIntegration(hue);
     integrationManager.registerIntegration(discord);
     integrationManager.registerIntegration(streamelements);
+    integrationManager.registerIntegration(aws);
 };

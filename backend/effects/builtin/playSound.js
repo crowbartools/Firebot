@@ -137,7 +137,8 @@ const playSound = {
 
         let data = {
             filepath: effect.filepath,
-            volume: effect.volume
+            volume: effect.volume,
+            overlayInstance: effect.overlayInstance
         };
 
         // Get random sound
