@@ -83,6 +83,7 @@
     "express": "^4.17.1",
     "fs-extra": "^7.0.1",
     "fuse.js": "^3.4.6",
+    "he": "^1.2.0",
     "howler": "https://github.com/ebiggz/howler.js/tarball/master",
     "js-convert-case": "^4.1.1",
     "kbm-robot": "https://github.com/Skriglitz/kbm-robot/tarball/master",

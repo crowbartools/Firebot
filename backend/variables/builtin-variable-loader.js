@@ -99,6 +99,7 @@ exports.loadReplaceVariables = () => {
         'text-uppercase',
         'text-capitalize',
         'text-contains',
+        'text-encode-for-html',
         'text-encode-for-url',
         'text-split',
         'text-substring',
