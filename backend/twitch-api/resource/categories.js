@@ -4,44 +4,61 @@ const logger = require("../../logwrapper");
 const twitchApi = require("../client");
 const { TwitchAPICallType } = require("twitch/lib");
 
-function mapTwitchGame(game, size) {
-    if (game.box_art_url) {
-        game.boxArtUrl = game.box_art_url.replace("{width}x{height}", size);
+/**
+ * @typedef TwitchCategory
+ * @property {string} id - The ID of this category
+ * @property {string} name - The name of this category
+ * @property {string} boxArtUrl - The box art or cover image url of this category
+ */
+
+
+function mapTwitchCategory(category, size) {
+    if (category.box_art_url) {
+        category.boxArtUrl = category.box_art_url.replace("{width}x{height}", size);
     }
-    return game;
+    return category;
 }
 
-async function getCategoryById(gameId, size = "285x380") {
+/**
+ * @param {number} categoryId
+ * @param {string} [size]
+ * @returns {Promise.<TwitchCategory>}
+ */
+async function getCategoryById(categoryId, size = "285x380") {
     const client = twitchApi.getClient();
     try {
-        const game = await client.helix.games.getGameById(gameId);
-        if (game == null) return null;
-        return mapTwitchGame(game._data, size);
+        const category = await client.helix.games.getGameById(categoryId);
+        if (category == null) return null;
+        return mapTwitchCategory(category._data, size);
     } catch (error) {
-        logger.error("Failed to get twitch game", error);
+        logger.error("Failed to get twitch category", error);
         return null;
     }
 }
 
-async function searchCategories(query) {
+/**
+ * @param {string} categoryName
+ * @returns {Promise.<TwitchCategory[]>}
+ */
+async function searchCategories(categoryName) {
     const client = twitchApi.getClient();
-    let games = [];
+    let categories = [];
     try {
         const response = await client.callAPI({
             type: TwitchAPICallType.Helix,
             url: "search/categories",
             query: {
-                query: query,
+                query: categoryName,
                 first: 10
             }
         });
         if (response && response.data) {
-            games = response.data;
+            categories = response.data;
         }
     } catch (err) {
         logger.error("Failed to search twitch categories", err);
     }
-    return games.map(g => mapTwitchGame(g));
+    return categories.map(c => mapTwitchCategory(c));
 }
 
 exports.getCategoryById = getCategoryById;

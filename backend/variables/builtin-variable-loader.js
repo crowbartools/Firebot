@@ -17,6 +17,7 @@ exports.loadReplaceVariables = () => {
         'array-reverse',
         'array-shuffle',
         'bot',
+        'category-image-url',
         'chat-message',
         'chat-messages',
         'cheer-bits',
