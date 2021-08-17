@@ -3,7 +3,7 @@
 "use strict";
 
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
-const he = require('he')
+const he = require('he');
 
 const model = {
     definition: {
