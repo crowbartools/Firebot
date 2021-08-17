@@ -4,6 +4,7 @@ const uuid = require("uuid/v4");
 const logger = require("../logwrapper");
 const accountAccess = require("../common/account-access");
 const twitchClient = require("../twitch-api/client");
+const { TwitchAPICallType } = require("twitch/lib");
 const bttv = require("./third-party/bttv");
 const ffz = require("./third-party/ffz");
 const frontendCommunicator = require("../common/frontend-communicator");
@@ -53,7 +54,6 @@ exports.setStreamerData = function(newStreamerData) {
     streamerData = newStreamerData;
 };
 
-/**@type {import('twitch/lib/API/Kraken/Channel/EmoteSetList').EmoteSetList} */
 let streamerEmotes = null;
 
 exports.cacheStreamerEmotes = async () => {
@@ -62,7 +62,23 @@ exports.cacheStreamerEmotes = async () => {
 
     if (client == null || !streamer.loggedIn) return;
 
-    streamerEmotes = await client.kraken.users.getUserEmotes(streamer.userId);
+    try {
+        const response = await client.callAPI({
+            type: TwitchAPICallType.Helix,
+            url: "chat/emotes",
+            query: {
+                "broadcaster_id": streamer.userId
+            }
+        });
+        if (response && response.data) {
+            streamerEmotes = response.data;
+        } else {
+            return null;
+        }
+    } catch (err) {
+        logger.error("Failed to get streamer chat emotes", err);
+        return null;
+    }
 };
 
 
@@ -97,12 +113,12 @@ exports.handleChatConnect = async () => {
     await exports.cacheThirdPartyEmotes();
 
     frontendCommunicator.send("all-emotes", [
-        ...Object.values(streamerEmotes && streamerEmotes._data || {})
+        ...Object.values(streamerEmotes || {})
             .flat()
             .map(e => ({
-                url: `https://static-cdn.jtvnw.net/emoticons/v1/${e.id}/1.0`,
+                url: e.images.url_1x,
                 origin: "Twitch",
-                code: e.code
+                code: e.name
             })),
         ...thirdPartyEmotes
     ]);
@@ -235,9 +251,9 @@ exports.buildFirebotChatMessageFromText = async (text = "") => {
         for (const word of words) {
             let emoteId = null;
             try {
-                const foundEmote = Object.values(streamerEmotes && streamerEmotes._data || {})
+                const foundEmote = Object.values(streamerEmotes || {})
                     .flat()
-                    .find(e => e.code === word);
+                    .find(e => e.name === word);
                 if (foundEmote) {
                     emoteId = foundEmote.id;
                 }
