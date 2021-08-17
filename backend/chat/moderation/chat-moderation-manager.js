@@ -143,7 +143,7 @@ async function moderateMessage(chatMessage) {
             if (permitCommand.hasTemporaryPermission(chatMessage.username)) return;
 
             const message = chatMessage.rawText;
-            const regex = new RegExp(/[\w][.][a-zA-Z]/, "gi");
+            const regex = new RegExp(/[\w]{2,}[.][\w]{2,}/, "gi");
 
             if (!regex.test(message)) return;
 
