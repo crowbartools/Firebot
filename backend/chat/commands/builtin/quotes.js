@@ -74,7 +74,7 @@ const quotesManagement = {
             {
                 arg: "remove",
                 usage: "remove [quoteId]",
-                description: "Removes a quote using it's id.",
+                description: "Removes a quote using its id.",
                 restrictionData: {
                     restrictions: [
                         {
@@ -569,22 +569,21 @@ const quotesManagement = {
             }
             default: {
 
-                // Try getting a quote using word search.
-                const quote = await quotesManagement.getRandomQuoteByWord(triggeredArg);
+                // Fallback
+                const quote = await quotesManager.getRandomQuote();
+
                 if (quote) {
                     let formattedQuote = getFormattedQuoteString(quote);
-                    twitchChat.sendChatMessage(
-                        formattedQuote
-                    );
-                    logger.debug('We pulled a quote using words: ' + formattedQuote);
-                    return resolve();
+                    twitchChat.sendChatMessage(formattedQuote);
+                    sendToTTS(formattedQuote);
+
+                    logger.debug('We pulled a quote by id: ' + formattedQuote);
+                } else {
+                    twitchChat.sendChatMessage(`Could not find a random quote!`);
                 }
-
-                logger.debug('Some bad stuff happened with quotes.');
+                return resolve();
             }
             }
-
-            resolve();
         });
     }
 };

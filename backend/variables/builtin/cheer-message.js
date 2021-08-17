@@ -19,7 +19,7 @@ const model = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
-        const cheerMessage = trigger.metadata.eventData.message || "";
+        const cheerMessage = trigger.metadata.eventData.cheerMessage || "";
         return cheerMessage
             .replace(/( |\b)[a-zA-Z]+\d+( |\b)/g, "")
             .trim();
