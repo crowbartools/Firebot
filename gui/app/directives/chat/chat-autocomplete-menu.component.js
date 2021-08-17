@@ -159,8 +159,8 @@
 
                     function buildEmoteItems() {
                         return chatMessagesService.allEmotes.map(emote => ({
-                            display: emote.code,
-                            text: emote.code,
+                            display: emote.name,
+                            text: emote.name,
                             url: emote.url
                         }));
                     }
