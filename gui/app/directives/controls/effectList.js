@@ -24,12 +24,13 @@
                         <h3 class="{{$ctrl.headerClasses}}" style="display:inline;margin:0;font-weight: 100;">EFFECTS</h3>
                         <span style="font-size: 11px; margin-left: 2px;"><tooltip text="$ctrl.header" ng-if="$ctrl.header"></tooltip></span>
                     </div>
-                    
 
                     <div style="display:flex;align-items: center;">
-
                         <div style="margin-right: 17px;" ng-if="$ctrl.getSelectedQueueModeIsCustom()">
-                            <div style="font-size: 10px;opacity: 0.8;text-align: right;">EFFECTS DURATION <tooltip text="'The total duration (in secs) the queue should wait after triggering this effect list before running the next one'"></tooltip></div>
+                            <div style="font-size: 10px;opacity: 0.8;text-align: right;" aria-label="Effects duration: The total duration in seconds the queue should wait after triggering this effect list before running the next one">
+                                EFFECTS DURATION 
+                                <tooltip role="tooltip" aria-label="The total duration in seconds the queue should wait after triggering this effect list before running the next one." text="'The total duration (in secs) the queue should wait after triggering this effect list before running the next one'"></tooltip>
+                            </div>
                             <div 
                                 style="display: flex; justify-content: flex-end; align-items: center;font-size: 12px;"
                                 ng-click="$ctrl.openEditQueueDurationModal()"
@@ -41,7 +42,10 @@
                         </div>
 
                         <div style="margin-right: 17px;" ng-if="$ctrl.validQueueSelected()">
-                            <div style="font-size: 10px;opacity: 0.8;text-align: right;">QUEUE PRIORITY <tooltip text="'If an effect list has priority, it will get added in front of other lists in the queue that do not have priority.'"></tooltip></div>
+                            <div style="font-size: 10px;opacity: 0.8;text-align: right;" aria-label="Queue Priority: If an effect list has priority, it will get added in front of other lists in the queue that do not have priority.">
+                                QUEUE PRIORITY 
+                                <tooltip role="tooltip" aria-label="If an effect list has priority, it will get added in front of other lists in the queue that do not have priority." text="'If an effect list has priority, it will get added in front of other lists in the queue that do not have priority.'"></tooltip>
+                            </div>
                             <div class="text-dropdown filter-mode-dropdown" uib-dropdown uib-dropdown-toggle>
                                 <a href role="button" class="ddtext" style="font-size: 12px;" aria-label="Selected: {{$ctrl.getSelectedQueuePriority() === 'Yes' ? 'high queue priority' : 'no queue priority'}}">
                                     {{$ctrl.getSelectedQueuePriority()}}<span class="fb-arrow down ddtext"></span>
@@ -58,7 +62,10 @@
                         </div>
 
                         <div style="margin-right: 20px;display: flex;flex-direction: column;align-items: flex-end;">
-                            <div style="font-size: 10px;opacity: 0.8;text-align: right;">QUEUE<tooltip text="'Effect queues allow you to queue up effects so they don\\'t overlap each other. Particularly useful for events!'"></tooltip></div>
+                            <div style="font-size: 10px;opacity: 0.8;text-align: right;">
+                                QUEUE
+                                <tooltip role="tooltip" aria-label="Effect queues allow you to queue up effects so they don't overlap each other. Particularly useful for events." text="'Effect queues allow you to queue up effects so they don\\'t overlap each other. Particularly useful for events!'"></tooltip>
+                            </div>
                             <div class="text-dropdown filter-mode-dropdown" uib-dropdown uib-dropdown-toggle>
                                 <a href role="button" class="ddtext" style="font-size: 12px;">{{$ctrl.getSelectedEffectQueueName()}}<span class="fb-arrow down ddtext"></span></a>
                                 <ul class="dropdown-menu" uib-dropdown-menu role="menu">
@@ -67,10 +74,9 @@
                                             href 
                                             style="padding-left: 10px;" 
                                             ng-click="$ctrl.effectsData.queue = null"
-                                            aria-label="Unset: Effects will always play immediately when triggered"
                                             role="menuitem"
                                         >
-                                            Unset <tooltip text="'Effects will always play immediately when triggered.'"></tooltip>
+                                            Unset <tooltip role="tooltip" aria-label="Effects will always play immediately when triggered" text="'Effects will always play immediately when triggered.'"></tooltip>
                                             <span ng-show="$ctrl.effectsData.queue == null" style="color:green;display: inline-block;"><i class="fas fa-check"></i></span>
                                         </a>   
                                     </li>
@@ -102,10 +108,10 @@
                             </div>
                         </div>
 
-                        <div class="test-effects-btn" uib-tooltip="Test Effects" aria-label="Test effects" ng-click="$ctrl.testEffects()" role="button">
+                        <div class="test-effects-btn clickable" uib-tooltip="Test Effects" aria-label="Test effects" ng-click="$ctrl.testEffects()" role="button">
                             <i class="far fa-play-circle"></i>
                         </div>
-                        
+
                         <div uib-dropdown uib-dropdown-toggle uib-tooltip="Open effects menu" tooltip-append-to-body="true">
                             <a href role="button" aria-label="Open effects menu" class="effects-actions-btn">
                                 <i class="fal fa-ellipsis-v"></i>
@@ -154,11 +160,7 @@
                                     </a>
                                 </li>
                                 <li role="none">
-                                    <a
-                                        href
-                                        ng-click="$ctrl.importSharedEffects();"
-                                        role="menuitem"
-                                    >
+                                    <a href ng-click="$ctrl.importSharedEffects();" role="menuitem">
                                         <i class="far fa-cloud-download-alt" style="margin-right: 5px;"></i> Import shared effect
                                     </a>
                                 </li>
@@ -202,38 +204,22 @@
                                             </a>
                                             <ul class="dropdown-menu" uib-dropdown-menu style="transform: translateY(-205px);" role="menu">
                                                 <li role="none">
-                                                    <a
-                                                        href
-                                                        role="menuitem"
-                                                        ng-click="$ctrl.editLabelForEffectAtIndex($index)"
-                                                    >
+                                                    <a href role="menuitem" ng-click="$ctrl.editLabelForEffectAtIndex($index)">
                                                         <i class="fal fa-tag" style="margin-right: 10px;"></i>  {{$ctrl.getLabelButtonTextForLabel(effect.effectLabel)}}
                                                     </a>
                                                 </li>
                                                 <li role="none">
-                                                    <a
-                                                        href
-                                                        role="menuitem"
-                                                        ng-click="$ctrl.openEditEffectModal(effect, $index, $ctrl.trigger)"
-                                                    >
+                                                    <a href role="menuitem" ng-click="$ctrl.openEditEffectModal(effect, $index, $ctrl.trigger)">
                                                         <i class="fal fa-edit" style="margin-right: 10px;"></i>  Edit
                                                     </a>
                                                 </li>
                                                 <li role="none">
-                                                    <a
-                                                        href
-                                                        role="menuitem"
-                                                        ng-click="$ctrl.duplicateEffectAtIndex($index)"
-                                                    >
+                                                    <a href role="menuitem" ng-click="$ctrl.duplicateEffectAtIndex($index)">
                                                         <i class="fal fa-clone" style="margin-right: 10px;"></i>  Duplicate
                                                     </a>
                                                 </li>
                                                 <li role="none">
-                                                    <a
-                                                        href
-                                                        role="menuitem"
-                                                        ng-click="$ctrl.copyEffectAtIndex($index)"
-                                                    >
+                                                    <a href role="menuitem" ng-click="$ctrl.copyEffectAtIndex($index)">
                                                         <i class="fal fa-copy" style="margin-right: 10px;"></i>  Copy
                                                     </a>
                                                 </li>
@@ -248,12 +234,7 @@
                                                     </a>
                                                 </li>
                                                 <li role="none">
-                                                    <a
-                                                        href
-                                                        role="menuitem"
-                                                        ng-click="$ctrl.removeEffectAtIndex($index)"
-                                                        style="color: #fb7373;"
-                                                    >
+                                                    <a href role="menuitem" ng-click="$ctrl.removeEffectAtIndex($index)" style="color: #fb7373;">
                                                         <i class="far fa-trash-alt" style="margin-right: 10px;"></i>  Delete
                                                     </a>
                                                 </li>
@@ -263,9 +244,11 @@
                             </div>
                         </div>
                     </div>
-            
+
                     <div class="add-more-functionality" style="margin-top: 16px;margin-left: 12px;">
-                        <a href class="clickable" ng-click="$ctrl.openNewEffectModal()" aria-label="Add new effect"> <i class="far fa-plus-circle"></i>Add New Effect</a>               
+                        <a href role="button" class="clickable" ng-click="$ctrl.openNewEffectModal()" aria-label="Add new effect">
+                            <i class="far fa-plus-circle"></i>Add New Effect
+                        </a>               
                     </div>
                 </div>
                 
