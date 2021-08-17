@@ -119,25 +119,6 @@ function getQuote(quoteId) {
     });
 }
 
-function getRandomQuoteByWord(searchTerm) {
-    return new Promise((resolve) => {
-        db.find({ $where: function () {
-            let quoteText = this.text;
-            if (quoteText != null) {
-                return this.text.indexOf(searchTerm) !== -1;
-            }
-            return false;
-        }}, function (err, docs) {
-            if (err) {
-                logger.debug(err);
-                return resolve(null);
-            }
-            let doc = docs[Math.floor(Math.random() * docs.length)];
-            return resolve(doc);
-        });
-    });
-}
-
 function getRandomQuoteByDate(dateConfig) {
     let regex = "^";
     if (dateConfig.year) {
@@ -203,7 +184,6 @@ function getRandomQuoteByGame(gameSearch) {
 }
 
 // searches quotes list for entries containing the specified text and returns a random entry from the matched items
-// replacement for getRandomQuoteByWord
 function getRandomQuoteContainingText(text) {
 
     // convert text query into a regex
@@ -338,7 +318,6 @@ exports.removeQuote = removeQuote;
 exports.updateQuote = updateQuote;
 exports.getQuote = getQuote;
 exports.getRandomQuote = getRandomQuote;
-exports.getRandomQuoteByWord = getRandomQuoteByWord;
 exports.getRandomQuoteContainingText = getRandomQuoteContainingText;
 exports.getRandomQuoteByAuthor = getRandomQuoteByAuthor;
 exports.getRandomQuoteByDate = getRandomQuoteByDate;
