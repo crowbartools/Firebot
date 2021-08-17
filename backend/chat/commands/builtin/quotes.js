@@ -74,7 +74,7 @@ const quotesManagement = {
             {
                 arg: "remove",
                 usage: "remove [quoteId]",
-                description: "Removes a quote using it's id.",
+                description: "Removes a quote using its id.",
                 restrictionData: {
                     restrictions: [
                         {
