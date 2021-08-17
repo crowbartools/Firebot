@@ -6,6 +6,19 @@ const frontendCommunicator = require("../common/frontend-communicator");
 
 const getTimersDb = () => profileManager.getJsonDbInProfile("timers");
 
+/**
+ * @typedef SavedTimer
+ * @property {string} id - the id of the timer
+ * @property {name} name - the name of the timer
+ * @property {object} effects - the saved effects in the list
+ * @property {string} effects.id - the effect list root id
+ * @property {any[]} effects.list - the array of effects objects
+ * @property {boolean} active - the active status of the timer
+ * @property {number} interval - the interval of the timer
+ * @property {number} requiredChatLines - the amount of chat lines before the timer starts
+ * @property {boolean} onlyWhenLive - whether the timer should only run when the stream is live
+ */
+
 /**@extends {NodeJS.EventEmitter} */
 class TimerAccess extends EventEmitter {
 
@@ -41,25 +54,56 @@ class TimerAccess extends EventEmitter {
         }
     }
 
-    saveTimer(timer, emitUpdateEventToFrontEnd = true) {
+    async saveTimer(timer) {
         if (timer == null) return;
 
-        this._timers[timer.id] = timer;
+        if (timer.id != null) {
+            this._timers[timer.id] = timer;
+        } else {
+            const uuidv1 = require("uuid/v1");
+            timer.id = uuidv1();
+            this._timers[timer.id] = timer;
+        }
 
         try {
-            const timerDb = getTimersDb();
+            const timersDb = getTimersDb();
 
-            timerDb.push("/" + timer.id, timer);
+            timersDb.push("/" + timer.id, timer);
 
             logger.debug(`Saved timer ${timer.id} to file.`);
 
-            if (emitUpdateEventToFrontEnd) {
-                frontendCommunicator.send("timerUpdate", timer);
-            }
+            this.emit("timerSaved", timer);
 
-            this.emit("timer-save", timer);
+            return timer;
         } catch (err) {
-            logger.warn(`There was an error saving an timer.`, err);
+            logger.warn(`There was an error saving a timer.`, err);
+            return null;
+        }
+    }
+
+    /**
+     *
+     * @param {SavedTimer[]} allTimers
+     */
+    async saveAllTimers(allTimers) {
+        /** @type {Record<string,SavedTimer>} */
+        const timersObject = allTimers.reduce((acc, current) => {
+            acc[current.id] = current;
+            return acc;
+        }, {});
+
+        this._timers = timersObject;
+
+        try {
+            const timersDb = getTimersDb();
+
+            timersDb.push("/", this._timers);
+
+            logger.debug(`Saved all timers to file.`);
+
+        } catch (err) {
+            logger.warn(`There was an error saving all timers.`, err);
+            return null;
         }
     }
 
@@ -75,7 +119,7 @@ class TimerAccess extends EventEmitter {
 
             logger.debug(`Deleted timer: ${timerId}`);
 
-            this.emit("timer-delete", timerId);
+            this.emit("timerDeleted", timerId);
         } catch (err) {
             logger.warn(`There was an error deleting a timer.`, err);
         }
@@ -90,7 +134,7 @@ class TimerAccess extends EventEmitter {
 
         this.saveTimer(timer);
 
-        this.emit("timerUpdate", timer);
+        frontendCommunicator.send("timerUpdate", timer);
     }
 }
 
@@ -98,9 +142,13 @@ const timerAccess = new TimerAccess();
 
 frontendCommunicator.onAsync("getTimers", async () => timerAccess.getTimers());
 
-frontendCommunicator.on("saveTimer", (timer) => {
-    timerAccess.saveTimer(timer, false);
-});
+frontendCommunicator.onAsync("saveTimer", (timer) => timerAccess.saveTimer(timer));
+
+frontendCommunicator.onAsync("saveAllTimers",
+    async (/** @type {SavedTimer[]} */ allTimers) => {
+        timerAccess.saveAllTimers(allTimers);
+    }
+);
 
 frontendCommunicator.on("deleteTimer", (timerId) => {
     timerAccess.deleteTimer(timerId);
