@@ -342,7 +342,7 @@ async function uiChatMessage(data) {
 
                     if (emoteData) {
                         for (let channelEmote of emoteData.channelEmotes) {
-                            if (channelEmote.code === word) {
+                            if (channelEmote.name === word) {
                                 emote = channelEmote;
                                 foundEmote = true;
                                 break;
