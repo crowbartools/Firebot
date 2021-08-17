@@ -144,11 +144,15 @@ const effectGroup = {
                     return resolve(true);
                 }
 
-                trigger.type = EffectTrigger.PRESET_LIST;
-                trigger.metadata.presetListArgs = effect.presetListArgs;
+                // The original trigger may be in use down the chain of events,
+                // we must therefore deepclone it in order to prevent mutations
+                const newTrigger = JSON.parse(JSON.stringify(trigger));
+
+                newTrigger.type = EffectTrigger.PRESET_LIST;
+                newTrigger.metadata.presetListArgs = effect.presetListArgs;
 
                 processEffectsRequest = {
-                    trigger: trigger,
+                    trigger: newTrigger,
                     effects: presetList.effects
                 };
             } else {
