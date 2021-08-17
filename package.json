@@ -39,6 +39,7 @@
     "node-sass": "^4.14.1"
   },
   "dependencies": {
+    "@aws-sdk/client-polly": "^3.26.0",
     "@mixer/client-node": "^3.5.0",
     "@mixer/interactive-node": "^2.9.0",
     "angular": "^1.8.0",
