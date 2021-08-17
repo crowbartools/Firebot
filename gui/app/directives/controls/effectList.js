@@ -63,8 +63,15 @@
                                 <a href role="button" class="ddtext" style="font-size: 12px;">{{$ctrl.getSelectedEffectQueueName()}}<span class="fb-arrow down ddtext"></span></a>
                                 <ul class="dropdown-menu" uib-dropdown-menu role="menu">
                                     <li role="none">
-                                        <a href style="padding-left: 10px;" ng-click="$ctrl.effectsData.queue = null" role="menuitem">Unset <tooltip text="'Effects will always play immediately when triggered.'"></tooltip>
-                                        <span ng-show="$ctrl.effectsData.queue == null" style="color:green;display: inline-block;"><i class="fas fa-check"></i></span>
+                                        <a 
+                                            href 
+                                            style="padding-left: 10px;" 
+                                            ng-click="$ctrl.effectsData.queue = null"
+                                            aria-label="Unset: Effects will always play immediately when triggered"
+                                            role="menuitem"
+                                        >
+                                            Unset <tooltip text="'Effects will always play immediately when triggered.'"></tooltip>
+                                            <span ng-show="$ctrl.effectsData.queue == null" style="color:green;display: inline-block;"><i class="fas fa-check"></i></span>
                                         </a>   
                                     </li>
 
@@ -104,43 +111,31 @@
                                 <i class="fal fa-ellipsis-v"></i>
                             </a>
                             <ul class="dropdown-menu" uib-dropdown-menu role="menu">
-                                <li 
-                                    role="menuitem"
-                                    ng-class="{'disabled': !$ctrl.effectsData.list.length > 0}"
-                                    ng-click="!$ctrl.effectsData.list > 0 ? $event.stopPropagation() : null"
-                                >
+                                <li role="none" ng-class="{'disabled': !$ctrl.effectsData.list.length > 0}">
                                     <a 
                                         href
-                                        ng-click="$ctrl.copyEffects()"
-                                        role="button"
+                                        ng-click="!$ctrl.effectsData.list > 0 ? $event.stopPropagation() : null; $ctrl.copyEffects()"
+                                        role="menuitem"
                                         aria-disabled="{{!$ctrl.effectsData.list.length > 0}}"
                                     >
                                         <i class="far fa-copy" style="margin-right: 10px;"></i> Copy all effects
                                     </a>
                                 </li>
-                                <li
-                                    role="menuitem"
-                                    ng-class="{'disabled': !$ctrl.hasCopiedEffects()}"
-                                    ng-click="!$ctrl.hasCopiedEffects() ? $event.stopPropagation() : null"
-                                >
+                                <li role="none" ng-class="{'disabled': !$ctrl.hasCopiedEffects()}">
                                     <a
                                         href
-                                        ng-click="$ctrl.pasteEffects(true)"
-                                        role="button"
+                                        ng-click="!$ctrl.hasCopiedEffects() ? $event.stopPropagation() : null; $ctrl.pasteEffects(true)"
+                                        role="menuitem"
                                         aria-disabled="{{!$ctrl.hasCopiedEffects()}}"
                                     >
                                         <i class="far fa-paste" style="margin-right: 10px;"></i> Paste effects
                                     </a>
                                 </li>
-                                <li
-                                    role="menuitem"
-                                    ng-class="{'disabled': !$ctrl.effectsData.list.length > 0}"
-                                    ng-click="!$ctrl.effectsData.list > 0 ? $event.stopPropagation() : null"
-                                >
+                                <li role="none" ng-class="{'disabled': !$ctrl.effectsData.list.length > 0}">
                                     <a
                                         href
-                                        ng-click="$ctrl.removeAllEffects()"
-                                        role="button"
+                                        ng-click="!$ctrl.effectsData.list > 0 ? $event.stopPropagation() : null; $ctrl.removeAllEffects()"
+                                        role="menuitem"
                                         aria-disabled="{{!$ctrl.effectsData.list.length > 0}}"
                                         style="color: #fb7373;"
                                     >
@@ -148,24 +143,21 @@
                                     </a>
                                 </li>
                                 <li class="divider" role="separator"></li>
-                                <li
-                                    role="menuitem"
-                                    ng-class="{'disabled': !$ctrl.effectsData.list.length > 0}"
-                                    ng-click="!$ctrl.effectsData.list > 0 ? $event.stopPropagation() : null"
-                                >
+                                <li role="none" ng-class="{'disabled': !$ctrl.effectsData.list.length > 0}">
                                     <a
                                         href
-                                        ng-click="$ctrl.shareEffects();" role="button"
+                                        ng-click="!$ctrl.effectsData.list > 0 ? $event.stopPropagation() : null; $ctrl.shareEffects();"
+                                        role="menuitem"
                                         aria-disabled="{{!$ctrl.effectsData.list.length > 0}}"
                                     >
                                         <i class="far fa-share-alt" style="margin-right: 10px;"></i> Share effects
                                     </a>
                                 </li>
-                                <li role="menuitem">
+                                <li role="none">
                                     <a
                                         href
                                         ng-click="$ctrl.importSharedEffects();"
-                                        role="button"
+                                        role="menuitem"
                                     >
                                         <i class="far fa-cloud-download-alt" style="margin-right: 5px;"></i> Import shared effect
                                     </a>
@@ -209,56 +201,56 @@
                                                 <i class="fal fa-ellipsis-v"></i>
                                             </a>
                                             <ul class="dropdown-menu" uib-dropdown-menu style="transform: translateY(-205px);" role="menu">
-                                                <li role="menuitem">
+                                                <li role="none">
                                                     <a
                                                         href
-                                                        role="button"
+                                                        role="menuitem"
                                                         ng-click="$ctrl.editLabelForEffectAtIndex($index)"
                                                     >
                                                         <i class="fal fa-tag" style="margin-right: 10px;"></i>  {{$ctrl.getLabelButtonTextForLabel(effect.effectLabel)}}
                                                     </a>
                                                 </li>
-                                                <li role="menuitem">
+                                                <li role="none">
                                                     <a
                                                         href
-                                                        role="button"
+                                                        role="menuitem"
                                                         ng-click="$ctrl.openEditEffectModal(effect, $index, $ctrl.trigger)"
                                                     >
                                                         <i class="fal fa-edit" style="margin-right: 10px;"></i>  Edit
                                                     </a>
                                                 </li>
-                                                <li role="menuitem">
+                                                <li role="none">
                                                     <a
                                                         href
+                                                        role="menuitem"
                                                         ng-click="$ctrl.duplicateEffectAtIndex($index)"
-                                                        role="button"
                                                     >
                                                         <i class="fal fa-clone" style="margin-right: 10px;"></i>  Duplicate
                                                     </a>
                                                 </li>
-                                                <li role="menuitem">
+                                                <li role="none">
                                                     <a
                                                         href
-                                                        role="button"
+                                                        role="menuitem"
                                                         ng-click="$ctrl.copyEffectAtIndex($index)"
                                                     >
                                                         <i class="fal fa-copy" style="margin-right: 10px;"></i>  Copy
                                                     </a>
                                                 </li>
-                                                <li role="menuitem" ng-class="{'disabled': !$ctrl.hasCopiedEffects()}" ng-click="!$ctrl.hasCopiedEffects() ? $event.stopPropagation() : null">
+                                                <li role="none" ng-class="{'disabled': !$ctrl.hasCopiedEffects()}">
                                                     <a
                                                         href
-                                                        role="button"
-                                                        ng-click="$ctrl.pasteEffectsAtIndex($index, false)"
+                                                        role="menuitem"
+                                                        ng-click="!$ctrl.hasCopiedEffects() ? $event.stopPropagation() : null; $ctrl.pasteEffectsAtIndex($index, false)"
                                                         aria-disabled={{!$ctrl.hasCopiedEffects()}}
                                                     >
                                                         <i class="fal fa-paste" style="margin-right: 10px;"></i>  Paste After
                                                     </a>
                                                 </li>
-                                                <li role="menuitem">
+                                                <li role="none">
                                                     <a
                                                         href
-                                                        role="button"
+                                                        role="menuitem"
                                                         ng-click="$ctrl.removeEffectAtIndex($index)"
                                                         style="color: #fb7373;"
                                                     >
