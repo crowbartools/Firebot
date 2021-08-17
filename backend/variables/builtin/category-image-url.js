@@ -1,6 +1,7 @@
 "use strict";
 
 const twitchApi = require("../../twitch-api/api");
+const accountAccess = require("../../common/account-access");
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
 const model = {
@@ -20,19 +21,23 @@ const model = {
             {
                 usage: "categoryImageUrl[ebiggz]",
                 description: "Gets the image url of the last streamed category for a specific channel."
+            },
+            {
+                usage: "categoryImageUrl[ebiggz, 285x380]",
+                description: "Get a different image size (use aspect ratio 4:3). Default is 285x380."
             }
         ],
         categories: [VariableCategory.USER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: async (_, username) => {
+    evaluator: async (_, username, size = "285x380") => {
         if (username == null) {
             username = accountAccess.getAccounts().streamer.username;
         }
 
         try {
             const channelInfo = await twitchApi.channels.getChannelInformationByUsername(username);
-            const category = await twitchApi.categories.getCategoryById(channelInfo.game_id);
+            const category = await twitchApi.categories.getCategoryById(channelInfo.game_id, size);
 
             return category.boxArtUrl ? category.boxArtUrl : "[No Category Image Found]";
         } catch (err) {
