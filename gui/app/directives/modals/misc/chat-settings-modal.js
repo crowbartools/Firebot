@@ -11,18 +11,18 @@
                 <div class="modal-body">
                     <div style="padding: 0 10px">
                         <div style="display: flex;align-items: center;justify-content: space-between;">
-                            <span style="font-weight: 900;">Chat User List</span>
+                            <span style="font-weight: 900;" id="chatUserListLabel">Chat User List</span>
                             <span>
-                                <input class="tgl tgl-light" id="cb5" type="checkbox"
+                                <input class="tgl tgl-light sr-only" id="cb5" type="checkbox" aria-labelledby="chatUserListLabel"
                                     ng-checked="settings.getShowChatViewerList()"
                                     ng-click="settings.setShowChatViewerList(!settings.getShowChatViewerList())"/>
                                 <label class="tgl-btn" for="cb5"></label>
                             </span>
                         </div>
                         <div style="display: flex;align-items: center;justify-content: space-between;">
-                            <span style="font-weight: 900;">Activity Feed</span>
+                            <span style="font-weight: 900;" id="activityFeedLabel">Activity Feed</span>
                             <span>
-                                <input class="tgl tgl-light" id="activityfeed" type="checkbox"
+                                <input class="tgl tgl-light sr-only" id="activityfeed" type="checkbox" aria-labelledby="activityFeedLabel"
                                     ng-checked="settings.showActivityFeed()"
                                     ng-click="settings.setShowActivityFeed(!settings.showActivityFeed())"/>
                                 <label class="tgl-btn" for="activityfeed"></label>
@@ -35,12 +35,12 @@
                                     {{selectedNotificationSound.name}} <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu" uib-dropdown-menu role="menu">
-                                    <li role="menuitem" ng-repeat="n in notificationOptions">
-                                        <a href ng-click="selectNotification(n)">{{n.name}}</a>
+                                    <li role="none" ng-repeat="n in notificationOptions">
+                                        <a href role="menuitem" ng-click="selectNotification(n)">{{n.name}}</a>
                                     </li>
                                 </ul>
                             </span>
-                            <span class="clickable" ng-click="playNotification()" style="color: #1f849e; font-size: 18px; padding-left: 5px;">
+                            <span class="clickable" ng-click="playNotification()" style="color: #1f849e; font-size: 18px; padding-left: 5px;" aria-label="Play notification">
                                 <i class="fas fa-play-circle"></i>
                             </span>
                             <file-chooser ng-show="selectedNotificationSound.name === 'Custom'"
@@ -67,18 +67,18 @@
                             </div>
                         </div>
                         <div style="display: flex;align-items: center;justify-content: space-between;">
-                            <span style="font-weight: 900;">Alternate Backgrounds</span>
+                            <span style="font-weight: 900;" id="alternateBackgroundsLabel">Alternate Backgrounds</span>
                             <span>
-                                <input class="tgl tgl-light" id="cb9" type="checkbox"
+                                <input class="tgl tgl-light sr-only" id="cb9" type="checkbox" aria-labelledby="alternateBackgroundsLabel"
                                     ng-checked="settings.chatAlternateBackgrounds()"
                                     ng-click="settings.setChatAlternateBackgrounds(!settings.chatAlternateBackgrounds())"/>
                                 <label class="tgl-btn" for="cb9"></label>
                             </span>
                         </div>
                         <div style="display: flex;align-items: center;justify-content: space-between;">
-                            <span style="font-weight: 900;">Hide Deleted Messages <tooltip text="'Turning this on will cover deleted messages with a blackbox. Hovering over the message will reveal it. Great for letting your mods hide spoilers!'"></tooltip></span>
+                            <span style="font-weight: 900;" id="hideDeletedMessagesLabel">Hide Deleted Messages <tooltip text="'Turning this on will cover deleted messages with a blackbox. Hovering over the message will reveal it. Great for letting your mods hide spoilers!'"></tooltip></span>
                             <span>
-                                <input class="tgl tgl-light" id="cb10" type="checkbox"
+                                <input class="tgl tgl-light sr-only" id="cb10" type="checkbox" aria-labelledby="hideDeletedMessagesLabel"
                                     ng-checked="settings.chatHideDeletedMessages()"
                                     ng-click="settings.setChatHideDeletedMessages(!settings.chatHideDeletedMessages())"/>
                                 <label class="tgl-btn" for="cb10"></label>
@@ -86,9 +86,9 @@
                         </div>
 
                         <div style="display: flex;align-items: center;justify-content: space-between;">
-                            <span style="font-weight: 900;">Show Avatars</span>
+                            <span style="font-weight: 900;" id="showAvatarsLabel">Show Avatars</span>
                             <span>
-                                <input class="tgl tgl-light" id="cb11" type="checkbox"
+                                <input class="tgl tgl-light sr-only" id="cb11" type="checkbox" aria-labelledby="showAvatarsLabel"
                                     ng-checked="settings.getShowAvatars()"
                                     ng-click="settings.setShowAvatars(!settings.getShowAvatars())"/>
                                 <label class="tgl-btn" for="cb11"></label>
@@ -96,9 +96,9 @@
                         </div>
 
                         <div style="display: flex;align-items: center;justify-content: space-between;">
-                            <span style="font-weight: 900;">Show Timestamps</span>
+                            <span style="font-weight: 900;" id="showTimestampsLabel">Show Timestamps</span>
                             <span>
-                                <input class="tgl tgl-light" id="cb12" type="checkbox"
+                                <input class="tgl tgl-light sr-only" id="cb12" type="checkbox" aria-labelledby="showTimestampsLabel"
                                     ng-checked="settings.getShowTimestamps()"
                                     ng-click="settings.setShowTimestamps(!settings.getShowTimestamps())"/>
                                 <label class="tgl-btn" for="cb12"></label>
@@ -106,9 +106,9 @@
                         </div>
 
                         <div style="display: flex;align-items: center;justify-content: space-between;">
-                            <span style="font-weight: 900;">BTTV/FFZ Emotes</span>
+                            <span style="font-weight: 900;" id="thirdPartyEmotesLabel">Show BTTV/FFZ Emotes</span>
                             <span>
-                                <input class="tgl tgl-light" id="cb13" type="checkbox"
+                                <input class="tgl tgl-light sr-only" id="cb13" type="checkbox" aria-labelledby="thirdPartyEmotesLabel"
                                     ng-checked="settings.getShowThirdPartyEmotes()"
                                     ng-click="settings.setShowThirdPartyEmotes(!settings.getShowThirdPartyEmotes())"/>
                                 <label class="tgl-btn" for="cb13"></label>
@@ -116,9 +116,9 @@
                         </div>
 
                         <div style="display: flex;align-items: center;justify-content: space-between;">
-                            <span style="font-weight: 900;">Show Pronouns <a href="https://pronouns.alejo.io/" target="_blank" style="font-size:10px;"><i class="fas fa-external-link"></i></a></span>
+                            <span style="font-weight: 900;" id="showPronounsLabel">Show Pronouns <a href="https://pronouns.alejo.io/" target="_blank" style="font-size:10px;"><i class="fas fa-external-link"></i></a></span>
                             <span>
-                                <input class="tgl tgl-light" id="cb14" type="checkbox"
+                                <input class="tgl tgl-light sr-only" id="cb14" type="checkbox" aria-labelledby="showPronounsLabel"
                                     ng-checked="settings.getShowPronouns()"
                                     ng-click="settings.setShowPronouns(!settings.getShowPronouns())"/>
                                 <label class="tgl-btn" for="cb14"></label>
@@ -126,9 +126,9 @@
                         </div>
 
                         <div style="display: flex;align-items: center;justify-content: space-between;">
-                            <span style="font-weight: 900;">Custom Font Size</span>
+                            <span style="font-weight: 900;" id="showCustomFontSize">Show custom Font Size</span>
                             <span>
-                                <input class="tgl tgl-light" id="cb15" type="checkbox"
+                                <input class="tgl tgl-light sr-only" id="cb15" type="checkbox" aria-labelledby="showCustomFontSize"
                                     ng-checked="settings.getChatCustomFontSizeEnabled()"
                                     ng-click="toggleCustomFontEnabled()"/>
                                 <label class="tgl-btn" for="cb15"></label>
