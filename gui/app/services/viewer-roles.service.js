@@ -88,11 +88,6 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
                 return firebotRoles;
             };
 
-            const mixerRoles = mixerRoleConstants.getMixerRoles();
-            service.getMixerRoles = function() {
-                return mixerRoles;
-            };
-
             const twitchRoles = twitchRoleConstants.getTwitchRoles();
             service.getTwitchRoles = function() {
                 return twitchRoles;
