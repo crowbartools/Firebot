@@ -14,7 +14,7 @@
                   <div style="display: flex;align-items: center;justify-content: space-between;margin-bottom:5px;">
                       <span style="font-weight: 900;">{{column.headerName}}</span>
                       <span>
-                          <input class="tgl tgl-light" id="{{column.field}}" type="checkbox" 
+                          <input class="tgl tgl-light sr-only" id="{{column.field}}" type="checkbox" 
                             ng-checked="$ctrl.columnIsChecked(column)" 
                             ng-click="$ctrl.flipColumnPreference(column)"/>
                         <label class="tgl-btn" for="{{column.field}}"></label>

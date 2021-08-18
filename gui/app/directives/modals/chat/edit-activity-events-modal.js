@@ -15,9 +15,9 @@
                     <searchbar placeholder-text="Search events" query="eventSearch" />
                 </div>
                 <div ng-hide="eventSearch && !!eventSearch.length" style="display: flex;align-items: center;justify-content: space-between;margin-bottom:10px;padding-bottom: 5px; border-bottom: 1px solid #585858;">
-                        <span style="font-weight: 900;">Select All</span>
+                        <span style="font-weight: 900;" id="selectAllLabel">Select All</span>
                         <span>
-                            <input class="tgl tgl-light" id="select-all" type="checkbox" 
+                            <input class="tgl tgl-light sr-only" id="select-all" type="checkbox" aria-labelledby="selectAllLabel"
                             ng-checked="$ctrl.allEventsChecked()" 
                             ng-click="$ctrl.toggleAllEvents()"/>
                         <label class="tgl-btn" for="select-all"></label>
@@ -27,7 +27,7 @@
                   <div style="display: flex;align-items: center;justify-content: space-between;margin-bottom:5px;">
                       <span><span style="font-weight: 900;">{{event.eventName}}</span> <span>({{event.sourceName}})</span></span>
                       <span>
-                          <input class="tgl tgl-light" id="{{event.sourceId}}:{{event.eventId}}" type="checkbox" 
+                          <input class="tgl tgl-light sr-only" id="{{event.sourceId}}:{{event.eventId}}" type="checkbox" aria-label="{{event.sourceId}} {{event.eventId}}"
                             ng-checked="$ctrl.eventIsChecked(event)" 
                             ng-click="$ctrl.toggleEventChecked(event)"/>
                         <label class="tgl-btn" for="{{event.sourceId}}:{{event.eventId}}"></label>
