@@ -75,6 +75,8 @@
                     gameName: ""
                 };
 
+                $ctrl.streamTags = [];
+
                 $ctrl.selectedGame = null;
 
                 $ctrl.formFieldHasError = (fieldName) => {
@@ -92,7 +94,14 @@
                                         if (game != null) {
                                             $ctrl.selectedGame = game;
                                         }
-                                        $ctrl.dataLoaded = true;
+                                        backendCommunicator.fireEventAsync("get-channel-stream-tags")
+                                            .then((tags) => {
+                                                if (tags != null) {
+                                                    $ctrl.streamTags = tags;
+                                                    console.log(tags);
+                                                }
+                                                $ctrl.dataLoaded = true;
+                                            });
                                     });
                             }
                         });
