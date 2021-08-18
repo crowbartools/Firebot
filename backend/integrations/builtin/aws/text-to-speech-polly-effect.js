@@ -455,7 +455,8 @@ const playSound = {
 
         let data = {
             filepath: mp3Path,
-            volume: effect.volume
+            volume: effect.volume,
+            overlayInstance: effect.overlayInstance
         };
 
         // Set output device.
