@@ -68,7 +68,17 @@
                                         <i class="far fa-times"></i>
                                     </span>
                                 </div>
-                                <div class="role-bar clickable" role="button" aria-label="Add tag" uib-tooltip="Add tag" tooltip-append-to-body="true">
+                                <div 
+                                    class="role-bar clickable"
+                                    ng-show="$ctrl.streamTags.length < 5"
+                                    ng-class="{'disabled': !$ctrl.allStreamTags.length > 0}"
+                                    aria-disabled="{{!$ctrl.allStreamTags.length > 0}}"
+                                    role="button" 
+                                    aria-label="{{$ctrl.allStreamTags.length > 0 ? 'Add tag' : 'Loading tags...'}}"
+                                    uib-tooltip="{{$ctrl.allStreamTags.length > 0 ? 'Add tag' : 'Loading tags...'}}" 
+                                    tooltip-append-to-body="true" 
+                                    ng-click="$ctrl.openAddStreamTagsModal()"
+                                >
                                     <i class="far fa-plus"></i> 
                                 </div>
                             </div>
@@ -86,7 +96,7 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function($scope, ngToast, backendCommunicator) {
+            controller: function($scope, ngToast, utilityService, backendCommunicator) {
                 const $ctrl = this;
 
                 $ctrl.dataLoaded = false;
@@ -100,6 +110,7 @@
                 };
 
                 $ctrl.streamTags = [];
+                $ctrl.allStreamTags = [];
 
                 $ctrl.selectedGame = null;
 
@@ -108,27 +119,46 @@
                         && $scope.streamInfo[fieldName].$invalid;
                 };
 
-                $ctrl.$onInit = () => {
-                    backendCommunicator.fireEventAsync("get-channel-info")
-                        .then((streamInfo) => {
-                            if (streamInfo) {
-                                $ctrl.streamInfo = streamInfo;
-                                backendCommunicator.fireEventAsync("get-twitch-game", $ctrl.streamInfo.gameId)
-                                    .then(game => {
-                                        if (game != null) {
-                                            $ctrl.selectedGame = game;
-                                        }
-                                        backendCommunicator.fireEventAsync("get-channel-stream-tags")
-                                            .then((tags) => {
-                                                if (tags != null) {
-                                                    $ctrl.streamTags = tags;
-                                                }
-                                                $ctrl.dataLoaded = true;
-                                            });
-                                    });
-                            }
-                        });
+                $ctrl.$onInit = async () => {
+                    $ctrl.loadStreamInfo();
+                    $ctrl.loadAllStreamTags();
                 };
+
+                $ctrl.loadAllStreamTags = async () => {
+                    $ctrl.allStreamTags = await backendCommunicator.fireEventAsync("get-all-stream-tags");
+                };
+
+                $ctrl.loadStreamInfo = async () => {
+                    $ctrl.streamTags = await backendCommunicator.fireEventAsync("get-channel-stream-tags");
+                    $ctrl.streamInfo = await backendCommunicator.fireEventAsync("get-channel-info");
+
+                    if ($ctrl.streamInfo) {
+                        const game = await backendCommunicator.fireEventAsync("get-twitch-game", $ctrl.streamInfo.gameId);
+
+                        if (game != null) {
+                            $ctrl.selectedGame = game;
+                        }
+                    }
+
+                    if ($ctrl.selectedGame && $ctrl.streamTags) {
+                        $ctrl.dataLoaded = true;
+                    }
+                };
+
+                $ctrl.openAddStreamTagsModal = function() {
+                    utilityService.openSelectModal(
+                        {
+                            label: "Add Stream Tag",
+                            options: $ctrl.allStreamTags,
+                            saveText: "Add",
+                            validationText: "Please select a tag."
+    
+                        },
+                        (tagId) => {
+                            if (!tagId) return;
+                            $ctrl.streamTags.push($ctrl.allStreamTags.find(tag => tag.id === tagId));
+                        });
+                }
 
                 $ctrl.searchGames = function(gameQuery) {
                     backendCommunicator.fireEventAsync("search-twitch-games", gameQuery)

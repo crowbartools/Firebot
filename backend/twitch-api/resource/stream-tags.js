@@ -22,25 +22,54 @@ function mapTwitchTag(tag) {
 	}
 }
 
-async function getAllStreamTags() {
+async function getAllStreamTags(cursor) {
 	const client = twitchApi.getClient();
 
 	try {
-		const response = await client.callApi({
-            type: TwitchAPICallType.Helix,
-            url: "tags/streams"
-        });
+		let response = {};
 
+		if (cursor == null) {
+			response = await client.callApi({
+				type: TwitchAPICallType.Helix,
+				url: "tags/streams"
+			});
+		} else {
+			response = await client.callApi({
+				type: TwitchAPICallType.Helix,
+				url: "tags/streams",
+				query: {
+					after: cursor
+				}
+			});
+		}
+		
 		if (response == null || response.data == null || response.data.length < 1) {
+			logger.error("Failed to get stream tags", error);
             return null;
         }
 
-		/**@type {TwitchStreamTag[]} */
-        return response.data.map(tag => mapTwitchTag(tag));
-	} catch (err) {
+		return response;
+	} catch (error) {
 		logger.error("Failed to get all stream tags", error);
         return null;
+	}	
+}
+
+async function getAllStreamTagsPaginated() {
+	let response = await getAllStreamTags();
+	let cursor = "";
+	let streamTags = response.data;
+	
+	while (response.pagination.cursor && response.pagination.cursor !== cursor) {
+		cursor = response.pagination.cursor;
+		response = await getAllStreamTags(cursor);
+		streamTags = streamTags.concat(response.data.filter(tag => !tag.is_auto));
 	}
+
+	logger.info(streamTags.length);
+
+	/**@type {TwitchStreamTag[]} */
+	return streamTags.map(tag => mapTwitchTag(tag));
 }
 
 async function getChannelStreamTags() {
@@ -61,9 +90,9 @@ async function getChannelStreamTags() {
         }
 
 		/**@type {TwitchStreamTag[]} */
-		return response.data.map(tag => mapTwitchTag(tag));
-	} catch (err) {
-		logger.error("Failed to get channel stream tags", err);
+		return response.data.filter(tag => !tag.is_auto).map(tag => mapTwitchTag(tag));
+	} catch (error) {
+		logger.error("Failed to get channel stream tags", error);
         return null;
 	}
 }
@@ -81,12 +110,12 @@ async function updateChannelStreamTags(tagIds) {
             body: { tag_ids: tagIds }
         });
         return true;
-    } catch (err) {
-        logger.error("Failed to update channel stream tags", err);
+    } catch (error) {
+        logger.error("Failed to update channel stream tags", error);
         return false;
     }
 }
 
-exports.getAllStreamTags = getAllStreamTags;
+exports.getAllStreamTagsPaginated = getAllStreamTagsPaginated;
 exports.getChannelStreamTags = getChannelStreamTags;
 exports.updateChannelStreamTags = updateChannelStreamTags;

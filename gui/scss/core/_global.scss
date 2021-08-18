@@ -1695,6 +1695,10 @@ thead th{
   margin-right: 4px;
   margin-bottom: 4px;
   justify-content: space-between;
+  &.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 }
 
 .effect-bar {
