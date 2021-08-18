@@ -42,6 +42,15 @@ exports.setupListeners = () => {
         }
     });
 
+    frontendCommunicator.onAsync("set-stream-tags", async (tagIds) => {
+        try {
+            await twitchApi.streamTags.updateChannelStreamTags(tagIds);
+            return true;
+        } catch (error) {
+            return false;
+        }
+    });
+
     frontendCommunicator.onAsync("get-channel-rewards", async () => {
         const rewards = await twitchApi.channelRewards.getCustomChannelRewards();
         return rewards || [];
