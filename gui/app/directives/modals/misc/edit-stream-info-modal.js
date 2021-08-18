@@ -54,7 +54,7 @@
                             <label for="tags" class="control-label">Stream Tags</label>
                             <div style="display: block" role="list">
                                 <div class="role-bar" id="streamTags" ng-repeat="tag in $ctrl.streamTags track by tag.id" role="listitem">
-                                    <span>{{tag.name}}</span>
+                                    <span uib-tooltip="{{tag.description}}">{{tag.name}}</span>
                                     <span 
                                         role="button" 
                                         class="clickable" 
@@ -63,7 +63,6 @@
                                         uib-tooltip="Remove tag" 
                                         tooltip-append-to-body="true"
                                         ng-click="$ctrl.removeStreamTag(tag.id)"
-                                        ng-if="!tag.isAuto"
                                     >
                                         <i class="far fa-times"></i>
                                     </span>
