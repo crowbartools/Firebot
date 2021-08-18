@@ -70,13 +70,13 @@
                                 <div 
                                     class="role-bar clickable"
                                     ng-show="$ctrl.streamTags.length < 5"
-                                    ng-class="{'disabled': !$ctrl.allStreamTags.length > 0}"
-                                    aria-disabled="{{!$ctrl.allStreamTags.length > 0}}"
+                                    ng-class="{'disabled': !$ctrl.streamTagsService.allStreamTags.length > 0}"
+                                    aria-disabled="{{!$ctrl.streamTagsService.allStreamTags.length > 0}}"
                                     role="button" 
-                                    aria-label="{{$ctrl.allStreamTags.length > 0 ? 'Add tag' : 'Loading tags...'}}"
-                                    uib-tooltip="{{$ctrl.allStreamTags.length > 0 ? 'Add tag' : 'Loading tags...'}}" 
+                                    aria-label="{{$ctrl.streamTagsService.allStreamTags.length > 0 ? 'Add tag' : 'Loading tags...'}}"
+                                    uib-tooltip="{{$ctrl.streamTagsService.allStreamTags.length > 0 ? 'Add tag' : 'Loading tags...'}}" 
                                     tooltip-append-to-body="true" 
-                                    ng-click="$ctrl.openAddStreamTagsModal()"
+                                    ng-click="!$ctrl.streamTagsService.allStreamTags.length > 0 ? $event.stopPropagation() : $ctrl.openAddStreamTagsModal();"
                                 >
                                     <i class="far fa-plus"></i> 
                                 </div>
@@ -95,7 +95,7 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function($scope, ngToast, utilityService, backendCommunicator) {
+            controller: function($scope, ngToast, utilityService, streamTagsService, backendCommunicator) {
                 const $ctrl = this;
 
                 $ctrl.dataLoaded = false;
@@ -108,8 +108,8 @@
                     gameName: ""
                 };
 
+                $ctrl.streamTagsService = streamTagsService;
                 $ctrl.streamTags = [];
-                $ctrl.allStreamTags = [];
 
                 $ctrl.selectedGame = null;
 
@@ -119,15 +119,6 @@
                 };
 
                 $ctrl.$onInit = async () => {
-                    $ctrl.loadStreamInfo();
-                    $ctrl.loadAllStreamTags();
-                };
-
-                $ctrl.loadAllStreamTags = async () => {
-                    $ctrl.allStreamTags = await backendCommunicator.fireEventAsync("get-all-stream-tags");
-                };
-
-                $ctrl.loadStreamInfo = async () => {
                     $ctrl.streamTags = await backendCommunicator.fireEventAsync("get-channel-stream-tags");
                     $ctrl.streamInfo = await backendCommunicator.fireEventAsync("get-channel-info");
 
@@ -139,7 +130,7 @@
                         }
                     }
 
-                    if ($ctrl.selectedGame && $ctrl.streamTags) {
+                    if ($ctrl.selectedGame) {
                         $ctrl.dataLoaded = true;
                     }
                 };
@@ -148,14 +139,16 @@
                     utilityService.openSelectModal(
                         {
                             label: "Add Stream Tag",
-                            options: $ctrl.allStreamTags,
+                            options: $ctrl.streamTagsService.allStreamTags,
                             saveText: "Add",
                             validationText: "Please select a tag."
     
                         },
                         (tagId) => {
                             if (!tagId) return;
-                            $ctrl.streamTags.push($ctrl.allStreamTags.find(tag => tag.id === tagId));
+                            if (!$ctrl.streamTags.find(tag => tag.id === tagId)) {
+                                $ctrl.streamTags.push($ctrl.streamTagsService.allStreamTags.find(tag => tag.id === tagId));
+                            }
                         });
                 }
 
