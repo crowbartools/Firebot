@@ -186,7 +186,7 @@ const playSound = {
         if (effect.waitForSound) {
             try {
                 const duration = await frontendCommunicator.fireEventAsync("getSoundDuration", {
-                    path: effect.filepath
+                    path: data.filepath
                 });
                 const durationInMils = (Math.round(duration) || 0) * 1000;
                 await wait(durationInMils);
