@@ -51,7 +51,7 @@ const permitCommand = {
     onTriggerEvent: async event => {
         const twitchChat = require("../twitch-chat");
         const { commandOptions } = event;
-        const target = event.userCommand.args[0];
+        const target = event.userCommand.args[0].replace("@", "");
 
         if (!target) {
             twitchChat.sendChatMessage("Please specify a user to permit.");
