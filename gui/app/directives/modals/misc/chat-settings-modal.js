@@ -126,7 +126,7 @@
                         </div>
 
                         <div style="display: flex;align-items: center;justify-content: space-between;">
-                            <span style="font-weight: 900;" id="showCustomFontSize">Show custom Font Size</span>
+                            <span style="font-weight: 900;" id="showCustomFontSize">Show Custom Font Size</span>
                             <span>
                                 <input class="tgl tgl-light sr-only" id="cb15" type="checkbox" aria-labelledby="showCustomFontSize"
                                     ng-checked="settings.getChatCustomFontSizeEnabled()"
