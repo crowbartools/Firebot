@@ -143,7 +143,7 @@
                             saveText: "Add",
                             selectPlaceholder: "Select a tag...",
                             validationText: "Please select a tag."
-    
+
                         },
                         (tagId) => {
                             if (!tagId) return;
@@ -151,7 +151,7 @@
                                 $ctrl.streamTags.push($ctrl.streamTagsService.allStreamTags.find(tag => tag.id === tagId));
                             }
                         });
-                }
+                };
 
                 $ctrl.searchGames = function(gameQuery) {
                     backendCommunicator.fireEventAsync("search-twitch-games", gameQuery)
@@ -171,11 +171,11 @@
 
                 $ctrl.removeStreamTag = function(id) {
                     $ctrl.streamTags = $ctrl.streamTags.filter(tag => tag.id !== id);
-                }
+                };
 
                 $ctrl.save = () => {
                     backendCommunicator.fireEventAsync("set-channel-info", $ctrl.streamInfo);
-                    backendCommunicator.fireEventAsync("set-stream-tags", $ctrl.streamTags.map(tag => tag.id));
+                    backendCommunicator.fireEventAsync("set-stream-tags", { tagIds: $ctrl.streamTags.map(tag => tag.id) });
                     backendCommunicator.fireEvent("category-changed", $ctrl.streamInfo.gameName);
                     ngToast.create({
                         className: 'success',
