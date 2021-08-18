@@ -1,6 +1,5 @@
 "use strict";
 
-const mixerRoleConstants = require("../../shared/mixer-roles");
 const twitchRoleConstants = require("../../shared/twitch-roles");
 const firebotRoleConstants = require("../../shared/firebot-roles");
 

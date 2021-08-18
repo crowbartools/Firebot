@@ -122,6 +122,13 @@ const currency = {
                                 <div class="control__indicator"></div>
                             </label>
                         </div>
+                        <div>
+                            <div style="font-size: 16px;font-weight: 900;color: #b9b9b9;font-family: 'Quicksand';margin-bottom: 5px;">Twitch</div>
+                            <label ng-repeat="twitchRole in getTwitchRoles()" class="control-fb control--checkbox">{{twitchRole.name}}
+                                <input type="checkbox" ng-click="toggleRole(twitchRole)" ng-checked="isRoleChecked(twitchRole)"  aria-label="..." >
+                                <div class="control__indicator"></div>
+                            </label>
+                        </div>
                     </div>
                     <div ng-if="effect.target === 'individual'" class="input-group">
                         <span class="input-group-addon" id="basic-addon3">Username</span>
@@ -190,6 +197,7 @@ const currency = {
         $scope.hasCustomRoles = viewerRolesService.getCustomRoles().length > 0;
         $scope.getCustomRoles = viewerRolesService.getCustomRoles;
         $scope.getFirebotRoles = viewerRolesService.getFirebotRoles;
+        $scope.getTwitchRoles = viewerRolesService.getTwitchRoles;
         $scope.getTeamRoles = viewerRolesService.getTeamRoles;
 
         $scope.isRoleChecked = function(role) {
