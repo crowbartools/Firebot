@@ -7,10 +7,10 @@ const logger = require('../../logwrapper');
 
 /**
  * @typedef TwitchStreamTag
- * @property {string} tag_id - The ID of this tag
- * @property {boolean} is_auto - Whether this tag is automatically applied to the channel
- * @property {object} name - A dictionary that contains the localized names of the tag
- * @property {object} description - A dictionary that contains the localized descriptions of the tag
+ * @property {string} id - The ID of this tag
+ * @property {boolean} isAuto - Whether this tag is automatically applied to the channel
+ * @property {string} name - A dictionary that contains the localized names of the tag
+ * @property {string} description - A dictionary that contains the localized descriptions of the tag
  */
 
 function mapTwitchTag(tag) {
@@ -65,8 +65,6 @@ async function getAllStreamTagsPaginated() {
 		response = await getAllStreamTags(cursor);
 		streamTags = streamTags.concat(response.data.filter(tag => !tag.is_auto));
 	}
-
-	logger.info(streamTags.length);
 
 	/**@type {TwitchStreamTag[]} */
 	return streamTags.map(tag => mapTwitchTag(tag));
