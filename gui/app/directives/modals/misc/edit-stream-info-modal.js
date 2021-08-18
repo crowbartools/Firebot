@@ -122,7 +122,6 @@
                                             .then((tags) => {
                                                 if (tags != null) {
                                                     $ctrl.streamTags = tags;
-                                                    console.log(tags);
                                                 }
                                                 $ctrl.dataLoaded = true;
                                             });

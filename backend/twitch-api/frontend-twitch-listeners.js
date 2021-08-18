@@ -17,6 +17,10 @@ exports.setupListeners = () => {
         return twitchApi.streamTags.getChannelStreamTags();
     });
 
+    frontendCommunicator.onAsync("get-all-stream-tags", () => {
+        return twitchApi.streamTags.getAllStreamTags();
+    });
+
     frontendCommunicator.onAsync("get-channel-info", async () => {
         try {
             const channelInfo = await twitchApi.channels.getChannelInformation();
