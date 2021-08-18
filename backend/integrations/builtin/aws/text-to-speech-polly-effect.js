@@ -77,8 +77,8 @@ const playSound = {
    */
     definition: {
         id: "aws:polly",
-        name: "Text-To-Speech (AWS Polly)",
-        description: "Have Firebot read out some text using AWS Polly.",
+        name: "Text-To-Speech (Amazon Polly)",
+        description: "Have Firebot read out some text using Amazon Polly.",
         icon: "fad fa-microphone-alt",
         categories: [EffectCategory.FUN],
         dependencies: [],
@@ -409,7 +409,7 @@ const playSound = {
         if (!awsIntegration || !awsIntegration.userSettings ||
             !awsIntegration.userSettings.iamCredentials.accessKeyId ||
             !awsIntegration.userSettings.iamCredentials.secretAccessKey) {
-            logger.error('AWS integration has not been configured. Unable to execute AWS Polly effect.');
+            logger.error('AWS integration has not been configured. Unable to execute Amazon Polly effect.');
             return false;
         }
 
@@ -433,7 +433,7 @@ const playSound = {
         try {
             synthSpeedResponse = await polly.send(synthSpeechCommand);
         } catch (err) {
-            logger.error("Unable to synthesize speech using AWS Polly", err);
+            logger.error("Unable to synthesize speech using Amazon Polly", err);
             return false;
         }
 
@@ -455,7 +455,8 @@ const playSound = {
 
         let data = {
             filepath: mp3Path,
-            volume: effect.volume
+            volume: effect.volume,
+            overlayInstance: effect.overlayInstance
         };
 
         // Set output device.
