@@ -32,7 +32,7 @@
                             />
                         </div>
 
-                        <div class="form-group" style="margin-bottom:0;">
+                        <div class="form-group">
                             <label for="game" class="control-label">Category</label>
                             <ui-select ng-model="$ctrl.selectedGame" required input-id="game" theme="bootstrap" spinner-enabled="true" on-select="$ctrl.gameSelected($item)">
                                 <ui-select-match placeholder="Search for category...">
@@ -48,6 +48,30 @@
                                     </div>                                  
                                 </ui-select-choices>
                             </ui-select>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="tags" class="control-label">Stream Tags</label>
+                            <div style="display: block" role="list">
+                                <div class="role-bar" id="streamTags" ng-repeat="tag in $ctrl.streamTags track by tag.id" role="listitem">
+                                    <span>{{tag.name}}</span>
+                                    <span 
+                                        role="button" 
+                                        class="clickable" 
+                                        style="padding-left: 10px;" 
+                                        aria-label="Remove {{tag.name}} tag" 
+                                        uib-tooltip="Remove tag" 
+                                        tooltip-append-to-body="true"
+                                        ng-click="$ctrl.removeStreamTag(tag.id)"
+                                        ng-if="!tag.isAuto"
+                                    >
+                                        <i class="far fa-times"></i>
+                                    </span>
+                                </div>
+                                <div class="role-bar clickable" role="button" aria-label="Add tag" uib-tooltip="Add tag" tooltip-append-to-body="true">
+                                    <i class="far fa-plus"></i> 
+                                </div>
+                            </div>
                         </div>
                         
                     </form>
@@ -122,6 +146,10 @@
                         $ctrl.streamInfo.gameName = game.name;
                     }
                 };
+
+                $ctrl.removeStreamTag = function(id) {
+                    $ctrl.streamTags = $ctrl.streamTags.filter(tag => tag.id !== id);
+                }
 
                 $ctrl.save = () => {
                     backendCommunicator.fireEventAsync("set-channel-info", $ctrl.streamInfo);

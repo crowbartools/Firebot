@@ -68,7 +68,7 @@ async function getChannelStreamTags() {
 	}
 }
 
-function updateChannelStreamTags(tagIds) {
+async function updateChannelStreamTags(tagIds) {
 	const client = twitchApi.getClient();
     try {
         await client.callApi({
