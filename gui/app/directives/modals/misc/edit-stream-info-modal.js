@@ -141,6 +141,7 @@
                             label: "Add Stream Tag",
                             options: $ctrl.streamTagsService.allStreamTags,
                             saveText: "Add",
+                            selectPlaceholder: "Select a tag...",
                             validationText: "Please select a tag."
     
                         },
