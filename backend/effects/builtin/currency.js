@@ -80,12 +80,12 @@ const currency = {
 
             <eos-container header="Target" pad-top="true">
 
-                <div class="permission-type controls-fb-inline">
+                <div class="permission-type controls-fb">
                     <label class="control-fb control--radio">Single User
                         <input type="radio" ng-model="effect.target" value="individual"/>
                         <div class="control__indicator"></div>
                     </label>
-                    <label class="control-fb control--radio">Role
+                    <label class="control-fb control--radio">Online Users in Role
                         <input type="radio" ng-model="effect.target" value="group"/>
                         <div class="control__indicator"></div>
                     </label>
