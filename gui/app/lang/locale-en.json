@@ -16,6 +16,8 @@
     "OTHER": {
       "OTHER": "Other",
       "EVENTS": "Events",
+      "PRESET_EFFECT_LISTS": "Preset Effect Lists",
+      "EFFECT_QUEUES": "Effect Queues",
       "TIMERS": "Timers",
       "HOTKEYS": "Hotkeys",
       "CHANNELREWARDS": "Channel Rewards"
