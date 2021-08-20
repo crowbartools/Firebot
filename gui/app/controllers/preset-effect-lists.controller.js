@@ -2,29 +2,11 @@
 (function() {
     angular
         .module("firebotApp")
-        .controller("effectsController", function(
+        .controller("presetEffectListsController", function(
             $scope,
-            effectQueuesService,
             presetEffectListsService,
             utilityService
         ) {
-            $scope.activeTab = 0;
-
-            $scope.eqs = effectQueuesService;
-
-            $scope.addOrEditQueue = (queueId) => {
-                effectQueuesService.showAddEditEffectQueueModal(queueId);
-            };
-
-            $scope.deleteQueue = (queueId) => {
-                effectQueuesService.showDeleteEffectQueueModal(queueId);
-            };
-
-            $scope.getQueueModeName = (modeId) => {
-                const mode = effectQueuesService.queueModes.find(m => m.id === modeId);
-                return mode ? mode.display : "Unknown";
-            };
-
             $scope.presetEffectListsService = presetEffectListsService;
 
             $scope.onPresetEffectListsUpdated = (items) => {

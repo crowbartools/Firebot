@@ -25,10 +25,11 @@
                         <nav-link page="Events" name="{{'SIDEBAR.OTHER.EVENTS' | translate }}" icon="fa-list"></nav-link>
                         <nav-link page="Timers" name="{{'SIDEBAR.OTHER.TIMERS' | translate }}" icon="fa-stopwatch"></nav-link>
                         <nav-link page="Channel Rewards" name="{{'SIDEBAR.OTHER.CHANNELREWARDS' | translate }}" icon="fa-gifts"></nav-link>
-                        <nav-link page="Effects" name="Effects" icon="fa-magic"></nav-link>
+                        <nav-link page="Preset Effect Lists" name="{{ 'SIDEBAR.OTHER.PRESET_EFFECT_LISTS' | translate }}" icon="fa-magic"></nav-link>
+                        <nav-link page="Effect Queues" name="{{ 'SIDEBAR.OTHER.EFFECT_QUEUES' | translate }}" icon="fa-stream"></nav-link>
                         <nav-link page="Hotkeys" name="{{'SIDEBAR.OTHER.HOTKEYS' | translate }}" icon="fa-keyboard"></nav-link>
                         <nav-link page="Counters" name="Counters" icon="fa-tally"></nav-link>
-                        
+
                         <nav-category name="{{'SIDEBAR.MANAGEMENT' | translate }}" pad-top="true"></nav-category>
                         <nav-link page="Viewers" name="{{'SIDEBAR.MANAGEMENT.VIEWERS' | translate }}" icon="fa-users" ng-if="$ctrl.isViewerDBOn()"></nav-link>
                         <nav-link page="Viewer Roles" name="{{'SIDEBAR.MANAGEMENT.VIEWER_ROLES' | translate }}" icon="fa-user-tag"></nav-link>
@@ -42,12 +43,12 @@
 
                     <div>
                         <patronage-tracker ng-show="$ctrl.cs.accounts.streamer.partnered"></patronage-tracker>
-            
+
                         <div class="connection-status-wrapper">
                             <div class='interactive-status-wrapper'>
-                                <div class="interative-status-icon" 
-                                    ng-class="{'contracted': !$ctrl.sbm.navExpanded, 'connected': $ctrl.cs.sidebarServicesOverallStatus === 'connected', 'partial-connected': $ctrl.cs.sidebarServicesOverallStatus === 'partial'}" 
-                                    uib-tooltip-template="'connectTooltipTemplate.html'" 
+                                <div class="interative-status-icon"
+                                    ng-class="{'contracted': !$ctrl.sbm.navExpanded, 'connected': $ctrl.cs.sidebarServicesOverallStatus === 'connected', 'partial-connected': $ctrl.cs.sidebarServicesOverallStatus === 'partial'}"
+                                    uib-tooltip-template="'connectTooltipTemplate.html'"
                                     tooltip-placement="{{!$ctrl.sbm.navExpanded ? 'right-bottom' : 'top-left'}}"
                                     tooltip-append-to-body="true"
                                     ng-click="$ctrl.cs.toggleSidebarControlledServices()"
@@ -69,7 +70,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            
+
                                 <div class="connection-panel-btn" ng-class="{'contracted': !$ctrl.sbm.navExpanded}" uib-tooltip="Open Connection Panel" tooltip-append-to-body="true"
                                     ng-click="$ctrl.showConnectionPanelModal()">
                                     <span><i class="fal fa-external-link-alt"></i></span>

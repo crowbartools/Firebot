@@ -1,0 +1,47 @@
+<scroll-sentinel element-class="effect-queue-header"></scroll-sentinel>
+<div style="padding: 15px;">
+    <button ng-click="addOrEditQueue()" class="btn btn-primary hvr-icon-grow" style="margin-bottom: 15px;">
+        <i class="fas fa-plus-circle hvr-icon" style="margin-right:5px;"></i> New Effect Queue
+    </button>
+    <div ng-if="eqs.getEffectQueues().length === 0" class="noselect muted" style="padding-left: 13px">
+        <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span><span style="margin-left:8px">No effect queues saved. You should make one! :) </span>
+    </div>
+    <table ng-show="eqs.getEffectQueues().length > 0" class="fb-table">
+        <thead>
+            <tr style="font-size: 11px;">
+                <th class="muted" style="padding-left: 10px;"><i class="fas fa-tag"></i> NAME</th>
+                <th class="muted"><i class="fas fa-bring-forward"></i> MODE</th>
+                <th class="muted"><i class="fas fa-clock"></i> INTERVAL</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="queue in eqs.getEffectQueues() track by queue.id">
+                <td class="command-trigger-cell" style="padding-left: 10px;">
+                    <span class="trigger">{{queue.name}}</span>
+                </td>
+                <td>
+                    {{getQueueModeName(queue.mode)}}
+                </td>
+                <td>
+                    {{queue.mode === 'interval' ? queue.interval+'s' : 'n/a'}}
+                </td>
+                <td>
+                    <div style="text-align: right;">
+                        <div uib-dropdown uib-dropdown-toggle class="pull-right">
+                            <span class="noselect clickable" style="font-size: 30px"><i class="fal fa-ellipsis-h"></i></span>
+                            <ul class="dropdown-menu" uib-dropdown-menu>
+                                <li>
+                                    <a href ng-click="addOrEditQueue(queue.id)">Edit</a>
+                                </li>
+                                <li>
+                                    <a href ng-click="deleteQueue(queue.id)" style="color: #fb7373;">Delete</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
