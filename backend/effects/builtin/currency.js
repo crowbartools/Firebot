@@ -80,12 +80,12 @@ const currency = {
 
             <eos-container header="Target" pad-top="true">
 
-                <div class="permission-type controls-fb-inline">
+                <div class="permission-type controls-fb">
                     <label class="control-fb control--radio">Single User
                         <input type="radio" ng-model="effect.target" value="individual"/>
                         <div class="control__indicator"></div>
                     </label>
-                    <label class="control-fb control--radio">Role
+                    <label class="control-fb control--radio">Online Users in Role
                         <input type="radio" ng-model="effect.target" value="group"/>
                         <div class="control__indicator"></div>
                     </label>
@@ -115,11 +115,20 @@ const currency = {
                                 <div class="control__indicator"></div>
                             </label>
                         </div>
-                        <div style="font-size: 16px;font-weight: 900;color: #b9b9b9;font-family: 'Quicksand';margin-bottom: 5px;">Mixer</div>
-                        <label ng-repeat="mixerRole in getMixerRoles()" class="control-fb control--checkbox">{{mixerRole.name}}
-                            <input type="checkbox" ng-click="toggleRole(mixerRole)" ng-checked="isRoleChecked(mixerRole)"  aria-label="..." >
-                            <div class="control__indicator"></div>
-                        </label>
+                        <div>
+                            <div style="font-size: 16px;font-weight: 900;color: #b9b9b9;font-family: 'Quicksand';margin-bottom: 5px;">Teams</div>
+                            <label ng-repeat="teamRole in getTeamRoles()" class="control-fb control--checkbox">{{teamRole.name}}
+                                <input type="checkbox" ng-click="toggleRole(teamRole)" ng-checked="isRoleChecked(teamRole)"  aria-label="..." >
+                                <div class="control__indicator"></div>
+                            </label>
+                        </div>
+                        <div>
+                            <div style="font-size: 16px;font-weight: 900;color: #b9b9b9;font-family: 'Quicksand';margin-bottom: 5px;">Twitch</div>
+                            <label ng-repeat="twitchRole in getTwitchRoles()" class="control-fb control--checkbox">{{twitchRole.name}}
+                                <input type="checkbox" ng-click="toggleRole(twitchRole)" ng-checked="isRoleChecked(twitchRole)"  aria-label="..." >
+                                <div class="control__indicator"></div>
+                            </label>
+                        </div>
                     </div>
                     <div ng-if="effect.target === 'individual'" class="input-group">
                         <span class="input-group-addon" id="basic-addon3">Username</span>
@@ -188,8 +197,8 @@ const currency = {
         $scope.hasCustomRoles = viewerRolesService.getCustomRoles().length > 0;
         $scope.getCustomRoles = viewerRolesService.getCustomRoles;
         $scope.getFirebotRoles = viewerRolesService.getFirebotRoles;
+        $scope.getTwitchRoles = viewerRolesService.getTwitchRoles;
         $scope.getTeamRoles = viewerRolesService.getTeamRoles;
-        $scope.getMixerRoles = viewerRolesService.getMixerRoles;
 
         $scope.isRoleChecked = function(role) {
             return $scope.effect.roleIds.includes(role.id);
