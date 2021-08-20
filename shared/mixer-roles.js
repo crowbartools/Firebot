@@ -51,7 +51,6 @@ function mapMixerRole(rawRole) {
     return mixerRoles.find(r => r.id === mappedRole);
 }
 
-exports.getMixerRoles = () => mixerRoles;
 exports.mapMixerRole = mapMixerRole;
 
 

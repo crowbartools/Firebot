@@ -1,6 +1,5 @@
 "use strict";
 
-const mixerRoleConstants = require("../../shared/mixer-roles");
 const twitchRoleConstants = require("../../shared/twitch-roles");
 const firebotRoleConstants = require("../../shared/firebot-roles");
 
@@ -86,11 +85,6 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
             const firebotRoles = firebotRoleConstants.getFirebotRoles();
             service.getFirebotRoles = function() {
                 return firebotRoles;
-            };
-
-            const mixerRoles = mixerRoleConstants.getMixerRoles();
-            service.getMixerRoles = function() {
-                return mixerRoles;
             };
 
             const twitchRoles = twitchRoleConstants.getTwitchRoles();
