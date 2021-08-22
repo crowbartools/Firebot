@@ -278,10 +278,15 @@ class TwitchChat extends EventEmitter {
         this._streamerChatClient.clear();
     }
 
-    enableFollowersOnly(duration = "15m") {
+    enableFollowersOnly(duration) {
         if (this._streamerChatClient == null) return;
         const streamer = accountAccess.getAccounts().streamer;
-        this._streamerChatClient.enableFollowersOnly(streamer, duration);
+
+        if (duration == null) {
+            this._streamerChatClient.enableFollowersOnly(streamer);
+        } else {
+            this._streamerChatClient.enableFollowersOnly(streamer, duration);
+        }
     }
 
     disableFollowersOnly() {
@@ -324,18 +329,6 @@ class TwitchChat extends EventEmitter {
         if (this._streamerChatClient == null) return;
         const streamer = accountAccess.getAccounts().streamer;
         this._streamerChatClient.disableSlow(streamer);
-    }
-
-    enableUniqueChat() {
-        if (this._streamerChatClient == null) return;
-        const streamer = accountAccess.getAccounts().streamer;
-        this._streamerChatClient.say(streamer, "/uniquechat");
-    }
-
-    disableUniqueChat() {
-        if (this._streamerChatClient == null) return;
-        const streamer = accountAccess.getAccounts().streamer;
-        this._streamerChatClient.say(streamer, "/uniquechatoff");
     }
 
     purgeUserMessages(username, reason = "") {

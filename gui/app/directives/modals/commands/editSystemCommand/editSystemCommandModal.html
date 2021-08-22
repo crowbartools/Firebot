@@ -109,25 +109,18 @@
     ng-if="$ctrl.command.options != null"
     pad-top="true"
   >
-    <div ng-repeat="(optionName, optionMetadata) in $ctrl.command.options">
-      <div ng-if="optionMetadata.type === 'nested'">
-        <div style="font-size: 15px;font-weight: 600;">{{optionMetadata.name}}</div>
-        <div style="padding-bottom: 5px;font-size: 14px;font-weight: 100x;opacity: 0.8;padding-bottom: 20px;">
-          {{optionMetadata.description}}
-        </div>
-        <command-option
-          ng-repeat="(optionName, optionMetadata) in optionMetadata.subOptions"
-          name="optionName"
-          metadata="optionMetadata"
-        ></command-option>
-      </div>
-      <div ng-else ng-if="optionMetadata.type !== 'nested'">
-        <command-option
-          name="optionName"
-          metadata="optionMetadata"
-        ></command-option>
-      </div>
-    </div>
+    <command-option
+      ng-repeat="(optionName, optionMetadata) in $ctrl.command.options"
+      ng-if="optionMetadata.title === 'Output Template'"
+      name="optionName"
+      metadata="optionMetadata"
+    ></command-option>
+    <command-option
+      ng-repeat="(optionName, optionMetadata) in $ctrl.command.options"
+      ng-if="optionMetadata.title !== 'Output Template'"
+      name="optionName"
+      metadata="optionMetadata"
+    ></command-option>
   </setting-container>
 
   <setting-container

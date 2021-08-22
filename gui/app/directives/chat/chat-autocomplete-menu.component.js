@@ -136,6 +136,46 @@
                                     display: "/unvip @username",
                                     description: "Revoke VIP status from a user",
                                     text: "/unvip"
+                                },
+                                {
+                                    display: "/followers [1m / 1h / 1w / 1mo]",
+                                    description: "Restrict Chat to followers based on their follow duration",
+                                    text: "/followers"
+                                },
+                                {
+                                    display: "/followersoff",
+                                    description: "Turn off followers-only mode",
+                                    text: "/followersoff"
+                                },
+                                {
+                                    display: "/subscribers",
+                                    description: "Restrict Chat to subscribers",
+                                    text: "/subscribers"
+                                },
+                                {
+                                    display: "/subscribersoff",
+                                    description: "Turn off subscribers-only mode",
+                                    text: "/subscribersoff"
+                                },
+                                {
+                                    display: "/slow [seconds]",
+                                    description: "Limit how frequently users can send messages in Chat",
+                                    text: "/slow"
+                                },
+                                {
+                                    display: "/slowoff",
+                                    description: "Turn off slow mode",
+                                    text: "/slowoff"
+                                },
+                                {
+                                    display: "/emoteonly",
+                                    description: "Restrict chat to emote-only messages",
+                                    text: "/emoteonly"
+                                },
+                                {
+                                    display: "/emoteonlyoff",
+                                    description: "Turn off emote-only mode",
+                                    text: "/emoteonlyoff"
                                 }
                             ]
                         },
