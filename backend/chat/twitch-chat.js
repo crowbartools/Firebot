@@ -278,6 +278,66 @@ class TwitchChat extends EventEmitter {
         this._streamerChatClient.clear();
     }
 
+    enableFollowersOnly(duration = "15m") {
+        if (this._streamerChatClient == null) return;
+        const streamer = accountAccess.getAccounts().streamer;
+        this._streamerChatClient.enableFollowersOnly(streamer, duration);
+    }
+
+    disableFollowersOnly() {
+        if (this._streamerChatClient == null) return;
+        const streamer = accountAccess.getAccounts().streamer;
+        this._streamerChatClient.disableFollowersOnly(streamer);
+    }
+
+    enableEmoteOnly() {
+        if (this._streamerChatClient == null) return;
+        const streamer = accountAccess.getAccounts().streamer;
+        this._streamerChatClient.enableEmoteOnly(streamer);
+    }
+
+    disableEmoteOnly() {
+        if (this._streamerChatClient == null) return;
+        const streamer = accountAccess.getAccounts().streamer;
+        this._streamerChatClient.disableEmoteOnly(streamer);
+    }
+
+    enableSubscribersOnly() {
+        if (this._streamerChatClient == null) return;
+        const streamer = accountAccess.getAccounts().streamer;
+        this._streamerChatClient.enableSubsOnly(streamer);
+    }
+
+    disableSubscribersOnly() {
+        if (this._streamerChatClient == null) return;
+        const streamer = accountAccess.getAccounts().streamer;
+        this._streamerChatClient.disableSubsOnly(streamer);
+    }
+
+    enableSlowMode(delay = 30) {
+        if (this._streamerChatClient == null) return;
+        const streamer = accountAccess.getAccounts().streamer;
+        this._streamerChatClient.enableSlow(streamer, delay);
+    }
+
+    disableSlowMode() {
+        if (this._streamerChatClient == null) return;
+        const streamer = accountAccess.getAccounts().streamer;
+        this._streamerChatClient.disableSlow(streamer);
+    }
+
+    enableUniqueChat() {
+        if (this._streamerChatClient == null) return;
+        const streamer = accountAccess.getAccounts().streamer;
+        this._streamerChatClient.say(streamer, "/uniquechat");
+    }
+
+    disableUniqueChat() {
+        if (this._streamerChatClient == null) return;
+        const streamer = accountAccess.getAccounts().streamer;
+        this._streamerChatClient.say(streamer, "/uniquechatoff");
+    }
+
     purgeUserMessages(username, reason = "") {
         const streamer = accountAccess.getAccounts().streamer;
         if (this._streamerChatClient == null || !streamer.loggedIn) return;

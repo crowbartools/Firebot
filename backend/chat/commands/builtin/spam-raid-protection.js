@@ -46,7 +46,7 @@ const spamRaidProtection = {
                     toggleFollowerOnly: {
                         type: "boolean",
                         title: "Follower only mode",
-                        description: "Follower mode only allows chat message from followers that have a follow age of more than 10 minutes.",
+                        description: "Follower mode only allows chat message from followers that have a follow age of 15 minutes and longer.",
                         default: true
                     },
                     toggleEmoteOnly: {
