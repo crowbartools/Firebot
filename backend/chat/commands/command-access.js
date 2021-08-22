@@ -148,3 +148,5 @@ exports.deleteCustomCommand = deleteCustomCommand;
 exports.getCustomCommands = () => commandsCache.customCommands;
 exports.getCustomCommand = id =>
     commandsCache.customCommands.find(c => c.id === id);
+exports.getSystemCommand = id =>
+    Object.values(commandsCache.systemCommandOverrides).find(c => c.id === id);
