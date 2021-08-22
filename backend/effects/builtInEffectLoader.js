@@ -25,7 +25,7 @@ exports.loadEffects = () => {
     const randomRedditImage = require("./builtin/randomRedditImage");
     const customVariable = require("./builtin/customVariable");
     const controlMouse = require('./builtin/controlMouse');
-    const runCommand = require('./builtin/runCommand');
+    const runCommand = require('./builtin/run-command');
     const customScript = require('./builtin/customScript');
     const clearEffects = require('./builtin/clearEffects');
     const sequentialEffect = require("./builtin/sequentialEffect");

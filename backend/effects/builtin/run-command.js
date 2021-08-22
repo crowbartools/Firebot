@@ -5,7 +5,7 @@ const commandAccess = require("../../chat/commands/command-access");
 
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
-const { EffectDependency, EffectTrigger } = effectModels;
+const { EffectTrigger } = effectModels;
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 
@@ -38,17 +38,30 @@ const model = {
    * You can alternatively supply a url to a html file via optionTemplateUrl
    */
     optionsTemplate: `
-        <eos-container header="Command To Run">
+    <eos-container header="Command Type" pad-top="true">
+        <dropdown-select options="{ system: 'System', custom: 'Custom'}" selected="effect.commandType"></dropdown-select>
+    </eos-container>
+
+        <eos-container header="Command To Run" ng-show="effect.commandType === 'system'" pad-top="true">
             <ui-select ng-model="effect.commandId" theme="bootstrap">
                 <ui-select-match placeholder="Select or search for a command... ">{{$select.selected.trigger}}</ui-select-match>
-                <ui-select-choices repeat="command.id as command in commands | filter: { trigger: $select.search }" style="position:relative;">
+                <ui-select-choices repeat="command.id as command in systemCommands | filter: { trigger: $select.search }" style="position:relative;">
+                    <div ng-bind-html="command.trigger | highlight: $select.search"></div>
+                </ui-select-choices>
+            </ui-select>
+        </eos-container>
+
+        <eos-container header="Command To Run" ng-show="effect.commandType === 'custom'" pad-top="true">
+            <ui-select ng-model="effect.commandId" theme="bootstrap">
+                <ui-select-match placeholder="Select or search for a command... ">{{$select.selected.trigger}}</ui-select-match>
+                <ui-select-choices repeat="command.id as command in customCommands | filter: { trigger: $select.search }" style="position:relative;">
                     <div ng-bind-html="command.trigger | highlight: $select.search"></div>
                 </ui-select-choices>
             </ui-select>
         </eos-container>
 
         <eos-container>
-            <div class="effect-info alert alert-info">
+            <div class="effect-info alert alert-info" pad-top="true">
                 Please keep in mind you may get unexpected results if any effects in the selected command have command specific things (such as $arg variables) when running outide the context of a chat event.
             </div>
         </eos-container>
@@ -57,7 +70,8 @@ const model = {
    * The controller for the front end Options
    */
     optionsController: ($scope, commandsService) => {
-        $scope.commands = commandsService.getCustomCommands();
+        $scope.systemCommands = commandsService.getSystemCommands();
+        $scope.customCommands = commandsService.getCustomCommands();
     },
     /**
    * When the effect is saved
