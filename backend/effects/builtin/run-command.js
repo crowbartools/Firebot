@@ -93,7 +93,6 @@ const model = {
     onTriggerEvent: event => {
         return new Promise(resolve => {
             let effect = event.effect;
-            console.log(event);
 
             if (effect.commandType === "custom") {
                 let command = commandAccess.getCustomCommand(effect.customCommandId);
