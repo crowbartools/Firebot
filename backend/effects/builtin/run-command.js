@@ -79,8 +79,11 @@ const model = {
    */
     optionsValidator: effect => {
         let errors = [];
-        if (effect.commandId == null || effect.commandId === "") {
-            errors.push("Please select a command to run.");
+        if (effect.commandType === "custom" && (effect.customCommandId == null || effect.customCommandId === "")) {
+            errors.push("Please select a custom command to run.");
+        }
+        if (effect.commandType === "system" && (effect.systemCommandId == null || effect.systemCommandId === "")) {
+            errors.push("Please select a system command to run.");
         }
         return errors;
     },
@@ -90,6 +93,7 @@ const model = {
     onTriggerEvent: event => {
         return new Promise(resolve => {
             let effect = event.effect;
+            console.log(event);
 
             if (effect.commandType === "custom") {
                 let command = commandAccess.getCustomCommand(effect.customCommandId);
@@ -105,7 +109,7 @@ const model = {
                     });
                 }
             } else {
-                commandHandler.triggerSystemCommand(effect.systemCommandId);
+                commandHandler.runSystemCommandFromEffect(effect.systemCommandId, event.trigger);
 
                 resolve(true);
             }

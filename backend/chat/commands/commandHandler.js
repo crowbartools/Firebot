@@ -457,13 +457,11 @@ function triggerCustomCommand(id, isManual = true) {
     }
 }
 
-function triggerSystemCommand(id, isManual = true) {
+function runSystemCommandFromEffect(id, trigger) {
     let command = commandManager.getSystemCommandById(id);
     if (command) {
-        console.log("firing command manually", command);
-        let commandSender = accountAccess.getAccounts().streamer.username,
-            userCmd = buildUserCommand(command, null, commandSender);
-        fireCommand(command.definition, userCmd, null, commandSender, isManual);
+        let userCmd = buildUserCommand(command, trigger.chatMessage, trigger.username);
+        fireCommand(command.definition, userCmd, trigger.chatMessage, trigger.username, false);
     }
 }
 
@@ -479,5 +477,5 @@ ipcMain.on("refreshCommandCache", function() {
 
 exports.handleChatMessage = handleChatMessage;
 exports.triggerCustomCommand = triggerCustomCommand;
-exports.triggerSystemCommand = triggerSystemCommand;
+exports.runSystemCommandFromEffect = runSystemCommandFromEffect;
 exports.flushCooldownCache = flushCooldownCache;
