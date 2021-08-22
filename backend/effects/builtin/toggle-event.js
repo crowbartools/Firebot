@@ -82,15 +82,8 @@ const chat = {
     },
     onTriggerEvent: async event => {
         const { effect } = event;
-        const activeEvents = eventAccess.getAllActiveEvents();
-        const selectedEvent = activeEvents.find(e => e.id === effect.selectedEventId);
-        let isActive = false;
-
-        if (effect.toggleType === "toggle") {
-            isActive = !selectedEvent;
-        } else {
-            isActive = effect.toggleType === "enable";
-        }
+        const selectedEvent = eventAccess.getEvent(effect.selectedEventId);
+        const isActive = effect.toggleType === "toggle" ? !selectedEvent.active : effect.toggleType === "enable";
 
         eventAccess.updateEventActiveStatus(effect.selectedEventId, isActive);
 

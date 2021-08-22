@@ -171,6 +171,18 @@ function getAllActiveEvents() {
     return activeEventsArray.filter(e => e.active);
 }
 
+function getEvent(eventId) {
+    let event = mainEvents.find(e => e.id === eventId);
+
+    if (event == null) {
+        for (const groupId of Object.keys(groups)) {
+            event = groups[groupId].events.find(e => e.id === eventId);
+        }
+    }
+
+    return event;
+}
+
 ipcMain.on("getAllEventData", event => {
     logger.debug("got 'get all event data' request");
     event.returnValue = {
@@ -258,5 +270,6 @@ exports.deleteGroup = deleteGroup;
 exports.removeEventFromMainEvents = removeEventFromMainEvents;
 exports.loadEventsAndGroups = loadEventsAndGroups;
 exports.getAllActiveEvents = getAllActiveEvents;
+exports.getEvent = getEvent;
 exports.updateEventGroupActiveStatus = updateEventGroupActiveStatus;
 exports.updateEventActiveStatus = updateEventActiveStatus;
