@@ -61,12 +61,6 @@ const spamRaidProtection = {
                 description: "In slow mode, users can only post one chat message every 30 seconds.",
                 default: true
             },
-            enableUniqueChat: {
-                type: "boolean",
-                title: "Unique chat mode",
-                description: "Chatters cannot post the same message two times in a row.",
-                default: true
-            },
             clearChat: {
                 type: "boolean",
                 title: "Clear chat",

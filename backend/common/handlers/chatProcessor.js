@@ -172,12 +172,6 @@ async function textProcessor(effect, trigger, populateReplaceVars = true) {
         case "/slowoff":
             twitchChat.disableSlowMode();
             break;
-        case "/unique":
-            twitchChat.enableUniqueChat();
-            break;
-        case "/uniqueoff":
-            twitchChat.disableUniqueChat();
-            break;
         case "/ad":
             await twitchApi.channels.triggerAdBreak();
             break;
