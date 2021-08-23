@@ -457,6 +457,14 @@ function triggerCustomCommand(id, isManual = true) {
     }
 }
 
+function runSystemCommandFromEffect(id, trigger) {
+    let command = commandManager.getSystemCommandById(id);
+    if (command) {
+        let userCmd = buildUserCommand(command, trigger.chatMessage, trigger.username);
+        fireCommand(command.definition, userCmd, trigger.chatMessage, trigger.username, false);
+    }
+}
+
 // Refresh command cooldown cache when changes happened on the front end
 ipcMain.on("commandManualTrigger", function(event, id) {
     triggerCustomCommand(id, true);
@@ -469,4 +477,5 @@ ipcMain.on("refreshCommandCache", function() {
 
 exports.handleChatMessage = handleChatMessage;
 exports.triggerCustomCommand = triggerCustomCommand;
+exports.runSystemCommandFromEffect = runSystemCommandFromEffect;
 exports.flushCooldownCache = flushCooldownCache;
