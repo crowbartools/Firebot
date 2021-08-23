@@ -270,9 +270,10 @@ function fireCommand(
             chatMessage: firebotChatMessage
         });
     }
-
-    logger.info("Executing command effects");
-    commandExecutor.execute(command, userCmd, firebotChatMessage, isManual);
+    if (command.effects) {
+        logger.info("Executing command effects");
+        commandExecutor.execute(command, userCmd, firebotChatMessage, isManual);
+    }
 }
 
 /**
@@ -457,12 +458,23 @@ function triggerCustomCommand(id, isManual = true) {
     }
 }
 
-function runSystemCommandFromEffect(id, trigger) {
-    let command = commandManager.getSystemCommandById(id);
+function runCommandFromEffect(command, trigger, args) {
+    let message = command.trigger + " " + args;
+
     if (command) {
-        let userCmd = buildUserCommand(command, trigger.chatMessage, trigger.username);
-        fireCommand(command.definition, userCmd, trigger.chatMessage, trigger.username, false);
+        let userCmd = buildUserCommand(command, message, trigger.metadata.username);
+        fireCommand(command, userCmd, message, trigger.metadata.username, false);
     }
+}
+
+function runSystemCommandFromEffect(id, trigger, args) {
+    let command = commandManager.getSystemCommandById(id).definition;
+    runCommandFromEffect(command, trigger, args);
+}
+
+function runCustomCommandFromEffect(id, trigger, args) {
+    let command = commandManager.getCustomCommandById(id);
+    runCommandFromEffect(command, trigger, args);
 }
 
 // Refresh command cooldown cache when changes happened on the front end
@@ -478,4 +490,5 @@ ipcMain.on("refreshCommandCache", function() {
 exports.handleChatMessage = handleChatMessage;
 exports.triggerCustomCommand = triggerCustomCommand;
 exports.runSystemCommandFromEffect = runSystemCommandFromEffect;
+exports.runCustomCommandFromEffect = runCustomCommandFromEffect;
 exports.flushCooldownCache = flushCooldownCache;
