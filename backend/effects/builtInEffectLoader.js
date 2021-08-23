@@ -25,7 +25,7 @@ exports.loadEffects = () => {
     const randomRedditImage = require("./builtin/randomRedditImage");
     const customVariable = require("./builtin/customVariable");
     const controlMouse = require('./builtin/controlMouse');
-    const runCommand = require('./builtin/runCommand');
+    const runCommand = require('./builtin/run-command');
     const customScript = require('./builtin/customScript');
     const clearEffects = require('./builtin/clearEffects');
     const sequentialEffect = require("./builtin/sequentialEffect");
@@ -48,6 +48,7 @@ exports.loadEffects = () => {
     const clearChat = require("./builtin/clearChat");
     const updateCounter = require("./builtin/update-counter");
     const toggleCommand = require("./builtin/toggle-command");
+    const toggleEvent = require("./builtin/toggle-event");
     const toggleEventSet = require("./builtin/toggle-event-set");
     const toggleTimer = require("./builtin/toggle-timer");
     const cooldownCommand = require("./builtin/cooldown-command");
@@ -101,6 +102,7 @@ exports.loadEffects = () => {
     effectManager.registerEffect(updateCounter);
     effectManager.registerEffect(toggleCommand);
     effectManager.registerEffect(toggleEventSet);
+    effectManager.registerEffect(toggleEvent);
     effectManager.registerEffect(toggleTimer);
     effectManager.registerEffect(cooldownCommand);
     effectManager.registerEffect(setUserMetadata);
