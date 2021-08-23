@@ -10,7 +10,6 @@ const { OutputDataType, VariableCategory } = require("../../../shared/variable-c
 
 let triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.PRESET_LIST] = true;
 triggers[EffectTrigger.MANUAL] = true;
 
 /**
