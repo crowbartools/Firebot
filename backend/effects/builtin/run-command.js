@@ -1,14 +1,11 @@
 "use strict";
 
-const effectRunner = require("../../common/effect-runner");
-const commandAccess = require("../../chat/commands/command-access");
-const commandHandler = require("../../chat/commands/commandHandler");
-
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
 const { EffectTrigger } = effectModels;
 
 const { EffectCategory } = require('../../../shared/effect-constants');
+const commandHandler = require("../../chat/commands/commandHandler");
 
 /**
  * The Delay effect
@@ -43,17 +40,15 @@ const model = {
         <dropdown-select options="{ system: 'System', custom: 'Custom'}" selected="effect.commandType"></dropdown-select>
     </eos-container>
 
-        <eos-container header="Command To Run" ng-show="effect.commandType === 'system'" pad-top="true">
-            <ui-select ng-model="effect.systemCommandId" theme="bootstrap">
+        <eos-container header="Command To Run" pad-top="true">
+            <ui-select ng-model="effect.systemCommandId" theme="bootstrap" ng-show="effect.commandType === 'system'">
                 <ui-select-match placeholder="Select or search for a command... ">{{$select.selected.trigger}}</ui-select-match>
                 <ui-select-choices repeat="command.id as command in systemCommands | filter: { trigger: $select.search }" style="position:relative;">
                     <div ng-bind-html="command.trigger | highlight: $select.search"></div>
                 </ui-select-choices>
             </ui-select>
-        </eos-container>
 
-        <eos-container header="Command To Run" ng-show="effect.commandType === 'custom'" pad-top="true">
-            <ui-select ng-model="effect.customCommandId" theme="bootstrap">
+            <ui-select ng-model="effect.customCommandId" theme="bootstrap" ng-show="effect.commandType === 'custom'">
                 <ui-select-match placeholder="Select or search for a command... ">{{$select.selected.trigger}}</ui-select-match>
                 <ui-select-choices repeat="command.id as command in customCommands | filter: { trigger: $select.search }" style="position:relative;">
                     <div ng-bind-html="command.trigger | highlight: $select.search"></div>
@@ -61,9 +56,17 @@ const model = {
             </ui-select>
         </eos-container>
 
+        <eos-container header="Arguments (optional)" pad-top="true">
+            <input type="text" style="margin-top: 20px;" class="form-control" ng-model="effect.args" placeholder="Enter some arguments..." replace-variables>
+        </eos-container>
+
+        <eos-container header="User who triggers the command (optional)" pad-top="true">
+            <input type="text" style="margin-top: 20px;" class="form-control" ng-model="effect.username" placeholder="Enter a username..." replace-variables>
+        </eos-container>
+
         <eos-container>
             <div class="effect-info alert alert-info" pad-top="true">
-                Please keep in mind you may get unexpected results if any effects in the selected command have command specific things (such as $arg variables) when running outide the context of a chat event.
+                Please keep in mind you may get unexpected results if any effects in the selected command have command specific things (such as $arg variables) when running outside the context of a chat event.
             </div>
         </eos-container>
     `,
@@ -92,27 +95,15 @@ const model = {
    */
     onTriggerEvent: event => {
         return new Promise(resolve => {
-            let effect = event.effect;
+            let { effect, trigger } = event;
+            trigger.metadata.username = effect.username;
 
             if (effect.commandType === "custom") {
-                let command = commandAccess.getCustomCommand(effect.customCommandId);
-
-                if (command && command.effects) {
-                    let processEffectsRequest = {
-                        trigger: event.trigger,
-                        effects: command.effects
-                    };
-
-                    effectRunner.processEffects(processEffectsRequest).then(() => {
-                        resolve(true);
-                    });
-                }
+                commandHandler.runCustomCommandFromEffect(effect.customCommandId, trigger, effect.args);
             } else {
-                commandHandler.runSystemCommandFromEffect(effect.systemCommandId, event.trigger);
-
+                commandHandler.runSystemCommandFromEffect(effect.systemCommandId, trigger, effect.args);
                 resolve(true);
             }
-
             resolve(true);
         });
     }
