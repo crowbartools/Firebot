@@ -48,6 +48,7 @@ exports.loadEffects = () => {
     const clearChat = require("./builtin/clearChat");
     const updateCounter = require("./builtin/update-counter");
     const toggleCommand = require("./builtin/toggle-command");
+    const toggleEvent = require("./builtin/toggle-event");
     const toggleEventSet = require("./builtin/toggle-event-set");
     const toggleTimer = require("./builtin/toggle-timer");
     const cooldownCommand = require("./builtin/cooldown-command");
@@ -101,6 +102,7 @@ exports.loadEffects = () => {
     effectManager.registerEffect(updateCounter);
     effectManager.registerEffect(toggleCommand);
     effectManager.registerEffect(toggleEventSet);
+    effectManager.registerEffect(toggleEvent);
     effectManager.registerEffect(toggleTimer);
     effectManager.registerEffect(cooldownCommand);
     effectManager.registerEffect(setUserMetadata);
