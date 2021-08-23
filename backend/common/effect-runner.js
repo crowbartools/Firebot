@@ -118,13 +118,6 @@ async function runEffects(runEffectsContext) {
         if (!validateEffectCanRun(effect.type, trigger.type)) {
             logger.info(`Skipping ${effect.type}(${effect.id}). Dependencies not met or trigger not supported.`);
 
-            renderWindow.webContents.send("eventlog", {
-                type: "general",
-                username: "System:",
-                event: `Skipped over ${
-                    effect.id
-                } due to dependencies or unsupported trigger.`
-            });
             continue;
         }
 

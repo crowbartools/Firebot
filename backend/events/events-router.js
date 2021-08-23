@@ -155,13 +155,6 @@ async function onEventTriggered(event, source, meta, isManual = false, isRetrigg
         }
 
         runEventEffects(effects, event, source, meta, isManual);
-
-        // send to ui log
-        renderWindow.webContents.send('eventlog', {
-            type: "alert",
-            username: (meta.username || "") + " triggered the event",
-            event: eventSetting.name
-        });
     }
 }
 
