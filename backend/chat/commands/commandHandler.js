@@ -13,7 +13,7 @@ const { TriggerType } = require("../../common/EffectType");
 const commandManager = require("./CommandManager");
 
 // custom command executor
-const customCommandExecutor = require("./customCommandExecutor");
+const commandExecutor = require("./command-executor");
 
 const cooldownCache = new NodeCache({ stdTTL: 1, checkperiod: 1 });
 
@@ -269,10 +269,10 @@ function fireCommand(
             userCommand: userCmd,
             chatMessage: firebotChatMessage
         });
-    } else if (command.type === "custom") {
-        logger.info("Executing custom command effects");
-        customCommandExecutor.execute(command, userCmd, firebotChatMessage, isManual);
     }
+
+    logger.info("Executing command effects");
+    commandExecutor.execute(command, userCmd, firebotChatMessage, isManual);
 }
 
 /**
