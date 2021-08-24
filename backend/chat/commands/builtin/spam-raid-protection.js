@@ -8,7 +8,7 @@ const spamRaidProtection = {
         id: "firebot:spamRaidProtection",
         name: "Spam Raid Protection",
         active: true,
-        hidden: true,
+        hidden: false,
         trigger: "!spamraidprotection",
         description: "Toggles protective measures such as follow-only mode, slow mode, etc.",
         autoDeleteTrigger: false,
@@ -93,7 +93,7 @@ const spamRaidProtection = {
                 default: true
             }
         },
-        subcommands: [
+        subCommands: [
             {
                 arg: "off",
                 usage: "off",
