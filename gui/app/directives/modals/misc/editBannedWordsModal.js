@@ -175,7 +175,7 @@
                                         });
                                     }
                                     if (chatModerationService.chatModerationData.bannedRegularExpressions
-                                        .some(regex => regex.text === value.toLowerCase())) {
+                                        .some(regex => regex.text === value)) {
                                         return resolve({
                                             success: false,
                                             reason: `Regex already exists.`

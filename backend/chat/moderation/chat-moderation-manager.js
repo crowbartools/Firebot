@@ -97,6 +97,13 @@ function startModerationService() {
         }
     );
 
+    moderationService.postMessage(
+        {
+            type: "bannedRegexUpdate",
+            regularExpressions: getBannedRegularExpressionsList()
+        }
+    );
+
     logger.info("Finished setting up chat moderation worker.");
 }
 
@@ -240,8 +247,8 @@ function saveBannedRegularExpressionsList() {
     if (moderationService != null) {
         moderationService.postMessage(
             {
-                type: "bannedRegularExpressionsUpdate",
-                words: getBannedRegularExpressionsList()
+                type: "bannedRegexUpdate",
+                regularExpressions: getBannedRegularExpressionsList()
             }
         );
     }
@@ -316,6 +323,11 @@ function load() {
         let words = getBannedWordsDb().getData("/");
         if (words && Object.keys(words).length > 0) {
             bannedWords = words;
+        }
+
+        let regularExpressions = getbannedRegularExpressionsDb().getData("/");
+        if (regularExpressions && Object.keys(regularExpressions).length > 0) {
+            bannedRegularExpressions = regularExpressions;
         }
     } catch (error) {
         if (error.name === 'DatabaseError') {
