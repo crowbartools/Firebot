@@ -119,7 +119,7 @@ const spamRaidProtection = {
      */
     onTriggerEvent: async event => {
         const { commandOptions } = event;
-        let args = event.userCommand.args;
+        const args = event.userCommand.args;
 
         if (args.length === 0) {
             if (commandOptions.enableFollowerOnly) {

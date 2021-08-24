@@ -2,12 +2,12 @@
 
 const logger = require("../../logwrapper");
 
-let messageCache = [];
-let chatCacheLimit = 50;
+const messageCache = [];
+const chatCacheLimit = 50;
 
 let raidMessage = "";
 let checkerEnabled = false;
-let settings = {
+const settings = {
     shouldBan: false,
     shouldBlock: false
 };
@@ -36,7 +36,7 @@ function sendMessageToCache(firebotChatMessage) {
     if (firebotChatMessage.rawText.length > 10) {
         firebotChatMessage.rawText = firebotChatMessage.rawText.substr(10);
     }
-
+    logger.debug(messageCache);
     messageCache.push(firebotChatMessage);
 
     if (firebotChatMessage && checkerEnabled && firebotChatMessage.rawText === raidMessage) {
@@ -45,10 +45,10 @@ function sendMessageToCache(firebotChatMessage) {
 }
 
 function getRaidMessage() {
-    let rawMessages = messageCache.map(message => message.rawText);
-    let raidMessages = rawMessages.reduce(function (allMessages, message) {
-        if (message in allMessages) {
-            allMessages[message]++;
+    const rawMessages = messageCache.map(message => message.rawText);
+    const raidMessages = rawMessages.reduce((allMessages, message) => {
+        if (allMessages[message] != null) {
+            allMessages[message] += 1;
         } else {
             allMessages[message] = 1;
         }
@@ -56,14 +56,14 @@ function getRaidMessage() {
         return allMessages;
     }, {});
 
-    let highest = Math.max(...Object.values(raidMessages));
-    let index = Object.values(raidMessages).findIndex(message => message === highest);
+    const highest = Math.max(...Object.values(raidMessages));
+    const index = Object.values(raidMessages).findIndex(message => message === highest);
 
     return Object.keys(raidMessages)[index];
 }
 
 function checkPreviousMessages() {
-    for (let message in messageCache) {
+    for (const message in messageCache) {
         if (messageCache[message].rawText === raidMessage) {
             handleRaider(messageCache[message]);
         }
