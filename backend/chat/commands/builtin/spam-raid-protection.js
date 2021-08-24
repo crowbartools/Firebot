@@ -1,0 +1,164 @@
+"use strict";
+
+const chat = require("../../twitch-chat");
+const raidMessageChecker = require("../../moderation/raid-message-checker");
+
+const spamRaidProtection = {
+    definition: {
+        id: "firebot:spamRaidProtection",
+        name: "Spam Raid Protection",
+        active: true,
+        hidden: false,
+        trigger: "!spamraidprotection",
+        description: "Toggles protective measures such as follow-only mode, slow mode, etc.",
+        autoDeleteTrigger: false,
+        scanWholeMessage: false,
+        cooldown: {
+            user: 0,
+            global: 30
+        },
+        restrictionData: {
+            restrictions: [
+                {
+                    id: "sys-cmd-mods-only-perms",
+                    type: "firebot:permissions",
+                    mode: "roles",
+                    roleIds: [
+                        "broadcaster",
+                        "mod"
+                    ]
+                }
+            ]
+        },
+        options: {
+            displayTemplate: {
+                type: "string",
+                title: "Output Template",
+                description: "A message that will tell the users what is going on",
+                default: `We are currently experiencing a spam raid, and have therefore temporarily turned on protective measures.`,
+                useTextArea: true
+            },
+            enableFollowerOnly: {
+                type: "boolean",
+                title: "Follower only mode",
+                description: "Allows you to restrict chat to all or some of your followers, based on how long they’ve followed (0 minutes to 3 months).",
+                default: false
+            },
+            enableFollowerOnlyDuration: {
+                type: "string",
+                title: "Follower only mode duration (formats: 1m / 1h / 1d / 1w / 1mo)",
+                description: "Allows you to restrict chat to all or some of your followers, based on how long they’ve followed (0 minutes to 3 months).",
+                default: "15m"
+            },
+            enableEmoteOnly: {
+                type: "boolean",
+                title: "Emote only mode",
+                description: "Chatters can only chat with Twitch emotes.",
+                default: false
+            },
+            enableSubscriberOnly: {
+                type: "boolean",
+                title: "Subscriber only mode",
+                description: "Only subscribers to the channel are allowed to chat.",
+                default: false
+            },
+            enableSlowMode: {
+                type: "boolean",
+                title: "Slow mode",
+                description: "In slow mode, users can only post one chat message every x seconds.",
+                default: false
+            },
+            enableSlowModeDelay: {
+                type: "number",
+                title: "Slow mode delay in seconds",
+                description: "In slow mode, users can only post one chat message every x seconds.",
+                default: 30
+            },
+            clearChat: {
+                type: "boolean",
+                title: "Clear chat",
+                description: "The chat will be cleared.",
+                default: true
+            },
+            blockRaiders: {
+                type: "boolean",
+                title: "Block raiders",
+                description: "Block every user that posted the raid message.",
+                default: true
+            },
+            banRaiders: {
+                type: "boolean",
+                title: "Ban raiders",
+                description: "Ban every user that posted the raid message from your channel.",
+                default: true
+            }
+        },
+        subCommands: [
+            {
+                arg: "off",
+                usage: "off",
+                description: "Turn off the protection command.",
+                restrictionData: {
+                    restrictions: [
+                        {
+                            id: "sys-cmd-mods-only-perms",
+                            type: "firebot:permissions",
+                            mode: "roles",
+                            roleIds: [
+                                "broadcaster",
+                                "mod"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    /**
+     * When the command is triggered
+     */
+    onTriggerEvent: async event => {
+        const { commandOptions } = event;
+        const args = event.userCommand.args;
+
+        if (args.length === 0) {
+            if (commandOptions.enableFollowerOnly) {
+                chat.enableFollowersOnly(commandOptions.enableFollowerOnlyDuration);
+            }
+
+            if (commandOptions.enableSubscriberOnly) {
+                chat.enableSubscribersOnly();
+            }
+
+            if (commandOptions.enableEmoteOnly) {
+                chat.enableEmoteOnly();
+            }
+
+            if (commandOptions.enableSlowMode) {
+                chat.enableSlowMode(commandOptions.enableSlowModeDelay);
+            }
+
+            if (commandOptions.clearChat) {
+                chat.clearChat();
+            }
+
+            if (commandOptions.banRaiders || commandOptions.blockRaiders) {
+                raidMessageChecker.enable(commandOptions.banRaiders, commandOptions.blockRaiders);
+            }
+
+            chat.sendChatMessage(commandOptions.displayTemplate);
+        }
+
+        if (args[0] === "off") {
+            chat.disableFollowersOnly();
+            chat.disableSubscribersOnly();
+            chat.disableEmoteOnly();
+            chat.disableSlowMode();
+            raidMessageChecker.disable();
+
+            chat.sendChatMessage("Protection turned off.");
+        }
+    }
+};
+
+module.exports = spamRaidProtection;

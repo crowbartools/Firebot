@@ -24,7 +24,9 @@
           </div>
 
           <div ng-switch-when="boolean" style="padding-top:10px;">
-            <label class="control-fb control--checkbox" style="font-weight: 600;"> {{$ctrl.metadata.title ? $ctrl.metadata.title : $ctrl.name}}
+            <label class="control-fb control--checkbox" style="font-weight: 600;">
+              {{$ctrl.metadata.title ? $ctrl.metadata.title : $ctrl.name}}
+              <tooltip text="$ctrl.metadata.description"></tooltip>
               <input type="checkbox" ng-click="$ctrl.metadata.value = !$ctrl.metadata.value" ng-checked="$ctrl.metadata.value" aria-label="...">
               <div class="control__indicator"></div>
             </label>
@@ -68,7 +70,7 @@
 
           <div ng-if="$ctrl.metadata.tip != null && $ctrl.metadata.tip !== ''" class="muted" style="font-size:12px; padding-top: 3px;">{{$ctrl.metadata.tip}}</div>
        </div>
-       
+
        <hr ng-if="$ctrl.metadata.showBottomHr" style="margin-top:10px; margin-bottom:15px;" />
        `,
         controller: function() {

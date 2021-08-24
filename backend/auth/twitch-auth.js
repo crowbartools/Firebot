@@ -47,6 +47,7 @@ const STREAMER_ACCOUNT_PROVIDER = {
         'chat:edit',
         'chat:read',
         'clips:edit',
+        'user:manage:blocked_users',
         'user:read:broadcast',
         'whispers:read',
         'whispers:edit',
