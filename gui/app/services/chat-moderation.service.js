@@ -28,7 +28,8 @@
                     },
                     exemptRoles: []
                 },
-                bannedWords: []
+                bannedWords: [],
+                bannedRegularExpressions: []
             };
 
             service.loadChatModerationData = () => {
@@ -69,6 +70,19 @@
                 backendCommunicator.fireEvent("addBannedWords", mapped);
             };
 
+            service.addBannedRegex = (regex) => {
+                let mapped = [
+                    {
+                        text: regex,
+                        createdAt: moment().valueOf()
+                    }
+                ];
+
+                service.chatModerationData.bannedRegularExpressions = service.chatModerationData.bannedRegularExpressions.concat(mapped);
+
+                backendCommunicator.fireEvent("addBannedRegularExpressions", mapped);
+            };
+
             service.removeBannedWordAtIndex = (index) => {
                 let word = service.chatModerationData.bannedWords[index];
                 if (word) {
@@ -87,6 +101,26 @@
             service.removeAllBannedWords = () => {
                 service.chatModerationData.bannedWords = [];
                 backendCommunicator.fireEvent("removeAllBannedWords");
+            };
+
+            service.removeRegexAtIndex = (index) => {
+                let regex = service.chatModerationData.bannedRegularExpressions[index];
+                if (regex) {
+                    backendCommunicator.fireEvent("removeBannedRegex", regex.text);
+                    service.chatModerationData.bannedRegularExpressions.splice(index, 1);
+                }
+            };
+
+            service.removeRegex = (regex) => {
+                let index = service.chatModerationData.bannedRegularExpressions.findIndex(r => r.text === regex);
+                if (index > -1) {
+                    service.removeRegexAtIndex(index);
+                }
+            };
+
+            service.removeAllBannedRegularExpressions = () => {
+                service.chatModerationData.bannedRegularExpressions = [];
+                backendCommunicator.fireEvent("removeAllBannedRegularExpressions");
             };
 
             service.registerPermitCommand = () => {

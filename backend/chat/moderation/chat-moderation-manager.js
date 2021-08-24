@@ -8,6 +8,7 @@ const permitCommand = require("./url-permit-command");
 
 let getChatModerationSettingsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/chat-moderation-settings");
 let getBannedWordsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-words", false);
+let getbannedRegularExpressionsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-regular-expressions", false);
 
 // default settings
 let chatModerationSettings = {
@@ -33,9 +34,18 @@ let bannedWords = {
     words: []
 };
 
+let bannedRegularExpressions = {
+    regularExpressions: []
+};
+
 function getBannedWordsList() {
     if (!bannedWords || !bannedWords.words) return [];
     return bannedWords.words.map(w => w.text);
+}
+
+function getBannedRegularExpressionsList() {
+    if (!bannedRegularExpressions || !bannedRegularExpressions.regularExpressions) return [];
+    return bannedRegularExpressions.regularExpressions.map(r => r.text);
 }
 
 /**
@@ -219,6 +229,24 @@ function saveBannedWordList() {
     }
 }
 
+function saveBannedRegularExpressionsList() {
+    try {
+        getbannedRegularExpressionsDb().push("/", bannedRegularExpressions);
+    } catch (error) {
+        if (error.name === 'DatabaseError') {
+            logger.error("Error saving banned regular expressions data", error);
+        }
+    }
+    if (moderationService != null) {
+        moderationService.postMessage(
+            {
+                type: "bannedRegularExpressionsUpdate",
+                words: getBannedRegularExpressionsList()
+            }
+        );
+    }
+}
+
 frontendCommunicator.on("addBannedWords", words => {
     bannedWords.words = bannedWords.words.concat(words);
     saveBannedWordList();
@@ -234,10 +262,26 @@ frontendCommunicator.on("removeAllBannedWords", () => {
     saveBannedWordList();
 });
 
+frontendCommunicator.on("addBannedRegularExpressions", regularExpressions => {
+    bannedRegularExpressions.regularExpressions = bannedRegularExpressions.regularExpressions.concat(regularExpressions);
+    saveBannedRegularExpressionsList();
+});
+
+frontendCommunicator.on("removeBannedRegularExpressions", regexText => {
+    bannedRegularExpressions.regularExpressions = bannedRegularExpressions.regularExpressions.filter(r => r.text.toLowerCase() !== regexText);
+    saveBannedRegularExpressionsList();
+});
+
+frontendCommunicator.on("removeAllRegularExpressions", () => {
+    bannedRegularExpressions.regularExpressions = [];
+    saveBannedRegularExpressionsList();
+});
+
 frontendCommunicator.on("getChatModerationData", () => {
     return {
         settings: chatModerationSettings,
-        bannedWords: bannedWords.words
+        bannedWords: bannedWords.words,
+        bannedRegularExpressions: bannedRegularExpressions.regularExpressions
     };
 });
 
