@@ -258,34 +258,18 @@ class TwitchChat extends EventEmitter {
         this._streamerChatClient.say(`#${streamer.username.replace("#", "")}`, `/unban ${username}`);
     }
 
-    async block(userId) {
-        if (userId == null) return;
+    block(username) {
+        if (username == null) return;
 
-        const client = twitchClient.getClient();
-
-        await client.callApi({
-            type: TwitchAPICallType.Helix,
-            method: "PUT",
-            url: "users/blocks",
-            query: {
-                "target_user_id": userId
-            }
-        });
+        const twitchApi = require("../twitch-api/api");
+        twitchApi.users.blockUserByName(username);
     }
 
-    async unblock(userId) {
-        if (userId == null) return;
+    unblock(username) {
+        if (username == null) return;
 
-        const client = twitchClient.getClient();
-
-        await client.callApi({
-            type: TwitchAPICallType.Helix,
-            method: "DELETE",
-            url: "users/blocks",
-            query: {
-                "target_user_id": userId
-            }
-        });
+        const twitchApi = require("../twitch-api/api");
+        twitchApi.users.unblockUserByName(username);
     }
 
     addVip(username) {

@@ -138,7 +138,7 @@
                                     text: "/unvip"
                                 },
                                 {
-                                    display: "/followers [1m / 1h / 1w / 1mo]",
+                                    display: "/followers [1m / 1h / 1d / 1w / 1mo]",
                                     description: "Restrict Chat to followers based on their follow duration",
                                     text: "/followers"
                                 },

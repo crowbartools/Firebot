@@ -6,6 +6,7 @@ const twitchApi = require("../client");
 const { TwitchAPICallType } = require("twitch/lib");
 
 const NodeCache = require("node-cache");
+const logger = require("../../logwrapper");
 
 const userRoleCache = new NodeCache({ stdTTL: 30, checkperiod: 5 });
 
@@ -131,6 +132,53 @@ async function updateUserRole(userId, role, addOrRemove) {
     return true;
 }
 
+async function blockUser(userId) {
+    if (userId == null) return;
+
+    const client = twitchApi.getClient();
+
+    try {
+        await client.callApi({
+            type: TwitchAPICallType.Helix,
+            method: "PUT",
+            url: "users/blocks",
+            query: {
+                "target_user_id": userId
+            }
+        });
+
+        return true;
+    } catch (err) {
+        logger.error("Couldn't block user", err);
+        return false;
+    }
+
+}
+
+async function unblockUser(userId) {
+    if (userId == null) return;
+
+    const client = twitchApi.getClient();
+
+    try {
+        await client.callApi({
+            type: TwitchAPICallType.Helix,
+            method: "DELETE",
+            url: "users/blocks",
+            query: {
+                "target_user_id": userId
+            }
+        });
+
+        return true;
+    } catch (err) {
+        logger.error("Couldn't unblock user", err);
+
+        return false;
+    }
+}
+
+
 async function getFollowDateForUser(username) {
     const client = twitchApi.getClient();
     const streamerData = accountAccess.getAccounts().streamer;
@@ -192,6 +240,8 @@ async function toggleFollowOnChannel(channelIdToFollow, shouldFollow = true) {
 
 exports.getUserChatInfoByName = getUserChatInfoByName;
 exports.getUsersChatRoles = getUsersChatRoles;
+exports.blockUser = blockUser;
+exports.unblockUser = unblockUser;
 exports.getFollowDateForUser = getFollowDateForUser;
 exports.toggleFollowOnChannel = toggleFollowOnChannel;
 exports.updateUserRole = updateUserRole;
