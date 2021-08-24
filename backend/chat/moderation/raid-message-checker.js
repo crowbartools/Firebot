@@ -24,13 +24,17 @@ function handleRaider(message) {
     }
 }
 
+/**
+ *
+ * @param {import("../chat-helpers").FirebotChatMessage} firebotChatMessage
+ */
 function sendMessageToCache(firebotChatMessage) {
     if (messageCache.length >= chatCacheLimit) {
         messageCache.shift();
     }
 
-    let message = firebotChatMessage.substr(10);
-    messageCache.push(message);
+    firebotChatMessage.rawText = firebotChatMessage.rawText.substr(10);
+    messageCache.push(firebotChatMessage);
 
     if (firebotChatMessage && checkerEnabled && firebotChatMessage.rawText === raidMessage) {
         handleRaider(firebotChatMessage);
