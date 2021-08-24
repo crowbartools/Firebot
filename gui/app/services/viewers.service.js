@@ -52,10 +52,6 @@
                 backendCommunicator.fireEvent("update-user-mod-status", { username, shouldBeMod });
             };
 
-            service.toggleFollowOnChannel = (channelIdToFollow, shouldFollow = true) => {
-                backendCommunicator.fireEvent("toggleFollowOnChannel", { channelIdToFollow, shouldFollow });
-            };
-
             // Did user see warning alert about connecting to chat first?
             service.sawWarningAlert = true;
             return service;
