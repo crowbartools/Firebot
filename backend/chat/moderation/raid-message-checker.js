@@ -29,7 +29,8 @@ function sendMessageToCache(firebotChatMessage) {
         messageCache.shift();
     }
 
-    messageCache.push(firebotChatMessage);
+    let message = firebotChatMessage.substr(10);
+    messageCache.push(message);
 
     if (firebotChatMessage && checkerEnabled && firebotChatMessage.rawText === raidMessage) {
         handleRaider(firebotChatMessage);
