@@ -3,6 +3,7 @@ const logger = require("../logwrapper");
 const EventEmitter = require("events");
 const { ChatClient } = require("twitch-chat-client");
 const twitchClient = require("../twitch-api/client");
+const { TwitchAPICallType } = require("twitch/lib");
 const accountAccess = require("../common/account-access");
 const frontendCommunicator = require("../common/frontend-communicator");
 const chatHelpers = require("./chat-helpers");
@@ -257,6 +258,36 @@ class TwitchChat extends EventEmitter {
         this._streamerChatClient.say(`#${streamer.username.replace("#", "")}`, `/unban ${username}`);
     }
 
+    async block(userId) {
+        if (userId == null) return;
+
+        const client = twitchClient.getClient();
+
+        await client.callApi({
+            type: TwitchAPICallType.Helix,
+            method: "PUT",
+            url: "users/blocks",
+            query: {
+                "target_user_id": userId
+            }
+        });
+    }
+
+    async unblock(userId) {
+        if (userId == null) return;
+
+        const client = twitchClient.getClient();
+
+        await client.callApi({
+            type: TwitchAPICallType.Helix,
+            method: "DELETE",
+            url: "users/blocks",
+            query: {
+                "target_user_id": userId
+            }
+        });
+    }
+
     addVip(username) {
         if (username == null) return;
 
@@ -280,7 +311,7 @@ class TwitchChat extends EventEmitter {
 
     enableFollowersOnly(duration) {
         if (this._streamerChatClient == null) return;
-        const streamer = accountAccess.getAccounts().streamer;
+        const streamer = accountAccess.getAccounts().streamer.username;
 
         if (duration == null) {
             this._streamerChatClient.enableFollowersOnly(streamer);
@@ -291,43 +322,43 @@ class TwitchChat extends EventEmitter {
 
     disableFollowersOnly() {
         if (this._streamerChatClient == null) return;
-        const streamer = accountAccess.getAccounts().streamer;
+        const streamer = accountAccess.getAccounts().streamer.username;
         this._streamerChatClient.disableFollowersOnly(streamer);
     }
 
     enableEmoteOnly() {
         if (this._streamerChatClient == null) return;
-        const streamer = accountAccess.getAccounts().streamer;
+        const streamer = accountAccess.getAccounts().streamer.username;
         this._streamerChatClient.enableEmoteOnly(streamer);
     }
 
     disableEmoteOnly() {
         if (this._streamerChatClient == null) return;
-        const streamer = accountAccess.getAccounts().streamer;
+        const streamer = accountAccess.getAccounts().streamer.username;
         this._streamerChatClient.disableEmoteOnly(streamer);
     }
 
     enableSubscribersOnly() {
         if (this._streamerChatClient == null) return;
-        const streamer = accountAccess.getAccounts().streamer;
+        const streamer = accountAccess.getAccounts().streamer.username;
         this._streamerChatClient.enableSubsOnly(streamer);
     }
 
     disableSubscribersOnly() {
         if (this._streamerChatClient == null) return;
-        const streamer = accountAccess.getAccounts().streamer;
+        const streamer = accountAccess.getAccounts().streamer.username;
         this._streamerChatClient.disableSubsOnly(streamer);
     }
 
     enableSlowMode(delay = 30) {
         if (this._streamerChatClient == null) return;
-        const streamer = accountAccess.getAccounts().streamer;
+        const streamer = accountAccess.getAccounts().streamer.username;
         this._streamerChatClient.enableSlow(streamer, delay);
     }
 
     disableSlowMode() {
         if (this._streamerChatClient == null) return;
-        const streamer = accountAccess.getAccounts().streamer;
+        const streamer = accountAccess.getAccounts().streamer.username;
         this._streamerChatClient.disableSlow(streamer);
     }
 

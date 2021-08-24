@@ -1,6 +1,7 @@
 "use strict";
 
 const chat = require("../../twitch-chat");
+const raidMessageChecker = require("../../moderation/raid-message-checker");
 
 const spamRaidProtection = {
     definition: {
@@ -79,29 +80,71 @@ const spamRaidProtection = {
                 description: "Ban every user that posted the raid message from your channel.",
                 default: true
             }
-        }
+        },
+        subcommands: [
+            {
+                arg: "off",
+                usage: "off",
+                description: "Turn off the protection command.",
+                restrictionData: {
+                    restrictions: [
+                        {
+                            id: "sys-cmd-mods-only-perms",
+                            type: "firebot:permissions",
+                            mode: "roles",
+                            roleIds: [
+                                "broadcaster",
+                                "mod"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
     },
     /**
      * When the command is triggered
      */
     onTriggerEvent: async event => {
         const { commandOptions } = event;
-        chat.sendChatMessage(commandOptions.spamRaidProtectionTemplate);
+        let args = event.userCommand.args;
 
-        if (commandOptions.enableFollowerOnly) {
-            chat.enableFollowersOnly("15m");
+        if (args.length === 0) {
+            if (commandOptions.enableFollowerOnly) {
+                chat.enableFollowersOnly("15m");
+            }
+
+            if (commandOptions.enableSubscriberOnly) {
+                chat.enableSubscribersOnly();
+            }
+
+            if (commandOptions.enableEmoteOnly) {
+                chat.enableEmoteOnly();
+            }
+
+            if (commandOptions.enableSlowMode) {
+                chat.enableSlowMode();
+            }
+
+            if (commandOptions.clearChat) {
+                chat.clearChat();
+            }
+
+            if (commandOptions.banRaiders || commandOptions.blockRaiders) {
+                raidMessageChecker.enable(commandOptions.banRaiders, commandOptions.blockRaiders);
+            }
+
+            chat.sendChatMessage(commandOptions.displayTemplate);
         }
 
-        if (commandOptions.enableSubscriberOnly) {
-            chat.enableSubscriberOnly();
-        }
+        if (args[0] === "off") {
+            chat.disableFollowersOnly();
+            chat.disableSubscribersOnly();
+            chat.disableEmoteOnly();
+            chat.disableSlowMode();
+            raidMessageChecker.disable();
 
-        if (commandOptions.enableEmoteOnly) {
-            chat.enableEmoteOnly();
-        }
-
-        if (commandOptions.enableSlowMode) {
-            chat.enableSlowMode();
+            chat.sendChatMessage("Protection turned off.");
         }
     }
 };
