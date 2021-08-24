@@ -19,7 +19,6 @@
             toggleServicesRequest: {},
             chatMessage: {},
             chatUpdate: {},
-            eventLog: {},
             error: {},
             updateError: {},
             updateDownloaded: {},
@@ -63,7 +62,6 @@
             CHAT_MESSAGE: "chatMessage",
             CHAT_UPDATE: "chatUpdate",
             CURRENT_VIEWERS_UPDATE: "currentViewersUpdate",
-            EVENT_LOG: "eventLog",
             ERROR: "error",
             UPDATE_ERROR: "updateError",
             UPDATE_DOWNLOADED: "updateDownloaded",
@@ -353,15 +351,6 @@
         // Recieves an event from main process when a current viewer count has changed
         ipcRenderer.on("currentViewersUpdate", function(event, data) {
             _.forEach(registeredListeners.currentViewersUpdate, listener => {
-                runListener(listener, data);
-            });
-        });
-
-        /**
-     * Event log event listener
-     */
-        ipcRenderer.on("eventlog", function(event, data) {
-            _.forEach(registeredListeners.eventLog, listener => {
                 runListener(listener, data);
             });
         });

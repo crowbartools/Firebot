@@ -76,14 +76,6 @@ module.exports = {
                 },
                 originatedInStreamerChannel: chatFromStreamerChannel
             });
-
-            if (chatFromStreamerChannel) {
-                renderWindow.webContents.send('eventlog', {
-                    type: "general",
-                    username: data.user_name,
-                    event: `sent the Sticker "${skill.skill_name}" Cost: ${skill.cost} ${skill.currency}`
-                });
-            }
         }
 
         const userdb = require("../../../database/userDatabase");

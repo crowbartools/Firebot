@@ -26,12 +26,6 @@ module.exports = {
             });
         }
 
-        renderWindow.webContents.send('eventlog', {
-            type: "general",
-            username: data['user_name'],
-            event: `used the Skill "${data.skill.skill_name}" Cost: ${data.skill.cost} ${data.skill.currency}`
-        });
-
         renderWindow.webContents.send('nonChatSkill', data);
     }
 };
