@@ -1,7 +1,6 @@
 "use strict";
 
 const { parentPort } = require("worker_threads");
-const logger = require("../../logwrapper");
 
 let bannedWords = [];
 let regularExpressions = [];
@@ -16,12 +15,17 @@ function hasBannedWord(input) {
 
 function matchesBannedRegex(input) {
     let expressions = regularExpressions.map(regex => new RegExp(regex, "gi"));
+    let inputWords = input.split(" ");
 
-    return expressions.some(expression => {
-        return input.split(" ").forEach(word => {
-            expression.test(word);
-        });
-    });
+    for (const exp of expressions) {
+        for (const word of inputWords) {
+            if (exp.test(word)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 parentPort.on("message", event => {
@@ -39,18 +43,14 @@ parentPort.on("message", event => {
         break;
     case "moderateMessage": {
         // check for banned word
-        logger.debug("checking if we have a message...");
         if (event.message == null || event.messageId == null) return;
         if (event.scanForBannedWords) {
-            logger.debug("checking for banned words...");
             let bannedWordFound = hasBannedWord(event.message);
             if (bannedWordFound) {
-                logger.debug("banned word found");
                 parentPort.postMessage({ type: "deleteMessage", messageId: event.messageId });
             } else {
                 let bannedRegexMatched = matchesBannedRegex(event.message);
                 if (bannedRegexMatched) {
-                    logger.debug("regex found");
                     parentPort.postMessage({ type: "deleteMessage", messageId: event.messageId });
                 }
             }
