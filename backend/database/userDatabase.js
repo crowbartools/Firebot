@@ -795,12 +795,6 @@ frontendCommunicator.on("updateViewerRole", (data) => {
     //await twitchApi.users.updateUserRole(userId, role, addOrRemove);
 });
 
-frontendCommunicator.on("toggleFollowOnChannel", (data) => {
-    const twitchApi = require("../twitch-api/api");
-    const { channelIdToFollow, shouldFollow } = data;
-    twitchApi.users.toggleFollowOnChannel(channelIdToFollow, shouldFollow);
-});
-
 frontendCommunicator.on("updateViewerDataField", (data) => {
     const { userId, field, value } = data;
 

@@ -14,6 +14,7 @@ exports.loadCommands = () => {
     const customRoleManagement = require("./builtin/custom-role-management");
     const mixerLink = require('./builtin/mixer-link');
     const marker = require('./builtin/marker');
+    const spamRaidProtection = require('./builtin/spam-raid-protection');
 
     // register them
     commandManager.registerSystemCommand(commandList);
@@ -25,6 +26,7 @@ exports.loadCommands = () => {
     commandManager.registerSystemCommand(customRoleManagement);
     commandManager.registerSystemCommand(mixerLink);
     commandManager.registerSystemCommand(marker);
+    commandManager.registerSystemCommand(spamRaidProtection);
 
     currencyManager.createAllCurrencyCommands();
 };
