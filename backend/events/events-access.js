@@ -171,6 +171,18 @@ function getAllActiveEvents() {
     return activeEventsArray.filter(e => e.active);
 }
 
+function getEvent(eventId) {
+    let event = mainEvents.find(e => e.id === eventId);
+
+    if (event == null) {
+        for (const groupId of Object.keys(groups)) {
+            event = groups[groupId].events.find(e => e.id === eventId);
+        }
+    }
+
+    return event;
+}
+
 ipcMain.on("getAllEventData", event => {
     logger.debug("got 'get all event data' request");
     event.returnValue = {
@@ -206,6 +218,35 @@ frontendCommunicator.on("event-sort-tags-update", tags => {
     saveSortTags();
 });
 
+function updateEventActiveStatus(eventId, active = false) {
+    let event = mainEvents.find(e => e.id === eventId);
+
+    if (event != null) {
+        event.active = active;
+
+        const index = mainEvents.findIndex(e => e.id === event.id);
+        mainEvents[index] = event;
+
+        saveMainEvents(mainEvents);
+        frontendCommunicator.send("main-events-update");
+    } else {
+        for (const [groupId, group] of Object.entries(groups)) {
+            event = groups[groupId].events.find(e => e.id === eventId);
+
+            if (event) {
+                event.active = active;
+
+                const index = groups[groupId].events.findIndex(e => e.id === event.id);
+                group.events[index] = event;
+
+                saveGroup(group);
+                frontendCommunicator.send("event-group-update", group);
+            }
+        }
+        return;
+    }
+}
+
 function updateEventGroupActiveStatus(groupId, active = false) {
     const group = groups[groupId];
 
@@ -229,4 +270,6 @@ exports.deleteGroup = deleteGroup;
 exports.removeEventFromMainEvents = removeEventFromMainEvents;
 exports.loadEventsAndGroups = loadEventsAndGroups;
 exports.getAllActiveEvents = getAllActiveEvents;
+exports.getEvent = getEvent;
 exports.updateEventGroupActiveStatus = updateEventGroupActiveStatus;
+exports.updateEventActiveStatus = updateEventActiveStatus;
