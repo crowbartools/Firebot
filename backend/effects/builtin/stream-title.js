@@ -42,7 +42,7 @@ const model = {
     onTriggerEvent: async event => {
         const client = twitchClient.getClient();
 
-        await client.callAPI({
+        await client.callApi({
             type: TwitchAPICallType.Helix,
             method: "PATCH",
             url: "channels",

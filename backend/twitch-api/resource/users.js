@@ -14,7 +14,7 @@ async function getUserChatInfo(userId) {
 
     const streamer = accountAccess.getAccounts().streamer;
 
-    const chatUser = await client.callAPI({
+    const chatUser = await client.callApi({
         type: TwitchAPICallType.Kraken,
         url: `users/${userId}/chat/channels/${streamer.userId}`
     });
