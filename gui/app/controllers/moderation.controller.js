@@ -2,29 +2,12 @@
 (function() {
     //This handles the Moderation tab
 
-    const fs = require("fs");
-
     angular
         .module("firebotApp")
-        .controller("moderationController", function($scope, eventLogService, chatModerationService, utilityService,
+        .controller("moderationController", function($scope, chatModerationService, utilityService,
             viewerRolesService, settingsService) {
 
-            $scope.activeTab = 0;
-
-            $scope.eventLogService = eventLogService;
-
             $scope.settingsService = settingsService;
-
-            $scope.pagination = {
-                generalLog: {
-                    currentPage: 1,
-                    pageSize: 5
-                },
-                alertLog: {
-                    currentPage: 1,
-                    pageSize: 5
-                }
-            };
 
             $scope.getExemptRoles = () => {
                 return [

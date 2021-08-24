@@ -1,23 +1,29 @@
 "use strict";
 
-const twitchCategories = require("./resource/categories");
-const channelRewards = require("./resource/channel-rewards");
-const channels = require("./resource/channels");
+const twitchApi = require("./api");
 const frontendCommunicator = require("../common/frontend-communicator");
 
 exports.setupListeners = () => {
 
     frontendCommunicator.onAsync("search-twitch-games", query => {
-        return twitchCategories.searchCategories(query);
+        return twitchApi.categories.searchCategories(query);
     });
 
     frontendCommunicator.onAsync("get-twitch-game", gameId => {
-        return twitchCategories.getCategoryById(gameId);
+        return twitchApi.categories.getCategoryById(gameId);
+    });
+
+    frontendCommunicator.onAsync("get-channel-stream-tags", () => {
+        return twitchApi.streamTags.getChannelStreamTags();
+    });
+
+    frontendCommunicator.onAsync("get-all-stream-tags", () => {
+        return twitchApi.streamTags.getAllStreamTagsPaginated();
     });
 
     frontendCommunicator.onAsync("get-channel-info", async () => {
         try {
-            const channelInfo = await channels.getChannelInformation();
+            const channelInfo = await twitchApi.channels.getChannelInformation();
             return {
                 title: channelInfo.title,
                 gameId: channelInfo.game_id
@@ -29,7 +35,16 @@ exports.setupListeners = () => {
 
     frontendCommunicator.onAsync("set-channel-info", async ({ title, gameId }) => {
         try {
-            await channels.updateChannelInformation(title, gameId);
+            await twitchApi.channels.updateChannelInformation(title, gameId);
+            return true;
+        } catch (error) {
+            return false;
+        }
+    });
+
+    frontendCommunicator.onAsync("set-stream-tags", async (tagIds) => {
+        try {
+            await twitchApi.streamTags.updateChannelStreamTags(tagIds);
             return true;
         } catch (error) {
             return false;
@@ -37,7 +52,7 @@ exports.setupListeners = () => {
     });
 
     frontendCommunicator.onAsync("get-channel-rewards", async () => {
-        const rewards = await channelRewards.getCustomChannelRewards();
+        const rewards = await twitchApi.channelRewards.getCustomChannelRewards();
         return rewards || [];
     });
 

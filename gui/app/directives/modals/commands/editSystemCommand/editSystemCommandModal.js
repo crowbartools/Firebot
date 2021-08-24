@@ -23,6 +23,10 @@
                 }
             };
 
+            $ctrl.effectListUpdated = function(effects) {
+                $ctrl.command.effects = effects;
+            };
+
             $ctrl.reset = function() {
                 $ctrl.close({
                     $value: {

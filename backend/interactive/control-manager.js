@@ -148,7 +148,6 @@ async function handleInput(inputType, sceneId, inputEvent, participant) {
                 mixplay.client.captureTransaction(inputEvent.transactionID);
 
                 logger.debug("User not spark exempt. Captured transaction to charge sparks for " + participant.username);
-                renderWindow.webContents.send('eventlog', {type: "general", username: 'System', event: participant.username + " pressed a button with sparks. They have been charged."});
             } else {
                 logger.debug("This control doesnt appear to have sparks associated to it.");
             }

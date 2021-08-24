@@ -148,6 +148,30 @@ async function textProcessor(effect, trigger, populateReplaceVars = true) {
         case "/purge":
             twitchChat.timeoutUser(target, 1);
             break;
+        case "/followers":
+            twitchChat.enableFollowersOnly(arg1);
+            break;
+        case "/followersoff":
+            twitchChat.disableFollowersOnly();
+            break;
+        case "/emoteonly":
+            twitchChat.enableEmoteOnly();
+            break;
+        case "/emoteonlyoff":
+            twitchChat.disableEmoteOnly();
+            break;
+        case "/subscribers":
+            twitchChat.enableSubscribersOnly();
+            break;
+        case "/subscribersoff":
+            twitchChat.disableSubscribersOnly();
+            break;
+        case "/slow":
+            twitchChat.enableSlowMode(arg1);
+            break;
+        case "/slowoff":
+            twitchChat.disableSlowMode();
+            break;
         case "/ad":
             await twitchApi.channels.triggerAdBreak();
             break;

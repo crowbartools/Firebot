@@ -257,6 +257,20 @@ class TwitchChat extends EventEmitter {
         this._streamerChatClient.say(`#${streamer.username.replace("#", "")}`, `/unban ${username}`);
     }
 
+    block(username) {
+        if (username == null) return;
+
+        const twitchApi = require("../twitch-api/api");
+        twitchApi.users.blockUserByName(username);
+    }
+
+    unblock(username) {
+        if (username == null) return;
+
+        const twitchApi = require("../twitch-api/api");
+        twitchApi.users.unblockUserByName(username);
+    }
+
     addVip(username) {
         if (username == null) return;
 
@@ -276,6 +290,59 @@ class TwitchChat extends EventEmitter {
     clearChat() {
         if (this._streamerChatClient == null) return;
         this._streamerChatClient.clear();
+    }
+
+    enableFollowersOnly(duration) {
+        if (this._streamerChatClient == null) return;
+        const streamer = accountAccess.getAccounts().streamer.username;
+
+        if (duration == null) {
+            this._streamerChatClient.enableFollowersOnly(streamer);
+        } else {
+            this._streamerChatClient.enableFollowersOnly(streamer, duration);
+        }
+    }
+
+    disableFollowersOnly() {
+        if (this._streamerChatClient == null) return;
+        const streamer = accountAccess.getAccounts().streamer.username;
+        this._streamerChatClient.disableFollowersOnly(streamer);
+    }
+
+    enableEmoteOnly() {
+        if (this._streamerChatClient == null) return;
+        const streamer = accountAccess.getAccounts().streamer.username;
+        this._streamerChatClient.enableEmoteOnly(streamer);
+    }
+
+    disableEmoteOnly() {
+        if (this._streamerChatClient == null) return;
+        const streamer = accountAccess.getAccounts().streamer.username;
+        this._streamerChatClient.disableEmoteOnly(streamer);
+    }
+
+    enableSubscribersOnly() {
+        if (this._streamerChatClient == null) return;
+        const streamer = accountAccess.getAccounts().streamer.username;
+        this._streamerChatClient.enableSubsOnly(streamer);
+    }
+
+    disableSubscribersOnly() {
+        if (this._streamerChatClient == null) return;
+        const streamer = accountAccess.getAccounts().streamer.username;
+        this._streamerChatClient.disableSubsOnly(streamer);
+    }
+
+    enableSlowMode(delay = 30) {
+        if (this._streamerChatClient == null) return;
+        const streamer = accountAccess.getAccounts().streamer.username;
+        this._streamerChatClient.enableSlow(streamer, delay);
+    }
+
+    disableSlowMode() {
+        if (this._streamerChatClient == null) return;
+        const streamer = accountAccess.getAccounts().streamer.username;
+        this._streamerChatClient.disableSlow(streamer);
     }
 
     purgeUserMessages(username, reason = "") {

@@ -13,7 +13,7 @@ const { TriggerType } = require("../../common/EffectType");
 const commandManager = require("./CommandManager");
 
 // custom command executor
-const customCommandExecutor = require("./customCommandExecutor");
+const commandExecutor = require("./command-executor");
 
 const cooldownCache = new NodeCache({ stdTTL: 1, checkperiod: 1 });
 
@@ -269,9 +269,10 @@ function fireCommand(
             userCommand: userCmd,
             chatMessage: firebotChatMessage
         });
-    } else if (command.type === "custom") {
-        logger.info("Executing custom command effects");
-        customCommandExecutor.execute(command, userCmd, firebotChatMessage, isManual);
+    }
+    if (command.effects) {
+        logger.info("Executing command effects");
+        commandExecutor.execute(command, userCmd, firebotChatMessage, isManual);
     }
 }
 
@@ -429,14 +430,6 @@ async function handleChatMessage(firebotChatMessage) {
     // add cooldown to cache if commmand has cooldowns set
     cooldownCommand(command, triggeredSubcmd, commandSender);
 
-    // Log the action in Firebot's log.
-    logger.debug("Sending activity log for command to front end.");
-    renderWindow.webContents.send("eventlog", {
-        type: "general",
-        username: commandSender,
-        event: "used the " + command.trigger + " command."
-    });
-
     //update the count for the command
     if (command.type === "custom") {
         logger.debug("Updating command count.");
@@ -457,6 +450,25 @@ function triggerCustomCommand(id, isManual = true) {
     }
 }
 
+function runCommandFromEffect(command, trigger, args) {
+    let message = command.trigger + " " + args;
+
+    if (command) {
+        let userCmd = buildUserCommand(command, message, trigger.metadata.username);
+        fireCommand(command, userCmd, message, trigger.metadata.username, false);
+    }
+}
+
+function runSystemCommandFromEffect(id, trigger, args) {
+    let command = commandManager.getSystemCommandById(id).definition;
+    runCommandFromEffect(command, trigger, args);
+}
+
+function runCustomCommandFromEffect(id, trigger, args) {
+    let command = commandManager.getCustomCommandById(id);
+    runCommandFromEffect(command, trigger, args);
+}
+
 // Refresh command cooldown cache when changes happened on the front end
 ipcMain.on("commandManualTrigger", function(event, id) {
     triggerCustomCommand(id, true);
@@ -469,4 +481,6 @@ ipcMain.on("refreshCommandCache", function() {
 
 exports.handleChatMessage = handleChatMessage;
 exports.triggerCustomCommand = triggerCustomCommand;
+exports.runSystemCommandFromEffect = runSystemCommandFromEffect;
+exports.runCustomCommandFromEffect = runCustomCommandFromEffect;
 exports.flushCooldownCache = flushCooldownCache;

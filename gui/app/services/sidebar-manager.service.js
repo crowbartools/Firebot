@@ -36,7 +36,8 @@
                 return (
                     service.currentTab.toLowerCase() === "chat feed" ||
                     service.currentTab.toLowerCase() === "commands" ||
-                    service.currentTab.toLowerCase() === "effects" ||
+                    service.currentTab.toLowerCase() === "preset effect lists" ||
+                    service.currentTab.toLowerCase() === "effect queues" ||
                     service.currentTab.toLowerCase() === "events" ||
                     service.currentTab.toLowerCase() === "timers" ||
                     service.currentTab.toLowerCase() === "channel rewards" ||
@@ -49,7 +50,7 @@
                 return (
                     service.currentTab.toLowerCase() === "chat feed" ||
                     service.currentTab.toLowerCase() === "buttons" ||
-                    service.currentTab.toLowerCase() === "effects" ||
+                    service.currentTab.toLowerCase() === "preset effect lists" ||
                     service.currentTab.toLowerCase() === "timers" ||
                     service.currentTab.toLowerCase() === "channel rewards" ||
                     service.currentTab.toLowerCase() === "events" ||
@@ -87,9 +88,14 @@
                     controller: "commandsController"
                 })
 
-                .when("/effects", {
-                    templateUrl: "./templates/_effects.html",
-                    controller: "effectsController"
+                .when("/preset-effect-lists", {
+                    templateUrl: "./templates/_preset-effect-lists.html",
+                    controller: "presetEffectListsController"
+                })
+
+                .when("/effect-queues", {
+                    templateUrl: "./templates/_effect-queues.html",
+                    controller: "effectQueuesController"
                 })
 
                 .when("/channel-rewards", {

@@ -16,7 +16,7 @@ jobs:
         GITHUB_PROJECT_COLUMN_NAME: Backlog
     - name: Add issue to Bugs project
       uses: takanabe/github-actions-automate-projects@v0.0.1
-      if: github.event_name == 'issues' && github.event.action == 'opened' && github.event.label.name == 'Bug'
+      if: github.event_name == 'issues' && github.event.action == 'opened' && contains(github.event.issue.labels.*.name, 'Bug')
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_PROJECT_URL: https://github.com/crowbartools/Firebot/projects/14

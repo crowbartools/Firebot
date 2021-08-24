@@ -19,7 +19,6 @@
 const listeners = [
     require("./listeners/adbreak-listener"),
     require("./listeners/channel-update-listener"),
-    require("./listeners/follow-unfollow-listener"),
     require("./listeners/host-unhost-listener").hostListener,
     require("./listeners/host-unhost-listener").unhostListener,
     require("./listeners/patronage-listener"),

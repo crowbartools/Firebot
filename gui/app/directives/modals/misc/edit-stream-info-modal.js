@@ -32,7 +32,7 @@
                             />
                         </div>
 
-                        <div class="form-group" style="margin-bottom:0;">
+                        <div class="form-group">
                             <label for="game" class="control-label">Category</label>
                             <ui-select ng-model="$ctrl.selectedGame" required input-id="game" theme="bootstrap" spinner-enabled="true" on-select="$ctrl.gameSelected($item)">
                                 <ui-select-match placeholder="Search for category...">
@@ -49,6 +49,39 @@
                                 </ui-select-choices>
                             </ui-select>
                         </div>
+
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="tags" class="control-label">Stream Tags</label>
+                            <div style="display: block" role="list">
+                                <div class="role-bar" id="streamTags" ng-repeat="tag in $ctrl.streamTags track by tag.id" role="listitem">
+                                    <span uib-tooltip="{{tag.description}}">{{tag.name}}</span>
+                                    <span 
+                                        role="button" 
+                                        class="clickable" 
+                                        style="padding-left: 10px;" 
+                                        aria-label="Remove {{tag.name}} tag" 
+                                        uib-tooltip="Remove tag" 
+                                        tooltip-append-to-body="true"
+                                        ng-click="$ctrl.removeStreamTag(tag.id)"
+                                    >
+                                        <i class="far fa-times"></i>
+                                    </span>
+                                </div>
+                                <div 
+                                    class="role-bar clickable"
+                                    ng-show="$ctrl.streamTags.length < 5"
+                                    ng-class="{'disabled': !$ctrl.streamTagsService.allStreamTags.length > 0}"
+                                    aria-disabled="{{!$ctrl.streamTagsService.allStreamTags.length > 0}}"
+                                    role="button" 
+                                    aria-label="{{$ctrl.streamTagsService.allStreamTags.length > 0 ? 'Add tag' : 'Loading tags...'}}"
+                                    uib-tooltip="{{$ctrl.streamTagsService.allStreamTags.length > 0 ? 'Add tag' : 'Loading tags...'}}" 
+                                    tooltip-append-to-body="true" 
+                                    ng-click="!$ctrl.streamTagsService.allStreamTags.length > 0 ? $event.stopPropagation() : $ctrl.openAddStreamTagsModal();"
+                                >
+                                    <i class="far fa-plus"></i> 
+                                </div>
+                            </div>
+                        </div>
                         
                     </form>
                 </div>
@@ -62,7 +95,7 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function($scope, ngToast, backendCommunicator) {
+            controller: function($scope, ngToast, utilityService, streamTagsService, backendCommunicator) {
                 const $ctrl = this;
 
                 $ctrl.dataLoaded = false;
@@ -75,6 +108,9 @@
                     gameName: ""
                 };
 
+                $ctrl.streamTagsService = streamTagsService;
+                $ctrl.streamTags = [];
+
                 $ctrl.selectedGame = null;
 
                 $ctrl.formFieldHasError = (fieldName) => {
@@ -82,18 +118,37 @@
                         && $scope.streamInfo[fieldName].$invalid;
                 };
 
-                $ctrl.$onInit = () => {
-                    backendCommunicator.fireEventAsync("get-channel-info")
-                        .then((streamInfo) => {
-                            if (streamInfo) {
-                                $ctrl.streamInfo = streamInfo;
-                                backendCommunicator.fireEventAsync("get-twitch-game", $ctrl.streamInfo.gameId)
-                                    .then(game => {
-                                        if (game != null) {
-                                            $ctrl.selectedGame = game;
-                                        }
-                                        $ctrl.dataLoaded = true;
-                                    });
+                $ctrl.$onInit = async () => {
+                    $ctrl.streamTags = await backendCommunicator.fireEventAsync("get-channel-stream-tags");
+                    $ctrl.streamInfo = await backendCommunicator.fireEventAsync("get-channel-info");
+
+                    if ($ctrl.streamInfo) {
+                        const game = await backendCommunicator.fireEventAsync("get-twitch-game", $ctrl.streamInfo.gameId);
+
+                        if (game != null) {
+                            $ctrl.selectedGame = game;
+                        }
+                    }
+
+                    if ($ctrl.selectedGame) {
+                        $ctrl.dataLoaded = true;
+                    }
+                };
+
+                $ctrl.openAddStreamTagsModal = function() {
+                    utilityService.openSelectModal(
+                        {
+                            label: "Add Stream Tag",
+                            options: $ctrl.streamTagsService.allStreamTags,
+                            saveText: "Add",
+                            selectPlaceholder: "Select a tag...",
+                            validationText: "Please select a tag."
+
+                        },
+                        (tagId) => {
+                            if (!tagId) return;
+                            if (!$ctrl.streamTags.find(tag => tag.id === tagId)) {
+                                $ctrl.streamTags.push($ctrl.streamTagsService.allStreamTags.find(tag => tag.id === tagId));
                             }
                         });
                 };
@@ -114,8 +169,13 @@
                     }
                 };
 
+                $ctrl.removeStreamTag = function(id) {
+                    $ctrl.streamTags = $ctrl.streamTags.filter(tag => tag.id !== id);
+                };
+
                 $ctrl.save = () => {
                     backendCommunicator.fireEventAsync("set-channel-info", $ctrl.streamInfo);
+                    backendCommunicator.fireEventAsync("set-stream-tags", { tagIds: $ctrl.streamTags.map(tag => tag.id) });
                     backendCommunicator.fireEvent("category-changed", $ctrl.streamInfo.gameName);
                     ngToast.create({
                         className: 'success',

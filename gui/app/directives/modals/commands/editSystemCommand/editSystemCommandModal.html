@@ -111,9 +111,32 @@
   >
     <command-option
       ng-repeat="(optionName, optionMetadata) in $ctrl.command.options"
+      ng-if="optionMetadata.title === 'Output Template'"
       name="optionName"
       metadata="optionMetadata"
     ></command-option>
+    <command-option
+      ng-repeat="(optionName, optionMetadata) in $ctrl.command.options"
+      ng-if="optionMetadata.title !== 'Output Template'"
+      name="optionName"
+      metadata="optionMetadata"
+    ></command-option>
+  </setting-container>
+
+  <setting-container
+    header="Additional Effects"
+    pad-top="true"
+  >
+    <div ng-if="$ctrl.command.subCommands != null && $ctrl.command.subCommands.length > 0" style="margin-bottom: 20px;font-weight: 100;">
+      This is only triggered when the user does not provide any arguments.
+    </div>
+    <effect-list
+      header="What should this command do?"
+      effects="$ctrl.command.effects"
+      trigger="command"
+      update="$ctrl.effectListUpdated(effects)"
+      is-array="true"
+    ></effect-list>
   </setting-container>
 
   <setting-container

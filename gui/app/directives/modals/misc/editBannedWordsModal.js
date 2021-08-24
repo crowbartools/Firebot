@@ -15,11 +15,11 @@
             </div>
             <div class="modal-body">
                 <p class="muted" style="margin-bottom:20px;">Messages containing any words or phrases listed here will be automatically deleted.</p>
-                <div style="margin: 0 0 25px;display: flex;flex-direction: row;justify-content: space-between;">
+                <div style="margin: 0 0 25px;display: flex;flex-direction: row;">
 
                     <div class="dropdown">
                         <button class="btn btn-primary dropdown-toggle" type="button" id="add-options" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            <span class="dropdown-text"><i class="far fa-plus-circle"></i> Add Word(s)</span>
+                            <span class="dropdown-text"><i class="fas fa-plus-circle"></i> Add Word(s)</span>
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="add-options">
@@ -27,24 +27,44 @@
                             <li role="menuitem" ng-click="$ctrl.showImportModal()"><a href style="padding-left: 10px;"><i class="fad fa-file-import" style="margin-right: 5px;"></i> Import from .txt file <tooltip text="'Import a list of words/phrases from a txt file'"></tooltip></a></li>
                         </ul>
                     </div>
+                    <div>
+                        <button class="btn btn-primary" type="button" id="add-options" ng-click="$ctrl.addRegex()" style="margin-left: 5px;">
+                            <span class="dropdown-text"><i class="fas fa-plus-circle"></i> Add regex</span>
+                        </button>
+                    </div>
 
-                    <div style="display: flex;flex-direction: row;justify-content: space-between;">           
+                    <div style="display: flex;flex-direction: row;justify-content: space-between;margin-left: auto;">
                         <searchbar placeholder-text="Search words..." query="$ctrl.search" style="flex-basis: 250px;"></searchbar>
-                    </div>         
+                    </div>
                 </div>
-                <sortable-table 
-                    table-data-set="$ctrl.cms.chatModerationData.bannedWords"
-                    headers="$ctrl.headers"
-                    query="$ctrl.search"
-                    clickable="false"
-                    starting-sort-field="createdAt"
-                    sort-initially-reversed="true"
-                    page-size="5"
-                    no-data-message="No banned words or phrases have been saved.">
-                </sortable-table>
+                <div style="margin-bottom: 10px;">
+                    <sortable-table
+                        table-data-set="$ctrl.cms.chatModerationData.bannedRegularExpressions"
+                        headers="$ctrl.regexHeaders"
+                        query="$ctrl.search"
+                        clickable="false"
+                        starting-sort-field="createdAt"
+                        sort-initially-reversed="true"
+                        page-size="5"
+                        no-data-message="No regular expressions have been saved.">
+                    </sortable-table>
+                </div>
+                <div>
+                    <sortable-table
+                        table-data-set="$ctrl.cms.chatModerationData.bannedWords"
+                        headers="$ctrl.wordHeaders"
+                        query="$ctrl.search"
+                        clickable="false"
+                        starting-sort-field="createdAt"
+                        sort-initially-reversed="true"
+                        page-size="5"
+                        no-data-message="No banned words or phrases have been saved.">
+                    </sortable-table>
+                </div>
             </div>
             <div class="modal-footer">
                 <button ng-show="$ctrl.cms.chatModerationData.bannedWords.length > 0" type="button" class="btn btn-danger pull-left" ng-click="$ctrl.deleteAllWords()">Delete All Words</button>
+                <button ng-show="$ctrl.cms.chatModerationData.bannedRegularExpressions.length > 0" type="button" class="btn btn-danger pull-left" ng-click="$ctrl.deleteAllRegex()">Delete All Regex</button>
             </div>
             `,
             bindings: {
@@ -65,7 +85,44 @@
                 // IE $ctrl.resolve.shouldDelete or whatever
                 };
 
-                $ctrl.headers = [
+                $ctrl.regexHeaders = [
+                    {
+                        name: "REGEX",
+                        icon: "fa-quote-right",
+                        dataField: "text",
+                        headerStyles: {
+                            'width': '375px'
+                        },
+                        sortable: true,
+                        cellTemplate: `{{data.text}}`,
+                        cellController: () => {}
+                    },
+                    {
+                        name: "CREATED AT",
+                        icon: "fa-calendar",
+                        dataField: "createdAt",
+                        sortable: true,
+                        cellTemplate: `{{data.createdAt | prettyDate}}`,
+                        cellController: () => {}
+                    },
+                    {
+                        headerStyles: {
+                            'width': '15px'
+                        },
+                        cellStyles: {
+                            'width': '15px'
+                        },
+                        sortable: false,
+                        cellTemplate: `<i class="fal fa-trash-alt clickable" style="color:#ff3737;" ng-click="clicked()" uib-tooltip="Delete" tooltip-append-to-body="true"></i>`,
+                        cellController: ($scope, chatModerationService) => {
+                            $scope.clicked = () => {
+                                chatModerationService.removeRegex($scope.data.text);
+                            };
+                        }
+                    }
+                ];
+
+                $ctrl.wordHeaders = [
                     {
                         name: "TEXT",
                         icon: "fa-quote-right",
@@ -101,6 +158,37 @@
                         }
                     }
                 ];
+
+                $ctrl.addRegex = () => {
+                    utilityService.openGetInputModal(
+                        {
+                            model: "",
+                            label: "Add Regex",
+                            saveText: "Add",
+                            inputPlaceholder: "Enter regex",
+                            validationFn: (value) => {
+                                return new Promise(resolve => {
+                                    if (value == null || value.trim().length < 1) {
+                                        return resolve({
+                                            success: false,
+                                            reason: `Regex value cannot be empty.`
+                                        });
+                                    }
+                                    if (chatModerationService.chatModerationData.bannedRegularExpressions
+                                        .some(regex => regex.text === value)) {
+                                        return resolve({
+                                            success: false,
+                                            reason: `Regex already exists.`
+                                        });
+                                    }
+                                    resolve(true);
+                                });
+                            }
+                        },
+                        (newRegex) => {
+                            chatModerationService.addBannedRegex(newRegex.trim());
+                        });
+                };
 
                 $ctrl.addWord = () => {
                     utilityService.openGetInputModal(
@@ -171,6 +259,19 @@
                     }).then(confirmed => {
                         if (confirmed) {
                             chatModerationService.removeAllBannedWords();
+                        }
+                    });
+                };
+
+                $ctrl.deleteAllRegex = function() {
+                    utilityService.showConfirmationModal({
+                        title: "Delete All Regex",
+                        question: `Are you sure you want to delete all regular expressions?`,
+                        confirmLabel: "Delete",
+                        confirmBtnType: "btn-danger"
+                    }).then(confirmed => {
+                        if (confirmed) {
+                            chatModerationService.removeAllBannedRegularExpressions();
                         }
                     });
                 };
