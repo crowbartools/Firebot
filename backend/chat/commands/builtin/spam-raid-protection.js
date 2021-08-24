@@ -41,8 +41,14 @@ const spamRaidProtection = {
             enableFollowerOnly: {
                 type: "boolean",
                 title: "Follower only mode",
-                description: "Follower mode only allows chat message from followers that have a follow age of 15 minutes and longer.",
-                default: true
+                description: "Allows you to restrict chat to all or some of your followers, based on how long they’ve followed (0 minutes to 3 months).",
+                default: false
+            },
+            enableFollowerOnlyDuration: {
+                type: "string",
+                title: "Follower only mode duration (formats: 1m / 1h / 1d / 1w / 1mo)",
+                description: "Allows you to restrict chat to all or some of your followers, based on how long they’ve followed (0 minutes to 3 months).",
+                default: "15m"
             },
             enableEmoteOnly: {
                 type: "boolean",
@@ -59,8 +65,14 @@ const spamRaidProtection = {
             enableSlowMode: {
                 type: "boolean",
                 title: "Slow mode",
-                description: "In slow mode, users can only post one chat message every 30 seconds.",
-                default: true
+                description: "In slow mode, users can only post one chat message every x seconds.",
+                default: false
+            },
+            enableSlowModeDelay: {
+                type: "number",
+                title: "Slow mode delay in seconds",
+                description: "In slow mode, users can only post one chat message every x seconds.",
+                default: 30
             },
             clearChat: {
                 type: "boolean",
@@ -111,7 +123,7 @@ const spamRaidProtection = {
 
         if (args.length === 0) {
             if (commandOptions.enableFollowerOnly) {
-                chat.enableFollowersOnly("15m");
+                chat.enableFollowersOnly(commandOptions.enableFollowerOnlyDuration);
             }
 
             if (commandOptions.enableSubscriberOnly) {
@@ -123,7 +135,7 @@ const spamRaidProtection = {
             }
 
             if (commandOptions.enableSlowMode) {
-                chat.enableSlowMode();
+                chat.enableSlowMode(commandOptions.enableSlowModeDelay);
             }
 
             if (commandOptions.clearChat) {
