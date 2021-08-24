@@ -28,7 +28,7 @@ async function getChannelInformation(broadcasterId) {
 
     const client = twitchApi.getClient();
     try {
-        const response = await client.callAPI({
+        const response = await client.callApi({
             type: TwitchAPICallType.Helix,
             url: "channels",
             method: "GET",
@@ -67,7 +67,7 @@ async function getOnlineStatus(username) {
 
 async function updateChannelInformation(title = undefined, gameId = undefined) {
     const client = twitchApi.getClient();
-    await client.callAPI({
+    await client.callApi({
         type: TwitchAPICallType.Helix,
         method: "PATCH",
         url: "channels",

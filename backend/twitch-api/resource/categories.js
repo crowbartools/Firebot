@@ -44,7 +44,7 @@ async function searchCategories(categoryName) {
     const client = twitchApi.getClient();
     let categories = [];
     try {
-        const response = await client.callAPI({
+        const response = await client.callApi({
             type: TwitchAPICallType.Helix,
             url: "search/categories",
             query: {

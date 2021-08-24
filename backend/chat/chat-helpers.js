@@ -63,7 +63,7 @@ exports.cacheStreamerEmotes = async () => {
     if (client == null || !streamer.loggedIn) return;
 
     try {
-        const response = await client.callAPI({
+        const response = await client.callApi({
             type: TwitchAPICallType.Helix,
             url: "chat/emotes",
             query: {

@@ -111,6 +111,13 @@
   >
     <command-option
       ng-repeat="(optionName, optionMetadata) in $ctrl.command.options"
+      ng-if="optionMetadata.title === 'Output Template'"
+      name="optionName"
+      metadata="optionMetadata"
+    ></command-option>
+    <command-option
+      ng-repeat="(optionName, optionMetadata) in $ctrl.command.options"
+      ng-if="optionMetadata.title !== 'Output Template'"
       name="optionName"
       metadata="optionMetadata"
     ></command-option>
