@@ -96,7 +96,7 @@ async function getCustomChannelRewards(onlyManageable = false) {
     const client = twitchApi.getClient();
     let rewards = [];
     try {
-        const response = await client.callAPI({
+        const response = await client.callApi({
             type: TwitchAPICallType.Helix,
             url: "channel_points/custom_rewards",
             query: {
@@ -140,7 +140,7 @@ async function createCustomChannelReward(reward) {
 
     const client = twitchApi.getClient();
     try {
-        const response = await client.callAPI({
+        const response = await client.callApi({
             type: TwitchAPICallType.Helix,
             url: "channel_points/custom_rewards",
             method: "POST",
@@ -162,7 +162,7 @@ async function createCustomChannelReward(reward) {
 async function updateCustomChannelReward(reward) {
     const client = twitchApi.getClient();
     try {
-        await client.callAPI({
+        await client.callApi({
             type: TwitchAPICallType.Helix,
             url: "channel_points/custom_rewards",
             method: "PATCH",
@@ -185,7 +185,7 @@ async function updateCustomChannelReward(reward) {
 async function deleteCustomChannelReward(rewardId) {
     const client = twitchApi.getClient();
     try {
-        await client.callAPI({
+        await client.callApi({
             type: TwitchAPICallType.Helix,
             url: "channel_points/custom_rewards",
             method: "DELETE",

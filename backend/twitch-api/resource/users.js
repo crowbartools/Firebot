@@ -15,7 +15,7 @@ async function getUserChatInfo(userId) {
 
     const streamer = accountAccess.getAccounts().streamer;
 
-    const chatUser = await client.callAPI({
+    const chatUser = await client.callApi({
         type: TwitchAPICallType.Kraken,
         url: `users/${userId}/chat/channels/${streamer.userId}`
     });
@@ -224,25 +224,10 @@ async function doesUserFollowChannel(username, channelName) {
     return true;
 }
 
-async function toggleFollowOnChannel(channelIdToFollow, shouldFollow = true) {
-    if (channelIdToFollow == null) return;
-
-    const client = twitchApi.getClient();
-
-    const user = await client.helix.users.getUserById(channelIdToFollow);
-
-    if (shouldFollow) {
-        await user.follow();
-    } else {
-        await user.unfollow();
-    }
-}
-
 exports.getUserChatInfoByName = getUserChatInfoByName;
 exports.getUsersChatRoles = getUsersChatRoles;
 exports.blockUser = blockUser;
 exports.unblockUser = unblockUser;
 exports.getFollowDateForUser = getFollowDateForUser;
-exports.toggleFollowOnChannel = toggleFollowOnChannel;
 exports.updateUserRole = updateUserRole;
 exports.doesUserFollowChannel = doesUserFollowChannel;
