@@ -33,7 +33,10 @@ function sendMessageToCache(firebotChatMessage) {
         messageCache.shift();
     }
 
-    firebotChatMessage.rawText = firebotChatMessage.rawText.substr(10);
+    if (firebotChatMessage.rawText.length > 10) {
+        firebotChatMessage.rawText = firebotChatMessage.rawText.substr(10);
+    }
+
     messageCache.push(firebotChatMessage);
 
     if (firebotChatMessage && checkerEnabled && firebotChatMessage.rawText === raidMessage) {
