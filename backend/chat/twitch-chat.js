@@ -3,7 +3,6 @@ const logger = require("../logwrapper");
 const EventEmitter = require("events");
 const { ChatClient } = require("twitch-chat-client");
 const twitchClient = require("../twitch-api/client");
-const { TwitchAPICallType } = require("twitch/lib");
 const accountAccess = require("../common/account-access");
 const frontendCommunicator = require("../common/frontend-communicator");
 const chatHelpers = require("./chat-helpers");
