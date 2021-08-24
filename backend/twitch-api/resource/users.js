@@ -176,23 +176,8 @@ async function doesUserFollowChannel(username, channelName) {
     return true;
 }
 
-async function toggleFollowOnChannel(channelIdToFollow, shouldFollow = true) {
-    if (channelIdToFollow == null) return;
-
-    const client = twitchApi.getClient();
-
-    const user = await client.helix.users.getUserById(channelIdToFollow);
-
-    if (shouldFollow) {
-        await user.follow();
-    } else {
-        await user.unfollow();
-    }
-}
-
 exports.getUserChatInfoByName = getUserChatInfoByName;
 exports.getUsersChatRoles = getUsersChatRoles;
 exports.getFollowDateForUser = getFollowDateForUser;
-exports.toggleFollowOnChannel = toggleFollowOnChannel;
 exports.updateUserRole = updateUserRole;
 exports.doesUserFollowChannel = doesUserFollowChannel;
