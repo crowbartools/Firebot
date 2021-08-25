@@ -4,11 +4,11 @@ const { InputEvent } = require("../../interactive/constants/MixplayConstants");
 
 /**
    * @typedef EffectDefinition
-   * @property {string} id The id of the effect
-   * @property {string} name The display name of the effect
-   * @property {string} description A short description of the effect
-   * @property {strong} icon The Font Awesome name of the icon in front of the effect
-   * @property {string[]} categories An array of organizational categories that apply to this effect
+   * @property {string} id The id of the Effect
+   * @property {string} name The display name of the Effect
+   * @property {string} description A short description of the Effect
+   * @property {string} icon The Font Awesome name of the icon in front of the Effect
+   * @property {string[]} categories An array of organizational categories that apply to this Effect
    * @property {string[]} dependencies An array of EffectDependencies
    * @property {string[]} [triggers] An array of EffectTriggers
    */
@@ -21,7 +21,7 @@ const { InputEvent } = require("../../interactive/constants/MixplayConstants");
    * @property {function} optionsController The controller of the Options view in the front end
    * @property {function} optionsValidator The function that validates the user input
    * @property {function} onTriggerEvent The callback function whenever this function is triggered
-   * @property {Object} [overlayExtension] Overlay extension object NOTE: unused at this time
+   * @property {object} [overlayExtension] Overlay extension object NOTE: unused at this time
    */
 
 /**
