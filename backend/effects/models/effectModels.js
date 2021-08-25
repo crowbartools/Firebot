@@ -59,7 +59,7 @@ exports.buildEffectTriggersObject = function(mixplayControls, mixplayEvents, oth
 };
 
 /**
- * Enum for effect dependancies
+ * Enum for effect dependencies
  * @readonly
  * @enum {string}
  */
@@ -78,15 +78,15 @@ class EffectDefinition {
    * @param {string} name The display name of the effect
    * @param {string} description A short description of the effect
    * @param {string[]} tags An array of organizational tags that apply to this effect
-   * @param {string[]} dependenies An array of EffectDependancys
+   * @param {string[]} dependencies An array of EffectDependencies
    * @param {string[]} triggers An array of EffectTriggers
    */
-    constructor(id, name, description, tags, dependenies, triggers) {
+    constructor(id, name, description, tags, dependencies, triggers) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.tags = tags;
-        this.dependenies = dependenies;
+        this.dependencies = dependencies;
         this.triggers = triggers;
     }
 }
