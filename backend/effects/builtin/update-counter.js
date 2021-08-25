@@ -2,7 +2,7 @@
 
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
-const { EffectDependency, EffectTrigger } = effectModels;
+const { EffectTrigger } = effectModels;
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 
@@ -54,7 +54,7 @@ const model = {
                     <span class="input-group-addon" id="delay-length-effect-type">Value</span>
                     <input ng-model="effect.value" type="text" class="form-control" aria-describedby="delay-length-effect-type" type="text" replace-variables="number">
                 </div>
-            </eos-container>         
+            </eos-container>
         </div>
     `,
     optionsController: ($scope, countersService) => {

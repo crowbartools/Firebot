@@ -6,11 +6,6 @@ const { ControlKind, InputEvent } = require('../../interactive/constants/Mixplay
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
 
-const accountAccess = require("../../common/account-access");
-const streamerAccount = accountAccess.getAccounts().streamer;
-
-const discord = require("../../integrations/builtin/discord/discord-message-sender");
-
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 const clip = {

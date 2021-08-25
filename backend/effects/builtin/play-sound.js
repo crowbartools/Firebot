@@ -55,7 +55,7 @@ const playSound = {
             </label>
         </div>
     </eos-container>
-    
+
     <div ng-hide="effect.soundType == null">
         <eos-container header="Sound">
             <div ng-if="effect.soundType === 'folderRandom'">
@@ -95,7 +95,7 @@ const playSound = {
     /**
    * The controller for the front end Options
    */
-    optionsController: ($scope, listenerService) => {
+    optionsController: ($scope) => {
         if ($scope.effect.soundType == null) {
             $scope.effect.soundType = "local";
         }

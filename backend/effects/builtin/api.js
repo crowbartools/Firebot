@@ -1,7 +1,5 @@
 "use strict";
 
-const { settings } = require("../../common/settings-access");
-const resourceTokenManager = require("../../resourceTokenManager");
 const apiProcessor = require("../../common/handlers/apiProcessor");
 const twitchChat = require("../../chat/twitch-chat");
 
@@ -126,7 +124,7 @@ const api = {
     /**
    * The controller for the front end Options
    */
-    optionsController: ($scope, listenerService) => {
+    optionsController: ($scope) => {
     // The name of the api and if it has images available to show or not.
         $scope.apiTypes = [
             { name: "Advice", image: false },

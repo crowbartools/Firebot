@@ -39,7 +39,6 @@ exports.loadEffects = () => {
     effectManager.registerEffect(require("./builtin/sequential-effect")); // No migration needed.
     effectManager.registerEffect(require("./builtin/set-user-metadata"));
     effectManager.registerEffect(require("./builtin/shoutout"));
-    effectManager.registerEffect(require("./builtin/show-events"));
     effectManager.registerEffect(require("./builtin/show-image")); // No migration needed.
     effectManager.registerEffect(require("./builtin/show-text")); // No migration needed.
     effectManager.registerEffect(require("./builtin/stop-effect-execution")); // No migration needed.

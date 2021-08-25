@@ -1,6 +1,4 @@
 "use strict";
-const fs = require("fs-extra");
-const path = require("path");
 
 const logger = require("../../logwrapper");
 
@@ -33,10 +31,10 @@ const fileWriter = {
         )
     },
     optionsTemplate: `
-        <custom-script-settings 
-            effect="effect" 
-            modal-id="modalId" 
-            trigger="trigger" 
+        <custom-script-settings
+            effect="effect"
+            modal-id="modalId"
+            trigger="trigger"
             trigger-meta="triggerMeta"
             allow-startup="isStartup"
         />

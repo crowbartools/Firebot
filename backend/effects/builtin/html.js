@@ -1,7 +1,6 @@
 "use strict";
 
 const { settings } = require("../../common/settings-access");
-const resourceTokenManager = require("../../resourceTokenManager");
 const webServer = require("../../../server/httpServer");
 
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
@@ -40,11 +39,11 @@ const html = {
    */
     optionsTemplate: `
     <eos-container header="HTML">
-        <div 
+        <div
             ui-codemirror="{onLoad : codemirrorLoaded}"
             ui-codemirror-opts="editorSettings"
             ng-model="effect.html"
-            replace-variables 
+            replace-variables
             menu-position="under">
         </div>
     </eos-container>
