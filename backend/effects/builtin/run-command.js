@@ -48,7 +48,7 @@ const model = {
                 </ui-select-choices>
             </ui-select>
 
-            <ui-select ng-model="effect.customCommandId" theme="bootstrap" ng-show="effect.commandType === 'custom'">
+            <ui-select ng-model="effect.commandId" theme="bootstrap" ng-show="effect.commandType === 'custom'">
                 <ui-select-match placeholder="Select or search for a command... ">{{$select.selected.trigger}}</ui-select-match>
                 <ui-select-choices repeat="command.id as command in customCommands | filter: { trigger: $select.search }" style="position:relative;">
                     <div ng-bind-html="command.trigger | highlight: $select.search"></div>
@@ -74,6 +74,12 @@ const model = {
    * The controller for the front end Options
    */
     optionsController: ($scope, commandsService) => {
+
+        // if commandType is null we must assume "custom" to maintain backwards compat
+        if ($scope.effect.commandType == null) {
+            $scope.effect.commandType = "custom";
+        }
+
         $scope.systemCommands = commandsService.getSystemCommands();
         $scope.customCommands = commandsService.getCustomCommands();
     },
@@ -98,11 +104,11 @@ const model = {
             let { effect, trigger } = event;
             trigger.metadata.username = effect.username;
 
-            if (effect.commandType === "custom") {
-                commandHandler.runCustomCommandFromEffect(effect.customCommandId, trigger, effect.args);
-            } else {
+            if (effect.commandType === "system") {
                 commandHandler.runSystemCommandFromEffect(effect.systemCommandId, trigger, effect.args);
-                resolve(true);
+            } else {
+                // always fall back to custom command to ensure backwards compat
+                commandHandler.runCustomCommandFromEffect(effect.commandId || effect.customCommandId, trigger, effect.args);
             }
             resolve(true);
         });
