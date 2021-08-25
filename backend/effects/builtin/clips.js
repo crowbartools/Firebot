@@ -5,6 +5,7 @@ const effectModels = require("../models/effectModels");
 const { EffectDependency } = effectModels;
 const { EffectCategory } = require('../../../shared/effect-constants');
 
+/** @type {import("../models/effectModels").Effect} */
 const clip = {
     definition: {
         id: "firebot:clip",

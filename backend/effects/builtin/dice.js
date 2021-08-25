@@ -5,9 +5,7 @@ const effectModels = require("../models/effectModels");
 const { EffectDependency } = effectModels;
 const { EffectCategory } = require('../../../shared/effect-constants');
 
-/**
- * The Dice effect
- */
+/** @type {import("../models/effectModels").Effect} */
 const dice = {
     /**
    * The definition of the Effect

@@ -2,6 +2,7 @@
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 
+/** @type {import("../models/effectModels").Effect} */
 const model = {
     definition: {
         id: "firebot:stop-effect-execution",

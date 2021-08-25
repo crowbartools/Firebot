@@ -5,9 +5,7 @@ const frontendCommunicator = require("../../common/frontend-communicator");
 const effectQueueRunner = require("../queues/effect-queue-runner");
 const { EffectCategory } = require('../../../shared/effect-constants');
 
-/**
- * The Delay effect
- */
+/** @type {import("../models/effectModels").Effect} */
 const delay = {
     /**
    * The definition of the Effect

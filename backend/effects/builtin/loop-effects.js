@@ -8,6 +8,7 @@ const conditionManager = require("./conditional-effects/conditions/condition-man
 
 const wait = (ms) => new Promise(r => setTimeout(r, ms));
 
+/** @type {import("../models/effectModels").Effect} */
 const model = {
     definition: {
         id: "firebot:loopeffects",

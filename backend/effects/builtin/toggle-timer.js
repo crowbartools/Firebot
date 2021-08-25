@@ -3,6 +3,7 @@
 const timerAccess = require("../../timers/timer-access");
 const { EffectCategory } = require('../../../shared/effect-constants');
 
+/** @type {import("../models/effectModels").Effect} */
 const chat = {
     definition: {
         id: "firebot:toggle-timer",

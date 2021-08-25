@@ -4,9 +4,8 @@ const webServer = require("../../../server/httpServer");
 const effectModels = require("../models/effectModels");
 const { EffectDependency } = effectModels;
 const { EffectCategory } = require('../../../shared/effect-constants');
-/**
- * The Celebration effect
- */
+
+/** @type {import("../models/effectModels").Effect} */
 const celebration = {
     /**
    * The definition of the Effect

@@ -3,6 +3,7 @@
 const customVariableManager = require("../../common/custom-variable-manager");
 const { EffectCategory } = require('../../../shared/effect-constants');
 
+/** @type {import("../models/effectModels").Effect} */
 const fileWriter = {
     definition: {
         id: "firebot:customvariable",

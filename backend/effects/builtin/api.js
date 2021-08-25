@@ -4,11 +4,9 @@ const apiProcessor = require("../../common/handlers/apiProcessor");
 const twitchChat = require("../../chat/twitch-chat");
 const effectModels = require("../models/effectModels");
 const { EffectDependency } = effectModels;
-
 const { EffectCategory } = require('../../../shared/effect-constants');
-/**
- * The API effect
- */
+
+/** @type {import("../models/effectModels").Effect} */
 const api = {
     /**
    * The definition of the Effect

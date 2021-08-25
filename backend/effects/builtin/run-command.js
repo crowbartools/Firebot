@@ -3,9 +3,7 @@
 const { EffectCategory } = require('../../../shared/effect-constants');
 const commandHandler = require("../../chat/commands/commandHandler");
 
-/**
- * The Delay effect
- */
+/** @type {import("../models/effectModels").Effect} */
 const model = {
     /**
    * The definition of the Effect

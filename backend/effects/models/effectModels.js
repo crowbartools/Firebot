@@ -3,6 +3,28 @@
 const { InputEvent } = require("../../interactive/constants/MixplayConstants");
 
 /**
+   * @typedef EffectDefinition
+   * @property {string} id The id of the effect
+   * @property {string} name The display name of the effect
+   * @property {string} description A short description of the effect
+   * @property {strong} icon The Font Awesome name of the icon in front of the effect
+   * @property {string[]} categories An array of organizational categories that apply to this effect
+   * @property {string[]} dependencies An array of EffectDependencies
+   * @property {string[]} [triggers] An array of EffectTriggers
+   */
+
+/**
+   * @typedef Effect
+   * @property {EffectDefinition} definition An EffectDefinition object definining this Effect
+   * @property {string} [optionsTemplate] An HTML template string for this Effect's options. Can include Angular bindings.
+   * @property {string} [optionsTemplateUrl] A url pointing to an html file to beused as the options for this Effect. Can be used in place of optionsTemplate
+   * @property {function} optionsController The controller of the Options view in the front end
+   * @property {function} optionsValidator The function that validates the user input
+   * @property {function} onTriggerEvent The callback function whenever this function is triggered
+   * @property {Object} [overlayExtension] Overlay extension object NOTE: unused at this time
+   */
+
+/**
  * Enum for effect triggers
  * @readonly
  * @enum {string}
@@ -70,57 +92,5 @@ const EffectDependency = Object.freeze({
     OVERLAY: "overlay"
 });
 
-/** The manifest of an effect */
-class EffectDefinition {
-    /**
-   * Create an EffectDefinition
-   * @param {string} id The id of the effect
-   * @param {string} name The display name of the effect
-   * @param {string} description A short description of the effect
-   * @param {string[]} tags An array of organizational tags that apply to this effect
-   * @param {string[]} dependencies An array of EffectDependencies
-   * @param {string[]} triggers An array of EffectTriggers
-   */
-    constructor(id, name, description, tags, dependencies, triggers) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.tags = tags;
-        this.dependencies = dependencies;
-        this.triggers = triggers;
-    }
-}
-
-/** An effect that can be triggered in various ways by Firebot */
-class Effect {
-    /**
-   * Creat an Effect
-   * @class
-   * @param {EffectDefinition} definition An EffectDefinition object definining this Effect
-   * @param {string} [optionsTemplate] An HTML template string for this Effect's options. Can include Angular bindings.
-   * @param {string} [optionsTemplateUrl] A url pointing to an html file to beused as the options for this Effect. Can be used in place of optionsTemplate
-   * @param {function} optionsController The controller of the Options view in the front end
-   * @param {function} onTriggerEvent The callback function whenever this function is triggered
-   * @param {object} overlayExtension Overlay extension object NOTE: unused at this time
-   */
-    constructor(
-        definition,
-        optionsTemplate,
-        optionsTemplateUrl,
-        optionsController,
-        onTriggerEvent,
-        overlayExtension
-    ) {
-        this.definition = definition;
-        this.optionsTemplate = optionsTemplate;
-        this.optionsTemplateUrl = optionsTemplateUrl;
-        this.optionsController = optionsController;
-        this.onTriggerEvent = onTriggerEvent;
-        this.overlayExtension = overlayExtension;
-    }
-}
-
 exports.EffectTrigger = EffectTrigger;
 exports.EffectDependency = EffectDependency;
-exports.EffectDefinition = EffectDefinition;
-exports.Effect = Effect;

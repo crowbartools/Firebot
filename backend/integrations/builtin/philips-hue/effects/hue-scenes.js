@@ -3,11 +3,10 @@
 const { ControlKind, InputEvent } = require('../../../../interactive/constants/MixplayConstants');
 const effectModels = require("../../../../effects/models/effectModels");
 const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require("../../../../../shared/effect-constants");
-
 const hueManager = require("../hue-manager");
 
+/** @type {import("../../../../effects/models/effectModels").Effect */
 const effect = {
     definition: {
         id: "hue:scenes",

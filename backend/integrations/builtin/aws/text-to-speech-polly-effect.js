@@ -10,15 +10,11 @@ const path = require("path");
 const logger = require("../../../logwrapper");
 const frontendCommunicator = require("../../../common/frontend-communicator");
 const integrationManager = require("../../IntegrationManager");
-const { ControlKind, InputEvent } = require('../../../interactive/constants/MixplayConstants');
-const effectModels = require("../../../effects/models/effectModels");
-const { EffectTrigger } = effectModels;
 
 const { EffectCategory } = require('../../../../shared/effect-constants');
 const { wait } = require("../../../utility");
 
 const { PollyClient, DescribeVoicesCommand, SynthesizeSpeechCommand } = require('@aws-sdk/client-polly');
-const { Readable } = require("stream");
 
 frontendCommunicator.onAsync("getAwsPollyVoices", async () => {
     let response = {
@@ -68,9 +64,7 @@ frontendCommunicator.onAsync("getAwsPollyVoices", async () => {
 
 const POLLY_TMP_DIR = getPathInTmpDir('/awspollyfx');
 
-/**
- * The Play Sound effect
- */
+/** @type {import("../../../effects/models/effectModels").Effect */
 const playSound = {
     /**
    * The definition of the Effect
@@ -81,12 +75,7 @@ const playSound = {
         description: "Have Firebot read out some text using Amazon Polly.",
         icon: "fad fa-microphone-alt",
         categories: [EffectCategory.FUN],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
     /**
    * The HTML template for the Options view (ie options when effect is added to something such as a button.

@@ -6,6 +6,7 @@ const logger = require('../../logwrapper');
 const twitchApi = require("../../twitch-api/api");
 const activeUserHandler = require("../../chat/chat-listeners/active-user-handler");
 
+/** @type {import("../models/effectModels").Effect} */
 const model = {
     definition: {
         id: "firebot:activeUserLists",

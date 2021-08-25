@@ -3,9 +3,7 @@
 const fileWriterProcessor = require("../../common/handlers/fileWriterProcessor");
 const { EffectCategory } = require('../../../shared/effect-constants');
 
-/**
- * The File Writer effect
- */
+/** @type {import("../models/effectModels").Effect} */
 const fileWriter = {
     /**
    * The definition of the Effect

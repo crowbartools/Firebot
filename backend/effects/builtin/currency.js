@@ -6,9 +6,7 @@ const logger = require("../../logwrapper");
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 
-/**
- * The Currency effect
- */
+/** @type {import("../models/effectModels").Effect} */
 const currency = {
     /**
    * The definition of the Effect

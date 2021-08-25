@@ -11,9 +11,7 @@ const logger = require("../../logwrapper");
 const path = require("path");
 const { EffectCategory } = require('../../../shared/effect-constants');
 
-/**
- * The Show Image effect
- */
+/** @type {import("../models/effectModels").Effect} */
 const showImage = {
     /**
    * The definition of the Effect

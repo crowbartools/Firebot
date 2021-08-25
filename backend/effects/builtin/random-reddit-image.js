@@ -10,6 +10,7 @@ const logger = require("../../logwrapper");
 const webServer = require("../../../server/httpServer");
 const { EffectCategory } = require('../../../shared/effect-constants');
 
+/** @type {import("../models/effectModels").Effect} */
 const model = {
     definition: {
         id: "firebot:randomReddit",

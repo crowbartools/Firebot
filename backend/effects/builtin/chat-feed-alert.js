@@ -5,6 +5,7 @@ const { EffectDependency } = effectModels;
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 
+/** @type {import("../models/effectModels").Effect} */
 const effect = {
     definition: {
         id: "firebot:chat-feed-alert",

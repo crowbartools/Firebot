@@ -8,9 +8,7 @@ const { EffectTrigger } = effectModels;
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 
-/**
- * The Control Emulation effect
- */
+/** @type {import("../models/effectModels").Effect} */
 const controlEmulation = {
     /**
    * The definition of the Effect

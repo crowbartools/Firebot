@@ -1,20 +1,11 @@
 "use strict";
 
-const { ControlKind, InputEvent } = require('../../../interactive/constants/MixplayConstants');
-const effectModels = require("../../../effects/models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require("../../../../shared/effect-constants");
-
-const request = require("request");
-
 const integrationManager = require("../../IntegrationManager");
-
 const discordEmbedBuilder = require('./discord-embed-builder');
-
 const discord = require("./discord-message-sender");
-
 const frontEndCommunicator = require("../../../common/frontend-communicator");
+
 frontEndCommunicator.onAsync("getDiscordChannels", async () => {
     let channels = [];
     const discordIntegration = integrationManager.getIntegrationDefinitionById("discord");
@@ -27,6 +18,7 @@ frontEndCommunicator.onAsync("getDiscordChannels", async () => {
     return channels;
 });
 
+/** @type {import("../../../effects/models/effectModels").Effect */
 module.exports = {
     definition: {
         id: "discord:send-message",
@@ -34,12 +26,7 @@ module.exports = {
         description: "Send a message and/or embed to a Discord channel",
         icon: "fab fa-discord",
         categories: [EffectCategory.INTEGRATIONS],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
     optionsTemplate: `
         <div>

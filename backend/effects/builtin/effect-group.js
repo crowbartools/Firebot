@@ -6,6 +6,7 @@ const { EffectTrigger } = effectModels;
 const { EffectCategory } = require('../../../shared/effect-constants');
 const presetEffectListManager = require("../preset-lists/preset-effect-list-manager");
 
+/** @type {import("../models/effectModels").Effect} */
 const effectGroup = {
     definition: {
         id: "firebot:run-effect-list",

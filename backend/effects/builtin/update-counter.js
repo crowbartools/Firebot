@@ -1,11 +1,10 @@
 "use strict";
 
 const { EffectCategory } = require('../../../shared/effect-constants');
-
 const counterManager = require("../../counters/counter-manager");
-
 const logger = require("../../logwrapper");
 
+/** @type {import("../models/effectModels").Effect} */
 const model = {
     definition: {
         id: "firebot:update-counter",

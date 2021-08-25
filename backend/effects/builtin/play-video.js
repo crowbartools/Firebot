@@ -9,9 +9,7 @@ const { EffectDependency } = effectModels;
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 
-/**
- * The Play Video effect
- */
+/** @type {import("../models/effectModels").Effect} */
 const playVideo = {
     /**
    * The definition of the Effect

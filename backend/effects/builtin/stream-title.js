@@ -5,6 +5,7 @@ const twitchClient = require("../../twitch-api/client");
 const { TwitchAPICallType } = require('twitch/lib');
 const accountAccess = require("../../common/account-access");
 
+/** @type {import("../models/effectModels").Effect} */
 const model = {
     definition: {
         id: "firebot:streamtitle",

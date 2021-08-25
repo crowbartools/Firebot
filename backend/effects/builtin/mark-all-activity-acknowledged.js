@@ -3,6 +3,7 @@
 const { EffectCategory } = require('../../../shared/effect-constants');
 const frontendCommunicator = require("../../common/frontend-communicator");
 
+/** @type {import("../models/effectModels").Effect} */
 const model = {
     definition: {
         id: "firebot:mark-all-activity-acknowledged",

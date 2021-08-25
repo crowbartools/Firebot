@@ -2,6 +2,7 @@
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 
+/** @type {import("../models/effectModels").Effect} */
 const effect = {
     definition: {
         id: "firebot:set-user-metadata",

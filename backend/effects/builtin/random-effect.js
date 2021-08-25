@@ -5,9 +5,7 @@ const util = require("../../utility");
 const { EffectCategory } = require('../../../shared/effect-constants');
 const randomQueuesCache = {};
 
-/**
- * The Random Effect effect
- */
+/** @type {import("../models/effectModels").Effect} */
 const randomEffect = {
     /**
    * The definition of the Effect

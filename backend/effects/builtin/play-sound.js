@@ -10,9 +10,7 @@ const frontendCommunicator = require("../../common/frontend-communicator");
 const { EffectCategory } = require('../../../shared/effect-constants');
 const { wait } = require("../../utility");
 
-/**
- * The Play Sound effect
- */
+/** @type {import("../models/effectModels").Effect} */
 const playSound = {
     /**
    * The definition of the Effect

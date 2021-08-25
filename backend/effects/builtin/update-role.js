@@ -3,9 +3,7 @@
 const { EffectCategory } = require('../../../shared/effect-constants');
 const customRolesManager = require("../../roles/custom-roles-manager");
 
-/**
- * The Delay effect
- */
+/** @type {import("../models/effectModels").Effect} */
 const delay = {
     /**
    * The definition of the Effect

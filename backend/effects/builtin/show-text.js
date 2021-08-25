@@ -7,9 +7,7 @@ const effectModels = require("../models/effectModels");
 const { EffectDependency } = effectModels;
 const { EffectCategory } = require('../../../shared/effect-constants');
 
-/**
- * The Show Text effect
- */
+/** @type {import("../models/effectModels").Effect} */
 const showText = {
     /**
    * The definition of the Effect

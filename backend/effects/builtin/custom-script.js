@@ -4,13 +4,8 @@ const logger = require("../../logwrapper");
 const customScriptRunner = require("../../common/handlers/custom-scripts/custom-script-runner");
 const { EffectCategory } = require('../../../shared/effect-constants');
 
-/**
- * The custom var effect
- */
+/** @type {import("../models/effectModels").Effect} */
 const fileWriter = {
-    /**
-   * The definition of the Effect
-   */
     definition: {
         id: "firebot:customscript",
         name: "Run Custom Script",

@@ -7,9 +7,7 @@ const { EffectCategory } = require('../../../shared/effect-constants');
 
 const twitchChat = require("../../chat/twitch-chat");
 
-/**
- * The Chat Effect
- */
+/** @type {import("../models/effectModels").Effect} */
 const chat = {
     /**
    * The definition of the Effect

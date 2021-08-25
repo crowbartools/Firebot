@@ -3,6 +3,7 @@
 const eventAccess = require("../../events/events-access");
 const { EffectCategory } = require('../../../shared/effect-constants');
 
+/** @type {import("../models/effectModels").Effect} */
 const chat = {
     definition: {
         id: "firebot:toggle-event",

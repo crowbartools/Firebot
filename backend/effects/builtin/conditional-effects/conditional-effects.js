@@ -7,6 +7,7 @@ const builtinConditionTypeLoader = require("./conditions/builtin-condition-loade
 
 builtinConditionTypeLoader.registerConditionTypes();
 
+/** @type {import("../models/effectModels").Effect} */
 const model = {
     definition: {
         id: "firebot:conditional-effects",

@@ -3,6 +3,7 @@
 const { EffectCategory } = require('../../../shared/effect-constants');
 const twitchApi = require("../../twitch-api/api");
 
+/** @type {import("../models/effectModels").Effect} */
 const model = {
     definition: {
         id: "firebot:streamgame",

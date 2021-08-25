@@ -2,6 +2,7 @@
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 
+/** @type {import("../models/effectModels").Effect} */
 const toggleConnection = {
     definition: {
         id: "firebot:update-channel-reward",

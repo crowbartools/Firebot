@@ -4,6 +4,7 @@ const frontendCommunicator = require("../../common/frontend-communicator");
 const commandManager = require("../../chat/commands/CommandManager");
 const { EffectCategory } = require('../../../shared/effect-constants');
 
+/** @type {import("../models/effectModels").Effect} */
 const chat = {
     definition: {
         id: "firebot:toggle-command",

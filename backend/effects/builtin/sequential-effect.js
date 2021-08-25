@@ -4,6 +4,7 @@ const effectRunner = require("../../common/effect-runner");
 const { EffectCategory } = require('../../../shared/effect-constants');
 const sequentialQueuesCache = {};
 
+/** @type {import("../models/effectModels").Effect} */
 const model = {
     /**
    * The definition of the Effect

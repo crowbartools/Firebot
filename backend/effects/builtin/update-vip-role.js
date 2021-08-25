@@ -3,11 +3,10 @@
 const effectModels = require("../models/effectModels");
 const { EffectDependency } = effectModels;
 const { EffectCategory } = require('../../../shared/effect-constants');
-
 const logger = require('../../logwrapper');
-
 const twitchChat = require("../../chat/twitch-chat");
 
+/** @type {import("../models/effectModels").Effect} */
 const model = {
     definition: {
         id: "firebot:update-vip-role",

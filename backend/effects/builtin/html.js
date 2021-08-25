@@ -6,9 +6,7 @@ const effectModels = require("../models/effectModels");
 const { EffectDependency } = effectModels;
 const { EffectCategory } = require('../../../shared/effect-constants');
 
-/**
- * The HTML effect
- */
+/** @type {import("../models/effectModels").Effect} */
 const html = {
     /**
    * The definition of the Effect

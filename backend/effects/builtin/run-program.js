@@ -32,6 +32,7 @@ const splitArgumentsText = (argsString) => {
     return arr;
 };
 
+/** @type {import("../models/effectModels").Effect} */
 const model = {
     definition: {
         id: "firebot:run-program",
