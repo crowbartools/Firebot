@@ -1,8 +1,7 @@
 "use strict";
 
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
-const { EffectDependency, EffectTrigger } = effectModels;
+const { EffectDependency } = effectModels;
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 
@@ -13,12 +12,7 @@ const effect = {
         description: "Display an alert in Firebot's chat feed",
         icon: "fad fa-comment-exclamation",
         categories: [EffectCategory.COMMON, EffectCategory.CHAT_BASED],
-        dependencies: [EffectDependency.CHAT],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: [EffectDependency.CHAT]
     },
     optionsTemplate: `
     <eos-container>

@@ -1,9 +1,5 @@
 "use strict";
 
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 const toggleConnection = {
@@ -13,12 +9,7 @@ const toggleConnection = {
         description: "Toggle connection to Twitch and any linked Integrations",
         icon: "fad fa-plug",
         categories: [EffectCategory.ADVANCED],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
     globalSettings: {},
     optionsTemplate: `

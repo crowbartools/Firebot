@@ -1,9 +1,5 @@
 "use strict";
 
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 const effect = {
@@ -13,17 +9,12 @@ const effect = {
         description: "Save metadata associated to a given user",
         icon: "fad fa-user-cog",
         categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
     globalSettings: {},
     optionsTemplate: `
         <eos-container header="Username">
-            <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="effect.username" placeholder="Enter username" replace-variables menu-position="below" /> 
+            <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="effect.username" placeholder="Enter username" replace-variables menu-position="below" />
         </eos-container>
 
         <eos-container header="Metadata Key" pad-top="true">

@@ -2,11 +2,8 @@
 
 const { settings } = require("../../common/settings-access");
 const webServer = require("../../../server/httpServer");
-
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
-const { EffectDependency, EffectTrigger } = effectModels;
-
+const { EffectDependency } = effectModels;
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 /**
@@ -22,12 +19,7 @@ const html = {
         description: "Show an HTML snippet in the overlay.",
         icon: "fab fa-html5",
         categories: [EffectCategory.ADVANCED, EffectCategory.OVERLAY],
-        dependencies: [EffectDependency.OVERLAY],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: [EffectDependency.OVERLAY]
     },
     /**
    * Global settings that will be available in the Settings tab

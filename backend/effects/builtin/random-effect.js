@@ -2,13 +2,7 @@
 
 const effectRunner = require("../../common/effect-runner");
 const util = require("../../utility");
-
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require('../../../shared/effect-constants');
-
 const randomQueuesCache = {};
 
 /**
@@ -24,12 +18,7 @@ const randomEffect = {
         description: "Run a random effect from a list of effects",
         icon: "fad fa-random",
         categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
     /**
    * Global settings that will be available in the Settings tab

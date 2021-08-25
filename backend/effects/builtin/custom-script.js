@@ -1,13 +1,7 @@
 "use strict";
 
 const logger = require("../../logwrapper");
-
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const customScriptRunner = require("../../common/handlers/custom-scripts/custom-script-runner");
-
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 /**
@@ -23,12 +17,7 @@ const fileWriter = {
         description: "Run a custom JS script.",
         icon: "fad fa-code",
         categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX, ControlKind.JOYSTICK],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT, InputEvent.MOVE],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
     optionsTemplate: `
         <custom-script-settings

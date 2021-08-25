@@ -1,11 +1,8 @@
 "use strict";
 
 const diceProcessor = require("../../common/handlers/diceProcessor");
-
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
-const { EffectDependency, EffectTrigger } = effectModels;
-
+const { EffectDependency } = effectModels;
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 /**
@@ -21,12 +18,7 @@ const dice = {
         description: "Specify an amount of dice to roll in chat.",
         icon: "fad fa-dice",
         categories: [EffectCategory.FUN, EffectCategory.CHAT_BASED],
-        dependencies: [EffectDependency.CHAT],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: [EffectDependency.CHAT]
     },
     /**
    * Global settings that will be available in the Settings tab

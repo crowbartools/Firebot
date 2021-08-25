@@ -2,10 +2,8 @@
 
 const apiProcessor = require("../../common/handlers/apiProcessor");
 const twitchChat = require("../../chat/twitch-chat");
-
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
-const { EffectDependency, EffectTrigger } = effectModels;
+const { EffectDependency } = effectModels;
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 /**
@@ -21,12 +19,7 @@ const api = {
         description: "Pulls info from a pre-selected api.",
         icon: "fad fa-chart-network",
         categories: [EffectCategory.FUN, EffectCategory.CHAT_BASED, EffectCategory.OVERLAY],
-        dependencies: [EffectDependency.CHAT],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: [EffectDependency.CHAT]
     },
     /**
    * Global settings that will be available in the Settings tab

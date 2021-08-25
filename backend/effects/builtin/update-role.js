@@ -1,12 +1,6 @@
 "use strict";
 
-
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require('../../../shared/effect-constants');
-
 const customRolesManager = require("../../roles/custom-roles-manager");
 
 /**
@@ -22,12 +16,7 @@ const delay = {
         description: "Add, remove, or clear users from a custom role.",
         icon: "fad fa-user-tag",
         categories: [EffectCategory.ADVANCED],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
     globalSettings: {},
     optionsTemplate: `

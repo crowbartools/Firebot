@@ -1,11 +1,6 @@
 "use strict";
 
 const logger = require("../../logwrapper");
-
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 const process = require('process');
@@ -44,12 +39,7 @@ const model = {
         description: "Run a program or executable",
         icon: "fad fa-terminal",
         categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
     globalSettings: {},
     optionsTemplate: `

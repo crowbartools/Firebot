@@ -1,11 +1,8 @@
 "use strict";
 
 const clipProcessor = require("../../common/handlers/createClipProcessor");
-
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
-const { EffectDependency, EffectTrigger } = effectModels;
-
+const { EffectDependency } = effectModels;
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 const clip = {
@@ -15,12 +12,7 @@ const clip = {
         description: "Creates a clip on Twitch.",
         icon: "fad fa-film",
         categories: [EffectCategory.COMMON, EffectCategory.FUN],
-        dependencies: [EffectDependency.CHAT],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN],
-            EffectTrigger.ALL
-        )
+        dependencies: [EffectDependency.CHAT]
     },
     globalSettings: {},
     optionsTemplate: `

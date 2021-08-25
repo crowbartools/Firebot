@@ -1,8 +1,7 @@
 "use strict";
 
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
-const { EffectDependency, EffectTrigger } = effectModels;
+const { EffectDependency } = effectModels;
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 
@@ -21,12 +20,7 @@ const chat = {
         description: "Send a chat message.",
         icon: "fad fa-comment-lines",
         categories: [EffectCategory.COMMON, EffectCategory.CHAT_BASED],
-        dependencies: [EffectDependency.CHAT],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: [EffectDependency.CHAT]
     },
     /**
    * Global settings that will be available in the Settings tab
