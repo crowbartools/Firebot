@@ -27,10 +27,6 @@ const showImage = {
         dependencies: [EffectDependency.OVERLAY]
     },
     /**
-   * Global settings that will be available in the Settings tab
-   */
-    globalSettings: {},
-    /**
    * The HTML template for the Options view (ie options when effect is added to something such as a button.
    * You can alternatively supply a url to a html file via optionTemplateUrl
    */

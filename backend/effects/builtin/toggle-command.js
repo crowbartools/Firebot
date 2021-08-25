@@ -13,7 +13,6 @@ const chat = {
         categories: [EffectCategory.COMMON],
         dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container>
             <p>This effect lets you automatically toggle the active status of Commands.</p>

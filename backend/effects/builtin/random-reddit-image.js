@@ -19,7 +19,6 @@ const model = {
         categories: [EffectCategory.FUN, EffectCategory.CHAT_BASED, EffectCategory.OVERLAY],
         dependencies: [EffectDependency.CHAT]
     },
-    globalSettings: {},
     optionsTemplate: `
     <eos-container header="Subreddit Name">
         <div class="input-group">

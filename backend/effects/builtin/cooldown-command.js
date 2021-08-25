@@ -11,7 +11,6 @@ const model = {
         categories: [EffectCategory.COMMON, EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
         dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container header="Command To Cooldown" ng-init="showSubcommands = effect.subcommandId != null">
             <ui-select ng-model="effect.commandId" theme="bootstrap" on-select="commandSelected($item, $model)">

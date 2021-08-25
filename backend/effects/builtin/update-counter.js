@@ -15,7 +15,6 @@ const model = {
         categories: [EffectCategory.COMMON, EffectCategory.ADVANCED],
         dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <div ng-hide="hasCounters">
             <p>You need to create a Counter to use this effect! Go to the <b>Counters</b> tab to create one.</p>

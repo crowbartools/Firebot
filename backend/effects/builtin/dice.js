@@ -21,10 +21,6 @@ const dice = {
         dependencies: [EffectDependency.CHAT]
     },
     /**
-   * Global settings that will be available in the Settings tab
-   */
-    globalSettings: {},
-    /**
    * The HTML template for the Options view (ie options when effect is added to something such as a button.
    * You can alternatively supply a url to a html file via optionTemplateUrl
    */
@@ -94,22 +90,6 @@ const dice = {
         // What should this do when triggered.
         diceProcessor.send(event.effect, event.trigger);
         return true;
-    },
-    /**
-   * Code to run in the overlay
-   */
-    overlayExtension: {
-        dependencies: {
-            css: [],
-            js: []
-        },
-        event: {
-            name: "dice",
-            onOverlayEvent: event => {
-                console.log("yay dice");
-                //need to implement this
-            }
-        }
     }
 };
 

@@ -11,7 +11,6 @@ const effect = {
         categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
         dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container header="Username">
             <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="effect.username" placeholder="Enter username" replace-variables menu-position="below" />

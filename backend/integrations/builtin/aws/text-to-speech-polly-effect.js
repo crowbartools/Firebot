@@ -89,14 +89,10 @@ const playSound = {
         )
     },
     /**
-   * Global settings that will be available in the Settings tab
-   */
-    globalSettings: {},
-    /**
    * The HTML template for the Options view (ie options when effect is added to something such as a button.
    * You can alternatively supply a url to a html file via optionTemplateUrl
    */
-    optionsTemplate: `    
+    optionsTemplate: `
     <div ng-hide="fetchError">
         <eos-container header="Engine">
             <div class="controls-fb-inline" style="padding-bottom: 5px;">
@@ -116,9 +112,9 @@ const playSound = {
 
             <div style="padding-top:10px">
                 <label class="control-fb control--checkbox"> Enable
-                    <a 
-                    ng-click="openLink('https://docs.aws.amazon.com/polly/latest/dg/supportedtags.html')" 
-                    class="clickable" 
+                    <a
+                    ng-click="openLink('https://docs.aws.amazon.com/polly/latest/dg/supportedtags.html')"
+                    class="clickable"
                     uib-tooltip="View SSML Documentation"
                     aria-label="View SSML Documentation"
                     tooltip-append-to-body="true">

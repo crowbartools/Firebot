@@ -11,7 +11,6 @@ const toggleConnection = {
         categories: [EffectCategory.ADVANCED],
         dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container header="Mode">
             <div style="padding-left: 10px;">

@@ -22,7 +22,6 @@ const effect = {
             EffectTrigger.ALL
         )
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container header="Activate Hue Scene">
             <ui-select ng-model="selectedScene" theme="bootstrap" on-select="sceneSelected($item)" style="margin-bottom:10px;">
@@ -34,7 +33,7 @@ const effect = {
                 <ui-select-choices minimum-input-length="1" repeat="scene in hueScenes | filter: $select.search" style="position:relative;">
                     <div style="height: 35px; display:flex; flex-direction: row; align-items: center;">
                         <div style="font-weight: 100;font-size: 17px;">{{scene._data.name}}</div>
-                    </div>                                  
+                    </div>
                 </ui-select-choices>
             </ui-select>
         </eos-container>

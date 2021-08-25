@@ -16,7 +16,6 @@ const model = {
         icon: "fad fa-question-circle",
         dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container>
 

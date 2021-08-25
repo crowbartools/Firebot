@@ -24,7 +24,6 @@ const effect = {
             EffectTrigger.ALL
         )
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container>
             <div class="effect-info alert alert-info">

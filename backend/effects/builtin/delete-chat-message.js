@@ -19,7 +19,6 @@ const model = {
         dependencies: [EffectDependency.CHAT],
         triggers: triggers
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container>
             <p>This effect deletes the associated chat message (for a Command or Chat Message Event)</p>

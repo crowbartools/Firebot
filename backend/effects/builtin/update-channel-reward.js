@@ -11,7 +11,6 @@ const toggleConnection = {
         categories: [EffectCategory.ADVANCED],
         dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container header="Channel Reward">
             <ui-select ng-model="effect.channelRewardId" theme="bootstrap">
@@ -59,11 +58,11 @@ const toggleConnection = {
             </div>
 
             <label class="control-fb control--checkbox">Update Name
-                <input 
-                    type="checkbox" 
-                    ng-click="effect.rewardSettings.name.update = !effect.rewardSettings.name.update" 
-                    ng-checked="effect.rewardSettings.name.update"  
-                    aria-label="Update name" 
+                <input
+                    type="checkbox"
+                    ng-click="effect.rewardSettings.name.update = !effect.rewardSettings.name.update"
+                    ng-checked="effect.rewardSettings.name.update"
+                    aria-label="Update name"
                 />
                 <div class="control__indicator"></div>
             </label>
@@ -72,11 +71,11 @@ const toggleConnection = {
             </div>
 
             <label class="control-fb control--checkbox">Update Description
-                <input 
-                    type="checkbox" 
-                    ng-click="effect.rewardSettings.description.update = !effect.rewardSettings.description.update" 
-                    ng-checked="effect.rewardSettings.description.update"  
-                    aria-label="Update description" 
+                <input
+                    type="checkbox"
+                    ng-click="effect.rewardSettings.description.update = !effect.rewardSettings.description.update"
+                    ng-checked="effect.rewardSettings.description.update"
+                    aria-label="Update description"
                 />
                 <div class="control__indicator"></div>
             </label>
@@ -85,11 +84,11 @@ const toggleConnection = {
             </div>
 
             <label class="control-fb control--checkbox">Update Cost
-                <input 
-                    type="checkbox" 
-                    ng-click="effect.rewardSettings.cost.update = !effect.rewardSettings.cost.update" 
-                    ng-checked="effect.rewardSettings.cost.update"  
-                    aria-label="Update cost" 
+                <input
+                    type="checkbox"
+                    ng-click="effect.rewardSettings.cost.update = !effect.rewardSettings.cost.update"
+                    ng-checked="effect.rewardSettings.cost.update"
+                    aria-label="Update cost"
                 />
                 <div class="control__indicator"></div>
             </label>

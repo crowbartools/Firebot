@@ -41,14 +41,13 @@ module.exports = {
             EffectTrigger.ALL
         )
     },
-    globalSettings: {},
     optionsTemplate: `
         <div>
             <div ng-show="hasChannels">
 
                 <eos-container header="Discord Channel">
                     <dropdown-select options="channelOptions" selected="effect.channelId"></dropdown-select>
-                </eos-container>  
+                </eos-container>
 
                 <eos-container header="Message" pad-top="true">
                     <textarea ng-model="effect.message" class="form-control" name="text" placeholder="Enter message" rows="4" cols="40" replace-variables></textarea>
@@ -68,7 +67,7 @@ module.exports = {
                             <div style="margin-top:10px;">
                                 <firebot-input input-title="Title" model="effect.customEmbed.title"></firebot-input>
                             </div>
-                            
+
                             <div style="margin-top:10px;">
                                 <firebot-input input-title="Content" model="effect.customEmbed.description"></firebot-input>
                             </div>
@@ -80,16 +79,16 @@ module.exports = {
                             <div style="margin-top:10px;">
                                 <firebot-input input-title="Author Icon URL" model="effect.customEmbed.authorIconUrl"></firebot-input>
                             </div>
-                        
+
                         </div>
                     </div>
-                </eos-container>   
+                </eos-container>
 
             </div>
             <div ng-hide="hasChannels">
                 <eos-container>
                     <span class="muted">No Discord channels configured yet! You can configure them in <b>Settings</b> > <b>Integrations</b> > <b>Discord</b></span>
-                </eos-container>   
+                </eos-container>
             </div>
         </div>
     `,

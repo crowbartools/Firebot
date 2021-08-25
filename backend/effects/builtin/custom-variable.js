@@ -12,7 +12,6 @@ const fileWriter = {
         categories: [EffectCategory.SCRIPTING],
         dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container header="Variable Name">
             <p class="muted">You'll use this name to reference this elsewhere via the $customVariable replace phrase.</p>

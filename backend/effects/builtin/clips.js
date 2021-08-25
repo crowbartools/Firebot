@@ -14,7 +14,6 @@ const clip = {
         categories: [EffectCategory.COMMON, EffectCategory.FUN],
         dependencies: [EffectDependency.CHAT]
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container>
             <div style="padding-top:15px">

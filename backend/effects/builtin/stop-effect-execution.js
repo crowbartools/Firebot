@@ -11,7 +11,6 @@ const model = {
         categories: [EffectCategory.SCRIPTING],
         dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container>
             <p>This effect will stop effect execution for the current effect list.</p>

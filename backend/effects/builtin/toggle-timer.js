@@ -12,7 +12,6 @@ const chat = {
         categories: [EffectCategory.COMMON],
         dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container>
             <p>This effect let's you automatically toggle the active status of Timers.</p>

@@ -41,7 +41,6 @@ const model = {
         categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
         dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container header="Program File Path">
             <file-chooser model="effect.programPath" options="{ filters: [ {name:'Program',extensions:['exe', 'bat', 'cmd']} ]}"></file-chooser>

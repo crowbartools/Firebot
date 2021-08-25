@@ -22,10 +22,6 @@ const api = {
         dependencies: [EffectDependency.CHAT]
     },
     /**
-   * Global settings that will be available in the Settings tab
-   */
-    globalSettings: {},
-    /**
    * The HTML template for the Options view (ie options when effect is added to something such as a button.
    * You can alternatively supply a url to a html file via optionTemplateUrl
    */
@@ -160,22 +156,6 @@ const api = {
         twitchChat.sendChatMessage(`${apiType}: ${apiResponse}`, null, chatter);
 
         return true;
-    },
-    /**
-   * Code to run in the overlay
-   */
-    overlayExtension: {
-        dependencies: {
-            css: [],
-            js: []
-        },
-        event: {
-            name: "apiEffect",
-            onOverlayEvent: event => {
-                // The API Effect can sometimes show images in the overlay.
-                // As part of this we use the showImage event.
-            }
-        }
     }
 };
 

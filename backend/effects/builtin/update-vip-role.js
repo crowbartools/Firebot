@@ -1,7 +1,7 @@
 "use strict";
 
 const effectModels = require("../models/effectModels");
-const { EffectDependency} = effectModels;
+const { EffectDependency } = effectModels;
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 const logger = require('../../logwrapper');

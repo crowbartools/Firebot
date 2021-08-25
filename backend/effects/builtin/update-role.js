@@ -18,7 +18,6 @@ const delay = {
         categories: [EffectCategory.ADVANCED],
         dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
 
     <eos-container header="Custom Role Actions" pad-top="true">

@@ -7,6 +7,7 @@ const { EffectCategory } = require('../../../shared/effect-constants');
 const accountAccess = require("../../common/account-access");
 const twitchApi = require("../../twitch-api/api");
 
+/** @type {import("../models/effectModels").Effect} */
 const model = {
     definition: {
         id: "firebot:ad-break",
@@ -17,7 +18,6 @@ const model = {
         categories: [EffectCategory.COMMON, EffectCategory.MODERATION],
         dependencies: [EffectDependency.CHAT]
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container header="Ad Duration" pad-top="true">
             <div class="btn-group">
