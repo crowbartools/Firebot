@@ -1,13 +1,9 @@
 "use strict";
 
 const customVariableManager = require("../../common/custom-variable-manager");
-
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require('../../../shared/effect-constants');
 
+/** @type {import("../models/effectModels").Effect} */
 const fileWriter = {
     definition: {
         id: "firebot:customvariable",
@@ -15,14 +11,8 @@ const fileWriter = {
         description: "Save data to a custom variable that you can then use elsewhere.",
         icon: "fad fa-value-absolute",
         categories: [EffectCategory.SCRIPTING],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container header="Variable Name">
             <p class="muted">You'll use this name to reference this elsewhere via the $customVariable replace phrase.</p>

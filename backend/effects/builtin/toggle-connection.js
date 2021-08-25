@@ -1,11 +1,8 @@
 "use strict";
 
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require('../../../shared/effect-constants');
 
+/** @type {import("../models/effectModels").Effect} */
 const toggleConnection = {
     definition: {
         id: "firebot:toggleconnection",
@@ -13,14 +10,8 @@ const toggleConnection = {
         description: "Toggle connection to Twitch and any linked Integrations",
         icon: "fad fa-plug",
         categories: [EffectCategory.ADVANCED],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container header="Mode">
             <div style="padding-left: 10px;">

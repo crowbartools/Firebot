@@ -7,16 +7,10 @@ const fs = require('fs-extra');
 const logger = require("../../logwrapper");
 const path = require("path");
 const frontendCommunicator = require("../../common/frontend-communicator");
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require('../../../shared/effect-constants');
 const { wait } = require("../../utility");
 
-/**
- * The Play Sound effect
- */
+/** @type {import("../models/effectModels").Effect} */
 const playSound = {
     /**
    * The definition of the Effect
@@ -27,17 +21,8 @@ const playSound = {
         description: "Plays a sound effect",
         icon: "fad fa-waveform",
         categories: [EffectCategory.COMMON],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
-    /**
-   * Global settings that will be available in the Settings tab
-   */
-    globalSettings: {},
     /**
    * The HTML template for the Options view (ie options when effect is added to something such as a button.
    * You can alternatively supply a url to a html file via optionTemplateUrl
@@ -55,7 +40,7 @@ const playSound = {
             </label>
         </div>
     </eos-container>
-    
+
     <div ng-hide="effect.soundType == null">
         <eos-container header="Sound">
             <div ng-if="effect.soundType === 'folderRandom'">
@@ -95,7 +80,7 @@ const playSound = {
     /**
    * The controller for the front end Options
    */
-    optionsController: ($scope, listenerService) => {
+    optionsController: ($scope) => {
         if ($scope.effect.soundType == null) {
             $scope.effect.soundType = "local";
         }

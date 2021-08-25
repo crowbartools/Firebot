@@ -1,11 +1,6 @@
 "use strict";
 
 const logger = require("../../logwrapper");
-
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 const process = require('process');
@@ -37,6 +32,7 @@ const splitArgumentsText = (argsString) => {
     return arr;
 };
 
+/** @type {import("../models/effectModels").Effect} */
 const model = {
     definition: {
         id: "firebot:run-program",
@@ -44,14 +40,8 @@ const model = {
         description: "Run a program or executable",
         icon: "fad fa-terminal",
         categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container header="Program File Path">
             <file-chooser model="effect.programPath" options="{ filters: [ {name:'Program',extensions:['exe', 'bat', 'cmd']} ]}"></file-chooser>

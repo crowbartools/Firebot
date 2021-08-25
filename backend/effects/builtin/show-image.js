@@ -5,17 +5,13 @@ const resourceTokenManager = require("../../resourceTokenManager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/httpServer");
 const fs = require('fs-extra');
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
-const { EffectDependency, EffectTrigger } = effectModels;
+const { EffectDependency } = effectModels;
 const logger = require("../../logwrapper");
 const path = require("path");
-
 const { EffectCategory } = require('../../../shared/effect-constants');
 
-/**
- * The Show Image effect
- */
+/** @type {import("../models/effectModels").Effect} */
 const showImage = {
     /**
    * The definition of the Effect
@@ -26,17 +22,8 @@ const showImage = {
         description: "Shows an image in the overlay.",
         icon: "fad fa-image",
         categories: [EffectCategory.COMMON, EffectCategory.FUN, EffectCategory.OVERLAY],
-        dependencies: [EffectDependency.OVERLAY],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: [EffectDependency.OVERLAY]
     },
-    /**
-   * Global settings that will be available in the Settings tab
-   */
-    globalSettings: {},
     /**
    * The HTML template for the Options view (ie options when effect is added to something such as a button.
    * You can alternatively supply a url to a html file via optionTemplateUrl

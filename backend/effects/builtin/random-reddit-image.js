@@ -1,10 +1,8 @@
 "use strict";
 
 const redditProcessor = require("../../common/handlers/redditProcessor");
-
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
-const { EffectDependency, EffectTrigger } = effectModels;
+const { EffectDependency } = effectModels;
 const twitchChat = require("../../chat/twitch-chat");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const settings = require("../../common/settings-access").settings;
@@ -12,6 +10,7 @@ const logger = require("../../logwrapper");
 const webServer = require("../../../server/httpServer");
 const { EffectCategory } = require('../../../shared/effect-constants');
 
+/** @type {import("../models/effectModels").Effect} */
 const model = {
     definition: {
         id: "firebot:randomReddit",
@@ -19,14 +18,8 @@ const model = {
         description: "Pulls a random image from a selected subreddit.",
         icon: "fab fa-reddit-alien",
         categories: [EffectCategory.FUN, EffectCategory.CHAT_BASED, EffectCategory.OVERLAY],
-        dependencies: [EffectDependency.CHAT],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: [EffectDependency.CHAT]
     },
-    globalSettings: {},
     optionsTemplate: `
     <eos-container header="Subreddit Name">
         <div class="input-group">

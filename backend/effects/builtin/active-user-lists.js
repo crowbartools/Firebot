@@ -1,7 +1,4 @@
 "use strict";
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger } = effectModels;
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 
@@ -9,6 +6,7 @@ const logger = require('../../logwrapper');
 const twitchApi = require("../../twitch-api/api");
 const activeUserHandler = require("../../chat/chat-listeners/active-user-handler");
 
+/** @type {import("../models/effectModels").Effect} */
 const model = {
     definition: {
         id: "firebot:activeUserLists",
@@ -16,12 +14,7 @@ const model = {
         description: "Add or remove users from the active chat user lists.",
         icon: "fad fa-users",
         categories: [EffectCategory.COMMON, EffectCategory.MODERATION],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
     optionsTemplate: `
     <eos-container header="Action" pad-top="true">

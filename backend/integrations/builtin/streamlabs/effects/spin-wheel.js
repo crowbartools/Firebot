@@ -1,15 +1,10 @@
 "use strict";
 
-const { ControlKind, InputEvent } = require('../../../../interactive/constants/MixplayConstants');
-const effectModels = require("../../../../effects/models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require("../../../../../shared/effect-constants");
-
 const request = require("request");
-
 const integrationManager = require("../../../IntegrationManager");
 
+/** @type {import("../../../../effects/models/effectModels").Effect */
 const effect = {
     definition: {
         id: "streamlabs:spin-wheel",
@@ -17,14 +12,8 @@ const effect = {
         description: "Trigger StreamLab's \"Spin the Wheel\" feature",
         icon: "fad fa-tire",
         categories: [EffectCategory.INTEGRATIONS],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container>
             <div class="effect-info alert alert-info">
