@@ -79,7 +79,7 @@ const controlEmulation = {
    * The controller for the front end Options
    * Port over from effectHelperService.js
    */
-    optionsController: ($scope, listenerService, effectHelperService) => {
+    optionsController: ($scope, effectHelperService) => {
         $scope.validControls = [
             "a",
             "b",

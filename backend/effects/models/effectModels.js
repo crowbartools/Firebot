@@ -17,7 +17,7 @@ const { InputEvent } = require("../../interactive/constants/MixplayConstants");
    * @typedef Effect
    * @property {EffectDefinition} definition An EffectDefinition object definining this Effect
    * @property {string} [optionsTemplate] An HTML template string for this Effect's options. Can include Angular bindings.
-   * @property {string} [optionsTemplateUrl] A url pointing to an html file to beused as the options for this Effect. Can be used in place of optionsTemplate
+   * @property {string} [optionsTemplateUrl] A url pointing to an html file to be used as this Effect's options. Can be used in place of optionsTemplate.
    * @property {function} optionsController The controller of the Options view in the front end
    * @property {function} optionsValidator The function that validates the user input
    * @property {function} onTriggerEvent The callback function whenever this function is triggered
@@ -86,9 +86,7 @@ exports.buildEffectTriggersObject = function(mixplayControls, mixplayEvents, oth
  * @enum {string}
  */
 const EffectDependency = Object.freeze({
-    INTERACTIVE: "interactive",
     CHAT: "chat",
-    CONSTELLATION: "constellation",
     OVERLAY: "overlay"
 });
 
