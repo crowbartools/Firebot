@@ -2,7 +2,7 @@
 
 const webServer = require("../../../server/httpServer");
 const frontendCommunicator = require("../../common/frontend-communicator");
-const effectQueueRunner = require("../../effects/queues/effect-queue-runner");
+const effectQueueRunner = require("../queues/effect-queue-runner");
 
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
