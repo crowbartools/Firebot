@@ -1,7 +1,5 @@
 "use strict";
 
-const { settings } = require("../../common/settings-access");
-const resourceTokenManager = require("../../resourceTokenManager");
 const diceProcessor = require("../../common/handlers/diceProcessor");
 
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
