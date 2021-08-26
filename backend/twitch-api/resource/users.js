@@ -126,12 +126,6 @@ async function getUsersChatRoles(userIdOrName = "") {
     return roles;
 }
 
-async function updateUserRole(userId, role, addOrRemove) {
-    // eslint-disable-next-line no-warning-comments
-    //TODO: Needs to be updated for twitch.
-    return true;
-}
-
 async function blockUser(userId) {
     if (userId == null) return;
 
@@ -255,5 +249,4 @@ exports.getUsersChatRoles = getUsersChatRoles;
 exports.blockUser = blockUser;
 exports.unblockUser = unblockUser;
 exports.getFollowDateForUser = getFollowDateForUser;
-exports.updateUserRole = updateUserRole;
 exports.doesUserFollowChannel = doesUserFollowChannel;
