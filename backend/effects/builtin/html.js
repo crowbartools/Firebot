@@ -1,18 +1,12 @@
 "use strict";
 
 const { settings } = require("../../common/settings-access");
-const resourceTokenManager = require("../../resourceTokenManager");
 const webServer = require("../../../server/httpServer");
-
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
-const { EffectDependency, EffectTrigger } = effectModels;
-
+const { EffectDependency } = effectModels;
 const { EffectCategory } = require('../../../shared/effect-constants');
 
-/**
- * The HTML effect
- */
+/** @type {import("../models/effectModels").Effect} */
 const html = {
     /**
    * The definition of the Effect
@@ -23,28 +17,19 @@ const html = {
         description: "Show an HTML snippet in the overlay.",
         icon: "fab fa-html5",
         categories: [EffectCategory.ADVANCED, EffectCategory.OVERLAY],
-        dependencies: [EffectDependency.OVERLAY],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: [EffectDependency.OVERLAY]
     },
-    /**
-   * Global settings that will be available in the Settings tab
-   */
-    globalSettings: {},
     /**
    * The HTML template for the Options view (ie options when effect is added to something such as a button.
    * You can alternatively supply a url to a html file via optionTemplateUrl
    */
     optionsTemplate: `
     <eos-container header="HTML">
-        <div 
+        <div
             ui-codemirror="{onLoad : codemirrorLoaded}"
             ui-codemirror-opts="editorSettings"
             ng-model="effect.html"
-            replace-variables 
+            replace-variables
             menu-position="under">
         </div>
     </eos-container>

@@ -1,13 +1,9 @@
 "use strict";
 
-const { ControlKind, InputEvent } = require('../../../../interactive/constants/MixplayConstants');
-const effectModels = require("../../../../effects/models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require("../../../../../shared/effect-constants");
-
 const hueManager = require("../hue-manager");
 
+/** @type {import("../../../../effects/models/effectModels").Effect */
 const effect = {
     definition: {
         id: "hue:scenes",
@@ -15,14 +11,8 @@ const effect = {
         description: "Activate a Philips Hue scene",
         icon: "far fa-lightbulb fa-align-center",
         categories: [EffectCategory.INTEGRATIONS],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container header="Activate Hue Scene">
             <ui-select ng-model="selectedScene" theme="bootstrap" on-select="sceneSelected($item)" style="margin-bottom:10px;">
@@ -34,7 +24,7 @@ const effect = {
                 <ui-select-choices minimum-input-length="1" repeat="scene in hueScenes | filter: $select.search" style="position:relative;">
                     <div style="height: 35px; display:flex; flex-direction: row; align-items: center;">
                         <div style="font-weight: 100;font-size: 17px;">{{scene._data.name}}</div>
-                    </div>                                  
+                    </div>
                 </ui-select-choices>
             </ui-select>
         </eos-container>

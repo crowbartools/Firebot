@@ -1,15 +1,10 @@
 "use strict";
 
 const effectRunner = require("../../common/effect-runner");
-
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require('../../../shared/effect-constants');
-
 const sequentialQueuesCache = {};
 
+/** @type {import("../models/effectModels").Effect} */
 const model = {
     /**
    * The definition of the Effect
@@ -20,38 +15,29 @@ const model = {
         description: "Run a single effect sequentially from a list of effects",
         icon: "fad fa-list-ol",
         categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
-    /**
-   * Global settings that will be available in the Settings tab
-   */
-    globalSettings: {},
     /**
    * The HTML template for the Options view (ie options when effect is added to something such as a button.
    * You can alternatively supply a url to a html file via optionTemplateUrl
    */
     optionsTemplate: `
-    
+
 
     <eos-container>
         <p>This effect will run a single effect sequentially from the list below. Particularly useful in Timers!</p>
     </eos-container>
 
     <eos-container pad-top="true">
-        <effect-list effects="effect.effectList" 
+        <effect-list effects="effect.effectList"
             trigger="{{trigger}}"
             trigger-meta="triggerMeta"
             update="effectListUpdated(effects)"
             header="Effects"
             modalId="{{modalId}}"></effect-list>
     </eos-container>
-    
-    
+
+
     `,
     /**
    * The controller for the front end Options

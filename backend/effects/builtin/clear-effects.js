@@ -2,17 +2,10 @@
 
 const webServer = require("../../../server/httpServer");
 const frontendCommunicator = require("../../common/frontend-communicator");
-const effectQueueRunner = require("../../effects/queues/effect-queue-runner");
-
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger } = effectModels;
-
+const effectQueueRunner = require("../queues/effect-queue-runner");
 const { EffectCategory } = require('../../../shared/effect-constants');
 
-/**
- * The Delay effect
- */
+/** @type {import("../models/effectModels").Effect} */
 const delay = {
     /**
    * The definition of the Effect
@@ -23,17 +16,8 @@ const delay = {
         description: "Remove overlay effects, stop sounds, or clear effect queues",
         icon: "fad fa-minus-circle",
         categories: [EffectCategory.COMMON, EffectCategory.OVERLAY],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
-    /**
-   * Global settings that will be available in the Settings tab
-   */
-    globalSettings: {},
     /**
    * The HTML template for the Options view (ie options when effect is added to something such as a button.
    * You can alternatively supply a url to a html file via optionTemplateUrl

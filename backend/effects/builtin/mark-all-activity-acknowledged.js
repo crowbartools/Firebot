@@ -1,13 +1,9 @@
 "use strict";
 
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require('../../../shared/effect-constants');
-
 const frontendCommunicator = require("../../common/frontend-communicator");
 
+/** @type {import("../models/effectModels").Effect} */
 const model = {
     definition: {
         id: "firebot:mark-all-activity-acknowledged",
@@ -15,12 +11,7 @@ const model = {
         description: "Marks all Activity as acknowledged on the Chat page",
         icon: "fad fa-comment-dots",
         categories: [EffectCategory.COMMON],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
     optionsTemplate: `
         <eos-container pad-top="true">

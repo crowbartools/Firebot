@@ -1,42 +1,24 @@
 "use strict";
-const fs = require("fs-extra");
-const path = require("path");
 
 const logger = require("../../logwrapper");
-
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const customScriptRunner = require("../../common/handlers/custom-scripts/custom-script-runner");
-
 const { EffectCategory } = require('../../../shared/effect-constants');
 
-/**
- * The custom var effect
- */
+/** @type {import("../models/effectModels").Effect} */
 const fileWriter = {
-    /**
-   * The definition of the Effect
-   */
     definition: {
         id: "firebot:customscript",
         name: "Run Custom Script",
         description: "Run a custom JS script.",
         icon: "fad fa-code",
         categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX, ControlKind.JOYSTICK],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT, InputEvent.MOVE],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
     optionsTemplate: `
-        <custom-script-settings 
-            effect="effect" 
-            modal-id="modalId" 
-            trigger="trigger" 
+        <custom-script-settings
+            effect="effect"
+            modal-id="modalId"
+            trigger="trigger"
             trigger-meta="triggerMeta"
             allow-startup="isStartup"
         />

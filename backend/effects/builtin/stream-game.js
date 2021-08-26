@@ -1,13 +1,9 @@
 "use strict";
 
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require('../../../shared/effect-constants');
-
 const twitchApi = require("../../twitch-api/api");
 
+/** @type {import("../models/effectModels").Effect} */
 const model = {
     definition: {
         id: "firebot:streamgame",
@@ -15,12 +11,7 @@ const model = {
         description: "Set the stream game.",
         icon: "fad fa-gamepad",
         categories: [EffectCategory.COMMON, EffectCategory.MODERATION],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
     optionsTemplate: `
         <eos-container header="Mode">
@@ -49,7 +40,7 @@ const model = {
                     <div style="height: 35px; display:flex; flex-direction: row; align-items: center;">
                         <img style="height: 30px; width: 30px; border-radius: 5px; margin-right:10px;" ng-src="{{game.boxArtUrl}}">
                         <div style="font-weight: 100;font-size: 17px;">{{game.name}}</div>
-                    </div>                                  
+                    </div>
                 </ui-select-choices>
             </ui-select>
 

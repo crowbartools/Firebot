@@ -9,6 +9,7 @@ const triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
 triggers[EffectTrigger.EVENT] = ["twitch:chat-message"];
 
+/** @type {import("../models/effectModels").Effect} */
 const model = {
     definition: {
         id: "firebot:delete-chat-message",
@@ -19,7 +20,6 @@ const model = {
         dependencies: [EffectDependency.CHAT],
         triggers: triggers
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container>
             <p>This effect deletes the associated chat message (for a Command or Chat Message Event)</p>

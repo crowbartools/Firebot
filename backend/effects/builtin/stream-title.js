@@ -1,16 +1,11 @@
 "use strict";
 
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require('../../../shared/effect-constants');
-
 const twitchClient = require("../../twitch-api/client");
 const { TwitchAPICallType } = require('twitch/lib');
-
 const accountAccess = require("../../common/account-access");
 
+/** @type {import("../models/effectModels").Effect} */
 const model = {
     definition: {
         id: "firebot:streamtitle",
@@ -18,12 +13,7 @@ const model = {
         description: "Set the title of the stream.",
         icon: "fad fa-comment-dots",
         categories: [EffectCategory.COMMON, EffectCategory.MODERATION],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
     optionsTemplate: `
         <eos-container header="New Title" pad-top="true">

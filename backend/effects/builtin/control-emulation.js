@@ -1,18 +1,14 @@
 "use strict";
 
-const { settings } = require("../../common/settings-access");
-const resourceTokenManager = require("../../resourceTokenManager");
 const controlProcessor = require("../../common/handlers/controlEmulation/controlProcessor");
 
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
-const { EffectDependency, EffectTrigger } = effectModels;
+const { EffectTrigger } = effectModels;
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 
-/**
- * The Control Emulation effect
- */
+/** @type {import("../models/effectModels").Effect} */
 const controlEmulation = {
     /**
    * The definition of the Effect
@@ -30,10 +26,6 @@ const controlEmulation = {
             EffectTrigger.ALL
         )
     },
-    /**
-   * Global settings that will be available in the Settings tab
-   */
-    globalSettings: {},
     /**
    * The HTML template for the Options view (ie options when effect is added to something such as a button.
    * You can alternatively supply a url to a html file via optionTemplateUrl
@@ -87,7 +79,7 @@ const controlEmulation = {
    * The controller for the front end Options
    * Port over from effectHelperService.js
    */
-    optionsController: ($scope, listenerService, effectHelperService) => {
+    optionsController: ($scope, effectHelperService) => {
         $scope.validControls = [
             "a",
             "b",
