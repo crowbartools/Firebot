@@ -88,7 +88,7 @@ const model = {
    */
     optionsValidator: effect => {
         let errors = [];
-        if (effect.commandType === "custom" && (effect.customCommandId == null || effect.customCommandId === "")) {
+        if (effect.commandType === "custom" && (effect.commandId == null || effect.commandId === "")) {
             errors.push("Please select a custom command to run.");
         }
         if (effect.commandType === "system" && (effect.systemCommandId == null || effect.systemCommandId === "")) {
