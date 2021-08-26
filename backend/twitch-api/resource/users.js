@@ -178,6 +178,32 @@ async function unblockUser(userId) {
     }
 }
 
+async function getFollowedChannel(userId, channelId) {
+    try {
+        const client = twitchApi.getClient();
+
+        const response = await client.callApi({
+            type: TwitchAPICallType.Helix,
+            url: "users/follows",
+            query: {
+                "from_id": userId,
+                "to_id": channelId
+            }
+        });
+
+        if (response && response.data && response.total > 0) {
+            const data = response.data[0];
+            data.followDate = new Date(data.followed_at);
+
+            return data;
+        }
+    } catch (err) {
+        logger.error("Couldn't find followed channel", err);
+
+        return null;
+    }
+}
+
 
 async function getFollowDateForUser(username) {
     const client = twitchApi.getClient();
@@ -186,7 +212,7 @@ async function getFollowDateForUser(username) {
     const userId = (await client.helix.users.getUserByName(username)).id;
     const channelId = (await client.helix.users.getUserByName(streamerData.username)).id;
 
-    const followerDate = (await client.kraken.users.getFollowedChannel(userId, channelId)).followDate;
+    const followerDate = (await getFollowedChannel(userId, channelId)).followDate;
 
     if (followerDate == null || followerDate.length < 1) {
         return null;
@@ -211,7 +237,7 @@ async function doesUserFollowChannel(username, channelName) {
         return false;
     }
 
-    const userFollow = await client.kraken.users.getFollowedChannel(userId, channelId);
+    const userFollow = await getFollowedChannel(userId, channelId);
 
     if (userFollow == null) {
         return false;
