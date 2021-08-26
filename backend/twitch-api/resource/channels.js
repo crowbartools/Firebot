@@ -114,7 +114,15 @@ async function triggerAdBreak(adLength) {
             adLength = 30;
         }
 
-        await client.kraken.channels.startChannelCommercial(userId, adLength);
+        await client.callApi({
+            type: TwitchAPICallType.Helix,
+            method: "POST",
+            url: "channels/commercial",
+            query: {
+                "broadcaster_id": userId,
+                "length": adLength
+            }
+        });
 
         logger.debug(`A commercial was run. Length: ${adLength}. Twitch does not send confirmation, so we can't be sure it ran.`);
         return true;
