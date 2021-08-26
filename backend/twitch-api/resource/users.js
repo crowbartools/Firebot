@@ -183,8 +183,8 @@ async function getFollowDateForUser(username) {
     const client = twitchApi.getClient();
     const streamerData = accountAccess.getAccounts().streamer;
 
-    const userId = (await client.kraken.users.getUserByName(username)).id;
-    const channelId = (await client.kraken.users.getUserByName(streamerData.username)).id;
+    const userId = (await client.helix.users.getUserByName(username)).id;
+    const channelId = (await client.helix.users.getUserByName(streamerData.username)).id;
 
     const followerDate = (await client.kraken.users.getFollowedChannel(userId, channelId)).followDate;
 
@@ -204,8 +204,8 @@ async function doesUserFollowChannel(username, channelName) {
         return true;
     }
 
-    const userId = (await client.kraken.users.getUserByName(username)).id;
-    const channelId = (await client.kraken.users.getUserByName(channelName)).id;
+    const userId = (await client.helix.users.getUserByName(username)).id;
+    const channelId = (await client.helix.users.getUserByName(channelName)).id;
 
     if (userId == null || channelId == null) {
         return false;
