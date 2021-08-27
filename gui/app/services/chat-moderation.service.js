@@ -58,6 +58,7 @@
                     if (service.chatModerationData.settings.emoteLimit == null) {
                         service.chatModerationData.settings.emoteLimit = {
                             enabled: false,
+                            exemptRoles: [],
                             max: 10
                         };
                     }

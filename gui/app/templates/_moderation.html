@@ -34,7 +34,7 @@
           <div ng-show="cms.chatModerationData.settings.bannedWordList.enabled">
             <div style="margin-top: 15px;margin-bottom: 15px;">
               <div style="font-weight: 600;font-size: 16px;width: 100%;margin-bottom: 10px;">
-                Exempt Roles <tooltip text="'These roles are exempt from the banned words list (overrides the gobal exempt roles).'" />
+                Exempt Roles <tooltip text="'These roles are exempt from the banned words list.'" />
               </div>
               <div class="role-bar" ng-repeat="role in getExemptRoles('bannedWordList') track by role.id">
                 <span>{{role.name}}</span>
@@ -70,7 +70,7 @@
           <div style="margin-top: 15px" ng-show="cms.chatModerationData.settings.emoteLimit.enabled">
             <div style="margin-top: 15px;margin-bottom: 15px;">
               <div style="font-weight: 600;font-size: 16px;width: 100%;margin-bottom: 10px;">
-                Exempt Roles <tooltip text="'These roles are exempt from the emote/emoji limit (overrides the gobal exempt roles).'" />
+                Exempt Roles <tooltip text="'These roles are exempt from the emote/emoji limit.'" />
               </div>
               <div class="role-bar" ng-repeat="role in getExemptRoles('emoteLimit') track by role.id">
                 <span>{{role.name}}</span>
@@ -116,7 +116,7 @@
             </div>
             <div style="margin-top: 15px;display: block;width: 100%;margin-bottom: 15px;">
               <div style="font-weight: 600;font-size: 16px;margin-bottom: 10px;">
-                Exempt Roles <tooltip text="'These roles are exempt from the url moderation (overrides the gobal exempt roles).'" />
+                Exempt Roles <tooltip text="'These roles are exempt from the url moderation.'" />
               </div>
               <div class="role-bar" ng-repeat="role in getExemptRoles('urlModeration') track by role.id">
                 <span>{{role.name}}</span>
