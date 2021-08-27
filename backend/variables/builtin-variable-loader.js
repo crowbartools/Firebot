@@ -84,7 +84,6 @@ exports.loadReplaceVariables = () => {
         'reward-image-url',
         'reward-message',
         'reward-name',
-        'stream-audience',
         'stream-title',
         'streamer',
         'sub-count',
