@@ -13,14 +13,17 @@ let getbannedRegularExpressionsDb = () => profileManager.getJsonDbInProfile("/ch
 // default settings
 let chatModerationSettings = {
     bannedWordList: {
-        enabled: false
+        enabled: false,
+        exemptRoles: []
     },
     emoteLimit: {
         enabled: false,
+        exemptRoles: [],
         max: 10
     },
     urlModeration: {
         enabled: false,
+        exemptRoles: [],
         viewTime: {
             enabled: false,
             viewTimeInHours: 0
@@ -133,19 +136,16 @@ async function moderateMessage(chatMessage) {
         && !chatModerationSettings.urlModeration.enabled
     ) return;
 
-    let moderateMessage = false;
-
-    const userExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles,
+    const globalUserExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles,
         chatModerationSettings.exemptRoles);
 
-    if (!userExempt) {
-        moderateMessage = true;
-    }
+    const chat = require("../twitch-chat");
 
-    if (moderateMessage) {
-        const chat = require("../twitch-chat");
+    if (chatModerationSettings.emoteLimit.enabled && !!chatModerationSettings.emoteLimit.max) {
+        const userExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles,
+            chatModerationSettings.emoteLimit.exemptRoles);
 
-        if (chatModerationSettings.emoteLimit.enabled && !!chatModerationSettings.emoteLimit.max) {
+        if (!userExempt || !globalUserExempt) {
             const emoteCount = chatMessage.parts.filter(p => p.type === "emote").length;
             const emojiCount = chatMessage.parts
                 .filter(p => p.type === "text")
@@ -155,10 +155,15 @@ async function moderateMessage(chatMessage) {
                 return;
             }
         }
+    }
 
-        if (chatModerationSettings.urlModeration.enabled) {
-            if (permitCommand.hasTemporaryPermission(chatMessage.username)) return;
+    if (chatModerationSettings.urlModeration.enabled) {
+        if (permitCommand.hasTemporaryPermission(chatMessage.username)) return;
 
+        const userExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles,
+            chatModerationSettings.urlModeration.exemptRoles);
+
+        if (!userExempt || !globalUserExempt) {
             const message = chatMessage.rawText;
             const regex = new RegExp(/[\w]{2,}[.][\w]{2,}/, "gi");
 
@@ -192,19 +197,19 @@ async function moderateMessage(chatMessage) {
                 chat.sendChatMessage(outputMessage);
             }
         }
-
-        const message = chatMessage.rawText;
-        const messageId = chatMessage.id;
-        moderationService.postMessage(
-            {
-                type: "moderateMessage",
-                message: message,
-                messageId: messageId,
-                scanForBannedWords: chatModerationSettings.bannedWordList.enabled,
-                maxEmotes: null
-            }
-        );
     }
+
+    const message = chatMessage.rawText;
+    const messageId = chatMessage.id;
+    moderationService.postMessage(
+        {
+            type: "moderateMessage",
+            message: message,
+            messageId: messageId,
+            scanForBannedWords: chatModerationSettings.bannedWordList.enabled,
+            maxEmotes: null
+        }
+    );
 }
 
 frontendCommunicator.on("chatMessageSettingsUpdate", settings => {

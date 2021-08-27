@@ -12,14 +12,17 @@
             service.chatModerationData = {
                 settings: {
                     bannedWordList: {
-                        enabled: false
+                        enabled: false,
+                        exemptRoles: []
                     },
                     emoteLimit: {
                         enabled: false,
+                        exemptRoles: [],
                         max: 10
                     },
                     urlModeration: {
                         enabled: false,
+                        exemptRoles: [],
                         viewTime: {
                             enabled: false,
                             viewTimeInHours: 0
@@ -36,13 +39,28 @@
                 let data = backendCommunicator.fireEventSync("getChatModerationData");
                 if (data != null) {
                     service.chatModerationData = data;
+
                     if (service.chatModerationData.settings.exemptRoles == null) {
                         service.chatModerationData.settings.exemptRoles = [];
                     }
+
                     if (service.chatModerationData.settings.emoteLimit == null) {
                         service.chatModerationData.settings.emoteLimit = {
                             enabled: false,
+                            exemptRoles: [],
                             max: 10
+                        };
+                    }
+
+                    if (service.chatModerationData.settings.urlModeration == null) {
+                        service.chatModerationData.settings.urlModeration = {
+                            enabled: false,
+                            exemptRoles: [],
+                            viewTime: {
+                                enabled: false,
+                                viewTimeInHours: 0
+                            },
+                            outputMessage: ""
                         };
                     }
                 }
