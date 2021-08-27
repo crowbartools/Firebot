@@ -11,7 +11,9 @@
     "CHAT": {
       "CHAT": "Chat",
       "COMMANDS": "Commands",
-      "CHAT_FEED": "Dashboard"
+      "CHAT_FEED": "Dashboard",
+      "GAMES": "Games",
+      "MODERATION": "Moderation"
     },
     "OTHER": {
       "OTHER": "Other",
@@ -26,7 +28,6 @@
       "MANAGEMENT": "Management",
       "VIEWER_GROUPS": "Viewer Groups",
       "VIEWER_ROLES": "Viewer Roles",
-      "MODERATION": "Moderation",
       "VIEWERS": "Viewers",
       "SETTINGS": "Settings",
       "UPDATES": "Updates",
