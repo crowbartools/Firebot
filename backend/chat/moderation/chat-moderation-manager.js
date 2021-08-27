@@ -12,6 +12,10 @@ let getbannedRegularExpressionsDb = () => profileManager.getJsonDbInProfile("/ch
 
 // default settings
 let chatModerationSettings = {
+    spamRaidProtection: {
+        cacheLimit: 50,
+        characterLimit: 10
+    },
     bannedWordList: {
         enabled: false
     },
@@ -46,6 +50,10 @@ function getBannedWordsList() {
 function getBannedRegularExpressionsList() {
     if (!bannedRegularExpressions || !bannedRegularExpressions.regularExpressions) return [];
     return bannedRegularExpressions.regularExpressions.map(r => r.text);
+}
+
+function getChatModerationSettings() {
+    return chatModerationSettings;
 }
 
 /**
@@ -207,7 +215,7 @@ async function moderateMessage(chatMessage) {
     }
 }
 
-frontendCommunicator.on("chatMessageSettingsUpdate", settings => {
+frontendCommunicator.on("chatModerationSettingsUpdate", settings => {
     chatModerationSettings = settings;
     try {
         getChatModerationSettingsDb().push("/", settings);
@@ -340,3 +348,4 @@ function load() {
 exports.load = load;
 exports.stopService = stopService;
 exports.moderateMessage = moderateMessage;
+exports.getChatModerationSettings = getChatModerationSettings;

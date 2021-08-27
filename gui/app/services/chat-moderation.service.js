@@ -10,6 +10,10 @@
             let service = {};
 
             service.chatModerationData = {
+                spamRaidProtection: {
+                    cacheLimit: 50,
+                    characterLimit: 10
+                },
                 settings: {
                     bannedWordList: {
                         enabled: false
@@ -49,7 +53,7 @@
             };
 
             service.saveChatModerationSettings = () => {
-                backendCommunicator.fireEvent("chatMessageSettingsUpdate", service.chatModerationData.settings);
+                backendCommunicator.fireEvent("chatModerationSettingsUpdate", service.chatModerationData.settings);
             };
 
             service.addBannedWords = (words) => {

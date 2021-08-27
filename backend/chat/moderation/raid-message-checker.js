@@ -1,15 +1,18 @@
 "use strict";
 
 const logger = require("../../logwrapper");
+const frontendCommunicator = require("../../common/frontend-communicator");
+const chatModerationManager = require("./chat-moderation-manager");
 
 const messageCache = [];
-const chatCacheLimit = 50;
 
 let raidMessage = "";
 let checkerEnabled = false;
 const settings = {
     shouldBan: false,
-    shouldBlock: false
+    shouldBlock: false,
+    cacheLimit: 50,
+    characterLimit: 10
 };
 
 function handleRaider(message) {
@@ -24,19 +27,36 @@ function handleRaider(message) {
     }
 }
 
+function updateSettings(moderationSettings) {
+    if (moderationSettings.spamRaidProtection.cacheLimit != null) {
+        settings.cacheLimit = moderationSettings.spamRaidProtection.cacheLimit;
+    }
+
+    if (moderationSettings.spamRaidProtection.characterLimit != null) {
+        settings.characterLimit = moderationSettings.spamRaidProtection.characterLimit;
+    }
+
+    logger.debug(settings);
+}
+
 /**
  *
  * @param {import("../chat-helpers").FirebotChatMessage} firebotChatMessage
  */
 function sendMessageToCache(firebotChatMessage) {
-    if (messageCache.length >= chatCacheLimit) {
+    if (messageCache.length === 0) {
+        const moderationSettings = chatModerationManager.getChatModerationSettings();
+        updateSettings(moderationSettings);
+    }
+
+    if (messageCache.length >= settings.cacheLimit) {
         messageCache.shift();
     }
 
-    if (firebotChatMessage.rawText.length > 10) {
-        firebotChatMessage.rawText = firebotChatMessage.rawText.substr(10);
+    if (firebotChatMessage.rawText.length > settings.characterLimit) {
+        firebotChatMessage.rawText = firebotChatMessage.rawText.substr(settings.characterLimit);
     }
-    logger.debug(messageCache);
+
     messageCache.push(firebotChatMessage);
 
     if (firebotChatMessage && checkerEnabled && firebotChatMessage.rawText === raidMessage) {
@@ -84,6 +104,12 @@ function enable(shouldBan, shouldBlock) {
 function disable() {
     checkerEnabled = false;
 }
+
+frontendCommunicator.on("chatModerationSettingsUpdate", moderationSettings => {
+    if (moderationSettings.spamRaidProtection == null) return;
+
+    updateSettings(moderationSettings);
+});
 
 exports.sendMessageToCache = sendMessageToCache;
 exports.enable = enable;
