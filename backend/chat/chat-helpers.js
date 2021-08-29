@@ -81,7 +81,28 @@ exports.cacheStreamerEmotes = async () => {
     }
 };
 
+let globalEmotes = null;
 
+exports.cacheGlobalEmotes = async () => {
+    const client = twitchClient.getClient();
+
+    if (client == null) return;
+
+    try {
+        const response = await client.callApi({
+            type: TwitchAPICallType.Helix,
+            url: "chat/emotes/global"
+        });
+        if (response && response.data) {
+            globalEmotes = response.data;
+        } else {
+            return null;
+        }
+    } catch (err) {
+        logger.error("Failed to get global chat emotes", err);
+        return null;
+    }
+};
 
 /**
  * @typedef ThirdPartyEmote
@@ -109,11 +130,16 @@ exports.handleChatConnect = async () => {
     await exports.cacheBadges();
 
     await exports.cacheStreamerEmotes();
-
+    await exports.cacheGlobalEmotes();
     await exports.cacheThirdPartyEmotes();
 
+    const twitchEmotes = [
+        ...Object.values(streamerEmotes || {}),
+        ...Object.values(globalEmotes || {})
+    ];
+
     frontendCommunicator.send("all-emotes", [
-        ...Object.values(streamerEmotes || {})
+        ...twitchEmotes
             .flat()
             .map(e => ({
                 url: e.images.url_1x,
@@ -246,14 +272,17 @@ exports.buildFirebotChatMessageFromText = async (text = "") => {
         ]
     };
 
-    if (streamerEmotes) {
+    if (streamerEmotes || globalEmotes) {
         const words = text.split(" ");
         for (const word of words) {
             let emoteId = null;
             try {
-                const foundEmote = Object.values(streamerEmotes || {})
-                    .flat()
-                    .find(e => e.name === word);
+                const emotes = [
+                    ...Object.values(streamerEmotes || {}),
+                    ...Object.values(globalEmotes || {})
+                ];
+
+                const foundEmote = emotes.flat().find(e => e.name === word);
                 if (foundEmote) {
                     emoteId = foundEmote.id;
                 }
