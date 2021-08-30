@@ -161,9 +161,6 @@
                 case ConnectionType.CHAT:
                     ctrl.connectionIcon = ConnectionIcon.CHAT;
                     break;
-                case ConnectionType.CONSTELLATION:
-                    ctrl.connectionIcon = ConnectionIcon.CONSTELLATION;
-                    break;
                 case ConnectionType.OVERLAY:
                     ctrl.connectionIcon = ConnectionIcon.OVERLAY;
                     break;

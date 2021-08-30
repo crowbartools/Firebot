@@ -1,31 +1,12 @@
 "use strict";
 
 const Source = {
-    CONSTELLATION: "constellation",
     FIREBOT: "firebot",
     CHAT: "chat",
     EXTRALIFE: "extralife"
 };
 
 const eventDefinitions = [
-    {
-        id: "FOLLOWED",
-        name: "Follow",
-        sources: [Source.CONSTELLATION],
-        description: "A user follows the channel."
-    },
-    {
-        id: "HOSTED",
-        name: "Host",
-        sources: [Source.CONSTELLATION],
-        description: "A user hosts the channel."
-    },
-    {
-        id: "SUBSCRIBED",
-        name: "Subscriber",
-        sources: [Source.CONSTELLATION],
-        description: "Subs, Re-Subs, Shared Re-subs."
-    },
     {
         id: "INTERACTIVE_CONNECTED",
         name: "Interactive Connected",
@@ -105,29 +86,11 @@ const eventDefinitions = [
         description: "When a user uses any Skill (Ie any Sticker, Effect, or Rally)"
     },
     {
-        id: "SKILL_GIF",
-        name: "Skill - GIF Effect Only",
-        sources: [Source.CONSTELLATION],
-        description: "When a user specifically uses the GIF Effect Skill."
-    },
-    {
         id: "SKILL_STICKER",
         name: "Skill - Sticker Only",
         sources: [Source.CHAT],
         description: "When a user specifically uses a Sticker."
-    },
-    {
-        id: "PATRONAGE_MILESTONE_REACHED",
-        name: "Patronage Milestone Reached",
-        sources: [Source.CONSTELLATION],
-        description: "When you complete a Patronage Milestone."
-    }//,
-    // {
-    //     id: "USER_TIMEOUT",
-    //     name: "User Timed Out",
-    //     sources: [Source.CHAT],
-    //     description: "User was timed out in Mixer Chat."
-    // }
+    }
 ];
 
 function getEvents(sourceType) {

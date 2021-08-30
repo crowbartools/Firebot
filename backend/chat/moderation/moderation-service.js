@@ -44,15 +44,13 @@ parentPort.on("message", event => {
     case "moderateMessage": {
         // check for banned word
         if (event.message == null || event.messageId == null) return;
-        if (event.scanForBannedWords) {
-            let bannedWordFound = hasBannedWord(event.message);
-            if (bannedWordFound) {
+        let bannedWordFound = hasBannedWord(event.message);
+        if (bannedWordFound) {
+            parentPort.postMessage({ type: "deleteMessage", messageId: event.messageId });
+        } else {
+            let bannedRegexMatched = matchesBannedRegex(event.message);
+            if (bannedRegexMatched) {
                 parentPort.postMessage({ type: "deleteMessage", messageId: event.messageId });
-            } else {
-                let bannedRegexMatched = matchesBannedRegex(event.message);
-                if (bannedRegexMatched) {
-                    parentPort.postMessage({ type: "deleteMessage", messageId: event.messageId });
-                }
             }
         }
         break;
