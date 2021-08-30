@@ -21,3 +21,10 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_PROJECT_URL: https://github.com/crowbartools/Firebot/projects/14
         GITHUB_PROJECT_COLUMN_NAME: To do
+    - name: Add issue to Tech Debt project
+      uses: takanabe/github-actions-automate-projects@v0.0.1
+      if: github.event_name == 'issues' && github.event.action == 'opened' && contains(github.event.issue.labels.*.name, 'Tech Debt')
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_PROJECT_URL: https://github.com/crowbartools/Firebot/projects/16
+        GITHUB_PROJECT_COLUMN_NAME: To do
