@@ -19,8 +19,8 @@
 
                         <nav-category name="{{'SIDEBAR.CHAT' | translate }}" pad-top="true"></nav-category>
                         <nav-link page="Commands" name="{{'SIDEBAR.CHAT.COMMANDS' | translate }}" icon="fa-exclamation"></nav-link>
-                        <nav-link page="Moderation" name="{{'SIDEBAR.CHAT.MODERATION' | translate }}" icon="fa-gavel"></nav-link>
                         <nav-link page="Games" name="{{'SIDEBAR.CHAT.GAMES' | translate }}" icon="fa-dice"></nav-link>
+                        <nav-link page="Moderation" name="{{'SIDEBAR.CHAT.MODERATION' | translate }}" icon="fa-gavel"></nav-link>
 
                         <nav-category name="{{'SIDEBAR.OTHER' | translate }}" pad-top="true"></nav-category>
                         <nav-link page="Events" name="{{'SIDEBAR.OTHER.EVENTS' | translate }}" icon="fa-list"></nav-link>
