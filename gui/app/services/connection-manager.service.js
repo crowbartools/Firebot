@@ -40,7 +40,6 @@
                 return (
                     connectionService.waitingForStatusChange ||
                     connectionService.waitingForChatStatusChange ||
-                    connectionService.waitingForConstellationStatusChange ||
                     connectionService.isConnectingAll
                 );
             };
@@ -61,27 +60,6 @@
                         connectionService.connectToChat();
                     } else {
                         connectionService.disconnectFromChat();
-                    }
-                });
-            };
-
-            service.setConnectionToConstellation = function(shouldConnect) {
-                return new Promise(resolve => {
-                    listenerService.registerListener(
-                        {
-                            type:
-                listenerService.ListenerType.CONSTELLATION_CONNECTION_STATUS,
-                            runOnce: true
-                        },
-                        isConstellationConnected => {
-                            resolve(isConstellationConnected);
-                        }
-                    );
-
-                    if (shouldConnect) {
-                        connectionService.connectToConstellation();
-                    } else {
-                        connectionService.disconnectFromConstellation();
                     }
                 });
             };
@@ -123,11 +101,6 @@
                         break;
                     case "chat":
                         if (connectionService.connectedToChat) {
-                            count++;
-                        }
-                        break;
-                    case "constellation":
-                        if (connectionService.connectedToConstellation) {
                             count++;
                         }
                         break;
@@ -206,17 +179,6 @@
                             await service.setConnectionToChat(false);
                         }
                         break;
-                    case "constellation":
-                        if (shouldConnect) {
-                            let didConnect = await service.setConnectionToConstellation(true);
-                            if (didConnect) {
-                                soundService.popSound();
-                                await delay(50);
-                            }
-                        } else if (connectionService.connectedToConstellation) {
-                            await service.setConnectionToConstellation(false);
-                        }
-                        break;
                     default:
                         if (s.startsWith("integration.")) {
                             let intId = s.replace("integration.", "");
@@ -252,13 +214,6 @@
                     break;
                 case "chat":
                     if (connectionService.connectedToChat) {
-                        connectionStatus = "connected";
-                    } else {
-                        connectionStatus = "disconnected";
-                    }
-                    break;
-                case "constellation":
-                    if (connectionService.connectedToConstellation) {
                         connectionStatus = "connected";
                     } else {
                         connectionStatus = "disconnected";
