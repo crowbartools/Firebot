@@ -1,8 +1,8 @@
 "use strict";
 
-const logger = require("../../logwrapper");
-const commandManager = require("../commands/CommandManager");
-const frontendCommunicator = require("../../common/frontend-communicator");
+const logger = require("../../../../logwrapper");
+const commandManager = require("../../../commands/CommandManager");
+const frontendCommunicator = require("../../../../common/frontend-communicator");
 
 const PERMIT_COMMAND_ID = "firebot:moderation:url:permit";
 let tempPermittedUsers = [];

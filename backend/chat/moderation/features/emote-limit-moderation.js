@@ -1,6 +1,6 @@
 "use strict";
 
-const chat = require("../twitch-chat");
+const chat = require("../../twitch-chat");
 
 function countEmojis(str) {
     const re = /\p{Extended_Pictographic}/ug; //eslint-disable-line

@@ -1,6 +1,6 @@
 "use strict";
 
-const logger = require("../../logwrapper");
+const logger = require("../../../../logwrapper");
 
 const messageCache = [];
 const chatCacheLimit = 50;

@@ -43,11 +43,6 @@ parentPort.on("message", event => {
     case "bannedRegexUpdate":
         regularExpressions = event.regularExpressions;
         break;
-    case "moderateMessage": {
-        // check for banned word
-
-        break;
-    }
     }
 });
 

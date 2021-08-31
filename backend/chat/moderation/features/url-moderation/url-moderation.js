@@ -1,8 +1,8 @@
 "use strict";
 
 const permitCommand = require("./url-permit-command");
-const chat = require("../twitch-chat");
-const logger = require("../../logwrapper");
+const chat = require("../../../twitch-chat");
+const logger = require("../../../../logwrapper");
 
 function sendOutputMessage(outputMessage, username) {
     outputMessage = outputMessage.replace("{userName}", username);
