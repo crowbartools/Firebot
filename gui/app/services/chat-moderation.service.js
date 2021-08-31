@@ -143,7 +143,7 @@
             service.removeRegexAtIndex = (index) => {
                 let regex = service.chatModerationData.bannedRegularExpressions[index];
                 if (regex) {
-                    backendCommunicator.fireEvent("removeBannedRegex", regex.text);
+                    backendCommunicator.fireEvent("removeBannedRegularExpressions", regex.text);
                     service.chatModerationData.bannedRegularExpressions.splice(index, 1);
                 }
             };

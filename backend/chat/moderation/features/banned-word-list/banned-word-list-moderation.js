@@ -29,21 +29,17 @@ function getBannedRegularExpressions() {
 
 function saveBannedWordList() {
     try {
-        getBannedWordsDb().push("/", bannedWords);
+        getBannedWordsDb().push("/", {words: bannedWords});
     } catch (error) {
-        if (error.name === 'DatabaseError') {
-            logger.error("Error saving banned words data", error);
-        }
+        logger.error("Error saving banned words data", error);
     }
 }
 
 function saveBannedRegularExpressionsList() {
     try {
-        getbannedRegularExpressionsDb().push("/", bannedRegularExpressions);
+        getbannedRegularExpressionsDb().push("/", {regularExpressions: bannedRegularExpressions});
     } catch (error) {
-        if (error.name === 'DatabaseError') {
-            logger.error("Error saving banned regular expressions data", error);
-        }
+        logger.error("Error saving banned regular expressions data", error);
     }
 }
 
@@ -52,12 +48,12 @@ function hasBannedWord(input) {
     input = input.toLowerCase();
     return bannedWords
         .some(word => {
-            return input.split(" ").includes(word.text);
+            return input.split(" ").includes(word);
         });
 }
 
 function matchesBannedRegex(input) {
-    let expressions = bannedRegularExpressions.regularExpressions.map(regex => new RegExp(regex, "gi"));
+    let expressions = bannedRegularExpressions.map(regex => new RegExp(regex, "gi"));
     let inputWords = input.split(" ");
 
     for (const exp of expressions) {
@@ -121,7 +117,7 @@ frontendCommunicator.on("addBannedRegularExpressions", regularExpressions => {
 });
 
 frontendCommunicator.on("removeBannedRegularExpressions", regexText => {
-    bannedRegularExpressions = bannedRegularExpressions.filter(r => r.text.toLowerCase() !== regexText);
+    bannedRegularExpressions = bannedRegularExpressions.filter(r => r.text !== regexText);
     saveBannedRegularExpressionsList();
 });
 
