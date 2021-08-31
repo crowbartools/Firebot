@@ -60,8 +60,6 @@ let moderationService = null;
 function startModerationService() {
     if (moderationService != null) return;
 
-    const chat = require("../twitch-chat");
-
     let servicePath = require("path").resolve(__dirname, "./moderation-service.js");
 
     if (servicePath.includes("app.asar")) {
@@ -69,19 +67,6 @@ function startModerationService() {
     }
 
     moderationService = new Worker(servicePath);
-
-    moderationService.on("message", event => {
-        if (event == null) return;
-        switch (event.type) {
-        case "deleteMessage": {
-            if (event.messageId) {
-                logger.debug(`Chat message with id '${event.messageId}' contains a banned word. Deleting...`);
-                chat.deleteMessage(event.messageId);
-            }
-            break;
-        }
-        }
-    });
 
     moderationService.on("error", code => {
         logger.warn(`Moderation worker failed with code: ${code}.`);
@@ -175,16 +160,11 @@ async function moderateMessage(chatMessage) {
                 chatModerationSettings.bannedWordList.exemptRoles);
 
             if (!userExempt) {
-                const message = chatMessage.rawText;
-                const messageId = chatMessage.id;
-
-                moderationService.postMessage(
-                    {
-                        type: "moderateMessage",
-                        message: message,
-                        messageId: messageId
+                moderationFeatures.bannedWordList.moderate(chatMessage, chatModerationSettings.bannedWordList, (moderated) => {
+                    if (moderated) {
+                        messageModerated = true;
                     }
-                );
+                });
             }
         }
     }
