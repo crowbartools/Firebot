@@ -3,6 +3,7 @@
 const logger = require("../../../../logwrapper");
 const frontendCommunicator = require("../../../../common/frontend-communicator");
 const profileManager = require("../../../../common/profile-manager");
+const rolesManager = require("../../../../roles/custom-roles-manager");
 
 let getBannedWordsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-words", false);
 let getbannedRegularExpressionsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-regular-expressions", false);
@@ -32,7 +33,6 @@ function saveBannedRegularExpressionsList() {
 
 
 function hasBannedWord(input) {
-    logger.debug(bannedWords);
     input = input.toLowerCase();
     return bannedWords
         .some(word => {
@@ -70,6 +70,13 @@ function load() {
 }
 
 function moderate(chatMessage, settings, moderated) {
+    const userExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, settings.exemptRoles);
+
+    if (userExempt) {
+        moderated(false);
+        return;
+    }
+
     const message = chatMessage.rawText;
 
     const bannedWordFound = hasBannedWord(message);

@@ -2,6 +2,7 @@
 
 const permitCommand = require("./url-permit-command");
 const logger = require("../../../../logwrapper");
+const rolesManager = require("../../../../roles/custom-roles-manager");
 
 function sendOutputMessage(outputMessage, username) {
     const chat = require("../../../twitch-chat");
@@ -18,6 +19,13 @@ async function getViewerViewTime(username) {
 
 async function moderate(chatMessage, settings, moderated) {
     if (permitCommand.hasTemporaryPermission(chatMessage.username)) {
+        moderated(false);
+        return;
+    }
+
+    const userExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, settings.exemptRoles);
+
+    if (userExempt) {
         moderated(false);
         return;
     }

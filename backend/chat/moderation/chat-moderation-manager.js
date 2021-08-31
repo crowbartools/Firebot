@@ -106,42 +106,27 @@ async function moderateMessage(chatMessage) {
         let messageModerated = false;
 
         if (chatModerationSettings.emoteLimit.enabled && !!chatModerationSettings.emoteLimit.max) {
-            const userExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles,
-                chatModerationSettings.emoteLimit.exemptRoles);
-
-            if (!userExempt) {
-                moderationFeatures.emoteLimit.moderate(chatMessage, chatModerationSettings.emoteLimit, (moderated) => {
-                    if (moderated) {
-                        messageModerated = true;
-                    }
-                });
-            }
+            moderationFeatures.emoteLimit.moderate(chatMessage, chatModerationSettings.emoteLimit, (moderated) => {
+                if (moderated) {
+                    messageModerated = true;
+                }
+            });
         }
 
         if (!messageModerated && chatModerationSettings.urlModeration.enabled) {
-            const userExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles,
-                chatModerationSettings.urlModeration.exemptRoles);
-
-            if (!userExempt) {
-                moderationFeatures.urls.moderate(chatMessage, chatModerationSettings.urlModeration, (moderated) => {
-                    if (moderated) {
-                        messageModerated = true;
-                    }
-                });
-            }
+            moderationFeatures.urls.moderate(chatMessage, chatModerationSettings.urlModeration, (moderated) => {
+                if (moderated) {
+                    messageModerated = true;
+                }
+            });
         }
 
         if (!messageModerated && chatModerationSettings.bannedWordList.enabled) {
-            const userExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles,
-                chatModerationSettings.bannedWordList.exemptRoles);
-
-            if (!userExempt) {
-                moderationFeatures.bannedWordList.moderate(chatMessage, chatModerationSettings.bannedWordList, (moderated) => {
-                    if (moderated) {
-                        messageModerated = true;
-                    }
-                });
-            }
+            moderationFeatures.bannedWordList.moderate(chatMessage, chatModerationSettings.bannedWordList, (moderated) => {
+                if (moderated) {
+                    messageModerated = true;
+                }
+            });
         }
     }
 }

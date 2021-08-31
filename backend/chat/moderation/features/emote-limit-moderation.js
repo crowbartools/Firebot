@@ -1,11 +1,20 @@
 "use strict";
 
+const rolesManager = require("../../../roles/custom-roles-manager");
+
 function countEmojis(str) {
     const re = /\p{Extended_Pictographic}/ug; //eslint-disable-line
     return ((str || '').match(re) || []).length;
 }
 
 function moderate(chatMessage, settings, moderated) {
+    const userExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, settings.exemptRoles);
+
+    if (userExempt) {
+        moderated(false);
+        return;
+    }
+
     const chat = require("../../twitch-chat");
 
     const emoteCount = chatMessage.parts.filter(p => p.type === "emote").length;
