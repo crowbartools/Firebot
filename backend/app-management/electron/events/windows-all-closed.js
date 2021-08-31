@@ -11,10 +11,6 @@ exports.windowsAllClosed = async () => {
     const hotkeyManager = require("../../../hotkeys/hotkey-manager");
     hotkeyManager.unregisterAllHotkeys();
 
-    // Stop the chat moderation service
-    const chatModerationManager = require("../../../chat/moderation/chat-moderation-manager");
-    chatModerationManager.stopService();
-
     // Persist custom variables
     if (settings.getPersistCustomVariables()) {
         const customVariableManager = require("../../../common/custom-variable-manager");

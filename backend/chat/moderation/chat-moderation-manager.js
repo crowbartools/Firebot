@@ -33,44 +33,6 @@ let chatModerationSettings = {
 };
 
 /**
- * @type Worker
- */
-let moderationService = null;
-
-function startModerationService() {
-    if (moderationService != null) return;
-
-    let servicePath = require("path").resolve(__dirname, "./features/banned-word-list/banned-word-list-moderation.js");
-
-    if (servicePath.includes("app.asar")) {
-        servicePath = servicePath.replace('app.asar', 'app.asar.unpacked');
-    }
-
-    moderationService = new Worker(servicePath);
-
-    moderationService.on("error", code => {
-        logger.warn(`Moderation worker failed with code: ${code}.`);
-        moderationService.unref();
-        moderationService = null;
-        //startModerationService();
-    });
-
-    moderationService.on("exit", code => {
-        logger.debug(`Moderation service stopped with code: ${code}.`);
-    });
-
-    logger.info("Finished setting up chat moderation worker.");
-}
-
-function stopService() {
-    if (moderationService != null) {
-        moderationService.terminate();
-        moderationService.unref();
-        moderationService = null;
-    }
-}
-
-/**
  *
  * @param {import("../chat-helpers").FirebotChatMessage} chatMessage
  */
@@ -201,8 +163,6 @@ function load() {
         }
     }
     logger.info("Attempting to setup chat moderation worker...");
-    startModerationService();
 }
 exports.load = load;
-exports.stopService = stopService;
 exports.moderateMessage = moderateMessage;

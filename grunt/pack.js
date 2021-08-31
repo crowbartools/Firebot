@@ -12,7 +12,6 @@ module.exports = function (grunt) {
         '--arch=x64',
         '--electronVersion=7.1.9',
         '--js-flags="--harmony"',
-        '--asar.unpack="moderation-service.js"',
         '--prune',
         '--overwrite',
         '--version-string.ProductName="Firebot v5"',
