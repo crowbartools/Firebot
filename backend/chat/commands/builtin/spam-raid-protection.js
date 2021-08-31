@@ -1,7 +1,7 @@
 "use strict";
 
 const chat = require("../../twitch-chat");
-const raidMessageChecker = require("../../moderation/raid-message-checker");
+const raidMessageChecker = require("../../moderation/features/spam-raid-protection/raid-message-checker");
 
 const spamRaidProtection = {
     definition: {

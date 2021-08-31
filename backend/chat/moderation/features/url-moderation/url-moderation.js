@@ -1,10 +1,10 @@
 "use strict";
 
 const permitCommand = require("./url-permit-command");
-const chat = require("../../../twitch-chat");
 const logger = require("../../../../logwrapper");
 
 function sendOutputMessage(outputMessage, username) {
+    const chat = require("../../../twitch-chat");
     outputMessage = outputMessage.replace("{userName}", username);
     chat.sendChatMessage(outputMessage);
 }
@@ -43,6 +43,7 @@ async function moderate(chatMessage, settings, moderated) {
         }
     }
 
+    const chat = require("../../../twitch-chat");
     chat.deleteMessage(chatMessage.id);
 
     if (outputMessage) {

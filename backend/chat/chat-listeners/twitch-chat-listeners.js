@@ -7,7 +7,7 @@ const activeUserHandler = require("./active-user-handler");
 const accountAccess = require("../../common/account-access");
 const chatModerationManager = require("../moderation/chat-moderation-manager");
 const twitchEventsHandler = require("../../events/twitch-events");
-const raidMessageChecker = require(".././moderation/raid-message-checker");
+const raidMessageChecker = require(".././moderation/features/spam-raid-protection/raid-message-checker");
 const logger = require("../../logwrapper");
 
 const events = require("events");
