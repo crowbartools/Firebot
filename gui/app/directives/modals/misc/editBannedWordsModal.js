@@ -186,7 +186,7 @@
                             }
                         },
                         (newRegex) => {
-                            chatModerationService.addBannedRegex([newRegex.trim()]);
+                            chatModerationService.addBannedRegex(newRegex.trim());
                         });
                 };
 

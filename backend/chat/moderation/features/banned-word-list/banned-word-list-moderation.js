@@ -12,19 +12,23 @@ let bannedWords = [];
 let bannedRegularExpressions = [];
 
 function getBannedWordsList() {
-    let words = getBannedWordsDb().getData("/");
+    let { words } = getBannedWordsDb().getData("/");
 
-    if (words && Object.keys(words).length > 0) {
-        return words.words;
+    if (words && words.length > 0) {
+        return words;
     }
+
+    return [];
 }
 
 function getBannedRegularExpressions() {
-    let regularExpressions = getbannedRegularExpressionsDb().getData("/");
+    let { regularExpressions } = getbannedRegularExpressionsDb().getData("/");
 
-    if (regularExpressions && Object.keys(regularExpressions).length > 0) {
-        return regularExpressions.regularExpressions;
+    if (regularExpressions && regularExpressions.length > 0) {
+        return regularExpressions;
     }
+
+    return [];
 }
 
 function saveBannedWordList() {
@@ -111,12 +115,12 @@ frontendCommunicator.on("removeAllBannedWords", () => {
     saveBannedWordList();
 });
 
-frontendCommunicator.on("addBannedRegularExpressions", regularExpressions => {
-    bannedRegularExpressions = bannedRegularExpressions.concat(regularExpressions);
+frontendCommunicator.on("addBannedRegularExpression", regularExpression => {
+    bannedRegularExpressions = bannedRegularExpressions.concat(regularExpression);
     saveBannedRegularExpressionsList();
 });
 
-frontendCommunicator.on("removeBannedRegularExpressions", regexText => {
+frontendCommunicator.on("removeBannedRegularExpression", regexText => {
     bannedRegularExpressions = bannedRegularExpressions.filter(r => r.text !== regexText);
     saveBannedRegularExpressionsList();
 });
