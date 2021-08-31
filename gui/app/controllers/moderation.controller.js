@@ -25,6 +25,8 @@
                     return roles.filter(r => chatModerationService.chatModerationData.settings.emoteLimit.exemptRoles.includes(r.id));
                 case 'urlModeration':
                     return roles.filter(r => chatModerationService.chatModerationData.settings.urlModeration.exemptRoles.includes(r.id));
+                case 'spamRaidProtection':
+                    return roles.filter(r => chatModerationService.chatModerationData.settings.spamRaidProtection.exemptRoles.includes(r.id));
                 default:
                     return roles.filter(r => chatModerationService.chatModerationData.settings.exemptRoles.includes(r.id));
                 }
@@ -51,6 +53,9 @@
                     break;
                 case 'urlModeration':
                     options = roles.filter(r => !chatModerationService.chatModerationData.settings.urlModeration.exemptRoles.includes(r.id));
+                    break;
+                case 'spamRaidProtection':
+                    options = roles.filter(r => !chatModerationService.chatModerationData.settings.spamRaidProtection.exemptRoles.includes(r.id));
                     break;
                 default:
                     options = roles.filter(r => !chatModerationService.chatModerationData.settings.exemptRoles.includes(r.id));
@@ -83,6 +88,9 @@
                         case 'urlModeration':
                             chatModerationService.chatModerationData.settings.urlModeration.exemptRoles.push(roleId);
                             break;
+                        case 'spamRaidProtection':
+                            chatModerationService.chatModerationData.settings.spamRaidProtection.exemptRoles.push(roleId);
+                            break;
                         default:
                             chatModerationService.chatModerationData.settings.exemptRoles.push(roleId);
                         }
@@ -108,6 +116,10 @@
                 case 'urlModeration':
                     chatModerationService.chatModerationData.settings.urlModeration.exemptRoles =
                         chatModerationService.chatModerationData.settings.urlModeration.exemptRoles.filter(id => id !== roleId);
+                    break;
+                case 'spamRaidProtection':
+                    chatModerationService.chatModerationData.settings.spamRaidProtection.exemptRoles =
+                        chatModerationService.chatModerationData.settings.spamRaidProtection.exemptRoles.filter(id => id !== roleId);
                     break;
                 default:
                     chatModerationService.chatModerationData.settings.exemptRoles =
