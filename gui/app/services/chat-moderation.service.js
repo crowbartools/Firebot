@@ -10,10 +10,6 @@
             let service = {};
 
             service.chatModerationData = {
-                spamRaidProtection: {
-                    cacheLimit: 50,
-                    characterLimit: 10
-                },
                 settings: {
                     bannedWordList: {
                         enabled: false,
@@ -32,6 +28,12 @@
                             viewTimeInHours: 0
                         },
                         outputMessage: ""
+                    },
+                    spamRaidProtection: {
+                        enabled: true,
+                        exemptRoles: [],
+                        cacheLimit: 50,
+                        characterLimit: 10
                     },
                     exemptRoles: []
                 },
@@ -85,6 +87,15 @@
 
                     if (service.chatModerationData.settings.urlModeration.exemptRoles == null) {
                         service.chatModerationData.settings.urlModeration.exemptRoles = [];
+                    }
+
+                    if (service.chatModerationData.settings.spamRaidProtection == null) {
+                        service.chatModerationData.settings.spamRaidProtection = {
+                            enabled: true,
+                            exemptRoles: [],
+                            cacheLimit: 50,
+                            characterLimit: 10
+                        };
                     }
                 }
             };

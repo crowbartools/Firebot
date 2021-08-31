@@ -12,10 +12,6 @@ let getbannedRegularExpressionsDb = () => profileManager.getJsonDbInProfile("/ch
 
 // default settings
 let chatModerationSettings = {
-    spamRaidProtection: {
-        cacheLimit: 50,
-        characterLimit: 10
-    },
     bannedWordList: {
         enabled: false,
         exemptRoles: []
@@ -33,6 +29,12 @@ let chatModerationSettings = {
             viewTimeInHours: 0
         },
         outputMessage: ""
+    },
+    spamRaidProtection: {
+        enabled: true,
+        exemptRoles: [],
+        cacheLimit: 50,
+        characterLimit: 10
     },
     exemptRoles: []
 };
@@ -368,6 +370,15 @@ function load() {
 
             if (settings.urlModeration.exemptRoles == null) {
                 settings.urlModeration.exemptRoles = [];
+            }
+
+            if (settings.spamRaidProtection == null) {
+                settings.spamRaidProtection = {
+                    enabled: true,
+                    exemptRoles: [],
+                    cacheLimit: 50,
+                    characterLimit: 10
+                };
             }
 
             if (settings.urlModeration.enabled) {
