@@ -113,6 +113,13 @@
         </div>
       </div>
 
+      <div style="padding-bottom: 1em" ng-hide="$ctrl.command.triggerIsRegex">
+        <div class="settings-title">
+          <h3>Aliases</h3>
+        </div>
+        <editable-tags model="$ctrl.command.aliases" settings="aliasesListOptions"></editable-tags>
+      </div>
+
       <div style="padding-bottom: 1em">
         <div class="settings-title">
           <h3>Cooldowns</h3>
