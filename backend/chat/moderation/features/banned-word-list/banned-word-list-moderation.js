@@ -1,6 +1,8 @@
 "use strict";
 
 const { parentPort } = require("worker_threads");
+const chat = require("../../../twitch-chat");
+const logger = require("../../../../logwrapper");
 
 let bannedWords = [];
 let regularExpressions = [];
@@ -43,18 +45,26 @@ parentPort.on("message", event => {
         break;
     case "moderateMessage": {
         // check for banned word
-        if (event.message == null || event.messageId == null) return;
-        let bannedWordFound = hasBannedWord(event.message);
-        if (bannedWordFound) {
-            parentPort.postMessage({ type: "deleteMessage", messageId: event.messageId });
-        } else {
-            let bannedRegexMatched = matchesBannedRegex(event.message);
-            if (bannedRegexMatched) {
-                parentPort.postMessage({ type: "deleteMessage", messageId: event.messageId });
-            }
-        }
+
         break;
     }
     }
 });
+
+function moderate(chatMessage, settings, moderated) {
+    const message = chatMessage.rawText;
+
+    let bannedWordFound = hasBannedWord(message);
+    let bannedRegexMatched = matchesBannedRegex(message);
+
+    if (bannedWordFound || bannedRegexMatched) {
+        chat.deleteMessage(chatMessage.id);
+        logger.debug(`Chat message with id '${chatMessage.id}' contains a banned word. Deleting...`);
+        moderated(true);
+    }
+
+    moderated(false);
+}
+
+exports.moderate = moderate;
 
