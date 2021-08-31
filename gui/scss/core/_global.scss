@@ -1701,6 +1701,30 @@ thead th{
   }
 }
 
+.fb-tag {
+  background: #24262A;
+  width: auto;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  color: white;
+  font-size: 13px;
+  border-radius: 3px;
+  margin-right: 4px;
+  margin-bottom: 4px;
+  justify-content: space-between;
+  span.tagName {
+    padding: 6px 0px 6px 10px;
+  }
+  span.tagRemove {
+    padding: 6px 10px;
+  }
+  &.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
 .effect-bar {
   background: #2aa1c0 - 15%;
   width: 100%;
