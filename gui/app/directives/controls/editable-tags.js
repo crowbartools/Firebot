@@ -15,13 +15,29 @@
             },
             template: `
                 <div>
-                    <div class="role-bar clickable" ng-repeat="item in $ctrl.model track by $index" ng-click="$ctrl.editItem($index)" aria-label="{{item + ' (Click to edit)'}}">
-                        <span>{{item}}</span>
-                        <span class="clickable" style="padding-left: 10px;" ng-click="$ctrl.removeItem($index);$event.stopPropagation();" aria-label="Remove item" tooltip-append-to-body="true">
+                    <div class="fb-tag" ng-repeat="item in $ctrl.model track by $index">
+                        <span 
+                            class="tagName clickable" 
+                            ng-click="$ctrl.editItem($index)" 
+                            aria-label="{{item + ' (Click to edit)'}}"
+                        >
+                            {{item}}
+                        </span>
+                        <span 
+                            class="tagRemove clickable" 
+                            ng-click="$ctrl.removeItem($index)" 
+                            aria-label="Remove item"
+                        >
                             <i class="far fa-times"></i>
                         </span>
                     </div>
-                    <button class="filter-bar" ng-click="$ctrl.addItem()" uib-tooltip="{{$ctrl.settings.addLabel}}" tooltip-append-to-body="true" aria-label="{{$ctrl.settings.addLabel}}">
+                    <button 
+                        class="filter-bar clickable" 
+                        ng-click="$ctrl.addItem()" 
+                        uib-tooltip="{{$ctrl.settings.addLabel}}" 
+                        tooltip-append-to-body="true" 
+                        aria-label="{{$ctrl.settings.addLabel}}"
+                    >
                         <i class="far fa-plus"></i> 
                     </button>       
                 </div>

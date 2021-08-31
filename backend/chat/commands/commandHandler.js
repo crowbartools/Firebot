@@ -89,7 +89,7 @@ function checkForCommand(rawMessage) {
             }
         }
     }
-    return null;
+    return { command: null };
 }
 
 function updateCommandCount(command) {

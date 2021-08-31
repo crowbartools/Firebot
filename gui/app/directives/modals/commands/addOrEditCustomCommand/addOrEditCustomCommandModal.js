@@ -41,7 +41,6 @@
                 addLabel: "New Alias",
                 editLabel: "Edit Alias",
                 validationText: "Alias cannot be empty",
-                noneAddedText: "None saved",
                 noDuplicates: true
             };
 
