@@ -11,6 +11,22 @@ let getbannedRegularExpressionsDb = () => profileManager.getJsonDbInProfile("/ch
 let bannedWords = [];
 let bannedRegularExpressions = [];
 
+function getBannedWordsList() {
+    let words = getBannedWordsDb().getData("/");
+
+    if (words && Object.keys(words).length > 0) {
+        return words.words;
+    }
+}
+
+function getBannedRegularExpressions() {
+    let regularExpressions = getbannedRegularExpressionsDb().getData("/");
+
+    if (regularExpressions && Object.keys(regularExpressions).length > 0) {
+        return regularExpressions.regularExpressions;
+    }
+}
+
 function saveBannedWordList() {
     try {
         getBannedWordsDb().push("/", bannedWords);
@@ -56,17 +72,8 @@ function matchesBannedRegex(input) {
 }
 
 function load() {
-    let words = getBannedWordsDb().getData("/");
-
-    if (words && Object.keys(words).length > 0) {
-        bannedWords = words.words;
-    }
-
-    let regularExpressions = getbannedRegularExpressionsDb().getData("/");
-
-    if (regularExpressions && Object.keys(regularExpressions).length > 0) {
-        bannedRegularExpressions = regularExpressions;
-    }
+    bannedWords = getBannedWordsList();
+    bannedRegularExpressions = getBannedRegularExpressions();
 }
 
 function moderate(chatMessage, settings, moderated) {
@@ -94,7 +101,7 @@ function moderate(chatMessage, settings, moderated) {
 }
 
 frontendCommunicator.on("addBannedWords", words => {
-    bannedWords.push(words);
+    bannedWords = bannedWords.concat(words);
     saveBannedWordList();
 });
 
@@ -109,19 +116,21 @@ frontendCommunicator.on("removeAllBannedWords", () => {
 });
 
 frontendCommunicator.on("addBannedRegularExpressions", regularExpressions => {
-    bannedRegularExpressions.regularExpressions = bannedRegularExpressions.regularExpressions.concat(regularExpressions);
+    bannedRegularExpressions = bannedRegularExpressions.concat(regularExpressions);
     saveBannedRegularExpressionsList();
 });
 
 frontendCommunicator.on("removeBannedRegularExpressions", regexText => {
-    bannedRegularExpressions.regularExpressions = bannedRegularExpressions.regularExpressions.filter(r => r.text.toLowerCase() !== regexText);
+    bannedRegularExpressions = bannedRegularExpressions.filter(r => r.text.toLowerCase() !== regexText);
     saveBannedRegularExpressionsList();
 });
 
 frontendCommunicator.on("removeAllRegularExpressions", () => {
-    bannedRegularExpressions.regularExpressions = [];
+    bannedRegularExpressions = [];
     saveBannedRegularExpressionsList();
 });
 
 exports.moderate = moderate;
 exports.load = load;
+exports.getBannedWordsList = getBannedWordsList;
+exports.getBannedRegularExpressions = getBannedRegularExpressions;

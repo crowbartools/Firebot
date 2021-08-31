@@ -8,8 +8,6 @@ const permitCommand = require("./features/url-moderation/url-permit-command");
 const moderationFeatures = require("./moderation-features");
 
 let getChatModerationSettingsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/chat-moderation-settings");
-let getBannedWordsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-words", false);
-let getbannedRegularExpressionsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-regular-expressions", false);
 
 // default settings
 let chatModerationSettings = {
@@ -32,14 +30,6 @@ let chatModerationSettings = {
         outputMessage: ""
     },
     exemptRoles: []
-};
-
-let bannedWords = {
-    words: []
-};
-
-let bannedRegularExpressions = {
-    regularExpressions: []
 };
 
 /**
@@ -145,8 +135,8 @@ frontendCommunicator.on("chatMessageSettingsUpdate", settings => {
 frontendCommunicator.on("getChatModerationData", () => {
     return {
         settings: chatModerationSettings,
-        bannedWords: bannedWords.words,
-        bannedRegularExpressions: bannedRegularExpressions.regularExpressions
+        bannedWords: moderationFeatures.bannedWordList.getBannedWordsList(),
+        bannedRegularExpressions: moderationFeatures.bannedWordList.getBannedRegularExpressions()
     };
 });
 
@@ -202,16 +192,6 @@ function load() {
             if (settings.urlModeration.enabled) {
                 permitCommand.registerPermitCommand();
             }
-        }
-
-        let words = getBannedWordsDb().getData("/");
-        if (words && Object.keys(words).length > 0) {
-            bannedWords = words;
-        }
-
-        let regularExpressions = getbannedRegularExpressionsDb().getData("/");
-        if (regularExpressions && Object.keys(regularExpressions).length > 0) {
-            bannedRegularExpressions = regularExpressions;
         }
 
         moderationFeatures.bannedWordList.load();
