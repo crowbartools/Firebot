@@ -1,9 +1,9 @@
 "use strict";
 
-const logger = require("../../../../logwrapper");
-const frontendCommunicator = require("../../../../common/frontend-communicator");
-const profileManager = require("../../../../common/profile-manager");
-const rolesManager = require("../../../../roles/custom-roles-manager");
+const logger = require("../../../logwrapper");
+const frontendCommunicator = require("../../../common/frontend-communicator");
+const profileManager = require("../../../common/profile-manager");
+const rolesManager = require("../../../roles/custom-roles-manager");
 
 let getBannedWordsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-words", false);
 let getbannedRegularExpressionsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-regular-expressions", false);
@@ -47,59 +47,6 @@ function saveBannedRegularExpressionsList() {
     }
 }
 
-
-function hasBannedWord(input) {
-    input = input.toLowerCase();
-    return bannedWords
-        .some(word => {
-            return input.split(" ").includes(word);
-        });
-}
-
-function matchesBannedRegex(input) {
-    let expressions = bannedRegularExpressions.map(regex => new RegExp(regex, "gi"));
-    let inputWords = input.split(" ");
-
-    for (const exp of expressions) {
-        for (const word of inputWords) {
-            if (exp.test(word)) {
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
-function load() {
-    bannedWords = getBannedWordsList();
-    bannedRegularExpressions = getBannedRegularExpressions();
-}
-
-function moderate(chatMessage, settings, moderated) {
-    const userExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, settings.exemptRoles);
-
-    if (userExempt) {
-        moderated(false);
-        return;
-    }
-
-    const message = chatMessage.rawText;
-
-    const bannedWordFound = hasBannedWord(message);
-    const bannedRegexMatched = matchesBannedRegex(message);
-
-    if (bannedWordFound || bannedRegexMatched) {
-        const chat = require("../../../twitch-chat");
-        chat.deleteMessage(chatMessage.id);
-        logger.debug(`Chat message with id '${chatMessage.id}' contains a banned word. Deleting...`);
-        moderated(true);
-        return;
-    }
-
-    moderated(false);
-}
-
 frontendCommunicator.on("addBannedWords", words => {
     bannedWords = bannedWords.concat(words);
     saveBannedWordList();
@@ -130,7 +77,59 @@ frontendCommunicator.on("removeAllRegularExpressions", () => {
     saveBannedRegularExpressionsList();
 });
 
-exports.moderate = moderate;
-exports.load = load;
+function hasBannedWord(input) {
+    input = input.toLowerCase();
+    return bannedWords
+        .some(word => {
+            return input.split(" ").includes(word);
+        });
+}
+
+function matchesBannedRegex(input) {
+    let expressions = bannedRegularExpressions.map(regex => new RegExp(regex, "gi"));
+    let inputWords = input.split(" ");
+
+    for (const exp of expressions) {
+        for (const word of inputWords) {
+            if (exp.test(word)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+function moderate(chatMessage, settings, moderated) {
+    const userExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, settings.exemptRoles);
+
+    if (userExempt) {
+        moderated(false);
+        return;
+    }
+
+    const message = chatMessage.rawText;
+
+    const bannedWordFound = hasBannedWord(message);
+    const bannedRegexMatched = matchesBannedRegex(message);
+
+    if (bannedWordFound || bannedRegexMatched) {
+        const chat = require("../../twitch-chat");
+        chat.deleteMessage(chatMessage.id);
+        logger.debug(`Chat message with id '${chatMessage.id}' contains a banned word. Deleting...`);
+        moderated(true);
+        return;
+    }
+
+    moderated(false);
+}
+
+function load() {
+    bannedWords = getBannedWordsList();
+    bannedRegularExpressions = getBannedRegularExpressions();
+}
+
 exports.getBannedWordsList = getBannedWordsList;
 exports.getBannedRegularExpressions = getBannedRegularExpressions;
+exports.moderate = moderate;
+exports.load = load;

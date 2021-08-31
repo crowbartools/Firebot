@@ -1,14 +1,7 @@
 "use strict";
 
-const permitCommand = require("./url-permit-command");
 const logger = require("../../../../logwrapper");
 const rolesManager = require("../../../../roles/custom-roles-manager");
-
-function sendOutputMessage(outputMessage, username) {
-    const chat = require("../../../twitch-chat");
-    outputMessage = outputMessage.replace("{userName}", username);
-    chat.sendChatMessage(outputMessage);
-}
 
 async function getViewerViewTime(username) {
     const viewerDB = require('../../database/userDatabase');
@@ -18,13 +11,13 @@ async function getViewerViewTime(username) {
 }
 
 async function moderate(chatMessage, settings, moderated) {
+    const permitCommand = require("./url-permit-command");
     if (permitCommand.hasTemporaryPermission(chatMessage.username)) {
         moderated(false);
         return;
     }
 
     const userExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, settings.exemptRoles);
-
     if (userExempt) {
         moderated(false);
         return;
@@ -32,7 +25,6 @@ async function moderate(chatMessage, settings, moderated) {
 
     const message = chatMessage.rawText;
     const regex = new RegExp(/[\w]{2,}[.][\w]{2,}/, "gi");
-
     if (!regex.test(message)) {
         moderated(false);
         return;
@@ -55,7 +47,8 @@ async function moderate(chatMessage, settings, moderated) {
     chat.deleteMessage(chatMessage.id);
 
     if (outputMessage) {
-        sendOutputMessage(outputMessage, chatMessage.username);
+        outputMessage = outputMessage.replace("{userName}", chatMessage.username);
+        chat.sendChatMessage(outputMessage);
     }
 
     moderated(true);

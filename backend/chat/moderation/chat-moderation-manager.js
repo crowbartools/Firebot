@@ -8,7 +8,6 @@ const moderationFeatures = require("./moderation-features");
 
 let getChatModerationSettingsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/chat-moderation-settings");
 
-// default settings
 let chatModerationSettings = {
     bannedWordList: {
         enabled: false,
@@ -87,9 +86,7 @@ frontendCommunicator.on("chatMessageSettingsUpdate", settings => {
     try {
         getChatModerationSettingsDb().push("/", settings);
     } catch (error) {
-        if (error.name === 'DatabaseError') {
-            logger.error("Error saving chat moderation settings", error);
-        }
+        logger.error("Error saving chat moderation settings", error);
     }
 });
 
@@ -157,11 +154,8 @@ function load() {
 
         moderationFeatures.bannedWordList.load();
     } catch (error) {
-        if (error.name === 'DatabaseError') {
-            logger.error("Error loading chat moderation data", error);
-        }
+        logger.error("Error loading chat moderation data", error);
     }
-    logger.info("Attempting to setup chat moderation worker...");
 }
 exports.load = load;
 exports.moderateMessage = moderateMessage;
