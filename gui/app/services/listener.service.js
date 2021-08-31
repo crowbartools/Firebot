@@ -11,8 +11,6 @@
             filePath: {},
             connectionStatus: {},
             connectionChangeRequest: {},
-            constellationConnectionStatus: {},
-            constellationConnectionChangeRequest: {},
             chatConnectionStatus: {},
             chatConnectionChangeRequest: {},
             overlayStatusUpdate: {},
@@ -53,8 +51,6 @@
             IMPORT_BACKUP_ZIP: "importBackup",
             CONNECTION_STATUS: "connectionStatus",
             CONNECTION_CHANGE_REQUEST: "connectionChangeRequest",
-            CONSTELLATION_CONNECTION_STATUS: "constellationConnectionStatus",
-            CONSTELLATION_CONNECTION_CHANGE_REQUEST: "constellationConnectionChangeRequest",
             CHAT_CONNECTION_STATUS: "chatConnectionStatus",
             CHAT_CONNECTION_CHANGE_REQUEST: "chatConnectionChangeRequest",
             OVERLAY_CONNECTION_STATUS: "overlayStatusUpdate",
@@ -255,17 +251,6 @@
             let isChatConnected = data ? data.toLowerCase() === "online" : false;
             _.forEach(registeredListeners.chatConnectionStatus, listener => {
                 runListener(listener, isChatConnected);
-            });
-        });
-
-        // Constellation Connection Monitor
-        // Recieves event from main process that connection has been established or disconnected.
-        ipcRenderer.on("constellationConnection", function(event, data) {
-            let isConstellationConnected = data
-                ? data.toLowerCase() === "online"
-                : false;
-            _.forEach(registeredListeners.constellationConnectionStatus, listener => {
-                runListener(listener, isConstellationConnected);
             });
         });
 

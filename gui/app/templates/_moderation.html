@@ -2,16 +2,16 @@
     <div style="padding: 15px;">
       <div class="content-block moderation-feature-block">
         <div class="content-block-body">
-          <div style="font-weight: 600;font-size: 20px;">Exempt Roles <tooltip text="'These roles are exempt from all Moderation features.'" /></div>
+          <div style="font-weight: 600;font-size: 20px;">Global Exempt Roles <tooltip text="'These roles are exempt from all Moderation features.'" /></div>
 
           <div style="margin-top: 15px">
-            <div class="role-bar" ng-repeat="role in getExemptRoles() track by role.id">
+            <div class="role-bar" ng-repeat="role in getExemptRoles('global') track by role.id">
               <span>{{role.name}}</span>
-              <span class="clickable" style="padding-left: 10px;" ng-click="removeExemptRole(role.id)" uib-tooltip="Remove role" tooltip-append-to-body="true">
+              <span class="clickable" style="padding-left: 10px;" ng-click="removeExemptRole('global', role.id)" uib-tooltip="Remove role" tooltip-append-to-body="true">
                 <i class="far fa-times"></i>
               </span>
             </div>
-            <div class="role-bar clickable" ng-click="openAddExemptRoleModal()" uib-tooltip="Add role" tooltip-append-to-body="true">
+            <div class="role-bar clickable" ng-click="openAddExemptRoleModal('global')" uib-tooltip="Add role" tooltip-append-to-body="true">
               <i class="far fa-plus"></i>
             </div>
           </div>
@@ -65,8 +65,22 @@
               />
             </div>
           </div>
-          <div style="margin-top: 15px" ng-show="cms.chatModerationData.settings.bannedWordList.enabled">
-            <div id="roles" class="mixplay-header" style="padding: 0 0 4px 0">
+          <div ng-show="cms.chatModerationData.settings.bannedWordList.enabled">
+            <div style="margin-top: 15px;margin-bottom: 15px;">
+              <div style="font-weight: 600;font-size: 16px;width: 100%;margin-bottom: 10px;">
+                Exempt Roles <tooltip text="'These roles are exempt from the banned words list.'" />
+              </div>
+              <div class="role-bar" ng-repeat="role in getExemptRoles('bannedWordList') track by role.id">
+                <span>{{role.name}}</span>
+                <span class="clickable" style="padding-left: 10px;" ng-click="removeExemptRole('bannedWordList', role.id)" uib-tooltip="Remove role" tooltip-append-to-body="true">
+                  <i class="far fa-times"></i>
+                </span>
+              </div>
+              <div class="role-bar clickable" ng-click="openAddExemptRoleModal('bannedWordList')" uib-tooltip="Add role" tooltip-append-to-body="true">
+                <i class="far fa-plus"></i>
+              </div>
+            </div>
+            <div id="roles" class="mixplay-header" style="padding: 0 0 4px 0;margin-top: 15px;">
                 Words
             </div>
             <button ng-click="showEditBannedWordsModal()" class="btn btn-default">Edit Word List</button>
@@ -88,6 +102,20 @@
             </div>
           </div>
           <div style="margin-top: 15px" ng-show="cms.chatModerationData.settings.emoteLimit.enabled">
+            <div style="margin-top: 15px;margin-bottom: 15px;">
+              <div style="font-weight: 600;font-size: 16px;width: 100%;margin-bottom: 10px;">
+                Exempt Roles <tooltip text="'These roles are exempt from the emote/emoji limit.'" />
+              </div>
+              <div class="role-bar" ng-repeat="role in getExemptRoles('emoteLimit') track by role.id">
+                <span>{{role.name}}</span>
+                <span class="clickable" style="padding-left: 10px;" ng-click="removeExemptRole('emoteLimit', role.id)" uib-tooltip="Remove role" tooltip-append-to-body="true">
+                  <i class="far fa-times"></i>
+                </span>
+              </div>
+              <div class="role-bar clickable" ng-click="openAddExemptRoleModal('emoteLimit')" uib-tooltip="Add role" tooltip-append-to-body="true">
+                <i class="far fa-plus"></i>
+              </div>
+            </div>
             <firebot-input
               input-title="Max Per Message"
               placeholder-text="Enter number"
@@ -112,14 +140,28 @@
               />
             </div>
           </div>
-          <div class="muted" style="margin-bottom: 15px;">
-            A !permit command is automatically added to System Commands.
-          </div>
           <div
-            style="margin-top: 15px; margin-left: 15px;"
+            style="margin-top: 15px;"
             class="title-toggle-button-container"
             ng-show="cms.chatModerationData.settings.urlModeration.enabled"
           >
+            <div class="muted" style="margin-bottom: 15px;">
+              A !permit command is automatically added to System Commands.
+            </div>
+            <div style="margin-top: 15px;display: block;width: 100%;margin-bottom: 15px;">
+              <div style="font-weight: 600;font-size: 16px;margin-bottom: 10px;">
+                Exempt Roles <tooltip text="'These roles are exempt from the url moderation.'" />
+              </div>
+              <div class="role-bar" ng-repeat="role in getExemptRoles('urlModeration') track by role.id">
+                <span>{{role.name}}</span>
+                <span class="clickable" style="padding-left: 10px;" ng-click="removeExemptRole('urlModeration', role.id)" uib-tooltip="Remove role" tooltip-append-to-body="true">
+                  <i class="far fa-times"></i>
+                </span>
+              </div>
+              <div class="role-bar clickable" ng-click="openAddExemptRoleModal('urlModeration')" uib-tooltip="Add role" tooltip-append-to-body="true">
+                <i class="far fa-plus"></i>
+              </div>
+            </div>
             <div class="moderation-feature-subtitle" ng-class="{ muted: !cms.chatModerationData.settings.urlModeration.viewTime.enabled }">View Time</div>
             <div class="toggle-button-container">
               <toggle-button

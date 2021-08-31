@@ -9,11 +9,12 @@
       "BUTTONS": "Controls"
     },
     "CHAT": {
+      "CHAT_FEED": "Dashboard",
       "CHAT": "Chat",
       "COMMANDS": "Commands",
-      "CHAT_FEED": "Dashboard",
-      "GAMES": "Games",
-      "MODERATION": "Moderation"
+      "MODERATION": "Moderation",
+      "GAMES": "Games"
+
     },
     "OTHER": {
       "OTHER": "Other",

@@ -17,14 +17,17 @@ let chatModerationSettings = {
         characterLimit: 10
     },
     bannedWordList: {
-        enabled: false
+        enabled: false,
+        exemptRoles: []
     },
     emoteLimit: {
         enabled: false,
+        exemptRoles: [],
         max: 10
     },
     urlModeration: {
         enabled: false,
+        exemptRoles: [],
         viewTime: {
             enabled: false,
             viewTimeInHours: 0
@@ -143,10 +146,10 @@ async function moderateMessage(chatMessage) {
 
     let moderateMessage = false;
 
-    const userExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles,
+    const globalUserExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles,
         chatModerationSettings.exemptRoles);
 
-    if (!userExempt) {
+    if (!globalUserExempt) {
         moderateMessage = true;
     }
 
@@ -154,64 +157,82 @@ async function moderateMessage(chatMessage) {
         const chat = require("../twitch-chat");
 
         if (chatModerationSettings.emoteLimit.enabled && !!chatModerationSettings.emoteLimit.max) {
-            const emoteCount = chatMessage.parts.filter(p => p.type === "emote").length;
-            const emojiCount = chatMessage.parts
-                .filter(p => p.type === "text")
-                .reduce((acc, part) => acc + countEmojis(part.text), 0);
-            if ((emoteCount + emojiCount) > chatModerationSettings.emoteLimit.max) {
-                chat.deleteMessage(chatMessage.id);
-                return;
+            const userExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles,
+                chatModerationSettings.emoteLimit.exemptRoles);
+
+            if (!userExempt) {
+                const emoteCount = chatMessage.parts.filter(p => p.type === "emote").length;
+                const emojiCount = chatMessage.parts
+                    .filter(p => p.type === "text")
+                    .reduce((acc, part) => acc + countEmojis(part.text), 0);
+                if ((emoteCount + emojiCount) > chatModerationSettings.emoteLimit.max) {
+                    chat.deleteMessage(chatMessage.id);
+                    return;
+                }
             }
         }
 
         if (chatModerationSettings.urlModeration.enabled) {
-            if (permitCommand.hasTemporaryPermission(chatMessage.username)) return;
+            if (!permitCommand.hasTemporaryPermission(chatMessage.username)) {
+                const userExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles,
+                    chatModerationSettings.urlModeration.exemptRoles);
 
-            const message = chatMessage.rawText;
-            const regex = new RegExp(/[\w]{2,}[.][\w]{2,}/, "gi");
+                if (!userExempt) {
+                    const message = chatMessage.rawText;
+                    const regex = new RegExp(/[\w]{2,}[.][\w]{2,}/, "gi");
 
-            if (!regex.test(message)) return;
+                    if (regex.test(message)) {
+                        logger.debug("Url moderation: Found url in message...");
 
-            logger.debug("Url moderation: Found url in message...");
+                        const settings = chatModerationSettings.urlModeration;
+                        let outputMessage = settings.outputMessage || "";
 
-            const settings = chatModerationSettings.urlModeration;
-            let outputMessage = settings.outputMessage || "";
+                        if (settings.viewTime && settings.viewTime.enabled) {
+                            const viewerDB = require('../../database/userDatabase');
+                            const viewer = await viewerDB.getUserByUsername(chatMessage.username);
 
-            if (settings.viewTime && settings.viewTime.enabled) {
-                const viewerDB = require('../../database/userDatabase');
-                const viewer = await viewerDB.getUserByUsername(chatMessage.username);
+                            const viewerViewTime = viewer.minutesInChannel / 60;
+                            const minimumViewTime = settings.viewTime.viewTimeInHours;
 
-                const viewerViewTime = viewer.minutesInChannel / 60;
-                const minimumViewTime = settings.viewTime.viewTimeInHours;
+                            if (viewerViewTime <= minimumViewTime) {
+                                outputMessage = outputMessage.replace("{viewTime}", minimumViewTime.toString());
+                                logger.debug("Url moderation: Not enough view time.");
+                            }
+                        } else {
+                            logger.debug("Url moderation: User does not have exempt role.");
+                        }
 
-                if (viewerViewTime >= minimumViewTime) return;
+                        chat.deleteMessage(chatMessage.id);
 
-                outputMessage = outputMessage.replace("{viewTime}", minimumViewTime.toString());
+                        if (outputMessage) {
+                            outputMessage = outputMessage.replace("{userName}", chatMessage.username);
+                            chat.sendChatMessage(outputMessage);
+                        }
 
-                logger.debug("Url moderation: Not enough view time.");
-            } else {
-                logger.debug("Url moderation: User does not have exempt role.");
-            }
+                        return;
+                    }
 
-            chat.deleteMessage(chatMessage.id);
-
-            if (outputMessage) {
-                outputMessage = outputMessage.replace("{userName}", chatMessage.username);
-                chat.sendChatMessage(outputMessage);
+                }
             }
         }
 
-        const message = chatMessage.rawText;
-        const messageId = chatMessage.id;
-        moderationService.postMessage(
-            {
-                type: "moderateMessage",
-                message: message,
-                messageId: messageId,
-                scanForBannedWords: chatModerationSettings.bannedWordList.enabled,
-                maxEmotes: null
+        if (chatModerationSettings.bannedWordList.enabled) {
+            const userExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles,
+                chatModerationSettings.bannedWordList.exemptRoles);
+
+            if (!userExempt) {
+                const message = chatMessage.rawText;
+                const messageId = chatMessage.id;
+
+                moderationService.postMessage(
+                    {
+                        type: "moderateMessage",
+                        message: message,
+                        messageId: messageId
+                    }
+                );
             }
-        );
+        }
     }
 }
 
@@ -308,19 +329,45 @@ function load() {
             if (settings.exemptRoles == null) {
                 settings.exemptRoles = [];
             }
+
+            if (settings.bannedWordList == null) {
+                settings.bannedWordList = {
+                    enabled: false,
+                    exemptRoles: [],
+                    max: 10
+                };
+            }
+
+            if (settings.bannedWordList.exemptRoles == null) {
+                settings.bannedWordList.exemptRoles = [];
+            }
+
             if (settings.emoteLimit == null) {
-                settings.emoteLimit = { enabled: false, max: 10 };
+                settings.emoteLimit = {
+                    enabled: false,
+                    exemptRoles: [],
+                    max: 10
+                };
+            }
+
+            if (settings.emoteLimit.exemptRoles == null) {
+                settings.emoteLimit.exemptRoles = [];
             }
 
             if (settings.urlModeration == null) {
                 settings.urlModeration = {
                     enabled: false,
+                    exemptRoles: [],
                     viewTime: {
                         enabled: false,
                         viewTimeInHours: 0
                     },
                     outputMessage: ""
                 };
+            }
+
+            if (settings.urlModeration.exemptRoles == null) {
+                settings.urlModeration.exemptRoles = [];
             }
 
             if (settings.urlModeration.enabled) {
