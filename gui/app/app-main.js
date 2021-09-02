@@ -111,7 +111,8 @@
         timerService,
         channelRewardsService,
         sortTagsService,
-        streamTagsService
+        streamTagsService,
+        itemGroupsService
     ) {
         // 'chatMessagesService' is included so its instantiated on app start
 
@@ -145,6 +146,8 @@
         channelRewardsService.loadChannelRewards();
 
         sortTagsService.loadSortTags();
+
+        itemGroupsService.loadItemGroups();
 
         streamTagsService.loadAllStreamTags();
 

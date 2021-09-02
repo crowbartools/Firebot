@@ -1,196 +1,390 @@
-<div style="overflow-y: scroll; height: 100%">
-  <div>
-    <scroll-sentinel
-      element-class="firebot-item-table-header"
-    ></scroll-sentinel>
+<div style="height: 100%" class="flex-row">
+  <div ng-if="$ctrl.groups == true" class="editior-column" style="padding-top: 15px; flex-shrink: 0">
     <div
-      class="light-bg sticky-top firebot-item-table-header"
-      style="
-        padding: 15px;
-        margin: 15px 0;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-      "
+      class="flex-row-center jspacebetween scene-row"
+      style="flex-shrink: 0"
+      ng-class="{'selected': $ctrl.groupIsSelected(null)}"
+      ng-click="$ctrl.setSelectedGroup(null)"
     >
-      <div class="flex-row">
-        <button
-          ng-click="$ctrl.onAddNewClicked()"
-          class="btn btn-primary hvr-icon-grow"
-          style="margin-right: 10px"
-          ng-disabled="$ctrl.addNewButtonDisabled"
-        >
-          <i class="fas fa-plus-circle hvr-icon" style="margin-right: 5px"></i>
-          {{$ctrl.addNewButtonText}}
-        </button>
-
-        <div ng-transclude="toolbar"></div>
+      <div class="flex-row-center" style="height: 100%">
+        <div
+          class="selected-scene-icon"
+          ng-class="{'transparent': !$ctrl.groupIsSelected(null)}"
+        ></div>
+        <div>
+          General {{$ctrl.itemPluralLabel}}
+          <tooltip
+            text="'A collection of {{$ctrl.itemPluralLabel}} that are always active'"
+          ></tooltip>
+        </div>
       </div>
-
-      <div style="display: flex; flex-direction: row; align-items: center;" ng-show="$ctrl.items.length > 0">
-        <sort-tag-dropdown
-          context="{{$ctrl.sortTagContext}}"
-          style="margin-right: 10px"
-        />
-        <searchbar
-          placeholder-text="{{$ctrl.searchPlaceholder}}"
-          query="searchQuery"
-          style="flex-basis: 250px; min-width: 217px;"
-        ></searchbar>
+      <div class="flex-row-center jspacebetween">
+        <span
+          class="status-dot active"
+          uib-tooltip="General {{$ctrl.itemPluralLabel}} are always active."
+          tooltip-append-to-body="true"
+        ></span>
+        <!-- <div
+          uib-dropdown
+          uib-dropdown-toggle
+          dropdown-append-to-body="true"
+          class="clickable"
+          ng-click="$event.stopPropagation()"
+          style="
+            font-size: 21px;
+            height: 20px;
+            width: 36px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          <span class="noselect pointer"
+            ><i class="fal fa-ellipsis-v"></i
+          ></span>
+          <ul class="dropdown-menu" uib-dropdown-menu>
+            <li ng-click="copyEvents('mainevents')">
+              <a href
+                ><i class="far fa-copy" style="margin-right: 10px"></i> Copy
+                events</a
+              >
+            </li>
+            <li
+              ng-class="{'disabled': !hasCopiedEvents()}"
+              ng-click="pasteEvents('mainevents')"
+              ng-disabled="!hasCopiedEvents()"
+            >
+              <a href
+                ><i class="far fa-paste" style="margin-right: 10px"></i>
+                Paste event(s)</a
+              >
+            </li>
+          </ul>
+        </div> -->
       </div>
     </div>
-    <div style="padding: 15px">
-      <div
-        ng-if="$ctrl.items.length === 0"
-        class="noselect muted"
-        style="padding-left: 13px"
-      >
-        <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span
-        ><span style="margin-left: 8px">{{$ctrl.noDataMessage}}</span>
+
+    <div
+      style="
+        height: 2px;
+        background: #3e3f40;
+        margin: 15px 0 10px;
+        flex-shrink: 0;
+      "
+    ></div>
+
+    <div
+      class="mixplay-header flex-row-center jspacebetween"
+      style="flex-shrink: 0"
+    >
+      <span
+        >{{$ctrl.itemSingularLabel}} Groups
+      ></span>
+      <div class="clickable" ng-click="">
+        <i class="fas fa-plus-circle"></i>
       </div>
+    </div>
+
+    <div style="height: 100%; overflow-y: auto">
       <div
-        ng-if="$ctrl.items.length > 0 && filteredItems && filteredItems.length < 1"
-        class="noselect muted"
-        style="padding-left: 13px"
+        class="muted"
+        ng-if="igs.getItemGroups($ctrl.sortTagContext).length < 1"
+        style="margin-left: 18px; font-size: 12px"
       >
-        <span style="margin-left: 8px">{{$ctrl.noneFoundMessage}}</span>
+        No groups created.
       </div>
-      <table
-        ng-show="$ctrl.items.length > 0 && (filteredItems == null || filteredItems.length > 0)"
-        class="fb-table"
+
+      <div
+        ng-repeat="group in igs.getItemGroups($ctrl.sortTagContext) track by group.id"
+        class="flex-row-center jspacebetween scene-row"
+        ng-class="{'selected': igs.itemGroupIsSelected($ctrl.sortTagContext, group.id)}"
+        ng-click="igs.setSelectedItemGroup($ctrl.sortTagContext, group.id)"
       >
-        <thead>
-          <tr style="font-size: 11px">
-            <th ng-if="$ctrl.testButton == true" style="width: 5%"></th>
-
-            <th
-              ng-repeat="header in $ctrl.headers track by $index"
-              ng-style="header.headerStyles"
-              class="muted"
-            >
-              <div style="display: flex">
-                <span style="display: inline-block"
-                  ><i
-                    ng-show="header.icon"
-                    class="fas"
-                    ng-class="header.icon"
-                  ></i
-                ></span>
-                <span
-                  ng-show="header.name"
-                  style="margin: 0 5px; display: inline-block"
-                  >{{header.name}}</span
-                >
-              </div>
-            </th>
-
-            <th ng-if="$ctrl.sortTagContext != null" class="muted">
-              <i class="fas fa-tag"></i> TAGS
-            </th>
-
-            <th ng-if="$ctrl.showStatusIndicator"></th>
-
-            <th></th>
-          </tr>
-        </thead>
-        <tbody ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.items">
-          <tr
-            ng-repeat="item in filteredItems = ($ctrl.items | sortTagSearch:sts.getSelectedSortTag($ctrl.sortTagContext) | filter:searchQuery) as visible track by item.id"
-            style="width: 100%"
-            context-menu="$ctrl.getContextMenu(item)"
+        <div class="flex-row-center" style="height: 100%">
+          <div
+            class="selected-scene-icon"
+            ng-class="{'transparent': !igs.itemGroupIsSelected($ctrl.sortTagContext, group.id)}"
+          ></div>
+          <div class="row-text" style="max-width: 145px">
+            {{group.name}}
+          </div>
+        </div>
+        <div class="flex-row-center jspacebetween">
+          <span
+            ng-if="group.active"
+            class="status-dot active"
+            uib-tooltip="This event set is active"
+            tooltip-append-to-body="true"
+          ></span>
+          <div
+            uib-dropdown
+            uib-dropdown-toggle
+            dropdown-append-to-body="true"
+            class="clickable"
+            ng-click="$event.stopPropagation()"
+            style="
+              font-size: 21px;
+              height: 20px;
+              width: 36px;
+              text-align: center;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            "
           >
-            <td ng-if="$ctrl.testButton == true">
-              <span
-                style="color: #2aa1c0; font-size: 20px"
-                ng-click="$ctrl.onTestButtonClicked({ itemId: item.id })"
+            <span class="noselect pointer"
+              ><i class="fal fa-ellipsis-v"></i
+            ></span>
+            <ul class="dropdown-menu" uib-dropdown-menu>
+              <li ng-click="showRenameEventGroupModal(group)">
+                <a href
+                  ><i class="far fa-pen" style="margin-right: 10px"></i>
+                  Rename</a
+                >
+              </li>
+              <li ng-click="es.toggleEventGroupActiveStatus(group.id)">
+                <a href
+                  ><i
+                    class="fas"
+                    ng-class="{'fa-toggle-on': !group.active, 'fa-toggle-off': group.active}"
+                    style="margin-right: 10px"
+                  ></i
+                  >{{group.active ? 'Deactivate' : 'Activate'}}</a
+                >
+              </li>
+              <li ng-click="es.duplicateEventGroup(group)">
+                <a href
+                  ><i class="far fa-clone" style="margin-right: 10px"></i>
+                  Duplicate set</a
+                >
+              </li>
+              <li ng-click="showDeleteGroupModal(group)">
+                <a href style="color: #fb7373"
+                  ><i
+                    class="far fa-trash-alt"
+                    style="margin-right: 10px"
+                  ></i>
+                  Delete set</a
+                >
+              </li>
+              <li class="divider"></li>
+              <li ng-click="copyEvents(group.id)">
+                <a href
+                  ><i class="far fa-copy" style="margin-right: 10px"></i>
+                  Copy events</a
+                >
+              </li>
+              <li
+                ng-class="{'disabled': !hasCopiedEvents()}"
+                ng-click="pasteEvents(group.id)"
+                ng-disabled="!hasCopiedEvents()"
               >
-                <i class="fas fa-play-circle clickable"></i>
-              </span>
-            </td>
-
-            <td
-              ng-repeat="header in $ctrl.headers track by $index"
-              ng-style="header.cellStyles"
-            >
-              <sortable-table-cell
-                data="item"
-                header="header"
-                cell-index="$index"
-              ></sortable-table-cell>
-            </td>
-
-            <td
-              ng-if="$ctrl.sortTagContext != null"
-              style="max-width: 135px; min-width: 100px"
-            >
-              <div
-                style="
-                  display: flex;
-                  flex-wrap: wrap;
-                  width: 100%;
-                  overflow: auto;
-                  max-height: 45.25px;
-                "
+                <a href
+                  ><i class="far fa-paste" style="margin-right: 10px"></i>
+                  Paste event(s)</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="overflow-y: scroll; height: 100%; width: 100%;">
+    <div>
+      <scroll-sentinel
+        element-class="firebot-item-table-header"
+      ></scroll-sentinel>
+      <div
+        class="light-bg sticky-top firebot-item-table-header"
+        style="
+          padding: 15px;
+          margin: 15px 0;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+        "
+      >
+        <div class="flex-row">
+          <button
+            ng-click="$ctrl.onAddNewClicked()"
+            class="btn btn-primary hvr-icon-grow"
+            style="margin-right: 10px"
+            ng-disabled="$ctrl.addNewButtonDisabled"
+          >
+            <i class="fas fa-plus-circle hvr-icon" style="margin-right: 5px"></i>
+            {{$ctrl.addNewButtonText}}
+          </button>
+  
+          <div ng-transclude="toolbar"></div>
+        </div>
+  
+        <div style="display: flex; flex-direction: row; align-items: center;" ng-show="$ctrl.items.length > 0">
+          <sort-tag-dropdown
+            context="{{$ctrl.sortTagContext}}"
+            style="margin-right: 10px"
+          />
+          <searchbar
+            placeholder-text="{{$ctrl.searchPlaceholder}}"
+            query="searchQuery"
+            style="flex-basis: 250px; min-width: 217px;"
+          ></searchbar>
+        </div>
+      </div>
+      <div style="padding: 15px">
+        <div
+          ng-if="$ctrl.items.length === 0"
+          class="noselect muted"
+          style="padding-left: 13px"
+        >
+          <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span
+          ><span style="margin-left: 8px">{{$ctrl.noDataMessage}}</span>
+        </div>
+        <div
+          ng-if="$ctrl.items.length > 0 && filteredItems && filteredItems.length < 1"
+          class="noselect muted"
+          style="padding-left: 13px"
+        >
+          <span style="margin-left: 8px">{{$ctrl.noneFoundMessage}}</span>
+        </div>
+        <table
+          ng-show="$ctrl.items.length > 0 && (filteredItems == null || filteredItems.length > 0)"
+          class="fb-table"
+        >
+          <thead>
+            <tr style="font-size: 11px">
+              <th ng-if="$ctrl.testButton == true" style="width: 5%"></th>
+  
+              <th
+                ng-repeat="header in $ctrl.headers track by $index"
+                ng-style="header.headerStyles"
+                class="muted"
               >
+                <div style="display: flex">
+                  <span style="display: inline-block"
+                    ><i
+                      ng-show="header.icon"
+                      class="fas"
+                      ng-class="header.icon"
+                    ></i
+                  ></span>
+                  <span
+                    ng-show="header.name"
+                    style="margin: 0 5px; display: inline-block"
+                    >{{header.name}}</span
+                  >
+                </div>
+              </th>
+  
+              <th ng-if="$ctrl.sortTagContext != null" class="muted">
+                <i class="fas fa-tag"></i> TAGS
+              </th>
+  
+              <th ng-if="$ctrl.showStatusIndicator"></th>
+  
+              <th></th>
+            </tr>
+          </thead>
+          <tbody ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.items">
+            <tr
+              ng-repeat="item in filteredItems = ($ctrl.items | sortTagSearch:sts.getSelectedSortTag($ctrl.sortTagContext) | filter:searchQuery) as visible track by item.id"
+              style="width: 100%"
+              context-menu="$ctrl.getContextMenu(item)"
+            >
+              <td ng-if="$ctrl.testButton == true">
                 <span
-                  ng-repeat="tagName in sts.getSortTagNames($ctrl.sortTagContext, item.sortTags)"
+                  style="color: #2aa1c0; font-size: 20px"
+                  ng-click="$ctrl.onTestButtonClicked({ itemId: item.id })"
+                >
+                  <i class="fas fa-play-circle clickable"></i>
+                </span>
+              </td>
+  
+              <td
+                ng-repeat="header in $ctrl.headers track by $index"
+                ng-style="header.cellStyles"
+              >
+                <sortable-table-cell
+                  data="item"
+                  header="header"
+                  cell-index="$index"
+                ></sortable-table-cell>
+              </td>
+  
+              <td
+                ng-if="$ctrl.sortTagContext != null"
+                style="max-width: 135px; min-width: 100px"
+              >
+                <div
                   style="
-                    background: gray;
-                    border-radius: 15px;
-                    padding: 1px 5px;
-                    margin-right: 2px;
-                    margin-bottom: 1px;
-                    font-size: 10px;
-                    line-height: 1.8;
+                    display: flex;
+                    flex-wrap: wrap;
+                    width: 100%;
+                    overflow: auto;
+                    max-height: 45.25px;
                   "
                 >
-                  {{tagName}}
-                </span>
-              </div>
-            </td>
-
-            <td ng-if="$ctrl.showStatusIndicator">
-              <status-indicator status="$ctrl.getStatus(item)" />
-            </td>
-
-            <td>
-              <div
-                style="
-                  display: flex;
-                  justify-content: flex-end;
-                  align-items: center;
-                "
-              >
-                <span
-                  class="dragHandle"
-                  ng-click="$event.stopPropagation();"
-                  ng-if="$ctrl.orderable"
-                  ng-show="sts.getSelectedSortTag($ctrl.sortTagContext) == null && (searchQuery == null || searchQuery.length < 1)"
-                >
-                  <i class="fal fa-bars" aria-hidden="true"></i>
-                </span>
-                <div style="text-align: right; margin-left: 25px">
                   <span
-                    class="noselect clickable"
-                    style="font-size: 30px"
-                    context-menu="$ctrl.getContextMenu(item)"
-                    context-menu-on="click"
-                    context-menu-orientation="left"
-                    ><i class="fal fa-ellipsis-h"></i
-                  ></span>
+                    ng-repeat="tagName in sts.getSortTagNames($ctrl.sortTagContext, item.sortTags)"
+                    style="
+                      background: gray;
+                      border-radius: 15px;
+                      padding: 1px 5px;
+                      margin-right: 2px;
+                      margin-bottom: 1px;
+                      font-size: 10px;
+                      line-height: 1.8;
+                    "
+                  >
+                    {{tagName}}
+                  </span>
                 </div>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              </td>
+  
+              <td ng-if="$ctrl.showStatusIndicator">
+                <status-indicator status="$ctrl.getStatus(item)" />
+              </td>
+  
+              <td>
+                <div
+                  style="
+                    display: flex;
+                    justify-content: flex-end;
+                    align-items: center;
+                  "
+                >
+                  <span
+                    class="dragHandle"
+                    ng-click="$event.stopPropagation();"
+                    ng-if="$ctrl.orderable"
+                    ng-show="sts.getSelectedSortTag($ctrl.sortTagContext) == null && (searchQuery == null || searchQuery.length < 1)"
+                  >
+                    <i class="fal fa-bars" aria-hidden="true"></i>
+                  </span>
+                  <div style="text-align: right; margin-left: 25px">
+                    <span
+                      class="noselect clickable"
+                      style="font-size: 30px"
+                      context-menu="$ctrl.getContextMenu(item)"
+                      context-menu-on="click"
+                      context-menu-orientation="left"
+                      ><i class="fal fa-ellipsis-h"></i
+                    ></span>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div
+        class="light-bg sticky-bottom firebot-item-table-footer"
+        ng-transclude="footer"
+      ></div>
+      <scroll-sentinel
+        element-class="firebot-item-table-footer"
+      ></scroll-sentinel>
     </div>
-    <div
-      class="light-bg sticky-bottom firebot-item-table-footer"
-      ng-transclude="footer"
-    ></div>
-    <scroll-sentinel
-      element-class="firebot-item-table-footer"
-    ></scroll-sentinel>
   </div>
 </div>

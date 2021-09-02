@@ -19,17 +19,21 @@
                 testButton: "<?",
                 onTestButtonClicked: "&",
                 filterName: "@?",
-                statusField: "@?"
+                statusField: "@?",
+                groups: "<?",
+                itemPluralLabel: "@?",
+                itemSingularLabel: "@?"
             },
             transclude: {
                 footer: "?fbItemTableFooter",
                 toolbar: "?fbItemTableToolbar"
             },
             templateUrl: "./directives/misc/firebot-item-table/firebot-item-table.html",
-            controller: function($scope, sortTagsService) {
+            controller: function($scope, sortTagsService, itemGroupService) {
                 const $ctrl = this;
 
                 $scope.sts = sortTagsService;
+                $scope.igs = itemGroupService;
 
                 $ctrl.$onInit = () => {
                     if ($ctrl.items == null) {
