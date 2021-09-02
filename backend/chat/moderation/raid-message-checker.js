@@ -56,8 +56,14 @@ function getRaidMessage() {
         return allMessages;
     }, {});
 
-    const highest = Math.max(...Object.values(raidMessages));
-    const index = Object.values(raidMessages).findIndex(message => message === highest);
+    const counts = Object.values(raidMessages);
+
+    const highest = Math.max(...counts);
+    if (highest < 2) {
+        return "";
+    }
+
+    const index = counts.findIndex(count => count === highest);
 
     return Object.keys(raidMessages)[index];
 }
@@ -72,6 +78,12 @@ function checkPreviousMessages() {
 
 function enable(shouldBan, shouldBlock) {
     raidMessage = getRaidMessage();
+
+    if (!raidMessage) {
+        logger.debug("No raid message detected");
+        return;
+    }
+
     settings.shouldBan = shouldBan;
     settings.shouldBlock = shouldBlock;
 
