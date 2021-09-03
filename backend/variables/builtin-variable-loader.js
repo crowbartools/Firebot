@@ -117,7 +117,8 @@ exports.loadReplaceVariables = () => {
         'username',
         'usernameArray',
         'view-time',
-        'whisper-message'
+        'whisper-message',
+        'wildcard-match'
     ].forEach(filename => {
         let definition = require(`./builtin/${filename}.js`);
         replaceVariableManager.registerReplaceVariable(definition);
