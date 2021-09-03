@@ -110,7 +110,7 @@
     "socket.io-client": "^2.3.0",
     "twitch": "^4.2.3",
     "twitch-chat-client": "^4.2.3",
-    "twitch-pubsub-client": "^4.2.3",
+    "twitch-pubsub-client": "^4.6.6",
     "ui-select": "^0.19.8",
     "underscore": "^1.13.1",
     "unzipper": "^0.9.15",
