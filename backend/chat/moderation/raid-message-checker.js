@@ -35,8 +35,6 @@ function updateSettings(moderationSettings) {
     if (moderationSettings.spamRaidProtection.characterLimit != null) {
         settings.characterLimit = moderationSettings.spamRaidProtection.characterLimit;
     }
-
-    logger.debug(settings);
 }
 
 /**

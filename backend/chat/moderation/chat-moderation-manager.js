@@ -4,6 +4,7 @@ const profileManager = require("../../common/profile-manager");
 const { Worker } = require("worker_threads");
 const frontendCommunicator = require("../../common/frontend-communicator");
 const permitCommand = require("./url-permit-command");
+const rolesManager = require("../../roles/custom-roles-manager");
 
 const getChatModerationSettingsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/chat-moderation-settings");
 const getBannedWordsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-words", false);
@@ -130,35 +131,38 @@ const stopService = () => {
     }
 };
 
+const getExemptUsers = (chatMessage, settings) => {
+    return {
+        spamRaidProtection: rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, settings.spamRaidProtection.exemptRoles),
+        bannedWords: rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, settings.bannedWordList.exemptRoles),
+        emoteLimit: rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, settings.emoteLimit.exemptRoles),
+        urls: rolesManager.userIsInRole(
+            chatMessage.username, chatMessage.roles, settings.urlModeration.exemptRoles
+        ) || permitCommand.hasTemporaryPermission(chatMessage.username)
+    };
+};
+
 /**
  *
  * @param {import("../chat-helpers").FirebotChatMessage} chatMessage
  */
 const moderateMessage = async (chatMessage) => {
-    const { bannedWordList, emoteLimit, urlModeration, exemptRoles } = chatModerationSettings;
     if (chatMessage == null) return;
 
-    if (
-        !bannedWordList.enabled
-        && emoteLimit.enabled
-        && !urlModeration.enabled
-    ) return;
-
-    const rolesManager = require("../../roles/custom-roles-manager");
-    const globalUserExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, exemptRoles);
+    const globalUserExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, chatModerationSettings.exemptRoles);
     if (globalUserExempt) return;
 
-    const userIsExemptFor = {
-        bannedWords: rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, bannedWordList.exemptRoles),
-        emoteLimit: rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, emoteLimit.exemptRoles),
-        urls: rolesManager.userIsInRole(
-            chatMessage.username, chatMessage.roles, urlModeration.exemptRoles
-        ) || permitCommand.hasTemporaryPermission(chatMessage.username)
-    };
-    if (userIsExemptFor.bannedWords && userIsExemptFor.emoteLimit && userIsExemptFor.urls) return;
+    const userIsExemptFor = getExemptUsers(chatMessage, chatModerationSettings);
+    if (
+        userIsExemptFor.spamRaidProtection &&
+        userIsExemptFor.bannedWords &&
+        userIsExemptFor.emoteLimit &&
+        userIsExemptFor.urls
+    ) return;
 
     let viewer = {};
-    if (urlModeration.enabled && urlModeration.viewTime && urlModeration.viewTime.enabled) {
+    const urlSettings = chatModerationSettings.urlModeration;
+    if (urlSettings.enabled && urlSettings.viewTime && urlSettings.viewTime.enabled) {
         const viewerDB = require('../../database/userDatabase');
         viewer = await viewerDB.getUserByUsername(chatMessage.username);
     }
