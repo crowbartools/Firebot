@@ -89,7 +89,6 @@ const startModerationService = () => {
         logger.warn(`Moderation worker failed with code: ${code}.`);
         moderationService.unref();
         moderationService = null;
-        //startModerationService();
     });
 
     moderationService.on("exit", code => {

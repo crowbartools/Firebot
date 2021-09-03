@@ -18,9 +18,7 @@ const matchesBannedRegex = (input) => {
 
     for (const word of uniqueWords) {
         for (const expression of regularExpressions) {
-            const exp = new RegExp(expression, 'i');
-
-            if (exp.test(word)) {
+            if (expression.test(word)) {
                 return true;
             }
         }
@@ -46,10 +44,10 @@ parentPort.on("message", event => {
         parentPort.close();
         break;
     case "bannedWordsUpdate":
-        bannedWords = new Set(event.words);
+        bannedWords = new Set(event.words.map(word => word.toLowerCase().trim()));
         break;
     case "bannedRegexUpdate":
-        regularExpressions = event.regularExpressions;
+        regularExpressions = event.regularExpressions.map(exp => new RegExp(exp, 'i'));
         break;
     case "moderateMessage": {
         if (event.chatMessage == null || event.settings == null || event.userIsExemptFor == null) return;
