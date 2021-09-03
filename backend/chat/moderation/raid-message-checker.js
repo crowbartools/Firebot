@@ -12,7 +12,7 @@ const settings = {
     shouldBlock: false
 };
 
-function handleRaider(message) {
+const handleRaider = (message) => {
     const chat = require("../twitch-chat");
 
     if (settings.shouldBan) {
@@ -22,13 +22,13 @@ function handleRaider(message) {
     if (settings.shouldBlock) {
         chat.block(message.userId, "");
     }
-}
+};
 
 /**
  *
  * @param {import("../chat-helpers").FirebotChatMessage} firebotChatMessage
  */
-function sendMessageToCache(firebotChatMessage) {
+const sendMessageToCache = (firebotChatMessage) => {
     if (messageCache.length >= chatCacheLimit) {
         messageCache.shift();
     }
@@ -42,9 +42,9 @@ function sendMessageToCache(firebotChatMessage) {
     if (firebotChatMessage && checkerEnabled && firebotChatMessage.rawText === raidMessage) {
         handleRaider(firebotChatMessage);
     }
-}
+};
 
-function getRaidMessage() {
+const getRaidMessage = () => {
     const rawMessages = messageCache.map(message => message.rawText);
     const raidMessages = rawMessages.reduce((allMessages, message) => {
         if (allMessages[message] != null) {
@@ -66,17 +66,17 @@ function getRaidMessage() {
     const index = counts.findIndex(count => count === highest);
 
     return Object.keys(raidMessages)[index];
-}
+};
 
-function checkPreviousMessages() {
+const checkPreviousMessages = () => {
     for (const message in messageCache) {
         if (messageCache[message].rawText === raidMessage) {
             handleRaider(messageCache[message]);
         }
     }
-}
+};
 
-function enable(shouldBan, shouldBlock) {
+const enable = (shouldBan, shouldBlock) => {
     raidMessage = getRaidMessage();
 
     if (!raidMessage) {
@@ -91,11 +91,11 @@ function enable(shouldBan, shouldBlock) {
 
     checkerEnabled = true;
     logger.debug("Raid message checker enabled...");
-}
+};
 
-function disable() {
+const disable = () => {
     checkerEnabled = false;
-}
+};
 
 exports.sendMessageToCache = sendMessageToCache;
 exports.enable = enable;
