@@ -2,7 +2,7 @@
 
 const { parentPort } = require("worker_threads");
 
-let bannedWords = [];
+let bannedWords = new Set();
 let regularExpressions = [];
 
 const hasBannedWord = (input) => {
