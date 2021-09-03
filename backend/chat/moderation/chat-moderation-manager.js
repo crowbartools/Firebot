@@ -3,7 +3,6 @@ const logger = require("../../logwrapper");
 const profileManager = require("../../common/profile-manager");
 const { Worker } = require("worker_threads");
 const frontendCommunicator = require("../../common/frontend-communicator");
-const rolesManager = require("../../roles/custom-roles-manager");
 const permitCommand = require("./url-permit-command");
 
 const getChatModerationSettingsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/chat-moderation-settings");
@@ -127,76 +126,43 @@ const stopService = () => {
  * @param {import("../chat-helpers").FirebotChatMessage} chatMessage
  */
 const moderateMessage = async (chatMessage) => {
+    const { bannedWordList, emoteLimit, urlModeration, exemptRoles } = chatModerationSettings;
     if (chatMessage == null) return;
 
     if (
-        !chatModerationSettings.bannedWordList.enabled
-        && !chatModerationSettings.emoteLimit.enabled
-        && !chatModerationSettings.urlModeration.enabled
+        !bannedWordList.enabled
+        && emoteLimit.enabled
+        && !urlModeration.enabled
     ) return;
 
-    const globalUserExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles,
-        chatModerationSettings.exemptRoles);
+    const rolesManager = require("../../roles/custom-roles-manager");
+    const globalUserExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, exemptRoles);
+    if (globalUserExempt) return;
 
-    if (!globalUserExempt) {
-        if (chatModerationSettings.bannedWordList.enabled) {
-            const userExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles,
-                chatModerationSettings.bannedWordList.exemptRoles);
+    const userIsExemptFor = {
+        bannedWords: rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, bannedWordList.exemptRoles),
+        emoteLimit: rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, emoteLimit.exemptRoles),
+        urls: rolesManager.userIsInRole(
+            chatMessage.username, chatMessage.roles, urlModeration.exemptRoles
+        ) || permitCommand.hasTemporaryPermission(chatMessage.username)
+    };
+    if (userIsExemptFor.bannedWords && userIsExemptFor.emoteLimit && userIsExemptFor.urls) return;
 
-            if (!userExempt) {
-                const message = chatMessage.rawText;
-                const messageId = chatMessage.id;
-
-                moderationService.postMessage(
-                    {
-                        type: "moderateBannedWords",
-                        message: message,
-                        messageId: messageId
-                    }
-                );
-            }
-        }
-
-        if (chatModerationSettings.emoteLimit.enabled && !!chatModerationSettings.emoteLimit.max) {
-            const userExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles,
-                chatModerationSettings.emoteLimit.exemptRoles);
-
-            if (!userExempt) {
-                moderationService.postMessage(
-                    {
-                        type: "moderateEmoteLimit",
-                        chatMessage: chatMessage,
-                        emoteMax: chatModerationSettings.emoteLimit.max
-                    }
-                );
-            }
-        }
-
-        if (chatModerationSettings.urlModeration.enabled) {
-            if (!permitCommand.hasTemporaryPermission(chatMessage.username)) {
-                const userExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles,
-                    chatModerationSettings.urlModeration.exemptRoles);
-
-                if (!userExempt) {
-                    let viewer = {};
-
-                    if (chatModerationSettings.urlModeration.viewTime && chatModerationSettings.urlModeration.viewTime.enabled) {
-                        const viewerDB = require('../../database/userDatabase');
-                        viewer = await viewerDB.getUserByUsername(chatMessage.username);
-                    }
-
-                    moderationService.postMessage(
-                        {
-                            type: "moderateUrls",
-                            chatMessage: chatMessage,
-                            viewer: viewer,
-                            settings: chatModerationSettings.urlModeration
-                        }
-                    );
-                }
-            }
-        }
+    let viewer = {};
+    if (urlModeration.enabled && urlModeration.viewTime && urlModeration.viewTime.enabled) {
+        const viewerDB = require('../../database/userDatabase');
+        viewer = await viewerDB.getUserByUsername(chatMessage.username);
     }
+
+    moderationService.postMessage(
+        {
+            type: "moderateMessage",
+            chatMessage: chatMessage,
+            userIsExemptFor: userIsExemptFor,
+            settings: chatModerationSettings,
+            viewer: viewer
+        }
+    );
 };
 
 frontendCommunicator.on("chatMessageSettingsUpdate", settings => {
