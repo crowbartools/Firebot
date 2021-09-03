@@ -21,15 +21,7 @@
             <div style="font-weight: 600;font-size: 16px;width: 100%;margin-bottom: 10px;">
               Exempt Roles <tooltip text="'These roles are exempt from the spam raid protection.'" />
             </div>
-            <div class="role-bar" ng-repeat="role in getExemptRoles('spamRaidProtection') track by role.id">
-              <span>{{role.name}}</span>
-              <span class="clickable" style="padding-left: 10px;" ng-click="removeExemptRole('spamRaidProtection', role.id)" uib-tooltip="Remove role" tooltip-append-to-body="true">
-                <i class="far fa-times"></i>
-              </span>
-            </div>
-            <div class="role-bar clickable" ng-click="openAddExemptRoleModal('spamRaidProtection')" uib-tooltip="Add role" tooltip-append-to-body="true">
-              <i class="far fa-plus"></i>
-            </div>
+            <exempt-roles model="cms.chatModerationData.settings.spamRaidProtection.exemptRoles" on-update="cms.saveChatModerationSettings()"></exempt-roles>
           </div>
           <div style="margin-top: 15px">
             <div style="font-weight: 600;font-size: 16px;width: 100%;margin-bottom: 10px;">
