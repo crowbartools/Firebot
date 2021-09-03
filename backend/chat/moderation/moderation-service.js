@@ -34,6 +34,10 @@ const countEmojis = (str) => {
     return ((str || '').match(re) || []).length;
 };
 
+const hasEnoughViewTime = (viewer, minimumViewTime) => {
+    return (viewer.minutesInChannel / 60) >= minimumViewTime;
+};
+
 parentPort.on("message", event => {
     if (event == null) return;
 
@@ -98,11 +102,9 @@ parentPort.on("message", event => {
             if (!regex.test(chatMessage.rawText)) return;
 
             if (Object.keys(event.viewer).length > 0) {
-                const viewerViewTime = event.viewer.minutesInChannel / 60;
-                const minimumViewTime = settings.urlModeration.viewTime.viewTimeInHours;
+                if (hasEnoughViewTime(event.viewer, settings.urlModeration.minimumViewTime)) return;
 
-                if (viewerViewTime <= minimumViewTime) return;
-                outputMessage = outputMessage.replace("{viewTime}", minimumViewTime.toString());
+                outputMessage = outputMessage.replace("{viewTime}", settings.urlModeration.minimumViewTime.toString());
             }
 
             if (outputMessage) {
