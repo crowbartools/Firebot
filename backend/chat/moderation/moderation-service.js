@@ -6,19 +6,20 @@ let bannedWords = [];
 let regularExpressions = [];
 
 const hasBannedWord = (input) => {
-    input = input.toLowerCase();
-    return bannedWords
-        .some(word => {
-            return input.split(" ").includes(word);
-        });
+    return input
+        .toLowerCase()
+        .split(/\s+/g)
+        .some(word => bannedWords.has(word));
 };
 
 const matchesBannedRegex = (input) => {
-    const expressions = regularExpressions.map(regex => new RegExp(regex, "gi"));
-    const inputWords = input.split(" ");
+    const inputWords = input.split(/\s+/g);
+    const uniqueWords = [...(new Set(inputWords))];
 
-    for (const exp of expressions) {
-        for (const word of inputWords) {
+    for (const word of uniqueWords) {
+        for (const expression of regularExpressions) {
+            const exp = new RegExp(expression, 'i');
+
             if (exp.test(word)) {
                 return true;
             }
@@ -41,7 +42,7 @@ parentPort.on("message", event => {
         parentPort.close();
         break;
     case "bannedWordsUpdate":
-        bannedWords = event.words;
+        bannedWords = new Set(event.words);
         break;
     case "bannedRegexUpdate":
         regularExpressions = event.regularExpressions;

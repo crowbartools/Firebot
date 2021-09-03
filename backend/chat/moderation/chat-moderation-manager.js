@@ -42,7 +42,7 @@ let bannedRegularExpressions = {
 
 const getBannedWordsList = () => {
     if (!bannedWords || !bannedWords.words) return [];
-    return bannedWords.words.map(w => w.text);
+    return bannedWords.words.map(w => w.text.toLowerCase());
 };
 
 const getBannedRegularExpressionsList = () => {
