@@ -1,8 +1,11 @@
 "use strict";
 
 const moment = require("moment");
+
+/* unused
 const logger = require("./logwrapper");
 const request = require("request");
+*/
 
 const replaceVariableManager = require("./variables/replace-variable-manager");
 
@@ -127,6 +130,7 @@ exports.anyPromise = function(promises) {
     );
 };
 
+/* Unused
 function messageContains(message, queries) {
     return queries.some(q => message.includes(q));
 }
@@ -143,6 +147,7 @@ function callUrl(url) {
         });
     });
 }
+*/
 
 function getTriggerIdFromTriggerData(trigger) {
 
