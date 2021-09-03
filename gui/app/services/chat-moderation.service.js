@@ -132,7 +132,7 @@
 
                 service.chatModerationData.bannedRegularExpressions = service.chatModerationData.bannedRegularExpressions.concat(mapped);
 
-                backendCommunicator.fireEvent("addBannedRegularExpressions", mapped);
+                backendCommunicator.fireEvent("addBannedRegularExpression", mapped);
             };
 
             service.removeBannedWordAtIndex = (index) => {
@@ -158,7 +158,7 @@
             service.removeRegexAtIndex = (index) => {
                 let regex = service.chatModerationData.bannedRegularExpressions[index];
                 if (regex) {
-                    backendCommunicator.fireEvent("removeBannedRegex", regex.text);
+                    backendCommunicator.fireEvent("removeBannedRegularExpression", regex.text);
                     service.chatModerationData.bannedRegularExpressions.splice(index, 1);
                 }
             };

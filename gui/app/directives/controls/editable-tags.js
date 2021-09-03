@@ -1,11 +1,13 @@
 "use strict";
 
-const deepmerge = require("deepmerge");
 
 (function() {
+
+    const deepmerge = require("deepmerge");
+
     angular
         .module('firebotApp')
-        .component("editableList", {
+        .component("editableTags", {
             bindings: {
                 model: "=",
                 settings: "<",
@@ -13,43 +15,43 @@ const deepmerge = require("deepmerge");
             },
             template: `
                 <div>
-                    <div ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.model">
-                        <div ng-repeat="item in $ctrl.model track by $index" class="list-item selectable" ng-click="$ctrl.editItem($index)">
-                            <span ng-show="$ctrl.settings.sortable" class="dragHandle" style="height: 38px; width: 15px; align-items: center; justify-content: center; display: flex">
-                                <i class="fal fa-bars" aria-hidden="true"></i>
-                            </span> 
-                            <div uib-tooltip="Click to edit"  style="font-weight: 400;" aria-label="{{item + ' (Click to edit)'}}">{{item}}</div>
-                            <span class="clickable" style="color: #fb7373;" ng-click="$ctrl.removeItem($index);$event.stopPropagation();" aria-label="Remove item">
-                                <i class="fad fa-trash-alt" aria-hidden="true"></i>
-                            </span>
-                        </div>
-                        <p class="muted" ng-show="$ctrl.model.length < 1">{{$ctrl.settings.noneAddedText}}</p>
+                    <div class="fb-tag" ng-repeat="item in $ctrl.model track by $index">
+                        <span 
+                            class="tagName clickable" 
+                            ng-click="$ctrl.editItem($index)" 
+                            aria-label="{{item + ' (Click to edit)'}}"
+                        >
+                            {{item}}
+                        </span>
+                        <span 
+                            class="tagRemove clickable" 
+                            ng-click="$ctrl.removeItem($index)" 
+                            aria-label="Remove item"
+                        >
+                            <i class="far fa-times"></i>
+                        </span>
                     </div>
-                    <div style="margin: 5px 0 10px 0px;">
-                        <button class="filter-bar" ng-click="$ctrl.addItem()" uib-tooltip="{{$ctrl.settings.addLabel}}" tooltip-append-to-body="true" aria-label="{{$ctrl.settings.addLabel}}">
-                            <i class="far fa-plus"></i> 
-                        </button>               
-                    </div>         
+                    <button 
+                        class="filter-bar clickable" 
+                        ng-click="$ctrl.addItem()" 
+                        uib-tooltip="{{$ctrl.settings.addLabel}}" 
+                        tooltip-append-to-body="true" 
+                        aria-label="{{$ctrl.settings.addLabel}}"
+                    >
+                        <i class="far fa-plus"></i> 
+                    </button>       
                 </div>
             `,
             controller: function(utilityService, ngToast) {
 
                 const $ctrl = this;
 
-                $ctrl.sortableOptions = {
-                    handle: ".dragHandle",
-                    stop: () => {}
-                };
-
                 const defaultSettings = {
-                    sortable: false,
                     addLabel: "Add",
                     editLabel: "Edit",
                     validationText: "Text cannot be empty",
-                    noneAddedText: "None saved",
                     noDuplicates: false
                 };
-
 
                 $ctrl.$onInit = () => {
                     if ($ctrl.settings == null) {
@@ -86,7 +88,7 @@ const deepmerge = require("deepmerge");
 
                 $ctrl.editItem = (index) => {
                     openGetInputModal($ctrl.model[index], false, (newItem) => {
-                        const foundDuplicate = [...$ctrl.model].splice(index, 1).some(i => i === newItem);
+                        const foundDuplicate = $ctrl.model.filter((_, i) => i !== index).some(i => i === newItem);
                         if (!$ctrl.settings.noDuplicates || !foundDuplicate) {
                             $ctrl.model[index] = newItem;
                         } else {
