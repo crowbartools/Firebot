@@ -6,9 +6,9 @@ const frontendCommunicator = require("../../common/frontend-communicator");
 const rolesManager = require("../../roles/custom-roles-manager");
 const permitCommand = require("./url-permit-command");
 
-let getChatModerationSettingsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/chat-moderation-settings");
-let getBannedWordsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-words", false);
-let getbannedRegularExpressionsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-regular-expressions", false);
+const getChatModerationSettingsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/chat-moderation-settings");
+const getBannedWordsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-words", false);
+const getbannedRegularExpressionsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-regular-expressions", false);
 
 // default settings
 let chatModerationSettings = {
@@ -41,22 +41,22 @@ let bannedRegularExpressions = {
     regularExpressions: []
 };
 
-function getBannedWordsList() {
+const getBannedWordsList = () => {
     if (!bannedWords || !bannedWords.words) return [];
     return bannedWords.words.map(w => w.text);
-}
+};
 
-function getBannedRegularExpressionsList() {
+const getBannedRegularExpressionsList = () => {
     if (!bannedRegularExpressions || !bannedRegularExpressions.regularExpressions) return [];
     return bannedRegularExpressions.regularExpressions.map(r => r.text);
-}
+};
 
 /**
  * @type Worker
  */
 let moderationService = null;
 
-function startModerationService() {
+const startModerationService = () => {
     if (moderationService != null) return;
 
     const chat = require("../twitch-chat");
@@ -76,6 +76,10 @@ function startModerationService() {
             if (event.messageId) {
                 logger.debug(`Chat message with id '${event.messageId}' contains a banned word. Deleting...`);
                 chat.deleteMessage(event.messageId);
+            }
+
+            if (event.outputMessage) {
+                chat.sendChatMessage(event.outputMessage);
             }
             break;
         }
@@ -108,21 +112,21 @@ function startModerationService() {
     );
 
     logger.info("Finished setting up chat moderation worker.");
-}
+};
 
-function stopService() {
+const stopService = () => {
     if (moderationService != null) {
         moderationService.terminate();
         moderationService.unref();
         moderationService = null;
     }
-}
+};
 
 /**
  *
  * @param {import("../chat-helpers").FirebotChatMessage} chatMessage
  */
-async function moderateMessage(chatMessage) {
+const moderateMessage = async (chatMessage) => {
     if (chatMessage == null) return;
 
     if (
@@ -131,16 +135,10 @@ async function moderateMessage(chatMessage) {
         && !chatModerationSettings.urlModeration.enabled
     ) return;
 
-    let moderateMessage = false;
-
     const globalUserExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles,
         chatModerationSettings.exemptRoles);
 
     if (!globalUserExempt) {
-        moderateMessage = true;
-    }
-
-    if (moderateMessage) {
         if (chatModerationSettings.bannedWordList.enabled) {
             const userExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles,
                 chatModerationSettings.bannedWordList.exemptRoles);
@@ -199,7 +197,7 @@ async function moderateMessage(chatMessage) {
             }
         }
     }
-}
+};
 
 frontendCommunicator.on("chatMessageSettingsUpdate", settings => {
     chatModerationSettings = settings;
@@ -212,7 +210,7 @@ frontendCommunicator.on("chatMessageSettingsUpdate", settings => {
     }
 });
 
-function saveBannedWordList() {
+const saveBannedWordList = () => {
     try {
         getBannedWordsDb().push("/", bannedWords);
     } catch (error) {
@@ -228,9 +226,9 @@ function saveBannedWordList() {
             }
         );
     }
-}
+};
 
-function saveBannedRegularExpressionsList() {
+const saveBannedRegularExpressionsList = () => {
     try {
         getbannedRegularExpressionsDb().push("/", bannedRegularExpressions);
     } catch (error) {
@@ -246,7 +244,7 @@ function saveBannedRegularExpressionsList() {
             }
         );
     }
-}
+};
 
 frontendCommunicator.on("addBannedWords", words => {
     bannedWords.words = bannedWords.words.concat(words);
@@ -286,9 +284,9 @@ frontendCommunicator.on("getChatModerationData", () => {
     };
 });
 
-function load() {
+const load = () => {
     try {
-        let settings = getChatModerationSettingsDb().getData("/");
+        const settings = getChatModerationSettingsDb().getData("/");
         if (settings && Object.keys(settings).length > 0) {
             chatModerationSettings = settings;
             if (settings.exemptRoles == null) {
@@ -340,12 +338,12 @@ function load() {
             }
         }
 
-        let words = getBannedWordsDb().getData("/");
+        const words = getBannedWordsDb().getData("/");
         if (words && Object.keys(words).length > 0) {
             bannedWords = words;
         }
 
-        let regularExpressions = getbannedRegularExpressionsDb().getData("/");
+        const regularExpressions = getbannedRegularExpressionsDb().getData("/");
         if (regularExpressions && Object.keys(regularExpressions).length > 0) {
             bannedRegularExpressions = regularExpressions;
         }
@@ -356,7 +354,8 @@ function load() {
     }
     logger.info("Attempting to setup chat moderation worker...");
     startModerationService();
-}
+};
+
 exports.load = load;
 exports.stopService = stopService;
 exports.moderateMessage = moderateMessage;

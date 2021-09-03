@@ -5,17 +5,17 @@ const { parentPort } = require("worker_threads");
 let bannedWords = [];
 let regularExpressions = [];
 
-function hasBannedWord(input) {
+const hasBannedWord = (input) => {
     input = input.toLowerCase();
     return bannedWords
         .some(word => {
             return input.split(" ").includes(word);
         });
-}
+};
 
-function matchesBannedRegex(input) {
-    let expressions = regularExpressions.map(regex => new RegExp(regex, "gi"));
-    let inputWords = input.split(" ");
+const matchesBannedRegex = (input) => {
+    const expressions = regularExpressions.map(regex => new RegExp(regex, "gi"));
+    const inputWords = input.split(" ");
 
     for (const exp of expressions) {
         for (const word of inputWords) {
@@ -26,7 +26,7 @@ function matchesBannedRegex(input) {
     }
 
     return false;
-}
+};
 
 const countEmojis = (str) => {
     const re = /\p{Extended_Pictographic}/ug; //eslint-disable-line
@@ -49,7 +49,7 @@ parentPort.on("message", event => {
     case "moderateBannedWords": {
         // check for banned word
         if (event.message == null || event.messageId == null) return;
-        let bannedWordFound = hasBannedWord(event.message);
+        const bannedWordFound = hasBannedWord(event.message);
         if (bannedWordFound) {
             parentPort.postMessage(
                 {
@@ -58,7 +58,7 @@ parentPort.on("message", event => {
                 }
             );
         } else {
-            let bannedRegexMatched = matchesBannedRegex(event.message);
+            const bannedRegexMatched = matchesBannedRegex(event.message);
             if (bannedRegexMatched) {
                 parentPort.postMessage(
                     {
