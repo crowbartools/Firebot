@@ -119,10 +119,60 @@ exports.setupChatListeners = (streamerChatClient) => {
     streamerChatClient.onBan((_, username) => {
         twitchEventsHandler.viewerBanned.triggerBanned(username);
         frontendCommunicator.send("twitch:chat:user:delete-messages", username);
+        frontendCommunicator.send("chat-feed-notification", `${username} was banned.`);
     });
 
     streamerChatClient.onTimeout((_, username, duration) => {
         twitchEventsHandler.viewerTimeout.triggerTimeout(username, duration);
         frontendCommunicator.send("twitch:chat:user:delete-messages", username);
+        frontendCommunicator.send("chat-feed-notification", `${username} was timed out for ${duration} seconds.`);
+    });
+
+    streamerChatClient.onEmoteOnly((_, enabled) => {
+        if (enabled) {
+            frontendCommunicator.send("chat-feed-notification", `Emote only mode enabled.`);
+        } else {
+            frontendCommunicator.send("chat-feed-notification", `Emote only mode disabled.`);
+        }
+    });
+
+    streamerChatClient.onSubsOnly((_, enabled) => {
+        if (enabled) {
+            frontendCommunicator.send("chat-feed-notification", `Subscribers only mode enabled.`);
+        } else {
+            frontendCommunicator.send("chat-feed-notification", `Subscribers only mode disabled.`);
+        }
+    });
+
+    streamerChatClient.onFollowersOnly((_, enabled, delay) => {
+        if (enabled) {
+            if (delay) {
+                frontendCommunicator.send("chat-feed-notification", `Followers (following at least ${delay} minutes) only mode enabled.`);
+            } else {
+                frontendCommunicator.send("chat-feed-notification", `Followers only mode enabled.`);
+            }
+        } else {
+            frontendCommunicator.send("chat-feed-notification", `Followers only mode disabled.`);
+        }
+    });
+
+    streamerChatClient.onChatClear((_) => {
+        frontendCommunicator.send("chat-feed-notification", `Chat cleared.`);
+    });
+
+    streamerChatClient.onSlow((_, enabled, delay) => {
+        if (enabled) {
+            if (delay) {
+                frontendCommunicator.send("chat-feed-notification", `Slow mode (${delay} seconds) enabled.`);
+            } else {
+                frontendCommunicator.send("chat-feed-notification", `Followers only mode enabled.`);
+            }
+        } else {
+            frontendCommunicator.send("chat-feed-notification", `Followers only mode disabled.`);
+        }
+    });
+
+    streamerChatClient.onMessageFailed((_, reason) => {
+        frontendCommunicator.send("chat-feed-notification", `Message not sent: ${reason}`);
     });
 };
