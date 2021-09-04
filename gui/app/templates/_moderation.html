@@ -38,6 +38,8 @@
               model="cms.chatModerationData.settings.spamRaidProtection.cacheLimit"
               on-input-update="cms.saveChatModerationSettings()"
               max="145"
+              required="true"
+              error-message="Cache limit is required and has to be between 1 and 145"
             />
           </div>
           <div style="margin-top: 20px">

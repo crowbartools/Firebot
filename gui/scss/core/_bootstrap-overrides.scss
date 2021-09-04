@@ -350,15 +350,14 @@ textarea.form-control {
 // Form Control
 .input-group-addon {
     border: 2px solid $add-on-group-border;
-    //border-radius: 2px;
     box-shadow: none;
     background-color: $add-on-group-bg;
     color: $add-on-group-text;
+    vertical-align: initial;
 }
 
 .form-control {
     border: 2px solid $form-control-border;
-    //border-radius: 2px;
     height: 36px;
     box-shadow: none;
     background-color: $form-control-bg;
@@ -371,8 +370,7 @@ textarea.form-control {
         height: 42px;
         font-size: 16px;
     }
-    &:out-of-range {
-        color: red;
+    &:out-of-range, &.invalid {
         border-color: red;
     }
 }
