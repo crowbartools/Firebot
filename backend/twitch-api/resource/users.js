@@ -10,6 +10,26 @@ const logger = require("../../logwrapper");
 
 const userRoleCache = new NodeCache({ stdTTL: 30, checkperiod: 5 });
 
+const getUserByName = async (username) => {
+    try {
+        const client = twitchApi.getClient();
+
+        const response = await client.callApi({
+            type: TwitchAPICallType.Helix,
+            url: "users",
+            query: {
+                "login": username
+            }
+        });
+
+        if (response && response.data) {
+            return response.data[0];
+        }
+    } catch (err) {
+        logger.debug("Couldn't find user by name", err);
+    }
+};
+
 async function getUserChatInfo(userId) {
     const client = twitchApi.getClient();
 
@@ -155,6 +175,15 @@ async function blockUser(userId) {
 
 }
 
+const blockUserByName = async (username) => {
+    try {
+        const user = await getUserByName(username);
+        blockUser(user.id);
+    } catch (err) {
+        logger.error("Couldn't block user", err);
+    }
+};
+
 async function unblockUser(userId) {
     if (userId == null) return;
 
@@ -178,6 +207,67 @@ async function unblockUser(userId) {
     }
 }
 
+const unblockUserByName = async (username) => {
+    try {
+        const user = await getUserByName(username);
+        unblockUser(user.id);
+    } catch (err) {
+        logger.error("Couldn't unblock user", err);
+    }
+};
+
+async function getAllBlockedUsers(userId, cursor) {
+    const client = twitchApi.getClient();
+
+    try {
+        let response = {};
+
+        if (cursor == null) {
+            response = await client.callApi({
+                type: TwitchAPICallType.Helix,
+                url: "users/blocks",
+                query: {
+                    "broadcaster_id": userId
+                }
+            });
+        } else {
+            response = await client.callApi({
+                type: TwitchAPICallType.Helix,
+                url: "users/blocks",
+                query: {
+                    "broadcaster_id": userId,
+                    after: cursor
+                }
+            });
+        }
+
+        if (response == null || response.data == null || response.data.length < 1) {
+            logger.error("Couldn't find any blocked users");
+            return null;
+        }
+
+        return response;
+    } catch (error) {
+        logger.error("Failed to get blocked users", error);
+        return null;
+    }
+}
+
+async function getAllBlockedUsersPaginated(streamerId) {
+    let response = await getAllBlockedUsers(streamerId);
+    if (response == null) return;
+
+    let cursor = "";
+    let blockedUsers = response.data.map(u => u.user_id);
+
+    while (response.pagination.cursor && response.pagination.cursor !== cursor) {
+        cursor = response.pagination.cursor;
+        response = await getAllBlockedUsers(streamerId, cursor);
+        blockedUsers = blockedUsers.concat(response.data.map(u => u.user_id));
+    }
+
+    return blockedUsers;
+}
 
 async function getFollowDateForUser(username) {
     const client = twitchApi.getClient();
@@ -227,7 +317,10 @@ async function doesUserFollowChannel(username, channelName) {
 exports.getUserChatInfoByName = getUserChatInfoByName;
 exports.getUsersChatRoles = getUsersChatRoles;
 exports.blockUser = blockUser;
+exports.blockUserByName = blockUserByName;
 exports.unblockUser = unblockUser;
+exports.unblockUserByName = unblockUserByName;
+exports.getAllBlockedUsersPaginated = getAllBlockedUsersPaginated;
 exports.getFollowDateForUser = getFollowDateForUser;
 exports.updateUserRole = updateUserRole;
 exports.doesUserFollowChannel = doesUserFollowChannel;

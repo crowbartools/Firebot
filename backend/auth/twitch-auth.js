@@ -55,7 +55,8 @@ const STREAMER_ACCOUNT_PROVIDER = {
         'user:edit:broadcast',
         'user_subscriptions',
         'user_follows_edit',
-        'user_read'
+        'user_read',
+        'user:read:blocked_users'
     ].join(' ')
 };
 

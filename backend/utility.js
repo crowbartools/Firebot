@@ -1,8 +1,11 @@
 "use strict";
 
 const moment = require("moment");
+
+/* unused
 const logger = require("./logwrapper");
 const request = require("request");
+*/
 
 const replaceVariableManager = require("./variables/replace-variable-manager");
 
@@ -127,6 +130,7 @@ exports.anyPromise = function(promises) {
     );
 };
 
+/* Unused
 function messageContains(message, queries) {
     return queries.some(q => message.includes(q));
 }
@@ -143,6 +147,7 @@ function callUrl(url) {
         });
     });
 }
+*/
 
 function getTriggerIdFromTriggerData(trigger) {
 
@@ -249,3 +254,29 @@ exports.wait = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
 };
 
+
+/**
+ * @param {string} pattern Converts a wildcard text expression into a RegExp instance
+ * @returns {RegExp}
+ */
+exports.wildcardToRegex = pattern => new RegExp(
+    '^' + pattern
+        // removing lead/trailing whitespace
+        .trim()
+
+        // escape irrelevent non alpha-numeric characters
+        .replace(/[^\w\s?*]/g, '\\$&')
+
+        // convert wildcard special characters to regex equivulants
+        // ? = any 1 character
+        // * = 0 or more characters
+        .replace(/[?*]+/gi, match => {
+            const hasAstrick = match.indexOf('*') > -1;
+            const qs = match.split('?').length - 1;
+            if (!qs) {
+                return '.*';
+            }
+            return '.'.repeat(qs) + (hasAstrick ? '+' : '');
+        }) + '$',
+    'i'
+);

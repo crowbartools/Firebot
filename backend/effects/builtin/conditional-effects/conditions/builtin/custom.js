@@ -1,10 +1,25 @@
 "use strict";
 
+const { wildcardToRegex } = require("../../../../../utility");
+
 module.exports = {
     id: "firebot:custom",
     name: "Custom",
     description: "Condition based on custom values (useful with $variables)",
-    comparisonTypes: ["is", "is not", "is less than", "is less than or equal to", "is greater than", "is greater than or equal to", "contains", "does not contain", "matches regex", "does not match regex"],
+    comparisonTypes: [
+        "is",
+        "is not",
+        "is less than",
+        "is less than or equal to",
+        "is greater than",
+        "is greater than or equal to",
+        "contains",
+        "does not contain",
+        "matches wildcard",
+        "does not match wildcard",
+        "matches regex",
+        "does not match regex"
+    ],
     leftSideValueType: "text",
     rightSideValueType: "text",
     predicate: (conditionSettings, trigger) => {
@@ -35,6 +50,10 @@ module.exports = {
             return leftSideValue.toString().includes(rightSideValue);
         case "does not contain":
             return !leftSideValue.toString().includes(rightSideValue);
+        case "matches wildcard":
+            return !!wildcardToRegex(rightSideValue || '').test(leftSideValue);
+        case "does not match wildcard":
+            return !wildcardToRegex(rightSideValue || '').test(leftSideValue);
         case "matches regex": {
             let regex = new RegExp(rightSideValue, "gi");
             return regex.test(leftSideValue);
