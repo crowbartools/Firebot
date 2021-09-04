@@ -34,7 +34,9 @@ let chatModerationSettings = {
         enabled: true,
         exemptRoles: [],
         cacheLimit: 50,
-        characterLimit: 10
+        characterLimit: 10,
+        shouldBan: false,
+        shouldBlock: false
     },
     exemptRoles: []
 };
@@ -228,6 +230,9 @@ const saveBannedRegularExpressionsList = () => {
 };
 
 const enableSpamRaidProtection = (shouldBan, shouldBlock) => {
+    chatModerationSettings.spamRaidProtection.shouldBan = shouldBan;
+    chatModerationSettings.spamRaidProtection.shouldBlock = shouldBlock;
+
     moderationService.postMessage(
         {
             type: "spamRaidProtectionEnable",
@@ -333,7 +338,9 @@ const load = () => {
                     enabled: true,
                     exemptRoles: [],
                     cacheLimit: 50,
-                    characterLimit: 10
+                    characterLimit: 10,
+                    shouldBan: false,
+                    shouldBlock: false
                 };
             }
 

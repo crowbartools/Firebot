@@ -33,7 +33,9 @@
                         enabled: true,
                         exemptRoles: [],
                         cacheLimit: 50,
-                        characterLimit: 10
+                        characterLimit: 10,
+                        shouldBan: false,
+                        shouldBlock: false
                     },
                     exemptRoles: []
                 },
@@ -94,7 +96,9 @@
                             enabled: true,
                             exemptRoles: [],
                             cacheLimit: 50,
-                            characterLimit: 10
+                            characterLimit: 10,
+                            shouldBan: false,
+                            shouldBlock: false
                         };
                     }
                 }

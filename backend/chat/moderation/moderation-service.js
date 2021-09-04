@@ -5,7 +5,7 @@ const { parentPort } = require("worker_threads");
 let bannedWords = new Set();
 let regularExpressions = [];
 
-let spamRaidCheckerEnabled = false;
+let spamRaidProtectionEnabled = false;
 let raidMessage = "";
 const messageCache = [];
 
@@ -110,10 +110,11 @@ parentPort.on("message", event => {
     case "spamRaidProtectionEnable":
         raidMessage = getRaidMessage();
         checkPreviousMessages(event.shouldBan, event.shouldBlock);
-        spamRaidCheckerEnabled = true;
+        spamRaidProtectionEnabled = true;
         break;
     case "spamRaidProtectionDisable":
-        spamRaidCheckerEnabled = false;
+        spamRaidProtectionEnabled = false;
+        raidMessage = "";
         break;
     case "moderateMessage": {
         if (event.chatMessage == null || event.settings == null || event.userIsExemptFor == null) return;
@@ -125,11 +126,11 @@ parentPort.on("message", event => {
                     messageCache.shift();
                 }
 
-                chatMessage.rawText = chatMessage.rawText.substr(settings.characterLimit);
+                chatMessage.rawText = chatMessage.rawText.substr(settings.spamRaidProtection.characterLimit);
                 messageCache.push(chatMessage);
 
-                if (spamRaidCheckerEnabled && chatMessage.rawText === raidMessage) {
-                    handleRaider(chatMessage);
+                if (spamRaidProtectionEnabled && chatMessage.rawText === raidMessage) {
+                    handleRaider(chatMessage, settings.spamRaidProtection.shouldBan, settings.spamRaidProtection.shouldBlock);
                     return;
                 }
             }
