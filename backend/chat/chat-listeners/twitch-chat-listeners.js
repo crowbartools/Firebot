@@ -124,11 +124,11 @@ exports.setupChatListeners = (streamerChatClient) => {
         frontendCommunicator.send("twitch:chat:user:delete-messages", username);
     });
 
-    streamerChatClient.onChatClear((_) => {
+    streamerChatClient.onChatClear(() => {
         frontendCommunicator.send("chat-feed-notification", `Chat cleared.`);
     });
 
-    streamerChatClient.onNotice((target, user, message, msg) => {
+    streamerChatClient.onNotice((_target, _user, message) => {
         frontendCommunicator.send("chat-feed-notification", message);
     });
 };
