@@ -45,7 +45,6 @@ async function getAllStreamTags(cursor) {
         }
 
         if (response == null || response.data == null || response.data.length < 1) {
-            logger.error("Failed to get stream tags", response);
             return null;
         }
 
@@ -64,6 +63,8 @@ async function getAllStreamTagsPaginated() {
     while (response.pagination.cursor && response.pagination.cursor !== cursor) {
         cursor = response.pagination.cursor;
         response = await getAllStreamTags(cursor);
+        if (response == null) break;
+
         streamTags = streamTags.concat(response.data.filter(tag => !tag.is_auto));
     }
 
