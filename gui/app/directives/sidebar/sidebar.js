@@ -19,7 +19,8 @@
 
                         <nav-category name="{{'SIDEBAR.CHAT' | translate }}" pad-top="true"></nav-category>
                         <nav-link page="Commands" name="{{'SIDEBAR.CHAT.COMMANDS' | translate }}" icon="fa-exclamation"></nav-link>
-                        <nav-link page="Games" name="Games" icon="fa-dice"></nav-link>
+                        <nav-link page="Games" name="{{'SIDEBAR.CHAT.GAMES' | translate }}" icon="fa-dice"></nav-link>
+                        <nav-link page="Moderation" name="{{'SIDEBAR.CHAT.MODERATION' | translate }}" icon="fa-gavel"></nav-link>
 
                         <nav-category name="{{'SIDEBAR.OTHER' | translate }}" pad-top="true"></nav-category>
                         <nav-link page="Events" name="{{'SIDEBAR.OTHER.EVENTS' | translate }}" icon="fa-list"></nav-link>
@@ -33,7 +34,6 @@
                         <nav-category name="{{'SIDEBAR.MANAGEMENT' | translate }}" pad-top="true"></nav-category>
                         <nav-link page="Viewers" name="{{'SIDEBAR.MANAGEMENT.VIEWERS' | translate }}" icon="fa-users" ng-if="$ctrl.isViewerDBOn()"></nav-link>
                         <nav-link page="Viewer Roles" name="{{'SIDEBAR.MANAGEMENT.VIEWER_ROLES' | translate }}" icon="fa-user-tag"></nav-link>
-                        <nav-link page="Moderation" name="{{'SIDEBAR.MANAGEMENT.MODERATION' | translate }}" icon="fa-gavel"></nav-link>
                         <nav-link page="Quotes" name="{{'SIDEBAR.MANAGEMENT.QUOTES' | translate }}" icon="fa-quote-right"></nav-link>
                         <nav-link page="Currency" name="{{'SIDEBAR.MANAGEMENT.CURRENCY' | translate }}" icon="fa-money-bill" ng-if="$ctrl.isViewerDBOn()"></nav-link>
                         <nav-link page="Settings" name="{{'SIDEBAR.MANAGEMENT.SETTINGS' | translate }}" icon="fa-cog"></nav-link>

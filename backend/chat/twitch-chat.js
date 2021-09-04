@@ -203,6 +203,22 @@ class TwitchChat extends EventEmitter {
             accountType = "streamer";
         }
 
+        if (message.includes("/block")) {
+            const username = message.split(" ")[1];
+
+            const twitchApi = require("../twitch-api/api");
+            twitchApi.users.blockUserByName(username.replace(/^@/, '').trim());
+            return;
+        }
+
+        if (message.includes("/unblock")) {
+            const username = message.split(" ")[1];
+
+            const twitchApi = require("../twitch-api/api");
+            twitchApi.users.unblockUserByName(username.replace(/^@/, '').trim());
+            return;
+        }
+
 
         // split message into fragments that don't exceed the max message length
         const messageFragments = message.match(/[\s\S]{1,500}/g)
@@ -257,18 +273,18 @@ class TwitchChat extends EventEmitter {
         this._streamerChatClient.say(`#${streamer.username.replace("#", "")}`, `/unban ${username}`);
     }
 
-    block(username) {
-        if (username == null) return;
+    block(userId) {
+        if (userId == null) return;
 
         const twitchApi = require("../twitch-api/api");
-        twitchApi.users.blockUserByName(username);
+        twitchApi.users.blockUser(userId);
     }
 
-    unblock(username) {
-        if (username == null) return;
+    unblock(userId) {
+        if (userId == null) return;
 
         const twitchApi = require("../twitch-api/api");
-        twitchApi.users.unblockUserByName(username);
+        twitchApi.users.unblockUser(userId);
     }
 
     addVip(username) {
@@ -407,6 +423,18 @@ frontendCommunicator.on("update-user-banned-status", data => {
         twitchChat.ban(username, "Banned via Firebot");
     } else {
         twitchChat.unban(username);
+    }
+});
+
+frontendCommunicator.on("update-user-blocked-status", data => {
+    if (data == null) return;
+    const { userId, shouldBeBlocked } = data;
+    if (userId == null || shouldBeBlocked == null) return;
+
+    if (shouldBeBlocked) {
+        twitchChat.block(userId);
+    } else {
+        twitchChat.unblock(userId);
     }
 });
 

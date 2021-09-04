@@ -46,25 +46,50 @@ function buildCommandRegexStr(trigger, scanWholeMessage) {
     return `^${escapedTrigger}(?!-)(?:\\b|$|(?=\\s))`;
 }
 
+function testForTrigger(message, trigger, scanWholeMessage, triggerIsRegex) {
+    message = message.toLowerCase();
+
+    const normalizedTrigger = trigger.toLowerCase();
+    const commandRegexStr = triggerIsRegex
+        ? trigger
+        : buildCommandRegexStr(normalizedTrigger, scanWholeMessage);
+
+    const regex = new RegExp(commandRegexStr, "gi");
+
+    return regex.test(message);
+}
+
 function checkForCommand(rawMessage) {
     if (rawMessage == null || rawMessage.length < 1) return null;
-    let normalziedRawMessage = rawMessage.toLowerCase();
 
-    let allCommands = commandManager.getAllActiveCommands();
+    const allCommands = commandManager.getAllActiveCommands();
 
-    for (let command of allCommands) {
-        let normalizedTrigger = command.trigger.toLowerCase(),
-            commandRegexStr = command.triggerIsRegex
-                ? command.trigger
-                : buildCommandRegexStr(normalizedTrigger, command.scanWholeMessage);
+    for (const command of allCommands) {
 
-        let regex = new RegExp(commandRegexStr, "gi");
+        if (testForTrigger(
+            rawMessage,
+            command.trigger,
+            command.scanWholeMessage,
+            command.triggerIsRegex
+        )
+        ) {
+            return { command, matchedTrigger: command.trigger };
+        }
 
-        if (regex.test(normalziedRawMessage)) {
-            return command;
+        if (!command.triggerIsRegex && command.aliases != null && Array.isArray(command.aliases)) {
+            for (const alias of command.aliases) {
+                if (testForTrigger(
+                    rawMessage,
+                    alias,
+                    command.scanWholeMessage,
+                    false
+                )) {
+                    return { command, matchedTrigger: alias };
+                }
+            }
         }
     }
-    return null;
+    return { command: null };
 }
 
 function updateCommandCount(command) {
@@ -286,7 +311,7 @@ async function handleChatMessage(firebotChatMessage) {
     logger.debug("Checking for command in message...");
 
     // Username of the person that sent the command.
-    let commandSender = firebotChatMessage.username;
+    const commandSender = firebotChatMessage.username;
 
     // Check to see if handled message array contains the id of this message already.
     // If it does, that means that one of the logged in accounts has already handled the message.
@@ -303,9 +328,9 @@ async function handleChatMessage(firebotChatMessage) {
 
     // search for and return command if found
     logger.debug("Searching for command...");
-    let command = checkForCommand(rawMessage);
+    const { command, matchedTrigger } = checkForCommand(rawMessage);
 
-    // command wasnt found
+    // command wasn't found
     if (command == null) {
         return false;
     }
@@ -325,7 +350,10 @@ async function handleChatMessage(firebotChatMessage) {
     }
 
     // build usercommand object
-    let userCmd = buildUserCommand(command, rawMessage, commandSender, firebotChatMessage.roles);
+    const userCmd = buildUserCommand(command, rawMessage, commandSender, firebotChatMessage.roles);
+
+    // update trigger with the one we matched
+    userCmd.trigger = matchedTrigger;
 
     let triggeredSubcmd = null;
     if (!command.scanWholeMessage && !command.triggerIsRegex && userCmd.args.length > 0 && command.subCommands && command.subCommands.length > 0) {
@@ -364,14 +392,14 @@ async function handleChatMessage(firebotChatMessage) {
     }
 
     // check if command meets min args requirement
-    let minArgs = triggeredSubcmd ? triggeredSubcmd.minArgs || 0 : command.minArgs || 0;
+    const minArgs = triggeredSubcmd ? triggeredSubcmd.minArgs || 0 : command.minArgs || 0;
     if (userCmd.args.length < minArgs) {
         let usage = triggeredSubcmd ? triggeredSubcmd.usage : command.usage;
         twitchChat.sendChatMessage(`Invalid command. Usage: ${command.trigger} ${usage || ""}`);
         return false;
     }
 
-    let restrictionData =
+    const restrictionData =
         triggeredSubcmd && triggeredSubcmd.restrictionData && triggeredSubcmd.restrictionData.restrictions
             && triggeredSubcmd.restrictionData.restrictions.length > 0
             ? triggeredSubcmd.restrictionData
@@ -413,7 +441,7 @@ async function handleChatMessage(firebotChatMessage) {
 
     logger.debug("Checking cooldowns for command...");
     // Check if the command is on cooldown
-    let remainingCooldown = getRemainingCooldown(
+    const remainingCooldown = getRemainingCooldown(
         command,
         triggeredSubcmd,
         commandSender

@@ -10,6 +10,26 @@ const logger = require("../../logwrapper");
 
 const userRoleCache = new NodeCache({ stdTTL: 30, checkperiod: 5 });
 
+const getUserByName = async (username) => {
+    try {
+        const client = twitchApi.getClient();
+
+        const response = await client.callApi({
+            type: TwitchAPICallType.Helix,
+            url: "users",
+            query: {
+                "login": username
+            }
+        });
+
+        if (response && response.data) {
+            return response.data[0];
+        }
+    } catch (err) {
+        logger.debug("Couldn't find user by name", err);
+    }
+};
+
 async function getUserChatInfo(userId) {
     const client = twitchApi.getClient();
 
@@ -149,6 +169,15 @@ async function blockUser(userId) {
 
 }
 
+const blockUserByName = async (username) => {
+    try {
+        const user = await getUserByName(username);
+        blockUser(user.id);
+    } catch (err) {
+        logger.error("Couldn't block user", err);
+    }
+};
+
 async function unblockUser(userId) {
     if (userId == null) return;
 
@@ -172,81 +201,72 @@ async function unblockUser(userId) {
     }
 }
 
-async function getFollowedChannel(userId, channelId) {
+const unblockUserByName = async (username) => {
     try {
-        const client = twitchApi.getClient();
-
-        const response = await client.callApi({
-            type: TwitchAPICallType.Helix,
-            url: "users/follows",
-            query: {
-                "from_id": userId,
-                "to_id": channelId
-            }
-        });
-
-        if (response && response.data && response.total > 0) {
-            const data = response.data[0];
-            data.followDate = new Date(data.followed_at);
-
-            return data;
-        }
+        const user = await getUserByName(username);
+        unblockUser(user.id);
     } catch (err) {
-        logger.error("Couldn't find followed channel", err);
+        logger.error("Couldn't unblock user", err);
+    }
+};
 
+async function getAllBlockedUsers(userId, cursor) {
+    const client = twitchApi.getClient();
+
+    try {
+        let response = {};
+
+        if (cursor == null) {
+            response = await client.callApi({
+                type: TwitchAPICallType.Helix,
+                url: "users/blocks",
+                query: {
+                    "broadcaster_id": userId
+                }
+            });
+        } else {
+            response = await client.callApi({
+                type: TwitchAPICallType.Helix,
+                url: "users/blocks",
+                query: {
+                    "broadcaster_id": userId,
+                    after: cursor
+                }
+            });
+        }
+
+        if (response == null || response.data == null || response.data.length < 1) {
+            logger.error("Couldn't find any blocked users");
+            return null;
+        }
+
+        return response;
+    } catch (error) {
+        logger.error("Failed to get blocked users", error);
         return null;
     }
 }
 
+async function getAllBlockedUsersPaginated(streamerId) {
+    let response = await getAllBlockedUsers(streamerId);
+    if (response == null) return;
 
-async function getFollowDateForUser(username) {
-    const client = twitchApi.getClient();
-    const streamerData = accountAccess.getAccounts().streamer;
+    let cursor = "";
+    let blockedUsers = response.data.map(u => u.user_id);
 
-    const userId = (await client.helix.users.getUserByName(username)).id;
-    const channelId = (await client.helix.users.getUserByName(streamerData.username)).id;
-
-    const followerDate = (await getFollowedChannel(userId, channelId)).followDate;
-
-    if (followerDate == null || followerDate.length < 1) {
-        return null;
+    while (response.pagination.cursor && response.pagination.cursor !== cursor) {
+        cursor = response.pagination.cursor;
+        response = await getAllBlockedUsers(streamerId, cursor);
+        blockedUsers = blockedUsers.concat(response.data.map(u => u.user_id));
     }
 
-    return new Date(followerDate);
-}
-
-async function doesUserFollowChannel(username, channelName) {
-    if (username == null || channelName == null) return false;
-
-    const client = twitchApi.getClient();
-
-    if (username.toLowerCase() === channelName.toLowerCase()) {
-        return true;
-    }
-
-    const userId = (await client.helix.users.getUserByName(username)).id;
-    const channelId = (await client.helix.users.getUserByName(channelName)).id;
-
-    if (userId == null || channelId == null) {
-        return false;
-    }
-
-    const userFollow = await getFollowedChannel(userId, channelId);
-
-    if (userFollow == null) {
-        return false;
-    }
-
-    if (userFollow.followDate == null || userFollow.followDate.length < 1) {
-        return false;
-    }
-
-    return true;
+    return blockedUsers;
 }
 
 exports.getUserChatInfoByName = getUserChatInfoByName;
 exports.getUsersChatRoles = getUsersChatRoles;
 exports.blockUser = blockUser;
+exports.blockUserByName = blockUserByName;
 exports.unblockUser = unblockUser;
-exports.getFollowDateForUser = getFollowDateForUser;
-exports.doesUserFollowChannel = doesUserFollowChannel;
+exports.unblockUserByName = unblockUserByName;
+exports.getAllBlockedUsersPaginated = getAllBlockedUsersPaginated;

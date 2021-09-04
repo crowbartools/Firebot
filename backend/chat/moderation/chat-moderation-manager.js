@@ -3,29 +3,40 @@ const logger = require("../../logwrapper");
 const profileManager = require("../../common/profile-manager");
 const { Worker } = require("worker_threads");
 const frontendCommunicator = require("../../common/frontend-communicator");
-const rolesManager = require("../../roles/custom-roles-manager");
 const permitCommand = require("./url-permit-command");
+const rolesManager = require("../../roles/custom-roles-manager");
 
-let getChatModerationSettingsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/chat-moderation-settings");
-let getBannedWordsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-words", false);
-let getbannedRegularExpressionsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-regular-expressions", false);
+const getChatModerationSettingsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/chat-moderation-settings");
+const getBannedWordsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-words", false);
+const getbannedRegularExpressionsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-regular-expressions", false);
 
 // default settings
 let chatModerationSettings = {
     bannedWordList: {
-        enabled: false
+        enabled: false,
+        exemptRoles: []
     },
     emoteLimit: {
         enabled: false,
+        exemptRoles: [],
         max: 10
     },
     urlModeration: {
         enabled: false,
+        exemptRoles: [],
         viewTime: {
             enabled: false,
             viewTimeInHours: 0
         },
         outputMessage: ""
+    },
+    spamRaidProtection: {
+        enabled: true,
+        exemptRoles: [],
+        cacheLimit: 50,
+        characterLimit: 10,
+        shouldBan: false,
+        shouldBlock: false
     },
     exemptRoles: []
 };
@@ -38,22 +49,22 @@ let bannedRegularExpressions = {
     regularExpressions: []
 };
 
-function getBannedWordsList() {
+const getBannedWordsList = () => {
     if (!bannedWords || !bannedWords.words) return [];
-    return bannedWords.words.map(w => w.text);
-}
+    return bannedWords.words.map(w => w.text.toLowerCase());
+};
 
-function getBannedRegularExpressionsList() {
+const getBannedRegularExpressionsList = () => {
     if (!bannedRegularExpressions || !bannedRegularExpressions.regularExpressions) return [];
     return bannedRegularExpressions.regularExpressions.map(r => r.text);
-}
+};
 
 /**
  * @type Worker
  */
 let moderationService = null;
 
-function startModerationService() {
+const startModerationService = () => {
     if (moderationService != null) return;
 
     const chat = require("../twitch-chat");
@@ -74,8 +85,18 @@ function startModerationService() {
                 logger.debug(`Chat message with id '${event.messageId}' contains a banned word. Deleting...`);
                 chat.deleteMessage(event.messageId);
             }
+
+            if (event.outputMessage) {
+                chat.sendChatMessage(event.outputMessage);
+            }
             break;
         }
+        case "banUser":
+            chat.ban(event.username);
+            break;
+        case "blockUser":
+            chat.block(event.username);
+            break;
         }
     });
 
@@ -83,7 +104,6 @@ function startModerationService() {
         logger.warn(`Moderation worker failed with code: ${code}.`);
         moderationService.unref();
         moderationService = null;
-        //startModerationService();
     });
 
     moderationService.on("exit", code => {
@@ -105,109 +125,64 @@ function startModerationService() {
     );
 
     logger.info("Finished setting up chat moderation worker.");
-}
+};
 
-function stopService() {
+const stopService = () => {
     if (moderationService != null) {
         moderationService.terminate();
         moderationService.unref();
         moderationService = null;
     }
-}
+};
 
-const countEmojis = (str) => {
-    const re = /\p{Extended_Pictographic}/ug; //eslint-disable-line
-    return ((str || '').match(re) || []).length;
+const getExemptUsers = (chatMessage, settings) => {
+    return {
+        spamRaidProtection: rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, settings.spamRaidProtection.exemptRoles),
+        bannedWords: rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, settings.bannedWordList.exemptRoles),
+        emoteLimit: rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, settings.emoteLimit.exemptRoles),
+        urls: rolesManager.userIsInRole(
+            chatMessage.username, chatMessage.roles, settings.urlModeration.exemptRoles
+        ) || permitCommand.hasTemporaryPermission(chatMessage.username)
+    };
 };
 
 /**
  *
  * @param {import("../chat-helpers").FirebotChatMessage} chatMessage
  */
-async function moderateMessage(chatMessage) {
+const moderateMessage = async (chatMessage) => {
     if (chatMessage == null) return;
 
+    const globalUserExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, chatModerationSettings.exemptRoles);
+    if (globalUserExempt) return;
+
+    const userIsExemptFor = getExemptUsers(chatMessage, chatModerationSettings);
     if (
-        !chatModerationSettings.bannedWordList.enabled
-        && !chatModerationSettings.emoteLimit.enabled
-        && !chatModerationSettings.urlModeration.enabled
+        userIsExemptFor.spamRaidProtection &&
+        userIsExemptFor.bannedWords &&
+        userIsExemptFor.emoteLimit &&
+        userIsExemptFor.urls
     ) return;
 
-    let moderateMessage = false;
-
-    const userExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles,
-        chatModerationSettings.exemptRoles);
-
-    if (!userExempt) {
-        moderateMessage = true;
+    let viewer = {};
+    const urlSettings = chatModerationSettings.urlModeration;
+    if (urlSettings.enabled && urlSettings.viewTime && urlSettings.viewTime.enabled) {
+        const viewerDB = require('../../database/userDatabase');
+        viewer = await viewerDB.getUserByUsername(chatMessage.username);
     }
 
-    if (moderateMessage) {
-        const chat = require("../twitch-chat");
-
-        if (chatModerationSettings.emoteLimit.enabled && !!chatModerationSettings.emoteLimit.max) {
-            const emoteCount = chatMessage.parts.filter(p => p.type === "emote").length;
-            const emojiCount = chatMessage.parts
-                .filter(p => p.type === "text")
-                .reduce((acc, part) => acc + countEmojis(part.text), 0);
-            if ((emoteCount + emojiCount) > chatModerationSettings.emoteLimit.max) {
-                chat.deleteMessage(chatMessage.id);
-                return;
-            }
+    moderationService.postMessage(
+        {
+            type: "moderateMessage",
+            chatMessage: chatMessage,
+            userIsExemptFor: userIsExemptFor,
+            settings: chatModerationSettings,
+            viewer: viewer
         }
+    );
+};
 
-        if (chatModerationSettings.urlModeration.enabled) {
-            if (permitCommand.hasTemporaryPermission(chatMessage.username)) return;
-
-            const message = chatMessage.rawText;
-            const regex = new RegExp(/[\w]{2,}[.][\w]{2,}/, "gi");
-
-            if (!regex.test(message)) return;
-
-            logger.debug("Url moderation: Found url in message...");
-
-            const settings = chatModerationSettings.urlModeration;
-            let outputMessage = settings.outputMessage || "";
-
-            if (settings.viewTime && settings.viewTime.enabled) {
-                const viewerDB = require('../../database/userDatabase');
-                const viewer = await viewerDB.getUserByUsername(chatMessage.username);
-
-                const viewerViewTime = viewer.minutesInChannel / 60;
-                const minimumViewTime = settings.viewTime.viewTimeInHours;
-
-                if (viewerViewTime >= minimumViewTime) return;
-
-                outputMessage = outputMessage.replace("{viewTime}", minimumViewTime.toString());
-
-                logger.debug("Url moderation: Not enough view time.");
-            } else {
-                logger.debug("Url moderation: User does not have exempt role.");
-            }
-
-            chat.deleteMessage(chatMessage.id);
-
-            if (outputMessage) {
-                outputMessage = outputMessage.replace("{userName}", chatMessage.username);
-                chat.sendChatMessage(outputMessage);
-            }
-        }
-
-        const message = chatMessage.rawText;
-        const messageId = chatMessage.id;
-        moderationService.postMessage(
-            {
-                type: "moderateMessage",
-                message: message,
-                messageId: messageId,
-                scanForBannedWords: chatModerationSettings.bannedWordList.enabled,
-                maxEmotes: null
-            }
-        );
-    }
-}
-
-frontendCommunicator.on("chatMessageSettingsUpdate", settings => {
+frontendCommunicator.on("chatModerationSettingsUpdate", settings => {
     chatModerationSettings = settings;
     try {
         getChatModerationSettingsDb().push("/", settings);
@@ -218,7 +193,7 @@ frontendCommunicator.on("chatMessageSettingsUpdate", settings => {
     }
 });
 
-function saveBannedWordList() {
+const saveBannedWordList = () => {
     try {
         getBannedWordsDb().push("/", bannedWords);
     } catch (error) {
@@ -234,9 +209,9 @@ function saveBannedWordList() {
             }
         );
     }
-}
+};
 
-function saveBannedRegularExpressionsList() {
+const saveBannedRegularExpressionsList = () => {
     try {
         getbannedRegularExpressionsDb().push("/", bannedRegularExpressions);
     } catch (error) {
@@ -252,7 +227,24 @@ function saveBannedRegularExpressionsList() {
             }
         );
     }
-}
+};
+
+const enableSpamRaidProtection = (shouldBan, shouldBlock) => {
+    chatModerationSettings.spamRaidProtection.shouldBan = shouldBan;
+    chatModerationSettings.spamRaidProtection.shouldBlock = shouldBlock;
+
+    moderationService.postMessage(
+        {
+            type: "spamRaidProtectionEnable",
+            shouldBan: shouldBan,
+            shouldBlock: shouldBlock
+        }
+    );
+};
+
+const disableSpamRaidProtection = () => {
+    moderationService.postMessage({ type: "spamRaidProtectionDisable" });
+};
 
 frontendCommunicator.on("addBannedWords", words => {
     bannedWords.words = bannedWords.words.concat(words);
@@ -269,12 +261,12 @@ frontendCommunicator.on("removeAllBannedWords", () => {
     saveBannedWordList();
 });
 
-frontendCommunicator.on("addBannedRegularExpressions", regularExpressions => {
+frontendCommunicator.on("addBannedRegularExpression", regularExpressions => {
     bannedRegularExpressions.regularExpressions = bannedRegularExpressions.regularExpressions.concat(regularExpressions);
     saveBannedRegularExpressionsList();
 });
 
-frontendCommunicator.on("removeBannedRegularExpressions", regexText => {
+frontendCommunicator.on("removeBannedRegularExpression", regexText => {
     bannedRegularExpressions.regularExpressions = bannedRegularExpressions.regularExpressions.filter(r => r.text.toLowerCase() !== regexText);
     saveBannedRegularExpressionsList();
 });
@@ -292,21 +284,43 @@ frontendCommunicator.on("getChatModerationData", () => {
     };
 });
 
-function load() {
+const load = () => {
     try {
-        let settings = getChatModerationSettingsDb().getData("/");
+        const settings = getChatModerationSettingsDb().getData("/");
         if (settings && Object.keys(settings).length > 0) {
             chatModerationSettings = settings;
             if (settings.exemptRoles == null) {
                 settings.exemptRoles = [];
             }
+
+            if (settings.bannedWordList == null) {
+                settings.bannedWordList = {
+                    enabled: false,
+                    exemptRoles: [],
+                    max: 10
+                };
+            }
+
+            if (settings.bannedWordList.exemptRoles == null) {
+                settings.bannedWordList.exemptRoles = [];
+            }
+
             if (settings.emoteLimit == null) {
-                settings.emoteLimit = { enabled: false, max: 10 };
+                settings.emoteLimit = {
+                    enabled: false,
+                    exemptRoles: [],
+                    max: 10
+                };
+            }
+
+            if (settings.emoteLimit.exemptRoles == null) {
+                settings.emoteLimit.exemptRoles = [];
             }
 
             if (settings.urlModeration == null) {
                 settings.urlModeration = {
                     enabled: false,
+                    exemptRoles: [],
                     viewTime: {
                         enabled: false,
                         viewTimeInHours: 0
@@ -315,17 +329,32 @@ function load() {
                 };
             }
 
+            if (settings.urlModeration.exemptRoles == null) {
+                settings.urlModeration.exemptRoles = [];
+            }
+
+            if (settings.spamRaidProtection == null) {
+                settings.spamRaidProtection = {
+                    enabled: true,
+                    exemptRoles: [],
+                    cacheLimit: 50,
+                    characterLimit: 10,
+                    shouldBan: false,
+                    shouldBlock: false
+                };
+            }
+
             if (settings.urlModeration.enabled) {
                 permitCommand.registerPermitCommand();
             }
         }
 
-        let words = getBannedWordsDb().getData("/");
+        const words = getBannedWordsDb().getData("/");
         if (words && Object.keys(words).length > 0) {
             bannedWords = words;
         }
 
-        let regularExpressions = getbannedRegularExpressionsDb().getData("/");
+        const regularExpressions = getbannedRegularExpressionsDb().getData("/");
         if (regularExpressions && Object.keys(regularExpressions).length > 0) {
             bannedRegularExpressions = regularExpressions;
         }
@@ -336,7 +365,10 @@ function load() {
     }
     logger.info("Attempting to setup chat moderation worker...");
     startModerationService();
-}
+};
+
 exports.load = load;
 exports.stopService = stopService;
 exports.moderateMessage = moderateMessage;
+exports.enableSpamRaidProtection = enableSpamRaidProtection;
+exports.disableSpamRaidProtection = disableSpamRaidProtection;

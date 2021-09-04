@@ -74,19 +74,19 @@ const permitCommand = {
     }
 };
 
-function hasTemporaryPermission(username) {
+const hasTemporaryPermission = (username) => {
     return tempPermittedUsers.includes(username);
-}
+};
 
-function registerPermitCommand() {
+const registerPermitCommand = () => {
     if (!commandManager.hasSystemCommand(PERMIT_COMMAND_ID)) {
         commandManager.registerSystemCommand(permitCommand);
     }
-}
+};
 
-function unregisterPermitCommand() {
+const unregisterPermitCommand = () => {
     commandManager.unregisterSystemCommand(PERMIT_COMMAND_ID);
-}
+};
 
 frontendCommunicator.on("registerPermitCommand", () => {
     registerPermitCommand();
