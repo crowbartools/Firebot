@@ -1,7 +1,7 @@
 "use strict";
 
 const chat = require("../../twitch-chat");
-const raidMessageChecker = require("../../moderation/raid-message-checker");
+const chatModerationManager = require("../../moderation/chat-moderation-manager");
 
 const spamRaidProtection = {
     definition: {
@@ -143,7 +143,7 @@ const spamRaidProtection = {
             }
 
             if (commandOptions.banRaiders || commandOptions.blockRaiders) {
-                raidMessageChecker.enable(commandOptions.banRaiders, commandOptions.blockRaiders);
+                chatModerationManager.enableSpamRaidProtection(commandOptions.banRaiders, commandOptions.blockRaiders);
             }
 
             chat.sendChatMessage(commandOptions.displayTemplate);
@@ -154,7 +154,7 @@ const spamRaidProtection = {
             chat.disableSubscribersOnly();
             chat.disableEmoteOnly();
             chat.disableSlowMode();
-            raidMessageChecker.disable();
+            chatModerationManager.disableSpamRaidProtection();
 
             chat.sendChatMessage("Protection turned off.");
         }

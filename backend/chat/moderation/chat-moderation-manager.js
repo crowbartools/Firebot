@@ -57,10 +57,6 @@ const getBannedRegularExpressionsList = () => {
     return bannedRegularExpressions.regularExpressions.map(r => r.text);
 };
 
-function getChatModerationSettings() {
-    return chatModerationSettings;
-}
-
 /**
  * @type Worker
  */
@@ -93,6 +89,12 @@ const startModerationService = () => {
             }
             break;
         }
+        case "banUser":
+            chat.ban(event.username);
+            break;
+        case "blockUser":
+            chat.block(event.username);
+            break;
         }
     });
 
@@ -225,6 +227,20 @@ const saveBannedRegularExpressionsList = () => {
     }
 };
 
+const enableSpamRaidProtection = (shouldBan, shouldBlock) => {
+    moderationService.postMessage(
+        {
+            type: "spamRaidProtectionEnable",
+            shouldBan: shouldBan,
+            shouldBlock: shouldBlock
+        }
+    );
+};
+
+const disableSpamRaidProtection = () => {
+    moderationService.postMessage({ type: "spamRaidProtectionDisable" });
+};
+
 frontendCommunicator.on("addBannedWords", words => {
     bannedWords.words = bannedWords.words.concat(words);
     saveBannedWordList();
@@ -347,4 +363,5 @@ const load = () => {
 exports.load = load;
 exports.stopService = stopService;
 exports.moderateMessage = moderateMessage;
-exports.getChatModerationSettings = getChatModerationSettings;
+exports.enableSpamRaidProtection = enableSpamRaidProtection;
+exports.disableSpamRaidProtection = disableSpamRaidProtection;
