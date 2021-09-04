@@ -208,6 +208,7 @@ class TwitchChat extends EventEmitter {
 
             const twitchApi = require("../twitch-api/api");
             twitchApi.users.blockUserByName(username.replace(/^@/, '').trim());
+            return;
         }
 
         if (message.includes("/unblock")) {
@@ -215,6 +216,7 @@ class TwitchChat extends EventEmitter {
 
             const twitchApi = require("../twitch-api/api");
             twitchApi.users.unblockUserByName(username.replace(/^@/, '').trim());
+            return;
         }
 
 
@@ -225,7 +227,6 @@ class TwitchChat extends EventEmitter {
 
         // Send all message fragments
         for (let fragment of messageFragments) {
-            logger.debug(fragment);
             if (shouldWhisper) {
                 this._whisper(fragment, username, accountType);
             } else {
