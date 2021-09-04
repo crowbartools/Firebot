@@ -10,27 +10,7 @@ const logger = require("../../logwrapper");
 
 const userRoleCache = new NodeCache({ stdTTL: 30, checkperiod: 5 });
 
-const getUserByName = async (username) => {
-    try {
-        const client = twitchApi.getClient();
-
-        const response = await client.callApi({
-            type: TwitchAPICallType.Helix,
-            url: "users",
-            query: {
-                "login": username
-            }
-        });
-
-        if (response && response.data) {
-            return response.data[0];
-        }
-    } catch (err) {
-        logger.debug("Couldn't find user by name", err);
-    }
-};
-
-async function getUserChatInfo(userId) {
+const getUserChatInfo = async (userId) => {
     const client = twitchApi.getClient();
 
     const streamer = accountAccess.getAccounts().streamer;
@@ -41,38 +21,41 @@ async function getUserChatInfo(userId) {
     });
 
     return chatUser;
-}
+};
 
-async function getUserChatInfoByName(username) {
-    const client = twitchApi.getClient();
+const getUserChatInfoByName = async (username) => {
     try {
+        const client = twitchApi.getClient();
         const user = await client.helix.users.getUserByName(username);
         return getUserChatInfo(user.id);
     } catch (error) {
-        return null;
+        logger.error("Couldn't get user chat info by name", error);
     }
-}
+};
 
-async function getUserSubInfo(userId) {
-    const client = twitchApi.getClient();
-    const streamer = accountAccess.getAccounts().streamer;
-    const subInfo = await client.helix.subscriptions.getSubscriptionForUser(streamer.userId, userId);
+const getUserSubInfo = async (userId) => {
+    try {
+        const client = twitchApi.getClient();
+        const streamer = accountAccess.getAccounts().streamer;
+        const subInfo = await client.helix.subscriptions.getSubscriptionForUser(streamer.userId, userId);
+        return subInfo;
+    } catch (error) {
+        logger.error("Couldn't get user sub info", error);
+    }
+};
 
-    return subInfo;
-}
-
-async function getUserSubInfoByName(username) {
+const getUserSubInfoByName = async (username) => {
     try {
         const client = twitchApi.getClient();
         const user = await client.helix.users.getUserByName(username);
 
         return getUserSubInfo(user.id);
     } catch (error) {
-        return null;
+        logger.error("Couldn't get user sub info by name", error);
     }
-}
+};
 
-async function getUserSubscriberRole(userIdOrName) {
+const getUserSubscriberRole = async (userIdOrName) => {
     const isName = isNaN(userIdOrName);
     const subInfo = isName ?
         (await getUserSubInfoByName(userIdOrName)) :
@@ -96,9 +79,9 @@ async function getUserSubscriberRole(userIdOrName) {
     }
 
     return role;
-}
+};
 
-async function getUsersChatRoles(userIdOrName = "") {
+const getUsersChatRoles = async (userIdOrName = "") => {
 
     userIdOrName = userIdOrName.toLowerCase();
 
@@ -144,9 +127,9 @@ async function getUsersChatRoles(userIdOrName = "") {
     userRoleCache.set(userChatInfo.login, roles);
 
     return roles;
-}
+};
 
-async function blockUser(userId) {
+const blockUser = async (userId) => {
     if (userId == null) return;
 
     const client = twitchApi.getClient();
@@ -166,19 +149,19 @@ async function blockUser(userId) {
         logger.error("Couldn't block user", err);
         return false;
     }
-
-}
+};
 
 const blockUserByName = async (username) => {
     try {
-        const user = await getUserByName(username);
+        const client = twitchApi.getClient();
+        const user = await client.helix.users.getUserByName(username);
         blockUser(user.id);
     } catch (err) {
         logger.error("Couldn't block user", err);
     }
 };
 
-async function unblockUser(userId) {
+const unblockUser = async (userId) => {
     if (userId == null) return;
 
     const client = twitchApi.getClient();
@@ -199,18 +182,19 @@ async function unblockUser(userId) {
 
         return false;
     }
-}
+};
 
 const unblockUserByName = async (username) => {
     try {
-        const user = await getUserByName(username);
+        const client = twitchApi.getClient();
+        const user = await client.helix.users.getUserByName(username);
         unblockUser(user.id);
     } catch (err) {
         logger.error("Couldn't unblock user", err);
     }
 };
 
-async function getAllBlockedUsers(userId, cursor) {
+const getAllBlockedUsers = async (userId, cursor) => {
     const client = twitchApi.getClient();
 
     try {
@@ -245,9 +229,9 @@ async function getAllBlockedUsers(userId, cursor) {
         logger.error("Failed to get blocked users", error);
         return null;
     }
-}
+};
 
-async function getAllBlockedUsersPaginated(streamerId) {
+const getAllBlockedUsersPaginated = async (streamerId) => {
     let response = await getAllBlockedUsers(streamerId);
     if (response == null) return;
 
@@ -261,7 +245,7 @@ async function getAllBlockedUsersPaginated(streamerId) {
     }
 
     return blockedUsers;
-}
+};
 
 exports.getUserChatInfoByName = getUserChatInfoByName;
 exports.getUsersChatRoles = getUsersChatRoles;
