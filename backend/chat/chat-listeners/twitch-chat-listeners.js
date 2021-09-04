@@ -171,8 +171,4 @@ exports.setupChatListeners = (streamerChatClient) => {
             frontendCommunicator.send("chat-feed-notification", `Followers only mode disabled.`);
         }
     });
-
-    streamerChatClient.onMessageFailed((_, reason) => {
-        frontendCommunicator.send("chat-feed-notification", `Message not sent: ${reason}`);
-    });
 };
