@@ -120,7 +120,7 @@ parentPort.on("message", event => {
         if (event.chatMessage == null || event.settings == null || event.userIsExemptFor == null) return;
         const { chatMessage, userIsExemptFor, settings } = event;
 
-        if (!userIsExemptFor.spamRaidProtection) {
+        if (!userIsExemptFor.spamRaidProtection && settings.spamRaidProtection.cacheLimit) {
             const srpSettings = settings.spamRaidProtection;
             if (chatMessage.rawText.length > srpSettings.characterLimit) {
                 if (messageCache.length >= srpSettings.cacheLimit) {
