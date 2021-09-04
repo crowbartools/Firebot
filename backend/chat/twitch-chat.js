@@ -203,6 +203,20 @@ class TwitchChat extends EventEmitter {
             accountType = "streamer";
         }
 
+        if (message.includes("/block")) {
+            const username = message.split(" ")[1];
+
+            const twitchApi = require("../twitch-api/api");
+            twitchApi.users.blockUserByName(username.replace(/^@/, '').trim());
+        }
+
+        if (message.includes("/unblock")) {
+            const username = message.split(" ")[1];
+
+            const twitchApi = require("../twitch-api/api");
+            twitchApi.users.unblockUserByName(username.replace(/^@/, '').trim());
+        }
+
 
         // split message into fragments that don't exceed the max message length
         const messageFragments = message.match(/[\s\S]{1,500}/g)
@@ -211,6 +225,7 @@ class TwitchChat extends EventEmitter {
 
         // Send all message fragments
         for (let fragment of messageFragments) {
+            logger.debug(fragment);
             if (shouldWhisper) {
                 this._whisper(fragment, username, accountType);
             } else {

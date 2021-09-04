@@ -5,7 +5,6 @@ const accountAccess = require("../common/account-access");
 const NodeCache = require('node-cache');
 const twitchApi = require("../twitch-api/api");
 const twitchClient = require("../twitch-api/client");
-const { TwitchAPICallType } = require("twitch/lib");
 const logger = require("../logwrapper");
 
 const followCache = new NodeCache({ stdTTL: 10, checkperiod: 10 });
@@ -83,10 +82,13 @@ async function getUserDetails(userId) {
         logger.error("Unable to get banned status", error);
     }
 
-    let isBlocked;
+    let isBlocked = false;
     try {
         const blocklist = await twitchApi.users.getAllBlockedUsersPaginated(streamerData.userId);
-        isBlocked = blocklist.find(id => id === twitchUser.id) != null;
+        if (blocklist) {
+            isBlocked = blocklist.find(id => id === twitchUser.id) != null;
+        }
+
     } catch (error) {
         logger.error("Unable to get blocked status", error);
     }
