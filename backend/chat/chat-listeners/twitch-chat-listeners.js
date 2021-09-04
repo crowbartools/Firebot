@@ -26,7 +26,7 @@ const HIGHLIGHT_MESSAGE_REWARD_ID = "highlight-message";
 
 /** @arg {import('twitch-chat-client/lib/ChatClient').ChatClient} streamerChatClient */
 exports.setupChatListeners = (streamerChatClient) => {
-    streamerChatClient.onPrivmsg(async (_channel, user, messageText, msg) => {
+    streamerChatClient.onMessage(async (_channel, user, messageText, msg) => {
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText);
 
         await chatModerationManager.moderateMessage(firebotChatMessage);
