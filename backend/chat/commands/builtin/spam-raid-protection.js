@@ -1,7 +1,7 @@
 "use strict";
 
 const chat = require("../../twitch-chat");
-const raidMessageChecker = require("../../moderation/raid-message-checker");
+const chatModerationManager = require("../../moderation/chat-moderation-manager");
 
 const spamRaidProtection = {
     definition: {
@@ -34,7 +34,7 @@ const spamRaidProtection = {
             displayTemplate: {
                 type: "string",
                 title: "Output Template",
-                description: "A message that will tell the users what is going on",
+                description: "A message that will tell the users what is going on.",
                 default: `We are currently experiencing a spam raid, and have therefore temporarily turned on protective measures.`,
                 useTextArea: true
             },
@@ -143,10 +143,14 @@ const spamRaidProtection = {
             }
 
             if (commandOptions.banRaiders || commandOptions.blockRaiders) {
-                raidMessageChecker.enable(commandOptions.banRaiders, commandOptions.blockRaiders);
+                chatModerationManager.enableSpamRaidProtection(commandOptions.banRaiders, commandOptions.blockRaiders);
             }
 
-            chat.sendChatMessage(commandOptions.displayTemplate);
+            setTimeout(function() {
+                (function(commandOptions) {
+                    chat.sendChatMessage(commandOptions.displayTemplate);
+                }(commandOptions));
+            }, 2000);
         }
 
         if (args[0] === "off") {
@@ -154,7 +158,7 @@ const spamRaidProtection = {
             chat.disableSubscribersOnly();
             chat.disableEmoteOnly();
             chat.disableSlowMode();
-            raidMessageChecker.disable();
+            chatModerationManager.disableSpamRaidProtection();
 
             chat.sendChatMessage("Protection turned off.");
         }
