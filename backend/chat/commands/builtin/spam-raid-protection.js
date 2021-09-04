@@ -146,7 +146,11 @@ const spamRaidProtection = {
                 chatModerationManager.enableSpamRaidProtection(commandOptions.banRaiders, commandOptions.blockRaiders);
             }
 
-            chat.sendChatMessage(commandOptions.displayTemplate);
+            setTimeout(function() {
+                (function(commandOptions) {
+                    chat.sendChatMessage(commandOptions.displayTemplate);
+                }(commandOptions));
+            }, 2000);
         }
 
         if (args[0] === "off") {
