@@ -79,7 +79,18 @@ async function getUserDetails(userId) {
     try {
         isBanned = await client.helix.moderation.checkUserBan(streamerData.userId, twitchUser.id);
     } catch (error) {
-        logger.warn("Unable to get banned status", error);
+        logger.error("Unable to get banned status", error);
+    }
+
+    let isBlocked = false;
+    try {
+        const blocklist = await twitchApi.users.getAllBlockedUsersPaginated(streamerData.userId);
+        if (blocklist) {
+            isBlocked = blocklist.find(id => id === twitchUser.id) != null;
+        }
+
+    } catch (error) {
+        logger.error("Unable to get blocked status", error);
     }
 
     const userRoles = await twitchApi.users.getUsersChatRoles(twitchUser.id);
@@ -104,6 +115,7 @@ async function getUserDetails(userId) {
         twitchUserData.followDate = userFollowsStreamer &&
             userFollowsStreamerResponse.data[0].followDate;
         twitchUserData.isBanned = isBanned;
+        twitchUserData.isBlocked = isBlocked;
         twitchUserData.userRoles = userRoles || [];
         twitchUserData.teamRoles = teamRoles || [];
     }
