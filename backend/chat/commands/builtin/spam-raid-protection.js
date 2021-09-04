@@ -34,7 +34,7 @@ const spamRaidProtection = {
             displayTemplate: {
                 type: "string",
                 title: "Output Template",
-                description: "A message that will tell the users what is going on",
+                description: "A message that will tell the users what is going on.",
                 default: `We are currently experiencing a spam raid, and have therefore temporarily turned on protective measures.`,
                 useTextArea: true
             },

@@ -188,10 +188,10 @@ textarea.form-control {
     }
 }
 
-.btn-danger:hover, 
-.btn-default:hover, 
-.btn-primary:hover, 
-.btn-secondary:hover, 
+.btn-danger:hover,
+.btn-default:hover,
+.btn-primary:hover,
+.btn-secondary:hover,
 .btn-success:hover {
     border-color: transparent;
 }
@@ -250,18 +250,18 @@ textarea.form-control {
     color: #12d0ff;
 }
 
-// Misc 
+// Misc
 
 .table-hover > tbody > tr:hover {
     background-color: $light-background-color;
 }
 .control-list:hover>td, .command-list:hover>td {
-    color: $content-text-color; 
+    color: $content-text-color;
 }
 
 .popover {
     border: 2px solid $dropdown-menu-border;
-    background-color: $dropdown-menu-bg; 
+    background-color: $dropdown-menu-bg;
     border-radius: 2px;
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.35);
 }
@@ -371,10 +371,14 @@ textarea.form-control {
         height: 42px;
         font-size: 16px;
     }
+    &:out-of-range {
+        color: red;
+        border-color: red;
+    }
 }
 
 .input-group .form-control {
-    z-index: 0; 
+    z-index: 0;
     float: none;
 }
 
@@ -486,7 +490,7 @@ label {
         }
     }
   }
-  
+
   .fb-tabs {
     margin: 0 10px;
     border-bottom: 0px solid #eaecec;

@@ -121,16 +121,17 @@ parentPort.on("message", event => {
         const { chatMessage, userIsExemptFor, settings } = event;
 
         if (!userIsExemptFor.spamRaidProtection) {
-            if (chatMessage.rawText.length > settings.spamRaidProtection.characterLimit) {
-                if (messageCache.length >= settings.spamRaidProtection.cacheLimit) {
+            const srpSettings = settings.spamRaidProtection;
+            if (chatMessage.rawText.length > srpSettings.characterLimit) {
+                if (messageCache.length >= srpSettings.cacheLimit) {
                     messageCache.shift();
                 }
 
-                chatMessage.rawText = chatMessage.rawText.substr(settings.spamRaidProtection.characterLimit);
+                chatMessage.rawText = chatMessage.rawText.substr(srpSettings.characterLimit);
                 messageCache.push(chatMessage);
 
                 if (spamRaidProtectionEnabled && chatMessage.rawText === raidMessage) {
-                    handleRaider(chatMessage, settings.spamRaidProtection.shouldBan, settings.spamRaidProtection.shouldBlock);
+                    handleRaider(chatMessage, srpSettings.shouldBan, srpSettings.shouldBlock);
                     return;
                 }
             }

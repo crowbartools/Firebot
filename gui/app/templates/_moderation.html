@@ -25,7 +25,7 @@
           </div>
           <div style="margin-top: 15px">
             <div style="font-weight: 600;font-size: 16px;width: 100%;margin-bottom: 10px;">
-              Message cache size
+              Message cache size (145 max)
             </div>
             <div class="muted" style="margin-bottom: 10px;">
               This will tell Firebot how many of the last chat messages it should save.
@@ -37,6 +37,7 @@
               disable-variables="true"
               model="cms.chatModerationData.settings.spamRaidProtection.cacheLimit"
               on-input-update="cms.saveChatModerationSettings()"
+              max="145"
             />
           </div>
           <div style="margin-top: 20px">
