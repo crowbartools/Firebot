@@ -18,7 +18,7 @@ exports.setupListeners = () => {
     });
 
     frontendCommunicator.onAsync("get-all-stream-tags", () => {
-        return twitchApi.streamTags.getAllStreamTagsPaginated();
+        return twitchApi.streamTags.getAllStreamTags();
     });
 
     frontendCommunicator.onAsync("get-channel-info", async () => {

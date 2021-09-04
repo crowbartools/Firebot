@@ -3,7 +3,7 @@
 const accountAccess = require("../../common/account-access");
 const twitchApi = require("../client");
 
-async function getTeams(broadcasterId) {
+const getTeams = async (broadcasterId) => {
     const client = twitchApi.getClient();
     const teams = await client.kraken.channels.getChannelTeams(broadcasterId);
 
@@ -12,9 +12,9 @@ async function getTeams(broadcasterId) {
     }
 
     return teams;
-}
+};
 
-async function getMatchingTeams(userId) {
+const getMatchingTeams = async (userId) => {
     const streamer = accountAccess.getAccounts().streamer;
     const streamerTeams = await getTeams(streamer.userId);
     const userTeams = await getTeams(userId);
@@ -24,8 +24,8 @@ async function getMatchingTeams(userId) {
     }
 
     const teams = [];
-    for (let streamerTeam of streamerTeams) {
-        for (let userTeam of userTeams) {
+    for (const streamerTeam of streamerTeams) {
+        for (const userTeam of userTeams) {
             if (streamerTeam.id === userTeam.id) {
                 teams.push(streamerTeam);
             }
@@ -33,9 +33,9 @@ async function getMatchingTeams(userId) {
     }
 
     return teams;
-}
+};
 
-async function getMatchingTeamsByName(username) {
+const getMatchingTeamsByName = async (username) => {
     const client = twitchApi.getClient();
     const user = await client.helix.users.getUserByName(username);
     const teams = await getMatchingTeams(user.id);
@@ -45,9 +45,9 @@ async function getMatchingTeamsByName(username) {
     }
 
     return teams;
-}
+};
 
-async function getMatchingTeamsById(userId) {
+const getMatchingTeamsById = async (userId) => {
     const teams = await getMatchingTeams(userId);
 
     if (teams == null) {
@@ -55,9 +55,9 @@ async function getMatchingTeamsById(userId) {
     }
 
     return teams;
-}
+};
 
-async function getStreamerTeams() {
+const getStreamerTeams = async () => {
     const streamer = accountAccess.getAccounts().streamer;
     const streamerTeams = await getTeams(streamer.userId);
 
@@ -66,7 +66,7 @@ async function getStreamerTeams() {
     }
 
     return streamerTeams;
-}
+};
 
 exports.getMatchingTeamsByName = getMatchingTeamsByName;
 exports.getMatchingTeamsById = getMatchingTeamsById;

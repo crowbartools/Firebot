@@ -4,7 +4,6 @@ const uuid = require("uuid/v4");
 const logger = require("../logwrapper");
 const accountAccess = require("../common/account-access");
 const twitchClient = require("../twitch-api/client");
-const { TwitchAPICallType } = require("twitch/lib");
 const bttv = require("./third-party/bttv");
 const ffz = require("./third-party/ffz");
 const frontendCommunicator = require("../common/frontend-communicator");
