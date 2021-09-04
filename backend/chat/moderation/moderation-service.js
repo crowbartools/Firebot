@@ -122,18 +122,18 @@ parentPort.on("message", event => {
 
         if (!userIsExemptFor.spamRaidProtection && settings.spamRaidProtection.cacheLimit) {
             const srpSettings = settings.spamRaidProtection;
-            if (chatMessage.rawText.length > srpSettings.characterLimit) {
-                if (messageCache.length >= srpSettings.cacheLimit) {
-                    messageCache.shift();
-                }
-
+            if (srpSettings.characterLimit && chatMessage.rawText.length > srpSettings.characterLimit) {
                 chatMessage.rawText = chatMessage.rawText.substr(srpSettings.characterLimit);
-                messageCache.push(chatMessage);
+            }
 
-                if (spamRaidProtectionEnabled && chatMessage.rawText === raidMessage) {
-                    handleRaider(chatMessage, srpSettings.shouldBan, srpSettings.shouldBlock);
-                    return;
-                }
+            if (messageCache.length >= srpSettings.cacheLimit) {
+                messageCache.shift();
+            }
+            messageCache.push(chatMessage);
+
+            if (spamRaidProtectionEnabled && chatMessage.rawText === raidMessage) {
+                handleRaider(chatMessage, srpSettings.shouldBan, srpSettings.shouldBlock);
+                return;
             }
         }
 
