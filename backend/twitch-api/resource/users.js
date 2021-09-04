@@ -178,6 +178,56 @@ async function unblockUser(userId) {
     }
 }
 
+async function getAllBlockedUsers(userId, cursor) {
+    const client = twitchApi.getClient();
+
+    try {
+        let response = {};
+
+        if (cursor == null) {
+            response = await client.callApi({
+                type: TwitchAPICallType.Helix,
+                url: "users/blocks",
+                query: {
+                    "broadcaster_id": userId
+                }
+            });
+        } else {
+            response = await client.callApi({
+                type: TwitchAPICallType.Helix,
+                url: "users/blocks",
+                query: {
+                    "broadcaster_id": userId,
+                    after: cursor
+                }
+            });
+        }
+
+        if (response == null || response.data == null || response.data.length < 1) {
+            logger.error("Failed to get blocked users", response);
+            return null;
+        }
+
+        return response;
+    } catch (error) {
+        logger.error("Failed to get blocked users", error);
+        return null;
+    }
+}
+
+async function getAllBlockedUsersPaginated(streamerId) {
+    let response = await getAllBlockedUsers(streamerId);
+    let cursor = "";
+    let blockedUsers = response.data.map(u => u.user_id);
+
+    while (response.pagination.cursor && response.pagination.cursor !== cursor) {
+        cursor = response.pagination.cursor;
+        response = await getAllBlockedUsers(streamerId, cursor);
+        blockedUsers = blockedUsers.concat(response.data.map(u => u.user_id));
+    }
+
+    return blockedUsers;
+}
 
 async function getFollowDateForUser(username) {
     const client = twitchApi.getClient();
@@ -228,6 +278,7 @@ exports.getUserChatInfoByName = getUserChatInfoByName;
 exports.getUsersChatRoles = getUsersChatRoles;
 exports.blockUser = blockUser;
 exports.unblockUser = unblockUser;
+exports.getAllBlockedUsersPaginated = getAllBlockedUsersPaginated;
 exports.getFollowDateForUser = getFollowDateForUser;
 exports.updateUserRole = updateUserRole;
 exports.doesUserFollowChannel = doesUserFollowChannel;

@@ -20,7 +20,7 @@ const handleRaider = (message) => {
     }
 
     if (settings.shouldBlock) {
-        chat.block(message.userId, "");
+        chat.block(message.userId);
     }
 };
 

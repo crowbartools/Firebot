@@ -48,6 +48,10 @@
                 backendCommunicator.fireEvent("update-user-banned-status", { username, shouldBeBanned });
             };
 
+            service.updateBlockedStatus = (userId, shouldBeBlocked) => {
+                backendCommunicator.fireEvent("update-user-blocked-status", { userId, shouldBeBlocked });
+            };
+
             service.updateModStatus = (username, shouldBeMod) => {
                 backendCommunicator.fireEvent("update-user-mod-status", { username, shouldBeMod });
             };

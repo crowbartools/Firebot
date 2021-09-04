@@ -128,6 +128,11 @@
                     style: {color: 'red'},
                     rank: -1
                 };
+                const blockedRole = {
+                    name: "Blocked",
+                    style: {color: 'red'},
+                    rank: -2
+                };
                 const modRole = {
                     name: "Moderator",
                     style: {color: '#37ED3B'},
@@ -152,6 +157,9 @@
                             style: {color: '#47AED2'},
                             rank: 2
                         });
+                    }
+                    if ($ctrl.viewerDetails.twitchData.isBlocked) {
+                        roles.push(blockedRole);
                     }
                     if ($ctrl.viewerDetails.twitchData.isBanned) {
                         roles.push(bannedRole);
@@ -307,6 +315,30 @@
                                     $ctrl.roles = $ctrl.roles.filter(r => r.name !== "Banned");
                                 }
                                 return newBanned;
+                            },
+                            "btn-danger"
+                        )
+                        );
+
+                        const isBlocked = $ctrl.viewerDetails.twitchData.isBlocked;
+                        actions.push(new ViewerAction(
+                            "block",
+                            isBlocked,
+                            blocked => {
+                                return blocked ? "Unblock" : "Block";
+                            },
+                            blocked => {
+                                return blocked ? "fas fa-user-slash" : "fal fa-user-slash";
+                            },
+                            blocked => {
+                                let newBlocked = !blocked;
+                                viewersService.updateBlockedStatus($ctrl.viewerDetails.twitchData.id, newBlocked);
+                                if (newBlocked) {
+                                    $ctrl.roles.push(blockedRole);
+                                } else {
+                                    $ctrl.roles = $ctrl.roles.filter(r => r.name !== "Blocked");
+                                }
+                                return newBlocked;
                             },
                             "btn-danger"
                         )
