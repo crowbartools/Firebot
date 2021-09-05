@@ -84,9 +84,9 @@ async function getUserDetails(userId) {
 
     let isBlocked = false;
     try {
-        const blocklist = await twitchApi.getClient().helix.users.getBlocksPaginated(streamerData.userId);
+        const blocklist = await twitchApi.users.getAllBlockedUsersPaginated(streamerData.userId);
         if (blocklist) {
-            isBlocked = blocklist.find(user => user.id === twitchUser.id) != null;
+            isBlocked = blocklist.find(id => id === twitchUser.id) != null;
         }
 
     } catch (error) {
