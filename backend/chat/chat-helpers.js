@@ -63,7 +63,13 @@ exports.cacheStreamerEmotes = async () => {
     if (client == null || !streamer.loggedIn) return;
 
     try {
-        const response = await client.helix.chat.getChannelEmotes(streamer.userId);
+        const response = await client.callApi({
+            type: TwitchAPICallType.Helix,
+            url: "chat/emotes",
+            query: {
+                "broadcaster_id": streamer.userId
+            }
+        });
         if (response && response.data) {
             streamerEmotes = response.data;
         } else {
@@ -83,7 +89,10 @@ exports.cacheGlobalEmotes = async () => {
     if (client == null) return;
 
     try {
-        const response = await client.helix.chat.getGlobalEmotes();
+        const response = await client.callApi({
+            type: TwitchAPICallType.Helix,
+            url: "chat/emotes/global"
+        });
         if (response && response.data) {
             globalEmotes = response.data;
         } else {
