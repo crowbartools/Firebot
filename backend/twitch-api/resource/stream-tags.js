@@ -16,81 +16,37 @@ const { snakeKeys } = require('js-convert-case');
 
 function mapTwitchTag(tag) {
     return {
-        id: tag.tag_id,
-        isAuto: tag.is_auto,
-        name: tag.localization_names["en-us"],
-        description: tag.localization_descriptions["en-us"]
+        id: tag.id,
+        isAuto: tag.isAuto,
+        name: tag.getName("en-us"),
+        description: tag.getDescription("en-us")
     };
 }
 
-async function getAllStreamTags(cursor) {
-    const client = twitchApi.getClient();
-
+async function getAllStreamTags() {
     try {
-        let response = {};
+        const client = twitchApi.getClient();
+        const response = await client.helix.tags.getAllStreamTagsPaginated().getAll();
 
-        if (cursor == null) {
-            response = await client.callApi({
-                type: TwitchAPICallType.Helix,
-                url: "tags/streams"
-            });
-        } else {
-            response = await client.callApi({
-                type: TwitchAPICallType.Helix,
-                url: "tags/streams",
-                query: {
-                    after: cursor
-                }
-            });
+        if (response) {
+            /**@type {TwitchStreamTag[]} */
+            return response.filter(tag => !tag.isAuto).map(tag => mapTwitchTag(tag));
         }
-
-        if (response == null || response.data == null || response.data.length < 1) {
-            return null;
-        }
-
-        return response;
     } catch (error) {
         logger.error("Failed to get all stream tags", error);
         return null;
     }
 }
 
-async function getAllStreamTagsPaginated() {
-    let response = await getAllStreamTags();
-    let cursor = "";
-    let streamTags = response.data;
-
-    while (response.pagination.cursor && response.pagination.cursor !== cursor) {
-        cursor = response.pagination.cursor;
-        response = await getAllStreamTags(cursor);
-        if (response == null) break;
-
-        streamTags = streamTags.concat(response.data.filter(tag => !tag.is_auto));
-    }
-
-    /**@type {TwitchStreamTag[]} */
-    return streamTags.map(tag => mapTwitchTag(tag));
-}
-
 async function getChannelStreamTags() {
-    const client = twitchApi.getClient();
-
     try {
-        const response = await client.callApi({
-            type: TwitchAPICallType.Helix,
-            url: "streams/tags",
-            method: "GET",
-            query: {
-                "broadcaster_id": accountAccess.getAccounts().streamer.userId
-            }
-        });
+        const client = twitchApi.getClient();
+        const response = await client.helix.streams.getStreamTags(accountAccess.getAccounts().streamer.userId);
 
-        if (response == null || response.data == null || response.data.length < 1) {
-            return null;
+        if (response) {
+            /**@type {TwitchStreamTag[]} */
+            return response.filter(tag => !tag.isAuto).map(tag => mapTwitchTag(tag));
         }
-
-        /**@type {TwitchStreamTag[]} */
-        return response.data.filter(tag => !tag.is_auto).map(tag => mapTwitchTag(tag));
     } catch (error) {
         logger.error("Failed to get channel stream tags", error);
         return null;
@@ -98,8 +54,8 @@ async function getChannelStreamTags() {
 }
 
 async function updateChannelStreamTags(tagIds) {
-    const client = twitchApi.getClient();
     try {
+        const client = twitchApi.getClient();
         await client.callApi({
             type: TwitchAPICallType.Helix,
             url: "streams/tags",
@@ -109,13 +65,12 @@ async function updateChannelStreamTags(tagIds) {
             },
             body: snakeKeys(tagIds)
         });
-        return true;
     } catch (error) {
         logger.error("Failed to update channel stream tags", error);
         return false;
     }
 }
 
-exports.getAllStreamTagsPaginated = getAllStreamTagsPaginated;
+exports.getAllStreamTags = getAllStreamTags;
 exports.getChannelStreamTags = getChannelStreamTags;
 exports.updateChannelStreamTags = updateChannelStreamTags;
