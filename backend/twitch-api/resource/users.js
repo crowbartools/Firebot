@@ -106,7 +106,7 @@ const getUsersChatRoles = async (userIdOrName = "") => {
 
     const roles = [];
     if (userChatInfo.badges) {
-        for (const badge of userChatInfo.badges) {
+        for (let badge of userChatInfo.badges) {
             if (badge.id === "broadcaster") {
                 roles.push("broadcaster");
             } else if (badge.id === "subscriber" || badge.id === "founder") {

@@ -2,6 +2,7 @@
 
 const logger = require("../../logwrapper");
 const twitchApi = require("../client");
+const { TwitchAPICallType } = require("twitch/lib");
 
 /**
  * @typedef TwitchCategory
@@ -11,19 +12,19 @@ const twitchApi = require("../client");
  */
 
 
-const mapTwitchCategory = (category, size) => {
+function mapTwitchCategory(category, size) {
     if (category.box_art_url) {
         category.boxArtUrl = category.box_art_url.replace("{width}x{height}", size);
     }
     return category;
-};
+}
 
 /**
  * @param {number} categoryId
  * @param {string} [size]
  * @returns {Promise.<TwitchCategory>}
  */
-const getCategoryById = async (categoryId, size = "285x380") => {
+async function getCategoryById(categoryId, size = "285x380") {
     const client = twitchApi.getClient();
     try {
         const category = await client.helix.games.getGameById(categoryId);
@@ -33,17 +34,24 @@ const getCategoryById = async (categoryId, size = "285x380") => {
         logger.error("Failed to get twitch category", error);
         return null;
     }
-};
+}
 
 /**
  * @param {string} categoryName
  * @returns {Promise.<TwitchCategory[]>}
  */
-const searchCategories = async (categoryName) => {
+async function searchCategories(categoryName) {
     const client = twitchApi.getClient();
     let categories = [];
     try {
-        const response = await client.helix.search.searchCategories(categoryName, {limit: 10});
+        const response = await client.callApi({
+            type: TwitchAPICallType.Helix,
+            url: "search/categories",
+            query: {
+                query: categoryName,
+                first: 10
+            }
+        });
         if (response && response.data) {
             categories = response.data;
         }
@@ -51,7 +59,7 @@ const searchCategories = async (categoryName) => {
         logger.error("Failed to search twitch categories", err);
     }
     return categories.map(c => mapTwitchCategory(c));
-};
+}
 
 exports.getCategoryById = getCategoryById;
 exports.searchCategories = searchCategories;

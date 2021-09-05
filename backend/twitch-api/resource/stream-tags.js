@@ -1,6 +1,7 @@
 "use strict";
 
 const twitchApi = require("../client");
+const { TwitchAPICallType } = require('twitch/lib');
 const accountAccess = require("../../common/account-access");
 const logger = require('../../logwrapper');
 const { snakeKeys } = require('js-convert-case');
@@ -13,31 +14,76 @@ const { snakeKeys } = require('js-convert-case');
  * @property {string} description - A dictionary that contains the localized descriptions of the tag
  */
 
-const mapTwitchTag = (tag) => {
+function mapTwitchTag(tag) {
     return {
-        id: tag.id,
-        isAuto: tag.isAuto,
-        name: tag.getName("en-us"),
-        description: tag.getDescription("en-us")
+        id: tag.tag_id,
+        isAuto: tag.is_auto,
+        name: tag.localization_names["en-us"],
+        description: tag.localization_descriptions["en-us"]
     };
-};
+}
 
-const getAllStreamTags = async () => {
-    try {
-        const client = twitchApi.getClient();
-        const response = await client.helix.tags.getAllStreamTagsPaginated();
-        /**@type {TwitchStreamTag[]} */
-        return response.map(tag => mapTwitchTag(tag));
-    } catch (error) {
-        logger.debug("Couldn't retrieve all stream tags");
-    }
-};
-
-const getChannelStreamTags = async () => {
+async function getAllStreamTags(cursor) {
     const client = twitchApi.getClient();
 
     try {
-        const response = await client.helix.streams.getStreamTags(accountAccess.getAccounts().streamer.userId);
+        let response = {};
+
+        if (cursor == null) {
+            response = await client.callApi({
+                type: TwitchAPICallType.Helix,
+                url: "tags/streams"
+            });
+        } else {
+            response = await client.callApi({
+                type: TwitchAPICallType.Helix,
+                url: "tags/streams",
+                query: {
+                    after: cursor
+                }
+            });
+        }
+
+        if (response == null || response.data == null || response.data.length < 1) {
+            return null;
+        }
+
+        return response;
+    } catch (error) {
+        logger.error("Failed to get all stream tags", error);
+        return null;
+    }
+}
+
+async function getAllStreamTagsPaginated() {
+    let response = await getAllStreamTags();
+    let cursor = "";
+    let streamTags = response.data;
+
+    while (response.pagination.cursor && response.pagination.cursor !== cursor) {
+        cursor = response.pagination.cursor;
+        response = await getAllStreamTags(cursor);
+        if (response == null) break;
+
+        streamTags = streamTags.concat(response.data.filter(tag => !tag.is_auto));
+    }
+
+    /**@type {TwitchStreamTag[]} */
+    return streamTags.map(tag => mapTwitchTag(tag));
+}
+
+async function getChannelStreamTags() {
+    const client = twitchApi.getClient();
+
+    try {
+        const response = await client.callApi({
+            type: TwitchAPICallType.Helix,
+            url: "streams/tags",
+            method: "GET",
+            query: {
+                "broadcaster_id": accountAccess.getAccounts().streamer.userId
+            }
+        });
 
         if (response == null || response.data == null || response.data.length < 1) {
             return null;
@@ -49,19 +95,27 @@ const getChannelStreamTags = async () => {
         logger.error("Failed to get channel stream tags", error);
         return null;
     }
-};
+}
 
-const updateChannelStreamTags = async (tagIds) => {
+async function updateChannelStreamTags(tagIds) {
     const client = twitchApi.getClient();
     try {
-        await client.helix.streams.replaceStreamTags(accountAccess.getAccounts().streamer.userId, snakeKeys(tagIds));
+        await client.callApi({
+            type: TwitchAPICallType.Helix,
+            url: "streams/tags",
+            method: "PUT",
+            query: {
+                "broadcaster_id": accountAccess.getAccounts().streamer.userId
+            },
+            body: snakeKeys(tagIds)
+        });
         return true;
     } catch (error) {
         logger.error("Failed to update channel stream tags", error);
         return false;
     }
-};
+}
 
-exports.getAllStreamTags = getAllStreamTags;
+exports.getAllStreamTagsPaginated = getAllStreamTagsPaginated;
 exports.getChannelStreamTags = getChannelStreamTags;
 exports.updateChannelStreamTags = updateChannelStreamTags;
