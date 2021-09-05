@@ -14,16 +14,16 @@ const { snakeKeys } = require('js-convert-case');
  * @property {string} description - A dictionary that contains the localized descriptions of the tag
  */
 
-function mapTwitchTag(tag) {
+const mapTwitchTag = (tag) => {
     return {
         id: tag.id,
         isAuto: tag.isAuto,
         name: tag.getName("en-us"),
         description: tag.getDescription("en-us")
     };
-}
+};
 
-async function getAllStreamTags() {
+const getAllStreamTags = async () => {
     try {
         const client = twitchApi.getClient();
         const response = await client.helix.tags.getAllStreamTagsPaginated().getAll();
@@ -36,9 +36,9 @@ async function getAllStreamTags() {
         logger.error("Failed to get all stream tags", error);
         return null;
     }
-}
+};
 
-async function getChannelStreamTags() {
+const getChannelStreamTags = async () => {
     try {
         const client = twitchApi.getClient();
         const response = await client.helix.streams.getStreamTags(accountAccess.getAccounts().streamer.userId);
@@ -51,9 +51,9 @@ async function getChannelStreamTags() {
         logger.error("Failed to get channel stream tags", error);
         return null;
     }
-}
+};
 
-async function updateChannelStreamTags(tagIds) {
+const updateChannelStreamTags = async (tagIds) => {
     try {
         const client = twitchApi.getClient();
         await client.callApi({
@@ -69,7 +69,7 @@ async function updateChannelStreamTags(tagIds) {
         logger.error("Failed to update channel stream tags", error);
         return false;
     }
-}
+};
 
 exports.getAllStreamTags = getAllStreamTags;
 exports.getChannelStreamTags = getChannelStreamTags;
