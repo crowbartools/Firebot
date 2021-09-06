@@ -1,10 +1,8 @@
 "use strict";
 
 const twitchApi = require("../client");
-const { TwitchAPICallType } = require('twitch/lib');
 const accountAccess = require("../../common/account-access");
 const logger = require('../../logwrapper');
-const { snakeKeys } = require('js-convert-case');
 
 /**
  * @typedef TwitchStreamTag
