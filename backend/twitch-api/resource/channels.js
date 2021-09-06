@@ -19,7 +19,7 @@ const logger = require('../../logwrapper');
  * @param {string} [broadcasterId] The id of the broadcaster to get channel info for. Defaults to Streamer channel if left blank.
  * @returns {Promise<TwitchChannelInformation>}
  */
-async function getChannelInformation(broadcasterId) {
+const getChannelInformation = async (broadcasterId) => {
 
     // default to streamer id
     if (broadcasterId == null || broadcasterId === "") {
@@ -45,9 +45,9 @@ async function getChannelInformation(broadcasterId) {
         logger.error("Failed to get twitch channel info", error);
         return null;
     }
-}
+};
 
-async function getOnlineStatus(username) {
+const getOnlineStatus = async(username) => {
     const client = twitchApi.getClient();
     if (client == null) {
         return false;
@@ -63,19 +63,19 @@ async function getOnlineStatus(username) {
     }
 
     return false;
-}
+};
 
-async function updateChannelInformation(title = undefined, gameId = undefined) {
+const updateChannelInformation = async (title = undefined, gameId = undefined) => {
     const client = twitchApi.getClient();
     await client.helix.channels.updateChannelInfo(accountAccess.getAccounts().streamer.userId, {title: title, gameId: gameId});
-}
+};
 
 /**
  * Get channel info (game, title, etc) for the given username
  * @param {string} username The id of the broadcaster to get channel info for.
  * @returns {Promise<TwitchChannelInformation>}
  */
-async function getChannelInformationByUsername(username) {
+const getChannelInformationByUsername = async (username) => {
     if (username == null) {
         return null;
     }
@@ -94,9 +94,9 @@ async function getChannelInformationByUsername(username) {
     }
 
     return getChannelInformation(user.id);
-}
+};
 
-async function triggerAdBreak(adLength) {
+const triggerAdBreak = async (adLength) => {
     try {
         const client = twitchApi.getClient();
         const userId = accountAccess.getAccounts().streamer.userId;
@@ -113,7 +113,7 @@ async function triggerAdBreak(adLength) {
         renderWindow.webContents.send("error", `Failed to trigger ad-break because: ${error.message}`);
         return false;
     }
-}
+};
 
 exports.getChannelInformation = getChannelInformation;
 exports.getChannelInformationByUsername = getChannelInformationByUsername;
