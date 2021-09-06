@@ -19,7 +19,7 @@ const getUserChatInfo = async (userId) => {
         type: TwitchAPICallType.Kraken,
         url: `users/${userId}/chat/channels/${streamer.userId}`
     });
-    console.log(chatUser);
+
     return chatUser;
 };
 
@@ -81,6 +81,21 @@ const getUserSubscriberRole = async (userIdOrName) => {
     return role;
 };
 
+const userIsModerator = async (streamerId, userIdOrName) => {
+    const isName = isNaN(userIdOrName);
+
+    try {
+        const client = twitchApi.getClient();
+        const response = await client.helix.moderation.getModeratorsPaginated(streamerId).getAll();
+
+        if (response) {
+            return isName ? response.find(m => m.userName === userIdOrName) : response.find(m => m.userId === userIdOrName);
+        }
+    } catch (error) {
+        logger.error("Failed to get moderators", error);
+    }
+};
+
 const getUsersChatRoles = async (userIdOrName = "") => {
 
     userIdOrName = userIdOrName.toLowerCase();
@@ -99,6 +114,9 @@ const getUsersChatRoles = async (userIdOrName = "") => {
         (await getUserChatInfo(userIdOrName));
 
     const subscriberRole = await getUserSubscriberRole(userIdOrName);
+    const streamer = accountAccess.getAccounts().streamer;
+    const isBroadcaster = isName ? streamer.username === userIdOrName : streamer.userId === userIdOrName;
+    const isModerator = await userIsModerator(streamer.userId, userIdOrName);
 
     if (userChatInfo == null && subscriberRole == null) {
         return [];
@@ -107,19 +125,22 @@ const getUsersChatRoles = async (userIdOrName = "") => {
     const roles = [];
     if (userChatInfo.badges) {
         for (let badge of userChatInfo.badges) {
-            if (badge.id === "broadcaster") {
-                roles.push("broadcaster");
-            } else if (badge.id === "subscriber" || badge.id === "founder") {
-                roles.push("sub");
-            } else if (badge.id === "vip") {
+            if (badge.id === "vip") {
                 roles.push("vip");
-            } else if (badge.id === "moderator") {
-                roles.push("mod");
             }
         }
     }
 
+    if (isBroadcaster) {
+        roles.push("broadcaster");
+    }
+
+    if (isModerator) {
+        roles.push("mod");
+    }
+
     if (subscriberRole != null) {
+        roles.push("sub");
         roles.push(subscriberRole);
     }
 
