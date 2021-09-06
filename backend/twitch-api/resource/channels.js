@@ -67,16 +67,7 @@ async function getOnlineStatus(username) {
 
 async function updateChannelInformation(title = undefined, gameId = undefined) {
     const client = twitchApi.getClient();
-    await client.callApi({
-        type: TwitchAPICallType.Helix,
-        method: "PATCH",
-        url: "channels",
-        query: {
-            "broadcaster_id": accountAccess.getAccounts().streamer.userId,
-            "title": title,
-            "game_id": gameId
-        }
-    });
+    await client.helix.channels.updateChannelInfo(accountAccess.getAccounts().streamer.userId, {title: title, gameId: gameId});
 }
 
 /**
