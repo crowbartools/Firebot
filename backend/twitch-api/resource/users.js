@@ -19,7 +19,7 @@ const getUserChatInfo = async (userId) => {
         type: TwitchAPICallType.Kraken,
         url: `users/${userId}/chat/channels/${streamer.userId}`
     });
-
+    console.log(chatUser);
     return chatUser;
 };
 

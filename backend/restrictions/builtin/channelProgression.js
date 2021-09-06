@@ -1,7 +1,5 @@
 "use strict";
 
-const channelAccess = require("../../common/channel-access");
-
 const model = {
     definition: {
         id: "firebot:channelprogression",
@@ -14,7 +12,7 @@ const model = {
         <div>
             <div class="alert alert-danger">
                 This restriction only worked on Mixer. It now does nothing and can be removed.
-            </div> 
+            </div>
         </div>
     `,
     optionsController: ($scope) => {
