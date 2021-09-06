@@ -5,6 +5,7 @@ const accountAccess = require("../common/account-access");
 const NodeCache = require('node-cache');
 const twitchApi = require("../twitch-api/api");
 const twitchClient = require("../twitch-api/client");
+const teamRolesManager = require("../roles/team-roles-manager");
 const logger = require("../logwrapper");
 
 const followCache = new NodeCache({ stdTTL: 10, checkperiod: 10 });
@@ -94,7 +95,7 @@ async function getUserDetails(userId) {
     }
 
     const userRoles = await twitchApi.users.getUsersChatRoles(twitchUser.id);
-    const teamRoles = await twitchApi.teams.getMatchingTeamsById(twitchUser.id);
+    const teamRoles = await teamRolesManager.getAllTeamRolesForViewer(twitchUser.name);
 
     const userFollowsStreamerResponse = await client.helix.users.getFollows({
         user: userId,
