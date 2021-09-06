@@ -129,58 +129,13 @@ const getUsersChatRoles = async (userIdOrName = "") => {
     return roles;
 };
 
-const blockUser = async (userId) => {
-    if (userId == null) return;
-
-    const client = twitchApi.getClient();
-
-    try {
-        await client.callApi({
-            type: TwitchAPICallType.Helix,
-            method: "PUT",
-            url: "users/blocks",
-            query: {
-                "target_user_id": userId
-            }
-        });
-
-        return true;
-    } catch (err) {
-        logger.error("Couldn't block user", err);
-        return false;
-    }
-};
-
 const blockUserByName = async (username) => {
     try {
         const client = twitchApi.getClient();
         const user = await client.helix.users.getUserByName(username);
-        blockUser(user.id);
+        client.helix.users.createBlock(user.id);
     } catch (err) {
         logger.error("Couldn't block user", err);
-    }
-};
-
-const unblockUser = async (userId) => {
-    if (userId == null) return;
-
-    const client = twitchApi.getClient();
-
-    try {
-        await client.callApi({
-            type: TwitchAPICallType.Helix,
-            method: "DELETE",
-            url: "users/blocks",
-            query: {
-                "target_user_id": userId
-            }
-        });
-
-        return true;
-    } catch (err) {
-        logger.error("Couldn't unblock user", err);
-
-        return false;
     }
 };
 
@@ -188,69 +143,13 @@ const unblockUserByName = async (username) => {
     try {
         const client = twitchApi.getClient();
         const user = await client.helix.users.getUserByName(username);
-        unblockUser(user.id);
+        client.helix.users.deleteBlock(user.id);
     } catch (err) {
         logger.error("Couldn't unblock user", err);
     }
 };
 
-const getAllBlockedUsers = async (userId, cursor) => {
-    const client = twitchApi.getClient();
-
-    try {
-        let response = {};
-
-        if (cursor == null) {
-            response = await client.callApi({
-                type: TwitchAPICallType.Helix,
-                url: "users/blocks",
-                query: {
-                    "broadcaster_id": userId
-                }
-            });
-        } else {
-            response = await client.callApi({
-                type: TwitchAPICallType.Helix,
-                url: "users/blocks",
-                query: {
-                    "broadcaster_id": userId,
-                    after: cursor
-                }
-            });
-        }
-
-        if (response == null || response.data == null || response.data.length < 1) {
-            logger.error("Couldn't find any blocked users");
-            return null;
-        }
-
-        return response;
-    } catch (error) {
-        logger.error("Failed to get blocked users", error);
-        return null;
-    }
-};
-
-const getAllBlockedUsersPaginated = async (streamerId) => {
-    let response = await getAllBlockedUsers(streamerId);
-    if (response == null) return;
-
-    let cursor = "";
-    let blockedUsers = response.data.map(u => u.user_id);
-
-    while (response.pagination.cursor && response.pagination.cursor !== cursor) {
-        cursor = response.pagination.cursor;
-        response = await getAllBlockedUsers(streamerId, cursor);
-        blockedUsers = blockedUsers.concat(response.data.map(u => u.user_id));
-    }
-
-    return blockedUsers;
-};
-
 exports.getUserChatInfoByName = getUserChatInfoByName;
 exports.getUsersChatRoles = getUsersChatRoles;
-exports.blockUser = blockUser;
 exports.blockUserByName = blockUserByName;
-exports.unblockUser = unblockUser;
 exports.unblockUserByName = unblockUserByName;
-exports.getAllBlockedUsersPaginated = getAllBlockedUsersPaginated;

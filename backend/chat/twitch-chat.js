@@ -276,15 +276,15 @@ class TwitchChat extends EventEmitter {
     block(userId) {
         if (userId == null) return;
 
-        const twitchApi = require("../twitch-api/api");
-        twitchApi.users.blockUser(userId);
+        const client = twitchClient.getClient();
+        client.helix.users.createBlock(userId);
     }
 
     unblock(userId) {
         if (userId == null) return;
 
-        const twitchApi = require("../twitch-api/api");
-        twitchApi.users.unblockUser(userId);
+        const client = twitchClient.getClient();
+        client.helix.users.deleteBlock(userId);
     }
 
     addVip(username) {
