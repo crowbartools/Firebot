@@ -53,6 +53,7 @@ const getChannelStreamTags = async () => {
     }
 };
 
+//TODO: update to package method when package patch is released
 const updateChannelStreamTags = async (tagIds) => {
     try {
         const client = twitchApi.getClient();
