@@ -53,19 +53,10 @@ const getChannelStreamTags = async () => {
     }
 };
 
-//TODO: update to package method when package patch is released
 const updateChannelStreamTags = async (tagIds) => {
     try {
         const client = twitchApi.getClient();
-        await client.callApi({
-            type: TwitchAPICallType.Helix,
-            url: "streams/tags",
-            method: "PUT",
-            query: {
-                "broadcaster_id": accountAccess.getAccounts().streamer.userId
-            },
-            body: snakeKeys(tagIds)
-        });
+        await client.helix.streams.replaceStreamTags(accountAccess.getAccounts().streamer.userId, tagIds);
     } catch (error) {
         logger.error("Failed to update channel stream tags", error);
         return false;
