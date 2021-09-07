@@ -1,11 +1,9 @@
 "use strict";
 
 const chatHelpers = require("../chat-helpers");
-
 const { settings } = require("../../common/settings-access");
-
 const frontendCommunicator = require("../../common/frontend-communicator");
-
+const chatRolesManager = require("../../roles/chat-roles-manager");
 const utils = require("../../utility");
 
 const NodeCache = require("node-cache");
@@ -97,8 +95,7 @@ async function updateUserOnlineStatus(userDetails, updateDb = false) {
         logger.debug(`Marking user ${userDetails.displayName} as online with ttl of ${ONLINE_TIMEOUT} secs`);
         onlineUsers.set(userDetails.id, true, ONLINE_TIMEOUT);
 
-        const twitchUsers = require("../../twitch-api/resource/users");
-        const roles = await twitchUsers.getUsersChatRoles(userDetails.id);
+        const roles = await chatRolesManager.getChatRoles(userDetails.id);
 
         frontendCommunicator.send("twitch:chat:user-joined", {
             id: userDetails.id,

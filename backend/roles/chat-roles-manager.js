@@ -1,9 +1,11 @@
 "use strict";
 
 const accountAccess = require("../common/account-access");
-const twitchChat = require("../chat/twitch-chat");
 const twitchApi = require("../twitch-api/client");
 const logger = require("../logwrapper");
+const NodeCache = require("node-cache");
+
+const userRoleCache = new NodeCache({ stdTTL: 30, checkperiod: 5 });
 
 const isBroadcaster = (username) => {
     return username === accountAccess.getAccounts().streamer.username;
@@ -30,17 +32,23 @@ const isModerator = async (userId) => {
 };
 
 const isVip = async (username) => {
-    const vips = await twitchChat.getVips();
+    try {
+        const twitchChat = require("../chat/twitch-chat");
+        const vips = await twitchChat.getVips();
 
-    if (vips) {
-        for (const vip of vips) {
-            if (vip === username) {
-                return true;
+        if (vips) {
+            for (const vip of vips) {
+                if (vip === username) {
+                    return true;
+                }
             }
         }
-    }
 
-    return false;
+        return false;
+    } catch (error) {
+        logger.error("Failed to get vips", error);
+        return false;
+    }
 };
 
 const getSubRoles = async (userId) => {
@@ -70,9 +78,16 @@ const getSubRoles = async (userId) => {
 };
 
 const getChatRoles = async (userIdOrName) => {
-    let roles = [];
+    /** @type {import("twitch/lib").HelixUser} */
     let user = {};
+    let roles = [];
     const isName = isNaN(userIdOrName);
+
+    const cachedRoles = userRoleCache.get(userIdOrName);
+
+    if (cachedRoles != null) {
+        return cachedRoles;
+    }
 
     try {
         const client = twitchApi.getClient();
@@ -107,6 +122,10 @@ const getChatRoles = async (userIdOrName) => {
             roles = roles.concat(subRoles);
         }
     }
+
+
+    userRoleCache.set(user.id, roles);
+    userRoleCache.set(user.name, roles);
 
     return roles;
 };

@@ -6,6 +6,7 @@ const NodeCache = require('node-cache');
 const twitchApi = require("../twitch-api/api");
 const twitchClient = require("../twitch-api/client");
 const teamRolesManager = require("../roles/team-roles-manager");
+const chatRolesManager = require("../roles/chat-roles-manager");
 const logger = require("../logwrapper");
 
 const followCache = new NodeCache({ stdTTL: 10, checkperiod: 10 });
@@ -90,7 +91,7 @@ async function getUserDetails(userId) {
         logger.error("Unable to get blocked status", error);
     }
 
-    const userRoles = await twitchApi.users.getUsersChatRoles(twitchUser.id);
+    const userRoles = await chatRolesManager.getChatRoles(twitchUser.id);
     const teamRoles = await teamRolesManager.getAllTeamRolesForViewer(twitchUser.name);
 
     const userFollowsStreamerResponse = await client.helix.users.getFollows({
