@@ -303,6 +303,17 @@ class TwitchChat extends EventEmitter {
         return this._streamerChatClient.removeVip(streamer.username, username);
     }
 
+    async getVips() {
+        const streamer = accountAccess.getAccounts().streamer;
+        const vips = await this._streamerChatClient.getVips(streamer.username);
+
+        if (vips) {
+            return vips;
+        }
+
+        return [];
+    }
+
     clearChat() {
         if (this._streamerChatClient == null) return;
         this._streamerChatClient.clear();
