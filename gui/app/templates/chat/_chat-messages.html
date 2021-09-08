@@ -105,6 +105,10 @@
             ng-if="chatItem.type === 'alert'"
             message="chatItem.data"
           />
+          <chat-notification
+            ng-if="chatItem.type === 'notification'"
+            message="chatItem.data"
+          />
         </div>
       </div>
     </div>
