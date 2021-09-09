@@ -32,7 +32,7 @@ const getAllStreamTags = async () => {
         }
     } catch (error) {
         logger.error("Failed to get all stream tags", error);
-        return null;
+        return [];
     }
 };
 
@@ -47,7 +47,7 @@ const getChannelStreamTags = async () => {
         }
     } catch (error) {
         logger.error("Failed to get channel stream tags", error);
-        return null;
+        return [];
     }
 };
 
@@ -57,7 +57,6 @@ const updateChannelStreamTags = async (tagIds) => {
         await client.helix.streams.replaceStreamTags(accountAccess.getAccounts().streamer.userId, tagIds);
     } catch (error) {
         logger.error("Failed to update channel stream tags", error);
-        return false;
     }
 };
 

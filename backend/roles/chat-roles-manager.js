@@ -16,15 +16,7 @@ const isModerator = async (userId) => {
         const client = twitchApi.getClient();
         const moderators = await client.helix.moderation.getModeratorsPaginated(accountAccess.getAccounts().streamer.userId).getAll();
 
-        if (moderators) {
-            for (const moderator of moderators) {
-                if (moderator.userId === userId) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        return moderators ? moderators.some(m => m.userId === userId) : false;
     } catch (error) {
         logger.debug("Failed to get moderators", error);
         return false;
@@ -36,15 +28,7 @@ const isVip = async (username) => {
         const twitchChat = require("../chat/twitch-chat");
         const vips = await twitchChat.getVips();
 
-        if (vips) {
-            for (const vip of vips) {
-                if (vip === username) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        return vips ? vips.includes(username) : false;
     } catch (error) {
         logger.error("Failed to get vips", error);
         return false;
@@ -118,9 +102,7 @@ const getChatRoles = async (userIdOrName) => {
             roles.push("vip");
         }
 
-        if (subRoles) {
-            roles = roles.concat(subRoles);
-        }
+        roles = roles.concat(subRoles);
     }
 
 

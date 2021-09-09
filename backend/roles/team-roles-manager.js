@@ -11,15 +11,10 @@ const accountAccess = require("../common/account-access");
  */
 
 /** @returns {MappedTeamRole} */
-const mapRoles = (teams) => {
-    return teams
-        .map(team => {
-            return {
-                id: parseInt(team.id), // For compatibility (Kraken API returned an int)
-                name: team.displayName
-            };
-        });
-};
+const mapRoles = (teams) => teams.map(t => ({
+    id: parseInt(t.id), // For compatibility (Kraken API returned an int)
+    name: t.displayName
+}));
 
 /** @returns {Promise.<MappedTeamRole[]>} */
 const getAllTeamRolesForViewer = async (username) => {
@@ -27,15 +22,13 @@ const getAllTeamRolesForViewer = async (username) => {
     const user = await client.helix.users.getUserByName(username);
     const streamerTeams = await client.helix.teams.getTeamsForBroadcaster(accountAccess.getAccounts().streamer.userId);
 
-    if (streamerTeams == null) return null;
+    if (streamerTeams == null) return [];
 
     const teams = [];
     for (const team of streamerTeams) {
         const relations = await team.getUserRelations();
-        for (const relation of relations) {
-            if (relation.id === user.id) {
-                teams.push(team);
-            }
+        if (relations.some(r => r.id === user.id)) {
+            teams.push(team);
         }
     }
 
