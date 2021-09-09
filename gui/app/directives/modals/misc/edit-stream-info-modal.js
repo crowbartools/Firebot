@@ -175,7 +175,7 @@
 
                 $ctrl.save = () => {
                     backendCommunicator.fireEventAsync("set-channel-info", $ctrl.streamInfo);
-                    backendCommunicator.fireEventAsync("set-stream-tags", { tagIds: $ctrl.streamTags.map(tag => tag.id) });
+                    backendCommunicator.fireEventAsync("set-stream-tags", $ctrl.streamTags.map(tag => tag.id));
                     backendCommunicator.fireEvent("category-changed", $ctrl.streamInfo.gameName);
                     ngToast.create({
                         className: 'success',

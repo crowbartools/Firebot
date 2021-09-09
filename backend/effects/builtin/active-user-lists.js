@@ -60,7 +60,7 @@ const model = {
             return true;
         }
 
-        let userId = (await twitchApi.users.getUserChatInfoByName(event.effect.username)).id;
+        let userId = (await twitchApi.getClient().helix.users.getUserByName(event.effect.username)).id;
         if (userId == null) {
             logger.debug("Couldn't get ids for username in active user list effect.");
             return true;
@@ -68,7 +68,7 @@ const model = {
 
         if (event.effect.action === "Add User") {
             await activeUserHandler.addActiveUser({
-                id: userId,
+                userId: userId,
                 displayName: username,
                 userName: username
             }, false, true);

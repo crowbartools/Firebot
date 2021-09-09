@@ -5,6 +5,8 @@ const accountAccess = require("../common/account-access");
 const NodeCache = require('node-cache');
 const twitchApi = require("../twitch-api/api");
 const twitchClient = require("../twitch-api/client");
+const teamRolesManager = require("../roles/team-roles-manager");
+const chatRolesManager = require("../roles/chat-roles-manager");
 const logger = require("../logwrapper");
 
 const followCache = new NodeCache({ stdTTL: 10, checkperiod: 10 });
@@ -35,11 +37,6 @@ async function userFollowsChannels(username, channelNames) {
     return userfollowsAllChannels;
 }
 
-function getUser(userId) {
-    const client = twitchClient.getClient();
-    return client.kraken.users.getUser(userId);
-}
-
 async function getUserDetails(userId) {
 
     const firebotUserData = await userDb.getUserById(userId);
@@ -52,9 +49,10 @@ async function getUserDetails(userId) {
 
     let twitchUser;
     try {
-        twitchUser = await getUser(userId);
+        const client = twitchClient.getClient();
+        twitchUser = await client.helix.users.getUserById(userId);
     } catch (error) {
-        // fail silently for now
+        logger.error("Failed to get user data", error);
     }
 
     if (twitchUser == null) {
@@ -67,7 +65,7 @@ async function getUserDetails(userId) {
         id: twitchUser.id,
         username: twitchUser.name,
         displayName: twitchUser.displayName,
-        iconUrl: twitchUser.logoUrl,
+        iconUrl: twitchUser.profilePictureUrl,
         creationDate: twitchUser.creationDate
     };
 
@@ -84,17 +82,17 @@ async function getUserDetails(userId) {
 
     let isBlocked = false;
     try {
-        const blocklist = await twitchApi.users.getAllBlockedUsersPaginated(streamerData.userId);
+        const blocklist = await twitchApi.getClient().helix.users.getBlocksPaginated(streamerData.userId).getAll();
         if (blocklist) {
-            isBlocked = blocklist.find(id => id === twitchUser.id) != null;
+            isBlocked = blocklist.some(u => u.userId === twitchUser.id);
         }
 
     } catch (error) {
         logger.error("Unable to get blocked status", error);
     }
 
-    const userRoles = await twitchApi.users.getUsersChatRoles(twitchUser.id);
-    const teamRoles = await twitchApi.teams.getMatchingTeamsById(twitchUser.id);
+    const userRoles = await chatRolesManager.getChatRoles(twitchUser.id);
+    const teamRoles = await teamRolesManager.getAllTeamRolesForViewer(twitchUser.name);
 
     const userFollowsStreamerResponse = await client.helix.users.getFollows({
         user: userId,
@@ -130,6 +128,5 @@ async function getUserDetails(userId) {
     return userDetails;
 }
 
-exports.getUser = getUser;
 exports.getUserDetails = getUserDetails;
 exports.userFollowsChannels = userFollowsChannels;
