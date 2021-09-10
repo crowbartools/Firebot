@@ -10,7 +10,7 @@ const spamRaidProtection = {
         active: true,
         hidden: false,
         trigger: "!spamraidprotection",
-        description: "Toggles protective measures such as follow-only mode, slow mode, etc.",
+        description: "Toggles protective measures like chat clearing, follow only, sub only, emote only and slow mode, as well as whether spam raiders should be banned and/or blocked or not.",
         autoDeleteTrigger: false,
         scanWholeMessage: false,
         cooldown: {
@@ -98,6 +98,132 @@ const spamRaidProtection = {
                 arg: "off",
                 usage: "off",
                 description: "Turn off the protection command.",
+                restrictionData: {
+                    restrictions: [
+                        {
+                            id: "sys-cmd-mods-only-perms",
+                            type: "firebot:permissions",
+                            mode: "roles",
+                            roleIds: [
+                                "broadcaster",
+                                "mod"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                arg: "followonly",
+                usage: "followonly",
+                description: "Toggles the follow-only mode setting.",
+                restrictionData: {
+                    restrictions: [
+                        {
+                            id: "sys-cmd-mods-only-perms",
+                            type: "firebot:permissions",
+                            mode: "roles",
+                            roleIds: [
+                                "broadcaster",
+                                "mod"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                arg: "subonly",
+                usage: "subonly",
+                description: "Toggles the subscriber-only mode setting.",
+                restrictionData: {
+                    restrictions: [
+                        {
+                            id: "sys-cmd-mods-only-perms",
+                            type: "firebot:permissions",
+                            mode: "roles",
+                            roleIds: [
+                                "broadcaster",
+                                "mod"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                arg: "emoteonly",
+                usage: "emoteonly",
+                description: "Toggles the emote-only mode setting.",
+                restrictionData: {
+                    restrictions: [
+                        {
+                            id: "sys-cmd-mods-only-perms",
+                            type: "firebot:permissions",
+                            mode: "roles",
+                            roleIds: [
+                                "broadcaster",
+                                "mod"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                arg: "slow",
+                usage: "slow",
+                description: "Toggles the slow mode setting.",
+                restrictionData: {
+                    restrictions: [
+                        {
+                            id: "sys-cmd-mods-only-perms",
+                            type: "firebot:permissions",
+                            mode: "roles",
+                            roleIds: [
+                                "broadcaster",
+                                "mod"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                arg: "chatclear",
+                usage: "chatclear",
+                description: "Toggles the setting to clear chat.",
+                restrictionData: {
+                    restrictions: [
+                        {
+                            id: "sys-cmd-mods-only-perms",
+                            type: "firebot:permissions",
+                            mode: "roles",
+                            roleIds: [
+                                "broadcaster",
+                                "mod"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                arg: "ban",
+                usage: "ban",
+                description: "Toggles the setting to ban spam raiders.",
+                restrictionData: {
+                    restrictions: [
+                        {
+                            id: "sys-cmd-mods-only-perms",
+                            type: "firebot:permissions",
+                            mode: "roles",
+                            roleIds: [
+                                "broadcaster",
+                                "mod"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                arg: "block",
+                usage: "block",
+                description: "Toggles the setting to block spam raiders.",
                 restrictionData: {
                     restrictions: [
                         {
