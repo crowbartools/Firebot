@@ -2,6 +2,58 @@
 
 const chat = require("../../twitch-chat");
 const chatModerationManager = require("../../moderation/chat-moderation-manager");
+const commandAccess = require("../command-access");
+const frontendCommunicator = require("../../../common/frontend-communicator");
+
+const activateProtectionOptions = async (commandOptions) => {
+    if (commandOptions.enableFollowerOnly) {
+        chat.enableFollowersOnly(commandOptions.enableFollowerOnlyDuration);
+    }
+
+    if (commandOptions.enableSubscriberOnly) {
+        chat.enableSubscribersOnly();
+    }
+
+    if (commandOptions.enableEmoteOnly) {
+        chat.enableEmoteOnly();
+    }
+
+    if (commandOptions.enableSlowMode) {
+        chat.enableSlowMode(commandOptions.enableSlowModeDelay);
+    }
+
+    if (commandOptions.clearChat) {
+        chat.clearChat();
+    }
+
+    if (commandOptions.banRaiders || commandOptions.blockRaiders) {
+        chatModerationManager.enableSpamRaidProtection(commandOptions.banRaiders, commandOptions.blockRaiders);
+    }
+
+    setTimeout(function() {
+        (function(commandOptions) {
+            chat.sendChatMessage(commandOptions.displayTemplate);
+        }(commandOptions));
+    }, 2000);
+};
+
+const toggleSetting = (option, setting) => {
+    const systemCommands = commandAccess.getSystemCommandOverrides();
+    let command = systemCommands["firebot:spamRaidProtection"];
+
+    if (command == null) return;
+
+    if (setting === "on") {
+        command.options[option].value = true;
+    } else if (setting === "off") {
+        command.options[option].value = false;
+    } else {
+        command.options[option].value = !command.options[option].value;
+    }
+
+    commandAccess.saveSystemCommandOverride(command);
+    frontendCommunicator.send("systemCommandsUpdated");
+};
 
 const spamRaidProtection = {
     definition: {
@@ -113,9 +165,9 @@ const spamRaidProtection = {
                 }
             },
             {
-                arg: "followonly",
-                usage: "followonly",
-                description: "Toggles the follow-only mode setting.",
+                arg: "followeronly",
+                usage: "followeronly [on/off]",
+                description: "Toggles the follower-only mode setting.",
                 restrictionData: {
                     restrictions: [
                         {
@@ -131,8 +183,8 @@ const spamRaidProtection = {
                 }
             },
             {
-                arg: "subonly",
-                usage: "subonly",
+                arg: "subsonly",
+                usage: "subsonly [on/off]",
                 description: "Toggles the subscriber-only mode setting.",
                 restrictionData: {
                     restrictions: [
@@ -150,7 +202,7 @@ const spamRaidProtection = {
             },
             {
                 arg: "emoteonly",
-                usage: "emoteonly",
+                usage: "emoteonly [on/off]",
                 description: "Toggles the emote-only mode setting.",
                 restrictionData: {
                     restrictions: [
@@ -168,7 +220,7 @@ const spamRaidProtection = {
             },
             {
                 arg: "slow",
-                usage: "slow",
+                usage: "slow [on/off]",
                 description: "Toggles the slow mode setting.",
                 restrictionData: {
                     restrictions: [
@@ -185,8 +237,8 @@ const spamRaidProtection = {
                 }
             },
             {
-                arg: "chatclear",
-                usage: "chatclear",
+                arg: "clearchat",
+                usage: "clearchat [on/off]",
                 description: "Toggles the setting to clear chat.",
                 restrictionData: {
                     restrictions: [
@@ -203,8 +255,8 @@ const spamRaidProtection = {
                 }
             },
             {
-                arg: "ban",
-                usage: "ban",
+                arg: "banraiders",
+                usage: "banraiders [on/off]",
                 description: "Toggles the setting to ban spam raiders.",
                 restrictionData: {
                     restrictions: [
@@ -221,8 +273,8 @@ const spamRaidProtection = {
                 }
             },
             {
-                arg: "block",
-                usage: "block",
+                arg: "blockraiders",
+                usage: "blockraiders [on/off]",
                 description: "Toggles the setting to block spam raiders.",
                 restrictionData: {
                     restrictions: [
@@ -248,45 +300,49 @@ const spamRaidProtection = {
         const args = event.userCommand.args;
 
         if (args.length === 0) {
-            if (commandOptions.enableFollowerOnly) {
-                chat.enableFollowersOnly(commandOptions.enableFollowerOnlyDuration);
-            }
-
-            if (commandOptions.enableSubscriberOnly) {
-                chat.enableSubscribersOnly();
-            }
-
-            if (commandOptions.enableEmoteOnly) {
-                chat.enableEmoteOnly();
-            }
-
-            if (commandOptions.enableSlowMode) {
-                chat.enableSlowMode(commandOptions.enableSlowModeDelay);
-            }
-
-            if (commandOptions.clearChat) {
-                chat.clearChat();
-            }
-
-            if (commandOptions.banRaiders || commandOptions.blockRaiders) {
-                chatModerationManager.enableSpamRaidProtection(commandOptions.banRaiders, commandOptions.blockRaiders);
-            }
-
-            setTimeout(function() {
-                (function(commandOptions) {
-                    chat.sendChatMessage(commandOptions.displayTemplate);
-                }(commandOptions));
-            }, 2000);
+            activateProtectionOptions(commandOptions);
         }
 
-        if (args[0] === "off") {
-            chat.disableFollowersOnly();
-            chat.disableSubscribersOnly();
-            chat.disableEmoteOnly();
-            chat.disableSlowMode();
-            chatModerationManager.disableSpamRaidProtection();
+        let option = "";
+        switch (args[0]) {
+        case "followeronly":
+            option = "enableFollowerOnly";
+            break;
+        case "subsonly":
+            option = "enableSubscriberOnly";
+            break;
+        case "emoteonly":
+            option = "enableEmoteOnly";
+            break;
+        case "slow":
+            option = "enableSlowMode";
+            break;
+        case "clearchat":
+            option = "clearChat";
+            break;
+        case "banraiders":
+            option = "banRaiders";
+            break;
+        case "blockraiders":
+            option = "blockRaiders";
+            break;
+        }
 
-            chat.sendChatMessage("Protection turned off.");
+        if (args.length === 2) {
+            toggleSetting(option, args[1]);
+        } else {
+            if (args[0] === "off") {
+                chat.disableFollowersOnly();
+                chat.disableSubscribersOnly();
+                chat.disableEmoteOnly();
+                chat.disableSlowMode();
+                chatModerationManager.disableSpamRaidProtection();
+
+                chat.sendChatMessage("Protection turned off.");
+                return;
+            }
+
+            toggleSetting(option);
         }
     }
 };
