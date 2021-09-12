@@ -10,7 +10,7 @@ const spamRaidProtection = {
         active: true,
         hidden: false,
         trigger: "!spamraidprotection",
-        description: "Toggles protective measures such as follow-only mode, slow mode, etc.",
+        description: "Toggles protective measures like chat clearing, follow only, sub only, emote only and slow mode, as well as whether spam raiders should be banned and/or blocked or not.",
         autoDeleteTrigger: false,
         scanWholeMessage: false,
         cooldown: {
