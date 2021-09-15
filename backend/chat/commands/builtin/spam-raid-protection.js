@@ -2,7 +2,7 @@
 
 const chat = require("../../twitch-chat");
 const chatModerationManager = require("../../moderation/chat-moderation-manager");
-const commandAccess = require("../command-access");
+const commandManager = require("../CommandManager");
 const frontendCommunicator = require("../../../common/frontend-communicator");
 
 const activateProtectionOptions = async (commandOptions) => {
@@ -38,8 +38,8 @@ const activateProtectionOptions = async (commandOptions) => {
 };
 
 const toggleSetting = (option, setting) => {
-    const systemCommands = commandAccess.getSystemCommandOverrides();
-    let command = systemCommands["firebot:spamRaidProtection"];
+    const systemCommands = commandManager.getAllSystemCommandDefinitions();
+    let command = systemCommands.find(sc => sc.id === "firebot:spamRaidProtection");
 
     if (command == null) return;
 
@@ -51,8 +51,8 @@ const toggleSetting = (option, setting) => {
         command.options[option].value = !command.options[option].value;
     }
 
-    commandAccess.saveSystemCommandOverride(command);
-    frontendCommunicator.send("systemCommandsUpdated");
+    commandManager.saveSystemCommandOverride(command);
+    frontendCommunicator.send("custom-commands-updated");
 };
 
 const spamRaidProtection = {
@@ -149,152 +149,45 @@ const spamRaidProtection = {
             {
                 arg: "off",
                 usage: "off",
-                description: "Turn off the protection command.",
-                restrictionData: {
-                    restrictions: [
-                        {
-                            id: "sys-cmd-mods-only-perms",
-                            type: "firebot:permissions",
-                            mode: "roles",
-                            roleIds: [
-                                "broadcaster",
-                                "mod"
-                            ]
-                        }
-                    ]
-                }
+                description: "Turn off the protection command."
             },
             {
                 arg: "followeronly",
                 usage: "followeronly [on/off]",
-                description: "Toggles the follower-only mode setting.",
-                restrictionData: {
-                    restrictions: [
-                        {
-                            id: "sys-cmd-mods-only-perms",
-                            type: "firebot:permissions",
-                            mode: "roles",
-                            roleIds: [
-                                "broadcaster",
-                                "mod"
-                            ]
-                        }
-                    ]
-                }
+                description: "Whether follower-only mode should be turned on when the protection command is used."
             },
             {
                 arg: "subsonly",
                 usage: "subsonly [on/off]",
-                description: "Toggles the subscriber-only mode setting.",
-                restrictionData: {
-                    restrictions: [
-                        {
-                            id: "sys-cmd-mods-only-perms",
-                            type: "firebot:permissions",
-                            mode: "roles",
-                            roleIds: [
-                                "broadcaster",
-                                "mod"
-                            ]
-                        }
-                    ]
-                }
+                description: "Whether subs-only mode should be turned on when the protection command is used."
             },
             {
                 arg: "emoteonly",
                 usage: "emoteonly [on/off]",
-                description: "Toggles the emote-only mode setting.",
-                restrictionData: {
-                    restrictions: [
-                        {
-                            id: "sys-cmd-mods-only-perms",
-                            type: "firebot:permissions",
-                            mode: "roles",
-                            roleIds: [
-                                "broadcaster",
-                                "mod"
-                            ]
-                        }
-                    ]
-                }
+                description: "Whether emote-only mode should be turned on when the protection command is used."
             },
             {
                 arg: "slow",
                 usage: "slow [on/off]",
-                description: "Toggles the slow mode setting.",
-                restrictionData: {
-                    restrictions: [
-                        {
-                            id: "sys-cmd-mods-only-perms",
-                            type: "firebot:permissions",
-                            mode: "roles",
-                            roleIds: [
-                                "broadcaster",
-                                "mod"
-                            ]
-                        }
-                    ]
-                }
+                description: "Whether slow mode should be turned on when the protection command is used."
             },
             {
                 arg: "clearchat",
                 usage: "clearchat [on/off]",
-                description: "Toggles the setting to clear chat.",
-                restrictionData: {
-                    restrictions: [
-                        {
-                            id: "sys-cmd-mods-only-perms",
-                            type: "firebot:permissions",
-                            mode: "roles",
-                            roleIds: [
-                                "broadcaster",
-                                "mod"
-                            ]
-                        }
-                    ]
-                }
+                description: "Whether chat should be cleared when the protection command is used."
             },
             {
                 arg: "banraiders",
                 usage: "banraiders [on/off]",
-                description: "Toggles the setting to ban spam raiders.",
-                restrictionData: {
-                    restrictions: [
-                        {
-                            id: "sys-cmd-mods-only-perms",
-                            type: "firebot:permissions",
-                            mode: "roles",
-                            roleIds: [
-                                "broadcaster",
-                                "mod"
-                            ]
-                        }
-                    ]
-                }
+                description: "Whether spam raiders should be banned when the protection command is used."
             },
             {
                 arg: "blockraiders",
                 usage: "blockraiders [on/off]",
-                description: "Toggles the setting to block spam raiders.",
-                restrictionData: {
-                    restrictions: [
-                        {
-                            id: "sys-cmd-mods-only-perms",
-                            type: "firebot:permissions",
-                            mode: "roles",
-                            roleIds: [
-                                "broadcaster",
-                                "mod"
-                            ]
-                        }
-                    ]
-                }
+                description: "Whether spam raiders should be blocked when the protection command is used."
             }
         ]
     },
-    /**
-     * When the command is triggered
-     */
     onTriggerEvent: async event => {
         const { commandOptions } = event;
         const args = event.userCommand.args;
