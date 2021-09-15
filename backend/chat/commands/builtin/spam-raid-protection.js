@@ -194,6 +194,7 @@ const spamRaidProtection = {
 
         if (args.length === 0) {
             activateProtectionOptions(commandOptions);
+            return;
         }
 
         let option = "";
