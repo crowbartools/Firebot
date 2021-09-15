@@ -70,7 +70,7 @@ class TwitchChat extends EventEmitter {
         await this.disconnect(false);
 
         try {
-            this._streamerChatClient = await ChatClient.forTwitchClient(client, {
+            this._streamerChatClient = new ChatClient(client, {
                 requestMembershipEvents: true
             });
 
@@ -115,7 +115,7 @@ class TwitchChat extends EventEmitter {
         }
 
         try {
-            this._botChatClient = await ChatClient.forTwitchClient(twitchClient.getBotClient(), {
+            this._botChatClient = new ChatClient(twitchClient.getBotClient(), {
                 requestMembershipEvents: true
             });
 
