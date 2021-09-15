@@ -4,6 +4,7 @@ const replaceVariableManager = require("./replace-variable-manager");
 
 exports.loadReplaceVariables = () => {
     [
+        'account-creation-date',
         'active-chat-user-count',
         'arg-array',
         'arg-count',
