@@ -82,7 +82,7 @@ const startModerationService = () => {
         switch (event.type) {
         case "deleteMessage": {
             if (event.messageId) {
-                logger.debug(`Chat message with id '${event.messageId}' contains a banned word. Deleting...`);
+                logger.debug(event.logMessage);
                 chat.deleteMessage(event.messageId);
             }
 

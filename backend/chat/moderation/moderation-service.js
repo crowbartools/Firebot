@@ -137,13 +137,14 @@ parentPort.on("message", event => {
             }
         }
 
-        if (!userIsExemptFor.bannedWords) {
+        if (settings.bannedWordList.enabled && !userIsExemptFor.bannedWords) {
             const bannedWordFound = hasBannedWord(chatMessage.rawText);
             if (bannedWordFound) {
                 parentPort.postMessage(
                     {
                         type: "deleteMessage",
-                        messageId: chatMessage.id
+                        messageId: chatMessage.id,
+                        logMessage: `Chat message with id '${chatMessage.id}' contains a banned word. Deleting...`
                     }
                 );
                 return;
@@ -154,14 +155,15 @@ parentPort.on("message", event => {
                 parentPort.postMessage(
                     {
                         type: "deleteMessage",
-                        messageId: chatMessage.id
+                        messageId: chatMessage.id,
+                        logMessage: `Chat message with id '${chatMessage.id}' contains a banned word. Deleting...`
                     }
                 );
                 return;
             }
         }
 
-        if (!userIsExemptFor.emoteLimit) {
+        if (settings.emoteLimit.enabled && !userIsExemptFor.emoteLimit) {
             const emoteCount = chatMessage.parts.filter(p => p.type === "emote").length;
             const emojiCount = chatMessage.parts
                 .filter(p => p.type === "text")
@@ -170,14 +172,15 @@ parentPort.on("message", event => {
                 parentPort.postMessage(
                     {
                         type: "deleteMessage",
-                        messageId: chatMessage.id
+                        messageId: chatMessage.id,
+                        logMessage: `Chat message with id '${chatMessage.id}' contains too many emotes. Deleting...`
                     }
                 );
                 return;
             }
         }
 
-        if (!userIsExemptFor.urls) {
+        if (settings.urlModeration.enabled && !userIsExemptFor.urls) {
             let outputMessage = settings.urlModeration.outputMessage;
 
             const regex = new RegExp(/[\w]{2,}[.][\w]{2,}/, "gi");
@@ -197,7 +200,8 @@ parentPort.on("message", event => {
                 {
                     type: "deleteMessage",
                     messageId: chatMessage.id,
-                    outputMessage: outputMessage
+                    outputMessage: outputMessage,
+                    logMessage: `Chat message with id '${chatMessage.id}' contains a url. Deleting...`
                 }
             );
         }
