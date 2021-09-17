@@ -30,10 +30,8 @@ const activateProtectionOptions = async (commandOptions) => {
         chatModerationManager.enableSpamRaidProtection(commandOptions.banRaiders, commandOptions.blockRaiders);
     }
 
-    setTimeout(function() {
-        (function(commandOptions) {
-            chat.sendChatMessage(commandOptions.displayTemplate);
-        }(commandOptions));
+    setTimeout(() => {
+        chat.sendChatMessage(commandOptions.displayTemplate);
     }, 2000);
 };
 
