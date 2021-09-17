@@ -1,18 +1,10 @@
 "use strict";
 
-const { ControlKind, InputEvent } = require('../../../../interactive/constants/MixplayConstants');
-const effectModels = require("../../../../effects/models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require("../../../../../shared/effect-constants");
-
 const request = require("request");
-
 const integrationManager = require("../../../IntegrationManager");
 
-/**
- * The Delay effect
- */
+/** @type {import("../../../../effects/models/effectModels").Effect */
 const effect = {
     /**
    * The definition of the Effect
@@ -23,17 +15,8 @@ const effect = {
         description: "Trigger StreamLab's Roll Credits feature",
         icon: "fad fa-align-center",
         categories: [EffectCategory.INTEGRATIONS],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
-    /**
-   * Global settings that will be available in the Settings tab
-   */
-    globalSettings: {},
     /**
    * The HTML template for the Options view (ie options when effect is added to something such as a button.
    * You can alternatively supply a url to a html file via optionTemplateUrl

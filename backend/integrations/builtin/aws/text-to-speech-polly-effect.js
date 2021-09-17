@@ -10,15 +10,11 @@ const path = require("path");
 const logger = require("../../../logwrapper");
 const frontendCommunicator = require("../../../common/frontend-communicator");
 const integrationManager = require("../../IntegrationManager");
-const { ControlKind, InputEvent } = require('../../../interactive/constants/MixplayConstants');
-const effectModels = require("../../../effects/models/effectModels");
-const { EffectTrigger } = effectModels;
 
 const { EffectCategory } = require('../../../../shared/effect-constants');
 const { wait } = require("../../../utility");
 
 const { PollyClient, DescribeVoicesCommand, SynthesizeSpeechCommand } = require('@aws-sdk/client-polly');
-const { Readable } = require("stream");
 
 frontendCommunicator.onAsync("getAwsPollyVoices", async () => {
     let response = {
@@ -68,9 +64,7 @@ frontendCommunicator.onAsync("getAwsPollyVoices", async () => {
 
 const POLLY_TMP_DIR = getPathInTmpDir('/awspollyfx');
 
-/**
- * The Play Sound effect
- */
+/** @type {import("../../../effects/models/effectModels").Effect */
 const playSound = {
     /**
    * The definition of the Effect
@@ -80,23 +74,14 @@ const playSound = {
         name: "Text-To-Speech (Amazon Polly)",
         description: "Have Firebot read out some text using Amazon Polly.",
         icon: "fad fa-microphone-alt",
-        categories: [EffectCategory.FUN],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        categories: [EffectCategory.FUN, EffectCategory.INTEGRATIONS],
+        dependencies: []
     },
-    /**
-   * Global settings that will be available in the Settings tab
-   */
-    globalSettings: {},
     /**
    * The HTML template for the Options view (ie options when effect is added to something such as a button.
    * You can alternatively supply a url to a html file via optionTemplateUrl
    */
-    optionsTemplate: `    
+    optionsTemplate: `
     <div ng-hide="fetchError">
         <eos-container header="Engine">
             <div class="controls-fb-inline" style="padding-bottom: 5px;">
@@ -116,9 +101,9 @@ const playSound = {
 
             <div style="padding-top:10px">
                 <label class="control-fb control--checkbox"> Enable
-                    <a 
-                    ng-click="openLink('https://docs.aws.amazon.com/polly/latest/dg/supportedtags.html')" 
-                    class="clickable" 
+                    <a
+                    ng-click="openLink('https://docs.aws.amazon.com/polly/latest/dg/supportedtags.html')"
+                    class="clickable"
                     uib-tooltip="View SSML Documentation"
                     aria-label="View SSML Documentation"
                     tooltip-append-to-body="true">

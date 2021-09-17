@@ -7,8 +7,6 @@ const emotesManager = require("../emotes-manager");
 const accountAccess = require("../account-access");
 const imgProbe = require('probe-image-size');
 
-const mixerApi = require("../../mixer-api/api");
-
 const twitchApi = require("../../twitch-api/api");
 const twitchChat = require("../../chat/twitch-chat");
 
@@ -434,19 +432,6 @@ async function uiChatMessage(data) {
     }
 }
 
-// Get Chat History
-// This grabs chat history for the channel. Useful on initial connection to grab pre-existing messages.
-async function uiGetChatHistory() {
-    logger.info("Attempting to get chat history");
-
-    const historicalMessages = await mixerApi.chats.getHistory();
-
-    if (historicalMessages.length > 0) {
-        uiChatMessage(historicalMessages);
-    }
-}
-
-
 // Chat User List Refresh
 // This will pull a brand new list of chat users and send it over to the UI for the chat window.
 async function uiChatUserRefresh() {
@@ -471,7 +456,6 @@ async function uiChatUserRefresh() {
 }
 
 twitchChat.on("connected", async () => {
-    await uiGetChatHistory();
     await uiChatUserRefresh();
 });
 
@@ -491,4 +475,3 @@ exports.send = textProcessor;
 exports.parseArg = parseArg;
 exports.uiChatMessage = uiChatMessage;
 exports.uiChatUserRefresh = uiChatUserRefresh;
-exports.uiGetChatHistory = uiGetChatHistory;

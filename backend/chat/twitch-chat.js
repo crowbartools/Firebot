@@ -70,7 +70,7 @@ class TwitchChat extends EventEmitter {
         await this.disconnect(false);
 
         try {
-            this._streamerChatClient = await ChatClient.forTwitchClient(client, {
+            this._streamerChatClient = new ChatClient(client, {
                 requestMembershipEvents: true
             });
 
@@ -115,7 +115,7 @@ class TwitchChat extends EventEmitter {
         }
 
         try {
-            this._botChatClient = await ChatClient.forTwitchClient(twitchClient.getBotClient(), {
+            this._botChatClient = new ChatClient(twitchClient.getBotClient(), {
                 requestMembershipEvents: true
             });
 
@@ -203,6 +203,22 @@ class TwitchChat extends EventEmitter {
             accountType = "streamer";
         }
 
+        if (message.includes("/block")) {
+            const username = message.split(" ")[1];
+
+            const twitchApi = require("../twitch-api/api");
+            twitchApi.users.blockUserByName(username.replace(/^@/, '').trim());
+            return;
+        }
+
+        if (message.includes("/unblock")) {
+            const username = message.split(" ")[1];
+
+            const twitchApi = require("../twitch-api/api");
+            twitchApi.users.unblockUserByName(username.replace(/^@/, '').trim());
+            return;
+        }
+
 
         // split message into fragments that don't exceed the max message length
         const messageFragments = message.match(/[\s\S]{1,500}/g)
@@ -257,18 +273,18 @@ class TwitchChat extends EventEmitter {
         this._streamerChatClient.say(`#${streamer.username.replace("#", "")}`, `/unban ${username}`);
     }
 
-    block(username) {
-        if (username == null) return;
+    block(userId) {
+        if (userId == null) return;
 
-        const twitchApi = require("../twitch-api/api");
-        twitchApi.users.blockUserByName(username);
+        const client = twitchClient.getClient();
+        client.helix.users.createBlock(userId);
     }
 
-    unblock(username) {
-        if (username == null) return;
+    unblock(userId) {
+        if (userId == null) return;
 
-        const twitchApi = require("../twitch-api/api");
-        twitchApi.users.unblockUserByName(username);
+        const client = twitchClient.getClient();
+        client.helix.users.deleteBlock(userId);
     }
 
     addVip(username) {
@@ -285,6 +301,17 @@ class TwitchChat extends EventEmitter {
         const streamer = accountAccess.getAccounts().streamer;
 
         return this._streamerChatClient.removeVip(streamer.username, username);
+    }
+
+    async getVips() {
+        const streamer = accountAccess.getAccounts().streamer;
+        const vips = await this._streamerChatClient.getVips(streamer.username);
+
+        if (vips) {
+            return vips;
+        }
+
+        return [];
     }
 
     clearChat() {
@@ -407,6 +434,18 @@ frontendCommunicator.on("update-user-banned-status", data => {
         twitchChat.ban(username, "Banned via Firebot");
     } else {
         twitchChat.unban(username);
+    }
+});
+
+frontendCommunicator.on("update-user-blocked-status", data => {
+    if (data == null) return;
+    const { userId, shouldBeBlocked } = data;
+    if (userId == null || shouldBeBlocked == null) return;
+
+    if (shouldBeBlocked) {
+        twitchChat.block(userId);
+    } else {
+        twitchChat.unblock(userId);
     }
 });
 

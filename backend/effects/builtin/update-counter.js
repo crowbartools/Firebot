@@ -1,15 +1,10 @@
 "use strict";
 
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectDependency, EffectTrigger } = effectModels;
-
 const { EffectCategory } = require('../../../shared/effect-constants');
-
 const counterManager = require("../../counters/counter-manager");
-
 const logger = require("../../logwrapper");
 
+/** @type {import("../models/effectModels").Effect} */
 const model = {
     definition: {
         id: "firebot:update-counter",
@@ -17,14 +12,8 @@ const model = {
         description: "Update a counter's value.",
         icon: "fad fa-tally",
         categories: [EffectCategory.COMMON, EffectCategory.ADVANCED],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <div ng-hide="hasCounters">
             <p>You need to create a Counter to use this effect! Go to the <b>Counters</b> tab to create one.</p>
@@ -54,7 +43,7 @@ const model = {
                     <span class="input-group-addon" id="delay-length-effect-type">Value</span>
                     <input ng-model="effect.value" type="text" class="form-control" aria-describedby="delay-length-effect-type" type="text" replace-variables="number">
                 </div>
-            </eos-container>         
+            </eos-container>
         </div>
     `,
     optionsController: ($scope, countersService) => {

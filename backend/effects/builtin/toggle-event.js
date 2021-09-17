@@ -1,13 +1,9 @@
 "use strict";
 
 const eventAccess = require("../../events/events-access");
-
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require('../../../shared/effect-constants');
 
+/** @type {import("../models/effectModels").Effect} */
 const chat = {
     definition: {
         id: "firebot:toggle-event",
@@ -15,14 +11,8 @@ const chat = {
         description: "Toggle an event's active status",
         icon: "fad fa-toggle-off",
         categories: [EffectCategory.COMMON],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container>
             <p>This effect let's you automatically toggle the active status of an Event (which you can create in the Events tab).</p>

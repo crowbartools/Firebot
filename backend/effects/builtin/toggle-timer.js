@@ -1,13 +1,9 @@
 "use strict";
 
 const timerAccess = require("../../timers/timer-access");
-
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require('../../../shared/effect-constants');
 
+/** @type {import("../models/effectModels").Effect} */
 const chat = {
     definition: {
         id: "firebot:toggle-timer",
@@ -15,14 +11,8 @@ const chat = {
         description: "Toggle a timer's active status",
         icon: "fad fa-toggle-off",
         categories: [EffectCategory.COMMON],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container>
             <p>This effect let's you automatically toggle the active status of Timers.</p>

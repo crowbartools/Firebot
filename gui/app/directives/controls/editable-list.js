@@ -32,7 +32,7 @@ const deepmerge = require("deepmerge");
                     </div>         
                 </div>
             `,
-            controller: function(utilityService) {
+            controller: function(utilityService, ngToast) {
 
                 const $ctrl = this;
 
@@ -46,7 +46,8 @@ const deepmerge = require("deepmerge");
                     addLabel: "Add",
                     editLabel: "Edit",
                     validationText: "Text cannot be empty",
-                    noneAddedText: "None saved"
+                    noneAddedText: "None saved",
+                    noDuplicates: false
                 };
 
 
@@ -85,13 +86,23 @@ const deepmerge = require("deepmerge");
 
                 $ctrl.editItem = (index) => {
                     openGetInputModal($ctrl.model[index], false, (newItem) => {
-                        $ctrl.model[index] = newItem;
+                        const foundDuplicate = [...$ctrl.model].splice(index, 1).some(i => i === newItem);
+                        if (!$ctrl.settings.noDuplicates || !foundDuplicate) {
+                            $ctrl.model[index] = newItem;
+                        } else {
+                            ngToast.create("Cannot edit: Duplicate found");
+                        }
                     });
                 };
 
                 $ctrl.addItem = () => {
                     openGetInputModal("", true, (newItem) => {
-                        $ctrl.model.push(newItem);
+                        const foundDuplicate = $ctrl.model.some(i => i === newItem);
+                        if (!$ctrl.settings.noDuplicates || !foundDuplicate) {
+                            $ctrl.model.push(newItem);
+                        } else {
+                            ngToast.create("Cannot add: Duplicate found");
+                        }
                     });
                 };
 

@@ -1,13 +1,13 @@
 "use strict";
 
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
-const { EffectDependency, EffectTrigger } = effectModels;
+const { EffectDependency } = effectModels;
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 const accountAccess = require("../../common/account-access");
 const twitchApi = require("../../twitch-api/api");
 
+/** @type {import("../models/effectModels").Effect} */
 const model = {
     definition: {
         id: "firebot:ad-break",
@@ -16,14 +16,8 @@ const model = {
         hidden: !accountAccess.getAccounts().streamer.loggedIn,
         icon: "fad fa-ad",
         categories: [EffectCategory.COMMON, EffectCategory.MODERATION],
-        dependencies: [EffectDependency.CHAT],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN],
-            EffectTrigger.ALL
-        )
+        dependencies: [EffectDependency.CHAT]
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container header="Ad Duration" pad-top="true">
             <div class="btn-group">

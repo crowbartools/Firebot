@@ -1,15 +1,12 @@
 "use strict";
 
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
-const { EffectTrigger, EffectDependency} = effectModels;
-
+const { EffectDependency } = effectModels;
 const { EffectCategory } = require('../../../shared/effect-constants');
-
 const logger = require('../../logwrapper');
-
 const twitchChat = require("../../chat/twitch-chat");
 
+/** @type {import("../models/effectModels").Effect} */
 const model = {
     definition: {
         id: "firebot:update-vip-role",
@@ -17,12 +14,7 @@ const model = {
         description: "Add or remove the VIP role of a user",
         icon: "far fa-gem",
         categories: [EffectCategory.COMMON, EffectCategory.MODERATION],
-        dependencies: [EffectDependency.CHAT],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: [EffectDependency.CHAT]
     },
     optionsTemplate: `
     <eos-container header="Action" pad-top="true">

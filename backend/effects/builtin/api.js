@@ -1,18 +1,12 @@
 "use strict";
 
-const { settings } = require("../../common/settings-access");
-const resourceTokenManager = require("../../resourceTokenManager");
 const apiProcessor = require("../../common/handlers/apiProcessor");
 const twitchChat = require("../../chat/twitch-chat");
-
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
-const { EffectDependency, EffectTrigger } = effectModels;
-
+const { EffectDependency } = effectModels;
 const { EffectCategory } = require('../../../shared/effect-constants');
-/**
- * The API effect
- */
+
+/** @type {import("../models/effectModels").Effect} */
 const api = {
     /**
    * The definition of the Effect
@@ -23,17 +17,8 @@ const api = {
         description: "Pulls info from a pre-selected api.",
         icon: "fad fa-chart-network",
         categories: [EffectCategory.FUN, EffectCategory.CHAT_BASED, EffectCategory.OVERLAY],
-        dependencies: [EffectDependency.CHAT],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: [EffectDependency.CHAT]
     },
-    /**
-   * Global settings that will be available in the Settings tab
-   */
-    globalSettings: {},
     /**
    * The HTML template for the Options view (ie options when effect is added to something such as a button.
    * You can alternatively supply a url to a html file via optionTemplateUrl
@@ -126,7 +111,7 @@ const api = {
     /**
    * The controller for the front end Options
    */
-    optionsController: ($scope, listenerService) => {
+    optionsController: ($scope) => {
     // The name of the api and if it has images available to show or not.
         $scope.apiTypes = [
             { name: "Advice", image: false },
@@ -169,22 +154,6 @@ const api = {
         twitchChat.sendChatMessage(`${apiType}: ${apiResponse}`, null, chatter);
 
         return true;
-    },
-    /**
-   * Code to run in the overlay
-   */
-    overlayExtension: {
-        dependencies: {
-            css: [],
-            js: []
-        },
-        event: {
-            name: "apiEffect",
-            onOverlayEvent: event => {
-                // The API Effect can sometimes show images in the overlay.
-                // As part of this we use the showImage event.
-            }
-        }
     }
 };
 

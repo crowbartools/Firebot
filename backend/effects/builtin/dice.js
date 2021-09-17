@@ -1,18 +1,11 @@
 "use strict";
 
-const { settings } = require("../../common/settings-access");
-const resourceTokenManager = require("../../resourceTokenManager");
 const diceProcessor = require("../../common/handlers/diceProcessor");
-
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
-const { EffectDependency, EffectTrigger } = effectModels;
-
+const { EffectDependency } = effectModels;
 const { EffectCategory } = require('../../../shared/effect-constants');
 
-/**
- * The Dice effect
- */
+/** @type {import("../models/effectModels").Effect} */
 const dice = {
     /**
    * The definition of the Effect
@@ -23,17 +16,8 @@ const dice = {
         description: "Specify an amount of dice to roll in chat.",
         icon: "fad fa-dice",
         categories: [EffectCategory.FUN, EffectCategory.CHAT_BASED],
-        dependencies: [EffectDependency.CHAT],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: [EffectDependency.CHAT]
     },
-    /**
-   * Global settings that will be available in the Settings tab
-   */
-    globalSettings: {},
     /**
    * The HTML template for the Options view (ie options when effect is added to something such as a button.
    * You can alternatively supply a url to a html file via optionTemplateUrl
@@ -104,22 +88,6 @@ const dice = {
         // What should this do when triggered.
         diceProcessor.send(event.effect, event.trigger);
         return true;
-    },
-    /**
-   * Code to run in the overlay
-   */
-    overlayExtension: {
-        dependencies: {
-            css: [],
-            js: []
-        },
-        event: {
-            name: "dice",
-            onOverlayEvent: event => {
-                console.log("yay dice");
-                //need to implement this
-            }
-        }
     }
 };
 

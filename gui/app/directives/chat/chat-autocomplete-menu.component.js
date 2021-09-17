@@ -103,6 +103,16 @@
                                     text: "/unban"
                                 },
                                 {
+                                    display: "/block @username",
+                                    description: "Block a user",
+                                    text: "/block"
+                                },
+                                {
+                                    display: "/unblock @username",
+                                    description: "Unblock a user",
+                                    text: "/unblock"
+                                },
+                                {
                                     display: "/clear",
                                     description: "Clear the chat feed",
                                     text: "/clear"
@@ -199,8 +209,8 @@
 
                     function buildEmoteItems() {
                         return chatMessagesService.allEmotes.map(emote => ({
-                            display: emote.name,
-                            text: emote.name,
+                            display: emote.code,
+                            text: emote.code,
                             url: emote.url
                         }));
                     }

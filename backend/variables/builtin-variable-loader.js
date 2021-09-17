@@ -4,6 +4,7 @@ const replaceVariableManager = require("./replace-variable-manager");
 
 exports.loadReplaceVariables = () => {
     [
+        'account-creation-date',
         'active-chat-user-count',
         'arg-array',
         'arg-count',
@@ -57,8 +58,6 @@ exports.loadReplaceVariables = () => {
         'loop-count',
         'loop-item',
         'math',
-        'max-ad-break-length',
-        'moderator',
         'number-ceil',
         'number-floor',
         'number-max',
@@ -84,7 +83,6 @@ exports.loadReplaceVariables = () => {
         'reward-image-url',
         'reward-message',
         'reward-name',
-        'stream-audience',
         'stream-title',
         'streamer',
         'sub-count',
@@ -115,16 +113,13 @@ exports.loadReplaceVariables = () => {
         'uptime',
         'user-avatar-url',
         'user-exists',
-        'user-level',
         'user-metadata',
-        'user-next-level-hearts',
-        'user-rank-badge-url',
-        'user-total-hearts',
         'user',
         'username',
         'usernameArray',
         'view-time',
-        'whisper-message'
+        'whisper-message',
+        'wildcard-match'
     ].forEach(filename => {
         let definition = require(`./builtin/${filename}.js`);
         replaceVariableManager.registerReplaceVariable(definition);

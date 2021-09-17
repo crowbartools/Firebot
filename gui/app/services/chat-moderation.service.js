@@ -12,19 +12,30 @@
             service.chatModerationData = {
                 settings: {
                     bannedWordList: {
-                        enabled: false
+                        enabled: false,
+                        exemptRoles: []
                     },
                     emoteLimit: {
                         enabled: false,
+                        exemptRoles: [],
                         max: 10
                     },
                     urlModeration: {
                         enabled: false,
+                        exemptRoles: [],
                         viewTime: {
                             enabled: false,
                             viewTimeInHours: 0
                         },
                         outputMessage: ""
+                    },
+                    spamRaidProtection: {
+                        enabled: true,
+                        exemptRoles: [],
+                        cacheLimit: 50,
+                        characterLimit: 10,
+                        shouldBan: false,
+                        shouldBlock: false
                     },
                     exemptRoles: []
                 },
@@ -36,20 +47,65 @@
                 let data = backendCommunicator.fireEventSync("getChatModerationData");
                 if (data != null) {
                     service.chatModerationData = data;
+
                     if (service.chatModerationData.settings.exemptRoles == null) {
                         service.chatModerationData.settings.exemptRoles = [];
                     }
+
+                    if (service.chatModerationData.settings.bannedWordList == null) {
+                        service.chatModerationData.settings.bannedWordList = {
+                            enabled: false,
+                            exemptRoles: []
+                        };
+                    }
+
+                    if (service.chatModerationData.settings.bannedWordList.exemptRoles == null) {
+                        service.chatModerationData.settings.bannedWordList.exemptRoles = [];
+                    }
+
                     if (service.chatModerationData.settings.emoteLimit == null) {
                         service.chatModerationData.settings.emoteLimit = {
                             enabled: false,
+                            exemptRoles: [],
                             max: 10
+                        };
+                    }
+
+                    if (service.chatModerationData.settings.emoteLimit.exemptRoles == null) {
+                        service.chatModerationData.settings.emoteLimit.exemptRoles = [];
+                    }
+
+                    if (service.chatModerationData.settings.urlModeration == null) {
+                        service.chatModerationData.settings.urlModeration = {
+                            enabled: false,
+                            exemptRoles: [],
+                            viewTime: {
+                                enabled: false,
+                                viewTimeInHours: 0
+                            },
+                            outputMessage: ""
+                        };
+                    }
+
+                    if (service.chatModerationData.settings.urlModeration.exemptRoles == null) {
+                        service.chatModerationData.settings.urlModeration.exemptRoles = [];
+                    }
+
+                    if (service.chatModerationData.settings.spamRaidProtection == null) {
+                        service.chatModerationData.settings.spamRaidProtection = {
+                            enabled: true,
+                            exemptRoles: [],
+                            cacheLimit: 50,
+                            characterLimit: 10,
+                            shouldBan: false,
+                            shouldBlock: false
                         };
                     }
                 }
             };
 
             service.saveChatModerationSettings = () => {
-                backendCommunicator.fireEvent("chatMessageSettingsUpdate", service.chatModerationData.settings);
+                backendCommunicator.fireEvent("chatModerationSettingsUpdate", service.chatModerationData.settings);
             };
 
             service.addBannedWords = (words) => {
@@ -80,7 +136,7 @@
 
                 service.chatModerationData.bannedRegularExpressions = service.chatModerationData.bannedRegularExpressions.concat(mapped);
 
-                backendCommunicator.fireEvent("addBannedRegularExpressions", mapped);
+                backendCommunicator.fireEvent("addBannedRegularExpression", mapped);
             };
 
             service.removeBannedWordAtIndex = (index) => {
@@ -106,7 +162,7 @@
             service.removeRegexAtIndex = (index) => {
                 let regex = service.chatModerationData.bannedRegularExpressions[index];
                 if (regex) {
-                    backendCommunicator.fireEvent("removeBannedRegex", regex.text);
+                    backendCommunicator.fireEvent("removeBannedRegularExpression", regex.text);
                     service.chatModerationData.bannedRegularExpressions.splice(index, 1);
                 }
             };
