@@ -2,6 +2,56 @@
 
 const chat = require("../../twitch-chat");
 const chatModerationManager = require("../../moderation/chat-moderation-manager");
+const commandManager = require("../CommandManager");
+const frontendCommunicator = require("../../../common/frontend-communicator");
+
+const activateProtectionOptions = async (commandOptions) => {
+    if (commandOptions.enableFollowerOnly) {
+        chat.enableFollowersOnly(commandOptions.enableFollowerOnlyDuration);
+    }
+
+    if (commandOptions.enableSubscriberOnly) {
+        chat.enableSubscribersOnly();
+    }
+
+    if (commandOptions.enableEmoteOnly) {
+        chat.enableEmoteOnly();
+    }
+
+    if (commandOptions.enableSlowMode) {
+        chat.enableSlowMode(commandOptions.enableSlowModeDelay);
+    }
+
+    if (commandOptions.clearChat) {
+        chat.clearChat();
+    }
+
+    if (commandOptions.banRaiders || commandOptions.blockRaiders) {
+        chatModerationManager.enableSpamRaidProtection(commandOptions.banRaiders, commandOptions.blockRaiders);
+    }
+
+    setTimeout(() => {
+        chat.sendChatMessage(commandOptions.displayTemplate);
+    }, 2000);
+};
+
+const toggleSetting = (option, setting) => {
+    const systemCommands = commandManager.getAllSystemCommandDefinitions();
+    let command = systemCommands.find(sc => sc.id === "firebot:spamRaidProtection");
+
+    if (command == null) return;
+
+    if (setting === "on") {
+        command.options[option].value = true;
+    } else if (setting === "off") {
+        command.options[option].value = false;
+    } else {
+        command.options[option].value = !command.options[option].value;
+    }
+
+    commandManager.saveSystemCommandOverride(command);
+    frontendCommunicator.send("custom-commands-updated");
+};
 
 const spamRaidProtection = {
     definition: {
@@ -97,70 +147,94 @@ const spamRaidProtection = {
             {
                 arg: "off",
                 usage: "off",
-                description: "Turn off the protection command.",
-                restrictionData: {
-                    restrictions: [
-                        {
-                            id: "sys-cmd-mods-only-perms",
-                            type: "firebot:permissions",
-                            mode: "roles",
-                            roleIds: [
-                                "broadcaster",
-                                "mod"
-                            ]
-                        }
-                    ]
-                }
+                description: "Turn off the protection command."
+            },
+            {
+                arg: "followeronly",
+                usage: "followeronly [on/off]",
+                description: "Whether follower-only mode should be turned on when the protection command is used."
+            },
+            {
+                arg: "subsonly",
+                usage: "subsonly [on/off]",
+                description: "Whether subs-only mode should be turned on when the protection command is used."
+            },
+            {
+                arg: "emoteonly",
+                usage: "emoteonly [on/off]",
+                description: "Whether emote-only mode should be turned on when the protection command is used."
+            },
+            {
+                arg: "slow",
+                usage: "slow [on/off]",
+                description: "Whether slow mode should be turned on when the protection command is used."
+            },
+            {
+                arg: "clearchat",
+                usage: "clearchat [on/off]",
+                description: "Whether chat should be cleared when the protection command is used."
+            },
+            {
+                arg: "banraiders",
+                usage: "banraiders [on/off]",
+                description: "Whether spam raiders should be banned when the protection command is used."
+            },
+            {
+                arg: "blockraiders",
+                usage: "blockraiders [on/off]",
+                description: "Whether spam raiders should be blocked when the protection command is used."
             }
         ]
     },
-    /**
-     * When the command is triggered
-     */
     onTriggerEvent: async event => {
         const { commandOptions } = event;
         const args = event.userCommand.args;
 
         if (args.length === 0) {
-            if (commandOptions.enableFollowerOnly) {
-                chat.enableFollowersOnly(commandOptions.enableFollowerOnlyDuration);
-            }
-
-            if (commandOptions.enableSubscriberOnly) {
-                chat.enableSubscribersOnly();
-            }
-
-            if (commandOptions.enableEmoteOnly) {
-                chat.enableEmoteOnly();
-            }
-
-            if (commandOptions.enableSlowMode) {
-                chat.enableSlowMode(commandOptions.enableSlowModeDelay);
-            }
-
-            if (commandOptions.clearChat) {
-                chat.clearChat();
-            }
-
-            if (commandOptions.banRaiders || commandOptions.blockRaiders) {
-                chatModerationManager.enableSpamRaidProtection(commandOptions.banRaiders, commandOptions.blockRaiders);
-            }
-
-            setTimeout(function() {
-                (function(commandOptions) {
-                    chat.sendChatMessage(commandOptions.displayTemplate);
-                }(commandOptions));
-            }, 2000);
+            activateProtectionOptions(commandOptions);
+            return;
         }
 
-        if (args[0] === "off") {
-            chat.disableFollowersOnly();
-            chat.disableSubscribersOnly();
-            chat.disableEmoteOnly();
-            chat.disableSlowMode();
-            chatModerationManager.disableSpamRaidProtection();
+        let option = "";
+        switch (args[0]) {
+        case "followeronly":
+            option = "enableFollowerOnly";
+            break;
+        case "subsonly":
+            option = "enableSubscriberOnly";
+            break;
+        case "emoteonly":
+            option = "enableEmoteOnly";
+            break;
+        case "slow":
+            option = "enableSlowMode";
+            break;
+        case "clearchat":
+            option = "clearChat";
+            break;
+        case "banraiders":
+            option = "banRaiders";
+            break;
+        case "blockraiders":
+            option = "blockRaiders";
+            break;
+        }
 
-            chat.sendChatMessage("Protection turned off.");
+        if (args.length === 2) {
+            toggleSetting(option, args[1]);
+        } else {
+            if (args[0] === "off") {
+                chat.disableFollowersOnly();
+                chat.disableSubscribersOnly();
+                chat.disableEmoteOnly();
+                chat.disableSlowMode();
+                chatModerationManager.disableSpamRaidProtection();
+
+                chat.sendChatMessage("Protection turned off.");
+                return;
+            }
+
+            toggleSetting(option);
         }
     }
 };
