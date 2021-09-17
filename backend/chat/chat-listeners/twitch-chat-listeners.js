@@ -131,7 +131,7 @@ exports.setupChatListeners = (streamerChatClient) => {
     streamerChatClient.onNotice((_target, _user, message, msg) => {
         // Mumbles in non-existing but very useful API endpoints..
         // We have to ignore this one for now since we request the vips for the role manager
-        if (!msg._tags.get("msg-id") === "vips_success") {
+        if (msg._tags.get("msg-id") !== "vips_success") {
             frontendCommunicator.send("chat-feed-notification", message);
         }
     });
