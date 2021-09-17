@@ -29,6 +29,14 @@
                         },
                         outputMessage: ""
                     },
+                    spamRaidProtection: {
+                        enabled: true,
+                        exemptRoles: [],
+                        cacheLimit: 50,
+                        characterLimit: 10,
+                        shouldBan: false,
+                        shouldBlock: false
+                    },
                     exemptRoles: []
                 },
                 bannedWords: [],
@@ -82,11 +90,22 @@
                     if (service.chatModerationData.settings.urlModeration.exemptRoles == null) {
                         service.chatModerationData.settings.urlModeration.exemptRoles = [];
                     }
+
+                    if (service.chatModerationData.settings.spamRaidProtection == null) {
+                        service.chatModerationData.settings.spamRaidProtection = {
+                            enabled: true,
+                            exemptRoles: [],
+                            cacheLimit: 50,
+                            characterLimit: 10,
+                            shouldBan: false,
+                            shouldBlock: false
+                        };
+                    }
                 }
             };
 
             service.saveChatModerationSettings = () => {
-                backendCommunicator.fireEvent("chatMessageSettingsUpdate", service.chatModerationData.settings);
+                backendCommunicator.fireEvent("chatModerationSettingsUpdate", service.chatModerationData.settings);
             };
 
             service.addBannedWords = (words) => {

@@ -2,45 +2,55 @@
 
 const twitchApi = require("../twitch-api/api");
 const frontendCommunicator = require("../common/frontend-communicator");
+const accountAccess = require("../common/account-access");
 
 /**
- * @param {import('twitch/lib/API/Kraken/Team/Team').Team[]} teams
+ * @typedef MappedTeamRole
+ * @property {string} id
+ * @property {string} name
  */
-function mapRoles(teams) {
-    return teams
-        .map(team => {
-            return {
-                id: team.id,
-                name: team.displayName
-            };
-        });
-}
 
-async function getAllTeamRolesForViewer(username) {
-    const roles = await twitchApi.teams.getMatchingTeamsByName(username);
+/** @returns {MappedTeamRole} */
+const mapRoles = (teams) => teams.map(t => ({
+    id: parseInt(t.id), // For compatibility (Kraken API returned an int)
+    name: t.displayName
+}));
 
-    return mapRoles(roles);
-}
+/** @returns {Promise.<MappedTeamRole[]>} */
+const getAllTeamRolesForViewer = async (username) => {
+    const client = twitchApi.getClient();
+    const user = await client.helix.users.getUserByName(username);
+    const streamerTeams = await client.helix.teams.getTeamsForBroadcaster(accountAccess.getAccounts().streamer.userId);
 
-async function getTeamRoles() {
-    const teams = await twitchApi.teams.getStreamerTeams();
+    if (streamerTeams == null) return [];
 
-    if (teams == null) {
-        return null;
+    const teams = [];
+    for (const team of streamerTeams) {
+        const relations = await team.getUserRelations();
+        if (relations.some(r => r.id === user.id)) {
+            teams.push(team);
+        }
     }
 
     return mapRoles(teams);
-}
+};
+
+/** @returns {Promise.<MappedTeamRole[]>} */
+const getTeamRoles = async () => {
+    const client = twitchApi.getClient();
+    const teams = await client.helix.teams.getTeamsForBroadcaster(accountAccess.getAccounts().streamer.userId);
+
+    if (teams != null) {
+        return mapRoles(teams);
+    }
+};
 
 frontendCommunicator.onAsync("getTeamRoles", async () => {
     const roles = await getTeamRoles();
 
-    if (roles == null) {
-        return null;
+    if (roles != null) {
+        return roles;
     }
-
-    return roles;
-
 });
 
 exports.getTeamRoles = getTeamRoles;

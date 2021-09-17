@@ -1,9 +1,9 @@
 "use strict";
 
-const twitchUsers = require("../../../../../twitch-api/resource/users");
 const firebotRolesManager = require("../../../../../roles/firebot-roles-manager");
 const customRolesManager = require("../../../../../roles/custom-roles-manager");
 const teamRolesManager = require("../../../../../roles/team-roles-manager");
+const chatRolesManager = require("../../../../../roles/chat-roles-manager");
 const twitchRolesManager = require("../../../../../../shared/twitch-roles");
 
 module.exports = {
@@ -46,7 +46,7 @@ module.exports = {
             username = trigger.metadata.username;
         }
 
-        const userTwitchRoles = (await twitchUsers.getUsersChatRoles(username))
+        const userTwitchRoles = (await chatRolesManager.getChatRoles(username))
             .map(twitchRolesManager.mapTwitchRole);
         const userFirebotRoles = firebotRolesManager.getAllFirebotRolesForViewer(username);
         const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username);

@@ -12,6 +12,58 @@
       <div class="content-block moderation-feature-block">
         <div class="content-block-body">
           <div class="title-toggle-button-container">
+            <div class="moderation-feature-title">Spam Raid Protection</div>
+            <div class="muted" style="margin-top: 5px;">
+              These are settings for the chat messages that the bot will save <span style="font-weight: 900">before</span> the spam raid protection command is activated.
+            </div>
+          </div>
+          <div style="margin-top: 15px;">
+            <div style="font-weight: 600;font-size: 16px;width: 100%;margin-bottom: 10px;">
+              Exempt Roles <tooltip text="'These roles are exempt from the spam raid protection.'" />
+            </div>
+            <exempt-roles model="cms.chatModerationData.settings.spamRaidProtection.exemptRoles" on-update="cms.saveChatModerationSettings()"></exempt-roles>
+          </div>
+          <div style="margin-top: 15px">
+            <div style="font-weight: 600;font-size: 16px;width: 100%;margin-bottom: 10px;">
+              Message cache size
+            </div>
+            <div class="muted" style="margin-bottom: 10px;">
+              This will tell Firebot how many of the last chat messages it should save (145 max).
+            </div>
+            <firebot-input
+              input-title="Amount of messages to save"
+              placeholder-text="Enter the amount of messages"
+              input-type="number"
+              disable-variables="true"
+              model="cms.chatModerationData.settings.spamRaidProtection.cacheLimit"
+              on-input-update="cms.saveChatModerationSettings()"
+              max="145"
+              required="true"
+              error-message="Cache limit is required and has to be between 1 and 145"
+            />
+          </div>
+          <div style="margin-top: 20px">
+            <div style="font-weight: 600;font-size: 16px;width: 100%;margin-bottom: 10px;">
+              Message start cut-off
+            </div>
+            <div class="muted" style="margin-bottom: 10px;">
+              This is the amount of characters it should cut off the start of the spam raid message (e.g. 10 of "spam raid message xxx" would make it only check for "raid message xxx"). Leave empty to turn off.
+            </div>
+            <firebot-input
+              input-title="Amount of characters"
+              placeholder-text="Enter the amount of characters"
+              input-type="number"
+              disable-variables="true"
+              model="cms.chatModerationData.settings.spamRaidProtection.characterLimit"
+              on-input-update="cms.saveChatModerationSettings()"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="content-block moderation-feature-block">
+        <div class="content-block-body">
+          <div class="title-toggle-button-container">
             <div class="moderation-feature-title" ng-class="{ muted: !cms.chatModerationData.settings.bannedWordList.enabled }">Banned Word List</div>
             <div class="toggle-button-container">
               <toggle-button

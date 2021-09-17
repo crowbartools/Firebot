@@ -79,7 +79,7 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
             service.loadTeamRoles();
 
             service.getTeamRoles = function() {
-                return Object.values(teamRoles);
+                return teamRoles;
             };
 
             const firebotRoles = firebotRoleConstants.getFirebotRoles();

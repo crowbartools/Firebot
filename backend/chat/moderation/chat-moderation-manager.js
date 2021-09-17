@@ -4,6 +4,7 @@ const profileManager = require("../../common/profile-manager");
 const { Worker } = require("worker_threads");
 const frontendCommunicator = require("../../common/frontend-communicator");
 const permitCommand = require("./url-permit-command");
+const rolesManager = require("../../roles/custom-roles-manager");
 
 const getChatModerationSettingsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/chat-moderation-settings");
 const getBannedWordsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-words", false);
@@ -28,6 +29,14 @@ let chatModerationSettings = {
             viewTimeInHours: 0
         },
         outputMessage: ""
+    },
+    spamRaidProtection: {
+        enabled: true,
+        exemptRoles: [],
+        cacheLimit: 50,
+        characterLimit: 10,
+        shouldBan: false,
+        shouldBlock: false
     },
     exemptRoles: []
 };
@@ -73,7 +82,7 @@ const startModerationService = () => {
         switch (event.type) {
         case "deleteMessage": {
             if (event.messageId) {
-                logger.debug(`Chat message with id '${event.messageId}' contains a banned word. Deleting...`);
+                logger.debug(event.logMessage);
                 chat.deleteMessage(event.messageId);
             }
 
@@ -82,6 +91,12 @@ const startModerationService = () => {
             }
             break;
         }
+        case "banUser":
+            chat.ban(event.username);
+            break;
+        case "blockUser":
+            chat.block(event.username);
+            break;
         }
     });
 
@@ -120,35 +135,38 @@ const stopService = () => {
     }
 };
 
+const getExemptUsers = (chatMessage, settings) => {
+    return {
+        spamRaidProtection: rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, settings.spamRaidProtection.exemptRoles),
+        bannedWords: rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, settings.bannedWordList.exemptRoles),
+        emoteLimit: rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, settings.emoteLimit.exemptRoles),
+        urls: rolesManager.userIsInRole(
+            chatMessage.username, chatMessage.roles, settings.urlModeration.exemptRoles
+        ) || permitCommand.hasTemporaryPermission(chatMessage.username)
+    };
+};
+
 /**
  *
  * @param {import("../chat-helpers").FirebotChatMessage} chatMessage
  */
 const moderateMessage = async (chatMessage) => {
-    const { bannedWordList, emoteLimit, urlModeration, exemptRoles } = chatModerationSettings;
     if (chatMessage == null) return;
 
-    if (
-        !bannedWordList.enabled
-        && emoteLimit.enabled
-        && !urlModeration.enabled
-    ) return;
-
-    const rolesManager = require("../../roles/custom-roles-manager");
-    const globalUserExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, exemptRoles);
+    const globalUserExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, chatModerationSettings.exemptRoles);
     if (globalUserExempt) return;
 
-    const userIsExemptFor = {
-        bannedWords: rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, bannedWordList.exemptRoles),
-        emoteLimit: rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, emoteLimit.exemptRoles),
-        urls: rolesManager.userIsInRole(
-            chatMessage.username, chatMessage.roles, urlModeration.exemptRoles
-        ) || permitCommand.hasTemporaryPermission(chatMessage.username)
-    };
-    if (userIsExemptFor.bannedWords && userIsExemptFor.emoteLimit && userIsExemptFor.urls) return;
+    const userIsExemptFor = getExemptUsers(chatMessage, chatModerationSettings);
+    if (
+        userIsExemptFor.spamRaidProtection &&
+        userIsExemptFor.bannedWords &&
+        userIsExemptFor.emoteLimit &&
+        userIsExemptFor.urls
+    ) return;
 
     let viewer = {};
-    if (urlModeration.enabled && urlModeration.viewTime && urlModeration.viewTime.enabled) {
+    const urlSettings = chatModerationSettings.urlModeration;
+    if (urlSettings.enabled && urlSettings.viewTime && urlSettings.viewTime.enabled) {
         const viewerDB = require('../../database/userDatabase');
         viewer = await viewerDB.getUserByUsername(chatMessage.username);
     }
@@ -164,7 +182,7 @@ const moderateMessage = async (chatMessage) => {
     );
 };
 
-frontendCommunicator.on("chatMessageSettingsUpdate", settings => {
+frontendCommunicator.on("chatModerationSettingsUpdate", settings => {
     chatModerationSettings = settings;
     try {
         getChatModerationSettingsDb().push("/", settings);
@@ -209,6 +227,23 @@ const saveBannedRegularExpressionsList = () => {
             }
         );
     }
+};
+
+const enableSpamRaidProtection = (shouldBan, shouldBlock) => {
+    chatModerationSettings.spamRaidProtection.shouldBan = shouldBan;
+    chatModerationSettings.spamRaidProtection.shouldBlock = shouldBlock;
+
+    moderationService.postMessage(
+        {
+            type: "spamRaidProtectionEnable",
+            shouldBan: shouldBan,
+            shouldBlock: shouldBlock
+        }
+    );
+};
+
+const disableSpamRaidProtection = () => {
+    moderationService.postMessage({ type: "spamRaidProtectionDisable" });
 };
 
 frontendCommunicator.on("addBannedWords", words => {
@@ -298,6 +333,17 @@ const load = () => {
                 settings.urlModeration.exemptRoles = [];
             }
 
+            if (settings.spamRaidProtection == null) {
+                settings.spamRaidProtection = {
+                    enabled: true,
+                    exemptRoles: [],
+                    cacheLimit: 50,
+                    characterLimit: 10,
+                    shouldBan: false,
+                    shouldBlock: false
+                };
+            }
+
             if (settings.urlModeration.enabled) {
                 permitCommand.registerPermitCommand();
             }
@@ -324,3 +370,5 @@ const load = () => {
 exports.load = load;
 exports.stopService = stopService;
 exports.moderateMessage = moderateMessage;
+exports.enableSpamRaidProtection = enableSpamRaidProtection;
+exports.disableSpamRaidProtection = disableSpamRaidProtection;

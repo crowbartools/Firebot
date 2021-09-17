@@ -131,6 +131,22 @@
                 service.chatAlertMessage(message);
             });
 
+            // Chat Alert Message
+            service.chatNotification = function(message) {
+
+                const alertItem = {
+                    id: uuid(),
+                    type: "notification",
+                    data: message
+                };
+
+                service.chatQueue.push(alertItem);
+            };
+
+            backendCommunicator.on("chat-feed-notification", (message) => {
+                service.chatNotification(message);
+            });
+
             // User Update
             // This is sent when a user's roles are updated. For example, when someone is banned.
             // Currently, this only checks for bans. It does not automatically unban the user after.
