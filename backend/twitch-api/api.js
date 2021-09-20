@@ -1,8 +1,9 @@
 "use strict";
 
-const twitchClient = require("./client");
+const refreshingAuthProvider = require("../auth/refreshing-auth-provider");
+const { ApiClient } = require("@twurple/api");
 
-exports.getClient = () => twitchClient.getClient();
+exports.getClient = () => new ApiClient({ authProvider: refreshingAuthProvider.getRefreshingAuthProviderForStreamer() });
 
 exports.channels = require("./resource/channels");
 exports.channelRewards = require("./resource/channel-rewards");

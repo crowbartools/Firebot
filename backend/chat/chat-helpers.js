@@ -3,8 +3,7 @@
 const uuid = require("uuid/v4");
 const logger = require("../logwrapper");
 const accountAccess = require("../common/account-access");
-const twitchClient = require("../twitch-api/client");
-const { TwitchAPICallType } = require("twitch/lib");
+const twitchClient = require("../twitch-api/api");
 const bttv = require("./third-party/bttv");
 const ffz = require("./third-party/ffz");
 const frontendCommunicator = require("../common/frontend-communicator");
@@ -20,7 +19,7 @@ const frontendCommunicator = require("../common/frontend-communicator");
  * @property {string} customRewardId
  * @property {string} color
  * @property {string} rawText
- * @property {import('twitch-chat-client/lib/Toolkit/EmoteTools').ParsedMessagePart[]} parts
+ * @property {import("@twurple/common").ParsedMessagePart[]} parts
  * @property {boolean} whisper
  * @property {boolean} action
  * @property {boolean} isCheer
@@ -36,13 +35,23 @@ const frontendCommunicator = require("../common/frontend-communicator");
  *
  */
 
-/**@type {import('twitch/lib/API/Badges/ChatBadgeList').ChatBadgeList} */
+/**@type {import("@twurple/api").HelixChatBadgeSet[]} */
 let badgeCache = null;
 exports.cacheBadges = async () => {
     const streamer = accountAccess.getAccounts().streamer;
     const client = twitchClient.getClient();
     if (streamer.loggedIn && client) {
-        badgeCache = await client.badges.getChannelBadges(streamer.userId, true);
+        try {
+            const channelBadges = await client.chat.getChannelBadges(streamer.userId);
+            const globalBadges = await client.chat.getGlobalBadges();
+
+            badgeCache = [
+                ...channelBadges,
+                ...globalBadges
+            ];
+        } catch (error) {
+            logger.error("Failed to get channel chat badges", error);
+        }
     }
 };
 
@@ -54,6 +63,7 @@ exports.setStreamerData = function(newStreamerData) {
     streamerData = newStreamerData;
 };
 
+/** @type {import("@twurple/api").HelixChannelEmote[]} */
 let streamerEmotes = null;
 
 exports.cacheStreamerEmotes = async () => {
@@ -63,15 +73,9 @@ exports.cacheStreamerEmotes = async () => {
     if (client == null || !streamer.loggedIn) return;
 
     try {
-        const response = await client.callApi({
-            type: TwitchAPICallType.Helix,
-            url: "chat/emotes",
-            query: {
-                "broadcaster_id": streamer.userId
-            }
-        });
-        if (response && response.data) {
-            streamerEmotes = response.data;
+        const response = await client.chat.getChannelEmotes(streamer.userId);
+        if (response) {
+            streamerEmotes = response;
         } else {
             return null;
         }
@@ -81,7 +85,8 @@ exports.cacheStreamerEmotes = async () => {
     }
 };
 
-let globalEmotes = null;
+/** @type {import("@twurple/api").HelixEmote[]} */
+let globalEmotes = [];
 
 exports.cacheGlobalEmotes = async () => {
     const client = twitchClient.getClient();
@@ -89,12 +94,9 @@ exports.cacheGlobalEmotes = async () => {
     if (client == null) return;
 
     try {
-        const response = await client.callApi({
-            type: TwitchAPICallType.Helix,
-            url: "chat/emotes/global"
-        });
-        if (response && response.data) {
-            globalEmotes = response.data;
+        const response = await client.chat.getGlobalEmotes();
+        if (response) {
+            globalEmotes = response;
         } else {
             return null;
         }
@@ -142,7 +144,7 @@ exports.handleChatConnect = async () => {
         ...twitchEmotes
             .flat()
             .map(e => ({
-                url: e.images.url_1x,
+                url: e.getImageUrl(1),
                 origin: "Twitch",
                 code: e.name
             })),
@@ -163,7 +165,7 @@ async function getUserProfilePicUrl(userId) {
     const streamer = accountAccess.getAccounts().streamer;
     const client = twitchClient.getClient();
     if (streamer.loggedIn && client) {
-        const user = await client.helix.users.getUserById(userId);
+        const user = await client.users.getUserById(userId);
         if (user) {
             profilePicUrlCache[userId] = user.profilePictureUrl;
             return user.profilePictureUrl;
@@ -181,7 +183,7 @@ const URL_REGEX = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\.[a-z
 
 /**
  * @param {FirebotChatMessage} firebotChatMessage
- * @param {import('twitch-chat-client/lib/Toolkit/EmoteTools').ParsedMessagePart[]} parts
+ * @param {import("@twurple/common").ParsedMessagePart[]} parts
  */
 function parseMessageParts(firebotChatMessage, parts) {
     if (firebotChatMessage == null || parts == null) return [];
@@ -290,7 +292,7 @@ exports.buildFirebotChatMessageFromText = async (text = "") => {
                 //logger.silly(`Failed to find emote id for ${word}`, err);
             }
 
-            /**@type {import('twitch-chat-client/lib/Toolkit/EmoteTools').ParsedMessagePart} */
+            /**@type {import("@twurple/common").ParsedMessagePart} */
             let part;
             if (emoteId != null) {
                 part = {
@@ -319,15 +321,15 @@ exports.buildFirebotChatMessageFromText = async (text = "") => {
     if (badgeCache != null) {
         for (const [setName, version] of streamerData.badges.entries()) {
 
-            const set = badgeCache.getBadgeSet(setName);
-            if (set._data == null) continue;
+            const set = badgeCache.find(b => b.id === setName);
+            if (set == null) continue;
 
             const setVersion = set.getVersion(version);
-            if (setVersion._data == null) continue;
+            if (setVersion == null) continue;
 
             try {
                 streamerFirebotChatMessage.badges.push({
-                    title: setVersion.title,
+                    title: setVersion.id,
                     url: setVersion.getImageUrl(2)
                 });
             } catch (err) {
@@ -340,7 +342,7 @@ exports.buildFirebotChatMessageFromText = async (text = "") => {
 };
 
 /**
- * @arg {import('twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage').TwitchPrivateMessage} msg
+ * @arg {import("@twurple/chat").PrivateMessage} msg
  * @returns {FirebotChatMessage}
 */
 exports.buildFirebotChatMessage = async (msg, msgText, whisper = false, action = false) => {
@@ -385,16 +387,17 @@ exports.buildFirebotChatMessage = async (msg, msgText, whisper = false, action =
 
     if (badgeCache != null) {
         for (const [setName, version] of msg.userInfo.badges.entries()) {
-
-            const set = badgeCache.getBadgeSet(setName);
-            if (set._data == null) continue;
+            console.log(badgeCache);
+            console.log(setName, version);
+            const set = badgeCache.find(b => b.id === setName);
+            if (set == null) continue;
 
             const setVersion = set.getVersion(version);
-            if (setVersion._data == null) continue;
+            if (setVersion == null) continue;
 
             try {
                 firebotChatMessage.badges.push({
-                    title: setVersion.title,
+                    title: setVersion.id,
                     url: setVersion.getImageUrl(2)
                 });
             } catch (err) {

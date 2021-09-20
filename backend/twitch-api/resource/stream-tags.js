@@ -1,6 +1,6 @@
 "use strict";
 
-const twitchApi = require("../client");
+const twitchApi = require("../api");
 const accountAccess = require("../../common/account-access");
 const logger = require('../../logwrapper');
 
@@ -24,7 +24,7 @@ const mapTwitchTag = (tag) => {
 const getAllStreamTags = async () => {
     try {
         const client = twitchApi.getClient();
-        const response = await client.helix.tags.getAllStreamTagsPaginated().getAll();
+        const response = await client.tags.getAllStreamTagsPaginated().getAll();
 
         if (response) {
             /**@type {TwitchStreamTag[]} */
@@ -39,7 +39,7 @@ const getAllStreamTags = async () => {
 const getChannelStreamTags = async () => {
     try {
         const client = twitchApi.getClient();
-        const response = await client.helix.streams.getStreamTags(accountAccess.getAccounts().streamer.userId);
+        const response = await client.streams.getStreamTags(accountAccess.getAccounts().streamer.userId);
 
         if (response) {
             /**@type {TwitchStreamTag[]} */
@@ -54,7 +54,7 @@ const getChannelStreamTags = async () => {
 const updateChannelStreamTags = async (tagIds) => {
     try {
         const client = twitchApi.getClient();
-        await client.helix.streams.replaceStreamTags(accountAccess.getAccounts().streamer.userId, tagIds);
+        await client.streams.replaceStreamTags(accountAccess.getAccounts().streamer.userId, tagIds);
     } catch (error) {
         logger.error("Failed to update channel stream tags", error);
     }

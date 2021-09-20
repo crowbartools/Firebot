@@ -1,6 +1,6 @@
 "use strict";
 
-const twitchApi = require("../../twitch-api/client");
+const twitchApi = require("../../twitch-api/api");
 
 const accountAccess = require("../../common/account-access");
 const logger = require("../../logwrapper");
@@ -72,7 +72,7 @@ const model = {
 
             let currentViewers = null;
             try {
-                const stream = await client.helix.streams.getStreamByUserId(streamer.userId);
+                const stream = await client.streams.getStreamByUserId(streamer.userId);
                 currentViewers = stream.viewers;
             } catch (error) {
                 logger.warn("unable to get stream viewer count", error);

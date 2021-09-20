@@ -1,13 +1,13 @@
 "use strict";
 
-const twitchApi = require("../client");
+const twitchApi = require("../api");
 const logger = require("../../logwrapper");
 
 const blockUserByName = async (username) => {
     try {
         const client = twitchApi.getClient();
-        const user = await client.helix.users.getUserByName(username);
-        await client.helix.users.createBlock(user.id);
+        const user = await client.users.getUserByName(username);
+        await client.users.createBlock(user.id);
     } catch (err) {
         logger.error("Couldn't block user", err);
     }
@@ -16,8 +16,8 @@ const blockUserByName = async (username) => {
 const unblockUserByName = async (username) => {
     try {
         const client = twitchApi.getClient();
-        const user = await client.helix.users.getUserByName(username);
-        await client.helix.users.deleteBlock(user.id);
+        const user = await client.users.getUserByName(username);
+        await client.users.deleteBlock(user.id);
     } catch (err) {
         logger.error("Couldn't unblock user", err);
     }

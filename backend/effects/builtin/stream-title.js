@@ -1,9 +1,9 @@
 "use strict";
 
 const { EffectCategory } = require('../../../shared/effect-constants');
-const twitchClient = require("../../twitch-api/client");
-const { TwitchAPICallType } = require('twitch/lib');
+const twitchClient = require("../../twitch-api/api");
 const accountAccess = require("../../common/account-access");
+const logger = require('../../logwrapper');
 
 /** @type {import("../models/effectModels").Effect} */
 const model = {
@@ -32,16 +32,12 @@ const model = {
     onTriggerEvent: async event => {
         const client = twitchClient.getClient();
 
-        await client.callApi({
-            type: TwitchAPICallType.Helix,
-            method: "PATCH",
-            url: "channels",
-            query: {
-                "broadcaster_id": accountAccess.getAccounts().streamer.userId,
-                "title": event.effect.title
-            }
-        });
-        return true;
+        try {
+            await client.channels.updateChannelInfo(accountAccess.getAccounts().streamer.userId, { title: event.effect.title });
+            logger.debug("Updated the stream title");
+        } catch (error) {
+            logger.error("Failed to update the stream title", error);
+        }
     }
 };
 

@@ -19,8 +19,8 @@ const mapRoles = (teams) => teams.map(t => ({
 /** @returns {Promise.<MappedTeamRole[]>} */
 const getAllTeamRolesForViewer = async (username) => {
     const client = twitchApi.getClient();
-    const user = await client.helix.users.getUserByName(username);
-    const streamerTeams = await client.helix.teams.getTeamsForBroadcaster(accountAccess.getAccounts().streamer.userId);
+    const user = await client.users.getUserByName(username);
+    const streamerTeams = await client.teams.getTeamsForBroadcaster(accountAccess.getAccounts().streamer.userId);
 
     if (streamerTeams == null) return [];
 
@@ -38,7 +38,7 @@ const getAllTeamRolesForViewer = async (username) => {
 /** @returns {Promise.<MappedTeamRole[]>} */
 const getTeamRoles = async () => {
     const client = twitchApi.getClient();
-    const teams = await client.helix.teams.getTeamsForBroadcaster(accountAccess.getAccounts().streamer.userId);
+    const teams = await client.teams.getTeamsForBroadcaster(accountAccess.getAccounts().streamer.userId);
 
     if (teams != null) {
         return mapRoles(teams);

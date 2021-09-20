@@ -4,7 +4,7 @@ const userDb = require("../database/userDatabase");
 const accountAccess = require("../common/account-access");
 const NodeCache = require('node-cache');
 const twitchApi = require("../twitch-api/api");
-const twitchClient = require("../twitch-api/client");
+const twitchClient = require("../twitch-api/api");
 const teamRolesManager = require("../roles/team-roles-manager");
 const chatRolesManager = require("../roles/chat-roles-manager");
 const logger = require("../logwrapper");
@@ -50,7 +50,7 @@ async function getUserDetails(userId) {
     let twitchUser;
     try {
         const client = twitchClient.getClient();
-        twitchUser = await client.helix.users.getUserById(userId);
+        twitchUser = await client.users.getUserById(userId);
     } catch (error) {
         logger.error("Failed to get user data", error);
     }
@@ -75,14 +75,14 @@ async function getUserDetails(userId) {
 
     let isBanned;
     try {
-        isBanned = await client.helix.moderation.checkUserBan(streamerData.userId, twitchUser.id);
+        isBanned = await client.moderation.checkUserBan(streamerData.userId, twitchUser.id);
     } catch (error) {
         logger.error("Unable to get banned status", error);
     }
 
     let isBlocked = false;
     try {
-        const blocklist = await twitchApi.getClient().helix.users.getBlocksPaginated(streamerData.userId).getAll();
+        const blocklist = await twitchApi.getClient().users.getBlocksPaginated(streamerData.userId).getAll();
         if (blocklist) {
             isBlocked = blocklist.some(u => u.userId === twitchUser.id);
         }
@@ -94,12 +94,12 @@ async function getUserDetails(userId) {
     const userRoles = await chatRolesManager.getChatRoles(twitchUser.id);
     const teamRoles = await teamRolesManager.getAllTeamRolesForViewer(twitchUser.name);
 
-    const userFollowsStreamerResponse = await client.helix.users.getFollows({
+    const userFollowsStreamerResponse = await client.users.getFollows({
         user: userId,
         followedUser: streamerData.userId
     });
 
-    const streamerFollowsUserResponse = await client.helix.users.getFollows({
+    const streamerFollowsUserResponse = await client.users.getFollows({
         user: streamerData.userId,
         followedUser: userId
     });

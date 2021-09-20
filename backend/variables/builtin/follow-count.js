@@ -36,9 +36,9 @@ const model = {
         }
 
         try {
-            const user = await api.getClient().helix.users.getUserByName(username);
+            const user = await api.getClient().users.getUserByName(username);
 
-            const response = await api.getClient().helix.users.getFollows({
+            const response = await api.getClient().users.getFollows({
                 followedUser: user.id
             });
             if (response) {
