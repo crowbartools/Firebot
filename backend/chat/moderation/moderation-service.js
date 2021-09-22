@@ -187,9 +187,12 @@ parentPort.on("message", event => {
             if (!regex.test(chatMessage.rawText)) return;
 
             if (Object.keys(event.viewer).length > 0) {
-                if (hasEnoughViewTime(event.viewer, settings.urlModeration.minimumViewTime)) return;
+                if (settings.urlModeration.viewTime.enabled) {
+                    if (hasEnoughViewTime(event.viewer, settings.urlModeration.viewTime.viewTimeInHours)) return;
 
-                outputMessage = outputMessage.replace("{viewTime}", settings.urlModeration.minimumViewTime.toString());
+                    outputMessage = outputMessage.replace("{viewTime}", settings.urlModeration.viewTime.viewTimeInHours.toString());
+                }
+
             }
 
             if (outputMessage) {
