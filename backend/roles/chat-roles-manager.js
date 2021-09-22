@@ -1,7 +1,7 @@
 "use strict";
 
 const accountAccess = require("../common/account-access");
-const twitchApi = require("../twitch-api/client");
+const twitchApi = require("../twitch-api/api");
 const logger = require("../logwrapper");
 const NodeCache = require("node-cache");
 
@@ -14,7 +14,7 @@ const isBroadcaster = (username) => {
 const isModerator = async (userId) => {
     try {
         const client = twitchApi.getClient();
-        const moderators = await client.helix.moderation.getModeratorsPaginated(accountAccess.getAccounts().streamer.userId).getAll();
+        const moderators = await client.moderation.getModeratorsPaginated(accountAccess.getAccounts().streamer.userId).getAll();
 
         return moderators ? moderators.some(m => m.userId === userId) : false;
     } catch (error) {
@@ -37,7 +37,7 @@ const isVip = async (username) => {
 
 const getSubRoles = async (userId) => {
     const client = twitchApi.getClient();
-    const subInfo = await client.helix.subscriptions.getSubscriptionForUser(accountAccess.getAccounts().streamer.userId, userId);
+    const subInfo = await client.subscriptions.getSubscriptionForUser(accountAccess.getAccounts().streamer.userId, userId);
 
     if (subInfo && subInfo.tier) {
         let tierRole = "";
@@ -62,7 +62,7 @@ const getSubRoles = async (userId) => {
 };
 
 const getChatRoles = async (userIdOrName) => {
-    /** @type {import("twitch/lib").HelixUser} */
+    /** @type {import("@twurple/api").HelixUser} */
     let user = {};
     let roles = [];
     const isName = isNaN(userIdOrName);
@@ -77,9 +77,9 @@ const getChatRoles = async (userIdOrName) => {
         const client = twitchApi.getClient();
 
         if (isName) {
-            user = await client.helix.users.getUserByName(userIdOrName);
+            user = await client.users.getUserByName(userIdOrName);
         } else {
-            user = await client.helix.users.getUserById(userIdOrName);
+            user = await client.users.getUserById(userIdOrName);
         }
     } catch (error) {
         logger.error("Failed to get user", error);

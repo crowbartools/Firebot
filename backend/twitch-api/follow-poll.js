@@ -2,7 +2,7 @@
 
 const accountAccess = require("../common/account-access");
 
-const twitchApi = require("./client");
+const twitchApi = require("./api");
 
 const twitchEventsHandler = require("../events/twitch-events");
 
@@ -25,7 +25,7 @@ exports.startFollowPoll = () => {
 
         if (client == null || !streamer.loggedIn) return;
 
-        const followRequest = client.helix.users.getFollowsPaginated({
+        const followRequest = client.users.getFollowsPaginated({
             followedUser: streamer.userId
         });
 

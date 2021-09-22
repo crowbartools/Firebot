@@ -1,8 +1,7 @@
 "use strict";
 
 const logger = require("../../logwrapper");
-const twitchApi = require("../client");
-const { TwitchAPICallType } = require("twitch/lib");
+const twitchApi = require("../api");
 
 /**
  * @typedef TwitchCategory
@@ -11,55 +10,53 @@ const { TwitchAPICallType } = require("twitch/lib");
  * @property {string} boxArtUrl - The box art or cover image url of this category
  */
 
-
-function mapTwitchCategory(category, size) {
-    if (category.box_art_url) {
-        category.boxArtUrl = category.box_art_url.replace("{width}x{height}", size);
-    }
-    return category;
-}
+/** @returns {TwitchCategory} */
+const mapTwitchCategory = (category, size) => {
+    return {
+        id: category.id,
+        name: category.name,
+        boxArtUrl: category.boxArtUrl.replace("{width}x{height}", size)
+    };
+};
 
 /**
  * @param {number} categoryId
  * @param {string} [size]
  * @returns {Promise.<TwitchCategory>}
  */
-async function getCategoryById(categoryId, size = "285x380") {
+const getCategoryById = async (categoryId, size = "285x380") => {
     const client = twitchApi.getClient();
     try {
-        const category = await client.helix.games.getGameById(categoryId);
-        if (category == null) return null;
-        return mapTwitchCategory(category._data, size);
+        const category = await client.games.getGameById(categoryId);
+        if (category) {
+            return mapTwitchCategory(category, size);
+        }
+
+        return null;
     } catch (error) {
         logger.error("Failed to get twitch category", error);
         return null;
     }
-}
+};
 
 /**
  * @param {string} categoryName
  * @returns {Promise.<TwitchCategory[]>}
  */
-async function searchCategories(categoryName) {
+const searchCategories = async (categoryName) => {
     const client = twitchApi.getClient();
-    let categories = [];
+
     try {
-        const response = await client.callApi({
-            type: TwitchAPICallType.Helix,
-            url: "search/categories",
-            query: {
-                query: categoryName,
-                first: 10
-            }
-        });
+        const response = await client.search.searchCategories(categoryName);
         if (response && response.data) {
-            categories = response.data;
+            return response.data.map(c => mapTwitchCategory(c));
         }
+
+        return null;
     } catch (err) {
         logger.error("Failed to search twitch categories", err);
     }
-    return categories.map(c => mapTwitchCategory(c));
-}
+};
 
 exports.getCategoryById = getCategoryById;
 exports.searchCategories = searchCategories;

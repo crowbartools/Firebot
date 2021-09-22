@@ -4,7 +4,7 @@ const eventManager = require("../../events/EventManager");
 
 /**
  *
- * @param {import("twitch-pubsub-client").PubSubSubscriptionMessage} subInfo
+ * @param {import("@twurple/pubsub").PubSubSubscriptionMessage} subInfo
  */
 exports.triggerSub = (subInfo) => {
     const totalMonths = subInfo._data["cumulative_months"] || 1;

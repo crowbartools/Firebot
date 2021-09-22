@@ -120,7 +120,7 @@ exports.addOnlineUser = async (username) => {
 
         if (firebotUser == null) {
             const twitchApi = require("../../twitch-api/api");
-            const twitchUser = await twitchApi.getClient().helix.users.getUserByName(username);
+            const twitchUser = await twitchApi.getClient().users.getUserByName(username);
 
             if (twitchUser == null) {
                 logger.warn(`Could not find twitch user with username '${username}'`);
@@ -160,7 +160,7 @@ exports.addOnlineUser = async (username) => {
 
 /**
  * Add or update an active user
- * @arg {import('twitch-chat-client/lib/ChatUser').ChatUser} chatUser
+ * @arg {import('@twurple/chat/lib').ChatUser} chatUser
  */
 exports.addActiveUser = async (chatUser, includeInOnline = false, forceActive = false) => {
 

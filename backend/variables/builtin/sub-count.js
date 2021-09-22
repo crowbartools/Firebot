@@ -18,7 +18,7 @@ const model = {
         const { streamer } = accountAccess.getAccounts();
         let count = 0;
         try {
-            const response = await api.getClient().helix.subscriptions
+            const response = await api.getClient().subscriptions
                 .getSubscriptionsPaginated(streamer.channelId).getAll();
             if (response && response.length) {
                 count = response.length;

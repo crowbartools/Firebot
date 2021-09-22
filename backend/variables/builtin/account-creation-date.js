@@ -34,7 +34,7 @@ const model = {
         }
 
         try {
-            const user = await api.getClient().helix.users.getUserByName(username);
+            const user = await api.getClient().users.getUserByName(username);
 
             if (user && user.creationDate) {
                 const creationDate = moment.utc(user.creationDate).format("YYYY-MM-DD HH:mm UTC");

@@ -10,7 +10,7 @@ const request = require("request");
 const replaceVariableManager = require("./variables/replace-variable-manager");
 
 const accountAccess = require("./common/account-access");
-const twitchApi = require("./twitch-api/client");
+const twitchApi = require("./twitch-api/api");
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -179,7 +179,7 @@ exports.getUptime = async () => {
     const client = twitchApi.getClient();
 
     const streamerAccount = accountAccess.getAccounts().streamer;
-    const channelData = await client.helix.streams.getStreamByUserName(streamerAccount.username);
+    const channelData = await client.streams.getStreamByUserName(streamerAccount.username);
 
     if (channelData == null) {
         return "Not currently broadcasting";

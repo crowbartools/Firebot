@@ -60,7 +60,7 @@ const model = {
             return true;
         }
 
-        let userId = (await twitchApi.getClient().helix.users.getUserByName(event.effect.username)).id;
+        let userId = (await twitchApi.getClient().users.getUserByName(event.effect.username)).id;
         if (userId == null) {
             logger.debug("Couldn't get ids for username in active user list effect.");
             return true;

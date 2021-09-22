@@ -4,7 +4,7 @@
 
 const logger = require("../../logwrapper");
 const accountAccess = require("../../common/account-access");
-const twitchApi = require("../../twitch-api/client");
+const twitchApi = require("../../twitch-api/api");
 
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
@@ -23,8 +23,7 @@ const model = {
 
         // retrieve stream data for user id
         const twitchClient = twitchApi.getClient();
-        const streamInfo = await twitchClient.helix.streams
-            .getStreamByUserId(streamerId);
+        const streamInfo = await twitchClient.streams.getStreamByUserId(streamerId);
 
         // extract viewer count
         return streamInfo ? streamInfo.viewers : 0;

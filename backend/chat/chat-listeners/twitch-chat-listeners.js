@@ -10,10 +10,11 @@ const twitchEventsHandler = require("../../events/twitch-events");
 const logger = require("../../logwrapper");
 
 const events = require("events");
+const moment = require("moment");
 
 exports.events = new events.EventEmitter();
 
-/** @arg {import('twitch-chat-client/lib/ChatClient').default} botChatClient */
+/** @arg {import("@twurple/chat").ChatClient} botChatClient */
 exports.setupBotChatListeners = (botChatClient) => {
     botChatClient.onWhisper(async (_user, messageText, msg) => {
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText, true);
@@ -23,7 +24,7 @@ exports.setupBotChatListeners = (botChatClient) => {
 
 const HIGHLIGHT_MESSAGE_REWARD_ID = "highlight-message";
 
-/** @arg {import('twitch-chat-client/lib/ChatClient').ChatClient} streamerChatClient */
+/** @arg {import("@twurple/chat").ChatClient} streamerChatClient */
 exports.setupChatListeners = (streamerChatClient) => {
     streamerChatClient.onMessage(async (_channel, user, messageText, msg) => {
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText);
@@ -83,8 +84,12 @@ exports.setupChatListeners = (streamerChatClient) => {
         twitchEventsHandler.viewerArrived.triggerViewerArrived(msg.userInfo.displayName);
     });
 
-    streamerChatClient.onMessageRemove((_channel, messageId) => {
+    streamerChatClient.onMessageRemove((_channel, messageId, msg) => {
         frontendCommunicator.send("twitch:chat:message:deleted", messageId);
+        frontendCommunicator.send(
+            "chat-feed-notification",
+            `${msg.userName}'s message was deleted'.`
+        );
     });
 
     streamerChatClient.onHosted((_, byChannel, auto, viewers) => {
@@ -105,7 +110,7 @@ exports.setupChatListeners = (streamerChatClient) => {
         }
     });
 
-    streamerChatClient.onCommunitySub((_channel, _user, subInfo, msg) => {
+    streamerChatClient.onCommunitySub((_channel, _user, subInfo) => {
         twitchEventsHandler.giftSub.triggerCommunitySubGift(subInfo.gifterDisplayName,
             subInfo.plan, subInfo.count);
     });
@@ -117,22 +122,105 @@ exports.setupChatListeners = (streamerChatClient) => {
     streamerChatClient.onBan((_, username) => {
         twitchEventsHandler.viewerBanned.triggerBanned(username);
         frontendCommunicator.send("twitch:chat:user:delete-messages", username);
+        frontendCommunicator.send(
+            "chat-feed-notification",
+            `${username} is now banned from this channel.`
+        );
     });
 
     streamerChatClient.onTimeout((_, username, duration) => {
         twitchEventsHandler.viewerTimeout.triggerTimeout(username, duration);
         frontendCommunicator.send("twitch:chat:user:delete-messages", username);
+        frontendCommunicator.send(
+            "chat-feed-notification",
+            `${username} has been timed out for ${duration} seconds.`
+        );
     });
 
     streamerChatClient.onChatClear(() => {
-        frontendCommunicator.send("chat-feed-notification", `Chat cleared.`);
+        frontendCommunicator.send(
+            "chat-feed-notification",
+            `The room has been cleared.`
+        );
     });
 
-    // streamerChatClient.onNotice((_target, _user, message, msg) => {
-    //     // Mumbles in non-existing but very useful API endpoints..
-    //     // We have to ignore this one for now since we request the vips for the role manager
-    //     if (msg._tags.get("msg-id") !== "vips_success") {
-    //         frontendCommunicator.send("chat-feed-notification", message);
-    //     }
-    // });
+    streamerChatClient.onEmoteOnly((_, enabled) => {
+        if (enabled) {
+            frontendCommunicator.send(
+                "chat-feed-notification",
+                `This room is now in emote-only mode.`
+            );
+        } else {
+            frontendCommunicator.send(
+                "chat-feed-notification",
+                `This room is no longer in emote-only mode.`
+            );
+        }
+    });
+
+    streamerChatClient.onSubsOnly((_, enabled) => {
+        if (enabled) {
+            frontendCommunicator.send(
+                "chat-feed-notification",
+                `This room is now in subscribers-only mode.`
+            );
+        } else {
+            frontendCommunicator.send(
+                "chat-feed-notification",
+                `This room is no longer in subscribers-only mode.`
+            );
+        }
+    });
+
+    streamerChatClient.onR9k((_, enabled) => {
+        if (enabled) {
+            frontendCommunicator.send(
+                "chat-feed-notification",
+                `This room is now in unique mode.`
+            );
+        } else {
+            frontendCommunicator.send(
+                "chat-feed-notification",
+                `This room is no longer in unique mode.`
+            );
+        }
+    });
+
+    streamerChatClient.onSlow((_, enabled, delay) => {
+        if (enabled && delay) {
+            frontendCommunicator.send(
+                "chat-feed-notification",
+                `This room is now in slow mode. Users may send messages every ${moment.duration(delay, "seconds").humanize()}.`
+            );
+        } else if (enabled) {
+            frontendCommunicator.send(
+                "chat-feed-notification",
+                `This room is now in slow mode.`
+            );
+        } else {
+            frontendCommunicator.send(
+                "chat-feed-notification",
+                `This room is no longer in slow mode.`
+            );
+        }
+    });
+
+    streamerChatClient.onFollowersOnly((_, enabled, delay) => {
+        if (enabled && delay) {
+            frontendCommunicator.send(
+                "chat-feed-notification",
+                `This room is now in ${moment.duration(delay, "minutes").humanize()} followers-only mode.`
+            );
+        } else if (enabled) {
+            frontendCommunicator.send(
+                "chat-feed-notification",
+                `This room is now in followers-only mode.`
+            );
+        } else {
+            frontendCommunicator.send(
+                "chat-feed-notification",
+                `This room is no longer in followers-only mode.`
+            );
+        }
+    });
 };

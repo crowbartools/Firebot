@@ -1,14 +1,14 @@
 "use strict";
 const logger = require("../../logwrapper");
 const accountAccess = require("../../common/account-access");
-const twitchClient = require("../client");
+const refreshingAuthProvider = require("../../auth/refreshing-auth-provider");
 
-const { PubSubClient } = require("twitch-pubsub-client");
+const { PubSubClient } = require("@twurple/pubsub");
 
 /**@type {PubSubClient} */
 let pubSubClient;
 
-/**@type {Array<import("twitch-pubsub-client").PubSubListener>} */
+/**@type {Array<import("@twurple/pubsub").PubSubListener} */
 let listeners = [];
 
 /**
@@ -69,13 +69,13 @@ async function createClient() {
 
     pubSubClient = new PubSubClient();
 
-    const apiClient = twitchClient.getClient();
+    const authProvider = refreshingAuthProvider.getRefreshingAuthProviderForStreamer();
 
     try {
         // throws error if one doesnt exist
         pubSubClient.getUserListener(streamer.userId);
     } catch (err) {
-        await pubSubClient.registerUserListener(apiClient, streamer.userId);
+        await pubSubClient.registerUserListener(authProvider, streamer.userId);
     }
 
     await removeListeners(pubSubClient);

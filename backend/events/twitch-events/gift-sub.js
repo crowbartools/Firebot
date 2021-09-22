@@ -18,7 +18,7 @@ exports.triggerCommunitySubGift = (gifterUsername, subPlan, subCount) => {
     });
 };
 
-/** @param {import("twitch-pubsub-client").PubSubSubscriptionMessage} subInfo */
+/** @param {import("@twurple/pubsub").PubSubSubscriptionMessage} subInfo */
 exports.triggerSubGift = (subInfo) => {
 
     if (settings.ignoreSubsequentSubEventsAfterCommunitySub()) {
