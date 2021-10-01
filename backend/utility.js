@@ -1,6 +1,5 @@
 "use strict";
 
-const mixerApi = require("./mixer-api/api");
 const moment = require("moment");
 const logger = require("./logwrapper");
 const request = require("request");
