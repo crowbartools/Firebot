@@ -103,7 +103,6 @@ exports.loadReplaceVariables = () => {
         'text-split',
         'text-substring',
         'text-trim',
-        'textbox-input',
         'time',
         'timeout-duration',
         'top-currency-user',
