@@ -13,7 +13,7 @@ const effectQueueManager = require("../effects/queues/effect-queue-manager");
 const effectQueueRunner = require("../effects/queues/effect-queue-runner");
 
 function getTriggerIdFromTriggerData(trigger) {
-    let { eventSource, event } = trigger.metadata;
+    const { eventSource, event } = trigger.metadata;
 
     if (eventSource && event) {
         return `${eventSource.id}:${event.id}`;

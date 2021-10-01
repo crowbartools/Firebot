@@ -200,9 +200,7 @@ function getEffects(triggerType) {
     // filter effects list to given triggerType
     let filteredEffects = effectDefinitions.filter(e => {
         if (triggerType != null) {
-            let supported = e.triggers[triggerType] != null && e.triggers[triggerType] !== false;
-            if (!supported) return false;
-            return true;
+            return e.triggers[triggerType] != null && e.triggers[triggerType] !== false;
         }
         return true;
     });

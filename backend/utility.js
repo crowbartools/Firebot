@@ -145,7 +145,7 @@ function callUrl(url) {
 }
 
 function getTriggerIdFromTriggerData(trigger) {
-    let { eventSource, event } = trigger.metadata;
+    const { eventSource, event } = trigger.metadata;
 
     if (eventSource && event) {
         return `${eventSource.id}:${event.id}`;

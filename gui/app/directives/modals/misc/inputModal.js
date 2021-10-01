@@ -9,38 +9,38 @@
             template: `
             <div class="modal-header">
                 <button type="button" class="close" aria-label="Close" ng-click="$ctrl.dismiss()"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="addInteractiveBoardLabel">{{$ctrl.label}}</h4>
+                <h4 class="modal-title">{{$ctrl.label}}</h4>
             </div>
             <div class="modal-body">
                 <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;margin-top: 15px;">
                     <p ng-if="$ctrl.descriptionText">{{$ctrl.descriptionText}}</p>
                     <div style="width: 95%; position: relative;">
                         <div class="form-group" ng-class="{'has-error': $ctrl.hasValidationError}" ng-hide="$ctrl.useTextArea" >
-                            <input  
-                                type="{{$ctrl.inputType}}" 
-                                class="form-control" 
-                                id="inputField" 
-                                ng-model="$ctrl.model" 
-                                ng-keyup="$event.keyCode == 13 && $ctrl.save() " 
-                                aria-describedby="helpBlock" 
-                                placeholder="{{$ctrl.inputPlaceholder}}" 
-                                replace-variables 
+                            <input
+                                type="{{$ctrl.inputType}}"
+                                class="form-control"
+                                id="inputField"
+                                ng-model="$ctrl.model"
+                                ng-keyup="$event.keyCode == 13 && $ctrl.save() "
+                                aria-describedby="helpBlock"
+                                placeholder="{{$ctrl.inputPlaceholder}}"
+                                replace-variables
                                 menu-position="under"
-                                button-position="below" 
+                                button-position="below"
                                 disable-variable-menu="$ctrl.hideVariableMenu">
                             <span id="helpBlock" class="help-block" ng-show="$ctrl.hasValidationError">{{$ctrl.validationText}}</span>
                         </div>
                         <div class="form-group" ng-class="{'has-error': $ctrl.hasValidationError}" ng-show="$ctrl.useTextArea">
                             <textarea
                                 ng-show="$ctrl.useTextArea"
-                                class="form-control" 
-                                ng-model="$ctrl.model" 
-                                ng-keyup="$event.keyCode == 13 && $ctrl.save() " 
-                                aria-describedby="helpBlock" 
-                                placeholder="{{$ctrl.inputPlaceholder}}" 
-                                replace-variables 
-                                menu-position="under" 
-                                rows="3" 
+                                class="form-control"
+                                ng-model="$ctrl.model"
+                                ng-keyup="$event.keyCode == 13 && $ctrl.save() "
+                                aria-describedby="helpBlock"
+                                placeholder="{{$ctrl.inputPlaceholder}}"
+                                replace-variables
+                                menu-position="under"
+                                rows="3"
                                 style="width:100%"
                                 disable-variable-menu="$ctrl.hideVariableMenu"></textarea>
                             <span id="helpBlock" class="help-block" ng-show="$ctrl.hasValidationError">{{$ctrl.validationText}}</span>
