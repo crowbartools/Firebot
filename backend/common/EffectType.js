@@ -18,7 +18,6 @@ const ALL_TRIGGERS = Object.values(Trigger);
 const Dependency = {
     INTERACTIVE: "interactive",
     CHAT: "chat",
-    CONSTELLATION: "constellation",
     OVERLAY: "overlay"
 };
 
