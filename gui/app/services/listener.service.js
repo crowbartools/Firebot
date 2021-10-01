@@ -236,15 +236,6 @@
      * Connection event listeners
      */
 
-        // Interactive Connection Monitor
-        // Recieves event from main process that connection has been established or disconnected.
-        ipcRenderer.on("connection", function(event, data) {
-            let isConnected = data ? data.toLowerCase() === "online" : false;
-            _.forEach(registeredListeners.connectionStatus, listener => {
-                runListener(listener, isConnected);
-            });
-        });
-
         // Chat Connection Monitor
         // Recieves event from main process that connection has been established or disconnected.
         ipcRenderer.on("chatConnection", function(event, data) {
@@ -267,44 +258,6 @@
             let services = data ? data : [];
             _.forEach(registeredListeners.toggleServicesRequest, listener => {
                 runListener(listener, services);
-            });
-        });
-
-        // patronage updates
-        ipcRenderer.on('periodPatronageUpdate', function (event, data) {
-            _.forEach(registeredListeners.periodPatronageUpdate, (listener) => {
-                runListener(listener, data);
-            });
-        });
-
-
-        ipcRenderer.on('channelPatronageUpdate', function (event, data) {
-            _.forEach(registeredListeners.channelPatronageUpdate, (listener) => {
-                runListener(listener, data);
-            });
-        });
-
-
-        // gif url for skill
-        ipcRenderer.on('gifUrlForSkill', function (event, data) {
-            _.forEach(registeredListeners.gifUrlForSkill, (listener) => {
-                runListener(listener, data);
-            });
-        });
-
-
-        // Non skill event listener
-        ipcRenderer.on('nonChatSkill', function (event, data) {
-            _.forEach(registeredListeners.nonChatSkill, (listener) => {
-                runListener(listener, data);
-            });
-        });
-
-        // Interactive Connect Request
-        // Recieves an event from the main process when the global hotkey is hit for connecting.
-        ipcRenderer.on("getRefreshToken", function() {
-            _.forEach(registeredListeners.connectionChangeRequest, listener => {
-                runListener(listener, null);
             });
         });
 

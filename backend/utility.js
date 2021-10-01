@@ -145,17 +145,10 @@ function callUrl(url) {
 }
 
 function getTriggerIdFromTriggerData(trigger) {
+    let { eventSource, event } = trigger.metadata;
 
-    switch (trigger.type) {
-    case "interactive":
-        return trigger.metadata.control && trigger.metadata.control.kind;
-    case "event": {
-        let eventSource = trigger.metadata.eventSource,
-            event = trigger.metadata.event;
-        if (eventSource && event) {
-            return `${eventSource.id}:${event.id}`;
-        }
-    }
+    if (eventSource && event) {
+        return `${eventSource.id}:${event.id}`;
     }
 
     return undefined;

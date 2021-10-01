@@ -42,12 +42,12 @@
 }
 
 .variable-menu {
-  width: 500px; 
-  background: #060707; 
-  position: absolute; 
-  right: 0px; 
-  top: -307px; 
-  z-index: 3000; 
+  width: 500px;
+  background: #060707;
+  position: absolute;
+  right: 0px;
+  top: -307px;
+  z-index: 3000;
   border-radius: 4px;
   &.below {
     top: 36px;
@@ -240,9 +240,9 @@ body {
 }
 
 .nav-body-wrapper {
-  height: 100%; 
-  display: flex; 
-  flex-direction: column; 
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   justify-content: space-between;
 }
 
@@ -261,7 +261,7 @@ body {
   &:hover::-webkit-scrollbar-track {
     background-color: transparent;
   }
-  
+
   &:hover::-webkit-scrollbar-thumb {
     background-color: #9a9fa0;
     border-radius: 5px;
@@ -297,7 +297,7 @@ body {
   }
   span.contracted {
     opacity: 0;
-  } 
+  }
 }
 //nav stuff
 
@@ -560,11 +560,11 @@ body {
 .connection-panel-btn {
   transition: 0.5s;
   opacity: 1;
-  color: gray; 
-  font-size: 16px; 
-  padding-right: 15px; 
-  cursor: pointer; 
-  width: 50px; 
+  color: gray;
+  font-size: 16px;
+  padding-right: 15px;
+  cursor: pointer;
+  width: 50px;
   text-align: right;
   &.contracted {
     opacity: 0;
@@ -1080,11 +1080,11 @@ body {
   font-size: 12px;
 }
 
-.wave.ng-enter, 
-.wave.ng-leave, 
-.wave-reverse.ng-enter, 
+.wave.ng-enter,
+.wave.ng-leave,
+.wave-reverse.ng-enter,
 .wave-reverse.ng-leave,
-.slide-fade.ng-enter, 
+.slide-fade.ng-enter,
 .slide-fade.ng-leave {
   -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
   transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
@@ -1499,7 +1499,7 @@ thead th{
   }
   &:last-child {
     //margin-bottom: 0;
-  }  
+  }
   .noti-icon {
     font-size: 27px;
     padding-left: 10px;
@@ -1508,7 +1508,7 @@ thead th{
       vertical-align: -3%;
     }
   }
-  .noti-text {  
+  .noti-text {
     font-size: 15px;
     width: 100%;
   }
@@ -1529,7 +1529,7 @@ thead th{
     text-transform: uppercase;
     font-size: 9px;
     font-weight: 600;
-    color: gray;   
+    color: gray;
   }
   .noti-action {
     padding-left: 10px;
@@ -1653,6 +1653,10 @@ thead th{
 
 .general-button-settings {
   margin: 10px 0 25px 0;
+
+  .input-group {
+    padding-bottom:1em;
+  }
 }
 
 .filter-bar {
@@ -1672,7 +1676,7 @@ thead th{
   cursor: pointer;
   border: none;
   &:hover, &:focus {
-    opacity: 0.8;  
+    opacity: 0.8;
   }
   .filter-remove-btn {
     border: none;
@@ -1877,3 +1881,49 @@ thead th{
   }
 }
 
+.modal-subheader {
+  font-size: 15px;
+  text-transform: uppercase;
+  font-family: "Quicksand";
+  padding: 11px;
+  font-weight: 100;
+  color: $editor-text-color;
+}
+
+.searchbar-wrapper {
+  display: inline-block;
+  position: relative;
+  width: 250px;
+}
+
+.searchbar-icon {
+  position: absolute;
+  left: 8px;
+  top: 9px;
+}
+
+.searchbar-clear-btn {
+  position: absolute;
+  right: 8px;
+  top: 9px;
+}
+
+.volume-slider-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .volume-low {
+    font-size: 30px;
+    margin-right: 10px;
+    color: #337ab7;
+    align-self: flex-end;
+    padding-bottom: 3px;
+  }
+  .volume-high {
+    font-size: 30px;
+    margin-left: 10px;
+    color: #337ab7;
+    align-self: flex-end;
+    padding-bottom: 3px;
+  }
+}

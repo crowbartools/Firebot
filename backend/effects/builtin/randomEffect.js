@@ -1,13 +1,7 @@
 "use strict";
 
-const { settings } = require("../../common/settings-access");
 const effectRunner = require("../../common/effect-runner");
 const util = require("../../utility");
-
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectDependency, EffectTrigger } = effectModels;
-
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 const randomQueuesCache = {};
@@ -25,12 +19,7 @@ const randomEffect = {
         description: "Run a random effect from a list of effects",
         icon: "fad fa-random",
         categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
     /**
    * Global settings that will be available in the Settings tab
@@ -41,7 +30,7 @@ const randomEffect = {
    * You can alternatively supply a url to a html file via optionTemplateUrl
    */
     optionsTemplate: `
-    
+
 
     <eos-container>
         <p>This effect will run a random effect from the list below.</p>
@@ -55,7 +44,7 @@ const randomEffect = {
     </eos-container>
 
     <eos-container pad-top="true">
-        <effect-list effects="effect.effectList" 
+        <effect-list effects="effect.effectList"
             trigger="{{trigger}}"
             trigger-meta="triggerMeta"
             update="effectListUpdated(effects)"
@@ -63,8 +52,8 @@ const randomEffect = {
             modalId="{{modalId}}"
             hide-numbers="true"></effect-list>
     </eos-container>
-    
-    
+
+
     `,
     /**
    * The controller for the front end Options

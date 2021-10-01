@@ -10,14 +10,14 @@ const model = {
     optionsTemplate: `
         <div>
             <div ng-show="hasCurrencies">
-                <div id="channelCurrency" class="mixplay-header" style="padding: 0 0 4px 0">
+                <div id="channelCurrency" class="modal-subheader" style="padding: 0 0 4px 0">
                     Channel Currency
                 </div>
                 <div class="">
                     <select class="fb-select" ng-model="restriction.selectedCurrency" ng-options="currency.id as currency.name for currency in currencies"></select>
                 </div>
 
-                <div id="channelCurrencyOption" class="mixplay-header" style="padding: 0 0 4px 0">
+                <div id="channelCurrencyOption" class="modal-subheader" style="padding: 0 0 4px 0">
                     Comparison
                 </div>
                 <div>
@@ -28,7 +28,7 @@ const model = {
                     </select>
                 </div>
 
-                <div id="channelCurrencyAmount" class="mixplay-header" style="padding: 0 0 4px 0">
+                <div id="channelCurrencyAmount" class="modal-subheader" style="padding: 0 0 4px 0">
                     Amount
                 </div>
                 <div class="form-group">

@@ -4,10 +4,6 @@
     "LOADING": "Loading..."
   },
   "SIDEBAR": {
-    "INTERACTIVE": {
-      "INTERACTIVE": "MixPlay",
-      "BUTTONS": "Controls"
-    },
     "CHAT": {
       "CHAT": "Chat",
       "COMMANDS": "Commands",

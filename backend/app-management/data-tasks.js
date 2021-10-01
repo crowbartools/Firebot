@@ -64,7 +64,6 @@ function ensureRequiredFoldersExist() {
         const requiredProfileDirPaths = [
             `/profiles/${profileId}`,
             `/profiles/${profileId}/scripts`,
-            `/profiles/${profileId}/mixplay`,
             `/profiles/${profileId}/chat`,
             `/profiles/${profileId}/currency`,
             `/profiles/${profileId}/counters`,

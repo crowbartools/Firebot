@@ -6,7 +6,6 @@ const importHelpers = require("./import-helpers");
 const frontendCommunicator = require("../../common/frontend-communicator");
 
 //areas
-const mixplayImporter = require("./areas/v4-mixplay-importer");
 const commandsImporter = require("./areas/v4-commands-importer");
 const eventsImporter = require("./areas/v4-events-importer");
 const viewerGroupsImporter = require("./areas/v4-viewergroups-importer");
@@ -43,20 +42,6 @@ async function importV4Data(settings) {
 
     //keep track of incompatibility issues so we can display them to the user later
     let incompatibilityWarnings = [];
-
-    if (settings.mixplay) {
-
-        logger.info("Importing v4 mixplay data...");
-
-        frontendCommunicator.send("v4-import-update", { importing: "MixPlay" });
-
-        await wait(2000);
-
-        let mixplayResult = await mixplayImporter.run();
-
-        incompatibilityWarnings = incompatibilityWarnings.concat(mixplayResult.incompatibilityWarnings);
-
-    }
 
     if (settings.commands) {
 

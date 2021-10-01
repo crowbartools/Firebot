@@ -9,7 +9,7 @@ const model = {
     },
     optionsTemplate: `
         <div>
-            <div id="chatMessageRestriction" class="mixplay-header" style="padding: 0 0 4px 0">
+            <div id="chatMessageRestriction" class="modal-subheader" style="padding: 0 0 4px 0">
                 Minimum # of Messages
             </div>
             <input type="number" class="form-control" placeholder="0" ng-model="restriction.messages">

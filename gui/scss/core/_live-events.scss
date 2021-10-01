@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    padding: 20px; 
+    padding: 20px;
     width: 100%;
     background: $light-background-color;
     margin-top: 10px;
@@ -52,5 +52,51 @@
         .fb-arrow {
             border-color: #c4c4c4;
         }
-    }   
+    }
+}
+
+.editior-column {
+    width: 215px;
+    height: 100%;
+    background: $editor-column-bg;
+    display: flex;
+    flex-direction: column;
+    position:relative;
+    overflow: hidden;
+    color: $editor-text-color;
+}
+
+.scene-row {
+    height: 35px;
+    cursor: pointer;
+    &:hover {
+        background: $editor-row-hover-bg;
+    }
+    &.selected {
+        background: $editor-row-selected-bg;
+    }
+}
+
+.selected-scene-icon {
+    width: 3px;
+    height: 100%;
+    background: #EBB11F;
+    margin-right: 9px;
+    &.transparent {
+        background: transparent !important;
+    }
+}
+
+.row-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 122px;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
 }
