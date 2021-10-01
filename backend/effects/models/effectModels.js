@@ -66,7 +66,6 @@ exports.buildEffectTriggersObject = function(mixplayControls, mixplayEvents, oth
 const EffectDependency = Object.freeze({
     INTERACTIVE: "interactive",
     CHAT: "chat",
-    CONSTELLATION: "constellation",
     OVERLAY: "overlay"
 });
 
