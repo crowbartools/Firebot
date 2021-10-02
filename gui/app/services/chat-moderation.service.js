@@ -80,7 +80,7 @@
 
                 service.chatModerationData.bannedRegularExpressions = service.chatModerationData.bannedRegularExpressions.concat(mapped);
 
-                backendCommunicator.fireEvent("addBannedRegularExpressions", mapped);
+                backendCommunicator.fireEvent("addBannedRegularExpression", mapped);
             };
 
             service.removeBannedWordAtIndex = (index) => {

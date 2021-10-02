@@ -269,12 +269,12 @@ frontendCommunicator.on("removeAllBannedWords", () => {
     saveBannedWordList();
 });
 
-frontendCommunicator.on("addBannedRegularExpressions", regularExpressions => {
+frontendCommunicator.on("addBannedRegularExpression", regularExpressions => {
     bannedRegularExpressions.regularExpressions = bannedRegularExpressions.regularExpressions.concat(regularExpressions);
     saveBannedRegularExpressionsList();
 });
 
-frontendCommunicator.on("removeBannedRegularExpressions", regexText => {
+frontendCommunicator.on("removeBannedRegularExpression", regexText => {
     bannedRegularExpressions.regularExpressions = bannedRegularExpressions.regularExpressions.filter(r => r.text.toLowerCase() !== regexText);
     saveBannedRegularExpressionsList();
 });
