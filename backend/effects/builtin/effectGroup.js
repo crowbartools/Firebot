@@ -1,13 +1,8 @@
 "use strict";
 
 const effectRunner = require("../../common/effect-runner");
-
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger } = effectModels;
-
+const { EffectTrigger } = require("../models/effectModels");
 const { EffectCategory } = require('../../../shared/effect-constants');
-
 const presetEffectListManager = require("../preset-lists/preset-effect-list-manager");
 
 const effectGroup = {
@@ -18,12 +13,7 @@ const effectGroup = {
             "Run a preset or custom list of effects",
         icon: "fad fa-list",
         categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
     optionsTemplate: `
         <eos-container header="List Type">
@@ -39,8 +29,8 @@ const effectGroup = {
             </ui-select>
 
             <div style="margin-top: 15px">
-                <button class="btn btn-default" 
-                    ng-show="effect.presetListId != null" 
+                <button class="btn btn-default"
+                    ng-show="effect.presetListId != null"
                     ng-click="editSelectedPresetList()">Edit '{{getSelectedPresetListName()}}'</button>
             </div>
         </eos-container>
@@ -54,14 +44,14 @@ const effectGroup = {
                     <span><b>{{arg.name}}: </b></span>
                     <div style="width: 100%; padding: 0 10px;">
                         <input type="text" class="form-control" placeholder="Enter data" ng-model="effect.presetListArgs[arg.name]" replace-variables />
-                    </div>       
+                    </div>
                 </div>
             </div>
         </eos-container>
 
         <eos-container ng-show="effect.listType === 'custom'" header="Custom Effect List" pad-top="true">
-            <effect-list effects="effect.effectList" 
-                    trigger="{{trigger}}" 
+            <effect-list effects="effect.effectList"
+                    trigger="{{trigger}}"
                     trigger-meta="triggerMeta"
                     update="effectListUpdated(effects)"
                     modalId="{{modalId}}"></effect-list>

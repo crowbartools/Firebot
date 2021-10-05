@@ -20,10 +20,6 @@ const v4EventTypeMap = {
         eventId: "subscribed",
         sourceId: "mixer"
     },
-    "INTERACTIVE_CONNECTED": {
-        eventId: "mixplay-connected",
-        sourceId: "firebot"
-    },
     "CHAT_CONNECTED": {
         eventId: "chat-connected",
         sourceId: "firebot"

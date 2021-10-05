@@ -157,9 +157,6 @@ exports.whenReady = async () => {
     const webServer = require("../../../../server/httpServer");
     webServer.start();
 
-    const channelAccess = require("../../../common/channel-access");
-    channelAccess.refreshStreamerChannelData();
-
     const channelRewardManager = require("../../../channel-rewards/channel-reward-manager");
     await channelRewardManager.loadChannelRewards();
 

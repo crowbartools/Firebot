@@ -1,9 +1,5 @@
 "use strict";
 
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 const model = {
@@ -13,12 +9,7 @@ const model = {
         description: "Manually add or remove a cooldown for a command",
         icon: "fad fa-hourglass-half",
         categories: [EffectCategory.COMMON, EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
     globalSettings: {},
     optionsTemplate: `
@@ -39,7 +30,7 @@ const model = {
                     <input type="radio" ng-model="showSubcommands" ng-value="true"/>
                     <div class="control__indicator"></div>
                 </label>
-                
+
                 <div ng-show="showSubcommands">
                     <dropdown-select selected="effect.subcommandId" options="subcommandOptions" placeholder="Please select"></dropdown-select>
                 </div>
@@ -72,7 +63,7 @@ const model = {
                         <span class="input-group-addon" id="globalsecs">Secs</span>
                         <input type="text" class="form-control" aria-describedby="globalsecs" replace-variables="number" ng-model="effect.globalCooldownSecs" placeholder="Enter secs">
                     </div>
-                </div>         
+                </div>
             </div>
             <div style="margin-top:5px;">
                 <label class="control-fb control--checkbox"> User Cooldown
@@ -89,15 +80,15 @@ const model = {
                         <span class="input-group-addon" id="usersecs">Secs</span>
                         <input type="text" class="form-control" aria-describedby="usersecs" replace-variables="number" ng-model="effect.userCooldownSecs" placeholder="Enter secs">
                     </div>
-                </div>         
-            </div> 
+                </div>
+            </div>
         </eos-container>
         <eos-container header="Cooldowns" pad-top="true" ng-show="effect.action === 'Clear'">
             <div style="margin-top:5px;">
                 <label class="control-fb control--checkbox"> Clear Global Cooldown
                     <input type="checkbox" ng-model="effect.clearGlobalCooldown">
                     <div class="control__indicator"></div>
-                </label>       
+                </label>
             </div>
             <div style="margin-top:5px;">
                 <label class="control-fb control--checkbox"> Clear User Cooldown
@@ -109,8 +100,8 @@ const model = {
                         <span class="input-group-addon" id="username">Username</span>
                         <input type="text" class="form-control" aria-describedby="username" replace-variables ng-model="effect.clearUsername" placeholder="Enter name">
                     </div>
-                </div>         
-            </div> 
+                </div>
+            </div>
         </eos-container>
     `,
     optionsController: ($scope, commandsService) => {

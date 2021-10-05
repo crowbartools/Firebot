@@ -287,7 +287,7 @@ function getUserOnlineMinutes(username) {
 }
 
 /**
- * Triggers a View Time Update event and updates MixPlay participant if view time hours has increased
+ * Triggers a View Time Update event if view time hours has increased
  */
 function userViewTimeUpdate(user, previousTotalMinutes, newTotalMinutes) {
     if (user == null) return;
@@ -696,7 +696,6 @@ async function sanitizeDbInput(changePacket) {
         changePacket.value = moment(changePacket.value).valueOf();
         break;
     case "minutesInChannel":
-    case "mixPlayInteractions":
     case "chatMessages":
         changePacket.value = parseInt(changePacket.value);
         break;

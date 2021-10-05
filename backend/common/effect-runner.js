@@ -13,17 +13,10 @@ const effectQueueManager = require("../effects/queues/effect-queue-manager");
 const effectQueueRunner = require("../effects/queues/effect-queue-runner");
 
 function getTriggerIdFromTriggerData(trigger) {
+    const { eventSource, event } = trigger.metadata;
 
-    switch (trigger.type) {
-    case "interactive":
-        return trigger.metadata.control && trigger.metadata.control.kind;
-    case "event": {
-        let eventSource = trigger.metadata.eventSource,
-            event = trigger.metadata.event;
-        if (eventSource && event) {
-            return `${eventSource.id}:${event.id}`;
-        }
-    }
+    if (eventSource && event) {
+        return `${eventSource.id}:${event.id}`;
     }
 
     return undefined;
@@ -61,7 +54,7 @@ const findAndReplaceVariables = async (data, trigger) => {
 };
 
 // Connection Dependency Checker
-// This returns true if all dependency checks pass. IE: If interactive is required and we're connected to interactive.
+// This returns true if all dependency checks pass.
 // NOTE: I don't know of a way to check for overlay status right now so this skips that check.
 function validateEffectCanRun(effectId, triggerType) {
     let effectDefinition = effectManager.getEffectById(effectId).definition;

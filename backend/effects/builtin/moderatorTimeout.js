@@ -1,11 +1,7 @@
 "use strict";
 
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger, EffectDependency } = effectModels;
-
+const { EffectDependency } = require("../models/effectModels");
 const { EffectCategory } = require('../../../shared/effect-constants');
-
 const logger = require('../../logwrapper');
 const twitchChat = require("../../chat/twitch-chat");
 
@@ -16,12 +12,7 @@ const model = {
         description: "Timeout a user.",
         icon: "fad fa-user-clock",
         categories: [EffectCategory.COMMON, EffectCategory.MODERATION],
-        dependencies: [EffectDependency.CHAT],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: [EffectDependency.CHAT]
     },
     optionsTemplate: `
     <eos-container header="Target" pad-top="true">

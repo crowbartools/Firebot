@@ -131,14 +131,6 @@
                 service.chatAlertMessage(message);
             });
 
-            // User Update
-            // This is sent when a user's roles are updated. For example, when someone is banned.
-            // Currently, this only checks for bans. It does not automatically unban the user after.
-            // Reason is, people can be added to our banned user group without being banned from the channel.
-            // But we're assuming here that if they're banned from the channel we should ban them from interactive always.
-            service.userUpdate = function(data) {
-            };
-
             // Chat Update Handler
             // This handles all of the chat stuff that isn't a message.
             // This will only work when chat feed is turned on in the settings area.

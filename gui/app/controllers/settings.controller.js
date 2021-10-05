@@ -171,12 +171,6 @@
                     });
             };
 
-            $scope.setSparkExemption = (value) => {
-                value = value === true;
-                settingsService.setSparkExemptionEnabled(value);
-                ipcRenderer.send("sparkExemptionToggled", value);
-            };
-
             $scope.toggleWhileLoops = () => {
                 let whileLoopsEnabled = settingsService.getWhileLoopEnabled();
 
@@ -210,20 +204,6 @@
                 }
                 settingsService.setActiveChatUserListTimeout(value);
                 ipcRenderer.send('setActiveChatUserTimeout', value);
-            };
-
-            $scope.setActiveMixplayUsers = (value) => {
-                value = value === true;
-                settingsService.setActiveMixplayUsers(value);
-                ipcRenderer.send("setActiveMixplayUsers", value);
-            };
-
-            $scope.setActiveMixplayUserTimeout = (value) => {
-                if (value == null) {
-                    value = "10";
-                }
-                settingsService.setActiveMixplayUserListTimeout(value);
-                ipcRenderer.send('setActiveMixplayUserTimeout', value);
             };
 
             $scope.audioOutputDevices = [{

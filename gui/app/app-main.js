@@ -244,7 +244,6 @@
 
                     $scope.getAccountAvatar = connectionService.getAccountAvatar;
 
-                    // When the user clicks "Save", we want to pass the id back to interactiveController
                     $scope.close = function() {
                         $uibModalInstance.close();
                     };

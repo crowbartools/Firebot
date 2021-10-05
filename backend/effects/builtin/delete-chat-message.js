@@ -1,7 +1,6 @@
 "use strict";
 const twitchChat = require("../../chat/twitch-chat");
-const effectModels = require("../models/effectModels");
-const { EffectTrigger, EffectDependency } = effectModels;
+const { EffectTrigger, EffectDependency } = require("../models/effectModels");
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 

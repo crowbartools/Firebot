@@ -14,7 +14,7 @@
                 </div>
                 <div class="modal-body">
                     <div>
-                        <div class="mixplay-header" style="padding: 0 0 4px 0">
+                        <div class="modal-subheader" style="padding: 0 0 4px 0">
                             QUOTE TEXT
                         </div>
                         <div style="width: 100%; position: relative;">
@@ -26,7 +26,7 @@
                     </div>
 
                     <div>
-                        <div class="mixplay-header" style="padding: 0 0 4px 0">
+                        <div class="modal-subheader" style="padding: 0 0 4px 0">
                             AUTHOR
                         </div>
                         <div style="width: 100%; position: relative;">
@@ -38,7 +38,7 @@
                     </div>
 
                     <div>
-                        <div class="mixplay-header" style="padding: 0 0 4px 0">
+                        <div class="modal-subheader" style="padding: 0 0 4px 0">
                             CREATED DATE
                         </div>
                         <div style="width: 100%; position: relative;">
@@ -54,7 +54,7 @@
                     </div>
 
                     <div>
-                        <div class="mixplay-header" style="padding: 0 0 4px 0">
+                        <div class="modal-subheader" style="padding: 0 0 4px 0">
                             GAME
                         </div>
                         <div style="width: 100%; position: relative;">
