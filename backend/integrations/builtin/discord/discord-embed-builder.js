@@ -47,7 +47,7 @@ async function buildChannelEmbed() {
 
     const channelEmbed = {
         title: currentStream.title,
-        url: `https://twitch.com/${user.name}`,
+        url: `https://twitch.tv/${user.name}`,
         color: 2210285,
         author: {
             name: user.displayName,

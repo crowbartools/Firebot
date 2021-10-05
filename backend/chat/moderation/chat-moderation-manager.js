@@ -71,7 +71,7 @@ function startModerationService() {
         switch (event.type) {
         case "deleteMessage": {
             if (event.messageId) {
-                logger.debug(`Chat message with id '${event.messageId}' contains a banned word. Deleting...`);
+                logger.debug(event.logMessage);
                 chat.deleteMessage(event.messageId);
             }
             break;
@@ -269,12 +269,12 @@ frontendCommunicator.on("removeAllBannedWords", () => {
     saveBannedWordList();
 });
 
-frontendCommunicator.on("addBannedRegularExpressions", regularExpressions => {
+frontendCommunicator.on("addBannedRegularExpression", regularExpressions => {
     bannedRegularExpressions.regularExpressions = bannedRegularExpressions.regularExpressions.concat(regularExpressions);
     saveBannedRegularExpressionsList();
 });
 
-frontendCommunicator.on("removeBannedRegularExpressions", regexText => {
+frontendCommunicator.on("removeBannedRegularExpression", regexText => {
     bannedRegularExpressions.regularExpressions = bannedRegularExpressions.regularExpressions.filter(r => r.text.toLowerCase() !== regexText);
     saveBannedRegularExpressionsList();
 });
