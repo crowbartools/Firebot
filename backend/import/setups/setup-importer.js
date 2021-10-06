@@ -222,6 +222,8 @@ function removeSetupComponents(components) {
                 eventsAccess.triggerUiRefresh();
             } else if (componentType === "presetEffectLists") {
                 presetEffectListManager.triggerUiRefresh();
+            } else if (componentType === "timers") {
+                timerAccess.triggerUiRefresh();
             } else if (componentType === "viewerRoles") {
                 customRolesManager.triggerUiRefresh();
             }
