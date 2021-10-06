@@ -142,7 +142,7 @@ const triviaCommand = {
             try {
                 userBalance = await currencyDatabase.getUserCurrencyAmount(username, currencyId);
             } catch (error) {
-                logger.error(error);
+                logger.error(error.message);
                 userBalance = 0;
             }
 
@@ -171,7 +171,7 @@ const triviaCommand = {
             try {
                 await currencyDatabase.adjustCurrencyForUser(username, currencyId, -Math.abs(wagerAmount));
             } catch (error) {
-                logger.error(error);
+                logger.error(error.message);
                 twitchChat.sendChatMessage(`Sorry ${username}, there was an error deducting currency from your balance so trivia has been canceled.`, null, chatter);
                 return;
             }

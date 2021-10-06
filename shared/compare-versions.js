@@ -60,7 +60,9 @@ function compareVersions(newVersion, currentVersion) {
     let patchesAreEqual = pNewVersion.patch === pCurrentVersion.patch;
 
     // check if previous version
-    if (pNewVersion.major < pCurrentVersion.major) {
+    if (pNewVersion.major < pCurrentVersion.major || 
+        (majorsAreEqual && pNewVersion.minor < pCurrentVersion.minor) ||
+        (majorsAreEqual && minorsAreEqual && pNewVersion.patch < pCurrentVersion.patch)) {
         return UpdateType.PREVIOUS_VERSION;
     }
 
@@ -102,7 +104,6 @@ function compareVersions(newVersion, currentVersion) {
             } else {
                 updateType = UpdateType.MAJOR_PRERELEASE;
             }
-
         }
 
     // If both versions are the same but the current version has a prelease tag and the new one doesn't,

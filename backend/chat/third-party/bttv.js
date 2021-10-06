@@ -25,7 +25,7 @@ exports.getAllBttvEmotes = async () => {
             ...channelEmoteData.sharedEmotes
         ];
     } catch (error) {
-        logger.error("Failed to get channel bttv emotes", error);
+        logger.error("Failed to get channel bttv emotes:", error.message);
     }
 
     return [
