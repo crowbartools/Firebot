@@ -123,12 +123,14 @@
                     $ctrl.streamInfo = await backendCommunicator.fireEventAsync("get-channel-info");
 
                     if ($ctrl.streamInfo) {
-                        const game = await backendCommunicator.fireEventAsync("get-twitch-game", $ctrl.streamInfo.gameId);
-                        if (game != null) {
-                            $ctrl.selectedGame = game;
+                        if ($ctrl.streamInfo.gameId) {
+                            const game = await backendCommunicator.fireEventAsync("get-twitch-game", $ctrl.streamInfo.gameId);
+
+                            if (game != null) {
+                                $ctrl.selectedGame = game;
+                            }
                         }
-                    }
-                    if ($ctrl.selectedGame) {
+
                         $ctrl.dataLoaded = true;
                     }
                 };
