@@ -1,8 +1,13 @@
 "use strict";
 
+const https = require('https');
+
 const axios = require("axios").default;
 const logger = require("../../../logwrapper");
 const utils = require("../../../utility");
+
+
+const httpsAgent = new https.Agent({ rejectUnauthorized: false });
 
 const getRandomItem = (array) => {
     if (array == null || !array.length) {
@@ -15,8 +20,8 @@ const getRandomItem = (array) => {
 const fetchQuestion = async (randomCategory, randomDifficulty, randomType, sessionToken) => {
     const url = `https://opentdb.com/api.php?encode=url3986&amount=1&category=${randomCategory}&difficulty=${randomDifficulty}&type=${randomType}${sessionToken ? `&token=${sessionToken}` : ''}`;
     try {
-        const response = await axios.get(url);
-        logger.debug("Trivia API response:", response);
+
+        const response = await axios.get(url, { httpsAgent });
         if (response.status === 200 && response.data) {
             const responseCode = response.data.response_code;
             const results = (response.data.results || []).map(q => {
@@ -34,7 +39,7 @@ const fetchQuestion = async (randomCategory, randomDifficulty, randomType, sessi
             };
         }
     } catch (error) {
-        logger.error("Unable to fetch question from Trivia API", error);
+        logger.error("Unable to fetch question from Trivia API:", error.message);
     }
     return null;
 };
@@ -43,12 +48,12 @@ let sessionToken = null;
 async function getSessionToken(forceNew = false) {
     if (sessionToken == null || forceNew) {
         try {
-            const tokenResponse = await axios.get("https://opentdb.com/api_token.php?command=request");
+            const tokenResponse = await axios.get("https://opentdb.com/api_token.php?command=request", { httpsAgent });
             if (tokenResponse.status === 200 && tokenResponse.data && tokenResponse.data.response_code === 0) {
                 sessionToken = tokenResponse.data.token;
             }
         } catch (error) {
-            logger.error("Unable to get session token for trivia", error);
+            logger.error("Unable to get session token for trivia:", error.message);
         }
     }
     return sessionToken;
@@ -69,6 +74,7 @@ exports.getQuestion = async (categories, difficulties, types) => {
             questionResponse = await fetchQuestion(randomCategory, randomDifficulty,
                 randomType, sessionToken);
         }
+
         if (questionResponse && questionResponse.responseCode === 0 && !!questionResponse.results.length) {
             const questionData = questionResponse.results[0];
             let answers;
