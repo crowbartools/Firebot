@@ -159,6 +159,7 @@ function importSetup(setup, selectedCurrency) {
     for (const timer of timers) {
         timerAccess.saveTimer(timer);
     }
+    timerAccess.triggerUiRefresh();
 
     // viewer roles
     const roles = setup.components.viewerRoles || [];
