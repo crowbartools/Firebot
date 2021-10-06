@@ -129,23 +129,10 @@
                     });
             }
 
-            service.mixerReportingIssues = false;
-            service.mixerStatus = {
-                description: "Unknown",
-                unresolvedIncidents: []
-            };
-
 
             service.getStatusIcon = () => {
-                if (service.mixerReportingIssues) {
-                    return "fa-exclamation-triangle";
-                }
                 return "fa-check-circle";
             };
-
-            function checkMixerStatus() {
-                // TODO: Deprecated
-            }
 
             service.NotificationIconType = NotificationIconType;
             service.NotificationType = NotificationType;
@@ -211,7 +198,6 @@
                 notifications = [];
                 loadSavedNotifications();
                 loadExternalNotifications();
-                checkMixerStatus();
             };
 
             let externalIntervalCheck = null;
@@ -223,7 +209,6 @@
 
                 externalIntervalCheck = $interval(() => {
                     loadExternalNotifications();
-                    //scheckMixerStatus();
                 }, 5 * 60000);
             };
 

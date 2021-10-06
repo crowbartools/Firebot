@@ -212,7 +212,7 @@
             service.levels = {};
 
 
-            // This submits a chat message to mixer.
+            // This submits a chat message to Twitch.
             service.submitChat = function(sender, message) {
                 backendCommunicator.send("send-chat-message", {
                     message: message,

@@ -165,24 +165,6 @@ async function getUserMetadata(username, key, propertyPath) {
     return jsonDataHelpers.readData(metadata[key], propertyPath);
 }
 
-//look up user object by mixer name
-function getMixerUserByUsername(username) {
-    return new Promise(resolve => {
-        if (!isViewerDBOn()) {
-            return resolve(null);
-        }
-
-        let searchTerm = new RegExp(username, 'gi');
-
-        db.findOne({ username: { $regex: searchTerm }, twitch: { $exists: false } }, (err, doc) => {
-            if (err) {
-                return resolve(null);
-            }
-            return resolve(doc);
-        });
-    });
-}
-
 /**
  *
  * @param {string} id
@@ -437,9 +419,7 @@ function getOnlineUsers() {
 function getPurgeWherePredicate(options) {
     return function () {
         const user = this;
-        if (options.mixer && !user.twitch) {
-            return true;
-        }
+
         if (!user.twitch) return false;
 
         let daysInactive = 0;
@@ -854,7 +834,6 @@ exports.setAllUsersOffline = setAllUsersOffline;
 exports.getUserOnlineMinutes = getUserOnlineMinutes;
 exports.getUserByUsername = getUserByUsername;
 exports.getUserById = getUserById;
-exports.getMixerUserByUsername = getMixerUserByUsername;
 exports.getTwitchUserByUsername = getTwitchUserByUsername;
 exports.incrementDbField = incrementDbField;
 exports.getUserDb = getUserDb;

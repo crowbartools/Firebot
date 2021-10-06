@@ -7,7 +7,6 @@ const frontendCommunicator = require("../../common/frontend-communicator");
 
 //areas
 const commandsImporter = require("./areas/v4-commands-importer");
-const eventsImporter = require("./areas/v4-events-importer");
 const viewerGroupsImporter = require("./areas/v4-viewergroups-importer");
 const hotkeysImporter = require("./areas/v4-hotkeys-importer");
 const scriptsImporter = require("./areas/v4-scripts-importer");
@@ -54,19 +53,6 @@ async function importV4Data(settings) {
         let commandsResult = await commandsImporter.run();
 
         incompatibilityWarnings = incompatibilityWarnings.concat(commandsResult.incompatibilityWarnings);
-    }
-
-    if (settings.events) {
-
-        logger.info("Importing v4 events data...");
-
-        frontendCommunicator.send("v4-import-update", { importing: "Events" });
-
-        await wait(2000);
-
-        let eventsResult = await eventsImporter.run();
-
-        incompatibilityWarnings = incompatibilityWarnings.concat(eventsResult.incompatibilityWarnings);
     }
 
     if (settings.viewerGroups) {

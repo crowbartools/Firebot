@@ -1,7 +1,7 @@
 "use strict";
 
 (function() {
-    // Provides utility methods for connecting to mixer services
+    // Provides utility methods for connecting to Twitch services, overlays and integrations
 
     angular
         .module("firebotApp")
