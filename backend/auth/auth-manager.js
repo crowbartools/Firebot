@@ -7,6 +7,19 @@ const simpleOauthModule = require('simple-oauth2');
 
 const HTTP_PORT = settings.getWebServerPort();
 
+/**
+ * @typedef AuthProviderDetails
+ * @property {string} id
+ * @property {string} name
+ * @property {object} client
+ * @property {string} client.id
+ * @property {object} auth
+ * @property {string} auth.tokenHost
+ * @property {string} auth.tokenPath
+ * @property {string} auth.authorizePath
+ * @property {string} scope
+ * */
+
 class AuthManager extends EventEmitter {
     constructor() {
         super();
@@ -15,6 +28,7 @@ class AuthManager extends EventEmitter {
         this.REDIRECT_URI = 'http://localhost:' + HTTP_PORT + '/api/v1/auth/callback';
     }
 
+    /** @param {AuthProviderDetails} authProviderDetails */
     registerAuthProvider(authProviderDetails) {
         if (authProviderDetails == null) return;
 
@@ -93,25 +107,6 @@ class AuthManager extends EventEmitter {
         this.emit("auth-success", { providerId: providerId, tokenData: tokenData });
     }
 }
-
-
-/*
-example auth provider details:
-{
-    id: "firebot:mixer:streamer",
-    name: "Mixer Streamer Account",
-    client: {
-        id: 'c22379f1a0ea851c805005b1b0c97ffd940794d61a73b366' // mixer oauth client ID here
-    },
-    auth: {
-        tokenHost: 'https://mixer.com',
-        tokenPath: '/api/v1/oauth/token',
-        authorizePath: '/oauth/authorize'
-    },
-    scope: ''
-}
-
-*/
 
 const manager = new AuthManager();
 

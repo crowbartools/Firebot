@@ -40,15 +40,6 @@ const model = {
         return errors;
     },
     onTriggerEvent: async event => {
-        let time = event.effect.time;
-        if (time) {
-            //try to remove previous mixer style data
-            time = time
-                .replace("s", "")
-                .replace("m", "")
-                .replace("h", "")
-                .replace("d", "");
-        }
         await twitchChat.timeoutUser(event.effect.username, event.effect.time);
         logger.debug(event.effect.username + " was timed out for " + event.effect.time + "s via the timeout effect.");
         return true;

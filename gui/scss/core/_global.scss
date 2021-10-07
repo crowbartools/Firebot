@@ -541,13 +541,9 @@ body {
  cursor: pointer;
  transition: 0.2s;
 }
+
 .delete-button:hover {
  opacity: 0.5;
-}
-.mixer-studio-link {
-  margin-left: auto;
-  font-size: 11px;
-  margin-right: 15px;
 }
 
 .connection-status-wrapper{
@@ -1427,28 +1423,7 @@ thead th{
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  &.mixer-issue {
-    background: #ebb120
-  }
 }
-
-.mixer-status-icon {
-  font-size: 27px;
-  padding-left: 10px;
-  color: green;
-  &.unhealthy {
-    color: yellow;
-  }
-}
-
-.mixer-status-modal-icon {
-  font-size: 80px;
-  color: rgb(15, 192, 15);
-  &.unhealthy {
-    color: gold;
-  }
-}
-
 
 .notification-popover {
   max-width: none;

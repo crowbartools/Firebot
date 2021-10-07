@@ -72,10 +72,10 @@
                         for (let release of releases) {
                             // Now lets look to see if there is a newer version.
                             const updateType = VersionCompare.compareVersions(release.tag_name, APP_VERSION);
-                            
+
                             if (!foundMajorRelease && (updateType === UpdateType.MAJOR || updateType === UpdateType.MAJOR_PRERELEASE)) {
                                 foundMajorRelease = true;
-                                if(settingsService.notifyOnBeta()) {
+                                if (settingsService.notifyOnBeta()) {
                                     service.majorUpdate = {
                                         gitName: release.name,
                                         gitVersion: release.tag_name,

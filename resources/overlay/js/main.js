@@ -8,7 +8,7 @@ startedVidCache = { test: true };
 
 // Kickstarter
 // This function kickstarts the connection process.
-function mixerSocketConnect(){
+function overlaySocketConnect(){
 	if ("WebSocket" in window){
 		// Let us open a web socket
 		let port = new URL(window.location.href).port;
@@ -23,8 +23,8 @@ function mixerSocketConnect(){
 		// When we get a message from the Firebot GUI...
 		ws.onmessage = function (evt){
 			var data = JSON.parse(evt.data);
-			var event = data.event;			
-			
+			var event = data.event;
+
 			var olInstance = params.get("instance");
 
 			console.log(`Received Event: ${event}`);
@@ -66,7 +66,7 @@ function mixerSocketConnect(){
 		console.error("Woah, something broke. Abandon ship!");
 	}
 }
-mixerSocketConnect();
+overlaySocketConnect();
 
 
 function loadFonts() {
@@ -102,5 +102,5 @@ function errorHandle(ws){
     ws.send(2);
   }
 }
- 
+
 
