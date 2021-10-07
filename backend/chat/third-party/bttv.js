@@ -14,7 +14,7 @@ exports.getAllBttvEmotes = async () => {
     try {
         globalEmotes = (await axios.get(GLOBAL_EMOTES_URL)).data;
     } catch (error) {
-        logger.error("Failed to get global bttv emotes", error);
+        logger.error("Failed to get global bttv emotes", error.message);
     }
 
     let channelEmotes = [];
@@ -25,7 +25,7 @@ exports.getAllBttvEmotes = async () => {
             ...channelEmoteData.sharedEmotes
         ];
     } catch (error) {
-        logger.error("Failed to get channel bttv emotes", error);
+        logger.error("Failed to get channel bttv emotes:", error.message);
     }
 
     return [

@@ -1,6 +1,6 @@
 {
   "name": "firebotv5",
-  "version": "5.44.1",
+  "version": "5.44.2",
   "description": "Powerful all-in-one bot for Twitch streamers.",
   "main": "main.js",
   "scripts": {
@@ -109,8 +109,8 @@
     "sanitize-filename": "^1.6.3",
     "simple-oauth2": "^3.4.0",
     "socket.io-client": "^2.3.0",
-    "twitch": "^4.2.3",
-    "twitch-chat-client": "^4.2.3",
+    "twitch": "^4.6.7",
+    "twitch-chat-client": "^4.6.7",
     "twitch-pubsub-client": "^4.2.3",
     "ui-select": "^0.19.8",
     "underscore": "^1.13.1",

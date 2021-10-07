@@ -110,7 +110,7 @@ async function getCustomChannelRewards(onlyManageable = false) {
             return null;
         }
     } catch (err) {
-        logger.error("Failed to get twitch custom channel rewards", err);
+        logger.error("Failed to get twitch custom channel rewards", err.message);
         return null;
     }
     return rewards.map(r => camelKeys(r, { recursive: true }));
