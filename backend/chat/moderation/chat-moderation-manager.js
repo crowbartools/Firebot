@@ -157,39 +157,41 @@ async function moderateMessage(chatMessage) {
         }
 
         if (chatModerationSettings.urlModeration.enabled) {
-            if (permitCommand.hasTemporaryPermission(chatMessage.username)) return;
+            if (!permitCommand.hasTemporaryPermission(chatMessage.username)) {
+                const message = chatMessage.rawText;
+                const regex = new RegExp(/[\w]{2,}[.][\w]{2,}/, "gi");
 
-            const message = chatMessage.rawText;
-            const regex = new RegExp(/[\w]{2,}[.][\w]{2,}/, "gi");
+                if (regex.test(message)) {
+                    logger.debug("Url moderation: Found url in message...");
 
-            if (!regex.test(message)) return;
+                    const settings = chatModerationSettings.urlModeration;
+                    let outputMessage = settings.outputMessage || "";
 
-            logger.debug("Url moderation: Found url in message...");
+                    if (settings.viewTime && settings.viewTime.enabled) {
+                        const viewerDB = require('../../database/userDatabase');
+                        const viewer = await viewerDB.getUserByUsername(chatMessage.username);
 
-            const settings = chatModerationSettings.urlModeration;
-            let outputMessage = settings.outputMessage || "";
+                        const viewerViewTime = viewer.minutesInChannel / 60;
+                        const minimumViewTime = settings.viewTime.viewTimeInHours;
 
-            if (settings.viewTime && settings.viewTime.enabled) {
-                const viewerDB = require('../../database/userDatabase');
-                const viewer = await viewerDB.getUserByUsername(chatMessage.username);
+                        if (viewerViewTime <= minimumViewTime) {
+                            outputMessage = outputMessage.replace("{viewTime}", minimumViewTime.toString());
 
-                const viewerViewTime = viewer.minutesInChannel / 60;
-                const minimumViewTime = settings.viewTime.viewTimeInHours;
+                            logger.debug("Url moderation: Not enough view time.");
+                        }
+                    } else {
+                        logger.debug("Url moderation: User does not have exempt role.");
+                    }
 
-                if (viewerViewTime >= minimumViewTime) return;
+                    chat.deleteMessage(chatMessage.id);
 
-                outputMessage = outputMessage.replace("{viewTime}", minimumViewTime.toString());
+                    if (outputMessage) {
+                        outputMessage = outputMessage.replace("{userName}", chatMessage.username);
+                        chat.sendChatMessage(outputMessage);
+                    }
 
-                logger.debug("Url moderation: Not enough view time.");
-            } else {
-                logger.debug("Url moderation: User does not have exempt role.");
-            }
-
-            chat.deleteMessage(chatMessage.id);
-
-            if (outputMessage) {
-                outputMessage = outputMessage.replace("{userName}", chatMessage.username);
-                chat.sendChatMessage(outputMessage);
+                    return;
+                }
             }
         }
 

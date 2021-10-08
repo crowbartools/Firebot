@@ -136,6 +136,10 @@ class TimerAccess extends EventEmitter {
 
         frontendCommunicator.send("timerUpdate", timer);
     }
+
+    triggerUiRefresh() {
+        frontendCommunicator.send("all-timers-updated", this.getTimers());
+    }
 }
 
 const timerAccess = new TimerAccess();

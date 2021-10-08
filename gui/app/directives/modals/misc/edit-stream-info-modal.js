@@ -21,14 +21,14 @@
                     <form ng-show="$ctrl.dataLoaded" name="streamInfo">
                         <div class="form-group" ng-class="{'has-error': $ctrl.formFieldHasError('title')}">
                             <label for="title" class="control-label">Stream Title</label>
-                            <input 
-                                type="text" 
-                                id="title" 
+                            <input
+                                type="text"
+                                id="title"
                                 name="title"
-                                required 
-                                class="form-control input-lg" 
-                                placeholder="Give your stream a title" 
-                                ng-model="$ctrl.streamInfo.title" 
+                                required
+                                class="form-control input-lg"
+                                placeholder="Give your stream a title"
+                                ng-model="$ctrl.streamInfo.title"
                             />
                         </div>
 
@@ -45,7 +45,7 @@
                                     <div style="height: 35px; display:flex; flex-direction: row; align-items: center;">
                                         <img style="height: 30px; width: 30px; border-radius: 5px; margin-right:10px;" ng-src="{{game.boxArtUrl}}">
                                         <div style="font-weight: 100;font-size: 17px;">{{game.name}}</div>
-                                    </div>                                  
+                                    </div>
                                 </ui-select-choices>
                             </ui-select>
                         </div>
@@ -55,34 +55,34 @@
                             <div style="display: block" role="list">
                                 <div class="role-bar" id="streamTags" ng-repeat="tag in $ctrl.streamTags track by tag.id" role="listitem">
                                     <span uib-tooltip="{{tag.description}}">{{tag.name}}</span>
-                                    <span 
-                                        role="button" 
-                                        class="clickable" 
-                                        style="padding-left: 10px;" 
-                                        aria-label="Remove {{tag.name}} tag" 
-                                        uib-tooltip="Remove tag" 
+                                    <span
+                                        role="button"
+                                        class="clickable"
+                                        style="padding-left: 10px;"
+                                        aria-label="Remove {{tag.name}} tag"
+                                        uib-tooltip="Remove tag"
                                         tooltip-append-to-body="true"
                                         ng-click="$ctrl.removeStreamTag(tag.id)"
                                     >
                                         <i class="far fa-times"></i>
                                     </span>
                                 </div>
-                                <div 
+                                <div
                                     class="role-bar clickable"
                                     ng-show="$ctrl.streamTags.length < 5"
                                     ng-class="{'disabled': !$ctrl.streamTagsService.allStreamTags.length > 0}"
                                     aria-disabled="{{!$ctrl.streamTagsService.allStreamTags.length > 0}}"
-                                    role="button" 
+                                    role="button"
                                     aria-label="{{$ctrl.streamTagsService.allStreamTags.length > 0 ? 'Add tag' : 'Loading tags...'}}"
-                                    uib-tooltip="{{$ctrl.streamTagsService.allStreamTags.length > 0 ? 'Add tag' : 'Loading tags...'}}" 
-                                    tooltip-append-to-body="true" 
+                                    uib-tooltip="{{$ctrl.streamTagsService.allStreamTags.length > 0 ? 'Add tag' : 'Loading tags...'}}"
+                                    tooltip-append-to-body="true"
                                     ng-click="!$ctrl.streamTagsService.allStreamTags.length > 0 ? $event.stopPropagation() : $ctrl.openAddStreamTagsModal();"
                                 >
-                                    <i class="far fa-plus"></i> 
+                                    <i class="far fa-plus"></i>
                                 </div>
                             </div>
                         </div>
-                        
+
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -123,14 +123,14 @@
                     $ctrl.streamInfo = await backendCommunicator.fireEventAsync("get-channel-info");
 
                     if ($ctrl.streamInfo) {
-                        const game = await backendCommunicator.fireEventAsync("get-twitch-game", $ctrl.streamInfo.gameId);
+                        if ($ctrl.streamInfo.gameId) {
+                            const game = await backendCommunicator.fireEventAsync("get-twitch-game", $ctrl.streamInfo.gameId);
 
-                        if (game != null) {
-                            $ctrl.selectedGame = game;
+                            if (game != null) {
+                                $ctrl.selectedGame = game;
+                            }
                         }
-                    }
 
-                    if ($ctrl.selectedGame) {
                         $ctrl.dataLoaded = true;
                     }
                 };
@@ -175,7 +175,7 @@
 
                 $ctrl.save = () => {
                     backendCommunicator.fireEventAsync("set-channel-info", $ctrl.streamInfo);
-                    backendCommunicator.fireEventAsync("set-stream-tags", { tagIds: $ctrl.streamTags.map(tag => tag.id) });
+                    backendCommunicator.fireEventAsync("set-stream-tags", $ctrl.streamTags.map(tag => tag.id));
                     backendCommunicator.fireEvent("category-changed", $ctrl.streamInfo.gameName);
                     ngToast.create({
                         className: 'success',

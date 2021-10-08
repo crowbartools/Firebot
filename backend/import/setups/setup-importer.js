@@ -159,6 +159,7 @@ function importSetup(setup, selectedCurrency) {
     for (const timer of timers) {
         timerAccess.saveTimer(timer);
     }
+    timerAccess.triggerUiRefresh();
 
     // viewer roles
     const roles = setup.components.viewerRoles || [];
@@ -221,6 +222,8 @@ function removeSetupComponents(components) {
                 eventsAccess.triggerUiRefresh();
             } else if (componentType === "presetEffectLists") {
                 presetEffectListManager.triggerUiRefresh();
+            } else if (componentType === "timers") {
+                timerAccess.triggerUiRefresh();
             } else if (componentType === "viewerRoles") {
                 customRolesManager.triggerUiRefresh();
             }
