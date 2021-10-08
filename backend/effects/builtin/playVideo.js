@@ -202,9 +202,12 @@ const playVideo = {
         // Set Video Type
         $scope.setVideoType = function(type) {
             $scope.effect.videoType = type;
+            $scope.effect.youtube = "";
+            $scope.effect.file = "";
+
             $timeout(function() {
                 $rootScope.$broadcast("rzSliderForceRender");
-            }, 1000);
+            }, 100);
         };
 
         if ($scope.effect.volume == null) {
@@ -234,12 +237,6 @@ const playVideo = {
                 $scope.effect.height = "";
                 $scope.effect.width = "";
             }
-        };
-
-        $scope.setVideoType = function(type) {
-            $scope.effect.videoType = type;
-            $scope.effect.youtube = "";
-            $scope.effect.file = "";
         };
     },
     /**
