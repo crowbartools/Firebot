@@ -20,7 +20,7 @@ async function randomAdvice() {
             return advice;
         })
         .catch(function(err) {
-            logger.debug(err);
+            logger.debug(err.message);
             renderWindow.webContents.send(
                 "error",
                 "Couldnt connect to the advice API. It may be down."
@@ -40,7 +40,7 @@ async function randomCatFact() {
             return fact;
         })
         .catch(function(err) {
-            logger.debug(err);
+            logger.debug(err.message);
             renderWindow.webContents.send(
                 "error",
                 "There was an error sending a cat fact to chat."
@@ -60,7 +60,7 @@ async function randomDogFact() {
             return fact;
         })
         .catch(function(err) {
-            logger.debug(err);
+            logger.debug(err.message);
             renderWindow.webContents.send(
                 "error",
                 "Couldnt conenct to the dog fact api. It may be down."
@@ -90,7 +90,7 @@ async function randomPokemon() {
             return text;
         })
         .catch(function(err) {
-            logger.debug(err);
+            logger.debug(err.message);
             renderWindow.webContents.send(
                 "error",
                 "Couldnt connect to the pokemon api. It may be down."
@@ -109,7 +109,7 @@ async function numberTrivia() {
             return response.data;
         })
         .catch(function(err) {
-            logger.debug(err);
+            logger.debug(err.message);
             renderWindow.webContents.send(
                 "error",
                 "Couldnt connect to the number trivia api. It may be down."
@@ -134,7 +134,7 @@ async function dadJoke() {
             return joke;
         })
         .catch(function(err) {
-            logger.debug(err);
+            logger.debug(err.message);
             renderWindow.webContents.send(
                 "error",
                 "Couldnt connect to the dad joke API. It may be down."
