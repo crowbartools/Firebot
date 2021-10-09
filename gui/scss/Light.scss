@@ -154,7 +154,5 @@ $sys-cmd-expanded-shadow: 3px 3px 5px -2px #dedede;
 
 $integration-row-bg: #f3f5f5;
 
-// Import Styles
+// Import Core Styles
 @import './core/$importer';
-@import './directives/$importer';
-
