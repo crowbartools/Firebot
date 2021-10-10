@@ -105,7 +105,7 @@ const currency = {
                                 <div class="control__indicator"></div>
                             </label>
                         </div>
-                        <div>
+                        <div ng-show="hasTeamRoles" style="margin-bottom: 10px;">
                             <div style="font-size: 16px;font-weight: 900;color: #b9b9b9;font-family: 'Quicksand';margin-bottom: 5px;">Teams</div>
                             <label ng-repeat="teamRole in getTeamRoles()" class="control-fb control--checkbox">{{teamRole.name}}
                                 <input type="checkbox" ng-click="toggleRole(teamRole)" ng-checked="isRoleChecked(teamRole)"  aria-label="..." >
@@ -185,6 +185,7 @@ const currency = {
         };
 
         $scope.hasCustomRoles = viewerRolesService.getCustomRoles().length > 0;
+        $scope.hasTeamRoles = viewerRolesService.getTeamRoles().length > 0;
         $scope.getCustomRoles = viewerRolesService.getCustomRoles;
         $scope.getFirebotRoles = viewerRolesService.getFirebotRoles;
         $scope.getTwitchRoles = viewerRolesService.getTwitchRoles;
