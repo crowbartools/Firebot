@@ -124,6 +124,11 @@ exports.handleChatConnect = async () => {
     ]);
 };
 
+const updateAccountAvatar = (accountType, account, url) => {
+    account.avatar = url;
+    accountAccess.updateAccount(accountType, account, true);
+};
+
 const profilePicUrlCache = {};
 async function getUserProfilePicUrl(userId) {
     if (userId == null) {
@@ -149,6 +154,12 @@ exports.getUserProfilePicUrl = getUserProfilePicUrl;
 exports.setUserProfilePicUrl = (userId, url) => {
     if (userId == null || url == null) return;
     profilePicUrlCache[userId] = url;
+
+    if (userId === accountAccess.getAccounts().streamer.userId) {
+        updateAccountAvatar("streamer", accountAccess.getAccounts().streamer, url);
+    } else if (userId === accountAccess.getAccounts().bot.userId) {
+        updateAccountAvatar("bot", accountAccess.getAccounts().bot, url);
+    }
 };
 
 const URL_REGEX = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)/i;
