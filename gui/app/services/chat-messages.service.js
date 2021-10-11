@@ -77,6 +77,11 @@
                 service.chatUsers = userList;
             };
 
+            service.chatUserUpdated = (user) => {
+                const index = service.chatUsers.findIndex(u => u.id === user.id);
+                service.chatUsers[index] = user;
+            };
+
             // Purge Chat Message
             service.purgeChatMessages = function(data) {
                 let chatQueue = service.chatQueue;
@@ -320,6 +325,10 @@
 
             backendCommunicator.on("twitch:chat:user-left", id => {
                 service.chatUserLeft(({ id }));
+            });
+
+            backendCommunicator.on("twitch:chat:user-updated", user => {
+                service.chatUserUpdated(user);
             });
 
             backendCommunicator.on("twitch:chat:clear-user-list", () => {

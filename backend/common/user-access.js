@@ -6,6 +6,9 @@ const NodeCache = require('node-cache');
 const twitchApi = require("../twitch-api/api");
 const twitchClient = require("../twitch-api/client");
 const logger = require("../logwrapper");
+const chatHelpers = require("../chat/chat-helpers");
+const activeUserHandler = require("../chat/chat-listeners/active-user-handler");
+const frontendCommunicator = require("../common/frontend-communicator");
 
 const followCache = new NodeCache({ stdTTL: 10, checkperiod: 10 });
 
@@ -70,6 +73,21 @@ async function getUserDetails(userId) {
         iconUrl: twitchUser.logoUrl,
         creationDate: twitchUser.creationDate
     };
+
+    if (firebotUserData.profilePicUrl !== twitchUser.logoUrl) {
+        chatHelpers.setUserProfilePicUrl(twitchUser.id, twitchUser.logoUrl);
+
+        firebotUserData.profilePicUrl = twitchUser.logoUrl;
+        userDb.updateUser(firebotUserData);
+
+        frontendCommunicator.send("twitch:chat:user-updated", {
+            id: firebotUserData._id,
+            username: firebotUserData.displayName,
+            roles: firebotUserData.twitchRoles,
+            profilePicUrl: firebotUserData.profilePicUrl,
+            active: activeUserHandler.userIsActive(firebotUserData._id)
+        });
+    }
 
     const streamerData = accountAccess.getAccounts().streamer;
 
