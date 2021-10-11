@@ -1,10 +1,5 @@
 "use strict";
 const fileWriterProcessor = require("../../common/handlers/fileWriterProcessor");
-
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 /**
@@ -20,12 +15,7 @@ const fileWriter = {
         description: "Write or delete some text in a file.",
         icon: "fad fa-file-edit",
         categories: [EffectCategory.ADVANCED],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
     /**
    * Global settings that will be available in the Settings tab

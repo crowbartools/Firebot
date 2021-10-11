@@ -7,10 +7,6 @@ const fs = require('fs-extra');
 const logger = require("../../logwrapper");
 const path = require("path");
 const frontendCommunicator = require("../../common/frontend-communicator");
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require('../../../shared/effect-constants');
 const { wait } = require("../../utility");
 
@@ -27,12 +23,7 @@ const playSound = {
         description: "Plays a sound effect",
         icon: "fad fa-waveform",
         categories: [EffectCategory.COMMON],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
     /**
    * Global settings that will be available in the Settings tab
@@ -55,7 +46,7 @@ const playSound = {
             </label>
         </div>
     </eos-container>
-    
+
     <div ng-hide="effect.soundType == null">
         <eos-container header="Sound">
             <div ng-if="effect.soundType === 'folderRandom'">

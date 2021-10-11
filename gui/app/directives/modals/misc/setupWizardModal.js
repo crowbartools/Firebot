@@ -10,12 +10,12 @@
         </div>
             <div class="modal-body" style="text-align:center">
 
-                <div ng-switch="$ctrl.getCurrentStep()" class="slide-frame">              
-                
+                <div ng-switch="$ctrl.getCurrentStep()" class="slide-frame">
+
                     <div ng-switch-when="0" class="wave">
                         <div class="welcome-wrapper">
                             <h3 class="animated fadeIn">Welcome to</h3>
-                            <img style="animation-delay: 0.5s" class="animated rollIn" src="../images/logo_transparent.png">      
+                            <img style="animation-delay: 0.5s" class="animated rollIn" src="../images/logo_transparent.png">
                         <span style="animation-delay: 1.3s" class="animated bounceIn">Firebot</span>
                         </div>
                         <div style="animation-delay: 2.0s" class="animated fadeIn welcome-subtitle">
@@ -31,13 +31,13 @@
                             <div>
                                 <div>
                                     <p>We have detected Firebot v4 data on your computer.<br><strong>Would you like to import anything?</strong></p>
-                                    
+
                                     <div class="muted" style="font-size:12px;padding: 0 65px;margin-top: 0px;">
                                         <strong>Please note:</strong><br>Due to some changes and fundemental differences in v5, we may not be able to import 100% of your v4 data. Some additional setup may be required.
                                     </div>
                                 </div>
                                 <div style="margin-top: 10px;">
-                                    <div class="mixplay-header" style="padding: 0 0 10px 0; font-size: 17px;">
+                                    <div class="modal-subheader" style="padding: 0 0 10px 0; font-size: 17px;">
                                         IMPORT SETTINGS
                                     </div>
                                     <div style="text-align:left !important;display:flex; justify-content: center;">
@@ -47,13 +47,13 @@
                                                     <input type="checkbox" ng-model="$ctrl.importSettings.commands">
                                                     <div class="control__indicator"></div>
                                                 </label>
-                                            </div> 
+                                            </div>
                                             <div style="margin-bottom: 3px">
                                                 <label class="control-fb control--checkbox" style="margin-bottom: 0px; font-size: 13px;opacity:0.9;display:inline-block;"> Events
                                                     <input type="checkbox" ng-model="$ctrl.importSettings.events">
                                                     <div class="control__indicator"></div>
                                                 </label>
-                                            </div> 
+                                            </div>
                                             <div style="margin-bottom: 3px">
                                                 <label class="control-fb control--checkbox" style="margin-bottom: 0px; font-size: 13px;opacity:0.9;display:inline-block;"> Viewer Groups
                                                     <input type="checkbox" ng-model="$ctrl.importSettings.viewerGroups">
@@ -72,24 +72,24 @@
                                                     <div class="control__indicator"></div>
                                                 </label>
                                             </div>
-                                        </div>                  
-                                    </div>                                                            
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div style="margin-top: 10px;">
                                     <button class="btn btn-default" ng-click="$ctrl.startImport()" ng-disabled="!$ctrl.canStartImport()"><i class="fad fa-file-import"></i> Import</button>
                                 </div>
-                                
+
                             </div>
-                            
+
                             <div style="margin-top: 15px;">
                                 <div>
-                                    <a class="btn btn-link" style="font-size: 17px;color: #5BC0DE;" ng-click="$ctrl.setCurrentStep(2)">No, don't import for now.</a>       
+                                    <a class="btn btn-link" style="font-size: 17px;color: #5BC0DE;" ng-click="$ctrl.setCurrentStep(2)">No, don't import for now.</a>
                                 </div>
                                 <div>
                                     <span style="font-size: 11px; opacity: 0.8; margin-top: 3px;">(You can import later at any time by going to Settings > Open Setup Wizard)</span>
                                 </div>
-                            </div>   
+                            </div>
                         </div>
 
                         <div ng-show="$ctrl.importStarted && !$ctrl.importCompleted">
@@ -109,7 +109,7 @@
                             <h3 style="margin-top:0;">V4 import completed successfully with <strong>{{$ctrl.importIncompatibilityMessages.length}}</strong> incompatibility warning(s)</h3>
 
                             <div style="height: 147px;">
-                                <div ng-hide="$ctrl.importIncompatibilityMessages.length < 1"> 
+                                <div ng-hide="$ctrl.importIncompatibilityMessages.length < 1">
                                     <eos-collapsable-panel show-label="Show incompatibility warnings" hide-label="Hide incompatibility warnings" hide-info-box="true">
                                         <div class="incompat-warnings-wrapper">
                                             <ul>
@@ -119,11 +119,11 @@
                                     </eos-collapsable-panel>
                                 </div>
                              </div>
-                            
+
                             <p style="font-size: 18px;font-weight: 100;">You're nearly there! Just a few more steps to go.</p>
                             <button class="btn btn-info" ng-click="$ctrl.handleNext()">Continue</button>
                         </div>
-                        
+
 
                     </div>
 
@@ -186,7 +186,7 @@
                             </tbody>
                         </table>
                             <span style="font-size: 12px; opacity: 0.8; margin-top: 3px;">Note: You can manage your logins in the upper-right corner of the app at any time.</span>
-                        </div>	
+                        </div>
                     </div>
 
 
@@ -236,28 +236,28 @@
                             <b>Thank you for using Firebot.</b>
                         </p>
                         <div style="animation-delay: 2.3s" class="animated fadeIn">
-                            <a style="margin-top: 5px;" class="btn btn-primary shake-slow" ng-click="$ctrl.handleNext()">I'm so ready!</a> 
+                            <a style="margin-top: 5px;" class="btn btn-primary shake-slow" ng-click="$ctrl.handleNext()">I'm so ready!</a>
                         </div>
                     </div>
                 </div>
-                
+
             </div>
             <div class="modal-footer"  style="min-height: 64px; text-align: center;">
 
                 <div ng-if="$ctrl.isFirstStep()">
                     <span style="animation-delay: 3.3s;display: flex;flex-direction: row;justify-content: center;align-items: center;" class="animated fadeIn">
                         <a class="btn btn-link import-settings-btn" ng-click="$ctrl.startBackupRestoreProcess()">Restore from a backup</a>
-                    </span>            
+                    </span>
                 </div>
 
                 <div>
                     <a class="btn btn-default" ng-click="$ctrl.handlePrevious()" ng-show="$ctrl.showBackButton()">Back</a>
-                    <a 
+                    <a
                         class="btn btn-primary"
                         uib-tooltip="{{$ctrl.getTooltipText()}}"
-                        tooltip-enable="!$ctrl.canGoToNext()" 
-                        ng-click="$ctrl.handleNext()" 
-                        ng-show="$ctrl.showNextButton()" 
+                        tooltip-enable="!$ctrl.canGoToNext()"
+                        ng-click="$ctrl.handleNext()"
+                        ng-show="$ctrl.showNextButton()"
                         ng-disabled="!$ctrl.canGoToNext()">
                             {{$ctrl.getNextLabel()}}
                     </a>

@@ -14,7 +14,6 @@ exports.loadEffects = () => {
     const fileWriter = require("./builtin/fileWriter");
     const html = require("./builtin/html");
     const playVideo = require("./builtin/playVideo");
-    const showEvents = require("./builtin/showEvents");
     const controlEmulation = require("./builtin/controlEmulation");
     const showImage = require("./builtin/showImage");
     const showText = require("./builtin/showText");
@@ -24,7 +23,6 @@ exports.loadEffects = () => {
     const currency = require("./builtin/currency");
     const randomRedditImage = require("./builtin/randomRedditImage");
     const customVariable = require("./builtin/customVariable");
-    const controlMouse = require('./builtin/controlMouse');
     const runCommand = require('./builtin/run-command');
     const customScript = require('./builtin/customScript');
     const clearEffects = require('./builtin/clearEffects');
@@ -48,6 +46,7 @@ exports.loadEffects = () => {
     const clearChat = require("./builtin/clearChat");
     const updateCounter = require("./builtin/update-counter");
     const toggleCommand = require("./builtin/toggle-command");
+    const toggleConnection = require("./builtin/toggleConnection");
     const toggleEvent = require("./builtin/toggle-event");
     const toggleEventSet = require("./builtin/toggle-event-set");
     const toggleTimer = require("./builtin/toggle-timer");
@@ -67,7 +66,6 @@ exports.loadEffects = () => {
     effectManager.registerEffect(fileWriter); // No migration needed.
     effectManager.registerEffect(html); // No migration needed.
     effectManager.registerEffect(playVideo); // No migration needed.
-    effectManager.registerEffect(showEvents);
     effectManager.registerEffect(controlEmulation); // No migration needed.
     effectManager.registerEffect(showImage); // No migration needed.
     effectManager.registerEffect(showText); // No migration needed.
@@ -77,7 +75,6 @@ exports.loadEffects = () => {
     effectManager.registerEffect(currency); // No migration needed.
     effectManager.registerEffect(randomRedditImage); // No migration needed.
     effectManager.registerEffect(customVariable); // No migration needed.
-    effectManager.registerEffect(controlMouse); // No migration needed.
     effectManager.registerEffect(runCommand); // No migration needed.
     effectManager.registerEffect(customScript); // No migration needed.
     effectManager.registerEffect(clearEffects); // No migration needed.
@@ -101,6 +98,7 @@ exports.loadEffects = () => {
     effectManager.registerEffect(clearChat);
     effectManager.registerEffect(updateCounter);
     effectManager.registerEffect(toggleCommand);
+    effectManager.registerEffect(toggleConnection);
     effectManager.registerEffect(toggleEventSet);
     effectManager.registerEffect(toggleEvent);
     effectManager.registerEffect(toggleTimer);
@@ -109,18 +107,4 @@ exports.loadEffects = () => {
     effectManager.registerEffect(shoutout);
     effectManager.registerEffect(markAllActivityAcknowledged);
     effectManager.registerEffect(require("./builtin/update-channel-reward"));
-
-    // Deactivated for Twitch.
-    const changeScene = require('./builtin/changeScene');
-    const streamAudience = require("./builtin/stream-audience");
-    const updateControl = require("./builtin/updateControl");
-    const channelProgression = require("./builtin/channelProgression");
-    const cooldowns = require("./builtin/cooldowns");
-    const toggleConnection = require("./builtin/toggleConnection");
-    effectManager.registerEffect(changeScene);
-    effectManager.registerEffect(streamAudience);
-    effectManager.registerEffect(updateControl);
-    effectManager.registerEffect(channelProgression);
-    effectManager.registerEffect(cooldowns);
-    effectManager.registerEffect(toggleConnection);
 };

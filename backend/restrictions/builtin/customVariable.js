@@ -9,12 +9,12 @@ const model = {
     },
     optionsTemplate: `
         <div>
-            <div id="customVariableName" class="mixplay-header" style="padding: 0 0 4px 0">
+            <div id="customVariableName" class="modal-subheader" style="padding: 0 0 4px 0">
                 Custom Variable Name
             </div>
             <input type="text" class="form-control" placeholder="Enter name" ng-model="restriction.name">
 
-            <div id="customVariableName" class="mixplay-header" style="padding: 0 0 4px 0">
+            <div id="customVariableName" class="modal-subheader" style="padding: 0 0 4px 0">
                 Value
             </div>
             <input type="text" class="form-control" placeholder="Enter value" ng-model="restriction.value">

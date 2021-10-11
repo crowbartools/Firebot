@@ -3,11 +3,6 @@
 const currencyDatabase = require("../../database/currencyDatabase");
 const twitchChat = require("../../chat/twitch-chat");
 const logger = require("../../logwrapper");
-
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 /**
@@ -23,12 +18,7 @@ const currency = {
         description: "Update a viewers currency.",
         icon: "fad fa-money-bill",
         categories: [EffectCategory.COMMON, EffectCategory.FUN],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
     /**
    * Global settings that will be available in the Settings tab

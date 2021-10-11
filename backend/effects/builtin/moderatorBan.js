@@ -1,11 +1,6 @@
 "use strict";
 
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require('../../../shared/effect-constants');
-
 const logger = require('../../logwrapper');
 const twitchChat = require("../../chat/twitch-chat");
 
@@ -16,12 +11,7 @@ const model = {
         description: "Ban or unban a user.",
         icon: "fad fa-ban",
         categories: [EffectCategory.COMMON, EffectCategory.MODERATION],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
     optionsTemplate: `
         <eos-container header="Action" pad-top="true">

@@ -535,8 +535,6 @@
                 // array having 2 columns - un-shifted, and shifted values.
                 // column = 0 is the un-shifted value, while column=1 is the shifted value.
                 // See the "keyboardCharMap" for printable characters.
-
-                // we dont support shifted values since the devlab didnt either and im not sure mixplay on mixer would either
                 let column = 0;
 
                 let keyMap = keyboardCharMap[keyCode];

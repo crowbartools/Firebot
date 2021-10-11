@@ -120,34 +120,6 @@
                 pushDataToFile(`/boards/${boardId}`, settingsBoard);
             };
 
-            service.getLastMixplayProjectId = function() {
-                let projectId;
-                try {
-                    projectId = getSettingsFile().getData("/mixplay/lastProjectId");
-                } catch (err) {
-                    logger.warn(err);
-                }
-                return projectId;
-            };
-
-            service.setLastMixplayProjectId = function(id) {
-                pushDataToFile("/mixplay/lastProjectId", id);
-            };
-
-            service.getActiveMixplayProjectId = function() {
-                let projectId;
-                try {
-                    projectId = getSettingsFile().getData("/mixplay/activeProjectId");
-                } catch (err) {
-                    logger.warn(err);
-                }
-                return projectId;
-            };
-
-            service.setActiveMixplayProjectId = function(id) {
-                pushDataToFile("/mixplay/activeProjectId", id);
-            };
-
             service.getCustomScriptsEnabled = function() {
                 return getDataFromFile("/settings/runCustomScripts") === true;
             };
@@ -497,24 +469,6 @@
                 pushDataToFile("/settings/activeChatUsers/inactiveTimer", inactiveTimer);
             };
 
-            service.getActiveMixplayUserListEnabled = function() {
-                let status = getDataFromFile("/settings/activeMixplayUsers/status");
-                return status != null ? status : true;
-            };
-
-            service.setActiveMixplayUsers = function(status) {
-                pushDataToFile("/settings/activeMixplayUsers/status", status);
-            };
-
-            service.getActiveMixplayUserListTimeout = function() {
-                let inactiveTimer = getDataFromFile("/settings/activeMixplayUsers/inactiveTimer");
-                return inactiveTimer != null ? inactiveTimer : "10";
-            };
-
-            service.setActiveMixplayUserListTimeout = function(inactiveTimer) {
-                pushDataToFile("/settings/activeMixplayUsers/inactiveTimer", inactiveTimer);
-            };
-
             /*
             * 0 = off,
             * 1 = bugfix,
@@ -648,34 +602,6 @@
             service.saveOverlayEventsSettings = function(eventSettings) {
                 pushDataToFile("/settings/eventSettings", eventSettings);
             };
-
-            service.sparkExemptionEnabled = function() {
-                let enabled = getDataFromFile('/settings/sparkExemptionEnabled');
-                return enabled != null ? enabled : false;
-            };
-
-            service.setSparkExemptionEnabled = function(enabled) {
-                pushDataToFile('/settings/sparkExemptionEnabled', enabled === true);
-            };
-
-            service.mixPlayPreviewModeEnabled = function() {
-                let enabled = getDataFromFile('/settings/mixplayPreviewMode');
-                return enabled != null ? enabled : false;
-            };
-
-            service.setMixPlayPreviewModeEnabled = function(enabled) {
-                pushDataToFile('/settings/mixplayPreviewMode', enabled === true);
-            };
-
-            service.centerGuideLinesEnabled = function() {
-                let enabled = getDataFromFile('/settings/mixplayCenterGuideLines');
-                return enabled != null ? enabled : false;
-            };
-
-            service.setCenterGuideLinesEnabled = function(enabled) {
-                pushDataToFile('/settings/mixplayCenterGuideLines', enabled === true);
-            };
-
 
             service.getClearCustomScriptCache = function() {
                 let clear = getDataFromFile("/settings/clearCustomScriptCache");

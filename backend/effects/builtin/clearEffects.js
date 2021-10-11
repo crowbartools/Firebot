@@ -3,11 +3,6 @@
 const webServer = require("../../../server/httpServer");
 const frontendCommunicator = require("../../common/frontend-communicator");
 const effectQueueRunner = require("../../effects/queues/effect-queue-runner");
-
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 /**
@@ -23,12 +18,7 @@ const delay = {
         description: "Remove overlay effects, stop sounds, or clear effect queues",
         icon: "fad fa-minus-circle",
         categories: [EffectCategory.COMMON, EffectCategory.OVERLAY],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
     /**
    * Global settings that will be available in the Settings tab

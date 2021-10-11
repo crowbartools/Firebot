@@ -1,13 +1,6 @@
 "use strict";
 
-const { settings } = require("../../common/settings-access");
-const resourceTokenManager = require("../../resourceTokenManager");
 const controlProcessor = require("../../common/handlers/controlEmulation/controlProcessor");
-
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectDependency, EffectTrigger } = effectModels;
-
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 /**
@@ -23,12 +16,7 @@ const controlEmulation = {
         description: "Emulate keyboard keys or mouse clicks",
         icon: "fad fa-keyboard",
         categories: [EffectCategory.ADVANCED, EffectCategory.FUN],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT, InputEvent.MOUSEUP, InputEvent.KEYUP],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
     /**
    * Global settings that will be available in the Settings tab

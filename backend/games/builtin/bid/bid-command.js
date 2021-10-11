@@ -56,9 +56,8 @@ const bidCommand = {
                             type: "firebot:permissions",
                             mode: "roles",
                             roleIds: [
-                                "Mod",
-                                "ChannelEditor",
-                                "Owner"
+                                "broadcaster",
+                                "mod"
                             ]
                         }
                     ]
@@ -77,9 +76,8 @@ const bidCommand = {
                             type: "firebot:permissions",
                             mode: "roles",
                             roleIds: [
-                                "Mod",
-                                "ChannelEditor",
-                                "Owner"
+                                "broadcaster",
+                                "mod"
                             ]
                         }
                     ]

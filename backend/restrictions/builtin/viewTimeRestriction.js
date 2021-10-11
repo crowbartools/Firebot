@@ -9,7 +9,7 @@ const model = {
     },
     optionsTemplate: `
         <div>
-            <div id="viewTimeRestriction" class="mixplay-header" style="padding: 0 0 4px 0">
+            <div id="viewTimeRestriction" class="modal-subheader" style="padding: 0 0 4px 0">
                 View Time Minimum
             </div>
             <input type="number" class="form-control" placeholder="Enter minutes" ng-model="restriction.time">

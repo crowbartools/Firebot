@@ -1,8 +1,6 @@
 "use strict";
 
 (function() {
-    // This handles logins and connections to mixer interactive
-
     const dataAccess = require("../../backend/common/data-access.js");
 
     angular

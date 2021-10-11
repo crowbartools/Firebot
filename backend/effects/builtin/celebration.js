@@ -1,14 +1,9 @@
 "use strict";
 
-const { settings } = require("../../common/settings-access");
-const resourceTokenManager = require("../../resourceTokenManager");
 const webServer = require("../../../server/httpServer");
-
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectDependency, EffectTrigger } = effectModels;
-
+const { EffectDependency } = require("../models/effectModels");
 const { EffectCategory } = require('../../../shared/effect-constants');
+
 /**
  * The Celebration effect
  */
@@ -22,12 +17,7 @@ const celebration = {
         description: "Celebrate with firework overlay effects.",
         icon: "fad fa-birthday-cake",
         categories: [EffectCategory.FUN, EffectCategory.OVERLAY],
-        dependencies: [EffectDependency.OVERLAY],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: [EffectDependency.OVERLAY]
     },
     /**
    * Global settings that will be available in the Settings tab

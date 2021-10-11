@@ -5,9 +5,7 @@ const resourceTokenManager = require("../../resourceTokenManager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/httpServer");
 const fs = require('fs-extra');
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectDependency, EffectTrigger } = effectModels;
+const { EffectDependency } = require("../models/effectModels");
 const logger = require("../../logwrapper");
 const path = require("path");
 
@@ -26,12 +24,7 @@ const showImage = {
         description: "Shows an image in the overlay.",
         icon: "fad fa-image",
         categories: [EffectCategory.COMMON, EffectCategory.FUN, EffectCategory.OVERLAY],
-        dependencies: [EffectDependency.OVERLAY],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: [EffectDependency.OVERLAY]
     },
     /**
    * Global settings that will be available in the Settings tab

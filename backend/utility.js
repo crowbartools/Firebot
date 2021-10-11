@@ -1,6 +1,5 @@
 "use strict";
 
-const mixerApi = require("./mixer-api/api");
 const moment = require("moment");
 const logger = require("./logwrapper");
 const request = require("request");
@@ -146,17 +145,10 @@ function callUrl(url) {
 }
 
 function getTriggerIdFromTriggerData(trigger) {
+    const { eventSource, event } = trigger.metadata;
 
-    switch (trigger.type) {
-    case "interactive":
-        return trigger.metadata.control && trigger.metadata.control.kind;
-    case "event": {
-        let eventSource = trigger.metadata.eventSource,
-            event = trigger.metadata.event;
-        if (eventSource && event) {
-            return `${eventSource.id}:${event.id}`;
-        }
-    }
+    if (eventSource && event) {
+        return `${eventSource.id}:${event.id}`;
     }
 
     return undefined;

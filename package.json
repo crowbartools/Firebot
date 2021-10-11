@@ -1,6 +1,6 @@
 {
   "name": "firebotv5",
-  "version": "5.44.3",
+  "version": "5.45.0-beta1",
   "description": "Powerful all-in-one bot for Twitch streamers.",
   "main": "main.js",
   "scripts": {
@@ -40,8 +40,6 @@
   },
   "dependencies": {
     "@aws-sdk/client-polly": "^3.26.0",
-    "@mixer/client-node": "^3.5.0",
-    "@mixer/interactive-node": "^2.9.0",
     "angular": "^1.8.0",
     "angular-animate": "^1.7.8",
     "angular-aria": "^1.7.9",

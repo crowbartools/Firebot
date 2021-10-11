@@ -1,20 +1,11 @@
 "use strict";
 
-const { ControlKind, InputEvent } = require('../../../interactive/constants/MixplayConstants');
-const effectModels = require("../../../effects/models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require("../../../../shared/effect-constants");
-
-const request = require("request");
-
 const integrationManager = require("../../IntegrationManager");
-
 const discordEmbedBuilder = require('./discord-embed-builder');
-
 const discord = require("./discord-message-sender");
-
 const frontEndCommunicator = require("../../../common/frontend-communicator");
+
 frontEndCommunicator.onAsync("getDiscordChannels", async () => {
     let channels = [];
     const discordIntegration = integrationManager.getIntegrationDefinitionById("discord");
@@ -34,12 +25,7 @@ module.exports = {
         description: "Send a message and/or embed to a Discord channel",
         icon: "fab fa-discord",
         categories: [EffectCategory.INTEGRATIONS],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
     globalSettings: {},
     optionsTemplate: `
@@ -48,7 +34,7 @@ module.exports = {
 
                 <eos-container header="Discord Channel">
                     <dropdown-select options="channelOptions" selected="effect.channelId"></dropdown-select>
-                </eos-container>  
+                </eos-container>
 
                 <eos-container header="Message" pad-top="true">
                     <textarea ng-model="effect.message" class="form-control" name="text" placeholder="Enter message" rows="4" cols="40" replace-variables></textarea>
@@ -68,7 +54,7 @@ module.exports = {
                             <div style="margin-top:10px;">
                                 <firebot-input input-title="Title" model="effect.customEmbed.title"></firebot-input>
                             </div>
-                            
+
                             <div style="margin-top:10px;">
                                 <firebot-input input-title="Content" model="effect.customEmbed.description"></firebot-input>
                             </div>
@@ -80,16 +66,16 @@ module.exports = {
                             <div style="margin-top:10px;">
                                 <firebot-input input-title="Author Icon URL" model="effect.customEmbed.authorIconUrl"></firebot-input>
                             </div>
-                        
+
                         </div>
                     </div>
-                </eos-container>   
+                </eos-container>
 
             </div>
             <div ng-hide="hasChannels">
                 <eos-container>
                     <span class="muted">No Discord channels configured yet! You can configure them in <b>Settings</b> > <b>Integrations</b> > <b>Discord</b></span>
-                </eos-container>   
+                </eos-container>
             </div>
         </div>
     `,
