@@ -53,7 +53,7 @@ const currency = {
             </ul>
         </div>
     </eos-container>
-    
+
     <div ng-if="effect.currency">
         <eos-container header="Operation" pad-top="true">
             <div class="btn-group">
@@ -92,11 +92,11 @@ const currency = {
                     <label class="control-fb control--radio">All Online Users
                         <input type="radio" ng-model="effect.target" value="allOnline"/>
                         <div class="control__indicator"></div>
-                    </label> 
+                    </label>
                     <label class="control-fb control--radio">All Viewers
                         <input type="radio" ng-model="effect.target" value="allViewers"/>
                         <div class="control__indicator"></div>
-                    </label>             
+                    </label>
                 </div>
 
                 <div class="settings-permission" style="padding-bottom:1em">
@@ -115,7 +115,7 @@ const currency = {
                                 <div class="control__indicator"></div>
                             </label>
                         </div>
-                        <div>
+                        <div ng-show="hasTeamRoles" style="margin-bottom: 10px;">
                             <div style="font-size: 16px;font-weight: 900;color: #b9b9b9;font-family: 'Quicksand';margin-bottom: 5px;">Teams</div>
                             <label ng-repeat="teamRole in getTeamRoles()" class="control-fb control--checkbox">{{teamRole.name}}
                                 <input type="checkbox" ng-click="toggleRole(teamRole)" ng-checked="isRoleChecked(teamRole)"  aria-label="..." >
@@ -132,7 +132,7 @@ const currency = {
                     </div>
                     <div ng-if="effect.target === 'individual'" class="input-group">
                         <span class="input-group-addon" id="basic-addon3">Username</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="effect.userTarget" replace-variables>        
+                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="effect.userTarget" replace-variables>
                     </div>
                 </div>
 
@@ -170,7 +170,7 @@ const currency = {
                                 <input ng-model="effect.whisper" type="text" class="form-control" id="chat-whisper-setting" aria-describedby="chat-text-effect-type" placeholder="Username">
                             </div>
                         </div>
-                    </div>   
+                    </div>
                 </eos-container>
             </div>
         </div>
@@ -195,6 +195,7 @@ const currency = {
         };
 
         $scope.hasCustomRoles = viewerRolesService.getCustomRoles().length > 0;
+        $scope.hasTeamRoles = viewerRolesService.getTeamRoles().length > 0;
         $scope.getCustomRoles = viewerRolesService.getCustomRoles;
         $scope.getFirebotRoles = viewerRolesService.getFirebotRoles;
         $scope.getTwitchRoles = viewerRolesService.getTwitchRoles;

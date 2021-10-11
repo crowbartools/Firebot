@@ -95,10 +95,7 @@ class TwitchChat extends EventEmitter {
             });
 
             this._streamerChatClient.onDisconnect((manual, reason) => {
-                if (!manual) {
-                    logger.error("Chat not disconnected", manual, reason);
-                    this.disconnect();
-                }
+                if (!manual) logger.error("Chat disconnected unexpectedly", reason);
             });
 
             await this._streamerChatClient.connect();
