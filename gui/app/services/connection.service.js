@@ -13,6 +13,7 @@
 
             backendCommunicator.on("accountUpdate", accounts => {
                 service.accounts = accounts;
+                service.loadProfiles();
             });
             service.getAccounts = () => {
                 service.accounts = backendCommunicator.fireEventSync("getAccounts");
