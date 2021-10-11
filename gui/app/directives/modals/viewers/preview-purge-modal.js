@@ -11,11 +11,11 @@
             </div>
             <div class="modal-body">
                 <div style="margin: 0 0 25px;display: flex;flex-direction: row;justify-content: space-between;">
-                    <div style="display: flex;flex-direction: row;justify-content: space-between;">           
+                    <div style="display: flex;flex-direction: row;justify-content: space-between;">
                         <searchbar placeholder-text="Search users..." query="$ctrl.search" style="flex-basis: 250px;"></searchbar>
-                    </div>         
+                    </div>
                 </div>
-                <sortable-table 
+                <sortable-table
                     table-data-set="$ctrl.viewers"
                     headers="$ctrl.headers"
                     query="$ctrl.search"
@@ -23,7 +23,7 @@
                     track-by-field="_id"
                     starting-sort-field="username"
                     no-data-message="No viewers met purge criteria">
-                </sortable-table>  
+                </sortable-table>
             </div>
             <div class="modal-footer" style="text-align:center;">
                 <button type="button" class="btn btn-primary" ng-click="$ctrl.close()">Back</button>
@@ -85,13 +85,6 @@
                         dataField: "chatMessages",
                         sortable: true,
                         cellTemplate: `{{data.chatMessages}}`,
-                        cellController: () => {}
-                    },
-                    {
-                        name: "ACCOUNT TYPE",
-                        icon: "fa-user-circle",
-                        sortable: false,
-                        cellTemplate: `{{data.twitch ? 'Twitch' : 'Mixer'}}`,
                         cellController: () => {}
                     }
                 ];

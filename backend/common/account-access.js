@@ -159,53 +159,8 @@ function updateAccount(accountType, account, emitUpdate = true) {
     }
 }
 
-/**
- * Refreshes a given accounts access token only if necessary
- * @param {string} accountType - The type of account ("streamer" or "bot")
- * @param {boolean} [emitUpdate=false] - If an account update event should be emitted
- */
-async function ensureTokenRefreshed(accountType, emitUpdate = false) {
-    if (accountType !== "streamer" && accountType !== "bot") return false;
-
-    let account = cache[accountType];
-    if (!account.loggedIn) return false;
-
-    let oldToken = account.auth;
-
-    const accountProviderId = accountType === "streamer" ? "mixer:streamer-account" : "mixer:bot-account";
-    let updatedToken = await authManager.refreshTokenIfExpired(accountProviderId, account.auth);
-
-    if (updatedToken == null) {
-        if (accountType === "streamer") {
-            streamerTokenIssue = true;
-        } else {
-            botTokenIssue = true;
-        }
-        return false;
-    }
-
-    if (updatedToken != null && oldToken.access_token !== updatedToken.access_token) {
-        logger.debug("Mixer account token updated, saving.");
-        cache[accountType].auth = updatedToken;
-        saveAccountDataToFile(accountType);
-        if (emitUpdate) {
-            sendAccountUpdate();
-        }
-        return true;
-    }
-
-    return true;
-}
-
 function removeAccount(accountType) {
     if (accountType !== "streamer" && accountType !== "bot") return;
-
-    /* Note (ebiggz): Mixer doesnt appear to allow token revoking right now
-    let account = cache[accountType];
-    if (account.auth) {
-        const accountProviderId = accountType === "streamer" ? "mixer:streamer-account" : "mixer:bot-account";
-        authManager.revokeTokens(accountProviderId, account.auth);
-    }*/
 
     let authDb = profileManager.getJsonDbInProfile("/auth-twitch");
     try {
@@ -236,7 +191,6 @@ frontendCommunicator.on("logoutAccount", accountType => {
 exports.events = accountEvents;
 exports.updateAccountCache = loadAccountData;
 exports.updateAccount = updateAccount;
-exports.ensureTokenRefreshed = ensureTokenRefreshed;
 exports.updateStreamerAccountSettings = updateStreamerAccountSettings;
 exports.getAccounts = () => cache;
 exports.streamerTokenIssue = () => streamerTokenIssue;

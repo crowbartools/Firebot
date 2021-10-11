@@ -13,14 +13,14 @@
             <div class="modal-body">
 
                 <div>
-                    <div class="mixplay-header" style="padding: 0 0 4px 0">
+                    <div class="modal-subheader" style="padding: 0 0 4px 0">
                         Txt File
                     </div>
                     <file-chooser model="$ctrl.filePath" options="{ filters: [ {name:'Text',extensions:['txt']} ]}"></file-chooser>
                 </div>
 
                 <div style="margin-top: 15px;">
-                    <div class="mixplay-header" style="padding: 0 0 4px 0">
+                    <div class="modal-subheader" style="padding: 0 0 4px 0">
                         Seperator <tooltip text="'Tell Firebot how the words/phrases in the txt file are seperated'"></tooltip>
                     </div>
                     <div class="dropdown">
@@ -33,9 +33,9 @@
                             <li><a href ng-click="$ctrl.delimiter = 'comma'">Comma</a></li>
                             <li><a href ng-click="$ctrl.delimiter = 'space'">Space</a></li>
                         </ul>
-                    </div> 
+                    </div>
                 </div>
-                
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>

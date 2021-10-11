@@ -1,8 +1,6 @@
 "use strict";
 
 (function() {
-    // This handles logins and connections to mixer interactive
-
     angular
         .module("firebotApp")
         .factory("integrationService", function(

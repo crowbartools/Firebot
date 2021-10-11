@@ -1,17 +1,9 @@
 "use strict";
 
 const effectRunner = require("../../common/effect-runner");
-
-const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
-const effectModels = require("../models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require('../../../shared/effect-constants');
-
 const logger = require("../../logwrapper");
-
 const { settings } = require("../../common/settings-access");
-
 const conditionManager = require("./conditional-effects/conditions/condition-manager");
 
 const wait = (ms) => new Promise(r => setTimeout(r, ms));
@@ -23,12 +15,7 @@ const model = {
         description: "Loop an effect list",
         icon: "fad fa-repeat-alt",
         categories: [EffectCategory.SCRIPTING],
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
     globalSettings: {},
     optionsTemplate: `
@@ -39,7 +26,7 @@ const model = {
         <eos-container header="Loop Mode" pad-top="true">
             <div style="padding-left: 10px;">
                 <label class="control-fb control--radio">Set Number <span class="muted"><br />Loop a set number of times.</span>
-                    <input type="radio" ng-model="effect.loopMode" value="count" ng-change="loopModeChanged()"/> 
+                    <input type="radio" ng-model="effect.loopMode" value="count" ng-change="loopModeChanged()"/>
                     <div class="control__indicator"></div>
                 </label>
                 <label class="control-fb control--radio" ng-hide="!whileLoopEnabled && effect.loopMode !== 'conditional'">Conditional <span class="muted"><br />Keep looping while conditions are met</span>
@@ -70,11 +57,11 @@ const model = {
                 <div style="font-size: 15px;font-family: 'Quicksand'; color: #c0c1c2;margin-bottom:3px;">Run the following effects:</div>
             </div>
 
-            <effect-list effects="effect.effectList" 
-                trigger="{{trigger}}" 
+            <effect-list effects="effect.effectList"
+                trigger="{{trigger}}"
                 trigger-meta="triggerMeta"
                 update="effectListUpdated(effects)"
-                modalId="{{modalId}}"></effect-list> 
+                modalId="{{modalId}}"></effect-list>
         </eos-container>
     `,
     /**

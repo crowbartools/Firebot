@@ -77,8 +77,8 @@ const commandManagement = {
                     type: "firebot:permissions",
                     mode: "roles",
                     roleIds: [
-                        "ChannelEditor",
-                        "Owner"
+                        "broadcaster",
+                        "mod"
                     ]
                 }
             ]

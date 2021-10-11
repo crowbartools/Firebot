@@ -10,7 +10,7 @@
             </div>
             <div class="modal-body">
                 <div>
-                    <div class="mixplay-header" style="padding: 0 0 4px 0">
+                    <div class="modal-subheader" style="padding: 0 0 4px 0">
                         Name <tooltip text="'A name to help you identify this effect queue'">
                     </div>
                     <div style="width: 100%; position: relative;">
@@ -22,7 +22,7 @@
                 </div>
 
                 <div style="margin-top: 15px;">
-                    <div class="mixplay-header" style="padding: 0 0 4px 0">
+                    <div class="modal-subheader" style="padding: 0 0 4px 0">
                         MODE
                     </div>
                     <div ng-class="{'has-error': $ctrl.modeError}">
@@ -37,17 +37,17 @@
                                         <div ng-bind-html="mode.display | highlight: $select.search"></div>
                                         <small class="muted">{{mode.description}}</small>
                                     </div>
-                                    
+
                                 </div>
-                                
+
                             </ui-select-choices>
                         </ui-select>
                         <div id="helpBlock2" class="help-block" ng-show="$ctrl.modeError">Please select a mode.</div>
-                    </div> 
+                    </div>
                 </div>
 
                 <div style="margin-top: 15px;" ng-show="$ctrl.effectQueue.mode != null && $ctrl.effectQueue.mode ==='interval'">
-                    <div class="mixplay-header" style="padding: 0 0 4px 0">
+                    <div class="modal-subheader" style="padding: 0 0 4px 0">
                         Interval (secs)
                     </div>
                     <div style="width: 100%; position: relative;">
@@ -57,7 +57,7 @@
                         </div>
                     </div>
                 </div>
-        
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>

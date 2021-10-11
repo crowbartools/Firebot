@@ -43,7 +43,6 @@ function refreshCommandCache(retry = 1) {
     // Get commands file
     let commandsDb = getCommandsDb();
 
-    // We've got the last used board! Let's update the interactive cache.
     if (commandsDb != null) {
         if (retry <= 3) {
             let cmdData;

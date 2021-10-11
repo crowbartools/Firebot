@@ -50,14 +50,6 @@
                         </div>
                         <p class="muted">Note: Viewers must meet all of the selected criteria above to be purged (exclusive filter).</p>
                     </div>
-                    <hr />
-                    <div>
-                        <h4>Mixer</h4>
-                        <label class="control-fb control--checkbox" style="margin-bottom: 0px; font-size: 13px;opacity.0.9;"> Purge unmigrated Mixer viewers <tooltip text="'Purge Mixer viewers who never used the !linkmixer command in your Twitch chat.'" />
-                            <input type="checkbox" ng-model="$ctrl.options.mixer">
-                            <div class="control__indicator"></div>
-                        </label>
-                    </div>            
                 </div>
                 <div class="modal-footer" style="text-align: center;">
                     <button type="button" class="btn btn-primary" ng-click="$ctrl.getPurgePreview()">Preview Purge</button>
@@ -73,8 +65,6 @@
                 const $ctrl = this;
 
                 $ctrl.options = {
-                    mixer: false,
-
                     daysSinceActive: {
                         enabled: false,
                         value: 0
@@ -93,7 +83,6 @@
                     $rootScope.showSpinner = true;
                     $q.when(backendCommunicator.fireEventAsync("getPurgePreview", $ctrl.options))
                         .then(users => {
-                            console.log(users);
                             $rootScope.showSpinner = false;
                             utilityService.showModal({
                                 component: "previewPurgeModal",

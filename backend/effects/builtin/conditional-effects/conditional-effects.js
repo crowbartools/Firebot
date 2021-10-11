@@ -1,15 +1,10 @@
 "use strict";
 
-
-const { ControlKind, InputEvent } = require('../../../interactive/constants/MixplayConstants');
-const effectModels = require("../../models/effectModels");
-const { EffectTrigger } = effectModels;
-
 const { EffectCategory } = require('../../../../shared/effect-constants');
-
 const effectRunner = require("../../../common/effect-runner");
 const conditionManager = require("./conditions/condition-manager");
 const builtinConditionTypeLoader = require("./conditions/builtin-condition-loader");
+
 builtinConditionTypeLoader.registerConditionTypes();
 
 const model = {
@@ -19,12 +14,7 @@ const model = {
         description: "Conditionally run effects",
         categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
         icon: "fad fa-question-circle",
-        dependencies: [],
-        triggers: effectModels.buildEffectTriggersObject(
-            [ControlKind.BUTTON, ControlKind.TEXTBOX],
-            [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT],
-            EffectTrigger.ALL
-        )
+        dependencies: []
     },
     globalSettings: {},
     optionsTemplate: `
@@ -35,16 +25,16 @@ const model = {
                 <condition-section header="{{$index === 0 ? 'If' : 'Else If'}}" label="ifCondition.label" initially-open="$index === 0 && openFirst">
                     <condition-list condition-data="ifCondition.conditionData" trigger="trigger" trigger-meta="triggerMeta"></condition-list>
                     <div style="font-size: 15px;font-family: 'Quicksand'; color: #c0c1c2;margin-bottom:3px;">Then run the following effects:</div>
-                    <effect-list effects="ifCondition.effectData" 
+                    <effect-list effects="ifCondition.effectData"
                         trigger="{{trigger}}"
-                        trigger-meta="triggerMeta" 
+                        trigger-meta="triggerMeta"
                         update="effectListUpdated(effects, $index)"
-                        modalId="{{modalId}}"></effect-list> 
-                        
+                        modalId="{{modalId}}"></effect-list>
+
                     <div style="margin-top: 10px">
                         <button class="btn btn-danger" ng-click="deleteClauseAtIndex($index)"><i class="far fa-trash"></i></button>
                     </div>
-                </condition-section>          
+                </condition-section>
             </div>
         </div>
 
@@ -56,13 +46,13 @@ const model = {
                     <div style="padding-bottom: 10px;padding-left: 2px;font-size: 15px;font-family: 'Quicksand'; color: #c0c1c2;">
                         <span>If none of the above conditions pass, run the following effects:</span>
                     </div>
-                    <effect-list effects="effect.otherwiseEffectData" 
-                        trigger="{{trigger}}" 
-                        trigger-meta="triggerMeta" 
+                    <effect-list effects="effect.otherwiseEffectData"
+                        trigger="{{trigger}}"
+                        trigger-meta="triggerMeta"
                         update="otherwiseEffectListUpdated(effects)"
-                        modalId="{{modalId}}"></effect-list> 
+                        modalId="{{modalId}}"></effect-list>
                 </condition-section>
-                
+
             </div>
         </eos-container>
     `,

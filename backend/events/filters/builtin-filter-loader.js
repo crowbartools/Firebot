@@ -23,7 +23,6 @@ exports.loadFilters = () => {
     const hostType = require("./builtin/host-type");
     const hostViewerCount = require("./builtin/host-viewer-count");
 
-    const messageType = require("./builtin/message-type");
     const message = require("./builtin/message");
 
     const rewardName = require("./builtin/reward-name");
@@ -52,7 +51,6 @@ exports.loadFilters = () => {
     filterManager.registerFilter(hostType);
     filterManager.registerFilter(hostViewerCount);
 
-    filterManager.registerFilter(messageType);
     filterManager.registerFilter(message);
 
     filterManager.registerFilter(reward);

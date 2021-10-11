@@ -1,7 +1,7 @@
 "use strict";
 
 (function() {
-    // Provides utility methods for connecting to mixer services
+    // Provides utility methods for connecting to Twitch services, overlays and integrations
 
     angular
         .module("firebotApp")
@@ -40,7 +40,6 @@
                 return (
                     connectionService.waitingForStatusChange ||
                     connectionService.waitingForChatStatusChange ||
-                    connectionService.waitingForConstellationStatusChange ||
                     connectionService.isConnectingAll
                 );
             };
@@ -65,48 +64,6 @@
                 });
             };
 
-            service.setConnectionToConstellation = function(shouldConnect) {
-                return new Promise(resolve => {
-                    listenerService.registerListener(
-                        {
-                            type:
-                listenerService.ListenerType.CONSTELLATION_CONNECTION_STATUS,
-                            runOnce: true
-                        },
-                        isConstellationConnected => {
-                            resolve(isConstellationConnected);
-                        }
-                    );
-
-                    if (shouldConnect) {
-                        connectionService.connectToConstellation();
-                    } else {
-                        connectionService.disconnectFromConstellation();
-                    }
-                });
-            };
-
-            service.setConnectionToInteractive = function(shouldConnect) {
-                return new Promise(resolve => {
-
-                    listenerService.registerListener(
-                        {
-                            type: listenerService.ListenerType.CONNECTION_STATUS,
-                            runOnce: true
-                        },
-                        isInteractiveConnected => {
-                            resolve(isInteractiveConnected);
-                        }
-                    );
-
-                    if (shouldConnect) {
-                        connectionService.connectToInteractive();
-                    } else {
-                        connectionService.disconnectFromInteractive();
-                    }
-                });
-            };
-
             service.connectedServiceCount = function(services) {
                 if (services == null) {
                     services = settingsService.getSidebarControlledServices();
@@ -116,18 +73,8 @@
 
                 services.forEach(s => {
                     switch (s) {
-                    case "interactive":
-                        if (connectionService.connectedToInteractive) {
-                            count++;
-                        }
-                        break;
                     case "chat":
                         if (connectionService.connectedToChat) {
-                            count++;
-                        }
-                        break;
-                    case "constellation":
-                        if (connectionService.connectedToConstellation) {
                             count++;
                         }
                         break;
@@ -184,17 +131,6 @@
                 for (let i = 0; i < services.length; i++) {
                     let s = services[i];
                     switch (s) {
-                    case "interactive":
-                        if (shouldConnect) {
-                            let didConnect = await service.setConnectionToInteractive(true);
-                            if (didConnect) {
-                                soundService.popSound();
-                                await delay(250);
-                            }
-                        } else if (connectionService.connectedToInteractive) {
-                            await service.setConnectionToInteractive(false);
-                        }
-                        break;
                     case "chat":
                         if (shouldConnect) {
                             let didConnect = await service.setConnectionToChat(true);
@@ -204,17 +140,6 @@
                             }
                         } else if (connectionService.connectedToChat) {
                             await service.setConnectionToChat(false);
-                        }
-                        break;
-                    case "constellation":
-                        if (shouldConnect) {
-                            let didConnect = await service.setConnectionToConstellation(true);
-                            if (didConnect) {
-                                soundService.popSound();
-                                await delay(50);
-                            }
-                        } else if (connectionService.connectedToConstellation) {
-                            await service.setConnectionToConstellation(false);
                         }
                         break;
                     default:
@@ -243,22 +168,8 @@
             service.getConnectionStatusForService = function(service) {
                 let connectionStatus = null;
                 switch (service) {
-                case "interactive":
-                    if (connectionService.connectedToInteractive) {
-                        connectionStatus = "connected";
-                    } else {
-                        connectionStatus = "disconnected";
-                    }
-                    break;
                 case "chat":
                     if (connectionService.connectedToChat) {
-                        connectionStatus = "connected";
-                    } else {
-                        connectionStatus = "disconnected";
-                    }
-                    break;
-                case "constellation":
-                    if (connectionService.connectedToConstellation) {
                         connectionStatus = "connected";
                     } else {
                         connectionStatus = "disconnected";

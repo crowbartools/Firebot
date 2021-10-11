@@ -76,39 +76,6 @@ settings.ignoreSubsequentSubEventsAfterCommunitySub = function() {
     return ignoreSubEvents != null ? ignoreSubEvents : true;
 };
 
-settings.getLastMixplayProjectId = function() {
-    let projectId;
-    try {
-        projectId = getSettingsFile().getData("/mixplay/lastProjectId");
-    } catch (err) {
-        logger.debug(err);
-    }
-    return projectId;
-};
-
-settings.setLastMixplayProjectId = function(id) {
-    pushDataToFile("/mixplay/lastProjectId", id);
-};
-
-settings.getActiveMixplayProjectId = function() {
-    let projectId;
-    try {
-        projectId = getSettingsFile().getData("/mixplay/activeProjectId");
-    } catch (err) {
-        logger.warn(err);
-    }
-    return projectId;
-};
-
-settings.setActiveMixplayProjectId = function(id) {
-    pushDataToFile("/mixplay/activeProjectId", id);
-};
-
-settings.getLastBoardName = function() {
-    let boardName = getDataFromFile("/interactive/lastBoardId");
-    return boardName != null ? boardName : "";
-};
-
 settings.hasJustUpdated = function() {
     let updated = getDataFromFile("/settings/justUpdated");
     return updated != null ? updated : false;
@@ -224,25 +191,6 @@ settings.getAllowQuoteCSVDownloads = function() {
 settings.getActiveChatUserListTimeout = function() {
     let inactiveTimer = getDataFromFile("/settings/activeChatUsers/inactiveTimer");
     return inactiveTimer != null ? parseInt(inactiveTimer) : 5;
-};
-
-settings.getActiveMixplayUserListEnabled = function() {
-    let enabled = getDataFromFile("/settings/activeMixplayUsers/status");
-    return enabled !== undefined ? enabled : true;
-};
-
-settings.getActiveMixplayUserListTimeout = function() {
-    let inactiveTimer = getDataFromFile("/settings/activeMixplayUsers/inactiveTimer");
-    return inactiveTimer != null ? parseInt(inactiveTimer) : 10;
-};
-
-settings.sparkExemptionEnabled = function() {
-    let enabled = getDataFromFile('/settings/sparkExemptionEnabled');
-    return enabled != null ? enabled : false;
-};
-
-settings.setSparkExemptionEnabled = function(enabled) {
-    pushDataToFile('/settings/sparkExemptionEnabled', enabled === true);
 };
 
 settings.getWebSocketPort = function() {

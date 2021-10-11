@@ -1,7 +1,6 @@
 "use strict";
 
 const Trigger = {
-    INTERACTIVE: "interactive",
     COMMAND: "command",
     CUSTOM_SCRIPT: "custom_script",
     API: "api",
@@ -16,9 +15,7 @@ const Trigger = {
 const ALL_TRIGGERS = Object.values(Trigger);
 
 const Dependency = {
-    INTERACTIVE: "interactive",
     CHAT: "chat",
-    CONSTELLATION: "constellation",
     OVERLAY: "overlay"
 };
 
@@ -40,56 +37,12 @@ const effectDefinitions = [
         description: "Fun effects in the overlay"
     },
     {
-        id: "CHANGE_GROUP",
-        v5Id: null,
-        name: "Change Group",
-        triggers: [
-            Trigger.INTERACTIVE,
-            Trigger.CUSTOM_SCRIPT,
-            Trigger.API,
-            Trigger.EVENT,
-            Trigger.HOTKEY
-        ],
-        dependencies: [Dependency.INTERACTIVE],
-        description: "Move a user to a new group"
-    },
-    {
-        id: "CHANGE_SCENE",
-        v5Id: null,
-        name: "Change Scene",
-        triggers: [
-            Trigger.INTERACTIVE,
-            Trigger.CUSTOM_SCRIPT,
-            Trigger.API,
-            Trigger.EVENT,
-            Trigger.HOTKEY
-        ],
-        dependencies: [Dependency.INTERACTIVE],
-        description: "Move a group to a new scene"
-    },
-    {
         id: "CHAT",
         v5Id: "firebot:chat",
         name: "Chat",
         triggers: ALL_TRIGGERS,
         dependencies: [Dependency.CHAT],
         description: "Send a message to chat"
-    },
-    {
-        id: "COOLDOWN",
-        v5Id: null,
-        name: "Cooldown",
-        triggers: [
-            Trigger.INTERACTIVE,
-            Trigger.CUSTOM_SCRIPT,
-            Trigger.API,
-            Trigger.COMMAND,
-            Trigger.EVENT,
-            Trigger.HOTKEY,
-            Trigger.TIMER
-        ],
-        dependencies: [Dependency.INTERACTIVE],
-        description: "Cooldown some buttons"
     },
     {
         id: "CUSTOM_SCRIPT",
@@ -218,63 +171,12 @@ const effectDefinitions = [
         description: "Write customizable text to a file"
     },
     {
-        id: "GROUP_LIST",
-        v5Id: null,
-        name: "Group List",
-        triggers: [Trigger.COMMAND],
-        dependencies: [Dependency.CHAT, Dependency.INTERACTIVE],
-        description: "Returns list of interactive groups"
-    },
-    {
-        id: "SCENE_LIST",
-        v5Id: null,
-        name: "Scene List",
-        triggers: [Trigger.COMMAND],
-        dependencies: [Dependency.INTERACTIVE, Dependency.CHAT],
-        description: "Returns list of interactive scenes"
-    },
-    {
         id: "COMMAND_LIST",
         v5Id: null,
         name: "Command List",
         triggers: [Trigger.COMMAND],
         dependencies: [Dependency.CHAT],
         description: "Returns list of chat commands"
-    },
-    {
-        id: "CHANGE_USER_SCENE",
-        v5Id: null,
-        name: "Change User Scene",
-        triggers: [
-            Trigger.COMMAND,
-            Trigger.CUSTOM_SCRIPT,
-            Trigger.API,
-            Trigger.HOTKEY
-        ],
-        dependencies: [Dependency.INTERACTIVE, Dependency.CHAT],
-        description: "Changes interactive scene for command user"
-    },
-    {
-        id: "CHANGE_GROUP_SCENE",
-        v5Id: null,
-        name: "Change Group Scene",
-        triggers: [
-            Trigger.COMMAND,
-            Trigger.CUSTOM_SCRIPT,
-            Trigger.API,
-            Trigger.MANUAL,
-            Trigger.HOTKEY
-        ],
-        dependencies: [Dependency.INTERACTIVE, Dependency.CHAT],
-        description: "Changes scene for interactive group"
-    },
-    {
-        id: "UPDATE_BUTTON",
-        v5Id: null,
-        name: "Update Button",
-        triggers: ALL_TRIGGERS,
-        dependencies: [Dependency.INTERACTIVE],
-        description: "Update properties on a button"
     },
     {
         id: "TOGGLE_CONNECTION",
@@ -294,25 +196,11 @@ const effectDefinitions = [
     }
 ];
 
-function getEffects(triggerType, triggerMeta) {
+function getEffects(triggerType) {
     // filter effects list to given triggerType
     let filteredEffects = effectDefinitions.filter(e => {
         if (triggerType != null) {
-            let supported = e.triggers[triggerType] != null && e.triggers[triggerType] !== false;
-            if (!supported) return false;
-
-
-            if (triggerMeta) {
-                const triggerData = e.triggers[triggerType];
-                switch (triggerType) {
-                case Trigger.INTERACTIVE:
-                    return triggerData.controls.includes(triggerData.control);
-                default:
-                    return true;
-                }
-            } else {
-                return true;
-            }
+            return e.triggers[triggerType] != null && e.triggers[triggerType] !== false;
         }
         return true;
     });

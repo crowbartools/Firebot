@@ -63,16 +63,6 @@ class EffectManager extends EventEmitter {
         };
     }
 
-    effectSupportsInputType(effectId, inputEvent) {
-        const effect = this.getEffectById(effectId);
-
-        if (effect == null) return false;
-
-        const effectTriggerData = effect.definition.triggers[EffectTrigger.INTERACTIVE];
-
-        return effectTriggerData.events && effectTriggerData.events.includes(inputEvent);
-    }
-
     clearFilePaths(effects) {
         if (effects == null) return effects;
 
@@ -129,8 +119,6 @@ frontendCommunicator.onAsync("getEffectDefinitions", async (triggerData) => {
                     const effectTriggerData = e.triggers[triggerType];
 
                     switch (triggerType) {
-                    case EffectTrigger.INTERACTIVE:
-                        return effectTriggerData.controls.includes(triggerMeta.triggerId);
                     case EffectTrigger.EVENT:
                         if (effectTriggerData === true) {
                             return true;

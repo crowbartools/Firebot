@@ -14,7 +14,7 @@ const model = {
     },
     optionsTemplate: `
     <div>
-        <div id="numViewersOption" class="mixplay-header" style="padding: 0 0 4px 0">
+        <div id="numViewersOption" class="modal-subheader" style="padding: 0 0 4px 0">
             Comparison
         </div>
         <div>
@@ -25,7 +25,7 @@ const model = {
             </select>
         </div>
 
-        <div id="numberOfViewers" class="mixplay-header" style="padding: 0 0 4px 0">
+        <div id="numberOfViewers" class="modal-subheader" style="padding: 0 0 4px 0">
             Amount
         </div>
         <div class="form-group">

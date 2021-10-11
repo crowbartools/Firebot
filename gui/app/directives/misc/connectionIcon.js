@@ -155,14 +155,8 @@
 
             ctrl.$onInit = function() {
                 switch (ctrl.type) {
-                case ConnectionType.INTERACTIVE:
-                    ctrl.connectionIcon = ConnectionIcon.INTERACTIVE;
-                    break;
                 case ConnectionType.CHAT:
                     ctrl.connectionIcon = ConnectionIcon.CHAT;
-                    break;
-                case ConnectionType.CONSTELLATION:
-                    ctrl.connectionIcon = ConnectionIcon.CONSTELLATION;
                     break;
                 case ConnectionType.OVERLAY:
                     ctrl.connectionIcon = ConnectionIcon.OVERLAY;

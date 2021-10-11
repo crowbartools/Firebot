@@ -123,7 +123,7 @@ async function dadJoke() {
         url: "https://icanhazdadjoke.com/",
         headers: {
             'Accept': "Application/json",
-            'User-Agent': "Firebot Mixer Interactive - (https://firebot.app) - @firebotapp"
+            'User-Agent': "Firebot - (https://firebot.app) - @firebotapp"
         }
     };
 

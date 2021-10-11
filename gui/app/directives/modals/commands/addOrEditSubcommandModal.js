@@ -11,7 +11,7 @@
             </div>
             <div class="modal-body">
                 <div>
-                    <div class="mixplay-header" style="padding: 0 0 4px 0">
+                    <div class="modal-subheader" style="padding: 0 0 4px 0">
                         Arg Type
                     </div>
                     <div ng-class="{'has-error': $ctrl.kindError}">
@@ -21,7 +21,7 @@
                                 <div style="padding: 5px;">
                                     <div ng-bind-html="arg.type | highlight: $select.search"></div>
                                     <small class="muted">{{arg.description}}</small>
-                                </div>     
+                                </div>
                             </ui-select-choices>
                         </ui-select>
                         <div id="helpBlock2" class="help-block" ng-show="$ctrl.kindError">Please select an arg type.</div>
@@ -29,7 +29,7 @@
                 </div>
 
                 <div ng-show="$ctrl.arg.type === 'Custom'" style="margin-top: 15px;">
-                    <div class="mixplay-header" style="padding: 0 0 4px 0">
+                    <div class="modal-subheader" style="padding: 0 0 4px 0">
                         Arg Trigger Text <tooltip text="'The text that should trigger this subcommand'">
                     </div>
                     <div style="width: 100%; position: relative;">

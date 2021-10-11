@@ -1,14 +1,11 @@
 "use strict";
 
-const { InputEvent } = require("../../interactive/constants/MixplayConstants");
-
 /**
  * Enum for effect triggers
  * @readonly
  * @enum {string}
  */
 const EffectTrigger = Object.freeze({
-    INTERACTIVE: "interactive",
     COMMAND: "command",
     CUSTOM_SCRIPT: "custom_script",
     STARTUP_SCRIPT: "startup_script",
@@ -23,50 +20,13 @@ const EffectTrigger = Object.freeze({
     ALL: "all"
 });
 
-function buildNonInteractiveTriggers(otherTriggers) {
-    let object = {};
-
-    if (otherTriggers == null) {
-        return object;
-    }
-
-    let triggers = [];
-    if (otherTriggers === EffectTrigger.ALL ||
-        (Array.isArray(otherTriggers) && otherTriggers.includes(EffectTrigger.ALL))) {
-        triggers = Object.values(EffectTrigger).filter(t => t !== EffectTrigger.ALL && t !== EffectTrigger.INTERACTIVE);
-    } else if (Array.isArray(otherTriggers)) {
-        triggers = otherTriggers;
-    }
-
-    for (const trigger of triggers) {
-        object[trigger] = true;
-    }
-
-    return object;
-}
-exports.buildEffectTriggersObject = function(mixplayControls, mixplayEvents, otherTriggers) {
-
-    let triggersBase = buildNonInteractiveTriggers(otherTriggers);
-
-    let mixplayTrigger = {
-        controls: mixplayControls,
-        events: mixplayEvents || [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN, InputEvent.SUBMIT]
-    };
-
-    triggersBase[EffectTrigger.INTERACTIVE] = mixplayTrigger;
-
-    return triggersBase;
-};
-
 /**
  * Enum for effect dependancies
  * @readonly
  * @enum {string}
  */
 const EffectDependency = Object.freeze({
-    INTERACTIVE: "interactive",
     CHAT: "chat",
-    CONSTELLATION: "constellation",
     OVERLAY: "overlay"
 });
 

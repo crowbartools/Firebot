@@ -9,7 +9,7 @@
                     <h4 class="modal-title">Select {{$ctrl.label}}</h4>
                 </div>
                 <div class="modal-body">
-                    <div id="roles" class="mixplay-header" style="padding: 0 0 4px 0">
+                    <div id="roles" class="modal-subheader" style="padding: 0 0 4px 0">
                         {{$ctrl.label}}
                     </div>
                     <div class="viewer-group-list" style="height: inherit; min-height: 100px;max-height: 300px;">
@@ -17,7 +17,7 @@
                             <input type="checkbox" ng-click="$ctrl.toggleComponentSelected(component.id)" ng-checked="$ctrl.componentIsSelected(component.id)"  aria-label="..." >
                             <div class="control__indicator"></div>
                         </label>
-                    </div> 
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>

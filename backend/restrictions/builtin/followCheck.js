@@ -9,7 +9,7 @@ const model = {
     },
     optionsTemplate: `
         <div>
-            <div id="userFollowList" class="mixplay-header" style="padding: 0 0 4px 0">
+            <div id="userFollowList" class="modal-subheader" style="padding: 0 0 4px 0">
                 User follows
             </div>
             <input type="text" class="form-control" placeholder="Enter value" ng-model="restriction.value">

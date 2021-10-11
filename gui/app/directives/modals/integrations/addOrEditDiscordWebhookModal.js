@@ -12,9 +12,9 @@
                 <h4 class="modal-title">Discord Channel</h4>
             </div>
             <div class="modal-body">
-            
+
                 <div>
-                    <div class="mixplay-header" style="padding: 0 0 4px 0">
+                    <div class="modal-subheader" style="padding: 0 0 4px 0">
                         Name
                     </div>
                     <div style="width: 100%; position: relative;">
@@ -26,7 +26,7 @@
                 </div>
 
                 <div style="margin-top: 15px;">
-                    <div class="mixplay-header" style="padding: 0 0 4px 0">
+                    <div class="modal-subheader" style="padding: 0 0 4px 0">
                         Webhook URL
                     </div>
                     <div style="width: 100%; position: relative;">
