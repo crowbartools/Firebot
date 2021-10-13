@@ -28,8 +28,8 @@
 
                         <nav-category name="{{'SIDEBAR.MANAGEMENT' | translate }}" pad-top="true"></nav-category>
                         <nav-link page="Effect Queues" name="{{ 'SIDEBAR.OTHER.EFFECT_QUEUES' | translate }}" icon="fa-stream"></nav-link>
-                        <nav-link page="Games" name="{{'SIDEBAR.CHAT.GAMES' | translate }}" icon="fa-dice"></nav-link>
-                        <nav-link page="Moderation" name="{{'SIDEBAR.CHAT.MODERATION' | translate }}" icon="fa-gavel"></nav-link>
+                        <nav-link page="Games" name="Games" icon="fa-dice"></nav-link>
+                        <nav-link page="Moderation" name="Moderation" icon="fa-gavel"></nav-link>
                         <nav-link page="Currency" name="{{'SIDEBAR.MANAGEMENT.CURRENCY' | translate }}" icon="fa-money-bill" ng-if="$ctrl.isViewerDBOn()"></nav-link>
                         <nav-link page="Quotes" name="{{'SIDEBAR.MANAGEMENT.QUOTES' | translate }}" icon="fa-quote-right"></nav-link>
                         <nav-link page="Viewers" name="{{'SIDEBAR.MANAGEMENT.VIEWERS' | translate }}" icon="fa-users" ng-if="$ctrl.isViewerDBOn()"></nav-link>
