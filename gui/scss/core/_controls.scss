@@ -70,7 +70,7 @@
     background: #ccc;
 }
 .control-fb input:checked ~ .control__indicator {
-    background: #2aa1c0;
+    background: #16809c;
 }
 .control-fb:hover input:not([disabled]):checked ~ .control__indicator,
 .control-fb input:checked:focus ~ .control__indicator {
@@ -327,7 +327,7 @@ video::-webkit-media-controls-fullscreen-button {
 }
 
 input:checked + .slider {
-    background-color: #2aa1c0;
+    background-color: #16809c;
 }
 
 input:focus + .slider {
@@ -462,7 +462,7 @@ input:checked + .slider:before {
     }
 
     &:checked + .tgl-btn {
-        background: #2aa1c0;
+        background: #16809c;
     }
 
     &:disabled + .tgl-btn {

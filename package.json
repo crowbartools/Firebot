@@ -118,5 +118,8 @@
     "winston-daily-rotate-file": "^1.4.6",
     "winston-raven-sentry": "^1.0.1",
     "ws": "^5.2.2"
+  },
+  "volta": {
+    "node": "12.14.1"
   }
 }
