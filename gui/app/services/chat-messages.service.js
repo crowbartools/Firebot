@@ -19,6 +19,8 @@
             // Chat User List
             service.chatUsers = [];
 
+            service.autodisconnected = false;
+
             // Tells us if we should process in app chat or not.
             service.getChatFeed = function() {
                 return settingsService.getRealChatFeed();
@@ -339,6 +341,10 @@
                 if (user != null) {
                     user.active = false;
                 }
+            });
+
+            backendCommunicator.on("twitch:chat:autodisconnected", autodisconnected => {
+                service.autodisconnected = autodisconnected;
             });
 
             backendCommunicator.on("twitch:chat:message", chatMessage => {
