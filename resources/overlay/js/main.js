@@ -68,6 +68,13 @@ function overlaySocketConnect(){
 }
 overlaySocketConnect();
 
+function sendWebsocketEvent(name, data) {
+	ws.send(JSON.stringify({
+		name,
+		data
+	}))
+}
+
 
 function loadFonts() {
 	$.get(`http://${window.location.hostname}:${OVERLAY_PORT}/api/v1/fonts`, (fonts) => {
