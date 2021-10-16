@@ -656,28 +656,6 @@
           </div>
         </uib-tab>
 
-        <!-- Clip Settings -->
-        <uib-tab index="8" heading="Clips">
-          <div class="row" style="margin-top: 15px">
-            <div class="setting col-sm-6">
-              <div class="setting-heading">Clip Download Folder</div>
-              <div class="setting-description">
-                The folder where Firebot should save clips.
-              </div>
-              <file-chooser
-                model="clipsFolder"
-                options="{ directoryOnly: true, filters: [], title: 'Select Clip Download Folder'}"
-                on-update="settings.setClipDownloadFolder(filepath)"
-              ></file-chooser>
-            </div>
-            <div class="setting col-sm-6">
-              <!--<div class="setting-heading">Clip Trigger Threshold</div>
-                  <div class="setting-description">The number of times a clip needs to be triggered before Firebot actually makes a clip. Ie 3 people need to type !clip before a clip is made. This threshold can be ignored at an effect level.</div>
-                  -->
-            </div>
-          </div>
-        </uib-tab>
-
         <!-- Backup Settings -->
         <uib-tab index="9" heading="Backup">
           <div class="row" style="margin-top: 15px">

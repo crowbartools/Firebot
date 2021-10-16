@@ -7,7 +7,17 @@ const model = {
     definition: {
         handle: "userAvatarUrl",
         usage: "userAvatarUrl",
-        description: "Gets the url for the avatar to the current user. Optionally pass in a username.",
+        description: "Gets the url for the avatar of the associated user (Ie who triggered command, pressed button, etc).",
+        examples: [
+            {
+                usage: "userAvatarUrl[$target]",
+                description: "When in a command, gets the the url for the avatar of the target user."
+            },
+            {
+                usage: "userAvatarUrl[ebiggz]",
+                description: "Gets the url for the avatar of a specific user."
+            }
+        ],
         categories: [VariableCategory.USER],
         possibleDataOutput: [OutputDataType.TEXT]
     },

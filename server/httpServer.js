@@ -12,6 +12,9 @@ const { ipcMain } = require("electron");
 const path = require('path');
 const cors = require('cors');
 
+const events = require("events");
+exports.events = new events.EventEmitter();
+
 let server = null;
 let httpServer = null;
 let wss = null;
@@ -22,7 +25,7 @@ let overlayHasClients = false;
 exports.start = function() {
     //server is already running.
     if (server != null) {
-        logger.error("Overlay server is already running... is another intance running?");
+        logger.error("Overlay server is already running... is another instance running?");
         return;
     }
 
@@ -33,6 +36,17 @@ exports.start = function() {
     httpServer = http.createServer(app);
     wss = new WebSocket.Server({
         server: httpServer
+    });
+
+    wss.on('connection', (ws) => {
+        ws.on('message', (message) => {
+            try {
+                const event = JSON.parse(message);
+                exports.events.emit("overlay-event", event);
+            } catch (error) {
+                logger.error("Error parsing overlay event", error);
+            }
+        });
     });
 
     app.use(bodyParser.json());

@@ -66,6 +66,12 @@
                                     display: `${c.trigger} ${sc.usage ? sc.usage : sc.arg}`,
                                     description: sc.description,
                                     text: `${c.trigger} ${sc.arg}`
+                                })) : []),
+                            ...(c.aliases ? c.aliases
+                                .map(alias => ({
+                                    display: alias,
+                                    description: `Alias of ${c.trigger}.`,
+                                    text: alias
                                 })) : [])
                         ]).flat();
 
