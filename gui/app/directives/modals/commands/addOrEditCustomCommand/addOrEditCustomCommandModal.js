@@ -30,10 +30,19 @@
                     restrictions: [],
                     mode: "all",
                     sendFailMessage: true
-                }
+                },
+                aliases: []
             };
 
             $scope.trigger = "command";
+
+            $scope.aliasesListOptions = {
+                useTextArea: false,
+                addLabel: "New Alias",
+                editLabel: "Edit Alias",
+                validationText: "Alias cannot be empty",
+                noDuplicates: true
+            };
 
             $ctrl.switchCommandMode = () => {
                 const currentlyAdvanced = !$ctrl.command.simple;
@@ -118,6 +127,10 @@
 
                 if ($ctrl.command.sendCooldownMessage == null) {
                     $ctrl.command.sendCooldownMessage = true;
+                }
+
+                if ($ctrl.command.aliases == null) {
+                    $ctrl.command.aliases = [];
                 }
 
                 let modalId = $ctrl.resolve.modalId;

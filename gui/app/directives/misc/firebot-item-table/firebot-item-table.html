@@ -1,86 +1,68 @@
-<div style="overflow-y: scroll; height: 100%">
+<div class="firebot-item-table">
   <div>
     <scroll-sentinel
-      element-class="firebot-item-table-header"
+      element-class="fit-header"
     ></scroll-sentinel>
-    <div
-      class="light-bg sticky-top firebot-item-table-header"
-      style="
-        padding: 15px;
-        margin: 15px 0;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-      "
-    >
+    <div class="light-bg sticky-top fit-header">
       <div class="flex-row">
         <button
           ng-click="$ctrl.onAddNewClicked()"
-          class="btn btn-primary hvr-icon-grow"
-          style="margin-right: 10px"
+          class="btn btn-primary hvr-icon-grow fit-header-button"
           ng-disabled="$ctrl.addNewButtonDisabled"
         >
-          <i class="fas fa-plus-circle hvr-icon" style="margin-right: 5px"></i>
+          <i class="fas fa-plus-circle hvr-icon"></i>
           {{$ctrl.addNewButtonText}}
         </button>
 
         <div ng-transclude="toolbar"></div>
       </div>
 
-      <div style="display: flex; flex-direction: row; align-items: center;" ng-show="$ctrl.items.length > 0">
+      <div class="fit-header-sort-search" ng-show="$ctrl.items.length > 0">
         <sort-tag-dropdown
           context="{{$ctrl.sortTagContext}}"
-          style="margin-right: 10px"
+          class="fit-header-sort"
         />
         <searchbar
           placeholder-text="{{$ctrl.searchPlaceholder}}"
           query="searchQuery"
-          style="flex-basis: 250px; min-width: 217px;"
+          class="fit-header-search"
         ></searchbar>
       </div>
     </div>
-    <div style="padding: 15px">
+    <div class="fit-body">
       <div
         ng-if="$ctrl.items.length === 0"
-        class="noselect muted"
-        style="padding-left: 13px"
+        class="noselect muted fit-body-no-data"
       >
         <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span
-        ><span style="margin-left: 8px">{{$ctrl.noDataMessage}}</span>
+        ><span class="fit-body-no-data-message">{{$ctrl.noDataMessage}}</span>
       </div>
       <div
         ng-if="$ctrl.items.length > 0 && filteredItems && filteredItems.length < 1"
-        class="noselect muted"
-        style="padding-left: 13px"
+        class="noselect muted fit-body-no-data"
       >
-        <span style="margin-left: 8px">{{$ctrl.noneFoundMessage}}</span>
+        <span class="fit-body-no-data-message">{{$ctrl.noneFoundMessage}}</span>
       </div>
       <table
         ng-show="$ctrl.items.length > 0 && (filteredItems == null || filteredItems.length > 0)"
-        class="fb-table"
+        class="fb-table fit-table"
       >
-        <thead>
-          <tr style="font-size: 11px">
-            <th ng-if="$ctrl.testButton == true" style="width: 5%"></th>
+        <thead class="fit-table-header">
+          <tr>
+            <th ng-if="$ctrl.testButton == true" class="fit-test-button-header"></th>
 
             <th
               ng-repeat="header in $ctrl.headers track by $index"
               ng-style="header.headerStyles"
-              class="muted"
+              class="muted fit-custom-header"
             >
-              <div style="display: flex">
-                <span style="display: inline-block"
-                  ><i
-                    ng-show="header.icon"
-                    class="fas"
-                    ng-class="header.icon"
-                  ></i
-                ></span>
-                <span
-                  ng-show="header.name"
-                  style="margin: 0 5px; display: inline-block"
-                  >{{header.name}}</span
-                >
+              <div>
+                <span>
+                  <i ng-show="header.icon" class="fas" ng-class="header.icon"></i>
+                </span>
+                <span ng-show="header.name" class="fit-custom-header-name">
+                  {{header.name}}
+                </span>
               </div>
             </th>
 
@@ -93,17 +75,13 @@
             <th></th>
           </tr>
         </thead>
-        <tbody ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.items">
+        <tbody ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.items" class="fit-table-body">
           <tr
             ng-repeat="item in filteredItems = ($ctrl.items | sortTagSearch:sts.getSelectedSortTag($ctrl.sortTagContext) | filter:searchQuery) as visible track by item.id"
-            style="width: 100%"
             context-menu="$ctrl.getContextMenu(item)"
           >
-            <td ng-if="$ctrl.testButton == true">
-              <span
-                style="color: #16809c; font-size: 20px"
-                ng-click="$ctrl.onTestButtonClicked({ itemId: item.id })"
-              >
+            <td ng-if="$ctrl.testButton == true" class="fit-test-button-body">
+              <span ng-click="$ctrl.onTestButtonClicked({ itemId: item.id })">
                 <i class="fas fa-play-circle clickable"></i>
               </span>
             </td>
@@ -121,29 +99,10 @@
 
             <td
               ng-if="$ctrl.sortTagContext != null"
-              style="max-width: 135px; min-width: 100px"
+              class="fit-table-sort-tags"
             >
-              <div
-                style="
-                  display: flex;
-                  flex-wrap: wrap;
-                  width: 100%;
-                  overflow: auto;
-                  max-height: 45.25px;
-                "
-              >
-                <span
-                  ng-repeat="tagName in sts.getSortTagNames($ctrl.sortTagContext, item.sortTags)"
-                  style="
-                    background: gray;
-                    border-radius: 15px;
-                    padding: 1px 5px;
-                    margin-right: 2px;
-                    margin-bottom: 1px;
-                    font-size: 10px;
-                    line-height: 1.8;
-                  "
-                >
+              <div>
+                <span ng-repeat="tagName in sts.getSortTagNames($ctrl.sortTagContext, item.sortTags)">
                   {{tagName}}
                 </span>
               </div>
@@ -153,14 +112,8 @@
               <status-indicator status="$ctrl.getStatus(item)" />
             </td>
 
-            <td>
-              <div
-                style="
-                  display: flex;
-                  justify-content: flex-end;
-                  align-items: center;
-                "
-              >
+            <td class="fit-table-drag-handle">
+              <div>
                 <span
                   class="dragHandle"
                   ng-click="$event.stopPropagation();"
@@ -169,15 +122,15 @@
                 >
                   <i class="fal fa-bars" aria-hidden="true"></i>
                 </span>
-                <div style="text-align: right; margin-left: 25px">
+                <div>
                   <span
                     class="noselect clickable"
-                    style="font-size: 30px"
                     context-menu="$ctrl.getContextMenu(item)"
                     context-menu-on="click"
                     context-menu-orientation="left"
-                    ><i class="fal fa-ellipsis-h"></i
-                  ></span>
+                  >
+                    <i class="fal fa-ellipsis-h"></i>
+                  </span>
                 </div>
               </div>
             </td>
@@ -186,11 +139,11 @@
       </table>
     </div>
     <div
-      class="light-bg sticky-bottom firebot-item-table-footer"
+      class="light-bg sticky-bottom fit-footer"
       ng-transclude="footer"
     ></div>
     <scroll-sentinel
-      element-class="firebot-item-table-footer"
+      element-class="fit-footer"
     ></scroll-sentinel>
   </div>
 </div>
