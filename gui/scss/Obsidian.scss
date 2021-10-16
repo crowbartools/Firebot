@@ -152,10 +152,10 @@ $sys-cmd-expanded-shadow: none;
 
 $integration-row-bg: #2f3136;
 
-// Import Core Styles
-@import './core/$importer';
-
 .list-group-item {
     background-color: #43454A;
     border: 1px solid #2f3136;
 }
+
+// Import Core Styles
+@import './core/$importer';
