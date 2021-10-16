@@ -25,6 +25,9 @@ exports.whenReady = async () => {
     const accountAccess = require("../../../common/account-access");
     await accountAccess.updateAccountCache(false);
 
+    const refreshingAuthProvider = require("../../../auth/refreshing-auth-provider");
+    refreshingAuthProvider.setupRefreshingAuthProviders();
+
     const connectionManager = require("../../../common/connection-manager");
     connectionManager.startOnlineCheckInterval();
 
