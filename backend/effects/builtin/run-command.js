@@ -93,7 +93,6 @@ const model = {
     onTriggerEvent: event => {
         return new Promise(resolve => {
             let { effect, trigger } = event;
-            trigger.metadata.username = effect.username;
 
             const clonedTrigger = JSON.parse(JSON.stringify(trigger));
             if (effect.username != null && effect.username.length > 0) {
