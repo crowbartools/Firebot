@@ -1,26 +1,13 @@
 'use strict';
 const {ipcMain} = require('electron');
 const logger = require('../logwrapper');
-
 const effectManager = require("../effects/effectManager");
 const { EffectDependency, EffectTrigger } = require("../effects/models/effectModels");
-
 const accountAccess = require('./account-access');
-
 const replaceVariableManager = require("./../variables/replace-variable-manager");
-
 const effectQueueManager = require("../effects/queues/effect-queue-manager");
 const effectQueueRunner = require("../effects/queues/effect-queue-runner");
-
-function getTriggerIdFromTriggerData(trigger) {
-    const { eventSource, event } = trigger.metadata;
-
-    if (eventSource && event) {
-        return `${eventSource.id}:${event.id}`;
-    }
-
-    return undefined;
-}
+const util = require("../utility");
 
 const findAndReplaceVariables = async (data, trigger) => {
     let keys = Object.keys(data);
@@ -35,7 +22,7 @@ const findAndReplaceVariables = async (data, trigger) => {
         if (value && typeof value === "string") {
             if (value.includes("$")) {
                 let replacedValue = value;
-                let triggerId = getTriggerIdFromTriggerData(trigger);
+                let triggerId = util.getTriggerIdFromTriggerData(trigger);
                 try {
                     replacedValue = await replaceVariableManager.evaluateText(value, trigger, {
                         type: trigger.type,

@@ -1,6 +1,6 @@
 {
   "name": "firebotv5",
-  "version": "5.44.2",
+  "version": "5.45.0-beta1",
   "description": "Powerful all-in-one bot for Twitch streamers.",
   "main": "main.js",
   "scripts": {
@@ -118,5 +118,8 @@
     "winston-daily-rotate-file": "^1.4.6",
     "winston-raven-sentry": "^1.0.1",
     "ws": "^5.2.2"
+  },
+  "volta": {
+    "node": "12.14.1"
   }
 }

@@ -3,41 +3,12 @@
 const twitchChat = require("../../chat/twitch-chat");
 const logger = require("../../logwrapper");
 const accountAccess = require("../account-access");
-const { settings } = require("../settings-access");
-const sanitize = require("sanitize-filename");
-const path = require("path");
 const discordEmbedBuilder = require("../../integrations/builtin/discord/discord-embed-builder");
 const discord = require("../../integrations/builtin/discord/discord-message-sender");
-const downloadClip = require("./clip-downloader");
 const utils = require("../../utility");
 
 const twitchApi = require("../../twitch-api/client");
-const { where } = require("underscore");
 const client = twitchApi.getClient();
-
-function downloadAndSaveClip(clipProperties) {
-    return new Promise((resolve, reject) => {
-        logger.debug("Starting clip download...");
-
-        const uri = clipProperties.url;
-        if (uri == null || uri === "") {
-            return reject("Invalid uri");
-        }
-
-        const title = sanitize(`${clipProperties.title}-${clipProperties.creationDate}`);
-        const clipsDownloadFolder = settings.getClipDownloadFolder();
-        const fullPath = path.join(clipsDownloadFolder, title + ".mp4");
-
-        downloadClip(uri, fullPath).then(() => {
-            logger.debug("Successfully completed clip download!");
-            resolve();
-        },
-        (e) => {
-            logger.warn("Failed to download clip: " + e, e);
-            reject("Failed to download the clip. See logs for more info.");
-        });
-    });
-}
 
 exports.createClip = async function(effect, trigger) {
 

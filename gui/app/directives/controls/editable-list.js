@@ -17,7 +17,7 @@ const deepmerge = require("deepmerge");
                         <div ng-repeat="item in $ctrl.model track by $index" class="list-item selectable" ng-click="$ctrl.editItem($index)">
                             <span ng-show="$ctrl.settings.sortable" class="dragHandle" style="height: 38px; width: 15px; align-items: center; justify-content: center; display: flex">
                                 <i class="fal fa-bars" aria-hidden="true"></i>
-                            </span> 
+                            </span>
                             <div uib-tooltip="Click to edit"  style="font-weight: 400;" aria-label="{{item + ' (Click to edit)'}}">{{item}}</div>
                             <span class="clickable" style="color: #fb7373;" ng-click="$ctrl.removeItem($index);$event.stopPropagation();" aria-label="Remove item">
                                 <i class="fad fa-trash-alt" aria-hidden="true"></i>
@@ -27,12 +27,12 @@ const deepmerge = require("deepmerge");
                     </div>
                     <div style="margin: 5px 0 10px 0px;">
                         <button class="filter-bar" ng-click="$ctrl.addItem()" uib-tooltip="{{$ctrl.settings.addLabel}}" tooltip-append-to-body="true" aria-label="{{$ctrl.settings.addLabel}}">
-                            <i class="far fa-plus"></i> 
-                        </button>               
-                    </div>         
+                            <i class="far fa-plus"></i>
+                        </button>
+                    </div>
                 </div>
             `,
-            controller: function(utilityService) {
+            controller: function(utilityService, ngToast) {
 
                 const $ctrl = this;
 
@@ -46,7 +46,8 @@ const deepmerge = require("deepmerge");
                     addLabel: "Add",
                     editLabel: "Edit",
                     validationText: "Text cannot be empty",
-                    noneAddedText: "None saved"
+                    noneAddedText: "None saved",
+                    noDuplicates: false
                 };
 
 
@@ -85,13 +86,23 @@ const deepmerge = require("deepmerge");
 
                 $ctrl.editItem = (index) => {
                     openGetInputModal($ctrl.model[index], false, (newItem) => {
-                        $ctrl.model[index] = newItem;
+                        const foundDuplicate = [...$ctrl.model].splice(index, 1).some(i => i === newItem);
+                        if (!$ctrl.settings.noDuplicates || !foundDuplicate) {
+                            $ctrl.model[index] = newItem;
+                        } else {
+                            ngToast.create("Cannot edit: Duplicate found");
+                        }
                     });
                 };
 
                 $ctrl.addItem = () => {
                     openGetInputModal("", true, (newItem) => {
-                        $ctrl.model.push(newItem);
+                        const foundDuplicate = $ctrl.model.some(i => i === newItem);
+                        if (!$ctrl.settings.noDuplicates || !foundDuplicate) {
+                            $ctrl.model.push(newItem);
+                        } else {
+                            ngToast.create("Cannot add: Duplicate found");
+                        }
                     });
                 };
 

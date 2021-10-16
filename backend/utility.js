@@ -1,35 +1,20 @@
 "use strict";
 
 const moment = require("moment");
-const logger = require("./logwrapper");
-const request = require("request");
-
 const replaceVariableManager = require("./variables/replace-variable-manager");
-
 const accountAccess = require("./common/account-access");
 const twitchApi = require("./twitch-api/client");
 
-function getRandomInt(min, max) {
+const getRandomInt = (min, max) => {
     min = Math.ceil(min);
     max = Math.floor(max);
+
     return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+};
 
-exports.getRandomInt = getRandomInt;
-
-function escapeRegExp(str) {
+const escapeRegExp = (str) => {
     return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"); // eslint-disable-line no-useless-escape
-}
-exports.escapeRegExp = escapeRegExp;
-
-function populateStringWithReplaceDict(string = "", replaceDictionary = {}) {
-    Object.keys(replaceDictionary).forEach(key => {
-        let replacement = replaceDictionary[key];
-        string = string.replace(new RegExp(escapeRegExp(key), "g"), replacement);
-    });
-    return string;
-}
-exports.populateStringWithReplaceDict = populateStringWithReplaceDict;
+};
 
 /**
  * Translates seconds into human readable format of seconds, minutes, hours, days, and years
@@ -37,7 +22,7 @@ exports.populateStringWithReplaceDict = populateStringWithReplaceDict;
  * @param  {number} seconds The number of seconds to be processed
  * @return {string}         The phrase describing the the amount of time
  */
-exports.secondsForHumans = function(seconds) {
+const secondsForHumans = (seconds) => {
     let levels = [
         [Math.floor(seconds / 31536000), "years"],
         [Math.floor((seconds % 31536000) / 86400), "days"],
@@ -60,7 +45,7 @@ exports.secondsForHumans = function(seconds) {
     return returntext.trim();
 };
 
-exports.formattedSeconds = (secs, simpleOutput = false) => {
+const formattedSeconds = (secs, simpleOutput = false) => {
     let allSecs = secs;
 
     allSecs = Math.round(allSecs);
@@ -110,41 +95,7 @@ exports.formattedSeconds = (secs, simpleOutput = false) => {
     return uptimeStr;
 };
 
-exports.anyPromise = function(promises) {
-    return Promise.all(promises.map(p => {
-        // If a request fails, count that as a resolution so it will keep
-        // waiting for other possible successes. If a request succeeds,
-        // treat it as a rejection so Promise.all immediately bails out.
-        return p.then(
-            val => Promise.reject(val),
-            err => Promise.resolve(err)
-        );
-    })).then(
-        // If '.all' resolved, we've just got an array of errors.
-        errors => Promise.reject(errors),
-        // If '.all' rejected, we've got the result we wanted.
-        val => Promise.resolve(val)
-    );
-};
-
-function messageContains(message, queries) {
-    return queries.some(q => message.includes(q));
-}
-
-function callUrl(url) {
-    return new Promise((resolve, reject) => {
-        request(url, (error, resp, body) => {
-            if (error) {
-                logger.warn("error calling readApi url: " + url, error);
-                reject(error);
-            } else {
-                resolve(body);
-            }
-        });
-    });
-}
-
-function getTriggerIdFromTriggerData(trigger) {
+const getTriggerIdFromTriggerData = (trigger) => {
     const { eventSource, event } = trigger.metadata;
 
     if (eventSource && event) {
@@ -152,10 +103,10 @@ function getTriggerIdFromTriggerData(trigger) {
     }
 
     return undefined;
-}
+};
 
 
-exports.populateStringWithTriggerData = async function(string = "", trigger) {
+const populateStringWithTriggerData = async (string = "", trigger) => {
     if (trigger == null || string === "") return string;
 
     let triggerId = getTriggerIdFromTriggerData(trigger);
@@ -163,7 +114,7 @@ exports.populateStringWithTriggerData = async function(string = "", trigger) {
     return await replaceVariableManager.evaluateText(string, trigger, { type: trigger.type, id: triggerId });
 };
 
-exports.getUptime = async () => {
+const getUptime = async () => {
     const client = twitchApi.getClient();
 
     const streamerAccount = accountAccess.getAccounts().streamer;
@@ -181,7 +132,7 @@ exports.getUptime = async () => {
     return exports.formattedSeconds(durationSecs);
 };
 
-exports.getDateDiffString = function(date1, date2) {
+const getDateDiffString = (date1, date2) => {
     let b = moment(date1),
         a = moment(date2),
         intervals = ["years", "months", "days", "hours", "minutes"],
@@ -206,10 +157,11 @@ exports.getDateDiffString = function(date1, date2) {
     return out.length === 2 ? out.join(" ") : out.join(", ");
 };
 
-exports.capitalize = ([first, ...rest]) =>
-    first.toUpperCase() + rest.join("").toLowerCase();
+const capitalize = ([first, ...rest]) => {
+    return first.toUpperCase() + rest.join("").toLowerCase();
+};
 
-exports.commafy = (number) => {
+const commafy = (number) => {
     return number == null ? number : number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
@@ -220,7 +172,7 @@ exports.commafy = (number) => {
  *
  * @returns {[]} A shuffled copy of the passed array
  */
-exports.shuffleArray = function(array) {
+const shuffleArray = (array) => {
     let arrayCopy = array.slice(0);
     for (let i = arrayCopy.length - 1; i > 0; i--) {
         let j = Math.floor(Math.random() * (i + 1));
@@ -236,9 +188,24 @@ exports.shuffleArray = function(array) {
  *
  * @returns {[]} A flattened copy of the passed array
  */
-exports.flattenArray = arr => arr.reduce((flat, next) => flat.concat(next), []);
+const flattenArray = arr => {
+    return arr.reduce((flat, next) => flat.concat(next), []);
+};
 
-exports.wait = (ms) => {
+const wait = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
 };
 
+exports.getRandomInt = getRandomInt;
+exports.escapeRegExp = escapeRegExp;
+exports.secondsForHumans = secondsForHumans;
+exports.formattedSeconds = formattedSeconds;
+exports.getTriggerIdFromTriggerData = getTriggerIdFromTriggerData;
+exports.populateStringWithTriggerData = populateStringWithTriggerData;
+exports.getUptime = getUptime;
+exports.getDateDiffString = getDateDiffString;
+exports.capitalize = capitalize;
+exports.commafy = commafy;
+exports.shuffleArray = shuffleArray;
+exports.flattenArray = flattenArray;
+exports.wait = wait;
