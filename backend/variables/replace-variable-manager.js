@@ -4,9 +4,8 @@ const logger = require("../logwrapper");
 const EventEmitter = require("events");
 const Expression = require("./expression");
 const { ExpressionArgumentsError, ExpressionError } = require("./expression-errors");
-
 const frontendCommunicator = require("../common/frontend-communicator");
-
+const util = require("../utility");
 
 class ReplaceVariableManager extends EventEmitter {
     constructor() {
@@ -58,7 +57,7 @@ class ReplaceVariableManager extends EventEmitter {
             if (value && typeof value === "string") {
                 if (value.includes("$")) {
                     let replacedValue = value;
-                    let triggerId = this.getTriggerIdFromTriggerData(trigger);
+                    let triggerId = util.getTriggerIdFromTriggerData(trigger);
                     try {
                         replacedValue = await Expression.evaluate({
                             expression: value,
@@ -129,16 +128,6 @@ class ReplaceVariableManager extends EventEmitter {
         }
 
         return errors;
-    }
-
-    getTriggerIdFromTriggerData(trigger) {
-        const { eventSource, event } = trigger.metadata;
-
-        if (eventSource && event) {
-            return `${eventSource.id}:${event.id}`;
-        }
-
-        return undefined;
     }
 }
 

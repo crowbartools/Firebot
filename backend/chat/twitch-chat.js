@@ -74,7 +74,10 @@ class TwitchChat extends EventEmitter {
                 requestMembershipEvents: true
             });
 
-            this._streamerChatClient.onRegister(() => this._streamerChatClient.join(streamer.username));
+            this._streamerChatClient.onRegister(() => {
+                this._streamerChatClient.join(streamer.username);
+                frontendCommunicator.send("twitch:chat:autodisconnected", false);
+            });
 
             this._streamerChatClient.onConnect(() => {
                 this.emit("connected");
@@ -95,7 +98,10 @@ class TwitchChat extends EventEmitter {
             });
 
             this._streamerChatClient.onDisconnect((manual, reason) => {
-                if (!manual) logger.error("Chat disconnected unexpectedly", reason);
+                if (!manual) {
+                    logger.error("Chat disconnected unexpectedly", reason);
+                    frontendCommunicator.send("twitch:chat:autodisconnected", true);
+                }
             });
 
             await this._streamerChatClient.connect();
