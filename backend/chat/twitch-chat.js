@@ -1,7 +1,8 @@
 "use strict";
 const logger = require("../logwrapper");
 const EventEmitter = require("events");
-const { ChatClient } = require("twitch-chat-client");
+const { ChatClient } = require("@twurple/chat");
+const refreshingAuthProvider = require("../auth/refreshing-auth-provider");
 const twitchClient = require("../twitch-api/client");
 const accountAccess = require("../common/account-access");
 const frontendCommunicator = require("../common/frontend-communicator");
@@ -63,14 +64,15 @@ class TwitchChat extends EventEmitter {
         const streamer = accountAccess.getAccounts().streamer;
         if (!streamer.loggedIn) return;
 
-        const client = twitchClient.getClient();
-        if (client == null) return;
+        const authProvider = refreshingAuthProvider.getRefreshingAuthProviderForStreamer();
+        if (authProvider == null) return;
 
         this.emit("connecting");
         await this.disconnect(false);
 
         try {
-            this._streamerChatClient = await ChatClient.forTwitchClient(client, {
+            this._streamerChatClient = new ChatClient({
+                authProvider: authProvider,
                 requestMembershipEvents: true
             });
 
@@ -118,7 +120,8 @@ class TwitchChat extends EventEmitter {
         }
 
         try {
-            this._botChatClient = await ChatClient.forTwitchClient(twitchClient.getBotClient(), {
+            this._botChatClient = new ChatClient({
+                authProvider: refreshingAuthProvider.getRefreshingAuthProviderForBot(),
                 requestMembershipEvents: true
             });
 
