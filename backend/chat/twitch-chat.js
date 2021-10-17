@@ -11,6 +11,8 @@ const followPoll = require("../twitch-api/follow-poll");
 const chatterPoll = require("../twitch-api/chatter-poll");
 const commandHandler = require("./commands/commandHandler");
 const activeUserHandler = require("./chat-listeners/active-user-handler");
+const twitchApi = require("../twitch-api/api");
+const chatRolesManager = require("../roles/chat-roles-manager");
 
 /**@extends NodeJS.EventEmitter */
 class TwitchChat extends EventEmitter {
@@ -113,6 +115,10 @@ class TwitchChat extends EventEmitter {
 
             followPoll.startFollowPoll();
             chatterPoll.startChatterPoll();
+
+            const vips = await this._streamerChatClient.getVips(accountAccess.getAccounts().streamer.username);
+
+            chatRolesManager.loadUsersInVipRole(vips);
         } catch (error) {
             logger.error("Chat connect error", error);
             await this.disconnect();
@@ -262,18 +268,20 @@ class TwitchChat extends EventEmitter {
         this._streamerChatClient.say(`#${streamer.username.replace("#", "")}`, `/unban ${username}`);
     }
 
-    block(username) {
+    async block(username) {
         if (username == null) return;
 
-        const twitchApi = require("../twitch-api/api");
-        twitchApi.users.blockUserByName(username);
+        const client = twitchApi.getClient();
+        const user = await client.users.getUserByName(username);
+        await client.users.createBlock(user.id);
     }
 
-    unblock(username) {
+    async unblock(username) {
         if (username == null) return;
 
-        const twitchApi = require("../twitch-api/api");
-        twitchApi.users.unblockUserByName(username);
+        const client = twitchApi.getClient();
+        const user = await client.users.getUserByName(username);
+        await client.users.deleteBlock(user.id);
     }
 
     addVip(username) {

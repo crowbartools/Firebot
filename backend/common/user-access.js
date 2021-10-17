@@ -8,6 +8,7 @@ const logger = require("../logwrapper");
 const chatHelpers = require("../chat/chat-helpers");
 const activeUserHandler = require("../chat/chat-listeners/active-user-handler");
 const frontendCommunicator = require("../common/frontend-communicator");
+const chatRolesManager = require("../roles/chat-roles-manager");
 
 const followCache = new NodeCache({ stdTTL: 10, checkperiod: 10 });
 
@@ -99,7 +100,7 @@ async function getUserDetails(userId) {
         logger.warn("Unable to get banned status", error);
     }
 
-    const userRoles = await twitchApi.users.getUsersChatRoles(twitchUser.id);
+    const userRoles = await chatRolesManager.getUsersChatRoles(twitchUser.id);
     const teamRoles = await twitchApi.teams.getMatchingTeamsById(twitchUser.id);
 
     const userFollowsStreamerResponse = await client.users.getFollows({

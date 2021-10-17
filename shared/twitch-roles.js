@@ -2,20 +2,20 @@
 
 const twitchRoles = [
     {
-        id: "vip",
-        name: "VIP"
-    },
-    {
-        id: "sub",
-        name: "Subscriber"
+        id: "broadcaster",
+        name: "Streamer"
     },
     {
         id: "mod",
         name: "Moderator"
     },
     {
-        id: "broadcaster",
-        name: "Streamer"
+        id: "vip",
+        name: "VIP"
+    },
+    {
+        id: "sub",
+        name: "Subscriber"
     },
     {
         id: "tier1",
