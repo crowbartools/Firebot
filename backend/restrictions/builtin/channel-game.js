@@ -79,7 +79,7 @@ const model = {
                 return reject(`Can't get channel information.`);
             }
 
-            const currentGameId = channel.game_Id;
+            const currentGameId = channel.game_id;
             if (currentGameId == null) {
                 return reject(`Can't determine the game being played.`);
             }
