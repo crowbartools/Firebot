@@ -16,7 +16,7 @@ const twitchApi = require("../api");
  * @param {string} size
  * @returns {TwitchCategory}
  * */
-function mapTwitchCategory(category, size) {
+const mapTwitchCategory = (category, size) => {
     const mappedCategory = {
         id: category.id,
         name: category.name,
@@ -28,14 +28,14 @@ function mapTwitchCategory(category, size) {
         mappedCategory.boxArtUrl = category.boxArtUrl.replace("{width}x{height}", size);
     }
     return mappedCategory;
-}
+};
 
 /**
  * @param {string} categoryId
  * @param {string} [size]
  * @returns {Promise.<TwitchCategory>}
  */
-async function getCategoryById(categoryId, size = "285x380") {
+const getCategoryById = async (categoryId, size = "285x380") => {
     const client = twitchApi.getClient();
     try {
         const category = await client.games.getGameById(categoryId);
@@ -45,32 +45,27 @@ async function getCategoryById(categoryId, size = "285x380") {
         logger.error("Failed to get twitch category", error);
         return null;
     }
-}
+};
 
 /**
  * @param {string} categoryName
  * @returns {Promise.<TwitchCategory[]>}
  */
-async function searchCategories(categoryName) {
+const searchCategories = async (categoryName) => {
     const client = twitchApi.getClient();
     let categories = [];
+
     try {
-        const response = await client.callApi({
-            type: 'helix',
-            url: "/search/categories",
-            query: {
-                query: categoryName,
-                first: 10
-            }
-        });
+        const response = await client.search.searchCategories(categoryName);
         if (response && response.data) {
             categories = response.data;
         }
     } catch (err) {
         logger.error("Failed to search twitch categories", err);
     }
+
     return categories.map(c => mapTwitchCategory(c));
-}
+};
 
 exports.getCategoryById = getCategoryById;
 exports.searchCategories = searchCategories;
