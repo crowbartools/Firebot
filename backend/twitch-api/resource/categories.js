@@ -2,7 +2,6 @@
 
 const logger = require("../../logwrapper");
 const twitchApi = require("../api");
-const { TwitchAPICallType } = require("twitch/lib");
 
 /**
  * @typedef TwitchCategory
@@ -12,11 +11,23 @@ const { TwitchAPICallType } = require("twitch/lib");
  */
 
 
+/**
+ * @param {import("@twurple/api").HelixGame} category
+ * @param {string} size
+ * @returns {TwitchCategory}
+ * */
 function mapTwitchCategory(category, size) {
+    const mappedCategory = {
+        id: category.id,
+        name: category.name,
+        boxArtUrl: ""
+    };
     if (category.box_art_url) {
-        category.boxArtUrl = category.box_art_url.replace("{width}x{height}", size);
+        mappedCategory.boxArtUrl = category.box_art_url.replace("{width}x{height}", size);
+    } else {
+        mappedCategory.boxArtUrl = category.boxArtUrl.replace("{width}x{height}", size);
     }
-    return category;
+    return mappedCategory;
 }
 
 /**
@@ -27,9 +38,9 @@ function mapTwitchCategory(category, size) {
 async function getCategoryById(categoryId, size = "285x380") {
     const client = twitchApi.getClient();
     try {
-        const category = await client.helix.games.getGameById(categoryId);
+        const category = await client.games.getGameById(categoryId);
         if (category == null) return null;
-        return mapTwitchCategory(category._data, size);
+        return mapTwitchCategory(category, size);
     } catch (error) {
         logger.error("Failed to get twitch category", error);
         return null;
@@ -45,8 +56,8 @@ async function searchCategories(categoryName) {
     let categories = [];
     try {
         const response = await client.callApi({
-            type: TwitchAPICallType.Helix,
-            url: "search/categories",
+            type: 'helix',
+            url: "/search/categories",
             query: {
                 query: categoryName,
                 first: 10

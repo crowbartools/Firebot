@@ -4,7 +4,6 @@ const uuid = require("uuid/v4");
 const logger = require("../logwrapper");
 const accountAccess = require("../common/account-access");
 const twitchClient = require("../twitch-api/api");
-const { TwitchAPICallType } = require("twitch/lib");
 const bttv = require("./third-party/bttv");
 const ffz = require("./third-party/ffz");
 const frontendCommunicator = require("../common/frontend-communicator");
@@ -40,7 +39,7 @@ const frontendCommunicator = require("../common/frontend-communicator");
 let badgeCache = null;
 exports.cacheBadges = async () => {
     const streamer = accountAccess.getAccounts().streamer;
-    const client = twitchClient.getClient();
+    const client = twitchClient.getOldClient();
     if (streamer.loggedIn && client) {
         badgeCache = await client.badges.getChannelBadges(streamer.userId, true);
     }
@@ -64,8 +63,8 @@ exports.cacheStreamerEmotes = async () => {
 
     try {
         const response = await client.callApi({
-            type: TwitchAPICallType.Helix,
-            url: "chat/emotes",
+            type: 'helix',
+            url: "/chat/emotes",
             query: {
                 "broadcaster_id": streamer.userId
             }
@@ -142,7 +141,7 @@ async function getUserProfilePicUrl(userId) {
     const streamer = accountAccess.getAccounts().streamer;
     const client = twitchClient.getClient();
     if (streamer.loggedIn && client) {
-        const user = await client.helix.users.getUserById(userId);
+        const user = await client.users.getUserById(userId);
         if (user) {
             profilePicUrlCache[userId] = user.profilePictureUrl;
             return user.profilePictureUrl;

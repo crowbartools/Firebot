@@ -38,7 +38,7 @@ async function userFollowsChannels(username, channelNames) {
 }
 
 function getUser(userId) {
-    const client = twitchApi.getClient();
+    const client = twitchApi.getOldClient();
     return client.kraken.users.getUser(userId);
 }
 
@@ -94,7 +94,7 @@ async function getUserDetails(userId) {
 
     let isBanned;
     try {
-        isBanned = await client.helix.moderation.checkUserBan(streamerData.userId, twitchUser.id);
+        isBanned = await client.moderation.checkUserBan(streamerData.userId, twitchUser.id);
     } catch (error) {
         logger.warn("Unable to get banned status", error);
     }
@@ -102,12 +102,12 @@ async function getUserDetails(userId) {
     const userRoles = await twitchApi.users.getUsersChatRoles(twitchUser.id);
     const teamRoles = await twitchApi.teams.getMatchingTeamsById(twitchUser.id);
 
-    const userFollowsStreamerResponse = await client.helix.users.getFollows({
+    const userFollowsStreamerResponse = await client.users.getFollows({
         user: userId,
         followedUser: streamerData.userId
     });
 
-    const streamerFollowsUserResponse = await client.helix.users.getFollows({
+    const streamerFollowsUserResponse = await client.users.getFollows({
         user: streamerData.userId,
         followedUser: userId
     });

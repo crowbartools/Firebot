@@ -30,7 +30,7 @@ async function handleStreamInfo() {
 
     const logger = require("../logwrapper");
 
-    const stream = await client.helix.streams.getStreamByUserId(streamer.userId);
+    const stream = await client.streams.getStreamByUserId(streamer.userId);
 
     let streamInfoChanged = false;
     if (stream == null) {

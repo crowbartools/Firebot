@@ -13,8 +13,8 @@ const client = twitchApi.getClient();
 exports.createClip = async function(effect, trigger) {
 
     const streamerAccount = accountAccess.getAccounts().streamer;
-    const broadcast = await client.helix.streams.getStreamByUserName(streamerAccount.username);
-    const channelId = (await client.helix.users.getUserByName(streamerAccount.username)).id;
+    const broadcast = await client.streams.getStreamByUserName(streamerAccount.username);
+    const channelId = (await client.users.getUserByName(streamerAccount.username)).id;
 
     if (broadcast == null) {
         renderWindow.webContents.send('error', `Failed to create a clip. Reason: Streamer is not live.`);
@@ -28,7 +28,7 @@ exports.createClip = async function(effect, trigger) {
     let clipId;
 
     try {
-        clipId = await client.helix.clips.createClip({
+        clipId = await client.clips.createClip({
             channelId: channelId
         });
     } catch (err) {
@@ -48,7 +48,7 @@ exports.createClip = async function(effect, trigger) {
     do {
         attempts++;
         try {
-            clip = await client.helix.clips.getClipById(clipId);
+            clip = await client.clips.getClipById(clipId);
         } catch (err) {
             //failed to get clip
         }

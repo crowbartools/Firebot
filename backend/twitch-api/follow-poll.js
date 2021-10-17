@@ -25,7 +25,7 @@ exports.startFollowPoll = () => {
 
         if (client == null || !streamer.loggedIn) return;
 
-        const followRequest = client.helix.users.getFollowsPaginated({
+        const followRequest = client.users.getFollowsPaginated({
             followedUser: streamer.userId
         });
 

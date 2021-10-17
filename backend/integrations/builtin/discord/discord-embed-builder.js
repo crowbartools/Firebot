@@ -25,7 +25,7 @@ async function buildChannelEmbed() {
     /**@type {import('twitch').HelixStream} */
     let currentStream;
     try {
-        currentStream = await twitchApi.getClient().helix.streams.getStreamByUserId(streamer.userId);
+        currentStream = await twitchApi.getClient().streams.getStreamByUserId(streamer.userId);
     } catch (error) {
         // stream not running
     }

@@ -2,7 +2,6 @@
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 const twitchApi = require("../../twitch-api/api");
-const { TwitchAPICallType } = require('twitch/lib');
 const accountAccess = require("../../common/account-access");
 
 const model = {
@@ -32,9 +31,9 @@ const model = {
         const client = twitchApi.getClient();
 
         await client.callApi({
-            type: TwitchAPICallType.Helix,
+            type: 'helix',
             method: "PATCH",
-            url: "channels",
+            url: "/channels",
             query: {
                 "broadcaster_id": accountAccess.getAccounts().streamer.userId,
                 "title": event.effect.title

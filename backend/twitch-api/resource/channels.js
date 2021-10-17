@@ -1,7 +1,6 @@
 "use strict";
 
 const twitchApi = require("../api");
-const { TwitchAPICallType } = require('twitch/lib');
 const accountAccess = require("../../common/account-access");
 const logger = require('../../logwrapper');
 
@@ -29,8 +28,8 @@ async function getChannelInformation(broadcasterId) {
     const client = twitchApi.getClient();
     try {
         const response = await client.callApi({
-            type: TwitchAPICallType.Helix,
-            url: "channels",
+            type: 'helix',
+            url: "/channels",
             method: "GET",
             query: {
                 "broadcaster_id": broadcasterId
@@ -54,7 +53,7 @@ async function getOnlineStatus(username) {
     }
 
     try {
-        const stream = await client.helix.streams.getStreamByUserName(username);
+        const stream = await client.streams.getStreamByUserName(username);
         if (stream != null) {
             return true;
         }
@@ -68,9 +67,9 @@ async function getOnlineStatus(username) {
 async function updateChannelInformation(title = undefined, gameId = undefined) {
     const client = twitchApi.getClient();
     await client.callApi({
-        type: TwitchAPICallType.Helix,
+        type: 'helix',
         method: "PATCH",
-        url: "channels",
+        url: "/channels",
         query: {
             "broadcaster_id": accountAccess.getAccounts().streamer.userId,
             "title": title,
@@ -93,7 +92,7 @@ async function getChannelInformationByUsername(username) {
     /**@type {import("twitch/lib").HelixUser} */
     let user;
     try {
-        user = await client.helix.users.getUserByName(username);
+        user = await client.users.getUserByName(username);
     } catch (error) {
         logger.error(`Error getting user with username ${username}`, error);
     }
@@ -107,7 +106,7 @@ async function getChannelInformationByUsername(username) {
 
 async function triggerAdBreak(adLength) {
     try {
-        const client = twitchApi.getClient();
+        const client = twitchApi.getOldClient();
         const userId = accountAccess.getAccounts().streamer.userId;
 
         if (adLength == null) {

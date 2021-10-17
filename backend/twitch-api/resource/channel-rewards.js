@@ -4,7 +4,6 @@ const { snakeKeys, camelKeys } = require('js-convert-case');
 
 const logger = require("../../logwrapper");
 const twitchApi = require("../api");
-const { TwitchAPICallType } = require("twitch/lib");
 const accountAccess = require("../../common/account-access");
 
 /**
@@ -97,8 +96,8 @@ async function getCustomChannelRewards(onlyManageable = false) {
     let rewards = [];
     try {
         const response = await client.callApi({
-            type: TwitchAPICallType.Helix,
-            url: "channel_points/custom_rewards",
+            type: 'helix',
+            url: "/channel_points/custom_rewards",
             query: {
                 "broadcaster_id": accountAccess.getAccounts().streamer.userId,
                 "only_manageable_rewards": onlyManageable
@@ -141,8 +140,8 @@ async function createCustomChannelReward(reward) {
     const client = twitchApi.getClient();
     try {
         const response = await client.callApi({
-            type: TwitchAPICallType.Helix,
-            url: "channel_points/custom_rewards",
+            type: 'helix',
+            url: "/channel_points/custom_rewards",
             method: "POST",
             query: {
                 "broadcaster_id": accountAccess.getAccounts().streamer.userId
@@ -163,8 +162,8 @@ async function updateCustomChannelReward(reward) {
     const client = twitchApi.getClient();
     try {
         await client.callApi({
-            type: TwitchAPICallType.Helix,
-            url: "channel_points/custom_rewards",
+            type: 'helix',
+            url: "/channel_points/custom_rewards",
             method: "PATCH",
             query: {
                 "broadcaster_id": accountAccess.getAccounts().streamer.userId,
@@ -186,8 +185,8 @@ async function deleteCustomChannelReward(rewardId) {
     const client = twitchApi.getClient();
     try {
         await client.callApi({
-            type: TwitchAPICallType.Helix,
-            url: "channel_points/custom_rewards",
+            type: 'helix',
+            url: "/channel_points/custom_rewards",
             method: "DELETE",
             query: {
                 "broadcaster_id": accountAccess.getAccounts().streamer.userId,

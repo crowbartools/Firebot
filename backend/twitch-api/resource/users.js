@@ -11,13 +11,13 @@ const logger = require("../../logwrapper");
 const userRoleCache = new NodeCache({ stdTTL: 30, checkperiod: 5 });
 
 async function getUserChatInfo(userId) {
-    const client = twitchApi.getClient();
+    const client = twitchApi.getOldClient();
 
     const streamer = accountAccess.getAccounts().streamer;
 
     const chatUser = await client.callApi({
         type: TwitchAPICallType.Kraken,
-        url: `users/${userId}/chat/channels/${streamer.userId}`
+        url: `/users/${userId}/chat/channels/${streamer.userId}`
     });
 
     return chatUser;
@@ -26,7 +26,7 @@ async function getUserChatInfo(userId) {
 async function getUserChatInfoByName(username) {
     const client = twitchApi.getClient();
     try {
-        const user = await client.helix.users.getUserByName(username);
+        const user = await client.users.getUserByName(username);
         return getUserChatInfo(user.id);
     } catch (error) {
         return null;
@@ -36,7 +36,7 @@ async function getUserChatInfoByName(username) {
 async function getUserSubInfo(userId) {
     const client = twitchApi.getClient();
     const streamer = accountAccess.getAccounts().streamer;
-    const subInfo = await client.helix.subscriptions.getSubscriptionForUser(streamer.userId, userId);
+    const subInfo = await client.subscriptions.getSubscriptionForUser(streamer.userId, userId);
 
     return subInfo;
 }
@@ -44,7 +44,7 @@ async function getUserSubInfo(userId) {
 async function getUserSubInfoByName(username) {
     try {
         const client = twitchApi.getClient();
-        const user = await client.helix.users.getUserByName(username);
+        const user = await client.users.getUserByName(username);
 
         return getUserSubInfo(user.id);
     } catch (error) {
@@ -139,9 +139,9 @@ async function blockUser(userId) {
 
     try {
         await client.callApi({
-            type: TwitchAPICallType.Helix,
+            type: 'helix',
             method: "PUT",
-            url: "users/blocks",
+            url: "/users/blocks",
             query: {
                 "target_user_id": userId
             }
@@ -162,9 +162,9 @@ async function unblockUser(userId) {
 
     try {
         await client.callApi({
-            type: TwitchAPICallType.Helix,
+            type: 'helix',
             method: "DELETE",
-            url: "users/blocks",
+            url: "/users/blocks",
             query: {
                 "target_user_id": userId
             }
@@ -180,7 +180,7 @@ async function unblockUser(userId) {
 
 
 async function getFollowDateForUser(username) {
-    const client = twitchApi.getClient();
+    const client = twitchApi.getOldClient();
     const streamerData = accountAccess.getAccounts().streamer;
 
     const userId = (await client.kraken.users.getUserByName(username)).id;
@@ -198,7 +198,7 @@ async function getFollowDateForUser(username) {
 async function doesUserFollowChannel(username, channelName) {
     if (username == null || channelName == null) return false;
 
-    const client = twitchApi.getClient();
+    const client = twitchApi.getOldClient();
 
     if (username.toLowerCase() === channelName.toLowerCase()) {
         return true;

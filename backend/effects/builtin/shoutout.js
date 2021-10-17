@@ -14,7 +14,7 @@ const shoutoutStyles = `
     .firebot-shoutout-wrapper {
         font-family: 'Open Sans';
         background: black;
-        border-radius: 1vw; 
+        border-radius: 1vw;
         width: 19vw;
         position: relative;
         padding-top: 63%;
@@ -36,7 +36,7 @@ const shoutoutStyles = `
         object-fit: cover;
     }
     .firebot-shoutout-username {
-        font-size: 27px; 
+        font-size: 27px;
         color: white;
         text-align: center;
         font-weight: 200;
@@ -55,7 +55,7 @@ const shoutoutStyles = `
         position: relative;
         border-radius: 1vw;
         overflow: hidden;
-        border-top-right-radius: 0; 
+        border-top-right-radius: 0;
         border-top-left-radius: 0;
     }
     .firebot-shoutout-game-boxart {
@@ -114,21 +114,21 @@ const effect = {
             <style>${shoutoutStyles}</style>
             <div style="display:flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
                 <div>
-                    <div 
+                    <div
                         class="firebot-shoutout-wrapper"
                         style="width: 300px;background: linear-gradient(0deg, {{effect.bgColor2}} 0%, {{effect.bgColor1}} 100%);"
                         >
                         <div style="position:relative;width:initial;">
                             <div class="firebot-shoutout-avatar-wrapper firebot-shoutout-padding" style="width: 100%;">
-                                <img 
+                                <img
                                     class="firebot-shoutout-user-avatar"
                                     src="{{defaultAvatar}}"/>
                             </div>
                         </div>
                         <div class="firebot-shoutout-username" style="padding: 0 10%; color: {{effect.textColor}};font-size: 32px;">SomeUserName</div>
                         <div class="firebot-shoutout-padding">
-                            <div 
-                                ng-hide="effect.shoutoutText == null || effect.shoutoutText === ''" 
+                            <div
+                                ng-hide="effect.shoutoutText == null || effect.shoutoutText === ''"
                                 class="firebot-shoutout-text"
                                 style="color: {{effect.textColor}};">
                                 {{effect.shoutoutText}}
@@ -152,13 +152,13 @@ const effect = {
             <firebot-input input-title="Shoutout Text" model="effect.shoutoutText" placeholder-text="Enter text" />
 
             <color-picker-input style="margin-top:10px" model="effect.bgColor1" label="Background Color 1"></color-picker-input>
-            
+
             <color-picker-input style="margin-top:10px" model="effect.bgColor2" label="Background Color 2"></color-picker-input>
 
             <color-picker-input style="margin-top:10px" model="effect.textColor" label="Text Color"></color-picker-input>
-            
+
             <firebot-input style="margin-top:10px" input-title="Scale" model="effect.scale" placeholder-text="Enter number (ie 1, 1.25, 0.75, etc)" input-type="number" disable-variables="true" />
-            
+
             <div style="padding-top:20px">
                 <label class="control-fb control--checkbox"> Show last game
                     <input type="checkbox" ng-model="effect.showLastGame">
@@ -251,7 +251,7 @@ const effect = {
             }
         }
 
-        const user = await twitchApi.getClient().helix.users
+        const user = await twitchApi.getClient().users
             .getUserByName(effect.username);
 
         if (user == null) return;
@@ -306,7 +306,7 @@ const effect = {
 
                         <div style="position:relative;">
                             <div class="firebot-shoutout-avatar-wrapper firebot-shoutout-padding">
-                                <img 
+                                <img
                                 class="firebot-shoutout-user-avatar"
                                 src="${data.avatarUrl}" />
                             </div>
@@ -321,7 +321,7 @@ const effect = {
                         <div class="firebot-shoutout-text firebot-shoutout-padding" style="color: ${data.textColor};display:${data.shoutoutText == null || data.shoutoutText === '' ? 'none' : 'inherit'};">
                             ${data.shoutoutText}
                         </div>
-                        
+
                         <div class="firebot-shoutout-game-wrapper" style="display:${!data.showLastGame || data.gameName == null ? 'none' : 'inherit'};">
                             <div class="firebot-shoutout-game-boxart" style="background-image:url('${data.gameBoxArtUrl}');"></div>
                             <div class="firebot-shoutout-game-dimmer" />

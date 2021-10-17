@@ -4,7 +4,7 @@ const accountAccess = require("../../common/account-access");
 const twitchApi = require("../api");
 
 async function getTeams(broadcasterId) {
-    const client = twitchApi.getClient();
+    const client = twitchApi.getOldClient();
     const teams = await client.kraken.channels.getChannelTeams(broadcasterId);
 
     if (teams == null) {
@@ -37,7 +37,7 @@ async function getMatchingTeams(userId) {
 
 async function getMatchingTeamsByName(username) {
     const client = twitchApi.getClient();
-    const user = await client.helix.users.getUserByName(username);
+    const user = await client.users.getUserByName(username);
     const teams = await getMatchingTeams(user.id);
 
     if (teams == null) {
