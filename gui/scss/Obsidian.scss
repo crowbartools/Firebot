@@ -146,16 +146,12 @@ $project-dropdown-text-color: #f9f9f9;
 $fb-tab-title-color: white;
 
 $fb-table-row-bg: #43454a;
+$fb-table-row-border: #2f3136;
 $fb-table-shadow: none;
 
 $sys-cmd-expanded-shadow: none;
 
 $integration-row-bg: #2f3136;
-
-.list-group-item {
-    background-color: #43454A;
-    border: 1px solid #2f3136;
-}
 
 // Import Core Styles
 @import './core/$importer';
