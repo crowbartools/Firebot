@@ -210,7 +210,7 @@
                         let rank = 8;
 
                         roles.push({
-                            name: teamRole._data.display_name,
+                            name: teamRole.name,
                             style: {color: '#7954b1'},
                             rank: rank + 1
                         });
