@@ -3,7 +3,7 @@
 const { snakeKeys, camelKeys } = require('js-convert-case');
 
 const logger = require("../../logwrapper");
-const twitchApi = require("../client");
+const twitchApi = require("../api");
 const { TwitchAPICallType } = require("twitch/lib");
 const accountAccess = require("../../common/account-access");
 

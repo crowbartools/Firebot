@@ -1,7 +1,7 @@
 "use strict";
 
 const accountAccess = require("../../common/account-access");
-const twitchApi = require("../client");
+const twitchApi = require("../api");
 
 async function getTeams(broadcasterId) {
     const client = twitchApi.getClient();

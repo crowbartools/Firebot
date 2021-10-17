@@ -1,7 +1,7 @@
 "use strict";
 
 const logger = require("../../logwrapper");
-const twitchApi = require("../client");
+const twitchApi = require("../api");
 const { TwitchAPICallType } = require("twitch/lib");
 
 /**

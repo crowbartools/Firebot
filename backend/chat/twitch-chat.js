@@ -3,7 +3,6 @@ const logger = require("../logwrapper");
 const EventEmitter = require("events");
 const { ChatClient } = require("@twurple/chat");
 const refreshingAuthProvider = require("../auth/refreshing-auth-provider");
-const twitchClient = require("../twitch-api/client");
 const accountAccess = require("../common/account-access");
 const frontendCommunicator = require("../common/frontend-communicator");
 const chatHelpers = require("./chat-helpers");

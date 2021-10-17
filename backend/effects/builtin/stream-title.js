@@ -1,7 +1,7 @@
 "use strict";
 
 const { EffectCategory } = require('../../../shared/effect-constants');
-const twitchClient = require("../../twitch-api/client");
+const twitchApi = require("../../twitch-api/api");
 const { TwitchAPICallType } = require('twitch/lib');
 const accountAccess = require("../../common/account-access");
 
@@ -29,7 +29,7 @@ const model = {
         return errors;
     },
     onTriggerEvent: async event => {
-        const client = twitchClient.getClient();
+        const client = twitchApi.getClient();
 
         await client.callApi({
             type: TwitchAPICallType.Helix,

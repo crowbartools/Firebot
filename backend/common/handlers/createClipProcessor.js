@@ -7,7 +7,7 @@ const discordEmbedBuilder = require("../../integrations/builtin/discord/discord-
 const discord = require("../../integrations/builtin/discord/discord-message-sender");
 const utils = require("../../utility");
 
-const twitchApi = require("../../twitch-api/client");
+const twitchApi = require("../../twitch-api/api");
 const client = twitchApi.getClient();
 
 exports.createClip = async function(effect, trigger) {

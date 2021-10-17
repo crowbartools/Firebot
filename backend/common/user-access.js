@@ -4,7 +4,6 @@ const userDb = require("../database/userDatabase");
 const accountAccess = require("../common/account-access");
 const NodeCache = require('node-cache');
 const twitchApi = require("../twitch-api/api");
-const twitchClient = require("../twitch-api/client");
 const logger = require("../logwrapper");
 const chatHelpers = require("../chat/chat-helpers");
 const activeUserHandler = require("../chat/chat-listeners/active-user-handler");
@@ -39,7 +38,7 @@ async function userFollowsChannels(username, channelNames) {
 }
 
 function getUser(userId) {
-    const client = twitchClient.getClient();
+    const client = twitchApi.getClient();
     return client.kraken.users.getUser(userId);
 }
 
@@ -91,7 +90,7 @@ async function getUserDetails(userId) {
 
     const streamerData = accountAccess.getAccounts().streamer;
 
-    const client = twitchClient.getClient();
+    const client = twitchApi.getClient();
 
     let isBanned;
     try {

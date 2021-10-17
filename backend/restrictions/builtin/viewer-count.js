@@ -1,6 +1,6 @@
 "use strict";
 
-const twitchApi = require("../../twitch-api/client");
+const twitchApi = require("../../twitch-api/api");
 
 const accountAccess = require("../../common/account-access");
 const logger = require("../../logwrapper");

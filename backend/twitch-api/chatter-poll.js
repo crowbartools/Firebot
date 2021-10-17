@@ -2,7 +2,7 @@
 
 const accountAccess = require("../common/account-access");
 
-const twitchApi = require("./client");
+const twitchApi = require("./api");
 
 // every 5 mins
 const POLL_INTERVAL = 300000;
