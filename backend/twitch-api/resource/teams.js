@@ -3,18 +3,26 @@
 const accountAccess = require("../../common/account-access");
 const twitchApi = require("../api");
 
-async function getTeams(broadcasterId) {
-    const client = twitchApi.getOldClient();
-    const teams = await client.kraken.channels.getChannelTeams(broadcasterId);
+/**
+ * @param {string} broadcasterId
+ * @returns {Promise<import("@twurple/api").HelixTeam[]>}
+ */
+const getTeams = async (broadcasterId) => {
+    const client = twitchApi.getClient();
+    const teams = await client.teams.getTeamsForBroadcaster(broadcasterId);
 
     if (teams == null) {
         return null;
     }
 
     return teams;
-}
+};
 
-async function getMatchingTeams(userId) {
+/**
+ * @param {string} userId
+ * @returns {Promise<import("@twurple/api").HelixTeam[]>}
+ */
+const getMatchingTeams = async (userId) => {
     const streamer = accountAccess.getAccounts().streamer;
     const streamerTeams = await getTeams(streamer.userId);
     const userTeams = await getTeams(userId);
@@ -33,9 +41,13 @@ async function getMatchingTeams(userId) {
     }
 
     return teams;
-}
+};
 
-async function getMatchingTeamsByName(username) {
+/**
+ * @param {string} username
+ * @returns {Promise<import("@twurple/api").HelixTeam[]>}
+ */
+const getMatchingTeamsByName = async (username) => {
     const client = twitchApi.getClient();
     const user = await client.users.getUserByName(username);
     const teams = await getMatchingTeams(user.id);
@@ -45,9 +57,13 @@ async function getMatchingTeamsByName(username) {
     }
 
     return teams;
-}
+};
 
-async function getMatchingTeamsById(userId) {
+/**
+ * @param {string} userId
+ * @returns {Promise<import("@twurple/api").HelixTeam[]>}
+ */
+const getMatchingTeamsById = async (userId) => {
     const teams = await getMatchingTeams(userId);
 
     if (teams == null) {
@@ -55,9 +71,12 @@ async function getMatchingTeamsById(userId) {
     }
 
     return teams;
-}
+};
 
-async function getStreamerTeams() {
+/**
+ * @returns {Promise<import("@twurple/api").HelixTeam[]>}
+ */
+const getStreamerTeams = async () => {
     const streamer = accountAccess.getAccounts().streamer;
     const streamerTeams = await getTeams(streamer.userId);
 
@@ -66,7 +85,7 @@ async function getStreamerTeams() {
     }
 
     return streamerTeams;
-}
+};
 
 exports.getMatchingTeamsByName = getMatchingTeamsByName;
 exports.getMatchingTeamsById = getMatchingTeamsById;

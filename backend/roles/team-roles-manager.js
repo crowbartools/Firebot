@@ -10,7 +10,7 @@ function mapRoles(teams) {
     return teams
         .map(team => {
             return {
-                id: team.id,
+                id: parseInt(team.id),
                 name: team.displayName
             };
         });
