@@ -265,8 +265,8 @@ const effect = {
 
         if (effect.showLastGame) {
             try {
-                const game = await twitchApi.categories.getCategoryById(channelInfo.game_id);
-                effect.gameName = channelInfo.game_name != null && channelInfo.game_name !== "" ? channelInfo.game_name : null;
+                const game = await twitchApi.categories.getCategoryById(channelInfo.gameId);
+                effect.gameName = channelInfo.gameName != null && channelInfo.gameName !== "" ? channelInfo.gameName : null;
                 effect.gameBoxArtUrl = game.boxArtUrl;
             } catch (error) {
                 logger.debug(`Failed to find game for ${user.displayName}`, error);

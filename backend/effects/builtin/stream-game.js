@@ -90,7 +90,7 @@ const model = {
     },
     onTriggerEvent: async event => {
         if (event.effect.mode === "specific") {
-            await twitchApi.channels.updateChannelInformation(undefined, event.effect.gameId);
+            await twitchApi.channels.updateChannelInformation({gameId: event.effect.gameId });
         } else {
             const categories = await twitchApi.categories.searchCategories(event.effect.gameName);
             if (categories && categories.length > 0) {
@@ -101,7 +101,7 @@ const model = {
                     return;
                 }
 
-                await twitchApi.channels.updateChannelInformation(undefined, category.id);
+                await twitchApi.channels.updateChannelInformation({ gameId: category.id });
             }
         }
         return true;

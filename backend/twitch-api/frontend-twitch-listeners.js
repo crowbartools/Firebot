@@ -26,7 +26,7 @@ exports.setupListeners = () => {
             const channelInfo = await twitchApi.channels.getChannelInformation();
             return {
                 title: channelInfo.title,
-                gameId: channelInfo.game_id
+                gameId: channelInfo.gameId
             };
         } catch (error) {
             return null;
@@ -35,7 +35,7 @@ exports.setupListeners = () => {
 
     frontendCommunicator.onAsync("set-channel-info", async ({ title, gameId }) => {
         try {
-            await twitchApi.channels.updateChannelInformation(title, gameId);
+            await twitchApi.channels.updateChannelInformation({ title, gameId });
             return true;
         } catch (error) {
             return false;

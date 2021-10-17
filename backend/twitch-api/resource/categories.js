@@ -31,7 +31,7 @@ function mapTwitchCategory(category, size) {
 }
 
 /**
- * @param {number} categoryId
+ * @param {string} categoryId
  * @param {string} [size]
  * @returns {Promise.<TwitchCategory>}
  */

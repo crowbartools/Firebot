@@ -27,7 +27,7 @@ const steam = {
 
             const channelData = await twitchChannels.getChannelInformation();
 
-            gameName = channelData && channelData.game_name ? channelData.game_name : "";
+            gameName = channelData && channelData.gameName ? channelData.gameName : "";
         }
 
         if (gameName != null && gameName !== "") {

@@ -34,7 +34,7 @@ const model = {
 
         const channelInfo = await twitchChannels.getChannelInformationByUsername(username);
 
-        return channelInfo != null ? channelInfo.game_name : "";
+        return channelInfo != null ? channelInfo.gameName : "";
     }
 };
 
