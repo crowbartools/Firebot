@@ -1,6 +1,7 @@
 "use strict";
 
 const { EffectCategory } = require('../../../shared/effect-constants');
+const logger = require('../../logwrapper');
 const twitchApi = require("../../twitch-api/api");
 
 const model = {
@@ -93,7 +94,14 @@ const model = {
         } else {
             const categories = await twitchApi.categories.searchCategories(event.effect.gameName);
             if (categories && categories.length > 0) {
-                await twitchApi.channels.updateChannelInformation(undefined, categories[0].id);
+                const category = categories.find(c => c.name === event.effect.gameName);
+
+                if (!category) {
+                    logger.error("Couldn't find a category with this name");
+                    return;
+                }
+
+                await twitchApi.channels.updateChannelInformation(undefined, category.id);
             }
         }
         return true;
