@@ -1,7 +1,5 @@
 "use strict";
 
-const { snakeKeys, camelKeys } = require('js-convert-case');
-
 const logger = require("../../logwrapper");
 const twitchApi = require("../api");
 const accountAccess = require("../../common/account-access");
@@ -22,7 +20,7 @@ const accountAccess = require("../../common/account-access");
  * @property {string} title - title of reward
  * @property {string} prompt - The prompt for the viewer when they are redeeming the reward
  * @property {number} cost - The cost of the reward
- * @property {ImageSet?} image - set of images, can be null if none uploaded
+ * @property {ImageSet?} [image] - set of images, can be null if none uploaded
  * @property {ImageSet} defaultImage - set of default images
  * @property {string} backgroundColor - Custom background color for the reward. Format: Hex with # prefix. Example: #00E5CB.
  * @property {boolean} isEnabled - Is the reward currently enabled, if false the reward won’t show up to viewers
@@ -40,49 +38,71 @@ const accountAccess = require("../../common/account-access");
  * @property {boolean} isInStock - Is the reward currently in stock, if false viewers can’t redeem
  * @property {boolean} shouldRedemptionsSkipRequestQueue - Should redemptions be set to FULFILLED status immediately when redeemed and skip the request queue instead of the normal UNFULFILLED status.
  * @property {number} redemptionsRedeemedCurrentStream - The number of redemptions redeemed during the current live stream. Counts against the max_per_stream_setting limit. Null if the broadcasters stream isn’t live or max_per_stream_setting isn’t enabled.
- * @property {string?} cooldownExpiresAt - Timestamp of the cooldown expiration. Null if the reward isn’t on cooldown.
- */
-
-/**
- * @typedef CreateCustomRewardPayload
- * @property {string} title - title of reward
- * @property {string} prompt - The prompt for the viewer when they are redeeming the reward
- * @property {number} cost - The cost of the reward
- * @property {boolean} isEnabled - Is the reward currently enabled, if false the reward won’t show up to viewers
- * @property {string} backgroundColor - Custom background color for the reward. Format: Hex with # prefix. Example: #00E5CB.
- * @property {boolean} isUserInputRequired - Does the user need to enter information when redeeming the reward
- * @property {boolean} isMaxPerStreamEnabled
- * @property {number} maxPerStream
- * @property {boolean} isMaxPerUserPerStreamEnabled
- * @property {number} maxPerUserPerStream
- * @property {boolean} isGlobalCooldownEnabled
- * @property {number} globalCooldownSeconds
- * @property {boolean} [isPaused] - Is the reward currently paused, if true viewers can’t redeem
- * @property {boolean} shouldRedemptionsSkipRequestQueue - Should redemptions be set to FULFILLED status immediately when redeemed and skip the request queue instead of the normal UNFULFILLED status.
+ * @property {string?} [cooldownExpiresAt] - Timestamp of the cooldown expiration. Null if the reward isn’t on cooldown.
  */
 
 /**
  * @param {CustomReward} reward
- * @returns {CreateCustomRewardPayload}
+ * @returns {import("@twurple/api").HelixCreateCustomRewardData}
  */
-function mapCustomRewardToCreateRewardPayload(reward) {
+const mapCustomRewardToCreateRewardPayload = (reward) => {
     return {
         title: reward.title,
         prompt: reward.prompt,
         cost: reward.cost,
         isEnabled: reward.isEnabled,
         backgroundColor: reward.backgroundColor,
-        isUserInputRequired: reward.isUserInputRequired,
-        isMaxPerStreamEnabled: reward.maxPerStreamSetting.isEnabled,
-        maxPerStream: reward.maxPerStreamSetting.maxPerStream || 0,
-        isMaxPerUserPerStreamEnabled: reward.maxPerUserPerStreamSetting.isEnabled,
-        maxPerUserPerStream: reward.maxPerUserPerStreamSetting.maxPerUserPerStream || 0,
-        isGlobalCooldownEnabled: reward.globalCooldownSetting.isEnabled,
-        globalCooldownSeconds: reward.globalCooldownSetting.globalCooldownSeconds || 0,
+        userInputRequired: reward.isUserInputRequired,
+        maxRedemptionsPerStream: reward.maxPerStreamSetting.maxPerStream || null,
+        maxRedemptionsPerUserPerStream: reward.maxPerUserPerStreamSetting.maxPerUserPerStream || null,
+        globalCooldown: reward.globalCooldownSetting.globalCooldownSeconds || null,
         isPaused: reward.isPaused,
-        shouldRedemptionsSkipRequestQueue: reward.shouldRedemptionsSkipRequestQueue
+        autoFulfill: reward.shouldRedemptionsSkipRequestQueue
     };
-}
+};
+
+/**
+ * @param {import("@twurple/api").HelixCustomReward} reward
+ * @returns {CustomReward}
+ */
+const mapCustomRewardResponse = (reward) => {
+    const image = {
+        url1x: reward.getImageUrl(1),
+        url2x: reward.getImageUrl(2),
+        url4x: reward.getImageUrl(4)
+    };
+
+    return {
+        broadcasterId: reward.broadcasterId,
+        broadcasterLogin: reward.broadcasterLogin,
+        broadcasterName: reward.broadcasterName,
+        id: reward.id,
+        title: reward.title,
+        prompt: reward.prompt,
+        cost: reward.cost,
+        image: image,
+        defaultImage: image,
+        backgroundColor: reward.backgroundColor,
+        isEnabled: reward.isEnabled,
+        isUserInputRequired: reward.userInputRequired,
+        maxPerStreamSetting: {
+            isEnabled: reward.maxRedemptionsPerStream !== null,
+            maxPerStream: reward.maxRedemptionsPerStream
+        },
+        maxPerUserPerStreamSetting: {
+            isEnabled: reward.maxRedemptionsPerUserPerStream !== null,
+            maxPerUserPerStream: reward.maxRedemptionsPerUserPerStream
+        },
+        globalCooldownSetting: {
+            isEnabled: reward.globalCooldown !== null,
+            globalCooldownSeconds: reward.globalCooldown
+        },
+        isPaused: reward.isPaused,
+        isInStock: reward.isInStock,
+        shouldRedemptionsSkipRequestQueue: reward.autoApproved,
+        cooldownExpiresAt: reward.cooldownExpiryDate
+    };
+};
 
 
 /**
@@ -91,20 +111,16 @@ function mapCustomRewardToCreateRewardPayload(reward) {
  * @returns {Promise.<CustomReward[]>}
  */
 
-async function getCustomChannelRewards(onlyManageable = false) {
+const getCustomChannelRewards = async (onlyManageable = false) => {
     const client = twitchApi.getClient();
     let rewards = [];
     try {
-        const response = await client.callApi({
-            type: 'helix',
-            url: "/channel_points/custom_rewards",
-            query: {
-                "broadcaster_id": accountAccess.getAccounts().streamer.userId,
-                "only_manageable_rewards": onlyManageable
-            }
-        });
-        if (response && response.data) {
-            rewards = response.data;
+        const response = await client.channelPoints.getCustomRewards(
+            accountAccess.getAccounts().streamer.userId,
+            onlyManageable
+        );
+        if (response) {
+            rewards = response;
         } else {
             return null;
         }
@@ -112,93 +128,83 @@ async function getCustomChannelRewards(onlyManageable = false) {
         logger.error("Failed to get twitch custom channel rewards", err.message);
         return null;
     }
-    return rewards.map(r => camelKeys(r, { recursive: true }));
-}
+    return rewards.map(r => mapCustomRewardResponse(r));
+};
 
-async function getUnmanageableCustomChannelRewards() {
+/**
+ * @returns {Promise<CustomReward[]>}
+ */
+const getUnmanageableCustomChannelRewards = async () => {
     const allRewards = await getCustomChannelRewards();
     const onlyManageable = await getCustomChannelRewards(true);
     if (allRewards == null || onlyManageable == null) return null;
     const onlyUnmanageable = allRewards.filter(r => onlyManageable.every(mr => mr.id !== r.id));
     return onlyUnmanageable;
-}
+};
 
-async function getTotalChannelRewardCount() {
+/**
+ * @returns {number}
+ */
+const getTotalChannelRewardCount = async () => {
     const rewards = await getCustomChannelRewards();
     if (rewards == null) return 0;
     return rewards.length;
-}
+};
 
 /**
  * @param {CustomReward} reward
  * @returns {Promise.<CustomReward>}
  */
-async function createCustomChannelReward(reward) {
-
-    const body = snakeKeys(mapCustomRewardToCreateRewardPayload(reward));
-
+const createCustomChannelReward = async (reward) => {
+    const data = mapCustomRewardToCreateRewardPayload(reward);
     const client = twitchApi.getClient();
+
     try {
-        const response = await client.callApi({
-            type: 'helix',
-            url: "/channel_points/custom_rewards",
-            method: "POST",
-            query: {
-                "broadcaster_id": accountAccess.getAccounts().streamer.userId
-            },
-            body: body
-        });
-        return camelKeys(response.data[0], { recursive: true });
+        const response = await client.channelPoints.createCustomReward(
+            accountAccess.getAccounts().streamer.userId,
+            data
+        );
+
+        return mapCustomRewardResponse(response);
     } catch (err) {
         logger.error("Failed to create twitch custom channel reward", err);
         return null;
     }
-}
+};
 
 /**
  * @param {CustomReward} reward
+ * @returns {Promise<boolean>}
  */
-async function updateCustomChannelReward(reward) {
+const updateCustomChannelReward = async (reward) => {
     const client = twitchApi.getClient();
     try {
-        await client.callApi({
-            type: 'helix',
-            url: "/channel_points/custom_rewards",
-            method: "PATCH",
-            query: {
-                "broadcaster_id": accountAccess.getAccounts().streamer.userId,
-                "id": reward.id
-            },
-            body: snakeKeys(mapCustomRewardToCreateRewardPayload(reward))
-        });
+        await client.channelPoints.updateCustomReward(
+            accountAccess.getAccounts().streamer.userId,
+            reward.id,
+            mapCustomRewardToCreateRewardPayload(reward)
+        );
         return true;
     } catch (err) {
         logger.error("Failed to update twitch custom channel reward", err);
         return false;
     }
-}
+};
 
 /**
  * @param {string} rewardId
+ * @returns {Promise<boolean>}
  */
-async function deleteCustomChannelReward(rewardId) {
+const deleteCustomChannelReward = async (rewardId) => {
     const client = twitchApi.getClient();
     try {
-        await client.callApi({
-            type: 'helix',
-            url: "/channel_points/custom_rewards",
-            method: "DELETE",
-            query: {
-                "broadcaster_id": accountAccess.getAccounts().streamer.userId,
-                "id": rewardId
-            }
-        });
+        await client.channelPoints.deleteCustomReward(accountAccess.getAccounts().streamer.userId, rewardId);
         return true;
     } catch (err) {
         logger.error("Failed to update twitch custom channel reward", err);
         return false;
     }
-}
+};
 
 exports.createCustomChannelReward = createCustomChannelReward;
 exports.getCustomChannelRewards = getCustomChannelRewards;
