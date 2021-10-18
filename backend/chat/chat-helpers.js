@@ -35,13 +35,22 @@ const frontendCommunicator = require("../common/frontend-communicator");
  *
  */
 
-/**@type {import('twitch/lib/API/Badges/ChatBadgeList').ChatBadgeList} */
+/**@type {import('@twurple/api').ChatBadgeSet[]} */
 let badgeCache = null;
 exports.cacheBadges = async () => {
     const streamer = accountAccess.getAccounts().streamer;
-    const client = twitchClient.getOldClient();
+    const client = twitchClient.getClient();
     if (streamer.loggedIn && client) {
-        badgeCache = await client.badges.getChannelBadges(streamer.userId, true);
+        try {
+            const channelBadges = await client.chat.getChannelBadges(streamer.userId);
+            const globalBadges = await client.chat.getGlobalBadges();
+            badgeCache = [
+                ...channelBadges,
+                ...globalBadges
+            ];
+        } catch (error) {
+            logger.error("Failed to get channel chat badges", error);
+        }
     }
 };
 
@@ -62,13 +71,7 @@ exports.cacheStreamerEmotes = async () => {
     if (client == null || !streamer.loggedIn) return;
 
     try {
-        const response = await client.callApi({
-            type: 'helix',
-            url: "/chat/emotes",
-            query: {
-                "broadcaster_id": streamer.userId
-            }
-        });
+        const response = await client.chat.getChannelEmotes(streamer.userId);
         if (response && response.data) {
             streamerEmotes = response.data;
         } else {
@@ -79,8 +82,6 @@ exports.cacheStreamerEmotes = async () => {
         return null;
     }
 };
-
-
 
 /**
  * @typedef ThirdPartyEmote
@@ -228,6 +229,30 @@ function parseMessageParts(firebotChatMessage, parts) {
     });
 }
 
+const getChatBadges = (badges) => {
+    const chatBadges = [];
+
+    for (const [setName, version] of badges.entries()) {
+
+        const set = badgeCache.find(b => b.id === setName);
+        if (set == null) continue;
+
+        const setVersion = set.getVersion(version);
+        if (setVersion == null) continue;
+
+        try {
+            chatBadges.push({
+                title: setVersion.id,
+                url: setVersion.getImageUrl(2)
+            });
+        } catch (err) {
+            logger.debug(`Failed to find badge ${setName} v:${version}`, err);
+        }
+    }
+
+    return chatBadges;
+};
+
 exports.buildFirebotChatMessageFromText = async (text = "") => {
     const streamer = accountAccess.getAccounts().streamer;
 
@@ -298,23 +323,7 @@ exports.buildFirebotChatMessageFromText = async (text = "") => {
     streamerFirebotChatMessage.parts = parseMessageParts(streamerFirebotChatMessage, streamerFirebotChatMessage.parts);
 
     if (badgeCache != null) {
-        for (const [setName, version] of streamerData.badges.entries()) {
-
-            const set = badgeCache.getBadgeSet(setName);
-            if (set._data == null) continue;
-
-            const setVersion = set.getVersion(version);
-            if (setVersion._data == null) continue;
-
-            try {
-                streamerFirebotChatMessage.badges.push({
-                    title: setVersion.title,
-                    url: setVersion.getImageUrl(2)
-                });
-            } catch (err) {
-                logger.debug(`Failed to find badge ${setName} v:${version}`, err);
-            }
-        }
+        streamerFirebotChatMessage.badges = getChatBadges(streamerData.badges);
     }
 
     return streamerFirebotChatMessage;
@@ -365,23 +374,7 @@ exports.buildFirebotChatMessage = async (msg, msgText, whisper = false, action =
     firebotChatMessage.parts = messageParts;
 
     if (badgeCache != null) {
-        for (const [setName, version] of msg.userInfo.badges.entries()) {
-
-            const set = badgeCache.getBadgeSet(setName);
-            if (set._data == null) continue;
-
-            const setVersion = set.getVersion(version);
-            if (setVersion._data == null) continue;
-
-            try {
-                firebotChatMessage.badges.push({
-                    title: setVersion.title,
-                    url: setVersion.getImageUrl(2)
-                });
-            } catch (err) {
-                logger.debug(`Failed to find badge ${setName} v:${version}`, err);
-            }
-        }
+        firebotChatMessage.badges = getChatBadges(msg.userInfo.badges);
     }
 
     firebotChatMessage.isFounder = msg.userInfo.isFounder;
