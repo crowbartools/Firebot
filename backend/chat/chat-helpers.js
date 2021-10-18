@@ -341,7 +341,7 @@ exports.buildFirebotChatMessageFromText = async (text = "") => {
 
 /**
  * @arg {import("@twurple/chat").PrivateMessage} msg
- * @returns {FirebotChatMessage}
+ * @returns {Promise<FirebotChatMessage>}
 */
 exports.buildFirebotChatMessage = async (msg, msgText, whisper = false, action = false) => {
 

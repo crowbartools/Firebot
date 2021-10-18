@@ -116,6 +116,7 @@ authManager.on("auth-success", async authData => {
             channelId: userData.id,
             userId: userData.id,
             avatar: userData.profile_image_url,
+            broadcasterType: userData.broadcaster_type,
             auth: tokenData
         };
 

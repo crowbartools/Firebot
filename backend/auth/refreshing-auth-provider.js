@@ -3,6 +3,7 @@ const logger = require("../logwrapper");
 const twitchAuth = require("./twitch-auth");
 const { RefreshingAuthProvider, getExpiryDateOfAccessToken } = require("@twurple/auth");
 const accountAccess = require("../common/account-access");
+const twitchApi = require("../twitch-api/api");
 
 /**@type {RefreshingAuthProvider} */
 let refreshingAuthProvider;
@@ -44,21 +45,24 @@ const setupRefreshingAuthProviders = () => {
     logger.info("Setting up refreshing auth providers...");
 
     const streamer = accountAccess.getAccounts().streamer;
-    if (!streamer.loggedIn) {
+    if (streamer.loggedIn) {
+        refreshingAuthProvider = getRefreshingAuthProvider(streamer, "streamer");
+        logger.info("Successfully setup streamer refreshing auth provider");
+    } else {
         logger.info("Unable to setup refreshing auth provider as streamer account is not logged in.");
-        return;
     }
-
-    refreshingAuthProvider = getRefreshingAuthProvider(streamer, "streamer");
-    logger.info("Successfully setup streamer refreshing auth provider");
 
     const bot = accountAccess.getAccounts().bot;
-    if (!bot.loggedIn) {
+    if (bot.loggedIn) {
+        botRefreshingAuthProvider = getRefreshingAuthProvider(bot, "bot");
+        logger.info("Successfully setup bot refreshing auth provider");
+    } else {
         logger.info("Unable to setup bot refreshing auth provider as bot account is not logged in.");
-        return;
     }
-    botRefreshingAuthProvider = getRefreshingAuthProvider(bot, "bot");
-    logger.info("Successfully setup bot refreshing auth provider");
+
+    if (refreshingAuthProvider) {
+        twitchApi.setupApiClients();
+    }
 };
 accountAccess.events.on("account-update", () => {
     setupRefreshingAuthProviders();

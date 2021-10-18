@@ -27,9 +27,7 @@ const accountEvents = new EventEmitter();
  * @property {number} userId - The user id for the account
  * @property {number} channelId - DEPRECATED: The channel id for the account (same as userId)
  * @property {string} avatar - The avatar url for the account
- * @property {string} subBadge - The sub badge url for the account
- * @property {boolean} partnered - If the channel is partnered
- * @property {boolean} canClip - If the channel can clip
+ * @property {string} broadcasterType - "partner", "affiliate" or ""
  * @property {AuthDetails} auth - Auth token details for the account
  * @property {boolean} loggedIn - If the account is linked/logged in
  */
