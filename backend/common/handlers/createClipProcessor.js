@@ -42,7 +42,7 @@ exports.createClip = async function(effect, trigger) {
         return;
     }
 
-    /**@type {import('twitch').HelixClip} */
+    /**@type {import('@twurple/api').HelixClip} */
     let clip;
     let attempts = 0;
     do {

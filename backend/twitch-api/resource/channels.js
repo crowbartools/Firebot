@@ -70,7 +70,7 @@ const getChannelInformationByUsername = async (username) => {
     }
 
     const client = twitchApi.getClient();
-    /**@type {import("twitch/lib").HelixUser} */
+    /**@type {import("@twurple/api").HelixUser} */
     let user;
     try {
         user = await client.users.getUserByName(username);

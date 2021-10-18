@@ -160,7 +160,7 @@ exports.addOnlineUser = async (username) => {
 
 /**
  * Add or update an active user
- * @arg {import('twitch-chat-client/lib/ChatUser').ChatUser} chatUser
+ * @arg {import('@twurple/chat').ChatUser} chatUser
  */
 exports.addActiveUser = async (chatUser, includeInOnline = false, forceActive = false) => {
 
