@@ -9,6 +9,7 @@ const chatHelpers = require("../chat/chat-helpers");
 const activeUserHandler = require("../chat/chat-listeners/active-user-handler");
 const frontendCommunicator = require("../common/frontend-communicator");
 const chatRolesManager = require("../roles/chat-roles-manager");
+const teamRolesManager = require("../roles/team-roles-manager");
 
 const followCache = new NodeCache({ stdTTL: 10, checkperiod: 10 });
 
@@ -75,7 +76,7 @@ async function getUserDetails(userId) {
     };
 
     if (firebotUserData.profilePicUrl !== twitchUser.profilePictureUrl) {
-        chatHelpers.setUserProfilePicUrl(twitchUser.id, twitchUser.logoUrl);
+        chatHelpers.setUserProfilePicUrl(twitchUser.id, twitchUser.profilePictureUrl);
 
         firebotUserData.profilePicUrl = twitchUser.profilePictureUrl;
         userDb.updateUser(firebotUserData);
@@ -101,7 +102,7 @@ async function getUserDetails(userId) {
     }
 
     const userRoles = await chatRolesManager.getUsersChatRoles(twitchUser.id);
-    const teamRoles = await twitchApi.teams.getMatchingTeamsById(twitchUser.id);
+    const teamRoles = await teamRolesManager.getAllTeamRolesForViewer(twitchUser.name);
 
     const userFollowsStreamerResponse = await client.users.getFollows({
         user: userId,
