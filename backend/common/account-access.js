@@ -124,7 +124,7 @@ const getTwitchData = async (accountType) => {
     const chatHelpers = require("../chat/chat-helpers");
 
     const account = accountType === "streamer" ? cache.streamer : cache.bot;
-    const data = await twitchApi.getClient().helix.users.getUserById(account.userId);
+    const data = await twitchApi.getClient().users.getUserById(account.userId);
 
     account.avatar = data.profilePictureUrl;
     chatHelpers.setUserProfilePicUrl(account.userId, data.profilePictureUrl);
