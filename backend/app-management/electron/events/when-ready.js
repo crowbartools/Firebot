@@ -37,6 +37,8 @@ exports.whenReady = async () => {
     const timerManager = require("../../../timers/timer-manager");
     timerManager.startTimers();
 
+    await accountAccess.refreshTwitchData();
+
     const twitchFrontendListeners = require("../../../twitch-api/frontend-twitch-listeners");
     twitchFrontendListeners.setupListeners();
 

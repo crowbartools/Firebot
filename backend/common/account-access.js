@@ -119,6 +119,35 @@ async function loadAccountData(emitUpdate = true) {
     }
 }
 
+const getTwitchData = async (accountType) => {
+    const twitchApi = require("../twitch-api/api");
+    const chatHelpers = require("../chat/chat-helpers");
+
+    const account = accountType === "streamer" ? cache.streamer : cache.bot;
+    const data = await twitchApi.getClient().helix.users.getUserById(account.userId);
+
+    account.avatar = data.profilePictureUrl;
+    chatHelpers.setUserProfilePicUrl(account.userId, data.profilePictureUrl);
+
+    if (accountType === "streamer") account.broadcasterType = data.broadcasterType;
+    account.username = data.name;
+    account.displayName = data.displayName;
+
+    return account;
+};
+
+const refreshTwitchData = async () => {
+    if (cache.streamer && cache.streamer.loggedIn) {
+        cache.streamer = await getTwitchData("streamer");
+        saveAccountDataToFile("streamer");
+    }
+
+    if (cache.bot && cache.bot.loggedIn) {
+        cache.bot = await getTwitchData("bot");
+        saveAccountDataToFile("bot");
+    }
+};
+
 let streamerTokenIssue = false;
 let botTokenIssue = false;
 
@@ -193,3 +222,4 @@ exports.updateStreamerAccountSettings = updateStreamerAccountSettings;
 exports.getAccounts = () => cache;
 exports.streamerTokenIssue = () => streamerTokenIssue;
 exports.botTokenIssue = () => botTokenIssue;
+exports.refreshTwitchData = refreshTwitchData;
