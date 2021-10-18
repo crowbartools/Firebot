@@ -4,7 +4,7 @@ const logger = require("../../logwrapper");
 const eventManager = require("../EventManager");
 const frontendCommunicator = require("../../common/frontend-communicator");
 
-/**@argument {import('twitch-pubsub-client').PubSubRedemptionMessage} redemptionMessage */
+/**@argument {import("@twurple/pubsub").PubSubRedemptionMessage} redemptionMessage */
 exports.handleRewardRedemption = (redemptionMessage) => {
 
     logger.debug("Got reward redemption event!");

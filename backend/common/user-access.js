@@ -4,11 +4,12 @@ const userDb = require("../database/userDatabase");
 const accountAccess = require("../common/account-access");
 const NodeCache = require('node-cache');
 const twitchApi = require("../twitch-api/api");
-const twitchClient = require("../twitch-api/client");
 const logger = require("../logwrapper");
 const chatHelpers = require("../chat/chat-helpers");
 const activeUserHandler = require("../chat/chat-listeners/active-user-handler");
 const frontendCommunicator = require("../common/frontend-communicator");
+const chatRolesManager = require("../roles/chat-roles-manager");
+const teamRolesManager = require("../roles/team-roles-manager");
 
 const followCache = new NodeCache({ stdTTL: 10, checkperiod: 10 });
 
@@ -39,8 +40,8 @@ async function userFollowsChannels(username, channelNames) {
 }
 
 function getUser(userId) {
-    const client = twitchClient.getClient();
-    return client.kraken.users.getUser(userId);
+    const client = twitchApi.getClient();
+    return client.users.getUserById(userId);
 }
 
 async function getUserDetails(userId) {
@@ -70,14 +71,14 @@ async function getUserDetails(userId) {
         id: twitchUser.id,
         username: twitchUser.name,
         displayName: twitchUser.displayName,
-        iconUrl: twitchUser.logoUrl,
+        iconUrl: twitchUser.profilePictureUrl,
         creationDate: twitchUser.creationDate
     };
 
-    if (firebotUserData.profilePicUrl !== twitchUser.logoUrl) {
-        chatHelpers.setUserProfilePicUrl(twitchUser.id, twitchUser.logoUrl);
+    if (firebotUserData.profilePicUrl !== twitchUser.profilePictureUrl) {
+        chatHelpers.setUserProfilePicUrl(twitchUser.id, twitchUser.profilePictureUrl);
 
-        firebotUserData.profilePicUrl = twitchUser.logoUrl;
+        firebotUserData.profilePicUrl = twitchUser.profilePictureUrl;
         userDb.updateUser(firebotUserData);
 
         frontendCommunicator.send("twitch:chat:user-updated", {
@@ -91,24 +92,24 @@ async function getUserDetails(userId) {
 
     const streamerData = accountAccess.getAccounts().streamer;
 
-    const client = twitchClient.getClient();
+    const client = twitchApi.getClient();
 
     let isBanned;
     try {
-        isBanned = await client.helix.moderation.checkUserBan(streamerData.userId, twitchUser.id);
+        isBanned = await client.moderation.checkUserBan(streamerData.userId, twitchUser.id);
     } catch (error) {
         logger.warn("Unable to get banned status", error);
     }
 
-    const userRoles = await twitchApi.users.getUsersChatRoles(twitchUser.id);
-    const teamRoles = await twitchApi.teams.getMatchingTeamsById(twitchUser.id);
+    const userRoles = await chatRolesManager.getUsersChatRoles(twitchUser.id);
+    const teamRoles = await teamRolesManager.getAllTeamRolesForViewer(twitchUser.name);
 
-    const userFollowsStreamerResponse = await client.helix.users.getFollows({
+    const userFollowsStreamerResponse = await client.users.getFollows({
         user: userId,
         followedUser: streamerData.userId
     });
 
-    const streamerFollowsUserResponse = await client.helix.users.getFollows({
+    const streamerFollowsUserResponse = await client.users.getFollows({
         user: streamerData.userId,
         followedUser: userId
     });

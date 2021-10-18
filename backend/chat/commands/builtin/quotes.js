@@ -270,7 +270,7 @@ const quotesManagement = {
 
                 const channelData = await twitchChannels.getChannelInformation();
 
-                let currentGameName = channelData && channelData.game_name ? channelData.game_name : "Unknown game";
+                let currentGameName = channelData && channelData.gameName ? channelData.gameName : "Unknown game";
 
                 let newQuote = {
                     text: args.slice(2, args.length).join(" "),

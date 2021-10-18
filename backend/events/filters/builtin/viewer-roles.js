@@ -1,10 +1,9 @@
 "use strict";
 
-const twitchUsers = require("../../../twitch-api/resource/users");
-
 const customRolesManager = require("../../../roles/custom-roles-manager");
 const teamRolesManager = require("../../../roles/team-roles-manager");
 const twitchRolesManager = require("../../../../shared/twitch-roles");
+const chatRolesManager = require("../../../roles/chat-roles-manager");
 
 module.exports = {
     id: "firebot:viewerroles",
@@ -71,7 +70,7 @@ module.exports = {
         /** @type{string[]} */
         let twitchUserRoles = eventMeta.twitchUserRoles;
         if (twitchUserRoles == null) {
-            twitchUserRoles = await twitchUsers.getUsersChatRoles(username);
+            twitchUserRoles = await chatRolesManager.getUsersChatRoles(username);
         }
 
         const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];

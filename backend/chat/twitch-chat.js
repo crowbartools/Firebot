@@ -1,8 +1,8 @@
 "use strict";
 const logger = require("../logwrapper");
 const EventEmitter = require("events");
-const { ChatClient } = require("twitch-chat-client");
-const twitchClient = require("../twitch-api/client");
+const { ChatClient } = require("@twurple/chat");
+const refreshingAuthProvider = require("../auth/refreshing-auth-provider");
 const accountAccess = require("../common/account-access");
 const frontendCommunicator = require("../common/frontend-communicator");
 const chatHelpers = require("./chat-helpers");
@@ -11,6 +11,8 @@ const followPoll = require("../twitch-api/follow-poll");
 const chatterPoll = require("../twitch-api/chatter-poll");
 const commandHandler = require("./commands/commandHandler");
 const activeUserHandler = require("./chat-listeners/active-user-handler");
+const twitchApi = require("../twitch-api/api");
+const chatRolesManager = require("../roles/chat-roles-manager");
 
 /**@extends NodeJS.EventEmitter */
 class TwitchChat extends EventEmitter {
@@ -63,14 +65,15 @@ class TwitchChat extends EventEmitter {
         const streamer = accountAccess.getAccounts().streamer;
         if (!streamer.loggedIn) return;
 
-        const client = twitchClient.getClient();
-        if (client == null) return;
+        const authProvider = refreshingAuthProvider.getRefreshingAuthProviderForStreamer();
+        if (authProvider == null) return;
 
         this.emit("connecting");
         await this.disconnect(false);
 
         try {
-            this._streamerChatClient = await ChatClient.forTwitchClient(client, {
+            this._streamerChatClient = new ChatClient({
+                authProvider: authProvider,
                 requestMembershipEvents: true
             });
 
@@ -112,13 +115,18 @@ class TwitchChat extends EventEmitter {
 
             followPoll.startFollowPoll();
             chatterPoll.startChatterPoll();
+
+            const vips = await this._streamerChatClient.getVips(accountAccess.getAccounts().streamer.username);
+
+            chatRolesManager.loadUsersInVipRole(vips);
         } catch (error) {
             logger.error("Chat connect error", error);
             await this.disconnect();
         }
 
         try {
-            this._botChatClient = await ChatClient.forTwitchClient(twitchClient.getBotClient(), {
+            this._botChatClient = new ChatClient({
+                authProvider: refreshingAuthProvider.getRefreshingAuthProviderForBot(),
                 requestMembershipEvents: true
             });
 
@@ -260,18 +268,20 @@ class TwitchChat extends EventEmitter {
         this._streamerChatClient.say(`#${streamer.username.replace("#", "")}`, `/unban ${username}`);
     }
 
-    block(username) {
+    async block(username) {
         if (username == null) return;
 
-        const twitchApi = require("../twitch-api/api");
-        twitchApi.users.blockUserByName(username);
+        const client = twitchApi.getClient();
+        const user = await client.users.getUserByName(username);
+        await client.users.createBlock(user.id);
     }
 
-    unblock(username) {
+    async unblock(username) {
         if (username == null) return;
 
-        const twitchApi = require("../twitch-api/api");
-        twitchApi.users.unblockUserByName(username);
+        const client = twitchApi.getClient();
+        const user = await client.users.getUserByName(username);
+        await client.users.deleteBlock(user.id);
     }
 
     addVip(username) {
