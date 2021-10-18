@@ -30,15 +30,7 @@ const model = {
     onTriggerEvent: async event => {
         const client = twitchApi.getClient();
 
-        await client.callApi({
-            type: 'helix',
-            method: "PATCH",
-            url: "/channels",
-            query: {
-                "broadcaster_id": accountAccess.getAccounts().streamer.userId,
-                "title": event.effect.title
-            }
-        });
+        await client.channels.updateChannelInfo(accountAccess.getAccounts().streamer.userId, {title: event.effect.title});
         return true;
     }
 };

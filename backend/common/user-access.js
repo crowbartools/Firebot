@@ -39,8 +39,8 @@ async function userFollowsChannels(username, channelNames) {
 }
 
 function getUser(userId) {
-    const client = twitchApi.getOldClient();
-    return client.kraken.users.getUser(userId);
+    const client = twitchApi.getClient();
+    return client.users.getUserById(userId);
 }
 
 async function getUserDetails(userId) {
@@ -70,14 +70,14 @@ async function getUserDetails(userId) {
         id: twitchUser.id,
         username: twitchUser.name,
         displayName: twitchUser.displayName,
-        iconUrl: twitchUser.logoUrl,
+        iconUrl: twitchUser.profilePictureUrl,
         creationDate: twitchUser.creationDate
     };
 
-    if (firebotUserData.profilePicUrl !== twitchUser.logoUrl) {
+    if (firebotUserData.profilePicUrl !== twitchUser.profilePictureUrl) {
         chatHelpers.setUserProfilePicUrl(twitchUser.id, twitchUser.logoUrl);
 
-        firebotUserData.profilePicUrl = twitchUser.logoUrl;
+        firebotUserData.profilePicUrl = twitchUser.profilePictureUrl;
         userDb.updateUser(firebotUserData);
 
         frontendCommunicator.send("twitch:chat:user-updated", {
