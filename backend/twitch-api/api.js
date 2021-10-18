@@ -27,7 +27,7 @@ exports.setupApiClients = () => {
         botClient = new ApiClient({ authProvider: botProvider });
         logger.info("Finished setting up Twitch API client for bot account.");
     }
-}
+};
 
 exports.getClient = () => client;
 exports.getBotClient = () => botClient;
