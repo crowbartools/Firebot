@@ -19,7 +19,7 @@ const frontendCommunicator = require("../common/frontend-communicator");
  * @property {string} customRewardId
  * @property {string} color
  * @property {string} rawText
- * @property {import('twitch-chat-client/lib/Toolkit/EmoteTools').ParsedMessagePart[]} parts
+ * @property {import('@twurple/common').ParsedMessagePart[]} parts
  * @property {boolean} whisper
  * @property {boolean} action
  * @property {boolean} isCheer
@@ -33,6 +33,13 @@ const frontendCommunicator = require("../common/frontend-communicator");
  * @property {boolean} isCheer
  * @property {boolean} isHighlighted
  *
+ */
+
+/**
+ * @typedef FirebotEmote
+ * @property {string} url
+ * @property {string} origin
+ * @property {string} code
  */
 
 /**@type {import('@twurple/api').ChatBadgeSet[]} */
@@ -62,23 +69,27 @@ exports.setStreamerData = function(newStreamerData) {
     streamerData = newStreamerData;
 };
 
-let streamerEmotes = null;
+/** @type {import("@twurple/api").HelixEmote[]} */
+let twitchEmotes = null;
 
-exports.cacheStreamerEmotes = async () => {
+exports.cacheTwitchEmotes = async () => {
     const client = twitchClient.getClient();
     const streamer = accountAccess.getAccounts().streamer;
 
     if (client == null || !streamer.loggedIn) return;
 
     try {
-        const response = await client.chat.getChannelEmotes(streamer.userId);
-        if (response && response.data) {
-            streamerEmotes = response.data;
-        } else {
-            return null;
-        }
+        const channelEmotes = await client.chat.getChannelEmotes(streamer.userId);
+        const globalEmotes = await client.chat.getGlobalEmotes();
+
+        if (!channelEmotes && !globalEmotes) return;
+
+        twitchEmotes = [
+            ...channelEmotes,
+            ...globalEmotes
+        ];
     } catch (err) {
-        logger.error("Failed to get streamer chat emotes", err);
+        logger.error("Failed to get Twitch chat emotes", err);
         return null;
     }
 };
@@ -107,16 +118,14 @@ exports.cacheThirdPartyEmotes = async () => {
 
 exports.handleChatConnect = async () => {
     await exports.cacheBadges();
-
-    await exports.cacheStreamerEmotes();
-
+    await exports.cacheTwitchEmotes();
     await exports.cacheThirdPartyEmotes();
 
     frontendCommunicator.send("all-emotes", [
-        ...Object.values(streamerEmotes || {})
+        ...Object.values(twitchEmotes || {})
             .flat()
             .map(e => ({
-                url: e.images.url_1x,
+                url: e.getImageUrl(1),
                 origin: "Twitch",
                 code: e.name
             })),
@@ -166,7 +175,7 @@ const URL_REGEX = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\.[a-z
 
 /**
  * @param {FirebotChatMessage} firebotChatMessage
- * @param {import('twitch-chat-client/lib/Toolkit/EmoteTools').ParsedMessagePart[]} parts
+ * @param {import("@twurple/common").ParsedMessagePart[]} parts
  */
 function parseMessageParts(firebotChatMessage, parts) {
     if (firebotChatMessage == null || parts == null) return [];
@@ -222,7 +231,6 @@ function parseMessageParts(firebotChatMessage, parts) {
             return subParts;
         }
         if (p.type === "emote") {
-            p.url = `https://static-cdn.jtvnw.net/emoticons/v1/${p.id}/1.0`;
             p.origin = "Twitch";
         }
         return p;
@@ -281,27 +289,29 @@ exports.buildFirebotChatMessageFromText = async (text = "") => {
         ]
     };
 
-    if (streamerEmotes) {
+    if (twitchEmotes) {
         const words = text.split(" ");
         for (const word of words) {
             let emoteId = null;
+            let url = "";
             try {
-                const foundEmote = Object.values(streamerEmotes || {})
+                const foundEmote = Object.values(twitchEmotes || {})
                     .flat()
                     .find(e => e.name === word);
                 if (foundEmote) {
                     emoteId = foundEmote.id;
+                    url = foundEmote.getImageUrl(1);
                 }
             } catch (err) {
                 //logger.silly(`Failed to find emote id for ${word}`, err);
             }
 
-            /**@type {import('twitch-chat-client/lib/Toolkit/EmoteTools').ParsedMessagePart} */
+            /**@type {import('@twurple/common').ParsedMessagePart} */
             let part;
             if (emoteId != null) {
                 part = {
                     type: "emote",
-                    url: `https://static-cdn.jtvnw.net/emoticons/v1/${emoteId}/1.0`,
+                    url: url,
                     id: emoteId,
                     name: word
                 };
@@ -330,7 +340,7 @@ exports.buildFirebotChatMessageFromText = async (text = "") => {
 };
 
 /**
- * @arg {import('twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage').TwitchPrivateMessage} msg
+ * @arg {import("@twurple/chat").PrivateMessage} msg
  * @returns {FirebotChatMessage}
 */
 exports.buildFirebotChatMessage = async (msg, msgText, whisper = false, action = false) => {
