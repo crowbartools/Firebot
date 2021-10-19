@@ -27,9 +27,7 @@ const accountEvents = new EventEmitter();
  * @property {number} userId - The user id for the account
  * @property {number} channelId - DEPRECATED: The channel id for the account (same as userId)
  * @property {string} avatar - The avatar url for the account
- * @property {string} subBadge - The sub badge url for the account
- * @property {boolean} partnered - If the channel is partnered
- * @property {boolean} canClip - If the channel can clip
+ * @property {string} broadcasterType - "partner", "affiliate" or ""
  * @property {AuthDetails} auth - Auth token details for the account
  * @property {boolean} loggedIn - If the account is linked/logged in
  */
@@ -121,6 +119,35 @@ async function loadAccountData(emitUpdate = true) {
     }
 }
 
+const getTwitchData = async (accountType) => {
+    const twitchApi = require("../twitch-api/api");
+    const chatHelpers = require("../chat/chat-helpers");
+
+    const account = accountType === "streamer" ? cache.streamer : cache.bot;
+    const data = await twitchApi.getClient().helix.users.getUserById(account.userId);
+
+    account.avatar = data.profilePictureUrl;
+    chatHelpers.setUserProfilePicUrl(account.userId, data.profilePictureUrl);
+
+    if (accountType === "streamer") account.broadcasterType = data.broadcasterType;
+    account.username = data.name;
+    account.displayName = data.displayName;
+
+    return account;
+};
+
+const refreshTwitchData = async () => {
+    if (cache.streamer && cache.streamer.loggedIn) {
+        cache.streamer = await getTwitchData("streamer");
+        saveAccountDataToFile("streamer");
+    }
+
+    if (cache.bot && cache.bot.loggedIn) {
+        cache.bot = await getTwitchData("bot");
+        saveAccountDataToFile("bot");
+    }
+};
+
 let streamerTokenIssue = false;
 let botTokenIssue = false;
 
@@ -195,3 +222,4 @@ exports.updateStreamerAccountSettings = updateStreamerAccountSettings;
 exports.getAccounts = () => cache;
 exports.streamerTokenIssue = () => streamerTokenIssue;
 exports.botTokenIssue = () => botTokenIssue;
+exports.refreshTwitchData = refreshTwitchData;

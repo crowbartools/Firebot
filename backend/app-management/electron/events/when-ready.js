@@ -37,6 +37,8 @@ exports.whenReady = async () => {
     const twitchClient = require("../../../twitch-api/client");
     twitchClient.setupTwitchClients();
 
+    await accountAccess.refreshTwitchData();
+
     const twitchFrontendListeners = require("../../../twitch-api/frontend-twitch-listeners");
     twitchFrontendListeners.setupListeners();
 

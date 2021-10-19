@@ -160,10 +160,15 @@
                     break;
                 case ConnectionType.OVERLAY:
                     ctrl.connectionIcon = ConnectionIcon.OVERLAY;
-                    ctrl.connectionStatus = connectionManager.getConnectionStatusForService("overlay");
                     break;
                 case ConnectionType.INTEGRATIONS:
                     ctrl.connectionIcon = ConnectionIcon.INTEGRATIONS;
+                }
+
+                if (ctrl.type === ConnectionType.OVERLAY) {
+                    ctrl.connectionStatus = connectionManager.getConnectionStatusForService("overlay");
+                } else {
+                    ctrl.connectionStatus = "disconnected";
                 }
 
                 setBubbleClasses();
