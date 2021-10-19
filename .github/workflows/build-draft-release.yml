@@ -1,4 +1,4 @@
-name: Build Status
+name: Build and Create Draft Release
 
 # Only runs
 # - after PRs have been merged into master
@@ -115,7 +115,7 @@ jobs:
       - name: Get Commit Messages
         id: messages
         if: steps.tagged.outputs.tagged == 1
-        uses: 'SReject/pr-commit-messages@v1.0.1'
+        uses: 'SReject/pr-commit-messages@v1.0.2'
         with:
           sha: ${{ github.sha }}
 
