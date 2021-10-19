@@ -1,7 +1,10 @@
 name: Build Status
 
-# Only runs after PRs have been merged into master
+# Only runs
+# - after PRs have been merged into master
+# - when a user specifically requests the workflow to run on a branch
 on:
+  workflow_dispatch:
   push:
     branches: 'master'
 
@@ -14,7 +17,7 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout master branch
+      - name: Checkout branch the workflow is being ran on
         uses: 'actions/checkout@v2'
 
       - name: Fetch tags
@@ -60,7 +63,7 @@ jobs:
 
       - name: Decrypt Secrets.gpg
         if: steps.tagged.outputs.tagged == 1
-        env: 
+        env:
           PASSKEY_FOR_FIREBOT_SECRETS: ${{ secrets.PASSKEY_FOR_FIREBOT_SECRETS }}
         run: grunt secrets:decrypt
 
