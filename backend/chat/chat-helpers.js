@@ -232,6 +232,8 @@ function parseMessageParts(firebotChatMessage, parts) {
         }
         if (p.type === "emote") {
             p.origin = "Twitch";
+            const emote = twitchEmotes.find(e => e.name === p.name);
+            p.url = emote ? emote.getImageUrl(1) : `https://static-cdn.jtvnw.net/emoticons/v2/${p.id}/default/dark/1.0`;
         }
         return p;
     });
