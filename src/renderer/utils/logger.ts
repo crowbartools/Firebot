@@ -2,6 +2,8 @@ import { LogLevel } from "SharedTypes/misc/logging";
 import { serialize } from "SharedUtils";
 import communicator from "./communicator";
 
+console.log(communicator);
+
 interface LeveledLogMethod {
     (message: string, ...meta: unknown[]): void;
     (message: unknown): void;
@@ -47,7 +49,7 @@ function printLogToBrowserConsole(
         "color:none"
     );
     if (meta?.length > 0) {
-        console.log(meta);
+        console.log("Metadata: ", meta);
     }
 }
 /* eslint-enable no-console */
@@ -64,21 +66,16 @@ function log(level: LogLevel, message: string | unknown, meta: unknown[]) {
         printLogToBrowserConsole(level, `(Renderer) ${logMessage}`, meta);
         communicator.emit("rendererLog", {
             level,
-            message: logMessage,
+            message: logMessage
         });
     }
 }
 
 function buildLogger(): Logger {
     const logger = {} as Logger;
-    ([
-        "error",
-        "warn",
-        "info",
-        "verbose",
-        "debug",
-        "silly",
-    ] as LogLevel[]).forEach((level) => {
+    (
+        ["error", "warn", "info", "verbose", "debug", "silly"] as LogLevel[]
+    ).forEach((level) => {
         logger[level] = (message: string | unknown, ...meta: unknown[]) => {
             log(level, message, meta);
         };

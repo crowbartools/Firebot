@@ -1,19 +1,17 @@
-import { observable } from "mobx";
-import { actionAsync, task } from "mobx-utils";
+import { makeAutoObservable } from "mobx";
+import {} from "mobx-utils";
 import { FirebotCustomCommand } from "SharedTypes/command";
 import { communicator } from "../utils";
 class CommandStore {
-    @observable customCommands: FirebotCustomCommand[] = [];
+    customCommands: FirebotCustomCommand[] = [];
 
     constructor() {
+        makeAutoObservable(this);
         this.loadCustomCommands();
     }
 
-    @actionAsync
-    private async loadCustomCommands() {
-        this.customCommands = await task(
-            communicator.invoke("getCustomCommands")
-        );
+    private *loadCustomCommands() {
+        this.customCommands = yield communicator.invoke("getCustomCommands");
     }
 }
 

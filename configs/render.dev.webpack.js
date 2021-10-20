@@ -9,23 +9,25 @@ const baseConfig = require("./render.webpack");
 module.exports = merge(baseConfig, {
     resolve: {
         alias: {
-            "react-dom": "@hot-loader/react-dom",
+            //"react-dom": "@hot-loader/react-dom",
         },
     },
     devServer: {
-        contentBase: path.join(baseConfig.context, "../dist"),
+        static: {
+            directory: path.join(baseConfig.context, "../dist"),
+        },
         port: 2003,
         compress: true,
-        noInfo: true,
-        stats: "errors-only",
-        inline: true,
         hot: true,
         headers: { "Access-Control-Allow-Origin": "*" },
+        devMiddleware: {
+            stats: "errors-only",
+        },
         historyApiFallback: {
             verbose: true,
             disableDotRule: false,
         },
-        after() {
+        onAfterSetupMiddleware() {
             if (process.env.START_HOT) {
                 console.log("Starting main process");
                 spawn("npm", ["run", "start-main"], {

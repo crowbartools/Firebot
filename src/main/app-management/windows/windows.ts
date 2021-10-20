@@ -17,7 +17,7 @@ export function createMainWindow() {
 
     const mainWindowState = windowStateKeeper({
         defaultWidth: 1280,
-        defaultHeight: 720,
+        defaultHeight: 720
     });
 
     mainWindow = new BrowserWindow({
@@ -30,8 +30,8 @@ export function createMainWindow() {
         webPreferences: {
             nodeIntegration: false,
             nativeWindowOpen: true,
-            preload: path.join(__dirname, "./preload.js"),
-        },
+            preload: path.join(__dirname, "./preload.js")
+        }
     });
 
     mainWindow.webContents.on(
@@ -41,7 +41,7 @@ export function createMainWindow() {
                 event.preventDefault();
                 Object.assign(options, {
                     width: 300,
-                    height: 300,
+                    height: 300
                 });
                 event.newGuest = new BrowserWindow(options);
             }

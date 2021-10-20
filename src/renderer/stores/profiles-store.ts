@@ -1,12 +1,13 @@
-import { observable, action, computed } from "mobx";
-import { actionAsync, task } from "mobx-utils";
+import { makeAutoObservable } from "mobx";
 import { UserProfile } from "SharedTypes/firebot/profile";
 import { communicator } from "../utils";
 class UserProfilesStore {
-    @observable profiles: UserProfile[] = [];
-    @observable activeProfileId: string = null;
+    profiles: UserProfile[] = [];
+    activeProfileId: string = null;
 
     constructor() {
+        makeAutoObservable(this);
+
         this.getProfiles();
 
         communicator.invoke("getActiveUserProfileId").then((id) => {
@@ -17,17 +18,14 @@ class UserProfilesStore {
         });
     }
 
-    @computed
     get activeProfile(): UserProfile {
         return this.profiles.find((p) => p.id === this.activeProfileId);
     }
 
-    @actionAsync
-    private async getProfiles() {
-        this.profiles = await task(communicator.invoke("getUserProfiles"));
+    private *getProfiles() {
+        this.profiles = yield communicator.invoke("getUserProfiles");
     }
 
-    @action.bound
     private setActiveProfileId(id: string) {
         this.activeProfileId = id;
     }

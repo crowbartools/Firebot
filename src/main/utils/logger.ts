@@ -22,7 +22,7 @@ class RendererProxyTransport extends Transport {
                 communicator.emit("mainLog", {
                     level: info.level as LogLevel,
                     message: info.message,
-                    meta: info[SPLAT as never],
+                    meta: info[SPLAT as never]
                 });
             }
         }
@@ -62,7 +62,7 @@ const consoleTransport = new transports.Console({
     level: "silly",
     format: winston.format.combine(
         winston.format.errors({
-            stack: true,
+            stack: true
         }),
         format((info) => {
             if (info.level) {
@@ -72,7 +72,7 @@ const consoleTransport = new transports.Console({
         })(),
         winston.format.colorize(),
         winston.format.printf(consoleLogTemplate)
-    ),
+    )
 });
 
 const rotateFileTransport = new transports.DailyRotateFile({
@@ -84,26 +84,26 @@ const rotateFileTransport = new transports.DailyRotateFile({
     maxFiles: "7d",
     format: winston.format.combine(
         winston.format.errors({
-            stack: true,
+            stack: true
         }),
         winston.format.timestamp({
-            format: "YYYY-MM-DD hh:mm:ss A",
+            format: "YYYY-MM-DD hh:mm:ss A"
         }),
         winston.format.label({
-            label: `v${app.getVersion()}`,
+            label: `v${app.getVersion()}`
         }),
         winston.format.printf(fileLogTemplate)
-    ),
+    )
 });
 
 const rendererProxyTransport = new RendererProxyTransport({
-    level: "silly",
+    level: "silly"
 });
 
 export const logger = winston.createLogger({
     level: "silly",
     exitOnError: false,
-    transports: [consoleTransport, rotateFileTransport, rendererProxyTransport],
+    transports: [consoleTransport, rotateFileTransport, rendererProxyTransport]
 });
 
 process.on("uncaughtException", (error) => {

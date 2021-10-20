@@ -53,13 +53,13 @@ function pathExistsSync(filePath: string) {
 export function ensureFirebotDataDirExistsSync(relativePath = "") {
     const fullPath = path.join(firebotDataPath, relativePath);
     if (!pathExistsSync(fullPath)) {
-        fs.mkdirSync(fullPath);
+        fs.mkdirSync(fullPath, { recursive: true });
     }
 }
 
 export async function ensureFirebotDataDirExists(relativePath = "") {
     const fullPath = path.join(firebotDataPath, relativePath);
     if (!(await pathExists(fullPath))) {
-        await fs.promises.mkdir(fullPath);
+        await fs.promises.mkdir(fullPath, { recursive: true });
     }
 }

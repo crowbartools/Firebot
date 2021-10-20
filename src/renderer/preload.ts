@@ -1,5 +1,6 @@
-import { ipcRenderer } from "electron";
+import { ipcRenderer, contextBridge } from "electron";
 import { communicator } from "SharedUtils";
 
 communicator.init(ipcRenderer, ipcRenderer);
-window.FirebotCommunicator = communicator;
+
+contextBridge.exposeInMainWorld("FirebotCommunicator", communicator);
