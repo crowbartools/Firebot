@@ -354,10 +354,10 @@ class TwitchChat extends EventEmitter {
         this._streamerChatClient.purge(streamer.username, username, reason);
     }
 
-    timeoutUser(username, duration = 600, reason = "") {
+    async timeoutUser(username, duration = 600, reason = "") {
         const streamer = accountAccess.getAccounts().streamer;
         if (this._streamerChatClient == null || !streamer.loggedIn) return;
-        this._streamerChatClient.timeout(streamer.username, username, duration, reason);
+        await this._streamerChatClient.timeout(streamer.username, username, parseInt(duration), reason);
     }
 
     getViewerList() {
