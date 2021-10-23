@@ -127,7 +127,7 @@ const getTwitchData = async (accountType) => {
     const data = await twitchApi.getClient().helix.users.getUserById(account.userId);
 
     account.avatar = data.profilePictureUrl;
-    chatHelpers.setUserProfilePicUrl(account.userId, data.profilePictureUrl);
+    chatHelpers.setUserProfilePicUrl(account.userId, data.profilePictureUrl, false);
 
     if (accountType === "streamer") account.broadcasterType = data.broadcasterType;
     account.username = data.name;
