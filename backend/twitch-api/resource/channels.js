@@ -1,25 +1,15 @@
 "use strict";
 
-const twitchApi = require("../client");
-const { TwitchAPICallType } = require('twitch/lib');
+const twitchApi = require("../api");
 const accountAccess = require("../../common/account-access");
 const logger = require('../../logwrapper');
 
 /**
- * @typedef TwitchChannelInformation
- * @property {string} broadcaster_id Twitch User ID of this channel owner
- * @property {string} game_name Name of the game being played on the channel
- * @property {string} game_id Current game ID being played on the channel
- * @property {string} title Title of the stream
- * @property {string} broadcaster_language Language of the channel
- */
-
-/**
  * Get channel info (game, title, etc) for the given broadcaster user id
  * @param {string} [broadcasterId] The id of the broadcaster to get channel info for. Defaults to Streamer channel if left blank.
- * @returns {Promise<TwitchChannelInformation>}
+ * @returns {Promise<import("@twurple/api").HelixChannel>}
  */
-async function getChannelInformation(broadcasterId) {
+const getChannelInformation = async (broadcasterId) => {
 
     // default to streamer id
     if (broadcasterId == null || broadcasterId === "") {
@@ -28,33 +18,27 @@ async function getChannelInformation(broadcasterId) {
 
     const client = twitchApi.getClient();
     try {
-        const response = await client.callApi({
-            type: TwitchAPICallType.Helix,
-            url: "channels",
-            method: "GET",
-            query: {
-                "broadcaster_id": broadcasterId
-            }
-        });
-        if (response == null || response.data == null || response.data.length < 1) {
-            return null;
-        }
-        /**@type {TwitchChannelInformation} */
-        return response.data[0];
+        const response = await client.channels.getChannelInfo(broadcasterId);
+        return response;
     } catch (error) {
         logger.error("Failed to get twitch channel info", error);
         return null;
     }
-}
+};
 
-async function getOnlineStatus(username) {
+/**
+ * Check whether a streamer is currently live.
+ * @param {string} username
+ * @returns {Promise<boolean>}
+ */
+const getOnlineStatus = async (username) => {
     const client = twitchApi.getClient();
     if (client == null) {
         return false;
     }
 
     try {
-        const stream = await client.helix.streams.getStreamByUserName(username);
+        const stream = await client.streams.getStreamByUserName(username);
         if (stream != null) {
             return true;
         }
@@ -63,37 +47,33 @@ async function getOnlineStatus(username) {
     }
 
     return false;
-}
+};
 
-async function updateChannelInformation(title = undefined, gameId = undefined) {
+/**
+ * Update the information of a Twitch channel.
+ * @param {import("@twurple/api").HelixChannelUpdate} data
+ * @returns {Promise<void>}
+ */
+const updateChannelInformation = async (data) => {
     const client = twitchApi.getClient();
-    await client.callApi({
-        type: TwitchAPICallType.Helix,
-        method: "PATCH",
-        url: "channels",
-        query: {
-            "broadcaster_id": accountAccess.getAccounts().streamer.userId,
-            "title": title,
-            "game_id": gameId
-        }
-    });
-}
+    await client.channels.updateChannelInfo(accountAccess.getAccounts().streamer.userId, data);
+};
 
 /**
  * Get channel info (game, title, etc) for the given username
  * @param {string} username The id of the broadcaster to get channel info for.
- * @returns {Promise<TwitchChannelInformation>}
+ * @returns {Promise<import("@twurple/api").HelixChannel>}
  */
-async function getChannelInformationByUsername(username) {
+const getChannelInformationByUsername = async (username) => {
     if (username == null) {
         return null;
     }
 
     const client = twitchApi.getClient();
-    /**@type {import("twitch/lib").HelixUser} */
+    /**@type {import("@twurple/api").HelixUser} */
     let user;
     try {
-        user = await client.helix.users.getUserByName(username);
+        user = await client.users.getUserByName(username);
     } catch (error) {
         logger.error(`Error getting user with username ${username}`, error);
     }
@@ -103,18 +83,19 @@ async function getChannelInformationByUsername(username) {
     }
 
     return getChannelInformation(user.id);
-}
+};
 
-async function triggerAdBreak(adLength) {
+/**
+ * Trigger a Twitch ad break. Default length 30 seconds.
+ * @param {string} [adLength] How long the ad should run.
+ * @returns {Promise<boolean>}
+ */
+const triggerAdBreak = async (adLength = 30) => {
     try {
         const client = twitchApi.getClient();
         const userId = accountAccess.getAccounts().streamer.userId;
 
-        if (adLength == null) {
-            adLength = 30;
-        }
-
-        await client.kraken.channels.startChannelCommercial(userId, adLength);
+        await client.channels.startChannelCommercial(userId, adLength);
 
         logger.debug(`A commercial was run. Length: ${adLength}. Twitch does not send confirmation, so we can't be sure it ran.`);
         return true;
@@ -122,7 +103,7 @@ async function triggerAdBreak(adLength) {
         renderWindow.webContents.send("error", `Failed to trigger ad-break because: ${error.message}`);
         return false;
     }
-}
+};
 
 exports.getChannelInformation = getChannelInformation;
 exports.getChannelInformationByUsername = getChannelInformationByUsername;

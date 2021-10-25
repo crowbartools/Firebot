@@ -8,13 +8,14 @@ const accountAccess = require("../../common/account-access");
 const chatModerationManager = require("../moderation/chat-moderation-manager");
 const twitchEventsHandler = require("../../events/twitch-events");
 const raidMessageChecker = require(".././moderation/raid-message-checker");
+const chatRolesManager = require("../../roles/chat-roles-manager");
 const logger = require("../../logwrapper");
 
 const events = require("events");
 
 exports.events = new events.EventEmitter();
 
-/** @arg {import('twitch-chat-client/lib/ChatClient').default} botChatClient */
+/** @arg {import('@twurple/chat').ChatClient} botChatClient */
 exports.setupBotChatListeners = (botChatClient) => {
     botChatClient.onWhisper(async (_user, messageText, msg) => {
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText, true);
@@ -24,9 +25,9 @@ exports.setupBotChatListeners = (botChatClient) => {
 
 const HIGHLIGHT_MESSAGE_REWARD_ID = "highlight-message";
 
-/** @arg {import('twitch-chat-client/lib/ChatClient').ChatClient} streamerChatClient */
+/** @arg {import('@twurple/chat').ChatClient} streamerChatClient */
 exports.setupChatListeners = (streamerChatClient) => {
-    streamerChatClient.onPrivmsg(async (_channel, user, messageText, msg) => {
+    streamerChatClient.onMessage(async (_channel, user, messageText, msg) => {
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText);
 
         await chatModerationManager.moderateMessage(firebotChatMessage);
@@ -124,5 +125,13 @@ exports.setupChatListeners = (streamerChatClient) => {
     streamerChatClient.onTimeout((_, username, duration) => {
         twitchEventsHandler.viewerTimeout.triggerTimeout(username, duration);
         frontendCommunicator.send("twitch:chat:user:delete-messages", username);
+    });
+
+    streamerChatClient._onVipResult((_, username) => {
+        chatRolesManager.addVipToVipList(username);
+    });
+
+    streamerChatClient._onUnvipResult((_, username) => {
+        chatRolesManager.removeVipFromVipList(username);
     });
 };

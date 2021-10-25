@@ -4,17 +4,14 @@ const logger = require("../../logwrapper");
 const eventManager = require("../EventManager");
 const frontendCommunicator = require("../../common/frontend-communicator");
 
-/**@argument {import('twitch-pubsub-client').PubSubRedemptionMessage} redemptionMessage */
+/**@argument {import("@twurple/pubsub").PubSubRedemptionMessage} redemptionMessage */
 exports.handleRewardRedemption = (redemptionMessage) => {
 
     logger.debug("Got reward redemption event!");
 
-    let imageUrl;
-    if (redemptionMessage._data &&
-        redemptionMessage._data.data &&
-        redemptionMessage._data.data.redemption &&
-        redemptionMessage._data.data.redemption.reward.default_image) {
-        const images = redemptionMessage._data.data.redemption.reward.default_image;
+    let imageUrl = "";
+    if (redemptionMessage && redemptionMessage.defaultImage) {
+        const images = redemptionMessage.defaultImage;
         if (images.url_4x) {
             imageUrl = images.url_4x;
         } else if (images.url_2x) {
@@ -35,7 +32,7 @@ exports.handleRewardRedemption = (redemptionMessage) => {
         },
         reward: {
             id: redemptionMessage.rewardId,
-            name: redemptionMessage.rewardName,
+            name: redemptionMessage.rewardTitle,
             cost: redemptionMessage.rewardCost,
             imageUrl: imageUrl
         }
@@ -49,7 +46,7 @@ exports.handleRewardRedemption = (redemptionMessage) => {
             redemptionId: redemptionMessage.id,
             rewardId: redemptionMessage.rewardId,
             rewardImage: imageUrl,
-            rewardName: redemptionMessage.rewardName,
+            rewardName: redemptionMessage.rewardTitle,
             rewardDescription: redemptionMessage.rewardPrompt,
             rewardCost: redemptionMessage.rewardCost
         };

@@ -4,13 +4,13 @@ const twitchApi = require("../twitch-api/api");
 const frontendCommunicator = require("../common/frontend-communicator");
 
 /**
- * @param {import('twitch/lib/API/Kraken/Team/Team').Team[]} teams
+ * @param {import('@twurple/api').HelixTeam[]} teams
  */
 function mapRoles(teams) {
     return teams
         .map(team => {
             return {
-                id: team.id,
+                id: parseInt(team.id),
                 name: team.displayName
             };
         });

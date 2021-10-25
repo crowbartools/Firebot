@@ -42,7 +42,7 @@ const model = {
     `,
     optionsController: () => {},
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.action == null || effect.action === "") {
             errors.push("Please select an action to perform.");
         }
@@ -52,13 +52,14 @@ const model = {
         return errors;
     },
     onTriggerEvent: async event => {
-        let username = event.effect.username;
+        const username = event.effect.username;
         if (username == null) {
             logger.debug("Couldn't find username for active user list effect.");
             return true;
         }
 
-        let userId = (await twitchApi.users.getUserChatInfoByName(event.effect.username)).id;
+        const client = twitchApi.getClient();
+        const userId = (await client.users.getUserByName(event.effect.username)).id;
         if (userId == null) {
             logger.debug("Couldn't get ids for username in active user list effect.");
             return true;

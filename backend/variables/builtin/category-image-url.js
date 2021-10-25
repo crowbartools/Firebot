@@ -37,7 +37,7 @@ const model = {
 
         try {
             const channelInfo = await twitchApi.channels.getChannelInformationByUsername(username);
-            const category = await twitchApi.categories.getCategoryById(channelInfo.game_id, size);
+            const category = await twitchApi.categories.getCategoryById(channelInfo.gameId, size);
 
             return category.boxArtUrl ? category.boxArtUrl : "[No Category Image Found]";
         } catch (err) {

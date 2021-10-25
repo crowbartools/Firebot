@@ -3,8 +3,7 @@
 const uuid = require("uuid/v4");
 const logger = require("../logwrapper");
 const accountAccess = require("../common/account-access");
-const twitchClient = require("../twitch-api/client");
-const { TwitchAPICallType } = require("twitch/lib");
+const twitchClient = require("../twitch-api/api");
 const bttv = require("./third-party/bttv");
 const ffz = require("./third-party/ffz");
 const frontendCommunicator = require("../common/frontend-communicator");
@@ -20,7 +19,7 @@ const frontendCommunicator = require("../common/frontend-communicator");
  * @property {string} customRewardId
  * @property {string} color
  * @property {string} rawText
- * @property {import('twitch-chat-client/lib/Toolkit/EmoteTools').ParsedMessagePart[]} parts
+ * @property {import('@twurple/common').ParsedMessagePart[]} parts
  * @property {boolean} whisper
  * @property {boolean} action
  * @property {boolean} isCheer
@@ -36,13 +35,29 @@ const frontendCommunicator = require("../common/frontend-communicator");
  *
  */
 
-/**@type {import('twitch/lib/API/Badges/ChatBadgeList').ChatBadgeList} */
+/**
+ * @typedef FirebotEmote
+ * @property {string} url
+ * @property {string} origin
+ * @property {string} code
+ */
+
+/**@type {import('@twurple/api').ChatBadgeSet[]} */
 let badgeCache = null;
 exports.cacheBadges = async () => {
     const streamer = accountAccess.getAccounts().streamer;
     const client = twitchClient.getClient();
     if (streamer.loggedIn && client) {
-        badgeCache = await client.badges.getChannelBadges(streamer.userId, true);
+        try {
+            const channelBadges = await client.chat.getChannelBadges(streamer.userId);
+            const globalBadges = await client.chat.getGlobalBadges();
+            badgeCache = [
+                ...channelBadges,
+                ...globalBadges
+            ];
+        } catch (error) {
+            logger.error("Failed to get channel chat badges", error);
+        }
     }
 };
 
@@ -54,34 +69,30 @@ exports.setStreamerData = function(newStreamerData) {
     streamerData = newStreamerData;
 };
 
-let streamerEmotes = null;
+/** @type {import("@twurple/api").HelixEmote[]} */
+let twitchEmotes = null;
 
-exports.cacheStreamerEmotes = async () => {
+exports.cacheTwitchEmotes = async () => {
     const client = twitchClient.getClient();
     const streamer = accountAccess.getAccounts().streamer;
 
     if (client == null || !streamer.loggedIn) return;
 
     try {
-        const response = await client.callApi({
-            type: TwitchAPICallType.Helix,
-            url: "chat/emotes",
-            query: {
-                "broadcaster_id": streamer.userId
-            }
-        });
-        if (response && response.data) {
-            streamerEmotes = response.data;
-        } else {
-            return null;
-        }
+        const channelEmotes = await client.chat.getChannelEmotes(streamer.userId);
+        const globalEmotes = await client.chat.getGlobalEmotes();
+
+        if (!channelEmotes && !globalEmotes) return;
+
+        twitchEmotes = [
+            ...channelEmotes,
+            ...globalEmotes
+        ];
     } catch (err) {
-        logger.error("Failed to get streamer chat emotes", err);
+        logger.error("Failed to get Twitch chat emotes", err);
         return null;
     }
 };
-
-
 
 /**
  * @typedef ThirdPartyEmote
@@ -107,16 +118,14 @@ exports.cacheThirdPartyEmotes = async () => {
 
 exports.handleChatConnect = async () => {
     await exports.cacheBadges();
-
-    await exports.cacheStreamerEmotes();
-
+    await exports.cacheTwitchEmotes();
     await exports.cacheThirdPartyEmotes();
 
     frontendCommunicator.send("all-emotes", [
-        ...Object.values(streamerEmotes || {})
+        ...Object.values(twitchEmotes || {})
             .flat()
             .map(e => ({
-                url: e.images.url_1x,
+                url: e.getImageUrl(1),
                 origin: "Twitch",
                 code: e.name
             })),
@@ -142,7 +151,7 @@ async function getUserProfilePicUrl(userId) {
     const streamer = accountAccess.getAccounts().streamer;
     const client = twitchClient.getClient();
     if (streamer.loggedIn && client) {
-        const user = await client.helix.users.getUserById(userId);
+        const user = await client.users.getUserById(userId);
         if (user) {
             profilePicUrlCache[userId] = user.profilePictureUrl;
             return user.profilePictureUrl;
@@ -151,9 +160,11 @@ async function getUserProfilePicUrl(userId) {
     return null;
 }
 exports.getUserProfilePicUrl = getUserProfilePicUrl;
-exports.setUserProfilePicUrl = (userId, url) => {
+exports.setUserProfilePicUrl = (userId, url, updateAccountAvatars = true) => {
     if (userId == null || url == null) return;
     profilePicUrlCache[userId] = url;
+
+    if (!updateAccountAvatars) return;
 
     if (userId === accountAccess.getAccounts().streamer.userId) {
         updateAccountAvatar("streamer", accountAccess.getAccounts().streamer, url);
@@ -166,7 +177,7 @@ const URL_REGEX = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\.[a-z
 
 /**
  * @param {FirebotChatMessage} firebotChatMessage
- * @param {import('twitch-chat-client/lib/Toolkit/EmoteTools').ParsedMessagePart[]} parts
+ * @param {import("@twurple/common").ParsedMessagePart[]} parts
  */
 function parseMessageParts(firebotChatMessage, parts) {
     if (firebotChatMessage == null || parts == null) return [];
@@ -222,12 +233,37 @@ function parseMessageParts(firebotChatMessage, parts) {
             return subParts;
         }
         if (p.type === "emote") {
-            p.url = `https://static-cdn.jtvnw.net/emoticons/v1/${p.id}/1.0`;
             p.origin = "Twitch";
+            const emote = twitchEmotes.find(e => e.name === p.name);
+            p.url = emote ? emote.getImageUrl(1) : `https://static-cdn.jtvnw.net/emoticons/v2/${p.id}/default/dark/1.0`;
         }
         return p;
     });
 }
+
+const getChatBadges = (badges) => {
+    const chatBadges = [];
+
+    for (const [setName, version] of badges.entries()) {
+
+        const set = badgeCache.find(b => b.id === setName);
+        if (set == null) continue;
+
+        const setVersion = set.getVersion(version);
+        if (setVersion == null) continue;
+
+        try {
+            chatBadges.push({
+                title: setVersion.id,
+                url: setVersion.getImageUrl(2)
+            });
+        } catch (err) {
+            logger.debug(`Failed to find badge ${setName} v:${version}`, err);
+        }
+    }
+
+    return chatBadges;
+};
 
 exports.buildFirebotChatMessageFromText = async (text = "") => {
     const streamer = accountAccess.getAccounts().streamer;
@@ -257,27 +293,29 @@ exports.buildFirebotChatMessageFromText = async (text = "") => {
         ]
     };
 
-    if (streamerEmotes) {
+    if (twitchEmotes) {
         const words = text.split(" ");
         for (const word of words) {
             let emoteId = null;
+            let url = "";
             try {
-                const foundEmote = Object.values(streamerEmotes || {})
+                const foundEmote = Object.values(twitchEmotes || {})
                     .flat()
                     .find(e => e.name === word);
                 if (foundEmote) {
                     emoteId = foundEmote.id;
+                    url = foundEmote.getImageUrl(1);
                 }
             } catch (err) {
                 //logger.silly(`Failed to find emote id for ${word}`, err);
             }
 
-            /**@type {import('twitch-chat-client/lib/Toolkit/EmoteTools').ParsedMessagePart} */
+            /**@type {import('@twurple/common').ParsedMessagePart} */
             let part;
             if (emoteId != null) {
                 part = {
                     type: "emote",
-                    url: `https://static-cdn.jtvnw.net/emoticons/v1/${emoteId}/1.0`,
+                    url: url,
                     id: emoteId,
                     name: word
                 };
@@ -299,31 +337,15 @@ exports.buildFirebotChatMessageFromText = async (text = "") => {
     streamerFirebotChatMessage.parts = parseMessageParts(streamerFirebotChatMessage, streamerFirebotChatMessage.parts);
 
     if (badgeCache != null) {
-        for (const [setName, version] of streamerData.badges.entries()) {
-
-            const set = badgeCache.getBadgeSet(setName);
-            if (set._data == null) continue;
-
-            const setVersion = set.getVersion(version);
-            if (setVersion._data == null) continue;
-
-            try {
-                streamerFirebotChatMessage.badges.push({
-                    title: setVersion.title,
-                    url: setVersion.getImageUrl(2)
-                });
-            } catch (err) {
-                logger.debug(`Failed to find badge ${setName} v:${version}`, err);
-            }
-        }
+        streamerFirebotChatMessage.badges = getChatBadges(streamerData.badges);
     }
 
     return streamerFirebotChatMessage;
 };
 
 /**
- * @arg {import('twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage').TwitchPrivateMessage} msg
- * @returns {FirebotChatMessage}
+ * @arg {import("@twurple/chat").PrivateMessage} msg
+ * @returns {Promise<FirebotChatMessage>}
 */
 exports.buildFirebotChatMessage = async (msg, msgText, whisper = false, action = false) => {
 
@@ -366,23 +388,7 @@ exports.buildFirebotChatMessage = async (msg, msgText, whisper = false, action =
     firebotChatMessage.parts = messageParts;
 
     if (badgeCache != null) {
-        for (const [setName, version] of msg.userInfo.badges.entries()) {
-
-            const set = badgeCache.getBadgeSet(setName);
-            if (set._data == null) continue;
-
-            const setVersion = set.getVersion(version);
-            if (setVersion._data == null) continue;
-
-            try {
-                firebotChatMessage.badges.push({
-                    title: setVersion.title,
-                    url: setVersion.getImageUrl(2)
-                });
-            } catch (err) {
-                logger.debug(`Failed to find badge ${setName} v:${version}`, err);
-            }
-        }
+        firebotChatMessage.badges = getChatBadges(msg.userInfo.badges);
     }
 
     firebotChatMessage.isFounder = msg.userInfo.isFounder;

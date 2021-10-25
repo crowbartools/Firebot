@@ -22,10 +22,10 @@ function buildCustomEmbed(customEmbedData) {
 async function buildChannelEmbed() {
     const streamer = accountAccess.getAccounts().streamer;
 
-    /**@type {import('twitch').HelixStream} */
+    /**@type {import('@twurple/api').HelixStream} */
     let currentStream;
     try {
-        currentStream = await twitchApi.getClient().helix.streams.getStreamByUserId(streamer.userId);
+        currentStream = await twitchApi.getClient().streams.getStreamByUserId(streamer.userId);
     } catch (error) {
         // stream not running
     }
@@ -34,9 +34,9 @@ async function buildChannelEmbed() {
         return null;
     }
 
-    /**@type {import('twitch').HelixUser} */
+    /**@type {import('@twurple/api').HelixUser} */
     let user;
-    /**@type {import('twitch').HelixGame} */
+    /**@type {import('@twurple/api').HelixGame} */
     let game;
     try {
         user = await currentStream.getUser();
@@ -69,7 +69,7 @@ async function buildChannelEmbed() {
 }
 
 /**
- * @param {import('twitch').HelixClip} clip
+ * @param {import('@twurple/api').HelixClip} clip
  */
 async function buildClipEmbed(clip) {
     const streamer = accountAccess.getAccounts().streamer;

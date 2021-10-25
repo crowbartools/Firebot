@@ -1,6 +1,6 @@
 {
   "name": "firebotv5",
-  "version": "5.45.0",
+  "version": "5.46.1",
   "description": "Powerful all-in-one bot for Twitch streamers.",
   "main": "main.js",
   "scripts": {
@@ -40,6 +40,10 @@
   },
   "dependencies": {
     "@aws-sdk/client-polly": "^3.26.0",
+    "@twurple/api": "^5.0.5",
+    "@twurple/auth": "^5.0.5",
+    "@twurple/chat": "^5.0.5",
+    "@twurple/pubsub": "^5.0.5",
     "angular": "^1.8.0",
     "angular-animate": "^1.7.8",
     "angular-aria": "^1.7.9",
@@ -107,9 +111,6 @@
     "sanitize-filename": "^1.6.3",
     "simple-oauth2": "^3.4.0",
     "socket.io-client": "^2.3.0",
-    "twitch": "^4.6.7",
-    "twitch-chat-client": "^4.6.7",
-    "twitch-pubsub-client": "^4.2.3",
     "ui-select": "^0.19.8",
     "underscore": "^1.13.1",
     "unzipper": "^0.9.15",

@@ -769,11 +769,6 @@ frontendCommunicator.onAsync("getViewerDetails", (userId) => {
     return userAccess.getUserDetails(userId);
 });
 
-frontendCommunicator.on("updateViewerRole", (data) => {
-    const { userId, role, addOrRemove } = data;
-    //await twitchApi.users.updateUserRole(userId, role, addOrRemove);
-});
-
 frontendCommunicator.on("updateViewerDataField", (data) => {
     const { userId, field, value } = data;
 

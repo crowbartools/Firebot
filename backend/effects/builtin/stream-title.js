@@ -1,8 +1,7 @@
 "use strict";
 
 const { EffectCategory } = require('../../../shared/effect-constants');
-const twitchClient = require("../../twitch-api/client");
-const { TwitchAPICallType } = require('twitch/lib');
+const twitchApi = require("../../twitch-api/api");
 const accountAccess = require("../../common/account-access");
 
 const model = {
@@ -29,17 +28,9 @@ const model = {
         return errors;
     },
     onTriggerEvent: async event => {
-        const client = twitchClient.getClient();
+        const client = twitchApi.getClient();
 
-        await client.callApi({
-            type: TwitchAPICallType.Helix,
-            method: "PATCH",
-            url: "channels",
-            query: {
-                "broadcaster_id": accountAccess.getAccounts().streamer.userId,
-                "title": event.effect.title
-            }
-        });
+        await client.channels.updateChannelInfo(accountAccess.getAccounts().streamer.userId, {title: event.effect.title});
         return true;
     }
 };
