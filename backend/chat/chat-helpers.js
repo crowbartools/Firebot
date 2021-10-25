@@ -160,9 +160,11 @@ async function getUserProfilePicUrl(userId) {
     return null;
 }
 exports.getUserProfilePicUrl = getUserProfilePicUrl;
-exports.setUserProfilePicUrl = (userId, url) => {
+exports.setUserProfilePicUrl = (userId, url, updateAccountAvatars = true) => {
     if (userId == null || url == null) return;
     profilePicUrlCache[userId] = url;
+
+    if (!updateAccountAvatars) return;
 
     if (userId === accountAccess.getAccounts().streamer.userId) {
         updateAccountAvatar("streamer", accountAccess.getAccounts().streamer, url);

@@ -75,6 +75,8 @@ async function getUserDetails(userId) {
         creationDate: twitchUser.creationDate
     };
 
+    const userRoles = await chatRolesManager.getUsersChatRoles(twitchUser.id);
+
     if (firebotUserData.profilePicUrl !== twitchUser.profilePictureUrl) {
         chatHelpers.setUserProfilePicUrl(twitchUser.id, twitchUser.profilePictureUrl);
 
@@ -84,7 +86,7 @@ async function getUserDetails(userId) {
         frontendCommunicator.send("twitch:chat:user-updated", {
             id: firebotUserData._id,
             username: firebotUserData.displayName,
-            roles: firebotUserData.twitchRoles,
+            roles: userRoles,
             profilePicUrl: firebotUserData.profilePicUrl,
             active: activeUserHandler.userIsActive(firebotUserData._id)
         });
@@ -101,7 +103,6 @@ async function getUserDetails(userId) {
         logger.warn("Unable to get banned status", error);
     }
 
-    const userRoles = await chatRolesManager.getUsersChatRoles(twitchUser.id);
     const teamRoles = await teamRolesManager.getAllTeamRolesForViewer(twitchUser.name);
 
     const userFollowsStreamerResponse = await client.users.getFollows({

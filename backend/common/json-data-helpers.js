@@ -40,7 +40,7 @@ exports.parseData = (newData, currentData, propertyPath) => {
     const dataRaw = newData != null ? newData.toString().toLowerCase() : "null";
     const dataIsNull = dataRaw === "null" || dataRaw === "undefined";
 
-    if (propertyPath == null) {
+    if (propertyPath == null || propertyPath.length < 1) {
         let dataToSet = dataIsNull ? undefined : newData;
         if (currentData && Array.isArray(currentData) && !Array.isArray(newData) && !dataIsNull) {
             currentData.push(newData);
