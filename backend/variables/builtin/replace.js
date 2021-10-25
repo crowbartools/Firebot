@@ -22,7 +22,7 @@ const model = {
             }
         ],
         categories: [VariableCategory.TEXT],
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
     },
     evaluator: (_, input, search, replacement = "", searchIsRegex = false, flags = "g") => {
 
