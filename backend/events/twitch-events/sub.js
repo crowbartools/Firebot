@@ -7,7 +7,7 @@ const eventManager = require("../../events/EventManager");
  * @param {import("@twurple/pubsub").PubSubSubscriptionMessage} subInfo
  */
 exports.triggerSub = (subInfo) => {
-    const totalMonths = subInfo._data["cumulative_months"] || 1;
+    const totalMonths = subInfo.cumulativeMonths || 1;
     const streak = subInfo.streakMonths || 1;
     const isPrime = subInfo.subPlan === "Prime";
 

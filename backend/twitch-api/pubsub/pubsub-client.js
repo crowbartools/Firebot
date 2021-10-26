@@ -100,10 +100,10 @@ async function createClient() {
         listeners.push(bitsListener);
 
         const subsListener = await pubSubClient.onSubscription(streamer.userId, (subInfo) => {
-            if (subInfo._data["context"] === "sub" || subInfo._data["context"] === "resub") {
-                twitchEventsHandler.sub.triggerSub(subInfo);
-            } else {
+            if (subInfo.isGift) {
                 twitchEventsHandler.giftSub.triggerSubGift(subInfo);
+            } else {
+                twitchEventsHandler.sub.triggerSub(subInfo);
             }
         });
         listeners.push(subsListener);
