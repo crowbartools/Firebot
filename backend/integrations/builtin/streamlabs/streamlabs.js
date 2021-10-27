@@ -6,7 +6,6 @@ const request = require("request");
 const { secrets } = require("../../../secrets-manager");
 
 const slEventHandler = require("./events/streamlabs-event-handler");
-const slVariableLoader = require("./variables/streamlabs-variable-loader");
 const slEffectsLoader = require("./effects/streamlabs-effect-loader");
 
 const integrationDefinition = {
@@ -59,7 +58,6 @@ class StreamlabsIntegration extends EventEmitter {
     }
     init() {
         slEventHandler.registerEvents();
-        slVariableLoader.registerVariables();
         slEffectsLoader.registerEffects();
     }
     connect(integrationData) {

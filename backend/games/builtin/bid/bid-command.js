@@ -28,7 +28,12 @@ function purgeCaches() {
 
 function stopBidding(chatter) {
     clearTimeout(bidTimer);
-    twitchChat.sendChatMessage(`${activeBiddingInfo.topBidder} has won the bidding with ${activeBiddingInfo.currentBid}!`, null, chatter);
+    if (activeBiddingInfo.topBidder) {
+        twitchChat.sendChatMessage(`${activeBiddingInfo.topBidder} has won the bidding with ${activeBiddingInfo.currentBid}!`, null, chatter);
+    } else {
+        twitchChat.sendChatMessage(`There is no winner, because no one bid!`, null, chatter);
+    }
+
     purgeCaches();
 }
 
