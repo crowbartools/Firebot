@@ -173,7 +173,7 @@ exports.setUserProfilePicUrl = (userId, url, updateAccountAvatars = true) => {
     }
 };
 
-const URL_REGEX = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)/i;
+const URL_REGEX = /^(?:https?:(?:\/\/)?)?(?:[a-z\d][a-z\d-]{0,253}[a-z\d]\.)+[a-z][a-z\d-]{0,60}[a-z\d](?:$|[\\/])/i;
 
 /**
  * @param {FirebotChatMessage} firebotChatMessage
