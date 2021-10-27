@@ -76,13 +76,17 @@ exports.cacheTwitchEmotes = async () => {
     const client = twitchClient.getClient();
     const streamer = accountAccess.getAccounts().streamer;
 
-    if (client == null || !streamer.loggedIn) return;
+    if (client == null || !streamer.loggedIn) {
+        return;
+    }
 
     try {
         const channelEmotes = await client.chat.getChannelEmotes(streamer.userId);
         const globalEmotes = await client.chat.getGlobalEmotes();
 
-        if (!channelEmotes && !globalEmotes) return;
+        if (!channelEmotes && !globalEmotes) {
+            return;
+        }
 
         twitchEmotes = [
             ...channelEmotes,
@@ -161,10 +165,14 @@ async function getUserProfilePicUrl(userId) {
 }
 exports.getUserProfilePicUrl = getUserProfilePicUrl;
 exports.setUserProfilePicUrl = (userId, url, updateAccountAvatars = true) => {
-    if (userId == null || url == null) return;
+    if (userId == null || url == null) {
+        return;
+    }
     profilePicUrlCache[userId] = url;
 
-    if (!updateAccountAvatars) return;
+    if (!updateAccountAvatars) {
+        return;
+    }
 
     if (userId === accountAccess.getAccounts().streamer.userId) {
         updateAccountAvatar("streamer", accountAccess.getAccounts().streamer, url);
@@ -180,7 +188,9 @@ const URL_REGEX = /^(?:https?:(?:\/\/)?)?(?:[a-z\d][a-z\d-]{0,253}[a-z\d]\.)+[a-
  * @param {import("@twurple/common").ParsedMessagePart[]} parts
  */
 function parseMessageParts(firebotChatMessage, parts) {
-    if (firebotChatMessage == null || parts == null) return [];
+    if (firebotChatMessage == null || parts == null) {
+        return [];
+    }
     const { streamer, bot } = accountAccess.getAccounts();
     return parts.flatMap(p => {
         if (p.type === "text" && p.text != null) {
@@ -247,10 +257,14 @@ const getChatBadges = (badges) => {
     for (const [setName, version] of badges.entries()) {
 
         const set = badgeCache.find(b => b.id === setName);
-        if (set == null) continue;
+        if (set == null) {
+            continue;
+        }
 
         const setVersion = set.getVersion(version);
-        if (setVersion == null) continue;
+        if (setVersion == null) {
+            continue;
+        }
 
         try {
             chatBadges.push({
