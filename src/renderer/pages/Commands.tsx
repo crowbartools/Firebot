@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { useObserver } from "mobx-react-lite";
 import { useStores } from "../stores";
+import { SubWindow } from "../components";
 
 export function Commands() {
+    const [showWindow, setShowWindow] = useState(true);
     return useObserver(() => (
         <div className="w-full h-full">
             <div className="w-80 bg-gray-600 flex flex-col h-full">
@@ -37,6 +39,18 @@ export function Commands() {
                     </div>
                 </div>
             </div>
+            {showWindow && (
+                <SubWindow
+                    windowName="Some Name"
+                    height={1000}
+                    width={300}
+                    onClose={() => setShowWindow(false)}
+
+                >
+                    <div className="bg-gray-600">Some content</div>
+                </SubWindow>
+            )}
+
         </div>
     ));
 }

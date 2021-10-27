@@ -34,27 +34,17 @@ export function createMainWindow() {
         }
     });
 
-    mainWindow.webContents.on(
-        "new-window",
-        (event, _url, frameName, _disposition, options) => {
-            if (frameName.startsWith("Firebot - ")) {
-                event.preventDefault();
-                Object.assign(options, {
-                    width: 300,
-                    height: 300
-                });
-                event.newGuest = new BrowserWindow(options);
-            }
+    mainWindow.webContents.setWindowOpenHandler(({ frameName, url }) => {
+        if (frameName.startsWith("Firebot - ")) {
+            return { action: "allow" };
         }
-    );
+
+        shell.openExternal(url);
+        return { action: "deny" };
+    });
 
     // initialize IPC communicator
     communicator.init(ipcMain, mainWindow.webContents);
-
-    mainWindow.webContents.on("new-window", function (e, url) {
-        e.preventDefault();
-        shell.openExternal(url);
-    });
 
     mainWindow.on("closed", () => {
         mainWindow = null;
