@@ -8,6 +8,7 @@ const { OutputDataType, VariableCategory } = require("../../../shared/variable-c
 
 let triggers = {};
 triggers[EffectTrigger.EVENT] = ["twitch:host"];
+triggers[EffectTrigger.PRESET_LIST] = true;
 triggers[EffectTrigger.MANUAL] = true;
 
 

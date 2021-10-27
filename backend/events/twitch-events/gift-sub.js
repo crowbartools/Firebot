@@ -40,8 +40,8 @@ exports.triggerSubGift = (subInfo) => {
 
     eventManager.triggerEvent("twitch", "subs-gifted", {
         username: subInfo.userDisplayName,
-        giftSubMonths: subInfo._data["cumulative_months"] || 1,
-        gifteeUsername: subInfo._data["recipient_display_name"] || subInfo.userDisplayName,
+        giftSubMonths: subInfo.cumulativeMonths || 1,
+        gifteeUsername: subInfo.userDisplayName,
         gifterUsername: subInfo.gifterDisplayName || subInfo.userDisplayName,
         subPlan: subInfo.subPlan,
         isAnonymous: subInfo.isAnonymous,

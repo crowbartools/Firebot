@@ -4,6 +4,7 @@ const replaceVariableManager = require("./replace-variable-manager");
 
 exports.loadReplaceVariables = () => {
     [
+        'account-creation-date',
         'active-chat-user-count',
         'arg-array',
         'arg-count',
@@ -77,6 +78,7 @@ exports.loadReplaceVariables = () => {
         'read-file',
         'regexExec',
         'regexTest',
+        'replace',
         'reward-description',
         'reward-cost',
         'reward-image-url',
@@ -93,7 +95,6 @@ exports.loadReplaceVariables = () => {
         'target',
         'text-length',
         'text-lowercase',
-        'text-replace',
         'text-scramble',
         'text-uppercase',
         'text-capitalize',
