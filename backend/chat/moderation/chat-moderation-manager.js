@@ -157,6 +157,8 @@ async function moderateMessage(chatMessage) {
         }
 
         if (chatModerationSettings.urlModeration.enabled) {
+            let shouldDeleteMessage = false;
+
             if (!permitCommand.hasTemporaryPermission(chatMessage.username)) {
                 const message = chatMessage.rawText;
                 const regex = new RegExp(/[\w]{2,}[.][\w]{2,}/, "gi");
@@ -178,19 +180,23 @@ async function moderateMessage(chatMessage) {
                             outputMessage = outputMessage.replace("{viewTime}", minimumViewTime.toString());
 
                             logger.debug("Url moderation: Not enough view time.");
+                            shouldDeleteMessage = true;
                         }
                     } else {
                         logger.debug("Url moderation: User does not have exempt role.");
+                        shouldDeleteMessage = true;
                     }
 
-                    chat.deleteMessage(chatMessage.id);
+                    if (shouldDeleteMessage) {
+                        chat.deleteMessage(chatMessage.id);
 
-                    if (outputMessage) {
-                        outputMessage = outputMessage.replace("{userName}", chatMessage.username);
-                        chat.sendChatMessage(outputMessage);
+                        if (outputMessage) {
+                            outputMessage = outputMessage.replace("{userName}", chatMessage.username);
+                            chat.sendChatMessage(outputMessage);
+                        }
+
+                        return;
                     }
-
-                    return;
                 }
             }
         }
