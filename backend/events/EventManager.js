@@ -100,12 +100,12 @@ const manager = new EventManager();
 
 ipcMain.on("getAllEventSources", (event) => {
     logger.info("got 'get all event sources' request");
-    event.returnValue = manager.getAllEventSources();
+    event.returnValue = JSON.parse(JSON.stringify(manager.getAllEventSources()));
 });
 
 ipcMain.on("getAllEvents", (event) => {
     logger.info("got 'get all events' request");
-    event.returnValue = manager.getAllEvents();
+    event.returnValue = JSON.parse(JSON.stringify(manager.getAllEvents()));
 });
 
 // Manually Activate an Event for Testing
