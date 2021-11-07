@@ -36,7 +36,7 @@ jobs:
         if: steps.tagged.outputs.tagged == 1
         uses: 'actions/setup-node@v1'
         with:
-          node-version: '10.x'
+          node-version: '14.x'
 
       - name: Build Prep for Windows
         if: steps.tagged.outputs.tagged == 1 && runner.os == 'windows'
