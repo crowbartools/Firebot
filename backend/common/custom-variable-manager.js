@@ -29,6 +29,8 @@ function getVariableCacheDb() {
         .getJsonDbInProfile("custom-variable-cache");
 }
 
+exports.getAllVariables = () => JSON.parse(JSON.stringify(cache.data));
+
 exports.persistVariablesToFile = () => {
     const db = getVariableCacheDb();
     db.push("/", cache.data);

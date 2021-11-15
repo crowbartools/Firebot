@@ -10,7 +10,8 @@ module.exports = function (grunt) {
     let flags = [
         '--out="./dist/pack"',
         '--arch=x64',
-        '--electronVersion=12.2.2',
+        '--electronVersion=7.1.9',
+        '--js-flags="--harmony"',
         '--asar.unpack="moderation-service.js"',
         '--prune',
         '--overwrite',
