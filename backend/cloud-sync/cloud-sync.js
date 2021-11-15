@@ -12,7 +12,7 @@ function sync(jsonData) {
                 'Content-Type': 'json',
                 'Content-Encoding': 'gzip'
             },
-            form: JSON.stringify(jsonData)
+            body: JSON.stringify(jsonData)
         }, function(err, httpResponse, body) {
             if (httpResponse.statusCode === 429) {
                 logger.error('Bytebin rate limit exceeded.');
