@@ -45,9 +45,9 @@ jobs:
           npm config set msvs_version 2019
           npm install --quiet --global --production windows-build-tools@4.0.0
 
-      - name: Build Prep for Linux
-        if: steps.tagged.outputs.tagged == 1 && runner.os == 'linux'
-        run: sudo apt-get install libx11-dev libxtst-dev libpng-dev
+      # - name: Build Prep for Linux
+      #   if: steps.tagged.outputs.tagged == 1 && runner.os == 'linux'
+      #   run: sudo apt-get install libx11-dev libxtst-dev libpng-dev
 
       - name: Install Global Dependencies
         if: steps.tagged.outputs.tagged == 1
@@ -81,7 +81,7 @@ jobs:
   release:
     name: Draft Release
     needs: build
-    runs-on: 'ubuntu-latest'
+    runs-on: 'windows-latest'
     steps:
       - name: Checkout master branch
         uses: 'actions/checkout@v2'
@@ -105,12 +105,12 @@ jobs:
           name: 'Windows'
           path: ./bundles/
 
-      - name: Download Linux Artifacts
-        if: steps.tagged.outputs.tagged == 1
-        uses: 'actions/download-artifact@v1'
-        with:
-          name: 'Linux'
-          path: ./bundles/
+      # - name: Download Linux Artifacts
+      #   if: steps.tagged.outputs.tagged == 1
+      #   uses: 'actions/download-artifact@v1'
+      #   with:
+      #     name: 'Linux'
+      #     path: ./bundles/
 
       - name: Get Commit Messages
         id: messages
@@ -165,13 +165,13 @@ jobs:
           asset_name: 'firebotv5-${{ steps.package.outputs.version }}-full.nupkg'
           asset_content_type: application/octet-stream
 
-      - name: Upload Tarball file
-        if: steps.tagged.outputs.tagged == 1
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.draft.outputs.upload_url }}
-          asset_path: './bundles/Firebot-linux-x64.tar.gz'
-          asset_name: 'firebot-v${{ steps.package.outputs.version }}-linux-x64.tar.gz'
-          asset_content_type: application/octet-stream
+      # - name: Upload Tarball file
+      #   if: steps.tagged.outputs.tagged == 1
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ steps.draft.outputs.upload_url }}
+      #     asset_path: './bundles/Firebot-linux-x64.tar.gz'
+      #     asset_name: 'firebot-v${{ steps.package.outputs.version }}-linux-x64.tar.gz'
+      #     asset_content_type: application/octet-stream
