@@ -15,6 +15,7 @@ exports.loadFilters = () => {
         'message',
         'new-view-time',
         'previous-view-time',
+        'raid-viewer-count',
         'reward-name',
         'reward',
         'stream-category',
