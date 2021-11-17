@@ -44,7 +44,9 @@ class StreamLootsIntegration extends EventEmitter {
             return;
         }
 
-        this._eventSource = new EventSource(`https://widgets.streamloots.com/alerts/${accountId}/media-stream`);
+        this._eventSource = new EventSource(`https://widgets.streamloots.com/alerts/${accountId}/media-stream`, {
+            rejectUnauthorized: false
+        });
 
         this._eventSource.onmessage = (event) => {
             if (event.data) {
@@ -55,8 +57,7 @@ class StreamLootsIntegration extends EventEmitter {
 
         this._eventSource.onerror = function(err) {
             logger.error("Streamloots eventsource failed:", err);
-            this.emit("disconnected", integrationDefinition.id);
-            this.connected = false;
+            this.disconnect();
             return;
         };
 
