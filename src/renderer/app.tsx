@@ -3,7 +3,7 @@ import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { SideNav } from "./components";
 import { appRoutes } from "./constants";
-import { Commands } from "./pages";
+import { Commands, Settings } from "./pages";
 
 const App = () => (
     <>
@@ -26,9 +26,7 @@ const App = () => (
                             </div>
                         </Route>
                         <Route path={appRoutes.SETTINGS}>
-                            <div className="h-full w-full flex justify-center items-center">
-                                Settings!
-                            </div>
+                            <Settings />
                         </Route>
                     </Switch>
                 </div>
