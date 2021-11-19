@@ -317,16 +317,16 @@ const playVideo = {
             }
         }
 
-        if(effect.videoType === "Twitch Clip" || effect.videoType === "Random Twitch Clip") {
+        if (effect.videoType === "Twitch Clip" || effect.videoType === "Random Twitch Clip") {
 
             const twitchApi = require("../../twitch-api/api");
-            const client = twitchApi.getClient(); 
+            const client = twitchApi.getClient();
 
             let clipId;
 
             /**@type {HelixClip} */
-            let clip; 
-            if(effect.videoType === "Twitch Clip") {
+            let clip;
+            if (effect.videoType === "Twitch Clip") {
                 clipId = effect.twitchClipUrl.replace("https://clips.twitch.tv/", "");
                 try {
                     clip = await client.clips.getClipById(clipId);
@@ -334,18 +334,28 @@ const playVideo = {
                     logger.error("Unable to find clip by id: " + clipId, error);
                     return true;
                 }
-            } else if(effect.videoType === "Random Twitch Clip") {
+            } else if (effect.videoType === "Random Twitch Clip") {
                 const username = effect.twitchClipUsername || accountAccess.getAccounts().streamer.username;
                 try {
-                    const clips = await client.clips.getClipsForBroadcasterPaginated(username).getAll();
 
-                    if(clips.length < 1) {
+                    const user = await client.users.getUserByName(username);
+
+                    if (user == null) {
+                        logger.warn(`Could not found a user by the username ${username}`);
+                        return true;
+                    }
+
+                    const clips = await client.clips.getClipsForBroadcaster(user.id);
+
+                    if (clips.data.length < 1) {
                         logger.warn(`User ${username} has no clips. Unable to get random.`);
                         return true;
                     }
 
-                    const randomClipIndex = util.getRandomInt(0, clips.length - 1);
-                    clip = clips[randomClipIndex];
+                    const randomClipIndex = util.getRandomInt(0, clips.data.length - 1);
+                    clip = clips.data[randomClipIndex];
+
+                    clipId = clip.id;
 
                 } catch (error) {
                     logger.error("Unable to find clip random clip for: " + username, error);
@@ -356,20 +366,20 @@ const playVideo = {
             const rawDataSymbol = Object.getOwnPropertySymbols(clip)[0];
             const clipDuration = clip[rawDataSymbol].duration;
 
-            const effectDuration = effect.length || 1;
-            if(effectDuration < 1) {
+            let effectDuration = effect.length || clipDuration;
+            if (effectDuration < 1) {
                 effectDuration = 1;
             }
-            if(effectDuration > clipDuration) {
+            if (effectDuration > clipDuration) {
                 effectDuration = clipDuration;
             }
 
             webServer.sendToOverlay("playTwitchClip", {
                 clipSlug: clipId,
-                width: effect.width, 
-                height: effect.height, 
-                duration: effectDuration, 
-                position: position, 
+                width: effect.width,
+                height: effect.height,
+                duration: effectDuration,
+                position: position,
                 customCoords: effect.customCoords,
                 enterAnimation: effect.enterAnimation,
                 enterDuration: effect.enterDuration,
@@ -382,10 +392,10 @@ const playVideo = {
                 overlayInstance: data.overlayInstance
             });
 
-            if(effect.wait) {
+            if (effect.wait) {
                 await util.wait(effectDuration * 1000);
             }
-            
+
             return true;
         }
 
