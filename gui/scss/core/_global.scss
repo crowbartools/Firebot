@@ -212,15 +212,15 @@ body {
 
 .fb-nav {
   position:relative;
- height: 100%;
- width: 223px;
- display: flex;
- flex-shrink: 0;
- flex-grow: 0;
- flex-direction: column;
- transition: 0.5s;
- white-space: nowrap;
- background: $sidebar-bg; /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  height: 100%;
+  width: 223px;
+  display: flex;
+  flex-shrink: 0;
+  flex-grow: 0;
+  flex-direction: column;
+  transition: 0.5s;
+  white-space: nowrap;
+  background: $sidebar-bg; /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 }
 .fb-nav.contracted {
  width: 62px;
@@ -241,9 +241,12 @@ body {
 
 .nav-body-wrapper {
   height: 100%;
+  flex-shrink: 1;
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  overflow: hidden;
 }
 
 .nav-links-wrapper {
