@@ -107,4 +107,5 @@ exports.loadEffects = () => {
     effectManager.registerEffect(shoutout);
     effectManager.registerEffect(markAllActivityAcknowledged);
     effectManager.registerEffect(require("./builtin/update-channel-reward"));
+    effectManager.registerEffect(require("./builtin/http-request"));
 };
