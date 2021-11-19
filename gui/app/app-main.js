@@ -4,6 +4,7 @@
     const shell = electron.shell;
 
     const profileManager = require("../../backend/common/profile-manager");
+    const secrets = require("../../secrets.json");
 
     const moment = require("moment");
     moment.locale(electron.remote.app.getLocale());
@@ -71,6 +72,13 @@
                 .preferredLanguage("en");
         }
     ]);
+
+    app.config(function($sceDelegateProvider) {  
+        $sceDelegateProvider.resourceUrlWhitelist([
+            'self',
+            'https://kit.fontawesome.com/**'
+            ]);
+    });
 
     app.config([
         "ngToastProvider",
@@ -169,6 +177,8 @@
     app.controller("MainController", function($scope, $rootScope, $timeout, connectionService, utilityService,
         settingsService, sidebarManager, logger, backendCommunicator) {
         $rootScope.showSpinner = true;
+
+        $scope.fontAwesome5KitUrl = `https://kit.fontawesome.com/${secrets.fontAwesome5KitId}.js`;
 
         $scope.sbm = sidebarManager;
 

@@ -1,6 +1,7 @@
 "use strict";
 
 const logger = require("./logwrapper");
+const frontendCommunicator = require("./common/frontend-communicator");
 
 /**
  * @typedef FirebotSecrets
@@ -19,7 +20,8 @@ const expectedKeys = [
     "tipeeeStreamClientId",
     "tipeeeStreamClientSecret",
     "streamLabsClientId",
-    "streamLabsClientSecret"
+    "streamLabsClientSecret",
+    "fontAwesome5KitId"
 ];
 
 exports.testSecrets = () => {
@@ -41,7 +43,7 @@ exports.testSecrets = () => {
         }
     }
 
-    logger.error(`secrets.json is missing the following keys: ${missingKeys.join(", ")}`);
+    logger.error(`secrets.json is missing the following key(s): ${missingKeys.join(", ")}`);
     return false;
 };
 

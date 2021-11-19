@@ -29,7 +29,6 @@ exports.whenReady = async () => {
     refreshingAuthProvider.setupRefreshingAuthProviders();
 
     const connectionManager = require("../../../common/connection-manager");
-    connectionManager.startOnlineCheckInterval();
 
     const timerAccess = require("../../../timers/timer-access");
     timerAccess.loadTimers();
@@ -41,6 +40,8 @@ exports.whenReady = async () => {
 
     const twitchFrontendListeners = require("../../../twitch-api/frontend-twitch-listeners");
     twitchFrontendListeners.setupListeners();
+
+    connectionManager.startOnlineCheckInterval();
 
     // load effects
     logger.debug("Loading effects...");
@@ -175,7 +176,7 @@ exports.whenReady = async () => {
         const mainWindow = windowManagement.mainWindow;
         if (mainWindow != null && !mainWindow.isDestroyed()) {
             mainWindow.webContents.send("logging", {
-                transport: transport ? { name: transport.name } : null,
+                transport: transport,
                 level: level,
                 msg: msg,
                 meta: meta

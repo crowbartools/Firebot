@@ -20,14 +20,16 @@
 
                 <h5><b>Team Crowbar</b></h5> 
                 <div>
-                    <div uib-tooltip="The Boss">TheLastMage</div>
+                    <div uib-tooltip="The Boss">Firebottle</div>
                     <div uib-tooltip="The Optimizer">ebiggz</div>
                     <div uib-tooltip="The Video Guy">ThePerry</div>
-                    <div>SReject</div>
+                    <div uib-tooltip="The Janitor">SReject</div>
+                    <div uib-tooltip="The Refactorer">CaveMobster</div>
                 </div>
 
                 <h5><b>Contributors</b></h5> 
                 <div>
+                    <div>baamang</div>
                     <div>Skriglitz</div>
                     <div>DragynsLair</div>
                     <div uib-tooltip="The Mature One">Kateract</div>    
