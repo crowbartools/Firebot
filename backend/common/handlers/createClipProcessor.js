@@ -8,8 +8,12 @@ const discord = require("../../integrations/builtin/discord/discord-message-send
 const utils = require("../../utility");
 
 const twitchApi = require("../../twitch-api/api");
+const { HelixClip } = require("@twurple/api");
 const client = twitchApi.getClient();
 
+/**
+ * @returns {Promise<HelixClip?>}
+ */
 exports.createClip = async function(effect, trigger) {
 
     const streamerAccount = accountAccess.getAccounts().streamer;
@@ -18,7 +22,7 @@ exports.createClip = async function(effect, trigger) {
 
     if (broadcast == null) {
         renderWindow.webContents.send('error', `Failed to create a clip. Reason: Streamer is not live.`);
-        return false;
+        return null;
     }
 
     if (effect.postLink) {
@@ -39,7 +43,7 @@ exports.createClip = async function(effect, trigger) {
         if (effect.postLink) {
             twitchChat.sendChatMessage("Whoops! Something went wrong when creating a clip. :(");
         }
-        return;
+        return null;
     }
 
     /**@type {import('@twurple/api').HelixClip} */
@@ -85,5 +89,5 @@ exports.createClip = async function(effect, trigger) {
             twitchChat.sendChatMessage("Whoops! Something went wrong when creating a clip. :(");
         }
     }
-    return true;
+    return clip;
 };

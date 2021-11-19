@@ -6,6 +6,10 @@ const webServer = require("../../../server/httpServer");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const { EffectDependency } = require("../models/effectModels");
 const { EffectCategory } = require('../../../shared/effect-constants');
+const logger = require("../../logwrapper");
+const accountAccess = require("../../common/account-access");
+const util = require("../../utility");
+const { HelixClip } = require("@twurple/api/lib");
 
 /**
  * The Play Video effect
@@ -67,6 +71,12 @@ const playVideo = {
                 <li ng-click="effect.reset = true">
                     <a ng-click="setVideoType('YouTube Video')" href>YouTube Video</a>
                 </li>
+                <li ng-click="effect.reset = true">
+                    <a ng-click="setVideoType('Twitch Clip')" href>Twitch Clip</a>
+                </li>
+                <li ng-click="effect.reset = true">
+                    <a ng-click="setVideoType('Random Twitch Clip')" href>Random Twitch Clip</a>
+                </li>
             </ul>
         </div>
 
@@ -83,6 +93,23 @@ const playVideo = {
                 ng-model="effect.youtube"
                 placeholder="Ex: AAYrZ69XA8c">
         </div>
+
+        <div ng-show="effect.videoType == 'Twitch Clip'">
+            <firebot-input 
+                input-title="Twitch Clip Url/ID" 
+                model="effect.twitchClipUrl" 
+                placeholder-text="Ex: HealthyBlazingLyrebirdTinyFace" 
+            />
+        </div>
+
+        <div ng-show="effect.videoType == 'Random Twitch Clip'">
+            <firebot-input 
+                input-title="Twitch Username" 
+                model="effect.twitchClipUsername" 
+                placeholder-text="Ex: $streamer, $user, etc" 
+            />
+        </div>
+
     </eos-container>
 
     <div ng-show="effect.videoType">
@@ -109,16 +136,21 @@ const playVideo = {
                     type="text"
                     class="form-control"
                     aria-describedby="video-length-effect-type"
+                    placeholder="Optional"
                     replace-variables="number"
                     ng-model="effect.length">
             </div>
-            <label class="control-fb control--checkbox" style="margin-top:15px;"> Loop <tooltip text="'Loop the video until the duration is reached.'"></tooltip>
+            <label ng-if="effect.videoType != 'Random Twitch Clip' && effect.videoType != 'Twitch Clip'" class="control-fb control--checkbox" style="margin-top:15px;"> Loop <tooltip text="'Loop the video until the duration is reached.'"></tooltip>
                 <input type="checkbox" ng-model="effect.loop">
+                <div class="control__indicator"></div>
+            </label>
+            <label ng-if="effect.videoType == 'Random Twitch Clip' || effect.videoType == 'Twitch Clip'" class="control-fb control--checkbox" style="margin-top:15px;"> Wait for clip to finish <tooltip text="'Wait for the twitch clip to finish before allowing the next effect to play.'"></tooltip>
+                <input type="checkbox" ng-model="effect.wait">
                 <div class="control__indicator"></div>
             </label>
         </eos-container>
 
-        <eos-container header="Volume" pad-top="true">
+        <eos-container header="Volume" pad-top="true" ng-if="effect.videoType != 'Random Twitch Clip' && effect.videoType != 'Twitch Clip'">
             <div class="volume-slider-wrapper">
                 <i class="fal fa-volume-down volume-low"></i>
                 <rzslider rz-slider-model="effect.volume" rz-slider-options="{floor: 1, ceil: 10, hideLimitLabels: true}"></rzslider>
@@ -195,6 +227,8 @@ const playVideo = {
             $scope.effect.videoType = type;
             $scope.effect.youtube = "";
             $scope.effect.file = "";
+            $scope.effect.twitchClipUrl = "";
+            $scope.effect.twitchClipUsername = "";
 
             $timeout(function() {
                 $rootScope.$broadcast("rzSliderForceRender");
@@ -281,6 +315,73 @@ const playVideo = {
                     data.overlayInstance = effect.overlayInstance;
                 }
             }
+        }
+
+        if(effect.videoType === "Twitch Clip" || effect.videoType === "Random Twitch Clip") {
+
+            const twitchApi = require("../../twitch-api/api");
+            const client = twitchApi.getClient(); 
+
+            let clipId;
+
+            /**@type {HelixClip} */
+            let clip; 
+            if(effect.videoType === "Twitch Clip") {
+                clipId = effect.twitchClipUrl.replace("https://clips.twitch.tv/", "");
+                try {
+                    clip = await client.clips.getClipById(clipId);
+                } catch (error) {
+                    logger.error("Unable to find clip by id: " + clipId, error);
+                    return true;
+                }
+            } else if(effect.videoType === "Random Twitch Clip") {
+                const username = effect.twitchClipUsername || accountAccess.getAccounts().streamer.username;
+                try {
+                    const clips = await client.clips.getClipsForBroadcasterPaginated(username).getAll();
+
+                    if(clips.length < 1) {
+                        logger.warn(`User ${username} has no clips. Unable to get random.`);
+                        return true;
+                    }
+
+                    const randomClipIndex = util.getRandomInt(0, clips.length - 1);
+                    clip = clips[randomClipIndex];
+
+                } catch (error) {
+                    logger.error("Unable to find clip random clip for: " + username, error);
+                    return true;
+                }
+            }
+
+            const rawDataSymbol = Object.getOwnPropertySymbols(clip)[0];
+            const clipDuration = clip[rawDataSymbol].duration;
+
+            const effectDuration = effect.length || 1;
+            if(effectDuration < 1) {
+                effectDuration = 1;
+            }
+            if(effectDuration > clipDuration) {
+                effectDuration = clipDuration;
+            }
+
+            webServer.sendToOverlay("playTwitchClip", {
+                clipSlug: clipId,
+                width: effect.width, 
+                height: effect.height, 
+                duration: effectDuration, 
+                position: position, 
+                customCoords: effect.customCoords,
+                enterAnimation: effect.enterAnimation,
+                enterDuration: effect.enterDuration,
+                inbetweenAnimation: effect.inbetweenAnimation,
+                inbetweenDuration: effect.inbetweenDuration,
+                inbetweenDelay: effect.inbetweenDelay,
+                inbetweenRepeat: effect.inbetweenRepeat,
+                exitAnimation: effect.exitAnimation,
+                exitDuration: effect.exitDuration,
+                overlayInstance: data.overlayInstance
+            });
+            return true;
         }
 
         let resourceToken = resourceTokenManager.storeResourcePath(
