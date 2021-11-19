@@ -381,6 +381,11 @@ const playVideo = {
                 exitDuration: effect.exitDuration,
                 overlayInstance: data.overlayInstance
             });
+
+            if(effect.wait) {
+                await util.wait(effectDuration * 1000);
+            }
+            
             return true;
         }
 
