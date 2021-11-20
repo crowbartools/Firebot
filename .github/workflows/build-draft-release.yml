@@ -36,13 +36,13 @@ jobs:
         if: steps.tagged.outputs.tagged == 1
         uses: 'actions/setup-node@v1'
         with:
-          node-version: '10.x'
+          node-version: '14.x'
 
       - name: Build Prep for Windows
         if: steps.tagged.outputs.tagged == 1 && runner.os == 'windows'
         shell: bash
         run: |
-          npm config set msvs_version 2019
+          npm config set msvs_version 2017
           npm install --quiet --global --production windows-build-tools@4.0.0
 
       - name: Build Prep for Linux
