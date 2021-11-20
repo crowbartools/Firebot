@@ -82,6 +82,12 @@ class TwitchChat extends EventEmitter {
                 frontendCommunicator.send("twitch:chat:autodisconnected", false);
             });
 
+            this._streamerChatClient.onPasswordError((event) => {
+                logger.error("Failed to connect to chat", event);
+                frontendCommunicator.send("error", `Unable to connect to chat. Reason: "${event.message}". Try signing out and back into your streamer/bot account(s).`);
+                this.disconnect(true);
+            });
+
             this._streamerChatClient.onConnect(() => {
                 this.emit("connected");
             });

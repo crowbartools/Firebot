@@ -1,7 +1,13 @@
 "use strict";
 
-const axios = require("axios");
+const https = require('https');
+
+const axiosDefault = require("axios").default;
 const logger = require("../../logwrapper");
+
+const axios = axiosDefault.create({
+    httpsAgent: new https.Agent({ rejectUnauthorized: false })
+});
 
 // Capitalize Name
 function toTitleCase(str) {

@@ -1,7 +1,8 @@
 "use strict";
 
 const uuidv1 = require("uuid/v1");
-
+const util = require("../../../utility");
+const frontendCommunicator = require("../../../common/frontend-communicator");
 
 function seperateTriggerFromArgs(args) {
     let trigger, remainingData = "";
@@ -120,7 +121,17 @@ const commandManagement = {
                 usage: "description [!trigger or \"phrase\"]",
                 description: "Updates the description for a command.",
                 minArgs: 3
-            }
+            },
+            {
+                arg: "enable",
+                usage: "enable [!trigger or \"phrase\"]",
+                description: "Disables the given custom command."
+            },
+            {
+                arg: "disable",
+                usage: "disable [!trigger or \"phrase\"]",
+                description: "Enables the given custom command."
+            },
         ]
     },
     /**
@@ -219,9 +230,9 @@ const commandManagement = {
                 }
 
                 let command = activeCustomCommands.find(c => c.trigger === trigger);
-                if (command === null) {
+                if (command == null) {
                     chat.sendChatMessage(
-                        `Could not find a command with the trigger '${trigger}', please try agian.`
+                        `Could not find a command with the trigger '${trigger}', please try again.`
                     );
                     return resolve();
                 }
@@ -264,9 +275,9 @@ const commandManagement = {
                 }
 
                 let command = activeCustomCommands.find(c => c.trigger === trigger);
-                if (command === null) {
+                if (command == null) {
                     chat.sendChatMessage(
-                        `Could not find a command with the trigger '${trigger}', please try agian.`
+                        `Could not find a command with the trigger '${trigger}', please try again.`
                     );
                     return resolve();
                 }
@@ -289,7 +300,7 @@ const commandManagement = {
             case "description": {
 
                 const command = activeCustomCommands.find(c => c.trigger === trigger);
-                if (command === null) {
+                if (command == null) {
                     chat.sendChatMessage(
                         `Could not find a command with the trigger '${trigger}', please try again.`
                     );
@@ -324,7 +335,7 @@ const commandManagement = {
                 }
 
                 let command = activeCustomCommands.find(c => c.trigger === trigger);
-                if (command === null) {
+                if (command == null) {
                     chat.sendChatMessage(
                         `Could not find a command with the trigger '${trigger}', please try again.`
                     );
@@ -364,7 +375,7 @@ const commandManagement = {
                 }
 
                 let command = activeCustomCommands.find(c => c.trigger === trigger);
-                if (command === null) {
+                if (command == null) {
                     chat.sendChatMessage(
                         `Could not find a command with the trigger '${trigger}', please try again.`
                     );
@@ -402,9 +413,9 @@ const commandManagement = {
             case "remove": {
 
                 let command = activeCustomCommands.find(c => c.trigger === trigger);
-                if (command === null) {
+                if (command == null) {
                     chat.sendChatMessage(
-                        `Could not find a command with the trigger '${trigger}', please try agian.`
+                        `Could not find a command with the trigger '${trigger}', please try again.`
                     );
                     return resolve();
                 }
@@ -412,6 +423,37 @@ const commandManagement = {
                 commandManager.removeCustomCommandByTrigger(trigger);
 
                 chat.sendChatMessage(`Successfully removed command '${trigger}'.`);
+                break;
+            }
+            case "disable":
+            case "enable": {
+                const command = commandManager.getAllCustomCommands().find(c => c.trigger === trigger);
+
+                if (command == null) {
+                    chat.sendChatMessage(
+                        `Could not find a command with the trigger '${trigger}', please try again.`
+                    );
+                    return resolve();
+                }
+
+                const newActiveStatus = triggeredArg === "enable";
+
+                if(command.active === newActiveStatus) {
+                    chat.sendChatMessage(
+                        `${trigger} is already ${triggeredArg}d.`
+                    );
+                    return resolve();
+                }
+
+                command.active = newActiveStatus;
+
+                commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
+    
+                frontendCommunicator.send("custom-commands-updated");
+
+                chat.sendChatMessage(
+                    `${util.capitalize(triggeredArg)}d "${trigger}"`
+                );
                 break;
             }
             default:

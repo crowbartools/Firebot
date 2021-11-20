@@ -124,7 +124,14 @@ const getTwitchData = async (accountType) => {
     const chatHelpers = require("../chat/chat-helpers");
 
     const account = accountType === "streamer" ? cache.streamer : cache.bot;
-    const data = await twitchApi.getClient().users.getUserById(account.userId);
+
+    let data;
+    try {
+        data = await twitchApi.getClient().users.getUserById(account.userId);
+    } catch(error) {
+        logger.warn("Failed to get account data", error);
+        return account;
+    }
 
     account.avatar = data.profilePictureUrl;
     chatHelpers.setUserProfilePicUrl(account.userId, data.profilePictureUrl, false);

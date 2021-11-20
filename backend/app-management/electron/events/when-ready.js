@@ -29,7 +29,6 @@ exports.whenReady = async () => {
     refreshingAuthProvider.setupRefreshingAuthProviders();
 
     const connectionManager = require("../../../common/connection-manager");
-    connectionManager.startOnlineCheckInterval();
 
     const timerAccess = require("../../../timers/timer-access");
     timerAccess.loadTimers();
@@ -41,6 +40,8 @@ exports.whenReady = async () => {
 
     const twitchFrontendListeners = require("../../../twitch-api/frontend-twitch-listeners");
     twitchFrontendListeners.setupListeners();
+
+    connectionManager.startOnlineCheckInterval();
 
     // load effects
     logger.debug("Loading effects...");
