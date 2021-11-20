@@ -160,7 +160,7 @@ const clip = {
 
             if (effect.showInOverlay) {
 
-                const position = effect.position;
+                let position = effect.position;
                 if (position === "Random") {
                     position = mediaProcessor.randomLocation();
                 }
