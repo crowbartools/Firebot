@@ -48,7 +48,9 @@ exports.registerEvents = () => {
 
 exports.processTipeeeStreamEvent = (eventData) => {
     logger.debug("Tipeee event received", eventData);
-    if (eventData === null) return;
+    if (eventData === null) {
+        return;
+    }
     if (eventData.type === "donation") {
         let donoData = eventData.parameters;
         eventManager.triggerEvent(EVENT_SOURCE_ID, EventId.DONATION, {

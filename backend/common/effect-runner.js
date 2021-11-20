@@ -15,7 +15,9 @@ const findAndReplaceVariables = async (data, trigger) => {
     for (let key of keys) {
 
         // skip nested effect lists and conditions so we dont replace variables too early
-        if (key === "list" || key === "leftSideValue" || key === "rightSideValue") continue;
+        if (key === "list" || key === "leftSideValue" || key === "rightSideValue") {
+            continue;
+        }
 
         let value = data[key];
 
@@ -108,7 +110,9 @@ async function runEffects(runEffectsContext) {
 
         try {
             let response = await triggerEffect(effect, trigger);
-            if (response === null || response === undefined) continue;
+            if (response === null || response === undefined) {
+                continue;
+            }
             if (!response || response.success === false) {
                 logger.error(`An effect of type ${effect.type} and id ${effect.id} failed to run.`, response.reason);
             } else {
@@ -159,7 +163,9 @@ async function processEffects(processEffectsRequest) {
 }
 
 function runEffectsManually(effects) {
-    if (effects == null) return;
+    if (effects == null) {
+        return;
+    }
 
     let streamerName = accountAccess.getAccounts().streamer.username || "";
 

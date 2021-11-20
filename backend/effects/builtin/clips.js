@@ -153,12 +153,12 @@ const clip = {
     onTriggerEvent: async event => {
         const { effect, trigger } = event;
         const clip = await clipProcessor.createClip(effect, trigger);
-        if(clip != null) {
+        if (clip != null) {
 
             const rawDataSymbol = Object.getOwnPropertySymbols(clip)[0];
             const clipDuration = clip[rawDataSymbol].duration;
 
-            if(effect.showInOverlay) {
+            if (effect.showInOverlay) {
 
                 const position = effect.position;
                 if (position === "Random") {
@@ -169,17 +169,17 @@ const clip = {
                 if (settings.useOverlayInstances()) {
                     if (effect.overlayInstance != null) {
                         if (settings.getOverlayInstances().includes(effect.overlayInstance)) {
-                           overlayInstance = effect.overlayInstance;
+                            overlayInstance = effect.overlayInstance;
                         }
                     }
                 }
-    
+
                 webServer.sendToOverlay("playTwitchClip", {
                     clipSlug: clip.id,
-                    width: effect.width, 
-                    height: effect.height, 
-                    duration: clipDuration, 
-                    position: position, 
+                    width: effect.width,
+                    height: effect.height,
+                    duration: clipDuration,
+                    position: position,
                     customCoords: effect.customCoords,
                     enterAnimation: effect.enterAnimation,
                     enterDuration: effect.enterDuration,
@@ -192,7 +192,7 @@ const clip = {
                     overlayInstance: overlayInstance
                 });
             }
-            
+
 
             await utils.wait(clipDuration * 1000);
         }
@@ -206,12 +206,12 @@ const clip = {
         event: {
             name: "playTwitchClip",
             onOverlayEvent: event => {
-                const { 
+                const {
                     clipSlug,
-                    width, 
-                    height, 
-                    duration, 
-                    position, 
+                    width,
+                    height,
+                    duration,
+                    position,
                     customCoords,
                     enterAnimation,
                     enterDuration,

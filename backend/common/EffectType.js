@@ -266,7 +266,9 @@ exports.getEffectById = getEffectById;
 
 exports.effectCanBeTriggered = function(effectName, triggerType) {
     let triggerTypes = getTriggerTypesForEffect(effectName);
-    if (triggerTypes == null) return false;
+    if (triggerTypes == null) {
+        return false;
+    }
 
     return triggerTypes.includes(triggerType);
 };

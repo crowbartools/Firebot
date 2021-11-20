@@ -51,8 +51,9 @@ function replaceLinesWithText(filepath, text, replacement) {
 }
 
 exports.run = async effect => {
-    if (effect == null || effect.filepath == null)
+    if (effect == null || effect.filepath == null) {
         return;
+    }
 
     let text = effect.text || "";
     text = text.replace(/\\n/g, "\n").trim();

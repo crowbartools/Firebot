@@ -55,7 +55,9 @@ const v4IncompatibilityReasonMap = {
 };
 
 function updateReplaceVariables(effect) {
-    if (effect == null) return effect;
+    if (effect == null) {
+        return effect;
+    }
 
     let keys = Object.keys(effect);
 
@@ -110,7 +112,9 @@ function mapV4Effect (v4Effect, triggerData, incompatibilityWarnings) {
 exports.mapV4EffectList = (v4EffectList, triggerData) => {
     let incompatibilityWarnings = [];
 
-    if (v4EffectList == null) return { effects: null, incompatibilityWarnings: incompatibilityWarnings};
+    if (v4EffectList == null) {
+        return { effects: null, incompatibilityWarnings: incompatibilityWarnings};
+    }
 
     // v4 effect lists can be objects or arrays
     let v4Effects = Array.isArray(v4EffectList) ? v4EffectList : Object.values(v4EffectList);
@@ -121,7 +125,9 @@ exports.mapV4EffectList = (v4EffectList, triggerData) => {
     };
 
     for (let v4Effect of v4Effects) {
-        if (v4Effect == null || v4Effect.type == null) continue;
+        if (v4Effect == null || v4Effect.type == null) {
+            continue;
+        }
         try {
             let mappedV5Effect = mapV4Effect(v4Effect, triggerData, incompatibilityWarnings);
             if (mappedV5Effect) {

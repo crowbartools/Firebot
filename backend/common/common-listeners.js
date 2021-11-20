@@ -193,7 +193,9 @@ exports.setupCommonListeners = () => {
 
     // Change profile when we get event from renderer
     ipcMain.on("sendToOverlay", function(_, data) {
-        if (data == null) return;
+        if (data == null) {
+            return;
+        }
         webServer.sendToOverlay(data.event, data.meta);
     });
 

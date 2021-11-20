@@ -65,7 +65,9 @@ async function deleteCounterTxtFile(counterName) {
 }
 
 function saveCounter(counter) {
-    if (counter == null) return;
+    if (counter == null) {
+        return;
+    }
 
     counters[counter.id] = counter;
 
@@ -108,7 +110,9 @@ function getCounter(counterId) {
 }
 
 function getCounterByName(counterName) {
-    if (counterName == null) return null;
+    if (counterName == null) {
+        return null;
+    }
     const countersArray = Object.values(counters);
     return countersArray.find(c => c.name.toLowerCase() === counterName.toLowerCase());
 }

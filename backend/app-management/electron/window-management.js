@@ -232,7 +232,9 @@ function createStreamPreviewWindow() {
     const accountAccess = require("../../common/account-access");
     const streamer = accountAccess.getAccounts().streamer;
 
-    if (!streamer.loggedIn) return;
+    if (!streamer.loggedIn) {
+        return;
+    }
 
     const streamPreviewWindowState = windowStateKeeper({
         defaultWidth: 815,

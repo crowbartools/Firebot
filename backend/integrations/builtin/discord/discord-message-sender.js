@@ -12,7 +12,9 @@ async function sendDiscordMessage(discordChannelId, content, embed) {
     const channels = discordSettings.webhookSettings && discordSettings.webhookSettings.channels;
 
     const channel = channels.find(c => c.id === discordChannelId);
-    if (!channel) return true;
+    if (!channel) {
+        return true;
+    }
 
     if (content != null && content.length > 2000) {
         content = content.substring(0, 1999);

@@ -29,7 +29,9 @@ function matchesBannedRegex(input) {
 }
 
 parentPort.on("message", event => {
-    if (event == null) return;
+    if (event == null) {
+        return;
+    }
 
     switch (event.type) {
     case "exit":
@@ -43,7 +45,9 @@ parentPort.on("message", event => {
         break;
     case "moderateMessage": {
         // check for banned word
-        if (event.message == null || event.messageId == null) return;
+        if (event.message == null || event.messageId == null) {
+            return;
+        }
         if (event.scanForBannedWords) {
             let bannedWordFound = hasBannedWord(event.message);
             if (bannedWordFound) {

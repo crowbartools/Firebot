@@ -103,7 +103,9 @@ const toggleConnection = {
             const service = $scope.effect.services.find(
                 (s) => s.id === serviceId
             );
-            if (service == null) return "";
+            if (service == null) {
+                return "";
+            }
 
             if (service.action === "toggle") {
                 return "Toggle";

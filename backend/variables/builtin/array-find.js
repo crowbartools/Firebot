@@ -8,7 +8,9 @@ function getPropertyAtPath(obj, propertyPath) {
     let data = obj;
     const pathNodes = propertyPath.split(".");
     for (let i = 0; i < pathNodes.length; i++) {
-        if (data == null) break;
+        if (data == null) {
+            break;
+        }
         let node = pathNodes[i];
         // parse to int for array access
         if (!isNaN(node)) {

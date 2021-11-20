@@ -77,19 +77,21 @@ function startBackup(manualActivation = false, callback) {
     archive.on("warning", function(err) {
         if (err.code === "ENOENT") {
             // log warning
-            if (manualActivation)
+            if (manualActivation) {
                 renderWindow.webContents.send(
                     "error",
                     "There was an error starting a backup."
                 );
+            }
             renderWindow.webContents.send("error", err);
         } else {
             // throw error
-            if (manualActivation)
+            if (manualActivation) {
                 renderWindow.webContents.send(
                     "error",
                     "Something bad happened, please check your logs."
                 );
+            }
             renderWindow.webContents.send("error", err);
             throw err;
         }

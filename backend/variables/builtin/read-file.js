@@ -34,7 +34,9 @@ const model = {
     },
     evaluator: (_, filePath, lineOrRandom) => {
 
-        if (filePath === null) return "[File Path Error]";
+        if (filePath === null) {
+            return "[File Path Error]";
+        }
 
         try {
             const contents = fs.readFileSync(filePath, "utf8");

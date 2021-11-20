@@ -75,7 +75,9 @@ exports.addCustomVariable = (name, data, ttl = 0, propertyPath = null) => {
         cache.set(name, dataToSet, ttl === "" ? 0 : ttl);
     } else {
         let currentData = cache.get(name);
-        if (!currentData) return;
+        if (!currentData) {
+            return;
+        }
         try {
             let cursor = currentData;
             let pathNodes = propertyPath.split(".");
@@ -126,7 +128,9 @@ exports.getCustomVariable = (name, propertyPath, defaultData = null) => {
     try {
         let pathNodes = propertyPath.split(".");
         for (let i = 0; i < pathNodes.length; i++) {
-            if (data == null) break;
+            if (data == null) {
+                break;
+            }
             let node = pathNodes[i];
             // parse to int for array access
             if (!isNaN(node)) {

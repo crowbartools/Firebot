@@ -170,11 +170,17 @@ const model = {
                 }
 
                 while (true) { //eslint-disable-line no-constant-condition
-                    if (effect.conditionData == null || effectList == null) break;
+                    if (effect.conditionData == null || effectList == null) {
+                        break;
+                    }
 
-                    if (maxLoopCount && currentLoopCount >= maxLoopCount) break;
+                    if (maxLoopCount && currentLoopCount >= maxLoopCount) {
+                        break;
+                    }
 
-                    if (effect.conditionData == null || effect.conditionData.conditions == null) break;
+                    if (effect.conditionData == null || effect.conditionData.conditions == null) {
+                        break;
+                    }
 
                     let conditionsPass = await conditionManager.runConditions(effect.conditionData, trigger);
 

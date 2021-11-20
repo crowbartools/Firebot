@@ -23,7 +23,7 @@ const playVideo = {
         description: "Plays a video in the overlay.",
         icon: "fad fa-video",
         categories: [EffectCategory.COMMON, EffectCategory.OVERLAY],
-        dependencies: [EffectDependency.OVERLAY],
+        dependencies: [EffectDependency.OVERLAY]
     },
     /**
      * Global settings that will be available in the Settings tab
@@ -218,7 +218,7 @@ const playVideo = {
             "Middle Right",
             "Bottom Left",
             "Bottom Middle",
-            "Bottom Right",
+            "Bottom Right"
         ];
 
         // Set Video Type
@@ -305,7 +305,7 @@ const playVideo = {
             inbetweenDuration: effect.inbetweenDuration,
             inbetweenRepeat: effect.inbetweenRepeat,
             customCoords: effect.customCoords,
-            loop: effect.loop === true,
+            loop: effect.loop === true
         };
 
         if (settings.useOverlayInstances()) {
@@ -385,7 +385,7 @@ const playVideo = {
                 inbetweenRepeat: effect.inbetweenRepeat,
                 exitAnimation: effect.exitAnimation,
                 exitDuration: effect.exitDuration,
-                overlayInstance: data.overlayInstance,
+                overlayInstance: data.overlayInstance
             });
 
             if (effect.wait) {
@@ -407,7 +407,7 @@ const playVideo = {
     overlayExtension: {
         dependencies: {
             css: [],
-            js: [],
+            js: []
         },
         event: {
             name: "video",
@@ -480,7 +480,7 @@ const playVideo = {
 
                 let positionData = {
                     position: data.videoPosition,
-                    customCoords: data.customCoords,
+                    customCoords: data.customCoords
                 };
 
                 let sizeStyles =
@@ -597,7 +597,7 @@ const playVideo = {
                         start: videoStarttime,
                         showinfo: 0,
                         rel: 0,
-                        modestbranding: 1,
+                        modestbranding: 1
                     };
 
                     if (loop) {
@@ -635,8 +635,8 @@ const playVideo = {
                                 if (event.data === 0 && !videoDuration) {
                                     animateVideoExit(`#${wrapperId}`, exitAnimation, exitDuration, inbetweenAnimation);
                                 }
-                            },
-                        },
+                            }
+                        }
                     };
                     if (data.videoHeight) {
                         ytOptions.height = data.videoHeight;
@@ -654,9 +654,9 @@ const playVideo = {
                         }, videoDuration);
                     }
                 }
-            },
-        },
-    },
+            }
+        }
+    }
 };
 
 module.exports = playVideo;

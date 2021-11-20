@@ -254,12 +254,16 @@ const effect = {
         const user = await twitchApi.getClient().users
             .getUserByName(effect.username);
 
-        if (user == null) return;
+        if (user == null) {
+            return;
+        }
 
         effect.username = user.displayName;
 
         const channelInfo = await twitchApi.channels.getChannelInformation(user.id);
-        if (channelInfo == null) return;
+        if (channelInfo == null) {
+            return;
+        }
 
         effect.avatarUrl = user.profilePictureUrl;
 

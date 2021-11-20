@@ -60,7 +60,9 @@ function testForTrigger(message, trigger, scanWholeMessage, triggerIsRegex) {
 }
 
 function checkForCommand(rawMessage) {
-    if (rawMessage == null || rawMessage.length < 1) return null;
+    if (rawMessage == null || rawMessage.length < 1) {
+        return null;
+    }
 
     const allCommands = commandManager.getAllActiveCommands();
 
@@ -93,7 +95,9 @@ function checkForCommand(rawMessage) {
 }
 
 function updateCommandCount(command) {
-    if (command.count == null) command.count = 0;
+    if (command.count == null) {
+        command.count = 0;
+    }
     command.count++;
     renderWindow.webContents.send("commandCountUpdate", {
         commandId: command.id,
@@ -147,7 +151,9 @@ function getRemainingCooldown(command, triggeredSubcmd, username) {
  */
 exports.manuallyCooldownCommand = (config) => {
     if (config.commandId == null || config.cooldowns == null ||
-        (config.cooldowns.global == null && config.cooldowns.user == null)) return;
+        (config.cooldowns.global == null && config.cooldowns.user == null)) {
+        return;
+    }
 
     const globalCacheKey = `${config.commandId}${config.subcommandId ? `:${config.subcommandId}` : ''}`;
     const userCacheKey = `${config.commandId}:${config.subcommandId ? `${config.subcommandId}:` : ''}${config.username}`;
@@ -182,7 +188,9 @@ exports.manuallyCooldownCommand = (config) => {
  */
 exports.manuallyClearCooldownCommand = (config) => {
     if (config.commandId == null || config.cooldowns == null ||
-        (config.cooldowns.global == null && config.cooldowns.user == null)) return;
+        (config.cooldowns.global == null && config.cooldowns.user == null)) {
+        return;
+    }
 
     const globalCacheKey = `${config.commandId}${config.subcommandId ? `:${config.subcommandId}` : ''}`;
     const userCacheKey = `${config.commandId}:${config.subcommandId ? `${config.subcommandId}:` : ''}${config.username}`;
@@ -203,7 +211,9 @@ function cooldownCommand(command, triggeredSubcmd, username) {
     } else {
         cooldown = triggeredSubcmd.cooldown;
     }
-    if (cooldown == null) return 0;
+    if (cooldown == null) {
+        return 0;
+    }
     logger.debug("Triggering cooldown for command");
 
     let globalCacheKey = `${command.id}${
@@ -261,7 +271,9 @@ function fireCommand(
     commandSender,
     isManual = false
 ) {
-    if (command == null) return;
+    if (command == null) {
+        return;
+    }
     if (commandSender == null) {
         commandSender = accountAccess.getAccounts().streamer.username;
     }
@@ -358,7 +370,9 @@ async function handleChatMessage(firebotChatMessage) {
     let triggeredSubcmd = null;
     if (!command.scanWholeMessage && !command.triggerIsRegex && userCmd.args.length > 0 && command.subCommands && command.subCommands.length > 0) {
         for (let subcmd of command.subCommands) {
-            if (subcmd.active === false) continue;
+            if (subcmd.active === false) {
+                continue;
+            }
             if (subcmd.regex) {
                 let regex = new RegExp(`^${subcmd.arg}$`, "gi");
                 if (regex.test(userCmd.args[0])) {

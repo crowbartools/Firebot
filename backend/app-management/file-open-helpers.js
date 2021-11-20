@@ -21,7 +21,9 @@ exports.setWindowReady = (ready) => {
  * @param {string[]} args
  */
 exports.checkForFirebotSetupPath = (args) => {
-    if (args == null) return;
+    if (args == null) {
+        return;
+    }
     for (const arg of args) {
         if (arg.endsWith(".firebotsetup")) {
             logger.info("Firebot setup file opened!", arg);

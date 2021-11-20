@@ -175,7 +175,9 @@ const showText = {
         };
 
         $scope.onVariableInsert = (variable) => {
-            if ($scope.editor == null) return;
+            if ($scope.editor == null) {
+                return;
+            }
             $scope.editor.summernote('restoreRange');
             $scope.editor.summernote("focus");
             $timeout(() => {

@@ -14,7 +14,9 @@ let botClient = null;
 exports.setupApiClients = () => {
     if (accountAccess.getAccounts().streamer.loggedIn) {
         const streamerProvider = refreshingAuthProvider.getRefreshingAuthProviderForStreamer();
-        if (!streamerProvider) return;
+        if (!streamerProvider) {
+            return;
+        }
 
         client = new ApiClient({ authProvider: streamerProvider });
         logger.info("Finished setting up Twitch API client for streamer account.");
@@ -22,7 +24,9 @@ exports.setupApiClients = () => {
 
     if (accountAccess.getAccounts().bot.loggedIn) {
         const botProvider = refreshingAuthProvider.getRefreshingAuthProviderForBot();
-        if (!botProvider) return;
+        if (!botProvider) {
+            return;
+        }
 
         botClient = new ApiClient({ authProvider: botProvider });
         logger.info("Finished setting up Twitch API client for bot account.");

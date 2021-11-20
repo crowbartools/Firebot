@@ -99,7 +99,9 @@ async function loadChannelRewards() {
  * @param {SavedChannelReward} channelReward
  */
 async function saveChannelReward(channelReward, emitUpdateEvent = false) {
-    if (channelReward == null) return null;
+    if (channelReward == null) {
+        return null;
+    }
 
     if (channelReward.id == null) {
         const twitchData = await twitchApi.channelRewards.createCustomChannelReward(channelReward.twitchData);
@@ -166,7 +168,9 @@ async function saveAllChannelRewards(allChannelRewards, updateTwitch = false) {
 }
 
 function deleteChannelReward(channelRewardId) {
-    if (channelRewardId == null) return;
+    if (channelRewardId == null) {
+        return;
+    }
 
     delete channelRewards[channelRewardId];
 
@@ -185,7 +189,9 @@ function deleteChannelReward(channelRewardId) {
 }
 
 function getChannelReward(channelRewardId) {
-    if (channelRewardId == null) return null;
+    if (channelRewardId == null) {
+        return null;
+    }
     return channelRewards[channelRewardId];
 }
 
@@ -254,7 +260,9 @@ frontendCommunicator.on("manuallyTriggerReward", (/** @type {string} */ channelR
 
     const savedReward = channelRewards[channelRewardId];
 
-    if (savedReward == null) return;
+    if (savedReward == null) {
+        return;
+    }
 
     const accountAccess = require("../common/account-access");
 

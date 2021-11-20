@@ -117,7 +117,9 @@ function saveImportedCustomCommand(command) {
 function deleteCustomCommand(commandId) {
     const commandDb = getCommandsDb();
 
-    if (commandId == null) return;
+    if (commandId == null) {
+        return;
+    }
 
     try {
         commandDb.delete("/customCommands/" + commandId);

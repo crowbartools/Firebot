@@ -16,9 +16,13 @@ settings.flushSettingsCache = function() {
 };
 
 frontendCommunicator.on("settings-updated-renderer", (settingsUpdate) => {
-    if (settingsUpdate == null) return;
+    if (settingsUpdate == null) {
+        return;
+    }
     let { path, data } = settingsUpdate;
-    if (path == null || path === '') return;
+    if (path == null || path === '') {
+        return;
+    }
     settingsCache[path] = data;
 });
 

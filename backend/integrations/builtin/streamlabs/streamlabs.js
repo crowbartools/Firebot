@@ -41,7 +41,9 @@ function getStreamlabsSocketToken(accessToken) {
         };
 
         request(options, function(error, response, body) {
-            if (error) return rej(error);
+            if (error) {
+                return rej(error);
+            }
 
             body = JSON.parse(body);
 

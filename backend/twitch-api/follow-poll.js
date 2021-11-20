@@ -23,7 +23,9 @@ exports.startFollowPoll = () => {
         const streamer = accountAccess.getAccounts().streamer;
         const client = twitchApi.getClient();
 
-        if (client == null || !streamer.loggedIn) return;
+        if (client == null || !streamer.loggedIn) {
+            return;
+        }
 
         const followRequest = client.users.getFollowsPaginated({
             followedUser: streamer.userId
@@ -31,7 +33,9 @@ exports.startFollowPoll = () => {
 
         const follows = await followRequest.getNext();
 
-        if (follows == null || follows.length < 1) return;
+        if (follows == null || follows.length < 1) {
+            return;
+        }
 
         if (lastUserId == null) {
             lastUserId = follows[0].userId;

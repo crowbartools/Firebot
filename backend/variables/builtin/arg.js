@@ -70,7 +70,9 @@ const model = {
     },
     argsCheck: (index, upperIndex) => {
         // both args can be null
-        if (index == null && upperIndex == null) return true;
+        if (index == null && upperIndex == null) {
+            return true;
+        }
 
         // index needs to either be "all" or a number
         if (String(index).toLowerCase() !== "all" && isNaN(index)) {

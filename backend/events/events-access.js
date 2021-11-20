@@ -17,7 +17,9 @@ function getEventsDb() {
 }
 
 function saveGroup(group) {
-    if (group == null) return;
+    if (group == null) {
+        return;
+    }
     let eventsDb = getEventsDb();
     try {
         groups[group.id] = group;
@@ -29,7 +31,9 @@ function saveGroup(group) {
 }
 
 function saveAllGroups(groupsToSave) {
-    if (groupsToSave == null) return;
+    if (groupsToSave == null) {
+        return;
+    }
     let eventsDb = getEventsDb();
     try {
         groups = groupsToSave;
@@ -100,7 +104,9 @@ function loadEventsAndGroups() {
 }
 
 function deleteGroup(groupId) {
-    if (groupId == null) return;
+    if (groupId == null) {
+        return;
+    }
     let eventsDb = getEventsDb();
     try {
         eventsDb.delete("/groups/" + groupId);
@@ -112,7 +118,9 @@ function deleteGroup(groupId) {
 }
 
 function saveMainEvents(events) {
-    if (events == null) return;
+    if (events == null) {
+        return;
+    }
     let eventsDb = getEventsDb();
     try {
         mainEvents = events;
@@ -124,7 +132,9 @@ function saveMainEvents(events) {
 }
 
 function saveNewEventToMainEvents(event) {
-    if (event == null || event.id == null) return;
+    if (event == null || event.id == null) {
+        return;
+    }
     try {
         if (mainEvents == null) {
             mainEvents = [];
@@ -147,7 +157,9 @@ function removeEventFromMainEvents(eventId) {
 }
 
 function saveGroupFromImport(group) {
-    if (group == null) return;
+    if (group == null) {
+        return;
+    }
 
     // IF present, remove existing events with the same id.
     for (let event of group.events) {
@@ -250,7 +262,9 @@ function updateEventActiveStatus(eventId, active = false) {
 function updateEventGroupActiveStatus(groupId, active = false) {
     const group = groups[groupId];
 
-    if (group == null) return;
+    if (group == null) {
+        return;
+    }
 
     group.active = active;
 

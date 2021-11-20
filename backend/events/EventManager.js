@@ -65,7 +65,9 @@ class EventManager extends EventEmitter {
     triggerEvent(sourceId, eventId, meta, isManual = false, isRetrigger = false) {
         let source = this.getEventSourceById(sourceId);
         let event = this.getEventById(sourceId, eventId);
-        if (event == null) return;
+        if (event == null) {
+            return;
+        }
 
         if (isManual) {
             meta = event.manualMetadata || {};
@@ -116,7 +118,9 @@ ipcMain.on("triggerManualEvent", function(_, data) {
 
     let source = manager.getEventSourceById(sourceId);
     let event = manager.getEventById(sourceId, eventId);
-    if (event == null) return;
+    if (event == null) {
+        return;
+    }
 
     let meta = event.manualMetadata || {};
     if (meta.username == null) {
@@ -125,7 +129,9 @@ ipcMain.on("triggerManualEvent", function(_, data) {
     }
 
     let eventSettings = eventsAccess.getAllActiveEvents().find(e => e.id === eventSettingsId);
-    if (eventSettings == null) return;
+    if (eventSettings == null) {
+        return;
+    }
 
     eventsRouter.runEventEffects(eventSettings.effects, event, source, meta, true);
 });

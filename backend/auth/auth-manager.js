@@ -30,7 +30,9 @@ class AuthManager extends EventEmitter {
 
     /** @param {AuthProviderDetails} authProviderDetails */
     registerAuthProvider(authProviderDetails) {
-        if (authProviderDetails == null) return;
+        if (authProviderDetails == null) {
+            return;
+        }
 
         const oauthClient = this.buildOAuthClientForProvider(authProviderDetails);
 
@@ -92,7 +94,9 @@ class AuthManager extends EventEmitter {
 
     async revokeTokens(providerId, tokenData) {
         const provider = this.getAuthProvider(providerId);
-        if (provider == null) return;
+        if (provider == null) {
+            return;
+        }
 
         let accessToken = provider.oauthClient.accessToken.create(tokenData);
         try {

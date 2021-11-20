@@ -14,7 +14,9 @@ exports.readData = (data, propertyPath) => {
     try {
         let pathNodes = propertyPath.split(".");
         for (let i = 0; i < pathNodes.length; i++) {
-            if (data == null) break;
+            if (data == null) {
+                break;
+            }
             let node = pathNodes[i];
             // parse to int for array access
             if (!isNaN(node)) {
@@ -49,7 +51,9 @@ exports.parseData = (newData, currentData, propertyPath) => {
         return dataToSet;
     }
 
-    if (!currentData) throw new Error("Property path is defined but there is no current data.");
+    if (!currentData) {
+        throw new Error("Property path is defined but there is no current data.");
+    }
 
     let cursor = currentData;
     let pathNodes = propertyPath.split(".");
