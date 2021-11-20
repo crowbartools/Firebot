@@ -139,7 +139,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.draft.outputs.upload_url }}
-          asset_path: './bundles/FirebotV5Setup.exe'
+          asset_path: './bundles/Firebot Setup.exe'
           asset_name: 'Firebot-v${{ steps.package.outputs.version }}-Setup.exe'
           asset_content_type: application/octet-stream
 
@@ -161,8 +161,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.draft.outputs.upload_url }}
-          asset_path: './bundles/firebotv5-${{ steps.package.outputs.version }}-full.nupkg'
-          asset_name: 'firebotv5-${{ steps.package.outputs.version }}-full.nupkg'
+          asset_path: './bundles/firebot-${{ steps.package.outputs.version }}-full.nupkg'
+          asset_name: 'firebot-${{ steps.package.outputs.version }}-full.nupkg'
           asset_content_type: application/octet-stream
 
       # - name: Upload Tarball file
