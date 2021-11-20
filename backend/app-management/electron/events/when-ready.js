@@ -174,7 +174,7 @@ exports.whenReady = async () => {
     // forward backend logs to front end
     logger.on("logging", (transport, level, msg, meta) => {
         const mainWindow = windowManagement.mainWindow;
-        if (mainWindow != null && !mainWindow.isDestroyed()) {
+        if (mainWindow != null && !mainWindow.isDestroyed() && mainWindow.webContents != null) {
             mainWindow.webContents.send("logging", {
                 transport: transport,
                 level: level,
