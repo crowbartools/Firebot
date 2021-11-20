@@ -36,7 +36,7 @@ jobs:
         if: steps.tagged.outputs.tagged == 1
         uses: 'actions/setup-node@v1'
         with:
-          node-version: '10.x'
+          node-version: '14.x'
 
       - name: Build Prep for Windows
         if: steps.tagged.outputs.tagged == 1 && runner.os == 'windows'
@@ -59,7 +59,7 @@ jobs:
 
       - name: Rebuild Robotjs for Electron
         if: steps.tagged.outputs.tagged == 1
-        run: node-gyp rebuild --silent --directory=node_modules/robotjs/ --runtime=electron --target=7.1.9 --arch=x64 --dist-url=https://atom.io/download/atom-shell
+        run: npm run rebuild
 
       - name: Decrypt Secrets.gpg
         if: steps.tagged.outputs.tagged == 1
