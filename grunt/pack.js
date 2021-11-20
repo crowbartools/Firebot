@@ -7,11 +7,12 @@ grunt pack
 
 'use strict';
 module.exports = function (grunt) {
+    const { version } = grunt.file.readJSON('./node_modules/electron/package.json');
+
     let flags = [
         '--out="./dist/pack"',
         '--arch=x64',
-        '--electronVersion=7.1.9',
-        '--js-flags="--harmony"',
+        `--electronVersion=${version}`,
         '--asar.unpack="moderation-service.js"',
         '--prune',
         '--overwrite',
