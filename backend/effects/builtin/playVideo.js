@@ -9,7 +9,6 @@ const { EffectCategory } = require('../../../shared/effect-constants');
 const logger = require("../../logwrapper");
 const accountAccess = require("../../common/account-access");
 const util = require("../../utility");
-const { HelixClip } = require("@twurple/api/lib");
 
 /**
  * The Play Video effect
@@ -324,7 +323,7 @@ const playVideo = {
 
             let clipId;
 
-            /**@type {HelixClip} */
+            /**@type {import("@twurple/api/lib").HelixClip} */
             let clip;
             if (effect.videoType === "Twitch Clip") {
                 clipId = effect.twitchClipUrl.replace("https://clips.twitch.tv/", "");
