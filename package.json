@@ -4,8 +4,8 @@
   "description": "Powerful all-in-one bot for Twitch streamers.",
   "main": "main.js",
   "scripts": {
-    "start": "grunt scss && grunt include-source && electron . --dev --js-flags=\"--harmony\"",
-    "start:noscss": "electron . --js-flags=\"--harmony\"",
+    "start": "grunt scss && grunt include-source && electron . --dev",
+    "start:noscss": "electron .",
     "rebuild": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=7.2.4 --arch=x64 --dist-url=https://atom.io/download/atom-shell",
     "rebuild:new": "npm rebuild --runtime=electron --target=7.2.4 --disturl=https://atom.io/download/atom-shell --abi=83",
     "rebuild:darwin": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=7.2.4 --arch=darwin --dist-url=https://atom.io/download/atom-shell",
