@@ -1,5 +1,5 @@
 {
-  "name": "firebotv5",
+  "name": "firebot",
   "version": "5.46.5",
   "description": "Powerful all-in-one bot for Twitch streamers.",
   "main": "main.js",
