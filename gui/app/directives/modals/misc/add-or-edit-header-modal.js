@@ -24,6 +24,7 @@
                                 ui-validate="'$value != null && $value.length > 0'" 
                                 required
                                 replace-variables="text"
+                                menu-position="under"
                             />
                         </div>
 
@@ -39,6 +40,7 @@
                                 ui-validate="'$value != null && $value.length > 0'" 
                                 required
                                 replace-variables="text"
+                                menu-position="under"
                             />
                         </div>
                         
