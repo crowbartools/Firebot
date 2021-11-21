@@ -298,7 +298,19 @@ module.exports = {
             settings: {
                 chatter: {
                     type: "chatter-select",
-                    title: "Chat As"
+                    title: "Chat As",
+                    sortRank: 1
+                },
+                noWagerMessage: {
+                    type: "string",
+                    title: "No Wager Message",
+                    useTextArea: true,
+                    default: "Incorrect trivia usage: !trivia [wager]",
+                    tip: "Available variables: {user}",
+                    sortRank: 2,
+                    validation: {
+                        required: true
+                    }
                 }
             }
         }

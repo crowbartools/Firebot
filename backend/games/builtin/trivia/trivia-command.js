@@ -33,18 +33,28 @@ function clearCurrentQuestion() {
 twitchListeners.events.on("chat-message", async data => {
     /**@type {import("../../../chat/chat-helpers").FirebotChatMessage} */
     const chatMessage = data;
-    if (!currentQuestion) return;
+    if (!currentQuestion) {
+        return;
+    }
     const { username, question, wager, winningsMultiplier, currencyId, chatter } = currentQuestion;
     //ensure chat is from question user
-    if (username !== chatMessage.username) return;
+    if (username !== chatMessage.username) {
+        return;
+    }
     //grab args
     const args = chatMessage.rawText.split(" ");
-    if (args.length < 1) return;
+    if (args.length < 1) {
+        return;
+    }
     //insure number
     const firstArg = parseInt(args[0]);
-    if (isNaN(firstArg)) return;
+    if (isNaN(firstArg)) {
+        return;
+    }
     // outside the answer bound
-    if (firstArg < 1 || firstArg > question.answers.length) return;
+    if (firstArg < 1 || firstArg > question.answers.length) {
+        return;
+    }
 
     const isCorrect = firstArg === question.correctIndex;
 
@@ -231,17 +241,23 @@ const triviaCommand = {
             twitchChat.sendChatMessage(questionMessage, null, chatter);
 
             fiveSecTimeoutId = setTimeout(() => {
-                if (currentQuestion == null || currentQuestion.username !== username) return;
+                if (currentQuestion == null || currentQuestion.username !== username) {
+                    return;
+                }
                 twitchChat.sendChatMessage(`@${username}, 5 seconds remaining to answer...`, null, chatter);
             }, (answerTimeout - 6) * 1000);
 
             answerTimeoutId = setTimeout(() => {
-                if (currentQuestion == null || currentQuestion.username !== username) return;
+                if (currentQuestion == null || currentQuestion.username !== username) {
+                    return;
+                }
                 twitchChat.sendChatMessage(`@${username} did not provide an answer in time!`, null, chatter);
                 clearCurrentQuestion();
             }, answerTimeout * 1000);
         } else {
-            twitchChat.sendChatMessage(`Incorrect trivia usage: ${userCommand.trigger} [wager]`, null, chatter);
+            const noWagerMessage = triviaSettings.settings.chatSettings.noWagerMessage
+                .replace("{user}", userCommand.commandSender);
+            twitchChat.sendChatMessage(noWagerMessage, null, chatter);
         }
     }
 };
