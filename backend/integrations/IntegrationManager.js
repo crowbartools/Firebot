@@ -181,7 +181,9 @@ class IntegrationManager extends EventEmitter {
 
     startIntegrationLink(integrationId) {
         let int = this.getIntegrationById(integrationId);
-        if (int == null || int.definition.linked) return;
+        if (int == null || int.definition.linked) {
+            return;
+        }
 
         if (int.definition.linkType === "auth") {
             shell.openExternal(`http://localhost:${settings.getWebServerPort()}/api/v1/auth?providerId=${encodeURIComponent(int.definition.authProviderDetails.id)}`);
@@ -217,7 +219,9 @@ class IntegrationManager extends EventEmitter {
 
     unlinkIntegration(integrationId) {
         let int = this.getIntegrationById(integrationId);
-        if (int == null || !int.definition.linked) return;
+        if (int == null || !int.definition.linked) {
+            return;
+        }
 
         this.disconnectIntegration(int);
 
@@ -296,7 +300,9 @@ class IntegrationManager extends EventEmitter {
 const manager = new IntegrationManager();
 
 frontEndCommunicator.on("integrationUserSettingsUpdate", (integrationData) => {
-    if (integrationData == null) return;
+    if (integrationData == null) {
+        return;
+    }
 
     const int = manager.getIntegrationById(integrationData.id);
     if (int != null) {
@@ -309,7 +315,9 @@ frontEndCommunicator.on("integrationUserSettingsUpdate", (integrationData) => {
 frontEndCommunicator.on("enteredIntegrationAccountId", async (idData) => {
     const { integrationId, accountId } = idData;
     const int = manager.getIntegrationById(integrationId);
-    if (int == null) return;
+    if (int == null) {
+        return;
+    }
 
     manager.saveIntegrationAccountId(int, accountId);
 

@@ -154,7 +154,7 @@ async function runScript(effect, trigger) {
 }
 
 ipcMain.on("openScriptsFolder", function() {
-    shell.openItem(profileManager.getPathInProfile("/scripts"));
+    shell.openPath(profileManager.getPathInProfile("/scripts"));
 });
 
 exports.runScript = runScript;

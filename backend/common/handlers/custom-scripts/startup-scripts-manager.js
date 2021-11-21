@@ -34,7 +34,9 @@ function loadStartupConfig() {
 }
 
 function saveStartupScriptData(startupScriptData) {
-    if (startupScriptData == null) return;
+    if (startupScriptData == null) {
+        return;
+    }
 
     startupScripts[startupScriptData.id] = startupScriptData;
 
@@ -50,7 +52,9 @@ function saveStartupScriptData(startupScriptData) {
 }
 
 function deleteStartupScriptData(startupScriptDataId) {
-    if (startupScriptDataId == null) return;
+    if (startupScriptDataId == null) {
+        return;
+    }
 
     delete startupScripts[startupScriptDataId];
 
@@ -67,7 +71,9 @@ function deleteStartupScriptData(startupScriptDataId) {
 }
 
 function getStartupScriptData(startupScriptDataId) {
-    if (startupScriptDataId == null) return null;
+    if (startupScriptDataId == null) {
+        return null;
+    }
     return startupScripts[startupScriptDataId];
 }
 

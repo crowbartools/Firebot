@@ -39,7 +39,9 @@ const getCategoryById = async (categoryId, size = "285x380") => {
     const client = twitchApi.getClient();
     try {
         const category = await client.games.getGameById(categoryId);
-        if (category == null) return null;
+        if (category == null) {
+            return null;
+        }
         return mapTwitchCategory(category, size);
     } catch (error) {
         logger.error("Failed to get twitch category", error);

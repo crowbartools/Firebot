@@ -194,7 +194,9 @@ const toggleConnection = {
 
         const channelReward = channelRewardsManager.getChannelReward(effect.channelRewardId);
 
-        if (channelReward == null) return;
+        if (channelReward == null) {
+            return;
+        }
 
         if (effect.rewardSettings.name.update) {
             channelReward.twitchData.title = effect.rewardSettings.name.newValue;

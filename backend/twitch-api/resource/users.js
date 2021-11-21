@@ -28,7 +28,9 @@ const getFollowDateForUser = async (username) => {
  * @returns {Promise<boolean>}
  */
 const doesUserFollowChannel = async (username, channelName) => {
-    if (username == null || channelName == null) return false;
+    if (username == null || channelName == null) {
+        return false;
+    }
 
     const client = twitchApi.getClient();
 

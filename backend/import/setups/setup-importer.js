@@ -72,7 +72,9 @@ function replaceCurrency(components, currency) {
 }
 
 function importSetup(setup, selectedCurrency) {
-    if (setup == null || setup.components == null) return false;
+    if (setup == null || setup.components == null) {
+        return false;
+    }
 
     if (setup.requireCurrency) {
         replaceCurrency(setup.components, selectedCurrency);

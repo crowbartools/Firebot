@@ -1,14 +1,14 @@
 {
   "name": "firebotv5",
-  "version": "5.46.6",
+  "version": "5.47.0-beta4",
   "description": "Powerful all-in-one bot for Twitch streamers.",
   "main": "main.js",
   "scripts": {
     "start": "grunt scss && grunt include-source && electron . --dev",
-    "start:noscss": "electron .",
-    "rebuild": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=7.3.3 --arch=x64 --dist-url=https://atom.io/download/atom-shell",
-    "rebuild:new": "npm rebuild --runtime=electron --target=7.3.3 --disturl=https://atom.io/download/atom-shell --abi=75",
-    "rebuild:darwin": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=7.3.3 --arch=darwin --dist-url=https://atom.io/download/atom-shell",
+    "start:noscss": "electron . --dev",
+    "rebuild": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=12.2.2 --arch=x64 --dist-url=https://atom.io/download/atom-shell --abi=87",
+    "rebuild:new": "npm rebuild --runtime=electron --target=12.2.2 --disturl=https://atom.io/download/atom-shell --abi=87",
+    "rebuild:darwin": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=12.2.2 --arch=darwin --dist-url=https://atom.io/download/atom-shell",
     "setup": "npm install && npm rebuild && npm run rebuild"
   },
   "repository": "https://github.com/crowbartools/Firebot",
@@ -22,7 +22,7 @@
   "author": "The Streaming Community",
   "license": "GPL-3.0",
   "devDependencies": {
-    "electron": "^7.3.3",
+    "electron": "^12.2.2",
     "electron-packager": "^12.2.0",
     "electron-rebuild": "^1.8.6",
     "eslint": "^5.16.0",
@@ -40,10 +40,10 @@
   },
   "dependencies": {
     "@aws-sdk/client-polly": "^3.26.0",
-    "@twurple/api": "^5.0.5",
-    "@twurple/auth": "^5.0.5",
-    "@twurple/chat": "^5.0.5",
-    "@twurple/pubsub": "^5.0.5",
+    "@twurple/api": "^5.0.9",
+    "@twurple/auth": "^5.0.9",
+    "@twurple/chat": "^5.0.9",
+    "@twurple/pubsub": "^5.0.9",
     "angular": "^1.8.0",
     "angular-animate": "^1.7.8",
     "angular-aria": "^1.7.9",
@@ -122,6 +122,6 @@
     "ws": "^5.2.2"
   },
   "volta": {
-    "node": "12.14.1"
+    "node": "14.18.1"
   }
 }

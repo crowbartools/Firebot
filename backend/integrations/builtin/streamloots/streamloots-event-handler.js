@@ -35,7 +35,9 @@ exports.registerEvents = () => {
 };
 
 function getFieldValue(fieldName, fields) {
-    if (fields == null) return null;
+    if (fields == null) {
+        return null;
+    }
     let field = fields.find(f => f.name === fieldName);
     return field ? field.value : null;
 }

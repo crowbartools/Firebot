@@ -128,7 +128,9 @@ async function runHeist() {
 
 
 exports.triggerLobbyStart = (startDelayMins) => {
-    if (exports.lobbyOpen) return;
+    if (exports.lobbyOpen) {
+        return;
+    }
     exports.lobbyOpen = true;
 
     if (startDelayTimeoutId != null) {
@@ -173,8 +175,12 @@ exports.triggerLobbyStart = (startDelayMins) => {
  * @param {HeistUser} user
  */
 exports.addUser = (user) => {
-    if (user == null) return;
-    if (usersInHeist.some(u => u.username === user.username)) return;
+    if (user == null) {
+        return;
+    }
+    if (usersInHeist.some(u => u.username === user.username)) {
+        return;
+    }
     usersInHeist.push(user);
 };
 

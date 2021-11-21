@@ -17,7 +17,9 @@ function handleTriggeredEvent(source, event, metadata) {
     }
 
     if (event.activityFeed == null ||
-        event.activityFeed.getMessage == null) return;
+        event.activityFeed.getMessage == null) {
+        return;
+    }
 
 
     const activityId = uuid();
@@ -65,7 +67,9 @@ eventManager.on("event-triggered", ({
 
 frontendCommunicator.on("retrigger-event", (activityId) => {
     const activity = previousActivity.find(a => a.id === activityId);
-    if (activity == null) return;
+    if (activity == null) {
+        return;
+    }
     eventManager.triggerEvent(activity.sourceId, activity.eventId,
         activity.metadata, false, true);
 });

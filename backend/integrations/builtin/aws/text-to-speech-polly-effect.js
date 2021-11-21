@@ -290,10 +290,18 @@ const playSound = {
                 const voicesArray = voices.voices;
                 // Sort voices according to Amazon Logic
                 const compareVoices = (a, b) => {
-                    if (a.Gender < b.Gender) return -1;
-                    if (a.Gender > b.Gender) return 1;
-                    if (a.Id < b.Id) return -1;
-                    if (a.Id > b.Id) return 1;
+                    if (a.Gender < b.Gender) {
+                        return -1;
+                    }
+                    if (a.Gender > b.Gender) {
+                        return 1;
+                    }
+                    if (a.Id < b.Id) {
+                        return -1;
+                    }
+                    if (a.Id > b.Id) {
+                        return 1;
+                    }
                     return 0;
                 };
 
@@ -348,8 +356,12 @@ const playSound = {
 
                 // Sort languages according to Amazon Logic
                 const compareLocales = (a, b) => {
-                    if (a.LanguageFormattedName < b.LanguageFormattedName) return -1;
-                    if (a.LanguageFormattedName > b.LanguageFormattedName) return 1;
+                    if (a.LanguageFormattedName < b.LanguageFormattedName) {
+                        return -1;
+                    }
+                    if (a.LanguageFormattedName > b.LanguageFormattedName) {
+                        return 1;
+                    }
                     return 0;
                 };
 

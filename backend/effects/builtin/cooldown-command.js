@@ -124,9 +124,13 @@ const model = {
         $scope.getSubcommands = () => {
             $scope.subcommands = [];
             const commandId = $scope.effect.commandId;
-            if (commandId == null) return;
+            if (commandId == null) {
+                return;
+            }
             const command = $scope.commands.find(c => c.id === commandId);
-            if (command == null) return;
+            if (command == null) {
+                return;
+            }
             if (command.subCommands) {
                 $scope.subcommands = command.subCommands;
             }

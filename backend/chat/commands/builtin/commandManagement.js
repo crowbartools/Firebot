@@ -29,7 +29,9 @@ function seperateTriggerFromArgs(args) {
 }
 
 function mapPermArgToRoleIds(permArg) {
-    if (permArg == null || permArg === "") return [];
+    if (permArg == null || permArg === "") {
+        return [];
+    }
 
     let normalizedPerm = permArg.toLowerCase().trim(),
         groups = [];
@@ -131,7 +133,7 @@ const commandManagement = {
                 arg: "disable",
                 usage: "disable [!trigger or \"phrase\"]",
                 description: "Enables the given custom command."
-            },
+            }
         ]
     },
     /**
@@ -438,7 +440,7 @@ const commandManagement = {
 
                 const newActiveStatus = triggeredArg === "enable";
 
-                if(command.active === newActiveStatus) {
+                if (command.active === newActiveStatus) {
                     chat.sendChatMessage(
                         `${trigger} is already ${triggeredArg}d.`
                     );
@@ -448,7 +450,7 @@ const commandManagement = {
                 command.active = newActiveStatus;
 
                 commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
-    
+
                 frontendCommunicator.send("custom-commands-updated");
 
                 chat.sendChatMessage(

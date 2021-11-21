@@ -98,11 +98,13 @@ exports.setupChatListeners = (streamerChatClient) => {
 
     streamerChatClient.onResub(async (_channel, _user, subInfo, msg) => {
         try {
-            const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, subInfo.message);
+            if (subInfo.message != null && subInfo.message.length > 0) {
+                const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, subInfo.message);
 
-            frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
+                frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
 
-            exports.events.emit("chat-message", firebotChatMessage);
+                exports.events.emit("chat-message", firebotChatMessage);
+            }
         } catch (error) {
             logger.error("Failed to parse resub message", error);
         }

@@ -44,7 +44,9 @@ function loadEffectQueues() {
 }
 
 function saveEffectQueue(queue) {
-    if (queue == null) return;
+    if (queue == null) {
+        return;
+    }
 
     effectQueues[queue.id] = queue;
 
@@ -63,7 +65,9 @@ function saveEffectQueue(queue) {
 }
 
 function deleteEffectQueue(queueId) {
-    if (queueId == null) return;
+    if (queueId == null) {
+        return;
+    }
 
     delete effectQueues[queueId];
 
@@ -82,7 +86,9 @@ function deleteEffectQueue(queueId) {
 }
 
 function getEffectQueue(queueId) {
-    if (queueId == null) return null;
+    if (queueId == null) {
+        return null;
+    }
     return effectQueues[queueId];
 }
 

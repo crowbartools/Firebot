@@ -15,7 +15,9 @@ function runHotkey(code) {
 
     let effects = hotkey.effects;
 
-    if (effects == null) return;
+    if (effects == null) {
+        return;
+    }
 
     let processEffectsRequest = {
         trigger: {
@@ -43,7 +45,9 @@ function registerHotkey(accelerator) {
 }
 
 function registerAllHotkeys() {
-    if (hotkeysCache == null) return;
+    if (hotkeysCache == null) {
+        return;
+    }
     hotkeysCache.filter(hk => hk.active).forEach(k => {
         registerHotkey(k.code);
     });

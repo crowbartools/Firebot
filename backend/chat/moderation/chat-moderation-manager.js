@@ -39,12 +39,16 @@ let bannedRegularExpressions = {
 };
 
 function getBannedWordsList() {
-    if (!bannedWords || !bannedWords.words) return [];
+    if (!bannedWords || !bannedWords.words) {
+        return [];
+    }
     return bannedWords.words.map(w => w.text);
 }
 
 function getBannedRegularExpressionsList() {
-    if (!bannedRegularExpressions || !bannedRegularExpressions.regularExpressions) return [];
+    if (!bannedRegularExpressions || !bannedRegularExpressions.regularExpressions) {
+        return [];
+    }
     return bannedRegularExpressions.regularExpressions.map(r => r.text);
 }
 
@@ -54,7 +58,9 @@ function getBannedRegularExpressionsList() {
 let moderationService = null;
 
 function startModerationService() {
-    if (moderationService != null) return;
+    if (moderationService != null) {
+        return;
+    }
 
     const chat = require("../twitch-chat");
 
@@ -67,7 +73,9 @@ function startModerationService() {
     moderationService = new Worker(servicePath);
 
     moderationService.on("message", event => {
-        if (event == null) return;
+        if (event == null) {
+            return;
+        }
         switch (event.type) {
         case "deleteMessage": {
             if (event.messageId) {
@@ -125,13 +133,17 @@ const countEmojis = (str) => {
  * @param {import("../chat-helpers").FirebotChatMessage} chatMessage
  */
 async function moderateMessage(chatMessage) {
-    if (chatMessage == null) return;
+    if (chatMessage == null) {
+        return;
+    }
 
     if (
         !chatModerationSettings.bannedWordList.enabled
         && !chatModerationSettings.emoteLimit.enabled
         && !chatModerationSettings.urlModeration.enabled
-    ) return;
+    ) {
+        return;
+    }
 
     let moderateMessage = false;
 

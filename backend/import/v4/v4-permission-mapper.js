@@ -3,7 +3,9 @@
 const uuid = require("uuid/v1");
 
 function mapV4RolesToMixerRoles(permissions) {
-    if (permissions == null || !Array.isArray(permissions) || permissions.length === 0) return [];
+    if (permissions == null || !Array.isArray(permissions) || permissions.length === 0) {
+        return [];
+    }
     return permissions
         .map((p) => {
             switch (p) {

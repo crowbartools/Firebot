@@ -136,7 +136,9 @@ class ConnectionManager extends EventEmitter {
 
     async updateConnectionForServices(services) {
 
-        if (connectionUpdateInProgress) return;
+        if (connectionUpdateInProgress) {
+            return;
+        }
 
         frontendCommunicator.send("toggle-connections-started");
 
@@ -195,11 +197,15 @@ class ConnectionManager extends EventEmitter {
 manager = new ConnectionManager();
 
 manager.on("service-connection-update", (data) => {
-    if (currentlyWaitingService == null) return;
+    if (currentlyWaitingService == null) {
+        return;
+    }
 
     let { serviceId, connectionState } = data;
 
-    if (connectionState !== ConnectionState.Connected && connectionState !== ConnectionState.Disconnected) return;
+    if (connectionState !== ConnectionState.Connected && connectionState !== ConnectionState.Disconnected) {
+        return;
+    }
 
     if (currentlyWaitingService.serviceId === serviceId) {
         currentlyWaitingService.callback();

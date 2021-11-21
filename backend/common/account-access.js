@@ -66,7 +66,9 @@ function sendAccountUpdate() {
  * @returns {Promise<FirebotAccount>}
  */
 async function updateStreamerAccountSettings(streamerAccount) {
-    if (streamerAccount == null || streamerAccount.channelId == null) return null;
+    if (streamerAccount == null || streamerAccount.channelId == null) {
+        return null;
+    }
 
     return streamerAccount;
 }
@@ -128,7 +130,7 @@ const getTwitchData = async (accountType) => {
     let data;
     try {
         data = await twitchApi.getClient().users.getUserById(account.userId);
-    } catch(error) {
+    } catch (error) {
         logger.warn("Failed to get account data", error);
         return account;
     }
@@ -167,7 +169,9 @@ let botTokenIssue = false;
  * @param {FirebotAccount} account - The  account
  */
 function updateAccount(accountType, account, emitUpdate = true) {
-    if ((accountType !== "streamer" && accountType !== "bot") || account == null) return;
+    if ((accountType !== "streamer" && accountType !== "bot") || account == null) {
+        return;
+    }
 
     // reset token issue flags
     if (accountType === 'streamer') {
@@ -197,7 +201,9 @@ function updateAccount(accountType, account, emitUpdate = true) {
 }
 
 function removeAccount(accountType) {
-    if (accountType !== "streamer" && accountType !== "bot") return;
+    if (accountType !== "streamer" && accountType !== "bot") {
+        return;
+    }
 
     let authDb = profileManager.getJsonDbInProfile("/auth-twitch");
     try {

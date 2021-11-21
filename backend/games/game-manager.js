@@ -72,9 +72,13 @@ const registeredGames = [];
  * @returns {void}
  */
 function registerGame(game) {
-    if (game == null) return;
+    if (game == null) {
+        return;
+    }
 
-    if (registeredGames.some(g => g.id === game.id)) return;
+    if (registeredGames.some(g => g.id === game.id)) {
+        return;
+    }
 
     game.active = false;
 
@@ -148,7 +152,9 @@ function getGameSettingsFromValues(settingCategories, savedSettings) {
  */
 function getGameSettings(gameId) {
     const game = registeredGames.find(g => g.id === gameId);
-    if (!game) return null;
+    if (!game) {
+        return null;
+    }
     return buildGameSettings(game, allGamesSettings[game.id]);
 }
 
@@ -192,7 +198,9 @@ frontendCommunicator.onAsync('get-games', async () => {
 function updateGameSettings(gameId, settingCategories, activeStatus) {
     const game = registeredGames.find(g => g.id === gameId);
 
-    if (game == null) return;
+    if (game == null) {
+        return;
+    }
 
 
     let previousSettings = buildGameSettings(game, allGamesSettings[game.id]);
@@ -243,7 +251,9 @@ frontendCommunicator.on('game-settings-update', (data) => {
 frontendCommunicator.on('reset-game-to-defaults', (gameId) => {
     const game = registeredGames.find(g => g.id === gameId);
 
-    if (game == null) return;
+    if (game == null) {
+        return;
+    }
 
     updateGameSettings(gameId, null, null);
 

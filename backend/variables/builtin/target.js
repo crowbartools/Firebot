@@ -49,7 +49,9 @@ const commmandTarget = {
     },
     argsCheck: (index) => {
         // index can be null
-        if (index == null) return true;
+        if (index == null) {
+            return true;
+        }
 
         // index needs to be a number
         if (isNaN(index)) {

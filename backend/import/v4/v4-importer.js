@@ -32,7 +32,9 @@ async function importV4Data(settings) {
     logger.info("Starting v4 import...");
 
     // no v4 data detected
-    if (!v4DataDetected) return;
+    if (!v4DataDetected) {
+        return;
+    }
 
     logger.info("v4 data detected! Continuing...");
 

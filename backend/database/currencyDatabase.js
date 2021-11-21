@@ -41,7 +41,9 @@ function getCurrencyById(currencyId) {
 }
 
 function getCurrencyByName(currencyName) {
-    if (currencyName == null) return null;
+    if (currencyName == null) {
+        return null;
+    }
     const currencies = Object.values(currencyCache);
     return currencies.find(c => c.name.toLowerCase() === currencyName.toLowerCase());
 }
@@ -178,7 +180,9 @@ function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value, igno
         logger.debug("user ids", userIdsInRoles);
 
 
-        if (!userIdsInRoles.length) return resolve();
+        if (!userIdsInRoles.length) {
+            return resolve();
+        }
 
         // GIVE DEM BOBS.
         let db = userDatabase.getUserDb();
@@ -446,10 +450,14 @@ frontendCommunicator.on("give-currency", async (/** @type {CurrencyInfo} */ {
     }
     if (sendChatMessage) {
         const twitchChat = require("../chat/twitch-chat");
-        if (!twitchChat.chatIsConnected()) return;
+        if (!twitchChat.chatIsConnected()) {
+            return;
+        }
 
         const currency = getCurrencyById(currencyId);
-        if (currency == null) return;
+        if (currency == null) {
+            return;
+        }
 
         const message = `${amount < 0 ? "Removed" : "Gave"} ${util.commafy(amount)} ${currency.name} to ${targetType === "allOnline" ? "everyone" : `@${username}`}!`;
         twitchChat.sendChatMessage(message);
