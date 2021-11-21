@@ -112,6 +112,7 @@ exports.loadReplaceVariables = () => {
         'uptime',
         'user-avatar-url',
         'user-exists',
+        'user-id',
         'user-metadata',
         'user',
         'username',
