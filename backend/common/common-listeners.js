@@ -87,28 +87,24 @@ exports.setupCommonListeners = () => {
 
     // Opens the firebot root folder
     ipcMain.on("openRootFolder", () => {
-    // We include "fakefile.txt" as a workaround to make it open into the 'root' folder instead
-    // of opening to the poarent folder with 'Firebot'folder selected.
-        let rootFolder = path.resolve(
+        const rootFolder = path.resolve(
             profileManager.getPathInProfile("/")
         );
-        shell.openItem(rootFolder);
+        shell.openPath(rootFolder);
     });
 
     // Opens the firebot root folder
     ipcMain.on("openLogsFolder", () => {
-    // We include "fakefile.txt" as a workaround to make it open into the 'root' folder instead
-    // of opening to the poarent folder with 'Firebot'folder selected.
-        let rootFolder = path.resolve(
+        const rootFolder = path.resolve(
             dataAccess.getPathInUserData("/logs/")
         );
-        shell.openItem(rootFolder);
+        shell.openPath(rootFolder);
     });
 
     // Get Import Folder Path
     // This listens for an event from the render media.js file to open a dialog to get a filepath.
     ipcMain.on("getImportFolderPath", (event, uniqueid) => {
-        let path = dialog.showOpenDialogSync({
+        const path = dialog.showOpenDialogSync({
             title: "Select 'user-settings' folder",
             buttonLabel: "Import 'user-settings'",
             properties: ["openDirectory"]
@@ -145,7 +141,7 @@ exports.setupCommonListeners = () => {
     // We include "fakefile.txt" as a workaround to make it open into the 'root' folder instead
     // of opening to the poarent folder with 'Firebot'folder selected.
         let backupFolder = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups" + path.sep);
-        shell.openItem(backupFolder);
+        shell.openPath(backupFolder);
     });
 
     ipcMain.on("startBackup", (event, manualActivation = false) => {
