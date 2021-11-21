@@ -96,6 +96,30 @@ async function buildClipEmbed(clip) {
     };
 }
 
+async function buildScreenshotEmbed(imageUrl) {
+    const streamer = accountAccess.getAccounts().streamer;
+    const channelInfo = await twitchApi.channels.getChannelInformation();
+    return {
+        title: channelInfo.title,
+        color: 2210285,
+        footer: {
+            text: streamer.username,
+            icon_url: streamer.avatar //eslint-disable-line camelcase
+        },
+        fields: [
+            {
+                name: "Game",
+                value: channelInfo.gameName,
+                inline: true
+            }
+        ],
+        image: {
+            url: imageUrl
+        },
+        timestamp: new Date()
+    };
+}
+
 async function buildEmbed(embedType, customEmbedData) {
     switch (embedType) {
     case "channel": {
@@ -115,3 +139,4 @@ async function buildEmbed(embedType, customEmbedData) {
 
 exports.buildEmbed = buildEmbed;
 exports.buildClipEmbed = buildClipEmbed;
+exports.buildScreenshotEmbed = buildScreenshotEmbed;

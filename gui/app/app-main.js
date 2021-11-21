@@ -73,11 +73,11 @@
         }
     ]);
 
-    app.config(function($sceDelegateProvider) {  
+    app.config(function($sceDelegateProvider) {
         $sceDelegateProvider.resourceUrlWhitelist([
             'self',
             'https://kit.fontawesome.com/**'
-            ]);
+        ]);
     });
 
     app.config([
@@ -431,6 +431,40 @@
             });
         });
 
+        backendCommunicator.onAsync("takeScreenshot", async (data) => {
+
+            const { desktopCapturer, remote } = require("electron");
+
+            const screen = remote.screen;
+
+            const displays = screen.getAllDisplays();
+
+            const matchingDisplay = displays.find(d => d.id === data.displayId);
+
+            const resolution = matchingDisplay ? {
+                width: matchingDisplay.size.width * matchingDisplay.scaleFactor,
+                height: matchingDisplay.size.height * matchingDisplay.scaleFactor
+            } : {
+                width: 1920,
+                height: 1080
+            };
+
+            try {
+                const sources = await desktopCapturer.getSources({ types: ['screen'], thumbnailSize: resolution });
+
+                const foundSource = sources.find(s => s.display_id.toString() === data.displayId.toString());
+
+                if (foundSource) {
+                    return foundSource.thumbnail.toDataURL();
+                }
+                return null;
+
+            } catch (error) {
+                logger.error("Failed to take screenshot", error);
+                return null;
+            }
+        });
+
         //show puzzle
         /*utilityService.showModal({
             component: "puzzleModal",
@@ -442,7 +476,9 @@
     // This adds a filter that we can use for ng-repeat, useful when we want to paginate something
     app.filter("startFrom", function() {
         return function(input, startFrom) {
-            if (!input) return input;
+            if (!input) {
+                return input;
+            }
             startFrom = +startFrom;
             return input.slice(startFrom);
         };
@@ -451,7 +487,9 @@
     // This adds a filter that we can use for searching command triggers
     app.filter("triggerSearch", function() {
         return function(commands, query) {
-            if (commands == null || query == null) return commands;
+            if (commands == null || query == null) {
+                return commands;
+            }
             return commands.filter(c =>
                 c.trigger.toLowerCase().includes(query.toLowerCase())
             );
@@ -461,7 +499,9 @@
 
     app.filter("sortTagSearch", function() {
         return function(elements, tag) {
-            if (elements == null || tag == null) return elements;
+            if (elements == null || tag == null) {
+                return elements;
+            }
             return elements.filter(e => {
                 if (tag.id === "none" && (e.sortTags == null || e.sortTags.length < 1)) {
                     return true;
@@ -474,7 +514,9 @@
 
     app.filter("chatUserRole", function() {
         return function(users, role) {
-            if (users == null || role == null) return users;
+            if (users == null || role == null) {
+                return users;
+            }
             return users.filter(u => {
                 if (role === "broadcaster") {
                     return u.roles.includes("broadcaster");
@@ -497,7 +539,9 @@
     // This adds a filter that we can use for searching variables
     app.filter("variableSearch", function() {
         return function(variables, query) {
-            if (variables == null || query == null) return variables;
+            if (variables == null || query == null) {
+                return variables;
+            }
             let normalizedQuery = query.replace("$", "").toLowerCase();
             return variables
                 .filter(v =>
@@ -509,7 +553,9 @@
     // This adds a filter that we can use for searching effects
     app.filter("effectCategoryFilter", function() {
         return function(effects, category) {
-            if (effects == null || category == null) return effects;
+            if (effects == null || category == null) {
+                return effects;
+            }
             return effects
                 .filter(v =>
                     v.categories && v.categories.includes(category)
@@ -520,7 +566,9 @@
     // This adds a filter that we can use for searching variables
     app.filter("variableCategoryFilter", function() {
         return function(variables, category) {
-            if (variables == null || category == null) return variables;
+            if (variables == null || category == null) {
+                return variables;
+            }
             return variables
                 .filter(v =>
                     v.categories && v.categories.includes(category)
