@@ -14,9 +14,9 @@ module.exports = function (grunt) {
                 loadingGif: path.join(__dirname, '../gui/images/animated.gif'),
                 iconUrl: path.join(__dirname, '../gui/images/icon_transparent.ico'),
                 setupIcon: path.join(__dirname, '../gui/images/icon_transparent.ico'),
-                exe: "Firebot v5.exe",
-                title: " Firebot v5",
-                setupExe: "FirebotV5Setup.exe",
+                exe: "Firebot.exe",
+                title: "firebot",
+                setupExe: "Firebot Setup.exe",
                 noMsi: true
             }
         },

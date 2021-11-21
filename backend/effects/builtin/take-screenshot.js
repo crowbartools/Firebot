@@ -1,62 +1,68 @@
 "use strict";
 
-const clipProcessor = require("../../common/handlers/createClipProcessor");
-const { EffectDependency } = require("../models/effectModels");
 const { EffectCategory } = require('../../../shared/effect-constants');
 const { settings } = require("../../common/settings-access");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/httpServer");
-const utils = require("../../utility");
+const frontendCommunicator = require("../../common/frontend-communicator");
+const path = require("path");
+const discordEmbedBuilder = require("../../integrations/builtin/discord/discord-embed-builder");
+const discord = require("../../integrations/builtin/discord/discord-message-sender");
+
+const sanitizeFileName = require("sanitize-filename");
+const fs = require("fs").promises;
+const logger = require('../../logwrapper');
 
 const clip = {
     definition: {
-        id: "firebot:clip",
-        name: "Create Clip",
-        description: "Creates a clip on Twitch.",
-        icon: "fad fa-film",
-        categories: [EffectCategory.COMMON, EffectCategory.FUN],
-        dependencies: [EffectDependency.CHAT]
+        id: "firebot:screenshot",
+        name: "Take Screenshot",
+        description: "Takes a screenshot of the selected screen.",
+        icon: "fad fa-camera",
+        categories: [EffectCategory.FUN],
+        dependencies: []
     },
     globalSettings: {},
     optionsTemplate: `
-        <eos-container>
+       <eos-container header="Display">
+            <dropdown-select options="displayOptions" selected="effect.displayId"></dropdown-select>
+       </eos-container>
+
+        <eos-container header="Options" pad-top="true">
             <div style="padding-top:15px">
-                <label class="control-fb control--checkbox"> Post clip link in chat
-                    <input type="checkbox" ng-model="effect.postLink">
+                <label class="control-fb control--checkbox"> Save screenshot to folder
+                    <input type="checkbox" ng-model="effect.saveLocally">
                     <div class="control__indicator"></div>
                 </label>
+                <div ng-if="effect.saveLocally" style="margin-left: 30px;">
+                    <file-chooser model="effect.folderPath" options="{ directoryOnly: true, filters: [], title: 'Select Screenshot Folder'}"></file-chooser>
+                </div>
             </div>
 
             <div style="padding-top:15px" ng-show="hasChannels">
-                <label class="control-fb control--checkbox"> Post clip in Discord channel
+                <label class="control-fb control--checkbox"> Post screenshot in Discord channel
                     <input type="checkbox" ng-model="effect.postInDiscord">
                     <div class="control__indicator"></div>
                 </label>
             </div>
-
             <div ng-show="effect.postInDiscord" style="margin-left: 30px;">
                 <div>Discord Channel:</div>
                 <dropdown-select options="channelOptions" selected="effect.discordChannelId"></dropdown-select>
             </div>
 
             <div style="padding-top:15px">
-                <label class="control-fb control--checkbox"> Show clip in overlay
+                <label class="control-fb control--checkbox"> Show screenshot in overlay
                     <input type="checkbox" ng-model="effect.showInOverlay">
                     <div class="control__indicator"></div>
                 </label>
             </div>
-
-            <!--<div style="padding-top:20px">
-                <label class="control-fb control--checkbox"> Download clip <tooltip text="'You can change which folder clips save to in the Settings tab.'"></tooltip>
-                    <input type="checkbox" ng-model="effect.download">
-                    <div class="control__indicator"></div>
-                </label>
-            </div>-->
         </eos-container>
 
         <div ng-if="effect.showInOverlay">
-            <eos-overlay-position effect="effect" class="setting-padtop"></eos-overlay-position>
-            <eos-container header="Dimensions">
+            <eos-container header="Overlay Duration" pad-top="true">
+                <firebot-input model="effect.duration" input-type="number" disable-variables="true" input-title="Secs" />
+            </eos-container>
+            <eos-container header="Overlay Dimensions" pad-top="true">
                 <label class="control-fb control--checkbox"> Force 16:9 Ratio
                     <input type="checkbox" ng-click="forceRatioToggle();" ng-checked="forceRatio">
                     <div class="control__indicator"></div>
@@ -80,15 +86,10 @@ const clip = {
                         ng-model="effect.height">
                 </div>
             </eos-container>
+            <eos-overlay-position effect="effect" class="setting-padtop"></eos-overlay-position>
             <eos-enter-exit-animations effect="effect" class="setting-padtop"></eos-enter-exit-animations>
             <eos-overlay-instance effect="effect" class="setting-padtop"></eos-overlay-instance>
         </div>
-
-        <eos-container>
-            <div class="effect-info alert alert-warning">
-                Note: You must be live for this effect to work.
-            </div>
-        </eos-container>
     `,
     optionsController: ($scope, $q, backendCommunicator) => {
 
@@ -117,8 +118,8 @@ const clip = {
             }
         };
 
-        if ($scope.effect.clipDuration == null) {
-            $scope.effect.clipDuration = 30;
+        if ($scope.effect.duration == null) {
+            $scope.effect.duration = 5;
         }
 
         $scope.hasChannels = false;
@@ -142,6 +143,24 @@ const clip = {
                     $scope.hasChannels = true;
                 }
             });
+
+        const { remote } = require("electron");
+
+        const screen = remote.screen;
+
+        const displays = screen.getAllDisplays();
+        const primaryDisplay = screen.getPrimaryDisplay();
+
+        $scope.displayOptions = displays.reduce((acc, display, i) => {
+            const isPrimary = display.id === primaryDisplay.id;
+            acc[display.id] = `Display ${i + 1}${isPrimary ? ` (Primary)` : ''}`;
+            return acc;
+        }, {});
+
+        if ($scope.effect.displayId == null ||
+            $scope.displayOptions[$scope.effect.displayId] == null) {
+            $scope.effect.displayId = displays[0].id;
+        }
     },
     optionsValidator: effect => {
         let errors = [];
@@ -151,12 +170,36 @@ const clip = {
         return errors;
     },
     onTriggerEvent: async event => {
-        const { effect, trigger } = event;
-        const clip = await clipProcessor.createClip(effect, trigger);
-        if (clip != null) {
+        const twitchApi = require('../../twitch-api/api');
 
-            const rawDataSymbol = Object.getOwnPropertySymbols(clip)[0];
-            const clipDuration = clip[rawDataSymbol].duration;
+        const { effect } = event;
+
+        const screenshotDataUrl = await frontendCommunicator.fireEventAsync("takeScreenshot", { displayId: effect.displayId });
+
+        if (screenshotDataUrl != null) {
+
+            const base64ImageData = screenshotDataUrl.split(';base64,').pop();
+            if (effect.saveLocally) {
+                try {
+                    const { title, gameName} = await twitchApi.channels.getChannelInformation();
+                    const fileName = sanitizeFileName(`${title}-${gameName}-${new Date().getTime()}`);
+                    const folder = path.join(effect.folderPath, `${fileName}.png`);
+                    await fs.writeFile(folder, base64ImageData, {encoding: 'base64'});
+                } catch (error) {
+                    logger.error("Failed to save screenshot locally", error);
+                }
+            }
+
+            if (effect.postInDiscord) {
+                const filename = "screenshot.png";
+                const files = [{
+                    file: Buffer.from(base64ImageData, 'base64'),
+                    name: filename,
+                    description: "Screenshot by Firebot"
+                }];
+                const screenshotEmbed = await discordEmbedBuilder.buildScreenshotEmbed(`attachment://${filename}`);
+                discord.sendDiscordMessage(effect.discordChannelId, "A new screenshot was taken!", screenshotEmbed, files);
+            }
 
             if (effect.showInOverlay) {
 
@@ -174,11 +217,11 @@ const clip = {
                     }
                 }
 
-                webServer.sendToOverlay("playTwitchClip", {
-                    clipSlug: clip.id,
+                webServer.sendToOverlay("showScreenshot", {
+                    screenshotDataUrl: screenshotDataUrl,
                     width: effect.width,
                     height: effect.height,
-                    duration: clipDuration,
+                    duration: effect.duration || 5,
                     position: position,
                     customCoords: effect.customCoords,
                     enterAnimation: effect.enterAnimation,
@@ -192,11 +235,9 @@ const clip = {
                     overlayInstance: overlayInstance
                 });
             }
-
-
-            await utils.wait(clipDuration * 1000);
         }
-        return clip != null;
+
+        return screenshotDataUrl != null;
     },
     overlayExtension: {
         dependencies: {
@@ -204,10 +245,10 @@ const clip = {
             js: []
         },
         event: {
-            name: "playTwitchClip",
+            name: "showScreenshot",
             onOverlayEvent: event => {
                 const {
-                    clipSlug,
+                    screenshotDataUrl,
                     width,
                     height,
                     duration,
@@ -226,15 +267,7 @@ const clip = {
                 const styles = (width ? `width: ${width}px;` : '') +
                     (height ? `height: ${height}px;` : '');
 
-                const videoElement = `
-                    <iframe
-                        src="https://clips.twitch.tv/embed?clip=${clipSlug}&parent=localhost&autoplay=true&muted=false"
-                        height="${height || ""}"
-                        width="${width || ""}"
-                        style="border: none;${styles}"
-                        allowfullscreen="false">
-                    </iframe>
-                `;
+                const imageElement = `<img src="${screenshotDataUrl}" style="${styles}">`;
 
                 const positionData = {
                     position: position,
@@ -253,8 +286,7 @@ const clip = {
                     totalDuration: parseFloat(duration) * 1000
                 };
 
-                showElement(videoElement, positionData, animationData); // eslint-disable-line no-undef
-
+                showElement(imageElement, positionData, animationData); // eslint-disable-line no-undef
             }
         }
     }

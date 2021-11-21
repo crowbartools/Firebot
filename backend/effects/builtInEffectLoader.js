@@ -55,4 +55,5 @@ exports.loadEffects = () => {
     effectManager.registerEffect(require("./builtin/mark-all-activity-acknowledged"));
     effectManager.registerEffect(require("./builtin/update-channel-reward"));
     effectManager.registerEffect(require("./builtin/http-request"));
+    effectManager.registerEffect(require("./builtin/take-screenshot"));
 };

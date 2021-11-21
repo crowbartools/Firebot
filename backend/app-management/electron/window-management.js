@@ -1,7 +1,7 @@
 "use strict";
 
 const electron = require("electron");
-const { BrowserWindow, BrowserView, Menu, shell } = electron;
+const { BrowserWindow, BrowserView, Menu, shell, dialog } = electron;
 const path = require("path");
 const url = require("url");
 const windowStateKeeper = require("electron-window-state");
@@ -172,6 +172,24 @@ function createMainWindow() {
     mainWindow.webContents.on('new-window', function(e, url) {
         e.preventDefault();
         shell.openExternal(url);
+    });
+
+    mainWindow.on("close", (event) => {
+        const connectionManager = require("../../common/connection-manager");
+        if (connectionManager.chatIsConnected()) {
+            event.preventDefault();
+            dialog.showMessageBox(mainWindow, {
+                message: "Are you sure you want to close Firebot while connected to Twitch?",
+                title: "Close Firebot",
+                type: "question",
+                buttons: ["Close Firebot", "Cancel"]
+
+            }).then(({response}) => {
+                if (response === 0) {
+                    mainWindow.destroy();
+                }
+            }).catch(() => console.log("Error with close app confirmation"));
+        }
     });
 }
 

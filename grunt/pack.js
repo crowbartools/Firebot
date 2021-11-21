@@ -7,15 +7,17 @@ grunt pack
 
 'use strict';
 module.exports = function (grunt) {
+    const { version } = grunt.file.readJSON('./node_modules/electron/package.json');
+
     let flags = [
         '--out="./dist/pack"',
         '--arch=x64',
-        '--electronVersion=12.2.2',
+        `--electronVersion=${version}`,
         '--asar.unpack="moderation-service.js"',
         '--prune',
         '--overwrite',
-        '--version-string.ProductName="Firebot v5"',
-        '--executable-name="Firebot v5"',
+        '--version-string.ProductName="Firebot"',
+        '--executable-name="Firebot"',
         '--icon="./gui/images/icon_transparent.ico"',
         '--ignore=/.github',
         '--ignore=/.vscode',

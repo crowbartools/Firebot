@@ -1,7 +1,24 @@
 "use strict";
 
+const logger = require("../../logwrapper");
 const { EffectCategory } = require('../../../shared/effect-constants');
-const axios = require("axios").default;
+const axiosDefault = require("axios").default;
+
+const axios = axiosDefault.create({
+    headers: {
+        'User-Agent': 'Firebot v5 - HTTP Request Effect'
+    }
+});
+
+axios.interceptors.request.use(request => {
+    logger.debug('HTTP Request Effect [Request]: ', request);
+    return request;
+});
+
+axios.interceptors.response.use(response => {
+    logger.debug('HTTP Request Effect [Response]: ', response);
+    return response;
+});
 
 const effect = {
     definition: {
@@ -207,12 +224,11 @@ const effect = {
             return acc;
         }, {});
 
-        if (effect.options.useTwitchAuth) {
+        if (effect.options.useTwitchAuth && effect.url.startsWith("https://api.twitch.tv")) {
             const accessToken = accountAccess.getAccounts().streamer.auth.access_token;
             headers = {
                 ...headers,
                 'Authorization': `Bearer ${accessToken}`,
-                'User-Agent': 'Firebot v5',
                 'Client-ID': twitchAuth.TWITCH_CLIENT_ID
             };
         }
