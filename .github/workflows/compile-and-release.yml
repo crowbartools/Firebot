@@ -5,7 +5,7 @@ name: WIP Compile and Release
 # - when a user specifically requests the workflow to run on a branch
 on:
   push:
-    branches: 'master'
+    # branches: 'master' # uncomment line to enable auto building
     workflow_dispatch:
 
 jobs:
