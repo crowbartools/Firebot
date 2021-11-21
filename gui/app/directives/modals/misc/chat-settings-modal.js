@@ -138,6 +138,15 @@
                             <rzslider rz-slider-model="customFontSize" rz-slider-options="fontSliderOptions"></rzslider>
                         </div>
 
+                        <div style="margin-top: 10px;">
+                            <div style="font-weight: 900;" id="showCustomFontSize">Clear Chat Feed</div>
+                            <dropdown-select 
+                                options="clearChatFeedOptions" 
+                                selected="chatFeedMode" 
+                                on-update="setChatFeedMode(option)"
+                            ></dropdown-select>
+                        </div>
+
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -152,6 +161,14 @@
                 const $ctrl = this;
 
                 $scope.settings = settingsService;
+
+                $scope.clearChatFeedOptions = {
+                    never: "Never",
+                    onlyStreamer: "Only when I /clear",
+                    always: "When I or mods /clear"
+                };
+                $scope.chatFeedMode = settingsService.getClearChatFeedMode();
+                $scope.setChatFeedMode = (mode) => settingsService.setClearChatFeedMode(mode);
 
                 $scope.compactMode = settingsService.isChatCompactMode();
                 $scope.toggleCompactMode = function() {

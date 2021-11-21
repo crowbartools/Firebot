@@ -7,7 +7,7 @@
     angular
         .module('firebotApp')
         .factory('chatMessagesService', function ($rootScope, logger, listenerService, settingsService,
-            soundService, backendCommunicator, $q, pronounsService) {
+            soundService, backendCommunicator, $q, pronounsService, accountAccess) {
             let service = {};
 
             // Chat Message Queue
@@ -327,6 +327,19 @@
 
             backendCommunicator.on("twitch:chat:clear-user-list", () => {
                 service.clearUserList();
+            });
+
+            backendCommunicator.on("twitch:chat:clear-feed", (modUsername) => {
+                const clearMode = settingsService.getClearChatFeedMode();
+
+                const isStreamer = accountAccess.accounts.streamer.username.toLowerCase()
+                    === modUsername.toLowerCase();
+
+                if (clearMode !== "never" && (clearMode === "always" || isStreamer)) {
+                    service.clearChatQueue();
+                }
+
+                service.chatAlertMessage(`${modUsername} cleared the chat.`);
             });
 
             backendCommunicator.on("twitch:chat:user-active", id => {

@@ -107,6 +107,15 @@ async function createClient() {
             }
         });
         listeners.push(subsListener);
+
+        const modListener = await pubSubClient.onModAction(streamer.userId, streamer.userId, (message) => {
+            const frontendCommunicator = require("../../common/frontend-communicator");
+
+            if (message.action === "clear") {
+                frontendCommunicator.send("twitch:chat:clear-feed", message.userName);
+            }
+        });
+        listeners.push(modListener);
     } catch (err) {
         logger.error("Failed to connect to Twitch PubSub!", err);
         return;

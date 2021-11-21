@@ -3,6 +3,7 @@
 const webServer = require("../../../server/httpServer");
 const { EffectDependency } = require("../models/effectModels");
 const { EffectCategory } = require('../../../shared/effect-constants');
+const { settings } = require("../../common/settings-access");
 
 /**
  * The Celebration effect
@@ -43,16 +44,18 @@ const celebration = {
     </eos-container>
 
     <eos-container header="Duration" pad-top="true">
-    <div class="input-group">
-        <span class="input-group-addon" id="celebration-length-effect-type">Seconds</span>
-        <input type="text" ng-model="effect.length" class="form-control" id="celebration-amount-setting" aria-describedby="celebration-length-effect-type" replace-variables="number">
-    </div>
+        <div class="input-group">
+            <span class="input-group-addon" id="celebration-length-effect-type">Seconds</span>
+            <input type="text" ng-model="effect.length" class="form-control" id="celebration-amount-setting" aria-describedby="celebration-length-effect-type" replace-variables="number">
+        </div>
     </eos-container>
 
+    <eos-overlay-instance effect="effect" pad-top="true"></eos-overlay-instance>
+
     <eos-container>
-    <div class="effect-info alert alert-warning">
-        This effect requires the Firebot overlay to be loaded in your broadcasting software. <a href ng-click="showOverlayInfoModal()" style="text-decoration:underline">Learn more</a>
-    </div>
+        <div class="effect-info alert alert-warning">
+            This effect requires the Firebot overlay to be loaded in your broadcasting software. <a href ng-click="showOverlayInfoModal()" style="text-decoration:underline">Learn more</a>
+        </div>
     </eos-container>
     `,
     /**
@@ -81,18 +84,26 @@ const celebration = {
    */
     onTriggerEvent: async event => {
         // What should this do when triggered.
-        let effect = event.effect;
+        const effect = event.effect;
 
         // Get report info
-        let celebrationType = effect.celebration;
-        let celebrationDuration = effect.length;
+        const celebrationType = effect.celebration;
+        const celebrationDuration = effect.length;
 
         // Send data to renderer.
-        let data = {
+        const data = {
             event: "celebration",
             celebrationType: celebrationType,
             celebrationDuration: celebrationDuration
         };
+
+        if (settings.useOverlayInstances()) {
+            if (effect.overlayInstance != null) {
+                if (settings.getOverlayInstances().includes(effect.overlayInstance)) {
+                    data.overlayInstance = effect.overlayInstance;
+                }
+            }
+        }
 
         // Send to overlay.
         webServer.sendToOverlay("celebrate", data);

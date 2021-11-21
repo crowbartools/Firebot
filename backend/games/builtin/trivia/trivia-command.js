@@ -255,7 +255,9 @@ const triviaCommand = {
                 clearCurrentQuestion();
             }, answerTimeout * 1000);
         } else {
-            twitchChat.sendChatMessage(`Incorrect trivia usage: ${userCommand.trigger} [wager]`, null, chatter);
+            const noWagerMessage = triviaSettings.settings.chatSettings.noWagerMessage
+                .replace("{user}", userCommand.commandSender);
+            twitchChat.sendChatMessage(noWagerMessage, null, chatter);
         }
     }
 };

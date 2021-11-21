@@ -47,6 +47,13 @@ const showText = {
         </div>
     </eos-container>
 
+    <eos-container header="Text Settings" pad-top="true">
+        <label class="control-fb control--checkbox"> Drop shadow
+            <input type="checkbox" ng-model="effect.dropShadow" />
+            <div class="control__indicator"></div>
+        </label>
+    </eos-container>
+
     <eos-container header="Container Settings" class="setting-padtop">
         <p>This defines the size of the (invisible) box that the above text will be placed in.</p>
         <div class="input-group" style="margin-bottom: 10px;">
@@ -250,6 +257,7 @@ const showText = {
             align: effect.align,
             dontWrap: effect.dontWrap,
             debugBorder: effect.debugBorder,
+            dropShadow: effect.dropShadow,
             overlayInstance: effect.overlayInstance
         };
 
@@ -349,6 +357,10 @@ const showText = {
                     innerStyles += "overflow: hidden; white-space: nowrap;";
                 } else {
                     innerStyles += "white-space:normal;word-wrap: break-word;";
+                }
+
+                if (data.dropShadow) {
+                    innerStyles += "text-shadow: 2px 1px 3px rgb(2 2 2 / 33%);";
                 }
 
                 let borderColor = params.get("borderColor");

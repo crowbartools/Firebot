@@ -17,9 +17,13 @@
             });
 
             backendCommunicator.on("settings-updated-main", (settingsUpdate) => {
-                if (settingsUpdate == null) return;
+                if (settingsUpdate == null) {
+                    return;
+                }
                 let { path, data } = settingsUpdate;
-                if (path == null || path === '') return;
+                if (path == null || path === '') {
+                    return;
+                }
                 settingsCache[path] = data;
             });
 
@@ -322,6 +326,15 @@
 
             service.setWysiwygBackground = function(bg) {
                 pushDataToFile("/settings/wysiwygBackground", bg);
+            };
+
+            service.getClearChatFeedMode = function() {
+                const mode = getDataFromFile("/settings/clearChatFeedMode");
+                return mode != null ? mode : 'onlyStreamer';
+            };
+
+            service.setClearChatFeedMode = function(mode) {
+                pushDataToFile("/settings/clearChatFeedMode", mode);
             };
 
             service.isChatCompactMode = function() {
