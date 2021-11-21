@@ -45,13 +45,13 @@ jobs:
       success: ${{ steps.finished.outputs.success }}
     steps:
 
+      - name: Checkout branch the workflow is being ran on
+        uses: 'actions/checkout@v2'
+
       - name: Setup Nodejs
         uses: 'actions/setup-node@v1'
         with:
-          node-version: '14.x'
-
-      - name: Checkout branch the workflow is being ran on
-        uses: 'actions/checkout@v2'
+          node-version: '12.x'
 
       - name: Install Global Dependencies
         shell: bash
@@ -74,7 +74,7 @@ jobs:
         run: grunt build
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: ${{ runner.os }}
           path: './dist/install/${{ runner.os }}/'
@@ -92,16 +92,16 @@ jobs:
       success: ${{ steps.finished.outputs.success }}
     steps:
 
+      - name: Checkout branch the workflow is being ran on
+        uses: 'actions/checkout@v2'
+
       - name: Install Environment Dependencies
         run: sudo apt-get install libx11-dev libxtst-dev libpng-dev
 
       - name: Setup Nodejs
-        uses: 'actions/setup-node@v1'
+        uses: 'actions/setup-node@v2'
         with:
-          node-version: '14.x'
-
-      - name: Checkout branch the workflow is being ran on
-        uses: 'actions/checkout@v2'
+          node-version: '12.x'
 
       - name: Install Global Dependencies
         run: npm install --quiet --global --production grunt-cli node-gyp
@@ -121,7 +121,7 @@ jobs:
         run: grunt build
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: ${{ runner.os }}
           path: './dist/install/${{ runner.os }}/'
@@ -144,26 +144,26 @@ jobs:
     needs: [checktag, windows, linux, darwin]
     runs-on: 'windows-latest'
     steps:
-      - name: Download Windows build
+      - name: Download Windows Artifacts
         if: needs.windows.outputs.success == 1
-        uses: 'actions/download-artifact@v1'
+        uses: 'actions/download-artifact@v2'
         with:
           name: 'Windows'
-          path: ./bundles/
+          path: './bundles/'
 
-      - name: Download Linux package
+      - name: Download Linux Artifacts
         if: needs.linux.outputs.success == 1
-        uses: 'actions/download-artifact@v1'
+        uses: 'actions/download-artifact@v2'
         with:
           name: 'Linux'
-          path: ./bundles/
+          path: './bundles/'
 
-      - name: Download MacOS package
+      - name: Download MacOS Artifacts
         if: needs.darwin.outputs.success == 1
-        uses: 'actions/download-artifact@v1'
+        uses: 'actions/download-artifact@v2'
         with:
           name: 'macOS'
-          path: ./bundles/
+          path: './bundles/'
 
       - name: Get Commit Messages
         id: messages
