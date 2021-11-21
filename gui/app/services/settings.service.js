@@ -328,6 +328,15 @@
                 pushDataToFile("/settings/wysiwygBackground", bg);
             };
 
+            service.getClearChatFeedMode = function() {
+                const mode = getDataFromFile("/settings/clearChatFeedMode");
+                return mode != null ? mode : 'onlyStreamer';
+            };
+
+            service.setClearChatFeedMode = function(mode) {
+                pushDataToFile("/settings/clearChatFeedMode", mode);
+            };
+
             service.isChatCompactMode = function() {
                 let compact = getDataFromFile("/settings/chatCompactMode");
                 return compact != null ? compact : false;
