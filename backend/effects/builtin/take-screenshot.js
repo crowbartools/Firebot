@@ -17,7 +17,7 @@ const clip = {
     definition: {
         id: "firebot:screenshot",
         name: "Take Screenshot",
-        description: "Takes a screenshot of selected screen.",
+        description: "Takes a screenshot of the selected screen.",
         icon: "fad fa-camera",
         categories: [EffectCategory.FUN],
         dependencies: []
@@ -27,13 +27,14 @@ const clip = {
        <eos-container header="Display">
             <dropdown-select options="displayOptions" selected="effect.displayId"></dropdown-select>
        </eos-container>
-        <eos-container pad-top="true">
+
+        <eos-container header="Options" pad-top="true">
             <div style="padding-top:15px">
                 <label class="control-fb control--checkbox"> Save screenshot to folder
                     <input type="checkbox" ng-model="effect.saveLocally">
                     <div class="control__indicator"></div>
                 </label>
-                <div ng-if="effect.saveLocally">
+                <div ng-if="effect.saveLocally" style="margin-left: 30px;">
                     <file-chooser model="effect.folderPath" options="{ directoryOnly: true, filters: [], title: 'Select Screenshot Folder'}"></file-chooser>
                 </div>
             </div>
@@ -58,11 +59,10 @@ const clip = {
         </eos-container>
 
         <div ng-if="effect.showInOverlay">
-            <eos-container header="Duration" pad-top="true">
+            <eos-container header="Overlay Duration" pad-top="true">
                 <firebot-input model="effect.duration" input-type="number" disable-variables="true" input-title="Secs" />
             </eos-container>
-            <eos-overlay-position effect="effect" class="setting-padtop"></eos-overlay-position>
-            <eos-container header="Dimensions">
+            <eos-container header="Overlay Dimensions" pad-top="true">
                 <label class="control-fb control--checkbox"> Force 16:9 Ratio
                     <input type="checkbox" ng-click="forceRatioToggle();" ng-checked="forceRatio">
                     <div class="control__indicator"></div>
@@ -86,6 +86,7 @@ const clip = {
                         ng-model="effect.height">
                 </div>
             </eos-container>
+            <eos-overlay-position effect="effect" class="setting-padtop"></eos-overlay-position>
             <eos-enter-exit-animations effect="effect" class="setting-padtop"></eos-enter-exit-animations>
             <eos-overlay-instance effect="effect" class="setting-padtop"></eos-overlay-instance>
         </div>
