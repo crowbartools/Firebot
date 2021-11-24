@@ -82,7 +82,7 @@ module.exports = {
         {
             id: "prime-sub-upgraded",
             name: "Prime Sub Upgraded",
-            description: "When a user upgrades to a paid sub from a Prime sub.",
+            description: "When someone upgrades to a paid sub from a Prime sub.",
             cached: false,
             affiliateRequired: true,
             manualMetadata: {
@@ -139,7 +139,7 @@ module.exports = {
         {
             id: "gift-sub-upgraded",
             name: "Gift Sub Upgraded",
-            description: "When a user upgrades to a paid sub from a gift sub.",
+            description: "When someone upgrades to a paid sub from a gift sub.",
             cached: false,
             affiliateRequired: true,
             manualMetadata: {
@@ -172,6 +172,24 @@ module.exports = {
                 icon: "fad fa-diamond",
                 getMessage: (eventData) => {
                     return `**${eventData.username}** cheered **${eventData.bits}** bits. A total of **${eventData.totalBits}** were cheered by **${eventData.username}** in the channel.`;
+                }
+            }
+        },
+        {
+            id: "bits-badge-unlocked",
+            name: "Bits Badge Unlocked",
+            description: "When someone unlocks a new bits badge tier in your channel.",
+            cached: false,
+            affiliateRequired: true,
+            manualMetadata: {
+                username: "Firebot",
+                message: "Test message",
+                badgeTier: "1000"
+            },
+            activityFeed: {
+                icon: "fad fa-diamond",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** unlocked the **${eventData.badgeTier}** bits badge in your channel!`;
                 }
             }
         },

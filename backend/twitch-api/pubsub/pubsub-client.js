@@ -94,10 +94,16 @@ async function createClient() {
         });
         listeners.push(whisperListener);
 
-        const bitsListener = await pubSubClient.onBits(streamer.userId, (event) => {
-            twitchEventsHandler.cheer.triggerCheer(event.userName, event.isAnonymous, event.bits, event.totalBits, event.message);
+        const bitsListener = await pubSubClient.onBits(streamer.userId, (message) => {
+            twitchEventsHandler.cheer.triggerCheer(message);
         });
         listeners.push(bitsListener);
+
+        const bitsBadgeUnlockListener = await pubSubClient.onBitsBadgeUnlock(streamer.userId, (message) => {
+            twitchEventsHandler.cheer.triggerBitsBadgeUnlock(message);
+        });
+        listeners.push(bitsBadgeUnlockListener);
+
 
         const subsListener = await pubSubClient.onSubscription(streamer.userId, (subInfo) => {
             if (subInfo.isGift) {

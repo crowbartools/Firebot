@@ -17,6 +17,8 @@ exports.loadReplaceVariables = () => {
         'array-remove',
         'array-reverse',
         'array-shuffle',
+        'bits-badge-tier',
+        'bits-badge-unlocked-message',
         'bot',
         'category-image-url',
         'chat-message',
