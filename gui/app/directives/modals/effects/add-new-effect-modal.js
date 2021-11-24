@@ -22,7 +22,14 @@ const { EffectCategory } = require("../../shared/effect-constants");
                         </div>
                         <div class="effect-category-wrapper" ng-repeat="category in $ctrl.categories" ng-class="{'selected': $ctrl.activeCategory === category}" ng-click="$ctrl.activeCategory = category;">
                             <div class="category-bar"></div>
-                            <div class="category-text">{{category}}</div>
+                            <div class="category-text">
+                                {{category}}
+                                <tooltip
+                                    style="margin-left: 5px"
+                                    ng-if="category === 'integrations'"
+                                    text="'Integrations need to be linked in Settings -> Integrations in order for the effects to work.'"
+                                ></tooltip>
+                            </div>
                         </div>
                     </div>
                     <div style="width: 100%; height: 100%;overflow-y:scroll;padding: 15px 15px 0;">
