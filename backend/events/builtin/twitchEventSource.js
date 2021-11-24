@@ -61,6 +61,7 @@ module.exports = {
             name: "Sub",
             description: "When someone subscribes (or resubscribes) to your channel.",
             cached: false,
+            affiliateRequired: true,
             manualMetadata: {
                 username: "Firebot",
                 subPlan: "1000",
@@ -83,6 +84,7 @@ module.exports = {
             name: "Prime Sub Upgraded",
             description: "When a user upgrades to a paid sub from a Prime sub.",
             cached: false,
+            affiliateRequired: true,
             manualMetadata: {
                 username: "Firebot",
                 subPlan: "1000"
@@ -99,6 +101,7 @@ module.exports = {
             name: "Sub Gifted",
             description: "When someone gifts a sub to someone else in your channel.",
             cached: false,
+            affiliateRequired: true,
             manualMetadata: {
                 username: "MageEnclave",
                 giftSubMonths: 1,
@@ -119,6 +122,7 @@ module.exports = {
             name: "Community Subs Gifted",
             description: "When someone gifts random subs to the community of the channel",
             cached: false,
+            affiliateRequired: true,
             manualMetadata: {
                 username: "Firebot",
                 gifterUsername: "Firebot",
@@ -137,6 +141,7 @@ module.exports = {
             name: "Gift Sub Upgraded",
             description: "When a user upgrades to a paid sub from a gift sub.",
             cached: false,
+            affiliateRequired: true,
             manualMetadata: {
                 username: "CaveMobster",
                 gifteeUsername: "CaveMobster",
@@ -155,6 +160,7 @@ module.exports = {
             name: "Cheer",
             description: "When someone cheers in your channel (uses bits).",
             cached: false,
+            affiliateRequired: true,
             manualMetadata: {
                 username: "Firebot",
                 isAnonymous: false,
@@ -236,6 +242,7 @@ module.exports = {
             cached: true,
             cacheMetaKey: "username",
             cacheTtlInSecs: 1,
+            affiliateRequired: true,
             queued: false,
             manualMetadata: {
                 username: "Firebot",

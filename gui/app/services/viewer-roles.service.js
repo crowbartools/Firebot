@@ -90,7 +90,7 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
             const twitchRoles = twitchRoleConstants.getTwitchRoles();
             service.getTwitchRoles = function() {
                 if (accountAccess.accounts.streamer.broadcasterType === "") {
-                    return twitchRoles.slice(0, 3);
+                    return twitchRoles.filter(r => !r.affiliateRequired);
                 }
 
                 return twitchRoles;

@@ -62,16 +62,7 @@ class EventManager extends EventEmitter {
         let events = util.flattenArray(eventArrays);
 
         if (accountAccess.getAccounts().streamer.broadcasterType === "") {
-            const affiliateEvents = [
-                "sub",
-                "prime-sub-upgraded",
-                "community-subs-gifted",
-                "subs-gifted",
-                "gift-sub-upgraded",
-                "cheer",
-                "channel-reward-redemption"
-            ];
-            events = events.filter(e => !affiliateEvents.includes(e.id));
+            events = events.filter(e => !e.affiliateRequired);
         }
 
         return events;
