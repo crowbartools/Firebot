@@ -7,6 +7,7 @@ const util = require("../utility");
 const eventsRouter = require("./events-router");
 const eventsAccess = require("./events-access");
 const frontendCommuncator = require("../common/frontend-communicator");
+const accountAccess = require("../common/account-access");
 
 /**@extends NodeJS.EventEmitter */
 class EventManager extends EventEmitter {
@@ -59,6 +60,20 @@ class EventManager extends EventEmitter {
         let eventArrays = this._registeredEventSources
             .map(es => es.events);
         let events = util.flattenArray(eventArrays);
+
+        if (accountAccess.getAccounts().streamer.broadcasterType === "") {
+            const affiliateEvents = [
+                "sub",
+                "prime-sub-upgraded",
+                "community-subs-gifted",
+                "subs-gifted",
+                "gift-sub-upgraded",
+                "cheer",
+                "channel-reward-redemption"
+            ];
+            events = events.filter(e => !affiliateEvents.includes(e.id));
+        }
+
         return events;
     }
 
