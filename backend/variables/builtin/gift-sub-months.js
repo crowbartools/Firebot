@@ -13,7 +13,7 @@ triggers[EffectTrigger.MANUAL] = true;
 const model = {
     definition: {
         handle: "giftSubMonths",
-        description: "The number of months gifted by the sub",
+        description: "The total number of months the gift receiver has been subscribed since the beginning of time.",
         triggers: triggers,
         categories: [VariableCategory.COMMON],
         possibleDataOutput: [OutputDataType.NUMBER]
