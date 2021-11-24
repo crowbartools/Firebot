@@ -7,7 +7,7 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
 
     angular
         .module("firebotApp")
-        .factory("viewerRolesService", function(logger, backendCommunicator) {
+        .factory("viewerRolesService", function(logger, backendCommunicator, accountAccess) {
             let service = {};
 
             let customRoles = {};
@@ -89,6 +89,10 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
 
             const twitchRoles = twitchRoleConstants.getTwitchRoles();
             service.getTwitchRoles = function() {
+                if (accountAccess.accounts.streamer.broadcasterType === "") {
+                    return twitchRoles.slice(0, 3);
+                }
+
                 return twitchRoles;
             };
 
