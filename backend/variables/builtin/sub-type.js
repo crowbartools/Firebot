@@ -7,7 +7,7 @@ const {
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
 let triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:sub"];
+triggers[EffectTrigger.EVENT] = ["twitch:sub", "twitch:prime-sub-upgraded"];
 triggers[EffectTrigger.MANUAL] = true;
 
 const model = {

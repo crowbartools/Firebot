@@ -13,6 +13,8 @@ module.exports = {
         { eventSourceId: "twitch", eventId: "cheer" },
         { eventSourceId: "twitch", eventId: "subs-gifted" },
         { eventSourceId: "twitch", eventId: "sub" },
+        { eventSourceId: "twitch", eventId: "prime-sub-upgraded" },
+        { eventSourceId: "twitch", eventId: "gift-sub-upgraded" },
         { eventSourceId: "twitch", eventId: "follow" },
         { eventSourceId: "streamlabs", eventId: "follow" },
         { eventSourceId: "twitch", eventId: "raid" },

@@ -79,6 +79,22 @@ module.exports = {
             }
         },
         {
+            id: "prime-sub-upgraded",
+            name: "Prime Sub Upgraded",
+            description: "When a user upgrades to a paid sub from a Prime sub.",
+            cached: false,
+            manualMetadata: {
+                username: "Firebot",
+                subPlan: "1000"
+            },
+            activityFeed: {
+                icon: "fas fa-star",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** upgraded their Prime sub at **Tier ${eventData.subPlan.replace("000", "")}!**`;
+                }
+            }
+        },
+        {
             id: "subs-gifted",
             name: "Sub Gifted",
             description: "When someone gifts a sub to someone else in your channel.",
@@ -113,6 +129,24 @@ module.exports = {
                 icon: "fad fa-gifts",
                 getMessage: (eventData) => {
                     return `**${eventData.username}** gifted **${eventData.subCount} Tier ${eventData.subPlan.replace("000", "")}** sub${eventData.subCount > 1 ? 's' : ''} to the community`;
+                }
+            }
+        },
+        {
+            id: "gift-sub-upgraded",
+            name: "Gift Sub Upgraded",
+            description: "When a user upgrades to a paid sub from a gift sub.",
+            cached: false,
+            manualMetadata: {
+                username: "CaveMobster",
+                gifteeUsername: "CaveMobster",
+                gifterUsername: "Firebot",
+                subPlan: "1000"
+            },
+            activityFeed: {
+                icon: "fas fa-star",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** upgraded their gift sub at **Tier ${eventData.subPlan.replace("000", "")}!**`;
                 }
             }
         },

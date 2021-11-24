@@ -48,3 +48,13 @@ exports.triggerSubGift = (subInfo) => {
         giftDuration: subInfo.giftDuration
     });
 };
+
+/** @param {import("@twurple/chat").ChatSubGiftUpgradeInfo} subInfo */
+exports.triggerSubGiftUpgrade = (subInfo) => {
+    eventManager.triggerEvent("twitch", "gift-sub-upgraded", {
+        username: subInfo.displayName,
+        gifterUsername: subInfo.gifterDisplayName,
+        gifteeUsername: subInfo.displayName,
+        subPlan: subInfo.plan
+    });
+};

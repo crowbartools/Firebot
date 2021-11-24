@@ -21,3 +21,11 @@ exports.triggerSub = (subInfo) => {
         isResub: subInfo.isResub
     });
 };
+
+/** @param {import("@twurple/chat").ChatSubUpgradeInfo} subInfo */
+exports.triggerPrimeUpgrade = (subInfo) => {
+    eventManager.triggerEvent("twitch", "prime-sub-upgraded", {
+        username: subInfo.displayName,
+        subPlan: subInfo.plan
+    });
+};

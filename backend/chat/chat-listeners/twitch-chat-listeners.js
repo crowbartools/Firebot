@@ -113,6 +113,14 @@ exports.setupChatListeners = (streamerChatClient) => {
             subInfo.plan, subInfo.count);
     });
 
+    streamerChatClient.onGiftPaidUpgrade((_channel, _user, subInfo, msg) => {
+        twitchEventsHandler.giftSub.triggerSubGiftUpgrade(subInfo);
+    });
+
+    streamerChatClient.onPrimePaidUpgrade((_channel, _user, subInfo, msg) => {
+        twitchEventsHandler.sub.triggerPrimeUpgrade(subInfo);
+    });
+
     streamerChatClient.onRaid((_channel, _username, raidInfo) => {
         twitchEventsHandler.raid.triggerRaid(raidInfo.displayName, raidInfo.viewerCount);
     });
