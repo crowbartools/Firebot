@@ -7,14 +7,17 @@ const eventManager = require("../../events/EventManager");
 
 const communitySubCache = new NodeCache({ stdTTL: 2, checkperiod: 2 });
 
-exports.triggerCommunitySubGift = (gifterUsername, subPlan, subCount) => {
-    communitySubCache.set(`${gifterUsername}:${subPlan}`, subCount);
+/** @param {import("@twurple/chat").ChatCommunitySubInfo} subInfo */
+exports.triggerCommunitySubGift = (subInfo) => {
+    const gifterDisplayName = subInfo.gifterDisplayName ? subInfo.gifterDisplayName : "An Anonymous Gifter";
+
+    communitySubCache.set(`${gifterDisplayName}:${subInfo.plan}`, subInfo.count);
 
     eventManager.triggerEvent("twitch", "community-subs-gifted", {
-        username: gifterUsername,
-        subCount,
-        gifterUsername,
-        subPlan
+        username: gifterDisplayName,
+        subCount: subInfo.count,
+        gifterUsername: gifterDisplayName,
+        subPlan: subInfo.plan
     });
 };
 
