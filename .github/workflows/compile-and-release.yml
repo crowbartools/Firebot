@@ -60,7 +60,7 @@ jobs:
           npm install --quiet --global --production windows-build-tools@4.0.0 grunt-cli node-gyp
 
       - name: Install Project Dependencies
-        run: npm install --quiet
+        run: npm ci --quiet
 
       - name: Rebuild Robotjs for Electron
         run: npm run rebuild
@@ -107,7 +107,7 @@ jobs:
         run: npm install --quiet --global --production grunt-cli node-gyp
 
       - name: Install Project Dependencies
-        run: npm install --quiet
+        run: npm ci --quiet
 
       - name: Rebuild Robotjs for Electron
         run: npm run rebuild

@@ -55,7 +55,7 @@ jobs:
 
       - name: Install Project Dependencies
         if: steps.tagged.outputs.tagged == 1
-        run: npm install --quiet
+        run: npm ci --quiet
 
       - name: Rebuild Robotjs for Electron
         if: steps.tagged.outputs.tagged == 1
