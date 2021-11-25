@@ -83,10 +83,12 @@ const getUsersChatRoles = async (userIdOrName = "") => {
             roles.push("broadcaster");
         }
 
-        const subscriberRole = await getUserSubscriberRole(userIdOrName);
-        if (subscriberRole != null) {
-            roles.push("sub");
-            roles.push(subscriberRole);
+        if (streamer.broadcasterType !== "") {
+            const subscriberRole = await getUserSubscriberRole(userIdOrName);
+            if (subscriberRole != null) {
+                roles.push("sub");
+                roles.push(subscriberRole);
+            }
         }
 
         if (vips.some(v => v === username)) {

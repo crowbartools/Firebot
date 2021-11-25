@@ -61,7 +61,9 @@ exports.registerEvents = () => {
 };
 
 exports.processStreamLabsEvent = (eventData) => {
-    if (eventData === null) return;
+    if (eventData === null) {
+        return;
+    }
     if (eventData.type === "donation") {
         let donoData = eventData.message[0];
         eventManager.triggerEvent(EVENT_SOURCE_ID, EventId.DONATION, {

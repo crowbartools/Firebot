@@ -44,7 +44,10 @@ function createMainWindow() {
         webPreferences: {
             nodeIntegration: true,
             nativeWindowOpen: false,
-            backgroundThrottling: false
+            backgroundThrottling: false,
+            contextIsolation: false,
+            worldSafeExecuteJavaScript: false,
+            enableRemoteModule: true
         }
     });
 

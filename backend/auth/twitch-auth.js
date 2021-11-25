@@ -107,7 +107,9 @@ authManager.on("auth-success", async authData => {
 
     if (providerId === STREAMER_ACCOUNT_PROVIDER_ID || providerId === BOT_ACCOUNT_PROVIDER_ID) {
         const userData = await getUserCurrent(tokenData.access_token);
-        if (userData == null) return;
+        if (userData == null) {
+            return;
+        }
 
         let accountType = providerId === STREAMER_ACCOUNT_PROVIDER_ID ? "streamer" : "bot";
         let accountObject = {

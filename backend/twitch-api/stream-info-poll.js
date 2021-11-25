@@ -26,7 +26,9 @@ async function handleStreamInfo() {
     const streamer = accountAccess.getAccounts().streamer;
     const client = twitchApi.getClient();
 
-    if (client == null || !streamer.loggedIn) return;
+    if (client == null || !streamer.loggedIn) {
+        return;
+    }
 
     const logger = require("../logwrapper");
 

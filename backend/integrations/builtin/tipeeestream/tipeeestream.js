@@ -39,7 +39,9 @@ function getTipeeeAPIKey(accessToken) {
         };
 
         request(options, function(error, _, body) {
-            if (error) return rej(error);
+            if (error) {
+                return rej(error);
+            }
 
             body = JSON.parse(body);
 
@@ -56,7 +58,9 @@ function getSocketUrl() {
         };
 
         request(options, function(error, _, body) {
-            if (error) return rej(error);
+            if (error) {
+                return rej(error);
+            }
 
             body = JSON.parse(body);
 

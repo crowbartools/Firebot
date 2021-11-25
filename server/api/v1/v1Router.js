@@ -51,4 +51,40 @@ router.route("/fonts/:name")
     .get(fonts.getFont);
 
 
+// custom variables
+const customVariables = require("./controllers/customVariableApiController");
+
+router
+    .route("/custom-variables")
+    .get(customVariables.getCustomVariables)
+    .post(customVariables.setCustomVariable);
+
+router.route("/custom-variables/:variableName")
+    .get(customVariables.getCustomVariable);
+
+
+// viewers
+const viewers = require("./controllers/viewersApiController");
+
+router
+    .route("/viewers/:userId/currency")
+    .get(viewers.getUserCurrency);
+
+router
+    .route("/viewers/:userId/currency/:currencyId")
+    .get(viewers.getUserCurrency)
+    .post(viewers.setUserCurrency);
+
+
+// currencies
+const currency = require("./controllers/currencyApiController");
+
+router
+    .route("/currency")
+    .get(currency.getCurrencies);
+
+router
+    .route("/currency/:currencyName")
+    .get(currency.getCurrencies);
+
 module.exports = router;

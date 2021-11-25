@@ -49,7 +49,9 @@ class EffectManager extends EventEmitter {
     }
 
     mapEffectForFrontEnd(e) {
-        if (!e) return {};
+        if (!e) {
+            return {};
+        }
         return {
             definition: e.definition,
             optionsTemplate: e.optionsTemplate,
@@ -64,7 +66,9 @@ class EffectManager extends EventEmitter {
     }
 
     clearFilePaths(effects) {
-        if (effects == null) return effects;
+        if (effects == null) {
+            return effects;
+        }
 
         let keys = Object.keys(effects);
 
@@ -111,9 +115,13 @@ frontendCommunicator.onAsync("getEffectDefinitions", async (triggerData) => {
         .map(e => e.definition)
         .filter(e => {
             if (triggerType != null) {
-                if (e.triggers == null) return true;
+                if (e.triggers == null) {
+                    return true;
+                }
                 let supported = e.triggers[triggerType] != null && e.triggers[triggerType] !== false;
-                if (!supported) return false;
+                if (!supported) {
+                    return false;
+                }
 
                 if (triggerMeta) {
                     const effectTriggerData = e.triggers[triggerType];

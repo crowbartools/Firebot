@@ -65,11 +65,21 @@ const model = {
                     <div class="control__indicator"></div>
                 </label>
             </div>
+
+            <div style="padding-top:15px">
+                <label class="control-fb control--checkbox"> Run detached
+                    <input type="checkbox" ng-model="effect.runDetached">
+                    <div class="control__indicator"></div>
+                </label>
+            </div>
         </eos-container>
     `,
     optionsController: $scope => {
-        if ($scope.effect.hideWindow === undefined) {
+        if ($scope.effect.hideWindow == null) {
             $scope.effect.hideWindow = true;
+        }
+        if ($scope.effect.runDetached == null) {
+            $scope.effect.runDetached = true;
         }
     },
     optionsValidator: effect => {
@@ -83,7 +93,7 @@ const model = {
         return new Promise(resolve => {
             let { effect } = event;
 
-            let { programPath, programArgs, waitForFinish, hideWindow } = effect;
+            let { programPath, programArgs, waitForFinish, hideWindow, runDetached } = effect;
 
             if (programPath == null || programPath === "") {
                 return resolve();
@@ -98,7 +108,7 @@ const model = {
             };
 
             if (!waitForFinish) {
-                options.detached = true;
+                options.detached = runDetached !== false; // catch null and true as valid for backwards compat
                 options.stdio = 'ignore';
             }
 

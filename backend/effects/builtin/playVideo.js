@@ -5,7 +5,7 @@ const resourceTokenManager = require("../../resourceTokenManager");
 const webServer = require("../../../server/httpServer");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const { EffectDependency } = require("../models/effectModels");
-const { EffectCategory } = require('../../../shared/effect-constants');
+const { EffectCategory } = require("../../../shared/effect-constants");
 const logger = require("../../logwrapper");
 const accountAccess = require("../../common/account-access");
 const util = require("../../utility");
@@ -15,8 +15,8 @@ const util = require("../../utility");
  */
 const playVideo = {
     /**
-   * The definition of the Effect
-   */
+     * The definition of the Effect
+     */
     definition: {
         id: "firebot:playvideo",
         name: "Play Video",
@@ -26,13 +26,13 @@ const playVideo = {
         dependencies: [EffectDependency.OVERLAY]
     },
     /**
-   * Global settings that will be available in the Settings tab
-   */
+     * Global settings that will be available in the Settings tab
+     */
     globalSettings: {},
     /**
-   * The HTML template for the Options view (ie options when effect is added to something such as a button.
-   * You can alternatively supply a url to a html file via optionTemplateUrl
-   */
+     * The HTML template for the Options view (ie options when effect is added to something such as a button.
+     * You can alternatively supply a url to a html file via optionTemplateUrl
+     */
     optionsTemplate: `
     <eos-container header="Video">
         <div style="padding-bottom: 10px">
@@ -201,11 +201,11 @@ const playVideo = {
     </div>
     `,
     /**
-   * The controller for the front end Options
-   * Port over from effectHelperService.js
-   */
+     * The controller for the front end Options
+     * Port over from effectHelperService.js
+     */
     optionsController: ($scope, $rootScope, $timeout, utilityService) => {
-        $scope.showOverlayInfoModal = function(overlayInstance) {
+        $scope.showOverlayInfoModal = function (overlayInstance) {
             utilityService.showOverlayInfoModal(overlayInstance);
         };
 
@@ -222,14 +222,14 @@ const playVideo = {
         ];
 
         // Set Video Type
-        $scope.setVideoType = function(type) {
+        $scope.setVideoType = function (type) {
             $scope.effect.videoType = type;
             $scope.effect.youtube = "";
             $scope.effect.file = "";
             $scope.effect.twitchClipUrl = "";
             $scope.effect.twitchClipUsername = "";
 
-            $timeout(function() {
+            $timeout(function () {
                 $rootScope.$broadcast("rzSliderForceRender");
             }, 100);
         };
@@ -240,7 +240,7 @@ const playVideo = {
 
         // Force ratio toggle
         $scope.forceRatio = true;
-        $scope.forceRatioToggle = function() {
+        $scope.forceRatioToggle = function () {
             if ($scope.forceRatio === true) {
                 $scope.forceRatio = false;
             } else {
@@ -250,12 +250,12 @@ const playVideo = {
 
         // Calculate 16:9
         // This checks to see which field the user is filling out, and then adjust the other field so it's always 16:9.
-        $scope.calculateSize = function(widthOrHeight, size) {
+        $scope.calculateSize = function (widthOrHeight, size) {
             if (size !== "") {
                 if (widthOrHeight === "Width" && $scope.forceRatio === true) {
-                    $scope.effect.height = String(Math.round(size / 16 * 9));
+                    $scope.effect.height = String(Math.round((size / 16) * 9));
                 } else if (widthOrHeight === "Height" && $scope.forceRatio === true) {
-                    $scope.effect.width = String(Math.round(size * 16 / 9));
+                    $scope.effect.width = String(Math.round((size * 16) / 9));
                 }
             } else {
                 $scope.effect.height = "";
@@ -264,10 +264,10 @@ const playVideo = {
         };
     },
     /**
-   * When the effect is triggered by something
-   * Used to validate fields in the option template.
-   */
-    optionsValidator: effect => {
+     * When the effect is triggered by something
+     * Used to validate fields in the option template.
+     */
+    optionsValidator: (effect) => {
         let errors = [];
         if (effect.videoType == null) {
             errors.push("Please select a video type.");
@@ -275,9 +275,9 @@ const playVideo = {
         return errors;
     },
     /**
-   * When the effect is triggered by something
-   */
-    onTriggerEvent: async event => {
+     * When the effect is triggered by something
+     */
+    onTriggerEvent: async (event) => {
         let effect = event.effect;
         // What should this do when triggered.
         let position = effect.position;
@@ -317,13 +317,12 @@ const playVideo = {
         }
 
         if (effect.videoType === "Twitch Clip" || effect.videoType === "Random Twitch Clip") {
-
             const twitchApi = require("../../twitch-api/api");
             const client = twitchApi.getClient();
 
             let clipId;
 
-            /**@type {import("@twurple/api/lib").HelixClip} */
+            /**@type {import('@twurple/api/lib').HelixClip} */
             let clip;
             if (effect.videoType === "Twitch Clip") {
                 clipId = effect.twitchClipUrl.replace("https://clips.twitch.tv/", "");
@@ -336,7 +335,6 @@ const playVideo = {
             } else if (effect.videoType === "Random Twitch Clip") {
                 const username = effect.twitchClipUsername || accountAccess.getAccounts().streamer.username;
                 try {
-
                     const user = await client.users.getUserByName(username);
 
                     if (user == null) {
@@ -355,7 +353,6 @@ const playVideo = {
                     clip = clips.data[randomClipIndex];
 
                     clipId = clip.id;
-
                 } catch (error) {
                     logger.error("Unable to find clip random clip for: " + username, error);
                     return true;
@@ -398,18 +395,15 @@ const playVideo = {
             return true;
         }
 
-        let resourceToken = resourceTokenManager.storeResourcePath(
-            effect.file,
-            effect.length
-        );
+        let resourceToken = resourceTokenManager.storeResourcePath(effect.file, effect.length);
         data.resourceToken = resourceToken;
 
         webServer.sendToOverlay("video", data);
         return true;
     },
     /**
-   * Code to run in the overlay
-   */
+     * Code to run in the overlay
+     */
     overlayExtension: {
         dependencies: {
             css: [],
@@ -417,24 +411,28 @@ const playVideo = {
         },
         event: {
             name: "video",
-            onOverlayEvent: event => {
-
-                if (!startedVidCache) { // eslint-disable-line no-undef
+            onOverlayEvent: (event) => {
+                // eslint-disable-next-line no-undef
+                if (!startedVidCache) {
+                    // eslint-disable-line no-undef
                     startedVidCache = {}; // eslint-disable-line no-undef
                 }
 
                 function animateVideoExit(idString, animation, duration, inbetweenAnimation) {
-
                     if (inbetweenAnimation) {
                         $(idString).find(".inner-position").css("animation-duration", "");
                         $(idString).find(".inner-position").css("animation-delay", "");
                         $(idString).find(".inner-position").css("animation-iteration-count", "");
-                        $(idString).find(".inner-position").removeClass('animated ' + inbetweenAnimation);
+                        $(idString)
+                            .find(".inner-position")
+                            .removeClass("animated " + inbetweenAnimation);
                     }
 
-                    $(idString).find(".inner-position").animateCss(animation, duration, null, null, () => {
-                        $(idString).remove();
-                    });
+                    $(idString)
+                        .find(".inner-position")
+                        .animateCss(animation, duration, null, null, () => {
+                            $(idString).remove();
+                        });
                 }
 
                 // Load youtube iframe api onto page.
@@ -447,7 +445,7 @@ const playVideo = {
 
                 let videoType = data.videoType;
                 let filepath = data.filepath;
-                let fileExt = filepath.split('.').pop();
+                let fileExt = filepath.split(".").pop();
                 if (fileExt === "ogv") {
                     fileExt = "ogg";
                 }
@@ -455,14 +453,16 @@ const playVideo = {
                 let videoPosition = data.videoPosition;
                 let videoHeight = data.videoHeight;
                 let videoWidth = data.videoWidth;
-                let videoDuration = data.videoDuration != null && data.videoDuration !== "" ? parseFloat(data.videoDuration) * 1000 : null;
+                let videoDuration =
+                    data.videoDuration != null && data.videoDuration !== ""
+                        ? parseFloat(data.videoDuration) * 1000
+                        : null;
                 let videoVolume = data.videoVolume;
                 let videoStarttime = data.videoStarttime || 0;
                 let loop = data.loop;
 
                 let token = encodeURIComponent(data.resourceToken);
                 let filepathNew = `http://${window.location.hostname}:7472/resource/${token}`;
-
 
                 // Get time in milliseconds to use as id
                 let time = new Date().getTime();
@@ -483,12 +483,12 @@ const playVideo = {
                     customCoords: data.customCoords
                 };
 
-                let sizeStyles = (data.videoWidth ? `width: ${data.videoWidth}px;` : '') +
-                            (data.videoHeight ? `height: ${data.videoHeight}px;` : '');
+                let sizeStyles =
+                    (data.videoWidth ? `width: ${data.videoWidth}px;` : "") +
+                    (data.videoHeight ? `height: ${data.videoHeight}px;` : "");
 
                 if (videoType === "Local Video") {
-
-                    const loopAttribute = loop ? 'loop' : '';
+                    const loopAttribute = loop ? "loop" : "";
 
                     let videoElement = `
                         <video id="${videoPlayerId}" class="player" ${loopAttribute} style="display:none;${sizeStyles}">
@@ -499,7 +499,7 @@ const playVideo = {
                     let wrapperId = new Date().getTime();
                     let wrappedHtml = getPositionWrappedHTML(wrapperId, positionData, videoElement); // eslint-disable-line no-undef
 
-                    $('.wrapper').append(wrappedHtml);
+                    $(".wrapper").append(wrappedHtml);
 
                     // Adjust volume
                     if (isNaN(videoVolume)) {
@@ -510,9 +510,10 @@ const playVideo = {
                     $(`#${videoPlayerId}`).prop("volume", videoVolume);
 
                     let video = document.getElementById(videoPlayerId);
-                    video.oncanplay = function() {
-
-                        if (startedVidCache[this.id]) { // eslint-disable-line no-undef
+                    video.oncanplay = function () {
+                        // eslint-disable-next-line no-undef
+                        if (startedVidCache[this.id]) {
+                            // eslint-disable-line no-undef
                             return;
                         }
 
@@ -526,37 +527,36 @@ const playVideo = {
                         let videoEl = $(`#${videoPlayerId}`);
                         videoEl.show();
 
-                        $(`#${wrapperId}`).find(".inner-position")
+                        $(`#${wrapperId}`)
+                            .find(".inner-position")
                             .animateCss(enterAnimation, enterDuration, null, null, () => {
-                                $(`#${wrapperId}`).find(".inner-position")
+                                $(`#${wrapperId}`)
+                                    .find(".inner-position")
                                     .animateCss(inbetweenAnimation, inbetweenDuration, inbetweenDelay, inbetweenRepeat);
                             });
 
                         // Remove div after X time.
                         if (videoDuration) {
-                            setTimeout(function() {
+                            setTimeout(function () {
                                 delete startedVidCache[this.id]; // eslint-disable-line no-undef
                                 animateVideoExit(`#${wrapperId}`, exitAnimation, exitDuration, inbetweenAnimation);
                             }, videoDuration);
                         } else {
-
                             const exitVideo = () => {
                                 delete startedVidCache[this.id]; // eslint-disable-line no-undef
                                 animateVideoExit(`#${wrapperId}`, exitAnimation, exitDuration, inbetweenAnimation);
                             };
 
-                            video.onended = function() {
+                            video.onended = function () {
                                 exitVideo();
                             };
 
-                            $(`#${videoPlayerId}`).on("error", function() {
+                            $(`#${videoPlayerId}`).on("error", function () {
                                 exitVideo();
                             });
                         }
                     };
-
                 } else {
-
                     let ytPlayerId = `yt-${new Date().getTime()}`;
 
                     let youtubeElement = `<div id="${ytPlayerId}" style="display:none;${sizeStyles}"></div>`;
@@ -564,8 +564,7 @@ const playVideo = {
                     let wrapperId = new Date().getTime();
                     let wrappedHtml = getPositionWrappedHTML(wrapperId, positionData, youtubeElement); // eslint-disable-line no-undef
 
-                    $('.wrapper').append(wrappedHtml);
-
+                    $(".wrapper").append(wrappedHtml);
 
                     try {
                         const url = new URL(youtubeId);
@@ -590,21 +589,20 @@ const playVideo = {
                         //failed to convert url
                     }
 
-
                     // Add iframe.
 
                     let playerVars = {
-                        'autoplay': 1,
-                        'controls': 0,
-                        'start': videoStarttime,
-                        'showinfo': 0,
-                        'rel': 0,
-                        'modestbranding': 1
+                        autoplay: 1,
+                        controls: 0,
+                        start: videoStarttime,
+                        showinfo: 0,
+                        rel: 0,
+                        modestbranding: 1
                     };
 
                     if (loop) {
-                        playerVars['loop'] = 1;
-                        playerVars['playlist'] = youtubeId;
+                        playerVars["loop"] = 1;
+                        playerVars["playlist"] = youtubeId;
                     }
 
                     let ytOptions = {
@@ -612,11 +610,17 @@ const playVideo = {
                         playerVars: playerVars,
                         events: {
                             onReady: (event) => {
-
-                                $(`#${wrapperId}`).find(".inner-position")
+                                $(`#${wrapperId}`)
+                                    .find(".inner-position")
                                     .animateCss(enterAnimation, enterDuration, null, null, () => {
-                                        $(`#${wrapperId}`).find(".inner-position")
-                                            .animateCss(inbetweenAnimation, inbetweenDuration, inbetweenDelay, inbetweenRepeat);
+                                        $(`#${wrapperId}`)
+                                            .find(".inner-position")
+                                            .animateCss(
+                                                inbetweenAnimation,
+                                                inbetweenDuration,
+                                                inbetweenDelay,
+                                                inbetweenRepeat
+                                            );
                                     });
 
                                 event.target.setVolume(parseInt(videoVolume) * 10);
@@ -645,11 +649,10 @@ const playVideo = {
 
                     // Remove div after X time.
                     if (videoDuration) {
-                        setTimeout(function() {
+                        setTimeout(function () {
                             animateVideoExit(`#${wrapperId}`, exitAnimation, exitDuration, inbetweenAnimation);
                         }, videoDuration);
                     }
-
                 }
             }
         }

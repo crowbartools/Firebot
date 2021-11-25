@@ -39,7 +39,9 @@ function loadCustomRoles() {
 }
 
 function saveCustomRole(role) {
-    if (role == null) return;
+    if (role == null) {
+        return;
+    }
 
     customRoles[role.id] = role;
 
@@ -56,7 +58,9 @@ function saveCustomRole(role) {
 }
 
 function deleteCustomRole(roleId) {
-    if (roleId == null) return;
+    if (roleId == null) {
+        return;
+    }
 
     delete customRoles[roleId];
 
@@ -82,10 +86,14 @@ const findIndexIgnoreCase = (array, element) => {
 };
 
 function addViewerToRole(roleId, username) {
-    if (username == null || username.length < 1) return;
+    if (username == null || username.length < 1) {
+        return;
+    }
     let role = customRoles[roleId];
     if (role) {
-        if (findIndexIgnoreCase(role.viewers, username) !== -1) return;
+        if (findIndexIgnoreCase(role.viewers, username) !== -1) {
+            return;
+        }
 
         role.viewers.push(username);
 
@@ -107,12 +115,16 @@ function removeAllViewersFromRole(roleId) {
 }
 
 function removeViewerFromRole(roleId, username) {
-    if (username == null || username.length < 1) return;
+    if (username == null || username.length < 1) {
+        return;
+    }
     let role = customRoles[roleId];
     if (role) {
         const index = findIndexIgnoreCase(role.viewers, username);
 
-        if (index === -1) return;
+        if (index === -1) {
+            return;
+        }
 
         role.viewers.splice(index, 1);
 

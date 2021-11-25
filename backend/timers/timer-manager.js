@@ -26,7 +26,9 @@ function clearIntervals(onlyClearWhenLiveTimers = false) {
 
 function clearIntervalForTimerId(timerId) {
     const intervalData = timerIntervalCache[timerId];
-    if (intervalData == null) return;
+    if (intervalData == null) {
+        return;
+    }
     clearInterval(intervalData.intervalId);
     delete timerIntervalCache[intervalData.timerId];
 }
@@ -35,11 +37,15 @@ function clearIntervalForTimerId(timerId) {
 function runTimer(timer) {
     logger.debug(`Running timer ${timer.name}`);
     // if the passed timer is null, stop
-    if (timer == null) return;
+    if (timer == null) {
+        return;
+    }
 
     // get the saved interval for this timer id
     let interval = timerIntervalCache[timer.id];
-    if (interval == null) return;
+    if (interval == null) {
+        return;
+    }
 
     // check if we have chat lines requirement
     if (timer.requiredChatLines > 0) {
@@ -105,7 +111,9 @@ function buildIntervalForTimer(timer) {
 }
 
 function updateIntervalForTimer(timer) {
-    if (timer == null) return;
+    if (timer == null) {
+        return;
+    }
     clearIntervalForTimerId(timer.id);
     if (!timer.active || (timer.onlyWhenLive &&
         !connectionManager.streamerIsOnline())) {
@@ -121,10 +129,14 @@ function buildIntervalsForTimers(timers, onlyClearWhenLiveTimers = false) {
 
     for (let timer of timers) {
     // skip inactive timers
-        if (!timer.active) continue;
+        if (!timer.active) {
+            continue;
+        }
 
         // skip over timers that require the streamer to be live
-        if (timer.onlyWhenLive && !connectionManager.streamerIsOnline()) continue;
+        if (timer.onlyWhenLive && !connectionManager.streamerIsOnline()) {
+            continue;
+        }
 
         const intervalTracker = buildIntervalForTimer(timer);
 

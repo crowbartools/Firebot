@@ -134,10 +134,14 @@ function updateUser(user) {
 
 async function updateUserMetadata(username, key, value, propertyPath) {
 
-    if (username == null || username.length < 1 || key == null || key.length < 1) return;
+    if (username == null || username.length < 1 || key == null || key.length < 1) {
+        return;
+    }
 
     const user = await getTwitchUserByUsername(username);
-    if (user == null) return;
+    if (user == null) {
+        return;
+    }
 
     const metadata = user.metadata || {};
 
@@ -154,11 +158,15 @@ async function updateUserMetadata(username, key, value, propertyPath) {
 }
 
 async function getUserMetadata(username, key, propertyPath) {
-    if (username == null || username.length < 1 || key == null || key.length < 1) return null;
+    if (username == null || username.length < 1 || key == null || key.length < 1) {
+        return null;
+    }
 
     const user = await getTwitchUserByUsername(username);
 
-    if (user == null) return null;
+    if (user == null) {
+        return null;
+    }
 
     const metadata = user.metadata || {};
 
@@ -272,10 +280,14 @@ function getUserOnlineMinutes(username) {
  * Triggers a View Time Update event if view time hours has increased
  */
 function userViewTimeUpdate(user, previousTotalMinutes, newTotalMinutes) {
-    if (user == null) return;
+    if (user == null) {
+        return;
+    }
     let previousHours = previousTotalMinutes > 0 ? parseInt(previousTotalMinutes / 60) : 0;
     let newHours = newTotalMinutes > 0 ? parseInt(newTotalMinutes / 60) : 0;
-    if (newHours < 1) return;
+    if (newHours < 1) {
+        return;
+    }
     if (newHours !== previousHours) {
 
         eventManager.triggerEvent("firebot", "view-time-update", {
@@ -420,7 +432,9 @@ function getPurgeWherePredicate(options) {
     return function () {
         const user = this;
 
-        if (!user.twitch) return false;
+        if (!user.twitch) {
+            return false;
+        }
 
         let daysInactive = 0;
         if (options.daysSinceActive.enabled) {

@@ -33,7 +33,9 @@ const secondsForHumans = (seconds) => {
     let returntext = "";
 
     for (let i = 0, max = levels.length; i < max; i++) {
-        if (levels[i][0] === 0) continue;
+        if (levels[i][0] === 0) {
+            continue;
+        }
         returntext +=
       " " +
       levels[i][0] +
@@ -107,7 +109,9 @@ const getTriggerIdFromTriggerData = (trigger) => {
 
 
 const populateStringWithTriggerData = async (string = "", trigger) => {
-    if (trigger == null || string === "") return string;
+    if (trigger == null || string === "") {
+        return string;
+    }
 
     let triggerId = getTriggerIdFromTriggerData(trigger);
 
@@ -142,7 +146,9 @@ const getDateDiffString = (date1, date2) => {
         let diff = a.diff(b, intervals[i]);
         b.add(diff, intervals[i]);
 
-        if (diff === 0) continue;
+        if (diff === 0) {
+            continue;
+        }
 
         let interval = intervals[i];
         if (diff === 1) {

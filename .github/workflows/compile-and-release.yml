@@ -1,0 +1,239 @@
+name: WIP Compile and Release
+
+# Only runs
+# - after PRs have been merged into master
+# - when a user specifically requests the workflow to run on a branch
+on:
+  push:
+    # branches: 'master' # uncomment line to enable auto building
+    workflow_dispatch:
+
+jobs:
+
+  # Check if the branch's package.json version has a corrosponding git tag
+  # If it does exit with an error to stop compilation
+  checktag:
+    name: 'Check if version is not tagged'
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.finished.outputs.version }}
+    steps:
+      - name: Checkout branch the workflow is being ran on
+        uses: 'actions/checkout@v2'
+
+      - name: Fetch tags
+        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+
+      - name: Read package.json
+        id: package
+        uses: gregoranders/nodejs-project-info@v0.0.1
+
+      - name: 'Check: package version does not have corrosponding git tag'
+        shell: bash
+        run: git show-ref --tags --verify --quiet -- "refs/tags/v${{ steps.package.outputs.version }}" && exit 1
+
+      - name: 'Finishing'
+        id: 'finished'
+        run: echo "::set-output name=version::${{ steps.package.outputs.version }}"
+
+  windows:
+    name: 'Compile For Windows'
+    # if: never() # enabled; remove comment to disable
+    needs: [checktag]
+    runs-on: windows-latest
+    outputs:
+      success: ${{ steps.finished.outputs.success }}
+    steps:
+
+      - name: Checkout branch the workflow is being ran on
+        uses: 'actions/checkout@v2'
+
+      - name: Setup Nodejs
+        uses: 'actions/setup-node@v1'
+        with:
+          node-version: '12.x'
+
+      - name: Install Global Dependencies
+        shell: bash
+        run: |
+          npm config set msvs_version 2019
+          npm install --quiet --global --production windows-build-tools@4.0.0 grunt-cli node-gyp
+
+      - name: Install Project Dependencies
+        run: npm ci --quiet
+
+      - name: Rebuild Robotjs for Electron
+        run: npm run rebuild
+
+      - name: Decrypt Secrets.gpg
+        env:
+          PASSKEY_FOR_FIREBOT_SECRETS: ${{ secrets.PASSKEY_FOR_FIREBOT_SECRETS }}
+        run: grunt secrets:decrypt
+
+      - name: Build
+        run: grunt build
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ runner.os }}
+          path: './dist/install/${{ runner.os }}/'
+
+      - name: Finishing
+        id: finished
+        run: echo "::set-output name=success::1"
+
+  linux:
+    name: 'Compile for Linux'
+    needs: [checktag]
+    # if: never() # enabled; remove comment to disable
+    runs-on: ubuntu-latest
+    outputs:
+      success: ${{ steps.finished.outputs.success }}
+    steps:
+
+      - name: Checkout branch the workflow is being ran on
+        uses: 'actions/checkout@v2'
+
+      - name: Install Environment Dependencies
+        run: sudo apt-get install libx11-dev libxtst-dev libpng-dev
+
+      - name: Setup Nodejs
+        uses: 'actions/setup-node@v2'
+        with:
+          node-version: '12.x'
+
+      - name: Install Global Dependencies
+        run: npm install --quiet --global --production grunt-cli node-gyp
+
+      - name: Install Project Dependencies
+        run: npm ci --quiet
+
+      - name: Rebuild Robotjs for Electron
+        run: npm run rebuild
+
+      - name: Decrypt Secrets.gpg
+        env:
+          PASSKEY_FOR_FIREBOT_SECRETS: ${{ secrets.PASSKEY_FOR_FIREBOT_SECRETS }}
+        run: grunt secrets:decrypt
+
+      - name: Build
+        run: grunt build
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ runner.os }}
+          path: './dist/install/${{ runner.os }}/'
+
+      - name: Finishing
+        id: finished
+        run: echo "::set-output name=success::1"
+
+  darwin:
+    name: 'Compile for Mac'
+    needs: [checktag]
+    if: never() # disabled; comment line to enable
+    runs-on: macos-latest
+    outputs:
+      success: ${{ steps.finished.outputs.success }}
+    steps:
+
+  release:
+    name: 'Draft Release'
+    needs: [checktag, windows, linux, darwin]
+    runs-on: 'windows-latest'
+    steps:
+      - name: Download Windows Artifacts
+        if: needs.windows.outputs.success == 1
+        uses: 'actions/download-artifact@v2'
+        with:
+          name: 'Windows'
+          path: './bundles/'
+
+      - name: Download Linux Artifacts
+        if: needs.linux.outputs.success == 1
+        uses: 'actions/download-artifact@v2'
+        with:
+          name: 'Linux'
+          path: './bundles/'
+
+      - name: Download MacOS Artifacts
+        if: needs.darwin.outputs.success == 1
+        uses: 'actions/download-artifact@v2'
+        with:
+          name: 'macOS'
+          path: './bundles/'
+
+      - name: Get Commit Messages
+        id: messages
+        uses: 'SReject/pr-commit-messages@v1.0.3'
+        with:
+          sha: ${{ github.sha }}
+
+      - name: Draft Release
+        id: draft
+        uses: 'actions/create-release@v1'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ needs.checktag.outputs.version }}
+          release_name: Release v${{ needs.checktag.outputs.version }}
+          body: "## v${{ needs.checktag.outputs.version }} Update Notes\n${{ steps.messages.outputs.messages }}  \n\n## Download the *.exe* to get V5!"
+          draft: true
+          prerelease: false
+
+      - name: Upload Windows Setup.exe
+        if: needs.windows.outputs.success == 1
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.draft.outputs.upload_url }}
+          asset_path: './bundles/FirebotV5Setup.exe'
+          asset_name: 'Firebot-v${{ needs.checktag.outputs.version }}-Setup.exe'
+          asset_content_type: application/octet-stream
+
+      - name: Upload RELEASES file
+        if: needs.windows.outputs.success == 1
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.draft.outputs.upload_url }}
+          asset_path: './bundles/RELEASES'
+          asset_name: 'RELEASES'
+          asset_content_type: application/octet-stream
+
+      - name: Upload NUPKG file
+        if: needs.windows.outputs.success == 1
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.draft.outputs.upload_url }}
+          asset_path: './bundles/firebotv5-${{ needs.checktag.outputs.version }}-full.nupkg'
+          asset_name: 'firebotv5-${{ needs.checktag.outputs.version }}-full.nupkg'
+          asset_content_type: application/octet-stream
+
+      - name: Upload Tarball file
+        if: needs.linux.outputs.success == 1
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.draft.outputs.upload_url }}
+          asset_path: './bundles/Firebot-linux-x64.tar.gz'
+          asset_name: 'firebot-v${{ needs.checktag.outputs.version }}-linux-x64.tar.gz'
+          asset_content_type: application/octet-stream
+
+      - name: Upload MacOS Relese
+        if: needs.macos.outputs.success == 1
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.draft.outputs.upload_url }}
+          asset_path: # TODO
+          asset_name: # TODO
+          asset_content_type: application/octet-stream

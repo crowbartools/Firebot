@@ -5,7 +5,9 @@ const profileManager = require("../common/profile-manager");
 const fs = require("fs-extra");
 
 function handleProfileRename() {
-    if (!profileManager.hasProfileRename()) return;
+    if (!profileManager.hasProfileRename()) {
+        return;
+    }
     let globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings");
 
     try {
@@ -60,7 +62,9 @@ function handleProfileDeletion() {
     }
 
     // Stop here if we have no deleted profile info.
-    if (deletedProfile == null) return;
+    if (deletedProfile == null) {
+        return;
+    }
 
     try {
 

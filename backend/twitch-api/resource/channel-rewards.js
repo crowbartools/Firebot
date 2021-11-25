@@ -137,7 +137,9 @@ const getCustomChannelRewards = async (onlyManageable = false) => {
 const getUnmanageableCustomChannelRewards = async () => {
     const allRewards = await getCustomChannelRewards();
     const onlyManageable = await getCustomChannelRewards(true);
-    if (allRewards == null || onlyManageable == null) return null;
+    if (allRewards == null || onlyManageable == null) {
+        return null;
+    }
     const onlyUnmanageable = allRewards.filter(r => onlyManageable.every(mr => mr.id !== r.id));
     return onlyUnmanageable;
 };
@@ -147,7 +149,9 @@ const getUnmanageableCustomChannelRewards = async () => {
  */
 const getTotalChannelRewardCount = async () => {
     const rewards = await getCustomChannelRewards();
-    if (rewards == null) return 0;
+    if (rewards == null) {
+        return 0;
+    }
     return rewards.length;
 };
 

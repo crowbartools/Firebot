@@ -199,7 +199,9 @@ exports.addActiveUser = async (chatUser, includeInOnline = false, forceActive = 
 
     await userDatabase.incrementDbField(chatUser.userId, "chatMessages");
 
-    if (!forceActive && user.disableActiveUserList) return;
+    if (!forceActive && user.disableActiveUserList) {
+        return;
+    }
 
     const userActive = activeUsers.get(chatUser.userId);
     if (!userActive) {
@@ -222,7 +224,9 @@ exports.removeActiveUser = async (usernameOrId) => {
         usernameOrId = usernameOrId.toLowerCase();
     }
     const other = activeUsers.get(usernameOrId);
-    if (other == null) return;
+    if (other == null) {
+        return;
+    }
     activeUsers.del([usernameOrId, other]);
     frontendCommunicator.send("twitch:chat:user-inactive", isUsername ? other : usernameOrId);
 };

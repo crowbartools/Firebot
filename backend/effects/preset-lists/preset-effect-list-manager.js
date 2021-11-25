@@ -46,7 +46,9 @@ function loadPresetEffectLists() {
  * @param {SavedPresetEffectList} presetEffectList
  */
 async function savePresetEffectList(presetEffectList) {
-    if (presetEffectList == null) return;
+    if (presetEffectList == null) {
+        return;
+    }
 
     if (presetEffectList.id != null) {
         presetEffectLists[presetEffectList.id] = presetEffectList;
@@ -97,7 +99,9 @@ async function saveAllPresetEffectLists(allPresetEffectLists) {
 }
 
 function deletePresetEffectList(presetEffectListId) {
-    if (presetEffectListId == null) return;
+    if (presetEffectListId == null) {
+        return;
+    }
 
     delete presetEffectLists[presetEffectListId];
 
@@ -114,7 +118,9 @@ function deletePresetEffectList(presetEffectListId) {
 }
 
 function getPresetEffectList(presetEffectListId) {
-    if (presetEffectListId == null) return null;
+    if (presetEffectListId == null) {
+        return null;
+    }
     return presetEffectLists[presetEffectListId];
 }
 

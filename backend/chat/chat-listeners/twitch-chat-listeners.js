@@ -98,19 +98,28 @@ exports.setupChatListeners = (streamerChatClient) => {
 
     streamerChatClient.onResub(async (_channel, _user, subInfo, msg) => {
         try {
-            const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, subInfo.message);
+            if (subInfo.message != null && subInfo.message.length > 0) {
+                const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, subInfo.message);
 
-            frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
+                frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
 
-            exports.events.emit("chat-message", firebotChatMessage);
+                exports.events.emit("chat-message", firebotChatMessage);
+            }
         } catch (error) {
             logger.error("Failed to parse resub message", error);
         }
     });
 
     streamerChatClient.onCommunitySub((_channel, _user, subInfo, msg) => {
-        twitchEventsHandler.giftSub.triggerCommunitySubGift(subInfo.gifterDisplayName,
-            subInfo.plan, subInfo.count);
+        twitchEventsHandler.giftSub.triggerCommunitySubGift(subInfo);
+    });
+
+    streamerChatClient.onGiftPaidUpgrade((_channel, _user, subInfo, msg) => {
+        twitchEventsHandler.giftSub.triggerSubGiftUpgrade(subInfo);
+    });
+
+    streamerChatClient.onPrimePaidUpgrade((_channel, _user, subInfo, msg) => {
+        twitchEventsHandler.sub.triggerPrimeUpgrade(subInfo);
     });
 
     streamerChatClient.onRaid((_channel, _username, raidInfo) => {

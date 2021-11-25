@@ -257,7 +257,9 @@ function getAllQuotes() {
 function updateQuoteId(quote, newId) {
     return new Promise(async resolve => {
 
-        if (quote._id === newId) return resolve(true);
+        if (quote._id === newId) {
+            return resolve(true);
+        }
 
         await removeQuote(quote._id, true);
 
@@ -273,10 +275,14 @@ function updateQuoteId(quote, newId) {
 }
 
 async function recalculateQuoteIds() {
-    if (db == null) return;
+    if (db == null) {
+        return;
+    }
 
     let quotes = await getAllQuotes();
-    if (quotes == null) return;
+    if (quotes == null) {
+        return;
+    }
 
     let idCounter = 1;
     for (let quote of quotes) {

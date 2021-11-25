@@ -7,13 +7,15 @@ const NodeCache = require("node-cache");
 const cache = new NodeCache({ stdTTL: 0, checkperiod: 5 });
 exports._cache = cache;
 
-cache.on("expired", function(key, value) {
+const onCustomVariableExpire = (key, value) => {
     eventManager.triggerEvent("firebot", "custom-variable-expired", {
         username: "Firebot",
         expiredCustomVariableName: key,
         expiredCustomVariableData: value
     });
-});
+};
+
+cache.on("expired", onCustomVariableExpire);
 
 cache.on("set", function(key, value) {
     eventManager.triggerEvent("firebot", "custom-variable-set", {
@@ -44,6 +46,7 @@ exports.loadVariablesFromFile = () => {
             const now = Date.now();
             if (t && t > 0 && t < now) {
                 // this var has expired
+                onCustomVariableExpire(key, v);
                 continue;
             }
             const ttl = t === 0 ? 0 : (t - now) / 1000;
@@ -75,7 +78,9 @@ exports.addCustomVariable = (name, data, ttl = 0, propertyPath = null) => {
         cache.set(name, dataToSet, ttl === "" ? 0 : ttl);
     } else {
         let currentData = cache.get(name);
-        if (!currentData) return;
+        if (!currentData) {
+            return;
+        }
         try {
             let cursor = currentData;
             let pathNodes = propertyPath.split(".");
@@ -119,14 +124,16 @@ exports.getCustomVariable = (name, propertyPath, defaultData = null) => {
         return defaultData;
     }
 
-    if (propertyPath == null) {
+    if (propertyPath == null || propertyPath == "null") {
         return data;
     }
 
     try {
         let pathNodes = propertyPath.split(".");
         for (let i = 0; i < pathNodes.length; i++) {
-            if (data == null) break;
+            if (data == null) {
+                break;
+            }
             let node = pathNodes[i];
             // parse to int for array access
             if (!isNaN(node)) {

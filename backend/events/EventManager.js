@@ -7,6 +7,7 @@ const util = require("../utility");
 const eventsRouter = require("./events-router");
 const eventsAccess = require("./events-access");
 const frontendCommuncator = require("../common/frontend-communicator");
+const accountAccess = require("../common/account-access");
 
 /**@extends NodeJS.EventEmitter */
 class EventManager extends EventEmitter {
@@ -59,13 +60,20 @@ class EventManager extends EventEmitter {
         let eventArrays = this._registeredEventSources
             .map(es => es.events);
         let events = util.flattenArray(eventArrays);
+
+        if (accountAccess.getAccounts().streamer.broadcasterType === "") {
+            events = events.filter(e => !e.affiliateRequired);
+        }
+
         return events;
     }
 
     triggerEvent(sourceId, eventId, meta, isManual = false, isRetrigger = false) {
         let source = this.getEventSourceById(sourceId);
         let event = this.getEventById(sourceId, eventId);
-        if (event == null) return;
+        if (event == null) {
+            return;
+        }
 
         if (isManual) {
             meta = event.manualMetadata || {};
@@ -100,12 +108,12 @@ const manager = new EventManager();
 
 ipcMain.on("getAllEventSources", (event) => {
     logger.info("got 'get all event sources' request");
-    event.returnValue = manager.getAllEventSources();
+    event.returnValue = JSON.parse(JSON.stringify(manager.getAllEventSources()));
 });
 
 ipcMain.on("getAllEvents", (event) => {
     logger.info("got 'get all events' request");
-    event.returnValue = manager.getAllEvents();
+    event.returnValue = JSON.parse(JSON.stringify(manager.getAllEvents()));
 });
 
 // Manually Activate an Event for Testing
@@ -116,7 +124,9 @@ ipcMain.on("triggerManualEvent", function(_, data) {
 
     let source = manager.getEventSourceById(sourceId);
     let event = manager.getEventById(sourceId, eventId);
-    if (event == null) return;
+    if (event == null) {
+        return;
+    }
 
     let meta = event.manualMetadata || {};
     if (meta.username == null) {
@@ -125,7 +135,9 @@ ipcMain.on("triggerManualEvent", function(_, data) {
     }
 
     let eventSettings = eventsAccess.getAllActiveEvents().find(e => e.id === eventSettingsId);
-    if (eventSettings == null) return;
+    if (eventSettings == null) {
+        return;
+    }
 
     eventsRouter.runEventEffects(eventSettings.effects, event, source, meta, true);
 });

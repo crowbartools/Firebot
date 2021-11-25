@@ -59,7 +59,9 @@ function ensureRequiredFoldersExist() {
     }
 
     for (const profileId of activeProfiles) {
-        if (profileId == null) continue;
+        if (profileId == null) {
+            continue;
+        }
 
         const requiredProfileDirPaths = [
             `/profiles/${profileId}`,

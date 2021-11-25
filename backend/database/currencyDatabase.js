@@ -41,7 +41,9 @@ function getCurrencyById(currencyId) {
 }
 
 function getCurrencyByName(currencyName) {
-    if (currencyName == null) return null;
+    if (currencyName == null) {
+        return null;
+    }
     const currencies = Object.values(currencyCache);
     return currencies.find(c => c.name.toLowerCase() === currencyName.toLowerCase());
 }
@@ -136,6 +138,20 @@ async function adjustCurrencyForUser(username, currencyId, value, adjustType = "
     return false;
 }
 
+async function adjustCurrencyForUserById(userId, currencyId, value, overrideValue) {
+    if (!isViewerDBOn()) {
+        return null;
+    }
+
+    const user = await userDatabase.getUserById(userId);
+
+    if (user == null) {
+        return null;
+    }
+
+    return adjustCurrencyForUser(user.username, currencyId, value, overrideValue ? 'set' : 'adjust');
+}
+
 // Add Currency to Usergroup
 // This will add an amount of currency to all online users in a usergroup.
 function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value, ignoreDisable = false, adjustType = "adjust") {
@@ -178,7 +194,9 @@ function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value, igno
         logger.debug("user ids", userIdsInRoles);
 
 
-        if (!userIdsInRoles.length) return resolve();
+        if (!userIdsInRoles.length) {
+            return resolve();
+        }
 
         // GIVE DEM BOBS.
         let db = userDatabase.getUserDb();
@@ -311,6 +329,21 @@ function getUserCurrencyAmount(username, currencyId) {
 
         });
     });
+}
+
+async function getUserCurrencies(usernameOrId, isUsername = false) {
+    if (!isViewerDBOn()) {
+        return {};
+    }
+    const user = isUsername ?
+        await userDatabase.getUserByUsername(usernameOrId) :
+        await userDatabase.getUserById(usernameOrId);
+
+    if (user == null) {
+        return null;
+    }
+
+    return user.currency;
 }
 
 function getTopCurrencyPosition(currencyId, position = 1) {
@@ -446,10 +479,14 @@ frontendCommunicator.on("give-currency", async (/** @type {CurrencyInfo} */ {
     }
     if (sendChatMessage) {
         const twitchChat = require("../chat/twitch-chat");
-        if (!twitchChat.chatIsConnected()) return;
+        if (!twitchChat.chatIsConnected()) {
+            return;
+        }
 
         const currency = getCurrencyById(currencyId);
-        if (currency == null) return;
+        if (currency == null) {
+            return;
+        }
 
         const message = `${amount < 0 ? "Removed" : "Gave"} ${util.commafy(amount)} ${currency.name} to ${targetType === "allOnline" ? "everyone" : `@${username}`}!`;
         twitchChat.sendChatMessage(message);
@@ -498,8 +535,10 @@ ipcMain.on("deleteCurrency", (event, currencyId) => {
 });
 
 exports.adjustCurrencyForUser = adjustCurrencyForUser;
+exports.adjustCurrencyForUserById = adjustCurrencyForUserById;
 exports.addCurrencyToOnlineUsers = addCurrencyToOnlineUsers;
 exports.getUserCurrencyAmount = getUserCurrencyAmount;
+exports.getUserCurrencies = getUserCurrencies;
 exports.purgeCurrencyById = purgeCurrencyById;
 exports.addCurrencyToNewUser = addCurrencyToNewUser;
 exports.refreshCurrencyCache = refreshCurrencyCache;

@@ -32,7 +32,9 @@ let EventType = {
 
 // Insert a record into the statabase.
 function insertStatRecord(eventType, userId, meta) {
-    if (!Object.keys(EventType).includes(eventType)) return;
+    if (!Object.keys(EventType).includes(eventType)) {
+        return;
+    }
 
     meta.event = eventType;
 

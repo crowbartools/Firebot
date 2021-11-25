@@ -176,7 +176,7 @@ exports.whenReady = async () => {
         const mainWindow = windowManagement.mainWindow;
         if (mainWindow != null && !mainWindow.isDestroyed() && mainWindow.webContents != null) {
             mainWindow.webContents.send("logging", {
-                transport: transport,
+                transport: transport ? { name: transport.name } : null,
                 level: level,
                 msg: msg,
                 meta: meta

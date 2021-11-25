@@ -55,7 +55,9 @@ class TimerAccess extends EventEmitter {
     }
 
     async saveTimer(timer) {
-        if (timer == null) return;
+        if (timer == null) {
+            return;
+        }
 
         if (timer.id != null) {
             this._timers[timer.id] = timer;
@@ -108,7 +110,9 @@ class TimerAccess extends EventEmitter {
     }
 
     deleteTimer(timerId) {
-        if (timerId == null) return;
+        if (timerId == null) {
+            return;
+        }
 
         delete this._timers[timerId];
 
@@ -128,7 +132,9 @@ class TimerAccess extends EventEmitter {
     updateTimerActiveStatus(timerId, active = false) {
         const timer = this._timers[timerId];
 
-        if (timer == null) return;
+        if (timer == null) {
+            return;
+        }
 
         timer.active = active;
 

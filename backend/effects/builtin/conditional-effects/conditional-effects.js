@@ -115,7 +115,9 @@ const model = {
             let effectsToRun = null;
             if (effect.ifs != null) {
                 for (let ifCondition of effect.ifs) {
-                    if (ifCondition.conditionData == null || ifCondition.effectData == null) continue;
+                    if (ifCondition.conditionData == null || ifCondition.effectData == null) {
+                        continue;
+                    }
 
                     let didPass = await conditionManager.runConditions(ifCondition.conditionData, trigger);
                     if (didPass) {

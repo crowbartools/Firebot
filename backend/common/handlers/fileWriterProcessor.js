@@ -8,6 +8,10 @@ function doesTextExistInFile(filepath, text) {
     return contents.includes(text);
 }
 
+const doesFileExist = (filepath) => {
+    return fs.existsSync(filepath);
+};
+
 function removeLines(filepath, lines = []) {
     let contents = fs.readFileSync(filepath, "utf8");
 
@@ -51,15 +55,16 @@ function replaceLinesWithText(filepath, text, replacement) {
 }
 
 exports.run = async effect => {
-    if (effect == null || effect.filepath == null)
+    if (effect == null || effect.filepath == null) {
         return;
+    }
 
     let text = effect.text || "";
     text = text.replace(/\\n/g, "\n").trim();
 
     try {
         if (effect.writeMode === "append") {
-            if (effect.dontRepeat) {
+            if (doesFileExist(effect.filepath) && effect.dontRepeat) {
                 if (!doesTextExistInFile(effect.filepath, text)) {
                     fs.appendFileSync(effect.filepath, text + "\n", "utf8");
                 }

@@ -109,7 +109,9 @@ class EffectQueue {
 let queues = {};
 
 function addEffectsToQueue(queueConfig, runEffectsContext, duration, priority) {
-    if (queueConfig == null || runEffectsContext == null) return;
+    if (queueConfig == null || runEffectsContext == null) {
+        return;
+    }
     let queue = queues[queueConfig.id];
     if (queue == null) {
         logger.debug(`Creating queue ${queueConfig.id}...`);
@@ -121,7 +123,9 @@ function addEffectsToQueue(queueConfig, runEffectsContext, duration, priority) {
 }
 
 function updateQueueConfig(queueConfig) {
-    if (queueConfig == null) return;
+    if (queueConfig == null) {
+        return;
+    }
     let queue = queues[queueConfig.id];
     if (queue != null) {
         queue.mode = queueConfig.mode;
@@ -130,7 +134,9 @@ function updateQueueConfig(queueConfig) {
 }
 
 function removeQueue(queueId) {
-    if (queueId == null) return;
+    if (queueId == null) {
+        return;
+    }
     let queue = queues[queueId];
 
     if (queue != null) {
