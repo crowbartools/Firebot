@@ -1,81 +1,66 @@
 "use strict";
 
-const controlProcessor = require("../../common/handlers/controlEmulation/controlProcessor");
+const { emulateKeyPress, typeString } = require("../../common/handlers/controlEmulation/emulate-control");
 const { EffectCategory } = require('../../../shared/effect-constants');
 
-/**
- * The Control Emulation effect
- */
-const controlEmulation = {
-    /**
-   * The definition of the Effect
-   */
+const effect = {
     definition: {
         id: "firebot:controlemulation",
-        name: "Control Emulation",
+        name: "Emulate Control",
         description: "Emulate keyboard keys or mouse clicks",
         icon: "fad fa-keyboard",
         categories: [EffectCategory.ADVANCED, EffectCategory.FUN],
         dependencies: []
     },
-    /**
-   * Global settings that will be available in the Settings tab
-   */
     globalSettings: {},
-    /**
-   * The HTML template for the Options view (ie options when effect is added to something such as a button.
-   * You can alternatively supply a url to a html file via optionTemplateUrl
-   */
     optionsTemplate: `
-    <eos-container header="Key To Press">
-        <div class="input-group game-press">
-            <span class="input-group-addon" id="button-press-effect-type">Press</span>
-            <input type="text" ng-model="effect.press" uib-typeahead="control for control in validControls | filter:$viewValue | limitTo:8" class="form-control" id="game-control-press-setting" aria-describedby="button-press-effect-type">
-        </div>
+    <eos-container header="Mode">
+        <dropdown-select options="{ keyPress: 'Key Press', typeString: 'Type Text'}" selected="effect.mode"></dropdown-select>
     </eos-container>
 
-    <eos-container header="Modifiers" pad-top="true">
-        <div class="button-press-modifier-effect-type" style="padding-left: 15px;">
-            <label ng-repeat="modifier in validModifiers" class="control-fb control--checkbox">{{modifier}}
-                <input type="checkbox" ng-click="modifierArray(effect.modifiers,modifier)" ng-checked="modifierCheckboxer(effect.modifiers,modifier)"  aria-label="..." >
-                <div class="control__indicator"></div>
-            </label>
-        </div>
-    </eos-container>
+    <div ng-if="effect.mode == 'typeString'">
+        <eos-container header="Text To Type">
+            <firebot-input placeholder-text="Input text" model="effect.text" />
+        </eos-container>
+    </div>
 
-    <eos-container header="Opposite Key" pad-top="true">
-        <p>Use when this key is meant to control movement in a game. IE if "W" is forward, "S" might be the opposite. If more people are pressing "W", then that will be used. If more are pressing "S", then that is used. This ensures movement doesn't get completely locked.</p>
-        <div class="input-group game-opposite">
-            <span class="input-group-addon" id="opposite-button-effect-type">Opposite</span>
-            <input type="text" ng-model="effect.opposite" uib-typeahead="control for control in validControls | filter:$viewValue | limitTo:8" class="form-control" id="game-control-opposite-setting" aria-describedby="opposite-button-effect-type">
-        </div>
-    </eos-container>
+    <div ng-if="effect.mode == 'keyPress'">
+        <eos-container header="Key To Press" pad-top="true">
+            <div class="input-group game-press">
+                <span class="input-group-addon" id="button-press-effect-type">Press</span>
+                <input type="text" ng-model="effect.press" uib-typeahead="control for control in validControls | filter:$viewValue | limitTo:8" class="form-control" id="game-control-press-setting" aria-describedby="button-press-effect-type">
+            </div>
+        </eos-container>
 
-    <eos-container header="Hold Key" pad-top="true">
-        <div class="btn-group">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="holding-button-effect-type">{{effect.holding ? effect.holding : 'No'}}</span> <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu holding-button-effect-dropdown">
-                <li ng-click="effect.holding = 'No'"><a href>No</a></li>
-                <li ng-click="effect.holding = 'Yes'"><a href>Yes</a></li>
-            </ul>
-        </div>
-        <p style="padding-top:5px;"><strong>Yes</strong>: The key will be held as long as the button is pressed on Mixer by one or more viewers.<br><br><strong>No</strong>: A "press and release" will be simulated for the key, regardless of how long the button is held by viewers.</p>
-    </eos-container>
+        <eos-container header="Modifiers" pad-top="true">
+            <div class="button-press-modifier-effect-type" style="padding-left: 15px;">
+                <label ng-repeat="modifier in validModifiers" class="control-fb control--checkbox">{{modifier}}
+                    <input type="checkbox" ng-click="modifierArray(effect.modifiers,modifier)" ng-checked="modifierCheckboxer(effect.modifiers,modifier)"  aria-label="..." >
+                    <div class="control__indicator"></div>
+                </label>
+            </div>
+        </eos-container>
+
+        <eos-container header="Press Duration" pad-top="true">
+            <firebot-input model="effect.pressDuration" input-title="Secs" data-type="number" placeholder-text="Optional" />
+            <p style="padding-top:5px;">How many seconds should the control be pressed for. Can be a decimal.</p>
+        </eos-container>
+    </div>
+
 
     <eos-container>
         <div class="effect-info alert alert-info">
-            Game controls do not work in every game or with every program. These are emulated controls. If the controls aren't working on your game or app try changing the emulator in the app settings.
+            Please keep in mind emulated controls may not work in every game or program.
         </div>
     </eos-container>
 
     `,
-    /**
-   * The controller for the front end Options
-   * Port over from effectHelperService.js
-   */
-    optionsController: ($scope, listenerService, effectHelperService) => {
+    optionsController: ($scope, effectHelperService) => {
+
+        if ($scope.effect.mode == null) {
+            $scope.effect.mode = "keyPress";
+        }
+
         $scope.validControls = [
             "a",
             "b",
@@ -127,6 +112,7 @@ const controlEmulation = {
             "end",
             "pageup",
             "pagedown",
+            "printscreen",
             "f1",
             "f2",
             "f3",
@@ -165,7 +151,7 @@ const controlEmulation = {
             "audio_next"
         ];
 
-        $scope.validModifiers = ["Control", "Alt", "Shift"];
+        $scope.validModifiers = ["Control", "Alt", "Shift", "Windows Key/Command"];
 
         // This sets the effect.modifier to an array of checked items.
         $scope.modifierArray = function(list, item) {
@@ -178,24 +164,24 @@ const controlEmulation = {
             return effectHelperService.checkSavedArray(list, item);
         };
     },
-    /**
-   * When the effect is triggered by something
-   * Used to validate fields in the option template.
-   */
     optionsValidator: effect => {
-        let errors = [];
-        if (effect.press == null) {
+        const errors = [];
+        if (effect.mode === "keyPress" && effect.press == null) {
             errors.push("Please select a control to press.");
+        }
+        if (effect.mode === "typeString" && (effect.text == null || effect.text.length < 1)) {
+            errors.push("Please provide text to type");
         }
         return errors;
     },
-    /**
-   * When the effect is triggered by something
-   */
-    onTriggerEvent: async event => {
-        controlProcessor.press(event.trigger.metadata.inputType, event.effect);
+    onTriggerEvent: async ({ effect }) => {
+        if (effect.mode == null || effect.mode === "keyPress") {
+            emulateKeyPress(effect.press, effect.modifiers, effect.pressDuration);
+        } else if (effect.mode === "typeString") {
+            typeString(effect.text);
+        }
         return true;
     }
 };
 
-module.exports = controlEmulation;
+module.exports = effect;
