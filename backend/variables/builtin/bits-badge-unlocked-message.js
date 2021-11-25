@@ -7,30 +7,19 @@ const {
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
 let triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:sub", "twitch:prime-sub-upgraded"];
+triggers[EffectTrigger.EVENT] = ["twitch:bits-badge-unlocked"];
 triggers[EffectTrigger.MANUAL] = true;
 
 const model = {
     definition: {
-        handle: "subType",
-        description: "The type of sub (ie Tier 1, 2, 3, etc).",
+        handle: "bitsBadgeUnlockedMessage",
+        description: "The message included when someone shares that they unlocked a new bits badge.",
         triggers: triggers,
         categories: [VariableCategory.COMMON],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
-        switch (trigger.metadata.eventData.subPlan) {
-        case "Prime":
-            return "Prime";
-        case "1000":
-            return "Tier 1";
-        case "2000":
-            return "Tier 2";
-        case "3000":
-            return "Tier 3";
-        }
-
-        return "";
+        return trigger.metadata.eventData.message || "";
     }
 };
 

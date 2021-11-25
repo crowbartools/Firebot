@@ -7,19 +7,20 @@ const {
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
 let triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:subs-gifted"];
+triggers[EffectTrigger.EVENT] = ["twitch:bits-badge-unlocked"];
 triggers[EffectTrigger.MANUAL] = true;
 
 const model = {
     definition: {
-        handle: "giftSubMonths",
-        description: "The total number of months the gift receiver has been subscribed since the beginning of time.",
+        handle: "bitsBadgeTier",
+        description: "The tier of the bits badge that was unlocked (100, 1000, 5000, etc.).",
         triggers: triggers,
         categories: [VariableCategory.COMMON],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {
-        return trigger.metadata.eventData.giftSubMonths || 1;
+        let badgeTier = trigger.metadata.eventData.badgeTier || 0;
+        return badgeTier;
     }
 };
 

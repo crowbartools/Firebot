@@ -61,6 +61,7 @@ module.exports = {
             name: "Sub",
             description: "When someone subscribes (or resubscribes) to your channel.",
             cached: false,
+            affiliateRequired: true,
             manualMetadata: {
                 username: "Firebot",
                 subPlan: "1000",
@@ -79,10 +80,28 @@ module.exports = {
             }
         },
         {
+            id: "prime-sub-upgraded",
+            name: "Prime Sub Upgraded",
+            description: "When someone upgrades to a paid sub from a Prime sub.",
+            cached: false,
+            affiliateRequired: true,
+            manualMetadata: {
+                username: "Firebot",
+                subPlan: "1000"
+            },
+            activityFeed: {
+                icon: "fas fa-star",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** upgraded their Prime sub at **Tier ${eventData.subPlan.replace("000", "")}!**`;
+                }
+            }
+        },
+        {
             id: "subs-gifted",
             name: "Sub Gifted",
             description: "When someone gifts a sub to someone else in your channel.",
             cached: false,
+            affiliateRequired: true,
             manualMetadata: {
                 username: "MageEnclave",
                 giftSubMonths: 1,
@@ -103,6 +122,7 @@ module.exports = {
             name: "Community Subs Gifted",
             description: "When someone gifts random subs to the community of the channel",
             cached: false,
+            affiliateRequired: true,
             manualMetadata: {
                 username: "Firebot",
                 gifterUsername: "Firebot",
@@ -117,10 +137,30 @@ module.exports = {
             }
         },
         {
+            id: "gift-sub-upgraded",
+            name: "Gift Sub Upgraded",
+            description: "When someone upgrades to a paid sub from a gift sub.",
+            cached: false,
+            affiliateRequired: true,
+            manualMetadata: {
+                username: "CaveMobster",
+                gifteeUsername: "CaveMobster",
+                gifterUsername: "Firebot",
+                subPlan: "1000"
+            },
+            activityFeed: {
+                icon: "fas fa-star",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** upgraded their gift sub at **Tier ${eventData.subPlan.replace("000", "")}!**`;
+                }
+            }
+        },
+        {
             id: "cheer",
             name: "Cheer",
             description: "When someone cheers in your channel (uses bits).",
             cached: false,
+            affiliateRequired: true,
             manualMetadata: {
                 username: "Firebot",
                 isAnonymous: false,
@@ -132,6 +172,24 @@ module.exports = {
                 icon: "fad fa-diamond",
                 getMessage: (eventData) => {
                     return `**${eventData.username}** cheered **${eventData.bits}** bits. A total of **${eventData.totalBits}** were cheered by **${eventData.username}** in the channel.`;
+                }
+            }
+        },
+        {
+            id: "bits-badge-unlocked",
+            name: "Bits Badge Unlocked",
+            description: "When someone unlocks a new bits badge tier in your channel.",
+            cached: false,
+            affiliateRequired: true,
+            manualMetadata: {
+                username: "Firebot",
+                message: "Test message",
+                badgeTier: "1000"
+            },
+            activityFeed: {
+                icon: "fad fa-diamond",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** unlocked the **${eventData.badgeTier}** bits badge in your channel!`;
                 }
             }
         },
@@ -202,6 +260,7 @@ module.exports = {
             cached: true,
             cacheMetaKey: "username",
             cacheTtlInSecs: 1,
+            affiliateRequired: true,
             queued: false,
             manualMetadata: {
                 username: "Firebot",
