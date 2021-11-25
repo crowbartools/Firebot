@@ -19,7 +19,7 @@ const effect = {
     </eos-container>
 
     <div ng-if="effect.mode == 'typeString'">
-        <eos-container header="Text To Type">
+        <eos-container header="Text To Type" pad-top="true">
             <firebot-input placeholder-text="Input text" model="effect.text" />
         </eos-container>
     </div>
