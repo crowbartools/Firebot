@@ -15,7 +15,7 @@ const model = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
-        let rarity = trigger.metadata.eventData && trigger.metadata.eventData.rarity;
+        const rarity = trigger.metadata.eventData && trigger.metadata.eventData.cardRarity;
 
         return rarity || "";
     }
