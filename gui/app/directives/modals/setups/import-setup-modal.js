@@ -183,8 +183,6 @@
                         return;
                     }
 
-                    debugger;
-
                     $q.when(
                         backendCommunicator.fireEventAsync("import-setup", {
                             setup: $ctrl.setup,
