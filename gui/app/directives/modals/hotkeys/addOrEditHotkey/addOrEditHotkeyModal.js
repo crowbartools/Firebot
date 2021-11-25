@@ -13,7 +13,8 @@
         controller: function(
             $scope,
             hotkeyService,
-            utilityService
+            utilityService,
+            ngToast
         ) {
             let $ctrl = this;
 
@@ -62,6 +63,7 @@
                     $ctrl.isNewHotkey = true;
 
                     $ctrl.hotkey = {
+                        name: "",
                         active: true,
                         code: ""
                     };
@@ -73,10 +75,28 @@
                 $ctrl.close({ $value: { hotkey: $ctrl.hotkey, action: "delete" } });
             };
 
+            function hotkeyValid() {
+                if ($ctrl.hotkey.name === "") {
+                    ngToast.create("Please provide a name for the Hotkey.");
+                    return false;
+                }
+
+                if ($ctrl.hotkey.code === "") {
+                    ngToast.create("Please record a Hotkey.");
+                    return false;
+                }
+
+                if (hotkeyService.hotkeyCodeExists($ctrl.hotkey.id, $ctrl.hotkey.code)) {
+                    ngToast.create("This Hotkey already exists.");
+                    return false;
+                }
+
+                return true;
+            }
+
             $ctrl.save = function() {
-                if ($ctrl.hotkey.name == null || $ctrl.hotkey.name === "") return;
-                if ($ctrl.hotkey.code == null || $ctrl.hotkey.code === "") return;
-                if (hotkeyService.hotkeyCodeExists($ctrl.hotkey.id, $ctrl.hotkey.code)) return;
+                if (!hotkeyValid()) return;
+
                 let action = $ctrl.isNewHotkey ? "add" : "update";
                 $ctrl.close({
                     $value: {

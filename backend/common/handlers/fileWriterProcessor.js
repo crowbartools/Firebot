@@ -8,6 +8,10 @@ function doesTextExistInFile(filepath, text) {
     return contents.includes(text);
 }
 
+const doesFileExist = (filepath) => {
+    return fs.existsSync(filepath);
+};
+
 function removeLines(filepath, lines = []) {
     let contents = fs.readFileSync(filepath, "utf8");
 
@@ -60,7 +64,7 @@ exports.run = async effect => {
 
     try {
         if (effect.writeMode === "append") {
-            if (effect.dontRepeat) {
+            if (doesFileExist(effect.filepath) && effect.dontRepeat) {
                 if (!doesTextExistInFile(effect.filepath, text)) {
                     fs.appendFileSync(effect.filepath, text + "\n", "utf8");
                 }

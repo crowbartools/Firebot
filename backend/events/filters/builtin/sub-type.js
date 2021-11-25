@@ -9,7 +9,9 @@ module.exports = {
     events: [
         { eventSourceId: "twitch", eventId: "sub" },
         { eventSourceId: "twitch", eventId: "subs-gifted" },
-        { eventSourceId: "twitch", eventId: "community-subs-gifted" }
+        { eventSourceId: "twitch", eventId: "community-subs-gifted" },
+        { eventSourceId: "twitch", eventId: "prime-sub-upgraded" },
+        { eventSourceId: "twitch", eventId: "gift-sub-upgraded" }
     ],
     comparisonTypes: [ComparisonType.IS, ComparisonType.IS_NOT],
     valueType: "preset",

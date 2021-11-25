@@ -10,13 +10,7 @@ const frontendCommunicator = require("../../common/frontend-communicator");
 const { EffectCategory } = require('../../../shared/effect-constants');
 const { wait } = require("../../utility");
 
-/**
- * The Play Sound effect
- */
 const playSound = {
-    /**
-   * The definition of the Effect
-   */
     definition: {
         id: "firebot:playsound",
         name: "Play Sound",
@@ -25,30 +19,19 @@ const playSound = {
         categories: [EffectCategory.COMMON],
         dependencies: []
     },
-    /**
-   * Global settings that will be available in the Settings tab
-   */
     globalSettings: {},
-    /**
-   * The HTML template for the Options view (ie options when effect is added to something such as a button.
-   * You can alternatively supply a url to a html file via optionTemplateUrl
-   */
     optionsTemplate: `
     <eos-container header="Type">
-        <div class="controls-fb-inline" style="padding-bottom: 5px;">
-            <label class="control-fb control--radio">Local file
-                <input type="radio" ng-model="effect.soundType" value="local"/>
-                <div class="control__indicator"></div>
-            </label>
-            <label class="control-fb control--radio">Random from folder
-                <input type="radio" ng-model="effect.soundType" value="folderRandom"/>
-                <div class="control__indicator"></div>
-            </label>
-        </div>
+        <firebot-radios 
+            options="{ local: 'Local file', folderRandom: 'Random from folder', url: 'Url' }"
+            model="effect.soundType"
+            inline="true"
+            style="padding-bottom: 5px;" 
+        />
     </eos-container>
 
     <div ng-hide="effect.soundType == null">
-        <eos-container header="Sound">
+        <eos-container header="Sound" pad-top="true">
             <div ng-if="effect.soundType === 'folderRandom'">
                 <file-chooser model="effect.folder" options="{ directoryOnly: true, filters: [], title: 'Select Sound Folder'}"></file-chooser>
             </div>
@@ -60,6 +43,10 @@ const playSound = {
                 <div>
                     <sound-player path="effect.filepath" volume="effect.volume" output-device="effect.audioOutputDevice"></sound-player>
                 </div>
+            </div>
+
+            <div ng-if="effect.soundType === 'url'">
+               <firebot-input input-title="Url" model="effect.url" />
             </div>
 
             <div style="padding-top:20px">
@@ -83,10 +70,7 @@ const playSound = {
         <eos-overlay-instance ng-if="effect.audioOutputDevice && effect.audioOutputDevice.deviceId === 'overlay'" effect="effect" pad-top="true"></eos-overlay-instance>
     </div>
     `,
-    /**
-   * The controller for the front end Options
-   */
-    optionsController: ($scope, listenerService) => {
+    optionsController: ($scope) => {
         if ($scope.effect.soundType == null) {
             $scope.effect.soundType = "local";
         }
@@ -95,39 +79,34 @@ const playSound = {
             $scope.effect.volume = 5;
         }
     },
-    /**
-   * When the effect is saved
-   */
     optionsValidator: effect => {
-        let errors = [];
-        console.log(effect);
+        const errors = [];
 
         if (effect.soundType === "local" || effect.soundType == null) {
             if (effect.filepath == null || effect.filepath.length < 1) {
                 errors.push("Please select a sound file.");
             }
-        } else {
+        } else if (effect.soundType === "folderRandom") {
             if (effect.folder == null || effect.folder.length < 1) {
                 errors.push("Please select a sound folder.");
             }
+        } else if (effect.soundType === "url" && (effect.url == null || effect.url.trim() === "")) {
+            errors.push("Please input a url.");
         }
-
 
         return errors;
     },
-    /**
-   * When the effect is triggered by something
-   */
     onTriggerEvent: async event => {
-        let effect = event.effect;
+        const effect = event.effect;
 
-        // Fallback 6-16-20
         if (effect.soundType == null) {
             effect.soundType = "local";
         }
 
-        let data = {
+        const data = {
             filepath: effect.filepath,
+            url: effect.url,
+            isUrl: effect.soundType === "url",
             volume: effect.volume,
             overlayInstance: effect.overlayInstance
         };
@@ -141,15 +120,14 @@ const playSound = {
                 logger.warn("Unable to read sound folder", err);
             }
 
-            let filteredFiles = files.filter(i => (/\.(mp3|ogg|wav)$/i).test(i));
-            let chosenFile = filteredFiles[Math.floor(Math.random() * filteredFiles.length)];
+            const filteredFiles = files.filter(i => (/\.(mp3|ogg|wav)$/i).test(i));
+            const chosenFile = filteredFiles[Math.floor(Math.random() * filteredFiles.length)];
 
             if (filteredFiles.length === 0) {
                 logger.error('No sounds were found in the select sound folder.');
             }
 
-            let fullFilePath = path.join(effect.folder, chosenFile);
-            data.filepath = fullFilePath;
+            data.filepath = path.join(effect.folder, chosenFile);
         }
 
         // Set output device.
@@ -161,11 +139,13 @@ const playSound = {
 
         // Generate token if going to overlay, otherwise send to gui.
         if (selectedOutputDevice.deviceId === "overlay") {
-            let resourceToken = resourceTokenManager.storeResourcePath(
-                data.filepath,
-                30
-            );
-            data.resourceToken = resourceToken;
+            if (effect.soundType !== "url") {
+                let resourceToken = resourceTokenManager.storeResourcePath(
+                    data.filepath,
+                    30
+                );
+                data.resourceToken = resourceToken;
+            }
 
             // send event to the overlay
             webServer.sendToOverlay("sound", data);
@@ -177,7 +157,7 @@ const playSound = {
         if (effect.waitForSound) {
             try {
                 const duration = await frontendCommunicator.fireEventAsync("getSoundDuration", {
-                    path: data.filepath
+                    path: data.isUrl ? data.url : data.filepath
                 });
                 const durationInMils = (Math.round(duration) || 0) * 1000;
                 await wait(durationInMils);
@@ -199,17 +179,17 @@ const playSound = {
         event: {
             name: "sound",
             onOverlayEvent: event => {
-                let data = event;
-                let token = encodeURIComponent(data.resourceToken);
-                let resourcePath = `http://${
+                const data = event;
+                const token = encodeURIComponent(data.resourceToken);
+                const resourcePath = `http://${
                     window.location.hostname
                 }:7472/resource/${token}`;
 
                 // Get time in milliseconds to use as class name.
-                let d = new Date();
-                let uuid = d.getTime().toString();
+                const d = new Date();
+                const uuid = d.getTime().toString();
 
-                let filepath = data.filepath.toLowerCase();
+                const filepath = data.isUrl ? data.url : data.filepath.toLowerCase();
                 let mediaType;
                 if (filepath.endsWith("mp3")) {
                     mediaType = "audio/mpeg";
@@ -219,12 +199,12 @@ const playSound = {
                     mediaType = "audio/wav";
                 }
 
-                let audioElement = `<audio id="${uuid}" src="${resourcePath}" type="${mediaType}"></audio>`;
+                const audioElement = `<audio id="${uuid}" src="${data.isUrl ? data.url : resourcePath}" type="${mediaType}"></audio>`;
 
                 // Throw audio element on page.
                 $("#wrapper").append(audioElement);
 
-                let audio = document.getElementById(uuid);
+                const audio = document.getElementById(uuid);
                 audio.volume = parseFloat(data.volume) / 10;
 
                 audio.oncanplay = () => audio.play();

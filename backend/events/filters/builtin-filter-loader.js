@@ -4,6 +4,7 @@ const filterManager = require("./filter-manager");
 
 exports.loadFilters = () => {
     [
+        'bits-badge-tier',
         'cheer-bits-amount',
         'donation-amount',
         'donation-from',

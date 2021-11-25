@@ -62,11 +62,15 @@ const celebration = {
    * The controller for the front end Options
    * Port over from effectHelperService.js
    */
-    optionsController: $scope => {
+    optionsController: ($scope, utilityService) => {
         $scope.celebrationTypes = ["Fireworks", "Confetti"];
         if ($scope.effect.length == null) {
             $scope.effect.length = 5;
         }
+
+        $scope.showOverlayInfoModal = function(overlayInstance) {
+            utilityService.showOverlayInfoModal(overlayInstance);
+        };
     },
     /**
    * When the effect is triggered by something
