@@ -66,7 +66,7 @@
 
             service.fireEventAsync = function(type, data) {
                 return new Promise(resolve => {
-                    ipcRenderer.send(type, data);
+                    ipcRenderer.send(type, JSON.parse(JSON.stringify(data)));
                     ipcRenderer.once(type + ":reply", (_, eventData) => {
                         resolve(eventData);
                     });

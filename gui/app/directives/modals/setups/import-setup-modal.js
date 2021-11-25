@@ -183,7 +183,9 @@
                         return;
                     }
 
-                    $.when(
+                    debugger;
+
+                    $q.when(
                         backendCommunicator.fireEventAsync("import-setup", {
                             setup: $ctrl.setup,
                             selectedCurrency: $ctrl.selectedCurrency
