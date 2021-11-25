@@ -65,8 +65,11 @@
             service.onAsync = (eventName, callback) => service.on(eventName, callback, true);
 
             service.fireEventAsync = function(type, data) {
+                if (data !== undefined) {
+                    data = JSON.parse(JSON.stringify(data));
+                }
                 return new Promise(resolve => {
-                    ipcRenderer.send(type, JSON.parse(JSON.stringify(data)));
+                    ipcRenderer.send(type, data);
                     ipcRenderer.once(type + ":reply", (_, eventData) => {
                         resolve(eventData);
                     });

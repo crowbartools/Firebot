@@ -11,12 +11,12 @@ const axios = axiosDefault.create({
 });
 
 axios.interceptors.request.use(request => {
-    logger.debug('HTTP Request Effect [Request]: ', request);
+    //logger.debug('HTTP Request Effect [Request]: ', JSON.parse(JSON.stringify(request)));
     return request;
 });
 
 axios.interceptors.response.use(response => {
-    logger.debug('HTTP Request Effect [Response]: ', response);
+    //logger.debug('HTTP Request Effect [Response]: ', JSON.parse(JSON.stringify(response)));
     return response;
 });
 
