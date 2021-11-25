@@ -138,6 +138,20 @@ async function adjustCurrencyForUser(username, currencyId, value, adjustType = "
     return false;
 }
 
+async function adjustCurrencyForUserById(userId, currencyId, value, overrideValue) {
+    if (!isViewerDBOn()) {
+        return null;
+    }
+
+    const user = await userDatabase.getUserById(userId);
+
+    if (user == null) {
+        return null;
+    }
+
+    return adjustCurrencyForUser(user.username, currencyId, value, overrideValue ? 'set' : 'adjust');
+}
+
 // Add Currency to Usergroup
 // This will add an amount of currency to all online users in a usergroup.
 function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value, ignoreDisable = false, adjustType = "adjust") {
@@ -315,6 +329,21 @@ function getUserCurrencyAmount(username, currencyId) {
 
         });
     });
+}
+
+async function getUserCurrencies(usernameOrId, isUsername = false) {
+    if (!isViewerDBOn()) {
+        return {};
+    }
+    const user = isUsername ?
+        await userDatabase.getUserByUsername(usernameOrId) :
+        await userDatabase.getUserById(usernameOrId);
+
+    if (user == null) {
+        return null;
+    }
+
+    return user.currency;
 }
 
 function getTopCurrencyPosition(currencyId, position = 1) {
@@ -506,8 +535,10 @@ ipcMain.on("deleteCurrency", (event, currencyId) => {
 });
 
 exports.adjustCurrencyForUser = adjustCurrencyForUser;
+exports.adjustCurrencyForUserById = adjustCurrencyForUserById;
 exports.addCurrencyToOnlineUsers = addCurrencyToOnlineUsers;
 exports.getUserCurrencyAmount = getUserCurrencyAmount;
+exports.getUserCurrencies = getUserCurrencies;
 exports.purgeCurrencyById = purgeCurrencyById;
 exports.addCurrencyToNewUser = addCurrencyToNewUser;
 exports.refreshCurrencyCache = refreshCurrencyCache;
