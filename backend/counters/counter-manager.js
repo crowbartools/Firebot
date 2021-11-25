@@ -38,7 +38,7 @@ function updateCounterTxtFile(counterName, counterValue) {
 
     let txtFilePath = getCounterTxtFilePath(counterName);
 
-    return fs.writeFile(txtFilePath, counterValue, 'utf8');
+    return fs.writeFile(txtFilePath, counterValue.toString(), 'utf8');
 }
 
 

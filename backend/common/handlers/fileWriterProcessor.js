@@ -106,7 +106,7 @@ exports.run = async effect => {
         } else if (effect.writeMode === "delete-all") {
             fs.writeFileSync(effect.filepath, "", "utf8");
         } else {
-            fs.writeFileSync(effect.filepath, text, "utf8");
+            fs.writeFileSync(effect.filepath, text.toString(), "utf8");
         }
     } catch (err) {
         logger.warn("Failed to write to file", err);
