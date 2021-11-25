@@ -81,7 +81,9 @@
             service.playChatNotification = function() {
                 let selectedSound = settingsService.getTaggedNotificationSound();
 
-                if (selectedSound.name === "None") return;
+                if (selectedSound.name === "None") {
+                    return;
+                }
 
                 if (selectedSound.name !== "Custom") {
                     selectedSound = service.notificationSoundOptions.find(
@@ -142,9 +144,12 @@
 
             service.getSoundDuration = function(path, format = undefined) {
                 return new Promise(resolve => {
+
+                    console.log("duration for", path, format);
+
                     let sound = new Howl({
                         src: [path],
-                        format: format
+                        format: format || []
                     });
 
                     sound.on("loaderror", () => {
@@ -173,7 +178,7 @@
                     let selectedOutputDevice = data.audioOutputDevice;
                     if (
                         selectedOutputDevice == null ||
-            selectedOutputDevice.label === "App Default"
+                        selectedOutputDevice.label === "App Default"
                     ) {
                         selectedOutputDevice = settingsService.getAudioOutputDevice();
                     }
@@ -183,6 +188,8 @@
                         websocketService.broadcast({
                             event: "sound",
                             filepath: filepath,
+                            url: data.url,
+                            isUrl: data.isUrl,
                             format: data.format,
                             volume: volume,
                             resourceToken: data.resourceToken,
@@ -190,7 +197,7 @@
                         });
 
                     } else {
-                        service.playSound(filepath, volume, selectedOutputDevice, data.format);
+                        service.playSound(data.isUrl ? data.url : data.filepath, volume, selectedOutputDevice, data.format);
                     }
                 }
             );
