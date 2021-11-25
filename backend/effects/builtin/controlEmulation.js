@@ -43,14 +43,14 @@ const effect = {
 
         <eos-container header="Press Duration" pad-top="true">
             <firebot-input model="effect.pressDuration" input-title="Secs" data-type="number" placeholder-text="Optional" />
-            <p style="padding-top:5px;">How many seconds should the control be pressed for. Can be a decimal.</p>
+            <p style="padding-top:5px;">How many seconds should the control be pressed for (Can be a decimal). Defaults to 0.03s if left blank.</p>
         </eos-container>
     </div>
 
 
     <eos-container>
         <div class="effect-info alert alert-info">
-            Please keep in mind emulated controls may not work in every game or program.
+            Please keep in mind emulated controls may not work in every game or program. If the controls aren't working for a game/app, try running either Firebot or the game/app with Administrator privileges. 
         </div>
     </eos-container>
 
@@ -166,8 +166,13 @@ const effect = {
     },
     optionsValidator: effect => {
         const errors = [];
-        if (effect.mode === "keyPress" && effect.press == null) {
-            errors.push("Please select a control to press.");
+        if (effect.mode === "keyPress") {
+            if (effect.press == null) {
+                errors.push("Please select a control to press.");
+            }
+            if (effect.pressDuration != null && !isNaN(effect.pressDuration) && parseFloat(effect.pressDuration) <= 0) {
+                errors.push("Press duration must be greater than 0 or left blank.");
+            }
         }
         if (effect.mode === "typeString" && (effect.text == null || effect.text.length < 1)) {
             errors.push("Please provide text to type");
