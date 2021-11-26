@@ -89,7 +89,13 @@ const clip = {
             <eos-overlay-position effect="effect" class="setting-padtop"></eos-overlay-position>
             <eos-enter-exit-animations effect="effect" class="setting-padtop"></eos-enter-exit-animations>
             <eos-overlay-instance effect="effect" class="setting-padtop"></eos-overlay-instance>
+
         </div>
+        <eos-container pad-top="true"> 
+            <div class="effect-info alert alert-info">
+                Note: Screenshots will capture the entirety of the selected display.
+            </div>
+        </eos-container>
     `,
     optionsController: ($scope, $q, backendCommunicator) => {
 
