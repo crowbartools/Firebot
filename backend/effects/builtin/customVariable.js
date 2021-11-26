@@ -42,11 +42,21 @@ const fileWriter = {
             <p class="muted">Duration (in seconds) this variable should be kept in the cache. Use 0 for indefinite (until Firebot restarts). </p>
             <input ng-model="effect.ttl" type="number" class="form-control" id="chat-text-setting" placeholder="Enter seconds">
         </eos-container>
+
+        <eos-container pad-top="true">
+            <div class="effect-info well">
+                Want to inspect variable values in real-time for debugging purposes? Open the <a ng-click="openVariableInspector()" style="color:#53afff;cursor:pointer;">Custom Variable Inspector</a>
+            </div>
+        </eos-container>
     `,
-    optionsController: ($scope) => {
+    optionsController: ($scope, backendCommunicator) => {
         if ($scope.effect.ttl === undefined) {
             $scope.effect.ttl = 0;
         }
+
+        $scope.openVariableInspector = function() {
+            backendCommunicator.fireEvent("show-variable-inspector");
+        };
     },
     optionsValidator: effect => {
         let errors = [];

@@ -6,7 +6,7 @@ const windowManagement = require("../app-management/electron/window-management")
 
 const NodeCache = require("node-cache");
 
-const cache = new NodeCache({ stdTTL: 0, checkperiod: 5 });
+const cache = new NodeCache({ stdTTL: 0, checkperiod: 1 });
 exports._cache = cache;
 
 const onCustomVariableExpire = (key, value) => {
@@ -37,11 +37,13 @@ function getVariableCacheDb() {
         .getJsonDbInProfile("custom-variable-cache");
 }
 
-exports.getInitialInspectorVariables = () => Object.entries(cache.data).map(([key, value]) => ({
-    key,
-    value: value.v,
-    tts: value.t
-}));
+exports.getInitialInspectorVariables = () =>
+    Object.entries(cache.data)
+        .map(([key, value]) => ({
+            key,
+            value: value.v,
+            ttl: value.t
+        }));
 
 exports.getAllVariables = () => JSON.parse(JSON.stringify(cache.data));
 

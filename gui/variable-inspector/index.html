@@ -1,60 +1,502 @@
-<!doctype html>
+<!DOCTYPE html>
 
 <html lang="en">
-<head>
-  <meta charset="utf-8">
+  <head>
+    <meta charset="utf-8" />
 
-  <title>Variable Inspector</title>
+    <title>Custom Variable Inspector</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
-</head>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+    <style>
+      .var-table {
+        border-radius: 5px;
+        overflow: hidden;
+      }
+      .var-table .var {
+        background: #43454b;
+        color: white;
+        padding: 10px;
+        cursor: pointer;
+      }
+      .var-table .var:nth-child(even) {
+        background: #3e4046;
+      }
+      .var-table .var .var-cell {
+        flex: 1;
+        padding-right: 5px;
+        word-break: break-all;
+        word-wrap: break-word;
+      }
+      .caret {
+        width: 15px;
+        height: 15px;
+        color: white;
+      }
+      .search-field {
+        width: 100%;
+        padding: 9px;
+        border-radius: 9px;
+        background: #24262a;
+        outline: none;
+        border: 2px solid transparent;
+        color: white;
+        padding-left: 25px;
+      }
+      .search-field:focus {
+        border-color: #66afe9;
+        background: #1a1c20;
+      }
+      .sk-circle {
+        width: 15px;
+        height: 15px;
+        position: relative;
+      }
+      .sk-circle .sk-child {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+      }
+      .sk-circle .sk-child:before {
+        content: "";
+        display: block;
+        margin: 0 auto;
+        width: 15%;
+        height: 15%;
+        background-color: rgba(255, 255, 255, 0.584);
+        border-radius: 100%;
+        -webkit-animation: sk-circleBounceDelay 1.2s infinite ease-in-out both;
+        animation: sk-circleBounceDelay 1.2s infinite ease-in-out both;
+      }
+      .sk-circle .sk-circle2 {
+        -webkit-transform: rotate(30deg);
+        -ms-transform: rotate(30deg);
+        transform: rotate(30deg);
+      }
+      .sk-circle .sk-circle3 {
+        -webkit-transform: rotate(60deg);
+        -ms-transform: rotate(60deg);
+        transform: rotate(60deg);
+      }
+      .sk-circle .sk-circle4 {
+        -webkit-transform: rotate(90deg);
+        -ms-transform: rotate(90deg);
+        transform: rotate(90deg);
+      }
+      .sk-circle .sk-circle5 {
+        -webkit-transform: rotate(120deg);
+        -ms-transform: rotate(120deg);
+        transform: rotate(120deg);
+      }
+      .sk-circle .sk-circle6 {
+        -webkit-transform: rotate(150deg);
+        -ms-transform: rotate(150deg);
+        transform: rotate(150deg);
+      }
+      .sk-circle .sk-circle7 {
+        -webkit-transform: rotate(180deg);
+        -ms-transform: rotate(180deg);
+        transform: rotate(180deg);
+      }
+      .sk-circle .sk-circle8 {
+        -webkit-transform: rotate(210deg);
+        -ms-transform: rotate(210deg);
+        transform: rotate(210deg);
+      }
+      .sk-circle .sk-circle9 {
+        -webkit-transform: rotate(240deg);
+        -ms-transform: rotate(240deg);
+        transform: rotate(240deg);
+      }
+      .sk-circle .sk-circle10 {
+        -webkit-transform: rotate(270deg);
+        -ms-transform: rotate(270deg);
+        transform: rotate(270deg);
+      }
+      .sk-circle .sk-circle11 {
+        -webkit-transform: rotate(300deg);
+        -ms-transform: rotate(300deg);
+        transform: rotate(300deg);
+      }
+      .sk-circle .sk-circle12 {
+        -webkit-transform: rotate(330deg);
+        -ms-transform: rotate(330deg);
+        transform: rotate(330deg);
+      }
+      .sk-circle .sk-circle2:before {
+        -webkit-animation-delay: -1.1s;
+        animation-delay: -1.1s;
+      }
+      .sk-circle .sk-circle3:before {
+        -webkit-animation-delay: -1s;
+        animation-delay: -1s;
+      }
+      .sk-circle .sk-circle4:before {
+        -webkit-animation-delay: -0.9s;
+        animation-delay: -0.9s;
+      }
+      .sk-circle .sk-circle5:before {
+        -webkit-animation-delay: -0.8s;
+        animation-delay: -0.8s;
+      }
+      .sk-circle .sk-circle6:before {
+        -webkit-animation-delay: -0.7s;
+        animation-delay: -0.7s;
+      }
+      .sk-circle .sk-circle7:before {
+        -webkit-animation-delay: -0.6s;
+        animation-delay: -0.6s;
+      }
+      .sk-circle .sk-circle8:before {
+        -webkit-animation-delay: -0.5s;
+        animation-delay: -0.5s;
+      }
+      .sk-circle .sk-circle9:before {
+        -webkit-animation-delay: -0.4s;
+        animation-delay: -0.4s;
+      }
+      .sk-circle .sk-circle10:before {
+        -webkit-animation-delay: -0.3s;
+        animation-delay: -0.3s;
+      }
+      .sk-circle .sk-circle11:before {
+        -webkit-animation-delay: -0.2s;
+        animation-delay: -0.2s;
+      }
+      .sk-circle .sk-circle12:before {
+        -webkit-animation-delay: -0.1s;
+        animation-delay: -0.1s;
+      }
 
-<body>
-    <div id="app">
-        <div v-for="variable in variableList">
-            {{variable.key}}
+      @-webkit-keyframes sk-circleBounceDelay {
+        0%,
+        80%,
+        100% {
+          -webkit-transform: scale(0);
+          transform: scale(0);
+        }
+        40% {
+          -webkit-transform: scale(1);
+          transform: scale(1);
+        }
+      }
+
+      @keyframes sk-circleBounceDelay {
+        0%,
+        80%,
+        100% {
+          -webkit-transform: scale(0);
+          transform: scale(0);
+        }
+        40% {
+          -webkit-transform: scale(1);
+          transform: scale(1);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="app" style="font-family: sans-serif">
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 10px;
+        "
+      >
+        <div class="sk-circle">
+          <div class="sk-circle1 sk-child"></div>
+          <div class="sk-circle2 sk-child"></div>
+          <div class="sk-circle3 sk-child"></div>
+          <div class="sk-circle4 sk-child"></div>
+          <div class="sk-circle5 sk-child"></div>
+          <div class="sk-circle6 sk-child"></div>
+          <div class="sk-circle7 sk-child"></div>
+          <div class="sk-circle8 sk-child"></div>
+          <div class="sk-circle9 sk-child"></div>
+          <div class="sk-circle10 sk-child"></div>
+          <div class="sk-circle11 sk-child"></div>
+          <div class="sk-circle12 sk-child"></div>
         </div>
+        <span
+          style="
+            margin-left: 5px;
+            color: rgba(255, 255, 255, 0.653);
+            font-size: 12px;
+          "
+          >Watching for variable changes...</span
+        >
+      </div>
+      <div style="position: relative; margin-bottom: 10px">
+        <div
+          style="
+            position: absolute;
+            left: 8px;
+            top: 55%;
+            transform: translateY(-50%);
+          "
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            style="color: white; width: 15px; height: 15px"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+        </div>
+        <input
+          type="search"
+          class="search-field"
+          v-model="search"
+          placeholder="Search variables"
+        />
+      </div>
+      <div style="color: white; margin-bottom: 20px">
+        <input type="checkbox" id="show-expired" v-model="showExpired" />
+        <label for="show-expired">Show expired variables</label>
+      </div>
+      <div
+        style="
+          display: flex;
+          color: rgba(255, 255, 255, 0.75);
+          padding: 10px;
+          font-size: 13px;
+        "
+      >
+        <div style="flex: 1">Name</div>
+        <div style="flex: 1">Value</div>
+        <div style="flex: 1">Expires</div>
+        <div style="flex: 1">Action</div>
+        <div style="width: 15px"></div>
+      </div>
+      <div class="var-table">
+        <variable-row
+          v-for="variable in filteredVariables"
+          :variable="variable"
+        />
+      </div>
+      <div
+        v-if="filteredVariables.length < 1"
+        style="opacity: 0.5; color: white; padding: 10px"
+      >
+        No variables found.
+      </div>
     </div>
     <script>
-        new Vue({
-            el: '#app',
-            data: {
-                variables: {}
-            },
-            computed: {
-                variableList() {
-                    return Object.entries(this.variables).map(([key, history]) => ({ key, history }));
-                }
-            },
-            mounted() {
-                const app = this;
-                window.ipcRenderer.on("all-variables", (variables) => {
-                    app.variables = {};
-                    for(const variable of variables) {
-                        variable.action = "set";
-                        app[variable.key] = [variable]
-                    }
-                });
+      Vue.component("caret-icon", {
+        props: ["direction"],
+        template: `
+                <svg xmlns="http://www.w3.org/2000/svg" class="caret" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path v-if="direction === 'right'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    <path v-if="direction === 'down'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            `,
+      });
 
-                window.ipcRenderer.on("variable-set", ({ key, value, ttl }) => {
-                    if(app.variables[key]) {
-                        app.variables[key].history.unshift({
-                            key,
-                            value,
-                            ttl,
-                            action: "set"
-                        })
-                    } else {
-                        app.variables[key] = [{
-                            key,
-                            value,
-                            ttl,
-                            action: "set"
-                        }];
-                    }
-                });
+      Vue.component("expire-display", {
+        props: ["ttl", "action"],
+        data: function () {
+          return {
+            display: "",
+            secondsLeft: 0,
+            timeoutId: null,
+          };
+        },
+        methods: {
+          toggleExpanded() {
+            this.expanded = !this.expanded;
+          },
+          updateSecondsDisplay() {
+            if (this.secondsLeft < 1) {
+              this.display = "-";
+            } else {
+              this.secondsLeft -= 1;
+              this.display = `in ${this.secondsLeft}s`;
+              this.timeoutId = setTimeout(this.updateSecondsDisplay, 1000);
             }
-        })
+          },
+          determineDisplay() {
+            console.log("DETERMINING DISPLAY");
+            if (this.timeoutId) {
+              clearTimeout(this.timeoutId);
+              this.timeoutId = null;
+            }
+            this.secondsLeft = 0;
+            this.display = "";
+
+            if (this.action === "expired" || this.ttl < 0) {
+              this.display = "-";
+            } else if (this.ttl === 0) {
+              this.display = "Never";
+            } else if (this.ttl > 0) {
+              const diffInSeconds = Math.ceil((this.ttl - Date.now()) / 1000);
+              this.secondsLeft = diffInSeconds;
+              this.updateSecondsDisplay();
+            }
+          },
+        },
+        watch: {
+          ttl: function () {
+            this.determineDisplay();
+          },
+          action: function () {
+            this.determineDisplay();
+          },
+        },
+        mounted() {
+          this.determineDisplay();
+        },
+        template: `<span>{{display}}</span>`,
+      });
+
+      Vue.component("variable-row", {
+        props: ["variable"],
+        data: function () {
+          return {
+            expanded: false,
+          };
+        },
+        methods: {
+          toggleExpanded() {
+            this.expanded = !this.expanded;
+          },
+        },
+        computed: {
+          history() {
+            const [_, ...rest] = this.variable.history;
+            return rest;
+          },
+        },
+        template: `
+                <div class="var" @click="toggleExpanded()">
+                    <div class="header" style="display:flex; color: white;">
+                        <div class="var-cell">{{variable.key}}</div>
+                        <div class="var-cell">{{variable.history[0].value}}</div>
+                        <div class="var-cell"><expire-display :ttl="variable.history[0].ttl" :action="variable.history[0].action" /></div>
+                        <div class="var-cell">{{variable.history[0].action}}</div>
+                        <div style="width: 15px;">
+                            <caret-icon :direction="expanded ? 'down' : 'right'" />
+                        </div>
+                    </div>
+                    <div v-if="expanded">
+                        <div style="display: flex; padding: 10px 10px;align-items: center;">
+                            <div style="height: 1px; background: #807676; flex: 1;"></div>
+                            <div style="margin: 0 13px; font-size: 12px; color: #909090;">History</div>
+                            <div style="height: 1px; background: #807676; flex: 1;"></div>
+                        </div>
+                        <div v-for="h in history" style="display:flex; color: white;">
+                            <div class="var-cell"></div>
+                            <div class="var-cell">{{h.value}}</div>
+                            <div class="var-cell"></div>
+                            <div class="var-cell">{{h.action}}</div>
+                            <div style="width: 15px;"></div>
+                        </div>
+                        <div v-if="history.length < 1" style="opacity: 0.75;">No changes captured yet.</div>
+                    </div>
+                </div>
+            `,
+      });
+
+      const app = new Vue({
+        el: "#app",
+        data: {
+          variables: [],
+          search: "",
+          showExpired: false,
+        },
+        computed: {
+          filteredVariables() {
+            return this.variables.filter((v) => {
+              const expired = v.history[0].action === "expired";
+              if (!this.showExpired && expired) {
+                return false;
+              }
+              if (this.search == null || !this.search.length) {
+                return true;
+              }
+              return (
+                v.key.toLowerCase().includes(this.search.toLowerCase()) ||
+                v.history[0].value
+                  .toLowerCase()
+                  .includes(this.search.toLowerCase())
+              );
+            });
+          },
+        },
+      });
+
+      window.ipcRenderer.on("all-variables", (variables) => {
+        console.log("ALL VARS", variables);
+        app.variables = variables.map((v) => ({
+          key: v.key,
+          history: [
+            {
+              ...v,
+              action: "set",
+            },
+          ],
+        }));
+      });
+
+      window.ipcRenderer.on("variable-set", ({ key, value, ttl }) => {
+        console.log("VAR SET", key, value, ttl);
+        const foundVar = app.variables.find((v) => v.key === key);
+        if (foundVar) {
+          foundVar.history.unshift({
+            key,
+            value,
+            ttl,
+            action: "set",
+          });
+        } else {
+          app.variables.push({
+            key,
+            history: [
+              {
+                key,
+                value,
+                ttl,
+                action: "set",
+              },
+            ],
+          });
+        }
+      });
+
+      window.ipcRenderer.on("variable-expire", ({ key, value }) => {
+        console.log("VAR EXPIRE", key, value);
+        const foundVar = app.variables.find((v) => v.key === key);
+        if (foundVar) {
+          foundVar.history.unshift({
+            key,
+            value,
+            ttl: -1,
+            action: "expired",
+          });
+        } else {
+          app.variables.push({
+            key,
+            history: [
+              {
+                key,
+                value,
+                ttl: -1,
+                action: "expired",
+              },
+            ],
+          });
+        }
+      });
     </script>
-</body>
+  </body>
 </html>

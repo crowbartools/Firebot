@@ -327,7 +327,7 @@ async function createVariableInspectorWindow() {
     variableInspectorWindow = new BrowserWindow({
         frame: true,
         alwaysOnTop: true,
-        backgroundColor: "#1E2023",
+        backgroundColor: "#2F3137",
         title: "Custom Variable Inspector",
         parent: exports.mainWindow,
         width: variableInspectorWindowState.width,
