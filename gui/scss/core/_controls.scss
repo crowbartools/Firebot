@@ -512,10 +512,32 @@ table.fb-table-alt {
                 opacity: 0.8;
             }
         }
+        &.not-clickable {
+            opacity: 0.5;
+            &:hover {
+                opacity: 0.5;
+                cursor: default;
+            }
+        }
     }
     & td {
         height: 45px;
         background: $fb-table-row-bg;
+        &.ellipsis {
+            position: relative;
+        }
+        &.ellipsis:before {
+            content: '&nbsp;';
+            visibility: hidden;
+        }
+        &.ellipsis span {
+            position: absolute;
+            left: 0;
+            right: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     }
     & tbody tr {
         &:nth-child(even) {
