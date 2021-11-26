@@ -9,13 +9,16 @@
     angular.module("firebotApp").component("addOrEditEventModal", {
         template:
         `
-        <div class="modal-header">
-            <button type="button" class="close" aria-label="Close" ng-click="$ctrl.dismiss()"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="editEventLabel">{{$ctrl.isNewEvent ? "Add Event" : "Edit Event"}}</h4>
-        </div>
+        <context-menu-modal-header
+            on-close="$ctrl.dismiss()"
+            trigger-type="event"
+            trigger-name="$ctrl.event.name"
+            sort-tags="$ctrl.event.sortTags"
+            show-trigger-name="true"
+        ></context-menu-modal-header>
         <div class="modal-body">
             <div class="general-event-settings">
-            
+
                 <div class="effect-setting-container">
                     <h3>Trigger On</h3>
                     <searchable-event-dropdown selected="{ eventId: $ctrl.event.eventId, sourceId: $ctrl.event.sourceId }" style="width:100%" update="$ctrl.eventChanged(event)"></searchable-event-dropdown>
@@ -25,15 +28,10 @@
                     <h3>Name</h3>
                     <input type="text" class="form-control event-id" aria-describedby="basic-addon3" placeholder="Enter name" ng-model="$ctrl.event.name" ng-change="$ctrl.nameChanged()">
                 </div>
-        
+
                 <div ng-if="$ctrl.event.eventId != null">
                     <filter-list event-source-id="$ctrl.event.sourceId" event-id="$ctrl.event.eventId" filter-data="$ctrl.event.filterData"></filter-list>
                 </div>
-                
-                 <!-- <div class="effect-setting-container setting-padtop" ng-show="$ctrl.allSortTags != null && $ctrl.allSortTags.length > 0">
-                    <h3>Sort Tags</h3>
-                    <sort-tag-list current-tag-ids="$ctrl.event.sortTags" all-tags="$ctrl.allSortTags"></sort-tag-list>
-                </div> -->
 
                 <div class="other-settings setting-padtop">
                     <div class="settings-title">
@@ -64,7 +62,7 @@
             </div>
             </div>
             <div ng-if="$ctrl.event.eventId != null" class="effect-setting-container setting-padtop">
-                <effect-list header="What should this event do?" effects="$ctrl.event.effects" trigger="event" trigger-meta="$ctrl.triggerMeta" update="$ctrl.effectListUpdated(effects)" modalId="{{modalId}}" is-array="true"></effect-list>      
+                <effect-list header="What should this event do?" effects="$ctrl.event.effects" trigger="event" trigger-meta="$ctrl.triggerMeta" update="$ctrl.effectListUpdated(effects)" modalId="{{modalId}}" is-array="true"></effect-list>
             </div>
         </div>
         <div class="modal-footer sticky-footer edit-event-footer">
@@ -80,7 +78,7 @@
             dismiss: "&",
             modalInstance: "<"
         },
-        controller: function($scope, utilityService, ngToast, eventsService) {
+        controller: function($scope, utilityService, ngToast) {
             let $ctrl = this;
 
             $ctrl.isNewEvent = true;

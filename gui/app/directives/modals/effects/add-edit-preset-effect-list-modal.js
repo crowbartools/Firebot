@@ -7,12 +7,14 @@
     angular.module("firebotApp").component("addOrEditPresetEffectListModal", {
         template: `
             <scroll-sentinel element-class="edit-preset-effect-list-header"></scroll-sentinel>
-            <div class="modal-header edit-preset-effect-list-header">
-                <button type="button" class="close" ng-click="$ctrl.dismiss()">&times;</span></button>
-                <h4 class="modal-title">
-                    {{$ctrl.isNewPresetList ? 'Add Preset Effect List' : 'Edit Preset Effect List' }}
-                </h4>
-            </div>
+            <context-menu-modal-header
+                class="edit-preset-effect-list-header"
+                on-close="$ctrl.dismiss()"
+                trigger-type="preset effect list"
+                trigger-name="$ctrl.presetList.name"
+                sort-tags="$ctrl.presetList.sortTags"
+                show-trigger-name="true"
+            ></context-menu-modal-header>
             <div class="modal-body">
                 <div>
                     <h3>Name</h3>
@@ -33,7 +35,7 @@
                         <i class="far fa-plus"></i>
                     </div>
                 </div>
-                
+
                 <div style="margin-top:20px;">
                     <effect-list effects="$ctrl.presetList.effects" trigger="preset" update="$ctrl.effectListUpdated(effects)"></effect-list>
                 </div>
@@ -49,7 +51,7 @@
                     </collapsable-panel>
                 </div>
             </div>
-            
+
             <div class="modal-footer sticky-footer">
                 <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
                 <button type="button" class="btn btn-primary" ng-click="$ctrl.save()">Save</button>

@@ -1,0 +1,16 @@
+.context-menu-modal-header {
+    > .close {
+      margin-left: 5px;
+    }
+
+    .context-menu {
+      order: 1;
+      margin-left: auto;
+      font-size: 29px;
+      margin-right: 25px;
+    }
+
+    .action {
+      text-transform: capitalize;
+    }
+}
