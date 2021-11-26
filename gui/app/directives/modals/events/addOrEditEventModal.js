@@ -91,7 +91,8 @@
             $ctrl.event = {
                 name: "",
                 active: true,
-                cached: true
+                cached: true,
+                sortTags: []
             };
 
             $ctrl.triggerMeta = {};
