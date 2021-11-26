@@ -300,6 +300,65 @@ function createStreamPreviewWindow() {
         }
     });
 }
+
+/**
+ * The variable inspector window.
+ *@type {Electron.BrowserWindow}
+ */
+let variableInspectorWindow = null;
+
+async function createVariableInspectorWindow() {
+
+    if (variableInspectorWindow != null && !variableInspectorWindow.isDestroyed()) {
+        if (variableInspectorWindow.isMinimized()) {
+            variableInspectorWindow.restore();
+        }
+        variableInspectorWindow.focus();
+        return;
+    }
+
+    const variableInspectorWindowState = windowStateKeeper({
+        defaultWidth: 720,
+        defaultHeight: 1280,
+        file: "variable-inspector-window-state.json"
+    });
+
+    variableInspectorWindow = new BrowserWindow({
+        frame: true,
+        alwaysOnTop: true,
+        backgroundColor: "#1E2023",
+        title: "Variable Inspector",
+        parent: exports.mainWindow,
+        width: variableInspectorWindowState.width,
+        height: variableInspectorWindowState.height,
+        x: variableInspectorWindowState.x,
+        y: variableInspectorWindowState.y,
+        webPreferences: {
+            preload: path.join(__dirname, "../../../gui/variable-inspector/preload.js")
+        }
+    });
+
+    variableInspectorWindowState.manage(variableInspectorWindow);
+
+    variableInspectorWindow.on("close", () => {
+        variableInspectorWindow = null;
+    });
+
+    await variableInspectorWindow.loadURL(
+        url.format({
+            pathname: path.join(__dirname, "../../../gui/variable-inspector/index.html"),
+            protocol: "file:",
+            slashes: true
+        }));
+
+    setTimeout(() => {
+        variableInspectorWindow.webContents.send("test", {foo: true});
+    }, 2000);
+
+
+}
+
+exports.createVariableInspectorWindow = createVariableInspectorWindow;
 exports.createStreamPreviewWindow = createStreamPreviewWindow;
 exports.createMainWindow = createMainWindow;
 exports.createSplashScreen = createSplashScreen;

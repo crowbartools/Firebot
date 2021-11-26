@@ -1,0 +1,22 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Variable Inspector</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+</head>
+
+<body>
+    <div>
+        test
+    </div>
+    <script>
+        window.ipcRenderer.on("test", (data) => {
+            console.log("Data", data);
+        });
+    </script>
+</body>
+</html>

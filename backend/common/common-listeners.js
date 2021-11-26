@@ -17,11 +17,12 @@ exports.setupCommonListeners = () => {
 
     frontendCommunicator.on("show-twitch-preview", () => {
         const windowManagement = require("../app-management/electron/window-management");
-        // const view = new BrowserView();
-        // windowManagement.mainWindow.setBrowserView(view);
-        // view.setBounds({ x: 0, y: 0, width: 300, height: 300 });
-        // view.webContents.loadURL('https://player.twitch.tv/?channel=evilnotion&muted=true&parent=twitch.tv');
         windowManagement.createStreamPreviewWindow();
+    });
+
+    frontendCommunicator.on("show-variable-inspector", () => {
+        const windowManagement = require("../app-management/electron/window-management");
+        windowManagement.createVariableInspectorWindow();
     });
 
     frontendCommunicator.onAsync("show-save-dialog", async data => {

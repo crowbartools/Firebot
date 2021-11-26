@@ -139,6 +139,10 @@
                 backendCommunicator.fireEvent("openLogsFolder");
             };
 
+            $scope.openVariableInspector = function() {
+                backendCommunicator.fireEvent("show-variable-inspector");
+            };
+
             $scope.startBackup = function() {
                 $scope.isBackingUp = true;
                 $scope.backupCompleted = false;
@@ -331,7 +335,9 @@
                         validationFn: (value) => {
                             return new Promise(resolve => {
 
-                                if (value == null || value.length < 1) return resolve(true);
+                                if (value == null || value.length < 1) {
+                                    return resolve(true);
+                                }
 
                                 $http.get(`https://www.extra-life.org/api/participants/${value}`)
                                     .then(resp => {
