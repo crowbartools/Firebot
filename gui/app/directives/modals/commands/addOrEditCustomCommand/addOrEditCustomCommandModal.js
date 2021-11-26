@@ -31,7 +31,8 @@
                     mode: "all",
                     sendFailMessage: true
                 },
-                aliases: []
+                aliases: [],
+                sortTags: []
             };
 
             $scope.trigger = "command";

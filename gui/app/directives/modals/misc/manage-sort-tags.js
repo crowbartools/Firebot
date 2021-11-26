@@ -15,7 +15,7 @@
                     <div ng-repeat="tag in $ctrl.tags track by tag.id" class="list-item selectable" style="padding: 1px 15px;border-radius: 7px;" ng-click="$ctrl.openAddOrEditTagModal(tag)" aria-label="{{item + ' (Click to edit)'}}">
                         <span class="dragHandle" ng-click="$event.stopPropagation();" style="height: 38px; width: 15px; align-items: center; justify-content: center; display: flex">
                             <i class="fal fa-bars" aria-hidden="true"></i>
-                        </span> 
+                        </span>
                         <span>{{tag.name}}</span>
                         <span class="clickable" style="color: #fb7373;" ng-click="$ctrl.removeTag(tag.id);$event.stopPropagation();">
                             <i class="fad fa-trash-alt" aria-hidden="true"></i>
@@ -24,7 +24,7 @@
                 </div>
                 <div ng-show="$ctrl.tags.length < 1" class="muted" style="margin: 10px 0;">No tags created yet.</div>
                 <div style="margin: 10px 0 5px 0px;">
-                    <button class="btn btn-default" ng-click="$ctrl.openAddOrEditTagModal()"><i class="far fa-plus-circle"></i> Add Tag</button>              
+                    <button class="btn btn-default" ng-click="$ctrl.openAddOrEditTagModal()"><i class="far fa-plus-circle"></i> Add Sort Tag</button>
                 </div>
             </div>
             <div class="modal-footer">
@@ -56,7 +56,7 @@
                     utilityService.openGetInputModal(
                         {
                             model: tag ? tag.name : "",
-                            label: tag ? "Edit Tag Name" : "Add Tag",
+                            label: tag ? "Edit Sort Tag Name" : "Add Sort Tag",
                             saveText: "OK",
                             validationFn: (value) => {
                                 return new Promise(resolve => {
