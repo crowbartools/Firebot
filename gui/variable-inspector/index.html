@@ -10,13 +10,51 @@
 </head>
 
 <body>
-    <div>
-        test
+    <div id="app">
+        <div v-for="variable in variableList">
+            {{variable.key}}
+        </div>
     </div>
     <script>
-        window.ipcRenderer.on("test", (data) => {
-            console.log("Data", data);
-        });
+        new Vue({
+            el: '#app',
+            data: {
+                variables: {}
+            },
+            computed: {
+                variableList() {
+                    return Object.entries(this.variables).map(([key, history]) => ({ key, history }));
+                }
+            },
+            mounted() {
+                const app = this;
+                window.ipcRenderer.on("all-variables", (variables) => {
+                    app.variables = {};
+                    for(const variable of variables) {
+                        variable.action = "set";
+                        app[variable.key] = [variable]
+                    }
+                });
+
+                window.ipcRenderer.on("variable-set", ({ key, value, ttl }) => {
+                    if(app.variables[key]) {
+                        app.variables[key].history.unshift({
+                            key,
+                            value,
+                            ttl,
+                            action: "set"
+                        })
+                    } else {
+                        app.variables[key] = [{
+                            key,
+                            value,
+                            ttl,
+                            action: "set"
+                        }];
+                    }
+                });
+            }
+        })
     </script>
 </body>
 </html>

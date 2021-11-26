@@ -327,7 +327,7 @@ async function createVariableInspectorWindow() {
         frame: true,
         alwaysOnTop: true,
         backgroundColor: "#1E2023",
-        title: "Variable Inspector",
+        title: "Custom Variable Inspector",
         parent: exports.mainWindow,
         width: variableInspectorWindowState.width,
         height: variableInspectorWindowState.height,
@@ -351,14 +351,36 @@ async function createVariableInspectorWindow() {
             slashes: true
         }));
 
-    setTimeout(() => {
-        variableInspectorWindow.webContents.send("test", {foo: true});
-    }, 2000);
+    const customVariableManager = require("../../common/custom-variable-manager");
+    variableInspectorWindow.webContents.send("all-variables", customVariableManager.getInitialInspectorVariables());
+}
 
+function sendVariableCreateToInspector(key, value, ttl) {
+    if (variableInspectorWindow == null || variableInspectorWindow.isDestroyed()) {
+        return;
+    }
 
+    variableInspectorWindow.webContents.send("variable-set", {
+        key,
+        value,
+        ttl
+    });
+}
+
+function sendVariableExpireToInspector(key, value) {
+    if (variableInspectorWindow == null || variableInspectorWindow.isDestroyed()) {
+        return;
+    }
+
+    variableInspectorWindow.webContents.send("variable-expire", {
+        key,
+        value
+    });
 }
 
 exports.createVariableInspectorWindow = createVariableInspectorWindow;
+exports.sendVariableCreateToInspector = sendVariableCreateToInspector;
+exports.sendVariableExpireToInspector = sendVariableExpireToInspector;
 exports.createStreamPreviewWindow = createStreamPreviewWindow;
 exports.createMainWindow = createMainWindow;
 exports.createSplashScreen = createSplashScreen;
