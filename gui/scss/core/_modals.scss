@@ -1,11 +1,14 @@
 .context-menu-modal-header {
-    > .close {
-      margin-left: 5px;
+    .modal-title {
+        margin-right: auto;
+    }
+
+    .close {
+        margin-left: 0;
     }
 
     .context-menu {
       order: 1;
-      margin-left: auto;
       font-size: 29px;
       margin-right: 25px;
     }

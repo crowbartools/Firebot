@@ -20,7 +20,7 @@
                 >
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <span
+                <span ng-show="$ctrl.allSortTags.length > 0"
                     class="noselect clickable context-menu"
                     context-menu="$ctrl.getContextMenu()"
                     context-menu-on="click"
@@ -40,18 +40,17 @@
 
                 $ctrl.$onInit = () => {
                     $ctrl.sortTagContext = $ctrl.triggerType + "s";
+                    $ctrl.allSortTags = sortTagsService.getSortTags($ctrl.sortTagContext);
                 };
 
                 $ctrl.getContextMenu = () => {
                     const menuItems = [];
 
                     if ($ctrl.sortTagContext != null) {
-                        const allSortTags = sortTagsService.getSortTags($ctrl.sortTagContext);
-
-                        if (allSortTags.length > 0) {
+                        if ($ctrl.allSortTags.length > 0) {
                             menuItems.push({
                                 text: "Sort tags...",
-                                children: allSortTags.map(st => {
+                                children: $ctrl.allSortTags.map(st => {
                                     const isSelected = $ctrl.sortTags && $ctrl.sortTags.includes(st.id);
                                     return {
                                         html: `<a href><i class="${isSelected ? 'fas fa-check' : ''}" style="margin-right: ${isSelected ? '10' : '27'}px;"></i> ${st.name}</a>`,
