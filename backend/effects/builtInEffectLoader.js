@@ -56,4 +56,5 @@ exports.loadEffects = () => {
     effectManager.registerEffect(require("./builtin/update-channel-reward"));
     effectManager.registerEffect(require("./builtin/http-request"));
     effectManager.registerEffect(require("./builtin/take-screenshot"));
+    effectManager.registerEffect(require("./builtin/reset-timer"));
 };

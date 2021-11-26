@@ -49,6 +49,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div style="margin-top: 45px;margin-left: 10px;">
                         <div style="display:flex;margin-bottom:5px;">
                             <div style="font-size:13px;font-weight: bold;opacity:0.9;">FIREBOT DATA</div>
@@ -83,6 +84,51 @@
                             <button type="button" class="btn btn-default" ng-click="$ctrl.saveUser()">Save User in Firebot</button>
                         </div>
                     </div>
+
+                    <div ng-if="$ctrl.hasFirebotData && $ctrl.viewerDetails.firebotData.metadata" style="margin: 20px 10px;">
+                        <div style="font-size:13px;font-weight: bold;opacity:0.9;margin-bottom:5px;">METADATA</div>
+                        <div style="margin-top: 10px" ng-show="$ctrl.userHasMetadata()">
+                            <table class="fb-table-alt" style="width:100%;">
+                                <thead>
+                                    <tr style="font-size: 11px;">
+                                        <th class="not-clickable">Key</th>
+                                        <th class="not-clickable">Data</th>
+                                        <th style="width: 70px;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="viewer-row" ng-repeat="(key, value) in $ctrl.viewerDetails.firebotData.metadata">
+                                        <td>
+                                            {{key}}
+                                        </td>
+                                        <td class="ellipsis">
+                                            <span>{{value}}</span>
+                                        </td>
+                                        <td style="display:flex; align-items: center; justify-content: flex-end;">
+                                            <i 
+                                                class="fal fa-edit clickable" 
+                                                style="margin-right: 10px;" 
+                                                ng-click="$ctrl.showAddOrEditMetadataModal({ key: key, value: value })" 
+                                                uib-tooltip="Edit" 
+                                                tooltip-append-to-body="true">
+                                            </i>
+                                            <i 
+                                                class="fal fa-trash-alt clickable" 
+                                                style="color:#ff3737;" 
+                                                ng-click="$ctrl.deleteMetadata(key)" 
+                                                uib-tooltip="Delete" 
+                                                tooltip-append-to-body="true">
+                                            </i>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="role-bar clickable" style="margin-top: 5px;" ng-click="$ctrl.showAddOrEditMetadataModal()" uib-tooltip="Add metadata" tooltip-append-to-body="true">
+                            <i class="far fa-plus"></i>
+                        </div>
+                    </div>
+
                     <div style="margin: 10px 10px 0;" ng-show="$ctrl.hasCustomRoles && $ctrl.viewerDetails.twitchData != null">
                         <div style="font-size:13px;font-weight: bold;opacity:0.9;margin-bottom:5px;">CUSTOM ROLES</div>
                         <div class="role-bar" ng-repeat="customRole in $ctrl.customRoles track by customRole.id">
@@ -95,6 +141,7 @@
                             <i class="far fa-plus"></i>
                         </div>
                     </div>
+
                 </div>
             </div>
             <div class="modal-footer"></div>
@@ -118,6 +165,51 @@
                 $ctrl.getAccountAge = function(date) {
                     return moment(date).fromNow(true);
                 };
+
+                $ctrl.showAddOrEditMetadataModal = (metadata) => {
+                    utilityService.showModal({
+                        component: "addOrEditMetadataModal",
+                        size: "sm",
+                        resolveObj: {
+                            metadata: () => metadata
+                        },
+                        closeCallback: ({ key, value }) => {
+
+                            try {
+                                value = JSON.parse(value);
+                            } catch (error) { /* silently fail */ }
+
+                            backendCommunicator.fireEvent("update-user-metadata", {
+                                username: $ctrl.viewerDetails.twitchData.username,
+                                key,
+                                value
+                            });
+
+                            $ctrl.viewerDetails.firebotData.metadata[key] = value;
+                        }
+                    });
+                };
+
+                $ctrl.deleteMetadata = (key) => {
+
+                    utilityService.showConfirmationModal({
+                        title: "Delete Metadata",
+                        question: `Are you sure you want to delete the metadata "${key}"?`,
+                        confirmLabel: "Delete",
+                        confirmBtnType: "btn-danger"
+                    }).then(confirmed => {
+                        if (confirmed) {
+                            backendCommunicator.fireEvent("delete-user-metadata", {
+                                username: $ctrl.viewerDetails.twitchData.username,
+                                key
+                            });
+
+                            delete $ctrl.viewerDetails.firebotData.metadata[key];
+                        }
+                    });
+                };
+
+                $ctrl.userHasMetadata = () => !!Object.keys($ctrl.viewerDetails.firebotData.metadata || {}).length;
 
                 $ctrl.channelProgressionImgSrc = "";
 
@@ -259,7 +351,9 @@
                 function buildActions() {
 
                     const userRoles = $ctrl.viewerDetails.twitchData.userRoles;
-                    if (userRoles.includes("broadcaster")) return;
+                    if (userRoles.includes("broadcaster")) {
+                        return;
+                    }
 
                     let actions = [];
 
@@ -407,7 +501,9 @@
                      */
                     let dataPoints = [];
 
-                    if (!$ctrl.hasFirebotData) return;
+                    if (!$ctrl.hasFirebotData) {
+                        return;
+                    }
 
                     let joinDate = $ctrl.viewerDetails.firebotData.joinDate;
                     dataPoints.push(new ViewerDataPoint(
@@ -534,7 +630,9 @@
 
                         },
                         (roleId) => {
-                            if (!roleId) return;
+                            if (!roleId) {
+                                return;
+                            }
 
                             let username = $ctrl.viewerDetails.twitchData.displayName;
 
@@ -556,11 +654,16 @@
                         buildActions();
                         loadRoles();
                         loadCustomRoles();
+                        if ($ctrl.viewerDetails.firebotData.metadata == null) {
+                            $ctrl.viewerDetails.firebotData.metadata = {};
+                        }
                     }
                 }
 
                 $ctrl.removeViewer = function() {
-                    if (!$ctrl.hasFirebotData) return;
+                    if (!$ctrl.hasFirebotData) {
+                        return;
+                    }
 
                     const displayName = $ctrl.viewerDetails.firebotData.twitch && $ctrl.viewerDetails.twitchData ?
                         $ctrl.viewerDetails.twitchData.displayName :
@@ -586,7 +689,9 @@
                 };
 
                 $ctrl.saveUser = function() {
-                    if ($ctrl.hasFirebotData) return;
+                    if ($ctrl.hasFirebotData) {
+                        return;
+                    }
 
                     const relationshipData = $ctrl.viewerDetails.twitchData.relationship;
                     const channelRoles = relationshipData ? relationshipData.roles : [];

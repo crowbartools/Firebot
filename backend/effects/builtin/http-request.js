@@ -257,7 +257,7 @@ const effect = {
                 );
             }
         } catch (error) {
-            logger.error("Error running http request", error);
+            logger.error("Error running http request", error.message);
 
             if (effect.options.runEffectsOnError) {
                 const processEffectsRequest = {

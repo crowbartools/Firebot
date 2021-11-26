@@ -157,6 +157,25 @@ async function updateUserMetadata(username, key, value, propertyPath) {
     }
 }
 
+frontendCommunicator.onAsync("update-user-metadata", async ({ username, key, value }) => {
+    updateUserMetadata(username, key, value);
+});
+
+frontendCommunicator.onAsync("delete-user-metadata", async ({ username, key }) => {
+    const user = await getTwitchUserByUsername(username);
+    if (user == null) {
+        return;
+    }
+
+    const metadata = user.metadata || {};
+
+    delete metadata[key];
+
+    user.metadata = metadata;
+
+    await updateUser(user);
+});
+
 async function getUserMetadata(username, key, propertyPath) {
     if (username == null || username.length < 1 || key == null || key.length < 1) {
         return null;
