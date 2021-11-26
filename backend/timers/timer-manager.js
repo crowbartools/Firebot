@@ -193,3 +193,4 @@ connectionManager.on("streamerOnlineChange", isOnline => {
 exports.startTimers = startTimers;
 exports.stopTimers = () => clearIntervals();
 exports.incrementChatLineCounters = incrementChatLineCounters;
+exports.updateIntervalForTimer = updateIntervalForTimer;
