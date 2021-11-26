@@ -176,7 +176,7 @@ function createMainWindow() {
 
     mainWindow.on("close", (event) => {
         const connectionManager = require("../../common/connection-manager");
-        if (connectionManager.chatIsConnected()) {
+        if (connectionManager.chatIsConnected() && connectionManager.streamerIsOnline()) {
             event.preventDefault();
             dialog.showMessageBox(mainWindow, {
                 message: "Are you sure you want to close Firebot while connected to Twitch?",
