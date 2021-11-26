@@ -11,13 +11,16 @@
 
             let obtainVoices = () => {
                 return new Promise(function(resolve) {
-                    let voices = speechSynthesis.getVoices();
-                    if (voices.length !== 0) {
-                        resolve(voices);
+                    let foundVoices = speechSynthesis.getVoices();
+                    if (foundVoices.length > 0) {
+                        resolve(foundVoices);
                     } else {
                         speechSynthesis.addEventListener("voiceschanged", function() {
-                            voices = speechSynthesis.getVoices();
-                            resolve(voices);
+                            foundVoices = speechSynthesis.getVoices();
+                            if (foundVoices.length > 0) {
+                                resolve(foundVoices);
+                                speechSynthesis.removeEventListener("voiceschanged", this);
+                            }
                         });
                     }
                 });
@@ -65,15 +68,21 @@
             };
 
             service.readText = (text, voiceId) => {
-                if (text == null || text.length < 1) return;
+                if (text == null || text.length < 1) {
+                    return;
+                }
 
                 if (voiceId === 'default' || voiceId == null) {
                     voiceId = service.getFirebotDefaultVoiceId();
                 }
-                if (voiceId == null) return;
+                if (voiceId == null) {
+                    return;
+                }
 
                 let speechSynthesisVoice = voices.find(v => v.voiceURI === voiceId);
-                if (speechSynthesisVoice == null) return;
+                if (speechSynthesisVoice == null) {
+                    return;
+                }
 
                 let msg = new SpeechSynthesisUtterance();
                 msg.voice = speechSynthesisVoice;
