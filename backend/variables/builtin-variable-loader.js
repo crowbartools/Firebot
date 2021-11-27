@@ -53,6 +53,7 @@ exports.loadReplaceVariables = () => {
         'gift-duration',
         'gift-giver-user',
         'gift-receiver-user',
+        'gift-receivers',
         'gift-sub-months',
         'gift-sub-type',
         'host-type',
