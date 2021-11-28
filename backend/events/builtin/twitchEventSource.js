@@ -125,14 +125,22 @@ module.exports = {
             affiliateRequired: true,
             manualMetadata: {
                 username: "Firebot",
-                gifterUsername: "Firebot",
                 subCount: 5,
-                subPlan: "1000"
+                subPlan: "1000",
+                gifterUsername: "Firebot",
+                isAnonymous: false,
+                giftReceivers: [
+                    {gifteeUsername: "User1", giftSubMonths: 3},
+                    {gifteeUsername: "User2", giftSubMonths: 5},
+                    {gifteeUsername: "User3", giftSubMonths: 8},
+                    {gifteeUsername: "User4", giftSubMonths: 10},
+                    {gifteeUsername: "User5", giftSubMonths: 16}
+                ]
             },
             activityFeed: {
                 icon: "fad fa-gifts",
                 getMessage: (eventData) => {
-                    return `**${eventData.username}** gifted **${eventData.subCount} Tier ${eventData.subPlan.replace("000", "")}** sub${eventData.subCount > 1 ? 's' : ''} to the community`;
+                    return `**${eventData.isAnonymous ? "An Anonymous Gifter" : eventData.username}** gifted **${eventData.subCount} Tier ${eventData.subPlan.replace("000", "")}** sub${eventData.subCount > 1 ? 's' : ''} to the community`;
                 }
             }
         },
