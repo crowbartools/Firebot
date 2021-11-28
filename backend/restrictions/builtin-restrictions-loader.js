@@ -11,6 +11,7 @@ exports.loadRestrictions = () => {
         'custom-variable',
         'follow-check',
         'permissions',
+        'time-range',
         'view-time',
         'viewer-count'
     ].forEach(filename => {
