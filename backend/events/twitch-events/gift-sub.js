@@ -16,31 +16,32 @@ exports.triggerCommunitySubGift = (subInfo) => {
 
 /** @param {import("@twurple/pubsub").PubSubSubscriptionMessage} subInfo */
 exports.triggerSubGift = (subInfo) => {
-    const cacheKey = `${subInfo.gifterDisplayName}:${subInfo.subPlan}`;
-
-    if (cacheKey != null && settings.ignoreSubsequentSubEventsAfterCommunitySub()) {
+    if (settings.ignoreSubsequentSubEventsAfterCommunitySub()) {
+        const cacheKey = `${subInfo.gifterDisplayName}:${subInfo.subPlan}`;
         const cache = communitySubCache.get(cacheKey);
 
-        const communityCount = cache.subCount;
-        const giftReceivers = cache.giftReceivers;
-        if (communityCount != null) {
-            if (communityCount > 0) {
-                const newCount = communityCount - 1;
-                giftReceivers.push({ gifteeUsername: subInfo.userDisplayName, giftSubMonths: subInfo.cumulativeMonths || 1});
+        if (cacheKey != null) {
+            const communityCount = cache.subCount;
+            const giftReceivers = cache.giftReceivers;
+            if (communityCount != null) {
+                if (communityCount > 0) {
+                    const newCount = communityCount - 1;
+                    giftReceivers.push({ gifteeUsername: subInfo.userDisplayName, giftSubMonths: subInfo.cumulativeMonths || 1});
 
-                if (newCount > 0) {
-                    communitySubCache.set(cacheKey, {subCount: communityCount, giftReceivers: giftReceivers});
-                } else {
-                    eventManager.triggerEvent("twitch", "community-subs-gifted", {
-                        username: subInfo.gifterDisplayName,
-                        subCount: giftReceivers.length,
-                        subPlan: subInfo.subPlan,
-                        isAnonymous: subInfo.isAnonymous,
-                        gifterUsername: subInfo.gifterDisplayName,
-                        giftReceivers: giftReceivers
-                    });
+                    if (newCount > 0) {
+                        communitySubCache.set(cacheKey, {subCount: newCount, giftReceivers: giftReceivers});
+                    } else {
+                        eventManager.triggerEvent("twitch", "community-subs-gifted", {
+                            username: subInfo.gifterDisplayName,
+                            subCount: giftReceivers.length,
+                            subPlan: subInfo.subPlan,
+                            isAnonymous: subInfo.isAnonymous,
+                            gifterUsername: subInfo.gifterDisplayName,
+                            giftReceivers: giftReceivers
+                        });
 
-                    communitySubCache.del(cacheKey);
+                        communitySubCache.del(cacheKey);
+                    }
                 }
             }
         }
