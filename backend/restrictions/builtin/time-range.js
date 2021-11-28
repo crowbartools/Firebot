@@ -34,12 +34,11 @@ const model = {
             hours = hours % 12;
             hours = hours ? hours : 12; // the hour '0' should be '12'
             minutes = minutes < 10 ? '0' + minutes : minutes;
-            let strTime = hours + ':' + minutes + ' ' + ampm;
-            return strTime;
+            return hours + ':' + minutes + ' ' + ampm;
         }
 
-        let startTime = formatAMPM(restriction.startTime);
-        let endTime = formatAMPM(restriction.endTime);
+        const startTime = formatAMPM(restriction.startTime);
+        const endTime = formatAMPM(restriction.endTime);
 
         return "Between " + startTime + " - " + endTime;
     },
@@ -48,10 +47,10 @@ const model = {
     */
     predicate: async (trigger, restrictionData) => {
         return new Promise(async (resolve, reject) => {
+            const time = moment(),
+                startTime = moment(restrictionData.startTime);
 
-            let time = moment(),
-                startTime = moment(restrictionData.startTime),
-                endTime = moment(restrictionData.endTime);
+            let endTime = moment(restrictionData.endTime);
 
             if (endTime.isSameOrBefore(startTime)) {
                 endTime = endTime.add(1, 'days');
@@ -60,7 +59,7 @@ const model = {
             if (time.isBetween(startTime, endTime)) {
                 resolve();
             } else {
-                reject('Time must be between ' + moment(restrictionData.startTime).utc().format('HH:mm:ss') + ' and ' + moment(restrictionData.endTime).utc().format('HH:mm:ss') + '.');
+                reject('Time must be between ' + moment(restrictionData.startTime).format('hh:mm A') + ' and ' + moment(restrictionData.endTime).format('hh:mm A') + '.');
             }
         });
     },
