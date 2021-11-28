@@ -227,6 +227,16 @@
                                                     <a
                                                         href
                                                         role="menuitem"
+                                                        ng-click="!$ctrl.hasCopiedEffects() ? $event.stopPropagation() : null; $ctrl.pasteEffectsAtIndex($index, true)"
+                                                        aria-disabled={{!$ctrl.hasCopiedEffects()}}
+                                                    >
+                                                        <i class="fal fa-paste" style="margin-right: 10px;"></i>  Paste Before
+                                                    </a>
+                                                </li>
+                                                <li role="none" ng-class="{'disabled': !$ctrl.hasCopiedEffects()}">
+                                                    <a
+                                                        href
+                                                        role="menuitem"
                                                         ng-click="!$ctrl.hasCopiedEffects() ? $event.stopPropagation() : null; $ctrl.pasteEffectsAtIndex($index, false)"
                                                         aria-disabled={{!$ctrl.hasCopiedEffects()}}
                                                     >
@@ -431,12 +441,12 @@
                     }
                 };
 
-                ctrl.pasteEffectsAtIndex = async function(index, above) {
+                ctrl.pasteEffectsAtIndex = async (index, above) => {
                     if (objectCopyHelper.hasCopiedEffects()) {
                         if (!above) {
                             index++;
                         }
-                        let copiedEffects = await objectCopyHelper.getCopiedEffects(ctrl.trigger, ctrl.triggerMeta);
+                        const copiedEffects = await objectCopyHelper.getCopiedEffects(ctrl.trigger, ctrl.triggerMeta);
                         ctrl.effectsData.list.splice(index, 0, ...copiedEffects);
                         ctrl.effectsUpdate();
                     }
@@ -523,6 +533,15 @@
                         click: function ($itemScope) {
                             const $index = $itemScope.$index;
                             ctrl.copyEffectAtIndex($index);
+                        }
+                    },
+                    {
+                        html: `<a href ><i class="far fa-paste" style="margin-right: 10px;"></i> Paste Before</a>`,
+                        click: function ($itemScope) {
+                            const $index = $itemScope.$index;
+                            if (ctrl.hasCopiedEffects()) {
+                                ctrl.pasteEffectsAtIndex($index, true);
+                            }
                         }
                     },
                     {
