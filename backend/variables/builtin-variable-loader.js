@@ -110,6 +110,8 @@ exports.loadReplaceVariables = () => {
         'timeout-duration',
         'top-currency-user',
         'top-currency',
+        'top-metadata-user',
+        'top-metadata',
         'top-view-time',
         'uptime',
         'user-avatar-url',
