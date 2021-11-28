@@ -5,6 +5,7 @@ const profileManager = require("../common/profile-manager");
 const frontendCommunicator = require("../common/frontend-communicator");
 const twitchApi = require("../twitch-api/api");
 const { EffectTrigger } = require("../effects/models/effectModels");
+const accountAccess = require("../common/account-access");
 
 /**
  * @typedef SavedChannelReward
@@ -27,6 +28,10 @@ function getChannelRewardsDb() {
 }
 
 async function loadChannelRewards() {
+    if (accountAccess.getAccounts().streamer.broadcasterType === "") {
+        return;
+    }
+
     logger.debug(`Attempting to load channel rewards...`);
 
     try {

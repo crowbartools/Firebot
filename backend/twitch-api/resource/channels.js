@@ -93,11 +93,11 @@ const getChannelInformationByUsername = async (username) => {
 const triggerAdBreak = async (adLength = 30) => {
     try {
         const client = twitchApi.getClient();
-        const userId = accountAccess.getAccounts().streamer.userId;
+        const streamer = accountAccess.getAccounts().streamer;
 
-        const isOnline = await getOnlineStatus(accountAccess.getAccounts().streamer.username);
-        if (isOnline) {
-            await client.channels.startChannelCommercial(userId, adLength);
+        const isOnline = await getOnlineStatus(streamer.username);
+        if (isOnline && streamer.broadcasterType !== "") {
+            await client.channels.startChannelCommercial(streamer.userId, adLength);
         }
 
         logger.debug(`A commercial was run. Length: ${adLength}. Twitch does not send confirmation, so we can't be sure it ran.`);
