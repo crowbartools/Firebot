@@ -9,6 +9,8 @@ const { EffectCategory } = require("../../../shared/effect-constants");
 const logger = require("../../logwrapper");
 const accountAccess = require("../../common/account-access");
 const util = require("../../utility");
+const fs = require('fs-extra');
+const path = require("path");
 
 /**
  * The Play Video effect
@@ -67,6 +69,9 @@ const playVideo = {
                 <li ng-click="effect.reset = false">
                     <a ng-click="setVideoType('Local Video')" href>Local Video</a>
                 </li>
+                <li ng-click="effect.reset = false">
+                    <a ng-click="setVideoType('Random From Folder')" href>Random From Folder</a>
+                </li>
                 <li ng-click="effect.reset = true">
                     <a ng-click="setVideoType('YouTube Video')" href>YouTube Video</a>
                 </li>
@@ -80,7 +85,16 @@ const playVideo = {
         </div>
 
         <div ng-show="effect.videoType == 'Local Video'" class="input-group">
-            <file-chooser model="effect.file" options="{ filters: [ {name: 'Video', extensions: ['mp4', 'webm', 'ogv']} ]}"></file-chooser>
+            <file-chooser 
+                model="effect.file" 
+                options="{ filters: [ {name: 'Video', extensions: ['mp4', 'webm', 'ogv']} ]}"
+            ></file-chooser>
+        </div>
+        <div ng-show="effect.videoType == 'Random From Folder'" class="input-group">
+            <file-chooser 
+                model="effect.folder" 
+                options="{ directoryOnly: true, filters: [], title: 'Select Video Folder'}" 
+            />
         </div>
         <div ng-show="effect.videoType == 'YouTube Video'" class="input-group">
             <span class="input-group-addon">YouTube Url/ID</span>
@@ -308,6 +322,27 @@ const playVideo = {
             loop: effect.loop === true
         };
 
+        // Get random sound
+        if (effect.videoType === "Random From Folder") {
+            let files = [];
+            try {
+                files = await fs.readdir(effect.folder);
+            } catch (err) {
+                logger.warn("Unable to read video folder", err);
+            }
+
+            const filteredFiles = files.filter(i => (/\.(mp4|webm|ogv)$/i).test(i));
+            const chosenFile = filteredFiles[Math.floor(Math.random() * filteredFiles.length)];
+
+            if (filteredFiles.length > 0) {
+                data.filepath = path.join(effect.folder, chosenFile);
+                data.videoType = "Local Video";
+            } else {
+                logger.error('No video were found in the selected video folder.');
+                return false;
+            }
+        }
+
         if (settings.useOverlayInstances()) {
             if (effect.overlayInstance != null) {
                 if (settings.getOverlayInstances().includes(effect.overlayInstance)) {
@@ -395,7 +430,7 @@ const playVideo = {
             return true;
         }
 
-        let resourceToken = resourceTokenManager.storeResourcePath(effect.file, effect.length);
+        let resourceToken = resourceTokenManager.storeResourcePath(data.filepath, effect.length);
         data.resourceToken = resourceToken;
 
         webServer.sendToOverlay("video", data);
