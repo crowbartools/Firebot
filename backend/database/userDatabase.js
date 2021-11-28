@@ -664,6 +664,59 @@ function connectUserDatabase() {
     updateTimeIntervalId = setInterval(calcAllUsersOnlineMinutes, 900000);
 }
 
+function getTopMetadataPosition(metadataKey, position = 1) {
+    return new Promise(resolve => {
+        if (!isViewerDBOn()) {
+            return resolve(null);
+        }
+        
+        const sortObj = {};
+        sortObj[`metadata.${metadataKey}`] = -1;
+
+        const projectionObj = { username: 1, displayName: 1};
+        projectionObj[`metadata.${metadataKey}`] = 1;
+
+        db.find({ twitch: true })
+            .sort(sortObj)
+            .skip(position - 1)
+            .limit(1)
+            .projection(projectionObj)
+            .exec(function (err, docs) {
+                if (err) {
+                    logger.error("Error getting top metadata request: ", err);
+                    return resolve(null);
+                }
+                return resolve(docs && !!docs.length ? docs[0] : null);
+            });
+    });
+}
+
+function getTopMetadata(metadataKey, count) {
+    return new Promise(resolve => {
+        if (!isViewerDBOn()) {
+            return resolve([]);
+        }
+
+        const sortObj = {};
+        sortObj[`metadata.${metadataKey}`] = -1;
+
+        const projectionObj = { username: 1, displayName: 1};
+        projectionObj[`metadata.${metadataKey}`] = 1;
+
+        db.find({ twitch: true })
+            .sort(sortObj)
+            .limit(count)
+            .projection(projectionObj)
+            .exec(function (err, docs) {
+                if (err) {
+                    logger.error("Error getting top metadata list: ", err);
+                    return resolve([]);
+                }
+                return resolve(docs || []);
+            });
+    });
+}
+
 
 function getAllUsers() {
     return new Promise(resolve => {
@@ -874,3 +927,5 @@ exports.getOnlineUsers = getOnlineUsers;
 exports.updateUserMetadata = updateUserMetadata;
 exports.getUserMetadata = getUserMetadata;
 exports.getAllUsernames = getAllUsernames;
+exports.getTopMetadata = getTopMetadata;
+exports.getTopMetadataPosition = getTopMetadataPosition;
