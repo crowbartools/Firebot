@@ -47,12 +47,13 @@ body:
     id: os
     attributes:
       label: What operating system are you using Firebot on?
-      multiple: true
       options:
         - Windows 10
         - Windows 11
         - Linux Distro
         - Other
+    validations:
+      required: true
   - type: textarea
     id: logs
     attributes:
