@@ -68,7 +68,3 @@ body:
       placeholder: ex. DiscordUsername#0000
     validations:
       required: false
-  - type: markdown
-    attributes:
-      value: |
-        > Did you know that we have an issues channel in Discord as well? https://discord.gg/crowbartools
