@@ -18,6 +18,7 @@ const eventSourceDefinition = {
             name: "Donation",
             description: "When someone donates to you via TipeeeStream.",
             cached: false,
+            isIntegration: true,
             queued: true,
             activityFeed: {
                 icon: "fad fa-money-bill",
@@ -32,6 +33,7 @@ const eventSourceDefinition = {
             description: "When someone follows your Twitch channel (comes from TipeeeStream)",
             cacheMetaKey: "username",
             cached: true,
+            isIntegration: true,
             activityFeed: {
                 icon: "fas fa-heart",
                 getMessage: (eventData) => {
@@ -52,7 +54,7 @@ exports.processTipeeeStreamEvent = (eventData) => {
         return;
     }
     if (eventData.type === "donation") {
-        let donoData = eventData.parameters;
+        const donoData = eventData.parameters;
         eventManager.triggerEvent(EVENT_SOURCE_ID, EventId.DONATION, {
             formattedDonationAmount: eventData.formattedAmount,
             dononationAmount: donoData.amount,
