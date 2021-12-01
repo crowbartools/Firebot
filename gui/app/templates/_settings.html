@@ -1,13 +1,13 @@
-<div style="display: flex; height: 100%; font-family: 'Inter var';">
-  <div style="width: 400px; height: 100%; background: #383a40; overflow-y: auto; flex-shrink: 0;border-right: 2px solid #383d3f;">
+<div class="settings-page">
+  <div class="settings-category-container">
     <div 
       ng-repeat="category in categories" 
       ng-click="setSelectedCategory(category)" 
-      style="display: flex;padding: 15px;border-bottom: 2px solid #444a4c;flex-shrink: 0;"
-      ng-style="selectedCategory.name === category.name ? {background: '#2d3135'} : {}"
+      class="settings-category"
+      ng-class="{ 'cat-selected': selectedCategory.name === category.name }"
     >
       <div>
-        <i class="fal" ng-class="category.icon" style="width: 40px;font-size: 20px;opacity: 0.7;padding-top: 3px;margin-right: 5px;text-align: center;"></i>
+        <i class="fal settings-category-icon" ng-class="category.icon"></i>
       </div>
       <div>
         <div style="font-weight: 600;">
@@ -19,8 +19,42 @@
       </div>
     </div>
   </div>
-  <div style="width: 100%; height: 100%; padding: 50px 100px;overflow-y: auto;">
-    <h1 style="margin: 0 0 50px;">{{selectedCategory.name}}</h1>
+  <div class="settings-category-content">
+    <h1 class="settings-category-title">{{selectedCategory.name}}</h1>
+    <div class="settings-category-select">
+
+      <ui-select 
+        ng-model="selectedCategory" 
+        on-select="setSelectedCategory($item, $model)" 
+        theme="bootstrap"
+        search-enabled="false"
+      >
+        <ui-select-match>
+          <div>
+            {{$select.selected.name}}
+          </div>
+        </ui-select-match>
+        <ui-select-choices repeat="category in categories | filter: { name: $select.search }" style="position:relative;">
+          <div 
+            class="settings-category"
+            style="border-bottom: none;padding: 10px 0;"
+          >
+            <div>
+              <i class="fal settings-category-icon" ng-class="category.icon"></i>
+            </div>
+            <div>
+              <div style="font-weight: 600;">
+                {{category.name}}
+              </div>
+              <div style="opacity: 0.7;">
+                {{category.description}}
+              </div>
+            </div>
+          </div>
+        </ui-select-choices>
+      </ui-select>
+
+    </div>
     <settings-category-content template="selectedCategory.template" />
   </div>
 </div>

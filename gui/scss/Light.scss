@@ -155,5 +155,10 @@ $sys-cmd-expanded-shadow: 3px 3px 5px -2px #dedede;
 
 $integration-row-bg: #f3f5f5;
 
+/* Settings Page */
+$settings-sidebar-bg: #ffffff;
+$settings-category-selected-bg: #ededed;
+$settings-category-hover-bg: #ebeaea;
+
 // Import Core Styles
 @import './core/$importer';
