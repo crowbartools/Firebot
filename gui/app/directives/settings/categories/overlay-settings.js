@@ -43,7 +43,7 @@
                     >
                         <firebot-button 
                             text="Manage Fonts"
-                            ng-click="settings.showOverlayInfoModal()"
+                            ng-click="showFontManagementModal()"
                         />
                     </firebot-setting>
 
