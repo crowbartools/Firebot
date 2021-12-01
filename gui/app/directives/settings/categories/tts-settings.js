@@ -62,7 +62,7 @@
 
                 </div>
           `,
-            controller: function($scope, settingsService, ttsService, accountAccess) {
+            controller: function($scope, settingsService, ttsService, accountAccess, $timeout) {
                 $scope.settings = settingsService;
 
                 $scope.getSelectedVoiceName = () => {
