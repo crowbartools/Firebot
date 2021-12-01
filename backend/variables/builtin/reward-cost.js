@@ -1,29 +1,57 @@
 "use strict";
 
-const {
-    EffectTrigger
-} = require("../../effects/models/effectModels");
 
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
-
-let triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:channel-reward-redemption"];
-triggers[EffectTrigger.CHANNEL_REWARD] = true;
-triggers[EffectTrigger.PRESET_LIST] = true;
-triggers[EffectTrigger.MANUAL] = true;
 
 const model = {
     definition: {
         handle: "rewardCost",
         description: "The channel point cost of the reward",
-        triggers: triggers,
+        examples: [
+            {
+                usage: "rewardCost[rewardName]",
+                description: "The channel point cost of the given reward. Name must be exact!"
+            }
+        ],
         categories: [VariableCategory.COMMON],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
-    evaluator: (trigger) => {
-        return trigger.metadata.eventData ?
-            trigger.metadata.eventData.rewardCost :
-            trigger.metadata.rewardCost;
+    evaluator: async (trigger, rewardName) => {
+        let rewardData;
+        if (!rewardName) {
+            rewardData = trigger.metadata.eventData ?
+                trigger.metadata.eventData :
+                trigger.metadata;
+        } else {
+            const channelRewardManager = require("../../channel-rewards/channel-reward-manager");
+            const twitchApi = require("../../twitch-api/api");
+            const accountAccess = require("../../common/account-access");
+
+            const channelRewardId = channelRewardManager.getChannelRewardIdByName(rewardName);
+
+            if (channelRewardId == null) {
+                return -1;
+            }
+
+            const reward = await twitchApi.getClient().channelPoints.getCustomRewardById(
+                accountAccess.getAccounts().streamer.userId,
+                channelRewardId
+            );
+            if (reward) {
+                rewardData = {
+                    rewardImage: reward.getImageUrl(4),
+                    rewardName: reward.title,
+                    rewardDescription: reward.prompt,
+                    rewardCost: reward.cost
+                };
+            }
+        }
+
+        if (rewardData == null) {
+            return -1;
+        }
+
+        return rewardData.rewardCost;
     }
 };
 
