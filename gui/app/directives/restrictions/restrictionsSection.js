@@ -63,6 +63,26 @@
                             <input type="checkbox" ng-model="$ctrl.restrictionData.sendFailMessage">
                             <div class="control__indicator"></div>
                         </label>
+
+                        <div ng-show="$ctrl.restrictionData.sendFailMessage">
+                            <label class="control-fb control--checkbox">
+                                Use custom restrictions message
+                                <input
+                                    type="checkbox"
+                                    ng-model="$ctrl.restrictionData.useCustomFailMessage"
+                                />
+                                <div class="control__indicator"></div>
+                            </label>
+
+                            <div ng-if="$ctrl.restrictionData.useCustomFailMessage">
+                                <firebot-input 
+                                    model="$ctrl.restrictionData.failMessage" 
+                                    disable-variables="true" 
+                                    input-title="Message" 
+                                />
+                                <p class="muted">Available variables: {user}, {reason}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `,
@@ -102,7 +122,9 @@
                         $ctrl.restrictionData = {
                             restrictions: [],
                             mode: "all",
-                            sendFailMessage: true
+                            sendFailMessage: true,
+                            useCustomFailMessage: false,
+                            failMessage: "Sorry, you cannot use this command because: {reason}"
                         };
                     }
 
@@ -116,6 +138,10 @@
 
                     if ($ctrl.restrictionData.sendFailMessage == null) {
                         $ctrl.restrictionData.sendFailMessage = true;
+                    }
+
+                    if ($ctrl.restrictionData.failMessage == null) {
+                        $ctrl.restrictionData.failMessage = "Sorry, you cannot use this command because: {reason}";
                     }
 
                     updateCanAddMoreRestrictions();

@@ -9,6 +9,9 @@ const NodeCache = require("node-cache");
 const restrictionsManager = require("../../restrictions/restriction-manager");
 const { TriggerType } = require("../../common/EffectType");
 
+const DEFAULT_COOLDOWN_MESSAGE = "This command is still on cooldown for: {timeLeft}";
+const DEFAULT_RESTRICTION_MESSAGE = "Sorry, you cannot use this command because: {reason}";
+
 // commandaccess
 const commandManager = require("./CommandManager");
 
@@ -446,7 +449,19 @@ async function handleChatMessage(firebotChatMessage) {
 
             logger.debug(`${commandSender} could not use command '${command.trigger}' because: ${reason}`);
             if (restrictionData.sendFailMessage || restrictionData.sendFailMessage == null) {
-                twitchChat.sendChatMessage(`Sorry ${commandSender}, you cannot use this command because: ${reason}`);
+
+                const restrictionMessage = restrictionData.useCustomFailMessage ?
+                    restrictionData.failMessage :
+                    DEFAULT_RESTRICTION_MESSAGE;
+
+                twitchChat.sendChatMessage(
+                    restrictionMessage
+                        .replace("{user}", commandSender)
+                        .replace("{reason}", reason),
+                    null,
+                    null,
+                    firebotChatMessage.id
+                );
             }
 
             return false;
@@ -464,7 +479,17 @@ async function handleChatMessage(firebotChatMessage) {
     if (remainingCooldown > 0) {
         logger.debug("Command is still on cooldown, alerting viewer...");
         if (command.sendCooldownMessage || command.sendCooldownMessage == null) {
-            twitchChat.sendChatMessage(`${commandSender}, this command is still on cooldown for: ${util.secondsForHumans(remainingCooldown)}`);
+
+            const cooldownMessage = command.useCustomCooldownMessage ? command.cooldownMessage : DEFAULT_COOLDOWN_MESSAGE;
+
+            twitchChat.sendChatMessage(
+                cooldownMessage
+                    .replace("{user}", commandSender)
+                    .replace("{timeLeft}", util.secondsForHumans(remainingCooldown)),
+                null,
+                null,
+                firebotChatMessage.id
+            );
         }
         return false;
     }
