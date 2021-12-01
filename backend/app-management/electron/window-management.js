@@ -77,6 +77,8 @@ function createMainWindow() {
     global.renderWindow = mainWindow;
 
     const frontendCommunicator = require("../../common/frontend-communicator");
+    const profileManager = require("../../common/profile-manager");
+    const dataAccess = require("../../common/data-access");
     const menuTemplate = [
         {
             label: 'Edit',
@@ -112,6 +114,58 @@ function createMainWindow() {
                 },
                 {
                     role: 'quit'
+                }
+            ]
+        },
+        {
+            label: 'Tools',
+            submenu: [
+                {
+                    label: 'Open Data Folder',
+                    toolTip: "Open the folder where Firebot data is stored",
+                    click: () => {
+                        const rootFolder = path.resolve(
+                            profileManager.getPathInProfile("/")
+                        );
+                        shell.openPath(rootFolder);
+                    }
+                },
+                {
+                    label: 'Open Logs Folder',
+                    toolTip: "Open the folder where logs are stored",
+                    click: () => {
+                        const rootFolder = path.resolve(
+                            dataAccess.getPathInUserData("/logs/")
+                        );
+                        shell.openPath(rootFolder);
+                    }
+                },
+                {
+                    label: 'Open Backups Folder',
+                    toolTip: "Open the folder where backups are stored",
+                    click: () => {
+                        const backupFolder = path.resolve(
+                            dataAccess.getPathInUserData("/backups/")
+                        );
+                        shell.openPath(backupFolder);
+                    }
+                },
+                {
+                    label: 'Setup Wizard',
+                    toolTip: "Run the setup wizard again",
+                    click: () => {
+                        frontendCommunicator.send("open-modal", {
+                            component: "setupWizardModal"
+                        });
+                    }
+                },
+                {
+                    label: 'Custom Variable Inspector',
+                    toolTip: "Open the custom variable inspector",
+                    click: () => {
+                        // eslint-disable-next-line no-use-before-define
+                        createVariableInspectorWindow();
+                    }
                 },
                 {
                     type: 'separator'
