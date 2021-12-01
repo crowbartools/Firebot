@@ -17,11 +17,12 @@ exports.setupCommonListeners = () => {
 
     frontendCommunicator.on("show-twitch-preview", () => {
         const windowManagement = require("../app-management/electron/window-management");
-        // const view = new BrowserView();
-        // windowManagement.mainWindow.setBrowserView(view);
-        // view.setBounds({ x: 0, y: 0, width: 300, height: 300 });
-        // view.webContents.loadURL('https://player.twitch.tv/?channel=evilnotion&muted=true&parent=twitch.tv');
         windowManagement.createStreamPreviewWindow();
+    });
+
+    frontendCommunicator.on("show-variable-inspector", () => {
+        const windowManagement = require("../app-management/electron/window-management");
+        windowManagement.createVariableInspectorWindow();
     });
 
     frontendCommunicator.onAsync("show-save-dialog", async data => {
@@ -138,8 +139,8 @@ exports.setupCommonListeners = () => {
 
     // Opens the firebot backup folder
     ipcMain.on("openBackupFolder", () => {
-    // We include "fakefile.txt" as a workaround to make it open into the 'root' folder instead
-    // of opening to the poarent folder with 'Firebot'folder selected.
+        // We include "fakefile.txt" as a workaround to make it open into the 'root' folder instead
+        // of opening to the poarent folder with 'Firebot'folder selected.
         let backupFolder = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups" + path.sep);
         shell.openPath(backupFolder);
     });

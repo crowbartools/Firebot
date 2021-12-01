@@ -67,7 +67,7 @@
             </th>
 
             <th ng-if="$ctrl.sortTagContext != null" class="muted">
-              <i class="fas fa-tag"></i> TAGS
+              <i class="fas fa-tag"></i> SORT TAGS
             </th>
 
             <th ng-if="$ctrl.showStatusIndicator"></th>
@@ -81,7 +81,11 @@
             context-menu="$ctrl.getContextMenu(item)"
           >
             <td ng-if="$ctrl.testButton == true" class="fit-test-button-body">
-              <span ng-click="$ctrl.onTestButtonClicked({ itemId: item.id })">
+              <span 
+                ng-click="$ctrl.onTestButtonClicked({ itemId: item.id })"
+                uib-tooltip="Test Effects"
+                tooltip-append-to-body="true"  
+              >
                 <i class="fas fa-play-circle clickable"></i>
               </span>
             </td>

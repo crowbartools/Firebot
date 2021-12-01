@@ -1,17 +1,10 @@
-<div class="modal-header">
-  <button
-    type="button"
-    class="close"
-    aria-label="Close"
-    ng-click="$ctrl.dismiss()"
-  >
-    <span aria-hidden="true">&times;</span>
-  </button>
-  <h4 class="modal-title">
-    <span ng-if="!$ctrl.isNewCommand">Edit Command - </span>
-    {{$ctrl.isNewCommand ? 'Add New Command' : $ctrl.command.trigger }}
-  </h4>
-</div>
+<context-menu-modal-header
+  on-close="$ctrl.dismiss()"
+  trigger-type="command"
+  trigger-name="$ctrl.command.trigger"
+  sort-tags="$ctrl.command.sortTags"
+  show-trigger-name="true"
+></context-menu-modal-header>
 <div class="modal-body">
   <simple-command-options
     command="$ctrl.command"
@@ -156,6 +149,26 @@
             />
             <div class="control__indicator"></div>
           </label>
+
+          <div ng-show="$ctrl.command.sendCooldownMessage">
+            <label class="control-fb control--checkbox">
+              Use custom cooldown message
+              <input
+                type="checkbox"
+                ng-model="$ctrl.command.useCustomCooldownMessage"
+              />
+              <div class="control__indicator"></div>
+            </label>
+
+            <div ng-if="$ctrl.command.useCustomCooldownMessage">
+              <firebot-input 
+                model="$ctrl.command.cooldownMessage" 
+                disable-variables="true" 
+                input-title="Message" 
+              />
+              <p class="muted">Available variables: {user}, {timeLeft}</p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -198,11 +211,6 @@
             </restrictions-list>
           </div>
         </div>
-
-        <!-- <div class="effect-setting-container" style="padding-bottom:1em" ng-show="$ctrl.allSortTags != null && $ctrl.allSortTags.length > 0">
-                    <h3>Sort Tags</h3>
-                    <sort-tag-list current-tag-ids="$ctrl.command.sortTags" all-tags="$ctrl.allSortTags"></sort-tag-list>
-                </div> -->
 
         <div class="other-settings" style="padding-bottom: 1em">
           <div class="settings-title">

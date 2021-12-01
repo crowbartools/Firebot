@@ -481,12 +481,11 @@ body {
     &:hover{
       background: $text-dropdown-hover-color;
     }
-
-    .accounts-dropdown{
+    
+    .right-justified-dropdown {
       right:0px!important;
       left:inherit!important;
     }
-
 
     img{
       height:42px;
@@ -1623,6 +1622,10 @@ thead th{
 .setting-padtop {
   padding-top: 20px;
   display: block;
+}
+
+.setting-category-padtop {
+  padding-top: 50px;
 }
 
 .settings-title h3 {

@@ -18,7 +18,6 @@
             listenerService,
             integrationService,
             connectionService,
-            logger,
             $http,
             backendCommunicator,
             ttsService,
@@ -27,33 +26,73 @@
         ) {
             $scope.settings = settingsService;
 
-            $scope.showCreateSetupModal = () => {
-                utilityService.showModal({
-                    component: "createSetupModal"
-                });
-            };
 
-            $scope.showImportSetupModal = () => {
-                utilityService.showModal({
-                    component: "importSetupModal",
-                    backdrop: false
-                });
-            };
+            $scope.categories = [
+                {
+                    name: "General",
+                    description: "Various settings for appearance, beta notifications, and more.",
+                    icon: "fa-sliders-v-square",
+                    template: "<general-settings />"
+                },
+                {
+                    name: "Setups",
+                    description: "Share your best creations with others. Or import others!",
+                    icon: "fa-box-full",
+                    template: "<setups-settings />"
+                },
+                {
+                    name: "Triggers",
+                    description: "Tweak the behaviors of various triggers (commands, events, etc)",
+                    icon: "fa-bolt",
+                    template: "<trigger-settings />"
+                },
+                {
+                    name: "Database",
+                    description: "Options and tools for the viewer database.",
+                    icon: "fa-database",
+                    template: "<database-settings />"
+                },
+                {
+                    name: "Overlay",
+                    description: "Add new fonts, create new instances, and other overlay settings.",
+                    icon: "fa-tv",
+                    template: "<overlay-settings />"
+                },
+                {
+                    name: "Integrations",
+                    description: "Link Firebot to a growing list of third party tools and apps.",
+                    icon: "fa-globe",
+                    template: "<integration-settings />"
+                },
+                {
+                    name: "TTS",
+                    description: "Settings for the default TTS voice.",
+                    icon: "fa-volume",
+                    template: "<tts-settings />"
+                },
+                {
+                    name: "Backups",
+                    description: "Manage backups and backup settings to ensure your data is never lost.",
+                    icon: "fa-file-archive",
+                    template: "<backups-settings />"
+                },
+                {
+                    name: "Scripts",
+                    description: "Configure script settings, add start up scripts, and more.",
+                    icon: "fa-code",
+                    template: "<scripts-settings />"
+                },
+                {
+                    name: "Advanced",
+                    description: "Various advanced settings such as debug mode, while loops, and other tools",
+                    icon: "fa-tools",
+                    template: "<advanced-settings />"
+                }
+            ];
 
-            $scope.showRemoveSetupModal = () => {
-                utilityService.showModal({
-                    component: "removeSetupModal",
-                    backdrop: true
-                });
-            };
-
-            $scope.showPurgeViewersModal = () => {
-                utilityService.showModal({
-                    component: "purgeViewersModal",
-                    size: 'sm',
-                    backdrop: false,
-                    keyboard: true
-                });
+            $scope.selectedCategory = $scope.categories[0];
+            $scope.setSelectedCategory = (category) => {
+                $scope.selectedCategory = category;
             };
 
             $scope.getCanClip = () => {
@@ -70,7 +109,10 @@
                 return voice ? voice.name : "Unknown Voice";
             };
 
-            $scope.ttsVoices = ttsService.getVoices();
+            $scope.ttsVoiceOptions = ttsService.getVoices().reduce((acc, v) => {
+                acc[v.id] = v.name;
+                return acc;
+            }, {});
 
             $scope.ttsVolumeSlider = {
                 value: settingsService.getTtsVoiceVolume(),
@@ -137,6 +179,10 @@
 
             $scope.openLogsFolder = function() {
                 backendCommunicator.fireEvent("openLogsFolder");
+            };
+
+            $scope.openVariableInspector = function() {
+                backendCommunicator.fireEvent("show-variable-inspector");
             };
 
             $scope.startBackup = function() {
@@ -331,7 +377,9 @@
                         validationFn: (value) => {
                             return new Promise(resolve => {
 
-                                if (value == null || value.length < 1) return resolve(true);
+                                if (value == null || value.length < 1) {
+                                    return resolve(true);
+                                }
 
                                 $http.get(`https://www.extra-life.org/api/participants/${value}`)
                                     .then(resp => {
@@ -523,86 +571,6 @@
                     }
                 };
                 utilityService.showModal(showChangePortModalContext);
-            };
-
-            $scope.showEditOverlayInstancesModal = function() {
-                let showEditOverlayInstancesModalContext = {
-                    templateUrl: "editOverlayInstances.html",
-                    controllerFunc: (
-                        $scope,
-                        settingsService,
-                        utilityService,
-                        $uibModalInstance
-                    ) => {
-                        $scope.getOverlayInstances = function() {
-                            return settingsService.getOverlayInstances();
-                        };
-
-                        $scope.usingObs =
-              settingsService.getOverlayCompatibility() === "OBS";
-
-                        $scope.deleteOverlayInstanceAtIndex = function(index) {
-                            let instances = settingsService.getOverlayInstances();
-
-                            instances.splice(index, 1);
-
-                            settingsService.setOverlayInstances(instances);
-                        };
-
-                        let addOverlayInstance = function(overlayInstance) {
-                            let instances = settingsService.getOverlayInstances();
-
-                            instances.push(overlayInstance);
-
-                            settingsService.setOverlayInstances(instances);
-                        };
-
-                        $scope.showViewUrlModal = function(instanceName) {
-                            utilityService.showOverlayInfoModal(instanceName);
-                        };
-
-                        $scope.showCreateInstanceModal = function() {
-                            let showCreateInstanceModalContext = {
-                                templateUrl: "createOverlayInstance.html",
-                                size: "sm",
-                                controllerFunc: (
-                                    $scope,
-                                    settingsService,
-                                    $uibModalInstance
-                                ) => {
-                                    $scope.name = "";
-
-                                    $scope.create = function() {
-                                        if (
-                                            settingsService
-                                                .getOverlayInstances()
-                                                .includes($scope.name) ||
-                      $scope.name === ""
-                                        ) {
-                                            $scope.createError = true;
-                                            return;
-                                        }
-
-                                        $uibModalInstance.close($scope.name);
-                                    };
-
-                                    $scope.dismiss = function() {
-                                        $uibModalInstance.dismiss("cancel");
-                                    };
-                                },
-                                closeCallback: instanceName => {
-                                    addOverlayInstance(instanceName);
-                                }
-                            };
-                            utilityService.showModal(showCreateInstanceModalContext);
-                        };
-
-                        $scope.dismiss = function() {
-                            $uibModalInstance.dismiss("cancel");
-                        };
-                    }
-                };
-                utilityService.showModal(showEditOverlayInstancesModalContext);
             };
         });
 }());

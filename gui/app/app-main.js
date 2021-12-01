@@ -421,6 +421,10 @@
             });
         });
 
+        backendCommunicator.on("open-modal", (modalConfig) => {
+            utilityService.showModal(modalConfig);
+        });
+
         backendCommunicator.on("setup-opened", (path) => {
             utilityService.showModal({
                 component: "importSetupModal",

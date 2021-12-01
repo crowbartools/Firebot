@@ -1,6 +1,6 @@
 "use strict";
 
-const { EffectDependency } = require("../models/effectModels");
+const { EffectTrigger, EffectDependency } = require("../models/effectModels");
 const { EffectCategory } = require('../../../shared/effect-constants');
 const twitchChat = require("../../chat/twitch-chat");
 
@@ -34,7 +34,7 @@ const chat = {
         <textarea ng-model="effect.message" class="form-control" name="text" placeholder="Enter message" rows="4" cols="40" replace-variables></textarea>
         <div style="color: #fb7373;" ng-if="effect.message && effect.message.length > 500">Chat messages cannot be longer than 500 characters. This message will get automatically chunked into mutltiple messages if it's too long after all replace variables have been populated.</div>
         <div style="display: flex; flex-direction: row; width: 100%; height: 36px; margin: 10px 0 10px; align-items: center;">
-            <label class="control-fb control--checkbox" style="margin: 0px 15px 0px 0px"> Whisper</tooltip>
+            <label class="control-fb control--checkbox" style="margin: 0px 15px 0px 0px"> Whisper
                 <input type="checkbox" ng-init="whisper = (effect.whisper != null && effect.whisper !== '')" ng-model="whisper" ng-click="effect.whisper = ''">
                 <div class="control__indicator"></div>
             </label>
@@ -46,6 +46,12 @@ const chat = {
             </div>
         </div>
         <p ng-show="whisper" class="muted" style="font-size:11px;"><b>ProTip:</b> To whisper the associated user, put <b>$user</b> in the whisper field.</p>
+        <div ng-hide="whisper">
+            <label class="control-fb control--checkbox" style="margin: 0px 15px 0px 0px"> Send as reply<tooltip text="'Replying only works within a Command or Chat Message event'"></tooltip>
+                <input type="checkbox" ng-model="effect.sendAsReply">
+                <div class="control__indicator"></div>
+            </label>
+        </div>
     </eos-container>
 
     `,
@@ -66,15 +72,20 @@ const chat = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: async event => {
+    onTriggerEvent: async ({ effect, trigger}) => {
 
         const chatHelpers = require("../../chat/chat-helpers");
 
         const commandHandler = require("../../chat/commands/commandHandler");
 
-        const { effect } = event;
+        let messageId = null;
+        if (trigger.type === EffectTrigger.COMMAND) {
+            messageId = trigger.metadata.chatMessage.id;
+        } else if (trigger.type === EffectTrigger.EVENT) {
+            messageId = trigger.metadata.eventData.chatMessage.id;
+        }
 
-        twitchChat.sendChatMessage(effect.message, effect.whisper, effect.chatter);
+        twitchChat.sendChatMessage(effect.message, effect.whisper, effect.chatter, !effect.whisper && effect.sendAsReply ? messageId : undefined);
 
         if (effect.chatter === "Streamer" && (effect.whisper == null || !effect.whisper.length)) {
             const firebotMessage = await chatHelpers.buildFirebotChatMessageFromText(effect.message);

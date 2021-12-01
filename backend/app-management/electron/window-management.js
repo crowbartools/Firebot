@@ -77,6 +77,8 @@ function createMainWindow() {
     global.renderWindow = mainWindow;
 
     const frontendCommunicator = require("../../common/frontend-communicator");
+    const profileManager = require("../../common/profile-manager");
+    const dataAccess = require("../../common/data-access");
     const menuTemplate = [
         {
             label: 'Edit',
@@ -112,6 +114,58 @@ function createMainWindow() {
                 },
                 {
                     role: 'quit'
+                }
+            ]
+        },
+        {
+            label: 'Tools',
+            submenu: [
+                {
+                    label: 'Open Data Folder',
+                    toolTip: "Open the folder where Firebot data is stored",
+                    click: () => {
+                        const rootFolder = path.resolve(
+                            profileManager.getPathInProfile("/")
+                        );
+                        shell.openPath(rootFolder);
+                    }
+                },
+                {
+                    label: 'Open Logs Folder',
+                    toolTip: "Open the folder where logs are stored",
+                    click: () => {
+                        const rootFolder = path.resolve(
+                            dataAccess.getPathInUserData("/logs/")
+                        );
+                        shell.openPath(rootFolder);
+                    }
+                },
+                {
+                    label: 'Open Backups Folder',
+                    toolTip: "Open the folder where backups are stored",
+                    click: () => {
+                        const backupFolder = path.resolve(
+                            dataAccess.getPathInUserData("/backups/")
+                        );
+                        shell.openPath(backupFolder);
+                    }
+                },
+                {
+                    label: 'Setup Wizard',
+                    toolTip: "Run the setup wizard again",
+                    click: () => {
+                        frontendCommunicator.send("open-modal", {
+                            component: "setupWizardModal"
+                        });
+                    }
+                },
+                {
+                    label: 'Custom Variable Inspector',
+                    toolTip: "Open the custom variable inspector",
+                    click: () => {
+                        // eslint-disable-next-line no-use-before-define
+                        createVariableInspectorWindow();
+                    }
                 },
                 {
                     type: 'separator'
@@ -301,6 +355,87 @@ function createStreamPreviewWindow() {
         }
     });
 }
+
+/**
+ * The variable inspector window.
+ *@type {Electron.BrowserWindow}
+ */
+let variableInspectorWindow = null;
+
+async function createVariableInspectorWindow() {
+
+    if (variableInspectorWindow != null && !variableInspectorWindow.isDestroyed()) {
+        if (variableInspectorWindow.isMinimized()) {
+            variableInspectorWindow.restore();
+        }
+        variableInspectorWindow.focus();
+        return;
+    }
+
+    const variableInspectorWindowState = windowStateKeeper({
+        defaultWidth: 720,
+        defaultHeight: 1280,
+        file: "variable-inspector-window-state.json"
+    });
+
+    variableInspectorWindow = new BrowserWindow({
+        frame: true,
+        alwaysOnTop: true,
+        backgroundColor: "#2F3137",
+        title: "Custom Variable Inspector",
+        parent: exports.mainWindow,
+        width: variableInspectorWindowState.width,
+        height: variableInspectorWindowState.height,
+        x: variableInspectorWindowState.x,
+        y: variableInspectorWindowState.y,
+        webPreferences: {
+            preload: path.join(__dirname, "../../../gui/variable-inspector/preload.js")
+        }
+    });
+
+    variableInspectorWindowState.manage(variableInspectorWindow);
+
+    variableInspectorWindow.on("close", () => {
+        variableInspectorWindow = null;
+    });
+
+    await variableInspectorWindow.loadURL(
+        url.format({
+            pathname: path.join(__dirname, "../../../gui/variable-inspector/index.html"),
+            protocol: "file:",
+            slashes: true
+        }));
+
+    const customVariableManager = require("../../common/custom-variable-manager");
+    variableInspectorWindow.webContents.send("all-variables", customVariableManager.getInitialInspectorVariables());
+}
+
+function sendVariableCreateToInspector(key, value, ttl) {
+    if (variableInspectorWindow == null || variableInspectorWindow.isDestroyed()) {
+        return;
+    }
+
+    variableInspectorWindow.webContents.send("variable-set", {
+        key,
+        value,
+        ttl
+    });
+}
+
+function sendVariableExpireToInspector(key, value) {
+    if (variableInspectorWindow == null || variableInspectorWindow.isDestroyed()) {
+        return;
+    }
+
+    variableInspectorWindow.webContents.send("variable-expire", {
+        key,
+        value
+    });
+}
+
+exports.createVariableInspectorWindow = createVariableInspectorWindow;
+exports.sendVariableCreateToInspector = sendVariableCreateToInspector;
+exports.sendVariableExpireToInspector = sendVariableExpireToInspector;
 exports.createStreamPreviewWindow = createStreamPreviewWindow;
 exports.createMainWindow = createMainWindow;
 exports.createSplashScreen = createSplashScreen;

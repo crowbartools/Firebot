@@ -1,29 +1,56 @@
 "use strict";
 
-const {
-    EffectTrigger
-} = require("../../effects/models/effectModels");
-
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
-
-let triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:channel-reward-redemption"];
-triggers[EffectTrigger.CHANNEL_REWARD] = true;
-triggers[EffectTrigger.PRESET_LIST] = true;
-triggers[EffectTrigger.MANUAL] = true;
 
 const model = {
     definition: {
         handle: "rewardImageUrl",
         description: "The image url of the award",
-        triggers: triggers,
+        examples: [
+            {
+                usage: "rewardDescription[rewardName]",
+                description: "The description of the given reward. Name must be exact!"
+            }
+        ],
         categories: [VariableCategory.COMMON],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (trigger) => {
-        return trigger.metadata.eventData ?
-            trigger.metadata.eventData.rewardImage :
-            trigger.metadata.rewardImage;
+    evaluator: async (trigger, rewardName) => {
+        let rewardData;
+        if (!rewardName) {
+            rewardData = trigger.metadata.eventData ?
+                trigger.metadata.eventData :
+                trigger.metadata;
+        } else {
+            const channelRewardManager = require("../../channel-rewards/channel-reward-manager");
+            const twitchApi = require("../../twitch-api/api");
+            const accountAccess = require("../../common/account-access");
+
+            const channelRewardId = channelRewardManager.getChannelRewardIdByName(rewardName);
+
+            if (channelRewardId == null) {
+                return "[Can't find reward by name]";
+            }
+
+            const reward = await twitchApi.getClient().channelPoints.getCustomRewardById(
+                accountAccess.getAccounts().streamer.userId,
+                channelRewardId
+            );
+            if (reward) {
+                rewardData = {
+                    rewardImage: reward.getImageUrl(4),
+                    rewardName: reward.title,
+                    rewardDescription: reward.prompt,
+                    rewardCost: reward.cost
+                };
+            }
+        }
+
+        if (rewardData == null) {
+            return "[No reward found]";
+        }
+
+        return rewardData.rewardImage;
     }
 };
 

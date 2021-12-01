@@ -28,10 +28,10 @@
                     <div style="display:flex;align-items: center;">
                         <div style="margin-right: 17px;" ng-if="$ctrl.getSelectedQueueModeIsCustom()">
                             <div style="font-size: 10px;opacity: 0.8;text-align: right;" aria-label="Effects duration: The total duration in seconds the queue should wait after triggering this effect list before running the next one">
-                                EFFECTS DURATION 
+                                EFFECTS DURATION
                                 <tooltip role="tooltip" aria-label="The total duration in seconds the queue should wait after triggering this effect list before running the next one." text="'The total duration (in secs) the queue should wait after triggering this effect list before running the next one'"></tooltip>
                             </div>
-                            <div 
+                            <div
                                 style="display: flex; justify-content: flex-end; align-items: center;font-size: 12px;"
                                 ng-click="$ctrl.openEditQueueDurationModal()"
                                 aria-label="Effects duration: {{$ctrl.effectsData.queueDuration || 0}} seconds"
@@ -43,7 +43,7 @@
 
                         <div style="margin-right: 17px;" ng-if="$ctrl.validQueueSelected()">
                             <div style="font-size: 10px;opacity: 0.8;text-align: right;" aria-label="Queue Priority: If an effect list has priority, it will get added in front of other lists in the queue that do not have priority.">
-                                QUEUE PRIORITY 
+                                QUEUE PRIORITY
                                 <tooltip role="tooltip" aria-label="If an effect list has priority, it will get added in front of other lists in the queue that do not have priority." text="'If an effect list has priority, it will get added in front of other lists in the queue that do not have priority.'"></tooltip>
                             </div>
                             <div class="text-dropdown filter-mode-dropdown" uib-dropdown uib-dropdown-toggle>
@@ -70,21 +70,21 @@
                                 <a href role="button" class="ddtext" style="font-size: 12px;">{{$ctrl.getSelectedEffectQueueName()}}<span class="fb-arrow down ddtext"></span></a>
                                 <ul class="dropdown-menu" uib-dropdown-menu role="menu">
                                     <li role="none">
-                                        <a 
-                                            href 
-                                            style="padding-left: 10px;" 
+                                        <a
+                                            href
+                                            style="padding-left: 10px;"
                                             ng-click="$ctrl.effectsData.queue = null"
                                             role="menuitem"
                                         >
                                             Unset <tooltip role="tooltip" aria-label="Effects will always play immediately when triggered" text="'Effects will always play immediately when triggered.'"></tooltip>
                                             <span ng-show="$ctrl.effectsData.queue == null" style="color:green;display: inline-block;"><i class="fas fa-check"></i></span>
-                                        </a>   
+                                        </a>
                                     </li>
 
                                     <li ng-repeat="queue in $ctrl.eqs.getEffectQueues() track by queue.id" role="none">
                                         <a href style="padding-left: 10px;" ng-click="$ctrl.toggleQueueSelection(queue.id)" role="menuitem" aria-label="Queue: {{queue.name}}">
                                             <span>{{queue.name}}</span>
-                                            <span ng-show="$ctrl.effectsData.queue === queue.id" style="color:green;display: inline-block;"><i class="fas fa-check"></i></span>      
+                                            <span ng-show="$ctrl.effectsData.queue === queue.id" style="color:green;display: inline-block;"><i class="fas fa-check"></i></span>
                                         </a>
                                     </li>
 
@@ -118,7 +118,7 @@
                             </a>
                             <ul class="dropdown-menu" uib-dropdown-menu role="menu">
                                 <li role="none" ng-class="{'disabled': !$ctrl.effectsData.list.length > 0}">
-                                    <a 
+                                    <a
                                         href
                                         ng-click="!$ctrl.effectsData.list > 0 ? $event.stopPropagation() : null; $ctrl.copyEffects()"
                                         role="menuitem"
@@ -185,10 +185,10 @@
                                     <span class="flex-row-center">
                                         <span class="dragHandle" style="height: 38px; width: 15px; align-items: center; justify-content: center; display: flex" ng-class="{'hiddenHandle': !hovering}" ng-click="$event.stopPropagation()">
                                             <i class="fal fa-bars"></i>
-                                        </span> 
+                                        </span>
                                         <div
                                             uib-dropdown
-                                            style="font-size: 20px;height: 38px;width: 35px;text-align: center;display: flex;align-items: center;justify-content: center;" 
+                                            style="font-size: 20px;height: 38px;width: 35px;text-align: center;display: flex;align-items: center;justify-content: center;"
                                             ng-click="$event.stopPropagation()"
                                             uib-dropdown-toggle
                                         >
@@ -227,6 +227,16 @@
                                                     <a
                                                         href
                                                         role="menuitem"
+                                                        ng-click="!$ctrl.hasCopiedEffects() ? $event.stopPropagation() : null; $ctrl.pasteEffectsAtIndex($index, true)"
+                                                        aria-disabled={{!$ctrl.hasCopiedEffects()}}
+                                                    >
+                                                        <i class="fal fa-paste" style="margin-right: 10px;"></i>  Paste Before
+                                                    </a>
+                                                </li>
+                                                <li role="none" ng-class="{'disabled': !$ctrl.hasCopiedEffects()}">
+                                                    <a
+                                                        href
+                                                        role="menuitem"
                                                         ng-click="!$ctrl.hasCopiedEffects() ? $event.stopPropagation() : null; $ctrl.pasteEffectsAtIndex($index, false)"
                                                         aria-disabled={{!$ctrl.hasCopiedEffects()}}
                                                     >
@@ -240,7 +250,7 @@
                                                 </li>
                                             </ul>
                                         </div>
-                                    </span> 
+                                    </span>
                             </div>
                         </div>
                     </div>
@@ -248,10 +258,10 @@
                     <div class="add-more-functionality" style="margin-top: 16px;margin-left: 12px;">
                         <a href role="button" class="clickable" ng-click="$ctrl.openNewEffectModal()" aria-label="Add new effect">
                             <i class="far fa-plus-circle"></i>Add New Effect
-                        </a>               
+                        </a>
                     </div>
                 </div>
-                
+
             </div>
             `,
             controller: function(utilityService, effectHelperService, objectCopyHelper, effectQueuesService,
@@ -431,12 +441,12 @@
                     }
                 };
 
-                ctrl.pasteEffectsAtIndex = async function(index, above) {
+                ctrl.pasteEffectsAtIndex = async (index, above) => {
                     if (objectCopyHelper.hasCopiedEffects()) {
                         if (!above) {
                             index++;
                         }
-                        let copiedEffects = await objectCopyHelper.getCopiedEffects(ctrl.trigger, ctrl.triggerMeta);
+                        const copiedEffects = await objectCopyHelper.getCopiedEffects(ctrl.trigger, ctrl.triggerMeta);
                         ctrl.effectsData.list.splice(index, 0, ...copiedEffects);
                         ctrl.effectsUpdate();
                     }
@@ -497,7 +507,7 @@
 
                 ctrl.effectMenuOptions = [
                     {
-                        html: `<a href ><i class="far fa-tag" style="margin-right: 10px;"></i> Edit Tag</a>`,
+                        html: `<a href ><i class="far fa-tag" style="margin-right: 10px;"></i> Edit Label</a>`,
                         click: function ($itemScope) {
                             const $index = $itemScope.$index;
                             ctrl.editLabelForEffectAtIndex($index);
@@ -523,6 +533,15 @@
                         click: function ($itemScope) {
                             const $index = $itemScope.$index;
                             ctrl.copyEffectAtIndex($index);
+                        }
+                    },
+                    {
+                        html: `<a href ><i class="far fa-paste" style="margin-right: 10px;"></i> Paste Before</a>`,
+                        click: function ($itemScope) {
+                            const $index = $itemScope.$index;
+                            if (ctrl.hasCopiedEffects()) {
+                                ctrl.pasteEffectsAtIndex($index, true);
+                            }
                         }
                     },
                     {

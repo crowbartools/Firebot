@@ -11,7 +11,7 @@
     angular
         .module("firebotApp")
         .factory("sortTagsService", function(logger, profileManager,
-            utilityService, settingsService) {
+            utilityService, settingsService, backendCommunicator) {
             let service = {};
 
             /**
@@ -67,6 +67,10 @@
                 }
                 return sortTags[context];
             };
+
+            backendCommunicator.onAsync("get-sort-tags", async (context) => {
+                return service.getSortTags(context);
+            });
 
             /**
              * @param {string} context

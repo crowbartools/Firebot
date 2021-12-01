@@ -61,10 +61,6 @@ class EventManager extends EventEmitter {
             .map(es => es.events);
         let events = util.flattenArray(eventArrays);
 
-        if (accountAccess.getAccounts().streamer.broadcasterType === "") {
-            events = events.filter(e => !e.affiliateRequired);
-        }
-
         return events;
     }
 

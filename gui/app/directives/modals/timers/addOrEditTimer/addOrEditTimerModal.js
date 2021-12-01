@@ -5,10 +5,13 @@
 (function() {
     angular.module("firebotApp").component("addOrEditTimerModal", {
         template: `
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" ng-click="$ctrl.dismiss()">&times;</span></button>
-                <h4 class="modal-title" id="newCooldownGroupLabel">{{$ctrl.isNewTimer ? 'Add New Timer' : 'Edit Timer - ' + $ctrl.timer.name}}</h4>
-            </div>
+            <context-menu-modal-header
+                on-close="$ctrl.dismiss()"
+                trigger-type="timer"
+                trigger-name="$ctrl.timer.name"
+                sort-tags="$ctrl.timer.sortTags"
+                show-trigger-name="true"
+            ></context-menu-modal-header>
             <div class="modal-body">
                 <div class="general-button-settings">
                     <div class="settings-title">

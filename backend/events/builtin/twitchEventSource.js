@@ -61,7 +61,6 @@ module.exports = {
             name: "Sub",
             description: "When someone subscribes (or resubscribes) to your channel.",
             cached: false,
-            affiliateRequired: true,
             manualMetadata: {
                 username: "Firebot",
                 subPlan: "1000",
@@ -84,7 +83,6 @@ module.exports = {
             name: "Prime Sub Upgraded",
             description: "When someone upgrades to a paid sub from a Prime sub.",
             cached: false,
-            affiliateRequired: true,
             manualMetadata: {
                 username: "Firebot",
                 subPlan: "1000"
@@ -101,7 +99,6 @@ module.exports = {
             name: "Sub Gifted",
             description: "When someone gifts a sub to someone else in your channel.",
             cached: false,
-            affiliateRequired: true,
             manualMetadata: {
                 username: "MageEnclave",
                 giftSubMonths: 1,
@@ -122,17 +119,24 @@ module.exports = {
             name: "Community Subs Gifted",
             description: "When someone gifts random subs to the community of the channel",
             cached: false,
-            affiliateRequired: true,
             manualMetadata: {
                 username: "Firebot",
-                gifterUsername: "Firebot",
                 subCount: 5,
-                subPlan: "1000"
+                subPlan: "1000",
+                gifterUsername: "Firebot",
+                isAnonymous: false,
+                giftReceivers: [
+                    {gifteeUsername: "User1", giftSubMonths: 3},
+                    {gifteeUsername: "User2", giftSubMonths: 5},
+                    {gifteeUsername: "User3", giftSubMonths: 8},
+                    {gifteeUsername: "User4", giftSubMonths: 10},
+                    {gifteeUsername: "User5", giftSubMonths: 16}
+                ]
             },
             activityFeed: {
                 icon: "fad fa-gifts",
                 getMessage: (eventData) => {
-                    return `**${eventData.username}** gifted **${eventData.subCount} Tier ${eventData.subPlan.replace("000", "")}** sub${eventData.subCount > 1 ? 's' : ''} to the community`;
+                    return `**${eventData.isAnonymous ? "An Anonymous Gifter" : eventData.username}** gifted **${eventData.subCount} Tier ${eventData.subPlan.replace("000", "")}** sub${eventData.subCount > 1 ? 's' : ''} to the community`;
                 }
             }
         },
@@ -141,7 +145,6 @@ module.exports = {
             name: "Gift Sub Upgraded",
             description: "When someone upgrades to a paid sub from a gift sub.",
             cached: false,
-            affiliateRequired: true,
             manualMetadata: {
                 username: "CaveMobster",
                 gifteeUsername: "CaveMobster",
@@ -160,7 +163,6 @@ module.exports = {
             name: "Cheer",
             description: "When someone cheers in your channel (uses bits).",
             cached: false,
-            affiliateRequired: true,
             manualMetadata: {
                 username: "Firebot",
                 isAnonymous: false,
@@ -180,7 +182,6 @@ module.exports = {
             name: "Bits Badge Unlocked",
             description: "When someone unlocks a new bits badge tier in your channel.",
             cached: false,
-            affiliateRequired: true,
             manualMetadata: {
                 username: "Firebot",
                 message: "Test message",
@@ -260,7 +261,6 @@ module.exports = {
             cached: true,
             cacheMetaKey: "username",
             cacheTtlInSecs: 1,
-            affiliateRequired: true,
             queued: false,
             manualMetadata: {
                 username: "Firebot",

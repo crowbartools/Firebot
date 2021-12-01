@@ -5,7 +5,7 @@
     angular.module("firebotApp").component("commandOption", {
         bindings: {
             metadata: "=",
-            name: "<",
+            name: "<?",
             onUpdate: "&"
         },
         template: `

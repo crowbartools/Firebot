@@ -1,0 +1,19 @@
+.context-menu-modal-header {
+    .modal-title {
+        margin-right: auto;
+    }
+
+    .close {
+        margin-left: 0;
+    }
+
+    .context-menu {
+      order: 1;
+      font-size: 29px;
+      margin-right: 25px;
+    }
+
+    .action {
+      text-transform: capitalize;
+    }
+}

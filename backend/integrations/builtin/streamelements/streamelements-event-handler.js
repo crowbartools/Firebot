@@ -1,7 +1,5 @@
 "use strict";
 
-const logger = require("../../../logwrapper");
-
 const eventManager = require("../../../events/EventManager");
 
 const EVENT_SOURCE_ID = "streamelements";
@@ -20,6 +18,7 @@ const eventSourceDefinition = {
             name: "Donation",
             description: "When someone donates.",
             cached: false,
+            isIntegration: true,
             activityFeed: {
                 icon: "fad fa-money-bill",
                 getMessage: (eventData) => {
@@ -33,6 +32,7 @@ const eventSourceDefinition = {
             description: "When someone follows your Twitch channel (comes from StreamElements)",
             cacheMetaKey: "username",
             cached: true,
+            isIntegration: true,
             activityFeed: {
                 icon: "fas fa-heart",
                 getMessage: (eventData) => {

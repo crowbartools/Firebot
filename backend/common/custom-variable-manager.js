@@ -2,9 +2,11 @@
 "use strict";
 const logger = require('../logwrapper');
 const eventManager = require("../events/EventManager");
+const windowManagement = require("../app-management/electron/window-management");
+
 const NodeCache = require("node-cache");
 
-const cache = new NodeCache({ stdTTL: 0, checkperiod: 5 });
+const cache = new NodeCache({ stdTTL: 0, checkperiod: 1 });
 exports._cache = cache;
 
 const onCustomVariableExpire = (key, value) => {
@@ -13,6 +15,8 @@ const onCustomVariableExpire = (key, value) => {
         expiredCustomVariableName: key,
         expiredCustomVariableData: value
     });
+
+    windowManagement.sendVariableExpireToInspector(key, value);
 };
 
 cache.on("expired", onCustomVariableExpire);
@@ -23,6 +27,8 @@ cache.on("set", function(key, value) {
         createdCustomVariableName: key,
         createdCustomVariableData: value
     });
+
+    windowManagement.sendVariableCreateToInspector(key, value, cache.getTtl(key));
 });
 
 function getVariableCacheDb() {
@@ -30,6 +36,14 @@ function getVariableCacheDb() {
     return profileManager
         .getJsonDbInProfile("custom-variable-cache");
 }
+
+exports.getInitialInspectorVariables = () =>
+    Object.entries(cache.data)
+        .map(([key, value]) => ({
+            key,
+            value: value.v,
+            ttl: value.t
+        }));
 
 exports.getAllVariables = () => JSON.parse(JSON.stringify(cache.data));
 

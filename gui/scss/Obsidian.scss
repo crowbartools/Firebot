@@ -151,7 +151,12 @@ $fb-table-shadow: none;
 
 $sys-cmd-expanded-shadow: none;
 
-$integration-row-bg: #2f3136;
+$integration-row-bg: #3e4046;
+
+/* Settings Page */
+$settings-sidebar-bg: #383a40;
+$settings-category-selected-bg: #2d3135;
+$settings-category-hover-bg: #33373c;
 
 // Import Core Styles
 @import './core/$importer';

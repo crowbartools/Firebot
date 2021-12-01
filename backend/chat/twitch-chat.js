@@ -155,13 +155,13 @@ class TwitchChat extends EventEmitter {
      * @param {string} message The message to send
      * @param {string} accountType The type of account to whisper with ('streamer' or 'bot')
      */
-    async _say(message, accountType) {
+    async _say(message, accountType, replyToId) {
         const chatClient = accountType === 'bot' ? this._botChatClient : this._streamerChatClient;
         try {
             logger.debug(`Sending message as ${accountType}.`);
 
             const streamer = accountAccess.getAccounts().streamer;
-            chatClient.say(streamer.username, message);
+            chatClient.say(streamer.username, message, replyToId ? { replyTo: replyToId } : undefined);
 
             if (accountType === 'streamer' && (!message.startsWith("/") || message.startsWith("/me"))) {
                 const firebotChatMessage = await chatHelpers.buildFirebotChatMessageFromText(message);
@@ -206,8 +206,9 @@ class TwitchChat extends EventEmitter {
      * @param {string} message The message to send
      * @param {string} [username] If provided, message will be whispered to the given user.
      * @param {string} [accountType] Which account to chat as. Defaults to bot if available otherwise, the streamer.
+     * @param {string} [replyToMessageId] A message id to reply to
      */
-    sendChatMessage(message, username, accountType) {
+    sendChatMessage(message, username, accountType, replyToMessageId) {
         if (message == null) {
             return null;
         }
@@ -237,7 +238,7 @@ class TwitchChat extends EventEmitter {
             if (shouldWhisper) {
                 this._whisper(fragment, username, accountType);
             } else {
-                this._say(fragment, accountType);
+                this._say(fragment, accountType, replyToMessageId);
             }
         }
     }

@@ -5,6 +5,7 @@ const cloudSync = require("./cloud-sync");
 const logger = require("../logwrapper");
 const commandList = require("./sync-handlers/command-list");
 const quoteList = require("./sync-handlers/quotes-list");
+const frontendCommunicator = require("../common/frontend-communicator");
 const { settings } = require("../common/settings-access");
 
 async function syncProfileData(profileSyncData) {
@@ -19,6 +20,7 @@ async function syncProfileData(profileSyncData) {
         'chatter': profileSyncData.username,
         'profilePage': profileSyncData.profilePage,
         'commands': commands,
+        'sortTags': await frontendCommunicator.fireEventAsync("get-sort-tags", "commands"),
         'variables': variableManager.getReplaceVariables().map(v => v.definition),
         'quotes': quotes,
         'allowQuoteCSVDownloads': settings.getAllowQuoteCSVDownloads()

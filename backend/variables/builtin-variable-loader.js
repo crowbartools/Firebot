@@ -53,6 +53,7 @@ exports.loadReplaceVariables = () => {
         'gift-duration',
         'gift-giver-user',
         'gift-receiver-user',
+        'gift-receivers',
         'gift-sub-months',
         'gift-sub-type',
         'host-type',
@@ -110,6 +111,8 @@ exports.loadReplaceVariables = () => {
         'timeout-duration',
         'top-currency-user',
         'top-currency',
+        'top-metadata-user',
+        'top-metadata',
         'top-view-time',
         'uptime',
         'user-avatar-url',
@@ -120,7 +123,8 @@ exports.loadReplaceVariables = () => {
         'username',
         'usernameArray',
         'view-time',
-        'whisper-message'
+        'whisper-message',
+        'word'
     ].forEach(filename => {
         let definition = require(`./builtin/${filename}.js`);
         replaceVariableManager.registerReplaceVariable(definition);

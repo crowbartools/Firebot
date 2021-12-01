@@ -19,6 +19,7 @@ const eventSourceDefinition = {
             name: "Donation",
             description: "When someone donates to you via StreamLabs.",
             cached: false,
+            isIntegration: true,
             queued: true,
             activityFeed: {
                 icon: "fad fa-money-bill",
@@ -32,6 +33,7 @@ const eventSourceDefinition = {
             name: "Extra Life Donation",
             description: "When someone donates to your Extra Life campaign.",
             cached: false,
+            isIntegration: true,
             queued: true,
             activityFeed: {
                 icon: "fad fa-money-bill",
@@ -46,6 +48,7 @@ const eventSourceDefinition = {
             description: "When someone follows your Twitch channel (comes from StreamLabs)",
             cacheMetaKey: "username",
             cached: true,
+            isIntegration: true,
             activityFeed: {
                 icon: "fas fa-heart",
                 getMessage: (eventData) => {
@@ -65,7 +68,7 @@ exports.processStreamLabsEvent = (eventData) => {
         return;
     }
     if (eventData.type === "donation") {
-        let donoData = eventData.message[0];
+        const donoData = eventData.message[0];
         eventManager.triggerEvent(EVENT_SOURCE_ID, EventId.DONATION, {
             formattedDonationAmount: donoData.formatted_amount,
             dononationAmount: donoData.amount,
@@ -73,7 +76,7 @@ exports.processStreamLabsEvent = (eventData) => {
             from: donoData.from
         });
     } else if (eventData.type === "eldonation") {
-        let donoData = eventData.message[0];
+        const donoData = eventData.message[0];
         eventManager.triggerEvent(
             EVENT_SOURCE_ID,
             EventId.EXTRA_LIFE_DONATION,

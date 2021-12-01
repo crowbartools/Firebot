@@ -21,6 +21,7 @@
                 active: true,
                 simple: !settingsService.getDefaultToAdvancedCommandMode(),
                 sendCooldownMessage: true,
+                cooldownMessage: "This command is still on cooldown for: {timeLeft}",
                 cooldown: {},
                 effects: {
                     id: uuid(),
@@ -31,7 +32,8 @@
                     mode: "all",
                     sendFailMessage: true
                 },
-                aliases: []
+                aliases: [],
+                sortTags: []
             };
 
             $scope.trigger = "command";
@@ -129,6 +131,10 @@
                     $ctrl.command.sendCooldownMessage = true;
                 }
 
+                if ($ctrl.command.cooldownMessage == null) {
+                    $ctrl.command.cooldownMessage = "This command is still on cooldown for: {timeLeft}";
+                }
+
                 if ($ctrl.command.aliases == null) {
                     $ctrl.command.aliases = [];
                 }
@@ -211,7 +217,9 @@
             };
 
             $ctrl.delete = function() {
-                if ($ctrl.isNewCommand) return;
+                if ($ctrl.isNewCommand) {
+                    return;
+                }
                 utilityService.showConfirmationModal({
                     title: "Delete Command",
                     question: `Are you sure you want to delete this command?`,

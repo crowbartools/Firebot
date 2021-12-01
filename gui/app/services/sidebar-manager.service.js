@@ -33,29 +33,31 @@
             };
 
             service.currentTabIsFullScreen = function() {
-                return (
-                    service.currentTab.toLowerCase() === "chat feed" ||
-                    service.currentTab.toLowerCase() === "commands" ||
-                    service.currentTab.toLowerCase() === "preset effect lists" ||
-                    service.currentTab.toLowerCase() === "effect queues" ||
-                    service.currentTab.toLowerCase() === "events" ||
-                    service.currentTab.toLowerCase() === "timers" ||
-                    service.currentTab.toLowerCase() === "channel rewards" ||
-                    service.currentTab.toLowerCase() === "moderation" ||
-                    service.currentTab.toLowerCase() === "buttons"
-                );
+                return [
+                    "chat feed",
+                    "commands",
+                    "preset effect lists",
+                    "effect queues",
+                    "events",
+                    "timers",
+                    "channel rewards",
+                    "moderation",
+                    "buttons",
+                    "settings"
+                ].includes(service.currentTab.toLowerCase());
             };
 
             service.currentTabShouldntScroll = function() {
-                return (
-                    service.currentTab.toLowerCase() === "chat feed" ||
-                    service.currentTab.toLowerCase() === "buttons" ||
-                    service.currentTab.toLowerCase() === "preset effect lists" ||
-                    service.currentTab.toLowerCase() === "timers" ||
-                    service.currentTab.toLowerCase() === "channel rewards" ||
-                    service.currentTab.toLowerCase() === "events" ||
-                    service.currentTab.toLowerCase() === "commands"
-                );
+                return [
+                    "chat feed",
+                    "commands",
+                    "preset effect lists",
+                    "events",
+                    "timers",
+                    "channel rewards",
+                    "buttons",
+                    "settings"
+                ].includes(service.currentTab.toLowerCase());
             };
 
             return service;

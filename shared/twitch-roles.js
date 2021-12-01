@@ -15,23 +15,19 @@ const twitchRoles = [
     },
     {
         id: "sub",
-        name: "Subscriber",
-        affiliateRequired: true
+        name: "Subscriber"
     },
     {
         id: "tier1",
-        name: "Tier 1 Sub",
-        affiliateRequired: true
+        name: "Tier 1 Sub"
     },
     {
         id: "tier2",
-        name: "Tier 2 Sub",
-        affiliateRequired: true
+        name: "Tier 2 Sub"
     },
     {
         id: "tier3",
-        name: "Tier 3 Sub",
-        affiliateRequired: true
+        name: "Tier 3 Sub"
     }
 ];
 
