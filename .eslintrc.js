@@ -3,14 +3,11 @@ module.exports = {
     // Indicated by a wrench @ https://eslint.org/docs/rules/
     "extends": "eslint:recommended",
 
-    "parserOptions": {
-        "ecmaVersion": 10
-    },
 
     "env": {
         "node": true,
         "browser": true,
-        "es6": true
+        "es2020": true
     },
 
     // Project specific globals
