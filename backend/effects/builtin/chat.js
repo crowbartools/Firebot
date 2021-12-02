@@ -82,7 +82,7 @@ const chat = {
         if (trigger.type === EffectTrigger.COMMAND) {
             messageId = trigger.metadata.chatMessage.id;
         } else if (trigger.type === EffectTrigger.EVENT) {
-            messageId = trigger.metadata.eventData.chatMessage.id;
+            messageId = trigger.metadata.eventData?.chatMessage?.id;
         }
 
         twitchChat.sendChatMessage(effect.message, effect.whisper, effect.chatter, !effect.whisper && effect.sendAsReply ? messageId : undefined);
