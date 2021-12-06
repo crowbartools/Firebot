@@ -77,12 +77,12 @@
              * @param {string[]} tagIds
              * @returns {string[]}
              */
-            service.getSortTagNames = (context, tagIds) => {
+            service.getSortTagsForItem = (context, tagIds) => {
                 if (context == null || tagIds == null) {
                     return [];
                 }
                 return service.getSortTags(context)
-                    .filter(st => tagIds.includes(st.id)).map(st => st.name);
+                    .filter(st => tagIds.includes(st.id));
             };
 
             /**
