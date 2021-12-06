@@ -5,6 +5,7 @@ const { Worker } = require("worker_threads");
 const frontendCommunicator = require("../../common/frontend-communicator");
 const rolesManager = require("../../roles/custom-roles-manager");
 const permitCommand = require("./url-permit-command");
+const utils = require("../../utility");
 
 let getChatModerationSettingsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/chat-moderation-settings");
 let getBannedWordsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-words", false);
@@ -173,7 +174,7 @@ async function moderateMessage(chatMessage) {
 
             if (!permitCommand.hasTemporaryPermission(chatMessage.username)) {
                 const message = chatMessage.rawText;
-                const regex = new RegExp(/[\w]{2,}[.][\w]{2,}/, "gi");
+                const regex = utils.getUrlRegex();
 
                 if (regex.test(message)) {
                     logger.debug("Url moderation: Found url in message...");
