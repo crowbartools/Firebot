@@ -4,13 +4,14 @@ module.exports = {
     "extends": "eslint:recommended",
 
     "parserOptions": {
-        "ecmaVersion": 10
+        "ecmaVersion": "2020"
     },
 
     "env": {
         "node": true,
         "browser": true,
-        "es6": true
+        "es6": true,
+        "es2020": true
     },
 
     // Project specific globals
@@ -36,6 +37,8 @@ module.exports = {
         "no-unused-expressions": "warn", // see: https://eslint.org/docs/rules/no-unused-expressions#disallow-unused-expressions-no-unused-expressions
         "no-with": "warn",               // no with statements
         "wrap-iife": "warn",             // immediately called functions must be wrapped in ()'s
+        "no-async-promise-executor": "off",
+        "no-prototype-builtins": "off",
 
         // Deviation from < https://eslint.org/docs/rules/#strict-mode >
         "strict": "warn", // require strict mode

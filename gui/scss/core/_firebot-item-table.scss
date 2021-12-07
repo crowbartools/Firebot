@@ -86,24 +86,6 @@
 .fit-table-sort-tags {
     max-width: 135px;
     min-width: 100px;
-
-    div {
-        display: flex;
-        flex-wrap: wrap;
-        width: 100%;
-        overflow: auto;
-        max-height: 45.25px;
-
-        span {
-            background: gray;
-            border-radius: 15px;
-            padding: 1px 5px;
-            margin-right: 2px;
-            margin-bottom: 1px;
-            font-size: 10px;
-            line-height: 1.8;
-        }
-    }
 }
 
 .fit-table-drag-handle {

@@ -20,6 +20,7 @@
       <div class="fit-header-sort-search" ng-show="$ctrl.items.length > 0">
         <sort-tag-dropdown
           context="{{$ctrl.sortTagContext}}"
+          on-update="$ctrl.updateSortTags()"
           class="fit-header-sort"
         />
         <searchbar
@@ -81,10 +82,10 @@
             context-menu="$ctrl.getContextMenu(item)"
           >
             <td ng-if="$ctrl.testButton == true" class="fit-test-button-body">
-              <span 
+              <span
                 ng-click="$ctrl.onTestButtonClicked({ itemId: item.id })"
                 uib-tooltip="Test Effects"
-                tooltip-append-to-body="true"  
+                tooltip-append-to-body="true"
               >
                 <i class="fas fa-play-circle clickable"></i>
               </span>
@@ -105,11 +106,7 @@
               ng-if="$ctrl.sortTagContext != null"
               class="fit-table-sort-tags"
             >
-              <div>
-                <span ng-repeat="tagName in sts.getSortTagNames($ctrl.sortTagContext, item.sortTags)">
-                  {{tagName}}
-                </span>
-              </div>
+              <sort-tags-row item="item" context="$ctrl.sortTagContext" on-update="$ctrl.triggerItemsUpdate()"></sort-tags-row>
             </td>
 
             <td ng-if="$ctrl.showStatusIndicator">

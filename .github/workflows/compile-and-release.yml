@@ -4,9 +4,9 @@ name: WIP Compile and Release
 # - after PRs have been merged into master
 # - when a user specifically requests the workflow to run on a branch
 on:
-  push:
+  workflow_dispatch:
+  # push:
     # branches: 'master' # uncomment line to enable auto building
-    workflow_dispatch:
 
 jobs:
 
@@ -51,7 +51,7 @@ jobs:
       - name: Setup Nodejs
         uses: 'actions/setup-node@v1'
         with:
-          node-version: '12.x'
+          node-version: '14.x'
 
       - name: Install Global Dependencies
         shell: bash
@@ -101,7 +101,7 @@ jobs:
       - name: Setup Nodejs
         uses: 'actions/setup-node@v2'
         with:
-          node-version: '12.x'
+          node-version: '14.x'
 
       - name: Install Global Dependencies
         run: npm install --quiet --global --production grunt-cli node-gyp

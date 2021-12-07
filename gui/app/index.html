@@ -25,6 +25,7 @@
       href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto:100,300,400,500,700|Roboto+Mono:300|Quicksand:300,400,700"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
     <link
       rel="stylesheet"
       type="text/css"
@@ -172,13 +173,14 @@
     <script type="text/javascript" src="./directives/controls/color-picker-input.js"></script>
     <script type="text/javascript" src="./directives/controls/currency-select.js"></script>
     <script type="text/javascript" src="./directives/controls/custom-script-settings.js"></script>
-    <script type="text/javascript" src="./directives/controls/dropdownSelect.js"></script>
     <script type="text/javascript" src="./directives/controls/editable-list.js"></script>
     <script type="text/javascript" src="./directives/controls/editable-tags.js"></script>
     <script type="text/javascript" src="./directives/controls/effectList.js"></script>
     <script type="text/javascript" src="./directives/controls/fileChooser.js"></script>
+    <script type="text/javascript" src="./directives/controls/firebot-button.js"></script>
     <script type="text/javascript" src="./directives/controls/firebot-input.js"></script>
     <script type="text/javascript" src="./directives/controls/firebot-radios.js"></script>
+    <script type="text/javascript" src="./directives/controls/firebot-select.js"></script>
     <script type="text/javascript" src="./directives/controls/multiselect.js"></script>
     <script type="text/javascript" src="./directives/controls/notificationCenter.js"></script>
     <script type="text/javascript" src="./directives/controls/role-based/role-number.js"></script>
@@ -191,6 +193,7 @@
     <script type="text/javascript" src="./directives/controls/settingContainer.js"></script>
     <script type="text/javascript" src="./directives/controls/sort-tag-dropdown.component.js"></script>
     <script type="text/javascript" src="./directives/controls/sort-tag-list.js"></script>
+    <script type="text/javascript" src="./directives/controls/sort-tags-row.js"></script>
     <script type="text/javascript" src="./directives/controls/soundPlayer.js"></script>
     <script type="text/javascript" src="./directives/controls/specialized/discord-channel-webhooks.js"></script>
     <script type="text/javascript" src="./directives/controls/time-input.js"></script>
@@ -294,6 +297,19 @@
     <script type="text/javascript" src="./directives/restrictions/restrictionItem.js"></script>
     <script type="text/javascript" src="./directives/restrictions/restrictionOptions.js"></script>
     <script type="text/javascript" src="./directives/restrictions/restrictionsSection.js"></script>
+    <script type="text/javascript" src="./directives/settings/categories/advanced-settings.js"></script>
+    <script type="text/javascript" src="./directives/settings/categories/backups-settings.js"></script>
+    <script type="text/javascript" src="./directives/settings/categories/database-settings.js"></script>
+    <script type="text/javascript" src="./directives/settings/categories/general-settings.js"></script>
+    <script type="text/javascript" src="./directives/settings/categories/integration-settings.js"></script>
+    <script type="text/javascript" src="./directives/settings/categories/overlay-settings.js"></script>
+    <script type="text/javascript" src="./directives/settings/categories/scripts-settings.js"></script>
+    <script type="text/javascript" src="./directives/settings/categories/setups-settings.js"></script>
+    <script type="text/javascript" src="./directives/settings/categories/trigger-settings.js"></script>
+    <script type="text/javascript" src="./directives/settings/categories/tts-settings.js"></script>
+    <script type="text/javascript" src="./directives/settings/firebot-setting-category.js"></script>
+    <script type="text/javascript" src="./directives/settings/firebot-setting.js"></script>
+    <script type="text/javascript" src="./directives/settings/settings-category-content.js"></script>
     <script type="text/javascript" src="./directives/sidebar/navCategory.js"></script>
     <script type="text/javascript" src="./directives/sidebar/navLink.js"></script>
     <script type="text/javascript" src="./directives/sidebar/sidebar.js"></script>
@@ -341,7 +357,7 @@
                 ng-src="{{cs.getAccountAvatar('bot')}}"
               />
               <div class="fb-arrow down login-arrow"></div>
-              <ul class="dropdown-menu accounts-dropdown" uib-dropdown-menu>
+              <ul class="dropdown-menu right-justified-dropdown" uib-dropdown-menu>
                 <li>
                   <a
                     href

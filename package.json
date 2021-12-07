@@ -1,6 +1,6 @@
 {
   "name": "firebotv5",
-  "version": "5.47.2",
+  "version": "5.48.2",
   "description": "Powerful all-in-one bot for Twitch streamers.",
   "main": "main.js",
   "scripts": {
@@ -9,7 +9,8 @@
     "rebuild": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=12.2.2 --arch=x64 --dist-url=https://atom.io/download/atom-shell --abi=87 --force-process-config",
     "rebuild:new": "npm rebuild --runtime=electron --target=12.2.2 --disturl=https://atom.io/download/atom-shell --abi=87",
     "rebuild:darwin": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=12.2.2 --arch=darwin --dist-url=https://atom.io/download/atom-shell",
-    "setup": "npm ci && npm rebuild && npm run rebuild"
+    "setup": "npm ci && npm rebuild && npm run rebuild",
+    "lint": "grunt lint"
   },
   "repository": "https://github.com/crowbartools/Firebot",
   "keywords": [
@@ -25,7 +26,7 @@
     "electron": "^12.2.2",
     "electron-packager": "^12.2.0",
     "electron-rebuild": "^1.8.6",
-    "eslint": "^5.16.0",
+    "eslint": "^8.3.0",
     "eslint-plugin-angular": "^4.0.1",
     "grunt": "^1.4.0",
     "grunt-contrib-compress": "^1.6.0",

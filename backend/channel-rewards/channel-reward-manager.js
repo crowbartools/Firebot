@@ -200,6 +200,17 @@ function getChannelReward(channelRewardId) {
     return channelRewards[channelRewardId];
 }
 
+function getChannelRewardIdByName(channelRewardName) {
+    if (channelRewardName == null) {
+        return null;
+    }
+    const channelReward = Object.values(channelRewards)
+        .filter(r => r.twitchData != null)
+        .find(r => r.twitchData.title === channelRewardName);
+
+    return channelReward ? channelReward.id : null;
+}
+
 /**
  *
  * @typedef RewardRedemptionMetadata
@@ -282,6 +293,7 @@ frontendCommunicator.on("manuallyTriggerReward", (/** @type {string} */ channelR
     }, true);
 });
 
+exports.getChannelRewardIdByName = getChannelRewardIdByName;
 exports.loadChannelRewards = loadChannelRewards;
 exports.getChannelReward = getChannelReward;
 exports.saveChannelReward = saveChannelReward;

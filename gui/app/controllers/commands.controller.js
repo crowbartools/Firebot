@@ -81,20 +81,6 @@
                 commandsService.refreshCommands();
             };
 
-            $scope.toggleSortTag = (command, tagId) => {
-                if (command == null) return;
-                if (command.sortTags == null) {
-                    command.sortTags = [];
-                }
-                if (command.sortTags.includes(tagId)) {
-                    command.sortTags = command.sortTags.filter(id => id !== tagId);
-                } else {
-                    command.sortTags.push(tagId);
-                }
-                commandsService.saveCustomCommand(command);
-                commandsService.refreshCommands();
-            };
-
             $scope.deleteCustomCommand = command => {
                 utilityService.showConfirmationModal({
                     title: "Delete Command",
@@ -158,7 +144,7 @@
                 }
             };
 
-            $scope.commandMenuOptions = (command) => {
+            $scope.commandMenuOptions = () => {
                 const options = [
                     {
                         html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
@@ -189,24 +175,6 @@
                         }
                     }
                 ];
-
-                const sortTags = sortTagsService.getSortTags("commands");
-
-                if (sortTags.length > 0) {
-                    options.push({
-                        text: "Sort tags...",
-                        children: sortTags.map(st => {
-                            const isSelected = command.sortTags && command.sortTags.includes(st.id);
-                            return {
-                                html: `<a href><i class="${isSelected ? 'fas fa-check' : ''}" style="margin-right: ${isSelected ? '10' : '27'}px;"></i> ${st.name}</a>`,
-                                click: () => {
-                                    $scope.toggleSortTag(command, st.id);
-                                }
-                            };
-                        }),
-                        hasTopDivider: true
-                    });
-                }
 
                 return options;
             };

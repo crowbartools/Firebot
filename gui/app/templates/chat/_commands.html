@@ -37,7 +37,7 @@
         add-new-button-disabled="channelRewardsService.channelRewards.length >= 50"
         add-new-button-text="New Custom Command"
         on-add-new-clicked="openAddOrEditCustomCommandModal()"
-        context-menu-options="commandMenuOptions(item)"
+        context-menu-options="commandMenuOptions()"
         no-data-message="No custom commands saved. You should make one! :)"
         none-found-message="No custom commands found."
         search-placeholder="Search custom commands"
@@ -116,7 +116,7 @@
           >
             <tr
               ng-repeat="command in (commandsService.commandsCache.customCommands | sortTagSearch:sts.getSelectedSortTag('commands') | triggerSearch:commandsService.customCommandSearch) as filteredCommands track by command.id"
-              context-menu="commandMenuOptions(command)"
+              context-menu="commandMenuOptions()"
               style="width: 100%"
             >
               <td style="text-align: center">
@@ -175,30 +175,8 @@
                 ></tooltip>
               </td>
               <td style="max-width: 135px; min-width: 100px">
-                <div
-                  style="
-                    display: flex;
-                    flex-wrap: wrap;
-                    width: 100%;
-                    overflow: auto;
-                    max-height: 45.25px;
-                  "
-                >
-                  <span
-                    ng-repeat="tagName in sts.getSortTagNames('commands', command.sortTags)"
-                    style="
-                      background: gray;
-                      border-radius: 15px;
-                      padding: 1px 5px;
-                      margin-right: 2px;
-                      margin-bottom: 1px;
-                      font-size: 10px;
-                      line-height: 1.8;
-                    "
-                  >
-                    {{tagName}}
-                  </span>
-                </div>
+                <sort-tags-row item="command" context="'commands'" on-update="commandsService.saveCustomCommand(command); commandsService.refreshCommands();">
+                </sort-tags-row>
               </td>
               <td>
                 <div
@@ -236,7 +214,7 @@
                     <span
                       class="noselect clickable"
                       style="font-size: 30px"
-                      context-menu="commandMenuOptions(command)"
+                      context-menu="commandMenuOptions()"
                       context-menu-on="click"
                       ><i class="fal fa-ellipsis-h"></i
                     ></span>

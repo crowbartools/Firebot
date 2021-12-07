@@ -149,6 +149,26 @@
             />
             <div class="control__indicator"></div>
           </label>
+
+          <div ng-show="$ctrl.command.sendCooldownMessage">
+            <label class="control-fb control--checkbox">
+              Use custom cooldown message
+              <input
+                type="checkbox"
+                ng-model="$ctrl.command.useCustomCooldownMessage"
+              />
+              <div class="control__indicator"></div>
+            </label>
+
+            <div ng-if="$ctrl.command.useCustomCooldownMessage">
+              <firebot-input 
+                model="$ctrl.command.cooldownMessage" 
+                disable-variables="true" 
+                input-title="Message" 
+              />
+              <p class="muted">Available variables: {user}, {timeLeft}</p>
+            </div>
+          </div>
         </div>
       </div>
 

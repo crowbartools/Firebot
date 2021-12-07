@@ -24,13 +24,13 @@ const commandList = {
         const cloudSync = require('../../../cloud-sync/profile-sync.js');
         const twitchChat = require("../../../chat/twitch-chat");
 
-        let profileJSON = {
+        const profileJSON = {
             username: event.chatMessage.username,
             userRoles: event.chatMessage.roles,
             profilePage: 'commands'
         };
 
-        let binId = await cloudSync.syncProfileData(profileJSON);
+        const binId = await cloudSync.syncProfileData(profileJSON);
 
         if (binId == null) {
             twitchChat.sendChatMessage(
