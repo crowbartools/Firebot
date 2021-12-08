@@ -11,6 +11,7 @@ exports.loadIntegrations = () => {
     const discord = require("./builtin/discord/discord");
     const streamelements = require("./builtin/streamelements/streamelements");
     const aws = require("./builtin/aws/aws");
+    const elgato = require("./builtin/elgato/elgato");
 
     // register them
     integrationManager.registerIntegration(streamlabs);
@@ -20,4 +21,5 @@ exports.loadIntegrations = () => {
     integrationManager.registerIntegration(discord);
     integrationManager.registerIntegration(streamelements);
     integrationManager.registerIntegration(aws);
+    integrationManager.registerIntegration(elgato);
 };
