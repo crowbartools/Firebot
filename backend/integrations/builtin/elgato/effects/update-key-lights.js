@@ -13,45 +13,47 @@ const effect = {
     },
     globalSettings: {},
     optionsTemplate: `
-        <eos-container>
-            <div class="btn-group" uib-dropdown>
-                <button id="single-button" type="button" class="btn btn-default" uib-dropdown-toggle>
-                    {{getSelectedKeyLight(effect.selectedKeyLight)}} <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                    <li role="menuitem" ng-repeat="keyLight in keyLights" ng-click="effect.selectedKeyLight = keyLight.name">
-                        <a href>{{keyLight.name}}</a>
-                    </li>
-                </ul>
-            </div>
-
-            <div ng-if="effect.selectedKeyLight">
-                <div class="btn-group" uib-dropdown>
-                    <button id="single-button" type="button" class="btn btn-default" uib-dropdown-toggle>
-                        {{getSelectedKeyLight(effect.selectedKeyLight)}} <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                        <li role="menuitem" ng-repeat="keyLight in keyLights" ng-click="effect.selectedKeyLight = keyLight.name">
-                            <a href>{{keyLight.name}}</a>
-                        </li>
-                    </ul>
-                </div>
+        <eos-container ng-show="!hasKeylights">
+            No key lights are connected currently.
+        </eos-container>
+        <eos-container ng-show="hasKeylights" header="Key Lights">
+            <div ng-repeat="light in keyLights">
+                <label class="control-fb control--checkbox">{{light.name}}
+                    <input type="checkbox" ng-click="selectLight(light)" ng-checked="isLightSelected(light)" aria-label="..." >
+                    <div class="control__indicator"></div>
+                </label>
             </div>
         </eos-container>
+
+
     `,
     optionsController: async ($scope, $q, backendCommunicator) => {
+        $scope.hasKeylights = false;
         $scope.keyLights = [];
+
+        if (!$scope.effect.selectedLights) {
+            $scope.effect.selectedLights = {};
+        }
 
         $q.when(backendCommunicator.fireEventAsync("getKeyLights"))
             .then(keyLights => {
                 if (keyLights) {
                     $scope.keyLights = keyLights;
+
+                    $scope.hasKeylights = true;
                 }
             });
 
-        $scope.getSelectedKeyLight = (selectedKeyLight) => {
-            const keyLight = $scope.keyLights.find(kl => kl.name === selectedKeyLight);
-            return keyLight ? keyLight.name : "Select one";
+        $scope.isLightSelected = function(light) {
+            return $scope.effect.selectedLights[light.name] != null && Object.keys($scope.effect.selectedLights[light.name]).length > 0;
+        };
+
+        $scope.selectLight = function(light) {
+            if ($scope.isLightSelected(light)) {
+                delete $scope.effect.selectedLights[light.name];
+            } else {
+                $scope.effect.selectedLights[light.name] = light;
+            }
         };
     },
     optionsValidator: () => {},
