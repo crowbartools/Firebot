@@ -1,6 +1,7 @@
 "use strict";
 
 const { EffectCategory } = require("../../../../../shared/effect-constants");
+const { integration } = require("../elgato");
 
 const effect = {
     definition: {
@@ -13,19 +14,29 @@ const effect = {
     },
     globalSettings: {},
     optionsTemplate: `
-        <eos-container ng-show="!hasKeylights">
+        <eos-container ng-if="!hasKeylights">
             No key lights are connected currently.
         </eos-container>
-        <eos-container ng-show="hasKeylights" header="Key Lights">
+        <eos-container ng-if="hasKeylights" header="Key Lights">
             <div ng-repeat="light in keyLights">
                 <label class="control-fb control--checkbox">{{light.name}}
                     <input type="checkbox" ng-click="selectLight(light)" ng-checked="isLightSelected(light)" aria-label="..." >
                     <div class="control__indicator"></div>
                 </label>
+
+                <div ng-if="isLightSelected(light)" class="ml-6 mb-10">
+                    <label class="control-fb control--checkbox">Update enabled
+                        <input type="checkbox" ng-click="selectEnabledOption(light)" ng-checked="isEnabledOptionSelected(light)" aria-label="..." >
+                        <div class="control__indicator"></div>
+                    </label>
+                    <dropdown-select
+                        ng-if="isEnabledOptionSelected(light)"
+                        options="toggleOptions"
+                        selected="effect.selectedLights[light.name].options.toggleType"
+                    ></dropdown-select>
+                </div>
             </div>
         </eos-container>
-
-
     `,
     optionsController: async ($scope, $q, backendCommunicator) => {
         $scope.hasKeylights = false;
@@ -45,21 +56,52 @@ const effect = {
             });
 
         $scope.isLightSelected = function(light) {
-            return $scope.effect.selectedLights[light.name] != null && Object.keys($scope.effect.selectedLights[light.name]).length > 0;
+            return $scope.effect.selectedLights[light.name] != null;
         };
 
         $scope.selectLight = function(light) {
             if ($scope.isLightSelected(light)) {
                 delete $scope.effect.selectedLights[light.name];
             } else {
-                $scope.effect.selectedLights[light.name] = light;
+                $scope.effect.selectedLights[light.name] = {
+                    light: light,
+                    options: {}
+                };
             }
         };
-    },
-    optionsValidator: () => {},
-    onTriggerEvent: async (event) => {
-        const effect = event.effect;
 
+        $scope.isEnabledOptionSelected = function(light) {
+            if (!$scope.isLightSelected(light)) {
+                return false;
+            }
+            return $scope.effect.selectedLights[light.name].options.toggleType != null;
+        };
+
+        $scope.selectEnabledOption = function(light) {
+            if ($scope.isEnabledOptionSelected(light.name)) {
+                delete $scope.effect.selectedLights[light.name].options.toggleType;
+            } else {
+                $scope.effect.selectedLights[light.name].options.toggleType = "disable";
+            }
+        };
+
+        $scope.toggleOptions = {
+            disable: "Deactivate",
+            enable: "Activate",
+            toggle: "Toggle"
+        };
+    },
+    optionsValidator: (effect) => {
+        let errors = [];
+        if (Object.keys(effect.selectedLights).length === 0) {
+            errors.push("Please select a key light.");
+        }
+        return errors;
+    },
+    onTriggerEvent: async (event) => {
+        integration.updateKeyLights(Object.values(event.effect.selectedLights));
+
+        return true;
     }
 };
 
