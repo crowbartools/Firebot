@@ -8,7 +8,7 @@ const effect = {
         id: "elgato:key-lights",
         name: "Update Elgato Key Lights",
         description: "Turn Elgato Key Lights on or off, and change the temperature and brightness.",
-        icon: "far fa-rectangle-landscape fa-align-center",
+        icon: "fad fa-lamp fa-align-center",
         categories: [EffectCategory.INTEGRATIONS],
         dependencies: []
     },
@@ -18,7 +18,7 @@ const effect = {
             No key lights are connected currently.
         </eos-container>
         <eos-container ng-if="hasKeylights" header="Key Lights">
-            <div ng-repeat="light in keyLights">
+            <div ng-repeat="light in keyLights" class="mb-16">
                 <label class="control-fb control--checkbox">{{light.name}}
                     <input type="checkbox" ng-click="selectLight(light)" ng-checked="isLightSelected(light)" aria-label="..." >
                     <div class="control__indicator"></div>
