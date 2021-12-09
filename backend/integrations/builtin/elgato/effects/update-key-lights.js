@@ -26,11 +26,11 @@ const effect = {
 
                 <div ng-if="isLightSelected(light)" class="ml-6 mb-10">
                     <label class="control-fb control--checkbox">Update Activated
-                        <input type="checkbox" ng-click="selectEnabledOption(light)" ng-checked="isEnabledOptionSelected(light)" aria-label="..." >
+                        <input type="checkbox" ng-click="selectOption('toggleType', light)" ng-checked="isOptionSelected('toggleType', light)" aria-label="..." >
                         <div class="control__indicator"></div>
                     </label>
                     <dropdown-select
-                        ng-if="isEnabledOptionSelected(light)"
+                        ng-if="isOptionSelected('toggleType', light)"
                         options="toggleOptions"
                         selected="effect.selectedLights[light.name].options.toggleType"
                     ></dropdown-select>
@@ -38,18 +38,32 @@ const effect = {
 
                 <div ng-if="isLightSelected(light)" class="ml-6 mb-10">
                     <label class="control-fb control--checkbox">Update Brightness
-                        <input type="checkbox" ng-click="selectBrightnessOption(light)" ng-checked="isBrightnessOptionSelected(light)" aria-label="..." >
+                        <input type="checkbox" ng-click="selectOption('brightness', light)" ng-checked="isOptionSelected('brightness', light)" aria-label="..." >
                         <div class="control__indicator"></div>
                     </label>
-                    <div class="input-group" ng-if="isBrightnessOptionSelected(light)">
-                        <span class="input-group-addon">%</span>
+                    <div class="input-group" ng-if="isOptionSelected('brightness', light)">
+                        <span class="input-group-addon">% (1 - 100)</span>
                         <input
-                            type="text"
                             class="form-control"
                             type="number"
-                            min="1" max="100"
-                            placeholder="1% - 100%"
+                            placeholder="1 - 100"
                             ng-model="effect.selectedLights[light.name].options.brightness"
+                            replace-variables>
+                    </div>
+                </div>
+
+                <div ng-if="isLightSelected(light)" class="ml-6 mb-10">
+                    <label class="control-fb control--checkbox">Update Temperature
+                        <input type="checkbox" ng-click="selectOption('temperature', light)" ng-checked="isOptionSelected('temperature', light)" aria-label="..." >
+                        <div class="control__indicator"></div>
+                    </label>
+                    <div class="input-group" ng-if="isOptionSelected('temperature', light)">
+                        <span class="input-group-addon">Kelvin (2900 - 7000)</span>
+                        <input
+                            class="form-control"
+                            type="number"
+                            placeholder="2900 - 7000"
+                            ng-model="effect.selectedLights[light.name].options.temperature"
                             replace-variables>
                     </div>
                 </div>
@@ -88,33 +102,18 @@ const effect = {
             }
         };
 
-        $scope.isEnabledOptionSelected = function(light) {
+        $scope.isOptionSelected = function(option, light) {
             if (!$scope.isLightSelected(light)) {
                 return false;
             }
-            return $scope.effect.selectedLights[light.name].options.toggleType != null;
+            return $scope.effect.selectedLights[light.name].options[option] != null;
         };
 
-        $scope.selectEnabledOption = function(light) {
-            if ($scope.isEnabledOptionSelected(light.name)) {
-                delete $scope.effect.selectedLights[light.name].options.toggleType;
+        $scope.selectOption = function(option, light) {
+            if ($scope.isOptionSelected(option, light)) {
+                delete $scope.effect.selectedLights[light.name].options[option];
             } else {
-                $scope.effect.selectedLights[light.name].options.toggleType = "disable";
-            }
-        };
-
-        $scope.isBrightnessOptionSelected = function(light) {
-            if (!$scope.isLightSelected(light)) {
-                return false;
-            }
-            return $scope.effect.selectedLights[light.name].options.brightness != null;
-        };
-
-        $scope.selectBrightnessOption = function(light) {
-            if ($scope.isBrightnessOptionSelected(light.name)) {
-                delete $scope.effect.selectedLights[light.name].options.brightness;
-            } else {
-                $scope.effect.selectedLights[light.name].options.brightness = 50;
+                $scope.effect.selectedLights[light.name].options[option] = option === "toggleType" ? "toggle" : "";
             }
         };
 

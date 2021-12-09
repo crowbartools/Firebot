@@ -4,6 +4,7 @@ const EventEmitter = require("events");
 const { ElgatoLightAPI } = require("elgato-light-api");
 const effectManager = require("../../../effects/effectManager");
 const frontendCommunicator = require("../../../common/frontend-communicator");
+const logger = require("../../../logwrapper");
 
 const integrationDefinition = {
     id: "elgato",
@@ -29,29 +30,16 @@ class ElgatoIntegration extends EventEmitter {
 
         this.lightAPI = new ElgatoLightAPI();
         this.lightAPI.on('newLight', /** @arg {import("elgato-light-api").KeyLight} newLight */ (newLight) => {
-            this.addNewKeyLight(newLight);
+            this.keyLights.push(newLight);
         });
 
         frontendCommunicator.onAsync("getKeyLights", async () => {
-            return this.getAllKeyLights();
+            return this.lightAPI.keyLights || [];
         });
-    }
-    onUserSettingsUpdate() {}
-    connect() {}
-    disconnect() {}
-    link() {}
-    unlink() {}
-
-    addNewKeyLight(newLight) {
-        this.keyLights.push(newLight);
-    }
-
-    getAllKeyLights() {
-        return this.lightAPI.keyLights || [];
     }
 
     async updateKeyLights(selectedKeyLights) {
-        selectedKeyLights.forEach(async keyLight => {
+        selectedKeyLights.forEach(keyLight => {
             const light = this.lightAPI.keyLights.find(kl => kl.name === keyLight.light.name);
             const settings = {};
 
@@ -72,15 +60,21 @@ class ElgatoIntegration extends EventEmitter {
             }
 
             if (keyLight.options.temperature) {
-                settings.temperature = parseInt(keyLight.options.temperature);
+                settings.temperature = Math.round(1000000 / parseInt(keyLight.options.temperature));
             }
 
+            /** @type {import("elgato-light-api").KeyLightOptions} */
             const options = {
                 numberOfLights: 1,
                 lights: [settings]
             };
 
-            await this.lightAPI.updateLightOptions(light, options);
+            try {
+                this.lightAPI.updateLightOptions(light, options);
+            } catch (err) {
+                logger.debug("Failed to update Elgato Key Light", err.message);
+            }
+
         });
     }
 }
