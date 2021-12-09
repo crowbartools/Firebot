@@ -1,0 +1,63 @@
+@function value($size) {
+    @if ($size == 0) {
+        @return 0;
+    } @else if ($size == "px") {
+        @return 1px;
+    } @else {
+        @return $size / 4 + rem;
+    }
+}
+
+@mixin options($props, $size, $value) {
+    @each $prop, $propAcr in $props {
+        .#{$propAcr}-#{$size} {
+            #{$prop}: $value;
+        }
+
+        .#{$propAcr}x-#{$size} {
+            #{$prop}-left: $value;
+            #{$prop}-right: $value;
+        }
+
+        .#{$propAcr}y-#{$size} {
+            #{$prop}-top: $value;
+            #{$prop}-bottom: $value;
+        }
+
+        @each $side, $sideAcr in ("top": "t", "right": "r", "bottom": "b", "left": "l") {
+            .#{$propAcr}#{$sideAcr}-#{$size} {
+                #{$prop}-#{$side}: $value;
+            }
+        }
+    }
+}
+
+@mixin spacing($props) {
+    @include options($props, "px", "1px");
+    @include options($props, 0\.5, value(0.5));
+    @include options($props, 1\.5, value(1.5));
+    @include options($props, 2\.5, value(2.5));
+    @include options($props, 3\.5, value(3.5));
+
+    $i: 0;
+    @while $i < 97 {
+        @if ($i < 12) {
+            @include options($props, $i, value($i));
+            $i: $i + 1;
+        } @else if ($i >= 12 && $i < 16) {
+            @include options($props, $i, value($i));
+            $i: $i + 2;
+        } @else if ($i >= 16 && $i < 64) {
+            @include options($props, $i, value($i));
+            $i: $i + 4;
+        } @else if ($i >= 64 && $i < 80) {
+            @include options($props, $i, value($i));
+            $i: $i + 8;
+        } @else if ($i >= 80 && $i < 96) {
+            @include options($props, $i, value($i));
+            $i: $i + 16;
+        }
+    }
+}
+
+@include spacing(("margin": "m", "padding": "p"));
