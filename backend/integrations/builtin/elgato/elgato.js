@@ -51,7 +51,7 @@ class ElgatoIntegration extends EventEmitter {
     }
 
     async updateKeyLights(selectedKeyLights) {
-        selectedKeyLights.forEach(keyLight => {
+        selectedKeyLights.forEach(async keyLight => {
             const light = this.lightAPI.keyLights.find(kl => kl.name === keyLight.light.name);
             const settings = {};
 
@@ -67,12 +67,20 @@ class ElgatoIntegration extends EventEmitter {
                 break;
             }
 
+            if (keyLight.options.brightness) {
+                settings.brightness = parseInt(keyLight.options.brightness);
+            }
+
+            if (keyLight.options.temperature) {
+                settings.temperature = parseInt(keyLight.options.temperature);
+            }
+
             const options = {
                 numberOfLights: 1,
                 lights: [settings]
             };
 
-            this.lightAPI.updateLightOptions(light, options);
+            await this.lightAPI.updateLightOptions(light, options);
         });
     }
 }

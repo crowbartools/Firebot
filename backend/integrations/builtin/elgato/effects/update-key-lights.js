@@ -25,7 +25,7 @@ const effect = {
                 </label>
 
                 <div ng-if="isLightSelected(light)" class="ml-6 mb-10">
-                    <label class="control-fb control--checkbox">Update enabled
+                    <label class="control-fb control--checkbox">Update Activated
                         <input type="checkbox" ng-click="selectEnabledOption(light)" ng-checked="isEnabledOptionSelected(light)" aria-label="..." >
                         <div class="control__indicator"></div>
                     </label>
@@ -34,6 +34,24 @@ const effect = {
                         options="toggleOptions"
                         selected="effect.selectedLights[light.name].options.toggleType"
                     ></dropdown-select>
+                </div>
+
+                <div ng-if="isLightSelected(light)" class="ml-6 mb-10">
+                    <label class="control-fb control--checkbox">Update Brightness
+                        <input type="checkbox" ng-click="selectBrightnessOption(light)" ng-checked="isBrightnessOptionSelected(light)" aria-label="..." >
+                        <div class="control__indicator"></div>
+                    </label>
+                    <div class="input-group" ng-if="isBrightnessOptionSelected(light)">
+                        <span class="input-group-addon">%</span>
+                        <input
+                            type="text"
+                            class="form-control"
+                            type="number"
+                            min="1" max="100"
+                            placeholder="1% - 100%"
+                            ng-model="effect.selectedLights[light.name].options.brightness"
+                            replace-variables>
+                    </div>
                 </div>
             </div>
         </eos-container>
@@ -82,6 +100,21 @@ const effect = {
                 delete $scope.effect.selectedLights[light.name].options.toggleType;
             } else {
                 $scope.effect.selectedLights[light.name].options.toggleType = "disable";
+            }
+        };
+
+        $scope.isBrightnessOptionSelected = function(light) {
+            if (!$scope.isLightSelected(light)) {
+                return false;
+            }
+            return $scope.effect.selectedLights[light.name].options.brightness != null;
+        };
+
+        $scope.selectBrightnessOption = function(light) {
+            if ($scope.isBrightnessOptionSelected(light.name)) {
+                delete $scope.effect.selectedLights[light.name].options.brightness;
+            } else {
+                $scope.effect.selectedLights[light.name].options.brightness = 50;
             }
         };
 
