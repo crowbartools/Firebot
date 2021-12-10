@@ -81,6 +81,7 @@
     "electron-oauth2": "^3.0.0",
     "electron-regedit": "^2.0.0",
     "electron-window-state": "^4.1.1",
+    "elgato-light-api": "^1.0.4",
     "empty-folder": "^2.0.2",
     "eventsource": "^1.0.7",
     "express": "^4.17.1",
