@@ -1,9 +1,12 @@
+"use strict";
 module.exports = {
     // Extend from recommened eslint rules
     // Indicated by a wrench @ https://eslint.org/docs/rules/
     "extends": "eslint:recommended",
 
+    "parser": "babel-parser",
     "parserOptions": {
+        "parser": "babel-parser",
         "ecmaVersion": "2020"
     },
 
