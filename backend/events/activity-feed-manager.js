@@ -71,7 +71,7 @@ frontendCommunicator.on("retrigger-event", (activityId) => {
         return;
     }
     eventManager.triggerEvent(activity.sourceId, activity.eventId,
-        activity.metadata, false, true);
+        activity.metadata, false, true, false);
 });
 
 frontendCommunicator.onAsync("get-all-activity-events", async () => previousActivity);

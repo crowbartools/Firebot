@@ -104,7 +104,7 @@ function addEventToQueue(eventPacket) {
     }
 }
 
-async function onEventTriggered(event, source, meta, isManual = false, isRetrigger = false) {
+async function onEventTriggered(event, source, meta, isManual = false, isRetrigger = false, isSimulation = false) {
 
     let effects = null;
 
@@ -118,7 +118,7 @@ async function onEventTriggered(event, source, meta, isManual = false, isRetrigg
 
     for (let eventSetting of eventSettings) {
 
-        if (!isRetrigger && !isManual && (eventSetting.customCooldown || event.cached)) {
+        if (!isRetrigger && (isSimulation || !isManual) && (eventSetting.customCooldown || event.cached)) {
             let cacheTtlInSecs;
             let cacheMetaKey;
 
@@ -136,7 +136,7 @@ async function onEventTriggered(event, source, meta, isManual = false, isRetrigg
             }
         }
 
-        if (eventSetting.filterData && !isManual) {
+        if (eventSetting.filterData && (isSimulation || !isManual)) {
             let passed = await filterManager.runFilters(eventSetting.filterData, {
                 eventSourceId: source.id,
                 eventId: event.id,

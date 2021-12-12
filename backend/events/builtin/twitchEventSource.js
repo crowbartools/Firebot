@@ -46,8 +46,7 @@ module.exports = {
             cached: true,
             cacheMetaKey: "username",
             manualMetadata: {
-                username: "Firebot",
-                userId: 0
+                username: "Firebot"
             },
             activityFeed: {
                 icon: "fas fa-heart",
@@ -63,11 +62,20 @@ module.exports = {
             cached: false,
             manualMetadata: {
                 username: "Firebot",
-                subPlan: "1000",
+                isPrime: false,
+                subPlan: {
+                    type: "enum",
+                    options: {
+                        Prime: "Prime",
+                        1000: "Tier 1",
+                        2000: "Tier 2",
+                        3000: "Tier 3"
+                    },
+                    value: "1000"
+                },
                 subMessage: "Test message",
                 totalMonths: 10,
                 streak: 8,
-                isPrime: false,
                 isResub: false
             },
             activityFeed: {
@@ -85,7 +93,15 @@ module.exports = {
             cached: false,
             manualMetadata: {
                 username: "Firebot",
-                subPlan: "1000"
+                subPlan: {
+                    type: "enum",
+                    options: {
+                        1000: "Tier 1",
+                        2000: "Tier 2",
+                        3000: "Tier 3"
+                    },
+                    value: "1000"
+                }
             },
             activityFeed: {
                 icon: "fas fa-star",
@@ -101,10 +117,19 @@ module.exports = {
             cached: false,
             manualMetadata: {
                 username: "MageEnclave",
+                gifterUsername: "Firebot",
+                isAnonymous: false,
+                subPlan: {
+                    type: "enum",
+                    options: {
+                        1000: "Tier 1",
+                        2000: "Tier 2",
+                        3000: "Tier 3"
+                    },
+                    value: "1000"
+                },
                 giftSubMonths: 1,
                 gifteeUsername: "MageEnclave",
-                gifterUsername: "Firebot",
-                subPlan: "1000"
             },
             activityFeed: {
                 icon: "fad fa-gift",
@@ -120,23 +145,30 @@ module.exports = {
             description: "When someone gifts random subs to the community of the channel",
             cached: false,
             manualMetadata: {
-                username: "Firebot",
-                subCount: 5,
-                subPlan: "1000",
                 gifterUsername: "Firebot",
                 isAnonymous: false,
+                subCount: 5,
+                subPlan: {
+                    type: "enum",
+                    options: {
+                        1000: "Tier 1",
+                        2000: "Tier 2",
+                        3000: "Tier 3"
+                    },
+                    value: "1000"
+                },
                 giftReceivers: [
-                    {gifteeUsername: "User1", giftSubMonths: 3},
-                    {gifteeUsername: "User2", giftSubMonths: 5},
-                    {gifteeUsername: "User3", giftSubMonths: 8},
-                    {gifteeUsername: "User4", giftSubMonths: 10},
-                    {gifteeUsername: "User5", giftSubMonths: 16}
+                    { gifteeUsername: "User1", giftSubMonths: 3 },
+                    { gifteeUsername: "User2", giftSubMonths: 5 },
+                    { gifteeUsername: "User3", giftSubMonths: 8 },
+                    { gifteeUsername: "User4", giftSubMonths: 10 },
+                    { gifteeUsername: "User5", giftSubMonths: 16 }
                 ]
             },
             activityFeed: {
                 icon: "fad fa-gifts",
                 getMessage: (eventData) => {
-                    return `**${eventData.isAnonymous ? "An Anonymous Gifter" : eventData.username}** gifted **${eventData.subCount} Tier ${eventData.subPlan.replace("000", "")}** sub${eventData.subCount > 1 ? 's' : ''} to the community`;
+                    return `**${eventData.isAnonymous ? "An Anonymous Gifter" : eventData.gifterUsername}** gifted **${eventData.subCount} Tier ${eventData.subPlan.replace("000", "")}** sub${eventData.subCount > 1 ? 's' : ''} to the community`;
                 }
             }
         },
@@ -149,7 +181,15 @@ module.exports = {
                 username: "CaveMobster",
                 gifteeUsername: "CaveMobster",
                 gifterUsername: "Firebot",
-                subPlan: "1000"
+                subPlan: {
+                    type: "enum",
+                    options: {
+                        1000: "Tier 1",
+                        2000: "Tier 2",
+                        3000: "Tier 3"
+                    },
+                    value: "1000"
+                }
             },
             activityFeed: {
                 icon: "fas fa-star",
@@ -185,7 +225,40 @@ module.exports = {
             manualMetadata: {
                 username: "Firebot",
                 message: "Test message",
-                badgeTier: "1000"
+                badgeTier: {
+                    type: "enum",
+                    options: {
+                        1: "1",
+                        100: "100",
+                        1000: "1k",
+                        5000: "5k",
+                        10000: "10k",
+                        25000: "25k",
+                        50000: "50k",
+                        75000: "75k",
+                        100000: "100k",
+                        200000: "200k",
+                        300000: "300k",
+                        400000: "400k",
+                        500000: "500k",
+                        600000: "600k",
+                        700000: "700k",
+                        800000: "800k",
+                        900000: "900k",
+                        1000000: "1M",
+                        1250000: "1.25M",
+                        1500000: "1.5M",
+                        1750000: "1.75M",
+                        2000000: "2M",
+                        2500000: "2.5M",
+                        3000000: "3M",
+                        3500000: "3.5M",
+                        4000000: "4M",
+                        4500000: "4.5M",
+                        5000000: "5M"
+                    },
+                    value: "1000"
+                }
             },
             activityFeed: {
                 icon: "fad fa-diamond",
