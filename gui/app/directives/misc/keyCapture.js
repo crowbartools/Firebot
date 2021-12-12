@@ -7,12 +7,12 @@
                 keyCode: "="
             },
             template: `
-                <div class="hotkey-capture" ng-class="{ 'capturing': $ctrl.isCapturingKey }">                   
+                <div class="hotkey-capture" ng-class="{ 'capturing': $ctrl.isCapturingKey }">
                     <span class="hotkey-display grayscale" ng-click="$ctrl.startKeyCapture()">
                         <span ng-if="$ctrl.keyDisplay == null || $ctrl.keyDisplay === ''" class="muted" style="font-weight: 500;">
                             {{ $ctrl.isCapturingKey ? 'Press a key...' : 'No key set.' }}
                         </span>
-                        <span>{{$ctrl.keyDisplay}}</span>                 
+                        <span>{{$ctrl.keyDisplay}}</span>
                     </span>
                     <button ng-click="$ctrl.startKeyCapture()" class="btn" ng-class="$ctrl.isCapturingKey ? 'btn-danger' : 'btn-default'">{{$ctrl.isCapturingKey ? 'Stop recording' : 'Record'}}</button>
 
