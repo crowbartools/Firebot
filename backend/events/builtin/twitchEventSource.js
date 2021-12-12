@@ -63,6 +63,7 @@ module.exports = {
             manualMetadata: {
                 username: "Firebot",
                 isPrime: false,
+                isResub: false,
                 subPlan: {
                     type: "enum",
                     options: {
@@ -75,8 +76,7 @@ module.exports = {
                 },
                 subMessage: "Test message",
                 totalMonths: 10,
-                streak: 8,
-                isResub: false
+                streak: 8
             },
             activityFeed: {
                 icon: "fas fa-star",
@@ -157,13 +157,16 @@ module.exports = {
                     },
                     value: "1000"
                 },
-                giftReceivers: [
-                    { gifteeUsername: "User1", giftSubMonths: 3 },
-                    { gifteeUsername: "User2", giftSubMonths: 5 },
-                    { gifteeUsername: "User3", giftSubMonths: 8 },
-                    { gifteeUsername: "User4", giftSubMonths: 10 },
-                    { gifteeUsername: "User5", giftSubMonths: 16 }
-                ]
+                giftReceivers: {
+                    type: "nested",
+                    value: [
+                        { gifteeUsername: "User1", giftSubMonths: 3 },
+                        { gifteeUsername: "User2", giftSubMonths: 5 },
+                        { gifteeUsername: "User3", giftSubMonths: 8 },
+                        { gifteeUsername: "User4", giftSubMonths: 10 },
+                        { gifteeUsername: "User5", giftSubMonths: 16 }
+                    ]
+                }
             },
             activityFeed: {
                 icon: "fad fa-gifts",
