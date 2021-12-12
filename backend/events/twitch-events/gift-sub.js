@@ -4,12 +4,14 @@ const NodeCache = require("node-cache");
 
 const { settings } = require("../../common/settings-access");
 const eventManager = require("../../events/EventManager");
+const logger = require("../../logwrapper");
 
 const communitySubCache = new NodeCache({ stdTTL: 2, checkperiod: 2 });
 
 /** @param {import("@twurple/chat").ChatCommunitySubInfo} subInfo */
 exports.triggerCommunitySubGift = (subInfo) => {
     const gifterDisplayName = subInfo.gifterDisplayName ? subInfo.gifterDisplayName : "An Anonymous Gifter";
+    logger.debug(`Received ${subInfo.count} community gift subs from ${gifterDisplayName}`);
 
     communitySubCache.set(`${gifterDisplayName}:${subInfo.plan}`, {subCount: subInfo.count, giftReceivers: []});
 };
@@ -17,12 +19,14 @@ exports.triggerCommunitySubGift = (subInfo) => {
 /** @param {import("@twurple/pubsub").PubSubSubscriptionMessage} subInfo */
 exports.triggerSubGift = (subInfo) => {
     if (settings.ignoreSubsequentSubEventsAfterCommunitySub()) {
+        logger.debug(`Attempting to process community gift sub from ${subInfo.gifterDisplayName}`);
         const cacheKey = `${subInfo.gifterDisplayName}:${subInfo.subPlan}`;
-        const cache = communitySubCache.get(cacheKey);
 
-        if (cacheKey != null) {
+        const cache = communitySubCache.get(cacheKey);
+        if (cache != null) {
             const communityCount = cache.subCount;
             const giftReceivers = cache.giftReceivers;
+
             if (communityCount != null) {
                 if (communityCount > 0) {
                     const newCount = communityCount - 1;
@@ -40,22 +44,29 @@ exports.triggerSubGift = (subInfo) => {
                             giftReceivers: giftReceivers
                         });
 
+                        logger.debug(`Community gift sub event triggered, deleting cache`);
                         communitySubCache.del(cacheKey);
                     }
+
+                    return;
                 }
+            } else {
+                logger.debug(`No community gift sub count found in cache`, cache);
             }
+        } else {
+            logger.debug(`No community gift sub data found in cache`);
         }
-    } else {
-        eventManager.triggerEvent("twitch", "subs-gifted", {
-            username: subInfo.userDisplayName,
-            giftSubMonths: subInfo.cumulativeMonths || 1,
-            gifteeUsername: subInfo.userDisplayName,
-            gifterUsername: subInfo.gifterDisplayName || subInfo.userDisplayName,
-            subPlan: subInfo.subPlan,
-            isAnonymous: subInfo.isAnonymous,
-            giftDuration: subInfo.giftDuration
-        });
     }
+
+    eventManager.triggerEvent("twitch", "subs-gifted", {
+        username: subInfo.userDisplayName,
+        giftSubMonths: subInfo.cumulativeMonths || 1,
+        gifteeUsername: subInfo.userDisplayName,
+        gifterUsername: subInfo.gifterDisplayName || subInfo.userDisplayName,
+        subPlan: subInfo.subPlan,
+        isAnonymous: subInfo.isAnonymous,
+        giftDuration: subInfo.giftDuration
+    });
 };
 
 /** @param {import("@twurple/chat").ChatSubGiftUpgradeInfo} subInfo */
