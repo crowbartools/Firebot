@@ -2,7 +2,7 @@
 <div style="min-width: 500px; height: 100%">
   <div style="height: 100%; display: flex; flex-direction: column">
     <div id="testDivFb" class="flex-row" style="height: 100%">
-      <div class="editior-column" style="padding-top: 15px; flex-shrink: 0">
+      <div class="editior-column pt-6" style="flex-shrink: 0">
         <div
           class="flex-row-center jspacebetween scene-row"
           style="flex-shrink: 0"
@@ -49,7 +49,7 @@
               <ul class="dropdown-menu" uib-dropdown-menu>
                 <li ng-click="copyEvents('mainevents')">
                   <a href
-                    ><i class="far fa-copy" style="margin-right: 10px"></i> Copy
+                    ><i class="far fa-copy mr-4"></i> Copy
                     events</a
                   >
                 </li>
@@ -59,7 +59,7 @@
                   ng-disabled="!hasCopiedEvents()"
                 >
                   <a href
-                    ><i class="far fa-paste" style="margin-right: 10px"></i>
+                    ><i class="far fa-paste mr-4"></i>
                     Paste event(s)</a
                   >
                 </li>
@@ -69,10 +69,10 @@
         </div>
 
         <div
+        class="mt-6 mb-4 mx-0"
           style="
             height: 2px;
             background: #3e3f40;
-            margin: 15px 0 10px;
             flex-shrink: 0;
           "
         ></div>
@@ -94,9 +94,9 @@
 
         <div style="height: 100%; overflow-y: auto">
           <div
-            class="muted"
+            class="muted ml-7"
             ng-if="es.getEventGroups().length < 1"
-            style="margin-left: 18px; font-size: 12px"
+            style="font-size: 12px"
           >
             No sets created.
           </div>
@@ -144,52 +144,48 @@
                 ></span>
                 <ul class="dropdown-menu" uib-dropdown-menu>
                   <li ng-click="showRenameEventGroupModal(group)">
-                    <a href
-                      ><i class="far fa-pen" style="margin-right: 10px"></i>
-                      Rename</a
-                    >
+                    <a href>
+                      <i class="far fa-pen mr-4"></i>
+                      Rename
+                    </a>
                   </li>
                   <li ng-click="es.toggleEventGroupActiveStatus(group.id)">
                     <a href
                       ><i
-                        class="fas"
+                        class="fas mr-4"
                         ng-class="{'fa-toggle-on': !group.active, 'fa-toggle-off': group.active}"
-                        style="margin-right: 10px"
                       ></i
                       >{{group.active ? 'Deactivate' : 'Activate'}}</a
                     >
                   </li>
                   <li ng-click="es.duplicateEventGroup(group)">
-                    <a href
-                      ><i class="far fa-clone" style="margin-right: 10px"></i>
-                      Duplicate set</a
-                    >
+                    <a href>
+                      <i class="far fa-clone mr-4"></i>
+                      Duplicate set
+                    </a>
                   </li>
                   <li ng-click="showDeleteGroupModal(group)">
-                    <a href style="color: #fb7373"
-                      ><i
-                        class="far fa-trash-alt"
-                        style="margin-right: 10px"
-                      ></i>
-                      Delete set</a
-                    >
+                    <a href style="color: #fb7373">
+                      <i class="far fa-trash-alt mr-4"></i>
+                      Delete set
+                    </a>
                   </li>
                   <li class="divider"></li>
                   <li ng-click="copyEvents(group.id)">
-                    <a href
-                      ><i class="far fa-copy" style="margin-right: 10px"></i>
-                      Copy events</a
-                    >
+                    <a href>
+                      <i class="far fa-copy mr-4"></i>
+                      Copy events
+                    </a>
                   </li>
                   <li
                     ng-class="{'disabled': !hasCopiedEvents()}"
                     ng-click="pasteEvents(group.id)"
                     ng-disabled="!hasCopiedEvents()"
                   >
-                    <a href
-                      ><i class="far fa-paste" style="margin-right: 10px"></i>
-                      Paste event(s)</a
-                    >
+                    <a href>
+                      <i class="far fa-paste mr-4"></i>
+                      Paste event(s)
+                    </a>
                   </li>
                 </ul>
               </div>
@@ -207,14 +203,14 @@
                 ng-click="showAddOrEditEventModal()"
                 class="btn btn-primary"
               >
-                <i class="fas fa-plus-circle" style="margin-right: 5px"></i> New
+                <i class="fas fa-plus-circle mr-2"></i> New
                 Event
               </button>
               <button
                 ng-click="simulateEventsByType()"
                 class="btn btn-default"
               >
-                <i class="fas fa-play-circle" style="margin-left: 5px"></i> Simulate
+                <i class="fas fa-play-circle ml-2"></i> Simulate
                 Event
               </button>
             </div>
@@ -223,7 +219,7 @@
               ng-hide="getSelectedEvents().length < 1"
               style="display: flex; flex-direction: row; align-items: center"
             >
-              <sort-tag-dropdown context="events" style="margin-right: 10px" />
+              <sort-tag-dropdown context="events" class="mr-4" />
 
               <searchbar
                 placeholder-text="Search Events"
@@ -233,24 +229,20 @@
             </div>
           </div>
 
-          <div style="padding: 0 20px 20px 20px">
+          <div class="pt-0 px-8 pb-8">
             <div
               ng-if="getSelectedEvents().length < 1"
-              class="noselect muted"
-              style="margin: 13px 0 0 13px"
+              class="noselect muted mt-5 ml-5 mb-0 mr-0"
             >
-              <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span
-              ><span style="margin-left: 8px"
-                >No events saved. You should make one! :)</span
-              >
+              <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span>
+              <span class="ml-3">No events saved. You should make one! :)</span>
             </div>
 
             <div
               ng-if="getSelectedEvents().length > 0 && filteredEvents && filteredEvents.length < 1"
-              class="noselect muted"
-              style="margin: 13px 0 0 13px"
+              class="noselect muted mt-5 ml-5 mb-0 mr-0"
             >
-              <span style="margin-left: 8px">No events found.</span>
+              <span class="ml-3">No events found.</span>
             </div>
 
             <table

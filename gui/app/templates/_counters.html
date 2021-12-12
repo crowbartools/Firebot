@@ -1,9 +1,9 @@
-<div style="margin-bottom: 10px">
-    <button class="btn btn-primary" ng-click="openCreateCounterModal()"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> New Counter</button>
+<div class="mb-4">
+    <button class="btn btn-primary" ng-click="openCreateCounterModal()"><i class="fas fa-plus-circle mr-2"></i> New Counter</button>
 </div>
 
-<div style="margin-top:20px;display:flex;flex-wrap: wrap;">
-    <div ng-repeat="counter in countersService.counters track by counter.id" class="fb-tile light-blue centered" style="margin-right: 10px;flex: 0 0 auto;width:250px;height:150px;">
+<div class="mt-8" style="display:flex;flex-wrap: wrap;">
+    <div ng-repeat="counter in countersService.counters track by counter.id" class="fb-tile light-blue centered mr-4" style="flex: 0 0 auto;width:250px;height:150px;">
         <div uib-dropdown uib-dropdown-toggle style="display:flex;flex-direction: column; position: absolute;top: 5px; right: 5px;">
             <div class="edit-btn" style="position: unset;"></div>
             <ul class="dropdown-menu" uib-dropdown-menu>
@@ -23,7 +23,7 @@
             </div>
         </div>
     </div>
-    <div ng-if="countersService.counters.length < 1" class="noselect muted" style="padding-left: 13px">
-        <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span><span style="margin-left:8px">No counters saved. You should make one! :) </span>
+    <div ng-if="countersService.counters.length < 1" class="noselect muted pl-5">
+        <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span><span class="ml-3">No counters saved. You should make one! :) </span>
     </div>
 </div>

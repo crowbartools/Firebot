@@ -1,8 +1,8 @@
 <div class="settings-page">
   <div class="settings-category-container">
-    <div 
-      ng-repeat="category in categories" 
-      ng-click="setSelectedCategory(category)" 
+    <div
+      ng-repeat="category in categories"
+      ng-click="setSelectedCategory(category)"
       class="settings-category"
       ng-class="{ 'cat-selected': selectedCategory.name === category.name }"
     >
@@ -23,9 +23,9 @@
     <h1 class="settings-category-title">{{selectedCategory.name}}</h1>
     <div class="settings-category-select">
 
-      <ui-select 
-        ng-model="selectedCategory" 
-        on-select="setSelectedCategory($item, $model)" 
+      <ui-select
+        ng-model="selectedCategory"
+        on-select="setSelectedCategory($item, $model)"
         theme="bootstrap"
         search-enabled="false"
       >
@@ -35,9 +35,9 @@
           </div>
         </ui-select-match>
         <ui-select-choices repeat="category in categories | filter: { name: $select.search }" style="position:relative;">
-          <div 
-            class="settings-category"
-            style="border-bottom: none;padding: 10px 0;"
+          <div
+            class="settings-category py-4 px-0"
+            style="border-bottom: none;"
           >
             <div>
               <i class="fal settings-category-icon" ng-class="category.icon"></i>
@@ -66,7 +66,7 @@
     <h4 class="modal-title">Edit Web Server Port</h4>
   </div>
   <div class="modal-body">
-    <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;margin-top: 15px;">
+    <div class="mt-6" style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
       <div style="width: 55%; position: relative;">
         <div class="form-group" ng-class="{'has-error': newPortError}">
           <label class="control-label" for="newPort">New Port</label>
@@ -124,7 +124,7 @@
     <h4 class="modal-title">Create Overlay Instance</h4>
   </div>
   <div class="modal-body">
-    <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;margin-top: 15px;">
+    <div class="mt-6" style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
       <div style="width: 75%; position: relative;">
         <div class="form-group" ng-class="{'has-error': createError}">
           <label class="control-label" for="name">Name</label>
@@ -145,16 +145,16 @@
   <div class="modal-header flex-row-center jspacebetween">
     <h4 class="modal-title" style="display:inline;">Manage Backups</h4>
   </div>
-  <div class="modal-body" style="overflow-y: auto;max-height: 300px;padding-bottom:0;">
-    <div class="list-group" style="margin-bottom: 0;">
+  <div class="modal-body pb-0" style="overflow-y: auto;max-height: 300px;">
+    <div class="list-group mb-0">
       <div class="list-group-item flex-row-center jspacebetween" ng-repeat="backup in backups track by $index">
         <div>
             <h4 class="list-group-item-heading" tooltip-append-to-body="true" uib-tooltip="{{backup.backupDateFull}}">{{backup.dayDifference < 1 ? backup.fromNowDisplay : backup.backupDateDisplay}}</h4>
             <p class="list-group-item-text muted">{{backup.size + " KB"}} | {{backup.version}} {{backup.isManual ? "| Manual" : ""}}
         </div>
         <div style="font-size:17px">
-          <span uib-tooltip="Prevent Auto-Deletion" tooltip-append-to-body="true" style="margin-right:15px; color:#4379f9;" ng-class="{'muted clickable-dark': !backup.neverDelete, 'clickable': backup.neverDelete}" ng-click="togglePreventDeletion(backup)"><i ng-class="{'far fa-unlock': !backup.neverDelete, 'fas fa-lock': backup.neverDelete}"></i></span>
-          <span uib-tooltip="Restore to this backup" tooltip-append-to-body="true" style="margin-right:15px;" class="clickable" ng-click="restoreBackup(backup)"><i class="fal fa-undo-alt"></i></span>
+          <span uib-tooltip="Prevent Auto-Deletion" tooltip-append-to-body="true" class="mr-6" style="color:#4379f9;" ng-class="{'muted clickable-dark': !backup.neverDelete, 'clickable': backup.neverDelete}" ng-click="togglePreventDeletion(backup)"><i ng-class="{'far fa-unlock': !backup.neverDelete, 'fas fa-lock': backup.neverDelete}"></i></span>
+          <span uib-tooltip="Restore to this backup" tooltip-append-to-body="true" class="clickable mr-6" ng-click="restoreBackup(backup)"><i class="fal fa-undo-alt"></i></span>
           <span uib-tooltip="Delete backup" tooltip-append-to-body="true" class="clickable" style="color:red;" ng-click="deleteBackup($index,backup)"><i class="fal fa-trash-alt"></i></span>
         </div>
       </div>
