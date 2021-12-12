@@ -11,7 +11,7 @@
         template: `
        <div ng-switch="$ctrl.metadata.type" style="padding-bottom: 20px;font-size: 15px;font-weight: 600;">
 
-          <div>{{$ctrl.metadata.type != 'boolean' && $ctrl.metadata.title ? $ctrl.metadata.title : ""}}</div>
+          <div style="margin-bottom: 5px;">{{$ctrl.metadata.type != 'boolean' && $ctrl.metadata.title ? $ctrl.metadata.title : ""}}</div>
           <div ng-if="$ctrl.metadata.type != 'boolean' && $ctrl.metadata.description" style="padding-bottom: 5px;font-size: 14px;font-weight: 100;opacity:0.8;">{{$ctrl.metadata.description}}</div>
 
           <div ng-switch-when="string">
@@ -26,7 +26,7 @@
           <div ng-switch-when="boolean" style="padding-top:10px;">
             <label class="control-fb control--checkbox" style="font-weight: 600;">
               {{$ctrl.metadata.title ? $ctrl.metadata.title : $ctrl.name}}
-              <tooltip text="$ctrl.metadata.description"></tooltip>
+              <tooltip ng-if="$ctrl.metadata.description" text="$ctrl.metadata.description"></tooltip>
               <input type="checkbox" ng-click="$ctrl.metadata.value = !$ctrl.metadata.value" ng-checked="$ctrl.metadata.value" aria-label="...">
               <div class="control__indicator"></div>
             </label>
