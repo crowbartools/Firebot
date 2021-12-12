@@ -4,19 +4,9 @@
 }
 
 .fit-header {
-    padding: 15px;
-    margin: 15px 0;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-}
-
-.fit-header-button {
-    margin-right: 10px;
-
-    i {
-        margin-right: 5px;
-    }
 }
 
 .fit-header-sort-search {
@@ -25,25 +15,9 @@
     align-items: center;
 }
 
-.fit-header-sort {
-    margin-right: 10px;
-}
-
 .fit-header-search {
     flex-basis: 250px;
     min-width: 217px;
-}
-
-.fit-body {
-    padding: 15px;
-}
-
-.fit-body-no-data {
-    padding-left: 13px;
-
-    .fit-body-no-data-message {
-        margin-left: 8px;
-    }
 }
 
 .fit-table-header {
@@ -62,10 +36,6 @@
 
         span {
             display: inline-block;
-
-            &.fit-custom-header-name {
-                margin: 0 5px
-            }
         }
     }
 }
@@ -86,24 +56,6 @@
 .fit-table-sort-tags {
     max-width: 135px;
     min-width: 100px;
-
-    div {
-        display: flex;
-        flex-wrap: wrap;
-        width: 100%;
-        overflow: auto;
-        max-height: 45.25px;
-
-        span {
-            background: gray;
-            border-radius: 15px;
-            padding: 1px 5px;
-            margin-right: 2px;
-            margin-bottom: 1px;
-            font-size: 10px;
-            line-height: 1.8;
-        }
-    }
 }
 
 .fit-table-drag-handle {
@@ -114,7 +66,6 @@
 
         div {
             text-align: right;
-            margin-left: 25px;
 
             span {
                 font-size: 30px;

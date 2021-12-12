@@ -16,13 +16,13 @@ jobs:
       - name: Setup Nodejs
         uses: 'actions/setup-node@v1'
         with:
-          node-version: "10.x"
+          node-version: "14.x"
 
       - name: Checkout branch
         uses: 'actions/checkout@v2'
 
       - name: Run Test Dependencies
-        run: npm install --global --production eslint@^5.16.0 node-sass@^4.13.1
+        run: npm install --global --production eslint@^8.3.0 node-sass@^4.14.1
 
       - name: Run Linter
         run: eslint . --quiet

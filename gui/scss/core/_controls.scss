@@ -194,10 +194,6 @@
     margin-left: 8px;
 }
 
-.modal-header {
-    position: relative;
-}
-
 .effects-actions-btn {
     border-radius: 50%;
     width: 22px;
@@ -210,10 +206,9 @@
     font-size: 26px;
     cursor: pointer;
     background: none;
-    //border: 1px solid #2d2d2d;
+
     &:hover {
         color: #707070;
-        //border: 1px solid #707070;
     }
 }
 
@@ -269,13 +264,6 @@
 .effect-setting-content {
     padding-left: 25px;
     padding-right: 15px;
-}
-
-.effect-edit-modal,
-.no-padding-modal {
-    .modal-body {
-        padding: 0 !important;
-    }
 }
 
 video::-webkit-media-controls-fullscreen-button {
@@ -542,13 +530,13 @@ table.fb-table-alt {
     & tbody tr {
         &:nth-child(even) {
             td {
-                background: $fb-table-row-bg - 5%;
+                background-color: adjust-color($fb-table-row-bg, $red: -5, $green: -5, $blue: -5);
             }
         }
         &.selectable:hover {
             td {
                 cursor: pointer;
-                background: $fb-table-row-bg - 2%;
+                background-color: adjust-color($fb-table-row-bg, $red: -2, $green: -2, $blue: -2);
             }
         }
     }
@@ -627,21 +615,21 @@ table.fb-table-alt {
 
     &:hover {
         cursor: pointer;
-        background: $fb-table-row-bg - 5%;
+        background: adjust-color($fb-table-row-bg, $red: -5, $green: -5, $blue: -5);
     }
 
     &.expanded {
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
-        background: $fb-table-row-bg - 5%;
+        background: adjust-color($fb-table-row-bg, $red: -5, $green: -5, $blue: -5);
         &:hover {
-            background: $fb-table-row-bg - 7%;
+            background: adjust-color($fb-table-row-bg, $red: -7, $green: -7, $blue: -7);
         }
     }
 }
 
 .sys-command-expanded {
-    border: 2px solid $fb-table-row-bg - 5%;
+    border: 2px solid adjust-color($fb-table-row-bg, $red: -5, $green: -5, $blue: -5);
     border-top: none;
     box-shadow: $sys-cmd-expanded-shadow;
     border-bottom-left-radius: 5px;
@@ -663,21 +651,21 @@ table.fb-table-alt {
 
     &:hover {
         cursor: pointer;
-        background: $fb-table-row-bg - 5%;
+        background: adjust-color($fb-table-row-bg, $red: -5, $green: -5, $blue: -5);
     }
 
     &.expanded {
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
-        background: $fb-table-row-bg - 5%;
+        background: adjust-color($fb-table-row-bg, $red: -5, $green: -5, $blue: -5);
         &:hover {
-            background: $fb-table-row-bg - 7%;
+            background: adjust-color($fb-table-row-bg, $red: -7, $green: -7, $blue: -7);
         }
     }
 }
 
 .expandable-item-expanded {
-    border: 2px solid $fb-table-row-bg - 5%;
+    border: 2px solid adjust-color($fb-table-row-bg, $red: -5, $green: -5, $blue: -5);
     border-top: none;
     box-shadow: $sys-cmd-expanded-shadow;
     border-bottom-left-radius: 5px;
@@ -814,4 +802,43 @@ table.fb-table-alt {
 
 .clear-btn-width {
     width: 70px !important;
+}
+
+.sort-tags {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    overflow: auto;
+    max-height: 45.25px;
+
+    .sort-tag {
+        display: flex;
+        margin-right: 5px;
+
+        span {
+            background: $sort-tags-bg;
+            margin-bottom: 1px;
+            font-size: 10px;
+            line-height: 1.8;
+        }
+
+        span:first-child {
+            border-radius: 15px 0 0 15px;
+            padding: 1px 0 1px 8px;
+        }
+
+        span:last-child {
+            border-radius: 0 15px 15px 0;
+            padding: 2px 8px 1px 7px;
+        }
+    }
+
+    .sort-tag-add {
+        border-radius: 15px;
+        padding: 2px 7px 1px 7px;
+        background: $sort-tags-bg;
+        margin-bottom: 1px;
+        font-size: 10px;
+        line-height: 1.8;
+    }
 }

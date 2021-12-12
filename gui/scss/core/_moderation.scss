@@ -1,32 +1,3 @@
-#event-log{
-    .event-sort{
-        margin: .5em;
-    }
-    .list{
-        list-style:none;
-        margin: 0px;
-        padding:0px;
-
-        .event-item{
-            span{
-                display:inline-block;
-                padding: .5em;
-            }
-            .milliseconds{
-                display:none;
-            }
-        }
-    }
-}
-
-#banned-users{
-    .list{
-        list-style:none;
-        margin:0px;
-        padding:0px;
-    }
-}
-
 .moderation-feature-block {
     width: 50%;
 
@@ -41,17 +12,17 @@
         flex-wrap: wrap;
 
         .moderation-feature-title {
-            font-weight: 600; 
+            font-weight: 600;
             font-size: 20px;
         }
 
         .moderation-feature-subtitle {
-            font-weight: 600; 
+            font-weight: 600;
             font-size: 16px;
         }
-    
+
         .toggle-button-container {
-            width: 150px; 
+            width: 150px;
             flex-shrink: 0;
             text-align: right;
         }

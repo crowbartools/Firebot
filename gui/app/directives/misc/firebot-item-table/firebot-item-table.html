@@ -3,14 +3,14 @@
     <scroll-sentinel
       element-class="fit-header"
     ></scroll-sentinel>
-    <div class="light-bg sticky-top fit-header">
+    <div class="light-bg sticky-top fit-header p-6 mx-0 my-6">
       <div class="flex-row">
         <button
           ng-click="$ctrl.onAddNewClicked()"
-          class="btn btn-primary hvr-icon-grow fit-header-button"
+          class="btn btn-primary hvr-icon-grow mr-4"
           ng-disabled="$ctrl.addNewButtonDisabled"
         >
-          <i class="fas fa-plus-circle hvr-icon"></i>
+          <i class="fas fa-plus-circle hvr-icon mr-2"></i>
           {{$ctrl.addNewButtonText}}
         </button>
 
@@ -20,7 +20,8 @@
       <div class="fit-header-sort-search" ng-show="$ctrl.items.length > 0">
         <sort-tag-dropdown
           context="{{$ctrl.sortTagContext}}"
-          class="fit-header-sort"
+          on-update="$ctrl.updateSortTags()"
+          class="mr-4"
         />
         <searchbar
           placeholder-text="{{$ctrl.searchPlaceholder}}"
@@ -29,19 +30,19 @@
         ></searchbar>
       </div>
     </div>
-    <div class="fit-body">
+    <div class="p-6">
       <div
         ng-if="$ctrl.items.length === 0"
-        class="noselect muted fit-body-no-data"
+        class="noselect muted pl-5"
       >
         <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span
-        ><span class="fit-body-no-data-message">{{$ctrl.noDataMessage}}</span>
+        ><span class="ml-3">{{$ctrl.noDataMessage}}</span>
       </div>
       <div
         ng-if="$ctrl.items.length > 0 && filteredItems && filteredItems.length < 1"
-        class="noselect muted fit-body-no-data"
+        class="noselect muted pl-5"
       >
-        <span class="fit-body-no-data-message">{{$ctrl.noneFoundMessage}}</span>
+        <span class="ml-3">{{$ctrl.noneFoundMessage}}</span>
       </div>
       <table
         ng-show="$ctrl.items.length > 0 && (filteredItems == null || filteredItems.length > 0)"
@@ -60,7 +61,7 @@
                 <span>
                   <i ng-show="header.icon" class="fas" ng-class="header.icon"></i>
                 </span>
-                <span ng-show="header.name" class="fit-custom-header-name">
+                <span ng-show="header.name" class="mx-2 my-0">
                   {{header.name}}
                 </span>
               </div>
@@ -81,10 +82,10 @@
             context-menu="$ctrl.getContextMenu(item)"
           >
             <td ng-if="$ctrl.testButton == true" class="fit-test-button-body">
-              <span 
+              <span
                 ng-click="$ctrl.onTestButtonClicked({ itemId: item.id })"
                 uib-tooltip="Test Effects"
-                tooltip-append-to-body="true"  
+                tooltip-append-to-body="true"
               >
                 <i class="fas fa-play-circle clickable"></i>
               </span>
@@ -105,11 +106,7 @@
               ng-if="$ctrl.sortTagContext != null"
               class="fit-table-sort-tags"
             >
-              <div>
-                <span ng-repeat="tagName in sts.getSortTagNames($ctrl.sortTagContext, item.sortTags)">
-                  {{tagName}}
-                </span>
-              </div>
+              <sort-tags-row item="item" context="$ctrl.sortTagContext" on-update="$ctrl.triggerItemsUpdate()"></sort-tags-row>
             </td>
 
             <td ng-if="$ctrl.showStatusIndicator">
@@ -126,7 +123,7 @@
                 >
                   <i class="fal fa-bars" aria-hidden="true"></i>
                 </span>
-                <div>
+                <div class="ml-10">
                   <span
                     class="noselect clickable"
                     context-menu="$ctrl.getContextMenu(item)"

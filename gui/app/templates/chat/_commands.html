@@ -37,7 +37,7 @@
         add-new-button-disabled="channelRewardsService.channelRewards.length >= 50"
         add-new-button-text="New Custom Command"
         on-add-new-clicked="openAddOrEditCustomCommandModal()"
-        context-menu-options="commandMenuOptions(item)"
+        context-menu-options="commandMenuOptions()"
         no-data-message="No custom commands saved. You should make one! :)"
         none-found-message="No custom commands found."
         search-placeholder="Search custom commands"
@@ -49,10 +49,8 @@
     <div ng-if="activeCmdTab === 0">
       <scroll-sentinel element-class="custom-cmd-header"></scroll-sentinel>
       <div
-        class="light-bg sticky-top custom-cmd-header"
+        class="light-bg sticky-top custom-cmd-header p-6 my-6 mx-0"
         style="
-          padding: 15px;
-          margin: 15px 0;
           display: flex;
           flex-direction: row;
           justify-content: space-between;
@@ -62,12 +60,12 @@
           ng-click="openAddOrEditCustomCommandModal()"
           class="btn btn-primary hvr-icon-grow"
         >
-          <i class="fas fa-plus-circle hvr-icon" style="margin-right: 5px"></i>
+          <i class="fas fa-plus-circle hvr-icon mr-2"></i>
           New Custom Command
         </button>
 
         <div style="display: flex; flex-direction: row; align-items: center">
-          <sort-tag-dropdown context="commands" style="margin-right: 10px" />
+          <sort-tag-dropdown context="commands" class="mr-4" />
 
           <searchbar
             ng-show="commandsService.getCustomCommands().length > 0"
@@ -77,23 +75,21 @@
           ></searchbar>
         </div>
       </div>
-      <div style="padding: 15px">
+      <div class="p-6">
         <div
           ng-if="commandsService.getCustomCommands().length === 0"
-          class="noselect muted"
-          style="padding-left: 13px"
+          class="noselect muted pl-5"
         >
           <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span
-          ><span style="margin-left: 8px"
+          ><span class="ml-3"
             >No custom commands saved. You should make one! :)
           </span>
         </div>
         <div
           ng-if="commandsService.getCustomCommands().length > 0 && filteredCommands && filteredCommands.length < 1"
-          class="noselect muted"
-          style="padding-left: 13px"
+          class="noselect muted pl-5"
         >
-          <span style="margin-left: 8px">No custom commands found.</span>
+          <span class="ml-3">No custom commands found.</span>
         </div>
         <table
           ng-show="commandsService.getCustomCommands().length > 0 && (filteredCommands == null || filteredCommands.length > 0)"
@@ -116,7 +112,7 @@
           >
             <tr
               ng-repeat="command in (commandsService.commandsCache.customCommands | sortTagSearch:sts.getSelectedSortTag('commands') | triggerSearch:commandsService.customCommandSearch) as filteredCommands track by command.id"
-              context-menu="commandMenuOptions(command)"
+              context-menu="commandMenuOptions()"
               style="width: 100%"
             >
               <td style="text-align: center">
@@ -142,8 +138,8 @@
                   text="'Description: ' + command.regexDescription"
                 ></tooltip>
                 <span
-                  class="muted"
-                  style="margin-left: 5px; font-size: 11px"
+                  class="muted ml-2"
+                  style="font-size: 11px"
                   ng-show="command.hidden"
                   uib-tooltip="Hidden from !commands list"
                   tooltip-append-to-body="true"
@@ -175,30 +171,8 @@
                 ></tooltip>
               </td>
               <td style="max-width: 135px; min-width: 100px">
-                <div
-                  style="
-                    display: flex;
-                    flex-wrap: wrap;
-                    width: 100%;
-                    overflow: auto;
-                    max-height: 45.25px;
-                  "
-                >
-                  <span
-                    ng-repeat="tagName in sts.getSortTagNames('commands', command.sortTags)"
-                    style="
-                      background: gray;
-                      border-radius: 15px;
-                      padding: 1px 5px;
-                      margin-right: 2px;
-                      margin-bottom: 1px;
-                      font-size: 10px;
-                      line-height: 1.8;
-                    "
-                  >
-                    {{tagName}}
-                  </span>
-                </div>
+                <sort-tags-row item="command" context="'commands'" on-update="commandsService.saveCustomCommand(command); commandsService.refreshCommands();">
+                </sort-tags-row>
               </td>
               <td>
                 <div
@@ -210,8 +184,7 @@
                   "
                 >
                   <span
-                    class="status-dot"
-                    style="margin-right: 5px"
+                    class="status-dot mr-2"
                     ng-class="{'active': command.active, 'notactive': !command.active}"
                   ></span
                   >{{command.active ? "Enabled" : "Disabled"}}
@@ -236,7 +209,7 @@
                     <span
                       class="noselect clickable"
                       style="font-size: 30px"
-                      context-menu="commandMenuOptions(command)"
+                      context-menu="commandMenuOptions()"
                       context-menu-on="click"
                       ><i class="fal fa-ellipsis-h"></i
                     ></span>
@@ -251,10 +224,8 @@
     <div ng-if="activeCmdTab === 1">
       <scroll-sentinel element-class="sys-cmd-header"></scroll-sentinel>
       <div
-        class="light-bg sticky-top sys-cmd-header"
+        class="light-bg sticky-top sys-cmd-header p-6 my-6 mx-0"
         style="
-          padding: 15px;
-          margin: 15px 0;
           display: flex;
           flex-direction: row;
           justify-content: flex-end;
@@ -266,16 +237,16 @@
           style="flex-basis: 250px"
         ></searchbar>
       </div>
-      <div style="padding: 15px">
+      <div class="p-6">
         <div
+          class="pb-4"
           style="
             display: flex;
             font-size: 11px;
             font-weight: bold;
-            padding-bottom: 10px;
           "
         >
-          <div class="muted" style="flex-basis: 25%; padding-left: 20px">
+          <div class="muted pl-8" style="flex-basis: 25%;">
             <i class="fas fa-tag"></i> NAME
           </div>
           <div class="muted" style="width: 20%">
@@ -289,8 +260,8 @@
           </div>
           <div class="muted" style="width: 20%"></div>
           <div
-            class="muted"
-            style="flex-basis: 30px; flex-shrink: 0; padding-right: 20px"
+            class="muted pr-8"
+            style="flex-basis: 30px; flex-shrink: 0;"
           ></div>
         </div>
         <sys-command-row

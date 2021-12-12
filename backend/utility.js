@@ -16,6 +16,10 @@ const escapeRegExp = (str) => {
     return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"); // eslint-disable-line no-useless-escape
 };
 
+const getUrlRegex = () => {
+    return /^(?:https?:(?:\/\/)?)?(?:[a-z\d](?:[a-z\d-]{0,253}[a-z\d])?\.)+[a-z][a-z\d-]{0,60}[a-z\d](?:$|[\\/])/i;
+};
+
 /**
  * Translates seconds into human readable format of seconds, minutes, hours, days, and years
  *
@@ -204,6 +208,7 @@ const wait = (ms) => {
 
 exports.getRandomInt = getRandomInt;
 exports.escapeRegExp = escapeRegExp;
+exports.getUrlRegex = getUrlRegex;
 exports.secondsForHumans = secondsForHumans;
 exports.formattedSeconds = formattedSeconds;
 exports.getTriggerIdFromTriggerData = getTriggerIdFromTriggerData;

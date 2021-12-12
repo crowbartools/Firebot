@@ -12,8 +12,7 @@
     </button>
 
     <button
-      style="margin-top: 10px"
-      class="quick-action-btn"
+      class="quick-action-btn mt-4"
       uib-tooltip="Give Currency"
       append-tooltip-to-body="true"
       tooltip-placement="right"
@@ -24,8 +23,7 @@
     </button>
 
     <button
-      style="margin-top: 10px"
-      class="quick-action-btn"
+      class="quick-action-btn mt-4"
       uib-tooltip="Open Stream Preview"
       append-tooltip-to-body="true"
       tooltip-placement="right"
@@ -36,7 +34,7 @@
     </button>
 
 
-    
+
 
   </div>
 
@@ -44,7 +42,7 @@
     <div class="viewer-list-header">
       <span> CHAT USERS </span>
     </div>
-    <div class="chat-users" style="margin-top: 5px">
+    <div class="chat-users mt-2">
       <chat-user-category category="Moderators" role-key="mod" />
       <chat-user-category category="VIPs" role-key="vip" />
       <chat-user-category category="Viewers" role-key="viewer" />
@@ -61,13 +59,12 @@
       <button
         ng-hide="scrollGlued"
         ng-click="scrollGlued = true"
-        class="btn-sm clickable"
+        class="btn-sm clickable mb-4"
         style="
           position: absolute;
           bottom: 0px;
           left: 50%;
           transform: translateX(-50%);
-          margin-bottom: 10px;
           background: rgba(104, 105, 108, 0.6);
           border: none;
           color: white;
@@ -130,12 +127,11 @@
             tooltip-placement="left"
             tooltip-append-to-body="true"
           >
-            <span style="margin-left: 10px; width: 100%; text-align: center"
+            <span class="ml-4" style="width: 100%; text-align: center"
               >{{chatSender}}</span
             >
             <div
-              class="fb-arrow down"
-              style="margin-left: 10px; margin-right: 10px; margin-bottom: 3px"
+              class="fb-arrow down mx-4 mb-1"
             ></div>
           </span>
           <ul class="dropdown-menu">
@@ -179,13 +175,12 @@
           ng-show="afs.unacknowledgedCount() > 0"
           uib-tooltip="Unacknowledged events"
           tooltip-append-to-body="true"
+          class="ml-2 py-px px-2"
           style="
             background: rgb(119, 121, 121);
             border-radius: 30%;
-            padding: 1px 5px;
             color: white;
             font-size: 12px;
-            margin-left: 5px;
             display: inline;
             height: max-content;
             flex-grow: 0;
@@ -208,8 +203,7 @@
           <li ng-class="{'disabled': afs.activities.length < 1}">
             <a href ng-click="afs.toggleMarkAllAcknowledged()"
               ><i
-                class="far fa-check-square"
-                style="margin-right: 10px"
+                class="far fa-check-square mr-4"
                 aria-label="Mark all events as acknowledged"
               ></i>
               Mark all as {{afs.allAcknowledged() ? 'Unacknowledged' :
@@ -219,8 +213,7 @@
           <li>
             <a href ng-click="afs.showEditActivityFeedEventsModal()"
               ><i
-                class="far fa-toggle-off"
-                style="margin-right: 10px"
+                class="far fa-toggle-off mr-4"
                 aria-label="Edit events"
               ></i>
               Edit events</a
@@ -237,12 +230,12 @@
         ng-repeat="activity in afs.activities track by activity.id"
       >
         <div
+          class="mr-4"
           style="
             display: flex;
             flex-direction: column;
             height: 100%;
             align-items: center;
-            margin-right: 10px;
           "
         >
           <i
@@ -260,16 +253,15 @@
           ng-bind-html="activity.message"
         ></div>
         <div
+          class="ml-4"
           style="
-            margin-left: 10px;
             font-size: 15px;
             display: flex;
             align-items: center;
           "
         >
           <i
-            class="clickable far fa-redo"
-            style="margin-right: 10px"
+            class="clickable far fa-redo mr-4"
             ng-click="afs.retriggerEvent(activity.id)"
             uib-tooltip="Retrigger event"
             tooltip-placement="top-right"

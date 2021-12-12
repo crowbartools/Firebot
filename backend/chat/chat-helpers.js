@@ -7,6 +7,7 @@ const twitchClient = require("../twitch-api/api");
 const bttv = require("./third-party/bttv");
 const ffz = require("./third-party/ffz");
 const frontendCommunicator = require("../common/frontend-communicator");
+const utils = require("../utility");
 
 /**
  * @typedef FirebotChatMessage
@@ -181,7 +182,7 @@ exports.setUserProfilePicUrl = (userId, url, updateAccountAvatars = true) => {
     }
 };
 
-const URL_REGEX = /^(?:https?:(?:\/\/)?)?(?:[a-z\d][a-z\d-]{0,253}[a-z\d]\.)+[a-z][a-z\d-]{0,60}[a-z\d](?:$|[\\/])/i;
+const URL_REGEX = utils.getUrlRegex();
 
 /**
  * @param {FirebotChatMessage} firebotChatMessage

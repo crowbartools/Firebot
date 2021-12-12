@@ -1,3 +1,115 @@
+.modal-header {
+  position: relative;
+}
+
+.modal-subheader {
+  font-size: 15px;
+  text-transform: uppercase;
+  font-family: "Quicksand";
+  padding: 11px;
+  font-weight: 100;
+  color: $editor-text-color;
+}
+
+.effect-edit-modal,
+.no-padding-modal {
+    .modal-body {
+        padding: 0 !important;
+    }
+}
+
+.modal-open .appwrapper {
+  filter: blur(0.7px);
+}
+
+.modal-open .modal {
+  overscroll-behavior: contain;
+  will-change: transform;
+}
+
+.counter-wrapper {
+  display: flex;
+  padding: 0 20px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'Quicksand';
+  font-weight: 100;
+  line-height: 1.3;
+  margin-bottom: 50px;
+  margin-top: 20px;
+
+  .small-num {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      height: 70px;
+      flex-shrink: 0;
+      .value {
+          font-size: 35px;
+          height: 50px;
+          max-width: 80px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: flex;
+          align-items: center;
+      }
+      .not-set {
+          font-size: 15px;
+          opacity: 0.7;
+          display: flex;
+          align-items: center;
+          height: 100%;
+      }
+  }
+
+  .big-num {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      .value {
+          font-size: 85px;
+          max-width: 295px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: flex;
+          align-items: center;
+      }
+  }
+
+  .counter-title {
+      font-size: 14px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+  }
+
+  .edit-icon {
+      font-size:9px;
+      margin-left: 3px;
+  }
+
+  .bar {
+      height: 2px;
+      margin: 0px 20px;
+      background: #6b6b6b;
+      border-radius: 5px;
+      width: 100%;
+  }
+}
+
+.use-title {
+  font-weight: 100;
+  text-transform: uppercase;
+  font-size: 19px;
+  font-family: 'Quicksand';
+}
+
 .context-menu-modal-header {
     .modal-title {
         margin-right: auto;

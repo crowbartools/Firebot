@@ -222,21 +222,6 @@
                 return event;
             }
 
-            $scope.toggleSortTag = (eventId, tagId) => {
-                if (eventId == null || tagId == null) return;
-                const groupId = eventsService.getSelectedTab();
-                if (groupId === "mainevents") {
-                    const event = eventsService.getMainEvents().find(e => e.id === eventId);
-                    toggleSortTagForEvent(event, tagId);
-                    eventsService.saveMainEvents();
-                } else {
-                    const group = eventsService.getEventGroup(groupId);
-                    const event = group.events.find(e => e.id === eventId);
-                    toggleSortTagForEvent(event, tagId);
-                    eventsService.saveGroup(group);
-                }
-            };
-
             function addEventToGroup(event, groupId) {
                 if (groupId === "mainevents") {
                     eventsService.getMainEvents().push(event);
@@ -394,24 +379,6 @@
                         hasTopDivider: true
                     }
                 ];
-
-                const sortTags = sortTagsService.getSortTags("events");
-
-                if (sortTags.length > 0) {
-                    options.push({
-                        text: "Sort tags...",
-                        children: sortTags.map(st => {
-                            const isSelected = event.sortTags && event.sortTags.includes(st.id);
-                            return {
-                                html: `<a href><i class="${isSelected ? 'fas fa-check' : ''}" style="margin-right: ${isSelected ? '10' : '27'}px;"></i> ${st.name}</a>`,
-                                click: () => {
-                                    $scope.toggleSortTag(event.id, st.id);
-                                }
-                            };
-                        }),
-                        hasTopDivider: true
-                    });
-                }
 
                 return options;
             };
