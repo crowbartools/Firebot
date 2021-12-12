@@ -4,9 +4,9 @@ module.exports = {
     // Indicated by a wrench @ https://eslint.org/docs/rules/
     "extends": "eslint:recommended",
 
-    "parser": "babel-parser",
+    // "parser": "babel-parser",
     "parserOptions": {
-        "parser": "babel-parser",
+        // "parser": "babel-parser",
         "ecmaVersion": "2020"
     },
 
