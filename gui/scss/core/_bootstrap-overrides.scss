@@ -110,9 +110,6 @@ textarea.form-control {
 	left: 100%;
 	margin-top: -6px;
 	margin-left: -1px;
-	//-webkit-border-radius: 0 6px 6px 6px;
-	//-moz-border-radius: 0 6px 6px 6px;
-	//border-radius: 0 6px 6px 6px;
 }
 
 .dropdown-submenu:hover>.dropdown-menu {
@@ -144,9 +141,6 @@ textarea.form-control {
 .dropdown-submenu.pull-left>.dropdown-menu {
 	left: -100%;
 	margin-left: 10px;
-	//-webkit-border-radius: 6px 0 6px 6px;
-	//-moz-border-radius: 6px 0 6px 6px;
-	//border-radius: 6px 0 6px 6px;
 }
 
 
@@ -356,7 +350,6 @@ textarea.form-control {
 // Form Control
 .input-group-addon {
     border: 2px solid $add-on-group-border;
-    //border-radius: 2px;
     box-shadow: none;
     background-color: $add-on-group-bg;
     color: $add-on-group-text;
@@ -364,7 +357,6 @@ textarea.form-control {
 
 .form-control {
     border: 2px solid $form-control-border;
-    //border-radius: 2px;
     height: 36px;
     box-shadow: none;
     background-color: $form-control-bg;
@@ -389,8 +381,6 @@ textarea.form-control {
     & .form-label {
         font-size: 15px;
         font-weight: 500;
-        //text-transform: uppercase;
-        //letter-spacing: 1px;
         opacity: 0.9;
     }
     & .help-block {

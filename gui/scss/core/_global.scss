@@ -481,7 +481,7 @@ body {
     &:hover{
       background: $text-dropdown-hover-color;
     }
-    
+
     .right-justified-dropdown {
       right:0px!important;
       left:inherit!important;
@@ -679,9 +679,6 @@ body {
 */
 
 .new-tile-grid {
-    //display: grid;
-    //grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    //grid-gap: 10px;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -1474,9 +1471,6 @@ thead th{
     border-top: none;
     padding-top: 0;
   }
-  &:last-child {
-    //margin-bottom: 0;
-  }
   .noti-icon {
     font-size: 27px;
     padding-left: 10px;
@@ -1781,10 +1775,6 @@ thead th{
 
 .tooltip {
   z-index:999999999999999999;
-}
-
-.effect-setting-container{
-  //padding:5px 0px;
 }
 
 /* Patronage */

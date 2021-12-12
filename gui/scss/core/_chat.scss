@@ -17,7 +17,6 @@
 }
 
 .chat-tab-content {
-    //padding: 15px;
     width: 100%;
     height: 100%;
     display: flex;
@@ -405,9 +404,6 @@
         .item-description {
             opacity: 0.8;
         }
-        &:not(:last-child) {
-            //margin-bottom: 10px;
-        }
     }
 }
 
@@ -447,7 +443,6 @@
     justify-content: center;
     align-items: center;
     user-select: none;
-    //border-radius: 5px;
 }
 
 .chatter-dropdown {
@@ -478,8 +473,6 @@
 
 // Userlist
 .chat-users {
-    //border: 2px solid rgba(170,164,164,0.43);
-    //background-color: $light-background-color + 20%;
     border-radius: 5px;
     padding: 10px;
     padding-top: 0;
