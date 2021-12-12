@@ -65,7 +65,7 @@
 .viewer-group-list{
     height:200px;
     overflow-y: scroll;
-    background: $light-background-color + 20%;
+    background: adjust-color($light-background-color, $red: 20, $green: 20, $blue: 20);
     border-radius: 3px;
     border: 0.01em solid $light-background-border;
     box-shadow: 2px 2px 7px $light-background-box-shadow;

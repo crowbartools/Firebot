@@ -155,7 +155,7 @@ body {
 .tab-header {
   width: 100%;
   height: 65px;
-  background: $light-background-color + 20%;
+  background: adjust-color($light-background-color, $red: 20, $green: 20, $blue: 20);
   border-bottom: 2px solid $light-background-border;
   display: flex;
   flex-flow: row;
@@ -182,7 +182,7 @@ body {
  display: flex;
 }
 .content-block {
- background: $light-background-color + 20%;
+ background: adjust-color($light-background-color, $red: 20, $green: 20, $blue: 20);
  border-radius: 3px;
  border: 0.01em solid $light-background-border;
  box-shadow: 2px 2px 7px $light-background-box-shadow;
@@ -471,7 +471,7 @@ body {
     width: 160px;
     min-width: 160px;
     height: 62px;
-    background: $light-background-color + 20%;
+    background: adjust-color($light-background-color, $red: 20, $green: 20, $blue: 20);
     border-left: 2px solid $light-background-border;
     display: flex;
     align-items: center;
@@ -758,7 +758,7 @@ body {
         &.inactive{
             background: $dark-tile-background-color-inactive;
             .header{
-                background: $dark-tile-background-color-inactive + 10%;
+                background: adjust-color($dark-tile-background-color-inactive, $red: 10, $green: 10, $blue: 10);
             }
         }
         &.centered {
@@ -924,7 +924,7 @@ body {
   &.inactive{
     background: $dark-tile-background-color-inactive;
     .header{
-      background: $dark-tile-background-color-inactive + 10%;
+      background: adjust-color($dark-tile-background-color-inactive, $red: 10, $green: 10, $blue: 10);
     }
   }
   &.centered {
@@ -1465,7 +1465,7 @@ thead th{
   align-items: center;
   &:hover {
     cursor: pointer;
-    background-color: $notification-preview-wrapper-color - 7%;
+    background-color: adjust-color($notification-preview-wrapper-color, $red: -7, $green: -7, $blue: -7);
   }
   &:first-child {
     border-top: none;

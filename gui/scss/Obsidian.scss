@@ -1,10 +1,10 @@
 $light-background-color: #2F3136; //tab content bg
 $light-background-border: #373c3e;
-$light-background-box-shadow: #2a2b30 +7%;
+$light-background-box-shadow: adjust-color(#2a2b30, $red: 7, $green: 7, $blue: 7);
 $medium-background-color:  #313131;
 $dark-background-color: #1e2023; //sidebar 1
 $dark-background-border: #2e2f30; //sidebar 2
-$dark-background-box-shadow: #2d2b2b + 7%;
+$dark-background-box-shadow: adjust-color(#2d2b2b, $red: 7, $green: 7, $blue: 7);
 
 $content-text-color: white;
 
@@ -15,11 +15,11 @@ $highlight-color: #EBB11F;
 
 // Scrollbar
 $scrollbar-background-color: #3e3e40;
-$scrollbar-bar-color: $light-background-border + 40%;
+$scrollbar-bar-color: adjust-color($light-background-border, $red: 40, $green: 40, $blue: 40);
 
 // Navigation
 $left-nav-link-text-color: white;
-$left-nav-link-text-hover-color:#1E2023 + 4%;
+$left-nav-link-text-hover-color: adjust-color($dark-background-color, $red: 4, $green: 4, $blue: 4);
 $left-nav-link-text-selected-color: whitesmoke;
 $nav-link-bg: #181a1d;
 $sidebar-bg: #1e2023;
@@ -33,7 +33,7 @@ $editor-row-selected-bg: #212223;
 // Tiles
 $tile-text-color: white;
 $tile-text-faded-color: whitesmoke;
-$tile-border: 3px solid $light-background-color + 20%;
+$tile-border: 3px solid adjust-color($light-background-color, $red: 20, $green: 20, $blue: 20);
 
 $dark-tile-background-color:linear-gradient(16deg, #022442, #124b7d);
 $dark-tile-background-color-inactive: #A9A9A9;
@@ -53,7 +53,7 @@ $quaternary-tile-header-background-color: linear-gradient(16deg, #6BA65D, #81BD6
 $list-text-color: white;
 
 // Button Effects
-$effect-background-color: $light-background-color + 20%;
+$effect-background-color: adjust-color($light-background-color, $red: 20, $green: 20, $blue: 20);;
 $effect-list-overflow-btn-color: white;
 $effect-list-bg-color: #202021;
 $effect-option-title: #272729;

@@ -111,7 +111,7 @@
         .chatContent {
             color: $chatWhisperColor;
         }
-        background-color: $chat-message-alternate-bg - 15%;
+        background-color: adjust-color($chat-message-alternate-bg, $red: -15, $green: -15, $blue: -15);
     }
 
     &.isTagged {
@@ -450,7 +450,7 @@
     width: 100px;
     display: flex;
     justify-content: center;
-    border-right: 2px solid $light-background-color + 15%;
+    border-right: 2px solid adjust-color($light-background-color, $red: 15, $green: 15, $blue: 15);
     align-items: center;
     &:hover {
         background: rgba(128, 128, 128, 0.267);
@@ -631,7 +631,7 @@
     width: 100%;
     height: 100%;
     padding-bottom: 10px;
-    background: $light-background-color + 15%;
+    background: adjust-color($light-background-color, $red: 15, $green: 15, $blue: 15);
 }
 
 .chat-window {

@@ -541,13 +541,13 @@ table.fb-table-alt {
     & tbody tr {
         &:nth-child(even) {
             td {
-                background: $fb-table-row-bg - 5%;
+                background-color: adjust-color($fb-table-row-bg, $red: -5, $green: -5, $blue: -5);
             }
         }
         &.selectable:hover {
             td {
                 cursor: pointer;
-                background: $fb-table-row-bg - 2%;
+                background-color: adjust-color($fb-table-row-bg, $red: -2, $green: -2, $blue: -2);
             }
         }
     }
@@ -626,21 +626,21 @@ table.fb-table-alt {
 
     &:hover {
         cursor: pointer;
-        background: $fb-table-row-bg - 5%;
+        background: adjust-color($fb-table-row-bg, $red: -5, $green: -5, $blue: -5);
     }
 
     &.expanded {
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
-        background: $fb-table-row-bg - 5%;
+        background: adjust-color($fb-table-row-bg, $red: -5, $green: -5, $blue: -5);
         &:hover {
-            background: $fb-table-row-bg - 7%;
+            background: adjust-color($fb-table-row-bg, $red: -7, $green: -7, $blue: -7);
         }
     }
 }
 
 .sys-command-expanded {
-    border: 2px solid $fb-table-row-bg - 5%;
+    border: 2px solid adjust-color($fb-table-row-bg, $red: -5, $green: -5, $blue: -5);
     border-top: none;
     box-shadow: $sys-cmd-expanded-shadow;
     border-bottom-left-radius: 5px;
@@ -662,21 +662,21 @@ table.fb-table-alt {
 
     &:hover {
         cursor: pointer;
-        background: $fb-table-row-bg - 5%;
+        background: adjust-color($fb-table-row-bg, $red: -5, $green: -5, $blue: -5);
     }
 
     &.expanded {
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
-        background: $fb-table-row-bg - 5%;
+        background: adjust-color($fb-table-row-bg, $red: -5, $green: -5, $blue: -5);
         &:hover {
-            background: $fb-table-row-bg - 7%;
+            background: adjust-color($fb-table-row-bg, $red: -7, $green: -7, $blue: -7);
         }
     }
 }
 
 .expandable-item-expanded {
-    border: 2px solid $fb-table-row-bg - 5%;
+    border: 2px solid adjust-color($fb-table-row-bg, $red: -5, $green: -5, $blue: -5);
     border-top: none;
     box-shadow: $sys-cmd-expanded-shadow;
     border-bottom-left-radius: 5px;

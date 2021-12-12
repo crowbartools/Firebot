@@ -17,7 +17,7 @@ $highlight-color: #EBB11F;
 
 // Scrollbar
 $scrollbar-background-color: $medium-background-color;
-$scrollbar-bar-color: $dark-background-border + 50%;
+$scrollbar-bar-color: adjust-color($dark-background-border, $red: 50, $green: 50, $blue: 50);
 
 // Navigation
 $left-nav-link-text-color: white;

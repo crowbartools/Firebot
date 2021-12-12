@@ -1,10 +1,10 @@
 $light-background-color: #2A2F42;
 $light-background-border: #262c40;
-$light-background-box-shadow: #2A2F42 +7%;
+$light-background-box-shadow: adjust-color($light-background-color, $red: 7, $green: 7, $blue: 7);
 $medium-background-color: #022B69;
 $dark-background-color: #141828;
 $dark-background-border: #2E3240;
-$dark-background-box-shadow: #141828 + 7%;
+$dark-background-box-shadow: adjust-color($dark-background-color, $red: 7, $green: 7, $blue: 7);
 
 $content-text-color: white;
 
@@ -33,7 +33,7 @@ $editor-row-selected-bg: #141828;
 // Tiles
 $tile-text-color: white;
 $tile-text-faded-color: whitesmoke;
-$tile-border: 3px solid $light-background-color + 20%;
+$tile-border: 3px solid adjust-color($light-background-color, $red: 20, $green: 20, $blue: 20);
 
 $dark-tile-background-color:linear-gradient(16deg, #022442, #124b7d);
 $dark-tile-background-color-inactive: #A9A9A9;
@@ -53,7 +53,7 @@ $quaternary-tile-header-background-color: linear-gradient(16deg, #6BA65D, #81BD6
 $list-text-color: white;
 
 // Button Effects
-$effect-background-color: $light-background-color + 20%;
+$effect-background-color: adjust-color($light-background-color, $red: 20, $green: 20, $blue: 20);
 $effect-list-overflow-btn-color: white;
 $effect-list-bg-color: #1f2332;
 $effect-option-title: #24283a;

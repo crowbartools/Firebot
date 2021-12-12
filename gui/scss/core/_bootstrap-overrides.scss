@@ -315,7 +315,7 @@ textarea.form-control {
     color: $dropdown-menu-text;
     &:focus, &:hover {
         color: $dropdown-menu-text;
-        background-color: $dropdown-menu-bg - 15%;
+        background-color: adjust-color($dropdown-menu-bg, $red: -15, $green: -15, $blue: -15);
     }
 }
 
@@ -334,7 +334,7 @@ textarea.form-control {
 .ui-select-bootstrap .ui-select-choices-row>span:hover, .ui-select-bootstrap .ui-select-choices-row>span:focus {
     text-decoration: none;
     color: $dropdown-menu-text;
-    background-color: $dropdown-menu-bg - 15%;
+    background-color: adjust-color($dropdown-menu-bg, $red: -15, $green: -15, $blue: -15);
 }
 
 .ui-select-bootstrap > .ui-select-choices, .ui-select-bootstrap > .ui-select-no-choice {
@@ -363,7 +363,7 @@ textarea.form-control {
     color: $form-control-text;
     &:focus {
         box-shadow: none;
-        background-color: $form-control-bg - 10%;
+        background-color: adjust-color($form-control-bg, $red: -10, $green: -10, $blue: -10);
     }
     &.input-lg {
         height: 42px;
@@ -410,7 +410,7 @@ textarea.form-control {
 }
 
 .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
-    background-color: $form-control-bg + 50%;
+    background-color: adjust-color($form-control-bg, $red: 50, $green: 50, $blue: 50);
     opacity: 1;
 }
 
