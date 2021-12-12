@@ -827,7 +827,7 @@ table.fb-table-alt {
         margin-right: 5px;
 
         span {
-            background: gray;
+            background: $sort-tags-bg;
             margin-bottom: 1px;
             font-size: 10px;
             line-height: 1.8;
@@ -847,7 +847,7 @@ table.fb-table-alt {
     .sort-tag-add {
         border-radius: 15px;
         padding: 2px 7px 1px 7px;
-        background: gray;
+        background: $sort-tags-bg;
         margin-bottom: 1px;
         font-size: 10px;
         line-height: 1.8;

@@ -93,7 +93,7 @@
     }
     .chatEventInfo {
         font-size: 0.85em;
-        color: $alertcolor;
+        color: #ff0000;
     }
     &.isAction {
         .chatContent {
@@ -136,7 +136,7 @@
     }
     &.isDeleted .chatContent {
         text-decoration: line-through;
-        color: $chatDeletedColor;
+        color: #808080;
     }
     &.isDeleted.spoilers .chatContent {
         text-decoration: none;
@@ -151,7 +151,7 @@
         }
         &:hover {
             background: transparent;
-            color: $chatDeletedColor;
+            color: #808080;
             .chat-link,
             a {
                 color: #3e87da;
@@ -643,7 +643,7 @@
     display: flex;
     flex-direction: column;
     @media only screen and (max-width: 779px) {
-        border-left: 1px solid $chatBorder;
+        border-left: 1px solid #cecece;
     }
     &::-webkit-scrollbar-track {
         background-color: transparent;

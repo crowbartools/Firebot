@@ -147,18 +147,18 @@ textarea.form-control {
 /* Tabs */
 
 .nav-tabs {
-    border-bottom: 1px solid $nav-border-bottom;
+    border-bottom: 1px solid #b1b1b1;
 }
 
 .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
-    color: $selected-tab-text-color;
+    color: #ffffff;
     background-color: transparent;
     border: 1px solid transparent;
-    border-bottom: 1px solid $nav-border-selected;
+    border-bottom: 1px solid #ffffff;
 }
 
 .nav-tabs .nav-link {
-    color: $unselected-tab-text-color;
+    color: #c5c5c5;
 }
 
 .nav>li>a:focus, .nav>li>a:hover {
@@ -168,11 +168,11 @@ textarea.form-control {
 
 .nav-tabs>li>a:hover {
     border-color: transparent;
-    border-bottom: 1px solid $nav-border-hover;
+    border-bottom: 1px solid #e4e4e4;
 }
 
 .nav-tabs .nav-link:hover {
-    color: $nav-border-hover;
+    color: #e4e4e4;
 }
 
 // Buttons
@@ -460,7 +460,7 @@ label {
     align-items: center;
     .fb-tab {
         padding: 10px 15px;
-        color: $fb-tab-notactive-text-color;
+        color: #a09a9a;
         &:hover {
             color: $fb-tab-hover-text-color;
             cursor: pointer;
@@ -632,5 +632,5 @@ a {
 
 .list-group-item {
     background-color: $fb-table-row-bg;
-    border: 1px solid $fb-table-row-border;
+    border: 1px solid $light-background-color;
 }

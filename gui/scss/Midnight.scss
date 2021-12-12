@@ -1,85 +1,52 @@
-$light-background-color: #2A2F42;
+$light-background-color: #2a2f42;
 $light-background-border: #262c40;
 $light-background-box-shadow: adjust-color($light-background-color, $red: 7, $green: 7, $blue: 7);
-$medium-background-color: #022B69;
+$medium-background-color: #022b69;
 $dark-background-color: #141828;
-$dark-background-border: #2E3240;
+$dark-background-border: #2e3240;
 $dark-background-box-shadow: adjust-color($dark-background-color, $red: 7, $green: 7, $blue: 7);
 
-$content-text-color: white;
+$content-text-color: #ffffff;
 
-$bad-color:red;
-$good-color:lightgreen;
-$info-color:#30a6ce;
-$highlight-color: #EBB11F;
+$bad-color: #ff0000;
+$good-color: #90ee90;
+$info-color: #30a6ce;
+$highlight-color: #ebb11f;
 
 // Scrollbar
 $scrollbar-background-color: rgba(97, 97, 105, 0.58);
 $scrollbar-bar-color: #2f2f30;
 
 // Navigation
-$left-nav-link-text-color: white;
-$left-nav-link-text-hover-color:#141828;
-$left-nav-link-text-selected-color: whitesmoke;
-$nav-link-bg: #141828;
-$sidebar-bg: linear-gradient(135deg, #141828 0%, #2E3240 98%);
+$left-nav-link-text-color: $content-text-color;
+$left-nav-link-text-hover-color: $dark-background-color;
+$left-nav-link-text-selected-color: #f5f5f5;
+$nav-link-bg: $dark-background-color;
+$sidebar-bg: linear-gradient(135deg, $dark-background-color 0%, $dark-background-border 98%);
 
 // editor column
-$editor-column-bg: linear-gradient(to right, #232736 0%, #282C3A 100%);
-$editor-text-color: white;
+$editor-column-bg: linear-gradient(to right, #232736 0%, #282c3a 100%);
+$editor-text-color: $content-text-color;
 $editor-row-hover-bg: #21263d;
-$editor-row-selected-bg: #141828;
-
-// Tiles
-$tile-text-color: white;
-$tile-text-faded-color: whitesmoke;
-$tile-border: 3px solid adjust-color($light-background-color, $red: 20, $green: 20, $blue: 20);
-
-$dark-tile-background-color:linear-gradient(16deg, #022442, #124b7d);
-$dark-tile-background-color-inactive: #A9A9A9;
-$dark-tile-background-color-inactive-light: #cecece;
-$light-tile-background-color:linear-gradient(16deg, #339FC0, #46AFC6);
-$light-tile-header-background-color:linear-gradient(16deg, #2A8FAE, #45A8BF);
-
-$secondary-tile-background-color:linear-gradient(16deg, #EC7F2E, #FDA23C);
-$secondary-tile-header-background-color:linear-gradient(16deg, #F17F1E, #F6953A);
-
-$tertiary-tile-background-color:linear-gradient(16deg, #525657, #5A5B5C);
-
-$quaternary-tile-background-color: linear-gradient(16deg, #76BA60, #8CC673);
-$quaternary-tile-header-background-color: linear-gradient(16deg, #6BA65D, #81BD68);
-
-// List View
-$list-text-color: white;
+$editor-row-selected-bg: $dark-background-color;
 
 // Button Effects
-$effect-background-color: adjust-color($light-background-color, $red: 20, $green: 20, $blue: 20);
-$effect-list-overflow-btn-color: white;
+$effect-list-overflow-btn-color: #ffffff;
 $effect-list-bg-color: #1f2332;
 $effect-option-title: #24283a;
 
 // misc
 $text-dropdown-hover-color: $light-background-color;
-$board-settings-btn-color: darkgray;
-$change-board-dropdown-color: darkgray;
-$navbar-collapse-btn: orange;
-$downarrow-color: darkgray;
+$board-settings-btn-color: #a9a9a9;
+$change-board-dropdown-color: #a9a9a9;
+$downarrow-color: #a9a9a9;
+$sort-tags-bg: #808080;
 
-$toggle-button-off-bg-color: white;
+$toggle-button-off-bg-color: #ffffff;
 
 // Chat Window
-$usercolor: #37aad5;
-$bannedcolor: red;
-$procolor: #b143d1;
-$modcolor: #36e53a;
-$staffcolor: #dcb235;
-$ownercolor: white;
-$alertcolor: red;
-$alert-bg-color: darkgray;
 $chatWhisperColor: #e660f2;
-$chatDeletedColor: gray;
-$chatTextColor: white;
-$chatBorder: #cecece;
+$chatTextColor: $content-text-color;
 $chat-message-alternate-bg: #333748;
 $sticker-bg-color:#29374a;
 $chat-input-bg-color: #4D5266;
@@ -87,35 +54,30 @@ $activity-bg-color: #232325;
 
 // Connection panel
 $connection-tile-bg: #3e4356;
-$connection-tile-title: white;
+$connection-tile-title: $content-text-color;
 $connection-status-bubble-border: #282c3a;
 
 // notifications
 $notification-center-header-color: #3e4356;
-$notification-preview-wrapper-color: #2a2f42;
+$notification-preview-wrapper-color: $light-background-color;
 
 // Bootstrap overrides
-$nav-border-bottom: #b1b1b1;
-$nav-border-hover: rgb(228, 228, 228);
-$nav-border-selected: white;
-$selected-tab-text-color: white;
-$unselected-tab-text-color: #c5c5c5;
 $default-btn-bg-color: #838488;
-$default-btn-text-color: white;
+$default-btn-text-color: $content-text-color;
 $default-btn-border: #838488;
 $default-btn-hover-bg: #5c637a;
 $default-btn-hover-border: #5c637a;
 
 $form-control-bg: #525565;
 $form-control-border: transparent;
-$form-control-text: white;
+$form-control-text: $content-text-color;
 $add-on-group-bg: #7f808c;
 $add-on-group-border: transparent;
-$add-on-group-text: white;
+$add-on-group-text: $content-text-color;
 
 $dropdown-menu-bg: #3e4356;
 $dropdown-menu-border: #5a617b;
-$dropdown-menu-text: white;
+$dropdown-menu-text: $content-text-color;
 $dropdown-menu-divider-color: #5a617b;
 
 $muted-text-color: #e4e4e4;
@@ -135,23 +97,21 @@ $fb-tab-border-bottom-hover: #1a1c24;
 $fb-tab-hightlight-color: #5fdeff;
 $fb-unselected-text-color: #a6bcca;
 
-$fb-tab-notactive-text-color: #a09a9a;
 $fb-tab-hover-text-color: #ececec;
-$fb-tab-active-text-color:#ffffff;
+$fb-tab-active-text-color: $content-text-color;
 
-$fb-tab-divider-color: #262C40;
+$fb-tab-divider-color: $light-background-border;
 
 $project-dropdown-text-color: #f9f9f9;
 
-$fb-tab-title-color: white;
+$fb-tab-title-color: $content-text-color;
 
 $fb-table-row-bg: #3e4356;
-$fb-table-row-border: #2a2f42;
 $fb-table-shadow: none;
 
 $sys-cmd-expanded-shadow: none;
 
-$integration-row-bg: #2a2f42;
+$integration-row-bg: $light-background-color;
 
 /* Settings Page */
 $settings-sidebar-bg: #313644;
