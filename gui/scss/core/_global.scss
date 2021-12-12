@@ -621,30 +621,10 @@ body {
   .interative-status-subtitle.contracted {
     opacity: 0;
   }
-
 }
 
 .force-white-text {
   color: white !important;
-}
-
-.note-frame.panel {
-  margin-bottom: 0px;
-}
-
-
-
-
-.about-link {
-  text-align: center;
-  color: $highlight-color;
-  font-size: 10px;
-  text-decoration: underline;
-  cursor: pointer;
-  transition: 0.4s;
-  position: absolute;
-  width: 100%;
-  bottom: 1px;
 }
 
 .text-dropdown {
@@ -667,11 +647,6 @@ body {
   height: 5px;
   margin-bottom: 3px;
   margin-left: 6px
-}
-
-.about-link.contracted {
-  opacity: 0;
-  visibility: hidden;
 }
 
 /**
@@ -1082,26 +1057,6 @@ body {
   cursor: pointer;
 }
 
-.board-settings-icon {
-  margin-left: 15px;
-  font-size: 15px;
-  color: $board-settings-btn-color;
-}
-
-.board-settings-icon:hover {
-  animation:fa-spin-half 0.7s 1 linear;
-}
-
-@keyframes
-  fa-spin-half {
-    0% {
-      transform:rotate(0deg)
-    }
-    100%{
-      transform:rotate(60deg)
-    }
-  }
-
 //////
 // animations
 //////
@@ -1141,7 +1096,7 @@ body {
   margin-top:47px;
 }
 
-.wizard-accounts-title   {
+.wizard-accounts-title {
   text-transform: uppercase;
   font-weight: 600;
   color: $content-text-color;
@@ -1428,11 +1383,6 @@ thead th{
   right: 12px;
 }
 
-.modal-header {
-  position: relative;
-}
-
-
 .btn-matrix > .btn:nth-child(3n+4) {
   clear: left;
   margin-left: 0;
@@ -1668,44 +1618,6 @@ thead th{
   z-index:999999999999999999;
 }
 
-/* Patronage */
-
-.milestone {
-  position: absolute;
-  display: flex;
-  flex-direction: row;
-  width: 320px;
-  hr {
-    margin-right: 15px;
-    width: 110px;
-    height: 1px;
-    border: none;
-    border-top: 2px dashed $content-text-color;
-    opacity: 0.3;
-  }
-  .detail {
-    font-size: 16px;
-    font-weight: bolder;
-    line-height: 20px;
-    padding-top: 7px;
-    display: inline-block;
-    width: 125px;
-    .subtext {
-      font-size: 13px;
-      padding-left: 13px;
-      padding-bottom: 5px;
-      text-align: left;
-      font-weight: lighter;
-      line-height: 17px;
-      opacity: 0.6;
-    }
-  }
-}
-
-.animated-height {
-  transition: height 1s cubic-bezier(.2,.43,.25,.91);
-}
-
 .fb-transition {
   position:absolute!important;
   .modal-dialog {
@@ -1734,15 +1646,6 @@ thead th{
   color:$content-text-color;
 }
 
-.modal-open .appwrapper {
-  filter: blur(0.7px);
-}
-
-.modal-open .modal {
-  overscroll-behavior: contain;
-  will-change: transform;
-}
-
 .CodeMirror {
   border-radius: 4px !important;
 }
@@ -1768,15 +1671,6 @@ thead th{
   .note-editable {
     background-color: white !important;
   }
-}
-
-.modal-subheader {
-  font-size: 15px;
-  text-transform: uppercase;
-  font-family: "Quicksand";
-  padding: 11px;
-  font-weight: 100;
-  color: $editor-text-color;
 }
 
 .searchbar-wrapper {

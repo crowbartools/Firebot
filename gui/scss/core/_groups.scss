@@ -1,36 +1,18 @@
-
-.group-user-list-container{
-    .user-list-header{
-        margin-bottom:1em;
-    }
-    #group-user-list{
-        .list{
-            list-style:none;
-            margin:0px;
-            padding:0px;
-        }
-    }
-}
-
-.interactive-group-container{
+.interactive-group-container {
     display:flex;
     flex-wrap: wrap;
 }
-
-.effect-panel {
-    line-height: 1.1;
-    justify-content: space-between;
-}
-
 
 .dragHandle {
     cursor: move;
     opacity: 0.7;
     transition: 0.2s;
     visibility: visible;
+
     &:hover {
         opacity: 1;
     }
+
     &.hiddenHandle {
         opacity: 0;
         visibility: hidden;
@@ -45,9 +27,11 @@
     margin-left:10px;
     font-size: 12px;
     line-height: 1;
+
     &:hover {
         opacity: 1;
     }
+
     &.hiddenBtn {
         opacity: 0;
         visibility: hidden;
@@ -62,7 +46,7 @@
     white-space: nowrap;
 }
 
-.viewer-group-list{
+.viewer-group-list {
     height:200px;
     overflow-y: scroll;
     background: adjust-color($light-background-color, $red: 20, $green: 20, $blue: 20);
@@ -70,6 +54,7 @@
     border: 0.01em solid $light-background-border;
     box-shadow: 2px 2px 7px $light-background-box-shadow;
     padding:8px;
+
     &.bg-inverted {
         background: $light-background-color;
     }

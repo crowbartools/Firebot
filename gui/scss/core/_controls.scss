@@ -194,10 +194,6 @@
     margin-left: 8px;
 }
 
-.modal-header {
-    position: relative;
-}
-
 .effects-actions-btn {
     border-radius: 50%;
     width: 22px;
@@ -268,13 +264,6 @@
 .effect-setting-content {
     padding-left: 25px;
     padding-right: 15px;
-}
-
-.effect-edit-modal,
-.no-padding-modal {
-    .modal-body {
-        padding: 0 !important;
-    }
 }
 
 video::-webkit-media-controls-fullscreen-button {

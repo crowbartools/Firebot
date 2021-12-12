@@ -1,7 +1,3 @@
-.command-permissions {
-    padding: 1em;
-}
-
 /* Chat - second pass*/
 .fifty {
     max-height: 50px;
@@ -181,17 +177,6 @@
             vertical-align: sub;
         }
     }
-}
-
-.chatProgressionRank {
-    margin-left: 6px;
-    padding: 2px 3px;
-    border-radius: 2px;
-    font-size: 10px;
-    line-height: 1;
-    padding-left: 14px;
-    color: #2f3136;
-    transform: translateY(1px);
 }
 
 .chat-user-avatar-wrapper {
@@ -452,19 +437,6 @@
     justify-content: center;
     border-right: 2px solid adjust-color($light-background-color, $red: 15, $green: 15, $blue: 15);
     align-items: center;
-    &:hover {
-        background: rgba(128, 128, 128, 0.267);
-        cursor: pointer;
-    }
-}
-
-.chatfeed-send-btn {
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    border-left: 2px solid rgba(170, 164, 164, 0.43);
-    align-items: center;
-    padding: 0px 15px;
     &:hover {
         background: rgba(128, 128, 128, 0.267);
         cursor: pointer;

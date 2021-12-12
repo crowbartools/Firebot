@@ -1,8 +1,8 @@
 // Third Party
-@import 'bootstrap';
-@import 'animate';
-@import 'slider';
-@import 'select';
+@import './thirdparty/bootstrap';
+@import './thirdparty/animate';
+@import './thirdparty/slider';
+@import './thirdparty/select';
 
 // Custom
 @import 'global';
@@ -16,7 +16,6 @@
 @import 'connection-panel';
 @import 'viewer-data';
 @import 'effects';
-@import 'counter-modal';
 @import 'bootstrap-overrides';
 @import 'title-bar';
 @import 'modals';

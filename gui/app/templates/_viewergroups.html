@@ -5,7 +5,7 @@
 </div>
 
 <div ng-if="groupsService.getViewerGroups(true).length === 0" class="muted">
-    No viewer groups saved. You should make one! :) 
+    No viewer groups saved. You should make one! :)
 </div>
 
 <div class="content-block" ng-if="groupsService.getViewerGroups(true).length !== 0">
@@ -13,9 +13,9 @@
     <!-- Groups Tab -->
     <div class="row interactive-group-container">
       <div class="muted" ng-if="groupsService.getViewerGroups(true).length < 1">No groups saved yet.</div>
-      
+
       <!-- Show each group -->
-      
+
       <div ng-repeat="group in groupsService.getViewerGroups(true) track by $index" class="fb-tile orange centered">
         <div class="edit-btn" ng-click="showAddEditGroupModal(group)"></div>
         <div class="header">
@@ -53,13 +53,13 @@
       </div>
     </div>
     <div style="padding-top: 25px;">
-      <div class="user-list-header">
+      <div>
         <div class="settings-title">
           <h3 style="display:inline-block; font-size:28px; font-weight: 300;">Users</h3>
           <div style="display:inline-block; width:50%; float:right; position: relative;" ng-show="group.users.length > 5 || searchText.length > 0">
             <input type="text" class="form-control" placeholder="Search users" ng-model="searchText" style="padding-left: 27px;">
             <span class="searchbar-icon"><i class="far fa-search"></i></span>
-          </div>      
+          </div>
         </div>
       </div>
       <div id="user-list" style="padding-bottom: 20px;">
