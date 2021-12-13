@@ -1,8 +1,10 @@
 <scroll-sentinel element-class="effect-queue-header"></scroll-sentinel>
-<div class="p-6">
-    <button ng-click="addOrEditQueue()" class="btn btn-primary hvr-icon-grow mb-6">
+<div class="effect-queue-header p-6 mx-0 my-6">
+    <button class="btn btn-primary hvr-icon-grow" ng-click="addOrEditQueue()">
         <i class="fas fa-plus-circle hvr-icon mr-2"></i> New Effect Queue
     </button>
+</div>
+<div class="p-6">
     <div ng-if="eqs.getEffectQueues().length === 0" class="noselect muted pl-5">
         <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span><span class="ml-3">No effect queues saved. You should make one! :) </span>
     </div>

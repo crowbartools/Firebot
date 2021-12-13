@@ -1,8 +1,8 @@
-<div class="mb-4">
+<div class="p-6 mx-0 my-6">
     <button class="btn btn-primary" ng-click="openCreateCounterModal()"><i class="fas fa-plus-circle mr-2"></i> New Counter</button>
 </div>
 
-<div class="mt-8" style="display:flex;flex-wrap: wrap;">
+<div class="p-6" style="display:flex;flex-wrap: wrap;">
     <div ng-repeat="counter in countersService.counters track by counter.id" class="fb-tile light-blue centered mr-4" style="flex: 0 0 auto;width:250px;height:150px;">
         <div uib-dropdown uib-dropdown-toggle style="display:flex;flex-direction: column; position: absolute;top: 5px; right: 5px;">
             <div class="edit-btn" style="position: unset;"></div>
