@@ -155,7 +155,7 @@ body {
 .tab-header {
   width: 100%;
   height: 65px;
-  background: $light-background-color + 20%;
+  background: adjust-color($light-background-color, $red: 20, $green: 20, $blue: 20);
   border-bottom: 2px solid $light-background-border;
   display: flex;
   flex-flow: row;
@@ -182,7 +182,7 @@ body {
  display: flex;
 }
 .content-block {
- background: $light-background-color + 20%;
+ background: adjust-color($light-background-color, $red: 20, $green: 20, $blue: 20);
  border-radius: 3px;
  border: 0.01em solid $light-background-border;
  box-shadow: 2px 2px 7px $light-background-box-shadow;
@@ -397,7 +397,7 @@ body {
  right: 10px;
  font-size: 36px;
  color: white;
- color: $navbar-collapse-btn;
+ color: #ffa500;
  cursor: pointer;
 }
 
@@ -471,7 +471,7 @@ body {
     width: 160px;
     min-width: 160px;
     height: 62px;
-    background: $light-background-color + 20%;
+    background: adjust-color($light-background-color, $red: 20, $green: 20, $blue: 20);
     border-left: 2px solid $light-background-border;
     display: flex;
     align-items: center;
@@ -481,7 +481,7 @@ body {
     &:hover{
       background: $text-dropdown-hover-color;
     }
-    
+
     .right-justified-dropdown {
       right:0px!important;
       left:inherit!important;
@@ -621,30 +621,10 @@ body {
   .interative-status-subtitle.contracted {
     opacity: 0;
   }
-
 }
 
 .force-white-text {
   color: white !important;
-}
-
-.note-frame.panel {
-  margin-bottom: 0px;
-}
-
-
-
-
-.about-link {
-  text-align: center;
-  color: $highlight-color;
-  font-size: 10px;
-  text-decoration: underline;
-  cursor: pointer;
-  transition: 0.4s;
-  position: absolute;
-  width: 100%;
-  bottom: 1px;
 }
 
 .text-dropdown {
@@ -669,27 +649,205 @@ body {
   margin-left: 6px
 }
 
-.about-link.contracted {
-  opacity: 0;
-  visibility: hidden;
-}
-
 /**
 * tile cards
 */
 
+@mixin tile {
+  .header {
+    min-height: 40px;
+    width: 100%;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  &.dark-blue {
+      background: linear-gradient(16deg, #022442, #124b7d);
+  }
+
+  &.light-blue {
+      background: linear-gradient(16deg, #339fc0, #46afc6);
+
+      .header {
+          background: linear-gradient(16deg, #2a8fae, #45a8bf);
+      }
+  }
+
+  &.orange {
+      background: linear-gradient(16deg, #ec7F2e, #fda23c);
+
+      .header {
+          background: linear-gradient(16deg, #f17f1e, #f6953a);
+      }
+  }
+
+  &.gray {
+      background: #656D78;
+
+      .header {
+          background: #434A54
+      }
+  }
+
+  &.lavender {
+      background: #AC92ED;
+
+      .header {
+          background: #967BDC
+      }
+  }
+
+  &.grapefruit {
+      background: #ED5564;
+
+      .header {
+          background: #DB4453;
+      }
+  }
+
+  &.mint {
+      background: #48CFAE;
+
+      .header {
+          background: #34BD9B;
+      }
+  }
+
+  &.green {
+      background: linear-gradient(16deg, #76ba60, #8cc673);
+
+      .header {
+          background: linear-gradient(16deg, #6ba65d, #81bd68);
+      }
+  }
+
+  &.inactive {
+      background: #a9a9a9;
+
+      .header {
+          background: adjust-color(#a9a9a9, $red: 10, $green: 10, $blue: 10);
+      }
+  }
+
+  &.centered {
+      justify-content: center;
+  }
+
+  &.space-around {
+      justify-content: space-around;
+  }
+
+  &.flex-start {
+      justify-content: flex-start;
+  }
+
+  .title {
+      font-weight: 100;
+      font-size: 20px;
+      color: #ffffff;
+      margin-bottom: 5px;
+
+      &.edit-btn-spacer {
+          margin-top: 14px;
+      }
+
+      &.bold {
+          font-weight: 600;
+      }
+  }
+
+  .content {
+      padding: 5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      width: 100%;
+      flex-grow: 1;
+      flex-direction: column;
+      margin: 5px 0 5px 0;
+
+      &.row {
+          flex-direction: row;
+      }
+  }
+
+  .subtitle {
+      font-weight: 400;
+      font-size: 15px;
+      color: #ffffff;
+  }
+
+  .detail-wrapper {
+      margin-top: 5px;
+      min-width: 95px;
+
+      &.nomargin {
+          margin: 0;
+      }
+  }
+
+  .detail {
+      font-weight: 100;
+      font-size: 55px;
+      color: #ffffff;
+      line-height: 1;
+  }
+
+  .detail-description {
+      font-weight: 300;
+      font-size: 14px;
+      color: #f5f5f5;
+      opacity: 0.7;
+      text-transform: uppercase;
+  }
+
+  .edit-btn {
+      visibility: hidden;
+      position: absolute;
+      right: 5px;
+      top: 5px;
+      transition: 0.2s;
+      opacity: 0;
+      color: #ffffff;
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 100;
+      border: 1px #ffffff solid;
+      border-radius: 2px;
+      padding: 0px 2px 0px 2px;
+      cursor: pointer;
+
+      &:hover {
+          color: #ffffff;
+          border-color: #ffffff;
+          opacity: 1 !important;
+      }
+
+      &:before {
+          content: 'edit';
+      }
+  }
+
+  &:hover .edit-btn {
+      visibility: visible;
+      opacity: 0.5;
+  }
+}
+
 .new-tile-grid {
-    //display: grid;
-    //grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    //grid-gap: 10px;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     flex-wrap: wrap;
+
     .new-tile {
         flex-shrink: 0;
         flex-grow: 0;
-        color: $tile-text-color;
+        color: #ffffff;
         text-align: center;
         font-size: 15px;
         width: 165px;
@@ -704,161 +862,13 @@ body {
         margin-right: 10px;
         margin-bottom: 10px;
 
-        .header {
-            min-height: 40px;
-            width: 100%;
-            border-top-left-radius: 7px;
-            border-top-right-radius: 7px;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-        }
-        &.dark-blue {
-            background: $dark-tile-background-color;
-        }
-        &.light-blue {
-            background: $light-tile-background-color;
-            .header {
-                background: $light-tile-header-background-color;
-            }
-        }
-        &.orange {
-            background: $secondary-tile-background-color;
-            .header {
-                background: $secondary-tile-header-background-color;
-            }
-        }
-        &.gray {
-            background: #656D78;
-            .header {
-                background: #434A54
-            }
-        }
-        &.lavender {
-            background: #AC92ED;
-            .header {
-                background: #967BDC
-            }
-        }
-        &.grapefruit {
-            background: #ED5564;
-            .header {
-                background: #DB4453;
-            }
-        }
-        &.mint {
-            background: #48CFAE;
-            .header {
-                background: #34BD9B;
-            }
-        }
-        &.green {
-            background: $quaternary-tile-background-color;
-            .header {
-                background: $quaternary-tile-header-background-color;
-            }
-        }
-        &.inactive{
-            background: $dark-tile-background-color-inactive;
-            .header{
-                background: $dark-tile-background-color-inactive + 10%;
-            }
-        }
-        &.centered {
-            justify-content: center;
-        }
-        &.space-around {
-            justify-content: space-around;
-        }
-        &.flex-start {
-            justify-content: flex-start;
-        }
-        .title {
-            font-weight: 100;
-            font-size: 20px;
-            color: $tile-text-color;
-            margin-bottom: 5px;
-            &.edit-btn-spacer {
-                margin-top: 14px;
-            }
-            &.bold {
-                font-weight: 600;
-            }
-        }
-        .content {
-            padding: 5px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            width: 100%;
-            flex-grow: 1;
-            flex-direction: column;
-            margin: 5px 0 5px 0;
-            &.row {
-                flex-direction: row;
-            }
-        }
-        .subtitle {
-            font-weight: 400;
-            font-size: 15px;
-            color: $tile-text-color;
-        }
-        .detail-wrapper {
-            margin-top: 5px;
-            min-width: 95px;
-            &.nomargin {
-                margin: 0;
-            }
-        }
-        .detail {
-            font-weight: 100;
-            font-size: 55px;
-            color: $tile-text-color;
-            line-height: 1;
-        }
-        .detail-description {
-            font-weight: 300;
-            font-size: 14px;
-            color: $tile-text-faded-color;
-            opacity: 0.7;
-            text-transform: uppercase;
-        }
-        .edit-btn {
-            visibility: hidden;
-            position: absolute;
-            right: 5px;
-            top: 5px;
-            transition: 0.2s;
-            opacity: 0;
-            color: $tile-text-color;
-            font-size: 10px;
-            text-transform: uppercase;
-            font-weight: 100;
-            border: 1px $tile-text-color solid;
-            border-radius: 2px;
-            padding: 0px 2px 0px 2px;
-            cursor: pointer;
-            &:hover {
-                color: $tile-text-color;
-                border-color: $tile-text-color;
-                opacity: 1 !important;
-            }
-            &:before {
-                content: 'edit';
-            }
-        }
-        &:hover .edit-btn {
-            visibility: visible;
-            opacity: 0.5;
-        }
+        @include tile;
     }
 }
 
 .fb-tile {
   margin-bottom: 10px;
-  color: $tile-text-color;
-  //border: $tile-border;
+  color: #ffffff;
   text-align: center;
   font-size: 1.2em;
   width: 25%;
@@ -870,155 +880,8 @@ body {
   justify-content: space-between;
   align-items: center;
   position: relative;
-  .header {
-    min-height: 40px;
-    width: 100%;
-    border-top-left-radius: 7px;
-    border-top-right-radius: 7px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-  }
-  &.dark-blue {
-    background: $dark-tile-background-color;
-   }
-  &.light-blue {
-   background: $light-tile-background-color;
-   .header {
-     background: $light-tile-header-background-color;
-   }
-  }
-  &.orange {
-    background: $secondary-tile-background-color;
-    .header {
-      background: $secondary-tile-header-background-color;
-    }
-  }
-  &.gray {
-    background: #656D78;
-    .header {
-      background: #434A54
-    }
-  }
-  &.lavender {
-    background: #AC92ED;
-    .header {
-      background: #967BDC
-    }
-  }
-  &.grapefruit {
-    background: #ED5564;
-    .header {
-      background: #DB4453;
-    }
-  }
-  &.mint {
-    background: #48CFAE;
-    .header {
-      background: #34BD9B;
-    }
-  }
-  &.green {
-    background: $quaternary-tile-background-color;
-    .header {
-      background: $quaternary-tile-header-background-color;
-    }
-  }
-  &.inactive{
-    background: $dark-tile-background-color-inactive;
-    .header{
-      background: $dark-tile-background-color-inactive + 10%;
-    }
-  }
-  &.centered {
-      justify-content: center;
-  }
-  &.space-around {
-      justify-content: space-around;
-  }
-  &.flex-start {
-      justify-content: flex-start;
-  }
-  .title {
-    font-weight: 100;
-    font-size: 20px;
-    color: $tile-text-color;
-    margin-bottom: 5px;
-    &.edit-btn-spacer {
-      margin-top: 14px;
-    }
-    &.bold {
-      font-weight: 600;
-    }
-  }
-  .content {
-    padding: 5px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    width: 100%;
-    flex-grow: 1;
-    flex-direction: column;
-    margin: 5px 0 5px 0;
-    &.row {
-      flex-direction: row;
-    }
-  }
-  .subtitle {
-    font-weight: 400;
-    font-size: 15px;
-    color: $tile-text-color;
-  }
-  .detail-wrapper {
-    margin-top: 5px;
-    min-width: 95px;
-    &.nomargin {
-      margin: 0;
-    }
-  }
-  .detail {
-    font-weight: 100;
-    font-size: 55px;
-    color: $tile-text-color;
-    line-height: 1;
-  }
-  .detail-description {
-    font-weight: 300;
-    font-size: 14px;
-    color: $tile-text-faded-color;
-    opacity: 0.7;
-    text-transform: uppercase;
 
-  }
-  .edit-btn {
-    visibility: hidden;
-    position: absolute;
-    right: 5px;
-    top: 5px;
-    transition: 0.2s;
-    opacity: 0;
-    color: $tile-text-color;
-    font-size: 10px;
-    text-transform: uppercase;
-    font-weight: 100;
-    border: 1px $tile-text-color solid;
-    border-radius: 2px;
-    padding: 0px 2px 0px 2px;
-    cursor: pointer;
-    &:hover {
-      color: $tile-text-color;
-      border-color: $tile-text-color;
-      opacity: 1 !important;
-    }
-    &:before {
-      content: 'edit';
-    }
-  }
-  &:hover .edit-btn {
-    visibility: visible;
-    opacity: 0.5;
-  }
+  @include tile;
 }
 
 .effect-info {
@@ -1194,26 +1057,6 @@ body {
   cursor: pointer;
 }
 
-.board-settings-icon {
-  margin-left: 15px;
-  font-size: 15px;
-  color: $board-settings-btn-color;
-}
-
-.board-settings-icon:hover {
-  animation:fa-spin-half 0.7s 1 linear;
-}
-
-@keyframes
-  fa-spin-half {
-    0% {
-      transform:rotate(0deg)
-    }
-    100%{
-      transform:rotate(60deg)
-    }
-  }
-
 //////
 // animations
 //////
@@ -1253,7 +1096,7 @@ body {
   margin-top:47px;
 }
 
-.wizard-accounts-title   {
+.wizard-accounts-title {
   text-transform: uppercase;
   font-weight: 600;
   color: $content-text-color;
@@ -1468,14 +1311,11 @@ thead th{
   align-items: center;
   &:hover {
     cursor: pointer;
-    background-color: $notification-preview-wrapper-color - 7%;
+    background-color: adjust-color($notification-preview-wrapper-color, $red: -7, $green: -7, $blue: -7);
   }
   &:first-child {
     border-top: none;
     padding-top: 0;
-  }
-  &:last-child {
-    //margin-bottom: 0;
   }
   .noti-icon {
     font-size: 27px;
@@ -1542,11 +1382,6 @@ thead th{
   top: 3px;
   right: 12px;
 }
-
-.modal-header {
-  position: relative;
-}
-
 
 .btn-matrix > .btn:nth-child(3n+4) {
   clear: left;
@@ -1783,48 +1618,6 @@ thead th{
   z-index:999999999999999999;
 }
 
-.effect-setting-container{
-  //padding:5px 0px;
-}
-
-/* Patronage */
-
-.milestone {
-  position: absolute;
-  display: flex;
-  flex-direction: row;
-  width: 320px;
-  hr {
-    margin-right: 15px;
-    width: 110px;
-    height: 1px;
-    border: none;
-    border-top: 2px dashed $content-text-color;
-    opacity: 0.3;
-  }
-  .detail {
-    font-size: 16px;
-    font-weight: bolder;
-    line-height: 20px;
-    padding-top: 7px;
-    display: inline-block;
-    width: 125px;
-    .subtext {
-      font-size: 13px;
-      padding-left: 13px;
-      padding-bottom: 5px;
-      text-align: left;
-      font-weight: lighter;
-      line-height: 17px;
-      opacity: 0.6;
-    }
-  }
-}
-
-.animated-height {
-  transition: height 1s cubic-bezier(.2,.43,.25,.91);
-}
-
 .fb-transition {
   position:absolute!important;
   .modal-dialog {
@@ -1853,15 +1646,6 @@ thead th{
   color:$content-text-color;
 }
 
-.modal-open .appwrapper {
-  filter: blur(0.7px);
-}
-
-.modal-open .modal {
-  overscroll-behavior: contain;
-  will-change: transform;
-}
-
 .CodeMirror {
   border-radius: 4px !important;
 }
@@ -1887,15 +1671,6 @@ thead th{
   .note-editable {
     background-color: white !important;
   }
-}
-
-.modal-subheader {
-  font-size: 15px;
-  text-transform: uppercase;
-  font-family: "Quicksand";
-  padding: 11px;
-  font-weight: 100;
-  color: $editor-text-color;
 }
 
 .searchbar-wrapper {

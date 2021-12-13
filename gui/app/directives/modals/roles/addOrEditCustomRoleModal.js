@@ -16,7 +16,7 @@
                     <input type="text" class="form-control" ng-model="$ctrl.role.name" placeholder="Enter name">
                 </div>
                 <div style="padding-top: 25px;">
-                    <div class="user-list-header">
+                    <div>
                         <div class="settings-title" style="margin-bottom: 4px;display: flex;justify-content: space-between;">
                             <div style="display:flex; align-items: center;">
                                 <div style="display:inline-block;font-size: 14px;font-weight: 500;opacity: 0.7;margin:0;padding:0;text-transform: uppercase;margin-bottom: 1px;margin-left: 10px;">Viewers</div>
@@ -26,11 +26,11 @@
                             <div style="display:inline-block; width:50%;position: relative;" ng-show="$ctrl.role.viewers.length > 5 || searchText.length > 0">
                                 <input type="text" class="form-control" placeholder="Search viewers" ng-model="searchText" style="height: 30px;padding-left:27px;">
                                 <span class="searchbar-icon" style="top:5px;"><i class="far fa-search"></i></span>
-                            </div>      
+                            </div>
                     </div>
                 </div>
                 <div id="user-list" style="padding-bottom: 20px;">
-                    <div style="min-height: 45px;background-color:#282a2e;border-radius:2px;">    
+                    <div style="min-height: 45px;background-color:#282a2e;border-radius:2px;">
 
                         <div ng-show="$ctrl.role.viewers.length == 0" style="display:flex;height: 45px; align-items: center; justify-content: space-between;padding: 0 15px;">
                             <span class="muted">No users with this role.</span>
@@ -45,7 +45,7 @@
                             </div>
                         </div>
 
-                    </div>                   
+                    </div>
                     <div ng-show="$ctrl.role.viewers.length > $ctrl.pagination.pageSize" style="text-align: center;">
                         <ul uib-pagination total-items="viewerList.length" ng-model="$ctrl.pagination.currentPage" items-per-page="$ctrl.pagination.pageSize" class="pagination-sm" max-size="5" boundary-link-numbers="true" rotate="true"></ul>
                     </div>

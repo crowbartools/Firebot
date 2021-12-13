@@ -1,6 +1,6 @@
 
-<div style="display:flex;flex-direction: row;align-items: center;margin-bottom: 10px;">
-    <span style="text-transform: uppercase;font-weight: 200;font-size: 19px;margin-right: 10px;">Custom Roles</span>
+<div class="mb-4" style="display:flex;flex-direction: row;align-items: center;">
+    <span class="mr-4" style="text-transform: uppercase;font-weight: 200;font-size: 19px;">Custom Roles</span>
     <div class="clickable" ng-click="showAddOrEditCustomRoleModal()" style="font-size: 15px;"><i class="fas fa-plus-circle"></i></div>
 </div>
 
@@ -12,7 +12,7 @@
                 <div class="detail" style="font-size: 1.6em;">
                     {{role.name}}
                 </div>
-                <div class="detail-description" style="margin-top: 5px;"><i class="fal fa-user"></i> {{role.viewers.length}}</div>
+                <div class="detail-description mt-2"><i class="fal fa-user"></i> {{role.viewers.length}}</div>
             </div>
         </div>
     </div>
@@ -20,7 +20,7 @@
     <p ng-if="viewerRolesService.getCustomRoles().length < 1" class="muted">No custom roles saved.</p>
 </div>
 
-<h3 style="text-transform: uppercase;font-weight: 200;font-size: 19px;margin-top:30px;">Twitch Roles</h3>
+<h3 class="mt-12" style="text-transform: uppercase;font-weight: 200;font-size: 19px;">Twitch Roles</h3>
 <p class="muted">These roles are predefined by Twitch and cannot be edited.</p>
 <div class="new-tile-grid" style="width: 100%">
     <div ng-repeat="role in viewerRolesService.getTwitchRoles() track by $index" class="new-tile gray centered">
@@ -34,7 +34,7 @@
     </div>
 </div>
 
-<h3 style="text-transform: uppercase;font-weight: 200;font-size: 19px;margin-top:30px;">Firebot Roles</h3>
+<h3 class="mt-12" style="text-transform: uppercase;font-weight: 200;font-size: 19px;">Firebot Roles</h3>
 <p class="muted">These roles are predefined by Firebot and cannot be edited.</p>
 <div class="new-tile-grid" style="width: 100%">
     <div ng-repeat="role in viewerRolesService.getFirebotRoles() track by $index" class="new-tile gray centered">
@@ -48,7 +48,7 @@
     </div>
 </div>
 
-<h3 style="text-transform: uppercase;font-weight: 200;font-size: 19px;margin-top:30px;">Team Roles</h3>
+<h3 class="mt-12" style="text-transform: uppercase;font-weight: 200;font-size: 19px;">Team Roles</h3>
 <p ng-if="viewerRolesService.getTeamRoles().length >= 1" class="muted">These roles are predefined by Twitch and cannot be edited.</p>
 <div class="new-tile-grid" style="width: 100%">
     <div ng-repeat="role in viewerRolesService.getTeamRoles() track by $index" class="new-tile gray centered">

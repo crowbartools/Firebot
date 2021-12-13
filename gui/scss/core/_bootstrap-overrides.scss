@@ -110,9 +110,6 @@ textarea.form-control {
 	left: 100%;
 	margin-top: -6px;
 	margin-left: -1px;
-	//-webkit-border-radius: 0 6px 6px 6px;
-	//-moz-border-radius: 0 6px 6px 6px;
-	//border-radius: 0 6px 6px 6px;
 }
 
 .dropdown-submenu:hover>.dropdown-menu {
@@ -144,27 +141,24 @@ textarea.form-control {
 .dropdown-submenu.pull-left>.dropdown-menu {
 	left: -100%;
 	margin-left: 10px;
-	//-webkit-border-radius: 6px 0 6px 6px;
-	//-moz-border-radius: 6px 0 6px 6px;
-	//border-radius: 6px 0 6px 6px;
 }
 
 
 /* Tabs */
 
 .nav-tabs {
-    border-bottom: 1px solid $nav-border-bottom;
+    border-bottom: 1px solid #b1b1b1;
 }
 
 .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
-    color: $selected-tab-text-color;
+    color: #ffffff;
     background-color: transparent;
     border: 1px solid transparent;
-    border-bottom: 1px solid $nav-border-selected;
+    border-bottom: 1px solid #ffffff;
 }
 
 .nav-tabs .nav-link {
-    color: $unselected-tab-text-color;
+    color: #c5c5c5;
 }
 
 .nav>li>a:focus, .nav>li>a:hover {
@@ -174,11 +168,11 @@ textarea.form-control {
 
 .nav-tabs>li>a:hover {
     border-color: transparent;
-    border-bottom: 1px solid $nav-border-hover;
+    border-bottom: 1px solid #e4e4e4;
 }
 
 .nav-tabs .nav-link:hover {
-    color: $nav-border-hover;
+    color: #e4e4e4;
 }
 
 // Buttons
@@ -321,7 +315,7 @@ textarea.form-control {
     color: $dropdown-menu-text;
     &:focus, &:hover {
         color: $dropdown-menu-text;
-        background-color: $dropdown-menu-bg - 15%;
+        background-color: adjust-color($dropdown-menu-bg, $red: -15, $green: -15, $blue: -15);
     }
 }
 
@@ -340,7 +334,7 @@ textarea.form-control {
 .ui-select-bootstrap .ui-select-choices-row>span:hover, .ui-select-bootstrap .ui-select-choices-row>span:focus {
     text-decoration: none;
     color: $dropdown-menu-text;
-    background-color: $dropdown-menu-bg - 15%;
+    background-color: adjust-color($dropdown-menu-bg, $red: -15, $green: -15, $blue: -15);
 }
 
 .ui-select-bootstrap > .ui-select-choices, .ui-select-bootstrap > .ui-select-no-choice {
@@ -356,7 +350,6 @@ textarea.form-control {
 // Form Control
 .input-group-addon {
     border: 2px solid $add-on-group-border;
-    //border-radius: 2px;
     box-shadow: none;
     background-color: $add-on-group-bg;
     color: $add-on-group-text;
@@ -364,14 +357,13 @@ textarea.form-control {
 
 .form-control {
     border: 2px solid $form-control-border;
-    //border-radius: 2px;
     height: 36px;
     box-shadow: none;
     background-color: $form-control-bg;
     color: $form-control-text;
     &:focus {
         box-shadow: none;
-        background-color: $form-control-bg - 10%;
+        background-color: adjust-color($form-control-bg, $red: -10, $green: -10, $blue: -10);
     }
     &.input-lg {
         height: 42px;
@@ -389,8 +381,6 @@ textarea.form-control {
     & .form-label {
         font-size: 15px;
         font-weight: 500;
-        //text-transform: uppercase;
-        //letter-spacing: 1px;
         opacity: 0.9;
     }
     & .help-block {
@@ -420,7 +410,7 @@ textarea.form-control {
 }
 
 .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
-    background-color: $form-control-bg + 50%;
+    background-color: adjust-color($form-control-bg, $red: 50, $green: 50, $blue: 50);
     opacity: 1;
 }
 
@@ -470,7 +460,7 @@ label {
     align-items: center;
     .fb-tab {
         padding: 10px 15px;
-        color: $fb-tab-notactive-text-color;
+        color: #a09a9a;
         &:hover {
             color: $fb-tab-hover-text-color;
             cursor: pointer;
@@ -642,5 +632,5 @@ a {
 
 .list-group-item {
     background-color: $fb-table-row-bg;
-    border: 1px solid $fb-table-row-border;
+    border: 1px solid $light-background-color;
 }

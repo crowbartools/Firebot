@@ -1,13 +1,13 @@
 <div style="min-width: 800px;">
-    <div style="padding: 15px;">
+    <div class="p-6">
         <div>
-            <div style="margin: 0 0 25px;display: flex;flex-direction: row;justify-content: space-between;">
+            <div class="mt-0 mb-10 mx-0" style="display: flex;flex-direction: row;justify-content: space-between;">
                 <button ng-click="showAddOrEditQuoteModal()" class="btn btn-primary"><i class="far fa-plus"></i> Add Quote</button>
-                <div style="display: flex;flex-direction: row;justify-content: space-between;">           
+                <div style="display: flex;flex-direction: row;justify-content: space-between;">
                     <searchbar placeholder-text="Search quotes..." query="quoteSearch" style="flex-basis: 250px;"></searchbar>
-                </div>         
+                </div>
             </div>
-            <sortable-table 
+            <sortable-table
                 table-data-set="qs.quotes"
                 headers="headers"
                 query="quoteSearch"
@@ -17,7 +17,7 @@
                 starting-sort-field="createdAt"
                 sort-initially-reversed="true"
                 no-data-message="No quotes created yet!">
-            </sortable-table>  
+            </sortable-table>
         </div>
     </div>
 </div>
