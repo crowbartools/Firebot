@@ -4,21 +4,31 @@
 
     angular
         .module("firebotApp")
-        .factory("effectQueuesService", function(logger, backendCommunicator, utilityService) {
+        .factory("effectQueuesService", function(backendCommunicator, utilityService,
+            objectCopyHelper, ngToast) {
             let service = {};
 
-            let effectQueues = {};
+            service.effectQueues = [];
 
-            service.loadEffectQueues = async function() {
-                let queues = await backendCommunicator.fireEventAsync("getEffectQueues");
-                if (queues != null) {
-                    effectQueues = queues;
+            const updateEffectQueue = (effectQueue) => {
+                const index = service.effectQueues.findIndex(eq => eq.id === effectQueue.id);
+                if (index > -1) {
+                    service.effectQueues[index] = effectQueue;
+                } else {
+                    service.effectQueues.push(effectQueue);
                 }
             };
 
-            backendCommunicator.on("all-queues", queues => {
-                if (queues != null) {
-                    effectQueues = queues;
+            service.loadEffectQueues = async () => {
+                const effectQueues = await backendCommunicator.fireEventAsync("getEffectQueues");
+                if (effectQueues != null) {
+                    service.effectQueues = Object.values(effectQueues);
+                }
+            };
+
+            backendCommunicator.on("all-queues", effectQueues => {
+                if (effectQueues != null) {
+                    service.effectQueues = effectQueues;
                 }
             });
 
@@ -43,69 +53,112 @@
                 }
             ];
 
-            service.getEffectQueues = function() {
-                return Object.values(effectQueues);
+            service.getEffectQueues = () => {
+                return service.effectQueues;
             };
 
-            service.getEffectQueue = function(id) {
-                return effectQueues[id];
+            service.getEffectQueue = (id) => {
+                return service.effectQueues.find(eq => eq.id === id);
             };
 
-            service.saveEffectQueue = function(queue) {
-                if (!queue) return;
-                effectQueues[queue.id] = queue;
-                backendCommunicator.fireEvent("saveEffectQueue", queue);
+            service.saveEffectQueue = async (effectQueue) => {
+                const savedEffectQueue = await backendCommunicator.fireEventAsync("saveEffectQueue", effectQueue);
+
+                if (savedEffectQueue != null) {
+                    updateEffectQueue(savedEffectQueue);
+
+                    return true;
+                }
+
+                return false;
             };
 
-            service.deleteEffectQueue = function(queueId) {
-                if (!queueId) return;
-                delete effectQueues[queueId];
-                backendCommunicator.fireEvent("deleteEffectQueue", queueId);
+            service.saveAllEffectQueues = (effectQueues) => {
+                service.effectQueues = effectQueues;
+                backendCommunicator.fireEvent("saveAllEffectQueues", effectQueues);
             };
 
-            service.showAddEditEffectQueueModal = function(queueId) {
+            service.effectQueueNameExists = (name) => {
+                return service.effectQueues.some(eq => eq.name === name);
+            };
+
+            service.duplicateEffectQueue = (effectQueueId) => {
+                const effectQueue = service.effectQueues.find(eq => eq.id === effectQueueId);
+                if (effectQueue == null) {
+                    return;
+                }
+
+                const copiedEffectQueue = objectCopyHelper.copyObject("effect_queue", effectQueue);
+                copiedEffectQueue.id = null;
+
+                while (service.effectQueueNameExists(copiedEffectQueue.name)) {
+                    copiedEffectQueue.name += " copy";
+                }
+
+                service.saveEffectQueue(copiedEffectQueue).then(successful => {
+                    if (successful) {
+                        ngToast.create({
+                            className: 'success',
+                            content: 'Successfully duplicated an effect queue!'
+                        });
+                    } else {
+                        ngToast.create("Unable to duplicate effect queue.");
+                    }
+                });
+            };
+
+            service.deleteEffectQueue = (effectQueueId) => {
+                service.effectQueues = service.effectQueues.filter(eq => eq.id !== effectQueueId);
+                backendCommunicator.fireEvent("deleteEffectQueue", effectQueueId);
+            };
+
+            service.showAddEditEffectQueueModal = (effectQueueId) => {
                 return new Promise(resolve => {
-                    let queue;
-                    if (queueId != null) {
-                        queue = service.getEffectQueue(queueId);
+                    let effectQueue;
+
+                    if (effectQueueId != null) {
+                        effectQueue = service.getEffectQueue(effectQueueId);
                     }
 
                     utilityService.showModal({
                         component: "addOrEditEffectQueueModal",
                         size: "sm",
                         resolveObj: {
-                            queue: () => queue
+                            effectQueue: () => effectQueue
                         },
-                        closeCallback: resp => {
-                            let { effectQueue } = resp;
-
-                            service.saveEffectQueue(effectQueue);
-
-                            resolve(effectQueue.id);
+                        closeCallback: response => {
+                            resolve(response.effectQueue.id);
                         }
                     });
                 });
             };
 
-            service.showDeleteEffectQueueModal = function(queueId) {
-                if (queueId == null) return Promise.resolve(false);
+            service.showDeleteEffectQueueModal = (effectQueueId) => {
+                return new Promise(resolve => {
+                    if (effectQueueId == null) {
+                        resolve(false);
+                    }
 
-                const queue = service.getEffectQueue(queueId);
-                if (queue == null) return Promise.resolve(false);
+                    const queue = service.getEffectQueue(effectQueueId);
+                    if (queue == null) {
+                        resolve(false);
+                    }
 
-                return utilityService
-                    .showConfirmationModal({
-                        title: "Delete Effect Queue",
-                        question: `Are you sure you want to delete the effect queue "${queue.name}"?`,
-                        confirmLabel: "Delete",
-                        confirmBtnType: "btn-danger"
-                    })
-                    .then(confirmed => {
-                        if (confirmed) {
-                            service.deleteEffectQueue(queueId);
-                        }
-                        return confirmed;
-                    });
+                    return utilityService
+                        .showConfirmationModal({
+                            title: "Delete Effect Queue",
+                            question: `Are you sure you want to delete the effect queue "${queue.name}"?`,
+                            confirmLabel: "Delete",
+                            confirmBtnType: "btn-danger"
+                        })
+                        .then(confirmed => {
+                            if (confirmed) {
+                                service.deleteEffectQueue(effectQueueId);
+                            }
+
+                            resolve(confirmed);
+                        });
+                });
             };
 
             return service;

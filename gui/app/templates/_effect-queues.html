@@ -1,49 +1,13 @@
-<scroll-sentinel element-class="effect-queue-header"></scroll-sentinel>
-<div class="effect-queue-header p-6 mx-0 my-6">
-    <button class="btn btn-primary hvr-icon-grow" ng-click="addOrEditQueue()">
-        <i class="fas fa-plus-circle hvr-icon mr-2"></i> New Effect Queue
-    </button>
-</div>
-<div class="p-6">
-    <div ng-if="eqs.getEffectQueues().length === 0" class="noselect muted pl-5">
-        <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span><span class="ml-3">No effect queues saved. You should make one! :) </span>
-    </div>
-    <table ng-show="eqs.getEffectQueues().length > 0" class="fb-table">
-        <thead>
-            <tr style="font-size: 11px;">
-                <th class="muted pl-4"><i class="fas fa-tag"></i> NAME</th>
-                <th class="muted"><i class="fas fa-bring-forward"></i> MODE</th>
-                <th class="muted"><i class="fas fa-clock"></i> INTERVAL</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr ng-repeat="queue in eqs.getEffectQueues() track by queue.id">
-                <td class="command-trigger-cell pl-4">
-                    <span class="trigger">{{queue.name}}</span>
-                </td>
-                <td>
-                    {{getQueueModeName(queue.mode)}}
-                </td>
-                <td>
-                    {{queue.mode === 'interval' ? queue.interval+'s' : 'n/a'}}
-                </td>
-                <td>
-                    <div style="text-align: right;">
-                        <div uib-dropdown uib-dropdown-toggle class="pull-right">
-                            <span class="noselect clickable" style="font-size: 30px"><i class="fal fa-ellipsis-h"></i></span>
-                            <ul class="dropdown-menu" uib-dropdown-menu>
-                                <li>
-                                    <a href ng-click="addOrEditQueue(queue.id)">Edit</a>
-                                </li>
-                                <li>
-                                    <a href ng-click="deleteQueue(queue.id)" style="color: #fb7373;">Delete</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+<firebot-item-table
+    items="effectQueuesService.effectQueues"
+    on-items-update="onEffectQueuesUpdated(items)"
+    headers="headers"
+    sort-tag-context="effect queues"
+    orderable="true"
+    add-new-button-text="New Effect Queue"
+    on-add-new-clicked="effectQueuesService.showAddEditEffectQueueModal()"
+    context-menu-options="effectQueueOptions(item)"
+    no-data-message="No effect queues saved. You should make one! :)"
+    none-found-message="No effect queues found."
+    search-placeholder="Search effect queues"
+></firebot-item-table>
