@@ -20,6 +20,7 @@ class ReplaceVariableManager extends EventEmitter {
         this._registeredVariableHandlers.set(
             variable.definition.handle,
             {
+                definition: variable.definition,
                 handle: variable.definition.handle,
                 argsCheck: variable.argsCheck,
                 evaluator: variable.evaluator,
@@ -41,6 +42,9 @@ class ReplaceVariableManager extends EventEmitter {
             variables.push(value);
         }
         return variables;
+    }
+    getVariableHandlers() {
+        return this._registeredVariableHandlers;
     }
 
     evaluateText(input, metadata, trigger) {
@@ -155,7 +159,6 @@ frontendCommunicator.on("getReplaceVariableDefinitions", trigger => {
     for (const [key, value] of registeredVariables) {
         variables.push(value.definition);
     }
-
     if (trigger != null) {
         variables
             .filter(v => {
