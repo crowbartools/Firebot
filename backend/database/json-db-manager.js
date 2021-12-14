@@ -12,7 +12,7 @@ class JsonDbManager {
      */
     constructor(type, path) {
         this.type = type;
-        this._items = {};
+        this.items = {};
         this.db = profileManager.getJsonDbInProfile(path);
     }
 
@@ -26,7 +26,7 @@ class JsonDbManager {
             const data = this.db.getData("/");
 
             if (data) {
-                this._items = data;
+                this.items = data;
             }
 
             logger.debug(`Loaded ${this.type}s.`);
@@ -43,18 +43,18 @@ class JsonDbManager {
         if (itemId == null) {
             return null;
         }
-        return this._items[itemId];
+        return this.items[itemId];
     }
 
     /**
      * @returns {T[]}
      */
     getAllItems() {
-        if (this._items == null) {
+        if (this.items == null) {
             return null;
         }
 
-        return this._items;
+        return this.items;
     }
 
     /**
@@ -67,10 +67,10 @@ class JsonDbManager {
         }
 
         if (item.id != null) {
-            this._items[item.id] = item;
+            this.items[item.id] = item;
         } else {
             item.id = uuidv1();
-            this._items[item.id] = item;
+            this.items[item.id] = item;
         }
 
         try {
@@ -95,10 +95,10 @@ class JsonDbManager {
             return acc;
         }, {});
 
-        this._items = itemsObject;
+        this.items = itemsObject;
 
         try {
-            this.db.push("/", this._items);
+            this.db.push("/", this.items);
 
             logger.debug(`Saved all ${this.type} to file.`);
 
@@ -117,7 +117,7 @@ class JsonDbManager {
             return;
         }
 
-        delete this._items[itemId];
+        delete this.items[itemId];
 
         try {
             this.db.delete("/" + itemId);
