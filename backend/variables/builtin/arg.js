@@ -8,7 +8,7 @@ const {
 
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
-const { ExpressionArgumentsError } = require("../expression-errors");
+const expressionish = require('expressionish');
 
 let triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
@@ -76,12 +76,12 @@ const model = {
 
         // index needs to either be "all" or a number
         if (String(index).toLowerCase() !== "all" && isNaN(index)) {
-            throw new ExpressionArgumentsError("First argument needs to be either 'all' or a number.", 0);
+            throw new expressionish.ExpressionArgumentsError("First argument needs to be either 'all' or a number.", 0);
         }
 
         // upperIndex needs to either be null, "last", or a number
         if (upperIndex != null && String(upperIndex).toLowerCase() !== "last" && isNaN(upperIndex)) {
-            throw new ExpressionArgumentsError("Second argument needs to be either 'last' or a number.", 1);
+            throw new expressionish.ExpressionArgumentsError("Second argument needs to be either 'last' or a number.", 1);
         }
 
         return true;
