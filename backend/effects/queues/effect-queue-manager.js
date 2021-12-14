@@ -2,9 +2,10 @@
 
 const frontendCommunicator = require("../../common/frontend-communicator");
 const JsonDbManager = require("../../database/json-db-manager");
+const effectQueueRunner = require("./effect-queue-runner");
 
 /**
- * @typedef SavedEffectQueue
+ * @typedef EffectQueue
  * @property {string} id - the id of the effect queue
  * @property {string} name - the name of the effect queue
  * @property {string} mode - the mode of the effect queue
@@ -13,11 +14,22 @@ const JsonDbManager = require("../../database/json-db-manager");
  */
 
 /**
- * @extends {JsonDbManager<SavedPresetEffectList>}
+ * @extends {JsonDbManager<EffectQueue>}
  */
 class EffectQueueManager extends JsonDbManager {
     constructor() {
         super("Effect Queue", "/effects/effectqueues");
+    }
+
+    /**
+     * @param {EffectQueue}
+     * @returns {Promise.<EffectQueue>}
+     * */
+    async saveItem(effectQueue) {
+        const savedEffectQueue = await super.saveItem(effectQueue);
+        effectQueueRunner.updateQueueConfig(savedEffectQueue);
+
+        return savedEffectQueue;
     }
 
     /**

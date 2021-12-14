@@ -4,7 +4,7 @@ const frontendCommunicator = require("../../common/frontend-communicator");
 const JsonDbManager = require("../../database/json-db-manager");
 
 /**
- * @typedef SavedPresetEffectList
+ * @typedef PresetEffectList
  * @property {string} id - the id of the effect list
  * @property {string} name - the name of the effect list
  * @prop {object[]} args - the arguments if the effect list
@@ -15,7 +15,7 @@ const JsonDbManager = require("../../database/json-db-manager");
  */
 
 /**
- * @extends {JsonDbManager<SavedPresetEffectList>}
+ * @extends {JsonDbManager<PresetEffectList>}
  */
 class PresetEffectListManager extends JsonDbManager {
     constructor() {
@@ -37,10 +37,10 @@ frontendCommunicator.onAsync("getPresetEffectLists",
     async () => presetEffectListManager.getAllItems());
 
 frontendCommunicator.onAsync("savePresetEffectList",
-    async (/** @type {SavedPresetEffectList} */ presetEffectList) => await presetEffectListManager.saveItem(presetEffectList));
+    async (/** @type {PresetEffectList} */ presetEffectList) => await presetEffectListManager.saveItem(presetEffectList));
 
 frontendCommunicator.onAsync("saveAllPresetEffectLists",
-    async (/** @type {SavedPresetEffectList[]} */ allPresetEffectLists) => await presetEffectListManager.saveAllItems(allPresetEffectLists));
+    async (/** @type {PresetEffectList[]} */ allPresetEffectLists) => await presetEffectListManager.saveAllItems(allPresetEffectLists));
 
 frontendCommunicator.on("deletePresetEffectList",
     (/** @type {string} */presetEffectListId) => presetEffectListManager.deleteItem(presetEffectListId));
