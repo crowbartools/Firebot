@@ -33,6 +33,7 @@ class ReplaceVariableManager extends EventEmitter {
     }
 
     getReplaceVariables () {
+        // Map register variables Map to array
         let registeredVariables = this._registeredVariableHandlers;
         let variables = [];
         /* eslint-disable-next-line no-unused-vars */
