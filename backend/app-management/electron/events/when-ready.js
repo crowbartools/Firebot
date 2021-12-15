@@ -88,10 +88,10 @@ exports.whenReady = async () => {
     customRolesManager.loadCustomRoles();
 
     const effectQueueManager = require("../../../effects/queues/effect-queue-manager");
-    effectQueueManager.loadEffectQueues();
+    effectQueueManager.loadItems();
 
     const presetEffectListManager = require("../../../effects/preset-lists/preset-effect-list-manager");
-    presetEffectListManager.loadPresetEffectLists();
+    presetEffectListManager.loadItems();
 
     const startupScriptsManager = require("../../../common/handlers/custom-scripts/startup-scripts-manager");
     startupScriptsManager.loadStartupConfig();

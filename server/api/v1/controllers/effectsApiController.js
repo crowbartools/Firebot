@@ -65,7 +65,7 @@ exports.runPresetList = async function(req, res) {
         });
     }
 
-    const presetList = presetEffectListManager.getPresetEffectList(presetListId);
+    const presetList = presetEffectListManager.getItem(presetListId);
     if (presetList == null) {
         return res.status(404).send({
             status: "error",
