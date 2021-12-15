@@ -15,11 +15,13 @@ function getSpinLabel(spinCount) {
     }
 }
 
-async function spin(username, successChance, chatter) {
+async function spin(showSpinInActionMsg, spinInActionMsg, successChance, chatter) {
 
     let successCount = 0;
 
-    twitchChat.sendChatMessage(`${username} pulls back the lever...`, null, chatter);
+    if (showSpinInActionMsg) {
+        twitchChat.sendChatMessage(spinInActionMsg, null, chatter);
+    }
 
     for (let currentSpin = 1; currentSpin <= SPIN_COUNT; currentSpin++) {
 
