@@ -108,7 +108,7 @@ function importSetup(setup, selectedCurrency) {
     // effect queues
     const effectQueues = setup.components.effectQueues || [];
     for (const queue of effectQueues) {
-        effectQueueManager.saveEffectQueue(queue);
+        effectQueueManager.saveItem(queue);
     }
     effectQueueManager.triggerUiRefresh();
 
@@ -152,7 +152,7 @@ function importSetup(setup, selectedCurrency) {
     // preset effect lists
     const presetEffectLists = setup.components.presetEffectLists || [];
     for (const presetLists of presetEffectLists) {
-        presetEffectListManager.savePresetEffectList(presetLists);
+        presetEffectListManager.saveItem(presetLists);
     }
     presetEffectListManager.triggerUiRefresh();
 
@@ -188,7 +188,7 @@ function removeSetupComponents(components) {
                     frontendCommunicator.send("remove-currency", { id, name });
                     break;
                 case "effectQueues":
-                    effectQueueManager.deleteEffectQueue(id);
+                    effectQueueManager.deleteItem(id);
                     break;
                 case "events":
                     eventsAccess.removeEventFromMainEvents(id);
@@ -200,7 +200,7 @@ function removeSetupComponents(components) {
                     frontendCommunicator.send("remove-hotkey", id);
                     break;
                 case "presetEffectLists":
-                    presetEffectListManager.deletePresetEffectList(id);
+                    presetEffectListManager.deleteItem(id);
                     break;
                 case "timers":
                     timerAccess.deleteTimer(id);
