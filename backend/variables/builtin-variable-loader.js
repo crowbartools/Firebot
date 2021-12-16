@@ -58,6 +58,7 @@ exports.loadReplaceVariables = () => {
         'gift-sub-type',
         'host-type',
         'host-viewer-count',
+        'if',
         'loop-count',
         'loop-item',
         'math',
