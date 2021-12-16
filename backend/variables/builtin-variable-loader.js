@@ -88,6 +88,7 @@ exports.loadReplaceVariables = () => {
         'reward-image-url',
         'reward-message',
         'reward-name',
+        'roll-dice',
         'stream-title',
         'streamer',
         'sub-count',
