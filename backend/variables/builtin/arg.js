@@ -38,7 +38,10 @@ const model = {
         possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
     },
     evaluator: (trigger, index, upperIndex) => {
-        let args = trigger.metadata.userCommand.args || [];
+        let args = trigger.metadata.userCommand.args;
+        if (args == null || args === '') {
+            args = [];
+        }
 
         if (String(index).toLowerCase() === "all") {
             return args.join(" ");
