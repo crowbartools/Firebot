@@ -31,18 +31,21 @@ const commmandTarget = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger, index) => {
-        let args = trigger.metadata.userCommand.args || [];
+        let args = trigger.metadata.userCommand.args;
+        if (args == null || args === '') {
+            args = [];
+        }
 
         index = parseInt(index);
-
-        if (args.length < index) {
-            return null;
-        }
 
         if (index != null && index > 0) {
             index--;
         } else {
             index = 0;
+        }
+
+        if (args.length < index || args[index] == null) {
+            return null;
         }
 
         return args[index].replace("@", "");
