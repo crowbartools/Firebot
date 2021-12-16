@@ -11,11 +11,11 @@ module.exports = {
         description: 'Returns the parameter based on the condition\'s result.',
         examples: [
             {
-                usage: 'arrayAdd[$user === Jim, JIM]',
+                usage: 'if[$user === Jim, JIM]',
                 description: "Returns JIM if the user is Jim, otherwise returns empty text"
             },
             {
-                usage: 'arrayAdd[$user === Jim, JIM, JOHN]',
+                usage: 'if[$user === Jim, JIM, JOHN]',
                 description: "Returns JIM if the user is Jim, otherwise returns JOHN"
             }
         ],
