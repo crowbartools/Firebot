@@ -76,7 +76,6 @@ const heistCommand = {
         let wagerAmount;
         if (event.userCommand.args.length < 1) {
             let defaultWager = heistSettings.settings.currencySettings.defaultWager;
-            console.log(defaultWager);
             if (defaultWager == null || defaultWager < 1) {
                 twitchChat.sendChatMessage(`${username}, please include a wager amount!`, null, chatter);
                 return;

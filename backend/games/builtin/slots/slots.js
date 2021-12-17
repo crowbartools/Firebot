@@ -25,12 +25,23 @@ module.exports = {
                         required: true
                     }
                 },
+                defaultWager: {
+                    type: "number",
+                    title: "Default Wager Amount",
+                    description: "The default wager amount to use if a viewer doesn't specify one.",
+                    placeholder: "Enter amount",
+                    tip: "Optional",
+                    sortRank: 2,
+                    validation: {
+                        min: 0
+                    }
+                },
                 minWager: {
                     type: "number",
                     title: "Min Wager Amount",
                     placeholder: "Enter amount",
                     tip: "Optional",
-                    sortRank: 2,
+                    sortRank: 3,
                     validation: {
                         min: 0
                     }
@@ -40,7 +51,7 @@ module.exports = {
                     title: "Max Wager Amount",
                     placeholder: "Enter amount",
                     tip: "Optional",
-                    sortRank: 3,
+                    sortRank: 4,
                     validation: {
                         min: 0
                     }
