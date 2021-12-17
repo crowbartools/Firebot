@@ -15,7 +15,7 @@ const model = {
                 description: "Format with the preferred tokens."
             },
             {
-                usage: "date[MMM Do YYY, 2, days]",
+                usage: "date[MMM Do YYYY, 2, days]",
                 description: "Adds 2 days to the current date (or use other units i.e. months, years, etc.)."
             }
         ],
