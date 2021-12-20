@@ -27,6 +27,10 @@
         word-break: break-all;
         word-wrap: break-word;
       }
+      .var-row-collapsed {
+        height: 19px;
+        overflow: hidden;
+      }
       .caret {
         width: 15px;
         height: 15px;
@@ -381,7 +385,7 @@
                 <div class="var" @click="toggleExpanded()">
                     <div class="header" style="display:flex; color: white;">
                         <div class="var-cell">{{variable.key}}</div>
-                        <div class="var-cell">{{variable.history[0].value}}</div>
+                        <div class="var-cell" :class="{ 'var-row-collapsed': !expanded }">{{variable.history[0].value}}</div>
                         <div class="var-cell"><expire-display :ttl="variable.history[0].ttl" :action="variable.history[0].action" /></div>
                         <div class="var-cell">{{variable.history[0].action}}</div>
                         <div style="width: 15px;">
