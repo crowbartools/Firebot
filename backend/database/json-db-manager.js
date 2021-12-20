@@ -11,8 +11,13 @@ class JsonDbManager {
      * @param {string} path - The path to the json file
      */
     constructor(type, path) {
+        /** @protected */
         this.type = type;
+
+        /** @protected */
         this.items = {};
+
+        /** @protected */
         this.db = profileManager.getJsonDbInProfile(path);
     }
 

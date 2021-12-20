@@ -1,6 +1,5 @@
 "use strict";
 
-const timerAccess = require("../../timers/timer-access");
 const timerManager = require("../../timers/timer-manager");
 const { EffectCategory } = require('../../../shared/effect-constants');
 
@@ -53,7 +52,7 @@ const chat = {
     onTriggerEvent: async event => {
         const { effect } = event;
 
-        const timer = timerAccess.getTimer(effect.selectedTimerId);
+        const timer = timerManager.getItem(effect.selectedTimerId);
 
         if (timer) {
             timerManager.updateIntervalForTimer(timer);

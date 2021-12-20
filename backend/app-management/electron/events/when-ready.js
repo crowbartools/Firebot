@@ -30,10 +30,8 @@ exports.whenReady = async () => {
 
     const connectionManager = require("../../../common/connection-manager");
 
-    const timerAccess = require("../../../timers/timer-access");
-    timerAccess.loadTimers();
-
     const timerManager = require("../../../timers/timer-manager");
+    await timerManager.loadItems();
     timerManager.startTimers();
 
     await accountAccess.refreshTwitchData();
