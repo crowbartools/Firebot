@@ -45,7 +45,7 @@ exports.whenReady = async () => {
 
     // load effects
     logger.debug("Loading effects...");
-    const { loadEffects } = require("../../../effects/builtInEffectLoader");
+    const { loadEffects } = require("../../../effects/builtin-effect-loader");
     loadEffects();
 
     // load commands
