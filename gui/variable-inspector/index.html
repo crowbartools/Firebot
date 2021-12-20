@@ -426,7 +426,8 @@
               }
               return (
                 v.key.toLowerCase().includes(this.search.toLowerCase()) ||
-                v.history[0].key
+                v.history[0].value
+                  .toString()
                   .toLowerCase()
                   .includes(this.search.toLowerCase())
               );
