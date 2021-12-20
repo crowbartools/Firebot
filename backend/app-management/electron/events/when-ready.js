@@ -65,7 +65,7 @@ exports.whenReady = async () => {
 
     // load integrations
     logger.debug("Loading integrations...");
-    const { loadIntegrations } = require("../../../integrations/integrationLoader");
+    const { loadIntegrations } = require("../../../integrations/builtin-integration-loader");
     loadIntegrations();
 
     // load variables
