@@ -1,9 +1,9 @@
 <div class="firebot-item-table">
   <div>
     <scroll-sentinel
-      element-class="fit-header"
+      element-class="{{$ctrl.headerClass}}"
     ></scroll-sentinel>
-    <div class="light-bg sticky-top fit-header p-6 mx-0 my-6">
+    <div class="light-bg sticky-top fit-header p-6 mx-0 my-6 {{$ctrl.headerClass}}">
       <div class="flex-row">
         <button
           ng-click="$ctrl.onAddNewClicked()"
