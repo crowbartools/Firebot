@@ -13,7 +13,7 @@ exports.loadIntegrations = () => {
         'streamloots/streamloots',
         'tipeeestream/tipeeestream'
     ].forEach(filename => {
-        let definition = require(`./builtin/${filename}.js`);
+        const definition = require(`./builtin/${filename}.js`);
         integrationManager.registerIntegration(definition);
     });
 };
