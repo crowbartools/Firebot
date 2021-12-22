@@ -1,6 +1,7 @@
 "use strict";
 
 const frontendCommunicator = require("../../common/frontend-communicator");
+const customCommandManager = require("../../chat/commands/custom-command-manager");
 const commandManager = require("../../chat/commands/CommandManager");
 const { EffectCategory } = require('../../../shared/effect-constants');
 
@@ -84,7 +85,7 @@ const chat = {
 
             frontendCommunicator.send("systemCommandsUpdated");
         } else if (commandType === "custom") {
-            const customCommand = commandManager.getCustomCommandById(commandId);
+            const customCommand = customCommandManager.getItem(commandId);
 
             if (customCommand == null) {
                 // command doesnt exist anymore
@@ -93,7 +94,7 @@ const chat = {
 
             customCommand.active = toggleType === "toggle" ? !customCommand.active : toggleType === "enable";
 
-            commandManager.saveCustomCommand(customCommand, "System", false);
+            customCommandManager.saveItem(customCommand, "System");
 
             frontendCommunicator.send("custom-commands-updated");
         }

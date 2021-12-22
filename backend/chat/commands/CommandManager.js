@@ -4,6 +4,7 @@ const { ipcMain } = require("electron");
 const logger = require("../../logwrapper");
 const EventEmitter = require("events");
 const commandAccess = require("./command-access");
+const customCommandManager = require("./custom-command-manager");
 
 class CommandManager extends EventEmitter {
     constructor() {
@@ -136,18 +137,10 @@ class CommandManager extends EventEmitter {
         return cmdDefs;
     }
 
-    getCustomCommandById(id) {
-        return commandAccess.getCustomCommands().find(c => c.id === id);
-    }
-
-    getAllCustomCommands() {
-        return commandAccess.getCustomCommands();
-    }
-
     getAllActiveCommands() {
         return this.getAllSystemCommandDefinitions()
             .filter(c => c.active)
-            .concat(this.getAllCustomCommands()
+            .concat(customCommandManager.getAllItems()
                 .filter(c => c.active));
     }
 
@@ -178,14 +171,6 @@ class CommandManager extends EventEmitter {
     saveSystemCommandOverride(sysCommand) {
         this._sysCommandOverrides[sysCommand.id] = sysCommand;
         commandAccess.saveSystemCommandOverride(sysCommand);
-    }
-
-    saveCustomCommand(command, user, isNew = true) {
-        renderWindow.webContents.send("saveCustomCommand", { command: command, user: user, newCommand: isNew });
-    }
-
-    removeCustomCommandByTrigger(trigger) {
-        renderWindow.webContents.send("removeCustomCommandByTrigger", { trigger: trigger });
     }
 }
 

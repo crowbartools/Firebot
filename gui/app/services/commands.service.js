@@ -2,7 +2,6 @@
 (function() {
     //This manages command data
     const profileManager = require("../../backend/common/profile-manager.js");
-    const moment = require("moment");
 
     angular
         .module("firebotApp")
@@ -23,6 +22,15 @@
             service.commandsCache = {
                 systemCommands: [],
                 customCommands: []
+            };
+
+            const updateCustomCommands = (command) => {
+                const index = service.commandsCache.customCommands.findIndex(c => c.id === command.id);
+                if (index > -1) {
+                    service.commandsCache.customCommands[index] = command;
+                } else {
+                    service.commandsCache.customCommands.push(command);
+                }
             };
 
             // Refresh commands cache
@@ -58,53 +66,21 @@
 
             service.getCustomCommands = () => service.commandsCache.customCommands;
 
-            service.saveCustomCommand = function(command, user = null) {
-                logger.debug("saving command: " + command.trigger);
-                if (command.id == null || command.id === "") {
-                    // generate id for new command
-                    const uuidv1 = require("uuid/v1");
-                    command.id = uuidv1();
-
-                    command.createdBy = user
-                        ? user
-                        : connectionService.accounts.streamer.username;
-                    command.createdAt = moment().format();
-                } else {
-                    command.lastEditBy = user
-                        ? user
-                        : connectionService.accounts.streamer.username;
-                    command.lastEditAt = moment().format();
+            service.saveCustomCommand = async (customCommand, user = null) => {
+                if (user == null) {
+                    user = connectionService.accounts.streamer.username;
                 }
 
-                if (command.count == null) {
-                    command.count = 0;
+                const savedCommand = await backendCommunicator.fireEventAsync("saveCustomCommand", {customCommand, user});
+
+                if (savedCommand != null) {
+                    updateCustomCommands(savedCommand);
                 }
-
-                let commandDb = getCommandsDb();
-
-                // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
-                // and other magical things. Angular has a .toJson() convienence method that coverts an object to a json string
-                // while removing internal angular properties. We then convert this string back to an object with
-                // JSON.parse. It's kinda hacky, but it's an easy way to ensure we arn't accidentally saving anything extra.
-                let cleanedCommand = JSON.parse(angular.toJson(command));
-
-                try {
-                    commandDb.push("/customCommands/" + command.id, cleanedCommand);
-                } catch (err) {} //eslint-disable-line no-empty
             };
 
             service.saveAllCustomCommands = (commands) => {
                 service.commandsCache.customCommands = commands;
-                const cleanedCommands = JSON.parse(angular.toJson(commands));
-                try {
-                    const commandDb = getCommandsDb();
-                    const customCommandsObj = cleanedCommands.reduce((acc, command) => {
-                        acc[command.id] = command;
-                        return acc;
-                    }, {});
-                    commandDb.push("/customCommands", customCommandsObj);
-                    ipcRenderer.send("refreshCommandCache");
-                } catch (err) {} //eslint-disable-line no-empty
+                backendCommunicator.fireEvent("saveAllCustomCommands", commands);
             };
 
             service.saveSystemCommandOverride = function(command) {
@@ -137,17 +113,9 @@
                 return foundDuplicateCustomCmdTrigger || foundDuplicateSystemCmdTrigger;
             };
 
-            // Deletes a command.
-            service.deleteCustomCommand = function(command) {
-                let commandDb = getCommandsDb();
-
-                if (command == null || command.id == null || command.id === "") return;
-
-                try {
-                    commandDb.delete("/customCommands/" + command.id);
-                } catch (err) {
-                    logger.warn("error when deleting command", err);
-                } //eslint-disable-line no-empty
+            service.deleteCustomCommand = (commandId) => {
+                service.commandsCache.customCommands = service.commandsCache.customCommands.filter(c => c.id !== commandId);
+                backendCommunicator.fireEvent("deleteCustomCommand", commandId);
             };
 
             listenerService.registerListener(
@@ -168,43 +136,6 @@
                     service.saveCustomCommand(command);
                 }
             });
-
-            listenerService.registerListener(
-                {
-                    type: listenerService.ListenerType.SAVE_CUSTOM_COMMAND
-                },
-                (data) => {
-                    service.saveCustomCommand(data.command, data.user);
-
-                    let currentIndex = service.commandsCache.customCommands.findIndex(c => c.trigger === data.command.trigger);
-
-                    if (currentIndex === -1) {
-                        service.commandsCache.customCommands.push(data.command);
-                    } else {
-                        service.commandsCache.customCommands[currentIndex] = data.command;
-                    }
-
-                    // Refresh the backend command cache.
-                    ipcRenderer.send("refreshCommandCache");
-                }
-            );
-
-            listenerService.registerListener(
-                {
-                    type: listenerService.ListenerType.REMOVE_CUSTOM_COMMAND
-                },
-                (data) => {
-
-                    let command = service.commandsCache.customCommands.find(c => c.trigger === data.trigger);
-
-                    service.deleteCustomCommand(command);
-
-                    service.commandsCache.customCommands = service.commandsCache.customCommands.filter(c => c.id !== command.id);
-
-                    // Refresh the backend command cache.
-                    ipcRenderer.send("refreshCommandCache");
-                }
-            );
 
 
             return service;

@@ -33,8 +33,6 @@
             systemCommandsUpdated: {},
             integrationConnectionUpdate: {},
             integrationsUpdated: {},
-            saveCustomCommand: {},
-            removeCustomCommand: {},
             clearEffects: {},
             nonChatSkill: {},
             gifUrlForSkill: {},
@@ -74,8 +72,6 @@
             SYS_CMDS_UPDATED: "systemCommandsUpdated",
             INTEGRATION_CONNECTION_UPDATE: "integrationConnectionUpdate",
             INTEGRATIONS_UPDATED: "integrationsUpdated",
-            SAVE_CUSTOM_COMMAND: "saveCustomCommand",
-            REMOVE_CUSTOM_COMMAND: "removeCustomCommand",
             CLEAR_EFFECTS: "clearEffects",
             NON_CHAT_SKILL: "nonChatSkill",
             GIF_FOR_SKILL: "gifUrlForSkill",
@@ -424,24 +420,6 @@
      */
         ipcRenderer.on("integrationsUpdated", function(event, data) {
             _.forEach(registeredListeners.integrationsUpdated, listener => {
-                runListener(listener, data);
-            });
-        });
-
-        /**
-         * save cmd listener
-         */
-        ipcRenderer.on("saveCustomCommand", function(event, data) {
-            _.forEach(registeredListeners.saveCustomCommand, listener => {
-                runListener(listener, data);
-            });
-        });
-
-        /**
-         * remove cmd listener
-         */
-        ipcRenderer.on("removeCustomCommandByTrigger", function(event, data) {
-            _.forEach(registeredListeners.removeCustomCommand, listener => {
                 runListener(listener, data);
             });
         });

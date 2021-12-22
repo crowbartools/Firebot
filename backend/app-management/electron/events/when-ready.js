@@ -46,6 +46,9 @@ exports.whenReady = async () => {
     const { loadEffects } = require("../../../effects/builtin-effect-loader");
     loadEffects();
 
+    const customCommandManager = require("../../../chat/commands/custom-command-manager");
+    customCommandManager.loadItems();
+
     // load commands
     logger.debug("Loading sys commands...");
     const { loadCommands } = require("../../../chat/commands/systemCommandLoader");

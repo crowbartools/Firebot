@@ -78,7 +78,6 @@
                 if (command == null) return;
                 command.active = !command.active;
                 commandsService.saveCustomCommand(command);
-                commandsService.refreshCommands();
             };
 
             $scope.deleteCustomCommand = command => {
@@ -89,8 +88,7 @@
                     confirmBtnType: "btn-danger"
                 }).then(confirmed => {
                     if (confirmed) {
-                        commandsService.deleteCustomCommand(command);
-                        commandsService.refreshCommands();
+                        commandsService.deleteCustomCommand(command.id);
                     }
                 });
             };
@@ -122,12 +120,9 @@
                             commandsService.saveCustomCommand(command);
                             break;
                         case "delete":
-                            commandsService.deleteCustomCommand(command);
+                            commandsService.deleteCustomCommand(command.id);
                             break;
                         }
-
-                        // Refresh Commands
-                        commandsService.refreshCommands();
                     }
                 });
             };

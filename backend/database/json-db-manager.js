@@ -9,10 +9,14 @@ class JsonDbManager {
     /**
      * @param {string} type - The type of data in the json file
      * @param {string} path - The path to the json file
+     * @param {object} [dataPath] - The path to a subset of the data
      */
-    constructor(type, path) {
+    constructor(type, path, dataPath = "") {
         /** @protected */
         this.type = type;
+
+        /** @protected */
+        this.dataPath = dataPath;
 
         /** @protected */
         this.items = {};
@@ -28,7 +32,7 @@ class JsonDbManager {
         logger.debug(`Attempting to load ${this.type}s...`);
 
         try {
-            const data = this.db.getData("/");
+            const data = this.db.getData(`${this.dataPath || '/'}`);
 
             if (data) {
                 this.items = data;
@@ -59,7 +63,7 @@ class JsonDbManager {
             return null;
         }
 
-        return this.items;
+        return Object.values(this.items);
     }
 
     /**
@@ -79,7 +83,7 @@ class JsonDbManager {
         }
 
         try {
-            this.db.push("/" + item.id, item);
+            this.db.push(`${this.dataPath}/${item.id}`, item);
 
             logger.debug(`Saved ${this.type} with id ${item.id} to file.`);
 
@@ -103,7 +107,7 @@ class JsonDbManager {
         this.items = itemsObject;
 
         try {
-            this.db.push("/", this.items);
+            this.db.push(this.dataPath, this.items);
 
             logger.debug(`Saved all ${this.type} to file.`);
 
@@ -125,7 +129,7 @@ class JsonDbManager {
         delete this.items[itemId];
 
         try {
-            this.db.delete("/" + itemId);
+            this.db.delete(`${this.dataPath}/${itemId}`);
 
             logger.debug(`Deleted ${this.type}: ${itemId}`);
 

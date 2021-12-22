@@ -90,7 +90,7 @@ class TimerManager extends JsonDbManager {
      * @returns {void}
      */
     triggerUiRefresh() {
-        frontendCommunicator.send("all-timers-updated", Object.values(this.getAllItems()));
+        frontendCommunicator.send("all-timers-updated", this.getAllItems());
     }
 
     /**
@@ -273,7 +273,7 @@ class TimerManager extends JsonDbManager {
     startTimers() {
         const timers = this.getAllItems();
         if (timers != null) {
-            this.buildIntervalsForTimers(Object.values(timers).filter(t => t.active));
+            this.buildIntervalsForTimers(timers.filter(t => t.active));
         }
     }
 }
@@ -281,7 +281,7 @@ class TimerManager extends JsonDbManager {
 const timerManager = new TimerManager();
 
 frontendCommunicator.onAsync("getTimers",
-    async () => Object.values(timerManager.getAllItems()));
+    async () => timerManager.getAllItems());
 
 frontendCommunicator.onAsync("saveTimer",
     async (/** @type {Timer} */ timer) => await timerManager.saveItem(timer));
