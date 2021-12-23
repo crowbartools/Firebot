@@ -38,6 +38,19 @@
         />
         <div class="control__indicator"></div>
       </label>
+
+      <label class="control-fb control--checkbox"
+        >Scan Whole Message
+        <tooltip
+          text="'Scan the whole message for the trigger instead just the first word'"
+        ></tooltip>
+        <input
+          type="checkbox"
+          ng-model="$ctrl.command.scanWholeMessage"
+          aria-label="..."
+        />
+        <div class="control__indicator"></div>
+      </label>
     </div>
   </setting-container>
 
