@@ -3,6 +3,10 @@
 /////////////////
 
 :focus {
+  outline: none;
+}
+
+:focus-visible {
   outline: 1px dotted #808080;
 }
 
