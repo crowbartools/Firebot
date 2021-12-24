@@ -10,7 +10,7 @@
             badgeText: "<"
         },
         template: `
-            <a draggable=false class="fb-nav-link" href="{{$ctrl.href}}" ng-class="{'selected': $ctrl.sbm.tabIsSelected($ctrl.page)}" ng-click="$ctrl.sbm.setTab($ctrl.page, $ctrl.name)"  uib-tooltip="{{!$ctrl.sbm.navExpanded ? $ctrl.name : ''}}" tooltip-placement="right" tooltip-append-to-body="true">
+            <a draggable=false class="fb-nav-link" href="{{$ctrl.href}}" ng-class="{'selected': $ctrl.sbm.tabIsSelected($ctrl.page)}" ng-click="$ctrl.sbm.setTab($ctrl.page, $ctrl.name)"  uib-tooltip="{{!$ctrl.sbm.navExpanded ? $ctrl.name : ''}}" tooltip-placement="right" tooltip-append-to-body="true" role="menuitem">
                 <div class="nav-link-bar"></div>
                 <div class="nav-link-icon">
                   <span class="nav-icon-wrapper">
