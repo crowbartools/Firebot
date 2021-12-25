@@ -33,11 +33,7 @@ const model = {
 
         const output = processDice(diceConfig, showEach);
 
-        if (output) {
-            return 0;
-        }
-
-        return `${result} (${rolled.join(", ")})`;
+        return (output == null || output === '') ? 0 : output;
     }
 };
 
