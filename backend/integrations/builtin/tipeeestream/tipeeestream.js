@@ -1,7 +1,7 @@
 "use strict";
 const EventEmitter = require("events");
 const io = require("socket.io-client");
-const request = require("request");
+const axios = require("axios").default;
 const logger = require("../../../logwrapper");
 const { secrets } = require("../../../secrets-manager");
 
@@ -30,46 +30,38 @@ const integrationDefinition = {
     }
 };
 
-function getTipeeeAPIKey(accessToken) {
-    return new Promise((res, rej) => {
-        let options = {
-            method: "GET",
-            url: "https://api.tipeeestream.com/v1.0/me/api",
-            qs: { access_token: accessToken } //eslint-disable-line camelcase
-        };
+const getTipeeeAPIKey = async (accessToken) => {
+    try {
+        const response = await axios.get("https://api.tipeeestream.com/v1.0/me/api",
+            {
+                params: {
+                    "access_token": accessToken
+                }
+            });
 
-        request(options, function(error, _, body) {
-            if (error) {
-                return rej(error);
-            }
+        if (response && response.data && response.data.apiKey) {
+            return response.data.apiKey;
+        }
+    } catch (error) {
+        logger.error("Failed to get TipeeeStream API key", error.message);
+        return null;
+    }
+};
 
-            body = JSON.parse(body);
+const getSocketUrl = async () => {
+    try {
+        const response = (await axios.get("https://api.tipeeestream.com/v2.0/site/socket")).data;
 
-            res(body.apiKey);
-        });
-    });
-}
+        if (response && response.datas) {
+            const data = response.datas;
 
-function getSocketUrl() {
-    return new Promise((res, rej) => {
-        let options = {
-            method: "GET",
-            url: "https://api.tipeeestream.com/v2.0/site/socket"
-        };
-
-        request(options, function(error, _, body) {
-            if (error) {
-                return rej(error);
-            }
-
-            body = JSON.parse(body);
-
-            let data = body.datas;
-
-            res(data.host + ":" + data.port);
-        });
-    });
-}
+            return data.host + ":" + data.port;
+        }
+    } catch (error) {
+        logger.error("Failed to get TipeeeStream socket url", error.message);
+        return null;
+    }
+};
 
 class TipeeeStreamIntegration extends EventEmitter {
     constructor() {
@@ -81,20 +73,18 @@ class TipeeeStreamIntegration extends EventEmitter {
         tsEventHandler.registerEvents();
     }
     async connect(integrationData) {
-        let { settings } = integrationData;
+        const { settings } = integrationData;
 
-        let apiKey = settings && settings.apiKey;
+        const apiKey = settings && settings.apiKey;
 
         if (apiKey == null) {
             this.emit("disconnected", integrationDefinition.id);
             return;
         }
 
-        let url;
-        try {
-            url = await getSocketUrl();
-        } catch (error) {
-            logger.error(error);
+        const url = await getSocketUrl();
+
+        if (url == null) {
             this.emit("disconnected", integrationDefinition.id);
             return;
         }
@@ -135,22 +125,15 @@ class TipeeeStreamIntegration extends EventEmitter {
 
         this.emit("disconnected", integrationDefinition.id);
     }
-    link(linkData) {
-        return new Promise(async (resolve, reject) => {
+    async link(linkData) {
+        const { auth } = linkData;
 
-            let { auth } = linkData;
+        const apiKey = await getTipeeeAPIKey(auth['access_token']);
+        if (apiKey == null) {
+            return;
+        }
 
-            let settings = {};
-            try {
-                settings.apiKey = await getTipeeeAPIKey(auth['access_token']);
-            } catch (error) {
-                return reject(error);
-            }
-
-            this.emit("settings-update", integrationDefinition.id, settings);
-
-            resolve(settings);
-        });
+        this.emit("settings-update", integrationDefinition.id, { apiKey });
     }
     async unlink() {
         this._socket.close();
