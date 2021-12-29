@@ -689,22 +689,13 @@
                     <div class="test-effects-btn clickable" uib-tooltip="Test Effect" ng-hide="effect == null || effect.type === 'Nothing'">
                         <i class="far fa-play-circle" style="cursor: pointer;" ng-click="runEffect()"></i>
                     </div>
-                    <div uib-dropdown uib-dropdown-toggle>
+                    <div 
+                      uib-dropdown 
+                      uib-dropdown-toggle
+                      context-menu="getOverflowMenu()"
+                      context-menu-on="click"
+                    >
                         <span class="noselect pointer effects-actions-btn" style="font-size: 31px"><i class="fal fa-ellipsis-v"></i></span>
-                        <ul class="dropdown-menu" uib-dropdown-menu>
-                            <li>
-                                <a href ng-click="editLabel()"><i class="fal fa-tag" style="margin-right: 10px;" aria-hidden="true"></i>  {{getLabelButtonTextForLabel(effect.effectLabel)}}</a>
-                            </li>
-                            <li>
-                                <a href ng-click="copy()"><i class="far fa-copy" style="margin-right: 10px;"></i> Copy</a>
-                            </li>
-                            <li ng-class="{'disabled': !hasCopiedEffect()}" ng-click="!hasCopiedEffect() ? $event.stopPropagation() : null">
-                                <a href ng-click="paste()"><i class="far fa-paste" style="margin-right: 10px;"></i> Paste</a>
-                            </li>
-                            <li>
-                                <a href ng-click="delete()" style="color: #fb7373;"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>
-                            </li>
-                        </ul>
                     </div>
                 </div>
             </div>

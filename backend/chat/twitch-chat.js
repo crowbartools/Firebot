@@ -209,7 +209,7 @@ class TwitchChat extends EventEmitter {
      * @param {string} [replyToMessageId] A message id to reply to
      */
     sendChatMessage(message, username, accountType, replyToMessageId) {
-        if (message == null) {
+        if (message == null || message?.length < 1) {
             return null;
         }
 

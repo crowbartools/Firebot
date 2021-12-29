@@ -234,10 +234,12 @@ const effect = {
         }
 
         let bodyData = effect.body;
-        try {
-            bodyData = JSON.parse(bodyData);
-        } catch (error) {
-            logger.debug("Failed to parse body json for request", error);
+        if (effect.body != null) {
+            try {
+                bodyData = JSON.parse(effect.body);
+            } catch (error) {
+                logger.debug("Failed to parse body json for request", error);
+            }
         }
 
         try {
