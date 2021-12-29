@@ -13,7 +13,7 @@
                     </span>
                 </div>
                 <div class="nav-body-wrapper">
-                    <div class="nav-links-wrapper" ng-class="{'contracted': !$ctrl.sbm.navExpanded}">
+                    <div class="nav-links-wrapper" ng-class="{'contracted': !$ctrl.sbm.navExpanded}" role="menu">
 
                         <nav-link page="Chat Feed" name="{{'SIDEBAR.CHAT.CHAT_FEED' | translate }}" icon="fa-signal-stream"></nav-link>
 

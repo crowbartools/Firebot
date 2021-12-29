@@ -94,7 +94,7 @@ const model = {
         } else {
             const categories = await twitchApi.categories.searchCategories(event.effect.gameName);
             if (categories && categories.length > 0) {
-                const category = categories.find(c => c.name === event.effect.gameName);
+                const category = categories.find(c => c.name.toLowerCase() === event.effect.gameName.toLowerCase());
 
                 if (!category) {
                     logger.error("Couldn't find a category with this name");
