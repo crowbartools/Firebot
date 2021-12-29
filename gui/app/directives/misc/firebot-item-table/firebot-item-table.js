@@ -41,6 +41,7 @@
                     }
 
                     $ctrl.showStatusIndicator = $ctrl.statusField != null;
+                    $ctrl.headerClass = `${$ctrl.sortTagContext.split(' ').join('-')}-header`;
                 };
 
                 $ctrl.triggerItemsUpdate = () => {

@@ -8,7 +8,7 @@ const commandAccess = require("../../chat/commands/command-access");
 const countersManager = require("../../counters/counter-manager");
 const effectQueueManager = require("../../effects/queues/effect-queue-manager");
 const eventsAccess = require("../../events/events-access");
-const timerAccess = require("../../timers/timer-access");
+const timerManager = require("../../timers/timer-manager");
 const presetEffectListManager = require("../../effects/preset-lists/preset-effect-list-manager");
 const customRolesManager = require("../../roles/custom-roles-manager");
 const { escapeRegExp } = require("../../utility");
@@ -159,9 +159,9 @@ function importSetup(setup, selectedCurrency) {
     // timers
     const timers = setup.components.timers || [];
     for (const timer of timers) {
-        timerAccess.saveTimer(timer);
+        timerManager.saveItem(timer);
     }
-    timerAccess.triggerUiRefresh();
+    timerManager.triggerUiRefresh();
 
     // viewer roles
     const roles = setup.components.viewerRoles || [];
@@ -203,7 +203,7 @@ function removeSetupComponents(components) {
                     presetEffectListManager.deleteItem(id);
                     break;
                 case "timers":
-                    timerAccess.deleteTimer(id);
+                    timerManager.deleteItem(id);
                     break;
                 case "viewerRoles":
                     customRolesManager.deleteCustomRole(id);
@@ -225,7 +225,7 @@ function removeSetupComponents(components) {
             } else if (componentType === "presetEffectLists") {
                 presetEffectListManager.triggerUiRefresh();
             } else if (componentType === "timers") {
-                timerAccess.triggerUiRefresh();
+                timerManager.triggerUiRefresh();
             } else if (componentType === "viewerRoles") {
                 customRolesManager.triggerUiRefresh();
             }

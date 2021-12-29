@@ -79,5 +79,20 @@
                     }
                 });
             };
+
+            $scope.openDeleteCounterModal = (counter) => {
+                utilityService
+                    .showConfirmationModal({
+                        title: "Delete",
+                        question: `Are you sure you want to delete the Counter "${counter.name}"?`,
+                        confirmLabel: "Delete",
+                        confirmBtnType: "btn-danger"
+                    })
+                    .then(confirmed => {
+                        if (confirmed) {
+                            countersService.deleteCounter(counter.id);
+                        }
+                    });
+            };
         });
 }());

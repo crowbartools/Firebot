@@ -9,24 +9,25 @@
                 onUpdate: "&"
             },
             template: `
-                <div class="sort-tags">
-                    <span ng-repeat="tag in sts.getSortTagsForItem($ctrl.context, $ctrl.item.sortTags) track by tag.id" class="sort-tag">
-                        <span>{{tag.name}}</span>
-                        <span ng-click="$ctrl.removeSortTag(tag.id)" aria-label="Remove sort tag">
+                <div class="sort-tags p-px">
+                    <span ng-repeat="tag in sts.getSortTagsForItem($ctrl.context, $ctrl.item.sortTags) track by tag.id" class="sort-tag mr-2">
+                        <span class="mb-px">{{tag.name}}</span>
+                        <button role="button" ng-click="$ctrl.removeSortTag(tag.id)" aria-label="Remove sort tag" class="mb-px">
                             <i class="far fa-times"></i>
-                        </span>
+                        </button>
                     </span>
-                    <span
+                    <button
                         role="button"
-                        class="sort-tag-add"
+                        class="sort-tag-add mb-px"
                         aria-label="Add sort tag"
+                        ng-click="$event.stopPropagation()"
                         context-menu="$ctrl.getSortTagsContextMenu()"
                         context-menu-on="click"
                         context-menu-orientation="right"
                         ng-show="$ctrl.getSortTagsContextMenu().length > 0"
                     >
                         <i class="far fa-plus"></i>
-                    </span>
+                    </button>
                 </div>
             `,
             controller: function($scope, sortTagsService) {

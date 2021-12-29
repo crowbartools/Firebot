@@ -30,10 +30,8 @@ exports.whenReady = async () => {
 
     const connectionManager = require("../../../common/connection-manager");
 
-    const timerAccess = require("../../../timers/timer-access");
-    timerAccess.loadTimers();
-
     const timerManager = require("../../../timers/timer-manager");
+    await timerManager.loadItems();
     timerManager.startTimers();
 
     await accountAccess.refreshTwitchData();
@@ -45,7 +43,7 @@ exports.whenReady = async () => {
 
     // load effects
     logger.debug("Loading effects...");
-    const { loadEffects } = require("../../../effects/builtInEffectLoader");
+    const { loadEffects } = require("../../../effects/builtin-effect-loader");
     loadEffects();
 
     // load commands
@@ -65,7 +63,7 @@ exports.whenReady = async () => {
 
     // load integrations
     logger.debug("Loading integrations...");
-    const { loadIntegrations } = require("../../../integrations/integrationLoader");
+    const { loadIntegrations } = require("../../../integrations/builtin-integration-loader");
     loadIntegrations();
 
     // load variables
