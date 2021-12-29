@@ -137,6 +137,13 @@ class CommandManager extends EventEmitter {
         return cmdDefs;
     }
 
+    getCustomCommandById(id) {
+        return customCommandManager.getItem(id);
+    }
+    getAllCustomCommands() {
+        return customCommandManager.getAllItems();
+    }
+
     getAllActiveCommands() {
         return this.getAllSystemCommandDefinitions()
             .filter(c => c.active)
@@ -171,6 +178,13 @@ class CommandManager extends EventEmitter {
     saveSystemCommandOverride(sysCommand) {
         this._sysCommandOverrides[sysCommand.id] = sysCommand;
         commandAccess.saveSystemCommandOverride(sysCommand);
+    }
+
+    saveCustomCommand(command, user, isNew = true) {
+        customCommandManager.saveItem(command, user);
+    }
+    removeCustomCommandByTrigger(trigger) {
+        customCommandManager.deleteItemByTrigger(trigger);
     }
 }
 
