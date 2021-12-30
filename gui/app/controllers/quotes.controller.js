@@ -32,6 +32,12 @@
                 });
             };
 
+            $scope.showImportQuotesModal = () => {
+                utilityService.showModal({
+                    component: "importQuotesModal"
+                });
+            };
+
             $scope.quoteRowClicked = (quote) => {
                 $scope.showAddOrEditQuoteModal(quote);
             };

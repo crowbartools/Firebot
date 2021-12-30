@@ -281,6 +281,7 @@
     <script type="text/javascript" src="./directives/modals/misc/stream-preview-modal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/txtFileWordImportModal.js"></script>
     <script type="text/javascript" src="./directives/modals/quotes/addOrEditQuoteModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/quotes/import-quotes-modal.js"></script>
     <script type="text/javascript" src="./directives/modals/roles/addOrEditCustomRoleModal.js"></script>
     <script type="text/javascript" src="./directives/modals/setups/add-edit-setup-question.js"></script>
     <script type="text/javascript" src="./directives/modals/setups/create-setup-modal.js"></script>
@@ -689,8 +690,8 @@
                     <div class="test-effects-btn clickable" uib-tooltip="Test Effect" ng-hide="effect == null || effect.type === 'Nothing'">
                         <i class="far fa-play-circle" style="cursor: pointer;" ng-click="runEffect()"></i>
                     </div>
-                    <div 
-                      uib-dropdown 
+                    <div
+                      uib-dropdown
                       uib-dropdown-toggle
                       context-menu="getOverflowMenu()"
                       context-menu-on="click"
