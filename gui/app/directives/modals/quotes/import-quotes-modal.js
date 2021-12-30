@@ -12,13 +12,13 @@
                     <button type="button" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
                     <h4 class="modal-title">Import Quotes</h4>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body pb-0">
                     <div ng-hide="$ctrl.fileSelected">
                         <h4>Import from</h5>
                         <p class="muted mb-12">Currently only quotes from Streamlabs Chatbot (desktop bot) can be imported.</p>
 
                         <h4>Choose file</h4>
-                        <p class="muted mb-8">To get the export file in Streamlabs Chatbot, go to Connections -> Cloud and click 'Create Split Excel</p>
+                        <p class="muted mb-8">To get the export file in Streamlabs Chatbot, go to Connections -> Cloud -> Create Split Excel and find the file called Quotes.xlsx.</p>
                         <file-chooser
                             model="$ctrl.importFilePath"
                             on-update="$ctrl.onFileSelected(filepath)"
@@ -26,6 +26,7 @@
                             hide-manual-edit="true"
                         >
                         </file-chooser>
+                        <p ng-if="$ctrl.fileError" style="color: #f96f6f;" class="mt-4">Cannot read this file. Please follow the instructions above.</p>
                     </div>
                     <div ng-show="$ctrl.fileSelected">
                         <div style="margin: 0 0 25px;display: flex;flex-direction: row;justify-content: space-between;align-items: flex-end;">
@@ -46,7 +47,7 @@
                         </sortable-table>
                     </div>
                 </div>
-                <div class="modal-footer" style="text-align: center;">
+                <div class="modal-footer pt-0" style="text-align: center;">
                     <button ng-show="$ctrl.fileSelected" ng-click="$ctrl.importQuotesFromSLChatbot()" class="btn btn-primary">Import</button>
                 </div>
             `,
@@ -91,6 +92,8 @@
 
                         $ctrl.fileSelected = true;
                         $ctrl.search = "";
+                    } else {
+                        $ctrl.fileError = true;
                     }
                 };
 
