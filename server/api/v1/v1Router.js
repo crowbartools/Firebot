@@ -87,4 +87,8 @@ router
     .route("/currency/:currencyName")
     .get(currency.getCurrencies);
 
+router
+    .route("/currency/:currencyName/top")
+    .get(currency.getTopCurrencyHolders);
+
 module.exports = router;

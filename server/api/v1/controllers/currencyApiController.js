@@ -10,3 +10,17 @@ exports.getCurrencies = function(req, res) {
         res.json(currencyDatabase.getCurrencies());
     }
 };
+
+exports.getTopCurrencyHolders = async (req, res) => {
+    const currencyName = req.params.currencyName;
+    const { count } = req.query;
+
+    let users = [];
+    if (count) {
+        users = await currencyDatabase.getTopCurrencyHolders(currencyName, count, true);
+    } else {
+        users = await currencyDatabase.getTopCurrencyHolders(currencyName, 10, true);
+    }
+
+    res.json(users);
+};
