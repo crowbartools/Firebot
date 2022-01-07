@@ -1569,6 +1569,11 @@ thead th{
   margin-bottom: 5px;
   line-height: 1.1;
   justify-content: space-between;
+
+  &.disabled {
+    background: #6c6c6c;
+    color: rgba(255,255,255,0.8);
+  }
 }
 
 .flex-center {

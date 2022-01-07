@@ -174,6 +174,7 @@
                             <div
                                 role="button"
                                 class="effect-bar clickable-dark"
+                                ng-class="{'disabled': !effect.active}"
                                 ng-click="$ctrl.openEditEffectModal(effect, $index, $ctrl.trigger)"
                                 ng-mouseenter="hovering = true"
                                 ng-mouseleave="hovering = false">
@@ -211,6 +212,11 @@
                                                 <li role="none">
                                                     <a href role="menuitem" ng-click="$ctrl.openEditEffectModal(effect, $index, $ctrl.trigger)">
                                                         <i class="fal fa-edit" style="margin-right: 10px;"></i>  Edit
+                                                    </a>
+                                                </li>
+                                                <li role="none">
+                                                    <a href role="menuitem" ng-click="$ctrl.toggleEffectActiveState($index)">
+                                                        <i class="fal fa-toggle-off" style="margin-right: 10px;"></i>  Toggle Enabled
                                                     </a>
                                                 </li>
                                                 <li role="none">
@@ -284,6 +290,13 @@
                     if (ctrl.effectsData.id == null) {
                         ctrl.effectsData.id = uuidv1();
                     }
+
+                    ctrl.effectsData.list.forEach(e => {
+                        if (e.active == null) {
+                            e.active = true;
+                        }
+                    });
+
                     ctrl.effectsUpdate();
                 }
 
@@ -403,6 +416,11 @@
                         });
                 };
 
+                ctrl.toggleEffectActiveState = (index) => {
+                    const effect = ctrl.effectsData.list[index];
+                    effect.active = !effect.active;
+                };
+
                 ctrl.duplicateEffectAtIndex = function(index) {
                     let effect = JSON.parse(angular.toJson(ctrl.effectsData.list[index]));
                     effect.id = uuidv1();
@@ -463,15 +481,6 @@
                     objectCopyHelper.copyEffects(ctrl.effectsData.list);
                 };
 
-                ctrl.addEffect = function() {
-                    let newEffect = {
-                        id: uuidv1(),
-                        type: "Nothing"
-                    };
-
-                    ctrl.openEditEffectModal(newEffect, null, ctrl.trigger);
-                };
-
                 ctrl.openNewEffectModal = function() {
                     utilityService.showModal({
                         component: "addNewEffectModal",
@@ -490,7 +499,8 @@
 
                             let newEffect = {
                                 id: uuidv1(),
-                                type: selectedEffectDef.id
+                                type: selectedEffectDef.id,
+                                active: true
                             };
 
                             ctrl.openEditEffectModal(newEffect, null, ctrl.trigger);
@@ -525,6 +535,13 @@
                             const $index = $itemScope.$index;
                             const effect = $itemScope.effect;
                             ctrl.openEditEffectModal(effect, $index, ctrl.trigger);
+                        }
+                    },
+                    {
+                        html: `<a href ><i class="fal fa-toggle-off" style="margin-right: 10px;"></i>  Toggle Enabled</a>`,
+                        click: function ($itemScope) {
+                            const $index = $itemScope.$index;
+                            ctrl.toggleEffectActiveState($index);
                         }
                     },
                     {
