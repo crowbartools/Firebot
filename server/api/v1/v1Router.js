@@ -56,11 +56,11 @@ const customVariables = require("./controllers/customVariableApiController");
 
 router
     .route("/custom-variables")
-    .get(customVariables.getCustomVariables)
-    .post(customVariables.setCustomVariable);
+    .get(customVariables.getCustomVariables);
 
 router.route("/custom-variables/:variableName")
-    .get(customVariables.getCustomVariable);
+    .get(customVariables.getCustomVariable)
+    .post(customVariables.setCustomVariable);
 
 
 // viewers
@@ -86,5 +86,9 @@ router
 router
     .route("/currency/:currencyName")
     .get(currency.getCurrencies);
+
+router
+    .route("/currency/:currencyName/top")
+    .get(currency.getTopCurrencyHolders);
 
 module.exports = router;
