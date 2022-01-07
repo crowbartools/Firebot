@@ -1,8 +1,9 @@
 "use strict";
 
 const { EffectCategory } = require("../../../../../shared/effect-constants");
-const request = require("request");
 const integrationManager = require("../../../IntegrationManager");
+const axios = require("axios").default;
+const logger = require("../../../../logwrapper");
 
 const effect = {
     definition: {
@@ -24,22 +25,23 @@ const effect = {
     optionsController: () => {},
     optionsValidator: () => {
     },
-    onTriggerEvent: () => {
-        return new Promise(resolve => {
+    onTriggerEvent: async () => {
+        const streamlabs = integrationManager.getIntegrationDefinitionById("streamlabs");
+        const accessToken = streamlabs.auth && streamlabs.auth["access_token"];
 
-            const streamlabs = integrationManager.getIntegrationDefinitionById("streamlabs");
-
-            const accessToken = streamlabs.auth && streamlabs.auth["access_token"];
-            if (accessToken) {
-                request.post(`https://streamlabs.com/api/v1.0/wheel/spin`, {
-                    json: {
+        if (accessToken) {
+            try {
+                await axios.post("https://streamlabs.com/api/v1.0/wheel/spin",
+                    {
                         "access_token": accessToken
-                    }
-                });
-            }
+                    });
 
-            resolve(true);
-        });
+                return true;
+            } catch (error) {
+                logger.error("Failed to spin Streamlabs wheel", error.message);
+                return false;
+            }
+        }
     }
 };
 

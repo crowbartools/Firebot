@@ -1,7 +1,8 @@
 "use strict";
 const EventEmitter = require("events");
 const io = require("socket.io-client");
-const request = require("request");
+const axios = require("axios").default;
+const logger = require("../../../logwrapper");
 
 const { secrets } = require("../../../secrets-manager");
 
@@ -32,25 +33,23 @@ const integrationDefinition = {
     }
 };
 
-function getStreamlabsSocketToken(accessToken) {
-    return new Promise((res, rej) => {
-        let options = {
-            method: "GET",
-            url: "https://streamlabs.com/api/v1.0/socket/token",
-            qs: { access_token: accessToken } //eslint-disable-line camelcase
-        };
+const getStreamlabsSocketToken = async (accessToken) => {
+    try {
+        const response = await axios.get("https://streamlabs.com/api/v1.0/socket/token",
+            {
+                params: {
+                    "access_token": accessToken
+                }
+            });
 
-        request(options, function(error, response, body) {
-            if (error) {
-                return rej(error);
-            }
-
-            body = JSON.parse(body);
-
-            res(body.socket_token);
-        });
-    });
-}
+        if (response && response.data && response.data.socket_token) {
+            return response.data.socket_token;
+        }
+    } catch (error) {
+        logger.error("Failed to get socket token for Streamlabs", error.message);
+        return null;
+    }
+};
 
 class StreamlabsIntegration extends EventEmitter {
     constructor() {
@@ -63,7 +62,7 @@ class StreamlabsIntegration extends EventEmitter {
         slEffectsLoader.registerEffects();
     }
     connect(integrationData) {
-        let { settings } = integrationData;
+        const { settings } = integrationData;
 
         if (settings == null) {
             this.emit("disconnected", integrationDefinition.id);
@@ -94,16 +93,12 @@ class StreamlabsIntegration extends EventEmitter {
         this.emit("disconnected", integrationDefinition.id);
     }
     async link(linkData) {
-        let { auth } = linkData;
+        const { auth } = linkData;
+        const socketToken = await getStreamlabsSocketToken(auth['access_token']);
 
-        let settings = {};
-        try {
-            settings.socketToken = await getStreamlabsSocketToken(auth['access_token']);
-        } catch (error) {
-            return;
+        if (socketToken) {
+            this.emit("settings-update", integrationDefinition.id, { socketToken });
         }
-
-        this.emit("settings-update", integrationDefinition.id, settings);
     }
     unlink() {
         if (this._socket) {
