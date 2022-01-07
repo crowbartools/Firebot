@@ -375,10 +375,15 @@ function getTopCurrencyPosition(currencyId, position = 1) {
     });
 }
 
-function getTopCurrencyHolders(currencyId, count) {
+function getTopCurrencyHolders(currencyIdOrName, count, byName = false) {
     return new Promise(resolve => {
         if (!isViewerDBOn()) {
             return resolve([]);
+        }
+
+        let currencyId = currencyIdOrName;
+        if (byName) {
+            currencyId = (getCurrencyByName(currencyIdOrName)).id;
         }
 
         let db = userDatabase.getUserDb();
