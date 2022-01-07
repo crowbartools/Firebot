@@ -4,33 +4,35 @@
 
     angular.module("firebotApp").component("addOrEditEffectQueueModal", {
         template: `
-            <div class="modal-header">
-                <button type="button" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
-                <h4 class="modal-title">{{$ctrl.isNewQueue ? 'Add New Effect Queue' : 'Edit Effect Queue'}}</h4>
-            </div>
+            <scroll-sentinel element-class="edit-effect-queue-header"></scroll-sentinel>
+            <context-menu-modal-header
+                class="edit-effect-queue-header"
+                on-close="$ctrl.dismiss()"
+                trigger-type="effect queue"
+                trigger-name="$ctrl.effectQueue.name"
+                sort-tags="$ctrl.effectQueue.sortTags"
+                show-trigger-name="true"
+            ></context-menu-modal-header>
             <div class="modal-body">
                 <div>
-                    <div class="modal-subheader" style="padding: 0 0 4px 0">
+                    <div class="modal-subheader pb-2 pt-0 px-0">
                         Name <tooltip text="'A name to help you identify this effect queue'">
                     </div>
                     <div style="width: 100%; position: relative;">
-                        <div class="form-group" ng-class="{'has-error': $ctrl.nameError}">
-                            <input type="text" class="form-control" ng-model="$ctrl.effectQueue.name" ng-keyup="$event.keyCode == 13 && $ctrl.save() " aria-describedby="helpBlock" placeholder="Enter name">
-                            <span id="helpBlock" class="help-block" ng-show="$ctrl.nameError">Please provide a name.</span>
+                        <div class="form-group">
+                            <input type="text" class="form-control" ng-model="$ctrl.effectQueue.name" placeholder="Enter name">
                         </div>
                     </div>
                 </div>
 
-                <div style="margin-top: 15px;">
-                    <div class="modal-subheader" style="padding: 0 0 4px 0">
-                        MODE
-                    </div>
-                    <div ng-class="{'has-error': $ctrl.modeError}">
+                <div class="mt-6">
+                    <div class="modal-subheader pb-2 pt-0 px-0">MODE</div>
+                    <div>
                         <ui-select ng-model="$ctrl.effectQueue.mode" theme="bootstrap" class="control-type-list">
                             <ui-select-match placeholder="Select queue mode">{{$select.selected.display}}</ui-select-match>
                             <ui-select-choices repeat="mode.id as mode in $ctrl.queueModes | filter: { display: $select.search }" style="position:relative;">
                                 <div class="flex-row-center">
-                                    <div style="width: 30px;height: 100%;font-size:20px;margin: 0 11px;text-align: center;flex-shrink: 0;">
+                                    <div class="my-0 mx-5" style="width: 30px;height: 100%;font-size:20px;text-align: center;flex-shrink: 0;">
                                         <i class="fas" ng-class="mode.iconClass"></i>
                                     </div>
                                     <div>
@@ -42,18 +44,14 @@
 
                             </ui-select-choices>
                         </ui-select>
-                        <div id="helpBlock2" class="help-block" ng-show="$ctrl.modeError">Please select a mode.</div>
                     </div>
                 </div>
 
-                <div style="margin-top: 15px;" ng-show="$ctrl.effectQueue.mode != null && $ctrl.effectQueue.mode ==='interval'">
-                    <div class="modal-subheader" style="padding: 0 0 4px 0">
-                        Interval (secs)
-                    </div>
+                <div class="mt-6" ng-show="$ctrl.effectQueue.mode != null && $ctrl.effectQueue.mode ==='interval'">
+                    <div class="modal-subheader pb-2 pt-0 px-0">Interval (secs)</div>
                     <div style="width: 100%; position: relative;">
-                        <div class="form-group" ng-class="{'has-error': $ctrl.intervalError}">
-                            <input type="number" class="form-control" ng-model="$ctrl.effectQueue.interval" ng-keyup="$event.keyCode == 13 && $ctrl.save() " aria-describedby="helpBlock" placeholder="Enter interval">
-                            <span id="helpBlock" class="help-block" ng-show="$ctrl.intervalError">Please provide an interval.</span>
+                        <div class="form-group">
+                            <input type="number" class="form-control" ng-model="$ctrl.effectQueue.interval" placeholder="Enter interval">
                         </div>
                     </div>
                 </div>
@@ -67,57 +65,56 @@
         bindings: {
             resolve: "<",
             close: "&",
-            dismiss: "&"
+            dismiss: "&",
+            modalInstance: "<"
         },
-        controller: function(effectQueuesService) {
+        controller: function(effectQueuesService, ngToast) {
             let $ctrl = this;
 
             $ctrl.isNewQueue = true;
 
             $ctrl.effectQueue = {
                 name: "",
-                mode: "custom"
+                mode: "custom",
+                sortTags: []
             };
 
-            $ctrl.$onInit = function() {
-                if ($ctrl.resolve.queue) {
-                    $ctrl.effectQueue = $ctrl.resolve.queue;
+            $ctrl.$onInit = () => {
+                if ($ctrl.resolve.effectQueue) {
+                    $ctrl.effectQueue = JSON.parse(
+                        angular.toJson($ctrl.resolve.effectQueue)
+                    );
+
                     $ctrl.isNewQueue = false;
+                }
+
+                if ($ctrl.isNewQueue && $ctrl.effectQueue.id == null) {
+                    $ctrl.effectQueue.id = uuidv1();
                 }
             };
 
             $ctrl.queueModes = effectQueuesService.queueModes;
 
-            $ctrl.save = function() {
+            $ctrl.save = () => {
                 if ($ctrl.effectQueue.name == null || $ctrl.effectQueue.name === "") {
-                    $ctrl.nameError = true;
-                } else {
-                    $ctrl.nameError = false;
+                    ngToast.create("Please provide a name for this Effect Queue");
+                    return;
                 }
 
-                if ($ctrl.effectQueue.mode == null || $ctrl.effectQueue.mode === "") {
-                    $ctrl.modeError = true;
-                } else {
-                    $ctrl.modeError = false;
+                if ($ctrl.effectQueue.mode === "interval" && $ctrl.effectQueue.interval == null) {
+                    ngToast.create("Please choose an interval for this Effect Queue");
+                    return;
                 }
 
-                if ($ctrl.effectQueue.mode === "interval" &&
-                    $ctrl.effectQueue.interval == null) {
-                    $ctrl.intervalError = true;
-                } else {
-                    $ctrl.intervalError = false;
-                }
-
-                if ($ctrl.nameError || $ctrl.modeError || $ctrl.intervalError) return;
-
-                if ($ctrl.isNewQueue) {
-                    $ctrl.effectQueue.id = uuidv1();
-                }
-
-                $ctrl.close({
-                    $value: {
-                        effectQueue: $ctrl.effectQueue,
-                        action: $ctrl.isNewQueue ? "add" : "update"
+                effectQueuesService.saveEffectQueue($ctrl.effectQueue).then(successful => {
+                    if (successful) {
+                        $ctrl.close({
+                            $value: {
+                                effectQueue: $ctrl.effectQueue
+                            }
+                        });
+                    } else {
+                        ngToast.create("Failed to save effect queue. Please try again or view logs for details.");
                     }
                 });
             };

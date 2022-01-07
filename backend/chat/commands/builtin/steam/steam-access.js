@@ -1,96 +1,94 @@
 "use strict";
 
-const request = require("request");
+const axios = require("axios").default;
 const logger = require("../../../../logwrapper");
 const Fuse = require("fuse.js");
 
 let steamCache = [];
 
-function cacheSteamLibrary() {
-    return new Promise(resolve => {
+const cacheSteamLibrary = async () => {
+    if (steamCache.length > 0) {
+        logger.debug('Steam library is still cached. No need to pull again.');
+        return false;
+    }
 
-        if (steamCache.length > 0) {
-            logger.debug('Steam library is still cached. No need to pull again.');
-            return resolve(true);
+    logger.debug('Refreshing steam library cache.');
+    const url = "https://api.steampowered.com/ISteamApps/GetAppList/v2/";
+    try {
+        const response = (await axios.get(url)).data;
+
+        if (response && response.applist && response.applist.apps) {
+            steamCache = response.applist.apps;
+            return true;
         }
 
-        logger.debug('Refreshing steam library cache.');
-        let appListUrl = "https://api.steampowered.com/ISteamApps/GetAppList/v0002/";
-        request(appListUrl, function(error, response, body) {
-            if (!error && response.statusCode === 200) {
-                let parsedBody = JSON.parse(body);
-                if (parsedBody && parsedBody.applist && parsedBody.applist.apps) {
-                    steamCache = parsedBody.applist.apps;
-                }
-                return resolve(true);
-            }
+        return false;
+    } catch (error) {
+        logger.error("Unable to get steam library from steam API.", error.message);
+        return false;
+    }
+};
 
-            logger.error("Unable to get steam library from steam API.");
-            return resolve(false);
-        });
-    });
-}
-
-async function getAppIdFromSteamCache(requestedGame) {
+const getAppIdFromSteamCache = async (requestedGame) => {
     // Try to cache library if we don't have one yet.
     if (steamCache.length === 0) {
-        let cacheSuccess = await cacheSteamLibrary();
+        const cacheSuccess = await cacheSteamLibrary();
+
         if (!cacheSuccess) {
             return null;
         }
     }
 
     // Now, let's search the app list and get the closest result.
-    let searchOptions = {
+    const searchOptions = {
         keys: ['name'],
         id: 'appid'
     };
-    let fuse = new Fuse(steamCache, searchOptions);
+    const fuse = new Fuse(steamCache, searchOptions);
 
-    let search = fuse.search(requestedGame);
+    const search = fuse.search(requestedGame);
     if (search.length > 0) {
         return search[0];
     }
 
     return null;
-}
+};
 
-function getSteamAppDetails(appId) {
-    return new Promise(resolve => {
-        const appDetailsUrl = `https://store.steampowered.com/api/appdetails?appids=${appId}`;
+const getSteamAppDetails = async (appId) => {
+    const url = `https://store.steampowered.com/api/appdetails?appids=${appId}`;
 
-        request(appDetailsUrl, function(error, response, body) {
-            if (!error && response.statusCode === 200 && body) {
-                let parsedBody = JSON.parse(body);
-                if (parsedBody) {
-                    let appData = parsedBody[appId];
-                    if (appData && appData.success && appData.data) {
-                        return resolve(appData.data);
-                    }
-                }
+    try {
+        const response = (await axios.get(url)).data;
+
+        if (response) {
+            const appData = response[appId];
+
+            if (appData && appData.success && appData.data) {
+                return appData.data;
             }
-            resolve(null);
-        });
-    });
-}
+        }
 
+        return null;
+    } catch (error) {
+        logger.error("Unable to get app details from steam API.", error.message);
+        return null;
+    }
+};
 
-async function getSteamGameDetails(requestedGame) {
-
-    let appId = await getAppIdFromSteamCache(requestedGame);
+const getSteamGameDetails = async (requestedGame) => {
+    const appId = await getAppIdFromSteamCache(requestedGame);
     if (appId == null || appId === "") {
         logger.debug('Could not retrieve app id for steam search.');
         return null;
     }
 
     const foundGame = await getSteamAppDetails(appId);
-
     if (foundGame == null) {
         logger.error("Unable to get game from steam api.");
         return null;
     }
 
-    let gameDetails = {
+    const gameDetails = {
         name: foundGame.name || "Unknown Name",
         price: null,
         score: null,
@@ -111,7 +109,7 @@ async function getSteamGameDetails(requestedGame) {
     }
 
     return gameDetails;
-}
+};
 
 exports.cacheSteamLibrary = cacheSteamLibrary;
 exports.getSteamGameDetails = getSteamGameDetails;

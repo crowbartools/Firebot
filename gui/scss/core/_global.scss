@@ -6,6 +6,10 @@
   outline: none;
 }
 
+:focus-visible {
+  outline: 1px dotted #808080;
+}
+
 .muted {
   opacity: 0.5;
 }

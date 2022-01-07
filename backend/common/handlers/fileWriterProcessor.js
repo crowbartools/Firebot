@@ -63,7 +63,10 @@ exports.run = async effect => {
     text = text.replace(/\\n/g, "\n").trim();
 
     try {
-        if (effect.writeMode === "append") {
+        if (effect.writeMode === "suffix") {
+            fs.appendFileSync(effect.filepath, text, "utf8");
+
+        } else if (effect.writeMode === "append") {
             if (doesFileExist(effect.filepath) && effect.dontRepeat) {
                 if (!doesTextExistInFile(effect.filepath, text)) {
                     fs.appendFileSync(effect.filepath, text + "\n", "utf8");

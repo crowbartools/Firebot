@@ -430,7 +430,18 @@ function createCurrencyCommandDefinition(currency) {
                 break;
             }
             default: {
-                // Warning: This block can't be entirely empty according to LINT.
+                currencyDatabase.getUserCurrencyAmount(event.userCommand.commandSender, currencyId).then(function(amount) {
+                    if (!isNaN(amount)) {
+                        const balanceMessage = commandOptions.currencyBalanceMessageTemplate
+                            .replace("{user}", event.userCommand.commandSender)
+                            .replace("{currency}", currencyName)
+                            .replace("{amount}", util.commafy(amount));
+
+                        twitchChat.sendChatMessage(balanceMessage, commandOptions.whisperCurrencyBalanceMessage ? event.userCommand.commandSender : null);
+                    } else {
+                        logger.log('Error while trying to show currency amount to user via chat command.');
+                    }
+                });
             }
             }
         }

@@ -151,7 +151,7 @@ async function processEffects(processEffectsRequest) {
     runEffectsContext.effects = JSON.parse(JSON.stringify(runEffectsContext.effects));
 
     const queueId = processEffectsRequest.effects.queue;
-    const queue = effectQueueManager.getEffectQueue(queueId);
+    const queue = effectQueueManager.getItem(queueId);
     if (queue != null) {
         logger.debug(`Sending effects for list ${processEffectsRequest.effects.id} to queue ${queueId}...`);
         effectQueueRunner.addEffectsToQueue(queue, runEffectsContext,

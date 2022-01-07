@@ -61,12 +61,11 @@
             modalInstance: "<"
         },
         controller: function($scope, utilityService, ngToast, timerService) {
-            let $ctrl = this;
+            const $ctrl = this;
 
             $ctrl.timer = {
                 active: true,
                 onlyWhenLive: true,
-                randomize: false,
                 name: "",
                 interval: 0,
                 requiredChatLines: 5,
@@ -80,11 +79,11 @@
                     $ctrl.timer = JSON.parse(JSON.stringify($ctrl.resolve.timer));
                 }
 
-                let modalId = $ctrl.resolve.modalId;
+                const modalId = $ctrl.resolve.modalId;
                 $ctrl.modalId = modalId;
                 utilityService.addSlidingModal(
                     $ctrl.modalInstance.rendered.then(() => {
-                        let modalElement = $("." + modalId).children();
+                        const modalElement = $("." + modalId).children();
                         return {
                             element: modalElement,
                             name: "Edit Timer",

@@ -3,21 +3,21 @@
 "use strict";
 
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
-const request = require("request");
 const logger = require("../../logwrapper");
+const axios = require("axios").default;
 
-function callUrl(url) {
-    return new Promise((resolve, reject) => {
-        request(url, (error, _, body) => {
-            if (error) {
-                logger.warn("error calling readApi url: " + url, error);
-                reject(error);
-            } else {
-                resolve(body);
-            }
-        });
-    });
-}
+const callUrl = async (url) => {
+    try {
+        const response = await axios.get(url);
+
+        if (response) {
+            return response;
+        }
+    } catch (error) {
+        logger.warn("error calling readApi url: " + url, error.message);
+        return error.message;
+    }
+};
 
 const model = {
     definition: {
@@ -35,17 +35,15 @@ const model = {
     },
     evaluator: async (_, url, responseJsonPath) => {
         try {
-
-            let content = await callUrl(url);
+            const content = (await callUrl(url)).data;
 
             if (responseJsonPath != null) {
                 if (content != null) {
-                    let jsonPathNodes = responseJsonPath.split(".");
+                    const jsonPathNodes = responseJsonPath.split(".");
                     try {
-                        let parsedContent = JSON.parse(content);
                         let currentObject = null;
-                        for (let node of jsonPathNodes) {
-                            let objToTraverse = currentObject === null ? parsedContent : currentObject;
+                        for (const node of jsonPathNodes) {
+                            const objToTraverse = currentObject === null ? content : currentObject;
                             if (objToTraverse[node] != null) {
                                 currentObject = objToTraverse[node];
                             } else {

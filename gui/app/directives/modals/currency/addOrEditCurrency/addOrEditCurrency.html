@@ -1,4 +1,4 @@
-<div class="modal-header">
+<div class="modal-header sticky-header">
     <button type="button" class="close" aria-label="Close" ng-click="$ctrl.dismiss()"><span aria-hidden="true">&times;</span></button>
     <h4 class="modal-title">
       <span ng-if="!$ctrl.isNewCurrency">Edit Currency - </span> {{$ctrl.isNewCurrency ? 'Add New Currency' : $ctrl.currency.name }}
@@ -21,7 +21,7 @@
                 <span class="input-group-addon" id="basic-addon3">Name</span>
                 <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.currency.name" placeholder="Coins">
             </div>
-            
+
             <div style="display: flex; flex-direction: row; width: 100%; height: 36px; align-items: center;">
                 <label class="control-fb control--checkbox" style="margin: 0px 15px 0px 0px; flex-shrink: 0">Currency Limit
                     <tooltip text="'Set a maximum amount users can have of this currency.'"></tooltip>
@@ -35,7 +35,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="dropdown options-sounds-dropdown">
                 <h4>Transfers</h4>
                 <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -63,7 +63,7 @@
                     <input type="number" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.currency.payout" placeholder="10">
                 </div>
                 <div style="display: flex; flex-direction: row; width: 100%; height: 36px; margin-bottom: 25px; align-items: center;">
-                    <label class="control-fb control--checkbox" style="margin: 0px 15px 0px 0px; flex-shrink: 0">Offline Payout 
+                    <label class="control-fb control--checkbox" style="margin: 0px 15px 0px 0px; flex-shrink: 0">Offline Payout
                         <tooltip text="'The offline payout amount replaces the base payout amount when the stream is offline.'"></tooltip>
                         <input type="checkbox" ng-init="offline = ($ctrl.currency.offline != null && $ctrl.currency.offline !== '')" ng-model="offline" ng-click="$ctrl.currency.offline = ''">
                         <div class="control__indicator"></div>
@@ -75,7 +75,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <h4>Role Bonuses</h4>
                 <p>These bonuses are added on top of the base payout. A viewer will receive a bonus for each role they are in.</p>
                 <div class="bonus-payout-groups">
@@ -88,7 +88,7 @@
     </div>
 </div>
 
-<div class="modal-footer">
+<div class="modal-footer sticky-footer">
     <button type="button" class="btn btn-danger pull-left" ng-hide="$ctrl.isNewCurrency" ng-click="$ctrl.showCurrencyDeleteModal($ctrl.currency)">Delete Currency</button>
     <button type="button" class="btn btn-warning pull-left" ng-hide="$ctrl.isNewCurrency" ng-click="$ctrl.showCurrencyPurgeModal($ctrl.currency)">Purge Currency</button>
     <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>

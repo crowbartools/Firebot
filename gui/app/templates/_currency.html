@@ -1,18 +1,20 @@
-<div class="mb-4">
+<div class="p-6 mx-0 my-6">
     <button class="btn btn-primary" ng-click="openAddOrEditCurrencyModal()"><i class="fas fa-plus-circle mr-2"></i> Add Currency</button>
 </div>
 
-<div ng-if="getCurrencies().length === 0" class="noselect muted pl-5">
-    <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span><span class="ml-3">No currencies saved. You should make one! :) </span>
-</div>
+<div class="p-6">
+    <div ng-if="getCurrencies().length === 0" class="noselect muted pl-5">
+        <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span><span class="ml-3">No currencies saved. You should make one! :) </span>
+    </div>
 
-<div class="mt-8" style="display:flex;flex-wrap: wrap;">
-    <div ng-repeat="currency in getCurrencies() track by $index" ng-class="{'disabled': !currency.active}" class="fb-tile green centered mr-4" style="flex: 0 0 auto;width:250px;height:150px;">
-        <div class="edit-btn" ng-click="openAddOrEditCurrencyModal(currency)"></div>
-        <div class="content row">
-            <div class="detail-wrapper nomargin">
-                <div class="detail" style="font-size: 1.6em;">
-                    {{currency.name}}
+    <div class="mt-8" style="display:flex;flex-wrap: wrap;">
+        <div ng-repeat="currency in getCurrencies() track by $index" ng-class="{'disabled': !currency.active}" class="fb-tile green centered mr-4" style="flex: 0 0 auto;width:250px;height:150px;">
+            <div class="edit-btn" ng-click="openAddOrEditCurrencyModal(currency)"></div>
+            <div class="content row">
+                <div class="detail-wrapper nomargin">
+                    <div class="detail" style="font-size: 1.6em;">
+                        {{currency.name}}
+                    </div>
                 </div>
             </div>
         </div>

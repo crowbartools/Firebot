@@ -81,8 +81,7 @@ const heistCommand = {
                 return;
             }
             wagerAmount = defaultWager;
-        }
-        if (event.userCommand.subcommandId === "wagerAmount") {
+        } else if (event.userCommand.subcommandId === "wagerAmount") {
             const triggeredArg = userCommand.args[0];
             wagerAmount = parseInt(triggeredArg);
         } else {

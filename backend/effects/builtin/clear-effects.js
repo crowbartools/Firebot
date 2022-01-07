@@ -4,6 +4,7 @@ const webServer = require("../../../server/httpServer");
 const frontendCommunicator = require("../../common/frontend-communicator");
 const effectQueueRunner = require("../../effects/queues/effect-queue-runner");
 const { EffectCategory } = require('../../../shared/effect-constants');
+const { settings } = require("../../common/settings-access");
 
 /**
  * The Delay effect
@@ -37,6 +38,17 @@ const delay = {
                 <input type="checkbox" ng-model="effect.overlay">
                 <div class="control__indicator"></div>
             </label>
+            <div class="mt-0 mr-0 mb-6 ml-6" uib-collapse="!effect.overlay || !settings.useOverlayInstances()">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="chat-effect-type">{{effect.overlayInstance ? effect.overlayInstance : 'Default'}}</span> <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu chat-effect-dropdown">
+                        <li ng-click="effect.overlayInstance = null"><a href>Default</a></li>
+                        <li ng-repeat="instanceName in settings.getOverlayInstances()" ng-click="effect.overlayInstance = instanceName"><a href>{{instanceName}}</a></li>
+                    </ul>
+                </div>
+            </div>
             <label class="control-fb control--checkbox"> Sounds
                 <input type="checkbox" ng-model="effect.sounds">
                 <div class="control__indicator"></div>
@@ -62,9 +74,15 @@ const delay = {
     /**
    * The controller for the front end Options
    */
-    optionsController: ($scope, effectQueuesService) => {
-
+    optionsController: ($scope, effectQueuesService, settingsService) => {
+        $scope.settings = settingsService;
         $scope.effectQueues = effectQueuesService.getEffectQueues() || [];
+
+        if ($scope.effect.overlayInstance != null) {
+            if (!settingsService.getOverlayInstances().includes($scope.effect.overlayInstance)) {
+                $scope.effect.overlayInstance = null;
+            }
+        }
 
         if ($scope.effect.queueId != null) {
             let queueStillExists = $scope.effectQueues.some(q => q.id === $scope.effect.queueId);
@@ -119,6 +137,13 @@ const delay = {
         }
 
         if (effect.overlay) {
+            if (settings.useOverlayInstances()) {
+                if (effect.overlayInstance != null) {
+                    webServer.sendToOverlay("OVERLAY:REFRESH", { overlayInstance: effect.overlayInstance });
+                    return true;
+                }
+            }
+
             // trigger overlay refresh to clear any current effects
             webServer.sendToOverlay("OVERLAY:REFRESH");
         }

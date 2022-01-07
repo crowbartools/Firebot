@@ -47,6 +47,10 @@
     padding-left: 10px;
     background: rgb(49, 49, 49);
     border-top: 1px solid #29292988;
+
+    span {
+        word-break: break-word;
+    }
 }
 
 .chat-message {
