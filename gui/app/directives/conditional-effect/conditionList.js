@@ -32,7 +32,7 @@
                         </div>
                         <span> of the following conditions pass:</span>
                     </div>
-                    <div style="display:flex;flex-wrap: wrap;">           
+                    <div style="display:flex;flex-wrap: wrap;">
                         <button ng-repeat="condition in $ctrl.conditionData.conditions track by $index" class="filter-bar" style="max-width: 100%;" ng-click="$ctrl.openAddOrEditConditionModal($index)">
                             <condition-display condition="condition" condition-type="$ctrl.getConditionType(condition.type)" style="width: 94%"></condition-display>
                             <a class="filter-remove-btn clickable" style="margin-left: 10px; flex-shrink: 0;" ng-click="$event.stopPropagation();$ctrl.removeConditionAtIndex($index)" uib-tooltip="Remove condition" tooltip-append-to-body="true">
@@ -41,14 +41,14 @@
                         </button>
 
                         <button class="filter-bar" ng-show="$ctrl.hasConditionsAvailable()" ng-click="$ctrl.openAddOrEditConditionModal()" uib-tooltip="Add new condition" tooltip-append-to-body="true">
-                            <i class="far fa-plus"></i> 
-                        </button> 
-                    </div>   
-                    <div ng-if="!$ctrl.hasConditionsAvailable()" class="muted">There are no conditions available for this trigger.</div>   
-                </div>              
+                            <i class="far fa-plus"></i>
+                        </button>
+                    </div>
+                    <div ng-if="!$ctrl.hasConditionsAvailable()" class="muted">There are no conditions available for this trigger.</div>
+                </div>
             </div>
             `,
-            controller: function($q, utilityService, backendCommunicator, $injector) {
+            controller: function(utilityService, backendCommunicator, $injector) {
                 let $ctrl = this;
 
                 // when the element is initialized
@@ -60,10 +60,14 @@
 
                         for (let i = 0; i < $ctrl.conditionData.conditions.length; i++) {
                             let condition = $ctrl.conditionData.conditions[i];
-                            if (!condition || !condition.value) continue;
+                            if (!condition || !condition.value) {
+                                continue;
+                            }
 
                             let conditionType = $ctrl.getConditionType(condition.type);
-                            if (!conditionType) continue;
+                            if (!conditionType) {
+                                continue;
+                            }
 
                             let valid = $injector.invoke(conditionType.valueIsStillValid, {}, {
                                 condition: condition

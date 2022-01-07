@@ -108,7 +108,10 @@
                 };
 
                 $ctrl.delete = () => {
-                    if ($ctrl.isNewQuote) return;
+                    if ($ctrl.isNewQuote) {
+                        return;
+                    }
+
                     $ctrl.close({
                         $value: {
                             quote: $ctrl.quote,
@@ -131,7 +134,9 @@
                         $ctrl.authorError = true;
                     }
 
-                    if ($ctrl.textError) return;
+                    if ($ctrl.textError) {
+                        return;
+                    }
 
                     $ctrl.quote.createdAt = $ctrl.createdAtDate != null ? moment($ctrl.createdAtDate).toISOString() : null;
 

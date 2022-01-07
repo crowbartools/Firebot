@@ -209,19 +209,6 @@
                 }
             };
 
-            function toggleSortTagForEvent(event, tagId) {
-                if (event == null) return null;
-                if (event.sortTags == null) {
-                    event.sortTags = [];
-                }
-                if (event.sortTags.includes(tagId)) {
-                    event.sortTags = event.sortTags.filter(id => id !== tagId);
-                } else {
-                    event.sortTags.push(tagId);
-                }
-                return event;
-            }
-
             function addEventToGroup(event, groupId) {
                 if (groupId === "mainevents") {
                     eventsService.getMainEvents().push(event);
@@ -289,7 +276,10 @@
             };
 
             $scope.pasteEvents = function(groupId) {
-                if (!$scope.hasCopiedEvents()) return;
+                if (!$scope.hasCopiedEvents()) {
+                    return;
+                }
+
                 if (groupId === "mainevents") {
                     let copiedEvents = objectCopyHelper.getCopiedObject("events");
 

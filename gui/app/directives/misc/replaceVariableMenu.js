@@ -18,7 +18,7 @@
                     menuPosition: "@",
                     buttonPosition: "@"
                 },
-                controller: function($scope, $element, $q, backendCommunicator, $timeout, $sce) {
+                controller: function($scope, $element, backendCommunicator, $timeout, $sce) {
 
                     const insertAt = (str, sub, pos) => `${str.slice(0, pos)}${sub}${str.slice(pos)}`;
 
@@ -170,8 +170,8 @@
                                             </collapsable-section>
                                         </div>
                                     </div>
-                                </div>                    
-                            </div>                         
+                                </div>
+                            </div>
                         </div>`
                     );
                     $compile(menu)(scope);

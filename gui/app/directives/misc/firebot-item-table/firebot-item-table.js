@@ -66,7 +66,10 @@
                     stop: () => {
                         if (sortTagsService.getSelectedSortTag($ctrl.sortTagContext) != null &&
                             ($scope.searchQuery == null ||
-                                $scope.searchQuery.length < 1)) return;
+                                $scope.searchQuery.length < 1)) {
+                            return;
+                        }
+
                         $ctrl.triggerItemsUpdate();
                     }
                 };

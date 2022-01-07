@@ -66,8 +66,7 @@
             </eos-container>
             `,
             controller: function($scope, utilityService, $rootScope, $q, logger,
-                backendCommunicator,
-                profileManager) {
+                backendCommunicator, profileManager) {
 
                 const $ctrl = this;
 
@@ -178,8 +177,10 @@
                 };
 
                 $scope.openScriptsWebsite = function() {
-                    if (!$scope.scriptManifest || !$scope.scriptManifest.website)
+                    if (!$scope.scriptManifest || !$scope.scriptManifest.website) {
                         return;
+                    }
+
                     $rootScope.openLinkExternally($scope.scriptManifest.website);
                 };
 

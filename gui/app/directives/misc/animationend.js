@@ -4,7 +4,7 @@ angular.module('firebotApp').
     directive('animationend', function() {
         return {
             restrict: 'A',
-            link: function(scope, element, attrs) {
+            link: function(element, attrs) {
                 let events = 'animationend webkitAnimationEnd MSAnimationEnd' +
 						'transitionend webkitTransitionEnd';
 

@@ -61,12 +61,17 @@
             };
 
             $ctrl.delete = function() {
-                if ($ctrl.isNewCurrency) return;
+                if ($ctrl.isNewCurrency) {
+                    return;
+                }
+
                 $ctrl.close({ $value: { currency: $ctrl.currency, action: "delete" } });
             };
 
             $ctrl.save = function() {
-                if ($ctrl.currency.name == null || $ctrl.currency.name === "") return;
+                if ($ctrl.currency.name == null || $ctrl.currency.name === "") {
+                    return;
+                }
 
                 logger.debug($ctrl.currency);
 

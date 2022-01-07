@@ -356,7 +356,10 @@
                 };
 
                 ctrl.getEffectNameById = id => {
-                    if (!effectDefinitions || effectDefinitions.length < 1) return "";
+                    if (!effectDefinitions || effectDefinitions.length < 1) {
+                        return "";
+                    }
+
                     return effectDefinitions.find(e => e.id === id).name;
                 };
 
@@ -479,7 +482,10 @@
                             triggerMeta: () => ctrl.triggerMeta
                         },
                         closeCallback: resp => {
-                            if (resp == null) return;
+                            if (resp == null) {
+                                return;
+                            }
+
                             let { selectedEffectDef } = resp;
 
                             let newEffect = {
@@ -568,9 +574,15 @@
 
                 ctrl.getSelectedEffectQueueName = () => {
                     const unsetDisplay = "Not set";
-                    if (ctrl.effectsData.queue == null) return unsetDisplay;
+                    if (ctrl.effectsData.queue == null) {
+                        return unsetDisplay;
+                    }
+
                     const queue = effectQueuesService.getEffectQueue(ctrl.effectsData.queue);
-                    if (queue == null) return unsetDisplay;
+                    if (queue == null) {
+                        return unsetDisplay;
+                    }
+
                     return queue.name;
                 };
 
@@ -580,9 +592,15 @@
                 };
 
                 ctrl.getSelectedQueueModeIsCustom = () => {
-                    if (ctrl.effectsData.queue == null) return false;
+                    if (ctrl.effectsData.queue == null) {
+                        return false;
+                    }
+
                     const queue = effectQueuesService.getEffectQueue(ctrl.effectsData.queue);
-                    if (queue == null) return false;
+                    if (queue == null) {
+                        return false;
+                    }
+
                     return queue.mode === "custom";
                 };
 
@@ -595,7 +613,10 @@
                 };
 
                 ctrl.validQueueSelected = () => {
-                    if (ctrl.effectsData.queue == null) return false;
+                    if (ctrl.effectsData.queue == null) {
+                        return false;
+                    }
+
                     const queue = effectQueuesService.getEffectQueue(ctrl.effectsData.queue);
                     return queue != null;
                 };

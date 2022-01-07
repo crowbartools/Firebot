@@ -9,7 +9,9 @@
                 link: function(scope, elem, attrs) {
 
                     scope.$watch(attrs.piClassHover, function(newValue) {
-                        if (newValue == null) return;
+                        if (newValue == null) {
+                            return;
+                        }
 
                         elem.bind('mouseover', function() {
                             elem.addClass(attrs.piClassHover);

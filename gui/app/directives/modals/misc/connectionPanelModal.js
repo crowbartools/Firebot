@@ -15,20 +15,20 @@
                     <div style="display: flex; flex-direction: row; justify-content: space-around; width: 100%;">
                         <div class="connection-tile">
                             <span class="connection-title">Chat & Events <tooltip text="'Used for commands, chat effects, chat feed, events, etc.'"></tooltip></span>
-                            <connection-button 
-                                connected="$ctrl.conn.connections['chat'] === 'connected'" 
+                            <connection-button
+                                connected="$ctrl.conn.connections['chat'] === 'connected'"
                                 connecting="$ctrl.conn.connections['chat'] === 'connecting'"
                                 connection-name="Chat"
                                 on-connection-click="$ctrl.conn.toggleConnectionToService('chat')"></connection-button>
                             <div class="sub-title">
                                 <div style="padding-bottom: 4px;">Sidebar controlled <tooltip text="'Check this to have Chat be controlled by the sidebar connect button.'"></tooltip></div>
-                                <label class="control-fb control--checkbox" style="position: relative;height: 20px;padding: 0;margin: 0;width: 20px;"> 
+                                <label class="control-fb control--checkbox" style="position: relative;height: 20px;padding: 0;margin: 0;width: 20px;">
                                     <input type="checkbox" ng-checked="$ctrl.serviceIsChecked('chat')" ng-click="$ctrl.toggledServiceIsChecked('chat')">
-                                    <div class="control__indicator"></div>                                             
+                                    <div class="control__indicator"></div>
                                 </label>
                             </div>
                         </div>
-                                              
+
                     </div>
                 </div>
                 <div>
@@ -53,21 +53,21 @@
                     <div style="display: flex; flex-direction: row; justify-content: space-around; width: 100%;">
                         <div class="connection-tile" style="margin-right: 10px;" ng-repeat="integration in $ctrl.is.getLinkedIntegrations()">
                             <span class="connection-title">{{integration.name}} <tooltip text="integration.description"></tooltip></span>
-                            <connection-button 
-                                connected="$ctrl.is.integrationIsConnected(integration.id)" 
+                            <connection-button
+                                connected="$ctrl.is.integrationIsConnected(integration.id)"
                                 connecting="$ctrl.is.integrationIsWaitingForConnectionUpdate(integration.id)"
                                 connection-name="{{integration.name}}"
                                 on-connection-click="$ctrl.is.toggleConnectionForIntegration(integration.id)"></connection-button>
                             <div class="sub-title">
                                 <div style="padding-bottom: 4px;">Sidebar controlled <tooltip text="'Check this to have ' + integration.name + ' be controlled by the sidebar connect button.'"></tooltip></div>
-                                <label class="control-fb control--checkbox" style="position: relative;height: 20px;padding: 0;margin: 0;width: 20px;"> 
+                                <label class="control-fb control--checkbox" style="position: relative;height: 20px;padding: 0;margin: 0;width: 20px;">
                                     <input type="checkbox" ng-checked="$ctrl.serviceIsChecked('integration.' + integration.id)" ng-click="$ctrl.toggledServiceIsChecked('integration.' + integration.id)">
-                                    <div class="control__indicator"></div>                                             
+                                    <div class="control__indicator"></div>
                                 </label>
                             </div>
                         </div>
                     </div>
-                </div>           
+                </div>
             </div>
             `,
         bindings: {
@@ -77,7 +77,6 @@
         },
         controller: function(
             connectionService,
-            websocketService,
             settingsService,
             integrationService,
             connectionManager
@@ -86,7 +85,6 @@
 
             $ctrl.$onInit = function() {
                 $ctrl.conn = connectionService;
-                $ctrl.wss = websocketService;
                 $ctrl.is = integrationService;
                 $ctrl.cm = connectionManager;
             };

@@ -75,7 +75,10 @@
             };
 
             $scope.toggleCustomCommandActiveState = command => {
-                if (command == null) return;
+                if (command == null) {
+                    return;
+                }
+
                 command.active = !command.active;
                 commandsService.saveCustomCommand(command);
                 commandsService.refreshCommands();
@@ -139,7 +142,10 @@
                     console.log(e, ui);
                     if (sortTagsService.getSelectedSortTag("commands") != null &&
                         (commandsService.customCommandSearch == null ||
-                            commandsService.customCommandSearch.length < 1)) return;
+                            commandsService.customCommandSearch.length < 1)) {
+                        return;
+                    }
+
                     commandsService.saveAllCustomCommands(commandsService.commandsCache.customCommands);
                 }
             };

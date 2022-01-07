@@ -32,7 +32,7 @@
             <span>:</span>
           </div>
           <div style="display:flex;flex-wrap: wrap;">
-           
+
             <button ng-repeat="filter in $ctrl.filterData.filters track by $index" class="filter-bar" ng-click="$ctrl.openAddOrEditFilterModal($index)">
                 <filter-display filter="filter" filter-type="$ctrl.getFilterType(filter.type)"></filter-display>
                 <a class="filter-remove-btn clickable" style="padding-left: 10px;" ng-click="$event.stopPropagation();$ctrl.removeFilterAtIndex($index)" uib-tooltip="Remove filter" tooltip-append-to-body="true">
@@ -41,15 +41,15 @@
             </button>
 
             <button class="filter-bar" ng-show="$ctrl.hasFiltersAvailable()" ng-click="$ctrl.openAddOrEditFilterModal()" uib-tooltip="Add new filter" tooltip-append-to-body="true">
-                <i class="far fa-plus"></i> 
-            </button> 
+                <i class="far fa-plus"></i>
+            </button>
 
           </div>
-             
-            <div ng-if="!$ctrl.hasFiltersAvailable()" class="muted">There are no filters available for this event type.</div>            
+
+            <div ng-if="!$ctrl.hasFiltersAvailable()" class="muted">There are no filters available for this event type.</div>
         </div>
             `,
-            controller: function($q, utilityService, backendCommunicator, $injector) {
+            controller: function(utilityService, backendCommunicator, $injector) {
                 let $ctrl = this;
 
                 // when the element is initialized
@@ -73,10 +73,14 @@
 
                         for (let i = 0; i < $ctrl.filterData.filters.length; i++) {
                             let filter = $ctrl.filterData.filters[i];
-                            if (!filter || !filter.value) continue;
+                            if (!filter || !filter.value) {
+                                continue;
+                            }
 
                             let filterType = $ctrl.getFilterType(filter.type);
-                            if (!filterType) continue;
+                            if (!filterType) {
+                                continue;
+                            }
 
                             let valid = $injector.invoke(filterType.valueIsStillValid, {}, {
                                 filterSettings: filter

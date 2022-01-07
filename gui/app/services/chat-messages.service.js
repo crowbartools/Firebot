@@ -6,8 +6,8 @@
 
     angular
         .module('firebotApp')
-        .factory('chatMessagesService', function ($rootScope, logger, listenerService, settingsService,
-            soundService, backendCommunicator, $q, pronounsService, accountAccess) {
+        .factory('chatMessagesService', function (logger, listenerService, settingsService,
+            soundService, backendCommunicator, pronounsService, accountAccess) {
             let service = {};
 
             // Chat Message Queue

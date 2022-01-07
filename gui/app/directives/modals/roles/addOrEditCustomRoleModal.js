@@ -94,7 +94,10 @@
                         saveText: "Add",
                         validationFn: (username) => {
                             return new Promise(resolve => {
-                                if (username == null) return resolve(false);
+                                if (username == null) {
+                                    return resolve(false);
+                                }
+
                                 if (findIndexIgnoreCase($ctrl.role.viewers, username) !== -1) {
                                     return resolve(false);
                                 }
@@ -138,7 +141,10 @@
             };
 
             $ctrl.delete = function() {
-                if ($ctrl.isNewRole) return;
+                if ($ctrl.isNewRole) {
+                    return;
+                }
+
                 $ctrl.close({
                     $value: {
                         role: $ctrl.role,

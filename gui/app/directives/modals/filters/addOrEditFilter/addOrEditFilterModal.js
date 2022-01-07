@@ -11,7 +11,7 @@
                 <h4 class="modal-title">{{$ctrl.isNewFilter ? 'Create New Filter' : 'Edit Filter'}}</h4>
             </div>
             <div class="modal-body">
-               
+
                 <div style="display: flex;flex-wrap: wrap;">
                     <div class="btn-group" style="margin-right: 5px;margin-bottom:5px;" uib-dropdown>
                         <button id="single-button" type="button" class="btn btn-default" uib-dropdown-toggle>
@@ -53,7 +53,7 @@
                         <div ng-switch-default>
                             <input type="{{$ctrl.currentFilterDef.valueType}}" class="form-control" style="min-width: 100px;" ng-model="$ctrl.selectedFilter.value" placeholder="Value">
                         </div>
-                    </div>         
+                    </div>
                 </div>
 
             </div>
@@ -142,7 +142,10 @@
             };
 
             $ctrl.delete = function() {
-                if ($ctrl.filter) return;
+                if ($ctrl.filter) {
+                    return;
+                }
+
                 $ctrl.close({
                     $value: { filter: $ctrl.selectedFilter, index: $ctrl.resolve.index, action: "delete" }
                 });
