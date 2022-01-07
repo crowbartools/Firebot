@@ -257,6 +257,10 @@
                             event.preventDefault();
                             event.stopImmediatePropagation();
                         }
+
+                        if (key === "Escape") {
+                            $scope.setMenuOpen(false);
+                        }
                     });
 
                     $scope.menuOpen = false;
