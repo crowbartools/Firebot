@@ -110,15 +110,15 @@ exports.setupChatListeners = (streamerChatClient) => {
         }
     });
 
-    streamerChatClient.onCommunitySub((_channel, _user, subInfo, msg) => {
+    streamerChatClient.onCommunitySub((_channel, _user, subInfo) => {
         twitchEventsHandler.giftSub.triggerCommunitySubGift(subInfo);
     });
 
-    streamerChatClient.onGiftPaidUpgrade((_channel, _user, subInfo, msg) => {
+    streamerChatClient.onGiftPaidUpgrade((_channel, _user, subInfo) => {
         twitchEventsHandler.giftSub.triggerSubGiftUpgrade(subInfo);
     });
 
-    streamerChatClient.onPrimePaidUpgrade((_channel, _user, subInfo, msg) => {
+    streamerChatClient.onPrimePaidUpgrade((_channel, _user, subInfo) => {
         twitchEventsHandler.sub.triggerPrimeUpgrade(subInfo);
     });
 

@@ -1,7 +1,6 @@
 "use strict";
 
 const logger = require("./logwrapper");
-const frontendCommunicator = require("./common/frontend-communicator");
 
 /**
  * @typedef FirebotSecrets

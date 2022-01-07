@@ -4,7 +4,7 @@
 
 const accountAccess = require("../../common/account-access");
 
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
+const { OutputDataType } = require("../../../shared/variable-constants");
 
 const model = {
     definition: {

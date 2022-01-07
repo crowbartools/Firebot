@@ -3,7 +3,6 @@
 const profileManager = require("./profile-manager");
 const logger = require("../logwrapper");
 const frontendCommunicator = require("./frontend-communicator");
-const authManager = require("../auth/auth-manager");
 const EventEmitter = require("events");
 
 /**@type {NodeJS.EventEmitter} */

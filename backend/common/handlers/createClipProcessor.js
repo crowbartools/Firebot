@@ -8,13 +8,12 @@ const discord = require("../../integrations/builtin/discord/discord-message-send
 const utils = require("../../utility");
 
 const twitchApi = require("../../twitch-api/api");
-const { HelixClip } = require("@twurple/api");
 const client = twitchApi.getClient();
 
 /**
  * @returns {Promise<HelixClip?>}
  */
-exports.createClip = async function(effect, trigger) {
+exports.createClip = async function(effect) {
 
     const streamerAccount = accountAccess.getAccounts().streamer;
     const broadcast = await client.streams.getStreamByUserName(streamerAccount.username);
@@ -71,16 +70,6 @@ exports.createClip = async function(effect, trigger) {
         if (effect.postInDiscord) {
             const clipEmbed = await discordEmbedBuilder.buildClipEmbed(clip);
             discord.sendDiscordMessage(effect.discordChannelId, "A new clip was created!", clipEmbed);
-        }
-
-        if (effect.download) {
-            try {
-                // TODO: Convert this to work with twitch clips
-                //await downloadAndSaveClip(clip);
-                renderWindow.webContents.send('eventlog', {type: "general", username: "System:", event: `Successfully saved clip to download folder.`});
-            } catch (e) {
-                renderWindow.webContents.send('eventlog', {type: "general", username: "System:", event: `Failed to download and save clip for reason: ${e}`});
-            }
         }
 
         logger.info("Successfully created a clip!");

@@ -85,15 +85,15 @@ const playVideo = {
         </div>
 
         <div ng-show="effect.videoType == 'Local Video'" class="input-group">
-            <file-chooser 
-                model="effect.file" 
+            <file-chooser
+                model="effect.file"
                 options="{ filters: [ {name: 'Video', extensions: ['mp4', 'webm', 'ogv']} ]}"
             ></file-chooser>
         </div>
         <div ng-show="effect.videoType == 'Random From Folder'" class="input-group">
-            <file-chooser 
-                model="effect.folder" 
-                options="{ directoryOnly: true, filters: [], title: 'Select Video Folder'}" 
+            <file-chooser
+                model="effect.folder"
+                options="{ directoryOnly: true, filters: [], title: 'Select Video Folder'}"
             />
         </div>
         <div ng-show="effect.videoType == 'YouTube Video'" class="input-group">
@@ -108,18 +108,18 @@ const playVideo = {
         </div>
 
         <div ng-show="effect.videoType == 'Twitch Clip'">
-            <firebot-input 
-                input-title="Twitch Clip Url/ID" 
-                model="effect.twitchClipUrl" 
-                placeholder-text="Ex: HealthyBlazingLyrebirdTinyFace" 
+            <firebot-input
+                input-title="Twitch Clip Url/ID"
+                model="effect.twitchClipUrl"
+                placeholder-text="Ex: HealthyBlazingLyrebirdTinyFace"
             />
         </div>
 
         <div ng-show="effect.videoType == 'Random Twitch Clip'">
-            <firebot-input 
-                input-title="Twitch Username" 
-                model="effect.twitchClipUsername" 
-                placeholder-text="Ex: $streamer, $user, etc" 
+            <firebot-input
+                input-title="Twitch Username"
+                model="effect.twitchClipUsername"
+                placeholder-text="Ex: $streamer, $user, etc"
             />
         </div>
 
@@ -485,9 +485,6 @@ const playVideo = {
                     fileExt = "ogg";
                 }
                 let youtubeId = data.youtubeId;
-                let videoPosition = data.videoPosition;
-                let videoHeight = data.videoHeight;
-                let videoWidth = data.videoWidth;
                 let videoDuration =
                     data.videoDuration != null && data.videoDuration !== ""
                         ? parseFloat(data.videoDuration) * 1000
@@ -680,7 +677,7 @@ const playVideo = {
                         ytOptions.width = data.videoWidth;
                     }
 
-                    let player = new YT.Player(ytPlayerId, ytOptions); // eslint-disable-line no-undef
+                    let player = new YT.Player(ytPlayerId, ytOptions); // eslint-disable-line
 
                     // Remove div after X time.
                     if (videoDuration) {

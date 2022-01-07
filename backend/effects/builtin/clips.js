@@ -151,8 +151,8 @@ const clip = {
         return errors;
     },
     onTriggerEvent: async event => {
-        const { effect, trigger } = event;
-        const clip = await clipProcessor.createClip(effect, trigger);
+        const { effect } = event;
+        const clip = await clipProcessor.createClip(effect);
         if (clip != null) {
 
             const rawDataSymbol = Object.getOwnPropertySymbols(clip)[0];

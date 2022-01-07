@@ -125,7 +125,7 @@ function stopService() {
 }
 
 const countEmojis = (str) => {
-    const re = /\p{Extended_Pictographic}/ug; //eslint-disable-line
+    const re = /\p{Extended_Pictographic}/ug;
     return ((str || '').match(re) || []).length;
 };
 

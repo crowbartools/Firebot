@@ -4,7 +4,7 @@
 
 const util = require("../../utility");
 
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
+const { OutputDataType } = require("../../../shared/variable-constants");
 
 const model = {
     definition: {

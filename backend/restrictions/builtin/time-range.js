@@ -22,9 +22,6 @@ const model = {
             <div uib-timepicker ng-model="restriction.endTime" show-spinners="false"></div>
         </div>
     `,
-    optionsController: ($scope) => {
-
-    },
     optionsValueDisplay: (restriction) => {
         function formatAMPM(date) {
             date = new Date(date);
@@ -62,14 +59,7 @@ const model = {
                 reject('Time must be between ' + moment(restrictionData.startTime).format('hh:mm A') + ' and ' + moment(restrictionData.endTime).format('hh:mm A') + '.');
             }
         });
-    },
-    /*
-        called after all restrictions in a list are met. Do logic such as deducting currency here.
-    */
-    onSuccessful: (triggerData, restrictionData) => {
-
     }
-
 };
 
 module.exports = model;

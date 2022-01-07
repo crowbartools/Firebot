@@ -95,9 +95,7 @@ const model = {
                 reject(`Channel game isn't set to the correct game.`);
             }
         });
-    },
-    onSuccessful: (triggerData, restrictionData) => {}
-
+    }
 };
 
 module.exports = model;

@@ -4,7 +4,6 @@ const path = require("path");
 const logger = require("../../../logwrapper");
 const importHelpers = require("../import-helpers");
 const { settings } = require("../../../common/settings-access");
-const frontendCommunicator = require("../../../common/frontend-communicator");
 
 
 async function checkForV4SettingsFile() {

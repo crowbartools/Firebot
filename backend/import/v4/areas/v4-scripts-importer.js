@@ -6,7 +6,6 @@ const importHelpers = require("../import-helpers");
 const fse = require("fs-extra");
 const profileManager = require("../../../common/profile-manager");
 const { settings } = require("../../../common/settings-access");
-const frontendCommunicator = require("../../../common/frontend-communicator");
 
 const v4ScriptsPath = path.join(importHelpers.v4DataPath, "/scripts");
 const v5ScriptsPath = profileManager.getPathInProfile("/scripts");

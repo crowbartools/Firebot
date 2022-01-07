@@ -15,9 +15,6 @@ const model = {
             <input type="number" class="form-control" placeholder="0" ng-model="restriction.messages">
         </div>
     `,
-    optionsController: ($scope) => {
-
-    },
     optionsValueDisplay: (restriction) => {
         let messages = restriction.messages || 0;
 
@@ -43,14 +40,7 @@ const model = {
                 reject("You have not sent enough chat messages in this channel");
             }
         });
-    },
-    /*
-        called after all restrictions in a list are met. Do logic such as deducting currency here.
-    */
-    onSuccessful: (triggerData, restrictionData) => {
-
     }
-
 };
 
 module.exports = model;
