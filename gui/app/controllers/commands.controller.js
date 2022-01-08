@@ -11,7 +11,8 @@
             listenerService,
             viewerRolesService,
             objectCopyHelper,
-            sortTagsService
+            sortTagsService,
+            effectQueuesService
         ) {
             // Cache commands on app load.
             commandsService.refreshCommands();
@@ -150,35 +151,83 @@
                 }
             };
 
-            $scope.commandMenuOptions = () => {
+            $scope.addToEffectQueue = (command, queueId) => {
+                if (command == null) {
+                    return;
+                }
+
+                if (command.effects) {
+                    command.effects.queue = queueId;
+                }
+
+                commandsService.saveCustomCommand(command);
+                commandsService.refreshCommands();
+            };
+
+            $scope.clearEffectQueue = (command) => {
+                command.effects.queue = null;
+            };
+
+            $scope.getEffectQueueMenuOptions = (command) => {
+                const queues = effectQueuesService.getEffectQueues();
+                if (command.effects != null && queues != null && queues.length > 0) {
+                    const children = queues.map(q => {
+                        const isSelected = command.effects.queue && command.effects.queue === q.id;
+                        return {
+                            html: `<a href><i class="${isSelected ? 'fas fa-check' : ''}" style="margin-right: ${isSelected ? '10' : '27'}px;"></i> ${q.name}</a>`,
+                            click: () => {
+                                $scope.addToEffectQueue(command, q.id);
+                            }
+                        };
+                    });
+
+                    const hasEffectQueue = command.effects.queue != null && command.effects.queue !== "";
+                    children.push({
+                        html: `<a href><i class="${!hasEffectQueue ? 'fas fa-check' : ''}" style="margin-right: ${!hasEffectQueue ? '10' : '27'}px;"></i> None</a>`,
+                        click: () => {
+                            $scope.clearEffectQueue(command);
+                        },
+                        hasTopDivider: true
+                    });
+
+                    return children;
+                }
+            };
+
+            $scope.commandMenuOptions = (command) => {
                 const options = [
                     {
                         html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
-                        click: function ($itemScope) {
-                            let command = $itemScope.command;
+                        click: ($itemScope) => {
+                            const command = $itemScope.command;
                             $scope.openAddOrEditCustomCommandModal(command);
                         }
                     },
                     {
                         html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> Toggle Enabled</a>`,
-                        click: function ($itemScope) {
-                            let command = $itemScope.command;
+                        click: ($itemScope) => {
+                            const command = $itemScope.command;
                             $scope.toggleCustomCommandActiveState(command);
                         }
                     },
                     {
                         html: `<a href ><i class="far fa-clone" style="margin-right: 10px;"></i> Duplicate</a>`,
-                        click: function ($itemScope) {
-                            let command = $itemScope.command;
+                        click: ($itemScope) => {
+                            const command = $itemScope.command;
                             $scope.duplicateCustomCommand(command);
                         }
                     },
                     {
                         html: `<a href style="color: #fb7373;"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>`,
-                        click: function ($itemScope) {
-                            let command = $itemScope.command;
+                        click: ($itemScope) => {
+                            const command = $itemScope.command;
                             $scope.deleteCustomCommand(command);
                         }
+                    },
+                    {
+                        text: `Effect Queues...`,
+                        children: $scope.getEffectQueueMenuOptions(command),
+                        hasTopDivider: true
                     }
                 ];
 

@@ -26,7 +26,7 @@
                 toolbar: "?fbItemTableToolbar"
             },
             templateUrl: "./directives/misc/firebot-item-table/firebot-item-table.html",
-            controller: function($scope, sortTagsService) {
+            controller: function($scope, sortTagsService, effectQueuesService) {
                 const $ctrl = this;
 
                 $scope.sts = sortTagsService;
@@ -74,10 +74,55 @@
                     }
                 };
 
-                $ctrl.getContextMenu = (item) => {
-                    return $ctrl.contextMenuOptions({ item: item }) || [];
+                $ctrl.addToEffectQueue = (item, queueId) => {
+                    if (item == null) {
+                        return;
+                    }
+
+                    if (item.effects) {
+                        item.effects.queue = queueId;
+                    }
+
+                    $ctrl.triggerItemsUpdate();
                 };
 
+                $ctrl.clearEffectQueue = (item) => {
+                    item.effects.queue = null;
+                };
+
+                $ctrl.getContextMenu = (item) => {
+                    const menuItems = $ctrl.contextMenuOptions({ item: item }) || [];
+
+                    const queues = effectQueuesService.getEffectQueues();
+                    if (item.effects != null && queues != null && queues.length > 0) {
+                        const children = queues.map(q => {
+                            const isSelected = item.effects.queue && item.effects.queue === q.id;
+                            return {
+                                html: `<a href><i class="${isSelected ? 'fas fa-check' : ''}" style="margin-right: ${isSelected ? '10' : '27'}px;"></i> ${q.name}</a>`,
+                                click: () => {
+                                    $ctrl.addToEffectQueue(item, q.id);
+                                }
+                            };
+                        });
+
+                        const hasEffectQueue = item.effects.queue != null && item.effects.queue !== "";
+                        children.push({
+                            html: `<a href><i class="${!hasEffectQueue ? 'fas fa-check' : ''}" style="margin-right: ${!hasEffectQueue ? '10' : '27'}px;"></i> None</a>`,
+                            click: () => {
+                                $ctrl.clearEffectQueue(item);
+                            },
+                            hasTopDivider: true
+                        });
+
+                        menuItems.push({
+                            text: `Effect Queues...`,
+                            children: children,
+                            hasTopDivider: true
+                        });
+                    }
+
+                    return menuItems;
+                };
             }
         });
 }());

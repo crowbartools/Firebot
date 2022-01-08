@@ -5,7 +5,7 @@
     angular
         .module("firebotApp")
         .controller("eventsController", function($scope, eventsService, utilityService,
-            listenerService, objectCopyHelper, sortTagsService) {
+            listenerService, objectCopyHelper, sortTagsService, effectQueuesService) {
 
             $scope.es = eventsService;
 
@@ -312,6 +312,52 @@
                 return group ? group.active === true : false;
             };
 
+            $scope.addToEffectQueue = (event, queueId) => {
+                if (event == null) {
+                    return;
+                }
+
+                if (event.effects) {
+                    event.effects.queue = queueId;
+                }
+
+                const selectedGroupId = eventsService.getSelectedTab();
+                updateEvent(selectedGroupId, event);
+            };
+
+            $scope.clearEffectQueue = (event) => {
+                event.effects.queue = null;
+            };
+
+            $scope.getEffectQueueMenuOption = (event) => {
+                const queues = effectQueuesService.getEffectQueues();
+                if (event.effects != null && queues != null && queues.length > 0) {
+                    const children = queues.map(q => {
+                        const isSelected = event.effects.queue && event.effects.queue === q.id;
+                        return {
+                            html: `<a href><i class="${isSelected ? 'fas fa-check' : ''}" style="margin-right: ${isSelected ? '10' : '27'}px;"></i> ${q.name}</a>`,
+                            click: () => {
+                                $scope.addToEffectQueue(event, q.id);
+                            }
+                        };
+                    });
+
+                    const hasEffectQueue = event.effects.queue != null && event.effects.queue !== "";
+                    children.push({
+                        html: `<a href><i class="${!hasEffectQueue ? 'fas fa-check' : ''}" style="margin-right: ${!hasEffectQueue ? '10' : '27'}px;"></i> None</a>`,
+                        click: () => {
+                            $scope.clearEffectQueue(event);
+                        },
+                        hasTopDivider: true
+                    });
+
+                    return {
+                        text: `Effect Queues...`,
+                        children: children
+                    };
+                }
+            };
+
             $scope.eventMenuOptions = function(event) {
 
                 const currentGroupId = eventsService.getSelectedTab();
@@ -323,35 +369,35 @@
                 const options = [
                     {
                         html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
-                        click: function ($itemScope) {
+                        click: ($itemScope) => {
                             const event = $itemScope.event;
                             $scope.showAddOrEditEventModal(event.id);
                         }
                     },
                     {
                         html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> Toggle Enabled</a>`,
-                        click: function ($itemScope) {
+                        click: ($itemScope) => {
                             const event = $itemScope.event;
                             $scope.toggleEventActiveStatus(event.id);
                         }
                     },
                     {
                         html: `<a href ><i class="far fa-copy" style="margin-right: 10px;"></i> Copy</a>`,
-                        click: function ($itemScope) {
+                        click: ($itemScope) => {
                             const event = $itemScope.event;
                             $scope.copyEvent(event.id);
                         }
                     },
                     {
                         html: `<a href ><i class="far fa-clone" style="margin-right: 10px;"></i> Duplicate</a>`,
-                        click: function ($itemScope) {
+                        click: ($itemScope) => {
                             const event = $itemScope.event;
                             $scope.duplicateEvent(event.id);
                         }
                     },
                     {
                         html: `<a href style="color: #fb7373;"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>`,
-                        click: function ($itemScope) {
+                        click: ($itemScope) => {
                             const event = $itemScope.event;
                             $scope.showDeleteEventModal(event.id, event.name ? event.name : 'Unnamed');
                         }
@@ -370,10 +416,13 @@
                     }
                 ];
 
+                const effectQueueMenuOption = $scope.getEffectQueueMenuOption(event);
+                if (effectQueueMenuOption != null) {
+                    options.push(effectQueueMenuOption);
+                }
+
                 return options;
             };
-
-
 
             $scope.simulateEventsByType = function() {
 
