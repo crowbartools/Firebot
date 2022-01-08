@@ -13,26 +13,13 @@ let currencyInterval = null;
 
 // This file manages the currency payout intervals.
 // For manipulating currency check out /database/currencyDatabase.js
-function processCurrencyTimer(currency) {
-    let bonusObject = currency.bonus;
-    let basePayout = currency.payout;
-
-    // offline currency not set and stream is offline
-    if (currency.offline == null && !connectionManager.streamerIsOnline()) {
-        return;
-    }
-
-    // If we have an offline currency amount and the streamer is offline, then use that.
-    if (currency.offline != null && !connectionManager.streamerIsOnline()) {
-        basePayout = currency.offline;
-    }
-
-
+function processCurrencyTimer(currency, basePayout) {
+    const bonusObject = currency.bonus;
     // Add base payout to everyone.
     currencyDatabase.addCurrencyToOnlineUsers(currency.id, basePayout).then(async () => {
         // Loop through our bonuses and try to apply the currency.
         try {
-            for (let bonusKey of Object.keys(bonusObject)) {
+            for (const bonusKey of Object.keys(bonusObject)) {
                 await currencyDatabase.addCurrencyToUserGroupOnlineUsers([bonusKey], currency.id, bonusObject[bonusKey]);
             }
         } catch (err) {
@@ -51,15 +38,23 @@ function applyCurrency() {
     let currencyData = currencyDatabase.getCurrencies();
 
     Object.values(currencyData).forEach(currency => {
+        let basePayout = currency.basePayout;
+        if (!connectionManager.streamerIsOnline()) {
+            if (currency.offline == null || currency.offline === 0 || currency.offline === "") {
+                return;
+            }
+
+            basePayout = currency.offline;
+        }
+
         let currentMinutes = moment().minutes();
         let intervalMod = currentMinutes % currency.interval;
         const chatConnected = twitchChat.chatIsConnected();
         if (intervalMod === 0 && currency.active && chatConnected) {
             // do payout
-            logger.info(
-                "Currency: Paying out " + currency.payout + " " + currency.name + "."
-            );
-            processCurrencyTimer(currency);
+            logger.info("Currency: Paying out " + basePayout + " " + currency.name + ".");
+
+            processCurrencyTimer(currency, basePayout);
         } else if (!chatConnected) {
             logger.debug(`Currency: Not connected to chat, so ${currency.name} will not pay out.`);
         } else if (!currency.active) {
