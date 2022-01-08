@@ -228,7 +228,7 @@ const clip = {
 
                 const videoElement = `
                     <iframe
-                        src="https://clips.twitch.tv/embed?clip=${clipSlug}&parent=localhost&autoplay=true&muted=false"
+                        src="https://clips.twitch.tv/embed?clip=${clipSlug}&parent=localhost&autoplay=true&muted=false&controls=false"
                         height="${height || ""}"
                         width="${width || ""}"
                         style="border: none;${styles}"
