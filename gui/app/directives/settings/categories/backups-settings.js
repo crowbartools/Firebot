@@ -3,6 +3,8 @@
 (function() {
 
     const moment = require("moment");
+    const path = require("path");
+    const fs = require("fs-extra");
 
     angular
         .module("firebotApp")
@@ -10,7 +12,7 @@
             template: `
                 <div>
 
-                    <firebot-setting 
+                    <firebot-setting
                         name="Max Backups"
                         description="The maximum number of backups to keep. When Firebot makes a new backup, it will delete the oldest if this number has been reached."
                     >
@@ -22,7 +24,7 @@
                         ></dropdown-select>
                     </firebot-setting>
 
-                    <firebot-setting 
+                    <firebot-setting
                         name="Automatic Backups"
                         description="Choose when Firebot should make automatic backups."
                     >
@@ -76,10 +78,10 @@
                         </div>
                     </firebot-setting>
 
-                    <firebot-setting 
+                    <firebot-setting
                         name="Manual Backup"
                         description="Trigger a manual back up now."
-                    >   
+                    >
                         <div>
                             <span
                                 ng-if="isBackingUp || backupCompleted"
@@ -90,7 +92,7 @@
                                     <i class="fal fa-check-circle"></i> Backup successful!
                                 </span>
                             </span>
-                            <firebot-button 
+                            <firebot-button
                                 text="Backup Now"
                                 ng-click="startBackup()"
                                 ng-disabled="isBackingUp"
@@ -98,18 +100,18 @@
                         </div>
                     </firebot-setting>
 
-                    <firebot-setting 
+                    <firebot-setting
                         name="Backup Management"
                         description="View, restore, and delete previous backups."
-                    >   
+                    >
                         <div>
-                            <firebot-button 
+                            <firebot-button
                                 text="Manage Backups"
                                 ng-click="showBackupListModal()"
                             />
                         </div>
                     </firebot-setting>
-                    
+
                 </div>
           `,
             controller: function($scope, settingsService, backupService, backendCommunicator, $timeout, utilityService) {
@@ -142,7 +144,6 @@
                         size: "sm",
                         controllerFunc: (
                             $scope,
-                            settingsService,
                             $uibModalInstance,
                             $q,
                             listenerService,
