@@ -460,10 +460,11 @@ function deleteCurrencyById(currencyId) {
 /**
  * @typedef CurrencyInfo
  * @property {string} currencyId
- * @property {"allOnline" | "individual"} targetType
+ * @property {"allOnline" | "allOnlineInRole" | "individual"} targetType
  * @property {string} [username]
  * @property {boolean} sendChatMessage
  * @property {number} amount
+ * @property {string} role
  */
 
 frontendCommunicator.on("give-currency", async (/** @type {CurrencyInfo} */ {
@@ -471,30 +472,38 @@ frontendCommunicator.on("give-currency", async (/** @type {CurrencyInfo} */ {
     amount,
     sendChatMessage,
     targetType,
-    username
+    username,
+    role
 }) => {
-    if (targetType === "allOnline") {
-        await addCurrencyToOnlineUsers(currencyId, amount);
-    } else if (targetType === "individual") {
-        await adjustCurrencyForUser(
-            username,
-            currencyId,
-            amount
-        );
+    const currency = getCurrencyById(currencyId);
+    if (currency == null) {
+        logger.error("Couldn't find currency to give or remove", {location: "currencyDatabase.js:480"});
+        return;
     }
-    if (sendChatMessage) {
+
+    let messageTarget = "";
+    switch (targetType) {
+    case "allOnline":
+        await addCurrencyToOnlineUsers(currencyId, amount);
+        messageTarget = `everyone`;
+        break;
+    case "allOnlineInRole":
+        addCurrencyToUserGroupOnlineUsers([role], currencyId, amount);
+        messageTarget = `all users in role ${role}`;
+        break;
+    case "individual":
+        await adjustCurrencyForUser(username, currencyId, amount);
+        messageTarget = `@${username}}`;
+        break;
+    }
+
+    if (sendChatMessage && messageTarget !== "") {
         const twitchChat = require("../chat/twitch-chat");
         if (!twitchChat.chatIsConnected()) {
             return;
         }
 
-        const currency = getCurrencyById(currencyId);
-        if (currency == null) {
-            return;
-        }
-
-        const message = `${amount < 0 ? "Removed" : "Gave"} ${util.commafy(amount)} ${currency.name} to ${targetType === "allOnline" ? "everyone" : `@${username}`}!`;
-        twitchChat.sendChatMessage(message);
+        twitchChat.sendChatMessage(`${amount < 0 ? "Removed" : "Gave"} ${util.commafy(amount)} ${currency.name} to ${messageTarget}!`);
     }
 });
 

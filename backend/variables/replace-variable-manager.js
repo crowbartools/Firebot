@@ -160,7 +160,7 @@ frontendCommunicator.on("getReplaceVariableDefinitions", trigger => {
         variables.push(value.definition);
     }
     if (trigger != null) {
-        variables
+        variables = variables
             .filter(v => {
 
                 if (trigger.dataOutput === "number") {

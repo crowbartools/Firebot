@@ -6,7 +6,7 @@ const {
     EffectTrigger
 } = require("../../effects/models/effectModels");
 
-const { OutputDataType } = require("../../../shared/variable-constants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
 let triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
@@ -17,6 +17,7 @@ const model = {
         handle: "commandTrigger",
         description: "The trigger of the issued command.",
         triggers: triggers,
+        categories: [VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {

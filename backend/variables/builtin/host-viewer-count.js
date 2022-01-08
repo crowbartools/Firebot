@@ -16,7 +16,7 @@ const model = {
         handle: "hostViewerCount",
         description: "Get the number of viewers brought over by a host",
         triggers: triggers,
-        categories: [VariableCategory.COMMON],
+        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: async (trigger) => {
