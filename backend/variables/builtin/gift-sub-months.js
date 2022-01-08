@@ -15,7 +15,7 @@ const model = {
         handle: "giftSubMonths",
         description: "The total number of months the gift receiver has been subscribed since the beginning of time.",
         triggers: triggers,
-        categories: [VariableCategory.COMMON],
+        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {

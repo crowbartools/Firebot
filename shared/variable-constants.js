@@ -9,6 +9,7 @@ exports.OutputDataType = OutputDataType;
 
 const VariableCategory = Object.freeze({
     COMMON: "common",
+    TRIGGER: "trigger based",
     USER: "user based",
     TEXT: "text",
     NUMBERS: "numbers",

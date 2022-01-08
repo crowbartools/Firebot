@@ -25,7 +25,7 @@ const model = {
             }
         ],
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.USER],
+        categories: [VariableCategory.COMMON, VariableCategory.USER, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.ALL]
     },
     evaluator: (trigger, target = null, property) => {

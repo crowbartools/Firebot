@@ -22,7 +22,7 @@ const model = {
         ],
         description: "Outputs the urls of a chat message's emotes from the associated command or event.",
         triggers: triggers,
-        categories: [VariableCategory.COMMON],
+        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger, target = null) => {

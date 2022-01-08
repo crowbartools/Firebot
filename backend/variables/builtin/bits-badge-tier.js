@@ -15,7 +15,7 @@ const model = {
         handle: "bitsBadgeTier",
         description: "The tier of the bits badge that was unlocked (100, 1000, 5000, etc.).",
         triggers: triggers,
-        categories: [VariableCategory.COMMON],
+        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {

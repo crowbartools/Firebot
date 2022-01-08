@@ -17,7 +17,7 @@ const model = {
         handle: "hostType",
         description: "Get the type of host ('manual' or 'auto')",
         triggers: triggers,
-        categories: [VariableCategory.COMMON],
+        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async (trigger) => {
