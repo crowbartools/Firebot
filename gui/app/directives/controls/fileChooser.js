@@ -58,7 +58,10 @@
                             currentPath: ctrl.model && ctrl.model !== "" ? ctrl.model : undefined
                         }))
                         .then(response => {
-                            if (response.path == null) return;
+                            if (response.path == null) {
+                                return;
+                            }
+
                             ctrl.model = response.path;
                             ctrl.onUpdate({filepath: response.path});
                         });

@@ -2,7 +2,7 @@
 (function() {
     angular
         .module("firebotApp")
-        .factory("timerService", function(logger, backendCommunicator, $q, utilityService, objectCopyHelper, ngToast) {
+        .factory("timerService", function(backendCommunicator, $q, utilityService, objectCopyHelper, ngToast) {
             let service = {};
 
             service.timers = [];
@@ -52,7 +52,10 @@
             };
 
             service.toggleTimerActiveState = function(timer) {
-                if (timer == null) return;
+                if (timer == null) {
+                    return;
+                }
+
                 timer.active = !timer.active;
                 service.saveTimer(timer);
             };
@@ -87,7 +90,9 @@
 
             // Deletes a timer.
             service.deleteTimer = function(timer) {
-                if (timer == null) return;
+                if (timer == null) {
+                    return;
+                }
 
                 service.timers = service.timers.filter(t => t.id !== timer.id);
 

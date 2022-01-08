@@ -15,7 +15,7 @@ const model = {
         handle: "subCurrentStreak",
         description: "Number of consecutive months a user has been subscribed to your channel.",
         triggers: triggers,
-        categories: [VariableCategory.COMMON],
+        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {

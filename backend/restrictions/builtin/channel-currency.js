@@ -120,12 +120,7 @@ const model = {
                 reject(`you need ${amountText} ${currencyName}`);
             }
         });
-    },
-    /*
-        called after all restrictions in a list are met. Do logic such as deducting currency here.
-    */
-    onSuccessful: (triggerData, restrictionData) => {}
-
+    }
 };
 
 module.exports = model;

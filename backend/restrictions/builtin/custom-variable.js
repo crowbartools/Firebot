@@ -20,9 +20,6 @@ const model = {
             <input type="text" class="form-control" placeholder="Enter value" ng-model="restriction.value">
         </div>
     `,
-    optionsController: ($scope) => {
-
-    },
     optionsValueDisplay: (restriction) => {
         let name = restriction.name;
         let value = restriction.value;
@@ -61,14 +58,7 @@ const model = {
                 reject("A flag is not set to the correct value");
             }
         });
-    },
-    /*
-        called after all restrictions in a list are met. Do logic such as deducting currency here.
-    */
-    onSuccessful: (triggerData, restrictionData) => {
-
     }
-
 };
 
 module.exports = model;

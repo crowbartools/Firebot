@@ -77,7 +77,7 @@
         class="chat-window"
         ng-init="scrollGlued = true"
         scroll-glue="scrollGlued"
-        style="{{customFontSizeStyle}}"
+        ng-style="{{customFontSizeStyle}}"
       >
         <div
           ng-repeat="chatItem in cms.chatQueue | limitTo:messageDisplayLimit track by chatItem.id"

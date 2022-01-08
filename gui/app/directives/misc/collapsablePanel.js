@@ -11,14 +11,14 @@
             template: `
                 <div>
                     <div class="expandable-item"
-                        style="justify-content: space-between;" 
-                        ng-click="hidePanel = !hidePanel" 
+                        style="justify-content: space-between;"
+                        ng-click="hidePanel = !hidePanel"
                         ng-class="{'expanded': !hidePanel}"
                         ng-mouseenter="hovering = true"
                         ng-mouseleave="hovering = false">
                             <div style="display: flex; align-items: center;">
                                 <h3 style="margin: 0px;padding-left: 15px;font-size:16px;">{{$ctrl.header}}</h3>
-                            </div>         
+                            </div>
 
                             <div style="display: flex; align-items: center;">
                                 <div style="width:30px;">
@@ -28,10 +28,10 @@
                     </div>
                     <div uib-collapse="hidePanel" class="expandable-item-expanded">
                         <div style="padding: 10px 20px 20px;" ng-transclude></div>
-                    </div> 
-                </div>    
+                    </div>
+                </div>
                 `,
-            controller: function($scope, utilityService) {
+            controller: function($scope) {
                 let $ctrl = this;
 
                 $ctrl.$onInit = () => {

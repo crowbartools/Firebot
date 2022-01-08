@@ -107,13 +107,6 @@ const delay = {
         };
     },
     /**
-   * When the effect is saved
-   */
-    optionsValidator: effect => {
-        let errors = [];
-        return errors;
-    },
-    /**
    * When the effect is triggered by something
    */
     onTriggerEvent: async event => {

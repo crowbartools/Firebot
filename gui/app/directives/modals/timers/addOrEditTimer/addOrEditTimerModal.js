@@ -114,7 +114,9 @@
             }
 
             $ctrl.save = function() {
-                if (!timerValid()) return;
+                if (!timerValid()) {
+                    return;
+                }
 
                 timerService.saveTimer($ctrl.timer).then(successful => {
                     if (successful) {

@@ -32,7 +32,9 @@
                     .then(resp => {
                         if (resp.status === 200) {
                             const userPronounData = resp.data[0];
-                            if (userPronounData == null) return;
+                            if (userPronounData == null) {
+                                return;
+                            }
 
                             const pronoun = pronouns.find(p => p.name
                                 === userPronounData.pronoun_id);

@@ -129,7 +129,9 @@
 
             $rootScope.$on("connection:update", (event, data) => {
                 if (ctrl.type === ConnectionType.INTEGRATIONS) {
-                    if (!data.type.startsWith("integration.")) return;
+                    if (!data.type.startsWith("integration.")) {
+                        return;
+                    }
                 } else if (data.type !== ctrl.type) {
                     return;
                 }

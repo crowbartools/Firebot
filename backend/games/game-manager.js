@@ -229,15 +229,15 @@ function updateGameSettings(gameId, settingCategories, activeStatus) {
     if (gameSettings.active) {
         //game has been enabled, load it
         if (previousActiveStatus === false && game.onLoad) {
-            game.onLoad(gameSettings);
+            game.onLoad();
         } else if (game.onSettingsUpdate) {
             // just trigger settings update
-            game.onSettingsUpdate(gameSettings);
+            game.onSettingsUpdate();
         }
     } else {
         //game has been disabled, unload it
         if (previousActiveStatus === true && game.onUnload) {
-            game.onUnload(gameSettings);
+            game.onUnload();
         }
     }
 }

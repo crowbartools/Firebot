@@ -4,7 +4,7 @@
 
     angular
         .module("firebotApp")
-        .factory("gamesService", function($q, logger, backendCommunicator) {
+        .factory("gamesService", function($q, backendCommunicator) {
             let service = {};
 
             service.games = [];
@@ -26,7 +26,10 @@
 
             service.saveGame = (game) => {
                 const index = service.games.findIndex(g => g.id === game.id);
-                if (index < 0) return;
+                if (index < 0) {
+                    return;
+                }
+
                 service.games[index] = game;
 
                 backendCommunicator.fireEvent("game-settings-update", {

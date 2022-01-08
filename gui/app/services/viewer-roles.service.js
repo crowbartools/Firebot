@@ -7,7 +7,7 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
 
     angular
         .module("firebotApp")
-        .factory("viewerRolesService", function(logger, backendCommunicator, accountAccess) {
+        .factory("viewerRolesService", function(backendCommunicator) {
             let service = {};
 
             let customRoles = {};
@@ -34,37 +34,55 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
             };
 
             service.addUserToRole = function(roleId, username) {
-                if (!roleId || !username) return;
+                if (!roleId || !username) {
+                    return;
+                }
 
                 let role = service.getCustomRole(roleId);
-                if (!role) return;
+                if (!role) {
+                    return;
+                }
 
-                if (role.viewers.some(v => v.toLowerCase() === username.toLowerCase())) return;
+                if (role.viewers.some(v => v.toLowerCase() === username.toLowerCase())) {
+                    return;
+                }
 
                 role.viewers.push(username);
                 service.saveCustomRole(role);
             };
 
             service.removeUserFromRole = function(roleId, username) {
-                if (!roleId || !username) return;
+                if (!roleId || !username) {
+                    return;
+                }
 
                 let role = service.getCustomRole(roleId);
-                if (!role) return;
+                if (!role) {
+                    return;
+                }
 
-                if (!role.viewers.some(v => v.toLowerCase() === username.toLowerCase())) return;
+                if (!role.viewers.some(v => v.toLowerCase() === username.toLowerCase())) {
+                    return;
+                }
 
                 role.viewers = role.viewers.filter(v => v.toLowerCase() !== username.toLowerCase());
                 service.saveCustomRole(role);
             };
 
             service.saveCustomRole = function(role) {
-                if (!role) return;
+                if (!role) {
+                    return;
+                }
+
                 customRoles[role.id] = role;
                 backendCommunicator.fireEvent("saveCustomRole", role);
             };
 
             service.deleteCustomRole = function(roleId) {
-                if (!roleId) return;
+                if (!roleId) {
+                    return;
+                }
+
                 delete customRoles[roleId];
                 backendCommunicator.fireEvent("deleteCustomRole", roleId);
             };

@@ -78,7 +78,7 @@ class RestrictionsManager extends EventEmitter {
                     try {
                         await restrictionDef.predicate(triggerData, restriction);
                         restrictionPassed = true;
-                        if (restrictionData.mode !== "none") {
+                        if (restrictionData.mode !== "none" && restrictionDef.onSuccessful) {
                             restrictionDef.onSuccessful(triggerData, restriction);
                         }
                         break;

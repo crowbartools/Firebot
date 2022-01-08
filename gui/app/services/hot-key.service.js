@@ -7,7 +7,7 @@ const uuidv1 = require("uuid/v1");
 
     angular
         .module("firebotApp")
-        .factory("hotkeyService", function($rootScope, utilityService, logger, backendCommunicator) {
+        .factory("hotkeyService", function($rootScope, logger, backendCommunicator) {
             let service = {};
 
             /**
@@ -82,16 +82,22 @@ const uuidv1 = require("uuid/v1");
             let stopCallback;
 
             const keyDownListener = function(event) {
-                if (!service.isCapturingHotkey) return;
+                if (!service.isCapturingHotkey) {
+                    return;
+                }
 
                 let alreadyPressed = cachedKeys.some(
                     k => k.rawKey.toUpperCase() === event.key.toUpperCase()
                 );
 
                 //skip if repeat of keys already inputted and no keys have been released
-                if (alreadyPressed && releasedKeyCodes.length === 0) return;
+                if (alreadyPressed && releasedKeyCodes.length === 0) {
+                    return;
+                }
 
-                if (prohibitedKeys.includes(event.key)) return;
+                if (prohibitedKeys.includes(event.key)) {
+                    return;
+                }
 
                 //clear out any keys that have since been released
                 releasedKeyCodes.forEach(k => {
@@ -125,7 +131,10 @@ const uuidv1 = require("uuid/v1");
             };
 
             const keyUpListener = function(event) {
-                if (!service.isCapturingHotkey) return;
+                if (!service.isCapturingHotkey) {
+                    return;
+                }
+
                 releasedKeyCodes.push(event.key);
             };
 
@@ -174,7 +183,9 @@ const uuidv1 = require("uuid/v1");
             };
 
             service.getDisplayFromAcceleratorCode = function(code) {
-                if (code == null) return "";
+                if (code == null) {
+                    return "";
+                }
 
                 let keys = code.split("+");
 

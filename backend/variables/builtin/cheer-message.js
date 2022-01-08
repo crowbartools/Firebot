@@ -15,7 +15,7 @@ const model = {
         handle: "cheerMessage",
         description: "The message included with the cheer",
         triggers: triggers,
-        categories: [VariableCategory.COMMON],
+        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {

@@ -20,17 +20,17 @@
                     <h3>Version</h3>
                     <input type="number" class="form-control" ng-model="$ctrl.setup.version" placeholder="Enter version">
 
-                    <h3>Components</h3>   
+                    <h3>Components</h3>
                     <p class="muted">Select the various components that you want to include in this Firebot Setup.</p>
                     <div ng-repeat="componentConfig in $ctrl.components track by $index" style="margin-bottom: 20px;">
                         <h4>{{componentConfig.label}}</h4>
                         <div style="padding-left: 5px">
                             <div
-                                style="margin-bottom: 13px;" 
+                                style="margin-bottom: 13px;"
                                 ng-repeat="component in $ctrl.setup.components[componentConfig.key] track by component.id">
                                 <span style="font-weight: 800; font-size: 15px; padding: 5px; background: #494d54; border-radius: 10px;">
                                     {{component[componentConfig.nameField]}}
-                                </span>         
+                                </span>
                             </div>
                         </div>
                         <button class="btn btn-link" ng-click="$ctrl.addOrEditComponent(componentConfig)">
@@ -61,8 +61,8 @@
                             </div>
                         </div>
                         <button class="filter-bar" ng-click="$ctrl.addImportQuestion()" uib-tooltip="Add Import Question" tooltip-append-to-body="true">
-                            <i class="far fa-plus"></i> 
-                        </button>  
+                            <i class="far fa-plus"></i>
+                        </button>
                     </div>
 
                     <div style="margin-top: 20px;">
@@ -245,7 +245,10 @@
                             }
                             for (const [componentKey, componentList] of Object.entries(setup.components)) {
                                 const componentConfig = $ctrl.components.find(c => c.key === componentKey);
-                                if (!componentConfig) continue;
+                                if (!componentConfig) {
+                                    continue;
+                                }
+
                                 setup.components[componentConfig.key] = componentConfig.all
                                     .filter(c => componentList.some(cy => cy.id === c.id));
                             }
@@ -265,7 +268,10 @@
                             }
                         }))
                         .then(response => {
-                            if (response.path == null) return;
+                            if (response.path == null) {
+                                return;
+                            }
+
                             $ctrl.onFileSelected(response.path);
                         });
                 };

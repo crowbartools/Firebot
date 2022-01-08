@@ -71,7 +71,10 @@
 
             service.getCopiedObject = (key) => {
                 let object = copiedObjectsCache[key];
-                if (!object) return null;
+                if (!object) {
+                    return null;
+                }
+
                 return service.copyAndReplaceIds(object);
             };
 

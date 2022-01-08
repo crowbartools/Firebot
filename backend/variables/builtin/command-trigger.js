@@ -17,6 +17,7 @@ const model = {
         handle: "commandTrigger",
         description: "The trigger of the issued command.",
         triggers: triggers,
+        categories: [VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {

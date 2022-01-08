@@ -17,7 +17,7 @@ const model = {
         handle: "donationAmountFormatted",
         description: "The amount (w/currency symbol) of a donation from StreamLabs/Tipeee/ExtraLife",
         triggers: triggers,
-        categories: [VariableCategory.COMMON],
+        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {

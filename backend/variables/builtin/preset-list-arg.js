@@ -18,7 +18,7 @@ const model = {
         usage: "presetListArg[name]",
         description: "Represents the given argument passed to this preset effect list.",
         triggers: triggers,
-        categories: [VariableCategory.COMMON],
+        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
     },
     evaluator: (trigger, argName = "") => {

@@ -36,8 +36,9 @@
                 });
             };
             $ctrl.save = function() {
-                if ($ctrl.command.trigger == null || $ctrl.command.trigger === "")
+                if ($ctrl.command.trigger == null || $ctrl.command.trigger === "") {
                     return;
+                }
 
                 $ctrl.close({
                     $value: {

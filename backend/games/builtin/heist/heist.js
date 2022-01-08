@@ -389,14 +389,14 @@ module.exports = {
             }
         }
     },
-    onLoad: gameSettings => {
+    onLoad: () => {
         heistCommand.registerHeistCommand();
     },
-    onUnload: gameSettings => {
+    onUnload: () => {
         heistCommand.unregisterHeistCommand();
         heistCommand.clearCooldown();
     },
-    onSettingsUpdate: gameSettings => {
+    onSettingsUpdate: () => {
         heistCommand.clearCooldown();
     }
 };

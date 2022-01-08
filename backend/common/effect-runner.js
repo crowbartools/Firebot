@@ -94,6 +94,10 @@ async function runEffects(runEffectsContext) {
         effects = runEffectsContext.effects.list;
 
     for (const effect of effects) {
+        if (effect.active != null && !effect.active) {
+            logger.info(`${effect.type}(${effect.id}) is disabled, skipping...`);
+            continue;
+        }
         // Check this effect for dependencies before running.
         // If all dependencies are not fulfilled, we will skip this effect.
 

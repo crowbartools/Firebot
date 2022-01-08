@@ -50,7 +50,10 @@
             }
 
             $scope.showUserDetailsModal = (userId) => {
-                if (userId == null) return;
+                if (userId == null) {
+                    return;
+                }
+
                 let closeFunc = () => {};
                 utilityService.showModal({
                     component: "viewerDetailsModal",

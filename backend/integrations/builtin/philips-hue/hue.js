@@ -49,10 +49,6 @@ class HueIntegration extends EventEmitter {
             }
         }
     }
-    async connect(integrationData) {
-
-        return false;
-    }
     disconnect() {
         // TODO: Disconnect from authed instance.
         this.emit("disconnected", integrationDefinition.id);
@@ -77,8 +73,8 @@ class HueIntegration extends EventEmitter {
         );
         throw new Error("Please press the link button on your hue bridge, then click the link button in Firebot.");
     }
-    async unlink(integrationData) {
-        await hueManager.deleteHueUser(integrationData);
+    async unlink() {
+        await hueManager.deleteHueUser();
     }
     async discoverBridge() {
         const discoveryResults = await discovery.nupnpSearch();

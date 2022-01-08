@@ -112,7 +112,8 @@
           >
             <tr
               ng-repeat="command in (commandsService.commandsCache.customCommands | sortTagSearch:sts.getSelectedSortTag('commands') | triggerSearch:commandsService.customCommandSearch) as filteredCommands track by command.id"
-              context-menu="commandMenuOptions()"
+              context-menu="commandMenuOptions(command)"
+              context-menu-class="angular-context-menu"
               style="width: 100%"
             >
               <td style="text-align: center">
@@ -209,8 +210,10 @@
                     <button
                       class="noselect clickable text-5xl"
                       style="background: transparent;border: none;"
-                      context-menu="commandMenuOptions()"
+                      context-menu="commandMenuOptions(command)"
+                      context-menu-class="angular-context-menu"
                       context-menu-on="click"
+                      context-menu-orientation="left"
                       ><i class="fal fa-ellipsis-h"></i
                     ></button>
                   </div>

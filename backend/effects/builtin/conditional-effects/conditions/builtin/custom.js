@@ -7,7 +7,7 @@ module.exports = {
     comparisonTypes: ["is", "is not", "is less than", "is less than or equal to", "is greater than", "is greater than or equal to", "contains", "does not contain", "matches regex", "does not match regex"],
     leftSideValueType: "text",
     rightSideValueType: "text",
-    predicate: (conditionSettings, trigger) => {
+    predicate: (conditionSettings) => {
 
         let { comparisonType, leftSideValue, rightSideValue } = conditionSettings;
 

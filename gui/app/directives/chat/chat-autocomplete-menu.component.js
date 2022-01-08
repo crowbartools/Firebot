@@ -236,7 +236,10 @@
 
                     $scope.selectedIndex = 0;
                     $(`#${$scope.inputId}`).bind("keydown", function (event) {
-                        if (!$scope.menuOpen) return;
+                        if (!$scope.menuOpen) {
+                            return;
+                        }
+
                         const key = event.key;
                         if (key === "ArrowUp" && $scope.selectedIndex > 0) {
                             $scope.selectedIndex -= 1;
@@ -253,6 +256,10 @@
                             event.stopPropagation();
                             event.preventDefault();
                             event.stopImmediatePropagation();
+                        }
+
+                        if (key === "Escape") {
+                            $scope.setMenuOpen(false);
                         }
                     });
 

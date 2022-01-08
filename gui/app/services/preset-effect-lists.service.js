@@ -4,7 +4,7 @@
 
     angular
         .module("firebotApp")
-        .factory("presetEffectListsService", function($q, logger, backendCommunicator,
+        .factory("presetEffectListsService", function($q, backendCommunicator,
             utilityService, objectCopyHelper, ngToast) {
             let service = {};
 

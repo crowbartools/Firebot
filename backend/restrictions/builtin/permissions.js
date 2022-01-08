@@ -142,14 +142,7 @@ const model = {
                 resolve();
             }
         });
-    },
-    /*
-        called after all restrictions in a list are met. Do logic such as deducting currency here.
-    */
-    onSuccessful: (triggerData, restrictionData) => {
-
     }
-
 };
 
 module.exports = model;

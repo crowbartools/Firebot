@@ -15,7 +15,7 @@ const model = {
         handle: "giftSubDuration",
         description: "The amount of months is gifted in case of a multi-month gift sub.",
         triggers: triggers,
-        categories: [VariableCategory.COMMON],
+        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {

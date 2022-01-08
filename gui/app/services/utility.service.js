@@ -613,9 +613,7 @@
                         index,
                         triggerType,
                         triggerMeta,
-                        objectCopyHelper,
-                        $timeout,
-                        $q
+                        objectCopyHelper
                     ) {
                         $scope.effect = JSON.parse(angular.toJson(effect));
                         $scope.triggerType = triggerType;

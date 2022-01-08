@@ -10,15 +10,12 @@
                 onActionSelected: "&"
             },
             controller: function(
-                logger,
                 $scope,
                 $rootScope,
                 $element,
                 $compile,
                 $document,
-                $window,
                 $uibPosition,
-                $attrs,
                 $timeout,
                 connectionService
             ) {
@@ -28,12 +25,12 @@
                         <div class="popover message-actions" role="{{vm.role}}">
                             <div class="name-wrapper">
                                 <img class="user-avatar" ng-src="{{vm.message.profilePicUrl}}">
-                                <span style="margin-left: 10px" class="user-name">{{vm.message.username}}</span>   
+                                <span style="margin-left: 10px" class="user-name">{{vm.message.username}}</span>
                             </div>
                             <div class="message-action" ng-repeat="action in vm.actions" ng-click="vm.actionClicked(action.name)">
                                 <span class="action-icon"><i class="fal" ng-class="action.icon"></i></span>
-                                <span class="action-name">{{action.name}}</span>                               
-                            </div>                           
+                                <span class="action-name">{{action.name}}</span>
+                            </div>
                         </div>
                     `;
 

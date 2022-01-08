@@ -8,7 +8,6 @@
             settingsService,
             listenerService,
             backendCommunicator,
-            logger,
             utilityService
         ) {
             let service = {};
@@ -47,21 +46,30 @@
 
             service.connectIntegration = function(id) {
                 let integration = getIntegrationById(id);
-                if (integration == null || integration.connected) return;
+                if (integration == null || integration.connected) {
+                    return;
+                }
+
                 addIntegrationToWaitingConnection(id);
                 listenerService.fireEvent("connectIntegration", id);
             };
 
             service.disconnectIntegration = function(id) {
                 let integration = getIntegrationById(id);
-                if (integration == null || !integration.connected) return;
+                if (integration == null || !integration.connected) {
+                    return;
+                }
+
                 addIntegrationToWaitingConnection(id);
                 listenerService.fireEvent("disconnectIntegration", id);
             };
 
             service.toggleConnectionForIntegration = function(id) {
                 let integration = getIntegrationById(id);
-                if (integration == null || !integration.linked) return;
+                if (integration == null || !integration.linked) {
+                    return;
+                }
+
                 addIntegrationToWaitingConnection(id);
                 if (integration.connected) {
                     service.disconnectIntegration(id);
@@ -100,13 +108,19 @@
 
             service.integrationIsConnected = function(id) {
                 let integration = getIntegrationById(id);
-                if (integration == null) return false;
+                if (integration == null) {
+                    return false;
+                }
+
                 return integration.connected === true;
             };
 
             service.integrationIsLinked = function(id) {
                 let integration = getIntegrationById(id);
-                if (integration == null) return false;
+                if (integration == null) {
+                    return false;
+                }
+
                 return integration.linked === true;
             };
 
@@ -132,7 +146,9 @@
 
             service.openIntegrationSettings = function(id) {
                 const integration = getIntegrationById(id);
-                if (integration == null) return;
+                if (integration == null) {
+                    return;
+                }
 
                 utilityService.showModal({
                     component: "editIntegrationUserSettingsModal",
@@ -146,7 +162,9 @@
                         if (action === 'save') {
 
                             const updatedIntegration = resp.integration;
-                            if (updatedIntegration == null) return;
+                            if (updatedIntegration == null) {
+                                return;
+                            }
 
                             const index = integrations.findIndex(i => i.id === updatedIntegration.id);
                             if (index > -1) {
