@@ -9,7 +9,9 @@
                 hideDeletedMessages: "<",
                 showAvatar: "<",
                 showTimestamp: "<",
-                showThirdPartyEmotes: "<",
+                showBttvEmotes: "<",
+                showFfzEmotes: "<",
+                showSevenTvEmotes: "<",
                 showPronoun: "<",
                 updateChatInput: "&",
                 chatSizeStyle: "@?"
@@ -99,14 +101,34 @@
                                 </span>
 
                                 <span
-                                    ng-if="part.type === 'third-party-emote' && $ctrl.showThirdPartyEmotes"
+                                    ng-if="part.origin === 'BTTV' && $ctrl.showBttvEmotes"
                                     class="chatEmoticon"
                                     uib-tooltip="{{part.origin}}: {{part.name}}"
                                     tooltip-append-to-body="true"
                                 >
                                     <img ng-src="{{part.url}}" style="height: 100%;" />
                                 </span>
-                                <span ng-if="part.type === 'third-party-emote' && !$ctrl.showThirdPartyEmotes" style="{{$ctrl.chatSizeStyle}}">{{part.name}}</span>
+                                <span ng-if="part.origin === 'BTTV' && !$ctrl.showBttvEmotes" style="{{$ctrl.chatSizeStyle}}">{{part.name}}</span>
+
+                                <span
+                                    ng-if="part.origin === 'FFZ' && $ctrl.showFfzEmotes"
+                                    class="chatEmoticon"
+                                    uib-tooltip="{{part.origin}}: {{part.name}}"
+                                    tooltip-append-to-body="true"
+                                >
+                                    <img ng-src="{{part.url}}" style="height: 100%;" />
+                                </span>
+                                <span ng-if="part.origin === 'FFZ' && !$ctrl.showFfzEmotes" style="{{$ctrl.chatSizeStyle}}">{{part.name}}</span>
+
+                                <span
+                                    ng-if="part.origin === '7TV' && $ctrl.showSevenTvEmotes"
+                                    class="chatEmoticon"
+                                    uib-tooltip="{{part.origin}}: {{part.name}}"
+                                    tooltip-append-to-body="true"
+                                >
+                                    <img ng-src="{{part.url}}" style="height: 100%;" />
+                                </span>
+                                <span ng-if="part.origin === '7TV' && !$ctrl.showSevenTvEmotes" style="{{$ctrl.chatSizeStyle}}">{{part.name}}</span>
                             </span>
                         </div>
                         <div ng-show="$ctrl.message.whisper" class="muted">(Whispered to you)</div>

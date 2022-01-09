@@ -36,7 +36,9 @@
                 $scope.hideDeletedMessages = settingsService.chatHideDeletedMessages();
                 $scope.showAvatars = settingsService.getShowAvatars();
                 $scope.showTimestamps = settingsService.getShowTimestamps();
-                $scope.showThirdPartyEmotes = settingsService.getShowThirdPartyEmotes();
+                $scope.showBttvEmotes = settingsService.getShowBttvEmotes();
+                $scope.showFfzEmotes = settingsService.getShowFfzEmotes();
+                $scope.showSevenTvEmotes = settingsService.getShowSevenTvEmotes();
                 $scope.showPronouns = settingsService.getShowPronouns();
                 $scope.customFontSizeEnabled = settingsService.getChatCustomFontSizeEnabled();
                 $scope.customFontSize = settingsService.getChatCustomFontSize();

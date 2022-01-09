@@ -204,15 +204,16 @@
                     });
 
                     function buildEmoteItems() {
-                        return chatMessagesService.allEmotes.map(emote => ({
+                        return chatMessagesService.filteredEmotes.map(emote => ({
                             display: emote.code,
                             text: emote.code,
-                            url: emote.url
+                            url: emote.url,
+                            origin: emote.origin
                         }));
                     }
 
                     emotesCategory.items = buildEmoteItems();
-                    $scope.$watchCollection("chatMessagesService.allEmotes", () => {
+                    $scope.$watchCollection("chatMessagesService.filteredEmotes", () => {
                         emotesCategory.items = buildEmoteItems();
                     });
 
@@ -330,6 +331,7 @@
                                 <div style="width: 100%; display: flex; flex-direction: column; justify-content: center;">
                                     <div class="item-display">{{item.display}}</div>
                                     <div ng-show="item.description != null" class="item-description">{{item.description}}</div>
+                                    <div ng-show="item.origin != null" class="item-description">{{item.origin}}</div>
                                 </div>
                             </div>
                         </div>`
