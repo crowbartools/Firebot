@@ -209,6 +209,14 @@
                 return getDataFromFile("/settings/chatViewCount");
             };
 
+            service.getQuickActions = () => {
+                return getDataFromFile("/settings/quickActions");
+            };
+
+            service.setQuickActions = (quickActions) => {
+                pushDataToFile("/settings/quickActions", quickActions);
+            };
+
             service.getShowChatViewerList = function() {
                 const value = getDataFromFile("/settings/chatUsersList");
                 return value == null ? true : value;
