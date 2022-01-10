@@ -1,8 +1,6 @@
 "use strict";
 
 (function() {
-    const xlsx = require("node-xlsx").default;
-    const fs = require("fs-extra");
     const moment = require("moment");
 
     angular.module("firebotApp")
@@ -13,7 +11,7 @@
                     <h4 class="modal-title">Import Quotes</h4>
                 </div>
                 <div class="modal-body pb-0">
-                    <div ng-hide="$ctrl.fileSelected">
+                    <div ng-hide="$ctrl.quotes">
                         <h4>Import from</h5>
                         <p class="muted mb-12">Currently only quotes from Streamlabs Chatbot (desktop bot) can be imported.</p>
 
@@ -28,7 +26,7 @@
                         </file-chooser>
                         <p ng-if="$ctrl.fileError" style="color: #f96f6f;" class="mt-4">Cannot read this file. Please follow the instructions above.</p>
                     </div>
-                    <div ng-show="$ctrl.fileSelected">
+                    <div ng-show="$ctrl.quotes">
                         <div style="margin: 0 0 25px;display: flex;flex-direction: row;justify-content: space-between;align-items: flex-end;">
                             <div>Found {{$ctrl.quotes.length}} quotes to import.</div>
                             <div style="display: flex;flex-direction: row;justify-content: space-between;">
@@ -48,7 +46,7 @@
                     </div>
                 </div>
                 <div class="modal-footer pt-0" style="text-align: center;">
-                    <button ng-show="$ctrl.fileSelected" ng-click="$ctrl.importQuotesFromSLChatbot()" class="btn btn-primary">Import</button>
+                    <button ng-show="$ctrl.quotes" ng-click="$ctrl.importQuotes()" class="btn btn-primary">Import</button>
                 </div>
             `,
             bindings: {
@@ -56,10 +54,8 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function(backendCommunicator, quotesService) {
+            controller: function(backendCommunicator, quotesService, importService) {
                 const $ctrl = this;
-
-                $ctrl.fileSelected = false;
 
                 $ctrl.headers = [
                     {
@@ -72,84 +68,45 @@
                     {
                         name: "QUOTE",
                         icon: "fa-quote-right",
-                        dataField: "quote",
+                        dataField: "text",
                         cellTemplate: `{{data.text}}`
+                    },
+                    {
+                        name: "DATE",
+                        icon: "fa-calendar",
+                        dataField: "date",
+                        headerStyles: {
+                            'padding': '0px 15px'
+                        },
+                        cellStyles: {
+                            'padding': '0px 15px'
+                        },
+                        cellTemplate: `{{data.createdAt | prettyDate}}`
+                    },
+                    {
+                        name: "GAME",
+                        icon: "fa-gamepad-alt",
+                        dataField: "game",
+                        headerStyles: {
+                            'width': '175px'
+                        },
+                        cellStyles: {
+                            'width': '175px'
+                        },
+                        cellTemplate: `{{data.game}}`
                     }
                 ];
 
                 $ctrl.onFileSelected = (filepath) => {
-                    const file = xlsx.parse(fs.readFileSync(filepath));
-
-                    if (file && file[0].name && file[0].name === "Quotes") {
-                        $ctrl.quotes = file[0].data
-                            .filter(q => q[0] !== "ID")
-                            .map(q => {
-                                return {
-                                    _id: q[0] + 1,
-                                    text: q[1]
-                                };
-                            });
-
-                        $ctrl.fileSelected = true;
+                    const data = importService.parseStreamlabsChatbotData(filepath);
+                    if (data && data.quotes) {
+                        $ctrl.quotes = data.quotes;
                         $ctrl.search = "";
-                    } else {
-                        $ctrl.fileError = true;
                     }
                 };
 
-                const getDateFormat = (quotes) => {
-                    let dateFormat = null;
-
-                    quotes.forEach(q => {
-                        const dateArray = q.createdAt.split("-");
-
-                        if (parseInt(dateArray[0]) > 12) {
-                            dateFormat = "DD-MM-YYYY";
-                            return false;
-                        } else if (parseInt(dateArray[1]) > 12) {
-                            dateFormat = "MM-DD-YYYY";
-                            return false;
-                        }
-                    });
-
-                    return dateFormat;
-                };
-
-                const getSplittedQuotes = () => {
-                    return $ctrl.quotes.map(q => {
-                        const splittedQuote = q.text.split("[").map(sq => sq.replace("]", "").trim());
-
-                        if (splittedQuote.length > 3) {
-                            splittedQuote[0] = splittedQuote.slice(0, splittedQuote.length - 2).join(" ");
-                        }
-
-                        return {
-                            text: splittedQuote[0],
-                            game: splittedQuote[splittedQuote.length - 2],
-                            createdAt: splittedQuote[splittedQuote.length - 1]
-                        };
-                    });
-                };
-
-                $ctrl.importQuotesFromSLChatbot = () => {
-                    const parsedQuotes = getSplittedQuotes();
-                    const dateFormat = getDateFormat(parsedQuotes);
-
-                    let lastId = quotesService.quotes.length;
-                    const quotesToImport = parsedQuotes.map(q => {
-                        lastId += 1;
-
-                        return {
-                            _id: lastId,
-                            text: q.text,
-                            originator: "",
-                            creator: "",
-                            game: q.game,
-                            createdAt: moment(q.createdAt, dateFormat).toISOString()
-                        };
-                    });
-
-                    quotesService.addQuotes(quotesToImport);
+                $ctrl.importQuotes = () => {
+                    quotesService.addQuotes($ctrl.quotes);
                 };
 
                 backendCommunicator.on("quotes-update", () => {

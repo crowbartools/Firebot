@@ -34,7 +34,8 @@
 
             $scope.showImportQuotesModal = () => {
                 utilityService.showModal({
-                    component: "importQuotesModal"
+                    component: "importQuotesModal",
+                    size: "lg"
                 });
             };
 
