@@ -153,7 +153,7 @@ class TwitchChat extends EventEmitter {
     /**
      * Sends a chat message to the streamers chat (INTERNAL USE ONLY)
      * @param {string} message The message to send
-     * @param {string} accountType The type of account to whisper with ('streamer' or 'bot')
+     * @param {string} accountType The type of account to chat with ('streamer' or 'bot')
      */
     async _say(message, accountType, replyToId) {
         const chatClient = accountType === 'bot' ? this._botChatClient : this._streamerChatClient;
@@ -180,25 +180,8 @@ class TwitchChat extends EventEmitter {
     }
 
     /**
-     * Sends a whisper to the given user (INTERNAL USE ONLY)
-     * @param {string} message The message to send
-     * @param {string} accountType The type of account to whisper with ('streamer' or 'bot')
-     */
-    async _whisper(message, username = "", accountType) {
-        const chatClient = accountType === 'bot' ? this._botChatClient : this._streamerChatClient;
-        try {
-            logger.debug(`Sending whisper as ${accountType} to ${username}.`);
-
-            const streamer = accountAccess.getAccounts().streamer;
-            const whisperMessage = `/w @${username.replace("@", "")} ${message}`;
-            chatClient.say(streamer.username, whisperMessage);
-            //chatClient.whisper(username, message);
-        } catch (error) {
-            logger.error(`Error attempting to send whisper with ${accountType}`, error);
-        }
-    }
-
-    /**
+     * @todo Remove username parameter as whisper functionality has been removed as of January 10th 2022.
+     *
      * Sends the message as the bot if available, otherwise as the streamer.
      * If a username is provided, the message will be whispered.
      * If the message is too long, it will be automatically broken into multiple fragments and sent individually.
@@ -218,11 +201,9 @@ class TwitchChat extends EventEmitter {
             accountType = accountType.toLowerCase();
         }
 
-        const shouldWhisper = username != null && username.trim() !== "";
-
         const botAvailable = accountAccess.getAccounts().bot.loggedIn && this._botChatClient && this._botChatClient.isConnected;
         if (accountType == null) {
-            accountType = botAvailable && !shouldWhisper ? "bot" : "streamer";
+            accountType = botAvailable ? "bot" : "streamer";
         } else if (accountType === "bot" && !botAvailable) {
             accountType = "streamer";
         }
@@ -234,12 +215,8 @@ class TwitchChat extends EventEmitter {
             .filter(mf => mf !== "");
 
         // Send all message fragments
-        for (let fragment of messageFragments) {
-            if (shouldWhisper) {
-                this._whisper(fragment, username, accountType);
-            } else {
-                this._say(fragment, accountType, replyToMessageId);
-            }
+        for (const fragment of messageFragments) {
+            this._say(fragment, accountType, replyToMessageId);
         }
     }
 

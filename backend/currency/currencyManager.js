@@ -105,7 +105,6 @@ function createCurrencyCommandDefinition(currency) {
     let currencyId = currency.id,
         currencyName = currency.name,
         cleanName = currencyName.replace(/\s+/g, '-').toLowerCase(); // lowecase and replace spaces with dash.
-
     // Define our command.
     const commandManagement = {
         definition: {
@@ -133,11 +132,6 @@ function createCurrencyCommandDefinition(currency) {
                     tip: "Variables: {user}, {currency}, {amount}",
                     default: `{user}'s {currency} total is {amount}`,
                     useTextArea: true
-                },
-                whisperCurrencyBalanceMessage: {
-                    type: "boolean",
-                    title: "Whisper Currency Balance Message",
-                    default: false
                 },
                 addMessageTemplate: {
                     type: "string",
@@ -273,7 +267,7 @@ function createCurrencyCommandDefinition(currency) {
                             .replace("{currency}", currencyName)
                             .replace("{amount}", util.commafy(amount));
 
-                        twitchChat.sendChatMessage(balanceMessage, commandOptions.whisperCurrencyBalanceMessage ? event.userCommand.commandSender : null);
+                        twitchChat.sendChatMessage(balanceMessage);
                     } else {
                         logger.log('Error while trying to show currency amount to user via chat command.');
                     }
@@ -374,7 +368,7 @@ function createCurrencyCommandDefinition(currency) {
                     // Subtract currency from command user now.
                     currencyDatabase.adjustCurrencyForUser(event.userCommand.commandSender, currencyId, currencyAdjustNeg).then(function(status) {
                         if (status) {
-                            twitchChat.sendChatMessage('Gave ' + util.commafy(currencyAdjust) + ' ' + currencyName + ' to ' + username + '.', null);
+                            twitchChat.sendChatMessage('Gave ' + util.commafy(currencyAdjust) + ' ' + currencyName + ' to ' + username + '.');
                             return true;
                         }
                         // Error removing currency.
@@ -434,7 +428,7 @@ function createCurrencyCommandDefinition(currency) {
                             .replace("{currency}", currencyName)
                             .replace("{amount}", util.commafy(amount));
 
-                        twitchChat.sendChatMessage(balanceMessage, commandOptions.whisperCurrencyBalanceMessage ? event.userCommand.commandSender : null);
+                        twitchChat.sendChatMessage(balanceMessage);
                     } else {
                         logger.log('Error while trying to show currency amount to user via chat command.');
                     }

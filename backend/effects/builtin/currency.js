@@ -149,18 +149,6 @@ const currency = {
                 <eos-container header="Message To Send" pad-top="true">
                     <textarea ng-model="effect.message" class="form-control" name="text" placeholder="Enter message" rows="4" cols="40"></textarea>
                     <div style="color: #fb7373;" ng-if="effect.message && effect.message.length > 360">Chat messages cannot be longer than 360 characters. This message will get automatically trimmed if the length is still too long after all replace variables have been populated.</div>
-                    <div style="display: flex; flex-direction: row; width: 100%; height: 36px; margin: 10px 0 10px; align-items: center;">
-                        <label class="control-fb control--checkbox" style="margin: 0px 15px 0px 0px"> Whisper
-                            <input type="checkbox" ng-init="whisper = (effect.whisper != null && effect.whisper !== '')" ng-model="whisper" ng-click="effect.whisper = ''">
-                            <div class="control__indicator"></div>
-                        </label>
-                        <div ng-show="whisper">
-                            <div class="input-group">
-                                <span class="input-group-addon" id="chat-whisper-effect-type">To</span>
-                                <input ng-model="effect.whisper" type="text" class="form-control" id="chat-whisper-setting" aria-describedby="chat-text-effect-type" placeholder="Username">
-                            </div>
-                        </div>
-                    </div>
                 </eos-container>
             </div>
         </div>
@@ -285,8 +273,8 @@ const currency = {
 
                 // Send chat if we have it.
                 if (event.effect.sendChat) {
-                    const { message, whisper, chatter } = event.effect;
-                    twitchChat.sendChatMessage(message, whisper, chatter);
+                    const { message, chatter } = event.effect;
+                    twitchChat.sendChatMessage(message, null, chatter);
                 }
             } catch (error) {
                 logger.error("Error updating currency", error);

@@ -99,7 +99,7 @@ const bidCommand = {
         ]
     },
     onTriggerEvent: async event => {
-        const { chatEvent, userCommand } = event;
+        const { userCommand } = event;
 
         const bidSettings = gameManager.getGameSettings("firebot-bid");
         const chatter = bidSettings.settings.chatSettings.chatter;
@@ -111,23 +111,19 @@ const bidCommand = {
         if (event.userCommand.subcommandId === "bidStart") {
             const triggeredArg = userCommand.args[1];
             const bidAmount = parseInt(triggeredArg);
-            const username = userCommand.commandSender;
 
             if (isNaN(bidAmount)) {
-                twitchChat.sendChatMessage(`Invalid amount. Please enter a number to start bidding.`, username, chatter);
-                twitchChat.deleteMessage(chatEvent.id);
+                twitchChat.sendChatMessage(`Invalid amount. Please enter a number to start bidding.`, null, chatter);
                 return;
             }
 
             if (activeBiddingInfo.active !== false) {
-                twitchChat.sendChatMessage(`There is already a bid running. Use !bid stop to stop it.`, username, chatter);
-                twitchChat.deleteMessage(chatEvent.id);
+                twitchChat.sendChatMessage(`There is already a bid running. Use !bid stop to stop it.`, null, chatter);
                 return;
             }
 
             if (bidAmount < bidSettings.settings.currencySettings.minBid) {
-                twitchChat.sendChatMessage(`The opening bid must be more than ${bidSettings.settings.currencySettings.minBid}.`, username, chatter);
-                twitchChat.deleteMessage(chatEvent.id);
+                twitchChat.sendChatMessage(`The opening bid must be more than ${bidSettings.settings.currencySettings.minBid}.`, null, chatter);
                 return;
             }
 
@@ -155,52 +151,45 @@ const bidCommand = {
             const username = userCommand.commandSender;
 
             if (activeBiddingInfo.active === false) {
-                twitchChat.sendChatMessage(`There is no active bidding in progress.`, username, chatter);
-                twitchChat.deleteMessage(chatEvent.id);
+                twitchChat.sendChatMessage(`There is no active bidding in progress.`, null, chatter);
                 return;
             }
 
             let cooldownExpireTime = cooldownCache.get(username);
             if (cooldownExpireTime && moment().isBefore(cooldownExpireTime)) {
                 const timeRemainingDisplay = util.secondsForHumans(Math.abs(moment().diff(cooldownExpireTime, 'seconds')));
-                twitchChat.sendChatMessage(`You placed a bid recently! Please wait ${timeRemainingDisplay} before placing another bid.`, username, chatter);
-                twitchChat.deleteMessage(chatEvent.id);
+                twitchChat.sendChatMessage(`You placed a bid recently! Please wait ${timeRemainingDisplay} before placing another bid.`, null, chatter);
                 return;
             }
 
             if (activeBiddingInfo.topBidder === username) {
-                twitchChat.sendChatMessage("You are already the top bidder. You can't bid against yourself.", username, chatter);
-                twitchChat.deleteMessage(chatEvent.id);
+                twitchChat.sendChatMessage("You are already the top bidder. You can't bid against yourself.", null, chatter);
                 return;
             }
 
             if (bidAmount < 1) {
-                twitchChat.sendChatMessage("Bid amount must be more than 0.", username, chatter);
-                twitchChat.deleteMessage(chatEvent.id);
+                twitchChat.sendChatMessage("Bid amount must be more than 0.", null, chatter);
                 return;
             }
 
             const minBid = bidSettings.settings.currencySettings.minBid;
             if (minBid != null & minBid > 0) {
                 if (bidAmount < minBid) {
-                    twitchChat.sendChatMessage(`Bid amount must be at least ${minBid} ${currencyName}.`, username, chatter);
-                    twitchChat.deleteMessage(chatEvent.id);
+                    twitchChat.sendChatMessage(`Bid amount must be at least ${minBid} ${currencyName}.`, null, chatter);
                     return;
                 }
             }
 
             const userBalance = await currencyDatabase.getUserCurrencyAmount(username, currencyId);
             if (userBalance < bidAmount) {
-                twitchChat.sendChatMessage(`You don't have enough ${currencyName}!`, username, chatter);
-                twitchChat.deleteMessage(chatEvent.id);
+                twitchChat.sendChatMessage(`You don't have enough ${currencyName}!`, null, chatter);
                 return;
             }
 
             let raiseMinimum = bidSettings.settings.currencySettings.minIncrement;
             let minimumBidWithRaise = activeBiddingInfo.currentBid + raiseMinimum;
             if (bidAmount < minimumBidWithRaise) {
-                twitchChat.sendChatMessage(`You must bid at least ${minimumBidWithRaise} ${currencyName}.`, username, chatter);
-                twitchChat.deleteMessage(chatEvent.id);
+                twitchChat.sendChatMessage(`You must bid at least ${minimumBidWithRaise} ${currencyName}.`, null, chatter);
                 return;
             }
 
@@ -208,7 +197,7 @@ const bidCommand = {
             let previousHighBidAmount = activeBiddingInfo.currentBid;
             if (previousHighBidder != null && previousHighBidder !== "") {
                 await currencyDatabase.adjustCurrencyForUser(previousHighBidder, currencyId, previousHighBidAmount);
-                twitchChat.sendChatMessage(`You have been out bid! You've been refunded ${previousHighBidAmount} ${currencyName}.`, previousHighBidder, chatter);
+                twitchChat.sendChatMessage(`You have been out bid! You've been refunded ${previousHighBidAmount} ${currencyName}.`, null, chatter);
             }
 
             await currencyDatabase.adjustCurrencyForUser(username, currencyId, -Math.abs(bidAmount));
@@ -224,8 +213,7 @@ const bidCommand = {
                 cooldownCache.set(username, expireTime, cooldownSecs);
             }
         } else {
-            twitchChat.sendChatMessage(`Incorrect bid usage: ${userCommand.trigger} [bidAmount]`, userCommand.commandSender, chatter);
-            twitchChat.deleteMessage(chatEvent.id);
+            twitchChat.sendChatMessage(`Incorrect bid usage: ${userCommand.trigger} [bidAmount]`, null, chatter);
         }
     }
 };

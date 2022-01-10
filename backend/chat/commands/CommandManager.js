@@ -88,8 +88,6 @@ class CommandManager extends EventEmitter {
             let override = this._sysCommandOverrides[c.definition.id];
             if (override != null) {
                 if (c.definition.options) {
-                    override.options = Object.assign(c.definition.options, override.options);
-
                     //remove now nonexistent options
                     for (let overrideOptionName of Object.keys(override.options)) {
                         if (c.definition.options[overrideOptionName] == null) {
