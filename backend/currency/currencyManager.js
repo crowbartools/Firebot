@@ -278,6 +278,8 @@ function createCurrencyCommandDefinition(currency) {
                         logger.log('Error while trying to show currency amount to user via chat command.');
                     }
                 });
+
+                return;
             }
 
             // Arguments passed, what are we even doing?!?
