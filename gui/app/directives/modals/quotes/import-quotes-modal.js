@@ -1,8 +1,6 @@
 "use strict";
 
 (function() {
-    const moment = require("moment");
-
     angular.module("firebotApp")
         .component("importQuotesModal", {
             template: `
