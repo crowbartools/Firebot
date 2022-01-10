@@ -8,8 +8,8 @@
                 roleKey: "@"
             },
             template: `
-            <div 
-                ng-show="filtered != null && filtered.length > 0" 
+            <div
+                ng-show="filtered != null && filtered.length > 0"
                 style="margin-bottom:15px;"
             >
                 <div style="font-size: 12px; opacity: 0.6;">{{$ctrl.category}}</div>
@@ -40,7 +40,10 @@
                 $scope.cms = chatMessagesService;
 
                 $scope.showUserDetailsModal = (userId) => {
-                    if (userId == null) return;
+                    if (userId == null) {
+                        return;
+                    }
+
                     const closeFunc = () => {};
                     utilityService.showModal({
                         component: "viewerDetailsModal",

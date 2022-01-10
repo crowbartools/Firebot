@@ -80,6 +80,7 @@
           <tr
             ng-repeat="item in filteredItems = ($ctrl.items | sortTagSearch:sts.getSelectedSortTag($ctrl.sortTagContext) | filter:searchQuery) as visible track by item.id"
             context-menu="$ctrl.getContextMenu(item)"
+            context-menu-class="angular-context-menu"
           >
             <td ng-if="$ctrl.testButton == true" class="fit-test-button-body">
               <span
@@ -128,6 +129,7 @@
                     class="noselect clickable text-5xl"
                     context-menu="$ctrl.getContextMenu(item)"
                     context-menu-on="click"
+                    context-menu-class="angular-context-menu"
                     context-menu-orientation="left"
                   >
                     <i class="fal fa-ellipsis-h"></i>

@@ -15,7 +15,7 @@ const model = {
         handle: "subType",
         description: "The type of sub (ie Tier 1, 2, 3, etc).",
         triggers: triggers,
-        categories: [VariableCategory.COMMON],
+        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {

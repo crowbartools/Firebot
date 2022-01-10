@@ -125,7 +125,7 @@ function deleteCustomCommand(commandId) {
         commandDb.delete("/customCommands/" + commandId);
     } catch (err) {
         logger.warn("error when deleting command", err);
-    } //eslint-disable-line no-empty
+    }
 }
 
 refreshCommandCache();

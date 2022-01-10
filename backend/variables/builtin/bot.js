@@ -11,7 +11,7 @@ const model = {
         description: "Outputs the Bot account username.",
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: _ => {
+    evaluator: () => {
         if (accountAccess.getAccounts().bot.loggedIn) {
             return accountAccess.getAccounts().bot.username;
         }

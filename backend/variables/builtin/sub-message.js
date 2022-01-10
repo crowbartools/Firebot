@@ -15,7 +15,7 @@ const model = {
         handle: "subMessage",
         description: "The message included with a resubscription.",
         triggers: triggers,
-        categories: [VariableCategory.COMMON],
+        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {

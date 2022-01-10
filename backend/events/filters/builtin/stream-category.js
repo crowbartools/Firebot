@@ -1,7 +1,6 @@
 "use strict";
 
 const { ComparisonType } = require("../../../../shared/filter-constants");
-const twitchApi = require("../../../twitch-api/api");
 
 module.exports = {
     id: "firebot:category-changed",

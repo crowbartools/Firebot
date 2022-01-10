@@ -15,7 +15,7 @@ const model = {
         handle: "giftSubType",
         description: "The type of gifted subs (ie Tier 1, 2, 3).",
         triggers: triggers,
-        categories: [VariableCategory.COMMON],
+        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {

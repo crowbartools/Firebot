@@ -108,7 +108,10 @@
         };
 
         backendCommunicator.on("import-currency", currency => {
-            if (currency == null || currency.id == null) return;
+            if (currency == null || currency.id == null) {
+                return;
+            }
+
             if (service.getCurrency(currency.id)) {
                 service.updateCurrency(currency);
             } else {

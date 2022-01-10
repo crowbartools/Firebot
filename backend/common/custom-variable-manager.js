@@ -138,7 +138,7 @@ exports.getCustomVariable = (name, propertyPath, defaultData = null) => {
         return defaultData;
     }
 
-    if (propertyPath == null || propertyPath == "null") {
+    if (propertyPath == null || propertyPath === "null") {
         return data;
     }
 

@@ -265,6 +265,7 @@
                 <tr
                   ng-repeat="event in (getSelectedEvents() | sortTagSearch:sts.getSelectedSortTag('events') | filter:eventSearch) as filteredEvents track by event.id"
                   context-menu="eventMenuOptions(event)"
+                  context-menu-class="angular-context-menu"
                 >
                   <td style="text-align: center">
                     <span
@@ -300,7 +301,9 @@
                         class="noselect clickable text-5xl"
                         style="background: transparent;border: none;"
                         context-menu="eventMenuOptions(event)"
+                        context-menu-class="angular-context-menu"
                         context-menu-on="click"
+                        context-menu-orientation="left"
                         ><i class="fal fa-ellipsis-h"></i
                       ></button>
                     </div>

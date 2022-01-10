@@ -213,26 +213,6 @@ function getUserById(id) {
     });
 }
 
-//function to escape regex characters for search
-function escape(s) {
-    return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"); // eslint-disable-line no-useless-escape
-}
-
-//returns array of users based on fragment of username
-function searchUsers(usernameFragment) {
-    return new Promise((resolve, reject) => {
-        if (!isViewerDBOn()) {
-            return resolve();
-        }
-        db.find({ username: new RegExp("/" + escape(usernameFragment) + "/") }, (docs, err) => {
-            if (err) {
-                reject(err.message);
-            }
-            resolve(docs);
-        });
-    });
-}
-
 function getAllUsernames() {
     return new Promise(resolve => {
         if (!isViewerDBOn()) {
@@ -577,7 +557,7 @@ async function setChatUsersOnline() {
 
 //set user offline, update time spent records
 function setChatUserOffline(id) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         if (!isViewerDBOn()) {
             return resolve();
         }
@@ -669,7 +649,7 @@ function getTopMetadataPosition(metadataKey, position = 1) {
         if (!isViewerDBOn()) {
             return resolve(null);
         }
-        
+
         const sortObj = {};
         sortObj[`metadata.${metadataKey}`] = -1;
 
@@ -843,10 +823,6 @@ frontendCommunicator.onAsync("getViewerFirebotData", (userId) => {
     return getUserById(userId);
 });
 
-frontendCommunicator.onAsync("createViewerFirebotData", data => {
-    //return createNewUser(data.id, data.username, data.roles);
-});
-
 frontendCommunicator.on("removeViewerFromDb", userId => {
     removeUser(userId);
 });
@@ -861,7 +837,7 @@ frontendCommunicator.on("updateViewerDataField", (data) => {
     let updateObject = {};
     updateObject[field] = value;
 
-    db.update({ _id: userId }, { $set: updateObject }, { returnUpdatedDocs: true }, function(err, _, updatedDoc) {
+    db.update({ _id: userId }, { $set: updateObject }, { returnUpdatedDocs: true }, function(err, _, updatedDoc) { //eslint-disable-line no-unused-vars
         if (err) {
             logger.error("Error updating user.", err);
         }
@@ -888,7 +864,7 @@ ipcMain.on("viewer-db-change", (event, data) => {
 });
 
 // Connect to the DBs
-ipcMain.on("viewerDbConnect", event => {
+ipcMain.on("viewerDbConnect", () => {
     if (!isViewerDBOn()) {
         return;
     }
@@ -897,7 +873,7 @@ ipcMain.on("viewerDbConnect", event => {
 });
 
 // Disconnect from DBs
-ipcMain.on("viewerDbDisconnect", (event, data) => {
+ipcMain.on("viewerDbDisconnect", () => {
     setAllUsersOffline();
     db = null;
 

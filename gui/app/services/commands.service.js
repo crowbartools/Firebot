@@ -121,7 +121,9 @@
             };
 
             service.triggerExists = function(trigger, id = null) {
-                if (trigger == null) return false;
+                if (trigger == null) {
+                    return false;
+                }
 
                 trigger = trigger != null ? trigger.toLowerCase() : "";
 
@@ -141,7 +143,9 @@
             service.deleteCustomCommand = function(command) {
                 let commandDb = getCommandsDb();
 
-                if (command == null || command.id == null || command.id === "") return;
+                if (command == null || command.id == null || command.id === "") {
+                    return;
+                }
 
                 try {
                     commandDb.delete("/customCommands/" + command.id);

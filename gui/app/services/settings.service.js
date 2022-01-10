@@ -66,64 +66,6 @@
                 backendCommunicator.fireEvent("purge-settings-cache");
             };
 
-            service.getGuardAgainstUnfollowUnhost = function() {
-                let enabled = getDataFromFile('/settings/moderation/guardAgainstUnfollowUnhost');
-                return enabled != null ? enabled : false;
-            };
-
-            service.setGuardAgainstUnfollowUnhost = function(enabled) {
-                pushDataToFile('/settings/moderation/guardAgainstUnfollowUnhost', enabled === true);
-            };
-
-            service.getKnownBoards = function() {
-                try {
-                    // This feeds the boardService with known boards and their lastUpdated values.
-                    let settingsDb = getSettingsFile();
-                    let boards = settingsDb.getData("/boards");
-                    return boards;
-                } catch (err) {} //eslint-disable-line no-empty
-            };
-
-            service.deleteKnownBoard = function(boardId) {
-                // This will delete a known board if provided a board id.
-                try {
-                    deleteDataAtPath("/boards/" + boardId);
-                } catch (err) {
-                    logger.info(err);
-                }
-            };
-
-            service.getBoardLastUpdatedDatetimeById = function(id) {
-                // Preparing for data from settings.json/boards/$boardId/lastUpdated
-                let lastUpdatedDatetime = null;
-                // Check if data is present for given board
-                try {
-                    lastUpdatedDatetime = getSettingsFile().getData(
-                        `/boards/${id}/lastUpdated`
-                    );
-                } catch (err) {
-                    logger.info(
-                        "We encountered an error, most likely there are no boards in file so we need to build the boards and save them first",
-                        err
-                    );
-                }
-                return lastUpdatedDatetime;
-            };
-
-            service.setBoardLastUpdatedDatetimeById = function(
-                boardId,
-                boardName,
-                boardDate
-            ) {
-                // Building the board with ID and lastUpdated before pushing to settings
-                let settingsBoard = {
-                    boardId: boardId,
-                    boardName: boardName,
-                    lastUpdated: boardDate
-                };
-                pushDataToFile(`/boards/${boardId}`, settingsBoard);
-            };
-
             service.getCustomScriptsEnabled = function() {
                 return getDataFromFile("/settings/runCustomScripts") === true;
             };
@@ -366,8 +308,29 @@
                 const value = getDataFromFile("/settings/chatThirdPartyEmotes");
                 return value != null ? value : true;
             };
-            service.setShowThirdPartyEmotes = function(value) {
-                pushDataToFile("/settings/chatThirdPartyEmotes", value === true);
+
+            service.getShowBttvEmotes = function() {
+                const value = getDataFromFile("/settings/chat/emotes/bttv");
+                return value != null ? value : service.getShowThirdPartyEmotes();
+            };
+            service.setShowBttvEmotes = function(value) {
+                pushDataToFile("/settings/chat/emotes/bttv", value === true);
+            };
+
+            service.getShowFfzEmotes = function() {
+                const value = getDataFromFile("/settings/chat/emotes/ffz");
+                return value != null ? value : service.getShowThirdPartyEmotes();
+            };
+            service.setShowFfzEmotes = function(value) {
+                pushDataToFile("/settings/chat/emotes/ffz", value === true);
+            };
+
+            service.getShowSevenTvEmotes = function() {
+                const value = getDataFromFile("/settings/chat/emotes/seventv");
+                return value != null ? value : service.getShowThirdPartyEmotes();
+            };
+            service.setShowSevenTvEmotes = function(value) {
+                pushDataToFile("/settings/chat/emotes/seventv", value === true);
             };
 
             service.getShowPronouns = function() {
@@ -416,24 +379,6 @@
             };
             service.setShowViewerCountStat = function(value) {
                 pushDataToFile("/settings/showViewerCountStat", value === true);
-            };
-
-            service.setChatShowGifs = function(showGifs) {
-                pushDataToFile('/settings/chatShowGifs', showGifs === true);
-            };
-
-            service.chatShowGifs = function() {
-                let showGifs = getDataFromFile('/settings/chatShowGifs');
-                return showGifs != null ? showGifs : true;
-            };
-
-            service.setChatShowStickers = function(showStickers) {
-                pushDataToFile('/settings/chatShowStickers', showStickers === true);
-            };
-
-            service.chatShowStickers = function() {
-                let showStickers = getDataFromFile('/settings/chatShowStickers');
-                return showStickers != null ? showStickers : true;
             };
 
             service.chatHideDeletedMessages = function() {
@@ -523,35 +468,6 @@
 
             service.setJustUpdated = function(justUpdated) {
                 pushDataToFile("/settings/justUpdated", justUpdated === true);
-            };
-
-            service.getButtonViewMode = function(type) {
-                if (type === "commands") {
-                    let buttonViewMode = getDataFromFile(
-                        "/settings/buttonViewModeCommands"
-                    );
-                    return buttonViewMode != null ? buttonViewMode : "list";
-                }
-
-                if (type === "liveEvents") {
-                    let buttonViewMode = getDataFromFile(
-                        "/settings/buttonViewModeLiveEvents"
-                    );
-                    return buttonViewMode != null ? buttonViewMode : "grid";
-                }
-
-                let buttonViewMode = getDataFromFile("/settings/buttonViewMode");
-                return buttonViewMode != null ? buttonViewMode : "grid";
-            };
-
-            service.setButtonViewMode = function(buttonViewMode, type) {
-                if (type === "commands") {
-                    pushDataToFile("/settings/buttonViewModeCommands", buttonViewMode);
-                } else if (type === "liveEvents") {
-                    pushDataToFile("/settings/buttonViewModeLiveEvents", buttonViewMode);
-                } else {
-                    pushDataToFile("/settings/buttonViewMode", buttonViewMode);
-                }
             };
 
             service.getOverlayVersion = function() {
@@ -693,15 +609,6 @@
                 pushDataToFile("/settings/maxBackupCount", maxBackupCount);
             };
 
-            service.getClipDownloadFolder = function() {
-                let dlFolder = getDataFromFile('/settings/clips/downloadFolder');
-                return dlFolder != null && dlFolder !== "" ? dlFolder : dataAccess.getPathInUserData("/clips/");
-            };
-
-            service.setClipDownloadFolder = function(filepath) {
-                pushDataToFile('/settings/clips/downloadFolder', filepath);
-            };
-
             service.getAudioOutputDevice = function() {
                 let device = getDataFromFile("/settings/audioOutputDevice");
                 return device != null
@@ -769,15 +676,6 @@
 
             service.deleteFromViewerColumnPreferences = function(columnName) {
                 deleteDataAtPath("/settings/viewerColumnPreferences/" + columnName);
-            };
-
-            service.getExtraLifeParticipantId = function() {
-                let id = getDataFromFile('/settings/extraLifeId');
-                return id;
-            };
-
-            service.setExtraLifeParticipantId = function(id) {
-                pushDataToFile('/settings/extraLifeId', id);
             };
 
             service.getDefaultTtsVoiceId = function() {

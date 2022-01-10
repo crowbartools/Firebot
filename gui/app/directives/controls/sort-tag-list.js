@@ -51,7 +51,9 @@
 
                         },
                         (tagId) => {
-                            if (!tagId) return;
+                            if (!tagId) {
+                                return;
+                            }
 
                             $ctrl.currentTagIds.push(tagId);
 

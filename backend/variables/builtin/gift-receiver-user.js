@@ -15,7 +15,7 @@ const model = {
         handle: "giftReceiverUsername",
         description: "The name of the user who just received a gifted sub.",
         triggers: triggers,
-        categories: [VariableCategory.COMMON],
+        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {

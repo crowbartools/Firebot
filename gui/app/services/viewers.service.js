@@ -4,7 +4,7 @@
 
     angular
         .module("firebotApp")
-        .factory("viewersService", function(logger, settingsService, backendCommunicator, $q) {
+        .factory("viewersService", function(settingsService, backendCommunicator, $q) {
             let service = {};
 
             // Check to see if the DB is turned on or not.
@@ -15,7 +15,10 @@
             service.viewers = [];
             let waitingForUpdate = false;
             service.updateViewers = function() {
-                if (waitingForUpdate) return Promise.resolve();
+                if (waitingForUpdate) {
+                    return Promise.resolve();
+                }
+
                 waitingForUpdate = true;
                 return $q(resolve => {
                     backendCommunicator.fireEventAsync("getAllViewers")

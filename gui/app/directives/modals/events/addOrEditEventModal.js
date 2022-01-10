@@ -147,7 +147,9 @@
             };
 
             $ctrl.delete = function() {
-                if ($ctrl.isNewEvent) return;
+                if ($ctrl.isNewEvent) {
+                    return;
+                }
 
                 utilityService
                     .showConfirmationModal({

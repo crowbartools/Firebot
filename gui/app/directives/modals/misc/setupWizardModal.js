@@ -375,7 +375,10 @@
             };
 
             $ctrl.startImport = () => {
-                if (!$ctrl.canStartImport()) return;
+                if (!$ctrl.canStartImport()) {
+                    return;
+                }
+
                 backendCommunicator.fireEvent("start-v4-import", $ctrl.importSettings);
             };
 
@@ -418,9 +421,13 @@
                         $ctrl.importCompleted = false;
                         return;
                     case 2:
-                    case 3:
-                        if (!$ctrl.canGoToNext() && !forceNext) return;
+                    case 3: {
+                        if (!$ctrl.canGoToNext() && !forceNext) {
+                            return;
+                        }
+
                         break;
+                    }
                     }
                     $ctrl.step += 1;
                 }

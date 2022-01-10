@@ -103,7 +103,7 @@ const model = {
             $scope.effect.otherwiseEffectData = effects;
         };
     },
-    optionsValidator: effect => {
+    optionsValidator: () => {
         let errors = [];
         return errors;
     },

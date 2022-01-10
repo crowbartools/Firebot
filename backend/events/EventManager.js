@@ -7,7 +7,6 @@ const util = require("../utility");
 const eventsRouter = require("./events-router");
 const eventsAccess = require("./events-access");
 const frontendCommuncator = require("../common/frontend-communicator");
-const accountAccess = require("../common/account-access");
 
 /**@extends NodeJS.EventEmitter */
 class EventManager extends EventEmitter {

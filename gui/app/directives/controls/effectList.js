@@ -174,6 +174,7 @@
                             <div
                                 role="button"
                                 class="effect-bar clickable-dark"
+                                ng-class="{'disabled': !effect.active}"
                                 ng-click="$ctrl.openEditEffectModal(effect, $index, $ctrl.trigger)"
                                 ng-mouseenter="hovering = true"
                                 ng-mouseleave="hovering = false">
@@ -211,6 +212,11 @@
                                                 <li role="none">
                                                     <a href role="menuitem" ng-click="$ctrl.openEditEffectModal(effect, $index, $ctrl.trigger)">
                                                         <i class="fal fa-edit" style="margin-right: 10px;"></i>  Edit
+                                                    </a>
+                                                </li>
+                                                <li role="none">
+                                                    <a href role="menuitem" ng-click="$ctrl.toggleEffectActiveState($index)">
+                                                        <i class="fal fa-toggle-off" style="margin-right: 10px;"></i>  Toggle Enabled
                                                     </a>
                                                 </li>
                                                 <li role="none">
@@ -284,6 +290,13 @@
                     if (ctrl.effectsData.id == null) {
                         ctrl.effectsData.id = uuidv1();
                     }
+
+                    ctrl.effectsData.list.forEach(e => {
+                        if (e.active == null) {
+                            e.active = true;
+                        }
+                    });
+
                     ctrl.effectsUpdate();
                 }
 
@@ -356,7 +369,10 @@
                 };
 
                 ctrl.getEffectNameById = id => {
-                    if (!effectDefinitions || effectDefinitions.length < 1) return "";
+                    if (!effectDefinitions || effectDefinitions.length < 1) {
+                        return "";
+                    }
+
                     return effectDefinitions.find(e => e.id === id).name;
                 };
 
@@ -398,6 +414,11 @@
                                 effect.effectLabel = newLabel;
                             }
                         });
+                };
+
+                ctrl.toggleEffectActiveState = (index) => {
+                    const effect = ctrl.effectsData.list[index];
+                    effect.active = !effect.active;
                 };
 
                 ctrl.duplicateEffectAtIndex = function(index) {
@@ -460,15 +481,6 @@
                     objectCopyHelper.copyEffects(ctrl.effectsData.list);
                 };
 
-                ctrl.addEffect = function() {
-                    let newEffect = {
-                        id: uuidv1(),
-                        type: "Nothing"
-                    };
-
-                    ctrl.openEditEffectModal(newEffect, null, ctrl.trigger);
-                };
-
                 ctrl.openNewEffectModal = function() {
                     utilityService.showModal({
                         component: "addNewEffectModal",
@@ -479,12 +491,16 @@
                             triggerMeta: () => ctrl.triggerMeta
                         },
                         closeCallback: resp => {
-                            if (resp == null) return;
+                            if (resp == null) {
+                                return;
+                            }
+
                             let { selectedEffectDef } = resp;
 
                             let newEffect = {
                                 id: uuidv1(),
-                                type: selectedEffectDef.id
+                                type: selectedEffectDef.id,
+                                active: true
                             };
 
                             ctrl.openEditEffectModal(newEffect, null, ctrl.trigger);
@@ -519,6 +535,13 @@
                             const $index = $itemScope.$index;
                             const effect = $itemScope.effect;
                             ctrl.openEditEffectModal(effect, $index, ctrl.trigger);
+                        }
+                    },
+                    {
+                        html: `<a href ><i class="fal fa-toggle-off" style="margin-right: 10px;"></i>  Toggle Enabled</a>`,
+                        click: function ($itemScope) {
+                            const $index = $itemScope.$index;
+                            ctrl.toggleEffectActiveState($index);
                         }
                     },
                     {
@@ -568,9 +591,15 @@
 
                 ctrl.getSelectedEffectQueueName = () => {
                     const unsetDisplay = "Not set";
-                    if (ctrl.effectsData.queue == null) return unsetDisplay;
+                    if (ctrl.effectsData.queue == null) {
+                        return unsetDisplay;
+                    }
+
                     const queue = effectQueuesService.getEffectQueue(ctrl.effectsData.queue);
-                    if (queue == null) return unsetDisplay;
+                    if (queue == null) {
+                        return unsetDisplay;
+                    }
+
                     return queue.name;
                 };
 
@@ -580,9 +609,15 @@
                 };
 
                 ctrl.getSelectedQueueModeIsCustom = () => {
-                    if (ctrl.effectsData.queue == null) return false;
+                    if (ctrl.effectsData.queue == null) {
+                        return false;
+                    }
+
                     const queue = effectQueuesService.getEffectQueue(ctrl.effectsData.queue);
-                    if (queue == null) return false;
+                    if (queue == null) {
+                        return false;
+                    }
+
                     return queue.mode === "custom";
                 };
 
@@ -595,7 +630,10 @@
                 };
 
                 ctrl.validQueueSelected = () => {
-                    if (ctrl.effectsData.queue == null) return false;
+                    if (ctrl.effectsData.queue == null) {
+                        return false;
+                    }
+
                     const queue = effectQueuesService.getEffectQueue(ctrl.effectsData.queue);
                     return queue != null;
                 };

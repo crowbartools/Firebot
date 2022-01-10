@@ -210,14 +210,14 @@ module.exports = {
             }
         }
     },
-    onLoad: gameSettings => {
+    onLoad: () => {
         spinCommand.registerSpinCommand();
     },
-    onUnload: gameSettings => {
+    onUnload: () => {
         spinCommand.unregisterSpinCommand();
         spinCommand.purgeCaches();
     },
-    onSettingsUpdate: gameSettings => {
+    onSettingsUpdate: () => {
         spinCommand.purgeCaches();
     }
 };

@@ -21,6 +21,7 @@ exports.loadReplaceVariables = () => {
         'bits-badge-unlocked-message',
         'bot',
         'category-image-url',
+        'chat-message-emote-urls',
         'chat-message',
         'chat-messages',
         'cheer-bits',

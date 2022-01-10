@@ -4,7 +4,7 @@
 
     angular
         .module("firebotApp")
-        .factory("ttsService", function(logger, $q, settingsService, backendCommunicator) {
+        .factory("ttsService", function($q, settingsService, backendCommunicator) {
             let service = {};
 
             let voices = [];

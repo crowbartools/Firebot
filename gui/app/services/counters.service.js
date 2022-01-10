@@ -7,7 +7,7 @@
 
     angular
         .module("firebotApp")
-        .factory("countersService", function($q, logger, backendCommunicator, profileManager) {
+        .factory("countersService", function($q, backendCommunicator, profileManager) {
             let service = {};
 
             service.counters = [];
@@ -46,14 +46,20 @@
             };
 
             service.saveCounter = (counter) => {
-                if (counter == null) return;
+                if (counter == null) {
+                    return;
+                }
+
                 const index = service.counters.findIndex(c => c.id === counter.id);
                 service.counters[index] = counter;
                 backendCommunicator.fireEvent("save-counter", counter);
             };
 
             service.renameCounter = (counterId, newName) => {
-                if (counterId == null || newName == null) return;
+                if (counterId == null || newName == null) {
+                    return;
+                }
+
                 const index = service.counters.findIndex(c => c.id === counterId);
                 if (index >= 0) {
                     service.counters[index].name = newName;
@@ -73,7 +79,10 @@
             };
 
             service.getTxtFilePath = (counterName) => {
-                if (counterName == null) return "";
+                if (counterName == null) {
+                    return "";
+                }
+
                 const sanitizedCounterName = sanitizeFileName(counterName);
                 return path.join(COUNTERS_FOLDER, `${sanitizedCounterName}.txt`);
             };

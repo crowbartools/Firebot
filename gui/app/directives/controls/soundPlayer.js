@@ -19,7 +19,7 @@
                     <i class="fas fa-stop"></i>
                 </div>
                 <span>
-                 {{seekPositionDisplay}} / {{durationDisplay}} 
+                 {{seekPositionDisplay}} / {{durationDisplay}}
                 </span>
             </div>
             `,
@@ -34,7 +34,10 @@
 
                 function pad(num) {
                     let s = num + "";
-                    while (s.length < 2) s = "0" + s;
+                    while (s.length < 2) {
+                        s = "0" + s;
+                    }
+
                     return s;
                 }
 
@@ -106,12 +109,18 @@
                 }
 
                 $scope.isPlaying = () => {
-                    if (sound == null) return false;
+                    if (sound == null) {
+                        return false;
+                    }
+
                     return sound.playing();
                 };
 
                 $scope.playOrPause = () => {
-                    if (sound == null || !$scope.controlsEnabled) return;
+                    if (sound == null || !$scope.controlsEnabled) {
+                        return;
+                    }
+
                     if (sound.playing()) {
                         sound.pause();
                     } else {
@@ -121,7 +130,10 @@
 
 
                 $scope.stop = () => {
-                    if (sound == null || !$scope.controlsEnabled) return;
+                    if (sound == null || !$scope.controlsEnabled) {
+                        return;
+                    }
+
                     sound.stop();
                 };
 

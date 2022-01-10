@@ -9,7 +9,7 @@ module.exports = {
     rightSideValueType: "text",
     predicate: (conditionSettings, trigger) => {
 
-        let { comparisonType, leftSideValue, rightSideValue } = conditionSettings;
+        let { comparisonType, rightSideValue } = conditionSettings;
 
         // normalize usernames
         let triggerUsername = trigger.metadata.username ? trigger.metadata.username.toLowerCase() : "";

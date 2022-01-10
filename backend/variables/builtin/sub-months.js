@@ -15,7 +15,7 @@ const model = {
         handle: "subMonths",
         description: "The total number of months the user has been subscribed since the beginning of time.",
         triggers: triggers,
-        categories: [VariableCategory.COMMON],
+        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {

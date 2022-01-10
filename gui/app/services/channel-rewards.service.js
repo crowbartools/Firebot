@@ -4,7 +4,7 @@
 
     angular
         .module("firebotApp")
-        .factory("channelRewardsService", function($q, logger,
+        .factory("channelRewardsService", function($q,
             backendCommunicator, utilityService, objectCopyHelper, ngToast) {
             let service = {};
 
@@ -76,7 +76,10 @@
             };
 
             service.duplicateChannelReward = (rewardId) => {
-                if (service.channelRewards.length >= 50) return;
+                if (service.channelRewards.length >= 50) {
+                    return;
+                }
+
                 const reward = service.channelRewards.find(r => r.id === rewardId);
                 if (reward == null) {
                     return;
@@ -106,7 +109,10 @@
 
             let currentlySyncing = false;
             service.syncChannelRewards = () => {
-                if (currentlySyncing) return;
+                if (currentlySyncing) {
+                    return;
+                }
+
                 currentlySyncing = true;
 
                 $q.when(backendCommunicator.fireEventAsync("syncChannelRewards"))

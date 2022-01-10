@@ -97,14 +97,14 @@ module.exports = {
             }
         }
     },
-    onLoad: settings => {
+    onLoad: () => {
         bidCommand.registerBidCommand();
     },
-    onUnload: settings => {
+    onUnload: () => {
         bidCommand.unregisterBidCommand();
         bidCommand.purgeCaches();
     },
-    onSettingsUpdate: settings => {
+    onSettingsUpdate: () => {
         bidCommand.purgeCaches();
     }
 };

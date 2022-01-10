@@ -1,7 +1,5 @@
 "use strict";
 
-const { indexOf } = require("angular-route");
-
 (function() {
     angular
         .module("firebotApp")
@@ -20,7 +18,9 @@ const { indexOf } = require("angular-route");
 
                         if (action === 'save') {
                             const updatedGame = resp.game;
-                            if (updatedGame == null) return;
+                            if (updatedGame == null) {
+                                return;
+                            }
                             gamesService.saveGame(updatedGame);
                         }
 

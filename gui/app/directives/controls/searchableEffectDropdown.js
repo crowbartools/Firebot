@@ -1,8 +1,5 @@
 "use strict";
 (function() {
-    //This a wrapped dropdown element that automatically handles the particulars
-    const Effect = require("../../backend/common/EffectType.js");
-
     angular.module("firebotApp").component("searchableEffectDropdown", {
         bindings: {
             trigger: "@",
@@ -22,18 +19,8 @@
         </ui-select-choices>
       </ui-select>
       `,
-        controller: function(
-            $scope,
-            $element,
-            $attrs,
-            settingsService,
-            listenerService,
-            connectionService,
-            backendCommunicator
-        ) {
+        controller: function(backendCommunicator) {
             let ctrl = this;
-
-
             let effectDefs;
 
             async function getSelected() {

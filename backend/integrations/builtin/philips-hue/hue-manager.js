@@ -26,7 +26,7 @@ async function connectHueBridge(hueUser) {
     }
 }
 
-async function deleteHueUser(hueUser) {
+async function deleteHueUser() {
     // The hue api does not allow deleting users. So, this will just show a popup to the user on where to go to delete Firebot access.
 
     renderWindow.webContents.send(

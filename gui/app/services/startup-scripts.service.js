@@ -26,14 +26,20 @@
             };
 
             service.saveStartupScriptData = function(startupScriptData) {
-                if (!startupScriptData) return;
+                if (!startupScriptData) {
+                    return;
+                }
+
                 startupScripts[startupScriptData.id] = startupScriptData;
                 backendCommunicator.fireEvent("saveStartupScriptData",
                     startupScriptData);
             };
 
             service.deleteStartupScriptData = function(startupScriptDataId) {
-                if (!startupScriptDataId) return;
+                if (!startupScriptDataId) {
+                    return;
+                }
+
                 delete startupScripts[startupScriptDataId];
                 backendCommunicator.fireEvent("deleteStartupScriptData",
                     startupScriptDataId);

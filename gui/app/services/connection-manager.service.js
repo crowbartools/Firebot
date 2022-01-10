@@ -119,7 +119,9 @@
                 services,
                 shouldConnect = false
             ) {
-                if (service.isWaitingForServicesStatusChange()) return;
+                if (service.isWaitingForServicesStatusChange()) {
+                    return;
+                }
 
                 // Clear all reconnect timeouts if any are running.
                 ipcRenderer.send("clearReconnect", "All");

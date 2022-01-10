@@ -8,7 +8,7 @@
             let service = {};
 
             // names of known key codes (0-255)
-            let keyboardNameMap = [
+            let keyboardNameMap = [ //eslint-disable-line no-unused-vars
                 "", // [0]
                 "", // [1]
                 "", // [2]
@@ -538,7 +538,9 @@
                 let column = 0;
 
                 let keyMap = keyboardCharMap[keyCode];
-                if (!keyMap) return "";
+                if (!keyMap) {
+                    return "";
+                }
 
                 return keyMap[column];
             };

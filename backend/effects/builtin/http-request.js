@@ -1,6 +1,5 @@
 "use strict";
 
-const logger = require("../../logwrapper");
 const { EffectCategory } = require('../../../shared/effect-constants');
 const axiosDefault = require("axios").default;
 

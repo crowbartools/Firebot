@@ -10,13 +10,13 @@
             },
             template: `
                 <div style="margin-bottom:3px;">
-                    
+
                     <div class="expandable-item"
-                        style="justify-content: space-between;" 
-                        ng-init="hidePanel = true" 
-                        ng-click="$ctrl.togglePanel()" 
+                        style="justify-content: space-between;"
+                        ng-init="hidePanel = true"
+                        ng-click="$ctrl.togglePanel()"
                         ng-class="{'expanded': !hidePanel}">
-                        
+
                             <div style="flex-basis: 30%;padding-left: 15px;font-family: 'Quicksand';font-size: 16px;">{{$ctrl.restrictionDefinition.definition.name}}</div>
 
                             <div style="display: flex; align-items: center;">
@@ -27,7 +27,7 @@
                                     <i class="fas" ng-class="{'fa-chevron-right': hidePanel, 'fa-chevron-down': !hidePanel}"></i>
                                 </div>
                             </div>
-                            
+
                     </div>
                     <div uib-collapse="hidePanel" class="expandable-item-expanded">
                         <div style="padding: 15px 20px 10px 20px;">
@@ -45,7 +45,10 @@
 
                 $ctrl.displayText = "";
                 $ctrl.setDisplayText = function() {
-                    if ($ctrl.restrictionDefinition == null) return "";
+                    if ($ctrl.restrictionDefinition == null) {
+                        return "";
+                    }
+
                     let displayValueFunc = $ctrl.restrictionDefinition.optionsValueDisplay;
                     if (displayValueFunc != null && $ctrl.restriction != null) {
                         // Invoke the func and inject any dependancies

@@ -1,25 +1,15 @@
 "use strict";
 
 (function() {
-    const WebSocket = require("ws");
-    const WebSocketServer = WebSocket.Server;
-
     // This provides methods for sending stuff to the websocket
 
     angular
         .module("firebotApp")
         .factory("websocketService", function(
             logger,
-            listenerService,
-            settingsService,
-            $timeout,
-            $interval,
-            $rootScope
+            listenerService
         ) {
             let service = {};
-
-            // Setup the WebSocketServer with the saved port.
-            let port = settingsService.getWebSocketPort();
 
             function showEvents(data) {
                 let showEventsPosition = data.showEventsPosition;
@@ -201,7 +191,7 @@
 
             // Websocket Server
             // This allows for the guiBroadcast call to send out data via websocket.
-            service.broadcast = function(data) {
+            service.broadcast = function() {
                 /*data = JSON.stringify(data);
         wss.clients.forEach(function each(client) {
           if (client.readyState === 1) {

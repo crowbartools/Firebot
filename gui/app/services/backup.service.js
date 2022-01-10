@@ -4,13 +4,12 @@
 
     const fs = require("fs-extra");
     const path = require("path");
-    const moment = require("moment");
     const unzipper = require("unzipper");
     const empty = require("empty-folder");
 
     angular
         .module("firebotApp")
-        .factory("backupService", function($q, logger, backendCommunicator, listenerService, profileManager,
+        .factory("backupService", function($q, logger, backendCommunicator, listenerService,
             dataAccess, utilityService) {
             let service = {};
 
@@ -35,7 +34,10 @@
                     currentPath: BACKUPS_FOLDER_PATH
                 }))
                     .then(response => {
-                        if (response == null || response.path == null) return null;
+                        if (response == null || response.path == null) {
+                            return null;
+                        }
+
                         return response.path;
                     });
             };

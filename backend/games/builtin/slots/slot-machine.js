@@ -4,17 +4,6 @@ const util = require("../../../utility");
 
 const SPIN_COUNT = 3;
 
-function getSpinLabel(spinCount) {
-    switch (spinCount) {
-    case 1:
-        return "First";
-    case 2:
-        return "Second";
-    default:
-        return "Third";
-    }
-}
-
 async function spin(showSpinInActionMsg, spinInActionMsg, successChance, chatter) {
 
     let successCount = 0;
@@ -32,8 +21,6 @@ async function spin(showSpinInActionMsg, spinInActionMsg, successChance, chatter
         if (successfulRoll) {
             successCount++;
         }
-
-        //twitchChat.sendChatMessage(`${getSpinLabel(currentSpin)} reel stops, it's a ${successfulRoll ? 'HIT' : 'MISS'}`, username, chatter);
     }
 
     return successCount;

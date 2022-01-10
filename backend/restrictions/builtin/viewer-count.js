@@ -111,11 +111,7 @@ const model = {
                 reject(`Viewer count must be ${comparisonText} ${numViewers}.`);
             }
         });
-    },
-    onSuccessful: (triggerData, restrictionData) => {
-
     }
-
 };
 
 module.exports = model;
