@@ -28,7 +28,7 @@
 
             backendCommunicator.on("all-queues", effectQueues => {
                 if (effectQueues != null) {
-                    service.effectQueues = effectQueues;
+                    service.effectQueues = Object.values(effectQueues);
                 }
             });
 
