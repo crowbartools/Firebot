@@ -35,7 +35,18 @@
                             hotkeyService.updateHotkey(hotkey);
                             break;
                         case "delete":
-                            hotkeyService.deleteHotkey(hotkey);
+                            utilityService
+                                .showConfirmationModal({
+                                    title: "Delete Hotkey",
+                                    question: `Are you sure you want to delete the Hotkey "${hotkey.name}"?`,
+                                    confirmLabel: "Delete",
+                                    confirmBtnType: "btn-danger"
+                                })
+                                .then(confirmed => {
+                                    if (confirmed) {
+                                        hotkeyService.deleteHotkey(hotkey);
+                                    }
+                                });
                             break;
                         }
                     }

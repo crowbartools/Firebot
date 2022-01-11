@@ -77,6 +77,19 @@ function addQuote(quote) {
     });
 }
 
+const addQuotes = (quotes) => {
+    return new Promise(async (resolve, reject) => {
+        db.insert(quotes, err => {
+            if (err) {
+                logger.error("QuoteDB: Error adding quotes: ", err.message);
+                return reject();
+            }
+            frontendCommunicator.send("quotes-update");
+            resolve();
+        });
+    });
+};
+
 function updateQuote(quote, dontSendUiUpdateEvent = false) {
     return new Promise(async (resolve, reject) => {
 
@@ -300,6 +313,10 @@ async function recalculateQuoteIds() {
 
 frontendCommunicator.on("add-quote", quote => {
     addQuote(quote).catch(() => {});
+});
+
+frontendCommunicator.on("add-quotes", quotes => {
+    addQuotes(quotes).catch(() => {});
 });
 
 frontendCommunicator.on("update-quote", quote => {

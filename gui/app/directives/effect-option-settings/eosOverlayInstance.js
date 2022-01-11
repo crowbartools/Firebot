@@ -18,11 +18,13 @@
                     <ul class="dropdown-menu chat-effect-dropdown">
                         <li ng-click="$ctrl.effect.overlayInstance = null"><a href>Default</a></li>
                         <li ng-repeat="instanceName in $ctrl.settings.getOverlayInstances()" ng-click="$ctrl.effect.overlayInstance = instanceName"><a href>{{instanceName}}</a></li>
+                        <li class="divider"></li>
+                        <li ng-click="$ctrl.showEditOverlayInstancesModal()"><a href>Edit Instances</a></li>
                     </ul>
                 </div>
             </eos-container>
        `,
-            controller: function(settingsService) {
+            controller: function(settingsService, utilityService) {
                 let ctrl = this;
 
                 ctrl.settings = settingsService;
@@ -38,6 +40,12 @@
                             ctrl.effect.overlayInstance = null;
                         }
                     }
+                };
+
+                ctrl.showEditOverlayInstancesModal = function() {
+                    utilityService.showModal({
+                        component: "editOverlayInstancesModal"
+                    });
                 };
             }
         });

@@ -106,32 +106,50 @@
                         </div>
 
                         <div style="display: flex;align-items: center;justify-content: space-between;">
-                            <span style="font-weight: 900;" id="thirdPartyEmotesLabel">Show BTTV/FFZ Emotes</span>
+                            <span style="font-weight: 900;" id="bttvEmotesLabel">Show BTTV Emotes <a href="https://betterttv.com/" target="_blank" style="font-size:10px;"><i class="fas fa-external-link"></i></a></span>
                             <span>
-                                <input class="tgl tgl-light sr-only" id="cb13" type="checkbox" aria-labelledby="thirdPartyEmotesLabel"
-                                    ng-checked="settings.getShowThirdPartyEmotes()"
-                                    ng-click="settings.setShowThirdPartyEmotes(!settings.getShowThirdPartyEmotes())"/>
+                                <input class="tgl tgl-light sr-only" id="cb13" type="checkbox" aria-labelledby="bttvEmotesLabel"
+                                    ng-checked="settings.getShowBttvEmotes()"
+                                    ng-click="setShowThirdPartyEmotes('bttv')"/>
                                 <label class="tgl-btn" for="cb13"></label>
+                            </span>
+                        </div>
+                        <div style="display: flex;align-items: center;justify-content: space-between;">
+                            <span style="font-weight: 900;" id="ffzEmotesLabel">Show FFZ Emotes <a href="https://www.frankerfacez.com/" target="_blank" style="font-size:10px;"><i class="fas fa-external-link"></i></a></span>
+                            <span>
+                                <input class="tgl tgl-light sr-only" id="cb14" type="checkbox" aria-labelledby="ffzEmotesLabel"
+                                    ng-checked="settings.getShowFfzEmotes()"
+                                    ng-click="setShowThirdPartyEmotes('ffz')"/>
+                                <label class="tgl-btn" for="cb14"></label>
+                            </span>
+                        </div>
+                        <div style="display: flex;align-items: center;justify-content: space-between;">
+                            <span style="font-weight: 900;" id="sevenTvEmotesLabel">Show 7TV Emotes <a href="https://7tv.app/" target="_blank" style="font-size:10px;"><i class="fas fa-external-link"></i></a></span>
+                            <span>
+                                <input class="tgl tgl-light sr-only" id="cb15" type="checkbox" aria-labelledby="sevenTvEmotesLabel"
+                                    ng-checked="settings.getShowSevenTvEmotes()"
+                                    ng-click="setShowThirdPartyEmotes('7tv')"/>
+                                <label class="tgl-btn" for="cb15"></label>
                             </span>
                         </div>
 
                         <div style="display: flex;align-items: center;justify-content: space-between;">
                             <span style="font-weight: 900;" id="showPronounsLabel">Show Pronouns <a href="https://pronouns.alejo.io/" target="_blank" style="font-size:10px;"><i class="fas fa-external-link"></i></a></span>
                             <span>
-                                <input class="tgl tgl-light sr-only" id="cb14" type="checkbox" aria-labelledby="showPronounsLabel"
+                                <input class="tgl tgl-light sr-only" id="cb16" type="checkbox" aria-labelledby="showPronounsLabel"
                                     ng-checked="settings.getShowPronouns()"
                                     ng-click="settings.setShowPronouns(!settings.getShowPronouns())"/>
-                                <label class="tgl-btn" for="cb14"></label>
+                                <label class="tgl-btn" for="cb16"></label>
                             </span>
                         </div>
 
                         <div style="display: flex;align-items: center;justify-content: space-between;">
                             <span style="font-weight: 900;" id="showCustomFontSize">Show Custom Font Size</span>
                             <span>
-                                <input class="tgl tgl-light sr-only" id="cb15" type="checkbox" aria-labelledby="showCustomFontSize"
+                                <input class="tgl tgl-light sr-only" id="cb17" type="checkbox" aria-labelledby="showCustomFontSize"
                                     ng-checked="settings.getChatCustomFontSizeEnabled()"
                                     ng-click="toggleCustomFontEnabled()"/>
-                                <label class="tgl-btn" for="cb15"></label>
+                                <label class="tgl-btn" for="cb17"></label>
                             </span>
                         </div>
                         <div class="volume-slider-wrapper" ng-show="settings.getChatCustomFontSizeEnabled()">
@@ -140,9 +158,9 @@
 
                         <div style="margin-top: 10px;">
                             <div style="font-weight: 900;" id="showCustomFontSize">Clear Chat Feed</div>
-                            <dropdown-select 
-                                options="clearChatFeedOptions" 
-                                selected="chatFeedMode" 
+                            <dropdown-select
+                                options="clearChatFeedOptions"
+                                selected="chatFeedMode"
                                 on-update="setChatFeedMode(option)"
                             ></dropdown-select>
                         </div>
@@ -157,7 +175,7 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function($scope, $rootScope, $timeout, settingsService, soundService) {
+            controller: function($scope, $rootScope, $timeout, settingsService, soundService, chatMessagesService) {
                 const $ctrl = this;
 
                 $scope.settings = settingsService;
@@ -216,6 +234,20 @@
                     });
                 };
 
+                $scope.setShowThirdPartyEmotes = (party) => {
+                    switch (party) {
+                    case "bttv":
+                        settingsService.setShowBttvEmotes(!settingsService.getShowBttvEmotes());
+                        break;
+                    case "ffz":
+                        settingsService.setShowFfzEmotes(!settingsService.getShowFfzEmotes());
+                        break;
+                    case "7tv":
+                        settingsService.setShowSevenTvEmotes(!settingsService.getShowSevenTvEmotes());
+                    }
+
+                    chatMessagesService.refreshEmotes();
+                };
 
                 $scope.toggleCustomFontEnabled = () => {
                     settingsService.setChatCustomFontSizeEnabled(!settingsService.getChatCustomFontSizeEnabled());
