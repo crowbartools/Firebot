@@ -91,6 +91,9 @@ exports.whenReady = async () => {
     const presetEffectListManager = require("../../../effects/preset-lists/preset-effect-list-manager");
     presetEffectListManager.loadItems();
 
+    const quickActionManager = require("../../../quick-actions/quick-actions-manager");
+    quickActionManager.loadItems();
+
     const startupScriptsManager = require("../../../common/handlers/custom-scripts/startup-scripts-manager");
     startupScriptsManager.loadStartupConfig();
 

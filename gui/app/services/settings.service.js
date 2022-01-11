@@ -209,11 +209,11 @@
                 return getDataFromFile("/settings/chatViewCount");
             };
 
-            service.getQuickActions = () => {
+            service.getQuickActionSettings = () => {
                 return getDataFromFile("/settings/quickActions");
             };
 
-            service.setQuickActions = (quickActions) => {
+            service.setQuickActionSettings = (quickActions) => {
                 pushDataToFile("/settings/quickActions", quickActions);
             };
 

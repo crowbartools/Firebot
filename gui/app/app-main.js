@@ -98,6 +98,7 @@
 
     app.run(function initializeApplication(
         logger,
+        customQuickActionsService,
         chatMessagesService,
         activityFeedService,
         viewerRolesService,
