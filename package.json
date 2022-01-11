@@ -1,6 +1,6 @@
 {
   "name": "firebotv5",
-  "version": "5.49.2",
+  "version": "5.49.3",
   "description": "Powerful all-in-one bot for Twitch streamers.",
   "main": "main.js",
   "scripts": {
@@ -105,6 +105,7 @@
     "node-cache": "^4.2.1",
     "node-hue-api": "^4.0.10",
     "node-json-db": "^0.7.3",
+    "node-xlsx": "^0.20.0",
     "parse-link-header": "^1.0.1",
     "probe-image-size": "^5.0.0",
     "request": "^2.85.0",
