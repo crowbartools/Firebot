@@ -5,13 +5,14 @@ const NodeCache = require("node-cache");
 const { settings } = require("../../common/settings-access");
 const eventManager = require("../../events/EventManager");
 const logger = require("../../logwrapper");
+const moment = require("moment");
 
-const communitySubCache = new NodeCache({ stdTTL: 2, checkperiod: 2 });
+const communitySubCache = new NodeCache({ stdTTL: 3, checkperiod: 3 });
 
 /** @param {import("@twurple/chat").ChatCommunitySubInfo} subInfo */
 exports.triggerCommunitySubGift = (subInfo) => {
     const gifterDisplayName = subInfo.gifterDisplayName ? subInfo.gifterDisplayName : "An Anonymous Gifter";
-    logger.debug(`Received ${subInfo.count} community gift subs from ${gifterDisplayName}`);
+    logger.debug(`Received ${subInfo.count} community gift subs from ${gifterDisplayName} at ${moment().format("HH:mm:ss:SS")}`);
 
     communitySubCache.set(`${gifterDisplayName}:${subInfo.plan}`, {subCount: subInfo.count, giftReceivers: []});
 };
@@ -19,7 +20,7 @@ exports.triggerCommunitySubGift = (subInfo) => {
 /** @param {import("@twurple/pubsub").PubSubSubscriptionMessage} subInfo */
 exports.triggerSubGift = (subInfo) => {
     if (settings.ignoreSubsequentSubEventsAfterCommunitySub()) {
-        logger.debug(`Attempting to process community gift sub from ${subInfo.gifterDisplayName}`);
+        logger.debug(`Attempting to process community gift sub from ${subInfo.gifterDisplayName}  at ${moment().format("HH:mm:ss:SS")}`);
         const cacheKey = `${subInfo.gifterDisplayName}:${subInfo.subPlan}`;
 
         const cache = communitySubCache.get(cacheKey);
@@ -67,6 +68,7 @@ exports.triggerSubGift = (subInfo) => {
         isAnonymous: subInfo.isAnonymous,
         giftDuration: subInfo.giftDuration
     });
+    logger.debug(`Gift Sub event triggered`);
 };
 
 /** @param {import("@twurple/chat").ChatSubGiftUpgradeInfo} subInfo */
