@@ -93,7 +93,7 @@ const fileWriter = {
         </eos-container>
 
         <eos-container header="Text" pad-top="true" ng-if="effect.writeMode === 'replace' || effect.writeMode === 'suffix' || effect.writeMode === 'append' || (effect.writeMode === 'delete' && effect.deleteLineMode === 'text') || (effect.writeMode === 'replace-line' && effect.replaceLineMode === 'text')">
-            <input ng-model="effect.text" type="text" class="form-control" id="chat-text-setting" placeholder="Enter text" replace-variables>
+            <input ng-model="effect.text" type="text" class="form-control" id="chat-text-setting" placeholder="Enter text" ng-trim="false" replace-variables>
         </eos-container>
 
         <eos-container header="Line Number(s)" pad-top="true" ng-if="(effect.writeMode === 'delete' && effect.deleteLineMode === 'lines') || (effect.writeMode === 'replace-line' && effect.replaceLineMode === 'lineNumbers')">
