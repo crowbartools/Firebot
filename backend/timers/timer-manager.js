@@ -298,9 +298,7 @@ connectionManager.on("streamerOnlineChange", isOnline => {
         logger.debug("Streamer has gone live.");
 
         // streamer went live, spool up intervals for only when live timers
-        const timers = timerManager
-            .getAllItems()
-            .filter(t => t.active && t.onlyWhenLive);
+        const timers = Object.values(timerManager.getAllItems()).filter(t => t.active && t.onlyWhenLive);
 
         timerManager.buildIntervalsForTimers(timers, true);
     } else {
