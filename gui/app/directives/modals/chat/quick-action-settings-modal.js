@@ -8,23 +8,26 @@
                 <button type="button" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
                 <h4 class="modal-title">Quick Action Settings</h4>
             </div>
-            <div class="modal-body py-8 px-14">
-                <div ng-repeat="header in $ctrl.headers" class="mb-10">
-                    <h4>{{header}}</h4>
-                    <div ng-repeat="action in $ctrl.quickActions">
-                        <div style="display: flex;align-items: center;justify-content: space-between;margin-bottom:5px;" ng-if="header.toLowerCase() === action.type">
-                            <span style="font-weight: 900;">{{action.name}}</span>
-                            <span>
-                                <input
-                                    class="tgl tgl-light sr-only"
-                                    id="{{action.id}}"
-                                    type="checkbox"
-                                    aria-label="{{action.name}}"
-                                    ng-checked="$ctrl.settings[action.id].enabled"
-                                    ng-click="$ctrl.settings[action.id].enabled = !$ctrl.settings[action.id].enabled"/>
-                                <label class="tgl-btn" for="{{action.id}}"></label>
-                            </span>
-                        </div>
+            <div class="modal-body py-8 px-14" ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.quickActions">
+                <div ng-repeat="action in $ctrl.quickActions track by $index">
+                    <div style="display: flex;align-items: center;justify-content: space-between;" class="mb-2">
+                        <span style="font-weight: 900;">{{action.name}}</span>
+                        <span class="mr-10" style="margin-left: auto">
+                            <input
+                                class="tgl tgl-light sr-only"
+                                id="{{action.id}}"
+                                type="checkbox"
+                                aria-label="{{action.name}}"
+                                ng-checked="$ctrl.settings[action.id].enabled"
+                                ng-click="$ctrl.settings[action.id].enabled = !$ctrl.settings[action.id].enabled"/>
+                            <label class="tgl-btn" for="{{action.id}}"></label>
+                        </span>
+                        <span
+                            class="dragHandle"
+                            ng-click="$event.stopPropagation();"
+                        >
+                            <i class="fal fa-bars" aria-hidden="true"></i>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -38,12 +41,20 @@
                 const $ctrl = this;
 
                 $ctrl.quickActions = [];
-
-                $ctrl.headers = ["System", "Custom"];
+                $ctrl.settings = [];
 
                 $ctrl.$onInit = () => {
                     $ctrl.quickActions = $ctrl.resolve.quickActions;
                     $ctrl.settings = $ctrl.resolve.settings;
+                };
+
+                $ctrl.sortableOptions = {
+                    handle: ".dragHandle",
+                    stop: () => {
+                        $ctrl.quickActions.forEach((qa, index) => {
+                            $ctrl.settings[qa.id].position = index;
+                        });
+                    }
                 };
             }
         });

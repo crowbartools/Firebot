@@ -5,7 +5,7 @@
         .component("quickActions", {
             template: `
                 <div class="quick-actions-column">
-                    <div ng-repeat="action in $ctrl.quickActions">
+                    <div ng-repeat="action in $ctrl.quickActions track by $index">
                         <button
                             ng-if="action.type === 'system' && $ctrl.settings[action.id].enabled"
                             class="quick-action-btn mt-4"
@@ -37,17 +37,6 @@
 
                     <button
                         class="quick-action-btn"
-                        uib-tooltip="Quick Action Settings"
-                        append-tooltip-to-body="true"
-                        tooltip-placement="right"
-                        ng-click="$ctrl.openQuickActionSettingsModal()"
-                        aria-label="Quick Action Settings"
-                    >
-                        <i class="fas fa-cog"></i>
-                    </button>
-
-                    <button
-                        class="quick-action-btn mt-4"
                         uib-tooltip="Add Custom Quick Action"
                         append-tooltip-to-body="true"
                         tooltip-placement="right"
@@ -56,14 +45,26 @@
                     >
                         <i class="fas fa-plus"></i>
                     </button>
+
+                    <button
+                        class="quick-action-btn mt-4"
+                        uib-tooltip="Quick Action Settings"
+                        append-tooltip-to-body="true"
+                        tooltip-placement="right"
+                        ng-click="$ctrl.openQuickActionSettingsModal()"
+                        aria-label="Quick Action Settings"
+                    >
+                        <i class="fas fa-cog"></i>
+                    </button>
                 </div>
             `,
-            controller: function($scope, utilityService, backendCommunicator, settingsService, customQuickActionsService, presetEffectListsService) {
+            controller: function($scope, utilityService, backendCommunicator, settingsService, customQuickActionsService, presetEffectListsService, logger) {
                 const $ctrl = this;
 
                 $ctrl.settings = settingsService.getQuickActionSettings();
                 $scope.customQuickActionsService = customQuickActionsService;
                 $scope.presetEffectListsService = presetEffectListsService;
+                $scope.logger = logger;
 
                 $ctrl.quickActions = [];
 
@@ -74,7 +75,10 @@
                         type: "system",
                         icon: "far fa-pencil",
                         click: () => {
-                            $ctrl.showEditStreamInfoModal();
+                            utilityService.showModal({
+                                component: "editStreamInfoModal",
+                                size: "md"
+                            });
                         }
                     },
                     {
@@ -83,7 +87,10 @@
                         type: "system",
                         icon: "far fa-coin",
                         click: () => {
-                            $ctrl.showGiveCurrencyModal();
+                            utilityService.showModal({
+                                component: "giveCurrencyModal",
+                                size: "md"
+                            });
                         }
                     },
                     {
@@ -92,7 +99,7 @@
                         type: "system",
                         icon: "far fa-tv-alt",
                         click: () => {
-                            $ctrl.popoutStreamPreview();
+                            backendCommunicator.send("show-twitch-preview");
                         }
                     }
                 ];
@@ -176,24 +183,6 @@
                             settingsService.setQuickActionSettings($ctrl.settings);
                         }
                     });
-                };
-
-                $ctrl.showEditStreamInfoModal = () => {
-                    utilityService.showModal({
-                        component: "editStreamInfoModal",
-                        size: "md"
-                    });
-                };
-
-                $ctrl.showGiveCurrencyModal = () => {
-                    utilityService.showModal({
-                        component: "giveCurrencyModal",
-                        size: "md"
-                    });
-                };
-
-                $ctrl.popoutStreamPreview = () => {
-                    backendCommunicator.send("show-twitch-preview");
                 };
             }
         });
