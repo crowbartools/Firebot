@@ -7,7 +7,7 @@
 
     angular
         .module("firebotApp")
-        .factory("importService", function() {
+        .factory("importService", function(logger) {
             let service = {};
 
             const getQuoteDateFormat = (quotes) => {
@@ -28,7 +28,7 @@
                 return dateFormat;
             };
 
-            const getSplittedQuotes = (quotes) => {
+            const splitQuotes = (quotes) => {
                 return quotes.map(q => {
                     const splittedQuote = q[1].split("[").map(sq => sq.replace("]", "").trim());
 
@@ -47,21 +47,54 @@
                 });
             };
 
+            const mapViewers = (data) => {
+                return data.map(v => {
+                    return {
+                        name: v[0],
+                        rank: v[1],
+                        currency: v[2],
+                        viewHours: v[3]
+                    };
+                });
+            };
+
+            const mapRanks = (viewers) => {
+                const viewerRanks = viewers.map(message => message.rank);
+                const ranks = viewerRanks.reduce((allRanks, rank) => {
+                    if (!allRanks.includes(rank) && rank !== "Unranked") {
+                        allRanks.push(rank);
+                    }
+
+                    return allRanks;
+                }, []);
+                logger.debug(ranks);
+                return ranks;
+            };
+
             service.parseStreamlabsChatbotData = (filepath) => {
                 const data = {};
                 const file = xlsx.parse(fs.readFileSync(filepath));
 
                 file.forEach(f => {
-                    if (f.name === "Quotes") {
-                        f.data.shift();
-
-                        const quotes = getSplittedQuotes(f.data);
+                    f.data.shift();
+                    switch (f.name) {
+                    case "Quotes": {
+                        const quotes = splitQuotes(f.data);
                         const dateFormat = getQuoteDateFormat(quotes);
 
                         quotes.forEach(q => q.createdAt = moment(q.createdAt, dateFormat).toISOString());
 
                         data.quotes = quotes;
+
+                        break;
                     }
+                    case "Points":
+                    case "Currency":
+                        data.viewers = mapViewers(f.data);
+                        data.ranks = mapRanks(data.viewers);
+                        break;
+                    }
+
                 });
 
                 return data;
