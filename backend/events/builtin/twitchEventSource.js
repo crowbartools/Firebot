@@ -129,7 +129,7 @@ module.exports = {
                     value: "1000"
                 },
                 giftSubMonths: 1,
-                gifteeUsername: "MageEnclave",
+                gifteeUsername: "MageEnclave"
             },
             activityFeed: {
                 icon: "fad fa-gift",
@@ -158,7 +158,7 @@ module.exports = {
                     value: "1000"
                 },
                 giftReceivers: {
-                    type: "nested",
+                    type: "gift-receivers-list",
                     value: [
                         { gifteeUsername: "User1", giftSubMonths: 3 },
                         { gifteeUsername: "User2", giftSubMonths: 5 },

@@ -38,7 +38,7 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function($scope, backendCommunicator, ngToast) {
+            controller: function(backendCommunicator, ngToast) {
                 const $ctrl = this;
 
                 $ctrl.metadata = [];

@@ -32,7 +32,7 @@
             </label>
           </div>
 
-          <div ng-switch-when="enum"  style="padding-top:5px;">
+          <div ng-switch-when="enum" style="padding-top:5px;">
             <dropdown-select options="$ctrl.metadata.options" selected="$ctrl.metadata.value"></dropdown-select>
           </div>
 
@@ -66,6 +66,10 @@
 
           <div ng-switch-when="discord-channel-webhooks" style="padding-top:5px;">
             <discord-channel-webhooks model="$ctrl.metadata.value"></discord-channel-webhooks>
+          </div>
+
+          <div ng-switch-when="gift-receivers-list" class="pt-5">
+            <gift-receivers-list model="$ctrl.metadata.value"></gift-receivers-list>
           </div>
 
           <div ng-if="$ctrl.metadata.tip != null && $ctrl.metadata.tip !== ''" class="muted" style="font-size:12px; padding-top: 3px;">{{$ctrl.metadata.tip}}</div>
