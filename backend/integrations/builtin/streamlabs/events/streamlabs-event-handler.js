@@ -19,6 +19,11 @@ const eventSourceDefinition = {
             name: "Donation",
             description: "When someone donates to you via StreamLabs.",
             cached: false,
+            manualMetadata: {
+                from: "StreamLabs",
+                formattedDonationAmount: 5,
+                donationMessage: "Test message"
+            },
             isIntegration: true,
             queued: true,
             activityFeed: {
@@ -33,6 +38,11 @@ const eventSourceDefinition = {
             name: "Extra Life Donation",
             description: "When someone donates to your Extra Life campaign.",
             cached: false,
+            manualMetadata: {
+                from: "Extra Life",
+                formattedDonationAmount: 5,
+                donationMessage: "Test message"
+            },
             isIntegration: true,
             queued: true,
             activityFeed: {
@@ -48,6 +58,9 @@ const eventSourceDefinition = {
             description: "When someone follows your Twitch channel (comes from StreamLabs)",
             cacheMetaKey: "username",
             cached: true,
+            manualMetadata: {
+                username: "StreamLabs"
+            },
             isIntegration: true,
             activityFeed: {
                 icon: "fas fa-heart",
@@ -71,7 +84,7 @@ exports.processStreamLabsEvent = (eventData) => {
         const donoData = eventData.message[0];
         eventManager.triggerEvent(EVENT_SOURCE_ID, EventId.DONATION, {
             formattedDonationAmount: donoData.formatted_amount,
-            dononationAmount: donoData.amount,
+            donationAmount: donoData.amount,
             donationMessage: donoData.message,
             from: donoData.from
         });
@@ -82,7 +95,7 @@ exports.processStreamLabsEvent = (eventData) => {
             EventId.EXTRA_LIFE_DONATION,
             {
                 formattedDonationAmount: donoData.formatted_amount,
-                dononationAmount: donoData.amount,
+                donationAmount: donoData.amount,
                 donationMessage: donoData.message,
                 from: donoData.from
             }

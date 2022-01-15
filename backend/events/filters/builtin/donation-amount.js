@@ -17,21 +17,21 @@ module.exports = {
         let { comparisonType, value } = filterSettings;
         let { eventMeta } = eventData;
 
-        let dononationAmount = eventMeta.dononationAmount || 0;
+        let donationAmount = eventMeta.donationAmount || 0;
 
 
         switch (comparisonType) {
         case "is": {
-            return dononationAmount === value;
+            return donationAmount === value;
         }
         case "is not": {
-            return dononationAmount !== value;
+            return donationAmount !== value;
         }
         case "less than": {
-            return dononationAmount < value;
+            return donationAmount < value;
         }
         case "greater than": {
-            return dononationAmount > value;
+            return donationAmount > value;
         }
         default:
             return false;
