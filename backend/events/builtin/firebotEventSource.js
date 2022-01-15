@@ -25,7 +25,6 @@ const firebotEventSource = {
             name: "View Time Update",
             description: "When a viewer's view time updates automatically.",
             cached: false,
-            canTestWithData: true,
             manualMetadata: {
                 previousViewTime: 1,
                 newViewTime: 2
@@ -54,7 +53,6 @@ const firebotEventSource = {
             name: "Chat Message Highlight",
             description: "When you select to highlight a message on your overlay.",
             cached: false,
-            canTestWithData: true,
             manualMetadata: {
                 username: "Firebot",
                 messageText: "Test message"
@@ -65,7 +63,6 @@ const firebotEventSource = {
             name: "Category Changed",
             description: "When you change the stream category in the dashboard.",
             cached: false,
-            canTestWithData: true,
             manualMetadata: {
                 category: "Just Chatting"
             }

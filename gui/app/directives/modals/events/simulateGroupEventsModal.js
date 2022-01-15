@@ -21,7 +21,7 @@
                         ></searchable-event-dropdown>
                     </div>
 
-                    <div ng-if="$ctrl.metadata" style="text-transform: capitalize">
+                    <div ng-if="$ctrl.metadata">
                         <command-option
                             ng-repeat="data in $ctrl.metadata"
                             name="data.title"
@@ -72,6 +72,13 @@
                     }
                 };
 
+                const getTitle = (metadata) => {
+                    const titleArray = metadata.split(/(?=[A-Z])/);
+
+                    const capitalized = titleArray.map(word => word.charAt(0).toUpperCase() + word.slice(1, word.length));
+                    return capitalized.join(" ");
+                };
+
                 $ctrl.eventChanged = async (event) => {
                     $ctrl.eventData.eventId = event.eventId;
                     $ctrl.eventData.sourceId = event.sourceId;
@@ -82,7 +89,7 @@
                         $ctrl.metadata = Object.keys(eventSource.manualMetadata).map(mmd => {
                             const data = {
                                 key: mmd,
-                                title: mmd.split(/(?=[A-Z])/).join(" "),
+                                title: getTitle(mmd),
                                 type: eventSource.manualMetadata[mmd].type || typeof eventSource.manualMetadata[mmd],
                                 options: eventSource.manualMetadata[mmd].options || {}
                             };

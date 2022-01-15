@@ -18,7 +18,7 @@
                                 type="text"
                                 id="gifteeUsername"
                                 name="gifteeUsername"
-                                class="form-control input-lg"
+                                class="form-control input-md"
                                 placeholder="Enter giftee username"
                                 ng-model="$ctrl.giftReceiver.gifteeUsername"
                                 ui-validate="'$value != null && $value.length > 0'"
@@ -33,13 +33,13 @@
                                 type="number"
                                 id="giftSubMonths"
                                 name="giftSubMonths"
-                                class="form-control input-lg"
-                                placeholder="Enter gift sub months"
+                                class="form-control input-md"
+                                placeholder="Enter months"
                                 ng-model="$ctrl.giftReceiver.giftSubMonths"
                                 ui-validate="'$value != null && $value > 0'"
                                 required
                                 menu-position="under"
-                                style="width: 25%;"
+                                style="width: 50%;"
                             />
                         </div>
 
