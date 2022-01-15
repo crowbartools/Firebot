@@ -26,6 +26,7 @@
                             ng-repeat="data in $ctrl.metadata"
                             name="data.title"
                             metadata="data"
+                            on-update="$ctrl.isAnon(value)"
                         ></command-option>
                     </div>
                 </div>
@@ -48,6 +49,28 @@
                     metadata: {}
                 };
                 $ctrl.eventError = false;
+
+                $ctrl.changeUsername = (key, usernameType, isAnon) => {
+                    const username = $ctrl.metadata.find(md => md.key === key);
+
+                    if (username && isAnon) {
+                        username.value = `An Anonymous ${usernameType}`;
+                    } else {
+                        username.value = "";
+                    }
+
+                    const index = $ctrl.metadata.findIndex(md => md.key === key);
+                    $ctrl.metadata[index] = username;
+                };
+
+                $ctrl.isAnon = (isAnon) => {
+                    if ($ctrl.eventData.eventId === 'subs-gifted' || $ctrl.eventData.eventId === 'community-subs-gifted') {
+                        $ctrl.changeUsername('gifterUsername', 'Gifter', isAnon);
+                        return;
+                    } else if ($ctrl.eventData.eventId === 'cheer') {
+                        $ctrl.changeUsername('username', 'Cheerer', isAnon);
+                    }
+                };
 
                 $ctrl.eventChanged = async (event) => {
                     $ctrl.eventData.eventId = event.eventId;

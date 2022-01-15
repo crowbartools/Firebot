@@ -116,7 +116,6 @@ module.exports = {
             description: "When someone gifts a sub to someone else in your channel.",
             cached: false,
             manualMetadata: {
-                username: "MageEnclave",
                 gifterUsername: "Firebot",
                 isAnonymous: false,
                 subPlan: {

@@ -77,8 +77,14 @@
 
        <hr ng-if="$ctrl.metadata.showBottomHr" style="margin-top:10px; margin-bottom:15px;" />
        `,
-        controller: function() {
+        controller: function($scope) {
             let ctrl = this;
+
+            $scope.$watchCollection("$ctrl.metadata", (changes) => {
+                if (changes.key === 'isAnonymous') {
+                    ctrl.onUpdate({ value: changes.value });
+                }
+            });
 
             //If there is no value, supply the default.
             ctrl.$onInit = function() {
