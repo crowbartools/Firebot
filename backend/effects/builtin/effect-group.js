@@ -130,7 +130,7 @@ const effectGroup = {
             let processEffectsRequest = {};
 
             if (effect.listType === "preset") {
-                const presetList = presetEffectListManager.getPresetEffectList(effect.presetListId);
+                const presetList = presetEffectListManager.getItem(effect.presetListId);
                 if (presetList == null) {
                     // preset list doesnt exist anymore
                     return resolve(true);

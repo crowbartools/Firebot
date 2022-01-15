@@ -4,7 +4,7 @@
 
     angular
         .module("firebotApp")
-        .directive("effectOptions", function(effectHelperService, listenerService, $compile) {
+        .directive("effectOptions", function(effectHelperService, $compile) {
             return {
                 restrict: "E",
                 scope: {
@@ -16,7 +16,7 @@
                 replace: true,
                 template: `<div><div id="child"></div></div>`,
                 link: function($scope, element) {
-                    $scope.$watch("type", function(newValue, oldValue) {
+                    $scope.$watch("type", function() {
                         let effectDef = $scope.effectDef;
 
                         if (effectDef == null) {
@@ -65,7 +65,10 @@
 
                     // Find new controller if the user changes the type via the dropdown
                     $scope.$watch("type", function(newValue, oldValue) {
-                        if (newValue === oldValue) return;
+                        if (newValue === oldValue) {
+                            return;
+                        }
+
                         findController();
                     });
                 }

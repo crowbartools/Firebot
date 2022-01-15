@@ -71,7 +71,10 @@
             };
 
             $ctrl.delete = function() {
-                if ($ctrl.isNewHotkey) return;
+                if ($ctrl.isNewHotkey) {
+                    return;
+                }
+
                 $ctrl.close({ $value: { hotkey: $ctrl.hotkey, action: "delete" } });
             };
 
@@ -95,7 +98,9 @@
             }
 
             $ctrl.save = function() {
-                if (!hotkeyValid()) return;
+                if (!hotkeyValid()) {
+                    return;
+                }
 
                 let action = $ctrl.isNewHotkey ? "add" : "update";
                 $ctrl.close({

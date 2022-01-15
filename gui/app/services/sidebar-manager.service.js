@@ -43,7 +43,13 @@
                     "channel rewards",
                     "moderation",
                     "buttons",
-                    "settings"
+                    "settings",
+                    "counters",
+                    "hotkeys",
+                    "effect queues",
+                    "currency",
+                    "quotes",
+                    "viewers"
                 ].includes(service.currentTab.toLowerCase());
             };
 

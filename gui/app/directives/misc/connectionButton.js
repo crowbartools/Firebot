@@ -18,7 +18,7 @@
             </div>
             `,
             controller: function() {
-                let $ctrl = this;
+                const $ctrl = this; // eslint-disable-line no-unused-vars
             }
         });
 }());

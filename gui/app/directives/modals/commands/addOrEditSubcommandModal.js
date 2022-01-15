@@ -83,7 +83,10 @@
                 ];
 
                 function validateArgTriggerText() {
-                    if ($ctrl.arg.type !== "Custom") return true;
+                    if ($ctrl.arg.type !== "Custom") {
+                        return true;
+                    }
+
                     const triggerText = $ctrl.arg.arg;
                     if (triggerText == null || triggerText.length < 1) {
                         $ctrl.nameErrorText = 'Please provide trigger text.';

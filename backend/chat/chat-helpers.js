@@ -6,6 +6,7 @@ const accountAccess = require("../common/account-access");
 const twitchClient = require("../twitch-api/api");
 const bttv = require("./third-party/bttv");
 const ffz = require("./third-party/ffz");
+const sevenTv = require("./third-party/7tv");
 const frontendCommunicator = require("../common/frontend-communicator");
 const utils = require("../utility");
 
@@ -115,9 +116,11 @@ let thirdPartyEmotes = [];
 exports.cacheThirdPartyEmotes = async () => {
     const bttvEmotes = await bttv.getAllBttvEmotes();
     const ffzEmotes = await ffz.getAllFfzEmotes();
+    const sevenTvEmotes = await sevenTv.getAllSevenTvEmotes();
     thirdPartyEmotes = [
         ...bttvEmotes,
-        ...ffzEmotes
+        ...ffzEmotes,
+        ...sevenTvEmotes
     ];
 };
 

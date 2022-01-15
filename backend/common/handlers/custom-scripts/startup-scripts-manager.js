@@ -8,8 +8,6 @@ const effectRunner = require("../../../common/effect-runner");
 
 let startupScripts = {};
 
-const STARTUP_SCRIPTS_FOLDER = "/scripts/";
-
 function getStartupScriptsConfig() {
     return profileManager
         .getJsonDbInProfile("startup-scripts-config");

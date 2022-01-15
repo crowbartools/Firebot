@@ -8,38 +8,37 @@
             template: `
                 <div>
 
-                    <firebot-setting 
+                    <firebot-setting
                         name="Viewer Database"
                         description="Turn on/off the viewer tracking database. This could improve performance in some cases."
                     >
-                        <firebot-select 
+                        <firebot-select
                             options="{ true: 'On', false: 'Off' }"
-                            ng-init="viewerDb = settings.getViewerDB()" 
-                            selected="viewerDb" 
+                            ng-init="viewerDb = settings.getViewerDB()"
+                            selected="viewerDb"
                             on-update="settings.setViewerDB(option === 'true')"
                             right-justify="true"
                         />
                     </firebot-setting>
 
-                    <firebot-setting 
+                    <firebot-setting
                         name="Viewers Table Page Size"
-                        description="Select the page size for the Viewers table."
+                        description="Select how many viewers are displayed per page for the Viewers table."
                     >
-                        <firebot-select 
+                        <firebot-select
                             options="[5,10,15,20,25,30,35,40,45,50,55,60]"
-                            ng-init="viewerListPageSize = settings.getViewerListPageSize()" 
-                            selected="viewerListPageSize" 
+                            ng-init="viewerListPageSize = settings.getViewerListPageSize()"
+                            selected="viewerListPageSize"
                             on-update="settings.setViewerListPageSize(option)"
-                            right-justify="true" 
+                            right-justify="true"
                         />
-                        <span> viewers per page</span>
                     </firebot-setting>
 
-                    <firebot-setting 
+                    <firebot-setting
                         name="Purge Viewer Data"
                         description="Sometimes you may want to periodically purge viewer data to clear out inactive viewers."
                     >
-                        <firebot-button 
+                        <firebot-button
                             text="View Purge Options"
                             ng-click="showPurgeViewersModal()"
                         />
@@ -49,7 +48,6 @@
           `,
             controller: function($scope, settingsService, utilityService) {
                 $scope.settings = settingsService;
-
 
                 $scope.showPurgeViewersModal = () => {
                     utilityService.showModal({

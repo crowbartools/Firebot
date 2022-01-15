@@ -18,9 +18,6 @@ const model = {
         </eos-container>
     `,
     optionsController: () => {},
-    optionsValidator: effect => {
-        return [];
-    },
     onTriggerEvent: async () => {
 
         frontendCommunicator.fireEventAsync("acknowledge-all-activity");

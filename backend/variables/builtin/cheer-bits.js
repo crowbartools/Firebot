@@ -15,7 +15,7 @@ const model = {
         handle: "cheerBitsAmount",
         description: "The amount of bits in the cheer.",
         triggers: triggers,
-        categories: [VariableCategory.COMMON],
+        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {

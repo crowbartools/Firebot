@@ -29,7 +29,6 @@ function overlaySocketConnect(){
 
 			console.log(`Received Event: ${event}`);
 			console.log(`Overlay Instance: ${olInstance}, Event Instance: ${data.meta.overlayInstance}`)
-			console.log(data);
 
 			if(olInstance != null && olInstance != "") {
 				if(data.meta.overlayInstance != olInstance) {
@@ -111,5 +110,3 @@ function errorHandle(ws){
     ws.send(2);
   }
 }
-
-

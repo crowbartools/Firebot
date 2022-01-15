@@ -42,8 +42,9 @@
                 };
 
                 const keyDownListener = function(event) {
-                    if (!$ctrl.isCapturingKey) return;
-                    if (event.keyCode == null) return;
+                    if (!$ctrl.isCapturingKey || event.keyCode == null) {
+                        return;
+                    }
 
                     let keyName = keyHelper.getKeyboardKeyName(event.keyCode);
 
@@ -68,7 +69,10 @@
                 };
 
                 $ctrl.startKeyCapture = function() {
-                    if ($ctrl.isCapturingKey) return;
+                    if ($ctrl.isCapturingKey) {
+                        return;
+                    }
+
                     $ctrl.isCapturingKey = true;
                     logger.info("Starting key capture...");
                     window.addEventListener("keydown", keyDownListener, true);

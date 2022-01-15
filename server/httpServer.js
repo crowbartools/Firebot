@@ -125,7 +125,9 @@ exports.start = function() {
 };
 
 exports.sendToOverlay = function(eventName, meta = {}, overlayInstance) {
-    if (wss == null || eventName == null) return;
+    if (wss == null || eventName == null) {
+        return;
+    }
 
     let data = { event: eventName, meta: meta, overlayInstance: overlayInstance },
         dataRaw = JSON.stringify(data);

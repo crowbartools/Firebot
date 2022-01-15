@@ -32,7 +32,9 @@
 
                 function seedElapsedSeconds() {
                     if (streamInfoService.streamInfo.startedAt == null ||
-                        streamInfoService.streamInfo.startedAt === "") return;
+                        streamInfoService.streamInfo.startedAt === "") {
+                        return;
+                    }
 
                     const startedAt = moment(streamInfoService.streamInfo.startedAt);
                     const now = moment();
@@ -69,7 +71,9 @@
                 };
 
                 $interval(() => {
-                    if (!streamInfoService.streamInfo.isLive) return;
+                    if (!streamInfoService.streamInfo.isLive) {
+                        return;
+                    }
 
                     totalSeconds += 1;
 

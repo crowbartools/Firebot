@@ -25,7 +25,10 @@
              */
 
             service.getAccountAvatar = function(type) {
-                if (type !== "streamer" && type !== "bot" && service.accounts[type] != null) return defaultPhotoUrl;
+                if (type !== "streamer" && type !== "bot" && service.accounts[type] != null) {
+                    return defaultPhotoUrl;
+                }
+
                 return service.accounts[type].avatar || defaultPhotoUrl;
             };
 
@@ -50,7 +53,10 @@
             };
 
             service.logout = (type) => {
-                if (type !== "streamer" && type !== "bot") return;
+                if (type !== "streamer" && type !== "bot") {
+                    return;
+                }
+
                 if (service.accounts[type].loggedIn) {
                     accountAccess.logoutAccount(type);
                 }
@@ -89,7 +95,9 @@
                     return;
                 }
 
-                if (activeProfileIds == null) return;
+                if (activeProfileIds == null) {
+                    return;
+                }
 
                 let profiles = [];
                 for (let profileId of activeProfileIds) {
@@ -154,7 +162,9 @@
                 const serviceIds = settingsService.getSidebarControlledServices();
                 for (const serviceId of serviceIds) {
 
-                    if (serviceId == null || (serviceId !== "chat" && !serviceId.startsWith("integration."))) continue;
+                    if (serviceId == null || (serviceId !== "chat" && !serviceId.startsWith("integration."))) {
+                        continue;
+                    }
 
                     if (service.connections[serviceId] === ConnectionState.Connected) {
                         oneConnected = true;
@@ -204,7 +214,10 @@
             };
 
             service.toggleConnectionToService = function(serviceId) {
-                if (service.connections[serviceId] == null) return;
+                if (service.connections[serviceId] == null) {
+                    return;
+                }
+
                 if (service.connections[serviceId] === 'connected') {
                     service.disconnectFromService(serviceId);
                 } else {
@@ -218,7 +231,10 @@
             };
             service.disconnectSidebarControlledServices = () => backendCommunicator.send("disconnect-sidebar-controlled-services");
             service.toggleSidebarControlledServices = () => {
-                if (service.isConnectingAll) return;
+                if (service.isConnectingAll) {
+                    return;
+                }
+
                 if (service.sidebarServicesOverallStatus === 'disconnected') {
                     soundService.resetPopCounter();
                     service.connectSidebarControlledServices();
@@ -255,7 +271,9 @@
                 const connectionState = data.connectionState;
 
                 //see if there has been no change
-                if (service.connections[serviceId] === connectionState) return;
+                if (service.connections[serviceId] === connectionState) {
+                    return;
+                }
 
                 if (connectionState === ConnectionState.Connected || connectionState === ConnectionState.Disconnected) {
                     if (!service.isConnectingAll) {

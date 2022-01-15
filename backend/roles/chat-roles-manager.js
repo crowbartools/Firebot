@@ -91,7 +91,7 @@ const getUsersChatRoles = async (userIdOrName = "") => {
             }
         }
 
-        if (vips.some(v => v === username)) {
+        if (vips.some(v => v.toLowerCase() === username)) {
             roles.push("vip");
         }
 

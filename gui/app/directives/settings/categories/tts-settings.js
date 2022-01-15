@@ -8,22 +8,22 @@
             template: `
                 <div>
 
-                    <firebot-setting 
+                    <firebot-setting
                         name="TTS Voice"
-                        description="Turn on/off the viewer tracking database. This could improve performance in some cases."
+                        description="The voice that is used for the TTS."
                     >
-                        <firebot-select 
+                        <firebot-select
                             options="ttsVoiceOptions"
-                            ng-init="ttsVoice = getSelectedVoiceName()" 
-                            selected="ttsVoice" 
+                            ng-init="ttsVoice = getSelectedVoiceName()"
+                            selected="ttsVoice"
                             on-update="settings.setDefaultTtsVoiceId(option)"
                             right-justify="true"
                         />
                     </firebot-setting>
-                    
-                    <firebot-setting 
+
+                    <firebot-setting
                         name="TTS Volume"
-                        description="Turn on/off the viewer tracking database. This could improve performance in some cases."
+                        description="The volume at which the TTS speaks."
                     >
                         <div class="volume-slider-wrapper"  style="width: 75%">
                             <i class="fal fa-volume-down volume-low" style="font-size: 25px"></i>
@@ -35,7 +35,7 @@
                         </div>
                     </firebot-setting>
 
-                    <firebot-setting 
+                    <firebot-setting
                         name="TTS Speak Rate"
                         description="The rate at which the TTS speaks: 1 is normal. 0.5 is half as fast. 2 is 2x as fast, etc."
                     >
@@ -50,11 +50,11 @@
                         </div>
                     </firebot-setting>
 
-                    <firebot-setting 
+                    <firebot-setting
                         name="Test TTS"
                         description="Test the current TTS settings."
                     >
-                        <firebot-button 
+                        <firebot-button
                             text="Speak Test Message"
                             ng-click="testTTS()"
                         />

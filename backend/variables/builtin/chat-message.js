@@ -16,7 +16,7 @@ const model = {
         handle: "chatMessage",
         description: "Outputs the chat message from the associated command or event.",
         triggers: triggers,
-        categories: [VariableCategory.COMMON],
+        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
     },
     evaluator: (trigger) => {

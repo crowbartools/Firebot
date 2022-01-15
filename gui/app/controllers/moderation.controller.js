@@ -40,7 +40,9 @@
 
                     },
                     (roleId) => {
-                        if (!roleId) return;
+                        if (!roleId) {
+                            return;
+                        }
                         chatModerationService.chatModerationData.settings.exemptRoles.push(roleId);
                         chatModerationService.saveChatModerationSettings();
                     });

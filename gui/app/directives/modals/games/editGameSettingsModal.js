@@ -129,7 +129,10 @@
             }
 
             $ctrl.save = () => {
-                if (!validate()) return;
+                if (!validate()) {
+                    return;
+                }
+
                 $ctrl.close({
                     $value: {
                         game: $ctrl.game,

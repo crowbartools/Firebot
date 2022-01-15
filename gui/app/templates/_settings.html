@@ -82,64 +82,6 @@
   </div>
 </script>
 
-<!-- Modal For Editing Overlay Instances -->
-<script type="text/ng-template" id="editOverlayInstances.html">
-  <div class="modal-header">
-    <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
-    <h4 class="modal-title">Edit Overlay Instances</h4>
-  </div>
-  <div class="modal-body">
-    <table class="table table-hover">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>URL</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Default</td>
-            <td><a href ng-click="showViewUrlModal()">View URL</a></td>
-            <td></td>
-          </tr>
-          <tr ng-repeat="instanceName in getOverlayInstances()">
-            <td>{{instanceName}}</td>
-            <td><a href ng-click="showViewUrlModal(instanceName)">View URL</a></td>
-            <td><span class="effect-delete-btn clickable pull-right" ng-click="deleteOverlayInstanceAtIndex($index)"><i class="far fa-trash-alt"></i></span></td>
-          </tr>
-        </tbody>
-      </table>
-      <button class="btn btn-default btn-sm" ng-click="showCreateInstanceModal()">+ Create Instance</button>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-primary" ng-click="dismiss()">Done</button>
-  </div>
-</script>
-
-<!-- Modal For Adding Overlay Instances -->
-<script type="text/ng-template" id="createOverlayInstance.html">
-  <div class="modal-header">
-    <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
-    <h4 class="modal-title">Create Overlay Instance</h4>
-  </div>
-  <div class="modal-body">
-    <div class="mt-6" style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
-      <div style="width: 75%; position: relative;">
-        <div class="form-group" ng-class="{'has-error': createError}">
-          <label class="control-label" for="name">Name</label>
-          <input type="text" class="form-control" id="name" ng-model="name" aria-describedby="helpBlock">
-          <span id="helpBlock" class="help-block" ng-show="createError">This name is invalid or already exists.</span>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-link" ng-click="dismiss()">Cancel</button>
-    <button type="button" class="btn btn-primary" ng-click="create()">Create</button>
-  </div>
-</script>
-
 <!-- View Backups Modal -->
 <script type="text/ng-template" id="backupListModal.html">
   <div class="modal-header flex-row-center jspacebetween">

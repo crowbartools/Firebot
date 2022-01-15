@@ -16,7 +16,7 @@ const model = {
     },
     optionsTemplate: `
         <eos-container>
-            <p>This effect will clear all chat messages from chat, exactly like the Mixer /clear command.</p>
+            <p>This effect will clear all chat messages from chat, exactly like the Twitch /clear command.</p>
         </eos-container>
     `,
     optionsController: () => {},

@@ -17,11 +17,21 @@ const steam = {
         cooldown: {
             user: 0,
             global: 5
+        },
+        options: {
+            outputTemplate: {
+                type: "string",
+                title: "Output Template",
+                tip: "Variables: {gameName}, {price}, {releaseDate}, {metaCriticScore}, {steamUrl}",
+                default: `{gameName} (Price: {price} - Released: {releaseDate} - Metacritic: {metaCriticScore}) {steamUrl}`,
+                useTextArea: true
+            }
         }
     },
     onTriggerEvent: async event => {
+        const { commandOptions } = event;
         let gameName = event.userCommand.args.join(" ").trim();
-        let message = "Couldn't find a Steam game using that name!";
+        let message = "Couldn't find a Steam game using that name";
 
         if (gameName == null || gameName.length < 1) {
 
@@ -31,22 +41,15 @@ const steam = {
         }
 
         if (gameName != null && gameName !== "") {
-            let gameDetails = await Steam.getSteamGameDetails(gameName);
+            const gameDetails = await Steam.getSteamGameDetails(gameName);
 
             if (gameDetails !== null) {
-                let details = [];
-                if (gameDetails.price) {
-                    details.push(`Price: ${gameDetails.price}`);
-                }
-                if (gameDetails.releaseDate) {
-                    details.push(`Released: ${gameDetails.releaseDate}`);
-                }
-                if (gameDetails.score) {
-                    details.push(`Metacritic: ${gameDetails.score}`);
-                }
-                let detailString = details.length > 0 ? `(${details.join(" - ")})` : "";
-
-                message = `${gameDetails.name} ${detailString} ${gameDetails.url}`;
+                message = commandOptions.outputTemplate
+                    .replace("{gameName}", gameDetails.name)
+                    .replace("{price}", gameDetails.price || "Unknown")
+                    .replace("{releaseDate}", gameDetails.releaseDate || "Unknown")
+                    .replace("{metaCriticScore}", gameDetails.score || "Unknown")
+                    .replace("{steamUrl}", gameDetails.url);
             }
         }
 

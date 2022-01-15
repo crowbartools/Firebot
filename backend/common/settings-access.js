@@ -58,11 +58,6 @@ function getDataFromFile(path, forceCacheUpdate = false) {
     return settingsCache[path];
 }
 
-settings.getGuardAgainstUnfollowUnhost = function() {
-    let enabled = getDataFromFile('/settings/moderation/guardAgainstUnfollowUnhost');
-    return enabled != null ? enabled : false;
-};
-
 settings.getEventSettings = function() {
     return getDataFromFile("/settings/eventSettings");
 };
@@ -96,11 +91,6 @@ settings.getOverlayVersion = function() {
 
 settings.setOverlayVersion = function(newVersion) {
     pushDataToFile("/settings/copiedOverlayVersion", newVersion.toString());
-};
-
-settings.getSparkExemptUsers = function() {
-    let exemptUsers = getDataFromFile("/sparkExempt");
-    return exemptUsers ? exemptUsers : { users: [] };
 };
 
 settings.getClearCustomScriptCache = function() {
@@ -212,12 +202,6 @@ settings.getViewerDbStatus = function() {
     return status != null ? status : true;
 };
 
-settings.getClipDownloadFolder = function() {
-    const dataAccess = require("./data-access");
-    let dlFolder = getDataFromFile('/settings/clips/downloadFolder');
-    return dlFolder != null && dlFolder !== "" ? dlFolder : dataAccess.getPathInUserData("/clips/");
-};
-
 /*
 * 0 = off,
 * 1 = bugfix,
@@ -240,15 +224,6 @@ settings.getAudioOutputDevice = function() {
 settings.debugModeEnabled = function() {
     let enabled = getDataFromFile("/settings/debugMode");
     return enabled != null ? enabled : false;
-};
-
-settings.getExtraLifeParticipantId = function() {
-    let id = getDataFromFile('/settings/extraLifeId');
-    return id;
-};
-
-settings.setExtraLifeParticipantId = function(id) {
-    pushDataToFile('/settings/extraLifeId', id);
 };
 
 settings.getWhileLoopEnabled = function() {

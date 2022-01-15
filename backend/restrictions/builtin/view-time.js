@@ -15,9 +15,6 @@ const model = {
             <input type="number" class="form-control" placeholder="Enter minutes" ng-model="restriction.time">
         </div>
     `,
-    optionsController: ($scope) => {
-
-    },
     optionsValueDisplay: (restriction) => {
         let time = restriction.time || 0;
 
@@ -43,14 +40,7 @@ const model = {
                 reject("You have not spent enough time in the channel to use this");
             }
         });
-    },
-    /*
-        called after all restrictions in a list are met. Do logic such as deducting currency here.
-    */
-    onSuccessful: (triggerData, restrictionData) => {
-
     }
-
 };
 
 module.exports = model;

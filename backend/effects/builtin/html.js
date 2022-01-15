@@ -159,8 +159,8 @@ const html = {
         event: {
             name: "html",
             onOverlayEvent: event => {
-
-                let element = $(event.html);
+                // The absolute position prevents the html effect from always being underneath other effects.
+                const element = $(event.html).css({"position": "absolute"});
 
                 element.hide();
 

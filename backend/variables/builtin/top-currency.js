@@ -2,7 +2,7 @@
 
 "use strict";
 
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
+const { OutputDataType } = require("../../../shared/variable-constants");
 
 const currencyDatabase = require("../../database/currencyDatabase");
 const util = require("../../utility");

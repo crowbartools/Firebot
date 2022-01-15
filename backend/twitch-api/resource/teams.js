@@ -1,6 +1,7 @@
 "use strict";
 
 const accountAccess = require("../../common/account-access");
+const logger = require("../../logwrapper");
 const twitchApi = require("../api");
 
 /**
@@ -9,13 +10,19 @@ const twitchApi = require("../api");
  */
 const getTeams = async (broadcasterId) => {
     const client = twitchApi.getClient();
-    const teams = await client.teams.getTeamsForBroadcaster(broadcasterId);
 
-    if (teams == null) {
-        return null;
+    try {
+        const teams = await client.teams.getTeamsForBroadcaster(broadcasterId);
+
+        if (teams != null) {
+            return teams;
+        }
+
+        return [];
+    } catch (error) {
+        logger.error("Failed to get teams for broadcaster", error);
+        return [];
     }
-
-    return teams;
 };
 
 /**
@@ -27,13 +34,9 @@ const getMatchingTeams = async (userId) => {
     const streamerTeams = await getTeams(streamer.userId);
     const userTeams = await getTeams(userId);
 
-    if (streamerTeams == null || userTeams == null) {
-        return null;
-    }
-
     const teams = [];
-    for (let streamerTeam of streamerTeams) {
-        for (let userTeam of userTeams) {
+    for (const streamerTeam of streamerTeams) {
+        for (const userTeam of userTeams) {
             if (streamerTeam.id === userTeam.id) {
                 teams.push(streamerTeam);
             }
@@ -49,14 +52,24 @@ const getMatchingTeams = async (userId) => {
  */
 const getMatchingTeamsByName = async (username) => {
     const client = twitchApi.getClient();
-    const user = await client.users.getUserByName(username);
-    const teams = await getMatchingTeams(user.id);
 
-    if (teams == null) {
-        return null;
+    try {
+        const user = await client.users.getUserByName(username);
+
+        if (user == null) {
+            return null;
+        }
+
+        const teams = await getMatchingTeams(user.id);
+        if (teams != null) {
+            return teams;
+        }
+
+        return [];
+    } catch (error) {
+        logger.error("Failed to get teams for broadcaster", error);
+        return [];
     }
-
-    return teams;
 };
 
 /**
@@ -66,11 +79,11 @@ const getMatchingTeamsByName = async (username) => {
 const getMatchingTeamsById = async (userId) => {
     const teams = await getMatchingTeams(userId);
 
-    if (teams == null) {
-        return null;
+    if (teams != null) {
+        return teams;
     }
 
-    return teams;
+    return [];
 };
 
 /**
@@ -80,11 +93,11 @@ const getStreamerTeams = async () => {
     const streamer = accountAccess.getAccounts().streamer;
     const streamerTeams = await getTeams(streamer.userId);
 
-    if (streamerTeams == null) {
-        return null;
+    if (streamerTeams != null) {
+        return streamerTeams;
     }
 
-    return streamerTeams;
+    return [];
 };
 
 exports.getMatchingTeamsByName = getMatchingTeamsByName;

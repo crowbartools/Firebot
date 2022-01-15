@@ -4,7 +4,7 @@
     //This handles events
     const uuidv1 = require("uuid/v1");
 
-    angular.module("firebotApp").factory("eventsService", function(logger, backendCommunicator, objectCopyHelper, utilityService) {
+    angular.module("firebotApp").factory("eventsService", function(backendCommunicator, objectCopyHelper) {
         let service = {};
 
         let mainEvents = [];
@@ -30,7 +30,10 @@
 
         backendCommunicator.on("event-group-update", (group) => {
             const index = groups.findIndex(g => g.id === group.id);
-            if (index < 0) return;
+            if (index < 0) {
+                return;
+            }
+
             groups[index] = group;
         });
 

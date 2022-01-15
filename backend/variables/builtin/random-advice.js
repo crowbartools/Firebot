@@ -3,7 +3,7 @@
 "use strict";
 
 const apiProcessor = require("../../common/handlers/apiProcessor");
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
+const { OutputDataType } = require("../../../shared/variable-constants");
 
 const model = {
     definition: {

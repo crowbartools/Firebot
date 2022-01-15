@@ -4,7 +4,7 @@
 
     angular
         .module("firebotApp")
-        .factory("accountAccess", function(logger, backendCommunicator) {
+        .factory("accountAccess", function(backendCommunicator) {
             let service = {};
 
             service.accounts = {

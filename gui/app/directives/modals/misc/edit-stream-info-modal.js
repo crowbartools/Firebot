@@ -146,7 +146,10 @@
 
                         },
                         (tagId) => {
-                            if (!tagId) return;
+                            if (!tagId) {
+                                return;
+                            }
+
                             if (!$ctrl.streamTags.find(tag => tag.id === tagId)) {
                                 $ctrl.streamTags.push($ctrl.streamTagsService.allStreamTags.find(tag => tag.id === tagId));
                             }

@@ -1,7 +1,6 @@
 "use strict";
 
 const NodeCache = require("node-cache");
-const logger = require("../logwrapper");
 const { EffectTrigger } = require("../effects/models/effectModels");
 const filterManager = require("./filters/filter-manager");
 const eventsAccess = require("./events-access");
@@ -53,29 +52,6 @@ function runEventEffects(effects, event, source, meta, isManual = false) {
     });
 }
 
-let eventQueue = [];
-let queueRunning = false;
-
-// runs queue'd events till queue is empty
-function runQueue() {
-    return new Promise(resolve => {
-        if (eventQueue.length === 0) {
-            return resolve();
-        }
-
-        let nextEventPacket = eventQueue.shift();
-
-        let effects = nextEventPacket.effects,
-            event = nextEventPacket.event,
-            source = nextEventPacket.source,
-            meta = nextEventPacket.meta;
-
-        runEventEffects(effects, event, source, meta).then(() => {
-            resolve(runQueue());
-        });
-    });
-}
-
 function cacheActivityFeedEvent(source, event, meta) {
     if (event.cached) {
         let cacheMetaKey;
@@ -91,17 +67,6 @@ function cacheActivityFeedEvent(source, event, meta) {
         );
     }
     return false;
-}
-
-function addEventToQueue(eventPacket) {
-    eventQueue.push(eventPacket);
-
-    if (!queueRunning) {
-        queueRunning = true;
-        runQueue().then(() => {
-            queueRunning = false;
-        });
-    }
 }
 
 async function onEventTriggered(event, source, meta, isManual = false, isRetrigger = false, isSimulation = false) {

@@ -4,7 +4,7 @@
 
     angular
         .module("firebotApp")
-        .factory("presetEffectListsService", function($q, logger, backendCommunicator,
+        .factory("presetEffectListsService", function($q, backendCommunicator,
             utilityService, objectCopyHelper, ngToast) {
             let service = {};
 
@@ -23,19 +23,19 @@
                 $q.when(backendCommunicator.fireEventAsync("getPresetEffectLists"))
                     .then(presetEffectLists => {
                         if (presetEffectLists) {
-                            service.presetEffectLists = Object.values(presetEffectLists);
+                            service.presetEffectLists = presetEffectLists;
                         }
                     });
             };
 
             backendCommunicator.on("all-preset-lists", presetEffectLists => {
                 if (presetEffectLists != null) {
-                    service.presetEffectLists = Object.values(presetEffectLists);
+                    service.presetEffectLists = presetEffectLists;
                 }
             });
 
             service.getPresetEffectLists = function() {
-                return Object.values(service.presetEffectLists);
+                return service.presetEffectLists;
             };
 
             service.getPresetEffectList = function(presetEffectListId) {

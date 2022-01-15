@@ -3,6 +3,9 @@
 
     const { VariableCategory } = require("../../shared/variable-constants");
 
+    const marked = require("marked");
+    const { sanitize } = require("dompurify");
+
     angular.module("firebotApp")
         .directive("replaceVariables", function($compile, $document) {
             return {
@@ -15,7 +18,7 @@
                     menuPosition: "@",
                     buttonPosition: "@"
                 },
-                controller: function($scope, $element, $q, backendCommunicator, $timeout) {
+                controller: function($scope, $element, backendCommunicator, $timeout, $sce) {
 
                     const insertAt = (str, sub, pos) => `${str.slice(0, pos)}${sub}${str.slice(pos)}`;
 
@@ -26,12 +29,17 @@
                     $scope.activeCategory = "common";
                     $scope.setActiveCategory = (category) => {
                         $scope.activeCategory = category;
-                        console.log("Set active category to: ", $scope.activeCategory);
                     };
                     $scope.categories = Object.values(VariableCategory);
 
                     $scope.searchUpdated = () => {
                         $scope.activeCategory = null;
+                    };
+
+                    const parseMarkdown = (text) => {
+                        return $sce.trustAsHtml(
+                            sanitize(marked(text))
+                        );
                     };
 
                     function findTriggerDataScope(currentScope) {
@@ -55,6 +63,17 @@
                                 type: trigger,
                                 id: triggerMeta && triggerMeta.triggerId,
                                 dataOutput: $scope.replaceVariables
+                            }).map(v => {
+                                return {
+                                    ...v,
+                                    description: parseMarkdown(v.description || ""),
+                                    examples: v.examples?.map(e => {
+                                        return {
+                                            ...e,
+                                            description: parseMarkdown(e.description || "")
+                                        };
+                                    })
+                                };
                             });
                         }
                     }
@@ -141,18 +160,18 @@
                                 <div style="padding: 10px;overflow-y: auto; height: 250px;">
                                     <div ng-repeat="variable in variables | orderBy:'handle' | variableCategoryFilter:activeCategory | variableSearch:variableSearchText" style="margin-bottom: 8px;">
                                         <div style="font-weight: 900;">\${{variable.usage ? variable.usage : variable.handle}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="addVariable(variable)"></i></div>
-                                        <div class="muted">{{variable.description || ""}}</div>
+                                        <div class="muted" ng-bind-html="variable.description"></div>
                                         <div ng-show="variable.examples && variable.examples.length > 0" style="font-size: 13px;padding-left: 5px; margin-top:3px;">
                                             <collapsable-section show-text="Other examples" hide-text="Other examples" text-color="#0b8dc6">
                                                 <div ng-repeat="example in variable.examples" style="margin-bottom: 6px;">
                                                     <div style="font-weight: 900;">\${{example.usage}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="addVariable(example)"></i></div>
-                                                    <div class="muted">{{example.description || ""}}</div>
+                                                    <div class="muted" ng-bind-html="example.description"></div>
                                                 </div>
                                             </collapsable-section>
                                         </div>
                                     </div>
-                                </div>                    
-                            </div>                         
+                                </div>
+                            </div>
                         </div>`
                     );
                     $compile(menu)(scope);

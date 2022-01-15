@@ -7,6 +7,12 @@ const logger = require("../../backend/logwrapper");
 
 //from old Gobal.js
 const shell = require("electron").shell;
+
+/**
+ * Dont remove the below imports for now, they are available globally to all frontend files
+ * TODO: Refactor to import these modules in the files that actually use them instead
+ * of making them available globally here
+ */
 const fs = require("fs");
 const request = require("request");
 const List = require("list.js");

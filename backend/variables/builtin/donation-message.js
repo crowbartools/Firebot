@@ -22,7 +22,7 @@ const model = {
         handle: "donationMessage",
         description: "The message from a StreamLabs/Tipeee/StreamElements/ExtraLife donation",
         triggers: triggers,
-        categories: [VariableCategory.COMMON],
+        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {

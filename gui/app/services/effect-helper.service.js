@@ -5,22 +5,24 @@
     angular
         .module("firebotApp")
         .factory("effectHelperService", function(
-            $q,
-            utilityService,
             listenerService,
-            logger,
             backendCommunicator
         ) {
             let service = {};
 
             service.getEffectDefinition = function(id) {
-                if (id == null) return null;
+                if (id == null) {
+                    return null;
+                }
+
                 let effectDef = listenerService.fireEventSync(
                     "getEffectDefinition",
                     id
                 );
 
-                if (effectDef == null) return null;
+                if (effectDef == null) {
+                    return null;
+                }
 
                 let def = {
                     definition: effectDef.definition,

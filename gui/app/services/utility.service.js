@@ -601,6 +601,7 @@
                     windowClass: "effect-edit-modal",
                     controllerFunc: function (
                         $scope,
+                        $rootScope,
                         $uibModalInstance,
                         ngToast,
                         utilityService,
@@ -612,9 +613,7 @@
                         index,
                         triggerType,
                         triggerMeta,
-                        objectCopyHelper,
-                        $timeout,
-                        $q
+                        objectCopyHelper
                     ) {
                         $scope.effect = JSON.parse(angular.toJson(effect));
                         $scope.triggerType = triggerType;
@@ -626,15 +625,66 @@
                             $scope.effect.type
                         );
 
-                        $scope.effectTypeChanged = function(effectType) {
-                            if ($scope.effect && $scope.effect.type === effectType.id) return;
+                        $scope.getOverflowMenu = () => {
+                            return [
+                                {
+                                    html: `<a href ><i class="fal fa-tag" style="margin-right: 10px; aria-hidden="true""></i> ${$scope.getLabelButtonTextForLabel($scope.effect.effectLabel)}</a>`,
+                                    click: function () {
+                                        $scope.editLabel();
+                                    }
+                                },
+                                {
+                                    html: `<a href ><i class="fal fa-copy" style="margin-right: 10px;" aria-hidden="true"></i> Copy</a>`,
+                                    click: function () {
+                                        $scope.copy();
+                                    }
+                                },
+                                {
+                                    text: "Copy Effect JSON",
+                                    children: [
+                                        {
+                                            text: "For Custom Scripts",
+                                            click: () => {
+                                                $rootScope.copyTextToClipboard(angular.toJson($scope.effect));
 
-                            let currentId = $scope.effect.id;
-                            $scope.effect = {
-                                id: currentId,
-                                type: effectType.id
-                            };
+                                                ngToast.create({
+                                                    className: 'success',
+                                                    content: 'Copied effect json to clipboard.'
+                                                });
+                                            }
+                                        },
+                                        {
+                                            text: "For $runEffect[]",
+                                            click: () => {
+                                                $rootScope.copyTextToClipboard(
+                                                    `$runEffect[\`\`${angular.toJson($scope.effect)}\`\`]`
+                                                );
 
+                                                ngToast.create({
+                                                    className: 'success',
+                                                    content: 'Copied $runEffect with effect json to clipboard.'
+                                                });
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    html: `<a href ><i class="fal fa-paste" style="margin-right: 10px;" aria-hidden="true"></i> Paste</a>`,
+                                    enabled: $scope.hasCopiedEffect(),
+                                    click: function () {
+                                        $scope.paste();
+                                    }
+                                },
+                                {
+                                    html: `<a href style="color: #fb7373;"><i class="fal fa-trash-alt" style="margin-right: 10px;" aria-hidden="true"></i> Delete</a>`,
+                                    click: function () {
+                                        $scope.delete();
+                                    }
+                                }
+                            ];
+                        };
+
+                        function effectTypeUpdated() {
                             $scope.effectDefinition = effectHelperService.getEffectDefinition(
                                 $scope.effect.type
                             );
@@ -642,6 +692,20 @@
                                 $scope.effectDefinition.definition.name,
                                 modalId
                             );
+                        }
+
+                        $scope.effectTypeChanged = function(effectType) {
+                            if ($scope.effect && $scope.effect.type === effectType.id) {
+                                return;
+                            }
+
+                            let currentId = $scope.effect.id;
+                            $scope.effect = {
+                                id: currentId,
+                                type: effectType.id
+                            };
+
+                            effectTypeUpdated();
                         };
 
                         $scope.openModals = utilityService.getSlidingModalNamesAndIds();
@@ -680,7 +744,9 @@
                                     selectedEffectTypeId: () => $scope.effect && $scope.effect.type
                                 },
                                 closeCallback: resp => {
-                                    if (resp == null) return;
+                                    if (resp == null) {
+                                        return;
+                                    }
                                     let { selectedEffectDef } = resp;
 
                                     $scope.effectTypeChanged(selectedEffectDef);
@@ -786,7 +852,9 @@
 
                         $scope.saveAll = async function() {
                             let valid = await validateEffect();
-                            if (!valid) return;
+                            if (!valid) {
+                                return;
+                            }
                             utilityService.saveAllSlidingModals();
                         };
 
@@ -795,7 +863,9 @@
 
                             let valid = await validateEffect();
 
-                            if (!valid) return;
+                            if (!valid) {
+                                return;
+                            }
 
                             // clear any toasts
                             ngToast.dismiss();
@@ -837,7 +907,8 @@
 
                         $scope.paste = async function() {
                             if ($scope.hasCopiedEffect()) {
-                                $scope.effect = await objectCopyHelper.getCopiedEffects(triggerType, triggerMeta)[0];
+                                $scope.effect = (await objectCopyHelper.getCopiedEffects(triggerType, triggerMeta))[0];
+                                effectTypeUpdated();
                             }
                         };
 
@@ -1015,7 +1086,9 @@
 
                     let later = function() {
                         timeout = null;
-                        if (!immediate) func.apply(context, args);
+                        if (!immediate) {
+                            func.apply(context, args);
+                        }
                     };
 
                     let callNow = immediate && !timeout;
@@ -1024,7 +1097,9 @@
 
                     timeout = $timeout(later, wait);
 
-                    if (callNow) func.apply(context, args);
+                    if (callNow) {
+                        func.apply(context, args);
+                    }
                 };
             };
 

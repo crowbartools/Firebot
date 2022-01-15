@@ -1,9 +1,9 @@
-<div class="mb-4">
+<div class="p-6 mx-0 my-6">
     <button class="btn btn-primary" ng-click="openAddOrEditHotkeyModal()"><i class="fas fa-plus-circle" class="mr-2"></i> New Hotkey</button>
 </div>
 
 
-<div class="mt-8" style="display: flex;flex-wrap: wrap;">
+<div class="p-6" style="display: flex;flex-wrap: wrap;">
     <div ng-repeat="hotkey in getHotkeys() track by $index" class="fb-tile mint centered mr-4" ng-class="{'inactive' : !hotkey.active}" style="flex: 0 0 auto;width:250px;height:150px;">
         <div class="edit-btn" ng-click="openAddOrEditHotkeyModal(hotkey)"></div>
         <div class="header">

@@ -36,6 +36,10 @@ const fileWriter = {
                     <input type="radio" ng-model="effect.writeMode" value="replace"/>
                     <div class="control__indicator"></div>
                 </label>
+                <label class="control-fb control--radio">Suffix <tooltip text="'Appends the given text to the file.'"></tooltip>
+                    <input type="radio" ng-model="effect.writeMode" value="suffix"/>
+                    <div class="control__indicator"></div>
+                </label>
                 <label class="control-fb control--radio">Append <tooltip text="'Appends a new line with the given text to the file.'"></tooltip>
                     <input type="radio" ng-model="effect.writeMode" value="append"/>
                     <div class="control__indicator"></div>
@@ -88,8 +92,8 @@ const fileWriter = {
             </div>
         </eos-container>
 
-        <eos-container header="Text" pad-top="true" ng-if="effect.writeMode === 'replace' || effect.writeMode === 'append' || (effect.writeMode === 'delete' && effect.deleteLineMode === 'text') || (effect.writeMode === 'replace-line' && effect.replaceLineMode === 'text')">
-            <input ng-model="effect.text" type="text" class="form-control" id="chat-text-setting" placeholder="Enter text" replace-variables>
+        <eos-container header="Text" pad-top="true" ng-if="effect.writeMode === 'replace' || effect.writeMode === 'suffix' || effect.writeMode === 'append' || (effect.writeMode === 'delete' && effect.deleteLineMode === 'text') || (effect.writeMode === 'replace-line' && effect.replaceLineMode === 'text')">
+            <input ng-model="effect.text" type="text" class="form-control" id="chat-text-setting" placeholder="Enter text" ng-trim="false" replace-variables>
         </eos-container>
 
         <eos-container header="Line Number(s)" pad-top="true" ng-if="(effect.writeMode === 'delete' && effect.deleteLineMode === 'lines') || (effect.writeMode === 'replace-line' && effect.replaceLineMode === 'lineNumbers')">

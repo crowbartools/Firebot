@@ -1,115 +1,62 @@
 "use strict";
 
-const logger = require("../../logwrapper");
-const profileManager = require("../../common/profile-manager");
 const frontendCommunicator = require("../../common/frontend-communicator");
+const JsonDbManager = require("../../database/json-db-manager");
+const effectQueueRunner = require("./effect-queue-runner");
 
-let effectQueueRunner = require("./effect-queue-runner");
+/**
+ * @typedef EffectQueue
+ * @prop {string} id - the id of the effect queue
+ * @prop {string} name - the name of the effect queue
+ * @prop {string} mode - the mode of the effect queue
+ * @prop {number} [interval] - the interval set for the interval mode
+ * @prop {string[]} sortTags - the sort tags for the effect queue
+ */
 
-let effectQueues = {};
-
-const EFFECTS_FOLDER = "/effects/";
-function getEffectQueuesDb() {
-    return profileManager.getJsonDbInProfile(EFFECTS_FOLDER + "effectqueues");
-}
-
-/*
-{
-    "queueId": {
-        name: "Some Queue",
-        id: "queueId",
-        mode: "",  // "auto" | "interval" | "custom"
-        interval: 5 //secs
+/**
+ * @extends {JsonDbManager<EffectQueue>}
+ */
+class EffectQueueManager extends JsonDbManager {
+    constructor() {
+        super("Effect Queue", "/effects/effectqueues");
     }
-}
-*/
 
-function loadEffectQueues() {
-    logger.debug(`Attempting to load effect queues...`);
+    /**
+     * @param {EffectQueue}
+     * @returns {Promise.<EffectQueue | null>}
+     * */
+    async saveItem(effectQueue) {
+        const savedEffectQueue = await super.saveItem(effectQueue);
 
-    const queuesDb = getEffectQueuesDb();
-
-    try {
-        let effectQueueData = queuesDb.getData("/");
-
-        if (effectQueueData) {
-            effectQueues = effectQueueData;
+        if (savedEffectQueue) {
+            effectQueueRunner.updateQueueConfig(savedEffectQueue);
+            return savedEffectQueue;
         }
 
-        logger.debug(`Loaded effect queues.`);
-
-    } catch (err) {
-        logger.warn(`There was an error reading effect queues file.`, err);
-    }
-}
-
-function saveEffectQueue(queue) {
-    if (queue == null) {
-        return;
-    }
-
-    effectQueues[queue.id] = queue;
-
-    try {
-        const queuesDb = getEffectQueuesDb();
-
-        queuesDb.push("/" + queue.id, queue);
-
-        logger.debug(`Saved effect queue ${queue.id} to file.`);
-
-    } catch (err) {
-        logger.warn(`There was an error saving an effect queue.`, err);
-    }
-
-    effectQueueRunner.updateQueueConfig(queue);
-}
-
-function deleteEffectQueue(queueId) {
-    if (queueId == null) {
-        return;
-    }
-
-    delete effectQueues[queueId];
-
-    try {
-        const queuesDb = getEffectQueuesDb();
-
-        queuesDb.delete("/" + queueId);
-
-        logger.debug(`Deleted effect queue: ${queueId}`);
-
-    } catch (err) {
-        logger.warn(`There was an error deleting an effect queue.`, err);
-    }
-
-    effectQueueRunner.removeQueue(queueId);
-}
-
-function getEffectQueue(queueId) {
-    if (queueId == null) {
         return null;
     }
-    return effectQueues[queueId];
+
+    /**
+     * @emits
+     * @returns {void}
+     */
+    triggerUiRefresh() {
+        frontendCommunicator.send("all-queues", this.getAllItems());
+    }
 }
 
-function triggerUiRefresh() {
-    frontendCommunicator.send("all-queues", effectQueues);
-}
+const effectQueueManager = new EffectQueueManager();
 
-frontendCommunicator.onAsync("getEffectQueues", async () => effectQueues);
+frontendCommunicator.onAsync("getEffectQueues",
+    async () => effectQueueManager.getAllItems());
 
-frontendCommunicator.on("saveEffectQueue", (queue) => {
-    saveEffectQueue(queue);
-});
+frontendCommunicator.onAsync("saveEffectQueue",
+    async (/** @type {SavedEffectQueue} */ effectQueue) => await effectQueueManager.saveItem(effectQueue));
 
-frontendCommunicator.on("deleteEffectQueue", (queueId) => {
-    deleteEffectQueue(queueId);
-});
+frontendCommunicator.onAsync("saveAllEffectQueues",
+    async (/** @type {SavedEffectQueue[]} */ allEffectQueues) => await effectQueueManager.saveAllItems(allEffectQueues));
 
+frontendCommunicator.on("deleteEffectQueue",
+    (/** @type {string} */ effectQueueId) => effectQueueManager.deleteItem(effectQueueId));
 
-
-exports.loadEffectQueues = loadEffectQueues;
-exports.getEffectQueue = getEffectQueue;
-exports.saveEffectQueue = saveEffectQueue;
-exports.deleteEffectQueue = deleteEffectQueue;
-exports.triggerUiRefresh = triggerUiRefresh;
+module.exports = effectQueueManager;

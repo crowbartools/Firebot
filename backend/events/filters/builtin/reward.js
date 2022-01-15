@@ -1,7 +1,5 @@
 "use strict";
 
-const { ComparisonType } = require("../../../../shared/filter-constants");
-
 module.exports = {
     id: "firebot:reward",
     name: "Reward",

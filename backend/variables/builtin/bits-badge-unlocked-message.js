@@ -15,7 +15,7 @@ const model = {
         handle: "bitsBadgeUnlockedMessage",
         description: "The message included when someone shares that they unlocked a new bits badge.",
         triggers: triggers,
-        categories: [VariableCategory.COMMON],
+        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {

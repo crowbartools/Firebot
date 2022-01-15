@@ -192,7 +192,10 @@
                 };
 
                 $ctrl.delete = function() {
-                    if ($ctrl.condition) return;
+                    if ($ctrl.condition) {
+                        return;
+                    }
+
                     $ctrl.close({
                         $value: { condition: $ctrl.selectedCondition, index: $ctrl.resolve.index, action: "delete" }
                     });

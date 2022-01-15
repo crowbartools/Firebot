@@ -115,7 +115,7 @@ const api = {
     /**
    * The controller for the front end Options
    */
-    optionsController: ($scope, listenerService) => {
+    optionsController: ($scope) => {
     // The name of the api and if it has images available to show or not.
         $scope.apiTypes = [
             { name: "Advice", image: false },
@@ -169,7 +169,7 @@ const api = {
         },
         event: {
             name: "apiEffect",
-            onOverlayEvent: event => {
+            onOverlayEvent: () => {
                 // The API Effect can sometimes show images in the overlay.
                 // As part of this we use the showImage event.
             }

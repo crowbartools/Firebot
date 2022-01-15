@@ -3,25 +3,24 @@
 
     angular
         .module("firebotApp")
-        .factory("quotesService", function(logger, profileManager, backendCommunicator, $q) {
+        .factory("quotesService", function(backendCommunicator, $q) {
             let service = {};
 
             service.quotes = [];
 
-            let waitingForUpdate = false;
             service.fetchQuotes = function() {
-                if (waitingForUpdate);
-                waitingForUpdate = true;
-
                 $q.when(backendCommunicator.fireEventAsync("get-all-quotes"))
                     .then(quotes => {
                         service.quotes = quotes;
-                        waitingForUpdate = false;
                     });
             };
 
             service.addQuote = (quote) => {
                 backendCommunicator.fireEvent("add-quote", quote);
+            };
+
+            service.addQuotes = (quotes) => {
+                backendCommunicator.fireEvent("add-quotes", quotes);
             };
 
             service.updateQuote = (quote) => {

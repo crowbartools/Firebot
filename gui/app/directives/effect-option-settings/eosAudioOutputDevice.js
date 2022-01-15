@@ -25,7 +25,7 @@
                 </div>
             </eos-container>
             `,
-            controller: function($scope, $element, $attrs, $q, settingsService) {
+            controller: function($q, settingsService) {
                 let ctrl = this;
 
                 ctrl.settings = settingsService;

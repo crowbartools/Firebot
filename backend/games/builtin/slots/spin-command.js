@@ -41,127 +41,156 @@ const spinCommand = {
     },
     onTriggerEvent: async event => {
 
-        const { chatEvent, userCommand } = event;
+        const { userCommand } = event;
 
         const slotsSettings = gameManager.getGameSettings("firebot-slots");
         const chatter = slotsSettings.settings.chatSettings.chatter;
+        const username = userCommand.commandSender;
 
-        if (event.userCommand.subcommandId === "spinAmount") {
-
+        // parse the wager amount
+        let wagerAmount;
+        if (event.userCommand.args.length < 1) {
+            let defaultWager = slotsSettings.settings.currencySettings.defaultWager;
+            if (defaultWager == null || defaultWager < 1) {
+                twitchChat.sendChatMessage(`${username}, please include a wager amount!`, null, chatter);
+                return;
+            }
+            wagerAmount = defaultWager;
+        } else if (event.userCommand.subcommandId === "spinAmount") {
             const triggeredArg = userCommand.args[0];
-            const wagerAmount = parseInt(triggeredArg);
-
-            const username = userCommand.commandSender;
-
-            if (activeSpinners.get(username)) {
-                twitchChat.sendChatMessage(`${username}, your slot machine is actively working!`, null, chatter);
-                return;
-            }
-
-            let cooldownExpireTime = cooldownCache.get(username);
-            if (cooldownExpireTime && moment().isBefore(cooldownExpireTime)) {
-                const timeRemainingDisplay = util.secondsForHumans(Math.abs(moment().diff(cooldownExpireTime, 'seconds')));
-                twitchChat.sendChatMessage(`${username}, your slot machine is currently on cooldown. Time remaining: ${timeRemainingDisplay}`, null, chatter);
-                return;
-            }
-
-            if (wagerAmount < 1) {
-                twitchChat.sendChatMessage(`${username}, your wager amount must be more than 0.`, null, chatter);
-                return;
-            }
-
-            const minWager = slotsSettings.settings.currencySettings.minWager;
-            if (minWager != null & minWager > 0) {
-                if (wagerAmount < minWager) {
-                    twitchChat.sendChatMessage(`${username}, your wager amount must be at least ${minWager}.`, null, chatter);
-                    return;
-                }
-            }
-            const maxWager = slotsSettings.settings.currencySettings.maxWager;
-            if (maxWager != null & maxWager > 0) {
-                if (wagerAmount > maxWager) {
-                    twitchChat.sendChatMessage(`${username}, your wager amount can be no more than ${maxWager}.`, null, chatter);
-                    return;
-                }
-            }
-
-            const currencyId = slotsSettings.settings.currencySettings.currencyId;
-            let userBalance;
-            try {
-                userBalance = await currencyDatabase.getUserCurrencyAmount(username, currencyId);
-            } catch (error) {
-                logger.error(error);
-                userBalance = 0;
-            }
-
-            if (userBalance < wagerAmount) {
-                twitchChat.sendChatMessage(`${username}, you don't have enough to wager this amount!`, null, chatter);
-                return;
-            }
-
-            activeSpinners.set(username, true);
-
-            let cooldownSecs = slotsSettings.settings.cooldownSettings.cooldown;
-            if (cooldownSecs && cooldownSecs > 0) {
-                const expireTime = moment().add(cooldownSecs, 'seconds');
-                cooldownCache.set(username, expireTime, cooldownSecs);
-            }
-
-            try {
-                await currencyDatabase.adjustCurrencyForUser(username, currencyId, -Math.abs(wagerAmount));
-            } catch (error) {
-                logger.error(error);
-                twitchChat.sendChatMessage(`Sorry ${username}, there was an error deducting currency from your balance so the spin has been canceled.`, null, chatter);
-                activeSpinners.del(username);
-                return;
-            }
-
-            let successChance = 50;
-
-            let successChancesSettings = slotsSettings.settings.spinSettings.successChances;
-            if (successChancesSettings) {
-                try {
-                    successChance = successChancesSettings.basePercent;
-
-                    const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
-                    const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(username) || [];
-                    const userTwitchRoles = (userCommand.senderRoles || [])
-                        .map(r => twitchRolesManager.mapTwitchRole(r))
-                        .filter(r => !!r);
-
-                    const allRoles = [
-                        ...userTwitchRoles,
-                        ...userTeamRoles,
-                        ...userCustomRoles
-                    ];
-
-                    for (let role of successChancesSettings.roles) {
-                        if (allRoles.some(r => r.id === role.roleId)) {
-                            successChance = role.percent;
-                            break;
-                        }
-                    }
-                } catch (error) {
-                    logger.error("There was an error while computing success chances, using base", error);
-                }
-            }
-
-            const successfulRolls = await slotMachine.spin(username, successChance, chatter);
-
-            const winMultiplier = slotsSettings.settings.spinSettings.multiplier;
-
-            const winnings = Math.floor(wagerAmount * (successfulRolls * winMultiplier));
-
-            await currencyDatabase.adjustCurrencyForUser(username, currencyId, winnings);
-
-            const currency = currencyDatabase.getCurrencyById(currencyId);
-
-            twitchChat.sendChatMessage(`${username} hit ${successfulRolls} out of 3 and won ${util.commafy(winnings)} ${currency.name}!`, null, chatter);
-
-            activeSpinners.del(username);
+            wagerAmount = parseInt(triggeredArg);
         } else {
-            twitchChat.sendChatMessage(`Incorrect spin usage: ${userCommand.trigger} [wagerAmount]`, null, chatter);
+            twitchChat.sendChatMessage(`${username}, please include a valid wager amount!`, null, chatter);
+            return;
         }
+
+        if (activeSpinners.get(username)) {
+            const alreadySpinningMsg = slotsSettings.settings.generalMessages.alreadySpinning
+                .replace("{username}", username);
+            twitchChat.sendChatMessage(alreadySpinningMsg, null, chatter);
+            return;
+        }
+
+        let cooldownExpireTime = cooldownCache.get(username);
+        if (cooldownExpireTime && moment().isBefore(cooldownExpireTime)) {
+            const timeRemainingDisplay = util.secondsForHumans(Math.abs(moment().diff(cooldownExpireTime, 'seconds')));
+            const cooldownMsg = slotsSettings.settings.generalMessages.onCooldown
+                .replace("{username}", username).replace("{timeRemaining}", timeRemainingDisplay);
+            twitchChat.sendChatMessage(cooldownMsg, null, chatter);
+            return;
+        }
+
+        if (wagerAmount < 1) {
+            const moreThanZeroMsg = slotsSettings.settings.generalMessages.moreThanZero
+                .replace("{username}", username);
+            twitchChat.sendChatMessage(moreThanZeroMsg, null, chatter);
+            return;
+        }
+
+        const minWager = slotsSettings.settings.currencySettings.minWager;
+        if (minWager != null & minWager > 0) {
+            if (wagerAmount < minWager) {
+                const minWagerMsg = slotsSettings.settings.generalMessages.minWager
+                    .replace("{username}", username).replace("{minWager}", minWager);
+                twitchChat.sendChatMessage(minWagerMsg, null, chatter);
+                return;
+            }
+        }
+        const maxWager = slotsSettings.settings.currencySettings.maxWager;
+        if (maxWager != null & maxWager > 0) {
+            if (wagerAmount > maxWager) {
+                const maxWagerMsg = slotsSettings.settings.generalMessages.maxWager
+                    .replace("{username}", username).replace("{maxWager}", maxWager);
+                twitchChat.sendChatMessage(maxWagerMsg, null, chatter);
+                return;
+            }
+        }
+
+        const currencyId = slotsSettings.settings.currencySettings.currencyId;
+        let userBalance;
+        try {
+            userBalance = await currencyDatabase.getUserCurrencyAmount(username, currencyId);
+        } catch (error) {
+            logger.error(error);
+            userBalance = 0;
+        }
+
+        if (userBalance < wagerAmount) {
+            const notEnoughMsg = slotsSettings.settings.generalMessages.notEnough
+                .replace("{username}", username);
+            twitchChat.sendChatMessage(notEnoughMsg, null, chatter);
+            return;
+        }
+
+        activeSpinners.set(username, true);
+
+        let cooldownSecs = slotsSettings.settings.cooldownSettings.cooldown;
+        if (cooldownSecs && cooldownSecs > 0) {
+            const expireTime = moment().add(cooldownSecs, 'seconds');
+            cooldownCache.set(username, expireTime, cooldownSecs);
+        }
+
+        try {
+            await currencyDatabase.adjustCurrencyForUser(username, currencyId, -Math.abs(wagerAmount));
+        } catch (error) {
+            logger.error(error);
+            twitchChat.sendChatMessage(`Sorry ${username}, there was an error deducting currency from your balance so the spin has been canceled.`, null, chatter);
+            activeSpinners.del(username);
+            return;
+        }
+
+        let successChance = 50;
+
+        let successChancesSettings = slotsSettings.settings.spinSettings.successChances;
+        if (successChancesSettings) {
+            try {
+                successChance = successChancesSettings.basePercent;
+
+                const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
+                const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(username) || [];
+                const userTwitchRoles = (userCommand.senderRoles || [])
+                    .map(r => twitchRolesManager.mapTwitchRole(r))
+                    .filter(r => !!r);
+
+                const allRoles = [
+                    ...userTwitchRoles,
+                    ...userTeamRoles,
+                    ...userCustomRoles
+                ];
+
+                for (let role of successChancesSettings.roles) {
+                    if (allRoles.some(r => r.id === role.roleId)) {
+                        successChance = role.percent;
+                        break;
+                    }
+                }
+            } catch (error) {
+                logger.error("There was an error while computing success chances, using base", error);
+            }
+        }
+
+        const spinInActionMsg = slotsSettings.settings.generalMessages.spinInAction
+            .replace("{username}", username);
+        const showSpinInActionMsg = slotsSettings.settings.generalMessages.showSpinInAction;
+        const successfulRolls = await slotMachine.spin(showSpinInActionMsg, spinInActionMsg, successChance, chatter);
+
+        const winMultiplier = slotsSettings.settings.spinSettings.multiplier;
+
+        const winnings = Math.floor(wagerAmount * (successfulRolls * winMultiplier));
+
+        await currencyDatabase.adjustCurrencyForUser(username, currencyId, winnings);
+
+        const currency = currencyDatabase.getCurrencyById(currencyId);
+
+        const spinSuccessfulMsg = slotsSettings.settings.generalMessages.spinSuccessful
+            .replace("{username}", username)
+            .replace("{successfulRolls}", successfulRolls)
+            .replace("{winningsAmount}", util.commafy(winnings))
+            .replace("{currencyName}", currency.name);
+        twitchChat.sendChatMessage(spinSuccessfulMsg, null, chatter);
+
+        activeSpinners.del(username);
+
     }
 };
 

@@ -1,9 +1,9 @@
 <div class="firebot-item-table">
   <div>
     <scroll-sentinel
-      element-class="fit-header"
+      element-class="{{$ctrl.headerClass}}"
     ></scroll-sentinel>
-    <div class="light-bg sticky-top fit-header p-6 mx-0 my-6">
+    <div class="light-bg sticky-top fit-header p-6 mx-0 my-6 {{$ctrl.headerClass}}">
       <div class="flex-row">
         <button
           ng-click="$ctrl.onAddNewClicked()"
@@ -80,6 +80,7 @@
           <tr
             ng-repeat="item in filteredItems = ($ctrl.items | sortTagSearch:sts.getSelectedSortTag($ctrl.sortTagContext) | filter:searchQuery) as visible track by item.id"
             context-menu="$ctrl.getContextMenu(item)"
+            context-menu-class="angular-context-menu"
           >
             <td ng-if="$ctrl.testButton == true" class="fit-test-button-body">
               <span
@@ -124,14 +125,15 @@
                   <i class="fal fa-bars" aria-hidden="true"></i>
                 </span>
                 <div class="ml-10">
-                  <span
-                    class="noselect clickable"
+                  <button
+                    class="noselect clickable text-5xl"
                     context-menu="$ctrl.getContextMenu(item)"
                     context-menu-on="click"
+                    context-menu-class="angular-context-menu"
                     context-menu-orientation="left"
                   >
                     <i class="fal fa-ellipsis-h"></i>
-                  </span>
+                </button>
                 </div>
               </div>
             </td>
