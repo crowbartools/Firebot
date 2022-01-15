@@ -22,7 +22,7 @@ class JsonDbManager {
     }
 
     /**
-     * @returns {Promise.<void>}
+     * @returns {Promise.<boolean>}
      */
     async loadItems() {
         logger.debug(`Attempting to load ${this.type}s...`);
@@ -35,19 +35,23 @@ class JsonDbManager {
             }
 
             logger.debug(`Loaded ${this.type}s.`);
+
+            return true;
         } catch (err) {
             logger.warn(`There was an error reading ${this.type} file.`, err);
+            return false;
         }
     }
 
     /**
      * @param {string} itemId
-     * @returns {T}
+     * @returns {T | null}
      */
     getItem(itemId) {
         if (itemId == null) {
             return null;
         }
+
         return this.items[itemId];
     }
 
@@ -56,15 +60,15 @@ class JsonDbManager {
      */
     getAllItems() {
         if (this.items == null) {
-            return null;
+            return [];
         }
 
-        return this.items;
+        return Object.values(this.items);
     }
 
     /**
      * @param {T} item
-     * @returns {Promise.<T>}
+     * @returns {Promise.<T | null>}
      */
     async saveItem(item) {
         if (item == null) {
@@ -92,7 +96,7 @@ class JsonDbManager {
 
     /**
      * @param {T[]} allItems
-     * @returns {Promise.<void>}
+     * @returns {Promise.<boolean>}
      */
     async saveAllItems(allItems) {
         const itemsObject = allItems.reduce((acc, current) => {
@@ -107,19 +111,21 @@ class JsonDbManager {
 
             logger.debug(`Saved all ${this.type} to file.`);
 
+            return true;
+
         } catch (err) {
             logger.warn(`There was an error saving all ${this.type}s.`, err);
-            return null;
+            return false;
         }
     }
 
     /**
      * @param {string} itemId
-     * @returns {Promise.<void>}
+     * @returns {Promise.<boolean>}
      */
     async deleteItem(itemId) {
         if (itemId == null) {
-            return;
+            return false;
         }
 
         delete this.items[itemId];
@@ -129,8 +135,30 @@ class JsonDbManager {
 
             logger.debug(`Deleted ${this.type}: ${itemId}`);
 
+            return true;
+
         } catch (err) {
             logger.warn(`There was an error deleting ${this.type}.`, err);
+            return false;
+        }
+    }
+
+    /**
+     * @returns {Promise.<boolean>}
+     */
+    async deleteAllItems() {
+        this.items = {};
+
+        try {
+            this.db.delete("/");
+
+            logger.debug(`Deleted all ${this.type}s.`);
+
+            return true;
+
+        } catch (err) {
+            logger.warn(`There was an error deleting all ${this.type}s.`, err);
+            return false;
         }
     }
 }

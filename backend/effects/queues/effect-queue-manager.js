@@ -6,11 +6,11 @@ const effectQueueRunner = require("./effect-queue-runner");
 
 /**
  * @typedef EffectQueue
- * @property {string} id - the id of the effect queue
- * @property {string} name - the name of the effect queue
- * @property {string} mode - the mode of the effect queue
- * @property {number} [interval] - the interval set for the interval mode
- * @property {string[]} sortTags - the sort tags for the effect queue
+ * @prop {string} id - the id of the effect queue
+ * @prop {string} name - the name of the effect queue
+ * @prop {string} mode - the mode of the effect queue
+ * @prop {number} [interval] - the interval set for the interval mode
+ * @prop {string[]} sortTags - the sort tags for the effect queue
  */
 
 /**
@@ -23,13 +23,17 @@ class EffectQueueManager extends JsonDbManager {
 
     /**
      * @param {EffectQueue}
-     * @returns {Promise.<EffectQueue>}
+     * @returns {Promise.<EffectQueue | null>}
      * */
     async saveItem(effectQueue) {
         const savedEffectQueue = await super.saveItem(effectQueue);
-        effectQueueRunner.updateQueueConfig(savedEffectQueue);
 
-        return savedEffectQueue;
+        if (savedEffectQueue) {
+            effectQueueRunner.updateQueueConfig(savedEffectQueue);
+            return savedEffectQueue;
+        }
+
+        return null;
     }
 
     /**
