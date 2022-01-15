@@ -1,5 +1,7 @@
 "use strict";
 (function() {
+    const uuidv1 = require("uuid/v1");
+
     angular
         .module("firebotApp")
         .controller("countersController", function($scope, countersService, utilityService) {
@@ -54,7 +56,13 @@
 
                     },
                     (name) => {
-                        countersService.createCounter(name);
+                        const counter = {
+                            id: uuidv1(),
+                            name: name,
+                            value: 0,
+                            saveToTxtFile: false
+                        };
+                        countersService.saveCounter(counter);
                     });
             };
 

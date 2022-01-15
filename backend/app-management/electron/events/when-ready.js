@@ -98,7 +98,7 @@ exports.whenReady = async () => {
     chatModerationManager.load();
 
     const countersManager = require("../../../counters/counter-manager");
-    countersManager.loadCounters();
+    countersManager.loadItems();
 
     const gamesManager = require("../../../games/game-manager");
     gamesManager.loadGameSettings();
