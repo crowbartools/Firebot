@@ -61,7 +61,7 @@ async function buildChannelEmbed() {
             }
         ] : [],
         image: {
-            url: currentStream.thumbnailUrl
+            url: currentStream.getThumbnailUrl(640, 360)
         }
     };
 
