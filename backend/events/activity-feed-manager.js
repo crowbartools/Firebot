@@ -3,6 +3,7 @@ const app = require('electron').app;
 const moment = require("moment");
 const uuid = require("uuid/v4");
 const frontendCommunicator = require("../common/frontend-communicator");
+const rewardManager = require("../channel-rewards/channel-reward-manager");
 
 const eventManager = require("./EventManager");
 
@@ -70,6 +71,11 @@ frontendCommunicator.on("retrigger-event", (activityId) => {
     if (activity == null) {
         return;
     }
+
+    if (activity.eventId === "channel-reward-redemption") {
+        rewardManager.triggerChannelReward(activity.metadata.rewardId, activity.metadata);
+    }
+
     eventManager.triggerEvent(activity.sourceId, activity.eventId,
         activity.metadata, false, true);
 });
