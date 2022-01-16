@@ -132,24 +132,65 @@ module.exports = {
                 onJoin: {
                     type: "string",
                     title: "On Join",
+                    description: "Sent when a user joins the heist (leave empty for no message).",
                     useTextArea: true,
                     default: "{user} has joined the heist with {wager} {currency}!",
                     tip: "Available variables: {user}, {wager}, {currency}",
-                    sortRank: 1,
-                    validation: {
-                        required: true
-                    }
+                    sortRank: 1
                 },
                 alreadyJoined: {
                     type: "string",
                     title: "Already Joined",
+                    description: "Sent when a user has already joined the heist (leave empty for no message).",
                     useTextArea: true,
                     default: "{user}, you've already joined the heist team!",
                     tip: "Available variables: {user}",
-                    sortRank: 2,
-                    validation: {
-                        required: true
-                    }
+                    sortRank: 2
+                },
+                noWagerAmount: {
+                    type: "string",
+                    title: "No Wager Amount",
+                    description: "Sent when a user leaves out the wager amount (leave empty for no message).",
+                    useTextArea: true,
+                    default: "{user}, please include a wager amount!",
+                    tip: "Available variables: {user}",
+                    sortRank: 3
+                },
+                invalidWagerAmount: {
+                    type: "string",
+                    title: "Invalid Wager Amount",
+                    description: "Sent when a user uses an invalid wager amount (leave empty for no message).",
+                    useTextArea: true,
+                    default: "{user}, please include a valid wager amount!",
+                    tip: "Available variables: {user}",
+                    sortRank: 4
+                },
+                wagerAmountTooLow: {
+                    type: "string",
+                    title: "Wager Amount Too Low",
+                    description: "Sent when a user uses a wager amount below the minimum (leave empty for no message).",
+                    useTextArea: true,
+                    default: "{user}, the wager amount must be at least {minWager}!",
+                    tip: "Available variables: {user}, {minWager}",
+                    sortRank: 5
+                },
+                wagerAmountTooHigh: {
+                    type: "string",
+                    title: "Wager Amount Too High",
+                    description: "Sent when a user uses a wager amount above the maximum (leave empty for no message).",
+                    useTextArea: true,
+                    default: "{user}, the wager amount can be no more than {maxWager}!",
+                    tip: "Available variables: {user}, {maxWager}",
+                    sortRank: 6
+                },
+                notEnoughToWager: {
+                    type: "string",
+                    title: "Not Enough To Wager",
+                    description: "Sent when a user tries to wager more than they have (leave empty for no message).",
+                    useTextArea: true,
+                    default: "{user}, you don't have enough to wager this amount!",
+                    tip: "Available variables: {user}",
+                    sortRank: 7
                 }
             }
         },
@@ -160,67 +201,49 @@ module.exports = {
                 teamCreation: {
                     type: "string",
                     title: "Team Creation",
-                    description: "Sent when a heist is triggered by someone.",
+                    description: "Sent when a heist is triggered by someone (leave empty for no message).",
                     useTextArea: true,
                     default: "@{user} is looking to put a team together for a heist! To join the team, type {command} [amount]",
-                    tip: "Available variables: {user}, {command}, {maxWager}, {minWager}, {minimumUsers}",
-                    validation: {
-                        required: true
-                    }
+                    tip: "Available variables: {user}, {command}, {maxWager}, {minWager}, {minimumUsers}"
                 },
                 onCooldown: {
                     type: "string",
                     title: "When On Cooldown",
-                    description: "Sent when someone tries to trigger the heist and it's on cooldown.",
+                    description: "Sent when someone tries to trigger the heist and it's on cooldown (leave empty for no message).",
                     useTextArea: true,
                     default: "The area is still too hot! Better wait awhile. Cooldown: {cooldown}",
-                    tip: "Available variables: {cooldown}",
-                    validation: {
-                        required: true
-                    }
+                    tip: "Available variables: {cooldown}"
                 },
                 cooldownOver: {
                     type: "string",
                     title: "Cooldown Over",
-                    description: "Sent when the cooldown is over.",
+                    description: "Sent when the cooldown is over (leave empty for no message).",
                     useTextArea: true,
                     default: "The coast is clear! Time to get a team together for another heist, type {command} [amount]",
-                    tip: "Available variables: {command}",
-                    validation: {
-                        required: true
-                    }
+                    tip: "Available variables: {command}"
                 },
                 startMessage: {
                     type: "string",
                     title: "Heist Started",
-                    description: "Sent when the heist has started.",
+                    description: "Sent when the heist has started (leave empty for no message).",
                     useTextArea: true,
-                    default: "It's time! Everyone checks their weapons and equipment before jumping out of the getaway car and running into the bank.",
-                    validation: {
-                        required: true
-                    }
+                    default: "It's time! Everyone checks their weapons and equipment before jumping out of the getaway car and running into the bank."
                 },
                 teamTooSmall: {
                     type: "string",
                     title: "Team Too Small",
-                    description: "Sent when the start delay has ended and team size doesn't mean the Required Users count.",
+                    description: "Sent when the start delay has ended and team size doesn't mean the Required Users count (leave empty for no message).",
                     useTextArea: true,
                     default: "Unfortunately @{user} wasn't able to get a team together in time and the heist has been canceled.",
-                    tip: "Available variables: {user}",
-                    validation: {
-                        required: true
-                    }
+                    tip: "Available variables: {user}"
                 },
                 heistWinnings: {
                     type: "string",
                     title: "Heist Winnings",
-                    description: "Sent at the completion of the heist, lists those who survived and their winnings.",
+                    description: "Sent at the completion of the heist, lists those who survived and their winnings (leave empty for no message).",
                     useTextArea: true,
                     default: "Winnings: {winnings}",
-                    tip: "Available variables: {winnings}",
-                    validation: {
-                        required: true
-                    }
+                    tip: "Available variables: {winnings}"
                 }
             }
         },
@@ -241,11 +264,7 @@ module.exports = {
                         sortable: false,
                         addLabel: "New Message",
                         editLabel: "Edit Message",
-                        validationText: "Text cannot be empty",
                         noneAddedText: "None saved"
-                    },
-                    validation: {
-                        required: true
                     }
                 },
                 top25Percent: {
@@ -261,11 +280,7 @@ module.exports = {
                         sortable: false,
                         addLabel: "New Message",
                         editLabel: "Edit Message",
-                        validationText: "Text cannot be empty",
                         noneAddedText: "None saved"
-                    },
-                    validation: {
-                        required: true
                     }
                 },
                 mid50Percent: {
@@ -281,11 +296,7 @@ module.exports = {
                         sortable: false,
                         addLabel: "New Message",
                         editLabel: "Edit Message",
-                        validationText: "Text cannot be empty",
                         noneAddedText: "None saved"
-                    },
-                    validation: {
-                        required: true
                     }
                 },
                 bottom25Percent: {
@@ -301,11 +312,7 @@ module.exports = {
                         sortable: false,
                         addLabel: "New Message",
                         editLabel: "Edit Message",
-                        validationText: "Text cannot be empty",
                         noneAddedText: "None saved"
-                    },
-                    validation: {
-                        required: true
                     }
                 },
                 zeroPercent: {
@@ -321,11 +328,7 @@ module.exports = {
                         sortable: false,
                         addLabel: "New Message",
                         editLabel: "Edit Message",
-                        validationText: "Text cannot be empty",
                         noneAddedText: "None saved"
-                    },
-                    validation: {
-                        required: true
                     }
                 }
             }
@@ -348,11 +351,7 @@ module.exports = {
                         sortable: false,
                         addLabel: "New Message",
                         editLabel: "Edit Message",
-                        validationText: "Text cannot be empty",
                         noneAddedText: "None saved"
-                    },
-                    validation: {
-                        required: true
                     }
                 },
                 soloFail: {
@@ -369,11 +368,7 @@ module.exports = {
                         sortable: false,
                         addLabel: "New Message",
                         editLabel: "Edit Message",
-                        validationText: "Text cannot be empty",
                         noneAddedText: "None saved"
-                    },
-                    validation: {
-                        required: true
                     }
                 }
             }

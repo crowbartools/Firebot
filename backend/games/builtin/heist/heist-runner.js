@@ -36,9 +36,11 @@ function triggerCooldown() {
     const cooldownOverMessage = heistSettings.settings.generalMessages.cooldownOver
         .replace("{command}", trigger ? trigger : '!heist');
 
-    cooldownTimeoutId = setTimeout((msg) => {
-        twitchChat.sendChatMessage(msg, null, chatter);
-    }, cooldownMins * 60000, cooldownOverMessage);
+    if (cooldownOverMessage) {
+        cooldownTimeoutId = setTimeout((msg) => {
+            twitchChat.sendChatMessage(msg, null, chatter);
+        }, cooldownMins * 60000, cooldownOverMessage);
+    }
 }
 
 async function runHeist() {
@@ -46,7 +48,10 @@ async function runHeist() {
     const chatter = heistSettings.settings.chatSettings.chatter;
 
     const startMessage = heistSettings.settings.generalMessages.startMessage;
-    twitchChat.sendChatMessage(startMessage, null, chatter);
+
+    if (startMessage) {
+        twitchChat.sendChatMessage(startMessage, null, chatter);
+    }
 
     // wait a few secs for suspense
     await util.wait(7 * 1000);
@@ -116,8 +121,13 @@ async function runHeist() {
         .replace("{winnings}", winningsString);
 
     try {
-        twitchChat.sendChatMessage(outcomeMessage, null, chatter);
-        twitchChat.sendChatMessage(winningsMessage, null, chatter);
+        if (outcomeMessage) {
+            twitchChat.sendChatMessage(outcomeMessage, null, chatter);
+        }
+
+        if (winningsMessage) {
+            twitchChat.sendChatMessage(winningsMessage, null, chatter);
+        }
     } catch (error) {
         //weird error
     }
@@ -153,12 +163,12 @@ exports.triggerLobbyStart = (startDelayMins) => {
 
             const chatter = heistSettings.settings.chatSettings.chatter;
             let teamTooSmallMessage = heistSettings.settings.generalMessages.teamTooSmall;
-            if (usersInHeist.length > 0) {
+            if (usersInHeist.length > 0 && teamTooSmallMessage) {
                 teamTooSmallMessage = teamTooSmallMessage
                     .replace("{user}", usersInHeist[0].username);
-            }
 
-            twitchChat.sendChatMessage(teamTooSmallMessage, null, chatter);
+                twitchChat.sendChatMessage(teamTooSmallMessage, null, chatter);
+            }
 
             usersInHeist = [];
             return;

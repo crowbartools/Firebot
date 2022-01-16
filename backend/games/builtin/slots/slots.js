@@ -101,107 +101,103 @@ module.exports = {
         },
         generalMessages: {
             title: "General Messages",
-            sortRank: 4,
+            sortRank: 5,
             settings: {
                 alreadySpinning: {
                     type: "string",
                     title: "Already Spinning",
-                    description: "When someone tries to spin too fast.",
+                    description: "When someone tries to spin too fast (leave empty for no message).",
                     useTextArea: true,
                     default: "{username}, your slot machine is actively working!",
                     tip: "Available variables: {username}",
-                    validation: {
-                        required: true
-                    }
+                    sortRank: 1
                 },
                 onCooldown: {
                     type: "string",
                     title: "On Cooldown",
-                    description: "When the command is on cooldown for a user.",
+                    description: "When the command is on cooldown for a user (leave empty for no message).",
                     useTextArea: true,
                     default: "{username}, your slot machine is currently on cooldown. Time remaining: {timeRemaining}",
                     tip: "Available variables: {username}, {timeRemaining}",
-                    validation: {
-                        required: true
-                    }
+                    sortRank: 2
+                },
+                noWagerAmount: {
+                    type: "string",
+                    title: "No Wager Amount",
+                    description: "Sent when a user leaves out the wager amount (leave empty for no message).",
+                    useTextArea: true,
+                    default: "{user}, please include a wager amount!",
+                    tip: "Available variables: {user}",
+                    sortRank: 3
+                },
+                invalidWagerAmount: {
+                    type: "string",
+                    title: "Invalid Wager Amount",
+                    description: "Sent when a user uses an invalid wager amount (leave empty for no message).",
+                    useTextArea: true,
+                    default: "{user}, please include a valid wager amount!",
+                    tip: "Available variables: {user}",
+                    sortRank: 4
                 },
                 moreThanZero: {
                     type: "string",
                     title: "More Than 0",
-                    description: "When the user tries to spin with 0 currency.",
+                    description: "When the user tries to spin with 0 currency (leave empty for no message).",
                     useTextArea: true,
                     default: "{username}, your wager amount must be more than 0.",
                     tip: "Available variables: {username}",
-                    validation: {
-                        required: true
-                    }
+                    sortRank: 5
                 },
                 minWager: {
                     type: "string",
                     title: "Amount Too Low",
-                    description: "When the wager amount is too low.",
+                    description: "When the wager amount is too low (leave empty for no message).",
                     useTextArea: true,
                     default: "{username}, your wager amount must be at least {minWager}.",
                     tip: "Available variables: {username}, {minWager}",
-                    validation: {
-                        required: true
-                    }
+                    sortRank: 6
                 },
                 maxWager: {
                     type: "string",
                     title: "Amount Too High",
-                    description: "When the wager amount is too high.",
+                    description: "When the wager amount is too high (leave empty for no message).",
                     useTextArea: true,
                     default: "{username}, your wager amount must be at least {maxWager}.",
                     tip: "Available variables: {username}, {maxWager}",
-                    validation: {
-                        required: true
-                    }
+                    sortRank: 7
                 },
                 notEnough: {
                     type: "string",
                     title: "Not Enough",
-                    description: "When the user doesn't have enough to wager the chosen amount.",
+                    description: "When the user doesn't have enough to wager the chosen amount (leave empty for no message).",
                     useTextArea: true,
                     default: "{username}, you don't have enough to wager this amount!",
                     tip: "Available variables: {username}",
-                    validation: {
-                        required: true
-                    }
-                },
-                showSpinInAction: {
-                    type: "boolean",
-                    title: "Show Spinning In Action message",
-                    default: true,
-                    description: "Whether you want the Spinning In Action to be sent in chat."
+                    sortRank: 8
                 },
                 spinInAction: {
                     type: "string",
                     title: "Spinning In Action",
-                    description: "When the spin is going on.",
+                    description: "When the spin is going on (leave empty for no message).",
                     useTextArea: true,
                     default: "{username} pulls back the lever...",
                     tip: "Available variables: {username}",
-                    validation: {
-                        required: true
-                    }
+                    sortRank: 9
                 },
                 spinSuccessful: {
                     type: "string",
                     title: "Spin successful",
-                    description: "When the spin is successful.",
+                    description: "When the spin is successful (leave empty for no message).",
                     useTextArea: true,
                     default: "{username} hit {successfulRolls} out of 3 and won {winningsAmount} {currencyName}!",
                     tip: "Available variables: {username}, {successfulRolls}, {winningsAmount}, {currencyName}",
-                    validation: {
-                        required: true
-                    }
+                    sortRank: 10
                 }
             }
         },
         chatSettings: {
             title: "Chat Settings",
-            sortRank: 5,
+            sortRank: 6,
             settings: {
                 chatter: {
                     type: "chatter-select",
