@@ -171,7 +171,7 @@
                     break;
                 case "UserUpdate":
                     logger.debug("User updated");
-                    service.userUpdate(data);
+                    service.chatUserUpdated(data);
                     break;
                 case "Disconnected":
                     // We disconnected. Clear messages, post alert, and then let the reconnect handle repopulation.
@@ -373,6 +373,12 @@
 
                 if (chatMessage.profilePicUrl == null) {
                     chatMessage.profilePicUrl = "../images/placeholders/default-profile-pic.png";
+                }
+
+                const user = service.chatUsers.find(u => u.id === chatMessage.userId);
+                if (user.roles.length !== chatMessage.roles.length) {
+                    user.roles = chatMessage.roles;
+                    service.chatUserUpdated(user);
                 }
 
                 if (settingsService.getRealChatFeed()) {
