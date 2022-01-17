@@ -295,6 +295,23 @@ module.exports = {
                     return `**${eventData.username}** sent you the following whisper: ${eventData.message}`;
                 }
             }
+        },
+        {
+            id: "chat-mode-changed",
+            name: "Chat Mode Changed",
+            description: "When the chat mode settings have been updated by a moderator.",
+            cached: false,
+            manualMetadata: {
+                chatMode: "Followers",
+                moderator: "Firebot",
+                duration: "30"
+            },
+            activityFeed: {
+                icon: "fad fa-comment-alt",
+                getMessage: (eventData) => {
+                    return `**${eventData.moderator}** has set the chat mode to **${eventData.chatMode}**.`;
+                }
+            }
         }
     ]
 };
