@@ -41,25 +41,25 @@
                         </div>
                         <span>:</span>
                     </div>
-                    <div>
-                        <restriction-item ng-repeat="restriction in $ctrl.restrictionData.restrictions" 
-                            restriction="restriction" 
+                    <div ng-class="{'mb-4': $ctrl.restrictionData.restrictions.length}">
+                        <restriction-item ng-repeat="restriction in $ctrl.restrictionData.restrictions"
+                            restriction="restriction"
                             restriction-definition="$ctrl.getRestrictionDefinition(restriction.type)"
                             on-delete="$ctrl.deleteRestriction(restriction.id)">
                         </restriction-item>
                     </div>
-                    <div>
+                    <div class="mb-4">
                         <div class="filter-bar clickable"
                             ng-show="$ctrl.canAddMoreRestrictions"
-                            ng-click="$ctrl.showAddRestrictionModal()" 
-                            uib-tooltip="Add Restriction" 
-                            aria-label="Add Restriction"  
+                            ng-click="$ctrl.showAddRestrictionModal()"
+                            uib-tooltip="Add Restriction"
+                            aria-label="Add Restriction"
                             tooltip-append-to-body="true">
-                                <i class="far fa-plus"></i> 
+                                <i class="far fa-plus"></i>
                         </div>
                     </div>
-                    <div style="margin-top: 5px;" ng-show="$ctrl.restrictionData.restrictions.length > 0">
-                        <label class="control-fb control--checkbox"> Send chat message when restrictions not met 
+                    <div class="ml-3.5" ng-show="$ctrl.restrictionData.restrictions.length > 0">
+                        <label class="control-fb control--checkbox"> Send chat message when restrictions not met
                             <input type="checkbox" ng-model="$ctrl.restrictionData.sendFailMessage">
                             <div class="control__indicator"></div>
                         </label>
@@ -75,10 +75,10 @@
                             </label>
 
                             <div ng-if="$ctrl.restrictionData.useCustomFailMessage">
-                                <firebot-input 
-                                    model="$ctrl.restrictionData.failMessage" 
-                                    disable-variables="true" 
-                                    input-title="Message" 
+                                <firebot-input
+                                    model="$ctrl.restrictionData.failMessage"
+                                    disable-variables="true"
+                                    input-title="Message"
                                 />
                                 <p class="muted">Available variables: {user}, {reason}</p>
                             </div>

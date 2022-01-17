@@ -13,8 +13,8 @@
 
   <div ng-if="!$ctrl.command.simple">
     <div class="general-button-settings">
-      <div style="padding-bottom: 1em">
-        <div class="input-group">
+      <div>
+        <div class="input-group pb-5">
           <span class="input-group-addon" id="basic-addon3">Trigger</span>
           <input
             type="text"
@@ -55,7 +55,7 @@
 
         <eos-collapsable-panel show-label="Advanced" hide-label="Hide Advanced">
           <h4>RegEx Trigger</h4>
-          <p style="margin-bottom: 10px" ;>
+          <p class="pb-4">
             For advanced users only! Enable this to make Firebot treat the
             trigger as a JavaScript flavored regular expression. This will allow
             you to define more complex patterns to match against.
@@ -70,8 +70,7 @@
             <div class="control__indicator"></div>
           </label>
           <div
-            class="input-group"
-            style="margin-top: 5px"
+            class="input-group mt-2"
             ng-if="$ctrl.command.triggerIsRegex"
           >
             <span class="input-group-addon" id="tooltip-desc"
@@ -91,7 +90,7 @@
           </div>
         </eos-collapsable-panel>
 
-        <div class="input-group">
+        <div class="input-group pt-4">
           <span class="input-group-addon" id="basic-addon3"
             >Description
             <tooltip text="'Displayed on the command list webpage'"></tooltip
@@ -106,73 +105,21 @@
         </div>
       </div>
 
-      <div style="padding-bottom: 1em" ng-hide="$ctrl.command.triggerIsRegex">
+      <div class="mt-10" ng-hide="$ctrl.command.triggerIsRegex">
         <div class="settings-title">
           <h3>Aliases</h3>
         </div>
         <editable-tags model="$ctrl.command.aliases" settings="aliasesListOptions"></editable-tags>
       </div>
 
-      <div style="padding-bottom: 1em">
+      <div class="mt-10">
         <div class="settings-title">
           <h3>Cooldowns</h3>
         </div>
-
-        <div class="input-group">
-          <span class="input-group-addon">Global</span>
-          <input
-            class="form-control"
-            type="number"
-            min="0"
-            placeholder="secs"
-            ng-model="$ctrl.command.cooldown.global"
-          />
-          <span class="input-group-addon">User</span>
-          <input
-            class="form-control"
-            type="number"
-            min="0"
-            placeholder="secs"
-            ng-model="$ctrl.command.cooldown.user"
-          />
-        </div>
-
-        <div
-          style="margin-top: 5px"
-          ng-show="$ctrl.command.cooldown.global > 0 || $ctrl.command.cooldown.user > 0"
-        >
-          <label class="control-fb control--checkbox">
-            Send chat message when on cooldown
-            <input
-              type="checkbox"
-              ng-model="$ctrl.command.sendCooldownMessage"
-            />
-            <div class="control__indicator"></div>
-          </label>
-
-          <div ng-show="$ctrl.command.sendCooldownMessage">
-            <label class="control-fb control--checkbox">
-              Use custom cooldown message
-              <input
-                type="checkbox"
-                ng-model="$ctrl.command.useCustomCooldownMessage"
-              />
-              <div class="control__indicator"></div>
-            </label>
-
-            <div ng-if="$ctrl.command.useCustomCooldownMessage">
-              <firebot-input 
-                model="$ctrl.command.cooldownMessage" 
-                disable-variables="true" 
-                input-title="Message" 
-              />
-              <p class="muted">Available variables: {user}, {timeLeft}</p>
-            </div>
-          </div>
-        </div>
+        <command-cooldown-settings command="$ctrl.command"></command-cooldown-settings>
       </div>
 
-      <div style="padding-bottom: 1em">
+      <div class="mt-10">
         <div class="settings-title">
           <h3>Stats</h3>
         </div>
@@ -188,31 +135,20 @@
           />
         </div>
 
-        <div>
-          <div style="margin-bottom: 20px">
-            <h3 style="margin-bottom: 5px">
-              Restrictions
-              <span
-                class="muted"
-                style="
-                  padding-bottom: 4px;
-                  padding-left: 2px;
-                  font-size: 13px;
-                  font-family: 'Quicksand';
-                "
-                >(Permissions, currency costs, and more)</span
-              >
-            </h3>
-            <restrictions-list
-              restriction-data="$ctrl.command.restrictionData"
-              trigger="command"
-              trigger-meta="$ctrl.triggerMeta"
-            >
-            </restrictions-list>
-          </div>
+        <div class="mt-10">
+          <h3 class="mb-2">
+            Restrictions
+            <span class="muted pl-1 text-xl" style="font-family: 'Quicksand';">(Permissions, currency costs, and more)</span>
+          </h3>
+          <restrictions-list
+            restriction-data="$ctrl.command.restrictionData"
+            trigger="command"
+            trigger-meta="$ctrl.triggerMeta"
+          >
+          </restrictions-list>
         </div>
 
-        <div class="other-settings" style="padding-bottom: 1em">
+        <div class="other-settings mt-10">
           <div class="settings-title">
             <h3>Settings</h3>
           </div>
@@ -264,10 +200,10 @@
               <div class="control__indicator"></div>
             </label>
           </div>
-          <div class="controls-fb-inline" style="margin-top: 10px"></div>
+          <div class="controls-fb-inline mt-4"></div>
         </div>
       </div>
-      <div class="function-button-settings">
+      <div class="mt-10">
         <div
           class="settings-title"
           ng-hide="$ctrl.command.scanWholeMessage || $ctrl.command.triggerIsRegex"
@@ -275,6 +211,7 @@
           <h3>
             Base Effects
             <tooltip
+              class="text-3xl"
               text="'Always triggered if there are no subcommands. If there are subcommands, this is only triggered when the user does not provide any arguments.'"
             ></tooltip>
           </h3>
@@ -290,7 +227,7 @@
       </div>
 
       <div
-        style="margin-top: 30px"
+        class="mt-12"
         ng-hide="$ctrl.command.scanWholeMessage || $ctrl.command.triggerIsRegex"
       >
         <div class="settings-title">
@@ -302,15 +239,8 @@
         <div
           ng-show="$ctrl.command.subCommands && $ctrl.command.subCommands.length > 0"
         >
-          <div
-            style="
-              display: flex;
-              font-size: 11px;
-              font-weight: bold;
-              padding-bottom: 10px;
-            "
-          >
-            <div class="muted" style="flex-basis: 30%; padding-left: 20px">
+          <div class="flex text-lg font-bold pb-4">
+            <div class="muted pl-8" style="flex-basis: 30%;">
               <i class="fas fa-tag"></i> ARG
             </div>
             <div class="muted" style="width: 25%">
@@ -321,8 +251,8 @@
             </div>
             <div class="muted" style="width: 25%"></div>
             <div
-              class="muted"
-              style="flex-basis: 30px; flex-shrink: 0; padding-right: 20px"
+              class="muted pr-8"
+              style="flex-basis: 30px; flex-shrink: 0;"
             ></div>
           </div>
           <subcommand-row
