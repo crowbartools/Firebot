@@ -186,17 +186,17 @@
                         icon: "fa-at"
                     });
 
-                    if (message.username !== connectionService.accounts.streamer.username &&
-                        message.username !== connectionService.accounts.bot.username) {
+                    actions.push({
+                        name: "Quote This Message",
+                        icon: "fa-quote-right"
+                    });
+
+                    if (message.username.toLowerCase() !== connectionService.accounts.streamer.username.toLowerCase() &&
+                        message.username.toLowerCase() !== connectionService.accounts.bot.username.toLowerCase()) {
 
                         actions.push({
                             name: "Whisper",
                             icon: "fa-envelope"
-                        });
-
-                        actions.push({
-                            name: "Quote This Message",
-                            icon: "fa-quote-right"
                         });
 
                         actions.push({

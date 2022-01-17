@@ -376,7 +376,7 @@
                 }
 
                 const user = service.chatUsers.find(u => u.id === chatMessage.userId);
-                if (user.roles.length !== chatMessage.roles.length) {
+                if (user && user.roles.length !== chatMessage.roles.length) {
                     user.roles = chatMessage.roles;
                     service.chatUserUpdated(user);
                 }
