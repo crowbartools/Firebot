@@ -1,5 +1,7 @@
 "use strict";
 
+const { ComparisonType } = require("../../../../shared/filter-constants");
+
 module.exports = {
     id: "firebot:gift-duration",
     name: "Gift Duration",
@@ -7,27 +9,40 @@ module.exports = {
     events: [
         { eventSourceId: "twitch", eventId: "subs-gifted" }
     ],
-    comparisonTypes: ["is", "is not", "less than", "greater than"],
+    comparisonTypes: [
+        ComparisonType.IS,
+        ComparisonType.IS_NOT,
+        ComparisonType.LESS_THAN,
+        ComparisonType.LESS_THAN_OR_EQUAL_TO,
+        ComparisonType.GREATER_THAN,
+        ComparisonType.GREATER_THAN_OR_EQUAL_TO
+    ],
     valueType: "number",
     predicate: (filterSettings, eventData) => {
 
-        let { comparisonType, value } = filterSettings;
-        let { eventMeta } = eventData;
+        const { comparisonType, value } = filterSettings;
+        const { eventMeta } = eventData;
 
-        let giftDuration = eventMeta.giftDuration || 1;
+        const giftDuration = eventMeta.giftDuration || 1;
 
         switch (comparisonType) {
-        case "is": {
+        case ComparisonType.IS: {
             return giftDuration === value;
         }
-        case "is not": {
+        case ComparisonType.IS_NOT: {
             return giftDuration !== value;
         }
-        case "less than": {
+        case ComparisonType.LESS_THAN: {
             return giftDuration < value;
         }
-        case "greater than": {
+        case ComparisonType.LESS_THAN_OR_EQUAL_TO: {
+            return giftDuration <= value;
+        }
+        case ComparisonType.GREATER_THAN: {
             return giftDuration > value;
+        }
+        case ComparisonType.GREATER_THAN_OR_EQUAL_TO: {
+            return giftDuration >= value;
         }
         default:
             return false;
