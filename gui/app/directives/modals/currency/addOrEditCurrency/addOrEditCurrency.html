@@ -17,7 +17,7 @@
                 <div class="control__indicator"></div>
             </label>
 
-            <div class="input-group">
+            <div class="input-group pb-6">
                 <span class="input-group-addon" id="basic-addon3">Name</span>
                 <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.currency.name" placeholder="Coins">
             </div>
@@ -29,7 +29,7 @@
                     <div class="control__indicator"></div>
                 </label>
                 <div ng-show="hasLimit">
-                    <div class="input-group" style="padding-bottom: 0;">
+                    <div class="input-group pb-6" style="padding-bottom: 0;">
                         <span class="input-group-addon" id="currency-limit">Amount</span>
                         <input type="number" class="form-control" aria-describedby="currency-limit" ng-model="$ctrl.currency.limit" placeholder="1000">
                     </div>
@@ -53,12 +53,12 @@
                     <h3>Payout Settings</h3>
                 </div>
 
-                <div class="input-group">
+                <div class="input-group pb-6">
                     <span class="input-group-addon" id="basic-addon3">Payout Interval (Mins)</span>
                     <input type="number" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.currency.interval" placeholder="5">
                 </div>
 
-                <div class="input-group">
+                <div class="input-group pb-6">
                     <span class="input-group-addon" id="basic-addon3">{{offline ? 'Online' : 'Base'}} Payout Amount</span>
                     <input type="number" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.currency.payout" placeholder="10">
                 </div>
@@ -69,7 +69,7 @@
                         <div class="control__indicator"></div>
                     </label>
                     <div ng-show="offline">
-                        <div class="input-group" style="padding-bottom: 0;">
+                        <div class="input-group pb-6" style="padding-bottom: 0;">
                             <span class="input-group-addon" id="currency-offline-effect-type">Amount</span>
                             <input ng-model="$ctrl.currency.offline" type="number" class="form-control" id="currency-offline-setting" aria-describedby="chat-text-effect-type" placeholder="5">
                         </div>
@@ -79,7 +79,7 @@
                 <h4>Role Bonuses</h4>
                 <p>These bonuses are added on top of the base payout. A viewer will receive a bonus for each role they are in.</p>
                 <div class="bonus-payout-groups">
-                    <div class="bonus-payout-group input-group" ng-repeat="role in $ctrl.viewerRoles">
+                    <div class="bonus-payout-group input-group pb-6" ng-repeat="role in $ctrl.viewerRoles">
                         <span class="input-group-addon" id="basic-addon3">{{role.name}}</span>
                         <input type="number" class="form-control" aria-describedby="basic-addon3" placeholder="0" ng-model="$ctrl.currency.bonus[role.id]">
                     </div>

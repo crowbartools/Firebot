@@ -484,6 +484,24 @@ frontendCommunicator.on("update-user-banned-status", data => {
     }
 });
 
+frontendCommunicator.on("update-user-vip-status", data => {
+    if (data == null) {
+        return;
+    }
+    const { username, shouldBeVip } = data;
+    if (username == null || shouldBeVip == null) {
+        return;
+    }
+
+    if (shouldBeVip) {
+        twitchChat.addVip(username);
+        chatRolesManager.addVipToVipList(username);
+    } else {
+        twitchChat.removeVip(username);
+        chatRolesManager.removeVipFromVipList(username);
+    }
+});
+
 module.exports = twitchChat;
 
 

@@ -6,7 +6,7 @@
             command: "="
         },
         template: `
-        <div style="padding:10px;">
+        <div class="simple-command p-4">
             <div class="form-group">
                 <label for="trigger" class="form-label"><i class="fad fa-exclamation"></i> Trigger <tooltip styles="opacity:0.7;font-size:11px;" text="'The text at the beginning of a chat message that should trigger this command. Usually starts with a special character such as !'"/></label>
                 <input type="text" class="form-control input-lg" id="trigger" placeholder="!something" ng-model="$ctrl.command.trigger" />
@@ -14,14 +14,7 @@
 
             <div class="form-group">
                 <label class="form-label"><i class="fad fa-stopwatch"></i> Cooldowns <tooltip styles="opacity:0.7;font-size:11px;" text="'Cooldowns prevent your commands from being spammed. You can apply a cooldown globally and even per user.'"/></label>
-                <div class="input-group">
-                    <span class="input-group-addon" style="min-width: 100px;width:100px">Global</span>
-                    <input class="form-control input-lg" type="number" min="0" placeholder="secs"
-                            ng-model="$ctrl.command.cooldown.global" />
-                    <span class="input-group-addon" style="min-width: 100px;width:100px">User</span>
-                    <input class="form-control input-lg" type="number" min="0" placeholder="secs"
-                            ng-model="$ctrl.command.cooldown.user" />
-                </div>
+                <command-cooldown-settings command="$ctrl.command" message-setting-disabled="true"></command-cooldown-settings>
                 <p class="help-block">Optional</p>
             </div>
 

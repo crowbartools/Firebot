@@ -16,7 +16,7 @@ const model = {
         handle: "timeoutDuration",
         description: "How long the user is timed out for in minus",
         triggers: triggers,
-        categories: [VariableCategory.COMMON],
+        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {

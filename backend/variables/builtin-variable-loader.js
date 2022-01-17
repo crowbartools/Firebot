@@ -63,6 +63,8 @@ exports.loadReplaceVariables = () => {
         'loop-count',
         'loop-item',
         'math',
+        'mod-reason',
+        'moderator',
         'number-ceil',
         'number-floor',
         'number-max',

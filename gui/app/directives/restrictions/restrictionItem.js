@@ -17,7 +17,7 @@
                         ng-click="$ctrl.togglePanel()"
                         ng-class="{'expanded': !hidePanel}">
 
-                            <div style="flex-basis: 30%;padding-left: 15px;font-family: 'Quicksand';font-size: 16px;">{{$ctrl.restrictionDefinition.definition.name}}</div>
+                            <div style="padding-left: 15px;font-family: 'Quicksand';font-size: 16px;">{{$ctrl.restrictionDefinition.definition.name}}</div>
 
                             <div style="display: flex; align-items: center;">
                                 <div ng-show="hidePanel" style="opacity: 0.6; margin-right: 20px; max-width: 200px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">

@@ -212,7 +212,7 @@
 }
 
 .name-wrapper {
-    width: 175px;
+    width: 200px;
     height: 50px;
     display: flex;
     flex-direction: row;
@@ -220,6 +220,10 @@
     border-bottom: inherit;
     padding-left: 10px;
     background: rgba(206, 208, 208, 0.07);
+}
+
+.chat-message-context-menu {
+    padding: 0;
 }
 
 .user-name {
