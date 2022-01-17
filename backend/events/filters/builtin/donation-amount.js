@@ -26,7 +26,7 @@ module.exports = {
         const { comparisonType, value } = filterSettings;
         const { eventMeta } = eventData;
 
-        const donationAmount = eventMeta.dononationAmount || 0;
+        const donationAmount = eventMeta.donationAmount || 0;
 
         switch (comparisonType) {
         case ComparisonType.IS: {
