@@ -228,12 +228,14 @@ module.exports = {
             cached: false,
             queued: false,
             manualMetadata: {
-                username: "Firebot"
+                username: "CaveMobster",
+                moderator: "Firebot",
+                modReason: "They were extra naughty"
             },
             activityFeed: {
                 icon: "fad fa-gavel",
                 getMessage: (eventData) => {
-                    return `**${eventData.username}** was banned`;
+                    return `**${eventData.username}** was banned by **${eventData.moderator}**. Reason: **${eventData.modReason}**`;
                 }
             }
         },
@@ -244,13 +246,15 @@ module.exports = {
             cached: false,
             queued: false,
             manualMetadata: {
-                username: "Firebot",
-                timeoutDuration: "1"
+                username: "ebiggz",
+                timeoutDuration: "1",
+                moderator: "Firebot",
+                modReason: "They were naughty"
             },
             activityFeed: {
                 icon: "fad fa-stopwatch",
                 getMessage: (eventData) => {
-                    return `**${eventData.username}** was timed out for **${eventData.timeoutDuration} sec(s)**`;
+                    return `**${eventData.username}** was timed out for **${eventData.timeoutDuration} sec(s)** by ${eventData.moderator}. Reason: **${eventData.modReason}**`;
                 }
             }
         },
