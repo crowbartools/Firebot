@@ -38,17 +38,17 @@ module.exports = {
         const { value } = filterSettings;
         const { eventMeta } = eventData;
 
-        const chatModeDisabled = eventMeta.chatMode.includes("off");
+        const chatModeStateEnabled = eventMeta.chatModeState === "enabled";
 
         switch (value) {
         case "enabled": {
-            return !chatModeDisabled;
+            return chatModeStateEnabled;
         }
         case "disabled": {
-            return chatModeDisabled;
+            return !chatModeStateEnabled;
         }
         default:
-            return chatModeDisabled;
+            return !chatModeStateEnabled;
         }
     }
 };
