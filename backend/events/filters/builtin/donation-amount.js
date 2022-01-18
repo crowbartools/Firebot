@@ -26,26 +26,26 @@ module.exports = {
         const { comparisonType, value } = filterSettings;
         const { eventMeta } = eventData;
 
-        const dononationAmount = eventMeta.dononationAmount || 0;
+        const donationAmount = eventMeta.donationAmount || 0;
 
         switch (comparisonType) {
         case ComparisonType.IS: {
-            return dononationAmount === value;
+            return donationAmount === value;
         }
         case ComparisonType.IS_NOT: {
-            return dononationAmount !== value;
+            return donationAmount !== value;
         }
         case ComparisonType.LESS_THAN: {
-            return dononationAmount < value;
+            return donationAmount < value;
         }
         case ComparisonType.LESS_THAN_OR_EQUAL_TO: {
-            return dononationAmount <= value;
+            return donationAmount <= value;
         }
         case ComparisonType.GREATER_THAN: {
-            return dononationAmount > value;
+            return donationAmount > value;
         }
         case ComparisonType.GREATER_THAN_OR_EQUAL_TO: {
-            return dononationAmount >= value;
+            return donationAmount >= value;
         }
         default:
             return false;

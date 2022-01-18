@@ -18,11 +18,16 @@ const eventSourceDefinition = {
             name: "Donation",
             description: "When someone donates.",
             cached: false,
+            manualMetadata: {
+                from: "StreamElements",
+                donationAmount: 5,
+                donationMessage: "Test message"
+            },
             isIntegration: true,
             activityFeed: {
                 icon: "fad fa-money-bill",
                 getMessage: (eventData) => {
-                    return `**${eventData.from}** donated **$${eventData.dononationAmount}**${eventData.donationMessage && !!eventData.donationMessage.length ? `: *${eventData.donationMessage}*` : ''}`;
+                    return `**${eventData.from}** donated **$${eventData.donationAmount}**${eventData.donationMessage && !!eventData.donationMessage.length ? `: *${eventData.donationMessage}*` : ''}`;
                 }
             }
         },
@@ -32,6 +37,9 @@ const eventSourceDefinition = {
             description: "When someone follows your Twitch channel (comes from StreamElements)",
             cacheMetaKey: "username",
             cached: true,
+            manualMetadata: {
+                username: "StreamElements"
+            },
             isIntegration: true,
             activityFeed: {
                 icon: "fas fa-heart",
@@ -49,7 +57,7 @@ exports.registerEvents = () => {
 
 exports.processDonationEvent = (eventData) => {
     eventManager.triggerEvent(EVENT_SOURCE_ID, EventId.DONATION, {
-        dononationAmount: eventData.amount,
+        donationAmount: eventData.amount,
         donationMessage: eventData.message,
         from: eventData.name
     });

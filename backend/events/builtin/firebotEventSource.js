@@ -13,9 +13,6 @@ const firebotEventSource = {
             name: "Twitch Connected",
             description: "When Firebot connects to Twitch.",
             cached: false,
-            manualMetadata: {
-                username: "Firebot"
-            },
             activityFeed: {
                 icon: "fad fa-plug",
                 getMessage: () => {
