@@ -18,12 +18,17 @@ const eventSourceDefinition = {
             name: "Donation",
             description: "When someone donates to you via TipeeeStream.",
             cached: false,
+            manualMetadata: {
+                from: "TipeeeStream",
+                formattedDonationAmount: 5,
+                donationMessage: "Test message"
+            },
             isIntegration: true,
             queued: true,
             activityFeed: {
                 icon: "fad fa-money-bill",
                 getMessage: (eventData) => {
-                    return `**${eventData.from}** donated **${eventData.formattedDonationAmmount}**${eventData.donationMessage && !!eventData.donationMessage.length ? `: *${eventData.donationMessage}*` : ''}`;
+                    return `**${eventData.from}** donated **${eventData.formattedDonationAmount}**${eventData.donationMessage && !!eventData.donationMessage.length ? `: *${eventData.donationMessage}*` : ''}`;
                 }
             }
         },
@@ -33,6 +38,9 @@ const eventSourceDefinition = {
             description: "When someone follows your Twitch channel (comes from TipeeeStream)",
             cacheMetaKey: "username",
             cached: true,
+            manualMetadata: {
+                username: "TipeeeStream"
+            },
             isIntegration: true,
             activityFeed: {
                 icon: "fas fa-heart",
@@ -57,7 +65,7 @@ exports.processTipeeeStreamEvent = (eventData) => {
         const donoData = eventData.parameters;
         eventManager.triggerEvent(EVENT_SOURCE_ID, EventId.DONATION, {
             formattedDonationAmount: eventData.formattedAmount,
-            dononationAmount: donoData.amount,
+            donationAmount: donoData.amount,
             donationMessage: donoData.formattedMessage,
             from: donoData.username
         });

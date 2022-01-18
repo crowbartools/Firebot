@@ -20,6 +20,12 @@ const eventSourceDefinition = {
             name: "Chest Purchase",
             description: "When someone purchases or gifts chests.",
             cached: false,
+            manualMetadata: {
+                username: "Firebot",
+                message: "Test message",
+                quantity: 5,
+                giftee: "ebiggz"
+            },
             isIntegration: true
         },
         {
@@ -27,6 +33,21 @@ const eventSourceDefinition = {
             name: "Card Redemption",
             description: "When someone redeems a card.",
             cached: false,
+            manualMetadata: {
+                username: "Firebot",
+                message: "Test message",
+                cardRarity: {
+                    type: "enum",
+                    options: {
+                        "common": "Common",
+                        "rare": "Rare",
+                        "epic": "Epic",
+                        "legendary": "Legendary"
+                    },
+                    value: "common"
+                },
+                cardName: "Hidden GIF"
+            },
             isIntegration: true
         }
     ]

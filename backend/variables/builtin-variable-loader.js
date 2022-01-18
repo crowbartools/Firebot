@@ -24,6 +24,8 @@ exports.loadReplaceVariables = () => {
         'chat-message-emote-urls',
         'chat-message',
         'chat-messages',
+        'chat-mode-duration',
+        'chat-mode',
         'cheer-bits',
         'cheer-message',
         'cheer-total-bits',

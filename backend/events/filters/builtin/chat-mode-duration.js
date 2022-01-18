@@ -3,14 +3,11 @@
 const { ComparisonType } = require("../../../../shared/filter-constants");
 
 module.exports = {
-    id: "firebot:donation-amount",
-    name: "Donation Amount",
-    description: "Filter by the amount of donation from StreamLabs/Tipeee/ExtraLife",
+    id: "firebot:chatmodeduration",
+    name: "Duration",
+    description: "Filter by a chat mode's duration (only for Slow (seconds) and Follower (minutes))",
     events: [
-        { eventSourceId: "streamlabs", eventId: "donation" },
-        { eventSourceId: "streamlabs", eventId: "eldonation" },
-        { eventSourceId: "tipeeestream", eventId: "donation" },
-        { eventSourceId: "streamelements", eventId: "donation" }
+        { eventSourceId: "twitch", eventId: "chat-mode-changed" }
     ],
     comparisonTypes: [
         ComparisonType.IS,
@@ -26,26 +23,30 @@ module.exports = {
         const { comparisonType, value } = filterSettings;
         const { eventMeta } = eventData;
 
-        const donationAmount = eventMeta.donationAmount || 0;
+        const duration = eventMeta.duration;
+
+        if (duration == null) {
+            return true;
+        }
 
         switch (comparisonType) {
         case ComparisonType.IS: {
-            return donationAmount === value;
+            return duration === value;
         }
         case ComparisonType.IS_NOT: {
-            return donationAmount !== value;
+            return duration !== value;
         }
         case ComparisonType.LESS_THAN: {
-            return donationAmount < value;
+            return duration < value;
         }
         case ComparisonType.LESS_THAN_OR_EQUAL_TO: {
-            return donationAmount <= value;
+            return duration <= value;
         }
         case ComparisonType.GREATER_THAN: {
-            return donationAmount > value;
+            return duration > value;
         }
         case ComparisonType.GREATER_THAN_OR_EQUAL_TO: {
-            return donationAmount >= value;
+            return duration >= value;
         }
         default:
             return false;

@@ -5,6 +5,9 @@ const filterManager = require("./filter-manager");
 exports.loadFilters = () => {
     [
         'bits-badge-tier',
+        'chat-mode-duration',
+        'chat-mode-setting',
+        'chat-mode',
         'cheer-bits-amount',
         'donation-amount',
         'donation-from',
