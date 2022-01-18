@@ -46,7 +46,7 @@
 
             service.deleteCounter = (counterId) => {
                 service.counters = service.counters.filter(c => c.id !== counterId);
-                backendCommunicator.fireEventAsync("deleteCounter", counterId);
+                backendCommunicator.fireEvent("deleteCounter", counterId);
             };
 
             service.saveCounter = async (counter) => {

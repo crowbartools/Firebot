@@ -4,7 +4,10 @@ const profileManager = require("../common/profile-manager");
 const logger = require("../logwrapper");
 const uuidv1 = require("uuid/v1");
 
-/** @template T */
+/**
+ * @template T
+ * @hideconstructor
+*/
 class JsonDbManager {
     /**
      * @param {string} type - The type of data in the json file
@@ -15,31 +18,21 @@ class JsonDbManager {
         this.type = type;
 
         /** @protected */
-        this.items = {};
-
-        /** @protected */
         this.db = profileManager.getJsonDbInProfile(path);
     }
 
     /**
-     * @returns {Promise.<boolean>}
+     * @returns {void}
      */
-    async loadItems() {
+    loadItems() {
         logger.debug(`Attempting to load ${this.type}s...`);
 
         try {
-            const data = this.db.getData("/");
-
-            if (data) {
-                this.items = data;
-            }
+            this.db.load();
 
             logger.debug(`Loaded ${this.type}s.`);
-
-            return true;
         } catch (err) {
-            logger.warn(`There was an error reading ${this.type} file.`, err);
-            return false;
+            logger.error(`There was an error reading ${this.type} file.`, err);
         }
     }
 
@@ -52,113 +45,135 @@ class JsonDbManager {
             return null;
         }
 
-        return this.items[itemId];
+        try {
+            const item = this.db.find("/", entry => entry.id === itemId);
+
+            if (item) {
+                return item;
+            }
+
+            logger.warn(`Couldn't find item of type ${this.type}`);
+            return null;
+        } catch (err) {
+            logger.error(`There was an error reading the ${this.type} file.`, err);
+            return null;
+        }
+    }
+
+    /**
+     * @param {string} itemName
+     * @returns {T | null}
+     */
+    getItemByName(itemName) {
+        if (itemName == null) {
+            return null;
+        }
+
+        try {
+            const item = this.db.find("/", entry => entry.name === itemName);
+
+            if (item) {
+                return item;
+            }
+
+            logger.warn(`Couldn't find item of type ${this.type}`);
+            return null;
+        } catch (err) {
+            logger.error(`There was an error reading the ${this.type} file.`, err);
+            return null;
+        }
     }
 
     /**
      * @returns {T[]}
      */
     getAllItems() {
-        if (this.items == null) {
+        try {
+            const items = this.db.getData("/");
+
+            if (items) {
+                return Object.values(items);
+            }
+
+            logger.warn(`Couldn't get items of type ${this.type}`);
+            return [];
+        } catch (err) {
+            logger.error(`There was an error reading the ${this.type} file.`, err);
             return [];
         }
-
-        return Object.values(this.items);
     }
 
     /**
      * @param {T} item
-     * @returns {Promise.<T | null>}
+     * @returns {T | null}
      */
-    async saveItem(item) {
+    saveItem(item) {
         if (item == null) {
             return;
         }
 
-        if (item.id != null) {
-            this.items[item.id] = item;
-        } else {
+        if (item.id == null) {
             item.id = uuidv1();
-            this.items[item.id] = item;
         }
 
         try {
             this.db.push("/" + item.id, item);
 
             logger.debug(`Saved ${this.type} with id ${item.id} to file.`);
-
             return item;
         } catch (err) {
-            logger.warn(`There was an error saving ${this.type}.`, err);
+            logger.error(`There was an error saving ${this.type}.`, err);
             return null;
         }
     }
 
     /**
      * @param {T[]} allItems
-     * @returns {Promise.<boolean>}
+     * @returns {void}
      */
-    async saveAllItems(allItems) {
+    saveAllItems(allItems) {
         const itemsObject = allItems.reduce((acc, current) => {
             acc[current.id] = current;
             return acc;
         }, {});
 
-        this.items = itemsObject;
-
         try {
-            this.db.push("/", this.items);
+            this.db.push("/", itemsObject);
 
             logger.debug(`Saved all ${this.type} to file.`);
-
-            return true;
-
         } catch (err) {
-            logger.warn(`There was an error saving all ${this.type}s.`, err);
-            return false;
+            logger.error(`There was an error saving all ${this.type}s.`, err);
         }
     }
 
     /**
      * @param {string} itemId
-     * @returns {Promise.<boolean>}
+     * @returns {void}
      */
-    async deleteItem(itemId) {
+    deleteItem(itemId) {
         if (itemId == null) {
             return false;
         }
-
-        delete this.items[itemId];
 
         try {
             this.db.delete("/" + itemId);
 
             logger.debug(`Deleted ${this.type}: ${itemId}`);
-
-            return true;
-
         } catch (err) {
-            logger.warn(`There was an error deleting ${this.type}.`, err);
-            return false;
+            logger.error(`There was an error deleting ${this.type}.`, err);
         }
     }
 
     /**
-     * @returns {Promise.<boolean>}
+     * @returns {void}
      */
-    async deleteAllItems() {
-        this.items = {};
-
+    deleteAllItems() {
         try {
-            this.db.delete("/");
+            this.db.resetData("/");
 
             logger.debug(`Deleted all ${this.type}s.`);
-
-            return true;
-
         } catch (err) {
-            logger.warn(`There was an error deleting all ${this.type}s.`, err);
-            return false;
+            logger.error(`There was an error deleting all ${this.type}s.`, err);
         }
     }
 }

@@ -37,6 +37,8 @@ const JsonDbManager = require("../database/json-db-manager");
 
 /**
  * @extends {JsonDbManager<Timer>}
+ * {@link JsonDbManager}
+ * @hideconstructor
  */
 class TimerManager extends JsonDbManager {
     constructor() {
@@ -47,11 +49,12 @@ class TimerManager extends JsonDbManager {
     }
 
     /**
+     * @override
      * @param {Timer} timer
-     * @returns {Promise.<Timer | null>}
+     * @returns {Timer | null}
      */
-    async saveItem(timer) {
-        const savedTimer = await super.saveItem(timer);
+    saveItem(timer) {
+        const savedTimer = super.saveItem(timer);
 
         if (savedTimer != null) {
             this.updateIntervalForTimer(timer);
@@ -62,11 +65,12 @@ class TimerManager extends JsonDbManager {
     }
 
     /**
+     * @override
      * @param {string} timerId
-     * @returns {Promise.<boolean>}
+     * @returns {void}
      */
-    async deleteItem(timerId) {
-        const itemDeleted = await super.deleteItem(timerId);
+    deleteItem(timerId) {
+        const itemDeleted = super.deleteItem(timerId);
 
         if (itemDeleted) {
             this.clearIntervalForTimerId(timerId);
@@ -77,7 +81,6 @@ class TimerManager extends JsonDbManager {
     }
 
     /**
-     * @emits
      * @returns {void}
      */
     triggerUiRefresh() {
@@ -85,17 +88,17 @@ class TimerManager extends JsonDbManager {
     }
 
     /**
-     * @emits
      * @param {string} timerId
      * @param {boolean} active
+     * @returns {void}
      */
-    async updateTimerActiveStatus(timerId, active = false) {
+    updateTimerActiveStatus(timerId, active = false) {
         const timer = this.getItem(timerId);
 
         if (timer != null) {
             timer.active = active;
 
-            const savedTimer = await this.saveItem(timer);
+            const savedTimer = this.saveItem(timer);
             if (savedTimer != null) {
                 frontendCommunicator.send("timerUpdate", timer);
             }
@@ -104,6 +107,7 @@ class TimerManager extends JsonDbManager {
 
     /**
      * @param {boolean} onlyClearWhenLiveTimers
+     * @returns {void}
      */
     clearIntervals(onlyClearWhenLiveTimers = false) {
         let intervalsToClear;
@@ -293,10 +297,10 @@ frontendCommunicator.onAsync("getTimers",
     async () => timerManager.getAllItems());
 
 frontendCommunicator.onAsync("saveTimer",
-    async (/** @type {Timer} */ timer) => await timerManager.saveItem(timer));
+    async (/** @type {Timer} */ timer) => timerManager.saveItem(timer));
 
 frontendCommunicator.onAsync("saveAllTimers",
-    async (/** @type {Timer[]} */ allTimers) => await timerManager.saveAllItems(allTimers));
+    async (/** @type {Timer[]} */ allTimers) => timerManager.saveAllItems(allTimers));
 
 frontendCommunicator.on("deleteTimer",
     (/** @type {string} */ timerId) => timerManager.deleteItem(timerId));

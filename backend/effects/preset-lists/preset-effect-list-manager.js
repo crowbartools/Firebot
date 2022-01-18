@@ -15,7 +15,9 @@ const JsonDbManager = require("../../database/json-db-manager");
  */
 
 /**
+ * @hideconstructor
  * @extends {JsonDbManager<PresetEffectList>}
+ * {@link JsonDbManager}
  */
 class PresetEffectListManager extends JsonDbManager {
     constructor() {
@@ -23,7 +25,6 @@ class PresetEffectListManager extends JsonDbManager {
     }
 
     /**
-     * @emits
      * @returns {void}
      */
     triggerUiRefresh() {
@@ -37,10 +38,10 @@ frontendCommunicator.onAsync("getPresetEffectLists",
     async () => presetEffectListManager.getAllItems());
 
 frontendCommunicator.onAsync("savePresetEffectList",
-    async (/** @type {PresetEffectList} */ presetEffectList) => await presetEffectListManager.saveItem(presetEffectList));
+    async (/** @type {PresetEffectList} */ presetEffectList) => presetEffectListManager.saveItem(presetEffectList));
 
 frontendCommunicator.onAsync("saveAllPresetEffectLists",
-    async (/** @type {PresetEffectList[]} */ allPresetEffectLists) => await presetEffectListManager.saveAllItems(allPresetEffectLists));
+    async (/** @type {PresetEffectList[]} */ allPresetEffectLists) => presetEffectListManager.saveAllItems(allPresetEffectLists));
 
 frontendCommunicator.on("deletePresetEffectList",
     (/** @type {string} */ presetEffectListId) => presetEffectListManager.deleteItem(presetEffectListId));

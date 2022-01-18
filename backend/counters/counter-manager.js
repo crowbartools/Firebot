@@ -32,6 +32,8 @@ const effectRunner = require("../common/effect-runner");
 
 /**
  * @extends {JsonDbManager<Counter>}
+ * {@link JsonDbManager}
+ * @hideconstructor
  */
 class CounterManager extends JsonDbManager {
     constructor() {
@@ -39,70 +41,66 @@ class CounterManager extends JsonDbManager {
     }
 
     /**
-     * @deprecated Please use loadItems() instead
+     * @deprecated Please use loadItems() instead.
      *
-     * @returns {Promise.<void>}
+     * @returns {void}
      */
-    async loadCounters() {
-        await this.loadItems();
+    loadCounters() {
+        this.loadItems();
     }
 
     /**
-     * @deprecated Please use saveItem() instead
+     * @deprecated Please use saveItem() instead.
      *
      * @param {Counter} counter
-     * @returns {Promise.<void>}
+     * @returns {Counter}
      */
-    async saveCounter(counter) {
-        await this.saveItem(counter);
+    saveCounter(counter) {
+        return this.saveItem(counter);
     }
 
     /**
-     * @deprecated Please use deleteItem() instead
+     * @deprecated Please use deleteItem() instead.
      *
      * @param {Counter} counterId
-     * @returns {Promise.<void>}
+     * @returns {void}
      */
-    async deleteCounter(counterId) {
-        await this.deleteItem(counterId);
+    deleteCounter(counterId) {
+        this.deleteItem(counterId);
     }
 
     /**
-     * @deprecated Please use getItem() instead
+     * @deprecated Please use getItem() instead.
      *
      * @param {string} counterId
      * @returns {Counter}
      */
     getCounter(counterId) {
-        this.getItem(counterId);
+        return this.getItem(counterId);
     }
 
     /**
+     * @deprecated Please use getItemByName() instead.
+     *
      * @param {string} counterName
      * @returns {Counter}
      */
     getCounterByName(counterName) {
-        if (counterName == null) {
-            return null;
-        }
-
-        return this.getAllItems().find(c => c.name.toLowerCase() === counterName.toLowerCase());
+        return this.getItemByName(counterName);
     }
 
     /**
-     * @emits
      * @returns {void}
      */
     triggerUiRefresh() {
         frontendCommunicator.send("all-counters", this.getAllItems());
     }
 
-
     /**
      * @param {string} counterName
      * @returns {Promise.<Counter>}
      */
-    async createCounter(counterName) {
+    createCounter(counterName) {
         const counter = {
             name: counterName,
             value: 0,
@@ -128,7 +126,7 @@ class CounterManager extends JsonDbManager {
      * @param {number} counterValue
      * @returns {Promise.<void>}
      */
-    async updateCounterTxtFile(counterName, counterValue) {
+    updateCounterTxtFile(counterName, counterValue) {
         if (counterName == null || counterValue === undefined || isNaN(counterValue)) {
             return;
         }
@@ -147,7 +145,7 @@ class CounterManager extends JsonDbManager {
      * @param {string} newName
      * @returns {void}
      */
-    async renameCounterTxtFile(oldName, newName) {
+    renameCounterTxtFile(oldName, newName) {
         if (oldName == null || oldName === undefined || newName == null || newName === undefined) {
             return;
         }
@@ -227,7 +225,7 @@ class CounterManager extends JsonDbManager {
      * @private
      * @param {Counter} counter
      * @param {EffectList} effects
-     * @returns {void}
+     * @returns {Promise.<void>}
      */
     _runEffects(counter, effects) {
         const processEffectsRequest = {
@@ -252,7 +250,7 @@ class CounterManager extends JsonDbManager {
     /**
      * @private
      * @param {Counter} counter
-     * @returns {void}
+     * @returns {Promise<void>}
      */
     async _updateCounter(counter) {
         this.saveItem(counter);
@@ -303,18 +301,19 @@ class CounterManager extends JsonDbManager {
     }
 }
 
+
 const counterManager = new CounterManager();
 
 frontendCommunicator.onAsync("getCounters",
     async () => counterManager.getAllItems());
 
 frontendCommunicator.onAsync("saveCounter",
-    async (/** @type {Counter} */ counter) => await counterManager.saveItem(counter));
+    async (/** @type {Counter} */ counter) => counterManager.saveItem(counter));
 
 frontendCommunicator.onAsync("saveAllCounters",
-    async (/** @type {Counter[]} */ allCounters) => await counterManager.saveAllItems(allCounters));
+    async (/** @type {Counter[]} */ allCounters) => counterManager.saveAllItems(allCounters));
 
-frontendCommunicator.onAsync("deleteCounter",
+frontendCommunicator.on("deleteCounter",
     (/** @type {string} */ counterId) => counterManager.deleteItem(counterId));
 
 module.exports = counterManager;
