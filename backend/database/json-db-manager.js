@@ -18,6 +18,9 @@ class JsonDbManager {
         this.type = type;
 
         /** @protected */
+        this.items = {};
+
+        /** @protected */
         this.db = profileManager.getJsonDbInProfile(path);
     }
 
@@ -28,7 +31,10 @@ class JsonDbManager {
         logger.debug(`Attempting to load ${this.type}s...`);
 
         try {
-            this.db.load();
+            const data = this.db.getData("/");
+            if (data) {
+                this.items = data;
+            }
 
             logger.debug(`Loaded ${this.type}s.`);
         } catch (err) {
@@ -45,19 +51,7 @@ class JsonDbManager {
             return null;
         }
 
-        try {
-            const item = this.db.find("/", entry => entry.id === itemId);
-
-            if (item) {
-                return item;
-            }
-
-            logger.warn(`Couldn't find item of type ${this.type}`);
-            return null;
-        } catch (err) {
-            logger.error(`There was an error reading the ${this.type} file.`, err);
-            return null;
-        }
+        return this.items[itemId] || null;
     }
 
     /**
@@ -69,38 +63,14 @@ class JsonDbManager {
             return null;
         }
 
-        try {
-            const item = this.db.find("/", entry => entry.name === itemName);
-
-            if (item) {
-                return item;
-            }
-
-            logger.warn(`Couldn't find item of type ${this.type}`);
-            return null;
-        } catch (err) {
-            logger.error(`There was an error reading the ${this.type} file.`, err);
-            return null;
-        }
+        return Object.values(this.items).find(i => i.name === itemName) || null;
     }
 
     /**
      * @returns {T[]}
      */
     getAllItems() {
-        try {
-            const items = this.db.getData("/");
-
-            if (items) {
-                return Object.values(items);
-            }
-
-            logger.warn(`Couldn't get items of type ${this.type}`);
-            return [];
-        } catch (err) {
-            logger.error(`There was an error reading the ${this.type} file.`, err);
-            return [];
-        }
+        return Object.values(this.items) || [];
     }
 
     /**
