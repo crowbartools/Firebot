@@ -79,7 +79,7 @@ function buildModules(scriptManifest) {
         childProcess: require('child_process'),
         fs: require('fs-extra'),
         path: require('path'),
-        JsonDb: require('node-json-db'),
+        JsonDb: require('node-json-db').JsonDB,
         moment: require('moment'),
         howler: require("howler"),
         logger: logger,

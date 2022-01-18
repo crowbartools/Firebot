@@ -2,7 +2,7 @@
 const electron = require("electron");
 const path = require("path");
 const fs = require("fs-extra");
-const JsonDB = require("node-json-db");
+const { JsonDB } = require("node-json-db");
 
 const appDataPath = electron.app.getPath("appData");
 const v4DataPath = path.join(appDataPath, "Firebot/firebot-data/user-settings");

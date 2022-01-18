@@ -1,7 +1,7 @@
 "use strict";
 
 const { app } = require("electron");
-const JsonDB = require("node-json-db");
+const { JsonDB } = require("node-json-db");
 const path = require("path");
 const dataAccess = require("./data-access.js");
 const logger = require("../logwrapper");
