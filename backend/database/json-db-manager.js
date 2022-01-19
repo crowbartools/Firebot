@@ -86,6 +86,8 @@ class JsonDbManager {
             item.id = uuidv1();
         }
 
+        this.items[item.id] = item;
+
         try {
             this.db.push("/" + item.id, item);
 
@@ -107,6 +109,8 @@ class JsonDbManager {
             return acc;
         }, {});
 
+        this.items = itemsObject;
+
         try {
             this.db.push("/", itemsObject);
 
@@ -122,8 +126,10 @@ class JsonDbManager {
      */
     deleteItem(itemId) {
         if (itemId == null) {
-            return false;
+            return;
         }
+
+        delete this.items[itemId];
 
         try {
             this.db.delete("/" + itemId);
@@ -138,6 +144,8 @@ class JsonDbManager {
      * @returns {void}
      */
     deleteAllItems() {
+        this.items = {};
+
         try {
             this.db.resetData("/");
 
