@@ -15,6 +15,8 @@ const effectQueueRunner = require("./effect-queue-runner");
 
 /**
  * @extends {JsonDbManager<EffectQueue>}
+ * {@link JsonDbManager}
+ * @hideconstructor
  */
 class EffectQueueManager extends JsonDbManager {
     constructor() {
@@ -22,11 +24,12 @@ class EffectQueueManager extends JsonDbManager {
     }
 
     /**
-     * @param {EffectQueue}
-     * @returns {Promise.<EffectQueue | null>}
+     * @override
+     * @param {EffectQueue} effectQueue
+     * @returns {EffectQueue | null}
      * */
-    async saveItem(effectQueue) {
-        const savedEffectQueue = await super.saveItem(effectQueue);
+    saveItem(effectQueue) {
+        const savedEffectQueue = super.saveItem(effectQueue);
 
         if (savedEffectQueue) {
             effectQueueRunner.updateQueueConfig(savedEffectQueue);
@@ -37,7 +40,6 @@ class EffectQueueManager extends JsonDbManager {
     }
 
     /**
-     * @emits
      * @returns {void}
      */
     triggerUiRefresh() {
@@ -51,10 +53,10 @@ frontendCommunicator.onAsync("getEffectQueues",
     async () => effectQueueManager.getAllItems());
 
 frontendCommunicator.onAsync("saveEffectQueue",
-    async (/** @type {SavedEffectQueue} */ effectQueue) => await effectQueueManager.saveItem(effectQueue));
+    async (/** @type {EffectQueue} */ effectQueue) => effectQueueManager.saveItem(effectQueue));
 
 frontendCommunicator.onAsync("saveAllEffectQueues",
-    async (/** @type {SavedEffectQueue[]} */ allEffectQueues) => await effectQueueManager.saveAllItems(allEffectQueues));
+    async (/** @type {EffectQueue[]} */ allEffectQueues) => effectQueueManager.saveAllItems(allEffectQueues));
 
 frontendCommunicator.on("deleteEffectQueue",
     (/** @type {string} */ effectQueueId) => effectQueueManager.deleteItem(effectQueueId));

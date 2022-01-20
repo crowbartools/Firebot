@@ -376,8 +376,27 @@ module.exports = {
             name: "Chat Mode Changed",
             description: "When the chat mode settings have been updated by a moderator.",
             cached: false,
+            queued: false,
             manualMetadata: {
-                chatMode: "Followers",
+                chatMode: {
+                    type: "enum",
+                    options: {
+                        "emoteonly": "Emote Only",
+                        "subscribers": "Subscribers Only",
+                        "followers": "Followers",
+                        "slow": "Slow",
+                        "r9kbeta": "Unique Chat"
+                    },
+                    value: "emoteonly"
+                },
+                chatModeState: {
+                    type: "enum",
+                    options: {
+                        "enabled": "Enabled",
+                        "disabled": "Disabled"
+                    },
+                    value: "enabled"
+                },
                 moderator: "Firebot",
                 duration: "30"
             },
