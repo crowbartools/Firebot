@@ -82,6 +82,9 @@ exports.whenReady = async () => {
     const eventsAccess = require("../../../events/events-access");
     eventsAccess.loadEventsAndGroups();
 
+    const teamRolesManager = require("../../../roles/team-roles-manager");
+    teamRolesManager.loadTeamRoles();
+
     const customRolesManager = require("../../../roles/custom-roles-manager");
     customRolesManager.loadCustomRoles();
 
