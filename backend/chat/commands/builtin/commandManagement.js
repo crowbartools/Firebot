@@ -197,6 +197,7 @@ const commandManagement = {
                 let command = {
                     trigger: trigger,
                     autoDeleteTrigger: false,
+                    ignoreBot: true,
                     active: true,
                     scanWholeMessage: !trigger.startsWith("!"),
                     cooldown: {
