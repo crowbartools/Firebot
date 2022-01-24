@@ -271,14 +271,22 @@ class TwitchChat extends EventEmitter {
         return this._streamerChatClient.unmod(streamer.username, username);
     }
 
-    ban(username, reason) {
+    async ban(username, reason) {
         if (username == null) {
             return;
         }
 
         const streamer = accountAccess.getAccounts().streamer;
 
-        this._streamerChatClient.ban(streamer.username, username, reason);
+        try {
+            await this._streamerChatClient.ban(streamer.username, username, reason);
+        } catch (error) {
+            logger.error("Failed to ban user: ", error);
+
+            if (error === "already_banned") {
+                frontendCommunicator.send("chat-feed-system-message", `${username} is already banned from the channel`);
+            }
+        }
     }
 
     unban(username) {
