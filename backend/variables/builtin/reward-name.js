@@ -17,7 +17,7 @@ const model = {
         handle: "rewardName",
         description: "The name of the reward",
         triggers: triggers,
-        categories: [VariableCategory.COMMON],
+        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
