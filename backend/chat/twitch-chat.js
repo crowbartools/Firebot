@@ -127,8 +127,9 @@ class TwitchChat extends EventEmitter {
             chatterPoll.startChatterPoll();
 
             const vips = await this._streamerChatClient.getVips(accountAccess.getAccounts().streamer.username);
-
-            chatRolesManager.loadUsersInVipRole(vips);
+            if (vips) {
+                chatRolesManager.loadUsersInVipRole(vips);
+            }
         } catch (error) {
             logger.error("Chat connect error", error);
             await this.disconnect();
