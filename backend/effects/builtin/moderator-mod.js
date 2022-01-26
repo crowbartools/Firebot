@@ -11,7 +11,7 @@ const model = {
         name: "Mod",
         description: "Mod or unmod a user",
         icon: "fad fa-crown",
-        categories: [EffectCategory.COMMON, EffectCategory.MODERATION],
+        categories: [EffectCategory.COMMON, EffectCategory.MODERATION, EffectCategory.TWITCH],
         dependencies: [EffectDependency.CHAT]
     },
     optionsTemplate: `

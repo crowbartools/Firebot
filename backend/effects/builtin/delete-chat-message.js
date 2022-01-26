@@ -14,7 +14,7 @@ const model = {
         name: "Delete Chat Message",
         description: "Delete the associated chat message",
         icon: "fad fa-comment-times",
-        categories: [EffectCategory.CHAT_BASED, EffectCategory.ADVANCED],
+        categories: [EffectCategory.CHAT_BASED, EffectCategory.ADVANCED, EffectCategory.TWITCH],
         dependencies: [EffectDependency.CHAT],
         triggers: triggers
     },

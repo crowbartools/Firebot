@@ -12,7 +12,7 @@ const model = {
         description: "Trigger an ad-break",
         hidden: !accountAccess.getAccounts().streamer.loggedIn,
         icon: "fad fa-ad",
-        categories: [EffectCategory.COMMON, EffectCategory.MODERATION],
+        categories: [EffectCategory.COMMON, EffectCategory.MODERATION, EffectCategory.TWITCH],
         dependencies: [EffectDependency.CHAT]
     },
     globalSettings: {},

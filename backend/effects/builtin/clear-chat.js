@@ -11,7 +11,7 @@ const model = {
         name: "Clear Chat",
         description: "Clear all chat messages.",
         icon: "fad fa-eraser",
-        categories: [EffectCategory.COMMON, EffectCategory.MODERATION],
+        categories: [EffectCategory.COMMON, EffectCategory.MODERATION, EffectCategory.TWITCH],
         dependencies: [EffectDependency.CHAT]
     },
     optionsTemplate: `

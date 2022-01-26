@@ -10,7 +10,7 @@ const model = {
         name: "Ban",
         description: "Ban or unban a user.",
         icon: "fad fa-ban",
-        categories: [EffectCategory.COMMON, EffectCategory.MODERATION],
+        categories: [EffectCategory.COMMON, EffectCategory.MODERATION, EffectCategory.TWITCH],
         dependencies: []
     },
     optionsTemplate: `

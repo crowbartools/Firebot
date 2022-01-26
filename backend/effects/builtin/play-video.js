@@ -22,9 +22,9 @@ const playVideo = {
     definition: {
         id: "firebot:playvideo",
         name: "Play Video",
-        description: "Plays a video in the overlay.",
+        description: "Plays a local, Youtube, or Twitch video in the overlay.",
         icon: "fad fa-video",
-        categories: [EffectCategory.COMMON, EffectCategory.OVERLAY],
+        categories: [EffectCategory.COMMON, EffectCategory.OVERLAY, EffectCategory.TWITCH],
         dependencies: [EffectDependency.OVERLAY]
     },
     /**

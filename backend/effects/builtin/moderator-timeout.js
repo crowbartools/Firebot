@@ -11,7 +11,7 @@ const model = {
         name: "Timeout",
         description: "Timeout a user.",
         icon: "fad fa-user-clock",
-        categories: [EffectCategory.COMMON, EffectCategory.MODERATION],
+        categories: [EffectCategory.COMMON, EffectCategory.MODERATION, EffectCategory.TWITCH],
         dependencies: [EffectDependency.CHAT]
     },
     optionsTemplate: `

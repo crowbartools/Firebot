@@ -16,7 +16,7 @@ const chat = {
         name: "Chat",
         description: "Send a chat message.",
         icon: "fad fa-comment-lines",
-        categories: [EffectCategory.COMMON, EffectCategory.CHAT_BASED],
+        categories: [EffectCategory.COMMON, EffectCategory.CHAT_BASED, EffectCategory.TWITCH],
         dependencies: [EffectDependency.CHAT]
     },
     /**

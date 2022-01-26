@@ -11,7 +11,7 @@ const model = {
         name: "VIP",
         description: "Add or remove the VIP role of a user",
         icon: "far fa-gem",
-        categories: [EffectCategory.COMMON, EffectCategory.MODERATION],
+        categories: [EffectCategory.COMMON, EffectCategory.MODERATION, EffectCategory.TWITCH],
         dependencies: [EffectDependency.CHAT]
     },
     optionsTemplate: `

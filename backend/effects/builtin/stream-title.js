@@ -10,7 +10,7 @@ const model = {
         name: "Set Stream Title",
         description: "Set the title of the stream.",
         icon: "fad fa-comment-dots",
-        categories: [EffectCategory.COMMON, EffectCategory.MODERATION],
+        categories: [EffectCategory.COMMON, EffectCategory.MODERATION, EffectCategory.TWITCH],
         dependencies: []
     },
     optionsTemplate: `

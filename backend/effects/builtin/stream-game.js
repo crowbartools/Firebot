@@ -10,7 +10,7 @@ const model = {
         name: "Set Stream Game",
         description: "Set the stream game.",
         icon: "fad fa-gamepad",
-        categories: [EffectCategory.COMMON, EffectCategory.MODERATION],
+        categories: [EffectCategory.COMMON, EffectCategory.MODERATION, EffectCategory.TWITCH],
         dependencies: []
     },
     optionsTemplate: `

@@ -14,7 +14,7 @@ const clip = {
         name: "Create Clip",
         description: "Creates a clip on Twitch.",
         icon: "fad fa-film",
-        categories: [EffectCategory.COMMON, EffectCategory.FUN],
+        categories: [EffectCategory.COMMON, EffectCategory.FUN, EffectCategory.TWITCH],
         dependencies: [EffectDependency.CHAT]
     },
     globalSettings: {},
