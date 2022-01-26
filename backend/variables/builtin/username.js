@@ -1,9 +1,6 @@
 "use strict";
 
-const {
-    EffectTrigger
-} = require("../../effects/models/effectModels");
-
+const { EffectTrigger } = require("../../../shared/effect-constants");
 const { OutputDataType } = require("../../../shared/variable-constants");
 
 let triggers = {};

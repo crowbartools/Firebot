@@ -1,7 +1,7 @@
 "use strict";
 
 const NodeCache = require("node-cache");
-const { EffectTrigger } = require("../effects/models/effectModels");
+const { EffectTrigger } = require("../../shared/effect-constants");
 const filterManager = require("./filters/filter-manager");
 const eventsAccess = require("./events-access");
 
