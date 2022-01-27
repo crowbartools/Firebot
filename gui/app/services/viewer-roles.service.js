@@ -88,11 +88,7 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
             };
 
             service.loadTeamRoles = async function() {
-                const roles = await backendCommunicator.fireEventAsync("getTeamRoles");
-
-                if (roles != null) {
-                    teamRoles = roles;
-                }
+                teamRoles = await backendCommunicator.fireEventAsync("getTeamRoles");
             };
             service.loadTeamRoles();
 

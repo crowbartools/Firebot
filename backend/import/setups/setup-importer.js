@@ -94,7 +94,7 @@ function importSetup(setup, selectedCurrency) {
     // counters
     const counters = setup.components.counters || [];
     for (const counter of counters) {
-        countersManager.saveCounter(counter);
+        countersManager.saveItem(counter);
         countersManager.updateCounterValue(counter.name, counter.value);
     }
     countersManager.triggerUiRefresh();
@@ -182,7 +182,7 @@ function removeSetupComponents(components) {
                     commandAccess.deleteCustomCommand(id);
                     break;
                 case "counters":
-                    countersManager.deleteCounter(id);
+                    countersManager.deleteItem(id);
                     break;
                 case "currencies":
                     frontendCommunicator.send("remove-currency", { id, name });

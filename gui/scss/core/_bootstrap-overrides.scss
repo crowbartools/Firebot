@@ -80,8 +80,12 @@
 .modal-body {
     padding-top: 0;
 }
-.general-button-settings .input-group-addon:first-child {
-    min-width: 150px;
+
+.sub-command,
+.general-button-settings {
+    .input-group-addon:first-child {
+        min-width: 150px;
+    }
 }
 
 .panel-group {

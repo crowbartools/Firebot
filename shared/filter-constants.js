@@ -1,5 +1,10 @@
 "use strict";
 
+/**
+ * Enum for effect filter comparison types.
+ * @readonly
+ * @enum {string}
+ */
 const ComparisonType = Object.freeze({
     IS: "is",
     IS_NOT: "is not",

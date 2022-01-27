@@ -46,8 +46,7 @@ module.exports = {
             cached: true,
             cacheMetaKey: "username",
             manualMetadata: {
-                username: "Firebot",
-                userId: 0
+                username: "Firebot"
             },
             activityFeed: {
                 icon: "fas fa-heart",
@@ -63,12 +62,21 @@ module.exports = {
             cached: false,
             manualMetadata: {
                 username: "Firebot",
-                subPlan: "1000",
+                isPrime: false,
+                isResub: false,
+                subPlan: {
+                    type: "enum",
+                    options: {
+                        Prime: "Prime",
+                        1000: "Tier 1",
+                        2000: "Tier 2",
+                        3000: "Tier 3"
+                    },
+                    value: "1000"
+                },
                 subMessage: "Test message",
                 totalMonths: 10,
-                streak: 8,
-                isPrime: false,
-                isResub: false
+                streak: 8
             },
             activityFeed: {
                 icon: "fas fa-star",
@@ -85,7 +93,15 @@ module.exports = {
             cached: false,
             manualMetadata: {
                 username: "Firebot",
-                subPlan: "1000"
+                subPlan: {
+                    type: "enum",
+                    options: {
+                        1000: "Tier 1",
+                        2000: "Tier 2",
+                        3000: "Tier 3"
+                    },
+                    value: "1000"
+                }
             },
             activityFeed: {
                 icon: "fas fa-star",
@@ -100,11 +116,19 @@ module.exports = {
             description: "When someone gifts a sub to someone else in your channel.",
             cached: false,
             manualMetadata: {
-                username: "MageEnclave",
-                giftSubMonths: 1,
-                gifteeUsername: "MageEnclave",
                 gifterUsername: "Firebot",
-                subPlan: "1000"
+                isAnonymous: false,
+                subPlan: {
+                    type: "enum",
+                    options: {
+                        1000: "Tier 1",
+                        2000: "Tier 2",
+                        3000: "Tier 3"
+                    },
+                    value: "1000"
+                },
+                giftSubMonths: 1,
+                gifteeUsername: "MageEnclave"
             },
             activityFeed: {
                 icon: "fad fa-gift",
@@ -120,23 +144,33 @@ module.exports = {
             description: "When someone gifts random subs to the community of the channel",
             cached: false,
             manualMetadata: {
-                username: "Firebot",
-                subCount: 5,
-                subPlan: "1000",
                 gifterUsername: "Firebot",
                 isAnonymous: false,
-                giftReceivers: [
-                    {gifteeUsername: "User1", giftSubMonths: 3},
-                    {gifteeUsername: "User2", giftSubMonths: 5},
-                    {gifteeUsername: "User3", giftSubMonths: 8},
-                    {gifteeUsername: "User4", giftSubMonths: 10},
-                    {gifteeUsername: "User5", giftSubMonths: 16}
-                ]
+                subCount: 5,
+                subPlan: {
+                    type: "enum",
+                    options: {
+                        1000: "Tier 1",
+                        2000: "Tier 2",
+                        3000: "Tier 3"
+                    },
+                    value: "1000"
+                },
+                giftReceivers: {
+                    type: "gift-receivers-list",
+                    value: [
+                        { gifteeUsername: "User1", giftSubMonths: 3 },
+                        { gifteeUsername: "User2", giftSubMonths: 5 },
+                        { gifteeUsername: "User3", giftSubMonths: 8 },
+                        { gifteeUsername: "User4", giftSubMonths: 10 },
+                        { gifteeUsername: "User5", giftSubMonths: 16 }
+                    ]
+                }
             },
             activityFeed: {
                 icon: "fad fa-gifts",
                 getMessage: (eventData) => {
-                    return `**${eventData.isAnonymous ? "An Anonymous Gifter" : eventData.username}** gifted **${eventData.subCount} Tier ${eventData.subPlan.replace("000", "")}** sub${eventData.subCount > 1 ? 's' : ''} to the community`;
+                    return `**${eventData.isAnonymous ? "An Anonymous Gifter" : eventData.gifterUsername}** gifted **${eventData.subCount} Tier ${eventData.subPlan.replace("000", "")}** sub${eventData.subCount > 1 ? 's' : ''} to the community`;
                 }
             }
         },
@@ -149,7 +183,15 @@ module.exports = {
                 username: "CaveMobster",
                 gifteeUsername: "CaveMobster",
                 gifterUsername: "Firebot",
-                subPlan: "1000"
+                subPlan: {
+                    type: "enum",
+                    options: {
+                        1000: "Tier 1",
+                        2000: "Tier 2",
+                        3000: "Tier 3"
+                    },
+                    value: "1000"
+                }
             },
             activityFeed: {
                 icon: "fas fa-star",
@@ -185,7 +227,40 @@ module.exports = {
             manualMetadata: {
                 username: "Firebot",
                 message: "Test message",
-                badgeTier: "1000"
+                badgeTier: {
+                    type: "enum",
+                    options: {
+                        1: "1",
+                        100: "100",
+                        1000: "1k",
+                        5000: "5k",
+                        10000: "10k",
+                        25000: "25k",
+                        50000: "50k",
+                        75000: "75k",
+                        100000: "100k",
+                        200000: "200k",
+                        300000: "300k",
+                        400000: "400k",
+                        500000: "500k",
+                        600000: "600k",
+                        700000: "700k",
+                        800000: "800k",
+                        900000: "900k",
+                        1000000: "1M",
+                        1250000: "1.25M",
+                        1500000: "1.5M",
+                        1750000: "1.75M",
+                        2000000: "2M",
+                        2500000: "2.5M",
+                        3000000: "3M",
+                        3500000: "3.5M",
+                        4000000: "4M",
+                        4500000: "4.5M",
+                        5000000: "5M"
+                    },
+                    value: "1000"
+                }
             },
             activityFeed: {
                 icon: "fad fa-diamond",
@@ -228,12 +303,14 @@ module.exports = {
             cached: false,
             queued: false,
             manualMetadata: {
-                username: "Firebot"
+                username: "CaveMobster",
+                moderator: "Firebot",
+                modReason: "They were extra naughty"
             },
             activityFeed: {
                 icon: "fad fa-gavel",
                 getMessage: (eventData) => {
-                    return `**${eventData.username}** was banned`;
+                    return `**${eventData.username}** was banned by **${eventData.moderator}**. Reason: **${eventData.modReason}**`;
                 }
             }
         },
@@ -244,13 +321,15 @@ module.exports = {
             cached: false,
             queued: false,
             manualMetadata: {
-                username: "Firebot",
-                timeoutDuration: "1"
+                username: "ebiggz",
+                timeoutDuration: "1",
+                moderator: "Firebot",
+                modReason: "They were naughty"
             },
             activityFeed: {
                 icon: "fad fa-stopwatch",
                 getMessage: (eventData) => {
-                    return `**${eventData.username}** was timed out for **${eventData.timeoutDuration} sec(s)**`;
+                    return `**${eventData.username}** was timed out for **${eventData.timeoutDuration} sec(s)** by ${eventData.moderator}. Reason: **${eventData.modReason}**`;
                 }
             }
         },
@@ -289,6 +368,42 @@ module.exports = {
                 icon: "fad fa-comment-alt",
                 getMessage: (eventData) => {
                     return `**${eventData.username}** sent you the following whisper: ${eventData.message}`;
+                }
+            }
+        },
+        {
+            id: "chat-mode-changed",
+            name: "Chat Mode Changed",
+            description: "When the chat mode settings have been updated by a moderator.",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                chatMode: {
+                    type: "enum",
+                    options: {
+                        "emoteonly": "Emote Only",
+                        "subscribers": "Subscribers Only",
+                        "followers": "Followers",
+                        "slow": "Slow",
+                        "r9kbeta": "Unique Chat"
+                    },
+                    value: "emoteonly"
+                },
+                chatModeState: {
+                    type: "enum",
+                    options: {
+                        "enabled": "Enabled",
+                        "disabled": "Disabled"
+                    },
+                    value: "enabled"
+                },
+                moderator: "Firebot",
+                duration: "30"
+            },
+            activityFeed: {
+                icon: "fad fa-comment-alt",
+                getMessage: (eventData) => {
+                    return `**${eventData.moderator}** has set the chat mode to **${eventData.chatMode}**.`;
                 }
             }
         }

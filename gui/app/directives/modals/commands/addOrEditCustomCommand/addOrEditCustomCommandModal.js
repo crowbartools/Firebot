@@ -123,10 +123,6 @@
                     }
                 }
 
-                if ($ctrl.command.ignoreBot === undefined) {
-                    $ctrl.command.ignoreBot = true;
-                }
-
                 if ($ctrl.command.sendCooldownMessage == null) {
                     $ctrl.command.sendCooldownMessage = true;
                 }

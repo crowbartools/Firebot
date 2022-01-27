@@ -1477,9 +1477,12 @@ thead th{
 
 .general-button-settings {
   margin: 10px 0 25px 0;
+}
 
-  .input-group {
-    padding-bottom:1em;
+.simple-command {
+  .input-group-addon {
+    min-width: 100px;
+    width: 100px;
   }
 }
 

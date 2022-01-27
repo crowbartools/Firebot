@@ -3,7 +3,7 @@
 const logger = require("../../../logwrapper");
 const profileManager = require("../../../common/profile-manager");
 const frontendCommunicator = require("../../../common/frontend-communicator");
-const { EffectTrigger } = require("../../../effects/models/effectModels");
+const { EffectTrigger } = require("../../../../shared/effect-constants");
 const effectRunner = require("../../../common/effect-runner");
 
 let startupScripts = {};

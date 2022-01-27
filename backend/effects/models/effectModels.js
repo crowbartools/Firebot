@@ -1,35 +1,5 @@
 "use strict";
 
-/**
- * Enum for effect triggers
- * @readonly
- * @enum {string}
- */
-const EffectTrigger = Object.freeze({
-    COMMAND: "command",
-    CUSTOM_SCRIPT: "custom_script",
-    STARTUP_SCRIPT: "startup_script",
-    API: "api",
-    EVENT: "event",
-    HOTKEY: "hotkey",
-    TIMER: "timer",
-    COUNTER: "counter",
-    PRESET_LIST: "preset",
-    CHANNEL_REWARD: "channel_reward",
-    MANUAL: "manual",
-    ALL: "all"
-});
-
-/**
- * Enum for effect dependancies
- * @readonly
- * @enum {string}
- */
-const EffectDependency = Object.freeze({
-    CHAT: "chat",
-    OVERLAY: "overlay"
-});
-
 /** The manifest of an effect */
 class EffectDefinition {
     /**
@@ -80,7 +50,5 @@ class Effect {
     }
 }
 
-exports.EffectTrigger = EffectTrigger;
-exports.EffectDependency = EffectDependency;
 exports.EffectDefinition = EffectDefinition;
 exports.Effect = Effect;

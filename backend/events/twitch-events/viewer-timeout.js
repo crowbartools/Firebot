@@ -2,9 +2,12 @@
 
 const eventManager = require("../EventManager");
 
-exports.triggerTimeout = (username, timeoutDuration) => {
+/** @param {import("@twurple/pubsub").PubSubChatModActionMessage} message */
+exports.triggerTimeout = (message) => {
     eventManager.triggerEvent("twitch", "timeout", {
-        username,
-        timeoutDuration
+        username: message.args[0],
+        timeoutDuration: message.args[1],
+        moderator: message.userName,
+        modReason: message.args[2] || ""
     });
 };

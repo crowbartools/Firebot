@@ -38,7 +38,7 @@ function applyCurrency() {
     let currencyData = currencyDatabase.getCurrencies();
 
     Object.values(currencyData).forEach(currency => {
-        let basePayout = currency.basePayout;
+        let basePayout = currency.payout;
         if (!connectionManager.streamerIsOnline()) {
             if (currency.offline == null || currency.offline === 0 || currency.offline === "") {
                 return;

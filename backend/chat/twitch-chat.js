@@ -127,8 +127,9 @@ class TwitchChat extends EventEmitter {
             chatterPoll.startChatterPoll();
 
             const vips = await this._streamerChatClient.getVips(accountAccess.getAccounts().streamer.username);
-
-            chatRolesManager.loadUsersInVipRole(vips);
+            if (vips) {
+                chatRolesManager.loadUsersInVipRole(vips);
+            }
         } catch (error) {
             logger.error("Chat connect error", error);
             await this.disconnect();
@@ -271,14 +272,22 @@ class TwitchChat extends EventEmitter {
         return this._streamerChatClient.unmod(streamer.username, username);
     }
 
-    ban(username, reason) {
+    async ban(username, reason) {
         if (username == null) {
             return;
         }
 
         const streamer = accountAccess.getAccounts().streamer;
 
-        this._streamerChatClient.ban(streamer.username, username, reason);
+        try {
+            await this._streamerChatClient.ban(streamer.username, username, reason);
+        } catch (error) {
+            logger.error("Failed to ban user: ", error);
+
+            if (error === "already_banned") {
+                frontendCommunicator.send("chat-feed-system-message", `${username} is already banned from the channel`);
+            }
+        }
     }
 
     unban(username) {
@@ -481,6 +490,24 @@ frontendCommunicator.on("update-user-banned-status", data => {
         twitchChat.ban(username, "Banned via Firebot");
     } else {
         twitchChat.unban(username);
+    }
+});
+
+frontendCommunicator.on("update-user-vip-status", data => {
+    if (data == null) {
+        return;
+    }
+    const { username, shouldBeVip } = data;
+    if (username == null || shouldBeVip == null) {
+        return;
+    }
+
+    if (shouldBeVip) {
+        twitchChat.addVip(username);
+        chatRolesManager.addVipToVipList(username);
+    } else {
+        twitchChat.removeVip(username);
+        chatRolesManager.removeVipFromVipList(username);
     }
 });
 

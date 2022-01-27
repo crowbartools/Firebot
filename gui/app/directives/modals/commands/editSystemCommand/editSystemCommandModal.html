@@ -8,13 +8,13 @@
     <span aria-hidden="true">&times;</span>
   </button>
   <h4 class="modal-title">
-    <div style="font-size: 22px">Edit System Command:</div>
-    <div style="font-weight: bold; font-size: 24px">{{$ctrl.command.name}}</div>
+    <div class="text-4xl">Edit System Command:</div>
+    <div class="text-4xl font-bold">{{$ctrl.command.name}}</div>
   </h4>
 </div>
-<div class="modal-body">
+<div class="modal-body general-button-settings">
   <setting-container header="Trigger">
-    <div class="input-group" style="margin-bottom: 5px">
+    <div class="input-group pb-5">
       <span class="input-group-addon" id="basic-addon3">Trigger</span>
       <input
         type="text"
@@ -59,24 +59,7 @@
     pad-top="true"
     ng-hide="$ctrl.command.hideCooldowns"
   >
-    <div class="input-group">
-      <span class="input-group-addon">Global</span>
-      <input
-        class="form-control"
-        type="number"
-        min="0"
-        placeholder="secs"
-        ng-model="$ctrl.command.cooldown.global"
-      />
-      <span class="input-group-addon">User</span>
-      <input
-        class="form-control"
-        type="number"
-        min="0"
-        placeholder="secs"
-        ng-model="$ctrl.command.cooldown.user"
-      />
-    </div>
+      <command-cooldown-settings command="$ctrl.command" message-setting-disabled="true"></command-cooldown-settings>
   </setting-container>
 
   <setting-container
@@ -157,15 +140,8 @@
     ng-if="$ctrl.command.subCommands != null && $ctrl.command.subCommands.length > 0"
     pad-top="true"
   >
-    <div
-      style="
-        display: flex;
-        font-size: 11px;
-        font-weight: bold;
-        padding-bottom: 10px;
-      "
-    >
-      <div class="muted" style="flex-basis: 30%; padding-left: 20px">
+    <div class="flex text-lg font-bold pb-4">
+      <div class="muted pl-8" style="flex-basis: 30%;">
         <i class="fas fa-tag"></i> ARG
       </div>
       <div class="muted" style="width: 25%">
@@ -176,8 +152,8 @@
       </div>
       <div class="muted" style="width: 25%"></div>
       <div
-        class="muted"
-        style="flex-basis: 30px; flex-shrink: 0; padding-right: 20px"
+        class="muted pr-8"
+        style="flex-basis: 30px; flex-shrink: 0;"
       ></div>
     </div>
     <subcommand-row

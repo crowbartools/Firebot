@@ -1,5 +1,5 @@
 "use strict";
-const { EffectTrigger } = require("../../../../backend/effects/models/effectModels");
+const { EffectTrigger } = require("../../../../shared/effect-constants");
 const effectsManager = require("../../../../backend/effects/effectManager");
 const effectRunner = require("../../../../backend/common/effect-runner");
 const presetEffectListManager = require("../../../../backend/effects/preset-lists/preset-effect-list-manager");

@@ -30,6 +30,7 @@
                     uib-dropdown-menu
                     role="menu"
                     aria-labelledby="single-button"
+                    style="min-height: fit-content;max-height: 50vh;overflow-y: auto;"
                 >
                     <li
                         role="menuitem"
@@ -63,7 +64,7 @@
                     </li>
                 </ul>
             </div>
-  
+
             `,
             controller: function($scope, sortTagsService) {
                 $scope.sts = sortTagsService;

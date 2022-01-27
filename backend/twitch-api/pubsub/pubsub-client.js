@@ -117,8 +117,32 @@ async function createClient() {
         const modListener = await pubSubClient.onModAction(streamer.userId, streamer.userId, (message) => {
             const frontendCommunicator = require("../../common/frontend-communicator");
 
-            if (message.action === "clear") {
+            switch (message.action) {
+            case "clear":
                 frontendCommunicator.send("twitch:chat:clear-feed", message.userName);
+                break;
+            case "ban":
+                twitchEventsHandler.viewerBanned.triggerBanned(message);
+                frontendCommunicator.send("twitch:chat:user:delete-messages", message.args[0]);
+                break;
+            case "timeout":
+                twitchEventsHandler.viewerTimeout.triggerTimeout(message);
+                frontendCommunicator.send("twitch:chat:user:delete-messages", message.args[0]);
+                break;
+            case "emoteonly":
+            case "emoteonlyoff":
+            case "subscribers":
+            case "subscribersoff":
+            case "followers":
+            case "followersoff":
+            case "slow":
+            case "slowoff":
+            case "r9kbeta": // Unique Chat
+            case "r9kbetaoff":
+                twitchEventsHandler.chatModeChanged.triggerChatModeChanged(message);
+                break;
+            default:
+                return;
             }
         });
         listeners.push(modListener);

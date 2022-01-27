@@ -1,13 +1,12 @@
 "use strict";
 
 const redditProcessor = require("../../common/handlers/redditProcessor");
-const { EffectDependency } = require("../models/effectModels");
 const twitchChat = require("../../chat/twitch-chat");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const settings = require("../../common/settings-access").settings;
 const logger = require("../../logwrapper");
 const webServer = require("../../../server/httpServer");
-const { EffectCategory } = require('../../../shared/effect-constants');
+const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
 
 const model = {
     definition: {
