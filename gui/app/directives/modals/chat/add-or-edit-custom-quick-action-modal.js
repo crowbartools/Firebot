@@ -84,8 +84,7 @@
                     }
 
                     if ($ctrl.quickAction.icon == null || $ctrl.quickAction.icon === "") {
-                        $ctrl.quickActions.icon = "far fa-magic";
-                        return;
+                        $ctrl.quickAction.icon = "far fa-magic";
                     }
 
                     quickActionsService.saveCustomQuickAction($ctrl.quickAction).then(successful => {

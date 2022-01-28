@@ -71,7 +71,10 @@
 
                 if (savedCustomQuickAction) {
                     updateQuickActions(savedCustomQuickAction);
+                    return true;
                 }
+
+                return false;
             };
 
             /**
