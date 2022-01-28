@@ -170,6 +170,9 @@ exports.whenReady = async () => {
     // load activity feed manager
     require("../../../events/activity-feed-manager");
 
+    const iconManager = require("../../../common/icon-manager");
+    iconManager.loadFontAwesomeIcons();
+
     const streamInfoPoll = require("../../../twitch-api/stream-info-poll");
     streamInfoPoll.startStreamInfoPoll();
 

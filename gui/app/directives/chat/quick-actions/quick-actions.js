@@ -21,7 +21,7 @@
                         <button
                             ng-if="action.type === 'custom' && $ctrl.settings[action.id].enabled"
                             class="quick-action-btn mt-4"
-                            ng-click="action.click()"
+                            ng-click="presetEffectListsService.manuallyTriggerPresetEffectList(action.presetListId)"
                             uib-tooltip="{{action.name}}"
                             append-tooltip-to-body="true"
                             tooltip-placement="right"
@@ -29,7 +29,7 @@
                             context-menu="$ctrl.customQuickActionsContextMenu(action)"
                             context-menu-orientation="right"
                         >
-                            <span ng-if="action.label">{{action.label}}</span>
+                            <i class="{{action.icon}}" ng-if="action.icon"></i>
                         </button>
                     </div>
 
@@ -109,7 +109,7 @@
                         ...$ctrl.systemQuickActions,
                         ...customQuickActionsService.customQuickActions
                     ].sort((a, b) => {
-                        return $ctrl.settings[a.id].position - $ctrl.settings[b.id].position;
+                        return $ctrl.settings[a.id]?.position - $ctrl.settings[b.id]?.position;
                     });
                 };
 

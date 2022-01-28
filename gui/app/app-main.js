@@ -120,7 +120,8 @@
         timerService,
         channelRewardsService,
         sortTagsService,
-        streamTagsService
+        streamTagsService,
+        iconService
     ) {
         // 'chatMessagesService' is included so its instantiated on app start
 
@@ -156,6 +157,8 @@
         sortTagsService.loadSortTags();
 
         streamTagsService.loadAllStreamTags();
+
+        iconService.loadFontAwesomeIcons();
 
         //start notification check
         $timeout(() => {
@@ -552,6 +555,22 @@
                 .filter(v =>
                     v.handle.toLowerCase().includes(normalizedQuery)
                 );
+        };
+    });
+
+    // This adds a filter that we can use for searching icons
+    app.filter("iconSearch", function() {
+        return function(icons, query) {
+            if (icons == null || query == null) {
+                return icons;
+            }
+            const normalizedQuery = query.toLowerCase();
+            return icons
+                .filter(v => {
+                    const terms = `${v.style} ${v.name} ${v.searchTerms.join(" ")}`;
+
+                    return terms.toLowerCase().includes(normalizedQuery);
+                });
         };
     });
 
