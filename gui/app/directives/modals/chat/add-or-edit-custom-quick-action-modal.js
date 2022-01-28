@@ -42,7 +42,7 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function(presetEffectListsService, customQuickActionsService, settingsService, ngToast) {
+            controller: function(presetEffectListsService, quickActionsService, settingsService, ngToast) {
                 const $ctrl = this;
 
                 $ctrl.presetEffectLists = presetEffectListsService.getPresetEffectLists();
@@ -88,7 +88,7 @@
                         return;
                     }
 
-                    customQuickActionsService.saveCustomQuickAction($ctrl.quickAction).then(successful => {
+                    quickActionsService.saveCustomQuickAction($ctrl.quickAction).then(successful => {
                         if (successful) {
                             settingsService.setQuickActionSettings($ctrl.settings);
                             $ctrl.close();

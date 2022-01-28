@@ -5,32 +5,34 @@
         .component("quickActions", {
             template: `
                 <div class="quick-actions-column">
-                    <div ng-repeat="action in $ctrl.quickActions track by $index">
-                        <button
-                            ng-if="action.type === 'system' && $ctrl.settings[action.id].enabled"
-                            class="quick-action-btn mt-4"
-                            ng-click="action.click()"
-                            uib-tooltip="{{action.name}}"
-                            append-tooltip-to-body="true"
-                            tooltip-placement="right"
-                            aria-label="{{action.name}}"
-                        >
-                            <i class="{{action.icon}}" ng-if="action.icon"></i>
-                        </button>
+                    <div ui-sortable="sortableOptions">
+                        <div ng-repeat="action in $ctrl.quickActions track by $index">
+                            <button
+                                ng-if="action.type === 'system' && $ctrl.settings[action.id].enabled"
+                                class="quick-action-btn mt-4"
+                                ng-click="$ctrl.triggerQuickAction(action.id)"
+                                uib-tooltip="{{action.name}}"
+                                append-tooltip-to-body="true"
+                                tooltip-placement="right"
+                                aria-label="{{action.name}}"
+                            >
+                                <i class="{{action.icon}}" ng-if="action.icon"></i>
+                            </button>
 
-                        <button
-                            ng-if="action.type === 'custom' && $ctrl.settings[action.id].enabled"
-                            class="quick-action-btn mt-4"
-                            ng-click="presetEffectListsService.manuallyTriggerPresetEffectList(action.presetListId)"
-                            uib-tooltip="{{action.name}}"
-                            append-tooltip-to-body="true"
-                            tooltip-placement="right"
-                            aria-label="{{action.name}}"
-                            context-menu="$ctrl.customQuickActionsContextMenu(action)"
-                            context-menu-orientation="right"
-                        >
-                            <i class="{{action.icon}}" ng-if="action.icon"></i>
-                        </button>
+                            <button
+                                ng-if="action.type === 'custom' && $ctrl.settings[action.id].enabled"
+                                class="quick-action-btn mt-4"
+                                ng-click="$ctrl.triggerQuickAction(action.id)"
+                                uib-tooltip="{{action.name}}"
+                                append-tooltip-to-body="true"
+                                tooltip-placement="right"
+                                aria-label="{{action.name}}"
+                                context-menu="$ctrl.customQuickActionsContextMenu(action)"
+                                context-menu-orientation="right"
+                            >
+                                <i class="{{action.icon}}" ng-if="action.icon"></i>
+                            </button>
+                        </div>
                     </div>
 
                     <hr class="my-5">
@@ -40,7 +42,7 @@
                         uib-tooltip="Add Custom Quick Action"
                         append-tooltip-to-body="true"
                         tooltip-placement="right"
-                        ng-click="customQuickActionsService.showAddOrEditCustomQuickActionModal()"
+                        ng-click="quickActionsService.showAddOrEditCustomQuickActionModal()"
                         aria-label="Add Custom Quick Action"
                     >
                         <i class="fas fa-plus"></i>
@@ -58,77 +60,64 @@
                     </button>
                 </div>
             `,
-            controller: function($scope, utilityService, backendCommunicator, settingsService, customQuickActionsService, presetEffectListsService, logger) {
+            controller: function($scope, utilityService, backendCommunicator, settingsService, quickActionsService, logger) {
                 const $ctrl = this;
 
+                $scope.sortableOptions = {
+                    handle: ".dragHandle",
+                    stop: () => {}
+                };
+
                 $ctrl.settings = settingsService.getQuickActionSettings();
-                $scope.customQuickActionsService = customQuickActionsService;
-                $scope.presetEffectListsService = presetEffectListsService;
+                $scope.quickActionsService = quickActionsService;
                 $scope.logger = logger;
 
                 $ctrl.quickActions = [];
 
-                $ctrl.systemQuickActions = [
-                    {
-                        id: "streamInfo",
-                        name: "Edit Stream Info",
-                        type: "system",
-                        icon: "far fa-pencil",
-                        click: () => {
-                            utilityService.showModal({
-                                component: "editStreamInfoModal",
-                                size: "md"
-                            });
-                        }
-                    },
-                    {
-                        id: "giveCurrency",
-                        name: "Give Currency",
-                        type: "system",
-                        icon: "far fa-coin",
-                        click: () => {
-                            utilityService.showModal({
-                                component: "giveCurrencyModal",
-                                size: "md"
-                            });
-                        }
-                    },
-                    {
-                        id: "streamPreview",
-                        name: "Open Stream Preview",
-                        type: "system",
-                        icon: "far fa-tv-alt",
-                        click: () => {
-                            backendCommunicator.send("show-twitch-preview");
-                        }
-                    }
-                ];
-
                 $ctrl.buildQuickActions = () => {
-                    $ctrl.quickActions = [
-                        ...$ctrl.systemQuickActions,
-                        ...customQuickActionsService.customQuickActions
-                    ].sort((a, b) => {
+                    $ctrl.quickActions = quickActionsService.quickActions.sort((a, b) => {
                         return $ctrl.settings[a.id]?.position - $ctrl.settings[b.id]?.position;
                     });
                 };
 
-                $scope.$watchCollection("customQuickActionsService.customQuickActions", () => {
+                $ctrl.setupListeners = () => {
+                    backendCommunicator.on("trigger-quickaction:stream-info", () => {
+                        utilityService.showModal({
+                            component: "editStreamInfoModal",
+                            size: "md"
+                        });
+                    });
+
+                    backendCommunicator.on("trigger-quickaction:give-currency", () => {
+                        utilityService.showModal({
+                            component: "giveCurrencyModal",
+                            size: "md"
+                        });
+                    });
+                };
+
+                $scope.$watchCollection("quickActionsService.quickActions", () => {
                     $ctrl.buildQuickActions();
                 });
 
+                $ctrl.triggerQuickAction = (quickActionId) => {
+                    backendCommunicator.fireEvent("triggerQuickAction", quickActionId);
+                };
+
                 $ctrl.$onInit = async () => {
+                    $ctrl.setupListeners();
+
                     if ($ctrl.settings == null) {
                         $ctrl.settings = {
-                            streamInfo: {
+                            "firebot:stream-info": {
                                 enabled: true,
                                 position: 1
                             },
-                            giveCurrency: {
+                            "firebot:give-currency": {
                                 enabled: true,
                                 position: 2
                             },
-                            streamPreview: {
+                            "firebot:stream-preview": {
                                 enabled: true,
                                 position: 3
                             }
@@ -141,7 +130,7 @@
                         {
                             html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
                             click: () => {
-                                customQuickActionsService.showAddOrEditCustomQuickActionModal(customQuickAction);
+                                quickActionsService.showAddOrEditCustomQuickActionModal(customQuickAction);
                             }
                         },
                         {
@@ -156,7 +145,7 @@
                                     })
                                     .then(confirmed => {
                                         if (confirmed) {
-                                            customQuickActionsService.deleteCustomQuickAction(customQuickAction.id);
+                                            quickActionsService.deleteCustomQuickAction(customQuickAction.id);
 
                                             delete $ctrl.settings[customQuickAction.id];
                                             settingsService.setQuickActionSettings($ctrl.settings);

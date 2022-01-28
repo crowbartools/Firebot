@@ -1,0 +1,102 @@
+"use strict";
+
+(function() {
+    /** @typedef {import("../../../shared/types").QuickActionDefinition} QuickAction */
+
+    angular
+        .module("firebotApp")
+        .factory("quickActionsService", function(backendCommunicator, utilityService) {
+            let service = {};
+
+            /** @type {QuickAction[]} */
+            service.quickActions = [];
+
+            /**
+             * @memberof quickActionService
+             * @param {QuickAction} quickAction
+             * @returns {void}
+             */
+            const updateQuickActions = (quickAction) => {
+                const index = service.quickActions.findIndex(cqa => cqa.id === quickAction.id);
+                if (index > -1) {
+                    service.quickActions[index] = quickAction;
+                } else {
+                    service.quickActions.push(quickAction);
+                }
+            };
+
+            /**
+             * @returns {void}
+             */
+            service.loadQuickActions = async () => {
+                const quickActions = await backendCommunicator.fireEventAsync("getQuickActions");
+
+                if (quickActions) {
+                    service.quickActions = quickActions;
+                }
+            };
+            service.loadQuickActions();
+
+            backendCommunicator.on("all-quick-actions", (/** @type {QuickAction[]} */ quickActions) => {
+                if (quickActions != null) {
+                    service.quickActions = quickActions;
+                }
+            });
+
+            /**
+             * @returns {QuickAction[]}
+             */
+            service.getQuickActions = async () => {
+                if (!service.quickActions || !service.quickActions.length) {
+                    await service.loadQuickActions();
+                }
+
+                return service.quickActions || [];
+            };
+
+            /**
+             * @param {string} quickActionId
+             * @returns {QuickAction}
+             */
+            service.getQuickAction = (quickActionId) => {
+                return service.quickActions.find(qa => qa.id === quickActionId);
+            };
+
+            /**
+             * @param {QuickAction} customQuickAction
+             * @returns {Promise.<void>}
+             */
+            service.saveCustomQuickAction = async (customQuickAction) => {
+                const savedCustomQuickAction = await backendCommunicator.fireEventAsync("saveCustomQuickAction", customQuickAction);
+
+                if (savedCustomQuickAction) {
+                    updateQuickActions(savedCustomQuickAction);
+                }
+            };
+
+            /**
+             * @param {string} customQuickActionId
+             * @returns {void}
+             */
+            service.deleteCustomQuickAction = (customQuickActionId) => {
+                service.quickActions = service.quickActions.filter(cqa => cqa.id !== customQuickActionId);
+                backendCommunicator.fireEvent("deleteCustomQuickAction", customQuickActionId);
+            };
+
+            /**
+             * @param {QuickAction} [customQuickAction]
+             * @returns {void}
+             */
+            service.showAddOrEditCustomQuickActionModal = (customQuickAction) => {
+                utilityService.showModal({
+                    component: "addOrEditCustomQuickActionModal",
+                    size: "md",
+                    resolveObj: {
+                        quickAction: () => customQuickAction
+                    }
+                });
+            };
+
+            return service;
+        });
+}());

@@ -1,4 +1,5 @@
 "use strict";
+
 (function() {
     const electron = require("electron");
     const shell = electron.shell;
@@ -98,7 +99,7 @@
 
     app.run(function initializeApplication(
         logger,
-        customQuickActionsService,
+        quickActionsService,
         chatMessagesService,
         activityFeedService,
         viewerRolesService,
