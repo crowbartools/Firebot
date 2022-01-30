@@ -55,11 +55,41 @@ exports.registerEvents = () => {
     eventManager.registerEventSource(eventSourceDefinition);
 };
 
+const currencies = new Map([
+    ["USD", "$"],
+    ["AUD", "$"],
+    ["CAD", "$"],
+    ["HKD", "$"],
+    ["MXN", "$"],
+    ["NZD", "$"],
+    ["SGD", "$"],
+    ["EUR", "€"],
+    ["GBP", "£"],
+    ["BRL", "R$"],
+    ["CHF", "CHF"],
+    ["DKK", "kr"],
+    ["NOK", "kr"],
+    ["SEK", "kr"],
+    ["HUF", "Ft"],
+    ["ILS", "₪"],
+    ["INR", "₹"],
+    ["JPY", "¥"],
+    ["MYR", "RM"],
+    ["PHP", "₱"],
+    ["PLN", "zł"],
+    ["UAH", "₴"],
+    ["RUB", "₽"],
+    ["TWD", "NT$"],
+    ["THB", "฿"],
+    ["TRY", "₺"]
+]);
+
 exports.processDonationEvent = (eventData) => {
     eventManager.triggerEvent(EVENT_SOURCE_ID, EventId.DONATION, {
         donationAmount: eventData.amount,
+        formattedDonationAmount: currencies.get(eventData.currency) + eventData.amount,
         donationMessage: eventData.message,
-        from: eventData.name
+        from: eventData.displayName
     });
 };
 
