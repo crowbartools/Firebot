@@ -153,6 +153,14 @@ font-weight: 900;
   display: flex;
 }
 
+.flex-col {
+    flex-direction: column;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
 .justify-between {
   justify-content: space-between;
 }

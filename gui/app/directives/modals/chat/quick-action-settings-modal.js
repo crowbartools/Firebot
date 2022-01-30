@@ -10,7 +10,7 @@
             </div>
             <div class="modal-body py-8 px-14" ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.quickActions">
                 <div ng-repeat="action in $ctrl.quickActions track by $index">
-                    <div style="display: flex;align-items: center;justify-content: space-between;" class="mb-2">
+                    <div class="mb-2 flex justify-between items-center">
                         <span style="font-weight: 900;">{{action.name}}</span>
                         <span class="mr-10" style="margin-left: auto">
                             <input
@@ -19,7 +19,8 @@
                                 type="checkbox"
                                 aria-label="{{action.name}}"
                                 ng-checked="$ctrl.settings[action.id].enabled"
-                                ng-click="$ctrl.settings[action.id].enabled = !$ctrl.settings[action.id].enabled"/>
+                                ng-click="$ctrl.settings[action.id].enabled = !$ctrl.settings[action.id].enabled"
+                            />
                             <label class="tgl-btn" for="{{action.id}}"></label>
                         </span>
                         <span
@@ -46,6 +47,8 @@
                 $ctrl.$onInit = () => {
                     $ctrl.quickActions = $ctrl.resolve.quickActions;
                     $ctrl.settings = $ctrl.resolve.settings;
+
+                    console.log($ctrl.settings);
                 };
 
                 $ctrl.sortableOptions = {

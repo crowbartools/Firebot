@@ -4,41 +4,39 @@
         .module('firebotApp')
         .component("quickActions", {
             template: `
-                <div class="quick-actions-column">
-                    <div ui-sortable="sortableOptions">
-                        <div ng-repeat="action in $ctrl.quickActions track by $index">
-                            <button
-                                ng-if="action.type === 'system' && $ctrl.settings[action.id].enabled"
-                                class="quick-action-btn mt-4"
-                                ng-click="$ctrl.triggerQuickAction(action.id)"
-                                uib-tooltip="{{action.name}}"
-                                append-tooltip-to-body="true"
-                                tooltip-placement="right"
-                                aria-label="{{action.name}}"
-                            >
-                                <i class="{{action.icon}}" ng-if="action.icon"></i>
-                            </button>
+                <div class="quick-actions flex flex-col flex-wrap items-center">
+                    <div ng-repeat="action in quickActionsService.quickActions track by $index" class="mt-4 draggableAction" ng-show="$ctrl.settings[action.id].enabled">
+                        <button
+                            ng-if="action.type === 'system'"
+                            class="quick-action-btn p-0"
+                            ng-click="$ctrl.triggerQuickAction(action.id)"
+                            uib-tooltip="{{action.name}}"
+                            append-tooltip-to-body="true"
+                            tooltip-placement="right"
+                            aria-label="{{action.name}}"
+                        >
+                            <i class="{{action.icon}}" ng-if="action.icon"></i>
+                        </button>
 
-                            <button
-                                ng-if="action.type === 'custom' && $ctrl.settings[action.id].enabled"
-                                class="quick-action-btn mt-4"
-                                ng-click="$ctrl.triggerQuickAction(action.id)"
-                                uib-tooltip="{{action.name}}"
-                                append-tooltip-to-body="true"
-                                tooltip-placement="right"
-                                aria-label="{{action.name}}"
-                                context-menu="$ctrl.customQuickActionsContextMenu(action)"
-                                context-menu-orientation="right"
-                            >
-                                <i class="{{action.icon}}" ng-if="action.icon"></i>
-                            </button>
-                        </div>
+                        <button
+                            ng-if="action.type === 'custom'"
+                            class="quick-action-btn p-0"
+                            ng-click="$ctrl.triggerQuickAction(action.id)"
+                            uib-tooltip="{{action.name}}"
+                            append-tooltip-to-body="true"
+                            tooltip-placement="right"
+                            aria-label="{{action.name}}"
+                            context-menu="$ctrl.customQuickActionsContextMenu(action)"
+                            context-menu-orientation="right"
+                        >
+                            <i class="{{action.icon}}" ng-if="action.icon"></i>
+                        </button>
                     </div>
-
-                    <hr class="my-5">
-
+                </div>
+                <hr class="my-8 flex flex-col items-center">
+                <div class="quick-action-settings flex flex-col items-center">
                     <button
-                        class="quick-action-btn"
+                        class="quick-action-btn p-0"
                         uib-tooltip="Add Custom Quick Action"
                         append-tooltip-to-body="true"
                         tooltip-placement="right"
@@ -49,7 +47,7 @@
                     </button>
 
                     <button
-                        class="quick-action-btn mt-4"
+                        class="quick-action-btn p-0 mt-4"
                         uib-tooltip="Quick Action Settings"
                         append-tooltip-to-body="true"
                         tooltip-placement="right"
@@ -63,22 +61,10 @@
             controller: function($scope, utilityService, backendCommunicator, settingsService, quickActionsService, logger) {
                 const $ctrl = this;
 
-                $scope.sortableOptions = {
-                    handle: ".dragHandle",
-                    stop: () => {}
-                };
-
-                $ctrl.settings = settingsService.getQuickActionSettings();
                 $scope.quickActionsService = quickActionsService;
                 $scope.logger = logger;
 
-                $ctrl.quickActions = [];
-
-                $ctrl.buildQuickActions = () => {
-                    $ctrl.quickActions = quickActionsService.quickActions.sort((a, b) => {
-                        return $ctrl.settings[a.id]?.position - $ctrl.settings[b.id]?.position;
-                    });
-                };
+                $ctrl.settings = settingsService.getQuickActionSettings();
 
                 $ctrl.setupListeners = () => {
                     backendCommunicator.on("trigger-quickaction:stream-info", () => {
@@ -96,10 +82,6 @@
                     });
                 };
 
-                $scope.$watchCollection("quickActionsService.quickActions", () => {
-                    $ctrl.buildQuickActions();
-                });
-
                 $ctrl.triggerQuickAction = (quickActionId) => {
                     backendCommunicator.fireEvent("triggerQuickAction", quickActionId);
                 };
@@ -108,20 +90,19 @@
                     $ctrl.setupListeners();
 
                     if ($ctrl.settings == null) {
-                        $ctrl.settings = {
-                            "firebot:stream-info": {
-                                enabled: true,
-                                position: 1
-                            },
-                            "firebot:give-currency": {
-                                enabled: true,
-                                position: 2
-                            },
-                            "firebot:stream-preview": {
-                                enabled: true,
-                                position: 3
-                            }
-                        };
+                        $ctrl.settings = {};
+
+                        if (quickActionsService.quickActions) {
+                            let position = 0;
+                            quickActionsService.quickActions.forEach(qa => {
+                                $ctrl.settings[qa.id] = {
+                                    enabled: true,
+                                    position: position++
+                                };
+                            });
+
+                            settingsService.setQuickActionSettings($ctrl.settings);
+                        }
                     }
                 };
 
@@ -165,7 +146,7 @@
                         component: "quickActionSettingsModal",
                         size: "sm",
                         resolveObj: {
-                            quickActions: () => $ctrl.quickActions,
+                            quickActions: () => quickActionsService.quickActions,
                             settings: () => $ctrl.settings
                         },
                         dismissCallback: () => {
