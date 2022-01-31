@@ -2,13 +2,13 @@
 
 (function() {
     angular.module("firebotApp")
-        .directive("iconpicker", function ($compile, $document) {
+        .directive("iconPicker", function ($compile, $document) {
             return {
                 scope: {
                     modelValue: '=ngModel'
                 },
-                controller: function($scope, $timeout, $element, iconService) {
-                    $scope.icons = iconService.icons;
+                controller: function($scope, $timeout, $element, iconsService) {
+                    $scope.icons = iconsService.icons;
                     $scope.showIconPicker = false;
                     $scope.displayLimit = 50;
 
@@ -35,12 +35,12 @@
                     $scope.selectIcon = (className) => {
                         $scope.modelValue = className;
                     };
-
                 },
                 link: function(scope, element) {
                     const wrapper = angular.element(`
                         <div class="input-group"></div>`
                     );
+
                     const compiled = $compile(wrapper)(scope);
                     element.wrap(compiled);
 
@@ -88,11 +88,10 @@
                     $compile(iconPicker)(scope);
                     iconPicker.insertAfter(element);
 
-                    const w = iconPicker.find(".icon-container")[0];
-                    console.log(w);
-                    angular.element(w).on('scroll', () => {
+                    const container = iconPicker.find(".icon-container")[0];
+                    angular.element(container).on('scroll', () => {
                         scope.$apply(() => {
-                            if (w.scrollTop + w.offsetHeight >= w.scrollHeight) {
+                            if (container.scrollTop + container.offsetHeight >= container.scrollHeight) {
                                 scope.displayLimit = scope.displayLimit + 50;
                             }
                         });

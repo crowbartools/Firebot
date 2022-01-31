@@ -1,5 +1,4 @@
 "use strict";
-
 (function() {
     const electron = require("electron");
     const shell = electron.shell;
@@ -122,7 +121,7 @@
         channelRewardsService,
         sortTagsService,
         streamTagsService,
-        iconService
+        iconsService
     ) {
         // 'chatMessagesService' is included so its instantiated on app start
 
@@ -159,7 +158,7 @@
 
         streamTagsService.loadAllStreamTags();
 
-        iconService.loadFontAwesomeIcons();
+        iconsService.loadFontAwesomeIcons();
 
         //start notification check
         $timeout(() => {

@@ -3,12 +3,13 @@
 (function() {
     angular
         .module("firebotApp")
-        .factory("iconService", function(backendCommunicator) {
+        .factory("iconsService", function(backendCommunicator) {
             let service = {};
 
+            /** @type {import("../../../shared/types").FontAwesomeIcon[]} */
             service.icons = [];
 
-            service.loadFontAwesomeIcons = async () => {
+            service.loadFontAwesomeIcons = () => {
                 const icons = backendCommunicator.fireEventSync("all-font-awesome-icons");
 
                 if (icons) {

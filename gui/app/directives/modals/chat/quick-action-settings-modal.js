@@ -47,8 +47,6 @@
                 $ctrl.$onInit = () => {
                     $ctrl.quickActions = $ctrl.resolve.quickActions;
                     $ctrl.settings = $ctrl.resolve.settings;
-
-                    console.log($ctrl.settings);
                 };
 
                 $ctrl.sortableOptions = {

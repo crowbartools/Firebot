@@ -8,7 +8,7 @@
             template: `
                 <div class="modal-header" style="text-align: center">
                     <button type="button" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
-                    <h4 class="modal-title">Edit Quick Actions</h4>
+                    <h4 class="modal-title">Edit Quick Action</h4>
                 </div>
                 <div class="modal-body py-8 px-14">
                     <div class="mb-6">
@@ -19,12 +19,12 @@
                     <div class="mb-6">
                         <h3>Icon</h3>
                         <p class="muted">A custom icon which allows you to identify your Quick Action.</p>
-                        <input maxlength="2" type="text" class="form-control" ng-model="$ctrl.quickAction.icon" iconpicker required>
+                        <input maxlength="2" type="text" class="form-control" ng-model="$ctrl.quickAction.icon" icon-picker required>
                     </div>
                     <div>
                         <h3>Effect list</h3>
                         <p class="muted">The effect list that will be run when the Quick Action is triggered.</p>
-                        <ui-select ng-model="$ctrl.quickAction.presetListId" theme="bootstrap"  on-select="presetListSelected($item)">
+                        <ui-select ng-model="$ctrl.quickAction.presetListId" theme="bootstrap" on-select="presetListSelected($item)">
                             <ui-select-match placeholder="Select or search for a preset effect list... ">{{$select.selected.name}}</ui-select-match>
                             <ui-select-choices repeat="presetList.id as presetList in $ctrl.presetEffectLists | filter: { name: $select.search }" style="position:relative;">
                                 <div ng-bind-html="presetList.name | highlight: $select.search"></div>
@@ -45,7 +45,7 @@
             controller: function(presetEffectListsService, quickActionsService, settingsService, ngToast) {
                 const $ctrl = this;
 
-                $ctrl.presetEffectLists = presetEffectListsService.getPresetEffectLists();
+                $ctrl.presetEffectLists = presetEffectListsService.getPresetEffectLists().map(pel => ({id: pel.id, name: pel.name}));
                 $ctrl.settings = settingsService.getQuickActionSettings();
 
                 $ctrl.quickAction = {
@@ -80,6 +80,11 @@
                 $ctrl.save = function() {
                     if ($ctrl.quickAction.name == null || $ctrl.quickAction.name === "") {
                         ngToast.create("Please provide a name for this Quick Action");
+                        return;
+                    }
+
+                    if ($ctrl.quickAction.presetListId == null || $ctrl.quickAction.presetListId === "") {
+                        ngToast.create("Please select a Preset Effect List for this Quick Action");
                         return;
                     }
 

@@ -3,6 +3,7 @@
 const axios = require("axios").default;
 const frontendCommunicator = require("./frontend-communicator");
 
+/** @type {import("../../shared/types").FontAwesomeIcon[]} */
 let icons = [];
 
 const loadFontAwesomeIcons = async () => {
@@ -25,11 +26,11 @@ const loadFontAwesomeIcons = async () => {
         }
 
         const styles = ['Solid', 'Regular', 'Light', 'Duotone'];
-        const versions = styles.map(s => {
+        const versions = styles.map(style => {
             return {
                 name: `${name.replace("-", " ")}`,
-                className: `fa${s.charAt(0).toLowerCase()} fa-${name}`,
-                style: s,
+                className: `fa${style.charAt(0).toLowerCase()} fa-${name}`,
+                style: style,
                 searchTerms: data.search.terms
             };
         });
