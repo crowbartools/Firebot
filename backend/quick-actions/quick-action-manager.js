@@ -62,7 +62,14 @@ class QuickActionManager extends JsonDbManager {
         ].find(qa => qa.id === quickActionId);
 
         if (triggeredQuickAction.type === 'custom') {
-            const presetList = presetEffectListManager.getItem(triggeredQuickAction.presetListId);
+            let effects = [];
+
+            if (triggeredQuickAction.presetListId != null) {
+                const presetList = presetEffectListManager.getItem(triggeredQuickAction.presetListId);
+                effects = presetList.effects;
+            } else if (triggeredQuickAction.effectList != null) {
+                effects = triggeredQuickAction.effectList;
+            }
 
             const request = {
                 trigger: {
@@ -71,7 +78,7 @@ class QuickActionManager extends JsonDbManager {
                         username: accountAccess.getAccounts().streamer.username
                     }
                 },
-                effects: presetList.effects
+                effects: effects
             };
 
             effectRunner.processEffects(request);
