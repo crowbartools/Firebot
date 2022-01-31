@@ -1,5 +1,5 @@
-<div class="chat-tab-content">
-  <quick-actions class="quick-actions-column flex flex-col"></quick-actions>
+<div class="chat-tab-content flex">
+  <quick-actions id="dashboardQuickActions" class="quick-actions-column flex flex-col justify-between" ng-style="{'width': layout.dashboardQuickActions }"></quick-actions>
 
   <column-resizer on-update="updateLayoutSettings(updatedSettings)"></column-resizer>
 

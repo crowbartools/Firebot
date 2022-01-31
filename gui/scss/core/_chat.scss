@@ -16,11 +16,6 @@
     width: 100%;
     height: 100%;
     position: relative;
-
-    quick-actions,
-    > div {
-        float: left;
-    }
 }
 
 .chat-item {
@@ -296,16 +291,16 @@
 .quick-actions-column {
     background: $light-background-color;
     height: 100%;
-    width: 5%;
 
     .quick-actions {
         width: 100%;
-        height: 80%;
+        min-height: 50%;
     }
 
     hr {
         border-top: 1px solid #53545b;
         width: 35px;
+        margin-top: auto;
     }
 
     .quick-action-btn {

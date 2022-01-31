@@ -44,6 +44,7 @@
                 }
 
                 if (updatedSettings) {
+                    console.log(updatedSettings);
                     Object.entries(updatedSettings).forEach(([key, value]) => {
                         settings[key] = value;
                     });
