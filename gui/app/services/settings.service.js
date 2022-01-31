@@ -209,6 +209,14 @@
                 return getDataFromFile("/settings/chatViewCount");
             };
 
+            service.setDashboardLayoutSettings = (layoutSettings) => {
+                pushDataToFile("/settings/dashboard/layout", layoutSettings);
+            };
+
+            service.getDashboardLayoutSettings = () => {
+                return getDataFromFile("/settings/dashboard/layout");
+            };
+
             service.getShowChatViewerList = function() {
                 const value = getDataFromFile("/settings/chatUsersList");
                 return value == null ? true : value;
