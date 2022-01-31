@@ -1,7 +1,5 @@
 <div class="chat-tab-content">
-  <quick-actions class="quick-actions-column flex flex-col justify-between"></quick-actions>
-
-  <resizer></resizer>
+  <quick-actions class="quick-actions-column flex flex-col"></quick-actions>
 
   <div class="viewer-list-column" ng-show="getChatViewerListSetting()">
     <div class="viewer-list-header">
@@ -14,9 +12,6 @@
       <chat-user-category category="Broadcaster" role-key="broadcaster" />
     </div>
   </div>
-
-  <resizer ng-show="getChatViewerListSetting()"></resizer>
-
   <div class="chat-window-column">
     <div class="chat-window-wrapper">
       <div ng-hide="chatFeedIsEnabled()" class="chatfeed-disabled-overlay">
@@ -137,9 +132,6 @@
       </div>
     </div>
   </div>
-
-  <resizer ng-show="settings.showActivityFeed()"></resizer>
-
   <div class="activity-feed-column" ng-show="settings.showActivityFeed()">
     <div class="activity-feed-header">
       <div style="display: flex; align-items: center">

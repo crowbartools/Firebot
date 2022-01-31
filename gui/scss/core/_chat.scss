@@ -16,7 +16,11 @@
     width: 100%;
     height: 100%;
     position: relative;
-    display: flex;
+
+    quick-actions,
+    > div {
+        float: left;
+    }
 }
 
 .chat-item {
@@ -291,20 +295,18 @@
 
 .quick-actions-column {
     background: $light-background-color;
+    border-right: 2px solid $light-background-border;
     height: 100%;
     width: 5%;
-    flex-shrink: 0;
 
     .quick-actions {
         width: 100%;
         height: 80%;
-        min-height: 65%;
     }
 
     hr {
         border-top: 1px solid #53545b;
         width: 35px;
-        margin-top: auto;
     }
 
     .quick-action-btn {
@@ -543,7 +545,6 @@
     width: 24%;
     height: 100%;
     overflow-y: scroll;
-    flex-shrink: 0;
 
     &::-webkit-scrollbar {
         width: 7px;
@@ -624,7 +625,6 @@
     height: 100%;
     padding-bottom: 10px;
     background: adjust-color($light-background-color, $red: 15, $green: 15, $blue: 15);
-    flex-grow: 1;
 }
 
 .chat-window {
@@ -731,24 +731,3 @@
     background: rgba(0, 0, 0, 0.6);
     padding: 10px;
 }
-
-resizer {
-    height: 100%;
-    width: 3px;
-    background: #373c3e;
-
-    &:hover {
-        cursor: col-resize;
-    }
-}
-
-#ghostbar {
-    width: 3px;
-    background-color: #373c3e;
-    opacity: 0.5;
-    position: absolute;
-    bottom: 0;
-    top: 0;
-    cursor: col-resize;
-    z-index: 10000
-  }

@@ -47,7 +47,7 @@
                     </button>
 
                     <button
-                        class="quick-action-btn p-0 mt-4 mb-4"
+                        class="quick-action-btn p-0 mt-4"
                         uib-tooltip="Quick Action Settings"
                         append-tooltip-to-body="true"
                         tooltip-placement="right"
