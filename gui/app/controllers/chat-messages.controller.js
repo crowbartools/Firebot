@@ -198,5 +198,10 @@
                     $scope.submitChat();
                 }
             };
+
+            $scope.hideEventLabel = $('#dashboardActivityFeed').width() < 180;
+            $scope.checkEventLabelVisibility = () => {
+                $scope.hideEventLabel = $('#dashboardActivityFeed').width() < 180 ? true : false;
+            };
         });
 }());
