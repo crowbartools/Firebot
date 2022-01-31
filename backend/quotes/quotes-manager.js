@@ -79,6 +79,17 @@ function addQuote(quote) {
 
 const addQuotes = (quotes) => {
     return new Promise(async (resolve, reject) => {
+        quotes.forEach(async q => {
+            let newQuoteId = await getNextQuoteId();
+
+            if (newQuoteId == null) {
+                logger.error("Unable to add quote as we could not generate a new ID");
+                return reject();
+            }
+
+            q._id = newQuoteId;
+        });
+
         db.insert(quotes, err => {
             if (err) {
                 logger.error("QuoteDB: Error adding quotes: ", err.message);
