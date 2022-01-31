@@ -12,7 +12,7 @@ const accountAccess = require("../common/account-access");
 /**
  * @extends {JsonDbManager<QuickActionDefinition>}
  */
-class CustomQuickActionManager extends JsonDbManager {
+class QuickActionManager extends JsonDbManager {
     constructor() {
         super("Custom Quick Action", "/custom-quick-actions");
 
@@ -90,22 +90,22 @@ class CustomQuickActionManager extends JsonDbManager {
     }
 }
 
-const customQuickActionManager = new CustomQuickActionManager();
+const quickActionManager = new QuickActionManager();
 
 frontendCommunicator.onAsync("getQuickActions",
-    async () => customQuickActionManager.getAllItems());
+    async () => quickActionManager.getAllItems());
 
 frontendCommunicator.onAsync("saveCustomQuickAction",
-    async (/** @type {QuickActionDefinition} */ customQuickAction) => await customQuickActionManager.saveItem(customQuickAction));
+    async (/** @type {QuickActionDefinition} */ customQuickAction) => await quickActionManager.saveItem(customQuickAction));
 
 frontendCommunicator.onAsync("saveAllCustomQuickActions",
-    async (/** @type {QuickActionDefinition[]} */ allCustomQuickActions) => await customQuickActionManager.saveAllItems(allCustomQuickActions));
+    async (/** @type {QuickActionDefinition[]} */ allCustomQuickActions) => await quickActionManager.saveAllItems(allCustomQuickActions));
 
 frontendCommunicator.on("deleteCustomQuickAction",
-    (/** @type {string} */ customQuickActionId) => customQuickActionManager.deleteItem(customQuickActionId));
+    (/** @type {string} */ customQuickActionId) => quickActionManager.deleteItem(customQuickActionId));
 
 frontendCommunicator.on("triggerQuickAction", quickActionId => {
-    customQuickActionManager.triggerQuickAction(quickActionId);
+    quickActionManager.triggerQuickAction(quickActionId);
 });
 
-module.exports = customQuickActionManager;
+module.exports = quickActionManager;
