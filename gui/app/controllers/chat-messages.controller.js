@@ -30,7 +30,34 @@
             // from the end of the array instead of the front
             $scope.messageDisplayLimit = chatMessagesService.chatMessageDisplayLimit * -1;
 
+            $scope.updateLayoutSettings = (updatedSettings) => {
+                let settings = settingsService.getDashboardLayoutSettings();
+
+                if (settings == null) {
+                    settings = {
+                        dashboardQuickActions: "50px",
+                        dashboardViewerList: "225px",
+                        dashboardChatWindow: "100%",
+                        dashboardActivityFeed: "275px"
+                    };
+
+                    settingsService.setDashboardLayoutSettings(settings);
+                }
+
+                if (updatedSettings) {
+                    Object.entries(updatedSettings).forEach(([key, value]) => {
+                        settings[key] = value;
+                    });
+
+                    settingsService.setDashboardLayoutSettings(settings);
+                }
+
+                $scope.layout = settings;
+            };
+
             function getUpdatedChatSettings() {
+                $scope.updateLayoutSettings();
+
                 $scope.compactDisplay = settingsService.isChatCompactMode();
                 $scope.alternateBackgrounds = settingsService.chatAlternateBackgrounds();
                 $scope.hideDeletedMessages = settingsService.chatHideDeletedMessages();
@@ -170,6 +197,11 @@
                     // enter
                     $scope.submitChat();
                 }
+            };
+
+            $scope.hideEventLabel = $('#dashboardActivityFeed').width() < 180;
+            $scope.checkEventLabelVisibility = () => {
+                $scope.hideEventLabel = $('#dashboardActivityFeed').width() < 180 ? true : false;
             };
         });
 }());

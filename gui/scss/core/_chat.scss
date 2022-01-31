@@ -291,9 +291,7 @@
 }
 
 .quick-actions-column {
-    width: 50px;
     background: $light-background-color;
-    border-right: 2px solid $light-background-border;
     height: 100%;
     flex-shrink: 0;
     display: flex;
@@ -509,10 +507,33 @@
     overflow-x: hidden;
     font-size: 16px;
     text-overflow: ellipsis;
+    overflow-y: scroll;
+    height: 100%;
+
+    &::-webkit-scrollbar {
+        width: 7px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: transparent;
+        border-radius: 7px;
+    }
+
+    &:hover {
+        &::-webkit-scrollbar-thumb {
+            background-color: #202225;
+        }
+    }
+
     .activity {
         padding: 10px;
         display: flex;
         align-items: center;
+        justify-content: space-between;
         font-size: 13px;
         background: $activity-bg-color;
         border-radius: 7px;
@@ -533,35 +554,12 @@
 }
 
 .activity-feed-column {
-    width: 275px;
     flex-shrink: 0;
     height: 100%;
-
-    overflow-y: scroll;
-
-    &::-webkit-scrollbar {
-        width: 7px;
-    }
-
-    &::-webkit-scrollbar-track {
-        background-color: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background-color: transparent;
-        border-radius: 7px;
-    }
-
-    &:hover {
-        &::-webkit-scrollbar-thumb {
-            background-color: #202225;
-        }
-    }
 }
 
 // Chat Screen
 .viewer-list-column {
-    width: 225px;
     flex-shrink: 0;
     height: 100%;
 
@@ -616,10 +614,10 @@
 .chat-window-column {
     display: flex;
     flex-direction: column;
-    width: 100%;
     height: 100%;
     padding-bottom: 10px;
     background: adjust-color($light-background-color, $red: 15, $green: 15, $blue: 15);
+    flex-grow: 1;
 }
 
 .chat-window {

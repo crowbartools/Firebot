@@ -1,5 +1,5 @@
 <div class="chat-tab-content">
-  <div class="quick-actions-column">
+  <div id="dashboardQuickActions" class="quick-actions-column" ng-style="{'width': layout.dashboardQuickActions }">
     <button
       class="quick-action-btn"
       ng-click="showEditStreamInfoModal()"
@@ -38,7 +38,9 @@
 
   </div>
 
-  <div class="viewer-list-column" ng-show="getChatViewerListSetting()">
+  <column-resizer on-update="updateLayoutSettings(updatedSettings)"></column-resizer>
+
+  <div id="dashboardViewerList" class="viewer-list-column" ng-show="getChatViewerListSetting()" ng-style="{'width': layout.dashboardViewerList }">
     <div class="viewer-list-header">
       <span> CHAT USERS </span>
     </div>
@@ -49,7 +51,10 @@
       <chat-user-category category="Broadcaster" role-key="broadcaster" />
     </div>
   </div>
-  <div class="chat-window-column">
+
+  <column-resizer on-update="updateLayoutSettings(updatedSettings)" ng-show="getChatViewerListSetting()"></column-resizer>
+
+  <div id="dashboardChatWindow" class="chat-window-column" ng-style="{'width': layout.dashboardChatWindow }">
     <div class="chat-window-wrapper">
       <div ng-hide="chatFeedIsEnabled()" class="chatfeed-disabled-overlay">
         <span style="color: white; font-size: 1.2em; text-align: center"
@@ -169,7 +174,10 @@
       </div>
     </div>
   </div>
-  <div class="activity-feed-column" ng-show="settings.showActivityFeed()">
+
+  <column-resizer on-update="updateLayoutSettings(updatedSettings); checkEventLabelVisibility()" ng-show="settings.showActivityFeed()"></column-resizer>
+
+  <div id="dashboardActivityFeed" class="activity-feed-column" ng-show="settings.showActivityFeed()" ng-style="{'width': layout.dashboardActivityFeed }">
     <div class="activity-feed-header">
       <div style="display: flex; align-items: center">
         <span>ACTIVITY FEED</span>
@@ -252,6 +260,7 @@
         <div
           style="width: 100%"
           class="activity-message"
+          ng-hide="hideEventLabel"
           ng-bind-html="activity.message"
         ></div>
         <div
