@@ -34,14 +34,35 @@
                 if (quickActions) {
                     service.quickActions = quickActions;
                 }
+
+                service.setupListeners();
             };
             service.loadQuickActions();
 
-            backendCommunicator.on("all-quick-actions", (/** @type {QuickAction[]} */ quickActions) => {
-                if (quickActions != null) {
-                    service.quickActions = quickActions;
-                }
-            });
+            /**
+             * @return {void}
+             */
+            service.setupListeners = () => {
+                backendCommunicator.on("all-quick-actions", (/** @type {QuickAction[]} */ quickActions) => {
+                    if (quickActions != null) {
+                        service.quickActions = quickActions;
+                    }
+                });
+
+                backendCommunicator.on("trigger-quickaction:stream-info", () => {
+                    utilityService.showModal({
+                        component: "editStreamInfoModal",
+                        size: "md"
+                    });
+                });
+
+                backendCommunicator.on("trigger-quickaction:give-currency", () => {
+                    utilityService.showModal({
+                        component: "giveCurrencyModal",
+                        size: "md"
+                    });
+                });
+            };
 
             /**
              * @returns {QuickAction[]}

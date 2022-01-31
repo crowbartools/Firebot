@@ -66,29 +66,11 @@
 
                 $ctrl.settings = settingsService.getQuickActionSettings();
 
-                $ctrl.setupListeners = () => {
-                    backendCommunicator.on("trigger-quickaction:stream-info", () => {
-                        utilityService.showModal({
-                            component: "editStreamInfoModal",
-                            size: "md"
-                        });
-                    });
-
-                    backendCommunicator.on("trigger-quickaction:give-currency", () => {
-                        utilityService.showModal({
-                            component: "giveCurrencyModal",
-                            size: "md"
-                        });
-                    });
-                };
-
                 $ctrl.triggerQuickAction = (quickActionId) => {
                     backendCommunicator.fireEvent("triggerQuickAction", quickActionId);
                 };
 
                 $ctrl.$onInit = async () => {
-                    $ctrl.setupListeners();
-
                     if ($ctrl.settings == null) {
                         $ctrl.settings = {};
 
