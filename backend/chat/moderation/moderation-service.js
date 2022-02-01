@@ -45,7 +45,7 @@ parentPort.on("message", event => {
         break;
     case "moderateMessage": {
         // check for banned word
-        if (event.message == null || event.messageId == null) {
+        if (event.isExempt || event.message == null || event.messageId == null) {
             return;
         }
         if (event.scanForBannedWords) {

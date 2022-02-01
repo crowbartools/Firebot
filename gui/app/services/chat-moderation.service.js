@@ -12,14 +12,17 @@
             service.chatModerationData = {
                 settings: {
                     bannedWordList: {
-                        enabled: false
+                        enabled: false,
+                        exemptRoles: []
                     },
                     emoteLimit: {
                         enabled: false,
+                        exemptRoles: [],
                         max: 10
                     },
                     urlModeration: {
                         enabled: false,
+                        exemptRoles: [],
                         viewTime: {
                             enabled: false,
                             viewTimeInHours: 0
@@ -39,11 +42,24 @@
                     if (service.chatModerationData.settings.exemptRoles == null) {
                         service.chatModerationData.settings.exemptRoles = [];
                     }
+
+                    if (service.chatModerationData.settings.bannedWordList.exemptRoles == null) {
+                        service.chatModerationData.settings.bannedWordList.exemptRoles = [];
+                    }
+
                     if (service.chatModerationData.settings.emoteLimit == null) {
                         service.chatModerationData.settings.emoteLimit = {
                             enabled: false,
+                            exemptRoles: [],
                             max: 10
                         };
+                    }
+                    if (service.chatModerationData.settings.emoteLimit.exemptRoles == null) {
+                        service.chatModerationData.settings.emoteLimit.exemptRoles = [];
+                    }
+
+                    if (service.chatModerationData.settings.urlModeration.exemptRoles == null) {
+                        service.chatModerationData.settings.urlModeration.exemptRoles = [];
                     }
                 }
             };

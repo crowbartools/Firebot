@@ -14,14 +14,17 @@ let getbannedRegularExpressionsDb = () => profileManager.getJsonDbInProfile("/ch
 // default settings
 let chatModerationSettings = {
     bannedWordList: {
-        enabled: false
+        enabled: false,
+        exemptRoles: []
     },
     emoteLimit: {
         enabled: false,
+        exemptRoles: [],
         max: 10
     },
     urlModeration: {
         enabled: false,
+        exemptRoles: [],
         viewTime: {
             enabled: false,
             viewTimeInHours: 0
@@ -146,86 +149,82 @@ async function moderateMessage(chatMessage) {
         return;
     }
 
-    let moderateMessage = false;
-
-    const userExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles,
+    const userExemptGlobally = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles,
         chatModerationSettings.exemptRoles);
 
-    if (!userExempt) {
-        moderateMessage = true;
+    if (userExemptGlobally) {
+        return;
     }
 
-    if (moderateMessage) {
-        const chat = require("../twitch-chat");
+    const chat = require("../twitch-chat");
 
-        if (chatModerationSettings.emoteLimit.enabled && !!chatModerationSettings.emoteLimit.max) {
-            const emoteCount = chatMessage.parts.filter(p => p.type === "emote").length;
-            const emojiCount = chatMessage.parts
-                .filter(p => p.type === "text")
-                .reduce((acc, part) => acc + countEmojis(part.text), 0);
-            if ((emoteCount + emojiCount) > chatModerationSettings.emoteLimit.max) {
+
+    const userExemptForEmoteLimit = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, chatModerationSettings.emoteLimit.exemptRoles);
+    if (chatModerationSettings.emoteLimit.enabled && !!chatModerationSettings.emoteLimit.max && !userExemptForEmoteLimit) {
+        const emoteCount = chatMessage.parts.filter(p => p.type === "emote").length;
+        const emojiCount = chatMessage.parts
+            .filter(p => p.type === "text")
+            .reduce((acc, part) => acc + countEmojis(part.text), 0);
+        if ((emoteCount + emojiCount) > chatModerationSettings.emoteLimit.max) {
+            chat.deleteMessage(chatMessage.id);
+            return;
+        }
+    }
+
+    const userExemptForUrlModeration = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, chatModerationSettings.urlModeration.exemptRoles);
+    if (chatModerationSettings.urlModeration.enabled && !userExemptForUrlModeration && !permitCommand.hasTemporaryPermission(chatMessage.username)) {
+        let shouldDeleteMessage = false;
+        const message = chatMessage.rawText;
+        const regex = utils.getUrlRegex();
+
+        if (regex.test(message)) {
+            logger.debug("Url moderation: Found url in message...");
+
+            const settings = chatModerationSettings.urlModeration;
+            let outputMessage = settings.outputMessage || "";
+
+            if (settings.viewTime && settings.viewTime.enabled) {
+                const viewerDB = require('../../database/userDatabase');
+                const viewer = await viewerDB.getUserByUsername(chatMessage.username);
+
+                const viewerViewTime = viewer.minutesInChannel / 60;
+                const minimumViewTime = settings.viewTime.viewTimeInHours;
+
+                if (viewerViewTime <= minimumViewTime) {
+                    outputMessage = outputMessage.replace("{viewTime}", minimumViewTime.toString());
+
+                    logger.debug("Url moderation: Not enough view time.");
+                    shouldDeleteMessage = true;
+                }
+            } else {
+                shouldDeleteMessage = true;
+            }
+
+            if (shouldDeleteMessage) {
                 chat.deleteMessage(chatMessage.id);
+
+                if (outputMessage) {
+                    outputMessage = outputMessage.replace("{userName}", chatMessage.username);
+                    chat.sendChatMessage(outputMessage);
+                }
+
                 return;
             }
         }
-
-        if (chatModerationSettings.urlModeration.enabled) {
-            let shouldDeleteMessage = false;
-
-            if (!permitCommand.hasTemporaryPermission(chatMessage.username)) {
-                const message = chatMessage.rawText;
-                const regex = utils.getUrlRegex();
-
-                if (regex.test(message)) {
-                    logger.debug("Url moderation: Found url in message...");
-
-                    const settings = chatModerationSettings.urlModeration;
-                    let outputMessage = settings.outputMessage || "";
-
-                    if (settings.viewTime && settings.viewTime.enabled) {
-                        const viewerDB = require('../../database/userDatabase');
-                        const viewer = await viewerDB.getUserByUsername(chatMessage.username);
-
-                        const viewerViewTime = viewer.minutesInChannel / 60;
-                        const minimumViewTime = settings.viewTime.viewTimeInHours;
-
-                        if (viewerViewTime <= minimumViewTime) {
-                            outputMessage = outputMessage.replace("{viewTime}", minimumViewTime.toString());
-
-                            logger.debug("Url moderation: Not enough view time.");
-                            shouldDeleteMessage = true;
-                        }
-                    } else {
-                        logger.debug("Url moderation: User does not have exempt role.");
-                        shouldDeleteMessage = true;
-                    }
-
-                    if (shouldDeleteMessage) {
-                        chat.deleteMessage(chatMessage.id);
-
-                        if (outputMessage) {
-                            outputMessage = outputMessage.replace("{userName}", chatMessage.username);
-                            chat.sendChatMessage(outputMessage);
-                        }
-
-                        return;
-                    }
-                }
-            }
-        }
-
-        const message = chatMessage.rawText;
-        const messageId = chatMessage.id;
-        moderationService.postMessage(
-            {
-                type: "moderateMessage",
-                message: message,
-                messageId: messageId,
-                scanForBannedWords: chatModerationSettings.bannedWordList.enabled,
-                maxEmotes: null
-            }
-        );
     }
+
+    const message = chatMessage.rawText;
+    const messageId = chatMessage.id;
+    moderationService.postMessage(
+        {
+            type: "moderateMessage",
+            message: message,
+            messageId: messageId,
+            scanForBannedWords: chatModerationSettings.bannedWordList.enabled,
+            isExempt: rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, chatModerationSettings.bannedWordList.exemptRoles),
+            maxEmotes: null
+        }
+    );
 }
 
 frontendCommunicator.on("chatMessageSettingsUpdate", settings => {

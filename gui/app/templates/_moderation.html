@@ -2,18 +2,10 @@
     <div class="p-6">
       <div class="content-block moderation-feature-block">
         <div class="content-block-body">
-          <div style="font-weight: 600;font-size: 20px;">Exempt Roles <tooltip text="'These roles are exempt from all Moderation features.'" /></div>
+          <div class="font-semibold text-3xl">Exempt Roles <tooltip text="'These roles are exempt from all Moderation features.'" /></div>
 
           <div class="mt-6">
-            <div class="role-bar" ng-repeat="role in getExemptRoles() track by role.id">
-              <span>{{role.name}}</span>
-              <span class="clickable pl-4" ng-click="removeExemptRole(role.id)" uib-tooltip="Remove role" tooltip-append-to-body="true">
-                <i class="far fa-times"></i>
-              </span>
-            </div>
-            <div class="role-bar clickable" ng-click="openAddExemptRoleModal()" uib-tooltip="Add role" tooltip-append-to-body="true">
-              <i class="far fa-plus"></i>
-            </div>
+            <exempt-roles model="cms.chatModerationData.settings.exemptRoles" on-update="cms.saveChatModerationSettings()"></exempt-roles>
           </div>
         </div>
       </div>
@@ -21,7 +13,7 @@
       <div class="content-block moderation-feature-block">
         <div class="content-block-body">
           <div class="title-toggle-button-container">
-            <div class="moderation-feature-title" ng-class="{ muted: !cms.chatModerationData.settings.bannedWordList.enabled }">Banned Word List</div>
+            <div class="font-semibold text-3xl" ng-class="{ muted: !cms.chatModerationData.settings.bannedWordList.enabled }">Banned Word List</div>
             <div class="toggle-button-container">
               <toggle-button
                 toggle-model="cms.chatModerationData.settings.bannedWordList.enabled"
@@ -32,6 +24,12 @@
             </div>
           </div>
           <div class="mt-6" ng-show="cms.chatModerationData.settings.bannedWordList.enabled">
+            <div class="my-6">
+              <div class="mb-4 font text-2xl font-semibold">
+                Exempt Roles <tooltip text="'These roles are exempt from the banned words list.'" />
+              </div>
+              <exempt-roles model="cms.chatModerationData.settings.bannedWordList.exemptRoles" on-update="cms.saveChatModerationSettings()"></exempt-roles>
+            </div>
             <button ng-click="showEditBannedWordsModal()" class="btn btn-default">Edit Word List</button>
           </div>
         </div>
@@ -40,7 +38,7 @@
       <div class="content-block moderation-feature-block">
         <div class="content-block-body">
           <div class="title-toggle-button-container">
-            <div class="moderation-feature-title" ng-class="{ muted: !cms.chatModerationData.settings.emoteLimit.enabled }">Emote/Emoji Limit</div>
+            <div class="font-semibold text-3xl" ng-class="{ muted: !cms.chatModerationData.settings.emoteLimit.enabled }">Emote/Emoji Limit</div>
             <div class="toggle-button-container">
               <toggle-button
                 toggle-model="cms.chatModerationData.settings.emoteLimit.enabled"
@@ -50,7 +48,14 @@
               />
             </div>
           </div>
+
           <div class="mt-6" ng-show="cms.chatModerationData.settings.emoteLimit.enabled">
+            <div class="my-6">
+              <div class="mb-4 font text-2xl font-semibold">
+                Exempt Roles <tooltip text="'These roles are exempt from the emote/emoji limit.'" />
+              </div>
+              <exempt-roles model="cms.chatModerationData.settings.emoteLimit.exemptRoles" on-update="cms.saveChatModerationSettings()"></exempt-roles>
+            </div>
             <firebot-input
               input-title="Max Per Message"
               placeholder-text="Enter number"
@@ -66,7 +71,7 @@
       <div class="content-block moderation-feature-block">
         <div class="content-block-body">
           <div class="title-toggle-button-container">
-            <div class="moderation-feature-title" ng-class="{ muted: !cms.chatModerationData.settings.urlModeration.enabled }">Url Moderation</div>
+            <div class="font-semibold text-3xl" ng-class="{ muted: !cms.chatModerationData.settings.urlModeration.enabled }">Url Moderation</div>
             <div class="toggle-button-container">
               <toggle-button
                 toggle-model="cms.chatModerationData.settings.urlModeration.enabled"
@@ -77,6 +82,12 @@
           </div>
           <div class="muted mb-6">
             A !permit command is automatically added to System Commands.
+          </div>
+          <div style="display: block;width: 100%;" class="my-6">
+            <div class="mb-4 font text-2xl font-semibold">
+              Exempt Roles <tooltip text="'These roles are exempt from the url moderation.'" />
+            </div>
+            <exempt-roles model="cms.chatModerationData.settings.urlModeration.exemptRoles" on-update="cms.saveChatModerationSettings()"></exempt-roles>
           </div>
           <div
             class="title-toggle-button-container mt-6 ml-6"
