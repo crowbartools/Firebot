@@ -94,6 +94,9 @@ exports.whenReady = async () => {
     const presetEffectListManager = require("../../../effects/preset-lists/preset-effect-list-manager");
     presetEffectListManager.loadItems();
 
+    const quickActionManager = require("../../../quick-actions/quick-action-manager");
+    quickActionManager.loadItems();
+
     const startupScriptsManager = require("../../../common/handlers/custom-scripts/startup-scripts-manager");
     startupScriptsManager.loadStartupConfig();
 
@@ -166,6 +169,9 @@ exports.whenReady = async () => {
 
     // load activity feed manager
     require("../../../events/activity-feed-manager");
+
+    const iconManager = require("../../../common/icon-manager");
+    iconManager.loadFontAwesomeIcons();
 
     const streamInfoPoll = require("../../../twitch-api/stream-info-poll");
     streamInfoPoll.startStreamInfoPoll();

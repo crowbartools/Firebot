@@ -9,8 +9,7 @@
             connectionService,
             settingsService,
             utilityService,
-            activityFeedService,
-            backendCommunicator
+            activityFeedService
         ) {
             $scope.settings = settingsService;
 
@@ -105,39 +104,9 @@
                 });
             };
 
-            $scope.showEditStreamInfoModal = () => {
-                utilityService.showModal({
-                    component: "editStreamInfoModal",
-                    size: "md"
-                });
-            };
-
-            $scope.showGiveCurrencyModal = () => {
-                utilityService.showModal({
-                    component: "giveCurrencyModal",
-                    size: "md"
-                });
-            };
-
             $scope.updateChatInput = function(text) {
                 $scope.chatMessage = text;
                 focusMessageInput();
-            };
-
-            $scope.popoutStreamPreview = () => {
-                // const modal = window.open('', 'stream-preview');
-                // modal.document.head.insertAdjacentHTML("beforeend", `
-                //     <style>
-                //         body {
-                //             -webkit-app-region: drag;
-                //         }
-                //         button, a {
-                //             -webkit-app-region: no-drag;
-                //         }
-                //     </style>
-                // `);
-                // modal.document.title = `Stream Preview`;
-                backendCommunicator.send("show-twitch-preview");
             };
 
             $scope.chatFeedIsEnabled = function() {
