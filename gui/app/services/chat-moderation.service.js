@@ -13,12 +13,14 @@
                 settings: {
                     bannedWordList: {
                         enabled: false,
-                        exemptRoles: []
+                        exemptRoles: [],
+                        outputMessage: ""
                     },
                     emoteLimit: {
                         enabled: false,
                         exemptRoles: [],
-                        max: 10
+                        max: 10,
+                        outputMessage: ""
                     },
                     urlModeration: {
                         enabled: false,
@@ -47,15 +49,24 @@
                         service.chatModerationData.settings.bannedWordList.exemptRoles = [];
                     }
 
+                    if (service.chatModerationData.settings.bannedWordList.outputMessage == null) {
+                        service.chatModerationData.settings.bannedWordList.outputMessage = "";
+                    }
+
                     if (service.chatModerationData.settings.emoteLimit == null) {
                         service.chatModerationData.settings.emoteLimit = {
                             enabled: false,
                             exemptRoles: [],
-                            max: 10
+                            max: 10,
+                            outputMessage: ""
                         };
                     }
                     if (service.chatModerationData.settings.emoteLimit.exemptRoles == null) {
                         service.chatModerationData.settings.emoteLimit.exemptRoles = [];
+                    }
+
+                    if (service.chatModerationData.settings.emoteLimit.outputMessage == null) {
+                        service.chatModerationData.settings.emoteLimit.outputMessage = "";
                     }
 
                     if (service.chatModerationData.settings.urlModeration.exemptRoles == null) {

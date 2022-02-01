@@ -51,11 +51,11 @@ parentPort.on("message", event => {
         if (event.scanForBannedWords) {
             let bannedWordFound = hasBannedWord(event.message);
             if (bannedWordFound) {
-                parentPort.postMessage({ type: "deleteMessage", messageId: event.messageId });
+                parentPort.postMessage({ type: "deleteMessage", messageId: event.messageId, username: event.username });
             } else {
                 let bannedRegexMatched = matchesBannedRegex(event.message);
                 if (bannedRegexMatched) {
-                    parentPort.postMessage({ type: "deleteMessage", messageId: event.messageId });
+                    parentPort.postMessage({ type: "deleteMessage", messageId: event.messageId, username: event.username });
                 }
             }
         }

@@ -15,12 +15,14 @@ let getbannedRegularExpressionsDb = () => profileManager.getJsonDbInProfile("/ch
 let chatModerationSettings = {
     bannedWordList: {
         enabled: false,
-        exemptRoles: []
+        exemptRoles: [],
+        outputMessage: ""
     },
     emoteLimit: {
         enabled: false,
         exemptRoles: [],
-        max: 10
+        max: 10,
+        outputMessage: ""
     },
     urlModeration: {
         enabled: false,
@@ -85,6 +87,12 @@ function startModerationService() {
             if (event.messageId) {
                 logger.debug(event.logMessage);
                 chat.deleteMessage(event.messageId);
+
+                let outputMessage = chatModerationSettings.bannedWordList.outputMessage || "";
+                if (outputMessage) {
+                    outputMessage = outputMessage.replace("{userName}", event.username);
+                    chat.sendChatMessage(outputMessage);
+                }
             }
             break;
         }
@@ -167,6 +175,13 @@ async function moderateMessage(chatMessage) {
             .reduce((acc, part) => acc + countEmojis(part.text), 0);
         if ((emoteCount + emojiCount) > chatModerationSettings.emoteLimit.max) {
             chat.deleteMessage(chatMessage.id);
+
+            let outputMessage = chatModerationSettings.emoteLimit.outputMessage || "";
+            if (outputMessage) {
+                outputMessage = outputMessage.replace("{userName}", chatMessage.username);
+                chat.sendChatMessage(outputMessage);
+            }
+
             return;
         }
     }
@@ -215,11 +230,13 @@ async function moderateMessage(chatMessage) {
 
     const message = chatMessage.rawText;
     const messageId = chatMessage.id;
+    const username = chatMessage.username;
     moderationService.postMessage(
         {
             type: "moderateMessage",
             message: message,
             messageId: messageId,
+            username: username,
             scanForBannedWords: chatModerationSettings.bannedWordList.enabled,
             isExempt: rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, chatModerationSettings.bannedWordList.exemptRoles),
             maxEmotes: null

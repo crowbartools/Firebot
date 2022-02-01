@@ -24,7 +24,7 @@
             </div>
           </div>
           <div class="mt-6" ng-show="cms.chatModerationData.settings.bannedWordList.enabled">
-            <div class="my-6">
+            <div class="my-8">
               <div class="mb-4 font text-2xl font-semibold">
                 Exempt Roles <tooltip text="'These roles are exempt from the banned words list.'" />
               </div>
@@ -32,6 +32,24 @@
             </div>
             <button ng-click="showEditBannedWordsModal()" class="btn btn-default">Edit Word List</button>
           </div>
+          <div
+              style="width: 100%;"
+              class="mt-8"
+              ng-show="cms.chatModerationData.settings.bannedWordList.enabled"
+            >
+            <div class="muted">The chat message shown when a message contains a banned word or regex (leave empty for no message).</div>
+              <div class="muted mb-4 font-extrabold">
+                Variables: {userName}</span>
+              </div>
+              <firebot-input
+                input-type="string"
+                disable-variables="true"
+                use-text-area="true"
+                placeholder-text="Enter text"
+                model="cms.chatModerationData.settings.bannedWordList.outputMessage"
+                on-input-update="cms.saveChatModerationSettings()"
+              />
+            </div>
         </div>
       </div>
 
@@ -50,7 +68,7 @@
           </div>
 
           <div class="mt-6" ng-show="cms.chatModerationData.settings.emoteLimit.enabled">
-            <div class="my-6">
+            <div class="my-8">
               <div class="mb-4 font text-2xl font-semibold">
                 Exempt Roles <tooltip text="'These roles are exempt from the emote/emoji limit.'" />
               </div>
@@ -64,6 +82,24 @@
               model="cms.chatModerationData.settings.emoteLimit.max"
               on-input-update="cms.saveChatModerationSettings()"
             />
+            <div
+              style="width: 100%;"
+              class="mt-8"
+              ng-show="cms.chatModerationData.settings.emoteLimit.enabled"
+            >
+            <div class="muted">The chat message shown when a message exceeds the emote/emoji limit (leave empty for no message).</div>
+              <div class="muted mb-4 font-extrabold">
+                Variables: {userName}</span>
+              </div>
+              <firebot-input
+                input-type="string"
+                disable-variables="true"
+                use-text-area="true"
+                placeholder-text="Enter text"
+                model="cms.chatModerationData.settings.emoteLimit.outputMessage"
+                on-input-update="cms.saveChatModerationSettings()"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -83,17 +119,17 @@
           <div class="muted mb-6">
             A !permit command is automatically added to System Commands.
           </div>
-          <div style="display: block;width: 100%;" class="my-6">
-            <div class="mb-4 font text-2xl font-semibold">
+          <div style="display: block;width: 100%;" class="my-8" ng-show="cms.chatModerationData.settings.urlModeration.enabled">
+            <div class="mb-4 text-2xl font-semibold">
               Exempt Roles <tooltip text="'These roles are exempt from the url moderation.'" />
             </div>
             <exempt-roles model="cms.chatModerationData.settings.urlModeration.exemptRoles" on-update="cms.saveChatModerationSettings()"></exempt-roles>
           </div>
           <div
-            class="title-toggle-button-container mt-6 ml-6"
+            class="title-toggle-button-container my-8"
             ng-show="cms.chatModerationData.settings.urlModeration.enabled"
           >
-            <div class="moderation-feature-subtitle" ng-class="{ muted: !cms.chatModerationData.settings.urlModeration.viewTime.enabled }">View Time</div>
+            <div class="font-semibold text-2xl" ng-class="{ muted: !cms.chatModerationData.settings.urlModeration.viewTime.enabled }">View Time</div>
             <div class="toggle-button-container">
               <toggle-button
                 toggle-model="cms.chatModerationData.settings.urlModeration.viewTime.enabled"
@@ -124,7 +160,7 @@
               ng-show="cms.chatModerationData.settings.urlModeration.enabled"
             >
             <div class="muted">The chat message shown when a message containing a url is moderated (leave empty for no message).</div>
-              <div class="muted mb-4" style="font-weight: 800;">
+              <div class="muted mb-4 font-extrabold">
                 Variables: {userName}<span ng-show="cms.chatModerationData.settings.urlModeration.viewTime.enabled">, {viewTime}</span>
               </div>
               <firebot-input
