@@ -35,7 +35,7 @@
                         </div>
                         <div ng-if="$ctrl.listType === 'custom'" class="mt-8">
                             <effect-list effects="$ctrl.quickAction.effectList"
-                                trigger="{{'quick_action'}}"
+                                trigger="quick_action"
                                 trigger-meta="$ctrl.triggerMeta"
                                 update="$ctrl.effectListUpdated(effects)"
                                 modalId="{{modalId}}"
