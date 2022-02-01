@@ -10,6 +10,7 @@ triggers[EffectTrigger.MANUAL] = true;
 triggers[EffectTrigger.CUSTOM_SCRIPT] = true;
 triggers[EffectTrigger.PRESET_LIST] = true;
 triggers[EffectTrigger.CHANNEL_REWARD] = true;
+triggers[EffectTrigger.QUICK_ACTION] = true;
 
 
 module.exports = {

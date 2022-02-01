@@ -99,6 +99,18 @@
   to {opacity: 0.05}
 }
 
+.icon-picker {
+  width: 300px;
+  background: #232325;
+  position: absolute;
+  left: 40px;
+  top: -315px;
+  z-index: 3000;
+  border-radius: 4px;
+  margin: 2px;
+  box-shadow: 5px 5px 21px rgba(0, 0, 0, 0.5);
+}
+
 
 .sticky-top {
   position: sticky;
