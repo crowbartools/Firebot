@@ -3,6 +3,8 @@
 const uuidv1 = require("uuid/v1");
 const util = require("../../../utility");
 const frontendCommunicator = require("../../../common/frontend-communicator");
+const customRolesManager = require("../../../roles/custom-roles-manager");
+const teamRolesManager = require("../../../roles/team-roles-manager");
 
 function seperateTriggerFromArgs(args) {
     let trigger, remainingData = "";
@@ -28,34 +30,93 @@ function seperateTriggerFromArgs(args) {
     };
 }
 
-function mapPermArgToRoleIds(permArg) {
-    if (permArg == null || permArg === "") {
-        return [];
+const mapSingleRole = async (perm) => {
+    const groups = [];
+
+    const roles = [
+        ...customRolesManager.getCustomRoles(),
+        ...await teamRolesManager.getTeamRoles()
+    ];
+
+    const role = roles.find(r => r.name.toLowerCase() === perm);
+    if (role) {
+        groups.push(role.id);
+        return groups;
     }
 
-    let normalizedPerm = permArg.toLowerCase().trim(),
-        groups = [];
-
-    switch (normalizedPerm) {
+    switch (perm) {
     case "all":
     case "everyone":
         break;
     case "sub":
         groups.push("sub");
-        break;
-    case "vip":
+    case "vip": //eslint-disable-line no-fallthrough
         groups.push("vip");
-        break;
-    case "mod":
+    case "mod": //eslint-disable-line no-fallthrough
         groups.push("mod");
-        break;
-    case "streamer":
+    case "streamer": //eslint-disable-line no-fallthrough
         groups.push("broadcaster");
         break;
     }
 
     return groups;
-}
+};
+
+const mapMultipleRoles = async (permArray) => {
+    const groups = [];
+
+    const roles = [
+        ...customRolesManager.getCustomRoles(),
+        ...await teamRolesManager.getTeamRoles()
+    ];
+
+    for (let perm of permArray) {
+        perm = perm.trim();
+
+        const role = roles.find(r => r.name.toLowerCase() === perm);
+        if (role) {
+            groups.push(role.id);
+            continue;
+        }
+
+        switch (perm) {
+        case "all":
+        case "everyone":
+            break;
+        case "sub":
+            groups.push("sub");
+            break;
+        case "vip":
+            groups.push("vip");
+            break;
+        case "mod":
+            groups.push("mod");
+            break;
+        case "streamer":
+            groups.push("broadcaster");
+            break;
+        }
+    }
+
+    return groups;
+};
+
+const mapPermArgToRoleIds = async (permArg) => {
+    if (permArg == null || permArg === "") {
+        return [];
+    }
+
+    const normalizedPerm = permArg.toLowerCase().trim();
+    let groups = [];
+
+    if (normalizedPerm.includes(",")) {
+        groups = await mapMultipleRoles(normalizedPerm.split(","));
+    } else {
+        groups = await mapSingleRole(normalizedPerm);
+    }
+
+    return groups;
+};
 
 /**
  * The Command List command
@@ -386,7 +447,7 @@ const commandManagement = {
                 }
 
                 let restrictions = [];
-                let roleIds = mapPermArgToRoleIds(remainingData);
+                let roleIds = await mapPermArgToRoleIds(remainingData);
 
 
                 if (roleIds === false) {
