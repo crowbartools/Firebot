@@ -15,16 +15,16 @@
                 </div>
                 <div class="modal-body">
                     <div ng-hide="$ctrl.setupSelected">
-                        <file-chooser 
-                            model="$ctrl.setupFilePath" 
-                            on-update="$ctrl.onFileSelected(filepath)" 
+                        <file-chooser
+                            model="$ctrl.setupFilePath"
+                            on-update="$ctrl.onFileSelected(filepath)"
                             options="{filters: [ {name:'Firebot Setups',extensions:['firebotsetup']} ]}"
                             hide-manual-edit="true"
                         >
                         </file-chooser>
                     </div>
                     <div ng-if="$ctrl.setupSelected">
-                        <div style="padding: 15px;background: #242529;border-radius: 5px;">              
+                        <div style="padding: 15px;background: #242529;border-radius: 5px;">
                             <div class="script-name" style="font-size: 30px;font-weight: 100;">{{$ctrl.setup.name || "Unnamed Setup"}} <span class="script-version muted">v{{$ctrl.setup.version}}</span></div>
                             <div style="font-size: 13px;">by <span class="script-author">{{$ctrl.setup.author}}</span></div>
                             <div class="script-description" ng-bind-html="$ctrl.setup.description"></div>
@@ -47,9 +47,9 @@
                         <div ng-show="$ctrl.setup.requireCurrency" style="margin-top: 25px;">
                             <h4 class="muted">Currency To Use:</h4>
                             <p class="muted">This setup requires that you select one of your currencies so it can be used in the included effects, variables, and restrictions.</p>
-                            <select 
-                                class="fb-select" 
-                                ng-model="$ctrl.selectedCurrency" 
+                            <select
+                                class="fb-select"
+                                ng-model="$ctrl.selectedCurrency"
                                 ng-options="currency as currency.name for currency in $ctrl.currencies">
                                 <option value="" disabled selected>Select currency...</option>
                             </select>
@@ -65,8 +65,8 @@
 
                         <div style="display:flex; justify-content: center;margin-top: 25px;">
                             <button type="button" class="btn btn-primary" ng-click="$ctrl.importSetup()">Import Setup</button>
-                        </div>               
-                    </div> 
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer"></div>
             `,
@@ -77,7 +77,7 @@
             },
             controller: function($q, logger, ngToast, commandsService, countersService, currencyService,
                 effectQueuesService, eventsService, hotkeyService, presetEffectListsService,
-                timerService, viewerRolesService, backendCommunicator, $sce) {
+                timerService, viewerRolesService, quickActionsService, backendCommunicator, $sce) {
                 const $ctrl = this;
 
                 $ctrl.setupFilePath = null;
@@ -98,7 +98,10 @@
                     ...hotkeyService.getHotkeys().map(i => i.id),
                     ...presetEffectListsService.getPresetEffectLists().map(i => i.id),
                     ...timerService.getTimers().map(i => i.id),
-                    ...viewerRolesService.getCustomRoles().map(i => i.id)
+                    ...viewerRolesService.getCustomRoles().map(i => i.id),
+                    ...quickActionsService.quickActions
+                        .filter(qa => qa.type === "custom")
+                        .map(i => i.id)
                 ].forEach(id => {
                     $ctrl.currentIds[id] = true;
                 });
@@ -113,7 +116,8 @@
                     hotkeys: "Hotkey",
                     presetEffectLists: "Preset Effect List",
                     timers: "Timer",
-                    viewerRoles: "Viewer Role"
+                    viewerRoles: "Viewer Role",
+                    quickActions: "Quick Action"
                 };
 
                 $ctrl.setup = null;
