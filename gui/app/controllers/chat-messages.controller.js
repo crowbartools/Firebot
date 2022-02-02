@@ -34,7 +34,6 @@
 
                 if (settings == null) {
                     settings = {
-                        dashboardQuickActions: "50px",
                         dashboardViewerList: "225px",
                         dashboardChatWindow: "100%",
                         dashboardActivityFeed: "275px"

@@ -4,7 +4,7 @@
         .module('firebotApp')
         .component("quickActions", {
             template: `
-                <div class="quick-actions flex flex-col flex-wrap items-center text-2xl">
+                <div class="quick-actions flex flex-col items-center text-2xl">
                     <div ng-repeat="action in quickActionsService.quickActions track by $index" class="mt-4 draggableAction" ng-show="$ctrl.settings[action.id].enabled">
                         <button
                             ng-if="action.type === 'system'"

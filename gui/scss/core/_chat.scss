@@ -296,6 +296,11 @@
     .quick-actions {
         width: 100%;
         min-height: 50%;
+        overflow-y: auto;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
     }
 
     hr {

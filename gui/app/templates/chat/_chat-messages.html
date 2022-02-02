@@ -1,7 +1,7 @@
 <div class="chat-tab-content flex">
   <quick-actions id="dashboardQuickActions" class="quick-actions-column flex flex-col justify-between" ng-style="{'width': layout.dashboardQuickActions }"></quick-actions>
 
-  <column-resizer on-update="updateLayoutSettings(updatedSettings)"></column-resizer>
+  <div style="width: 2px;background: #373c3e;position: relative;"></div>
 
   <div id="dashboardViewerList" class="viewer-list-column" ng-show="getChatViewerListSetting()" ng-style="{'width': layout.dashboardViewerList }">
     <div class="viewer-list-header">
