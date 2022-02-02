@@ -26,7 +26,7 @@
             };
 
             /**
-             * @returns {void}
+             * @returns {Promise.<void>}
              */
             service.loadQuickActions = async () => {
                 const quickActions = await backendCommunicator.fireEventAsync("getQuickActions");
