@@ -48,7 +48,7 @@
     "angular": "^1.8.0",
     "angular-animate": "^1.7.8",
     "angular-aria": "^1.7.9",
-    "angular-bootstrap-contextmenu": "^1.2.1",
+    "angular-bootstrap-contextmenu": "git+https://github.com/cavemobster/ui.bootstrap.contextMenu.git",
     "angular-pageslide-directive": "^2.2.0",
     "angular-route": "^1.7.8",
     "angular-sanitize": "^1.7.8",
