@@ -1745,7 +1745,7 @@ thead th{
 
 column-resizer {
   height: 100%;
-  width: 3px;
+  min-width: 2px;
   background: #373c3e;
   position: relative;
 
