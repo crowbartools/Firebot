@@ -53,6 +53,15 @@
 
                 const getAllColumnData = () => {
                     const columns = [];
+                    $.each($parent.children().not('column-resizer'), (_, el) => {
+                        columns.push(getColumnData($(el)));
+                    });
+
+                    return columns;
+                };
+
+                const getResizableColumnData = () => {
+                    const columns = [];
                     $.each($('column-resizer'), (index, el) => {
                         if (index === 0) {
                             const $firstCol = $(el).prev();
@@ -78,8 +87,7 @@
                 };
 
                 const getRelativeWidth = (width) => {
-                    const parentWidth = $parent.width() - getTotalResizersWidth();
-                    return (width / parentWidth) * 100;
+                    return (width / $parent.width()) * 100;
                 };
 
                 const updateSettings = (leftWidth, rightWidth) => {
@@ -98,7 +106,7 @@
                 };
 
                 const findDropColumn = (position) => {
-                    const allColumns = getAllColumnData();
+                    const allColumns = getResizableColumnData();
                     let dropColumn = {};
                     const areas = {};
 
