@@ -166,7 +166,6 @@ async function moderateMessage(chatMessage) {
 
     const chat = require("../twitch-chat");
 
-
     const userExemptForEmoteLimit = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, chatModerationSettings.emoteLimit.exemptRoles);
     if (chatModerationSettings.emoteLimit.enabled && !!chatModerationSettings.emoteLimit.max && !userExemptForEmoteLimit) {
         const emoteCount = chatMessage.parts.filter(p => p.type === "emote").length;
@@ -337,19 +336,37 @@ function load() {
             if (settings.exemptRoles == null) {
                 settings.exemptRoles = [];
             }
+
+            if (settings.bannedWordList.exemptRoles == null) {
+                settings.bannedWordList.exemptRoles = [];
+            }
+
             if (settings.emoteLimit == null) {
-                settings.emoteLimit = { enabled: false, max: 10 };
+                settings.emoteLimit = {
+                    enabled: false,
+                    exemptRoles: [],
+                    max: 10
+                };
+            }
+
+            if (settings.emoteLimit.exemptRoles == null) {
+                settings.emoteLimit.exemptRoles = [];
             }
 
             if (settings.urlModeration == null) {
                 settings.urlModeration = {
                     enabled: false,
+                    exemptRoles: [],
                     viewTime: {
                         enabled: false,
                         viewTimeInHours: 0
                     },
                     outputMessage: ""
                 };
+            }
+
+            if (settings.urlModeration.exemptRoles == null) {
+                settings.urlModeration.exemptRoles = [];
             }
 
             if (settings.urlModeration.enabled) {
