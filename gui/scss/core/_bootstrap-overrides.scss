@@ -266,7 +266,10 @@ textarea.form-control {
     border: 2px solid $dropdown-menu-border;
     background-color: $dropdown-menu-bg;
     z-index: 2080;
-    min-width: 125px;
+
+    &:not(.effect-overflow-menu) {
+        min-width: 125px;
+    }
 }
 
 .dropdown-menu>li>a {
