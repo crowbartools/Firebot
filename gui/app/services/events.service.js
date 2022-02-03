@@ -82,6 +82,24 @@
             service.setSelectedTab(duplicatedGroup.id);
         };
 
+        service.saveEvent = (eventToSave) => {
+            const indexInMain = mainEvents.findIndex(e => e.id === eventToSave.id);
+            if (indexInMain > -1) {
+                mainEvents[indexInMain] = eventToSave;
+                service.saveMainEvents();
+                return;
+            }
+
+            groups.forEach(group => {
+                const indexInGroup = group.events.findIndex(e => e.id === eventToSave.id);
+                if (indexInGroup > -1) {
+                    group.events[indexInGroup] = eventToSave;
+                    service.saveGroup(group);
+                    return;
+                }
+            });
+        };
+
         service.saveGroup = function(group) {
             let existingIndex = groups.findIndex(g => g.id === group.id);
             if (existingIndex >= 0) {

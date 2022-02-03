@@ -6,6 +6,7 @@ const path = require("path");
 const url = require("url");
 const windowStateKeeper = require("electron-window-state");
 const fileOpenHelpers = require("../file-open-helpers");
+const logger = require("../../logwrapper");
 
 /**
  * Firebot's main window
@@ -251,7 +252,7 @@ function createMainWindow() {
 /**
  * Creates the splash screen
  */
-function createSplashScreen() {
+const createSplashScreen = async () => {
     const isLinux = process.platform !== 'win32' && process.platform !== 'darwin';
     const splash = new BrowserWindow({
         width: 240,
@@ -281,8 +282,13 @@ function createSplashScreen() {
             pathname: path.join(__dirname, "../../../gui/splashscreen/splash.html"),
             protocol: "file:",
             slashes: true
-        }));
-}
+        }))
+        .then(() => {
+            logger.debug("Loaded splash screen");
+        }).catch((reason) => {
+            logger.error("Failed to load splash screen", reason);
+        });
+};
 
 /**
  * Firebot's main window

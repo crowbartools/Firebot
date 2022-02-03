@@ -3,11 +3,8 @@
 const { settings } = require("../../common/settings-access");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/httpServer");
-const effectModels = require("../models/effectModels");
-const { EffectDependency } = effectModels;
 const twitchApi = require("../../twitch-api/api");
-
-const { EffectCategory } = require('../../../shared/effect-constants');
+const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
 const logger = require("../../logwrapper");
 
 const shoutoutStyles = `

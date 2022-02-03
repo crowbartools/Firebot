@@ -1,7 +1,6 @@
 "use strict";
 
-const { EffectTrigger, EffectDependency } = require("../models/effectModels");
-const { EffectCategory } = require('../../../shared/effect-constants');
+const { EffectCategory, EffectTrigger, EffectDependency } = require('../../../shared/effect-constants');
 const twitchChat = require("../../chat/twitch-chat");
 
 /**
@@ -16,7 +15,7 @@ const chat = {
         name: "Chat",
         description: "Send a chat message.",
         icon: "fad fa-comment-lines",
-        categories: [EffectCategory.COMMON, EffectCategory.CHAT_BASED],
+        categories: [EffectCategory.COMMON, EffectCategory.CHAT_BASED, EffectCategory.TWITCH],
         dependencies: [EffectDependency.CHAT]
     },
     /**

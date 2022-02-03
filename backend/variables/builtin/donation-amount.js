@@ -2,10 +2,7 @@
 
 "use strict";
 
-const {
-    EffectTrigger
-} = require("../../effects/models/effectModels");
-
+const { EffectTrigger } = require("../../../shared/effect-constants");
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
 let triggers = {};
@@ -26,9 +23,9 @@ const model = {
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {
-        const dononationAmount = (trigger.metadata.eventData && trigger.metadata.eventData.dononationAmount) || 0;
+        const donationAmount = (trigger.metadata.eventData && trigger.metadata.eventData.donationAmount) || 0;
 
-        return dononationAmount;
+        return donationAmount;
     }
 };
 

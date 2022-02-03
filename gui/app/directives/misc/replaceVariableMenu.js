@@ -157,7 +157,7 @@
                                         <div class="category-text">{{category}}</div>
                                     </div>
                                 </div>
-                                <div style="padding: 10px;overflow-y: auto; height: 250px;">
+                                <div style="padding: 10px;overflow-y: auto; height: 250px;width: 100%;">
                                     <div ng-repeat="variable in variables | orderBy:'handle' | variableCategoryFilter:activeCategory | variableSearch:variableSearchText" style="margin-bottom: 8px;">
                                         <div style="font-weight: 900;">\${{variable.usage ? variable.usage : variable.handle}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="addVariable(variable)"></i></div>
                                         <div class="muted" ng-bind-html="variable.description"></div>

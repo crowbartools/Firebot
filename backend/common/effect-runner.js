@@ -2,7 +2,7 @@
 const {ipcMain} = require('electron');
 const logger = require('../logwrapper');
 const effectManager = require("../effects/effectManager");
-const { EffectDependency, EffectTrigger } = require("../effects/models/effectModels");
+const { EffectDependency, EffectTrigger } = require("../../shared/effect-constants");
 const accountAccess = require('./account-access');
 const replaceVariableManager = require("./../variables/replace-variable-manager");
 const effectQueueManager = require("../effects/queues/effect-queue-manager");

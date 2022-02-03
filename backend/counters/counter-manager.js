@@ -1,178 +1,234 @@
 "use strict";
-const logger = require("../logwrapper");
-const profileManager = require("../../backend/common/profile-manager.js");
+
+const frontendCommunicator = require("../common/frontend-communicator");
+const JsonDbManager = require("../database/json-db-manager");
+const profileManager = require("../common/profile-manager.js");
 const fs = require("fs-extra");
 const path = require("path");
-const uuid = require("uuid/v4");
 const sanitizeFileName = require("sanitize-filename");
-const frontendCommunicator = require("../common/frontend-communicator");
-const accountAccess = require("../common/account-access");
-
+const logger = require("../logwrapper");
 const { TriggerType } = require("../common/EffectType");
+const accountAccess = require("../common/account-access");
 const effectRunner = require("../common/effect-runner");
 
-const getCountersDb = () => profileManager.getJsonDbInProfile("/counters/counters");
+/**
+ * @typedef EffectList
+ * @prop {string} id - The id of the effect list
+ * @prop {any[]} list - the array of effect objects
+*/
 
-const COUNTERS_FOLDER = profileManager.getPathInProfile("/counters/");
+/**
+ * @typedef Counter
+ * @prop {string} id - the id of the counter
+ * @prop {string} name - the name of the counter
+ * @prop {number} value - the value of the counter
+ * @prop {boolean} saveToTxtFile - whether the value of the counter should be saved in a text file
+ * @prop {number} [minimum] - the minimum value the counter can be
+ * @prop {number} [maximum] - the maximum value the counter can be
+ * @prop {EffectList} [updateEffects] - the effect list that is triggered when the counter is updated
+ * @prop {EffectList} [minimumEffects] - the effect list that is triggered when the minimum value is hit
+ * @prop {EffectList} [maximumEffects] - the effect list that is triggered when the maximum value is hit
+ */
 
-let counters = {};
-
-function loadCounters() {
-    let countersDb = getCountersDb();
-
-    let countersData = countersDb.getData("/");
-    if (countersData != null) {
-        counters = countersData;
-    }
-}
-
-function getCounterTxtFilePath(counterName) {
-    const sanitizedCounterName = sanitizeFileName(counterName);
-    return path.join(COUNTERS_FOLDER, `${sanitizedCounterName}.txt`);
-}
-
-function updateCounterTxtFile(counterName, counterValue) {
-    if (counterName == null || counterValue === undefined || isNaN(counterValue)) {
-        return Promise.resolve();
-    }
-
-    let txtFilePath = getCounterTxtFilePath(counterName);
-
-    return fs.writeFile(txtFilePath, counterValue.toString(), 'utf8');
-}
-
-
-function renameCounterTxtFile(oldName, newName) {
-    if (oldName == null || oldName === undefined || newName == null || newName === undefined) {
-        return Promise.resolve();
+/**
+ * @extends {JsonDbManager<Counter>}
+ * {@link JsonDbManager}
+ * @hideconstructor
+ */
+class CounterManager extends JsonDbManager {
+    constructor() {
+        super("Counter", "/counters/counters");
     }
 
-    let oldTxtFilePath = getCounterTxtFilePath(oldName);
-    let newTxtFilePath = getCounterTxtFilePath(newName);
-
-    return fs.rename(oldTxtFilePath, newTxtFilePath);
-}
-
-async function deleteCounterTxtFile(counterName) {
-    if (counterName == null) {
-        return Promise.resolve();
-    }
-    let txtFilePath = getCounterTxtFilePath(counterName);
-    const fileExists = await fs.pathExists(txtFilePath);
-    if (fileExists) {
-        return fs.unlink(txtFilePath);
-    }
-}
-
-function saveCounter(counter) {
-    if (counter == null) {
-        return;
+    /**
+     * @deprecated Please use loadItems() instead.
+     *
+     * @returns {void}
+     */
+    loadCounters() {
+        this.loadItems();
     }
 
-    counters[counter.id] = counter;
-
-    const countersDb = getCountersDb();
-    try {
-        countersDb.push(`/${counter.id}`, counter);
-    } catch (err) {
-        logger.error(err);
-    }
-}
-
-function deleteCounter(counterId) {
-    const counter = counters[counterId];
-    if (counter) {
-        deleteCounterTxtFile(counter.name);
-        delete counters[counterId];
+    /**
+     * @deprecated Please use saveItem() instead.
+     *
+     * @param {Counter} counter
+     * @returns {Counter}
+     */
+    saveCounter(counter) {
+        return this.saveItem(counter);
     }
 
-    const countersDb = getCountersDb();
-    try {
-        countersDb.delete(`/${counterId}`);
-    } catch (err) {
-        logger.error(err);
-    }
-}
-
-function createCounter(name) {
-    const counter = {
-        id: uuid(),
-        name: name,
-        value: 0,
-        saveToTxtFile: false
-    };
-    saveCounter(counter);
-    return counter;
-}
-
-function getCounter(counterId) {
-    return counters[counterId];
-}
-
-function getCounterByName(counterName) {
-    if (counterName == null) {
-        return null;
-    }
-    const countersArray = Object.values(counters);
-    return countersArray.find(c => c.name.toLowerCase() === counterName.toLowerCase());
-}
-
-async function updateCounterValue(counterId, value, overridePreviousValue = false) {
-    if (counterId == null || value === undefined || isNaN(value)) {
-        logger.warn("Could not update counter, invalid values: ", counterId, value);
-        return;
+    /**
+     * @deprecated Please use deleteItem() instead.
+     *
+     * @param {Counter} counterId
+     * @returns {void}
+     */
+    deleteCounter(counterId) {
+        this.deleteItem(counterId);
     }
 
-    value = parseInt(value);
+    /**
+     * @deprecated Please use getItem() instead.
+     *
+     * @param {string} counterId
+     * @returns {Counter}
+     */
+    getCounter(counterId) {
+        return this.getItem(counterId);
+    }
 
-    const counter = getCounter(counterId);
+    /**
+     * @deprecated Please use getItemByName() instead.
+     *
+     * @param {string} counterName
+     * @returns {Counter}
+     */
+    getCounterByName(counterName) {
+        return this.getItemByName(counterName);
+    }
 
-    let newValue = overridePreviousValue ? value : counter.value + value;
+    /**
+     * @returns {void}
+     */
+    triggerUiRefresh() {
+        frontendCommunicator.send("all-counters", this.getAllItems());
+    }
 
-    let hitMin = false, hitMax = false;
-    if (counter.maximum !== undefined && counter.maximum !== null) {
-        if (newValue >= counter.maximum) {
-            newValue = counter.maximum;
-            if (counter.value !== counter.maximum) {
-                hitMax = true;
-            }
+    /**
+     * @param {string} counterName
+     * @returns {Promise.<Counter>}
+     */
+    createCounter(counterName) {
+        const counter = {
+            name: counterName,
+            value: 0,
+            saveToTxtFile: false
+        };
+
+        return this.saveItem(counter);
+    }
+
+    /**
+     * @param {string} counterName
+     * @returns {string}
+     */
+    getCounterTxtFilePath(counterName) {
+        const folder = profileManager.getPathInProfile("/counters/");
+        const sanitizedCounterName = sanitizeFileName(counterName);
+
+        return path.join(folder, `${sanitizedCounterName}.txt`) || "";
+    }
+
+    /**
+     * @param {string} counterName
+     * @param {number} counterValue
+     * @returns {Promise.<void>}
+     */
+    updateCounterTxtFile(counterName, counterValue) {
+        if (counterName == null || counterValue === undefined || isNaN(counterValue)) {
+            return;
         }
-    }
-    if (counter.minimum !== undefined && counter.minimum !== null) {
-        if (newValue <= counter.minimum) {
-            newValue = counter.minimum;
-            if (counter.value !== counter.minimum) {
-                hitMin = true;
-            }
+
+        try {
+            const txtFilePath = this.getCounterTxtFilePath(counterName);
+            return fs.writeFile(txtFilePath, counterValue.toString(), 'utf8');
+        } catch (err) {
+            logger.error("There was an error updating the counter text file", err);
+            return;
         }
     }
 
-    if (newValue === counter.value) {
-        return;
+    /**
+     * @param {string} oldName
+     * @param {string} newName
+     * @returns {void}
+     */
+    renameCounterTxtFile(oldName, newName) {
+        if (oldName == null || oldName === undefined || newName == null || newName === undefined) {
+            return;
+        }
+
+        try {
+            const oldTxtFilePath = this.getCounterTxtFilePath(oldName);
+            const newTxtFilePath = this.getCounterTxtFilePath(newName);
+
+            return fs.rename(oldTxtFilePath, newTxtFilePath);
+        } catch (err) {
+            logger.error("There was an error renaming the counter text file", err);
+            return;
+        }
     }
 
-    counter.value = newValue;
+    /**
+     * @param {string} counterName
+     * @returns {Promise.<void>}
+     */
+    async deleteCounterTxtFile(counterName) {
+        if (counterName == null) {
+            return;
+        }
 
-    saveCounter(counter);
+        try {
+            const txtFilePath = this.getCounterTxtFilePath(counterName);
+            const fileExists = await fs.pathExists(txtFilePath);
 
-    await updateCounterTxtFile(counter.name, counter.value);
+            if (fileExists) {
+                return fs.unlink(txtFilePath);
+            }
 
-    frontendCommunicator.send("counter-update", {
-        counterId: counter.id,
-        counterValue: counter.value
-    });
-
-    let effects = null;
-    if (hitMin) {
-        effects = counter.minimumEffects;
-    } else if (hitMax) {
-        effects = counter.maximumEffects;
-    } else {
-        effects = counter.updateEffects;
+            logger.warn("Failed to delete counter text file: the file doesn't exist.", {location: "/counters/counter-manager.js:117"});
+        } catch (err) {
+            logger.error("There was an error deleting the counter text file", err);
+            return;
+        }
     }
 
-    if (effects) {
-        let processEffectsRequest = {
+    /**
+     * @private
+     * @param {Counter} counter
+     * @param {number} value
+     * @returns {boolean}
+     */
+    _counterHitMin(counter, value) {
+        if (counter.minimum === undefined || counter.minimum === null) {
+            return false;
+        }
+
+        if (value <= counter.minimum) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @private
+     * @param {Counter} counter
+     * @param {number} value
+     * @returns {boolean}
+     */
+    _counterHitMax(counter, value) {
+        if (counter.maximum === undefined || counter.maximum === null) {
+            return false;
+        }
+
+        if (value >= counter.maximum) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @private
+     * @param {Counter} counter
+     * @param {EffectList} effects
+     * @returns {Promise.<void>}
+     */
+    _runEffects(counter, effects) {
+        const processEffectsRequest = {
             trigger: {
                 type: TriggerType.COUNTER,
                 metadata: {
@@ -190,48 +246,74 @@ async function updateCounterValue(counterId, value, overridePreviousValue = fals
         };
         effectRunner.processEffects(processEffectsRequest);
     }
-}
 
-function triggerUiRefresh() {
-    frontendCommunicator.send("all-counters", counters ? Object.values(counters) : []);
-}
+    /**
+     * @private
+     * @param {Counter} counter
+     * @returns {Promise<void>}
+     */
+    async _updateCounter(counter) {
+        this.saveItem(counter);
 
+        await this.updateCounterTxtFile(counter.name, counter.value);
 
-frontendCommunicator.onAsync("get-counters", async () => {
-    return counters ? Object.values(counters) : [];
-});
-
-frontendCommunicator.onAsync("create-counter", async (counterName) => {
-    const counter = createCounter(counterName);
-    return counter;
-});
-
-frontendCommunicator.on("save-counter", async (counter) => {
-    saveCounter(counter);
-    updateCounterTxtFile(counter.name, counter.value);
-});
-
-frontendCommunicator.on("rename-counter", async (data) => {
-    let { counterId, newName } = data;
-    const counter = getCounter(counterId);
-
-    if (counter) {
-        const oldName = counter.name;
-        renameCounterTxtFile(oldName, newName);
-
-        counter.name = newName;
-        saveCounter(counter);
+        frontendCommunicator.send("counter-update", counter);
     }
-});
 
-frontendCommunicator.on("delete-counter", async (counterId) => {
-    deleteCounter(counterId);
-});
+    /**
+     * @param {string} counterId
+     * @param {number} value
+     * @param {number} overridePreviousValue
+     * @returns {Promise.<void>}
+     */
+    async updateCounterValue(counterId, value, overridePreviousValue = false) {
+        if (counterId == null || value === undefined || isNaN(value)) {
+            logger.warn(`Failed to update counter, invalid values: ${counterId}, ${value}`, {location: "/counters/counter-manager:126"});
+            return;
+        }
 
-exports.loadCounters = loadCounters;
-exports.getCounter = getCounter;
-exports.getCounterByName = getCounterByName;
-exports.updateCounterValue = updateCounterValue;
-exports.saveCounter = saveCounter;
-exports.deleteCounter = deleteCounter;
-exports.triggerUiRefresh = triggerUiRefresh;
+        const counter = this.getItem(counterId);
+        let newValue = parseInt(value);
+
+        if (!overridePreviousValue) {
+            newValue = counter.value + newValue;
+        }
+
+        let effects = {};
+        if (this._counterHitMin(counter, newValue)) {
+            newValue = counter.minimum;
+            effects = counter.minimumEffects;
+
+        } else if (this._counterHitMax(counter, newValue)) {
+            newValue = counter.maximum;
+            effects = counter.maximumEffects;
+
+        } else {
+            effects = counter.updateEffects;
+        }
+
+        if (newValue !== counter.value) {
+            counter.value = newValue;
+            await this._updateCounter(counter);
+
+            this._runEffects(counter, effects);
+        }
+    }
+}
+
+
+const counterManager = new CounterManager();
+
+frontendCommunicator.onAsync("getCounters",
+    async () => counterManager.getAllItems());
+
+frontendCommunicator.onAsync("saveCounter",
+    async (/** @type {Counter} */ counter) => counterManager.saveItem(counter));
+
+frontendCommunicator.onAsync("saveAllCounters",
+    async (/** @type {Counter[]} */ allCounters) => counterManager.saveAllItems(allCounters));
+
+frontendCommunicator.on("deleteCounter",
+    (/** @type {string} */ counterId) => counterManager.deleteItem(counterId));
+
+module.exports = counterManager;

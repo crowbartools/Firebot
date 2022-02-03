@@ -12,14 +12,19 @@
             service.chatModerationData = {
                 settings: {
                     bannedWordList: {
-                        enabled: false
+                        enabled: false,
+                        exemptRoles: [],
+                        outputMessage: ""
                     },
                     emoteLimit: {
                         enabled: false,
-                        max: 10
+                        exemptRoles: [],
+                        max: 10,
+                        outputMessage: ""
                     },
                     urlModeration: {
                         enabled: false,
+                        exemptRoles: [],
                         viewTime: {
                             enabled: false,
                             viewTimeInHours: 0
@@ -39,11 +44,33 @@
                     if (service.chatModerationData.settings.exemptRoles == null) {
                         service.chatModerationData.settings.exemptRoles = [];
                     }
+
+                    if (service.chatModerationData.settings.bannedWordList.exemptRoles == null) {
+                        service.chatModerationData.settings.bannedWordList.exemptRoles = [];
+                    }
+
+                    if (service.chatModerationData.settings.bannedWordList.outputMessage == null) {
+                        service.chatModerationData.settings.bannedWordList.outputMessage = "";
+                    }
+
                     if (service.chatModerationData.settings.emoteLimit == null) {
                         service.chatModerationData.settings.emoteLimit = {
                             enabled: false,
-                            max: 10
+                            exemptRoles: [],
+                            max: 10,
+                            outputMessage: ""
                         };
+                    }
+                    if (service.chatModerationData.settings.emoteLimit.exemptRoles == null) {
+                        service.chatModerationData.settings.emoteLimit.exemptRoles = [];
+                    }
+
+                    if (service.chatModerationData.settings.emoteLimit.outputMessage == null) {
+                        service.chatModerationData.settings.emoteLimit.outputMessage = "";
+                    }
+
+                    if (service.chatModerationData.settings.urlModeration.exemptRoles == null) {
+                        service.chatModerationData.settings.urlModeration.exemptRoles = [];
                     }
                 }
             };

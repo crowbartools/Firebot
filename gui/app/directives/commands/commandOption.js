@@ -11,7 +11,7 @@
         template: `
        <div ng-switch="$ctrl.metadata.type" style="padding-bottom: 20px;font-size: 15px;font-weight: 600;">
 
-          <div>{{$ctrl.metadata.type != 'boolean' && $ctrl.metadata.title ? $ctrl.metadata.title : ""}}</div>
+          <div style="margin-bottom: 5px;">{{$ctrl.metadata.type != 'boolean' && $ctrl.metadata.title ? $ctrl.metadata.title : ""}}</div>
           <div ng-if="$ctrl.metadata.type != 'boolean' && $ctrl.metadata.description" style="padding-bottom: 5px;font-size: 14px;font-weight: 100;opacity:0.8;">{{$ctrl.metadata.description}}</div>
 
           <div ng-switch-when="string">
@@ -26,13 +26,13 @@
           <div ng-switch-when="boolean" style="padding-top:10px;">
             <label class="control-fb control--checkbox" style="font-weight: 600;">
               {{$ctrl.metadata.title ? $ctrl.metadata.title : $ctrl.name}}
-              <tooltip text="$ctrl.metadata.description"></tooltip>
+              <tooltip ng-if="$ctrl.metadata.description" text="$ctrl.metadata.description"></tooltip>
               <input type="checkbox" ng-click="$ctrl.metadata.value = !$ctrl.metadata.value" ng-checked="$ctrl.metadata.value" aria-label="...">
               <div class="control__indicator"></div>
             </label>
           </div>
 
-          <div ng-switch-when="enum"  style="padding-top:5px;">
+          <div ng-switch-when="enum" style="padding-top:5px;">
             <dropdown-select options="$ctrl.metadata.options" selected="$ctrl.metadata.value"></dropdown-select>
           </div>
 
@@ -68,13 +68,23 @@
             <discord-channel-webhooks model="$ctrl.metadata.value"></discord-channel-webhooks>
           </div>
 
+          <div ng-switch-when="gift-receivers-list" class="pt-5">
+            <gift-receivers-list model="$ctrl.metadata.value"></gift-receivers-list>
+          </div>
+
           <div ng-if="$ctrl.metadata.tip != null && $ctrl.metadata.tip !== ''" class="muted" style="font-size:12px; padding-top: 3px;">{{$ctrl.metadata.tip}}</div>
        </div>
 
        <hr ng-if="$ctrl.metadata.showBottomHr" style="margin-top:10px; margin-bottom:15px;" />
        `,
-        controller: function() {
+        controller: function($scope) {
             let ctrl = this;
+
+            $scope.$watchCollection("$ctrl.metadata", (changes) => {
+                if (changes.key === 'isAnonymous') {
+                    ctrl.onUpdate({ value: changes.value });
+                }
+            });
 
             //If there is no value, supply the default.
             ctrl.$onInit = function() {

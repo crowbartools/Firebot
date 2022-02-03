@@ -82,7 +82,7 @@
             },
             controller: function(commandsService, countersService, currencyService,
                 effectQueuesService, eventsService, hotkeyService, presetEffectListsService,
-                timerService, viewerRolesService, accountAccess, utilityService,
+                timerService, viewerRolesService, quickActionsService, accountAccess, utilityService,
                 ngToast, backendCommunicator, $q) {
 
                 const $ctrl = this;
@@ -147,6 +147,12 @@
                         all: viewerRolesService.getCustomRoles(),
                         nameField: "name",
                         key: "viewerRoles"
+                    },
+                    {
+                        label: "Quick Actions",
+                        all: quickActionsService.quickActions.filter(qa => qa.type === "custom"),
+                        nameField: "name",
+                        key: "quickActions"
                     }
                 ];
 
@@ -179,7 +185,8 @@
                         hotkeys: [],
                         presetEffectLists: [],
                         timers: [],
-                        viewerRoles: []
+                        viewerRoles: [],
+                        quickActions: []
                     },
                     requireCurrency: false,
                     importQuestions: []

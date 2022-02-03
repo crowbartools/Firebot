@@ -270,10 +270,10 @@
                         $scope.usingOverlayInstances = settingsService.useOverlayInstances();
 
                         $scope.broadcastingSoftwares = [
-                            "OBS/SLOBS", "XSplit", "Direct Link/2 PC Setup"
+                            "OBS/Streamlabs Desktop", "XSplit", "Direct Link/2 PC Setup"
                         ];
 
-                        $scope.selectedBroadcastingSoftware = "OBS/SLOBS";
+                        $scope.selectedBroadcastingSoftware = "OBS/Streamlabs Desktop";
 
                         $scope.updateSelectedBroadcastingSoftware = (type) => {
                             $scope.selectedBroadcastingSoftware = type;

@@ -3,7 +3,7 @@
 const { ipcMain } = require("electron");
 const logger = require("../logwrapper");
 let EventEmitter = require("events");
-const { EffectTrigger } = require("./models/effectModels");
+const { EffectTrigger } = require("../../shared/effect-constants");
 const frontendCommunicator = require("../common/frontend-communicator");
 const cloudSync = require("../cloud-sync/cloud-sync");
 

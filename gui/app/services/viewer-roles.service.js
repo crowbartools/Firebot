@@ -88,11 +88,7 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
             };
 
             service.loadTeamRoles = async function() {
-                const roles = await backendCommunicator.fireEventAsync("getTeamRoles");
-
-                if (roles != null) {
-                    teamRoles = roles;
-                }
+                teamRoles = await backendCommunicator.fireEventAsync("getTeamRoles");
             };
             service.loadTeamRoles();
 
@@ -117,10 +113,15 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
                 ...service.getCustomRoles()
             ];
 
-            service.getRoleById = function(id) {
-                let customRole = customRoles[id];
+            service.getRoleById = (id) => {
+                const customRole = customRoles[id];
                 if (customRole != null) {
                     return customRole;
+                }
+
+                const teamRole = teamRoles.find(tr => tr.id === id);
+                if (teamRole != null) {
+                    return teamRole;
                 }
 
                 return twitchRoles.find(r => r.id === id);

@@ -5,11 +5,9 @@ const resourceTokenManager = require("../../resourceTokenManager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/httpServer");
 const fs = require('fs-extra');
-const { EffectDependency } = require("../models/effectModels");
+const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
 const logger = require("../../logwrapper");
 const path = require("path");
-
-const { EffectCategory } = require('../../../shared/effect-constants');
 
 /**
  * The Show Image effect

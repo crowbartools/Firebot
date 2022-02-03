@@ -5,17 +5,19 @@ const JsonDbManager = require("../../database/json-db-manager");
 
 /**
  * @typedef PresetEffectList
- * @property {string} id - the id of the effect list
- * @property {string} name - the name of the effect list
- * @prop {object[]} args - the arguments if the effect list
+ * @prop {string} id - the id of the effect list
+ * @prop {string} name - the name of the effect list
+ * @prop {object[]} args - the arguments of the effect list
  * @prop {object} effects - the saved effects in the list
  * @prop {string} effects.id - the effect list root id
  * @prop {any[]} effects.list - the array of effects objects
- * @property {string[]} sortTags - the sort tags for the effect list
+ * @prop {string[]} sortTags - the sort tags for the effect list
  */
 
 /**
+ * @hideconstructor
  * @extends {JsonDbManager<PresetEffectList>}
+ * {@link JsonDbManager}
  */
 class PresetEffectListManager extends JsonDbManager {
     constructor() {
@@ -23,7 +25,6 @@ class PresetEffectListManager extends JsonDbManager {
     }
 
     /**
-     * @emits
      * @returns {void}
      */
     triggerUiRefresh() {
@@ -37,12 +38,12 @@ frontendCommunicator.onAsync("getPresetEffectLists",
     async () => presetEffectListManager.getAllItems());
 
 frontendCommunicator.onAsync("savePresetEffectList",
-    async (/** @type {PresetEffectList} */ presetEffectList) => await presetEffectListManager.saveItem(presetEffectList));
+    async (/** @type {PresetEffectList} */ presetEffectList) => presetEffectListManager.saveItem(presetEffectList));
 
 frontendCommunicator.onAsync("saveAllPresetEffectLists",
-    async (/** @type {PresetEffectList[]} */ allPresetEffectLists) => await presetEffectListManager.saveAllItems(allPresetEffectLists));
+    async (/** @type {PresetEffectList[]} */ allPresetEffectLists) => presetEffectListManager.saveAllItems(allPresetEffectLists));
 
 frontendCommunicator.on("deletePresetEffectList",
-    (/** @type {string} */presetEffectListId) => presetEffectListManager.deleteItem(presetEffectListId));
+    (/** @type {string} */ presetEffectListId) => presetEffectListManager.deleteItem(presetEffectListId));
 
 module.exports = presetEffectListManager;

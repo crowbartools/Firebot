@@ -57,18 +57,26 @@ const heistCommand = {
 
         // see if the heist is on cooldown before doing anything else
         if (heistRunner.cooldownExpireTime && moment().isBefore(heistRunner.cooldownExpireTime)) {
-            const timeRemainingDisplay = util.secondsForHumans(Math.abs(moment().diff(heistRunner.cooldownExpireTime, 'seconds')));
-            const cooldownMsg = heistSettings.settings.generalMessages.onCooldown
-                .replace("{cooldown}", timeRemainingDisplay);
-            twitchChat.sendChatMessage(cooldownMsg, null, chatter);
+            if (heistSettings.settings.generalMessages.onCooldown) {
+                const timeRemainingDisplay = util.secondsForHumans(Math.abs(moment().diff(heistRunner.cooldownExpireTime, 'seconds')));
+                const cooldownMsg = heistSettings.settings.generalMessages.onCooldown
+                    .replace("{cooldown}", timeRemainingDisplay);
+
+                twitchChat.sendChatMessage(cooldownMsg, null, chatter);
+            }
+
             return;
         }
 
         // check if the user has already joined an active heist
         if (heistRunner.lobbyOpen && heistRunner.userOnTeam(username)) {
-            const alreadyJoinedMsg = heistSettings.settings.entryMessages.alreadyJoined
-                .replace("{user}", username);
-            twitchChat.sendChatMessage(alreadyJoinedMsg, null, chatter);
+            if (heistSettings.settings.entryMessages.alreadyJoined) {
+                const alreadyJoinedMsg = heistSettings.settings.entryMessages.alreadyJoined
+                    .replace("{user}", username);
+
+                twitchChat.sendChatMessage(alreadyJoinedMsg, null, chatter);
+            }
+
             return;
         }
 
@@ -76,8 +84,14 @@ const heistCommand = {
         let wagerAmount;
         if (event.userCommand.args.length < 1) {
             let defaultWager = heistSettings.settings.currencySettings.defaultWager;
-            if (defaultWager == null || defaultWager < 1) {
-                twitchChat.sendChatMessage(`${username}, please include a wager amount!`, null, chatter);
+            if ((defaultWager == null || defaultWager < 1)) {
+                if (heistSettings.settings.entryMessages.noWagerAmount) {
+                    const noWagerAmountMsg = heistSettings.settings.entryMessages.noWagerAmount
+                        .replace("{user}", username);
+
+                    twitchChat.sendChatMessage(noWagerAmountMsg, null, chatter);
+                }
+
                 return;
             }
             wagerAmount = defaultWager;
@@ -85,7 +99,13 @@ const heistCommand = {
             const triggeredArg = userCommand.args[0];
             wagerAmount = parseInt(triggeredArg);
         } else {
-            twitchChat.sendChatMessage(`${username}, please include a valid wager amount!`, null, chatter);
+            if (heistSettings.settings.entryMessages.invalidWagerAmount) {
+                const invalidWagerAmountMsg = heistSettings.settings.entryMessages.invalidWagerAmount
+                    .replace("{user}", username);
+
+                twitchChat.sendChatMessage(invalidWagerAmountMsg, null, chatter);
+            }
+
             return;
         }
 
@@ -95,14 +115,28 @@ const heistCommand = {
         const minWager = heistSettings.settings.currencySettings.minWager || 1;
         if (minWager != null & minWager > 0) {
             if (wagerAmount < minWager) {
-                twitchChat.sendChatMessage(`${username}, wager amount must be at least ${minWager}.`, null, chatter);
+                if (heistSettings.settings.entryMessages.wagerAmountTooLow) {
+                    const wagerAmountTooLowMsg = heistSettings.settings.entryMessages.wagerAmountTooLow
+                        .replace("{user}", username)
+                        .replace("minWager}", minWager);
+
+                    twitchChat.sendChatMessage(wagerAmountTooLowMsg, null, chatter);
+                }
+
                 return;
             }
         }
         const maxWager = heistSettings.settings.currencySettings.maxWager;
         if (maxWager != null & maxWager > 0) {
             if (wagerAmount > maxWager) {
-                twitchChat.sendChatMessage(`${username}, wager amount can be no more than ${maxWager}.`, null, chatter);
+                if (heistSettings.settings.entryMessages.wagerAmountTooHigh) {
+                    const wagerAmountTooHighMsg = heistSettings.settings.entryMessages.wagerAmountTooHigh
+                        .replace("{user}", username)
+                        .replace("minWager}", minWager);
+
+                    twitchChat.sendChatMessage(wagerAmountTooHighMsg, null, chatter);
+                }
+
                 return;
             }
         }
@@ -110,7 +144,13 @@ const heistCommand = {
         // check users balance
         const userBalance = await currencyDatabase.getUserCurrencyAmount(username, currencyId);
         if (userBalance < wagerAmount) {
-            twitchChat.sendChatMessage(`${username}, you don't have enough to wager this amount!`, null, chatter);
+            if (heistSettings.settings.entryMessages.notEnoughToWager) {
+                const notEnoughToWagerMsg = heistSettings.settings.entryMessages.notEnoughToWager
+                    .replace("{user}", username);
+
+                twitchChat.sendChatMessage(notEnoughToWagerMsg, null, chatter);
+            }
+
             return;
         }
 
@@ -170,7 +210,9 @@ const heistCommand = {
                 .replace("{minMager}", minWager)
                 .replace("{requiredUsers}", heistSettings.settings.generalSettings.minimumUsers);
 
-            twitchChat.sendChatMessage(teamCreationMessage, null, chatter);
+            if (teamCreationMessage) {
+                twitchChat.sendChatMessage(teamCreationMessage, null, chatter);
+            }
         }
 
         // add the user to the game
@@ -185,7 +227,10 @@ const heistCommand = {
             .replace("{user}", username)
             .replace("{wager}", util.commafy(wagerAmount))
             .replace("{currency}", currency.name);
-        twitchChat.sendChatMessage(onJoinMessage, null, chatter);
+
+        if (onJoinMessage) {
+            twitchChat.sendChatMessage(onJoinMessage, null, chatter);
+        }
     }
 };
 

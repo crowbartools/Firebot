@@ -41,11 +41,13 @@ const delay = {
             <div class="mt-0 mr-0 mb-6 ml-6" uib-collapse="!effect.overlay || !settings.useOverlayInstances()">
                 <div class="btn-group">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="chat-effect-type">{{effect.overlayInstance ? effect.overlayInstance : 'Default'}}</span> <span class="caret"></span>
+                        <span class="chat-effect-type">{{ getSelectedOverlayDisplay() }}</span> <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu chat-effect-dropdown">
-                        <li ng-click="effect.overlayInstance = null"><a href>Default</a></li>
-                        <li ng-repeat="instanceName in settings.getOverlayInstances()" ng-click="effect.overlayInstance = instanceName"><a href>{{instanceName}}</a></li>
+                        <li role="menuitem" ng-click="effect.overlayInstance = null"><a href>Default</a></li>
+                        <li role="menuitem" ng-repeat="instanceName in overlayInstances" ng-click="effect.overlayInstance = instanceName"><a href>{{instanceName}}</a></li>
+                        <li class="divider"></li>
+                        <li role="menuitem" ng-click="effect.overlayInstance = 'all'"><a href>All</a></li>
                     </ul>
                 </div>
             </div>
@@ -77,15 +79,27 @@ const delay = {
     optionsController: ($scope, effectQueuesService, settingsService) => {
         $scope.settings = settingsService;
         $scope.effectQueues = effectQueuesService.getEffectQueues() || [];
+        $scope.overlayInstances = settingsService.getOverlayInstances() || [];
 
-        if ($scope.effect.overlayInstance != null) {
-            if (!settingsService.getOverlayInstances().includes($scope.effect.overlayInstance)) {
+        if ($scope.effect.overlayInstance != null && $scope.effect.overlayInstance !== "all") {
+            if (!$scope.overlayInstances.includes($scope.effect.overlayInstance)) {
                 $scope.effect.overlayInstance = null;
             }
         }
 
+        $scope.getSelectedOverlayDisplay = () => {
+            if ($scope.effect.overlayInstance === "all") {
+                return "All";
+            }
+
+            const overlayInstance = $scope.overlayInstances.find(oi => oi === $scope.effect.overlayInstance);
+            if (overlayInstance) {
+                return overlayInstance;
+            }
+        };
+
         if ($scope.effect.queueId != null) {
-            let queueStillExists = $scope.effectQueues.some(q => q.id === $scope.effect.queueId);
+            const queueStillExists = $scope.effectQueues.some(q => q.id === $scope.effect.queueId);
             if (!queueStillExists) {
                 $scope.effect.queueId = "all";
             }
@@ -102,7 +116,7 @@ const delay = {
                 return "All";
             }
 
-            let effectQueue = $scope.effectQueues.find(q => q.id === $scope.effect.queueId);
+            const effectQueue = $scope.effectQueues.find(q => q.id === $scope.effect.queueId);
             if (effectQueue) {
                 return effectQueue.name;
             }
@@ -137,14 +151,20 @@ const delay = {
         }
 
         if (effect.overlay) {
-            if (settings.useOverlayInstances()) {
-                if (effect.overlayInstance != null) {
-                    webServer.sendToOverlay("OVERLAY:REFRESH", { overlayInstance: effect.overlayInstance });
+            if (settings.useOverlayInstances() && effect.overlayInstance != null) {
+                if (effect.overlayInstance === "all") {
+                    const instances = settings.getOverlayInstances();
+                    instances.forEach(i => {
+                        webServer.sendToOverlay("OVERLAY:REFRESH", { overlayInstance: i });
+                    });
+
                     return true;
                 }
+
+                webServer.sendToOverlay("OVERLAY:REFRESH", { overlayInstance: effect.overlayInstance });
+                return true;
             }
 
-            // trigger overlay refresh to clear any current effects
             webServer.sendToOverlay("OVERLAY:REFRESH");
         }
 
