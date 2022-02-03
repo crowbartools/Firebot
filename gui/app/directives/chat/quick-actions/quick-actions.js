@@ -73,19 +73,21 @@
                 $ctrl.$onInit = async () => {
                     if ($ctrl.settings == null) {
                         $ctrl.settings = {};
-
-                        if (quickActionsService.quickActions) {
-                            let position = 0;
-                            quickActionsService.quickActions.forEach(qa => {
-                                $ctrl.settings[qa.id] = {
-                                    enabled: true,
-                                    position: position++
-                                };
-                            });
-
-                            settingsService.setQuickActionSettings($ctrl.settings);
-                        }
                     }
+
+                    if (quickActionsService.quickActions == null || !quickActionsService.quickActions.length) {
+                        await quickActionsService.loadQuickActions();
+                    }
+
+                    let position = 0;
+                    quickActionsService.quickActions.forEach(qa => {
+                        $ctrl.settings[qa.id] = {
+                            enabled: true,
+                            position: position++
+                        };
+                    });
+
+                    settingsService.setQuickActionSettings($ctrl.settings);
                 };
 
                 $ctrl.customQuickActionsContextMenu = (customQuickAction) => {

@@ -37,7 +37,6 @@
 
                 service.setupListeners();
             };
-            service.loadQuickActions();
 
             /**
              * @return {void}
