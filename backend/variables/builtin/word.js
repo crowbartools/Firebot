@@ -26,7 +26,7 @@ const model = {
             return "[Position not number]";
         }
 
-        const word = text.split(" ")[index + 1];
+        const word = text.split(" ")[index - 1];
 
         return word || "[No word at position]";
     }
