@@ -106,7 +106,7 @@
                     ...presetEffectListsService.getPresetEffectLists().map(i => i.id),
                     ...timerService.getTimers().map(i => i.id),
                     ...viewerRolesService.getCustomRoles().map(i => i.id),
-                    ...quickActionsService.getQuickActions().map(i => i.id)
+                    ...quickActionsService.quickActions.map(i => i.id)
                 ].forEach(id => {
                     $ctrl.currentIds[id] = true;
                 });

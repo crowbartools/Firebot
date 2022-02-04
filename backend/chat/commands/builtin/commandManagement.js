@@ -188,12 +188,12 @@ const commandManagement = {
             {
                 arg: "enable",
                 usage: "enable [!trigger or \"phrase\"]",
-                description: "Disables the given custom command."
+                description: "Enables the given custom command."
             },
             {
                 arg: "disable",
                 usage: "disable [!trigger or \"phrase\"]",
-                description: "Enables the given custom command."
+                description: "Disables the given custom command."
             }
         ]
     },
