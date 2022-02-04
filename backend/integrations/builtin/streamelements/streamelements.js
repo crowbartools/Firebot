@@ -90,12 +90,12 @@ class StreamElementsIntegration extends EventEmitter {
             }
         });
 
-        this._socket.on('event', (data) => {
-            logger.debug("Received streamelements event:", data);
-            if (data && data.type === "tip") {
-                seEventsHandler.processDonationEvent(data);
-            } else if (data && data.type === "follow") {
-                seEventsHandler.processFollowEvent(data);
+        this._socket.on('event', (event) => {
+            logger.debug("Received streamelements event:", event);
+            if (event && event.type === "tip") {
+                seEventsHandler.processDonationEvent(event.data);
+            } else if (event && event.type === "follow") {
+                seEventsHandler.processFollowEvent(event.data);
             }
         });
     }
