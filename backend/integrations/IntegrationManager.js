@@ -67,6 +67,7 @@ class IntegrationManager extends EventEmitter {
             this.emit("integration-connected", id);
             logger.info(`Successfully connected to ${id}`);
         });
+
         integration.integration.on("disconnected", id => {
             renderWindow.webContents.send("integrationConnectionUpdate", {
                 id: id,
@@ -75,6 +76,12 @@ class IntegrationManager extends EventEmitter {
             this.emit("integration-disconnected", id);
             logger.info(`Disconnected from ${id}`);
         });
+
+        integration.integration.on("reconnect", id => {
+            logger.debug(`Reconnecting to ${id}...`);
+            this.connectIntegration(id);
+        });
+
         integration.integration.on("settings-update", (id, settings) => {
             try {
                 let integrationDb = profileManager.getJsonDbInProfile("/integrations");
