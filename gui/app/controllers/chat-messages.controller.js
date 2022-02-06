@@ -29,6 +29,11 @@
             // from the end of the array instead of the front
             $scope.messageDisplayLimit = chatMessagesService.chatMessageDisplayLimit * -1;
 
+            const updateLabelVisibility = (settings) => {
+                const $parent = $('#dashboardActivityFeed').parent();
+                $scope.hideEventLabel = (parseInt(settings.dashboardActivityFeed.replace("%", "") / 100 * $parent.width())) < 180 ? true : false;
+            };
+
             $scope.updateLayoutSettings = (updatedSettings) => {
                 let settings = settingsService.getDashboardLayoutSettings();
 
@@ -51,6 +56,8 @@
                 }
 
                 $scope.layout = settings;
+
+                updateLabelVisibility(settings);
             };
 
             function getUpdatedChatSettings() {
@@ -165,11 +172,6 @@
                     // enter
                     $scope.submitChat();
                 }
-            };
-
-            $scope.hideEventLabel = $('#dashboardActivityFeed').width() < 180;
-            $scope.checkEventLabelVisibility = () => {
-                $scope.hideEventLabel = $('#dashboardActivityFeed').width() < 180 ? true : false;
             };
         });
 }());
