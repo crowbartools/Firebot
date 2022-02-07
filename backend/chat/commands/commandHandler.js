@@ -153,7 +153,6 @@ function getRemainingCooldown(command, triggeredSubcmd, username) {
  * @param {number} [config.cooldowns.user]
  */
 exports.manuallyCooldownCommand = (config) => {
-    console.log(config);
     if (config.commandId == null || config.cooldowns == null ||
         (config.cooldowns.global == null && config.cooldowns.user == null)) {
         return;
