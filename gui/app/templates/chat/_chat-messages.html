@@ -138,7 +138,7 @@
     </div>
   </div>
 
-  <column-resizer on-update="updateLayoutSettings(updatedSettings); checkEventLabelVisibility()" ng-show="settings.showActivityFeed()"></column-resizer>
+  <column-resizer on-update="updateLayoutSettings(updatedSettings)" ng-show="settings.showActivityFeed()"></column-resizer>
 
   <div id="dashboardActivityFeed" class="activity-feed-column" ng-show="settings.showActivityFeed()" ng-style="{'width': layout.dashboardActivityFeed }">
     <div class="activity-feed-header">
