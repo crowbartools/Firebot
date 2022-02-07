@@ -55,7 +55,7 @@ const model = {
             </div>
         </eos-container>
 
-        <eos-container header="Action" pad-top="true" ng-show="effect.commandId != null">
+        <eos-container header="Action" pad-top="true" ng-show="effect.commandId != null || effect.sortTagId != null">
             <div class="btn-group">
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="list-effect-type">{{effect.action ? effect.action : 'Pick one'}}</span> <span class="caret"></span>
@@ -182,23 +182,12 @@ const model = {
     },
     onTriggerEvent: async event => {
         const { effect } = event;
-        const commandIds = [];
-
-        if (effect.selectionType === "command") {
-            commandIds.push(effect.commandId);
-        }
-
-        if (effect.selectionType === "sortTag") {
-            const commandManager = require("../../chat/commands/CommandManager");
-            const commands = commandManager.getAllCustomCommands().filter(c => c.sortTags.includes(effect.sortTagId));
-            commands.forEach(c => commandIds.push(c.id));
-        }
 
         const commandHandler = require("../../chat/commands/commandHandler");
-        commandIds.forEach(id => {
+        if (effect.commandId != null && (effect.selectionType == null || effect.selectionType === "command")) {
             if (effect.action === "Add") {
                 commandHandler.manuallyCooldownCommand({
-                    commandId: id,
+                    commandId: effect.commandId,
                     subcommandId: effect.subcommandId,
                     username: effect.username,
                     cooldowns: {
@@ -208,7 +197,7 @@ const model = {
                 });
             } else if (effect.action === "Clear") {
                 commandHandler.manuallyClearCooldownCommand({
-                    commandId: id,
+                    commandId: effect.commandId,
                     subcommandId: effect.subcommandId,
                     username: effect.clearUsername,
                     cooldowns: {
@@ -217,9 +206,44 @@ const model = {
                     }
                 });
             }
-        });
 
-        return true;
+            return true;
+        }
+
+        const commandIds = [];
+        if (effect.sortTagId != null && effect.selectionType === "sortTag") {
+            const commandManager = require("../../chat/commands/CommandManager");
+            const commands = commandManager.getAllCustomCommands().filter(c => c.sortTags.includes(effect.sortTagId));
+            commands.forEach(c => commandIds.push(c.id));
+
+            commandIds.forEach(id => {
+                if (effect.action === "Add") {
+                    commandHandler.manuallyCooldownCommand({
+                        commandId: id,
+                        subcommandId: effect.subcommandId,
+                        username: effect.username,
+                        cooldowns: {
+                            global: !isNaN(effect.globalCooldownSecs) ? parseInt(effect.globalCooldownSecs) : undefined,
+                            user: !isNaN(effect.userCooldownSecs) && effect.username != null && effect.username !== '' ? parseInt(effect.userCooldownSecs) : undefined
+                        }
+                    });
+                } else if (effect.action === "Clear") {
+                    commandHandler.manuallyClearCooldownCommand({
+                        commandId: id,
+                        subcommandId: effect.subcommandId,
+                        username: effect.clearUsername,
+                        cooldowns: {
+                            global: effect.clearGlobalCooldown,
+                            user: effect.clearUserCooldown
+                        }
+                    });
+                }
+            });
+
+            return true;
+        }
+
+        return false;
     }
 };
 
