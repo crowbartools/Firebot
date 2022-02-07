@@ -10,10 +10,10 @@
                 </div>
                 <div class="modal-body pb-0">
                     <div ng-hide="$ctrl.viewers">
-                        <h4>Import from</h5>
+                        <h4 class="font-semibold">Import from</h4>
                         <p class="muted mb-12">Currently only viewers from Streamlabs Chatbot (desktop bot) can be imported.</p>
 
-                        <h4>Choose file</h4>
+                        <h4 class="font-semibold">Choose file</h4>
                         <p class="muted mb-8">To get the export file in Streamlabs Chatbot, go to Connections -> Cloud -> Create Split Excel and find the file called [Name of the currency].xlsx, or choose Create Excel Files and find the file called Data.xlsx.</p>
                         <file-chooser
                             model="$ctrl.importFilePath"
@@ -26,20 +26,35 @@
                     </div>
                     <div ng-show="$ctrl.viewers">
                         <div class="mb-8">
-                            <h3>Settings</h3>
-                            <label class="control-fb control--checkbox mt-8"> Include viewers with 0 view hours
-                                <input type="checkbox" ng-checked="$ctrl.includeZeroHourViewers" ng-click="$ctrl.toggleZeroHourViewersIncluded()">
-                                <div class="control__indicator"></div>
-                            </label>
+                            <h4 class="font-semibold">Settings</h4>
+                            <div class="mt-8">
+                                <label class="control-fb control--checkbox"> Include currency
+                                    <input type="checkbox" ng-model="$ctrl.settings.includeCurrency" ng-click="$ctrl.settings.includeCurrency = !$ctrl.settings.includeCurrency">
+                                    <div class="control__indicator"></div>
+                                </label>
+                                <label ng-if="$ctrl.settings.includeCurrency" class="control-fb control--checkbox ml-4"> Include viewers with 0 currency
+                                    <input type="checkbox" ng-model="$ctrl.settings.includeZeroCurrencyViewers" ng-click="$ctrl.settings.includeZeroCurrencyViewers = !$ctrl.settings.includeZeroCurrencyViewers; $ctrl.filterViewers();">
+                                    <div class="control__indicator"></div>
+                                </label>
+
+                                <label class="control-fb control--checkbox"> Include view hours
+                                    <input type="checkbox" ng-model="$ctrl.settings.includeViewHours" ng-click="$ctrl.settings.includeViewHours = !$ctrl.settings.includeViewHours">
+                                    <div class="control__indicator"></div>
+                                </label>
+                                <label ng-if="$ctrl.settings.includeViewHours" class="control-fb control--checkbox ml-4"> Include viewers with 0 view hours
+                                    <input type="checkbox" ng-model="$ctrl.settings.includeZeroHoursViewers" ng-click="$ctrl.settings.includeZeroHoursViewers = !$ctrl.settings.includeZeroHoursViewers; $ctrl.filterViewers();">
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
                         </div>
                         <div class="mb-10 flex flex-row justify-between items-end">
-                            <div>Found {{$ctrl.viewers.length}} viewers to import.</div>
+                            <div>Found {{$ctrl.filteredViewers.length}} viewers to import.</div>
                             <div class="flex justify-between">
                                 <searchbar placeholder-text="Search viewers..." query="$ctrl.search" style="flex-basis: 250px;"></searchbar>
                             </div>
                         </div>
                         <sortable-table
-                            table-data-set="$ctrl.viewers"
+                            table-data-set="$ctrl.filteredViewers"
                             headers="$ctrl.headers"
                             query="$ctrl.search"
                             clickable="true"
@@ -64,7 +79,12 @@
             controller: function(utilityService, importService) {
                 const $ctrl = this;
 
-                $ctrl.includeZeroHourViewers = true;
+                $ctrl.settings = {
+                    includeCurrency: true,
+                    includeZeroCurrencyViewers: true,
+                    includeViewHours: true,
+                    includeZeroHoursViewers: true
+                };
 
                 $ctrl.headers = [
                     {
@@ -108,22 +128,8 @@
                         $ctrl.viewers = data.viewers;
                         $ctrl.search = "";
 
-                        $ctrl.zeroHourViewersincluded = $ctrl.viewers;
-                        $ctrl.zeroHourViewersExcluded = $ctrl.viewers.filter(v => parseInt(v.viewHours) !== 0);
+                        $ctrl.filteredViewers = $ctrl.viewers;
                     }
-                };
-
-                $ctrl.deleteImportedViewer = (id) => {
-                    $ctrl.viewers = $ctrl.viewers.filter(v => v.id !== id);
-                    $ctrl.zeroHourViewersincluded = $ctrl.zeroHourViewersincluded.filter(v => v.id !== id);
-                    $ctrl.zeroHourViewersExcluded = $ctrl.zeroHourViewersExcluded.filter(v => v.id !== id);
-                };
-
-                $ctrl.editImportedViewer = (viewer) => {
-                    const index = $ctrl.viewers.findIndex(v => v.id === viewer.id);
-                    $ctrl.viewers[index] = viewer;
-                    $ctrl.zeroHourViewersincluded[index] = viewer;
-                    $ctrl.zeroHourViewersExcluded[index] = viewer;
                 };
 
                 $ctrl.showEditImportedViewerModal = (viewer) => {
@@ -135,19 +141,25 @@
                         },
                         closeCallback: response => {
                             if (response.action === "delete") {
-                                $ctrl.deleteImportedViewer(response.viewer.id);
+                                $ctrl.filteredViewers = $ctrl.filteredViewers.filter(v => v.id !== response.viewer.id);
                                 return;
                             }
 
-                            $ctrl.editImportedViewer(response.viewer);
+                            const index = $ctrl.filteredViewers.findIndex(v => v.id === response.viewer.id);
+                            $ctrl.filteredViewers[index] = response.viewer;
                         }
                     });
                 };
 
-                $ctrl.toggleZeroHourViewersIncluded = () => {
-                    $ctrl.includeZeroHourViewers = !$ctrl.includeZeroHourViewers;
+                $ctrl.filterViewers = () => {
+                    $ctrl.filteredViewers = $ctrl.viewers;
+                    if (!$ctrl.settings.includeZeroHoursViewers) {
+                        $ctrl.filteredViewers = $ctrl.filteredViewers.filter(v => parseInt(v.viewHours) !== 0);
+                    }
 
-                    $ctrl.viewers = $ctrl.includeZeroHourViewers ? $ctrl.zeroHourViewersincluded : $ctrl.zeroHourViewersExcluded;
+                    if (!$ctrl.settings.includeZeroCurrencyViewers) {
+                        $ctrl.filteredViewers = $ctrl.filteredViewers.filter(v => parseInt(v.currency) !== 0);
+                    }
                 };
             }
         });
