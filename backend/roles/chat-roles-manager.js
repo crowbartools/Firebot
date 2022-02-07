@@ -12,8 +12,10 @@ let vips = [];
  * @return {void}
  */
 const loadUsersInVipRole = (usersInVipRole) => {
-    const lastItem = usersInVipRole[usersInVipRole.length - 1].replace(".", "");
-    usersInVipRole[usersInVipRole.length - 1] = lastItem;
+    if (usersInVipRole.length > 0) {
+        const lastItem = usersInVipRole[usersInVipRole.length - 1].replace(".", "");
+        usersInVipRole[usersInVipRole.length - 1] = lastItem;
+    }
 
     vips = usersInVipRole;
 };
