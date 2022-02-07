@@ -7,7 +7,7 @@
 
     angular
         .module("firebotApp")
-        .factory("countersService", function($q, backendCommunicator, profileManager) {
+        .factory("countersService", function($q, backendCommunicator, profileManager, utilityService, objectCopyHelper, ngToast) {
             let service = {};
 
             service.counters = [];
@@ -36,14 +36,6 @@
                 return service.counters.find(c => c.id === counterId);
             };
 
-            service.counterNameExists = (name) => {
-                if (name == null) {
-                    return false;
-                }
-                const sanitizedName = sanitizeFileName(name).toLowerCase();
-                return service.counters.some(c => sanitizeFileName(c.name).toLowerCase() === sanitizedName);
-            };
-
             service.deleteCounter = (counterId) => {
                 service.counters = service.counters.filter(c => c.id !== counterId);
                 backendCommunicator.fireEvent("deleteCounter", counterId);
@@ -56,21 +48,47 @@
 
                 const savedCounter = await backendCommunicator.fireEventAsync("saveCounter", counter);
                 if (savedCounter) {
-                    updateCounter(counter);
+                    updateCounter(savedCounter);
+                    return true;
                 }
+
+                return false;
             };
 
-            service.renameCounter = (counterId, newName) => {
-                if (counterId == null || newName == null) {
+            service.saveAllCounters = (counters) => {
+                if (counters) {
+                    service.counters = counters;
+                }
+
+                backendCommunicator.fireEvent("saveAllCounters", service.counters);
+            };
+
+            service.counterNameExists = (name) => {
+                return service.counters.some(c => c.name === name);
+            };
+
+            service.duplicateCounter = (counterId) => {
+                const counter = service.counters.find(c => c.id === counterId);
+                if (counter == null) {
                     return;
                 }
+                const copiedCounter = objectCopyHelper.copyObject("counter", counter);
+                copiedCounter.id = null;
 
-                const counter = service.getCounter(counterId);
-
-                if (counter) {
-                    counter.name = newName;
-                    service.saveCounter(counter);
+                while (service.counterNameExists(copiedCounter.name)) {
+                    copiedCounter.name += " copy";
                 }
+
+                service.saveCounter(copiedCounter).then(successful => {
+                    if (successful) {
+                        ngToast.create({
+                            className: 'success',
+                            content: 'Successfully duplicated a counter!'
+                        });
+                    } else {
+                        ngToast.create("Unable to duplicate counter.");
+                    }
+                });
             };
 
             service.getTxtFilePath = (counterName) => {
@@ -91,6 +109,16 @@
                     service.counters = counters;
                 }
             });
+
+            service.showAddEditCounterModal = (counter) => {
+                utilityService.showModal({
+                    component: "AddOrEditCounterModal",
+                    size: "md",
+                    resolveObj: {
+                        counter: () => counter
+                    }
+                });
+            };
 
             return service;
         });

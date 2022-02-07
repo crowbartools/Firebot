@@ -1,12 +1,74 @@
 "use strict";
 (function() {
-    const uuidv1 = require("uuid/v1");
-
     angular
         .module("firebotApp")
         .controller("countersController", function($scope, countersService, utilityService) {
 
             $scope.countersService = countersService;
+
+            $scope.onCountersUpdated = (items) => {
+                countersService.saveAllCounters(items);
+            };
+
+            $scope.headers = [
+                {
+                    name: "NAME",
+                    icon: "fa-user",
+                    cellTemplate: `{{data.name}}`
+                },
+                {
+                    name: "VALUE",
+                    icon: "fa-tally",
+                    cellTemplate: `{{data.value}}`
+                },
+                {
+                    name: "MIMINUM",
+                    icon: "fa-arrow-to-bottom",
+                    cellTemplate: `{{data.minimum ? data.minimum : 'n/a'}}`
+                },
+                {
+                    name: "MAXIMUM",
+                    icon: "fa-arrow-to-top",
+                    cellTemplate: `{{data.maximum ? data.maximum : 'n/a'}}`
+                }
+            ];
+
+            $scope.counterOptions = (item) => {
+                const options = [
+                    {
+                        html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
+                        click: () => {
+                            countersService.showAddEditCounterModal(item);
+                        }
+                    },
+                    {
+                        html: `<a href ><i class="far fa-clone" style="margin-right: 10px;"></i> Duplicate</a>`,
+                        click: () => {
+                            countersService.duplicateCounter(item.id);
+                        }
+                    },
+                    {
+                        html: `<a href style="color: #fb7373;"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>`,
+                        click: () => {
+                            utilityService
+                                .showConfirmationModal({
+                                    title: "Delete Counter",
+                                    question: `Are you sure you want to delete the Counter "${item.name}"?`,
+                                    confirmLabel: "Delete",
+                                    confirmBtnType: "btn-danger"
+                                })
+                                .then(confirmed => {
+                                    if (confirmed) {
+                                        countersService.deleteCounter(item.id);
+                                    }
+                                });
+
+                        }
+                    }
+                ];
+
+                return options;
+            };
 
             $scope.openRenameCounterModal = function(counter) {
                 utilityService.openGetInputModal(
@@ -30,76 +92,6 @@
                     (newName) => {
                         counter.name = newName;
                         countersService.renameCounter(counter.id, newName);
-                    });
-            };
-
-
-            $scope.openCreateCounterModal = function() {
-                utilityService.openGetInputModal(
-                    {
-                        model: "",
-                        label: "Create Counter",
-                        inputPlaceholder: "Enter counter name",
-                        saveText: "Create",
-                        validationFn: (value) => {
-                            return new Promise(resolve => {
-                                if (value == null || value.trim().length < 1) {
-                                    resolve(false);
-                                } else if (countersService.counterNameExists(value)) {
-                                    resolve(false);
-                                } else {
-                                    resolve(true);
-                                }
-                            });
-                        },
-                        validationText: "Counter name cannot be empty and must be unique."
-
-                    },
-                    (name) => {
-                        const counter = {
-                            id: uuidv1(),
-                            name: name,
-                            value: 0,
-                            saveToTxtFile: false
-                        };
-                        countersService.saveCounter(counter);
-                    });
-            };
-
-            $scope.openEditCounterModal = function(counter) {
-                utilityService.showModal({
-                    component: "editCounterModal",
-                    windowClass: "no-padding-modal",
-                    resolveObj: {
-                        counter: () => counter
-                    },
-                    closeCallback: resp => {
-                        const { action, counter } = resp;
-
-                        switch (action) {
-                        case "update":
-                            countersService.saveCounter(counter);
-                            break;
-                        case "delete":
-                            countersService.deleteCounter(counter.id);
-                            break;
-                        }
-                    }
-                });
-            };
-
-            $scope.openDeleteCounterModal = (counter) => {
-                utilityService
-                    .showConfirmationModal({
-                        title: "Delete",
-                        question: `Are you sure you want to delete the Counter "${counter.name}"?`,
-                        confirmLabel: "Delete",
-                        confirmBtnType: "btn-danger"
-                    })
-                    .then(confirmed => {
-                        if (confirmed) {
-                            countersService.deleteCounter(counter.id);
-                        }
                     });
             };
         });
