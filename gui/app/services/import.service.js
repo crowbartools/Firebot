@@ -48,8 +48,12 @@
             };
 
             const mapViewers = (data) => {
+                let i = 0;
                 return data.map(v => {
+                    i++;
+
                     return {
+                        id: i,
                         name: v[0],
                         rank: v[1],
                         currency: v[2],
