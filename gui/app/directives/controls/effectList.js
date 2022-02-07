@@ -172,7 +172,7 @@
                     </div>
 
                     <div class="add-more-functionality mt-7 ml-5">
-                        <a href role="button" class="clickable" ng-click="$ctrl.openNewEffectModal()" aria-label="Add new effect">
+                        <a href role="button" class="clickable" ng-click="$ctrl.openNewEffectModal($ctrl.effectsData.list.length)" aria-label="Add new effect">
                             <i class="far fa-plus-circle"></i>Add New Effect
                         </a>
                     </div>
