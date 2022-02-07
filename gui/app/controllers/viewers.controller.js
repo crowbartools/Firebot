@@ -26,8 +26,7 @@
 
             $scope.showImportViewersModal = () => {
                 utilityService.showModal({
-                    component: "importViewersModal",
-                    size: "lg"
+                    component: "importViewersModal"
                 });
             };
 
