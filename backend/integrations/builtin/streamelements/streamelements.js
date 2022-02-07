@@ -8,7 +8,7 @@ const seEventsHandler = require("./streamelements-event-handler");
 const integrationDefinition = {
     id: "streamelements",
     name: "StreamElements",
-    description: "Donation events",
+    description: "Donation & Follow events",
     connectionToggle: true,
     linkType: "id",
     idDetails: {
@@ -29,6 +29,7 @@ class StreamElementsIntegration extends EventEmitter {
         super();
         this.connected = false;
         this._socket = null;
+        this.reconnectAttempts = 0;
     }
     init() {
         seEventsHandler.registerEvents();
@@ -52,19 +53,24 @@ class StreamElementsIntegration extends EventEmitter {
             });
             setTimeout(() => {
                 if (!this.connected) {
-                    // if we still haven't connected after 20 secs, disconnect
-                    this.disconnect();
+                    this.reconnect();
                 }
-            }, 20000);
+            }, 10000);
         });
 
         this._socket.on("error", (err) => {
             logger.error(err);
+
             this.disconnect();
+            this.reconnect();
         });
 
-        this._socket.on('disconnect', () => {
+        this._socket.on('disconnect', reason => {
             this.disconnect();
+
+            if (reason === 'io server disconnect') {
+                this.reconnect();
+            }
         });
 
         this._socket.on('authenticated', (data) => {
@@ -72,10 +78,11 @@ class StreamElementsIntegration extends EventEmitter {
                 channelId
             } = data;
 
-            console.log(`Successfully connected to StreamElements channel ${channelId}`);
+            logger.debug(`Successfully connected to StreamElements channel ${channelId}`);
 
             this.emit("connected", integrationDefinition.id);
             this.connected = true;
+            this.reconnectAttempts = 0;
         });
 
         this._socket.on('event:test', (data) => {
@@ -99,16 +106,31 @@ class StreamElementsIntegration extends EventEmitter {
             }
         });
     }
+
+    reconnect() {
+        if (this.reconnectAttempts === 3) {
+            logger.warn("Attemped to reconnect to StreamElements 3 times, setting integration to disconnected...");
+            this.disconnect();
+            return;
+        }
+
+        this.emit("reconnect", integrationDefinition.id);
+        this.reconnectAttempts++;
+    }
+
     disconnect() {
         this._socket.close();
         this.connected = false;
 
         this.emit("disconnected", integrationDefinition.id);
     }
+
     link() {}
+
     async unlink() {
-        this._socket.close();
-        return;
+        if (this._socket) {
+            this.disconnect();
+        }
     }
 }
 
