@@ -6,7 +6,7 @@
             bindings: {
                 triggerType: "@",
                 triggerName: "<",
-                sortTags: "<",
+                sortTags: "=",
                 onClose: "&",
                 showTriggerName: "<"
             },
