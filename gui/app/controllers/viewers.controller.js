@@ -24,6 +24,13 @@
                 });
             };
 
+            $scope.showImportViewersModal = () => {
+                utilityService.showModal({
+                    component: "importViewersModal",
+                    size: "lg"
+                });
+            };
+
             $scope.viewerRowClicked = (data) => {
                 $scope.showUserDetailsModal(data._id);
             };

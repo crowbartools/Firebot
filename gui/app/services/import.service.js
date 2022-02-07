@@ -67,7 +67,7 @@
 
                     return allRanks;
                 }, []);
-                logger.debug(ranks);
+
                 return ranks;
             };
 
