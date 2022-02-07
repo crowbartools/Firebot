@@ -125,6 +125,8 @@ class StreamElementsIntegration extends EventEmitter {
         this.emit("disconnected", integrationDefinition.id);
     }
 
+    link() {}
+
     async unlink() {
         if (this._socket) {
             this.disconnect();
