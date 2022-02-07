@@ -105,7 +105,7 @@
 
             <td
               ng-if="$ctrl.sortTagContext != null"
-              class="fit-table-sort-tags"
+              class="fit-table-sort-tags py-4"
             >
               <sort-tags-row item="item" context="$ctrl.sortTagContext" on-update="$ctrl.triggerItemsUpdate()"></sort-tags-row>
             </td>
@@ -131,6 +131,7 @@
                     context-menu-on="click"
                     context-menu-class="angular-context-menu"
                     context-menu-orientation="left"
+                    context-menu-bottom-offset="60px"
                   >
                     <i class="fal fa-ellipsis-h"></i>
                 </button>

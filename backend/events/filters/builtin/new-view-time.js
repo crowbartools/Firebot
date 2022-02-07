@@ -1,5 +1,7 @@
 "use strict";
 
+const { ComparisonType } = require("../../../../shared/filter-constants");
+
 module.exports = {
     id: "firebot:new-view-time",
     name: "New View Time",
@@ -7,27 +9,40 @@ module.exports = {
     events: [
         { eventSourceId: "firebot", eventId: "view-time-update" }
     ],
-    comparisonTypes: ["is", "is not", "less than", "greater than"],
+    comparisonTypes: [
+        ComparisonType.IS,
+        ComparisonType.IS_NOT,
+        ComparisonType.LESS_THAN,
+        ComparisonType.LESS_THAN_OR_EQUAL_TO,
+        ComparisonType.GREATER_THAN,
+        ComparisonType.GREATER_THAN_OR_EQUAL_TO
+    ],
     valueType: "number",
     predicate: (filterSettings, eventData) => {
 
-        let { comparisonType, value } = filterSettings;
-        let { eventMeta } = eventData;
+        const { comparisonType, value } = filterSettings;
+        const { eventMeta } = eventData;
 
-        let previousViewTime = eventMeta.newViewTime || 0;
+        const newViewTime = eventMeta.newViewTime || 0;
 
         switch (comparisonType) {
-        case "is": {
-            return previousViewTime === value;
+        case ComparisonType.IS: {
+            return newViewTime === value;
         }
-        case "is not": {
-            return previousViewTime !== value;
+        case ComparisonType.IS_NOT: {
+            return newViewTime !== value;
         }
-        case "less than": {
-            return previousViewTime < value;
+        case ComparisonType.LESS_THAN: {
+            return newViewTime < value;
         }
-        case "greater than": {
-            return previousViewTime > value;
+        case ComparisonType.LESS_THAN_OR_EQUAL_TO: {
+            return newViewTime <= value;
+        }
+        case ComparisonType.GREATER_THAN: {
+            return newViewTime > value;
+        }
+        case ComparisonType.GREATER_THAN_OR_EQUAL_TO: {
+            return newViewTime >= value;
         }
         default:
             return false;

@@ -80,8 +80,12 @@
 .modal-body {
     padding-top: 0;
 }
-.general-button-settings .input-group-addon:first-child {
-    min-width: 150px;
+
+.sub-command,
+.general-button-settings {
+    .input-group-addon:first-child {
+        min-width: 150px;
+    }
 }
 
 .panel-group {
@@ -97,52 +101,6 @@
 textarea.form-control {
     resize: vertical;
 }
-
-
-
-/* sub menus */
-.dropdown-submenu {
-	position: relative;
-}
-
-.dropdown-submenu>.dropdown-menu {
-	top: 0;
-	left: 100%;
-	margin-top: -6px;
-	margin-left: -1px;
-}
-
-.dropdown-submenu:hover>.dropdown-menu {
-	display: block;
-}
-
-.dropdown-submenu>a:after {
-	display: block;
-	content: " ";
-	float: right;
-	width: 0;
-	height: 0;
-	border-color: transparent;
-	border-style: solid;
-	border-width: 5px 0 5px 5px;
-	border-left-color: #cccccc;
-	margin-top: 5px;
-	margin-right: -10px;
-}
-
-.dropdown-submenu:hover>a:after {
-	border-left-color: #ffffff;
-}
-
-.dropdown-submenu.pull-left {
-	float: none;
-}
-
-.dropdown-submenu.pull-left>.dropdown-menu {
-	left: -100%;
-	margin-left: 10px;
-}
-
 
 /* Tabs */
 
@@ -308,7 +266,10 @@ textarea.form-control {
     border: 2px solid $dropdown-menu-border;
     background-color: $dropdown-menu-bg;
     z-index: 2080;
-    min-width: 125px;
+
+    &:not(.effect-overflow-menu) {
+        min-width: 125px;
+    }
 }
 
 .dropdown-menu>li>a {

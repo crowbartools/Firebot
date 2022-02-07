@@ -1,5 +1,7 @@
 "use strict";
 
+const { ComparisonType } = require("../../../../shared/filter-constants");
+
 module.exports = {
     id: "firebot:bits-badge-tier",
     name: "Bits Badge Tier",
@@ -7,7 +9,14 @@ module.exports = {
     events: [
         { eventSourceId: "twitch", eventId: "bits-badge-unlocked" }
     ],
-    comparisonTypes: ["is", "is not", "less than", "greater than"],
+    comparisonTypes: [
+        ComparisonType.IS,
+        ComparisonType.IS_NOT,
+        ComparisonType.LESS_THAN,
+        ComparisonType.LESS_THAN_OR_EQUAL_TO,
+        ComparisonType.GREATER_THAN,
+        ComparisonType.GREATER_THAN_OR_EQUAL_TO
+    ],
     valueType: "number",
     predicate: (filterSettings, eventData) => {
 
@@ -16,19 +25,24 @@ module.exports = {
 
         const badgeTier = eventMeta.badgeTier || 0;
 
-
         switch (comparisonType) {
-        case "is": {
+        case ComparisonType.IS: {
             return badgeTier === value;
         }
-        case "is not": {
+        case ComparisonType.IS_NOT: {
             return badgeTier !== value;
         }
-        case "less than": {
+        case ComparisonType.LESS_THAN: {
             return badgeTier < value;
         }
-        case "greater than": {
+        case ComparisonType.LESS_THAN_OR_EQUAL_TO: {
+            return badgeTier <= value;
+        }
+        case ComparisonType.GREATER_THAN: {
             return badgeTier > value;
+        }
+        case ComparisonType.GREATER_THAN_OR_EQUAL_TO: {
+            return badgeTier >= value;
         }
         default:
             return false;

@@ -4,8 +4,7 @@ const { settings } = require("../../common/settings-access");
 const resourceTokenManager = require("../../resourceTokenManager");
 const webServer = require("../../../server/httpServer");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
-const { EffectDependency } = require("../models/effectModels");
-const { EffectCategory } = require("../../../shared/effect-constants");
+const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
 const logger = require("../../logwrapper");
 const accountAccess = require("../../common/account-access");
 const util = require("../../utility");
@@ -22,9 +21,9 @@ const playVideo = {
     definition: {
         id: "firebot:playvideo",
         name: "Play Video",
-        description: "Plays a video in the overlay.",
+        description: "Plays a local, Youtube, or Twitch video in the overlay.",
         icon: "fad fa-video",
-        categories: [EffectCategory.COMMON, EffectCategory.OVERLAY],
+        categories: [EffectCategory.COMMON, EffectCategory.OVERLAY, EffectCategory.TWITCH],
         dependencies: [EffectDependency.OVERLAY]
     },
     /**
@@ -209,7 +208,7 @@ const playVideo = {
             <div class="effect-info alert alert-warning">
                 This effect requires the Firebot overlay to be loaded in your broadcasting software. <a href ng-click="showOverlayInfoModal(effect.overlayInstance)" style="text-decoration:underline">Learn more</a>
                 <br>
-                <strong>NOTE</strong>: Streamlabs OBS does not support mp4 videos in their browser source. If you have mp4 videos that you want to display in SLOBS, you will need to convert them to the <strong>.webm</strong> format.
+                <strong>NOTE</strong>: Streamlabs Desktop (formerly known as SLOBS) does not support mp4 videos in their browser source. If you have mp4 videos that you want to display in Streamlabs Desktop, you will need to convert them to the <strong>.webm</strong> format.
             </div>
         </eos-container>
     </div>

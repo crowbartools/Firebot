@@ -1,8 +1,7 @@
 "use strict";
 
 const {handleDiceEffect} = require("../../common/handlers/diceProcessor");
-const { EffectDependency } = require("../models/effectModels");
-const { EffectCategory } = require('../../../shared/effect-constants');
+const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
 
 const model = {
     definition: {
@@ -15,17 +14,17 @@ const model = {
     },
     optionsTemplate: `
         <eos-container header="Roll">
-            <firebot-input 
-                input-title="Dice" 
-                model="effect.dice" 
-                placeholder-text="2d20 or 2d10+1d12 or 1d10+3" 
+            <firebot-input
+                input-title="Dice"
+                model="effect.dice"
+                placeholder-text="2d20 or 2d10+1d12 or 1d10+3"
             />
         </eos-container>
 
         <eos-container header="Display Mode" pad-top="true">
-            <firebot-radios 
+            <firebot-radios
                 options="displayModeOptions"
-                model="effect.resultType" 
+                model="effect.resultType"
             />
         </eos-container>
 

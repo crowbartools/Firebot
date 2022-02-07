@@ -45,17 +45,17 @@ parentPort.on("message", event => {
         break;
     case "moderateMessage": {
         // check for banned word
-        if (event.message == null || event.messageId == null) {
+        if (event.isExempt || event.message == null || event.messageId == null) {
             return;
         }
         if (event.scanForBannedWords) {
             let bannedWordFound = hasBannedWord(event.message);
             if (bannedWordFound) {
-                parentPort.postMessage({ type: "deleteMessage", messageId: event.messageId });
+                parentPort.postMessage({ type: "deleteMessage", messageId: event.messageId, username: event.username });
             } else {
                 let bannedRegexMatched = matchesBannedRegex(event.message);
                 if (bannedRegexMatched) {
-                    parentPort.postMessage({ type: "deleteMessage", messageId: event.messageId });
+                    parentPort.postMessage({ type: "deleteMessage", messageId: event.messageId, username: event.username });
                 }
             }
         }

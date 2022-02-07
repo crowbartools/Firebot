@@ -12,6 +12,11 @@ let vips = [];
  * @return {void}
  */
 const loadUsersInVipRole = (usersInVipRole) => {
+    if (usersInVipRole.length > 0) {
+        const lastItem = usersInVipRole[usersInVipRole.length - 1].replace(".", "");
+        usersInVipRole[usersInVipRole.length - 1] = lastItem;
+    }
+
     vips = usersInVipRole;
 };
 
@@ -91,7 +96,7 @@ const getUsersChatRoles = async (userIdOrName = "") => {
             }
         }
 
-        if (vips.some(v => v === username)) {
+        if (vips.some(v => v.toLowerCase() === username.toLowerCase())) {
             roles.push("vip");
         }
 

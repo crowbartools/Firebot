@@ -270,10 +270,10 @@
                         $scope.usingOverlayInstances = settingsService.useOverlayInstances();
 
                         $scope.broadcastingSoftwares = [
-                            "OBS/SLOBS", "XSplit", "Direct Link/2 PC Setup"
+                            "OBS/Streamlabs Desktop", "XSplit", "Direct Link/2 PC Setup"
                         ];
 
-                        $scope.selectedBroadcastingSoftware = "OBS/SLOBS";
+                        $scope.selectedBroadcastingSoftware = "OBS/Streamlabs Desktop";
 
                         $scope.updateSelectedBroadcastingSoftware = (type) => {
                             $scope.selectedBroadcastingSoftware = type;
@@ -592,7 +592,8 @@
                 index,
                 triggerType,
                 closeCallback,
-                triggerMeta
+                triggerMeta,
+                isNew
             ) {
                 let showEditEffectContext = {
                     templateUrl: "editEffectModal.html",
@@ -620,7 +621,7 @@
                         $scope.triggerMeta = triggerMeta;
                         $scope.modalId = modalId;
 
-                        $scope.isAddMode = index == null;
+                        $scope.isAddMode = isNew;
                         $scope.effectDefinition = effectHelperService.getEffectDefinition(
                             $scope.effect.type
                         );

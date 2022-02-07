@@ -283,8 +283,8 @@
                     friendlyEventTypeName(event.sourceId, event.eventId) : "No
                     Type"}}
                   </td>
-                  <td style="max-width: 135px; min-width: 100px">
-                    <sort-tags-row item="event" context="'events'" on-update="eventsService.saveGroup(group); eventsService.saveMainEvents();"></sort-tags-row>
+                  <td style="max-width: 180px; min-width: 100px" class="py-4">
+                    <sort-tags-row item="event" context="'events'" on-update="es.saveEvent(event);"></sort-tags-row>
                   </td>
                   <td>
                     <div>

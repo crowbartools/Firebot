@@ -3,45 +3,65 @@
 const twitchApi = require("../twitch-api/api");
 const frontendCommunicator = require("../common/frontend-communicator");
 
-/**
- * @param {import('@twurple/api').HelixTeam[]} teams
- */
-function mapRoles(teams) {
-    return teams
-        .map(team => {
-            return {
+let streamerTeams = [];
+
+const loadTeamRoles = async () => {
+    const roles = await twitchApi.teams.getStreamerTeams();
+
+    if (!roles.length) {
+        streamerTeams = null;
+        return;
+    }
+
+    roles.forEach(async team => {
+        const members = await team.getUserRelations();
+        streamerTeams.push({
+            mappedRole: {
                 id: parseInt(team.id),
                 name: team.displayName
-            };
+            },
+            members: members.map(m => m.displayName)
         });
-}
+    });
+};
 
-async function getAllTeamRolesForViewer(username) {
-    const roles = await twitchApi.teams.getMatchingTeamsByName(username);
-
-    return mapRoles(roles);
-}
-
-async function getTeamRoles() {
-    const teams = await twitchApi.teams.getStreamerTeams();
-
-    if (teams == null) {
-        return null;
+const getTeamRoles = async () => {
+    if (streamerTeams == null) {
+        return [];
     }
 
-    return mapRoles(teams);
-}
+    if (!streamerTeams.length) {
+        await loadTeamRoles();
+    }
+
+    return streamerTeams.map(team => team.mappedRole);
+};
+
+const getAllTeamRolesForViewer = async (username) => {
+    if (streamerTeams == null) {
+        return [];
+    }
+
+    const teams = [];
+    streamerTeams.forEach(team => {
+        if (team.members.some(m => m.toLowerCase() === username.toLowerCase())) {
+            teams.push(team.mappedRole);
+        }
+    });
+
+    return teams;
+};
 
 frontendCommunicator.onAsync("getTeamRoles", async () => {
-    const roles = await getTeamRoles();
-
-    if (roles == null) {
-        return null;
+    if (streamerTeams == null) {
+        return [];
     }
 
+    const roles = await getTeamRoles();
     return roles;
 
 });
 
+exports.loadTeamRoles = loadTeamRoles;
 exports.getTeamRoles = getTeamRoles;
 exports.getAllTeamRolesForViewer = getAllTeamRolesForViewer;

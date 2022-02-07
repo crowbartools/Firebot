@@ -1,8 +1,7 @@
 "use strict";
 
 const effectRunner = require("../../common/effect-runner");
-const { EffectTrigger } = require("../models/effectModels");
-const { EffectCategory } = require('../../../shared/effect-constants');
+const { EffectCategory, EffectTrigger } = require('../../../shared/effect-constants');
 const presetEffectListManager = require("../preset-lists/preset-effect-list-manager");
 
 const effectGroup = {

@@ -126,16 +126,6 @@ exports.setupChatListeners = (streamerChatClient) => {
         twitchEventsHandler.raid.triggerRaid(raidInfo.displayName, raidInfo.viewerCount);
     });
 
-    streamerChatClient.onBan((_, username) => {
-        twitchEventsHandler.viewerBanned.triggerBanned(username);
-        frontendCommunicator.send("twitch:chat:user:delete-messages", username);
-    });
-
-    streamerChatClient.onTimeout((_, username, duration) => {
-        twitchEventsHandler.viewerTimeout.triggerTimeout(username, duration);
-        frontendCommunicator.send("twitch:chat:user:delete-messages", username);
-    });
-
     streamerChatClient._onVipResult((_, username) => {
         chatRolesManager.addVipToVipList(username);
     });

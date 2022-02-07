@@ -1,44 +1,9 @@
-<div class="chat-tab-content">
-  <div class="quick-actions-column">
-    <button
-      class="quick-action-btn"
-      ng-click="showEditStreamInfoModal()"
-      uib-tooltip="Edit Stream Info"
-      append-tooltip-to-body="true"
-      tooltip-placement="right"
-      aria-label="Edit Stream Info"
-    >
-      <i class="far fa-pencil"></i>
-    </button>
+<div class="chat-tab-content flex">
+  <quick-actions id="dashboardQuickActions" class="quick-actions-column flex flex-col justify-between" ng-style="{'width': layout.dashboardQuickActions }"></quick-actions>
 
-    <button
-      class="quick-action-btn mt-4"
-      uib-tooltip="Give Currency"
-      append-tooltip-to-body="true"
-      tooltip-placement="right"
-      ng-click="showGiveCurrencyModal();"
-      aria-label="Give Currency"
-    >
-      <i class="far fa-coins"></i>
-    </button>
+  <div style="width: 2px;background: #373c3e;position: relative;"></div>
 
-    <button
-      class="quick-action-btn mt-4"
-      uib-tooltip="Open Stream Preview"
-      append-tooltip-to-body="true"
-      tooltip-placement="right"
-      ng-click="popoutStreamPreview()"
-      aria-label="Open Stream Preview"
-    >
-      <i class="far fa-tv-alt"></i>
-    </button>
-
-
-
-
-  </div>
-
-  <div class="viewer-list-column" ng-show="getChatViewerListSetting()">
+  <div id="dashboardViewerList" class="viewer-list-column" ng-show="getChatViewerListSetting()" ng-style="{'width': layout.dashboardViewerList }">
     <div class="viewer-list-header">
       <span> CHAT USERS </span>
     </div>
@@ -49,7 +14,10 @@
       <chat-user-category category="Broadcaster" role-key="broadcaster" />
     </div>
   </div>
-  <div class="chat-window-column">
+
+  <column-resizer on-update="updateLayoutSettings(updatedSettings)" ng-show="getChatViewerListSetting()"></column-resizer>
+
+  <div id="dashboardChatWindow" class="chat-window-column" ng-style="{'width': layout.dashboardChatWindow }">
     <div class="chat-window-wrapper">
       <div ng-hide="chatFeedIsEnabled()" class="chatfeed-disabled-overlay">
         <span style="color: white; font-size: 1.2em; text-align: center"
@@ -169,7 +137,10 @@
       </div>
     </div>
   </div>
-  <div class="activity-feed-column" ng-show="settings.showActivityFeed()">
+
+  <column-resizer on-update="updateLayoutSettings(updatedSettings)" ng-show="settings.showActivityFeed()"></column-resizer>
+
+  <div id="dashboardActivityFeed" class="activity-feed-column" ng-show="settings.showActivityFeed()" ng-style="{'width': layout.dashboardActivityFeed }">
     <div class="activity-feed-header">
       <div style="display: flex; align-items: center">
         <span>ACTIVITY FEED</span>
@@ -252,6 +223,7 @@
         <div
           style="width: 100%"
           class="activity-message"
+          ng-hide="hideEventLabel"
           ng-bind-html="activity.message"
         ></div>
         <div

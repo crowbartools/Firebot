@@ -82,6 +82,9 @@ exports.whenReady = async () => {
     const eventsAccess = require("../../../events/events-access");
     eventsAccess.loadEventsAndGroups();
 
+    const teamRolesManager = require("../../../roles/team-roles-manager");
+    teamRolesManager.loadTeamRoles();
+
     const customRolesManager = require("../../../roles/custom-roles-manager");
     customRolesManager.loadCustomRoles();
 
@@ -91,6 +94,9 @@ exports.whenReady = async () => {
     const presetEffectListManager = require("../../../effects/preset-lists/preset-effect-list-manager");
     presetEffectListManager.loadItems();
 
+    const quickActionManager = require("../../../quick-actions/quick-action-manager");
+    quickActionManager.loadItems();
+
     const startupScriptsManager = require("../../../common/handlers/custom-scripts/startup-scripts-manager");
     startupScriptsManager.loadStartupConfig();
 
@@ -98,7 +104,7 @@ exports.whenReady = async () => {
     chatModerationManager.load();
 
     const countersManager = require("../../../counters/counter-manager");
-    countersManager.loadCounters();
+    countersManager.loadItems();
 
     const gamesManager = require("../../../games/game-manager");
     gamesManager.loadGameSettings();
@@ -163,6 +169,9 @@ exports.whenReady = async () => {
 
     // load activity feed manager
     require("../../../events/activity-feed-manager");
+
+    const iconManager = require("../../../common/icon-manager");
+    iconManager.loadFontAwesomeIcons();
 
     const streamInfoPoll = require("../../../twitch-api/stream-info-poll");
     streamInfoPoll.startStreamInfoPoll();

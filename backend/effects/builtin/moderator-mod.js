@@ -1,7 +1,6 @@
 "use strict";
 
-const { EffectDependency } = require("../models/effectModels");
-const { EffectCategory } = require('../../../shared/effect-constants');
+const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
 const logger = require('../../logwrapper');
 const twitchChat = require("../../chat/twitch-chat");
 
@@ -11,7 +10,7 @@ const model = {
         name: "Mod",
         description: "Mod or unmod a user",
         icon: "fad fa-crown",
-        categories: [EffectCategory.COMMON, EffectCategory.MODERATION],
+        categories: [EffectCategory.COMMON, EffectCategory.MODERATION, EffectCategory.TWITCH],
         dependencies: [EffectDependency.CHAT]
     },
     optionsTemplate: `

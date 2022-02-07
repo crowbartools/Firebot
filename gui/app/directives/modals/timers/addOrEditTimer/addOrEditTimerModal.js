@@ -17,15 +17,15 @@
                     <div class="settings-title">
                         <h3>General Settings</h3>
                     </div>
-                    <div class="input-group settings-commandGroup-groupName">
+                    <div class="input-group pb-6 settings-commandGroup-groupName">
                         <span class="input-group-addon">Name</span>
                         <input type="text" class="form-control" ng-model="$ctrl.timer.name">
                     </div>
-                    <div class="input-group settings-commandGroup-timer">
+                    <div class="input-group pb-6 settings-commandGroup-timer">
                         <span class="input-group-addon">Interval(secs)</span>
                         <input type="number" class="form-control" ng-model="$ctrl.timer.interval" placeholder="Seconds">
                     </div>
-                    <div class="input-group settings-commandGroup-timer">
+                    <div class="input-group pb-6 settings-commandGroup-timer">
                         <span class="input-group-addon">Required Chat Lines <tooltip text="'The minimum number of chat lines since the last interval.'"></tooltip></span>
                         <input type="number" class="form-control" ng-model="$ctrl.timer.requiredChatLines" placeholder="">
                     </div>

@@ -6,15 +6,17 @@ const effectQueueRunner = require("./effect-queue-runner");
 
 /**
  * @typedef EffectQueue
- * @property {string} id - the id of the effect queue
- * @property {string} name - the name of the effect queue
- * @property {string} mode - the mode of the effect queue
- * @property {number} [interval] - the interval set for the interval mode
- * @property {string[]} sortTags - the sort tags for the effect queue
+ * @prop {string} id - the id of the effect queue
+ * @prop {string} name - the name of the effect queue
+ * @prop {string} mode - the mode of the effect queue
+ * @prop {number} [interval] - the interval set for the interval mode
+ * @prop {string[]} sortTags - the sort tags for the effect queue
  */
 
 /**
  * @extends {JsonDbManager<EffectQueue>}
+ * {@link JsonDbManager}
+ * @hideconstructor
  */
 class EffectQueueManager extends JsonDbManager {
     constructor() {
@@ -22,18 +24,22 @@ class EffectQueueManager extends JsonDbManager {
     }
 
     /**
-     * @param {EffectQueue}
-     * @returns {Promise.<EffectQueue>}
+     * @override
+     * @param {EffectQueue} effectQueue
+     * @returns {EffectQueue | null}
      * */
-    async saveItem(effectQueue) {
-        const savedEffectQueue = await super.saveItem(effectQueue);
-        effectQueueRunner.updateQueueConfig(savedEffectQueue);
+    saveItem(effectQueue) {
+        const savedEffectQueue = super.saveItem(effectQueue);
 
-        return savedEffectQueue;
+        if (savedEffectQueue) {
+            effectQueueRunner.updateQueueConfig(savedEffectQueue);
+            return savedEffectQueue;
+        }
+
+        return null;
     }
 
     /**
-     * @emits
      * @returns {void}
      */
     triggerUiRefresh() {
@@ -47,10 +53,10 @@ frontendCommunicator.onAsync("getEffectQueues",
     async () => effectQueueManager.getAllItems());
 
 frontendCommunicator.onAsync("saveEffectQueue",
-    async (/** @type {SavedEffectQueue} */ effectQueue) => await effectQueueManager.saveItem(effectQueue));
+    async (/** @type {EffectQueue} */ effectQueue) => effectQueueManager.saveItem(effectQueue));
 
 frontendCommunicator.onAsync("saveAllEffectQueues",
-    async (/** @type {SavedEffectQueue[]} */ allEffectQueues) => await effectQueueManager.saveAllItems(allEffectQueues));
+    async (/** @type {EffectQueue[]} */ allEffectQueues) => effectQueueManager.saveAllItems(allEffectQueues));
 
 frontendCommunicator.on("deleteEffectQueue",
     (/** @type {string} */ effectQueueId) => effectQueueManager.deleteItem(effectQueueId));

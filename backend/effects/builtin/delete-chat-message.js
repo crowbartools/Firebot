@@ -1,8 +1,6 @@
 "use strict";
 const twitchChat = require("../../chat/twitch-chat");
-const { EffectTrigger, EffectDependency } = require("../models/effectModels");
-
-const { EffectCategory } = require('../../../shared/effect-constants');
+const { EffectCategory, EffectTrigger, EffectDependency } = require('../../../shared/effect-constants');
 
 const triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
@@ -14,7 +12,7 @@ const model = {
         name: "Delete Chat Message",
         description: "Delete the associated chat message",
         icon: "fad fa-comment-times",
-        categories: [EffectCategory.CHAT_BASED, EffectCategory.ADVANCED],
+        categories: [EffectCategory.CHAT_BASED, EffectCategory.ADVANCED, EffectCategory.TWITCH],
         dependencies: [EffectDependency.CHAT],
         triggers: triggers
     },

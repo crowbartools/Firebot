@@ -9,8 +9,7 @@
             connectionService,
             settingsService,
             utilityService,
-            activityFeedService,
-            backendCommunicator
+            activityFeedService
         ) {
             $scope.settings = settingsService;
 
@@ -30,7 +29,40 @@
             // from the end of the array instead of the front
             $scope.messageDisplayLimit = chatMessagesService.chatMessageDisplayLimit * -1;
 
+            const updateLabelVisibility = (settings) => {
+                const $parent = $('#dashboardActivityFeed').parent();
+                $scope.hideEventLabel = (parseInt(settings.dashboardActivityFeed.replace("%", "") / 100 * $parent.width())) < 180 ? true : false;
+            };
+
+            $scope.updateLayoutSettings = (updatedSettings) => {
+                let settings = settingsService.getDashboardLayoutSettings();
+
+                if (settings == null) {
+                    settings = {
+                        dashboardViewerList: "225px",
+                        dashboardChatWindow: "100%",
+                        dashboardActivityFeed: "275px"
+                    };
+
+                    settingsService.setDashboardLayoutSettings(settings);
+                }
+
+                if (updatedSettings) {
+                    Object.entries(updatedSettings).forEach(([key, value]) => {
+                        settings[key] = value;
+                    });
+
+                    settingsService.setDashboardLayoutSettings(settings);
+                }
+
+                $scope.layout = settings;
+
+                updateLabelVisibility(settings);
+            };
+
             function getUpdatedChatSettings() {
+                $scope.updateLayoutSettings();
+
                 $scope.compactDisplay = settingsService.isChatCompactMode();
                 $scope.alternateBackgrounds = settingsService.chatAlternateBackgrounds();
                 $scope.hideDeletedMessages = settingsService.chatHideDeletedMessages();
@@ -78,39 +110,9 @@
                 });
             };
 
-            $scope.showEditStreamInfoModal = () => {
-                utilityService.showModal({
-                    component: "editStreamInfoModal",
-                    size: "md"
-                });
-            };
-
-            $scope.showGiveCurrencyModal = () => {
-                utilityService.showModal({
-                    component: "giveCurrencyModal",
-                    size: "md"
-                });
-            };
-
             $scope.updateChatInput = function(text) {
                 $scope.chatMessage = text;
                 focusMessageInput();
-            };
-
-            $scope.popoutStreamPreview = () => {
-                // const modal = window.open('', 'stream-preview');
-                // modal.document.head.insertAdjacentHTML("beforeend", `
-                //     <style>
-                //         body {
-                //             -webkit-app-region: drag;
-                //         }
-                //         button, a {
-                //             -webkit-app-region: no-drag;
-                //         }
-                //     </style>
-                // `);
-                // modal.document.title = `Stream Preview`;
-                backendCommunicator.send("show-twitch-preview");
             };
 
             $scope.chatFeedIsEnabled = function() {

@@ -1,5 +1,7 @@
 "use strict";
 
+const { ComparisonType } = require("../../../../shared/filter-constants");
+
 module.exports = {
     id: "firebot:cheerbitsamount",
     name: "Cheer Bits Amount",
@@ -7,7 +9,14 @@ module.exports = {
     events: [
         { eventSourceId: "twitch", eventId: "cheer" }
     ],
-    comparisonTypes: ["is", "is not", "less than", "greater than"],
+    comparisonTypes: [
+        ComparisonType.IS,
+        ComparisonType.IS_NOT,
+        ComparisonType.LESS_THAN,
+        ComparisonType.LESS_THAN_OR_EQUAL_TO,
+        ComparisonType.GREATER_THAN,
+        ComparisonType.GREATER_THAN_OR_EQUAL_TO
+    ],
     valueType: "number",
     predicate: (filterSettings, eventData) => {
 
@@ -16,19 +25,24 @@ module.exports = {
 
         const bitsAmount = eventMeta.bits || 0;
 
-
         switch (comparisonType) {
-        case "is": {
+        case ComparisonType.IS: {
             return bitsAmount === value;
         }
-        case "is not": {
+        case ComparisonType.IS_NOT: {
             return bitsAmount !== value;
         }
-        case "less than": {
+        case ComparisonType.LESS_THAN: {
             return bitsAmount < value;
         }
-        case "greater than": {
+        case ComparisonType.LESS_THAN_OR_EQUAL_TO: {
+            return bitsAmount <= value;
+        }
+        case ComparisonType.GREATER_THAN: {
             return bitsAmount > value;
+        }
+        case ComparisonType.GREATER_THAN_OR_EQUAL_TO: {
+            return bitsAmount >= value;
         }
         default:
             return false;

@@ -1,6 +1,7 @@
 "use strict";
 
 exports.chatMessage = require('./twitch-events/chat-message');
+exports.chatModeChanged = require('./twitch-events/chat-mode-changed');
 exports.cheer = require('./twitch-events/cheer');
 exports.follow = require('./twitch-events/follow');
 exports.giftSub = require('./twitch-events/gift-sub');

@@ -11,6 +11,7 @@ const eventsAccess = require("../../events/events-access");
 const timerManager = require("../../timers/timer-manager");
 const presetEffectListManager = require("../../effects/preset-lists/preset-effect-list-manager");
 const customRolesManager = require("../../roles/custom-roles-manager");
+const quickActionManager = require("../../quick-actions/quick-action-manager");
 const { escapeRegExp } = require("../../utility");
 
 function findAndReplaceCurrency(data, currency) {
@@ -94,7 +95,7 @@ function importSetup(setup, selectedCurrency) {
     // counters
     const counters = setup.components.counters || [];
     for (const counter of counters) {
-        countersManager.saveCounter(counter);
+        countersManager.saveItem(counter);
         countersManager.updateCounterValue(counter.name, counter.value);
     }
     countersManager.triggerUiRefresh();
@@ -170,6 +171,13 @@ function importSetup(setup, selectedCurrency) {
     }
     customRolesManager.triggerUiRefresh();
 
+    // quick actions
+    const quickActions = setup.components.quickActions || [];
+    for (const action of quickActions) {
+        quickActionManager.saveItem(action);
+    }
+    quickActionManager.triggerUiRefresh();
+
     return true;
 }
 
@@ -182,7 +190,7 @@ function removeSetupComponents(components) {
                     commandAccess.deleteCustomCommand(id);
                     break;
                 case "counters":
-                    countersManager.deleteCounter(id);
+                    countersManager.deleteItem(id);
                     break;
                 case "currencies":
                     frontendCommunicator.send("remove-currency", { id, name });
@@ -208,6 +216,9 @@ function removeSetupComponents(components) {
                 case "viewerRoles":
                     customRolesManager.deleteCustomRole(id);
                     break;
+                case "quickActions":
+                    quickActionManager.deleteItem(id);
+                    break;
                 default:
                     // do nothing
                 }
@@ -228,6 +239,8 @@ function removeSetupComponents(components) {
                 timerManager.triggerUiRefresh();
             } else if (componentType === "viewerRoles") {
                 customRolesManager.triggerUiRefresh();
+            } else if (componentType === "quickActions") {
+                quickActionManager.triggerUiRefresh();
             }
         });
     return true;

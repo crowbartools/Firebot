@@ -99,6 +99,18 @@
   to {opacity: 0.05}
 }
 
+.icon-picker {
+  width: 300px;
+  background: #232325;
+  position: absolute;
+  left: 40px;
+  top: -315px;
+  z-index: 3000;
+  border-radius: 4px;
+  margin: 2px;
+  box-shadow: 5px 5px 21px rgba(0, 0, 0, 0.5);
+}
+
 
 .sticky-top {
   position: sticky;
@@ -1477,9 +1489,12 @@ thead th{
 
 .general-button-settings {
   margin: 10px 0 25px 0;
+}
 
-  .input-group {
-    padding-bottom:1em;
+.simple-command {
+  .input-group-addon {
+    min-width: 100px;
+    width: 100px;
   }
 }
 
@@ -1726,4 +1741,35 @@ thead th{
 
 .angular-context-menu {
   min-width: 155px!important;
+}
+
+column-resizer {
+  height: 100%;
+  min-width: 2px;
+  background: #373c3e;
+  position: relative;
+
+  .resizer-hitbox {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -5px;
+    right: -5px;
+    z-index: 9999;
+
+    &:hover {
+      cursor: col-resize;
+    }
+  }
+}
+
+#ghostbar {
+  width: 3px;
+  background-color: #373c3e;
+  opacity: 0.5;
+  position: absolute;
+  bottom: 0;
+  top: 0;
+  cursor: col-resize;
+  z-index: 10000
 }

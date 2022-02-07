@@ -15,8 +15,6 @@
 .chat-tab-content {
     width: 100%;
     height: 100%;
-    display: flex;
-    flex-direction: row;
     position: relative;
 }
 
@@ -212,7 +210,7 @@
 }
 
 .name-wrapper {
-    width: 175px;
+    width: 200px;
     height: 50px;
     display: flex;
     flex-direction: row;
@@ -220,6 +218,10 @@
     border-bottom: inherit;
     padding-left: 10px;
     background: rgba(206, 208, 208, 0.07);
+}
+
+.chat-message-context-menu {
+    padding: 0;
 }
 
 .user-name {
@@ -287,15 +289,26 @@
 }
 
 .quick-actions-column {
-    width: 50px;
     background: $light-background-color;
-    border-right: 2px solid $light-background-border;
     height: 100%;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 8px;
+    min-width: 50px;
+
+    .quick-actions {
+        width: 100%;
+        min-height: 50%;
+        overflow-y: auto;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    hr {
+        border-top: 1px solid #53545b;
+        width: 35px;
+        margin-top: auto;
+    }
+
     .quick-action-btn {
         width: 35px;
         height: 35px;
@@ -304,8 +317,8 @@
         background: $activity-bg-color;
         align-items: center;
         justify-content: center;
-        padding: 0;
         border: 0;
+
         &:hover {
             cursor: pointer;
             background: #53545b;
@@ -356,8 +369,41 @@
     border-radius: 4px;
     transform: translateY(-8px);
     box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.33);
-    max-height: 300px;
-    overflow-y: auto;
+    & .tip {
+        padding: 5px 10px;
+        opacity: 0.8;
+        font-size: 13px;
+    }
+    & .completions {
+        max-height: 300px;
+        overflow-y: auto;
+        .autocomplete-menu-item {
+            padding: 10px;
+            display: flex;
+            &:hover {
+                background: #3f4148;
+                cursor: pointer;
+            }
+            &.selected {
+                background: #2f3136;
+            }
+            .item-image {
+                width: 28px;
+                height: 28px;
+                margin-right: 10px;
+                img {
+                    width: 100%;
+                }
+            }
+            .item-display {
+                font-size: 15px;
+            }
+            .item-description {
+                opacity: 0.8;
+                font-size: 13.5px;
+            }
+        }
+    }
     &.below {
         top: 36px;
     }
@@ -368,31 +414,6 @@
     &.under {
         bottom: -307px;
         top: unset;
-    }
-    .autocomplete-menu-item {
-        padding: 10px;
-        display: flex;
-        &:hover {
-            background: #3f4148;
-            cursor: pointer;
-        }
-        &.selected {
-            background: #2f3136;
-        }
-        .item-image {
-            width: 28px;
-            height: 28px;
-            margin-right: 10px;
-            img {
-                width: 100%;
-            }
-        }
-        .item-display {
-            font-size: 15px;
-        }
-        .item-description {
-            opacity: 0.8;
-        }
     }
 }
 
@@ -497,10 +518,33 @@
     overflow-x: hidden;
     font-size: 16px;
     text-overflow: ellipsis;
+    overflow-y: scroll;
+    height: 100%;
+
+    &::-webkit-scrollbar {
+        width: 7px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: transparent;
+        border-radius: 7px;
+    }
+
+    &:hover {
+        &::-webkit-scrollbar-thumb {
+            background-color: #202225;
+        }
+    }
+
     .activity {
         padding: 10px;
         display: flex;
         align-items: center;
+        justify-content: space-between;
         font-size: 13px;
         background: $activity-bg-color;
         border-radius: 7px;
@@ -521,39 +565,17 @@
 }
 
 .activity-feed-column {
-    width: 275px;
     flex-shrink: 0;
     height: 100%;
-
-    overflow-y: scroll;
-
-    &::-webkit-scrollbar {
-        width: 7px;
-    }
-
-    &::-webkit-scrollbar-track {
-        background-color: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background-color: transparent;
-        border-radius: 7px;
-    }
-
-    &:hover {
-        &::-webkit-scrollbar-thumb {
-            background-color: #202225;
-        }
-    }
+    min-width: 145px;
 }
 
 // Chat Screen
 .viewer-list-column {
-    width: 225px;
     flex-shrink: 0;
     height: 100%;
-
     overflow-y: scroll;
+    min-width: 105px;
 
     &::-webkit-scrollbar {
         width: 7px;
@@ -604,10 +626,11 @@
 .chat-window-column {
     display: flex;
     flex-direction: column;
-    width: 100%;
     height: 100%;
     padding-bottom: 10px;
     background: adjust-color($light-background-color, $red: 15, $green: 15, $blue: 15);
+    flex-grow: 1;
+    min-width: 315px;
 }
 
 .chat-window {

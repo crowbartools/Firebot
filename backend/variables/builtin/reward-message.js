@@ -1,9 +1,6 @@
 "use strict";
 
-const {
-    EffectTrigger
-} = require("../../effects/models/effectModels");
-
+const { EffectTrigger } = require("../../../shared/effect-constants");
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
 let triggers = {};
@@ -17,7 +14,7 @@ const model = {
         handle: "rewardMessage",
         description: "The reward message text",
         triggers: triggers,
-        categories: [VariableCategory.COMMON],
+        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {

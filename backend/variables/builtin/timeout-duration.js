@@ -1,10 +1,8 @@
 // Migration: todo - Needs implementation details
 
 "use strict";
-const {
-    EffectTrigger
-} = require("../../effects/models/effectModels");
 
+const { EffectTrigger } = require("../../../shared/effect-constants");
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
 let triggers = {};
@@ -16,7 +14,7 @@ const model = {
         handle: "timeoutDuration",
         description: "How long the user is timed out for in minus",
         triggers: triggers,
-        categories: [VariableCategory.COMMON],
+        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {

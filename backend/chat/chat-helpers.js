@@ -272,7 +272,7 @@ const getChatBadges = (badges) => {
 
         try {
             chatBadges.push({
-                title: setVersion.id,
+                title: set.id,
                 url: setVersion.getImageUrl(2)
             });
         } catch (err) {

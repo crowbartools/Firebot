@@ -22,13 +22,13 @@
             service.loadEffectQueues = async () => {
                 const effectQueues = await backendCommunicator.fireEventAsync("getEffectQueues");
                 if (effectQueues != null) {
-                    service.effectQueues = Object.values(effectQueues);
+                    service.effectQueues = effectQueues;
                 }
             };
 
             backendCommunicator.on("all-queues", effectQueues => {
                 if (effectQueues != null) {
-                    service.effectQueues = Object.values(effectQueues);
+                    service.effectQueues = effectQueues;
                 }
             });
 

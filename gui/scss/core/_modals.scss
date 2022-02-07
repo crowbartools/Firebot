@@ -111,18 +111,21 @@
 }
 
 .context-menu-modal-header {
+  align-items: flex-start;
+
     .modal-title {
         margin-right: auto;
+        max-width: 400px;
     }
 
     .close {
         margin-left: 0;
+        font-size: 30px;
     }
 
     .context-menu {
       order: 1;
-      font-size: 29px;
-      margin-right: 25px;
+      font-size: 31px;
     }
 
     .action {

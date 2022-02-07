@@ -6,7 +6,7 @@
             bindings: {
                 triggerType: "@",
                 triggerName: "<",
-                sortTags: "<",
+                sortTags: "=",
                 onClose: "&",
                 showTriggerName: "<"
             },
@@ -18,19 +18,21 @@
                     aria-label="Close"
                     ng-click="$ctrl.onClose()"
                 >
-                    <span aria-hidden="true">&times;</span>
+                    <i class="fal fa-times" aria-hidden="true"></i>
                 </button>
-                <span ng-show="$ctrl.allSortTags.length > 0"
-                    class="noselect clickable context-menu"
-                    context-menu="$ctrl.getContextMenu()"
-                    context-menu-on="click"
-                    context-menu-orientation="left"
-                >
-                    <i class="fal fa-ellipsis-v"></i>
-                </span>
+                <div class="context-menu mr-10">
+                    <span ng-show="$ctrl.allSortTags.length > 0"
+                        class="noselect clickable flex"
+                        context-menu="$ctrl.getContextMenu()"
+                        context-menu-on="click"
+                        context-menu-orientation="left"
+                    >
+                        <i class="fal fa-ellipsis-v"></i>
+                    </span>
+                </div>
                 <h4 class="modal-title">
-                    <span class="action">{{$ctrl.triggerName ? 'Edit' : 'Add New'}} {{$ctrl.triggerType}}</span>
-                    <span ng-if="$ctrl.triggerName && $ctrl.showTriggerName">- {{$ctrl.triggerName}}</span>
+                    <div class="action text-4xl">{{$ctrl.triggerName ? 'Edit' : 'Add New'}} {{$ctrl.triggerType}}<span ng-if="$ctrl.triggerName">:</span></div>
+                    <div class="text-4xl font-semibold" ng-if="$ctrl.triggerName && $ctrl.showTriggerName">{{$ctrl.triggerName}}</div>
                 </h4>
             </div>
 

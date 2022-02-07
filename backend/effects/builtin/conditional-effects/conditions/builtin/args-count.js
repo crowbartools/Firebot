@@ -2,7 +2,7 @@
 
 const {
     EffectTrigger
-} = require("../../../../../effects/models/effectModels");
+} = require("../../../../../../shared/effect-constants");
 
 let triggers = {};
 triggers[EffectTrigger.COMMAND] = true;

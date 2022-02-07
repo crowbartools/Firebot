@@ -1,9 +1,6 @@
 "use strict";
 
-const {
-    EffectTrigger
-} = require("../../effects/models/effectModels");
-
+const { EffectTrigger } = require("../../../shared/effect-constants");
 const { OutputDataType } = require("../../../shared/variable-constants");
 
 let triggers = {};
@@ -13,6 +10,7 @@ triggers[EffectTrigger.MANUAL] = true;
 triggers[EffectTrigger.CUSTOM_SCRIPT] = true;
 triggers[EffectTrigger.PRESET_LIST] = true;
 triggers[EffectTrigger.CHANNEL_REWARD] = true;
+triggers[EffectTrigger.QUICK_ACTION] = true;
 
 
 module.exports = {

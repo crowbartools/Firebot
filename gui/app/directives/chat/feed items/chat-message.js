@@ -30,6 +30,7 @@
                     }"
                     ng-attr-messageId="{{$ctrl.message.id}}"
                     context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
+                    context-menu-class="chat-message-context-menu"
                     context-menu-on="contextmenu"
                 >
                     <div
@@ -37,6 +38,7 @@
                         ng-show="$ctrl.showAvatar"
                         class="chat-user-avatar-wrapper"
                         context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
+                        context-menu-class="chat-message-context-menu"
                         context-menu-on="click"
                     >
                         <img class="chat-user-avatar" ng-src="{{$ctrl.message.profilePicUrl}}">
@@ -52,6 +54,7 @@
                             class="chat-user-avatar-wrapper"
                             ng-show="$ctrl.showAvatar"
                             context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
+                            context-menu-class="chat-message-context-menu"
                             context-menu-on="click"
                         >
                             <img class="chat-user-avatar" ng-src="{{$ctrl.message.profilePicUrl}}">
@@ -60,6 +63,7 @@
                         <div
                             class="chat-username"
                             context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
+                            context-menu-class="chat-message-context-menu"
                             context-menu-on="click"
                         >
                             <div ng-show="$ctrl.message.badges.length > 0" class="user-badges">
@@ -135,7 +139,7 @@
                     </div>
                 </div>
             `,
-            controller: function(chatMessagesService, utilityService, connectionService, pronounsService) {
+            controller: function(chatMessagesService, utilityService, connectionService, pronounsService, backendCommunicator) {
 
                 const $ctrl = this;
 
@@ -173,7 +177,7 @@
                     });
 
                     actions.push({
-                        name: "Delete",
+                        name: "Delete This Message",
                         icon: "fa-trash-alt"
                     });
 
@@ -182,17 +186,17 @@
                         icon: "fa-at"
                     });
 
-                    if (message.username !== connectionService.accounts.streamer.username &&
-                        message.username !== connectionService.accounts.bot.username) {
+                    actions.push({
+                        name: "Quote This Message",
+                        icon: "fa-quote-right"
+                    });
+
+                    if (message.username.toLowerCase() !== connectionService.accounts.streamer.username.toLowerCase() &&
+                        message.username.toLowerCase() !== connectionService.accounts.bot.username.toLowerCase()) {
 
                         actions.push({
                             name: "Whisper",
                             icon: "fa-envelope"
-                        });
-
-                        actions.push({
-                            name: "Quote This Message",
-                            icon: "fa-quote-right"
                         });
 
                         actions.push({
@@ -215,6 +219,18 @@
                                 name: "Mod",
                                 icon: "fa-user-plus"
                             });
+
+                            if (message.roles.includes("vip")) {
+                                actions.push({
+                                    name: "Remove VIP",
+                                    icon: "fa-gem"
+                                });
+                            } else {
+                                actions.push({
+                                    name: "Add as VIP",
+                                    icon: "fa-gem"
+                                });
+                            }
                         }
 
                         actions.push({
@@ -236,35 +252,79 @@
                                 </div>`,
                             enabled: false
                         },
-                        ...actions.map(a => ({
-                            html: `
-                                <div class="message-action">
-                                    <span class="action-icon"><i class="fad ${a.icon}"></i></span>
-                                    <span class="action-name">${a.name}</span>
-                                </div>
-                            `,
-                            click: () => {
-                                $ctrl.messageActionSelected(a.name, message.username, message.userId, message.id, message.rawText);
+                        ...actions.map(a => {
+                            let html = "";
+                            if (a.name === "Remove VIP") {
+                                html = `
+                                    <div class="message-action">
+                                        <span class="fa-stack fa-1x mr-3" style="width: 18px">
+                                            <i class="fad fa-gem fa-stack-1x ml-px mt-1" style="opacity: 0.5"></i>
+                                            <i class="far fa-slash fa-stack-1x text-2xl"></i>
+                                        </span>
+                                        <span class="action-name">${a.name}</span>
+                                    </div>
+                                `;
+                            } else {
+                                html = `
+                                    <div class="message-action">
+                                        <span class="action-icon"><i class="fad ${a.icon}"></i></span>
+                                        <span class="action-name">${a.name}</span>
+                                    </div>
+                                `;
                             }
-                        }))];
+                            return {
+                                html: html,
+                                click: () => {
+                                    $ctrl.messageActionSelected(a.name, message.username, message.userId, message.id, message.rawText);
+                                }
+                            };
+                        })];
                 };
 
                 $ctrl.messageActionSelected = (action, userName, userId, msgId, rawText) => {
                     switch (action.toLowerCase()) {
-                    case "delete":
+                    case "delete this message":
                         chatMessagesService.deleteMessage(msgId);
                         break;
                     case "timeout":
                         updateChatField(`/timeout @${userName} 300`);
                         break;
                     case "ban":
-                        updateChatField(`/ban @${userName}`);
+                        utilityService
+                            .showConfirmationModal({
+                                title: "Ban User",
+                                question: `Are you sure you want to ban ${userName}?`,
+                                confirmLabel: "Ban",
+                                confirmBtnType: "btn-danger"
+                            })
+                            .then(confirmed => {
+                                if (confirmed) {
+                                    backendCommunicator.fireEvent("update-user-banned-status", { username: userName, shouldBeBanned: true });
+                                }
+                            });
                         break;
                     case "mod":
                         chatMessagesService.changeModStatus(userName, true);
                         break;
                     case "unmod":
-                        chatMessagesService.changeModStatus(userName, false);
+                        utilityService
+                            .showConfirmationModal({
+                                title: "Mod User",
+                                question: `Are you sure you want to unmod ${userName}?`,
+                                confirmLabel: "Unmod",
+                                confirmBtnType: "btn-danger"
+                            })
+                            .then(confirmed => {
+                                if (confirmed) {
+                                    chatMessagesService.changeModStatus(userName, false);
+                                }
+                            });
+                        break;
+                    case "add as vip":
+                        backendCommunicator.fireEvent("update-user-vip-status", { username: userName, shouldBeVip: true });
+                        break;
+                    case "remove vip":
+                        backendCommunicator.fireEvent("update-user-vip-status", { username: userName, shouldBeVip: false });
                         break;
                     case "whisper":
                         updateChatField(`/w @${userName} `);
