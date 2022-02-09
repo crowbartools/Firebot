@@ -7,6 +7,8 @@ const { ipcMain } = require("electron");
 const { settings } = require("../common/settings-access.js");
 const currencyDatabase = require("./currencyDatabase");
 const twitchChat = require("../chat/twitch-chat");
+const twitchApi = require("../twitch-api/api");
+const chatRolesManager = require("../roles/chat-roles-manager");
 const frontendCommunicator = require("../common/frontend-communicator");
 const userAccess = require("../common/user-access");
 const eventManager = require("../events/EventManager");
@@ -795,6 +797,127 @@ function incrementDbField(userId, fieldName) {
     });
 }
 
+const addViewersFromTwitch = async (viewers) => {
+    let twitchViewers = [];
+
+    const nameGroups = [];
+    if (viewers.length > 100) {
+        while (viewers.length > 100) {
+            nameGroups.push(viewers.splice(0, 100));
+        }
+    } else {
+        nameGroups.push(viewers);
+    }
+
+    for (const group of nameGroups) {
+        const client = twitchApi.getClient();
+
+        try {
+            const names = group.map(v => v.name);
+            const response = await client.users.getUsersByNames(names);
+
+            if (response) {
+                twitchViewers = [
+                    ...twitchViewers,
+                    ...response
+                ];
+            }
+        } catch (err) {
+            logger.error("Failed to get users", { location: "/database/userDatabase.js:826", err: err });
+
+            if (err._statusCode === 400) {
+                for (const viewer of group) {
+                    try {
+                        const response = await client.users.getUserByName(viewer.name);
+
+                        if (response) {
+                            twitchViewers.push(response);
+                        }
+                    } catch (err) {
+                        logger.error("Failed to get user", { location: "/database/userDatabase.js:838", err: err });
+                    }
+                }
+            }
+        }
+    }
+
+    const newViewers = [];
+    for (const viewer of twitchViewers) {
+        const roles = chatRolesManager.getUsersChatRoles(viewer.id);
+
+        const newViewer = await createNewUser(
+            viewer.id,
+            viewer.name,
+            viewer.displayName,
+            viewer.profilePictureUrl,
+            roles
+        );
+
+        if (newViewer) {
+            newViewers.push(newViewer);
+        } else {
+            logger.error("Failed to create new user", { location: "/database/userDatabase.js:822" });
+        }
+    }
+
+    return newViewers || [];
+};
+
+const importViewers = async (data) => {
+    logger.debug(`Attempting to import viewers...`);
+
+    const { viewers, settings } = data;
+
+    const newViewers = [];
+    let viewersToUpdate = [];
+
+    for (const v of viewers) {
+        const viewer = await getUserByUsername(v.name);
+
+        if (viewer == null) {
+            newViewers.push(v);
+            continue;
+        }
+
+        viewersToUpdate.push(viewer);
+    }
+
+    const createdViewers = await addViewersFromTwitch(newViewers);
+
+    if (createdViewers.length) {
+        viewersToUpdate = [
+            ...viewersToUpdate,
+            ...createdViewers
+        ];
+    }
+
+    for (const viewer of viewersToUpdate) {
+        const viewerToUpdate = viewer;
+        const importedViewer = viewers.find(v => v.name.toLowerCase() === viewer.username.toLowerCase());
+
+        if (settings.viewHours.includeViewHours) {
+            viewerToUpdate.minutesInChannel += importedViewer.viewHours * 60;
+        }
+
+        if (settings.currency.includeCurrency) {
+            if (viewer.currency == null) {
+                viewerToUpdate.currency = {};
+            }
+
+            if (viewerToUpdate.currency[settings.currency.currency.id] == null) {
+                viewerToUpdate.currency[settings.currency.currency.id] = importedViewer.currency;
+            } else {
+                viewerToUpdate.currency[settings.currency.currency.id] += importedViewer.currency;
+            }
+        }
+
+        await updateUser(viewerToUpdate);
+    }
+
+    logger.debug(`Finished importing viewers`);
+    return true;
+};
+
 //////////////////
 // Event Listeners
 
@@ -843,6 +966,8 @@ frontendCommunicator.on("updateViewerDataField", (data) => {
         }
     });
 });
+
+frontendCommunicator.onAsync("importViewers", async data => importViewers(data));
 
 // Return db rows for the ui to use.
 ipcMain.on("request-viewer-db", event => {

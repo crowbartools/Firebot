@@ -7,8 +7,8 @@
 
     angular
         .module("firebotApp")
-        .factory("importService", function(logger) {
-            let service = {};
+        .factory("importService", function() {
+            const service = {};
 
             const getQuoteDateFormat = (quotes) => {
                 let dateFormat = null;
