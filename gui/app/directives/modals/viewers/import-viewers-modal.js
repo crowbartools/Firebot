@@ -35,22 +35,22 @@
                             <div class="mt-8" uib-collapse="hideSettings">
                                 <div class="form-group">
                                     <label class="control-fb control--checkbox"> Include view hours
-                                        <input type="checkbox" ng-model="$ctrl.settings.viewHours.includeViewHours" ng-click="$ctrl.settings.viewHours.includeViewHours = !$ctrl.settings.viewHours.includeViewHours">
+                                        <input type="checkbox" ng-model="$ctrl.settings.viewHours.includeViewHours" ng-click="$ctrl.toggleIncludeViewHours()">
                                         <div class="control__indicator"></div>
                                     </label>
                                     <label ng-if="$ctrl.settings.viewHours.includeViewHours" class="control-fb control--checkbox ml-12"> Include viewers with 0 view hours
-                                        <input type="checkbox" ng-model="$ctrl.settings.viewHours.includeZeroHoursViewers" ng-click="$ctrl.settings.viewHours.includeZeroHoursViewers = !$ctrl.settings.viewHours.includeZeroHoursViewers; $ctrl.filterViewers();">
+                                        <input type="checkbox" ng-model="$ctrl.settings.viewHours.includeZeroHoursViewers" ng-click="$ctrl.toggleIncludeZeroHoursViewers()">
                                         <div class="control__indicator"></div>
                                     </label>
                                 </div>
 
                                 <label class="control-fb control--checkbox"> Include currency
-                                    <input type="checkbox" ng-model="$ctrl.settings.currency.includeCurrency" ng-click="$ctrl.settings.currency.includeCurrency = !$ctrl.settings.currency.includeCurrency">
+                                    <input type="checkbox" ng-model="$ctrl.settings.currency.includeCurrency" ng-click="$ctrl.toggleIncludeCurrency()">
                                     <div class="control__indicator"></div>
                                 </label>
                                 <div class="ml-12 mb-8" ng-if="$ctrl.settings.currency.includeCurrency">
                                     <label class="control-fb control--checkbox"> Include viewers with 0 currency
-                                        <input type="checkbox" ng-model="$ctrl.settings.currency.includeZeroCurrencyViewers" ng-click="$ctrl.settings.currency.includeZeroCurrencyViewers = !$ctrl.settings.currency.includeZeroCurrencyViewers; $ctrl.filterViewers();">
+                                        <input type="checkbox" ng-model="$ctrl.settings.currency.includeZeroCurrencyViewers" ng-click="$ctrl.toggleIncludeZeroCurrencyViewers()">
                                         <div class="control__indicator"></div>
                                     </label>
 
@@ -99,7 +99,10 @@
                             </h3>
                             <div uib-collapse="hideOverview">
                                 <div class="mb-10 flex flex-row justify-between items-end">
-                                    <div>Found {{$ctrl.filteredViewers.length}} viewers to import.</div>
+                                    <div>
+                                        Found {{$ctrl.filteredViewers.length}} viewers to import.
+                                        <tooltip text="'Viewers that have changed their username in the mean time are included in this number, but will not be imported since their new name is unknown.'"></tooltip>
+                                    </div>
                                     <div class="flex justify-between">
                                         <searchbar placeholder-text="Search viewers..." query="$ctrl.search" style="flex-basis: 250px;"></searchbar>
                                     </div>
@@ -196,8 +199,26 @@
                     }
                 ];
 
-                $ctrl.hasCurrency = () => {
-                    return Object.values($ctrl.settings.currency.currency).length && $ctrl.settings.currency.currency.name != null;
+                $ctrl.toggleIncludeViewHours = () => {
+                    $ctrl.settings.viewHours.includeViewHours = !$ctrl.settings.viewHours.includeViewHours;
+                };
+
+                $ctrl.toggleIncludeZeroHoursViewers = () => {
+                    $ctrl.settings.viewHours.includeZeroHoursViewers = !$ctrl.settings.viewHours.includeZeroHoursViewers;
+                    $ctrl.filterViewers();
+                };
+
+                $ctrl.toggleIncludeCurrency = () => {
+                    $ctrl.settings.currency.includeCurrency = !$ctrl.settings.currency.includeCurrency;
+
+                    if (!$ctrl.settings.currency.includeCurrency) {
+                        $ctrl.settings.currency.addNewCurrency = false;
+                    }
+                };
+
+                $ctrl.toggleIncludeZeroCurrencyViewers = () => {
+                    $ctrl.settings.currency.includeZeroCurrencyViewers = !$ctrl.settings.currency.includeZeroCurrencyViewers;
+                    $ctrl.filterViewers();
                 };
 
                 $ctrl.onFileSelected = (filepath) => {
@@ -247,7 +268,7 @@
                     };
 
                     if ($ctrl.settings.currency.addNewCurrency) {
-                        if (!$ctrl.settings.currency.currency.name || $ctrl.settings.currency.currency.name == null) {
+                        if ($ctrl.settings.currency.includeCurrency && (!$ctrl.settings.currency.currency.name || $ctrl.settings.currency.currency.name == null)) {
                             ngToast.create("Please provide a currency name");
 
                             return;
