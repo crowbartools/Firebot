@@ -21,14 +21,13 @@ const eventSourceDefinition = {
             manualMetadata: {
                 from: "StreamElements",
                 donationAmount: 5,
-                formattedDonationAmount: "$5",
                 donationMessage: "Test message"
             },
             isIntegration: true,
             activityFeed: {
                 icon: "fad fa-money-bill",
                 getMessage: (eventData) => {
-                    return `**${eventData.from}** donated **${eventData.formattedDonationAmount}**${eventData.donationMessage && !!eventData.donationMessage.length ? `: *${eventData.donationMessage}*` : ''}`;
+                    return `**${eventData.from}** donated **$${eventData.donationAmount}**${eventData.donationMessage && !!eventData.donationMessage.length ? `: *${eventData.donationMessage}*` : ''}`;
                 }
             }
         },
@@ -86,28 +85,16 @@ const currencies = new Map([
 ]);
 
 exports.processDonationEvent = (eventData) => {
-    let donatorName = "";
-
-    if (eventData.displayName != null) {
-        donatorName = eventData.username;
-    } else if (eventData.username != null) {
-        donatorName = eventData.username;
-    } else if (eventData.name != null) {
-        donatorName = eventData.name;
-    } else {
-        donatorName = "Unknown";
-    }
-
     eventManager.triggerEvent(EVENT_SOURCE_ID, EventId.DONATION, {
         donationAmount: eventData.amount,
         formattedDonationAmount: currencies.get(eventData.currency) + eventData.amount,
         donationMessage: eventData.message,
-        from: donatorName
+        from: eventData.displayName
     });
 };
 
 exports.processFollowEvent = (eventData) => {
     eventManager.triggerEvent(EVENT_SOURCE_ID, EventId.FOLLOW, {
-        username: eventData.displayName || eventData.username
+        username: eventData.displayName
     });
 };
