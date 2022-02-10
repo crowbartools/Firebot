@@ -89,7 +89,7 @@ exports.processDonationEvent = (eventData) => {
         donationAmount: eventData.amount,
         formattedDonationAmount: currencies.get(eventData.currency) + eventData.amount,
         donationMessage: eventData.message,
-        from: eventData.displayName
+        from: eventData.username
     });
 };
 
