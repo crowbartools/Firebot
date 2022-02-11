@@ -19,7 +19,7 @@ const model = {
                     <input type="radio" ng-model="effect.selectionType" value="command" />
                     <div class="control__indicator"></div>
                 </label>
-                <label class="control-fb control--radio">Commands With Sort Tag
+                <label class="control-fb control--radio">Commands With Tag
                     <input type="radio" ng-model="effect.selectionType" value="sortTag" />
                     <div class="control__indicator"></div>
                 </label>
@@ -33,7 +33,7 @@ const model = {
             </ui-select>
 
             <ui-select ng-if="effect.selectionType && effect.selectionType === 'sortTag'" ng-model="effect.sortTagId" theme="bootstrap">
-                <ui-select-match placeholder="Select or search for a sort tag... ">{{$select.selected.name}}</ui-select-match>
+                <ui-select-match placeholder="Select or search for a tag... ">{{$select.selected.name}}</ui-select-match>
                 <ui-select-choices repeat="sortTag.id as sortTag in sortTags | filter: { name: $select.search }" style="position:relative;">
                     <div ng-bind-html="sortTag.name | highlight: $select.search"></div>
                 </ui-select-choices>
@@ -170,7 +170,7 @@ const model = {
     optionsValidator: effect => {
         const errors = [];
         if (effect.commandId == null && effect.sortTagId == null) {
-            errors.push("Please select a command or sort tag");
+            errors.push("Please select a command or tag");
         }
         if (effect.userCooldownSecs != null && (effect.username == null || effect.username === '')) {
             errors.push("Please provide a username for the user cooldown");
