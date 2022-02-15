@@ -50,8 +50,8 @@ const spinCommand = {
         // parse the wager amount
         let wagerAmount;
         if (event.userCommand.args.length < 1) {
-            let defaultWager = slotsSettings.settings.currencySettings.defaultWager;
-            if ((defaultWager == null || defaultWager) < 1) {
+            const defaultWager = slotsSettings.settings.currencySettings.defaultWager;
+            if (defaultWager == null || defaultWager < 1) {
                 if (slotsSettings.settings.generalMessages.noWagerAmount) {
                     const noWagerAmountMsg = slotsSettings.settings.generalMessages.noWagerAmount
                         .replace("{user}", username);
