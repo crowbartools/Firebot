@@ -26,11 +26,8 @@
                     </div>
                     <div ng-show="$ctrl.viewers">
                         <div class="mb-8">
-                            <h3 ng-init="hideSettings = false" ng-click="hideSettings = !hideSettings">
-                                Settings
-                                <i class="far fa-sm ml-4" ng-class="{'fa-chevron-right': hideSettings, 'fa-chevron-down': !hideSettings}"></i>
-                            </h3>
-                            <div class="mt-8" uib-collapse="hideSettings">
+                            <h3>Settings</h3>
+                            <div class="mt-8">
                                 <div class="form-group">
                                     <label class="control-fb control--checkbox"> Include view hours
                                         <input type="checkbox" ng-model="$ctrl.settings.includeViewHours" ng-click="$ctrl.toggleIncludeViewHours()">
@@ -43,34 +40,29 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="mt-16">
-                            <h3 ng-init="hideOverview = false" ng-click="hideOverview = !hideOverview">
-                                Overview
-                                <i class="far fa-sm ml-4" ng-class="{'fa-chevron-right': hideOverview, 'fa-chevron-down': !hideOverview}"></i>
-                            </h3>
-                            <div uib-collapse="hideOverview">
-                                <div class="mb-10 flex flex-row justify-between items-end">
-                                    <div>
-                                        Found {{$ctrl.filteredViewers.length}} viewers to import.
-                                        <tooltip text="'Viewers that have changed their username in the mean time are included in this number, but will not be imported since their new name is unknown.'"></tooltip>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <searchbar placeholder-text="Search viewers..." query="$ctrl.search" style="flex-basis: 250px;"></searchbar>
-                                    </div>
+                        <div class="mt-16 mb-4">
+                            <h3>Overview</h3>
+                            <div class="mb-10 flex flex-row justify-between items-end">
+                                <div>
+                                    Found {{$ctrl.filteredViewers.length}} viewers to import.
+                                    <tooltip text="'Viewers that have changed their username in the mean time are included in this number, but will not be imported since their new name is unknown.'"></tooltip>
                                 </div>
-                                <sortable-table
-                                    table-data-set="$ctrl.filteredViewers"
-                                    headers="$ctrl.headers"
-                                    query="$ctrl.search"
-                                    clickable="true"
-                                    on-row-click="$ctrl.showEditImportedViewerModal(data)"
-                                    track-by-field="name"
-                                    starting-sort-field="viewHours"
-                                    sort-initially-reversed="true"
-                                    no-data-message="No viewers found"
-                                >
-                                </sortable-table>
+                                <div class="flex justify-between">
+                                    <searchbar placeholder-text="Search viewers..." query="$ctrl.search" style="flex-basis: 250px;"></searchbar>
+                                </div>
                             </div>
+                            <sortable-table
+                                table-data-set="$ctrl.filteredViewers"
+                                headers="$ctrl.headers"
+                                query="$ctrl.search"
+                                clickable="true"
+                                on-row-click="$ctrl.showEditImportedViewerModal(data)"
+                                track-by-field="name"
+                                starting-sort-field="viewHours"
+                                sort-initially-reversed="true"
+                                no-data-message="No viewers found"
+                            >
+                            </sortable-table>
                         </div>
                     </div>
                 </div>
