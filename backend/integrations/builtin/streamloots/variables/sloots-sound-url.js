@@ -1,7 +1,7 @@
 "use strict";
 
 const { EffectTrigger } = require("../../../../../shared/effect-constants");
-const { OutputDataType } = require("../../../../../shared/variable-constants");
+const { OutputDataType, VariableCategory } = require("../../../../../shared/variable-constants");
 
 let triggers = {};
 triggers[EffectTrigger.EVENT] = ["streamloots:purchase", "streamloots:redemption"];
@@ -12,6 +12,7 @@ const model = {
         handle: "slootsSoundUrl",
         description: "The sound url for the StreamLoots Chest/Card.",
         triggers: triggers,
+        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
