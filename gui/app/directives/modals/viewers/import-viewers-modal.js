@@ -140,6 +140,8 @@
                         $ctrl.search = "";
 
                         $ctrl.filteredViewers = $ctrl.viewers;
+                    } else {
+                        $ctrl.fileError = true;
                     }
                 };
 
