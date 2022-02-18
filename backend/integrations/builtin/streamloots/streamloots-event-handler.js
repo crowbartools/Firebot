@@ -71,13 +71,17 @@ exports.processStreamLootsEvent = (eventData) => {
 
     const metadata = {
         imageUrl: eventData.imageUrl,
-        soundUrl: eventData.soundUrl
+        soundUrl: eventData.soundUrl,
+        message: eventData.message
     };
 
-    const streamlootsEventType = eventData.data.type;
+    if (metadata.message == null) {
+        metadata.message = getFieldValue("message", eventData.data.fields);
+    }
 
-    metadata.message = getFieldValue("message", eventData.data.fields);
     metadata.username = getFieldValue("username", eventData.data.fields);
+
+    const streamlootsEventType = eventData.data.type;
 
     let eventId;
     if (streamlootsEventType === "purchase") {

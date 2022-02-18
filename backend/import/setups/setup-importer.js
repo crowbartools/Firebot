@@ -72,7 +72,7 @@ function replaceCurrency(components, currency) {
     }
 }
 
-function importSetup(setup, selectedCurrency) {
+async function importSetup(setup, selectedCurrency) {
     if (setup == null || setup.components == null) {
         return false;
     }
@@ -95,8 +95,7 @@ function importSetup(setup, selectedCurrency) {
     // counters
     const counters = setup.components.counters || [];
     for (const counter of counters) {
-        countersManager.saveItem(counter);
-        countersManager.updateCounterValue(counter.name, counter.value);
+        await countersManager.saveItem(counter);
     }
     countersManager.triggerUiRefresh();
 
