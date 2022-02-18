@@ -1,8 +1,6 @@
 "use strict";
 
 (function() {
-    const uuid = require("uuid/v4");
-
     angular.module("firebotApp")
         .component("importViewersModal", {
             template: `
@@ -38,57 +36,10 @@
                                         <input type="checkbox" ng-model="$ctrl.settings.viewHours.includeViewHours" ng-click="$ctrl.toggleIncludeViewHours()">
                                         <div class="control__indicator"></div>
                                     </label>
-                                    <label ng-if="$ctrl.settings.viewHours.includeViewHours" class="control-fb control--checkbox ml-12"> Include viewers with 0 view hours
+                                    <label ng-if="$ctrl.settings.viewHours.includeViewHours" class="control-fb control--checkbox"> Include viewers with 0 view hours
                                         <input type="checkbox" ng-model="$ctrl.settings.viewHours.includeZeroHoursViewers" ng-click="$ctrl.toggleIncludeZeroHoursViewers()">
                                         <div class="control__indicator"></div>
                                     </label>
-                                </div>
-
-                                <label class="control-fb control--checkbox"> Include currency
-                                    <input type="checkbox" ng-model="$ctrl.settings.currency.includeCurrency" ng-click="$ctrl.toggleIncludeCurrency()">
-                                    <div class="control__indicator"></div>
-                                </label>
-                                <div class="ml-12 mb-8" ng-if="$ctrl.settings.currency.includeCurrency">
-                                    <label class="control-fb control--checkbox"> Include viewers with 0 currency
-                                        <input type="checkbox" ng-model="$ctrl.settings.currency.includeZeroCurrencyViewers" ng-click="$ctrl.toggleIncludeZeroCurrencyViewers()">
-                                        <div class="control__indicator"></div>
-                                    </label>
-
-                                    <div>
-                                        <label class="control-fb control--radio" ng-if="$ctrl.currencies != null && $ctrl.currencies.length">Map to new currency
-                                            <input type="radio" ng-model="$ctrl.settings.currency.addNewCurrency" ng-value="true"/>
-                                            <div class="control__indicator"></div>
-                                        </label>
-                                        <div class="form-group" ng-class="{'ml-12': $ctrl.currencies != null && $ctrl.currencies.length}" ng-if="$ctrl.settings.currency.addNewCurrency" style="width: 50%">
-                                            <div ng-if="$ctrl.currencies == null || !$ctrl.currencies.length" class="mb-2">
-                                                Map Currency To:
-                                            </div>
-                                            <input
-                                                type="text"
-                                                id="currencyName"
-                                                name="currencyName"
-                                                class="form-control input-md"
-                                                placeholder="Enter new currency name"
-                                                ng-model="$ctrl.settings.currency.currency.name"
-                                            />
-                                        </div>
-
-                                        <label class="control-fb control--radio" ng-if="$ctrl.currencies != null && $ctrl.currencies.length">Map to existing currency
-                                            <input type="radio" ng-model="$ctrl.settings.currency.addNewCurrency" ng-value="false"/>
-                                            <div class="control__indicator"></div>
-                                        </label>
-                                        <div class="btn-group ml-12" ng-if="!$ctrl.settings.currency.addNewCurrency">
-                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <span>{{$ctrl.currencies[0].name}}</span>
-                                                <span class="caret"></span>
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <li ng-repeat="currency in $ctrl.currencies" ng-click="$ctrl.settings.currency.currency = currency">
-                                                    <a href>{{currency.name}}</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -135,21 +86,13 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function(backendCommunicator, utilityService, importService, currencyService, logger, ngToast) {
+            controller: function(backendCommunicator, utilityService, importService, logger) {
                 const $ctrl = this;
-
-                $ctrl.currencies = currencyService.getCurrencies();
 
                 $ctrl.settings = {
                     viewHours: {
                         includeViewHours: true,
                         includeZeroHoursViewers: true
-                    },
-                    currency: {
-                        includeCurrency: true,
-                        includeZeroCurrencyViewers: true,
-                        addNewCurrency: true,
-                        currency: {}
                     }
                 };
 
@@ -160,19 +103,6 @@
                         dataField: "name",
                         sortable: true,
                         cellTemplate: `{{data.name}}`
-                    },
-                    {
-                        name: "CURRENCY",
-                        icon: "fa-coin",
-                        dataField: "currency",
-                        sortable: true,
-                        headerStyles: {
-                            'width': '125px'
-                        },
-                        cellStyles: {
-                            'width': '125px'
-                        },
-                        cellTemplate: `{{data.currency}}`
                     },
                     {
                         name: "VIEW HOURS",
@@ -205,20 +135,12 @@
 
                 $ctrl.toggleIncludeZeroHoursViewers = () => {
                     $ctrl.settings.viewHours.includeZeroHoursViewers = !$ctrl.settings.viewHours.includeZeroHoursViewers;
-                    $ctrl.filterViewers();
-                };
 
-                $ctrl.toggleIncludeCurrency = () => {
-                    $ctrl.settings.currency.includeCurrency = !$ctrl.settings.currency.includeCurrency;
-
-                    if (!$ctrl.settings.currency.includeCurrency) {
-                        $ctrl.settings.currency.addNewCurrency = false;
+                    if (!$ctrl.settings.viewHours.includeZeroHoursViewers) {
+                        $ctrl.filteredViewers = $ctrl.viewers.filter(v => parseInt(v.viewHours) !== 0);
+                    } else {
+                        $ctrl.filteredViewers = $ctrl.viewers;
                     }
-                };
-
-                $ctrl.toggleIncludeZeroCurrencyViewers = () => {
-                    $ctrl.settings.currency.includeZeroCurrencyViewers = !$ctrl.settings.currency.includeZeroCurrencyViewers;
-                    $ctrl.filterViewers();
                 };
 
                 $ctrl.onFileSelected = (filepath) => {
@@ -250,46 +172,14 @@
                     });
                 };
 
-                $ctrl.filterViewers = () => {
-                    $ctrl.filteredViewers = $ctrl.viewers;
-                    if (!$ctrl.settings.viewHours.includeZeroHoursViewers) {
-                        $ctrl.filteredViewers = $ctrl.filteredViewers.filter(v => parseInt(v.viewHours) !== 0);
-                    }
-
-                    if (!$ctrl.settings.currency.includeZeroCurrencyViewers) {
-                        $ctrl.filteredViewers = $ctrl.filteredViewers.filter(v => parseInt(v.currency) !== 0);
-                    }
-                };
-
                 $ctrl.importViewers = async () => {
                     const data = {
                         viewers: $ctrl.filteredViewers,
                         settings: $ctrl.settings
                     };
 
-                    if ($ctrl.settings.currency.addNewCurrency) {
-                        if ($ctrl.settings.currency.includeCurrency && (!$ctrl.settings.currency.currency.name || $ctrl.settings.currency.currency.name == null)) {
-                            ngToast.create("Please provide a currency name");
-
-                            return;
-                        }
-
-                        $ctrl.settings.currency.currency = {
-                            id: uuid(),
-                            name: $ctrl.settings.currency.currency.name,
-                            active: true,
-                            payout: 5,
-                            interval: 5,
-                            limit: 0,
-                            transfer: "Allow",
-                            bonus: {}
-                        };
-
-                        currencyService.saveCurrency($ctrl.settings.currency.currency);
-                    }
-
                     $ctrl.importing = true;
-                    const success = await backendCommunicator.fireEventAsync("importViewers", data);
+                    const success = await backendCommunicator.fireEventAsync("importSlcbViewers", data);
 
                     if (success) {
                         logger.debug(`Viewer import completed`);

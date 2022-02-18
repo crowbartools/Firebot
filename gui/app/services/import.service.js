@@ -10,7 +10,7 @@
         .factory("importService", function() {
             const service = {};
 
-            const getQuoteDateFormat = (quotes) => {
+            const getSlcbQuoteDateFormat = (quotes) => {
                 let dateFormat = null;
 
                 quotes.forEach(q => {
@@ -28,7 +28,7 @@
                 return dateFormat;
             };
 
-            const splitQuotes = (quotes) => {
+            const splitSlcbQuotes = (quotes) => {
                 return quotes.map(q => {
                     const splittedQuote = q[1].split("[").map(sq => sq.replace("]", "").trim());
 
@@ -47,7 +47,7 @@
                 });
             };
 
-            const mapViewers = (data) => {
+            const mapSlcbViewers = (data) => {
                 let i = 0;
                 return data.map(v => {
                     i++;
@@ -62,7 +62,7 @@
                 });
             };
 
-            const mapRanks = (viewers) => {
+            const mapSlcbRanks = (viewers) => {
                 const viewerRanks = viewers.map(message => message.rank);
                 const ranks = viewerRanks.reduce((allRanks, rank) => {
                     if (!allRanks.includes(rank) && rank !== "Unranked") {
@@ -83,8 +83,8 @@
                     f.data.shift();
                     switch (f.name) {
                     case "Quotes": {
-                        const quotes = splitQuotes(f.data);
-                        const dateFormat = getQuoteDateFormat(quotes);
+                        const quotes = splitSlcbQuotes(f.data);
+                        const dateFormat = getSlcbQuoteDateFormat(quotes);
 
                         quotes.forEach(q => q.createdAt = moment(q.createdAt, dateFormat).toISOString());
 
@@ -94,8 +94,8 @@
                     }
                     case "Points":
                     case "Currency":
-                        data.viewers = mapViewers(f.data);
-                        data.ranks = mapRanks(data.viewers);
+                        data.viewers = mapSlcbViewers(f.data);
+                        data.ranks = mapSlcbRanks(data.viewers);
                         break;
                     }
 

@@ -23,19 +23,6 @@
                             />
                         </div>
 
-                        <div class="form-group" ng-class="{'has-error': $ctrl.formFieldHasError('currency')}">
-                            <label for="currency" class="control-label">Currency</label>
-                            <input
-                                type="number"
-                                id="currency"
-                                name="currency"
-                                class="form-control input-lg"
-                                ng-model="$ctrl.viewer.currency"
-                                ui-validate="'$value != null'"
-                                required
-                            />
-                        </div>
-
                         <div class="form-group" ng-class="{'has-error': $ctrl.formFieldHasError('viewHours')}">
                             <label for="viewHours" class="control-label">View Hours</label>
                             <input

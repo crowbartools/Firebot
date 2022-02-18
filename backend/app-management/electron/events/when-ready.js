@@ -125,6 +125,9 @@ exports.whenReady = async () => {
     const setupImporter = require("../../../import/setups/setup-importer");
     setupImporter.setupListeners();
 
+    const slcbImporter = require("../../../import/third-party/streamlabs-chatbot");
+    slcbImporter.setupListeners();
+
     const { setupCommonListeners } = require("../../../common/common-listeners");
     setupCommonListeners();
 
