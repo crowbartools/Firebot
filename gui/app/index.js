@@ -136,7 +136,7 @@ function getLogLevelColor(level) {
     case "silly":
         return "#973EBB";
     default:
-        return "black";
+        return "gray";
     }
 }
 
@@ -149,7 +149,7 @@ function printLogToBrowserConsole(transport, level, msg, meta) {
             console.log(
                 "%c" + level.toUpperCase() + "%c " + msg,
                 `color:${getLogLevelColor(level)}`,
-                "color:black"
+                "color:gray"
             );
         }
         if (meta && Object.keys(meta).length > 0) {
