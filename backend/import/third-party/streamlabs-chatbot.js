@@ -104,7 +104,7 @@ const importViewers = async (data) => {
         const viewerToUpdate = viewer;
         const importedViewer = viewers.find(v => v.name.toLowerCase() === viewer.username.toLowerCase());
 
-        if (settings.viewHours.includeViewHours) {
+        if (settings.includeViewHours) {
             viewerToUpdate.minutesInChannel += importedViewer.viewHours * 60;
         }
 

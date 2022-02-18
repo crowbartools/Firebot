@@ -33,11 +33,11 @@
                             <div class="mt-8" uib-collapse="hideSettings">
                                 <div class="form-group">
                                     <label class="control-fb control--checkbox"> Include view hours
-                                        <input type="checkbox" ng-model="$ctrl.settings.viewHours.includeViewHours" ng-click="$ctrl.toggleIncludeViewHours()">
+                                        <input type="checkbox" ng-model="$ctrl.settings.includeViewHours" ng-click="$ctrl.toggleIncludeViewHours()">
                                         <div class="control__indicator"></div>
                                     </label>
-                                    <label ng-if="$ctrl.settings.viewHours.includeViewHours" class="control-fb control--checkbox"> Include viewers with 0 view hours
-                                        <input type="checkbox" ng-model="$ctrl.settings.viewHours.includeZeroHoursViewers" ng-click="$ctrl.toggleIncludeZeroHoursViewers()">
+                                    <label ng-if="$ctrl.settings.includeViewHours" class="control-fb control--checkbox"> Include viewers with 0 view hours
+                                        <input type="checkbox" ng-model="$ctrl.settings.includeZeroHoursViewers" ng-click="$ctrl.toggleIncludeZeroHoursViewers()">
                                         <div class="control__indicator"></div>
                                     </label>
                                 </div>
@@ -90,10 +90,8 @@
                 const $ctrl = this;
 
                 $ctrl.settings = {
-                    viewHours: {
-                        includeViewHours: true,
-                        includeZeroHoursViewers: true
-                    }
+                    includeViewHours: true,
+                    includeZeroHoursViewers: true
                 };
 
                 $ctrl.headers = [
@@ -130,13 +128,13 @@
                 ];
 
                 $ctrl.toggleIncludeViewHours = () => {
-                    $ctrl.settings.viewHours.includeViewHours = !$ctrl.settings.viewHours.includeViewHours;
+                    $ctrl.settings.includeViewHours = !$ctrl.settings.includeViewHours;
                 };
 
                 $ctrl.toggleIncludeZeroHoursViewers = () => {
-                    $ctrl.settings.viewHours.includeZeroHoursViewers = !$ctrl.settings.viewHours.includeZeroHoursViewers;
+                    $ctrl.settings.includeZeroHoursViewers = !$ctrl.settings.includeZeroHoursViewers;
 
-                    if (!$ctrl.settings.viewHours.includeZeroHoursViewers) {
+                    if (!$ctrl.settings.includeZeroHoursViewers) {
                         $ctrl.filteredViewers = $ctrl.viewers.filter(v => parseInt(v.viewHours) !== 0);
                     } else {
                         $ctrl.filteredViewers = $ctrl.viewers;
