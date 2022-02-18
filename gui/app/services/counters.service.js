@@ -87,7 +87,7 @@
             });
 
             backendCommunicator.on("all-counters", counters => {
-                if (counters.length) {
+                if (counters != null) {
                     service.counters = counters;
                 }
             });

@@ -53,10 +53,16 @@ class CounterManager extends JsonDbManager {
      * @deprecated Please use saveItem() instead.
      *
      * @param {Counter} counter
-     * @returns {Counter}
+     * @returns {Promise.<Counter>}
      */
-    saveCounter(counter) {
-        return this.saveItem(counter);
+    async saveCounter(counter) {
+        const savedCounter = await this.saveItem(counter);
+
+        if (savedCounter) {
+            return savedCounter;
+        }
+
+        return {};
     }
 
     /**
@@ -65,7 +71,7 @@ class CounterManager extends JsonDbManager {
      * @param {Counter} counterId
      * @returns {void}
      */
-    deleteCounter(counterId) {
+    async deleteCounter(counterId) {
         this.deleteItem(counterId);
     }
 
@@ -87,6 +93,29 @@ class CounterManager extends JsonDbManager {
      */
     getCounterByName(counterName) {
         return this.getItemByName(counterName);
+    }
+
+    /**
+     * @override
+     * @param {Counter} counter
+     * @returns {Promise.<Counter>}
+     */
+    async saveItem(counter) {
+        await this.updateCounterTxtFile(counter.name, counter.value);
+
+        return super.saveItem(counter);
+    }
+
+    /**
+     * @override
+     * @param {string} counterId
+     * @returns {Promise.<void>}
+     */
+    async deleteItem(counterId) {
+        const counter = this.getItem(counterId);
+
+        super.deleteItem(counterId);
+        await this.deleteCounterTxtFile(counter.name);
     }
 
     /**
@@ -127,7 +156,7 @@ class CounterManager extends JsonDbManager {
      * @returns {Promise.<void>}
      */
     updateCounterTxtFile(counterName, counterValue) {
-        if (counterName == null || counterValue === undefined || isNaN(counterValue)) {
+        if (counterName == null || isNaN(counterValue)) {
             return;
         }
 
@@ -146,7 +175,7 @@ class CounterManager extends JsonDbManager {
      * @returns {void}
      */
     renameCounterTxtFile(oldName, newName) {
-        if (oldName == null || oldName === undefined || newName == null || newName === undefined) {
+        if (oldName == null || newName == null) {
             return;
         }
 
@@ -192,7 +221,7 @@ class CounterManager extends JsonDbManager {
      * @returns {boolean}
      */
     _counterHitMin(counter, value) {
-        if (counter.minimum === undefined || counter.minimum === null) {
+        if (counter.minimum == null) {
             return false;
         }
 
@@ -210,7 +239,7 @@ class CounterManager extends JsonDbManager {
      * @returns {boolean}
      */
     _counterHitMax(counter, value) {
-        if (counter.maximum === undefined || counter.maximum === null) {
+        if (counter.maximum == null) {
             return false;
         }
 
@@ -267,7 +296,7 @@ class CounterManager extends JsonDbManager {
      * @returns {Promise.<void>}
      */
     async updateCounterValue(counterId, value, overridePreviousValue = false) {
-        if (counterId == null || value === undefined || isNaN(value)) {
+        if (counterId == null || isNaN(value)) {
             logger.warn(`Failed to update counter, invalid values: ${counterId}, ${value}`, {location: "/counters/counter-manager:126"});
             return;
         }
