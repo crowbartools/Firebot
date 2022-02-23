@@ -10,12 +10,8 @@ const addViewersFromTwitch = async (viewers) => {
     let twitchViewers = [];
 
     const nameGroups = [];
-    if (viewers.length > 100) {
-        while (viewers.length > 100) {
-            nameGroups.push(viewers.splice(0, 100));
-        }
-    } else {
-        nameGroups.push(viewers);
+    while (viewers.length > 0) {
+        nameGroups.push(viewers.splice(0, 100));
     }
 
     for (const group of nameGroups) {
