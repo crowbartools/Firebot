@@ -67,10 +67,9 @@ module.exports = function createTray(mainWindow) {
     });
 
     frontendCommunicator.on('settings-updated-renderer', (evt) => {
-        const evtData = evt.data;
         if (
-            evtData.path === '/settings/minimizeToTray' &&
-            evtData.data !== true &&
+            evt.path === '/settings/minimizeToTray' &&
+            evt.data !== true &&
             minimizedToTray === true
         ) {
             mainWindow.show();
