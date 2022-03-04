@@ -210,9 +210,7 @@ function createMainWindow() {
     // wait for the main window's content to load, then show it
     mainWindow.webContents.on("did-finish-load", () => {
 
-        /* TODO: Tray is ready for deploy once we have UI options to toggle behavior
         createTray(mainWindow);
-        */
 
         mainWindow.show();
         if (splashscreenWindow) {
