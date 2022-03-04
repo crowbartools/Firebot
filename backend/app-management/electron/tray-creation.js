@@ -5,6 +5,9 @@ const path = require("path");
 const electron = require("electron");
 const { Menu, Tray, app } = electron;
 
+const frontendCommunicator = require('../../common/frontend-communicator.js');
+const { settings } = require("../../common/settings-access");
+
 let mainTray;
 let minimizedToTray = false;
 
@@ -51,7 +54,7 @@ module.exports = function createTray(mainWindow) {
     });
 
     mainWindow.on('minimize', () => {
-        if (minimizedToTray !== true) {
+        if (settings.getMinimizeToTray() && minimizedToTray !== true) {
             mainWindow.hide();
             minimizedToTray = true;
         }
@@ -59,6 +62,18 @@ module.exports = function createTray(mainWindow) {
 
     mainWindow.on('focus', () => {
         if (minimizedToTray !== false) {
+            minimizedToTray = false;
+        }
+    });
+
+    frontendCommunicator.on('settings-updated-renderer', (evt) => {
+        const evtData = evt.data;
+        if (
+            evtData.path === '/settings/minimizeToTray' &&
+            evtData.data !== true &&
+            minimizedToTray === true
+        ) {
+            mainWindow.show();
             minimizedToTray = false;
         }
     });

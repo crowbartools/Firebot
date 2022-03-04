@@ -243,4 +243,12 @@ settings.getSidebarControlledServices = function() {
         : ["chat"];
 };
 
+settings.getMinimizeToTray = function () {
+    let minimizeToTray = getDataFromFile('/settings/minimizeToTray');
+    return minimizeToTray === true;
+};
+settings.setMinimizeToTray = function (minimizeToTray) {
+    pushDataToFile('/settings/minimizeToTray', minimizeToTray === true);
+};
+
 exports.settings = settings;
