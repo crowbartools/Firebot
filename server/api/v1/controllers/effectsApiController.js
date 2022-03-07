@@ -75,11 +75,18 @@ exports.runPresetList = async function(req, res) {
 
     const body = req.body || {};
     const query = req.query || {};
-    let { args, username } = body;
-
-    if (req.method === "GET") {
+    let args, username;
+    
+    // GET
+    if (req.method === "GET")
+    {
         username = query.username;
         args = query;
+
+    // POST
+    } else {
+        username = body.username;
+        args = body.args;
     }
 
     const processEffectsRequest = {
