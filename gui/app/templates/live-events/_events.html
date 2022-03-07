@@ -123,72 +123,15 @@
                 uib-tooltip="This event set is active"
                 tooltip-append-to-body="true"
               ></span>
-              <div
-                uib-dropdown
-                uib-dropdown-toggle
-                dropdown-append-to-body="true"
-                class="clickable"
-                ng-click="$event.stopPropagation()"
-                style="
-                  font-size: 21px;
-                  height: 20px;
-                  width: 36px;
-                  text-align: center;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                "
-              >
-                <span class="noselect pointer"
-                  ><i class="fal fa-ellipsis-v"></i
-                ></span>
-                <ul class="dropdown-menu" uib-dropdown-menu>
-                  <li ng-click="showRenameEventGroupModal(group)">
-                    <a href>
-                      <i class="far fa-pen mr-4"></i>
-                      Rename
-                    </a>
-                  </li>
-                  <li ng-click="es.toggleEventGroupActiveStatus(group.id)">
-                    <a href
-                      ><i
-                        class="fas mr-4"
-                        ng-class="{'fa-toggle-on': !group.active, 'fa-toggle-off': group.active}"
-                      ></i
-                      >{{group.active ? 'Deactivate' : 'Activate'}}</a
-                    >
-                  </li>
-                  <li ng-click="es.duplicateEventGroup(group)">
-                    <a href>
-                      <i class="far fa-clone mr-4"></i>
-                      Duplicate set
-                    </a>
-                  </li>
-                  <li ng-click="showDeleteGroupModal(group)">
-                    <a href style="color: #fb7373">
-                      <i class="far fa-trash-alt mr-4"></i>
-                      Delete set
-                    </a>
-                  </li>
-                  <li class="divider"></li>
-                  <li ng-click="copyEvents(group.id)">
-                    <a href>
-                      <i class="far fa-copy mr-4"></i>
-                      Copy events
-                    </a>
-                  </li>
-                  <li
-                    ng-class="{'disabled': !hasCopiedEvents()}"
-                    ng-click="pasteEvents(group.id)"
-                    ng-disabled="!hasCopiedEvents()"
-                  >
-                    <a href>
-                      <i class="far fa-paste mr-4"></i>
-                      Paste event(s)
-                    </a>
-                  </li>
-                </ul>
-              </div>
+              <button
+                class="noselect clickable text-3xl mx-5"
+                style="background: transparent;border: none;"
+                context-menu="eventSetMenuOptions(group)"
+                context-menu-class="angular-context-menu"
+                context-menu-on="click"
+                context-menu-orientation="left"
+                ><i class="fal fa-ellipsis-v"></i
+              ></button>
             </div>
           </div>
         </div>
