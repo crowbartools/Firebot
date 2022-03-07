@@ -18,6 +18,8 @@ module.exports = {
         ComparisonType.DOESNT_STARTS_WITH,
         ComparisonType.ENDS_WITH,
         ComparisonType.DOESNT_END_WITH,
+        ComparisonType.MATCHES_REGEX_CS,
+        ComparisonType.DOESNT_MATCH_REGEX_CS,
         ComparisonType.MATCHES_REGEX,
         ComparisonType.DOESNT_MATCH_REGEX
     ],
@@ -55,6 +57,14 @@ module.exports = {
         }
         case ComparisonType.DOESNT_MATCH_REGEX: {
             let regex = new RegExp(value, "gi");
+            return !regex.test(chatMessage);
+        }
+        case ComparisonType.MATCHES_REGEX_CS: {
+            let regex = new RegExp(value, "g");
+            return regex.test(chatMessage);
+        }
+        case ComparisonType.DOESNT_MATCH_REGEX_CS: {
+            let regex = new RegExp(value, "g");
             return !regex.test(chatMessage);
         }
         default:

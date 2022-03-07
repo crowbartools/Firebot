@@ -731,6 +731,13 @@
                 pushDataToFile('/settings/whileLoopEnabled', enabled === true);
             };
 
+            service.getMinimizeToTray = function () {
+                return getDataFromFile('/settings/minimizeToTray') === true;
+            };
+            service.setMinimizeToTray = function (minimizeToTray) {
+                pushDataToFile('/settings/minimizeToTray', minimizeToTray === true);
+            };
+
             return service;
         });
 }());

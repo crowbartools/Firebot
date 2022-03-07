@@ -10,7 +10,7 @@ const effectQueueRunner = require("./effect-queue-runner");
  * @prop {string} name - the name of the effect queue
  * @prop {string} mode - the mode of the effect queue
  * @prop {number} [interval] - the interval set for the interval mode
- * @prop {string[]} sortTags - the sort tags for the effect queue
+ * @prop {string[]} sortTags - the tags for the effect queue
  */
 
 /**
