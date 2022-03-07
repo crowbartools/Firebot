@@ -84,9 +84,13 @@ exports.runPresetList = async function(req, res) {
         args = query;
 
     // POST
-    } else {
+    } else if (req.method === "POST") {
         username = body.username;
         args = body.args;
+        
+    // Not GET or POST
+    } else {
+        return res.status(404).send({ status: "error", message: "Invalid request method" });
     }
 
     const processEffectsRequest = {
