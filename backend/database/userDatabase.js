@@ -895,6 +895,7 @@ exports.getTwitchUserByUsername = getTwitchUserByUsername;
 exports.incrementDbField = incrementDbField;
 exports.getUserDb = getUserDb;
 exports.removeUser = removeUser;
+exports.createNewUser = createNewUser;
 exports.updateUser = updateUser;
 exports.setChatUsersOnline = setChatUsersOnline;
 exports.getTopViewTimeUsers = getTopViewTimeUsers;
