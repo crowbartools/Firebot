@@ -37,7 +37,7 @@ async function viewerHasRoles(username, roleIds) {
 }
 
 /**
- * Check if user has the given roles by their ids
+ * Check if user has the given roles by their names
  * @param {string} username
  * @param {string[]} roleNames
  */
