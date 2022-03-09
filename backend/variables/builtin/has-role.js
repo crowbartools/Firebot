@@ -3,7 +3,7 @@
 const { EffectTrigger } = require("../../../shared/effect-constants");
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
-const { viewerHasRolesByName } = require('../../roles/role-helpers');
+const { viewerHasRoleByName } = require('../../roles/role-helpers');
 
 let triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
@@ -31,6 +31,6 @@ module.exports = {
             return false;
         }
 
-        return viewerHasRolesByName(username, [role]);
+        return viewerHasRoleByName(username, [role]);
     }
 };
