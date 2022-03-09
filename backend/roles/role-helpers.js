@@ -27,25 +27,48 @@ async function getAllRolesForViewer(username) {
 }
 
 /**
+ * Check if user has the given role its id
+ * @param {string} username
+ * @param {string} expectedRoleName
+ */
+async function viewerHasRole(username, expectedRoleId) {
+    const viewerRoles = await getAllRolesForViewer(username);
+    return viewerRoles.some(r => r.id === expectedRoleId);
+}
+
+/**
+ * Check if user has the given role by name
+ * @param {string} username
+ * @param {string} roleName
+ */
+async function viewerHasRoleByName(username, expectedRoleName) {
+    const viewerRoles = await getAllRolesForViewer(username);
+    return viewerRoles.some(r => r.name === expectedRoleName);
+}
+
+
+/**
  * Check if user has the given roles by their ids
  * @param {string} username
- * @param {string[]} roleIds
+ * @param {string[]} expectedRoleIds
  */
-async function viewerHasRoles(username, roleIds) {
+async function viewerHasRoles(username, expectedRoleIds) {
     const viewerRoles = await getAllRolesForViewer(username);
-    return viewerRoles.some(r => roleIds.includes(r.id));
+    return expectedRoleIds.every(n => viewerRoles.some(r => r.id === n));
 }
 
 /**
  * Check if user has the given roles by their names
  * @param {string} username
- * @param {string[]} roleNames
+ * @param {string[]} expectedRoleNames
  */
-async function viewerHasRolesByName(username, roleNames) {
+async function viewerHasRolesByName(username, expectedRoleNames) {
     const viewerRoles = await getAllRolesForViewer(username);
-    return viewerRoles.some(r => roleNames.includes(r.name));
+    return expectedRoleNames.every(n => viewerRoles.some(r => r.name === n));
 }
 
 exports.getAllRolesForViewer = getAllRolesForViewer;
 exports.viewerHasRoles = viewerHasRoles;
 exports.viewerHasRolesByName = viewerHasRolesByName;
+exports.viewerHasRole = viewerHasRole;
+exports.viewerHasRoleByName = viewerHasRoleByName;
