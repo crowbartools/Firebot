@@ -43,7 +43,7 @@ async function viewerHasRoles(username, roleIds) {
  */
 async function viewerHasRolesByName(username, roleNames) {
     const viewerRoles = await getAllRolesForViewer(username);
-    return viewerRoles.some(r => roleNames.includes(r.id));
+    return viewerRoles.some(r => roleNames.includes(r.name));
 }
 
 exports.getAllRolesForViewer = getAllRolesForViewer;
