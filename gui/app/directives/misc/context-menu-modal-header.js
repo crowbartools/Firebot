@@ -51,7 +51,7 @@
                     if ($ctrl.sortTagContext != null) {
                         if ($ctrl.allSortTags.length > 0) {
                             menuItems.push({
-                                text: "Sort tags...",
+                                text: "Tags...",
                                 children: $ctrl.allSortTags.map(st => {
                                     const isSelected = $ctrl.sortTags && $ctrl.sortTags.includes(st.id);
                                     return {

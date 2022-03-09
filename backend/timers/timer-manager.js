@@ -20,7 +20,7 @@ const JsonDbManager = require("../database/json-db-manager");
  * @prop {object} effects - the saved effects in the timer
  * @prop {string} effects.id - the effect list root id
  * @prop {any[]} effects.list - the array of effects objects
- * @prop {string[]} sortTags - the sort tags for the timer
+ * @prop {string[]} sortTags - the tags for the timer
  */
 
 /**

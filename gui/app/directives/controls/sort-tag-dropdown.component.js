@@ -46,7 +46,7 @@
                         class="dropdown-header"
                         ng-show="sts.getSortTags($ctrl.context).length > 0"
                     >
-                        Sort Tags
+                        Tags
                     </li>
                     <li
                         ng-repeat="tag in sts.getSortTags($ctrl.context)"
@@ -60,7 +60,7 @@
                         role="menuitem"
                         ng-click="sts.showEditSortTagsModal($ctrl.context)"
                     >
-                        <a href>Edit sort tags</a>
+                        <a href>Edit tags</a>
                     </li>
                 </ul>
             </div>

@@ -8,9 +8,9 @@
     angular
         .module("firebotApp")
         .factory("importService", function() {
-            let service = {};
+            const service = {};
 
-            const getQuoteDateFormat = (quotes) => {
+            const getSlcbQuoteDateFormat = (quotes) => {
                 let dateFormat = null;
 
                 quotes.forEach(q => {
@@ -28,7 +28,7 @@
                 return dateFormat;
             };
 
-            const getSplittedQuotes = (quotes) => {
+            const splitSlcbQuotes = (quotes) => {
                 return quotes.map(q => {
                     const splittedQuote = q[1].split("[").map(sq => sq.replace("]", "").trim());
 
@@ -47,21 +47,58 @@
                 });
             };
 
+            const mapSlcbViewers = (data) => {
+                let i = 0;
+                return data.map(v => {
+                    i++;
+
+                    return {
+                        id: i,
+                        name: v[0],
+                        rank: v[1],
+                        currency: v[2],
+                        viewHours: v[3]
+                    };
+                });
+            };
+
+            const mapSlcbRanks = (viewers) => {
+                const viewerRanks = viewers.map(message => message.rank);
+                const ranks = viewerRanks.reduce((allRanks, rank) => {
+                    if (!allRanks.includes(rank) && rank !== "Unranked") {
+                        allRanks.push(rank);
+                    }
+
+                    return allRanks;
+                }, []);
+
+                return ranks;
+            };
+
             service.parseStreamlabsChatbotData = (filepath) => {
                 const data = {};
                 const file = xlsx.parse(fs.readFileSync(filepath));
 
                 file.forEach(f => {
-                    if (f.name === "Quotes") {
-                        f.data.shift();
-
-                        const quotes = getSplittedQuotes(f.data);
-                        const dateFormat = getQuoteDateFormat(quotes);
+                    f.data.shift();
+                    switch (f.name) {
+                    case "Quotes": {
+                        const quotes = splitSlcbQuotes(f.data);
+                        const dateFormat = getSlcbQuoteDateFormat(quotes);
 
                         quotes.forEach(q => q.createdAt = moment(q.createdAt, dateFormat).toISOString());
 
                         data.quotes = quotes;
+
+                        break;
                     }
+                    case "Points":
+                    case "Currency":
+                        data.viewers = mapSlcbViewers(f.data);
+                        data.ranks = mapSlcbRanks(data.viewers);
+                        break;
+                    }
+
                 });
 
                 return data;

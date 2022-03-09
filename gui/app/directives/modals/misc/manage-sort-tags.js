@@ -8,7 +8,7 @@
             template: `
             <div class="modal-header">
                 <button type="button" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
-                <h4 class="modal-title">Edit Sort Tags</h4>
+                <h4 class="modal-title">Edit Tags</h4>
             </div>
             <div class="modal-body">
                 <div ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.tags">
@@ -24,7 +24,7 @@
                 </div>
                 <div ng-show="$ctrl.tags.length < 1" class="muted" style="margin: 10px 0;">No tags created yet.</div>
                 <div style="margin: 10px 0 5px 0px;">
-                    <button class="btn btn-default" ng-click="$ctrl.openAddOrEditTagModal()"><i class="far fa-plus-circle"></i> Add Sort Tag</button>
+                    <button class="btn btn-default" ng-click="$ctrl.openAddOrEditTagModal()"><i class="far fa-plus-circle"></i> Add Tag</button>
                 </div>
             </div>
             <div class="modal-footer">
@@ -56,7 +56,7 @@
                     utilityService.openGetInputModal(
                         {
                             model: tag ? tag.name : "",
-                            label: tag ? "Edit Sort Tag Name" : "Add Sort Tag",
+                            label: tag ? "Edit Tag Name" : "Add Tag",
                             saveText: "OK",
                             validationFn: (value) => {
                                 return new Promise(resolve => {
