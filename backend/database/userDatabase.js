@@ -233,7 +233,6 @@ function getAllUsernames() {
     });
 }
 
-
 function getAllUsernamesWithIds() {
     return new Promise(resolve => {
         if (!isViewerDBOn()) {
