@@ -233,6 +233,27 @@ function getAllUsernames() {
     });
 }
 
+
+function getAllUsernamesWithIds() {
+    return new Promise(resolve => {
+        if (!isViewerDBOn()) {
+            return resolve([]);
+        }
+
+        const projectionObj = {
+            displayName: 1
+        };
+
+        db.find({ twitch: true }).projection(projectionObj).exec(function (err, docs) {
+            if (err) {
+                logger.error("Error getting all users: ", err);
+                return resolve([]);
+            }
+            return resolve(docs != null ? docs.map(u => ({ id: u._id, username: u.displayName })) : []);
+        });
+    });
+}
+
 function getTopViewTimeUsers(count) {
     return new Promise(resolve => {
         if (!isViewerDBOn()) {
@@ -904,5 +925,6 @@ exports.getOnlineUsers = getOnlineUsers;
 exports.updateUserMetadata = updateUserMetadata;
 exports.getUserMetadata = getUserMetadata;
 exports.getAllUsernames = getAllUsernames;
+exports.getAllUsernamesWithIds = getAllUsernamesWithIds;
 exports.getTopMetadata = getTopMetadata;
 exports.getTopMetadataPosition = getTopMetadataPosition;
