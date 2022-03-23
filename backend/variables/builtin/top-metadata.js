@@ -26,6 +26,8 @@ const model = {
         } else if (count < 1) {
             // min of 1
             count = 1;
+        } else if (typeof count !== 'number') {
+            count = parseInt(count, 10);
         }
 
         let topMetadataUsers = await userDatabase.getTopMetadata(metadataKey, count);

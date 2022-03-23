@@ -7,10 +7,6 @@ const { OutputDataType, VariableCategory } = require("../../../shared/variable-c
 
 const expressionish = require('expressionish');
 
-let triggers = {};
-triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.MANUAL] = true;
-
 const model = {
     definition: {
         handle: "arg",
@@ -30,7 +26,10 @@ const model = {
                 description: "Grab all args. This is a good way to grab all text after the !command trigger."
             }
         ],
-        triggers: triggers,
+        triggers: {
+            [EffectTrigger.COMMAND]: true,
+            [EffectTrigger.MANUAL]: true
+        },
         categories: [VariableCategory.COMMON],
         possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
     },
