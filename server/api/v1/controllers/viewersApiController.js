@@ -19,9 +19,12 @@ exports.getUserMetadata = async function(req, res) {
         });
     }
 
-    const metadata = username === "true" ?
-        (await userDb.getUserByUsername(userId)) :
-        (await userDb.getUserById(userId));
+    let metadata;
+    if (username === "true") {
+        metadata = await userDb.getUserByUsername(userId);
+    } else {
+        metadata = await userDb.getUserById(userId);
+    }
 
     if (metadata === null) {
         return res.status(404).send({
