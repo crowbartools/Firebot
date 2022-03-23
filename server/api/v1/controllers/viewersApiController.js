@@ -1,10 +1,39 @@
 "use strict";
 
 const userDb = require("../../../../backend/database/userDatabase");
+const customRolesManager = require("../../../../backend/roles/custom-roles-manager")
 const currencyDb = require("../../../../backend/database/currencyDatabase");
 
 exports.getAllUsers = async function(req, res) {
     return res.json(await userDb.getAllUsernamesWithIds());
+}
+
+exports.getUserMetadata = async function(req, res) {
+    const { userId } = req.params;
+    const { username } = req.query;
+
+    if (userId == null) {
+        return res.status(400).send({
+            status: "error",
+            message: `No viewerIdOrName provided`
+        });
+    }
+
+    const metadata = username === "true" ?
+        (await userDb.getUserByUsername(userId)) :
+        (await userDb.getUserById(userId));
+
+    if (metadata === null) {
+        return res.status(404).send({
+            status: "error",
+            message: `Specified viewer does not exist`
+        });
+    }
+
+    const customRoles = customRolesManager.getAllCustomRolesForViewer(metadata.username) ?? [];
+    metadata.customRoles = customRoles;
+
+    return res.json(metadata);
 }
 
 exports.getUserCurrency = async function(req, res) {
