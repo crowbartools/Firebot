@@ -1,6 +1,11 @@
 "use strict";
 
+const userDb = require("../../../../backend/database/userDatabase");
 const currencyDb = require("../../../../backend/database/currencyDatabase");
+
+exports.getAllUsers = async function(req, res) {
+    return res.json(await userDb.getAllUsernamesWithIds());
+}
 
 exports.getUserCurrency = async function(req, res) {
     const { userId, currencyId } = req.params;

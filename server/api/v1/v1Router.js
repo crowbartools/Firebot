@@ -67,6 +67,10 @@ router.route("/custom-variables/:variableName")
 const viewers = require("./controllers/viewersApiController");
 
 router
+    .route("/viewers")
+    .get(viewers.getAllUsers);
+
+router
     .route("/viewers/:userId/currency")
     .get(viewers.getUserCurrency);
 
