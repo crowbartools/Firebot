@@ -14,7 +14,7 @@ const model = {
                 usage: 'quickStore[name, value]',
                 description: 'Stores "value" under the key "name"'
             }, {
-                usage: 'quickstore[name]',
+                usage: 'quickStore[name]',
                 description: 'Retrieves the value of what was stored under the key of "name"'
 
             }
