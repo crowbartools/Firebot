@@ -493,7 +493,7 @@ frontendCommunicator.on("give-currency", async (/** @type {CurrencyInfo} */ {
         break;
     case "individual":
         await adjustCurrencyForUser(username, currencyId, amount);
-        messageTarget = `@${username}}`;
+        messageTarget = `@${username}`;
         break;
     }
 
@@ -503,7 +503,7 @@ frontendCommunicator.on("give-currency", async (/** @type {CurrencyInfo} */ {
             return;
         }
 
-        twitchChat.sendChatMessage(`${amount < 0 ? "Removed" : "Gave"} ${util.commafy(amount)} ${currency.name} to ${messageTarget}!`);
+        twitchChat.sendChatMessage(`${amount < 0 ? "Removed" : "Gave"} ${util.commafy(amount)} ${currency.name} ${amount < 0 ? "from" : "to"} ${messageTarget}!`);
     }
 });
 

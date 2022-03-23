@@ -60,8 +60,31 @@ module.exports = function createTray(mainWindow) {
         }
     });
 
+    mainWindow.on('restore', () => {
+        if (minimizedToTray) {
+            if (!mainWindow.isVisible()) {
+                mainWindow.show();
+            }
+            minimizedToTray = false;
+        }
+
+    });
+    mainWindow.on('show', () => {
+        if (minimizedToTray) {
+            if (mainWindow.isMinimized()) {
+                mainWindow.restore();
+            }
+            minimizedToTray = false;
+        }
+    });
     mainWindow.on('focus', () => {
-        if (minimizedToTray !== false) {
+        if (minimizedToTray) {
+            if (mainWindow.isMinimized()) {
+                mainWindow.restore();
+            }
+            if (!mainWindow.isVisible()) {
+                mainWindow.show();
+            }
             minimizedToTray = false;
         }
     });
