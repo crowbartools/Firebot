@@ -50,6 +50,7 @@ exports.loadReplaceVariables = () => {
         'ensure-number',
         'eval-vars',
         'file-line-count',
+        'follow-age',
         'follow-count',
         'game',
         'gift-count',
