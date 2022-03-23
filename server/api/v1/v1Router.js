@@ -71,6 +71,10 @@ router
     .get(viewers.getAllUsers);
 
 router
+    .route("/viewers/:userId")
+    .get(viewers.getUserMetadata);
+
+router
     .route("/viewers/:userId/currency")
     .get(viewers.getUserCurrency);
 
