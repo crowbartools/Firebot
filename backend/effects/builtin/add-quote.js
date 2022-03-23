@@ -15,8 +15,13 @@ const addQuoteEffect = {
         dependencies: []
     },
     globalSettings: {},
-    optionsTemplate: `
-        <eos-container header="Quote Originator">
+    optionsTemplate: `    
+        <eos-container header="Quote Creator">
+            <p class="muted">This is the name of the person who is creating the quote entry.</p>
+            <input ng-model="effect.creator" type="text" class="form-control" id="chat-text-setting" placeholder="Enter quote creator" replace-variables/>
+        </eos-container>
+
+        <eos-container header="Quote Originator" pad-top="true">
             <p class="muted">This is the name of the person who actually said the quote.</p>
             <input ng-model="effect.originator" type="text" class="form-control" id="chat-text-setting" placeholder="Enter quote originator" replace-variables/>
         </eos-container>
@@ -25,25 +30,20 @@ const addQuoteEffect = {
             <p class="muted">This is the actual quote text.</p>
             <input ng-model="effect.text" type="text" class="form-control" id="chat-text-setting" placeholder="Enter quote text" replace-variables/>
         </eos-container>
-        
-        <eos-container header="Quote Creator" pad-top="true">
-            <p class="muted">This is the name of the person who is creating the quote entry.</p>
-            <input ng-model="effect.creator" type="text" class="form-control" id="chat-text-setting" placeholder="Enter quote creator" replace-variables/>
-        </eos-container>
     `,
     optionsController: () => {},
     optionsValidator: effect => {
         let errors = [];
+        if (effect.creator == null || effect.creator === "") {
+            errors.push("Please provide a quote creator.");
+        }
+
         if (effect.originator == null || effect.originator === "") {
             errors.push("Please provide a quote originator.");
         }
-        
+
         if (effect.text == null || effect.text === "") {
             errors.push("Please provide a value for quote text.");
-        }
-        
-        if (effect.creator == null || effect.creator === "") {
-            errors.push("Please provide a quote creator.");
         }
         return errors;
     },
