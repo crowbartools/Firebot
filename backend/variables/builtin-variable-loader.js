@@ -76,6 +76,7 @@ exports.loadReplaceVariables = () => {
         'ordinal-indicator',
         'preset-list-arg',
         'profile-page-bytebin-token',
+        'quick-store',
         'quote',
         'raid-viewer-count',
         'random-active-viewer',
