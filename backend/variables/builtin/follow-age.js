@@ -28,31 +28,23 @@ const model = {
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: async (trigger, username, unitOfTime = "days") => {
-        let age = 0;
-
-        if (username === null) {
-            username = trigger.metadata.username;
-            if (username === null) {
-                return age;
-            }
+        username = username == null ? trigger.metadata.username : username;
+        if (username == null) {
+            return 0;
         }
 
         try {
-            let followDate = await api.users.getFollowDateForUser(username);
-    
-            if (followDate === null) {
-                age = 0;
-            } else {
-                const followDateMoment = moment(followDate),
-                    nowMoment = moment();
-    
-                age = nowMoment.diff(followDateMoment, unitOfTime);
+            const followDate = await api.users.getFollowDateForUser(username);
+            if (followDate == null) {
+                return 0;
             }
-        } catch {
-            return age;
-        }
 
-        return age;
+            const followDateMoment = moment(followDate);
+            return moment().diff(followDateMoment, unitOfTime);
+
+        } catch {
+            return 0;
+        }
     }
 };
 
