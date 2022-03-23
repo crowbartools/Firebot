@@ -11,6 +11,9 @@ exports.secondInstance = (_, argv) => {
     try {
         const { mainWindow } = require("../window-management");
         if (mainWindow) {
+            if (!mainWindow.isVisible()) {
+                mainWindow.show();
+            }
             if (mainWindow.isMinimized()) {
                 mainWindow.restore();
             }
