@@ -48,13 +48,13 @@ const addQuoteEffect = {
         return errors;
     },
     onTriggerEvent: async event => {
-        let { effect } = event;
+        const { effect } = event;
 
         const channelData = await twitchChannels.getChannelInformation();
 
-        let currentGameName = channelData && channelData.gameName ? channelData.gameName : "Unknown game";
+        const currentGameName = channelData && channelData.gameName ? channelData.gameName : "Unknown game";
 
-        let newQuote = {
+        const newQuote = {
             text: effect.text,
             originator: effect.originator.replace(/@/g, ""),
             creator: effect.creator.replace(/@/g, ""),
