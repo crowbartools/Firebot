@@ -27,7 +27,7 @@ const model = {
 		possibleDataOutput: [OutputDataType.TEXT]
 	},
 	evaluator: (_, name, propertyPath) => {
-		let data = customVariableManager.getCustomVariable(name, propertyPath);
+		const data = customVariableManager.getCustomVariable(name, propertyPath);
 		let keys = [];
 		if (data && isObject(data)) {
 			keys = Object.keys(data);
