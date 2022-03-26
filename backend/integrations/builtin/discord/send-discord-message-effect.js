@@ -56,6 +56,10 @@ module.exports = {
                             </div>
 
                             <div style="margin-top:10px;">
+                                <firebot-input input-title="URL" model="effect.customEmbed.url"></firebot-input>
+                            </div>
+
+                            <div style="margin-top:10px;">
                                 <firebot-input input-title="Content" model="effect.customEmbed.description"></firebot-input>
                             </div>
 
