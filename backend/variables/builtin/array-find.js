@@ -28,7 +28,7 @@ const model = {
         description: "Finds a matching element in the array or null. Returns either the object index or the object",
         examples: [
             {
-                usage: 'arrayFind["["a","b","c"]", "b"]',
+                usage: 'arrayFind["[\\"a\\",\\"b\\",\\"c\\"]", b]',
                 description: 'Returns "b"'
             },
             {
@@ -36,14 +36,18 @@ const model = {
                 description: 'Returns the object where "username"="ebiggz"'
             },
             {
-                usage: 'arrayFind["["a","b","c"]", "b", null, true]',
-                description: 'Returns 1'
+                usage: 'arrayFind["[\\"a\\",\\"b\\",\\"c\\"]", b, null, true]',
+                description: 'Returns 1, the index of "b"'
+            },
+            {
+                usage: 'arrayFind["[{\\"username\\": \\"ebiggz\\"},{\\"username\\": \\"MageEnclave\\"}]", ebiggz, username, true]',
+                description: 'Returns 0, the index of the object where "username"="ebiggz"'
             }
         ],
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
     },
-    evaluator: (_, jsonArray, matcher, propertyPath = null) => {
+    evaluator: (_, jsonArray, matcher, propertyPath = null, returnIndex = false) => {
         if (jsonArray != null) {
             if (matcher === undefined || matcher === "") {
                 return null;
@@ -59,23 +63,45 @@ const model = {
                 propertyPath = null;
             }
 
+            if (returnIndex === 'true') {
+                returnIndex = true;
+            } else {
+                returnIndex = false;
+            }
+
             try {
                 const array = JSON.parse(jsonArray);
                 if (Array.isArray(array)) {
                     let found;
+                    // returning the index has been requested
+                    if (returnIndex) {
+                        // propertyPath arg not specified
+                        if (propertyPath == null || propertyPath === "") {
+                            found = array.findIndex(v => v === matcher);
 
-                    // propertyPath arg not specified
-                    if (propertyPath == null || propertyPath === "") {
-                        found = array.find(v => v === matcher);
-
-                    // property path specified
+                        // property path specified
+                        } else {
+                            found = array.findIndex(v => {
+                                const property = getPropertyAtPath(v, propertyPath);
+                                return property === matcher;
+                            });
+                        }
+                        return JSON.stringify(found != -1 ? found : null);
+                    // returning the index has not been requested
                     } else {
-                        found = array.find(v => {
-                            const property = getPropertyAtPath(v, propertyPath);
-                            return property === matcher;
-                        });
+                        // propertyPath arg not specified
+                        if (propertyPath == null || propertyPath === "") {
+                            found = array.find(v => v === matcher);
+
+                        // property path specified
+                        } else {
+                            found = array.find(v => {
+                                const property = getPropertyAtPath(v, propertyPath);
+                                return property === matcher;
+                            });
+                        }
+                        return JSON.stringify(found != null ? found : null);
                     }
-                    return JSON.stringify(found != null ? found : null);
                 }
             } catch (error) {
                 // fail silently
