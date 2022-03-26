@@ -24,16 +24,20 @@ function getPropertyAtPath(obj, propertyPath) {
 const model = {
     definition: {
         handle: "arrayFind",
-        usage: "arrayFind[jsonArray, matcher, propertyPath]",
-        description: "Finds a matching element in the array or null",
+        usage: "arrayFind[jsonArray, matcher, propertyPath, returnIndex]",
+        description: "Finds a matching element in the array or null. Returns either the object index or the object",
         examples: [
             {
-                usage: 'arrayFind["[1,2,3]", 1]',
-                description: "Finds 1 in the array"
+                usage: 'arrayFind["["a","b","c"]", "b"]',
+                description: 'Returns "b"'
             },
             {
                 usage: 'arrayFind["[{\\"username\\": \\"ebiggz\\"},{\\"username\\": \\"MageEnclave\\"}]", ebiggz, username]',
-                description: 'Finds object with username of "ebiggz"'
+                description: 'Returns the object where "username"="ebiggz"'
+            },
+            {
+                usage: 'arrayFind["["a","b","c"]", "b", null, true]',
+                description: 'Returns 1'
             }
         ],
         categories: [VariableCategory.ADVANCED],
