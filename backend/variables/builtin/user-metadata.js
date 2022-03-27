@@ -26,12 +26,15 @@ const model = {
     },
     evaluator: async (_, username, key, defaultValue = null, propertyPath = null) => {
         const userDb = require("../../database/userDatabase");
-        let data = await userDb.getUserMetadata(username, key, propertyPath);
-        if (data == null || !isObjectOrArray(data)) {
+        const data = await userDb.getUserMetadata(username, key, propertyPath);
+        if (data == null) {
             return defaultValue;
         }
+
+        if (isObjectOrArray(data)) {
+            return JSON.stringify(data);
+        }
         
-        data = JSON.stringify(data);
         return data;
     }
 };

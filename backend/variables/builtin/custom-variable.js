@@ -33,12 +33,15 @@ const model = {
         possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
     },
     evaluator: (_, name, propertyPath, defaultData) => {
-        let data = customVariableManager.getCustomVariable(name, propertyPath, defaultData);
-        if (data == null || !isObjectOrArray(data)) {
-            return 'null';
+        const data = customVariableManager.getCustomVariable(name, propertyPath, defaultData);
+        if (data == null) {
+            return defaultData;
         }
 
-        data = JSON.stringify(data);
+        if (isObjectOrArray(data)) {
+            return JSON.stringify(data);
+        }
+
         return data;
     }
 };
