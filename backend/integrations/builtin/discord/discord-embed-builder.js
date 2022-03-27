@@ -7,6 +7,7 @@ const accountAccess = require("../../../common/account-access");
 function buildCustomEmbed(customEmbedData) {
     const customEmbed = {
         title: customEmbedData.title,
+        url: customEmbedData.url,
         description: customEmbedData.description
     };
 
