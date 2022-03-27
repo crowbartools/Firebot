@@ -13,6 +13,8 @@ Registered Tasks:
 
     scss - Deletes compiled CSS, then recompiles SCSS
 
+    inline-source - Generates a new index.html containing AngularJS modules
+
     lint - Runs eslint
 
     secrets:encrypt - Encrypts an updated secrets.json to secrets.gpg
@@ -24,7 +26,9 @@ Registered Tasks:
 
     compile - Creates an installer/tarball from the platform's pack
 
-    build - Runs cleanup, scss, pack, and compile
+    fullpack - Runs cleanup, scss, inline-source, pack
+
+    build - Runs cleanup, scss, inline-source, pack, and compile
 */
 
 module.exports = function(grunt) {
@@ -58,5 +62,6 @@ module.exports = function(grunt) {
     require('./grunt/secrets.js')(grunt);
     require('./grunt/include-source')(grunt);
 
+    grunt.registerTask('fullpack', ['scss', 'include-source', 'pack']);
     grunt.registerTask('build', ['scss', 'include-source', 'pack', 'compile']);
 };
