@@ -38,7 +38,7 @@ exports.loadReplaceVariables = () => {
         'current-viewer-count',
         'custom-role-user-count',
         'custom-variable',
-		'custom-variable-keys',
+        'custom-variable-keys',
         'custom-variable-created-data',
         'custom-variable-created-name',
         'custom-variable-expired-data',
