@@ -424,6 +424,50 @@
                 return options;
             };
 
+            $scope.eventSetMenuOptions = function(group) {
+
+                return [
+                    {
+                        html: `<a href ><i class="far fa-pen mr-4"></i> Rename</a>`,
+                        click: () => {
+                            $scope.showRenameEventGroupModal(group);
+                        }
+                    },
+                    {
+                        html: `<a href ><i class="fas mr-4 ${group.active ? 'fa-toggle-off' : 'fa-toggle-on'}"></i> ${group.active ? 'Deactivate' : 'Activate'}</a>`,
+                        click: () => {
+                            eventsService.toggleEventGroupActiveStatus(group.id);
+                        }
+                    },
+                    {
+                        html: `<a href ><i class="far fa-clone mr-4"></i> Duplicate set</a>`,
+                        click: () => {
+                            eventsService.duplicateEventGroup(group);
+                        }
+                    },
+                    {
+                        html: `<a href style="color: #fb7373"><i class="far fa-trash-alt mr-4"></i> Delete set</a>`,
+                        click: () => {
+                            $scope.showDeleteGroupModal(group);
+                        }
+                    },
+                    {
+                        html: `<a href ><i class="far fa-copy mr-4"></i> Copy events</a>`,
+                        click: () => {
+                            $scope.copyEvents(group.id);
+                        },
+                        hasTopDivider: true
+                    },
+                    {
+                        html: `<a href><i class="far fa-paste mr-4" ng-class="{'disabled': !hasCopiedEvents()}"></i> Paste event(s)</a>`,
+                        click: () => {
+                            $scope.pasteEvents(group.id);
+                        },
+                        enabled: $scope.hasCopiedEvents()
+                    }
+                ];
+            };
+
             $scope.simulateEventsByType = function() {
 
                 utilityService.showModal({

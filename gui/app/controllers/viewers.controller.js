@@ -4,7 +4,7 @@
 
     angular
         .module("firebotApp")
-        .controller("viewersController", function($scope, viewersService, currencyService,
+        .controller("viewersController", function($route, $scope, viewersService, currencyService,
             utilityService, settingsService) {
 
             $scope.viewerTablePageSize = settingsService.getViewerListPageSize();
@@ -21,6 +21,15 @@
                     },
                     closeCallback: closeFunc,
                     dismissCallback: closeFunc
+                });
+            };
+
+            $scope.showImportViewersModal = () => {
+                utilityService.showModal({
+                    component: "importViewersModal",
+                    closeCallback: () => {
+                        $route.reload();
+                    }
                 });
             };
 

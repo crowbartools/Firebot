@@ -7,20 +7,31 @@
         .component("generalSettings", {
             template: `
                 <div>
-                    <firebot-setting 
+                    <firebot-setting
                         name="Theme"
                         description="Choose your color theme for Firebot!"
                     >
-                        <firebot-select 
+                        <firebot-select
                             options="['Light', 'Midnight', 'Obsidian']"
-                            ng-init="selectedTheme = settings.getTheme()" 
-                            selected="selectedTheme" 
+                            ng-init="selectedTheme = settings.getTheme()"
+                            selected="selectedTheme"
                             on-update="settings.setTheme(option)"
-                            right-justify="true" 
+                            right-justify="true"
                         />
                     </firebot-setting>
 
-                    <firebot-setting 
+                    <firebot-setting
+                        name="Minimize to Tray"
+                        description="When minimized, Firebot will minimize to tray instead of task bar"
+                    >
+                        <toggle-button
+                            toggle-model="settings.getMinimizeToTray()"
+                            on-toggle="settings.setMinimizeToTray(!settings.getMinimizeToTray())"
+                            font-size="40"
+                        />
+                    </firebot-setting>
+
+                    <firebot-setting
                         name="Beta Notifications"
                         description="Firebot automatically updates to new stable versions. It does not automatically update to betas or major new
                         releases however. Enable if you want to be notified of new beta releases."
@@ -32,7 +43,7 @@
                         />
                     </firebot-setting>
 
-                    <firebot-setting 
+                    <firebot-setting
                         name="Connection Sounds"
                         description="Get audible alerts when Firebot connects or disconnects."
                     >
@@ -43,7 +54,7 @@
                         />
                     </firebot-setting>
 
-                    <firebot-setting 
+                    <firebot-setting
                         name="Sound Output Device"
                         description="Change what output device app sounds (ie connect/disconnect sounds) and Play Sound Effects are sent to."
                     >
@@ -61,8 +72,8 @@
                             </button>
                             <ul class="dropdown-menu right-justified-dropdown">
                                 <li ng-repeat="device in audioOutputDevices">
-                                    <a 
-                                        href 
+                                    <a
+                                        href
                                         ng-click="settings.setAudioOutputDevice(device)"
                                     >{{device.label}}</a>
                                 </li>
@@ -77,10 +88,10 @@
                         </div>
                     </firebot-setting>
 
-                    <firebot-setting 
+                    <firebot-setting
                         name="Live Stream Stats"
                         description="Select which stream stats show in the top bar when live."
-                    >   
+                    >
                         <div>
                             <label class="control-fb control--checkbox"
                                 >Uptime
@@ -105,16 +116,16 @@
                         </div>
                     </firebot-setting>
 
-                    <firebot-setting 
+                    <firebot-setting
                         name="Inactive Viewer Time"
                         description="The amount of time it takes for an active viewer to be marked as inactive after their last chat message."
                     >
-                        <firebot-select 
+                        <firebot-select
                             options="[5,10,15,20,25,30,35,40,45,50,55,60]"
-                            ng-init="selectedTimeout = settings.getActiveChatUserListTimeout()" 
-                            selected="selectedTimeout" 
+                            ng-init="selectedTimeout = settings.getActiveChatUserListTimeout()"
+                            selected="selectedTimeout"
                             on-update="setActiveChatUserTimeout(option)"
-                            right-justify="true" 
+                            right-justify="true"
                         />
                         <span> minutes</span>
                     </firebot-setting>

@@ -11,11 +11,11 @@
                 <div>
                     <div class="role-bar" ng-repeat="tagId in $ctrl.currentTagIds track by $index">
                         <span>{{$ctrl.getTagName(tagId)}}</span>
-                        <span class="clickable" style="padding-left: 10px;" ng-click="$ctrl.removeTag(tagId)" uib-tooltip="Remove sort tag" tooltip-append-to-body="true">
+                        <span class="clickable" style="padding-left: 10px;" ng-click="$ctrl.removeTag(tagId)" uib-tooltip="Remove tag" tooltip-append-to-body="true">
                             <i class="far fa-times"></i>
                         </span>
                     </div>
-                    <div class="role-bar clickable" ng-if="$ctrl.hasTagsAvailable" ng-click="$ctrl.addTag()" uib-tooltip="Add sort tag" tooltip-append-to-body="true">
+                    <div class="role-bar clickable" ng-if="$ctrl.hasTagsAvailable" ng-click="$ctrl.addTag()" uib-tooltip="Add tag" tooltip-append-to-body="true">
                         <i class="far fa-plus"></i>
                     </div>
                 </div>
@@ -44,7 +44,7 @@
 
                     utilityService.openSelectModal(
                         {
-                            label: "Add Sort Tag",
+                            label: "Add Tag",
                             options: remainingTags,
                             saveText: "Add",
                             validationText: "Please select a tag."

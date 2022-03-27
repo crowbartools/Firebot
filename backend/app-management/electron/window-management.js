@@ -6,6 +6,7 @@ const path = require("path");
 const url = require("url");
 const windowStateKeeper = require("electron-window-state");
 const fileOpenHelpers = require("../file-open-helpers");
+const createTray = require('./tray-creation.js');
 const logger = require("../../logwrapper");
 
 /**
@@ -208,6 +209,9 @@ function createMainWindow() {
 
     // wait for the main window's content to load, then show it
     mainWindow.webContents.on("did-finish-load", () => {
+
+        createTray(mainWindow);
+
         mainWindow.show();
         if (splashscreenWindow) {
             splashscreenWindow.destroy();
