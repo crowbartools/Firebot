@@ -48,7 +48,7 @@ const model = {
             try {
                 matcher = JSON.parse(matcher);
             } catch (err) {
-                //fail silently
+                return null;
             }
 
             if (propertyPath === 'null' || propertyPath === "") {
@@ -74,7 +74,7 @@ const model = {
                     return JSON.stringify(found != -1 ? found : null);
                 }
             } catch (error) {
-                // fail silently
+                return null;
             }
         }
         return null;
