@@ -5,7 +5,7 @@ const customVariableManager = require("../../common/custom-variable-manager");
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
 function isObject(data) {
-    return typeof data === 'object' && !(typeof data === 'string' || data instanceof String);
+    return typeof data === 'object' && !(data instanceof String);
 }
 
 const model = {
@@ -28,10 +28,11 @@ const model = {
     },
     evaluator: (_, name, propertyPath) => {
         const data = customVariableManager.getCustomVariable(name, propertyPath);
-        let keys = [];
-        if (data && isObject(data)) {
-            keys = Object.keys(data);
+        if (data == null || !isObject(data)) {
+           return "[]"; // same as JSON.stringify([]);
         }
+
+        let keys = Object.keys(data);
         return JSON.stringify(keys);
     }
 };
