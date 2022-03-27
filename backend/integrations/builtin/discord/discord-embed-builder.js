@@ -125,10 +125,13 @@ async function buildEmbed(embedType, customEmbedData) {
     switch (embedType) {
     case "channel": {
         let channelEmbed = await buildChannelEmbed();
-        channelEmbed.allowed_mentions = { //eslint-disable-line camelcase
-            parse: ["users", "roles", "everyone"]
-        };
-        return channelEmbed;
+        if (channelEmbed) {
+            channelEmbed.allowed_mentions = { //eslint-disable-line camelcase
+                parse: ["users", "roles", "everyone"]
+            };
+            return channelEmbed;
+        }
+        return null;
     }
     case "custom": {
         return buildCustomEmbed(customEmbedData);
