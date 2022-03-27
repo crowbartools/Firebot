@@ -12,6 +12,7 @@ exports.loadReplaceVariables = () => {
         'array-add',
         'array-filter',
         'array-find',
+        'array-find-index',
         'array-join',
         'array-length',
         'array-remove',
