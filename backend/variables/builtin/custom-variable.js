@@ -35,7 +35,7 @@ const model = {
     evaluator: (_, name, propertyPath, defaultData) => {
         const data = customVariableManager.getCustomVariable(name, propertyPath, defaultData);
         if (data == null) {
-            return defaultData;
+            return null;
         }
 
         if (isObjectOrArray(data)) {
