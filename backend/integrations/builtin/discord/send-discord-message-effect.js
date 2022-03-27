@@ -72,6 +72,10 @@ module.exports = {
                             </div>
 
                         </div>
+
+                        <div ng-show="effect.embedType === 'channel'">
+                            <br /><b>*</b> Must be live for this to post.
+                        </div>
                     </div>
                 </eos-container>
 
