@@ -204,7 +204,7 @@ function parseMessageParts(firebotChatMessage, parts) {
                 if (!firebotChatMessage.whisper &&
                 !firebotChatMessage.tagged &&
                 streamer.loggedIn &&
-                p.text.includes(streamer.username)) {
+                (p.text.includes(streamer.username) || p.text.includes(streamer.displayName))) {
                     firebotChatMessage.tagged = true;
                 }
             }
