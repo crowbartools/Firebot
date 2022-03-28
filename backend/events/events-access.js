@@ -60,9 +60,9 @@ function saveSortTags() {
     let eventsDb = getEventsDb();
     try {
         eventsDb.push("/sortTags", sortTags);
-        logger.debug(`Saved event sort tags.`);
+        logger.debug(`Saved event tags.`);
     } catch (err) {
-        logger.warn(`Unable to save event sort tags.`, err);
+        logger.warn(`Unable to save event tags.`, err);
     }
 }
 

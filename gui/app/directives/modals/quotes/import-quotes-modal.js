@@ -43,7 +43,8 @@
                         </sortable-table>
                     </div>
                 </div>
-                <div class="modal-footer pt-0" style="text-align: center;">
+                <div class="modal-footer pt-0">
+                    <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
                     <button ng-show="$ctrl.quotes" ng-click="$ctrl.importQuotes()" class="btn btn-primary">Import</button>
                 </div>
             `,
@@ -100,6 +101,8 @@
                     if (data && data.quotes) {
                         $ctrl.quotes = data.quotes;
                         $ctrl.search = "";
+                    } else {
+                        $ctrl.fileError = true;
                     }
                 };
 

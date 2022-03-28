@@ -56,6 +56,10 @@ module.exports = {
                             </div>
 
                             <div style="margin-top:10px;">
+                                <firebot-input input-title="URL" model="effect.customEmbed.url"></firebot-input>
+                            </div>
+
+                            <div style="margin-top:10px;">
                                 <firebot-input input-title="Content" model="effect.customEmbed.description"></firebot-input>
                             </div>
 
@@ -67,6 +71,10 @@ module.exports = {
                                 <firebot-input input-title="Author Icon URL" model="effect.customEmbed.authorIconUrl"></firebot-input>
                             </div>
 
+                        </div>
+
+                        <div ng-show="effect.embedType === 'channel'">
+                            <br /><b>*</b> Must be live for this to post.
                         </div>
                     </div>
                 </eos-container>

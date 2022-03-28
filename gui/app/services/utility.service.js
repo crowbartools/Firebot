@@ -592,7 +592,8 @@
                 index,
                 triggerType,
                 closeCallback,
-                triggerMeta
+                triggerMeta,
+                isNew
             ) {
                 let showEditEffectContext = {
                     templateUrl: "editEffectModal.html",
@@ -620,7 +621,7 @@
                         $scope.triggerMeta = triggerMeta;
                         $scope.modalId = modalId;
 
-                        $scope.isAddMode = index == null;
+                        $scope.isAddMode = isNew;
                         $scope.effectDefinition = effectHelperService.getEffectDefinition(
                             $scope.effect.type
                         );

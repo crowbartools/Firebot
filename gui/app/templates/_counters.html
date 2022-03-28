@@ -1,30 +1,13 @@
-<div class="p-6 mx-0 my-6">
-    <button class="btn btn-primary" ng-click="openCreateCounterModal()"><i class="fas fa-plus-circle mr-2"></i> New Counter</button>
-</div>
-
-<div class="p-6" style="display:flex;flex-wrap: wrap;">
-    <div ng-repeat="counter in countersService.counters track by counter.id" class="fb-tile light-blue centered mr-4" style="flex: 0 0 auto;width:250px;height:150px;">
-        <div uib-dropdown uib-dropdown-toggle style="display:flex;flex-direction: column; position: absolute;top: 5px; right: 5px;">
-            <div class="edit-btn" style="position: unset;"></div>
-            <ul role="menu" class="dropdown-menu" uib-dropdown-menu>
-                <li><a href ng-click="openEditCounterModal(counter)" role="menuitem"><i class="fal fa-edit"></i> Edit</a></li>
-                <li><a href ng-click="openRenameCounterModal(counter)" role="menuitem"><i class="fal fa-tag"></i> Rename</a></li>
-                <li><a href ng-click="openDeleteCounterModal(counter)" role="menuitem" style="color: #fb7373;"><i class="far fa-trash-alt"></i> Delete</a></li>
-            </ul>
-        </div>
-        <div class="header">
-            <div class="title edit-btn-spacer">
-                {{counter.name}}
-            </div>
-        </div>
-        <div class="content row">
-            <div class="detail-wrapper nomargin">
-                <div class="detail" style="font-size: 1.6em;">{{counter.value}}</div>
-                <div class="detail-description"></div>
-            </div>
-        </div>
-    </div>
-    <div ng-if="countersService.counters.length < 1" class="noselect muted pl-5">
-        <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span><span class="ml-3">No counters saved. You should make one! :) </span>
-    </div>
-</div>
+<firebot-item-table
+    items="countersService.counters"
+    on-items-update="onCountersUpdated(items)"
+    headers="headers"
+    sort-tag-context="counters"
+    orderable="true"
+    add-new-button-text="New Counter"
+    on-add-new-clicked="countersService.showAddEditCounterModal()"
+    context-menu-options="counterOptions(item)"
+    no-data-message="No counters saved. You should make one! :)"
+    none-found-message="No counters found."
+    search-placeholder="Search counters"
+></firebot-item-table>

@@ -18,8 +18,10 @@ const ComparisonType = Object.freeze({
     STARTS_WITH: "starts with",
     DOESNT_END_WITH: "doesn't end with",
     ENDS_WITH: "ends with",
-    MATCHES_REGEX: "matches regex",
-    DOESNT_MATCH_REGEX: "doesn't match regex"
+    MATCHES_REGEX_CS: "matches regex",
+    DOESNT_MATCH_REGEX_CS: "doesn't matches regex",
+    MATCHES_REGEX: "matches regex (case insensitive)",
+    DOESNT_MATCH_REGEX: "doesn't match regex (case insensitive)"
 });
 
 exports.ComparisonType = ComparisonType;

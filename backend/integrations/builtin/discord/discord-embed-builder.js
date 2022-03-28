@@ -7,6 +7,7 @@ const accountAccess = require("../../../common/account-access");
 function buildCustomEmbed(customEmbedData) {
     const customEmbed = {
         title: customEmbedData.title,
+        url: customEmbedData.url,
         description: customEmbedData.description
     };
 
@@ -124,10 +125,13 @@ async function buildEmbed(embedType, customEmbedData) {
     switch (embedType) {
     case "channel": {
         let channelEmbed = await buildChannelEmbed();
-        channelEmbed.allowed_mentions = { //eslint-disable-line camelcase
-            parse: ["users", "roles", "everyone"]
-        };
-        return channelEmbed;
+        if (channelEmbed) {
+            channelEmbed.allowed_mentions = { //eslint-disable-line camelcase
+                parse: ["users", "roles", "everyone"]
+            };
+            return channelEmbed;
+        }
+        return null;
     }
     case "custom": {
         return buildCustomEmbed(customEmbedData);

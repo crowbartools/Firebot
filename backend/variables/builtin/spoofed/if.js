@@ -2,7 +2,7 @@
 
 // Dummy variable - $if logic gets handled by the evaluator
 
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
+const { OutputDataType, VariableCategory } = require("../../../../shared/variable-constants");
 
 module.exports = {
     definition: {

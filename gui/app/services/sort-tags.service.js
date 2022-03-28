@@ -33,14 +33,14 @@
                 try {
                     getSortTagsDb().push("/", sortTags);
 
-                    logger.debug(`Saved sort tags.`);
+                    logger.debug(`Saved tags.`);
                 } catch (err) {
-                    logger.warn(`There was an error saving sort tags.`, err);
+                    logger.warn(`There was an error saving tags.`, err);
                 }
             }
 
             service.loadSortTags = () => {
-                logger.debug(`Attempting to load sort tags...`);
+                logger.debug(`Attempting to load tags...`);
 
                 try {
                     const sortTagsData = getSortTagsDb().getData("/");
@@ -49,9 +49,9 @@
                         sortTags = sortTagsData;
                     }
 
-                    logger.debug(`Loaded sort tags.`);
+                    logger.debug(`Loaded tags.`);
                 } catch (err) {
-                    logger.warn(`There was an error reading sort tags file.`, err);
+                    logger.warn(`There was an error reading tags file.`, err);
                 }
 
                 service.getLegacyEventAndCommandTags();
