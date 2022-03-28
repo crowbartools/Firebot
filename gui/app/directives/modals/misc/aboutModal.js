@@ -12,7 +12,7 @@
                 <p>{{$ctrl.version}}</p>
 
                 <h5><b>Source</b></h5>
-                <p><a href ng-click="$root.openLinkExternally('https://github.com/crowbartools/Firebot/Firebot')">GitHub</a></p>
+                <p><a href ng-click="$root.openLinkExternally('https://github.com/crowbartools/Firebot')">GitHub</a></p>
 
                 <h5><b>Support</b></h5> 
                 <span>Experiencing a problem or have a suggestion?</span></br>
