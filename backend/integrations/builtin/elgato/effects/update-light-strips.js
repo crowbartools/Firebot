@@ -5,20 +5,20 @@ const { integration } = require("../elgato");
 
 const effect = {
     definition: {
-        id: "elgato:key-lights",
-        name: "Update Elgato Key Lights",
-        description: "Turn Elgato Key Lights on or off, and change the temperature and brightness.",
-        icon: "fad fa-lamp fa-align-center",
+        id: "elgato:light-strips",
+        name: "Update Elgato Light Strips",
+        description: "Turn Elgato Light Strips on or off, and change the color and brightness.",
+        icon: "fad fa-lights-holiday fa-align-center",
         categories: [EffectCategory.INTEGRATIONS],
         dependencies: []
     },
     globalSettings: {},
     optionsTemplate: `
-        <eos-container ng-if="!hasKeylights">
-            No Key Lights are connected currently.
+        <eos-container ng-if="!hasLightStrips">
+            No Light Strips are connected currently.
         </eos-container>
-        <eos-container ng-if="hasKeylights" header="Key Lights">
-            <div ng-repeat="light in keyLights" class="mb-16">
+        <eos-container ng-if="hasLightStrips" header="Light Strips">
+            <div ng-repeat="light in lightStrips" class="mb-16">
                 <label class="control-fb control--checkbox">{{light.name}}
                     <input type="checkbox" ng-click="selectLight(light)" ng-checked="isLightSelected(light)" aria-label="..." >
                     <div class="control__indicator"></div>
@@ -37,33 +37,20 @@ const effect = {
                 </div>
 
                 <div ng-if="isLightSelected(light)" class="ml-6 mb-10">
-                    <label class="control-fb control--checkbox">Update Brightness
-                        <input type="checkbox" ng-click="selectOption('brightness', light)" ng-checked="isOptionSelected('brightness', light)" aria-label="..." >
+                    <label class="control-fb control--checkbox">Update Color
+                        <input type="checkbox" ng-click="selectOption('color', light)" ng-checked="isOptionSelected('color', light)" aria-label="..." >
                         <div class="control__indicator"></div>
                     </label>
-                    <div class="input-group" ng-if="isOptionSelected('brightness', light)">
-                        <span class="input-group-addon">% (1 - 100)</span>
-                        <input
-                            class="form-control"
-                            type="number"
-                            placeholder="1 - 100"
-                            ng-model="effect.selectedLights[light.name].options.brightness"
-                            replace-variables>
+                    <div ng-if="isOptionSelected('color', light)">
+                        <p class="muted">Color value can either be a hex RGB value or a CSS standard color name.</p>
                     </div>
-                </div>
-
-                <div ng-if="isLightSelected(light)" class="ml-6 mb-10">
-                    <label class="control-fb control--checkbox">Update Temperature
-                        <input type="checkbox" ng-click="selectOption('temperature', light)" ng-checked="isOptionSelected('temperature', light)" aria-label="..." >
-                        <div class="control__indicator"></div>
-                    </label>
-                    <div class="input-group" ng-if="isOptionSelected('temperature', light)">
-                        <span class="input-group-addon">Kelvin (2900 - 7000)</span>
+                    <div class="input-group" ng-if="isOptionSelected('color', light)">
+                        <span class="input-group-addon">Color (RGB or color name)</span>
                         <input
                             class="form-control"
-                            type="number"
-                            placeholder="2900 - 7000"
-                            ng-model="effect.selectedLights[light.name].options.temperature"
+                            type="text"
+                            placeholder="Example: RRGGBB or blue"
+                            ng-model="effect.selectedLights[light.name].options.color"
                             replace-variables>
                     </div>
                 </div>
@@ -71,19 +58,19 @@ const effect = {
         </eos-container>
     `,
     optionsController: async ($scope, $q, backendCommunicator) => {
-        $scope.hasKeylights = false;
-        $scope.keyLights = [];
+        $scope.hasLightStrips = false;
+        $scope.lightStrips = [];
 
         if (!$scope.effect.selectedLights) {
             $scope.effect.selectedLights = {};
         }
 
-        $q.when(backendCommunicator.fireEventAsync("getKeyLights"))
-            .then(keyLights => {
-                if (keyLights) {
-                    $scope.keyLights = keyLights;
+        $q.when(backendCommunicator.fireEventAsync("getLightStrips"))
+            .then(lightStrips => {
+                if (lightStrips) {
+                    $scope.lightStrips = lightStrips;
 
-                    $scope.hasKeylights = true;
+                    $scope.hasLightStrips = true;
                 }
             });
 
@@ -126,12 +113,12 @@ const effect = {
     optionsValidator: (effect) => {
         let errors = [];
         if (Object.keys(effect.selectedLights).length === 0) {
-            errors.push("Please select a Key Light.");
+            errors.push("Please select a Light Strip.");
         }
         return errors;
     },
     onTriggerEvent: async (event) => {
-        integration.updateKeyLights(Object.values(event.effect.selectedLights));
+        integration.updateLightStrips(Object.values(event.effect.selectedLights));
 
         return true;
     }
