@@ -7,7 +7,7 @@ const effect = {
     definition: {
         id: "elgato:light-strips",
         name: "Update Elgato Light Strips",
-        description: "Turn Elgato Light Strips on or off, and change the color and brightness.",
+        description: "Turn Elgato Light Strips on or off and change the color.",
         icon: "fad fa-lights-holiday fa-align-center",
         categories: [EffectCategory.INTEGRATIONS],
         dependencies: []
