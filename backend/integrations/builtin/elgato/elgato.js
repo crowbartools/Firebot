@@ -108,25 +108,25 @@ class ElgatoIntegration extends EventEmitter {
                 }
 
                 const hexCodeRegEx = /^[0-9a-fA-F]{6}$/;
-                let hslColor = [];
+                let hsvColor = [];
 
                 // If the color value is a hex RRGGBB value, convert from that hex value
                 if (hexCodeRegEx.test(colorValue) === true) {
-                    hslColor = colorConvert.hex.hsl(colorValue);
+                    hsvColor = colorConvert.hex.hsv(colorValue);
 
                 // Otherwise, convert from the color name
                 } else {
                     try {
-                        hslColor = colorConvert.keyword.hsl(colorValue);
+                        hsvColor = colorConvert.keyword.hsv(colorValue);
                     } catch {
-                        logger.debug('Unable to convert "' + colorValue + '" to HSL color');
+                        logger.debug('Unable to convert "' + colorValue + '" to HSV color');
                         return;
                     }
                 }
 
-                settings.hue = parseInt(hslColor[0]);
-                settings.saturation = parseInt(hslColor[1]);
-                settings.brightness = parseInt(hslColor[2]);
+                settings.hue = parseInt(hsvColor[0]);
+                settings.saturation = parseInt(hsvColor[1]);
+                settings.brightness = parseInt(hsvColor[2]);
             }
 
             /** @type {import("@zunderscore/elgato-light-control").LightStripOptions} */
