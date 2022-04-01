@@ -23,6 +23,19 @@ function loadQuoteDatabase() {
     });
 }
 
+function getCurrentQuoteId() {
+    return new Promise(resolve => {
+        db.find({ _id: '__autoid__' },
+            function (err, autoid) {
+                if (err) {
+                    resolve(null);
+                }
+                resolve(autoid[0].seq);
+            }
+        );
+    });
+}
+
 function getNextQuoteId() {
     return new Promise(resolve => {
         db.update(
@@ -57,14 +70,25 @@ function setQuoteIdIncrementer(number) {
 
 function addQuote(quote) {
     return new Promise(async (resolve, reject) => {
+        // If no/invalid ID is specified, get the next one
+        if (!quote._id || isNaN(quote._id)) {
+            let newQuoteId = await getNextQuoteId();
+            if (newQuoteId == null) {
+                logger.error("Unable to add quote as we could not generate a new ID");
+                return reject();
+            }
+    
+            quote._id = newQuoteId;
 
-        let newQuoteId = await getNextQuoteId();
-        if (newQuoteId == null) {
-            logger.error("Unable to add quote as we could not generate a new ID");
-            return reject();
+        // Otherwise, use the ID passed in
+        } else {
+            // If the specified ID is higher than the next autoincrement,
+            // set the autoincrement to the new ID
+            const highestQuoteId = await getCurrentQuoteId();
+            if (highestQuoteId < quote._id) {
+                await setQuoteIdIncrementer(quote._id);
+            }
         }
-
-        quote._id = newQuoteId;
 
         db.insert(quote, err => {
             if (err) {
@@ -72,7 +96,7 @@ function addQuote(quote) {
                 return reject();
             }
             frontendCommunicator.send("quotes-update");
-            resolve(newQuoteId);
+            resolve(quote._id);
         });
     });
 }

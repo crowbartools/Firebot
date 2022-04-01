@@ -6,7 +6,7 @@ const currencyDb = require("../../../../backend/database/currencyDatabase");
 
 exports.getAllUsers = async function(req, res) {
     return res.json(await userDb.getAllUsernamesWithIds());
-}
+};
 
 exports.getUserMetadata = async function(req, res) {
     const { userId } = req.params;
@@ -37,7 +37,7 @@ exports.getUserMetadata = async function(req, res) {
     metadata.customRoles = customRoles;
 
     return res.json(metadata);
-}
+};
 
 exports.getUserCurrency = async function(req, res) {
     const { userId, currencyId } = req.params;

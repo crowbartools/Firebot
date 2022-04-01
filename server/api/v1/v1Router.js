@@ -99,4 +99,19 @@ router
     .route("/currency/:currencyName/top")
     .get(currency.getTopCurrencyHolders);
 
+// Quotes
+const quotes = require("./controllers/quotesApiController");
+
+router
+    .route("/quotes")
+    .get(quotes.getQuotes)
+    .post(quotes.postQuote);
+
+router
+    .route("/quotes/:quoteId")
+    .get(quotes.getQuote)
+    .put(quotes.putQuote)
+    .patch(quotes.patchQuote)
+    .delete(quotes.deleteQuote);
+
 module.exports = router;
