@@ -143,7 +143,7 @@ exports.putQuote = async function(req, res) {
         } catch (e) {
             return res.status(500).send({
                status: "error",
-               message: "Error storing quote " + quoteId + ": " + error
+               message: "Error storing quote " + quoteId + ": " + e
             });
         }
     }
@@ -151,7 +151,7 @@ exports.putQuote = async function(req, res) {
     if (quote == null) {
         return res.status(500).send({
             status: "error",
-            message: "Error storing quote " + quoteId + ": " + error
+            message: "Error storing quote " + quoteId
          });
     }
 
@@ -211,7 +211,7 @@ exports.patchQuote = async function(req, res) {
     } catch (e) {
         return res.status(500).send({
            status: "error",
-           message: "Error updating quote " + quoteId + ": " + error
+           message: "Error updating quote " + quoteId + ": " + e
         });
     }
 
