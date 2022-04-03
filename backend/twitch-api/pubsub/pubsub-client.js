@@ -104,16 +104,6 @@ async function createClient() {
         });
         listeners.push(bitsBadgeUnlockListener);
 
-
-        const subsListener = await pubSubClient.onSubscription(streamer.userId, (subInfo) => {
-            if (subInfo.isGift) {
-                twitchEventsHandler.giftSub.triggerSubGift(subInfo);
-            } else {
-                twitchEventsHandler.sub.triggerSub(subInfo);
-            }
-        });
-        listeners.push(subsListener);
-
         const modListener = await pubSubClient.onModAction(streamer.userId, streamer.userId, (message) => {
             const frontendCommunicator = require("../../common/frontend-communicator");
 
