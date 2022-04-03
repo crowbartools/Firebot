@@ -27,6 +27,7 @@ exports.loadEffects = () => {
         'file-writer',
         'html',
         'http-request',
+        'log-message',
         'loop-effects',
         'mark-all-activity-acknowledged',
         'moderator-ban',
