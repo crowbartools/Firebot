@@ -114,6 +114,10 @@ exports.setupChatListeners = (streamerChatClient) => {
         twitchEventsHandler.giftSub.triggerCommunitySubGift(subInfo);
     });
 
+    streamerChatClient.onSubGift((_channel, _user, subInfo) => {
+        twitchEventsHandler.giftSub.triggerSubGift(subInfo);
+    });
+
     streamerChatClient.onGiftPaidUpgrade((_channel, _user, subInfo) => {
         twitchEventsHandler.giftSub.triggerSubGiftUpgrade(subInfo);
     });
