@@ -247,11 +247,11 @@ function validateQuote(quote) {
     quote = quote ?? {};
     const validationErrors = [];
     
-    if (!(quote.text?.length > 1)) {
+    if (!(quote.text?.length > 0)) {
         validationErrors.push("Missing quote text");
     }
     
-    if (!(quote.creator?.length > 1)) {
+    if (!(quote.creator?.length > 0)) {
         validationErrors.push("Missing quote creator");
     }
 
