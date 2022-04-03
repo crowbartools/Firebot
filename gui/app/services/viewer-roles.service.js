@@ -11,7 +11,8 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
             let service = {};
 
             let customRoles = {};
-            let teamRoles = {};
+
+            let teamRoles = [];
 
             service.loadCustomRoles = async function() {
                 let roles = await backendCommunicator.fireEventAsync("getCustomRoles");
