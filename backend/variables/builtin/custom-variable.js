@@ -7,7 +7,7 @@ const customVariableManager = require("../../common/custom-variable-manager");
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
 function isObjectOrArray(data) {
-    return Array.isArray(data) || (typeof data === 'object' && !(typeof data === 'string' || data instanceof String));
+    return Array.isArray(data) || (typeof data === 'object' && !(data instanceof String));
 }
 
 const model = {
@@ -33,11 +33,16 @@ const model = {
         possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
     },
     evaluator: (_, name, propertyPath, defaultData) => {
-        let data = customVariableManager.getCustomVariable(name, propertyPath, defaultData);
-        if (data && isObjectOrArray(data)) {
-            data = JSON.stringify(data);
+        const data = customVariableManager.getCustomVariable(name, propertyPath, defaultData);
+        if (data == null) {
+            return null;
         }
-        return data != null ? data : "null";
+
+        if (isObjectOrArray(data)) {
+            return JSON.stringify(data);
+        }
+
+        return data;
     }
 };
 
