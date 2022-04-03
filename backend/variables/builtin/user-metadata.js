@@ -3,7 +3,7 @@
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
 function isObjectOrArray(data) {
-    return Array.isArray(data) || (typeof data === 'object' && !(typeof data === 'string' || data instanceof String));
+    return Array.isArray(data) || (typeof data === 'object' && !(data instanceof String));
 }
 
 const model = {
@@ -26,11 +26,16 @@ const model = {
     },
     evaluator: async (_, username, key, defaultValue = null, propertyPath = null) => {
         const userDb = require("../../database/userDatabase");
-        let data = await userDb.getUserMetadata(username, key, propertyPath);
-        if (data && isObjectOrArray(data)) {
-            data = JSON.stringify(data);
+        const data = await userDb.getUserMetadata(username, key, propertyPath);
+        if (data == null) {
+            return defaultValue;
         }
-        return data != null ? data : defaultValue;
+
+        if (isObjectOrArray(data)) {
+            return JSON.stringify(data);
+        }
+        
+        return data;
     }
 };
 
