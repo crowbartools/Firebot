@@ -16,19 +16,9 @@ exports.getQuotes = async function(req, res) {
 exports.getQuote = async function(req, res) {
     let { quoteId } = req.params;
 
-    if (quoteId == null) {
-        return res.status(400).send({
-            status: "error",
-            message: "No quoteId provided"
-        });
-    }
-
-    quoteId = parseInt(quoteId);
-    if (isNaN(quoteId)) {
-        return res.status(400).send({
-            status: "error",
-            message: "Invalid quoteId provided"
-        });
+    quoteId = validateQuoteId(quoteId, res);
+    if (!quoteId) {
+        return;
     }
 
     const quote = await quotesManager.getQuote(quoteId);
@@ -36,7 +26,7 @@ exports.getQuote = async function(req, res) {
     if (quote == null) {
         return res.status(404).send({
             status: "error",
-            message: "Quote " + quoteId + " not found"
+            message: `Quote ${quoteId} not found`
         });
     }
 
@@ -70,29 +60,18 @@ exports.postQuote = async function(req, res) {
     } catch (e) {
         return res.status(500).send({
            status: "error",
-           message: "Error creating quote: " + e
+           message: `Error creating quote: ${e}`
         });
     }
 };
 
 exports.putQuote = async function(req, res) {
     let { quoteId } = req.params;
-    let quotePut = req.body;
+    const quotePut = req.body;
 
-    // Check the quote ID first
-    if (quoteId == null) {
-        return res.status(400).send({
-            status: "error",
-            message: "No quoteId provided"
-        });
-    }
-
-    quoteId = parseInt(quoteId);
-    if (isNaN(quoteId)) {
-        return res.status(400).send({
-            status: "error",
-            message: "Invalid quoteId provided"
-        });
+    quoteId = validateQuoteId(quoteId, res);
+    if (!quoteId) {
+        return;
     }
 
     // Make sure the new quote is valid
@@ -143,7 +122,7 @@ exports.putQuote = async function(req, res) {
         } catch (e) {
             return res.status(500).send({
                status: "error",
-               message: "Error storing quote " + quoteId + ": " + e
+               message: `Error storing quote ${quoteId}: ${e}`
             });
         }
     }
@@ -151,7 +130,7 @@ exports.putQuote = async function(req, res) {
     if (quote == null) {
         return res.status(500).send({
             status: "error",
-            message: "Error storing quote " + quoteId
+            message: `Error storing quote ${quoteId}`
          });
     }
 
@@ -162,19 +141,9 @@ exports.patchQuote = async function(req, res) {
     let { quoteId } = req.params;
     const quotePatch = req.body;
 
-    if (quoteId == null) {
-        return res.status(400).send({
-            status: "error",
-            message: "No quoteId provided"
-        });
-    }
-
-    quoteId = parseInt(quoteId);
-    if (isNaN(quoteId)) {
-        return res.status(400).send({
-            status: "error",
-            message: "Invalid quoteId provided"
-        });
+    quoteId = validateQuoteId(quoteId, res);
+    if (!quoteId) {
+        return;
     }
 
     let quote = await quotesManager.getQuote(quoteId);
@@ -182,27 +151,27 @@ exports.patchQuote = async function(req, res) {
     if (quote == null) {
         return res.status(404).send({
             status: "error",
-            message: "Quote " + quoteId + " not found"
+            message: `Quote ${quoteId} not found`
         });
     }
 
-    if (quotePatch.text != null && quotePatch.text !== "") {
+    if (quotePatch.text?.length > 0) {
         quote.text = quotePatch.text;
     }
 
-    if (quotePatch.originator != null && quotePatch.originator !== "") {
+    if (quotePatch.originator?.length > 0) {
         quote.originator = quotePatch.originator.replace(/@/g, "");
     }
     
-    if (quotePatch.creator != null && quotePatch.creator !== "") {
+    if (quotePatch.creator?.length > 0) {
         quote.creator = quotePatch.creator.replace(/@/g, "");
     }
 
-    if (quotePatch.game != null && quotePatch.game !== "") {
+    if (quotePatch.game?.length > 0) {
         quote.game = quotePatch.game;
     }
 
-    if (quotePatch.createdAt && quotePatch.createdAt != null && quotePatch.createdAt !== "") {
+    if (quotePatch.createdAt?.length > 0) {
         quote.createdAt = moment(quotePatch.createdAt).toISOString();
     }
 
@@ -211,7 +180,7 @@ exports.patchQuote = async function(req, res) {
     } catch (e) {
         return res.status(500).send({
            status: "error",
-           message: "Error updating quote " + quoteId + ": " + e
+           message: `Error updating quote ${quoteId}: ${e}`
         });
     }
 
@@ -221,19 +190,9 @@ exports.patchQuote = async function(req, res) {
 exports.deleteQuote = async function(req, res) {
     let { quoteId } = req.params;
 
-    if (quoteId == null) {
-        return res.status(400).send({
-            status: "error",
-            message: "No quoteId provided"
-        });
-    }
-
-    quoteId = parseInt(quoteId);
-    if (isNaN(quoteId)) {
-        return res.status(400).send({
-            status: "error",
-            message: "Invalid quoteId provided"
-        });
+    quoteId = validateQuoteId(quoteId, res);
+    if (!quoteId) {
+        return;
     }
 
     const quote = await quotesManager.getQuote(quoteId);
@@ -241,7 +200,7 @@ exports.deleteQuote = async function(req, res) {
     if (quote == null) {
         return res.status(404).send({
             status: "error",
-            message: "Quote " + quoteId + " not found"
+            message: `Quote ${quoteId} not found`
         });
     }
 
@@ -249,6 +208,27 @@ exports.deleteQuote = async function(req, res) {
 
     return res.status(204).send();
 };
+
+function validateQuoteId(quoteId, res) {
+    if (quoteId == null) {
+        res.status(400).send({
+            status: "error",
+            message: "No quoteId provided"
+        });
+        return false;
+    }
+
+    quoteId = parseInt(quoteId);
+    if (isNaN(quoteId)) {
+        res.status(400).send({
+            status: "error",
+            message: "Invalid quoteId provided"
+        });
+        return false;
+    }
+    
+    return quoteId;
+}
 
 // Formats a quote for API output
 function formatQuote(quote) {
@@ -265,13 +245,13 @@ function formatQuote(quote) {
 // Validates that all required quote fields are present and valid
 function validateQuote(quote) {
     quote = quote ?? {};
-    let validationErrors = [];
+    const validationErrors = [];
     
-    if (!quote.text || quote.text == null || quote.text === "") {
+    if (!(quote.text?.length > 1)) {
         validationErrors.push("Missing quote text");
     }
     
-    if (!quote.creator || quote.creator == null || quote.creator === "") {
+    if (!(quote.creator?.length > 1)) {
         validationErrors.push("Missing quote creator");
     }
 

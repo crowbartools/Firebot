@@ -72,7 +72,7 @@ function addQuote(quote) {
     return new Promise(async (resolve, reject) => {
         // If no/invalid ID is specified, get the next one
         if (!quote._id || isNaN(quote._id)) {
-            let newQuoteId = await getNextQuoteId();
+            const newQuoteId = await getNextQuoteId();
             if (newQuoteId == null) {
                 logger.error("Unable to add quote as we could not generate a new ID");
                 return reject();
