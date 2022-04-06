@@ -1,7 +1,7 @@
 {
     "extends": "../../config/typescript/base.json",
     "compilerOptions": {
-        "baseUrl": "./",
+        "baseUrl": ".",
         "lib": [ "DOM" ],
         "jsx": "react",
         "paths": {

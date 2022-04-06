@@ -4,6 +4,7 @@ const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const ReactRefreshTypeScript = require('react-refresh-typescript');
 const ESLintWebpackPlugin = require('eslint-webpack-plugin');
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 const mode = /^pro(?:d(?:uction)?)?$/i.test(process.env.NODE_ENV) ? 'production' : 'development';
 const exclude = /(?:^|[\\\/])(?:(?:node_modules)|(?:config)|(?:\.vscode)|(?:dist)|(?:build))(?:[\\\/]|$)/i;
@@ -47,11 +48,7 @@ module.exports.merge = config => {
         target: config.target,
         resolve: {
             extensions: resolveExtensions,
-            alias: {
-                '@assets' : path.resolve(__dirname, '../../assets/'),
-                'SharedUtils' : path.resolve(__dirname, '../../src/shared/util/index.ts'),
-                'SharedTypes' : path.resolve(__dirname, '../../src/shared/typings/')
-            }
+            plugins: [new TsconfigPathsPlugin({configFile: tsconfig})],
         },
         module: {
             rules: [

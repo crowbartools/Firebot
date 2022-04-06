@@ -22,7 +22,7 @@ export const emitIpcEvent = <K extends keyof IpcEvents>(eventName: K) => {
             }
 
             // call original method
-            return originalMethod.apply(this, [data]);
+            return originalMethod?.apply(this, [data]);
         };
     };
 };

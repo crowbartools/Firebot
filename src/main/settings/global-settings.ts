@@ -3,11 +3,11 @@ import { FbConfig } from "../utils/fb-config";
 
 interface GlobalSettings {
     debugMode: boolean;
-    activeProfile: string;
+    activeProfile?: string;
     profiles: Array<UserProfile>;
 }
 export default new FbConfig<GlobalSettings>("global-settings", {
     debugMode: false,
-    activeProfile: null,
+//    activeProfile: null,
     profiles: [],
 });

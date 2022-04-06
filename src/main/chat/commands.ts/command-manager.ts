@@ -1,6 +1,6 @@
 import commandSettings from "./command-settings";
 import { FirebotCustomCommand } from "SharedTypes/command";
-import { registerIpcMethods } from "src/main/utils";
+import { registerIpcMethods } from "../../utils";
 
 @registerIpcMethods(
     "getCustomCommands",

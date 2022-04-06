@@ -34,7 +34,7 @@ export interface IpcSend {
 }
 
 interface Listener<E extends keyof IpcEvents> {
-    handler: (data: IpcMessageEvent<E>["data"]) => void;
+    handler: (data: IpcEvents[E]) => void;
     once: boolean;
 }
 
@@ -50,10 +50,9 @@ const methods: Record<string, HandlerFunc<keyof IpcMethods>> = {};
 let emitter: IpcEmitter;
 let sender: IpcSender;
 let msgId = 0;
-
 export function on<E extends keyof IpcEvents>(
-    event: E,
-    handler: (data: IpcMessageEvent<E>["data"]) => void,
+    event: keyof IpcEvents,
+    handler: (data: IpcEvents[E]) => void,
     once = false
 ): void {
     if (listeners[event] == null) {
@@ -69,15 +68,15 @@ export function on<E extends keyof IpcEvents>(
     }
 }
 
-export function once<E extends keyof IpcEvents>(
-    event: E,
-    handler: (data: IpcMessageEvent<E>["data"]) => void
+export function once(
+    event: keyof IpcEvents,
+    handler: any
 ): void {
     on(event, handler, true);
 }
 
 export function off<E extends keyof IpcEvents>(
-    event: E,
+    event: keyof IpcEvents,
     handler: (data: IpcMessageEvent<E>["data"]) => void,
     once = false
 ): void {
@@ -105,7 +104,7 @@ export function off<E extends keyof IpcEvents>(
 
 export function offOnce<E extends keyof IpcEvents>(
     event: E,
-    handler: (data: IpcMessageEvent<E>["data"]) => void
+    handler: any
 ): void {
     off(event, handler, true);
 }

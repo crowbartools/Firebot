@@ -9,6 +9,6 @@ export function registerStreamingPlatform(platform: StreamingPlatform): void {
     platforms.push(platform);
 }
 
-export function getPlatform(id: string): StreamingPlatform {
+export function getPlatform(id: string): StreamingPlatform | void {
     return platforms.find((p) => p.id === id);
 }

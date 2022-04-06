@@ -1,13 +1,14 @@
 {
     "extends": "../../config/typescript/base.json",
     "compilerOptions": {
-        "baseUrl": "./",
+        "baseUrl": ".",
         "lib": [
             "WebWorker"
         ],
         "paths": {
             "SharedUtils": ["../shared/util/index.ts"],
             "SharedTypes/*": ["../shared/typings/*"]
-        }
+        },
+        "strictPropertyInitialization": false
     }
 }

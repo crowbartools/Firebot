@@ -3,7 +3,7 @@ import fs from "fs-extra";
 import { v4 as uuid } from "uuid";
 import path from "path";
 import { TypedEmitter } from "tiny-typed-emitter";
-import { UserProfile } from "SharedTypes/firebot/profile";
+import type { UserProfile } from "SharedTypes/firebot/profile";
 import globalSettingsConfig from "./settings/global-settings";
 import {
     registerIpcMethods,

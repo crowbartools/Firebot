@@ -4,7 +4,7 @@ import path from "path";
 import { applicationMenu } from "./menu-builder";
 import { communicator } from "SharedUtils";
 
-let mainWindow: BrowserWindow = null;
+let mainWindow: BrowserWindow | null = null;
 
 export function getMainWindow(): BrowserWindow | null {
     return mainWindow;
@@ -29,7 +29,6 @@ export function createMainWindow() {
         minHeight: 50,
         webPreferences: {
             nodeIntegration: false,
-            nativeWindowOpen: true,
             preload: path.join(__dirname, "./preload.js")
         }
     });
@@ -52,12 +51,13 @@ export function createMainWindow() {
 
     mainWindow.webContents.once("dom-ready", () => {
         if (process.env.NODE_ENV !== "production") {
-            mainWindow.webContents.openDevTools();
+            mainWindow?.webContents.openDevTools();
         }
     });
 
     if (process.env.NODE_ENV !== "production") {
-        mainWindow.loadURL("http://localhost:2003");
+        mainWindow.loadURL("http://localhost:8080");
+
     } else {
         mainWindow.loadFile(path.join(__dirname, "./index.html"));
     }

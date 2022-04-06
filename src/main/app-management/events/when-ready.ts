@@ -4,7 +4,7 @@ import installExtension, {
     MOBX_DEVTOOLS,
 } from "electron-devtools-installer";
 import "../../profile-manager";
-import profileSettings from "src/main/settings/profile-settings";
+import profileSettings from "../../settings/profile-settings";
 
 export async function whenReady() {
     if (process.env.NODE_ENV !== "production") {
