@@ -38,7 +38,7 @@ const addFirebotLogMessage = {
     },
     optionsValidator: effect => {
         let errors = [];
-        if (!(effect.logMessage?.length > 1)) {
+        if (!(effect.logMessage?.length > 0)) {
             errors.push("Please input a log message.");
         }
         if (effect.logLevel == null) {
