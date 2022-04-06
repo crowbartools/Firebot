@@ -57,13 +57,16 @@ export function on<E extends keyof IpcEvents>(
     once = false
 ): void {
     if (listeners[event] == null) {
-        listeners[event] = [];
+        listeners[event] = [{
+            handler,
+            once
+        }];
+    } else {
+        listeners[event].push({
+            handler,
+            once,
+        });
     }
-
-    listeners[event].push({
-        handler,
-        once,
-    });
 }
 
 export function once<E extends keyof IpcEvents>(
@@ -79,18 +82,19 @@ export function off<E extends keyof IpcEvents>(
     once = false
 ): void {
     if (listeners[event]?.length === 0) {
-        listeners[event] = null;
+        delete listeners[event];
     }
+    const eventListeners = listeners[event];
+    if (eventListeners != null) {
 
-    if (listeners[event] != null) {
         let i = 0;
-        while (i < listeners[event].length) {
-            const listener = listeners[event][i];
+        while (i < eventListeners.length) {
+            const listener = eventListeners[i];
 
             if (listener.handler === handler && listener.once === once) {
-                listeners[event].splice(i, 1);
-                if (listeners[event].length === 0) {
-                    listeners[event] = null;
+                eventListeners.splice(i, 1);
+                if (eventListeners.length === 0) {
+                    delete listeners[event];
                 }
                 break;
             }
@@ -124,18 +128,20 @@ export function emit<E extends keyof IpcEvents>(
 const processEvent = function <E extends keyof IpcEvents>(
     event: IpcMessageEvent<E>
 ) {
-    if (listeners[event.name] != null) {
+
+    const eventListeners = listeners[event.name];
+    if (eventListeners != null) {
         // static listeners get priority
-        const evtlisteners = listeners[event.name];
         let i = 0;
-        while (i < evtlisteners.length) {
-            const { handler, once } = evtlisteners[i];
+        while (i < eventListeners.length) {
+            const { handler, once } = eventListeners[i];
 
             try {
                 handler(jsonClone(event.data as never));
 
                 if (once === true) {
-                    evtlisteners.splice(i, 1);
+                    eventListeners.splice(i, 1);
+
                 } else {
                     i += 1;
                 }
@@ -144,7 +150,7 @@ const processEvent = function <E extends keyof IpcEvents>(
                     `Error From Communicator Listener of ${event.name}`,
                     err
                 );
-                evtlisteners.splice(i, 1);
+                eventListeners.splice(i, 1);
             }
         }
     } else if (
@@ -193,7 +199,7 @@ export function unregister<M extends keyof IpcMethods>(
         throw new Error(`handler for '${method}' does not match given handler`);
     }
 
-    methods[method] = null;
+    delete methods[method];
 }
 
 export function invoke<M extends Extract<keyof IpcMethods, string>>(
@@ -241,15 +247,17 @@ const processInvoke = async function (message: IpcMessageInvoke) {
         id: message.id,
     };
 
-    if (methods[message.name as keyof IpcMethods] == null) {
+    const methodRunner = methods[message.name as keyof IpcMethods]
+
+    if (methodRunner == null) {
         reply.result = "method not registered";
     } else {
         try {
-            reply.result = await methods[message.name as keyof IpcMethods](
+            reply.result = await methodRunner(
                 ...message.data
             );
             reply.status = "ok";
-        } catch (e) {
+        } catch (e : any) {
             console.error(e);
             reply.result = e.message;
         }

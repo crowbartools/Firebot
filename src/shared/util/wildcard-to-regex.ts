@@ -15,9 +15,9 @@ export const wildcard = (wildcard: string, caseSensitive = false): RegExp => {
                 const hasStar = match.indexOf("*") > -1 ? "*" : "";
 
                 if (match.indexOf("?") > -1) {
-                    const count = match.match(/\?/g).length;
+                    const count = match.match(/\?/g)?.length;
 
-                    if (count > 4) {
+                    if (count != null && count > 4) {
                         return ".".repeat(count) + hasStar;
                     }
 

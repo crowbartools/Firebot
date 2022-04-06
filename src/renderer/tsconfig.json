@@ -1,0 +1,12 @@
+{
+    "extends": "../../config/typescript/base.json",
+    "compilerOptions": {
+        "baseUrl": "./",
+        "lib": [ "DOM" ],
+        "jsx": "react",
+        "paths": {
+            "SharedUtils": ["../shared/util/index.ts"],
+            "SharedTypes/*": ["../shared/typings/*"]
+        }
+    }
+}

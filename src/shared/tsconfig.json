@@ -1,0 +1,10 @@
+{
+    "extends": "../../config/typescript/base.json",
+    "compilerOptions": {
+        "baseUrl": "./",
+        "paths": {
+            "SharedUtils": ["./util/index.ts"],
+            "SharedTypes/*": ["./typings/*"]
+        }
+    }
+}

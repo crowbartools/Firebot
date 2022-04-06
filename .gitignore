@@ -47,5 +47,6 @@ node_modules/
 
 # Project
 dist/
+build/
 release/
 secrets.json
