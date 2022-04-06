@@ -55,6 +55,27 @@ exports.runEffects = async function(req, res) {
     }
 };
 
+exports.getPresetLists = async function(req, res) {
+    const presetLists = presetEffectListManager.getAllItems();
+
+    if (presetLists == null) {
+        return res.status(500).send({
+            status: "error",
+            message: "Unknown error getting preset effect lists"
+        });
+    }
+
+    const formattedPresetLists = presetLists.map(l => {
+        return {
+            id: l.id,
+            name: l.name,
+            args: l.args.map(a => a.name)
+        };
+    });
+
+    return res.json(formattedPresetLists);
+};
+
 exports.runPresetList = async function(req, res) {
     const presetListId = req.params.presetListId;
 
