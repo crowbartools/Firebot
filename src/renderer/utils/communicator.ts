@@ -1,2 +1,2 @@
-const communicator = (window as any).FirebotCommunicator;
+const communicator = window.FirebotCommunicator;
 export default communicator;
