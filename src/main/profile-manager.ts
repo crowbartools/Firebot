@@ -36,7 +36,7 @@ class ProfileManager extends TypedEmitter<{
         }
 
         communicator.register("getActiveUserProfileId", async () =>
-            globalSettingsConfig.get("activeProfile")
+            globalSettingsConfig.get("activeProfile") ?? ""
         );
     }
 

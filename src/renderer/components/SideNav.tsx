@@ -114,7 +114,7 @@ const MenuItem = (isOpen: boolean) => (menuItem: MenuItem, index: number) => {
                 })}
             >
                 <motion.div
-                    whileTap={!isActive ? { scale: 0.95 } : null}
+                    whileTap={!isActive ? { scale: 0.95 } : undefined}
                     className={clsx(
                         {
                             "bg-gray-900 bg-opacity-50": isActive,
@@ -182,7 +182,7 @@ const SidebarHeader = (isOpen: boolean) => (
         )}
     >
         <div className="w-24 flex justify-center items-center">
-            <img src={logo} className="w-8" />
+            {/* <img src={logo} className="w-8" /> */}
         </div>
         <motion.div
             variants={headerVariants}

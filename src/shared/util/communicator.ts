@@ -34,7 +34,7 @@ export interface IpcSend {
 }
 
 interface Listener<E extends keyof IpcEvents> {
-    handler: (data: IpcEvents[E]) => void;
+    handler: (data: IpcMessageEvent<E>["data"]) => void;
     once: boolean;
 }
 
@@ -50,50 +50,47 @@ const methods: Record<string, HandlerFunc<keyof IpcMethods>> = {};
 let emitter: IpcEmitter;
 let sender: IpcSender;
 let msgId = 0;
+
 export function on<E extends keyof IpcEvents>(
     event: E,
-    handler: (data: IpcEvents[E]) => void,
+    handler: (data: IpcMessageEvent<E>["data"]) => void,
     once = false
 ): void {
     if (listeners[event] == null) {
-        listeners[event] = [{
-            handler,
-            once
-        }];
-    } else {
-        listeners[event].push({
-            handler,
-            once,
-        });
+        listeners[event] = [];
     }
+
+    listeners[event].push({
+        handler,
+        once,
+    });
 }
 
-export function once(
-    event: keyof IpcEvents,
-    handler: any
+export function once<E extends keyof IpcEvents>(
+    event: E,
+    handler: (data: IpcMessageEvent<E>["data"]) => void
 ): void {
     on(event, handler, true);
 }
 
 export function off<E extends keyof IpcEvents>(
-    event: keyof IpcEvents,
+    event: E,
     handler: (data: IpcMessageEvent<E>["data"]) => void,
     once = false
 ): void {
     if (listeners[event]?.length === 0) {
-        delete listeners[event];
+        listeners[event] = null;
     }
-    const eventListeners = listeners[event];
-    if (eventListeners != null) {
 
+    if (listeners[event] != null) {
         let i = 0;
-        while (i < eventListeners.length) {
-            const listener = eventListeners[i];
+        while (i < listeners[event].length) {
+            const listener = listeners[event][i];
 
             if (listener.handler === handler && listener.once === once) {
-                eventListeners.splice(i, 1);
-                if (eventListeners.length === 0) {
-                    delete listeners[event];
+                listeners[event].splice(i, 1);
+                if (listeners[event].length === 0) {
+                    listeners[event] = null;
                 }
                 break;
             }
@@ -104,7 +101,7 @@ export function off<E extends keyof IpcEvents>(
 
 export function offOnce<E extends keyof IpcEvents>(
     event: E,
-    handler: any
+    handler: (data: IpcMessageEvent<E>["data"]) => void
 ): void {
     off(event, handler, true);
 }
@@ -127,20 +124,18 @@ export function emit<E extends keyof IpcEvents>(
 const processEvent = function <E extends keyof IpcEvents>(
     event: IpcMessageEvent<E>
 ) {
-
-    const eventListeners = listeners[event.name];
-    if (eventListeners != null) {
+    if (listeners[event.name] != null) {
         // static listeners get priority
+        const evtlisteners = listeners[event.name];
         let i = 0;
-        while (i < eventListeners.length) {
-            const { handler, once } = eventListeners[i];
+        while (i < evtlisteners.length) {
+            const { handler, once } = evtlisteners[i];
 
             try {
                 handler(jsonClone(event.data as never));
 
                 if (once === true) {
-                    eventListeners.splice(i, 1);
-
+                    evtlisteners.splice(i, 1);
                 } else {
                     i += 1;
                 }
@@ -149,7 +144,7 @@ const processEvent = function <E extends keyof IpcEvents>(
                     `Error From Communicator Listener of ${event.name}`,
                     err
                 );
-                eventListeners.splice(i, 1);
+                evtlisteners.splice(i, 1);
             }
         }
     } else if (
@@ -198,7 +193,7 @@ export function unregister<M extends keyof IpcMethods>(
         throw new Error(`handler for '${method}' does not match given handler`);
     }
 
-    delete methods[method];
+    methods[method] = null;
 }
 
 export function invoke<M extends Extract<keyof IpcMethods, string>>(
@@ -246,17 +241,15 @@ const processInvoke = async function (message: IpcMessageInvoke) {
         id: message.id,
     };
 
-    const methodRunner = methods[message.name as keyof IpcMethods]
-
-    if (methodRunner == null) {
+    if (methods[message.name as keyof IpcMethods] == null) {
         reply.result = "method not registered";
     } else {
         try {
-            reply.result = await methodRunner(
+            reply.result = await methods[message.name as keyof IpcMethods](
                 ...message.data
             );
             reply.status = "ok";
-        } catch (e : any) {
+        } catch (e: any) {
             console.error(e);
             reply.result = e.message;
         }

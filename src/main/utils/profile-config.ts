@@ -7,7 +7,7 @@ export class ProfileConfig<Settings> extends FbConfig<Settings> {
         const getPathInProfile = (profileFilePath: string) =>
             path.join(
                 "profiles",
-                profileManager.activeProfile.name,
+                profileManager.activeProfile?.name ?? "",
                 profileFilePath
             );
 

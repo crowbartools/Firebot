@@ -1,6 +1,5 @@
 export const thunk = <
-  Func extends (...args: Args[]) => void,
-  Args extends unknown
+  Func extends (...args: any) => any
 >(
   fn: Func,
   args?: Parameters<Func>

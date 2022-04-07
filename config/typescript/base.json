@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "target": "ES2021",
-        "strict": true,
+        "strict": false,
         "module": "CommonJS",
         "resolveJsonModule": true,
         "emitDecoratorMetadata": true,
@@ -11,7 +11,5 @@
         "sourceMap": true,
         "forceConsistentCasingInFileNames": true
     },
-    "exclude": [
-        "node_modules"
-    ]
+    "exclude": ["node_modules"]
 }
