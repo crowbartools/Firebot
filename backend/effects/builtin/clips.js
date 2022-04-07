@@ -6,6 +6,7 @@ const { settings } = require("../../common/settings-access");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/httpServer");
 const utils = require("../../utility");
+const customVariableManager = require("../../common/custom-variable-manager");
 
 const clip = {
     definition: {
@@ -43,6 +44,18 @@ const clip = {
                     <input type="checkbox" ng-model="effect.showInOverlay">
                     <div class="control__indicator"></div>
                 </label>
+            </div>
+
+            <div style="padding-top:15px">
+                <label class="control-fb control--checkbox"> Put clip URL in a variable <tooltip text="'Put the clip URL into a variable so you can use it later'"></tooltip>
+                    <input type="checkbox" ng-model="effect.options.putClipUrlInVariable">
+                    <div class="control__indicator"></div>
+                </label>
+                <div ng-if="effect.options.putClipUrlInVariable" style="padding-left: 15px;">
+                    <firebot-input input-title="Variable Name" model="effect.options.variableName" placeholder-text="Enter name" />
+                    <firebot-input style="margin-top: 10px;" input-title="Variable TTL" model="effect.options.variableTtl" input-type="number" disable-variables="true" placeholder-text="Enter secs | Optional" />
+                    <firebot-input style="margin-top: 10px;" input-title="Variable Property Path" model="effect.options.variablePropertyPath" input-type="text" disable-variables="true" placeholder-text="Optional" />
+                </div>
             </div>
 
             <!--<div style="padding-top:20px">
@@ -101,6 +114,10 @@ const clip = {
             }
         };
 
+        if ($scope.effect.options == null) {
+            $scope.effect.options = { };
+        }
+
         // Calculate 16:9
         // This checks to see which field the user is filling out, and then adjust the other field so it's always 16:9.
         $scope.calculateSize = function(widthOrHeight, size) {
@@ -147,6 +164,9 @@ const clip = {
         if (effect.postInDiscord && effect.discordChannelId == null) {
             errors.push("Please select Discord channel.");
         }
+        if (effect.options.putClipUrlInVariable && !(effect.options.variableName?.length > 0)) {
+            errors.push("Please enter a variable name.");
+        }
         return errors;
     },
     onTriggerEvent: async event => {
@@ -192,6 +212,9 @@ const clip = {
                 });
             }
 
+            if (effect.options.putClipUrlInVariable) {
+                customVariableManager.addCustomVariable(effect.options.variableName, clip.url, effect.options.variableTtl, effect.options.variablePropertyPath);
+            }
 
             await utils.wait(clipDuration * 1000);
         }
