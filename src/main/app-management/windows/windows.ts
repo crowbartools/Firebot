@@ -59,7 +59,7 @@ export function createMainWindow() {
         mainWindow.loadURL("http://localhost:8080");
 
     } else {
-        mainWindow.loadFile(path.join(__dirname, "./index.html"));
+        mainWindow.loadFile(path.join(__dirname, "../renderer/index.html"));
     }
 
     Menu.setApplicationMenu(applicationMenu);
