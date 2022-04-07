@@ -213,7 +213,12 @@ const clip = {
             }
 
             if (effect.options.putClipUrlInVariable) {
-                customVariableManager.addCustomVariable(effect.options.variableName, clip.url, effect.options.variableTtl, effect.options.variablePropertyPath);
+                customVariableManager.addCustomVariable(
+                    effect.options.variableName,
+                    clip.url,
+                    effect.options.variableTtl || 0,
+                    effect.options.variablePropertyPath || null
+                );
             }
 
             await utils.wait(clipDuration * 1000);
