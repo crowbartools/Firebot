@@ -13,13 +13,13 @@ module.exports = merge({
     dir: './renderer/',
 
     // relative to /src/<dir>/
-    entry: './app.tsx',
+    entry: './index.tsx',
 
     // electron-renderer assumes node integration. something we don't want
     target: 'web',
 
     resolve: {
-        extensions: ['.tsx']
+        extensions: ['.tsx', '.html']
     },
 
     module: {
@@ -65,7 +65,8 @@ module.exports = merge({
         new MiniCssExtractPlugin({ filename: 'css/[name].css'}),
         new HtmlWebpackPlugin({
             title: 'Firebot PlayGround',
-            template: './src/renderer/index.html'
+            filename: "index.html",
+            template: path.join(__dirname, "../../src/renderer/index.html")
         })
     ]
 });
