@@ -1,6 +1,6 @@
 root = true
 
-[*.{htm,html,css,scss,sass,js,ts,tsx,json}]
+[*.{htm,html,css,js,ts,tsx,json}]
 charset = utf-8
 end_of_line = lf
 insert_final_newline = false
