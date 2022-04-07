@@ -5,7 +5,7 @@ const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 
 const { merge, exclude } = require('./build.js');
 
-module.exports = merge({
+const config = merge({
     // enable tsx suppport
     tsx: true,
 
@@ -63,3 +63,5 @@ module.exports = merge({
         })
     ]
 });
+
+module.exports = config;

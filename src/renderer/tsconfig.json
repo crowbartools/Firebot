@@ -2,11 +2,17 @@
     "extends": "../../config/typescript/base.json",
     "compilerOptions": {
         "baseUrl": ".",
-        "lib": [ "DOM" ],
         "jsx": "react",
+        "lib": [ "DOM" ],
         "paths": {
             "SharedUtils": ["../shared/util/index.ts"],
             "SharedTypes/*": ["../shared/typings/*"]
         }
-    }
+    },
+    "include": [
+        "../shared/typings/**/*.ts",
+        "../shared/typings/**/*.tsx",
+        "index.tsx"
+    ],
+    "exclude": ["../../node_modules/**/*"]
 }

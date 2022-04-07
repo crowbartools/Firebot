@@ -53,14 +53,7 @@ module.exports.merge = config => {
         module: {
             rules: [
                 {
-                    test: /\.(gif|jpe?g|tiff|png|webp|bmp|svg|eot|ttf|woff|woff2)$/i,
-                    type: 'asset/resource',
-                    generator: {
-                        filename: 'assets/[base]',
-                    }
-                },
-                {
-                    test: config.tsx ? /\.tsx?/i : /\.ts/i,
+                    test: /\.tsx?/i,
                     exclude,
                     use: [
                         { loader: 'source-map-loader' },
@@ -73,6 +66,13 @@ module.exports.merge = config => {
                             }
                         }
                     ]
+                },
+                {
+                    test: /\.(gif|jpe?g|tiff|png|webp|bmp|svg|eot|ttf|woff|woff2)$/i,
+                    type: 'asset/resource',
+                    generator: {
+                        filename: 'assets/[base]',
+                    }
                 },
                 ...(config.module?.rules ?? [])
             ]
