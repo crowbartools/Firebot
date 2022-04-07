@@ -1,4 +1,3 @@
-import { hot } from "react-hot-loader/root";
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { SideNav } from "./components";
@@ -35,4 +34,4 @@ const App = () => (
     </>
 );
 
-export default hot(App);
+export default App;

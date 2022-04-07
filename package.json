@@ -27,6 +27,9 @@
         "start:dev": "webpack build -c ./config/webpack/main.js && concurrently -k -s=first \"webpack serve -c ./config/webpack/renderer.js --hot\" \"electron ./build/main/index.js\"",
         "start:prod": "webpack build -c ./config/webpack/all.js --node-env production && electron ./build/main/index.js"
     },
+    "volta": {
+        "node": "14.18.1"
+    },
     "devDependencies": {
         "@pmmmwh/react-refresh-webpack-plugin": "^0.5.5",
         "@types/node": "^16.11.1",

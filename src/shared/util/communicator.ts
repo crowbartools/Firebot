@@ -51,7 +51,7 @@ let emitter: IpcEmitter;
 let sender: IpcSender;
 let msgId = 0;
 export function on<E extends keyof IpcEvents>(
-    event: keyof IpcEvents,
+    event: E,
     handler: (data: IpcEvents[E]) => void,
     once = false
 ): void {

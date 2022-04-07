@@ -3,7 +3,6 @@ import * as ReactDOM from "react-dom";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
-import { AppContainer } from "react-hot-loader";
 import { initialStore, Provider as StoreProvider } from "./stores";
 import "./styles/index.css";
 
@@ -13,10 +12,8 @@ library.add(far, fas);
 
 // Render app
 ReactDOM.render(
-    <AppContainer>
-        <StoreProvider value={initialStore}>
-            <App />
-        </StoreProvider>
-    </AppContainer>,
+    <StoreProvider value={initialStore}>
+        <App />
+    </StoreProvider>,
     document.getElementById("root")
 );
