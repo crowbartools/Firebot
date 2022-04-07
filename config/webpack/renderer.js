@@ -2,6 +2,7 @@ const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const TerserPlugin = require('terser-webpack-plugin');
 
 const { merge, exclude } = require('./build.js');
 
@@ -57,7 +58,7 @@ const config = merge({
     plugins:[
         new MiniCssExtractPlugin({ filename: 'css/[name].css'}),
         new HtmlWebpackPlugin({
-            title: 'Firebot PlayGround',
+            title: 'Firebot',
             filename: "index.html",
             template: path.join(__dirname, "../../src/renderer/index.html")
         })
