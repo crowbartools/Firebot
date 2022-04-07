@@ -48,13 +48,6 @@ module.exports = merge({
                         }
                     }
                 ]
-            },
-            {
-                test: /\.(gif|jpe?g|tiff|png|webp|bmp|svg|eot|ttf|woff|woff2)$/i,
-                type: 'asset/resource',
-                generator: {
-                    filename: 'assets/[base]',
-                }
             }
         ]
     },

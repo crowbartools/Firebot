@@ -53,6 +53,13 @@ module.exports.merge = config => {
         module: {
             rules: [
                 {
+                    test: /\.(gif|jpe?g|tiff|png|webp|bmp|svg|eot|ttf|woff|woff2)$/i,
+                    type: 'asset/resource',
+                    generator: {
+                        filename: 'assets/[base]',
+                    }
+                },
+                {
                     test: config.tsx ? /\.tsx?/i : /\.ts/i,
                     exclude,
                     use: [

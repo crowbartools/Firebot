@@ -5,7 +5,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import clsx from "clsx";
 import { motion, Variants } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// import logo from "../assets/images/logo.png";
+import logo from "../assets/images/logo.png";
 import { TemplateIcon } from "@heroicons/react/outline";
 
 import { thunk } from "../utils";
@@ -182,7 +182,7 @@ const SidebarHeader = (isOpen: boolean) => (
         )}
     >
         <div className="w-24 flex justify-center items-center">
-            {/* <img src={logo} className="w-8" /> */}
+            {<img src={logo} className="w-8" />}
         </div>
         <motion.div
             variants={headerVariants}
