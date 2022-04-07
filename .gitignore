@@ -50,3 +50,5 @@ dist/
 build/
 release/
 secrets.json
+src/**/*.js
+src/**/*.map
