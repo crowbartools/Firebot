@@ -24,7 +24,7 @@
     },
     "main": "./dist/index.js",
     "scripts": {
-        "start:dev": "webpack build -c ./config/webpack/main.js && concurrently -k -s=first \"webpack serve -c ./config/webpack/renderer.js --hot\" \"electron ./build/main/index.js\"",
+        "start:dev": "concurrently -k -s=first \"webpack serve -c ./config/webpack/renderer.js --hot\" \"webpack build -c ./config/webpack/main.js && electron ./build/main/index.js\"",
         "start:prod": "webpack build -c ./config/webpack/all.js --node-env production && electron ./build/main/index.js"
     },
     "volta": {
