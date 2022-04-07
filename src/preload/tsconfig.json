@@ -7,5 +7,9 @@
             "SharedUtils": ["../shared/util/index.ts"],
             "SharedTypes/*": ["../shared/typings/*"]
         }
-    }
+    },
+    "include":[
+        "../shared/typings/**/*.ts",
+        "preload.ts"
+    ]
 }

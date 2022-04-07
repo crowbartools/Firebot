@@ -10,5 +10,9 @@
             "SharedTypes/*": ["../shared/typings/*"]
         },
         "strictPropertyInitialization": false
-    }
+    },
+    "include":[
+        "../shared/typings/**/*.ts",
+        "main.ts"
+    ]
 }

@@ -6,5 +6,8 @@
             "SharedUtils": ["./util/index.ts"],
             "SharedTypes/*": ["./typings/*"]
         }
-    }
+    },
+    "include": [
+        "./**/*.ts"
+    ]
 }
