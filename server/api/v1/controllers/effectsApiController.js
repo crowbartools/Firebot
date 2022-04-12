@@ -8,7 +8,7 @@ exports.getEffects = function(req, res) {
     let effectDefs = effectsManager.getEffectDefinitions();
 
     if (req.query.trigger) {
-        effectDefs = effectDefs.filter(e => e.triggers == null || e.triggers[req.query.trigger]);
+        effectDefs = effectDefs.filter(effect => effect.triggers == null || effect.triggers[req.query.trigger]);
     }
 
     res.json(effectDefs);
@@ -65,11 +65,11 @@ exports.getPresetLists = async function(req, res) {
         });
     }
 
-    const formattedPresetLists = presetLists.map(l => {
+    const formattedPresetLists = presetLists.map(presetList => {
         return {
-            id: l.id,
-            name: l.name,
-            args: l.args.map(a => a.name)
+            id: presetList.id,
+            name: presetList.name,
+            args: presetList.args.map(arg => arg.name)
         };
     });
 
