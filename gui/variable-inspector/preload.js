@@ -7,5 +7,8 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
         ipcRenderer.on(channel, (_, data) => {
             listener(data);
         });
+    },
+    deleteVariable: (key) => {
+        ipcRenderer.send("customVariableDelete", key);
     }
 });

@@ -374,6 +374,10 @@
           toggleExpanded() {
             this.expanded = !this.expanded;
           },
+          deleteVariable() {
+            console.log("DELETING VARIABLE", this.variable.key);
+            window.ipcRenderer.deleteVariable(this.variable.key);
+          },
         },
         computed: {
           history() {
@@ -388,6 +392,7 @@
                         <div class="var-cell" :class="{ 'var-row-collapsed': !expanded }">{{variable.history[0].value}}</div>
                         <div class="var-cell"><expire-display :ttl="variable.history[0].ttl" :action="variable.history[0].action" /></div>
                         <div class="var-cell">{{variable.history[0].action}}</div>
+                        <div class="var-cell"><button @click="deleteVariable">Delete</a></div>
                         <div style="width: 15px;">
                             <caret-icon :direction="expanded ? 'down' : 'right'" />
                         </div>
@@ -500,6 +505,16 @@
               },
             ],
           });
+        }
+      });
+
+      window.ipcRenderer.on("variable-deleted", ({ key }) => {
+        console.log("VAR DELETE");
+        console.log(key);
+        const foundVar = app.variables.find(variable => variable.key === key);
+
+        if (foundVar) {
+          app.variables.splice(app.variables.indexOf(foundVar), 1);
         }
       });
     </script>
