@@ -13,11 +13,11 @@ exports.getSystemCommands = async function(req, res) {
         });
     }
 
-    const formattedSysCommands = sysCommands.map(c => {
+    const formattedSysCommands = sysCommands.map(command => {
         return {
-            id: c.id,
-            trigger: c.trigger,
-            name: c.name
+            id: command.id,
+            trigger: command.trigger,
+            name: command.name
         };
     });
 
@@ -92,11 +92,11 @@ exports.getCustomCommands = async function(req, res) {
         });
     }
 
-    const formattedCustomCommands = customCommands.map(c => {
+    const formattedCustomCommands = customCommands.map(command => {
         return {
-            id: c.id,
-            trigger: c.trigger,
-            description: c.description
+            id: command.id,
+            trigger: command.trigger,
+            description: command.description
         };
     });
 
