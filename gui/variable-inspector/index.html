@@ -16,6 +16,7 @@
         background: #43454b;
         color: white;
         padding: 10px;
+        cursor: pointer;
       }
       .var-table .var:nth-child(even) {
         background: #3e4046;
@@ -31,8 +32,8 @@
         overflow: hidden;
       }
       .caret {
-        width: 24px;
-        height: 24px;
+        width: 15px;
+        height: 15px;
         color: white;
       }
       .search-field {
@@ -207,6 +208,7 @@
         font-size: 14px;
         font-weight: 400;
         cursor: pointer;
+        margin-left: 10px;
       }
         .delete-button:hover {
           background-color: #c9302c;
@@ -302,8 +304,7 @@
         <div style="flex: 1">Value</div>
         <div style="flex: 1">Expires</div>
         <div style="flex: 1">Action</div>
-        <div style="flex: 1">Manage</div>
-        <div style="width: 24px"></div>
+        <div style="width: 15px"></div>
       </div>
       <div class="var-table">
         <variable-row
@@ -408,14 +409,13 @@
           },
         },
         template: `
-                <div class="var">
+                <div class="var" @click="toggleExpanded()">
                     <div class="header" style="display:flex; color: white;">
                         <div class="var-cell">{{variable.key}}</div>
                         <div class="var-cell" :class="{ 'var-row-collapsed': !expanded }">{{variable.history[0].value}}</div>
                         <div class="var-cell"><expire-display :ttl="variable.history[0].ttl" :action="variable.history[0].action" /></div>
                         <div class="var-cell">{{variable.history[0].action}}</div>
-                        <div class="var-cell"><button class="delete-button" @click="deleteVariable"><i class="fad fa-trash-alt"></i></a></div>
-                        <div style="width: 24px; cursor: pointer;" @click="toggleExpanded()">
+                        <div style="width: 15px;">
                             <caret-icon :direction="expanded ? 'down' : 'right'" />
                         </div>
                     </div>
@@ -424,14 +424,14 @@
                             <div style="height: 1px; background: #807676; flex: 1;"></div>
                             <div style="margin: 0 13px; font-size: 12px; color: #909090;">History</div>
                             <div style="height: 1px; background: #807676; flex: 1;"></div>
+                            <button class="delete-button" @click.stop="deleteVariable" title="Delete Variable"><i class="fad fa-trash-alt"></i></a>
                         </div>
                         <div v-for="h in history" style="display:flex; color: white;">
                             <div class="var-cell"></div>
                             <div class="var-cell">{{h.value}}</div>
                             <div class="var-cell"></div>
                             <div class="var-cell">{{h.action}}</div>
-                            <div class="var-cell"></div>
-                            <div style="width: 24px;"></div>
+                            <div style="width: 15px;"></div>
                         </div>
                         <div v-if="history.length < 1" style="opacity: 0.75;">No changes captured yet.</div>
                     </div>
