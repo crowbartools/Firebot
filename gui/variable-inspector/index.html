@@ -16,7 +16,6 @@
         background: #43454b;
         color: white;
         padding: 10px;
-        cursor: pointer;
       }
       .var-table .var:nth-child(even) {
         background: #3e4046;
@@ -32,8 +31,8 @@
         overflow: hidden;
       }
       .caret {
-        width: 15px;
-        height: 15px;
+        width: 24px;
+        height: 24px;
         color: white;
       }
       .search-field {
@@ -198,10 +197,32 @@
           transform: scale(1);
         }
       }
+
+      .delete-button {
+        padding: 7px 12px;
+        background-color: #d9534f;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        color: white;
+        font-size: 14px;
+        font-weight: 400;
+        cursor: pointer;
+      }
+        .delete-button:hover {
+          background-color: #c9302c;
+          border-color: transparent;
+        }
     </style>
   </head>
 
   <body>
+    <script>
+      // Load the FontAwesome assets
+      console.log(window.ipcRenderer.fontAwesome5KitUrl);
+      let myScript = document.createElement("script");
+      myScript.setAttribute("src", window.ipcRenderer.fontAwesome5KitUrl);
+      document.body.appendChild(myScript);
+    </script>
     <div id="app" style="font-family: sans-serif">
       <div
         style="
@@ -281,7 +302,8 @@
         <div style="flex: 1">Value</div>
         <div style="flex: 1">Expires</div>
         <div style="flex: 1">Action</div>
-        <div style="width: 15px"></div>
+        <div style="flex: 1">Manage</div>
+        <div style="width: 24px"></div>
       </div>
       <div class="var-table">
         <variable-row
@@ -386,14 +408,14 @@
           },
         },
         template: `
-                <div class="var" @click="toggleExpanded()">
+                <div class="var">
                     <div class="header" style="display:flex; color: white;">
                         <div class="var-cell">{{variable.key}}</div>
                         <div class="var-cell" :class="{ 'var-row-collapsed': !expanded }">{{variable.history[0].value}}</div>
                         <div class="var-cell"><expire-display :ttl="variable.history[0].ttl" :action="variable.history[0].action" /></div>
                         <div class="var-cell">{{variable.history[0].action}}</div>
-                        <div class="var-cell"><button @click="deleteVariable">Delete</a></div>
-                        <div style="width: 15px;">
+                        <div class="var-cell"><button class="delete-button" @click="deleteVariable"><i class="fad fa-trash-alt"></i></a></div>
+                        <div style="width: 24px; cursor: pointer;" @click="toggleExpanded()">
                             <caret-icon :direction="expanded ? 'down' : 'right'" />
                         </div>
                     </div>
@@ -408,7 +430,8 @@
                             <div class="var-cell">{{h.value}}</div>
                             <div class="var-cell"></div>
                             <div class="var-cell">{{h.action}}</div>
-                            <div style="width: 15px;"></div>
+                            <div class="var-cell"></div>
+                            <div style="width: 24px;"></div>
                         </div>
                         <div v-if="history.length < 1" style="opacity: 0.75;">No changes captured yet.</div>
                     </div>
@@ -509,8 +532,7 @@
       });
 
       window.ipcRenderer.on("variable-deleted", ({ key }) => {
-        console.log("VAR DELETE");
-        console.log(key);
+        console.log("VAR DELETE", key);
         const foundVar = app.variables.find(variable => variable.key === key);
 
         if (foundVar) {
