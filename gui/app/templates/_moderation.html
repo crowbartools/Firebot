@@ -107,7 +107,7 @@
       <div class="content-block moderation-feature-block">
         <div class="content-block-body">
           <div class="title-toggle-button-container">
-            <div class="font-semibold text-3xl" ng-class="{ muted: !cms.chatModerationData.settings.urlModeration.enabled }">Url Moderation</div>
+            <div class="font-semibold text-3xl" ng-class="{ muted: !cms.chatModerationData.settings.urlModeration.enabled }">URL Moderation</div>
             <div class="toggle-button-container">
               <toggle-button
                 toggle-model="cms.chatModerationData.settings.urlModeration.enabled"
@@ -120,10 +120,13 @@
             A !permit command is automatically added to System Commands.
           </div>
           <div style="display: block;width: 100%;" class="my-8" ng-show="cms.chatModerationData.settings.urlModeration.enabled">
-            <div class="mb-4 text-2xl font-semibold">
-              Exempt Roles <tooltip text="'These roles are exempt from the url moderation.'" />
+            <div class="my-8">
+              <div class="mb-4 text-2xl font-semibold">
+                Exempt Roles <tooltip text="'These roles are exempt from the url moderation.'" />
+              </div>
+              <exempt-roles model="cms.chatModerationData.settings.urlModeration.exemptRoles" on-update="cms.saveChatModerationSettings()"></exempt-roles>
             </div>
-            <exempt-roles model="cms.chatModerationData.settings.urlModeration.exemptRoles" on-update="cms.saveChatModerationSettings()"></exempt-roles>
+            <button ng-click="showEditUrlAllowlistModal()" class="btn btn-default">Edit URL Allowlist</button>
           </div>
           <div
             class="title-toggle-button-container my-8"

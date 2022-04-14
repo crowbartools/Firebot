@@ -28,5 +28,13 @@
                     resolveObj: {}
                 });
             };
+
+            $scope.showEditUrlAllowlistModal = () => {
+                utilityService.showModal({
+                    component: "editUrlAllowlistModal",
+                    backdrop: true,
+                    resolveObj: {}
+                });
+            };
         });
 }());
