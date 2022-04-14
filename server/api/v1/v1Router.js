@@ -42,6 +42,30 @@ router.route("/effects/preset/:presetListId")
     .post(effects.runPresetList);
 
 
+// Commands
+const commands = require("./controllers/commandsApiController");
+
+router.route("/commands/system")
+    .get(commands.getSystemCommands);
+
+router.route("/commands/system/:sysCommandId")
+    .get(commands.getSystemCommand);
+
+router.route("/commands/system/:sysCommandId/run")
+    .get(commands.runSystemCommand)
+    .post(commands.runSystemCommand);
+
+router.route("/commands/custom")
+    .get(commands.getCustomCommands);
+
+router.route("/commands/custom/:customCommandId")
+    .get(commands.getCustomCommand);
+
+router.route("/commands/custom/:customCommandId/run")
+    .get(commands.runCustomCommand)
+    .post(commands.runCustomCommand);
+
+
 // Fonts
 const fonts = require("./controllers/fontsApiController");
 router.route("/fonts")
