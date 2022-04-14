@@ -31,15 +31,15 @@ router
     .get(effects.getEffects)
     .post(effects.runEffects);
 
-router.route("/effects/preset/:presetListId")
-    .post(effects.runPresetList);
-
-router.route("/effects/preset/:presetListId")
-    .post(effects.runPresetList)
-    .get(effects.runPresetList);
+router.route("/effects/preset")
+    .get(effects.getPresetLists);
 
 router.route("/effects/:effectId")
     .get(effects.getEffect);
+
+router.route("/effects/preset/:presetListId")
+    .get(effects.runPresetList)
+    .post(effects.runPresetList);
 
 
 // Commands
