@@ -183,7 +183,7 @@ function deleteCustomVariable(name) {
     } catch (error) {
         logger.debug(`Error deleting custom variable ${name}: ${error}`);
     }
-};
+}
 
 ipcMain.on("customVariableDelete", (_, key) => {
     deleteCustomVariable(key);
