@@ -12,29 +12,29 @@
                 <h4 class="modal-title">Edit URL Allowlist</h4>
             </div>
             <div class="modal-body">
-                <p class="muted" style="margin-bottom:10px;">URLs found in messages containing any words or phrases listed here will be automatically allowed.</p>
+                <p class="muted" style="margin-bottom:10px;">URLs found in messages containing any URL parts listed here will be automatically allowed.</p>
                 <p class="muted" style="margin-bottom:20px;">NOTE: If multiple URLs are found in a message and ANY of them are not allowed, the entire message will be deleted.</p>
                 <div style="margin: 0 0 25px;display: flex;flex-direction: row;">
 
                     <div class="dropdown">
                         <button class="btn btn-primary dropdown-toggle" type="button" id="add-options" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            <span class="dropdown-text"><i class="fas fa-plus-circle"></i> Add Word(s)</span>
+                            <span class="dropdown-text"><i class="fas fa-plus-circle"></i> Add URL(s)</span>
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="add-options">
-                            <li role="menuitem" ng-click="$ctrl.addWord()"><a href style="padding-left: 10px;"><i class="fad fa-plus-circle" style="margin-right: 5px;"></i> Add single word</a></li>
-                            <li role="menuitem" ng-click="$ctrl.showImportModal()"><a href style="padding-left: 10px;"><i class="fad fa-file-import" style="margin-right: 5px;"></i> Import from .txt file <tooltip text="'Import a list of words/phrases from a txt file'"></tooltip></a></li>
+                            <li role="menuitem" ng-click="$ctrl.addUrl()"><a href style="padding-left: 10px;"><i class="fad fa-plus-circle" style="margin-right: 5px;"></i> Add single URL</a></li>
+                            <li role="menuitem" ng-click="$ctrl.showImportModal()"><a href style="padding-left: 10px;"><i class="fad fa-file-import" style="margin-right: 5px;"></i> Import from .txt file <tooltip text="'Import a list of URLs from a txt file'"></tooltip></a></li>
                         </ul>
                     </div>
 
                     <div style="display: flex;flex-direction: row;justify-content: space-between;margin-left: auto;">
-                        <searchbar placeholder-text="Search words..." query="$ctrl.search" style="flex-basis: 250px;"></searchbar>
+                        <searchbar placeholder-text="Search URLs..." query="$ctrl.search" style="flex-basis: 250px;"></searchbar>
                     </div>
                 </div>
                 <div>
                     <sortable-table
                         table-data-set="$ctrl.cms.chatModerationData.urlAllowlist"
-                        headers="$ctrl.wordHeaders"
+                        headers="$ctrl.urlHeaders"
                         query="$ctrl.search"
                         clickable="false"
                         starting-sort-field="createdAt"
@@ -45,7 +45,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button ng-show="$ctrl.cms.chatModerationData.urlAllowlist.length > 0" type="button" class="btn btn-danger pull-left" ng-click="$ctrl.deleteAllWords()">Delete All Allowed URLs</button>
+                <button ng-show="$ctrl.cms.chatModerationData.urlAllowlist.length > 0" type="button" class="btn btn-danger pull-left" ng-click="$ctrl.deleteAllUrls()">Delete All Allowed URLs</button>
             </div>
             `,
             bindings: {
@@ -66,7 +66,7 @@
                 // IE $ctrl.resolve.shouldDelete or whatever
                 };
 
-                $ctrl.wordHeaders = [
+                $ctrl.urlHeaders = [
                     {
                         name: "TEXT",
                         icon: "fa-quote-right",
@@ -103,7 +103,7 @@
                     }
                 ];
 
-                $ctrl.addWord = () => {
+                $ctrl.addUrl = () => {
                     utilityService.openGetInputModal(
                         {
                             model: "",
@@ -125,8 +125,8 @@
                             validationText: "Allowed URL can't be empty and can't already exist."
 
                         },
-                        (newWord) => {
-                            chatModerationService.addAllowedUrls([newWord.trim()]);
+                        (newUrl) => {
+                            chatModerationService.addAllowedUrls([newUrl.trim()]);
                         });
                 };
 
@@ -147,23 +147,23 @@
                                 return;
                             }
 
-                            let words = [];
+                            let urls = [];
                             if (delimiter === 'newline') {
-                                words = contents.replace(/\r\n/g, "\n").split("\n");
+                                urls = contents.replace(/\r\n/g, "\n").split("\n");
                             } else if (delimiter === "comma") {
-                                words = contents.split(",");
+                                urls = contents.split(",");
                             } else if (delimiter === "space") {
-                                words = contents.split(" ");
+                                urls = contents.split(" ");
                             }
 
-                            if (words != null) {
-                                chatModerationService.addAllowedUrls(words);
+                            if (urls != null) {
+                                chatModerationService.addAllowedUrls(urls);
                             }
                         }
                     });
                 };
 
-                $ctrl.deleteAllWords = function() {
+                $ctrl.deleteAllUrls = function() {
                     utilityService.showConfirmationModal({
                         title: "Delete All Allowed URLs",
                         question: `Are you sure you want to delete all allowed URLs?`,
