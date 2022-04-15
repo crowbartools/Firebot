@@ -198,10 +198,33 @@
           transform: scale(1);
         }
       }
+
+      .delete-button {
+        padding: 7px 12px;
+        background-color: #d9534f;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        color: white;
+        font-size: 14px;
+        font-weight: 400;
+        cursor: pointer;
+        margin-left: 10px;
+      }
+        .delete-button:hover {
+          background-color: #c9302c;
+          border-color: transparent;
+        }
     </style>
   </head>
 
   <body>
+    <script>
+      // Load the FontAwesome assets
+      console.log(window.ipcRenderer.fontAwesome5KitUrl);
+      let myScript = document.createElement("script");
+      myScript.setAttribute("src", window.ipcRenderer.fontAwesome5KitUrl);
+      document.body.appendChild(myScript);
+    </script>
     <div id="app" style="font-family: sans-serif">
       <div
         style="
@@ -318,7 +341,7 @@
         },
         methods: {
           toggleExpanded() {
-            this.expanded = !this.expanded;
+            this.variable.expanded = !this.variable.expanded;
           },
           updateSecondsDisplay() {
             if (this.secondsLeft < 1) {
@@ -365,14 +388,13 @@
 
       Vue.component("variable-row", {
         props: ["variable"],
-        data: function () {
-          return {
-            expanded: false,
-          };
-        },
         methods: {
           toggleExpanded() {
-            this.expanded = !this.expanded;
+            this.variable.expanded = !this.variable.expanded;
+          },
+          deleteVariable() {
+            console.log("DELETING VARIABLE", this.variable.key);
+            window.ipcRenderer.deleteVariable(this.variable.key);
           },
         },
         computed: {
@@ -385,18 +407,19 @@
                 <div class="var" @click="toggleExpanded()">
                     <div class="header" style="display:flex; color: white;">
                         <div class="var-cell">{{variable.key}}</div>
-                        <div class="var-cell" :class="{ 'var-row-collapsed': !expanded }">{{variable.history[0].value}}</div>
+                        <div class="var-cell" :class="{ 'var-row-collapsed': !variable.expanded }">{{variable.history[0].value}}</div>
                         <div class="var-cell"><expire-display :ttl="variable.history[0].ttl" :action="variable.history[0].action" /></div>
                         <div class="var-cell">{{variable.history[0].action}}</div>
                         <div style="width: 15px;">
-                            <caret-icon :direction="expanded ? 'down' : 'right'" />
+                            <caret-icon :direction="variable.expanded ? 'down' : 'right'" />
                         </div>
                     </div>
-                    <div v-if="expanded">
+                    <div v-if="variable.expanded">
                         <div style="display: flex; padding: 10px 10px;align-items: center;">
                             <div style="height: 1px; background: #807676; flex: 1;"></div>
                             <div style="margin: 0 13px; font-size: 12px; color: #909090;">History</div>
                             <div style="height: 1px; background: #807676; flex: 1;"></div>
+                            <button class="delete-button" @click.stop="deleteVariable" title="Delete Variable"><i class="fad fa-trash-alt"></i></a>
                         </div>
                         <div v-for="h in history" style="display:flex; color: white;">
                             <div class="var-cell"></div>
@@ -450,6 +473,7 @@
               action: "set",
             },
           ],
+          expanded: false
         }));
       });
 
@@ -474,6 +498,7 @@
                 action: "set",
               },
             ],
+            expanded: false
           });
         }
       });
@@ -500,6 +525,15 @@
               },
             ],
           });
+        }
+      });
+
+      window.ipcRenderer.on("variable-deleted", ({ key }) => {
+        console.log("VAR DELETE", key);
+        const foundVar = app.variables.find(variable => variable.key === key);
+
+        if (foundVar) {
+          app.variables.splice(app.variables.indexOf(foundVar), 1);
         }
       });
     </script>
