@@ -157,11 +157,12 @@ async function updateUserMetadata(username, key, value, propertyPath) {
     }
 }
 
-frontendCommunicator.onAsync("update-user-metadata", async ({ username, key, value }) => {
-    updateUserMetadata(username, key, value);
-});
+async function removeUserMetadata(username, key) {
 
-frontendCommunicator.onAsync("delete-user-metadata", async ({ username, key }) => {
+    if (username == null || username.length < 1 || key == null || key.length < 1) {
+        return;
+    }
+
     const user = await getTwitchUserByUsername(username);
     if (user == null) {
         return;
@@ -174,6 +175,14 @@ frontendCommunicator.onAsync("delete-user-metadata", async ({ username, key }) =
     user.metadata = metadata;
 
     await updateUser(user);
+}
+
+frontendCommunicator.onAsync("update-user-metadata", async ({ username, key, value }) => {
+    updateUserMetadata(username, key, value);
+});
+
+frontendCommunicator.onAsync("delete-user-metadata", async ({ username, key }) => {
+    removeUserMetadata(username, key);
 });
 
 async function getUserMetadata(username, key, propertyPath) {
@@ -921,6 +930,7 @@ exports.setChatUsersOnline = setChatUsersOnline;
 exports.getTopViewTimeUsers = getTopViewTimeUsers;
 exports.addNewUserFromChat = addNewUserFromChat;
 exports.getOnlineUsers = getOnlineUsers;
+exports.removeUserMetadata = removeUserMetadata;
 exports.updateUserMetadata = updateUserMetadata;
 exports.getUserMetadata = getUserMetadata;
 exports.getAllUsernames = getAllUsernames;

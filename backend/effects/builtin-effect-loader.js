@@ -38,6 +38,7 @@ exports.loadEffects = () => {
         'play-video', // No migration needed.
         'random-effect',
         'random-reddit-image',
+        'remove-user-metadata',
         'reset-timer',
         'run-command',
         'run-program',
