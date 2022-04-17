@@ -104,11 +104,8 @@ async function createClient() {
         });
         listeners.push(bitsBadgeUnlockListener);
 
-
         const subsListener = await pubSubClient.onSubscription(streamer.userId, (subInfo) => {
-            if (subInfo.isGift) {
-                twitchEventsHandler.giftSub.triggerSubGift(subInfo);
-            } else {
+            if (!subInfo.isGift) {
                 twitchEventsHandler.sub.triggerSub(subInfo);
             }
         });

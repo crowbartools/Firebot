@@ -443,9 +443,20 @@ function sendVariableExpireToInspector(key, value) {
     });
 }
 
+function sendVariableDeleteToInspector(key) {
+    if (variableInspectorWindow == null || variableInspectorWindow.isDestroyed()) {
+        return;
+    }
+
+    variableInspectorWindow.webContents.send("variable-deleted", {
+        key
+    });
+}
+
 exports.createVariableInspectorWindow = createVariableInspectorWindow;
 exports.sendVariableCreateToInspector = sendVariableCreateToInspector;
 exports.sendVariableExpireToInspector = sendVariableExpireToInspector;
+exports.sendVariableDeleteToInspector = sendVariableDeleteToInspector;
 exports.createStreamPreviewWindow = createStreamPreviewWindow;
 exports.createMainWindow = createMainWindow;
 exports.createSplashScreen = createSplashScreen;

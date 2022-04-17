@@ -8,7 +8,7 @@ exports.getEffects = function(req, res) {
     let effectDefs = effectsManager.getEffectDefinitions();
 
     if (req.query.trigger) {
-        effectDefs = effectDefs.filter(e => e.triggers == null || e.triggers[req.query.trigger]);
+        effectDefs = effectDefs.filter(effect => effect.triggers == null || effect.triggers[req.query.trigger]);
     }
 
     res.json(effectDefs);
@@ -53,6 +53,27 @@ exports.runEffects = async function(req, res) {
     } else {
         res.status(400).send({ status: "error", message: "No effects provided." });
     }
+};
+
+exports.getPresetLists = async function(req, res) {
+    const presetLists = presetEffectListManager.getAllItems();
+
+    if (presetLists == null) {
+        return res.status(500).send({
+            status: "error",
+            message: "Unknown error getting preset effect lists"
+        });
+    }
+
+    const formattedPresetLists = presetLists.map(presetList => {
+        return {
+            id: presetList.id,
+            name: presetList.name,
+            args: presetList.args.map(arg => arg.name)
+        };
+    });
+
+    return res.json(formattedPresetLists);
 };
 
 exports.runPresetList = async function(req, res) {

@@ -3,6 +3,7 @@
 const logger = require('../logwrapper');
 const eventManager = require("../events/EventManager");
 const windowManagement = require("../app-management/electron/window-management");
+const { ipcMain } = require("electron");
 
 const NodeCache = require("node-cache");
 
@@ -19,6 +20,10 @@ const onCustomVariableExpire = (key, value) => {
     windowManagement.sendVariableExpireToInspector(key, value);
 };
 
+const onCustomVariableDelete = (key) => {
+    windowManagement.sendVariableDeleteToInspector(key);
+};
+
 cache.on("expired", onCustomVariableExpire);
 
 cache.on("set", function(key, value) {
@@ -30,6 +35,8 @@ cache.on("set", function(key, value) {
 
     windowManagement.sendVariableCreateToInspector(key, value, cache.getTtl(key));
 });
+
+cache.on("del", onCustomVariableDelete);
 
 function getVariableCacheDb() {
     const profileManager = require("../common/profile-manager");
@@ -161,3 +168,25 @@ exports.getCustomVariable = (name, propertyPath, defaultData = null) => {
         return defaultData;
     }
 };
+
+function deleteCustomVariable(name) {
+    const data = cache.get(name);
+
+    if (data == null) {
+        logger.debug(`Cannot delete custom variable ${name}: Variable does not exist.`);
+    }
+
+    try {
+        cache.del(name);
+        
+        logger.debug(`Custom variable ${name} deleted`);
+    } catch (error) {
+        logger.debug(`Error deleting custom variable ${name}: ${error}`);
+    }
+}
+
+ipcMain.on("customVariableDelete", (_, key) => {
+    deleteCustomVariable(key);
+});
+
+exports.deleteCustomVariable = deleteCustomVariable;
