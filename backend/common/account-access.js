@@ -183,7 +183,7 @@ function updateAccount(accountType, account, emitUpdate = true) {
     let otherAccount = accountType === "streamer" ? cache.bot : cache.streamer;
     if (otherAccount != null && otherAccount.loggedIn) {
         if (otherAccount.userId === account.userId) {
-            renderWindow.webContents.send("error", "You cannot sign into the same user for both Streamer and Bot accounts. The bot account should be a seperate Mixer user. If you don't have a seperate user, simply don't use the Bot account feature as it's not required.");
+            renderWindow.webContents.send("error", "You cannot sign into the same user for both Streamer and Bot accounts. The bot account should be a seperate Twitch user. If you don't have a seperate user, simply don't use the Bot account feature as it's not required.");
             return;
         }
     }
