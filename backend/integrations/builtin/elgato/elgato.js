@@ -34,7 +34,7 @@ class ElgatoIntegration extends EventEmitter {
         frontendCommunicator.onAsync("getKeyLights", async () => {
             return this.keyLightController.keyLights || [];
         });
-        
+
         frontendCommunicator.onAsync("getLightStrips", async () => {
             return this.lightStripController.lightStrips || [];
         });
@@ -117,7 +117,7 @@ class ElgatoIntegration extends EventEmitter {
                 // Otherwise, convert from the color name
                 } else {
                     try {
-                        hsvColor = colorConvert.keyword.hsv(colorValue);
+                        hsvColor = colorConvert.keyword.hsv(colorValue.toLowerCase());
                     } catch {
                         logger.debug('Unable to convert "' + colorValue + '" to HSV color');
                         return;
