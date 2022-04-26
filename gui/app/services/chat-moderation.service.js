@@ -34,7 +34,8 @@
                     exemptRoles: []
                 },
                 bannedWords: [],
-                bannedRegularExpressions: []
+                bannedRegularExpressions: [],
+                urlAllowlist: []
             };
 
             service.loadChatModerationData = () => {
@@ -71,6 +72,10 @@
 
                     if (service.chatModerationData.settings.urlModeration.exemptRoles == null) {
                         service.chatModerationData.settings.urlModeration.exemptRoles = [];
+                    }
+
+                    if (service.chatModerationData.urlAllowlist == null) {
+                        service.chatModerationData.urlAllowlist = [];
                     }
                 }
             };
@@ -148,6 +153,44 @@
             service.removeAllBannedRegularExpressions = () => {
                 service.chatModerationData.bannedRegularExpressions = [];
                 backendCommunicator.fireEvent("removeAllBannedRegularExpressions");
+            };
+
+            service.addAllowedUrls = (urls) => {
+                let normalizedUrls = urls
+                    .filter(u => u != null && u.trim().length > 0 && u.trim().length < 360)
+                    .map(u => u.trim().toLowerCase());
+
+                let mapped = [...new Set(normalizedUrls)].map(u => {
+                    return {
+                        text: u,
+                        createdAt: moment().valueOf()
+                    };
+                });
+
+                service.chatModerationData.urlAllowlist =
+                    service.chatModerationData.urlAllowlist.concat(mapped);
+
+                backendCommunicator.fireEvent("addAllowedUrls", mapped);
+            };
+
+            service.removeAllowedUrlAtIndex = (index) => {
+                let word = service.chatModerationData.urlAllowlist[index];
+                if (word) {
+                    backendCommunicator.fireEvent("removeAllowedUrl", word.text);
+                    service.chatModerationData.urlAllowlist.splice(index, 1);
+                }
+            };
+
+            service.removeAllowedUrlByText = (text) => {
+                let index = service.chatModerationData.urlAllowlist.findIndex(u => u.text === text);
+                if (index > -1) {
+                    service.removeAllowedUrlAtIndex(index);
+                }
+            };
+
+            service.removeAllAllowedUrls = () => {
+                service.chatModerationData.urlAllowlist = [];
+                backendCommunicator.fireEvent("removeAllAllowedUrls");
             };
 
             service.registerPermitCommand = () => {
