@@ -10,6 +10,7 @@ const utils = require("../../utility");
 let getChatModerationSettingsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/chat-moderation-settings");
 let getBannedWordsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-words", false);
 let getbannedRegularExpressionsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-regular-expressions", false);
+let getUrlAllowlistDb = () => profileManager.getJsonDbInProfile("/chat/moderation/url-allowlist", false);
 
 // default settings
 let chatModerationSettings = {
@@ -44,6 +45,10 @@ let bannedRegularExpressions = {
     regularExpressions: []
 };
 
+let urlAllowlist = {
+    urls: []
+}
+
 function getBannedWordsList() {
     if (!bannedWords || !bannedWords.words) {
         return [];
@@ -56,6 +61,13 @@ function getBannedRegularExpressionsList() {
         return [];
     }
     return bannedRegularExpressions.regularExpressions.map(r => r.text);
+}
+
+function getUrlAllowlist() {
+    if (!urlAllowlist || !urlAllowlist.urls) {
+        return [];
+    }
+    return urlAllowlist.urls.map(u => u.text);
 }
 
 /**
@@ -197,32 +209,57 @@ async function moderateMessage(chatMessage) {
             const settings = chatModerationSettings.urlModeration;
             let outputMessage = settings.outputMessage || "";
 
-            if (settings.viewTime && settings.viewTime.enabled) {
-                const viewerDB = require('../../database/userDatabase');
-                const viewer = await viewerDB.getUserByUsername(chatMessage.username);
+            let disallowedUrlFound = false;
 
-                const viewerViewTime = viewer.minutesInChannel / 60;
-                const minimumViewTime = settings.viewTime.viewTimeInHours;
-
-                if (viewerViewTime <= minimumViewTime) {
-                    outputMessage = outputMessage.replace("{viewTime}", minimumViewTime.toString());
-
-                    logger.debug("Url moderation: Not enough view time.");
-                    shouldDeleteMessage = true;
-                }
+            // If the urlAllowlist is empty, ANY URL is disallowed
+            if (urlAllowlist.length === 0) {
+                disallowedUrlFound = true;
             } else {
-                shouldDeleteMessage = true;
+                const urlsFound = message.match(regex);
+
+                // Go through the list of URLs found in the message...
+                for (let url of urlsFound) {
+                    url = url.toLowerCase();
+
+                    // And see if there's a matching rule in the allow list
+                    const foundAllowlistRule = getUrlAllowlist().find(allowedUrl => url.includes(allowedUrl.toLowerCase()));
+
+                    // If there isn't, we have at least one bad URL, so we flag the message and dip out
+                    if (!foundAllowlistRule) {
+                        disallowedUrlFound = true;
+                        break;
+                    }
+                }
             }
 
-            if (shouldDeleteMessage) {
-                chat.deleteMessage(chatMessage.id);
-
-                if (outputMessage) {
-                    outputMessage = outputMessage.replace("{userName}", chatMessage.username);
-                    chat.sendChatMessage(outputMessage);
+            if (disallowedUrlFound) {
+                if (settings.viewTime && settings.viewTime.enabled) {
+                    const viewerDB = require('../../database/userDatabase');
+                    const viewer = await viewerDB.getUserByUsername(chatMessage.username);
+    
+                    const viewerViewTime = viewer.minutesInChannel / 60;
+                    const minimumViewTime = settings.viewTime.viewTimeInHours;
+    
+                    if (viewerViewTime <= minimumViewTime) {
+                        outputMessage = outputMessage.replace("{viewTime}", minimumViewTime.toString());
+    
+                        logger.debug("Url moderation: Not enough view time.");
+                        shouldDeleteMessage = true;
+                    }
+                } else {
+                    shouldDeleteMessage = true;
                 }
-
-                return;
+    
+                if (shouldDeleteMessage) {
+                    chat.deleteMessage(chatMessage.id);
+    
+                    if (outputMessage) {
+                        outputMessage = outputMessage.replace("{userName}", chatMessage.username);
+                        chat.sendChatMessage(outputMessage);
+                    }
+    
+                    return;
+                }
             }
         }
     }
@@ -290,6 +327,16 @@ function saveBannedRegularExpressionsList() {
     }
 }
 
+function saveUrlAllowlist() {
+    try {
+        getUrlAllowlistDb().push("/", urlAllowlist);
+    } catch (error) {
+        if (error.name === 'DatabaseError') {
+            logger.error("Error saving URL allowlist data", error);
+        }
+    }
+}
+
 frontendCommunicator.on("addBannedWords", words => {
     bannedWords.words = bannedWords.words.concat(words);
     saveBannedWordList();
@@ -320,11 +367,27 @@ frontendCommunicator.on("removeAllRegularExpressions", () => {
     saveBannedRegularExpressionsList();
 });
 
+frontendCommunicator.on("addAllowedUrls", words => {
+    urlAllowlist.urls = urlAllowlist.urls.concat(words);
+    saveUrlAllowlist();
+});
+
+frontendCommunicator.on("removeAllowedUrl", wordText => {
+    urlAllowlist.urls = urlAllowlist.urls.filter(u => u.text.toLowerCase() !== wordText);
+    saveUrlAllowlist();
+});
+
+frontendCommunicator.on("removeAllAllowedUrls", () => {
+    urlAllowlist.urls = [];
+    saveUrlAllowlist();
+});
+
 frontendCommunicator.on("getChatModerationData", () => {
     return {
         settings: chatModerationSettings,
         bannedWords: bannedWords.words,
-        bannedRegularExpressions: bannedRegularExpressions.regularExpressions
+        bannedRegularExpressions: bannedRegularExpressions.regularExpressions,
+        urlAllowlist: urlAllowlist.urls
     };
 });
 
@@ -382,6 +445,11 @@ function load() {
         let regularExpressions = getbannedRegularExpressionsDb().getData("/");
         if (regularExpressions && Object.keys(regularExpressions).length > 0) {
             bannedRegularExpressions = regularExpressions;
+        }
+
+        let allowlist = getUrlAllowlistDb().getData("/");
+        if (allowlist && Object.keys(allowlist).length > 0) {
+            urlAllowlist = allowlist;
         }
     } catch (error) {
         if (error.name === 'DatabaseError') {
