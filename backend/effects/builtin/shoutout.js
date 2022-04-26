@@ -136,7 +136,7 @@ const effect = {
                             <div class="firebot-shoutout-game-dimmer" />
                             <div class="firebot-shoutout-game-text-wrapper">
                                 <div class="firebot-shoutout-game-lastseen">
-                                    LAST SEEN PLAYING
+                                {{effect.lastGameText}}
                                 </div>
                                 Science & Technology
                             </div>
@@ -162,6 +162,9 @@ const effect = {
                     <div class="control__indicator"></div>
                 </label>
             </div>
+
+            <firebot-input input-title="Last Playing Text" model="effect.lastGameText" placeholder-text="Enter text" />
+
         </eos-container>
         <eos-container header="Username" pad-top="true">
             <firebot-input model="effect.username" placeholder-text="Enter username" />
@@ -328,7 +331,7 @@ const effect = {
                             <div class="firebot-shoutout-game-dimmer" />
                             <div class="firebot-shoutout-game-text-wrapper">
                                 <div class="firebot-shoutout-game-lastseen">
-                                    LAST SEEN PLAYING
+                                    ${data.lastGameText}
                                 </div>
                                 ${data.gameName}
                             </div>
