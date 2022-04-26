@@ -17,6 +17,11 @@ function buildCustomEmbed(customEmbedData) {
             icon_url: customEmbedData.authorIconUrl //eslint-disable-line camelcase
         };
     }
+    if (customEmbedData.imageUrl) {
+        customEmbed.image = {
+            url: customEmbedData.imageUrl //eslint-disable-line camelcase
+        };
+    }
     return customEmbed;
 }
 
