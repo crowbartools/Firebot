@@ -10,6 +10,7 @@ exports.loadReplaceVariables = () => {
         'arg-count',
         'arg',
         'array-add',
+        'array-element',
         'array-filter',
         'array-find',
         'array-find-index',
