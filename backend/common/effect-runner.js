@@ -7,6 +7,7 @@ const accountAccess = require('./account-access');
 const replaceVariableManager = require("./../variables/replace-variable-manager");
 const effectQueueManager = require("../effects/queues/effect-queue-manager");
 const effectQueueRunner = require("../effects/queues/effect-queue-runner");
+const webServer = require("../../server/httpServer");
 const util = require("../utility");
 
 const findAndReplaceVariables = async (data, trigger) => {
@@ -86,7 +87,14 @@ async function triggerEffect(effect, trigger) {
 
     let effectDef = effectManager.getEffectById(effect.type);
 
-    return effectDef.onTriggerEvent({ effect: effect, trigger: trigger });
+    const sendDataToOverlay = (data, overlayInstance) => {
+        const overlayEventName = effectDef.overlayExtension?.event?.name;
+        if (overlayEventName) {
+            webServer.sendToOverlay(overlayEventName, data, overlayInstance);
+        }
+    };
+
+    return effectDef.onTriggerEvent({ effect, trigger, sendDataToOverlay });
 }
 
 async function runEffects(runEffectsContext) {
