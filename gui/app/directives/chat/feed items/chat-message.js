@@ -17,126 +17,138 @@
                 chatSizeStyle: "@?"
             },
             template: `
-                <div class="chat-message"
-                    ng-class="{
-                        isAction: $ctrl.message.action,
-                        isWhisper: $ctrl.message.whisper,
-                        isDeleted: $ctrl.message.deleted,
-                        isTagged: $ctrl.message.tagged,
-                        isCompact: $ctrl.compactDisplay,
-                        spoilers: $ctrl.hideDeletedMessages,
-                        isHighlighted: $ctrl.message.isHighlighted,
-                        isCustomReward: $ctrl.message.customRewardId != null
-                    }"
-                    ng-attr-messageId="{{$ctrl.message.id}}"
-                    context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
-                    context-menu-class="chat-message-context-menu"
-                    context-menu-on="contextmenu"
-                >
-                    <div
-                        ng-if="!$ctrl.compactDisplay"
-                        ng-show="$ctrl.showAvatar"
-                        class="chat-user-avatar-wrapper"
+                <div class="chat-message-wrapper">
+                    <div 
+                        ng-if="$ctrl.message.isAnnouncement" 
+                        class="announcement-bar" 
+                        ng-class="$ctrl.message.announcementColor"
+                    >
+                    </div>
+                    <div ng-if="$ctrl.message.isAnnouncement" style="background: #00000014;padding: 5px 10px;margin-top:5px">
+                    <i class="fad fa-bullhorn"></i> Announcement
+                    </div>
+                    <div class="chat-message"
+                        ng-class="{
+                            isAction: $ctrl.message.action,
+                            isWhisper: $ctrl.message.whisper,
+                            isDeleted: $ctrl.message.deleted,
+                            isTagged: $ctrl.message.tagged,
+                            isCompact: $ctrl.compactDisplay,
+                            spoilers: $ctrl.hideDeletedMessages,
+                            isHighlighted: $ctrl.message.isHighlighted,
+                            isCustomReward: $ctrl.message.customRewardId != null
+                        }"
+                        ng-attr-messageId="{{$ctrl.message.id}}"
                         context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
                         context-menu-class="chat-message-context-menu"
-                        context-menu-on="click"
+                        context-menu-on="contextmenu"
                     >
-                        <img class="chat-user-avatar" ng-src="{{$ctrl.message.profilePicUrl}}">
-                    </div>
-                    <div>
-
-                        <span ng-if="$ctrl.compactDisplay" ng-show="$ctrl.showTimestamp" class="muted chat-timestamp">
-                            {{$ctrl.message.timestampDisplay}}
-                        </span>
-
                         <div
-                            ng-if="$ctrl.compactDisplay"
-                            class="chat-user-avatar-wrapper"
+                            ng-if="!$ctrl.compactDisplay"
                             ng-show="$ctrl.showAvatar"
+                            class="chat-user-avatar-wrapper"
                             context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
                             context-menu-class="chat-message-context-menu"
                             context-menu-on="click"
                         >
                             <img class="chat-user-avatar" ng-src="{{$ctrl.message.profilePicUrl}}">
                         </div>
+                        <div>
 
-                        <div
-                            class="chat-username"
-                            context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
-                            context-menu-class="chat-message-context-menu"
-                            context-menu-on="click"
-                        >
-                            <div ng-show="$ctrl.message.badges.length > 0" class="user-badges">
-                                <img ng-repeat="badge in $ctrl.message.badges"
-                                    ng-src="{{badge.url}}"
-                                    uib-tooltip="{{badge.title}}"
-                                    tooltip-append-to-body="true" />
-                            </div>
-                            <span
-                                class="pronoun"
-                                uib-tooltip="Pronouns"
-                                tooltip-append-to-body="true"
-                                ng-click="$root.openLinkExternally('https://pronouns.alejo.io/')"
-                                ng-show="$ctrl.showPronoun && $ctrl.pronouns.pronounCache[$ctrl.message.username] != null"
-                            >{{$ctrl.pronouns.pronounCache[$ctrl.message.username]}}</span>
-                            <b ng-style="{'color': $ctrl.message.color}">{{$ctrl.message.username}}</b>
-                            <span
-                                ng-if="$ctrl.compactDisplay && !$ctrl.message.action"
-                                style="color:white;font-weight:200;"
-                            >:</span>
-                            <span ng-if="!$ctrl.compactDisplay" ng-show="$ctrl.showTimestamp" class="muted chat-timestamp">
+                            <span ng-if="$ctrl.compactDisplay" ng-show="$ctrl.showTimestamp" class="muted chat-timestamp">
                                 {{$ctrl.message.timestampDisplay}}
                             </span>
+
+                            <div
+                                ng-if="$ctrl.compactDisplay"
+                                class="chat-user-avatar-wrapper"
+                                ng-show="$ctrl.showAvatar"
+                                context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
+                                context-menu-class="chat-message-context-menu"
+                                context-menu-on="click"
+                            >
+                                <img class="chat-user-avatar" ng-src="{{$ctrl.message.profilePicUrl}}">
+                            </div>
+
+                            <div
+                                class="chat-username"
+                                context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
+                                context-menu-class="chat-message-context-menu"
+                                context-menu-on="click"
+                            >
+                                <div ng-show="$ctrl.message.badges.length > 0" class="user-badges">
+                                    <img ng-repeat="badge in $ctrl.message.badges"
+                                        ng-src="{{badge.url}}"
+                                        uib-tooltip="{{badge.title}}"
+                                        tooltip-append-to-body="true" />
+                                </div>
+                                <span
+                                    class="pronoun"
+                                    uib-tooltip="Pronouns"
+                                    tooltip-append-to-body="true"
+                                    ng-click="$root.openLinkExternally('https://pronouns.alejo.io/')"
+                                    ng-show="$ctrl.showPronoun && $ctrl.pronouns.pronounCache[$ctrl.message.username] != null"
+                                >{{$ctrl.pronouns.pronounCache[$ctrl.message.username]}}</span>
+                                <b ng-style="{'color': $ctrl.message.color}">{{$ctrl.message.username}}</b>
+                                <span
+                                    ng-if="$ctrl.compactDisplay && !$ctrl.message.action"
+                                    style="color:white;font-weight:200;"
+                                >:</span>
+                                <span ng-if="!$ctrl.compactDisplay" ng-show="$ctrl.showTimestamp" class="muted chat-timestamp">
+                                    {{$ctrl.message.timestampDisplay}}
+                                </span>
+                            </div>
+                            <div class="chatContent">
+                                <span ng-repeat="part in $ctrl.message.parts" class="chat-content-wrap">
+
+                                    <span ng-if="part.type === 'text'" style="{{$ctrl.chatSizeStyle}}">{{part.text}}</span>
+
+                                    <a ng-if="part.type === 'link'" ng-href="{{part.url}}" target="_blank">{{part.text}}</a>
+
+                                    <span
+                                        ng-if="part.type === 'emote'"
+                                        class="chatEmoticon"
+                                        uib-tooltip="{{part.origin}}: {{part.name}}"
+                                        tooltip-append-to-body="true"
+                                    >
+                                        <img ng-src="{{part.url}}" style="height: 100%;">
+                                    </span>
+
+                                    <span
+                                        ng-if="part.origin === 'BTTV' && $ctrl.showBttvEmotes"
+                                        class="chatEmoticon"
+                                        uib-tooltip="{{part.origin}}: {{part.name}}"
+                                        tooltip-append-to-body="true"
+                                    >
+                                        <img ng-src="{{part.url}}" style="height: 100%;" />
+                                    </span>
+                                    <span ng-if="part.origin === 'BTTV' && !$ctrl.showBttvEmotes" style="{{$ctrl.chatSizeStyle}}">{{part.name}}</span>
+
+                                    <span
+                                        ng-if="part.origin === 'FFZ' && $ctrl.showFfzEmotes"
+                                        class="chatEmoticon"
+                                        uib-tooltip="{{part.origin}}: {{part.name}}"
+                                        tooltip-append-to-body="true"
+                                    >
+                                        <img ng-src="{{part.url}}" style="height: 100%;" />
+                                    </span>
+                                    <span ng-if="part.origin === 'FFZ' && !$ctrl.showFfzEmotes" style="{{$ctrl.chatSizeStyle}}">{{part.name}}</span>
+
+                                    <span
+                                        ng-if="part.origin === '7TV' && $ctrl.showSevenTvEmotes"
+                                        class="chatEmoticon"
+                                        uib-tooltip="{{part.origin}}: {{part.name}}"
+                                        tooltip-append-to-body="true"
+                                    >
+                                        <img ng-src="{{part.url}}" style="height: 100%;" />
+                                    </span>
+                                    <span ng-if="part.origin === '7TV' && !$ctrl.showSevenTvEmotes" style="{{$ctrl.chatSizeStyle}}">{{part.name}}</span>
+                                </span>
+                            </div>
+                            <div ng-show="$ctrl.message.whisper" class="muted">(Whispered to you)</div>
                         </div>
-                        <div class="chatContent">
-                            <span ng-repeat="part in $ctrl.message.parts" class="chat-content-wrap">
-
-                                <span ng-if="part.type === 'text'" style="{{$ctrl.chatSizeStyle}}">{{part.text}}</span>
-
-                                <a ng-if="part.type === 'link'" ng-href="{{part.url}}" target="_blank">{{part.text}}</a>
-
-                                <span
-                                    ng-if="part.type === 'emote'"
-                                    class="chatEmoticon"
-                                    uib-tooltip="{{part.origin}}: {{part.name}}"
-                                    tooltip-append-to-body="true"
-                                >
-                                    <img ng-src="{{part.url}}" style="height: 100%;">
-                                </span>
-
-                                <span
-                                    ng-if="part.origin === 'BTTV' && $ctrl.showBttvEmotes"
-                                    class="chatEmoticon"
-                                    uib-tooltip="{{part.origin}}: {{part.name}}"
-                                    tooltip-append-to-body="true"
-                                >
-                                    <img ng-src="{{part.url}}" style="height: 100%;" />
-                                </span>
-                                <span ng-if="part.origin === 'BTTV' && !$ctrl.showBttvEmotes" style="{{$ctrl.chatSizeStyle}}">{{part.name}}</span>
-
-                                <span
-                                    ng-if="part.origin === 'FFZ' && $ctrl.showFfzEmotes"
-                                    class="chatEmoticon"
-                                    uib-tooltip="{{part.origin}}: {{part.name}}"
-                                    tooltip-append-to-body="true"
-                                >
-                                    <img ng-src="{{part.url}}" style="height: 100%;" />
-                                </span>
-                                <span ng-if="part.origin === 'FFZ' && !$ctrl.showFfzEmotes" style="{{$ctrl.chatSizeStyle}}">{{part.name}}</span>
-
-                                <span
-                                    ng-if="part.origin === '7TV' && $ctrl.showSevenTvEmotes"
-                                    class="chatEmoticon"
-                                    uib-tooltip="{{part.origin}}: {{part.name}}"
-                                    tooltip-append-to-body="true"
-                                >
-                                    <img ng-src="{{part.url}}" style="height: 100%;" />
-                                </span>
-                                <span ng-if="part.origin === '7TV' && !$ctrl.showSevenTvEmotes" style="{{$ctrl.chatSizeStyle}}">{{part.name}}</span>
-                            </span>
-                        </div>
-                        <div ng-show="$ctrl.message.whisper" class="muted">(Whispered to you)</div>
                     </div>
+                    <div ng-if="$ctrl.message.isAnnouncement" style="margin-bottom:5px">
                 </div>
             `,
             controller: function(chatMessagesService, utilityService, connectionService, pronounsService, backendCommunicator) {
@@ -350,7 +362,8 @@
                     }
                 };
 
-                $ctrl.$onInit = () => {};
+                $ctrl.$onInit = () => {
+                };
 
                 /*
                     $scope.getWhisperData = function(data) {

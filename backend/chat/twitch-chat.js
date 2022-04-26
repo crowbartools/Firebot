@@ -136,6 +136,11 @@ class TwitchChat extends EventEmitter {
         }
 
         try {
+            const bot = accountAccess.getAccounts().bot;
+            if (!bot.loggedIn) {
+                return;
+            }
+
             this._botChatClient = new ChatClient({
                 authProvider: refreshingAuthProvider.getRefreshingAuthProviderForBot(),
                 requestMembershipEvents: true
@@ -241,6 +246,41 @@ class TwitchChat extends EventEmitter {
             } else {
                 this._say(fragment, accountType, replyToMessageId);
             }
+        }
+    }
+
+    /**
+     * Sends an announcement to the chat channel
+     *
+     * @param {string} message The message to send
+     * @param {string} [accountType] Which account to chat as. Defaults to bot if available otherwise, the streamer.
+     */
+    async sendAnnouncement(message, accountType) {
+        if (message?.length < 1) {
+            return;
+        }
+
+        accountType = accountType?.toLowerCase();
+        const botAvailable = accountAccess.getAccounts().bot.loggedIn && this._botChatClient && this._botChatClient.isConnected;
+        if (accountType == null) {
+            accountType = botAvailable ? "bot" : "streamer";
+        } else if (accountType === "bot" && !botAvailable) {
+            accountType = "streamer";
+        }
+
+        logger.debug(`Sending announcement as ${accountType}.`);
+
+        const chatClient = accountType === 'bot' ? this._botChatClient : this._streamerChatClient;
+
+        const streamer = accountAccess.getAccounts().streamer;
+
+        // split message into fragments so we don't exceed the max message length
+        const messageFragments = message.match(/[\s\S]{1,500}/g)
+            .map(mf => mf.trim())
+            .filter(mf => mf !== "");
+
+        for (const fragment of messageFragments) {
+            await chatClient.announce(streamer.username, fragment);
         }
     }
 

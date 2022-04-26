@@ -1,5 +1,6 @@
 "use strict";
 
+exports.announcement = require('./twitch-events/announcement');
 exports.chatMessage = require('./twitch-events/chat-message');
 exports.chatModeChanged = require('./twitch-events/chat-mode-changed');
 exports.cheer = require('./twitch-events/cheer');

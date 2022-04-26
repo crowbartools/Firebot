@@ -51,6 +51,32 @@
     }
 }
 
+.chat-message-wrapper {
+    position: relative;
+    .announcement-bar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 5px;
+        &.PRIMARY {
+            background: rgb(31, 105, 255);
+        }
+        &.BLUE {
+            background: linear-gradient(#00d6d6,#9146ff);
+        }
+        &.GREEN {
+            background: linear-gradient(#00db84,#57bee6);
+        }
+        &.ORANGE {
+            background: linear-gradient(#ffb31a,#e0e000);
+        }
+        &.PURPLE {
+            background: linear-gradient(#9146ff,#ff75e6);
+        }
+    }
+}
+
 .chat-message {
     display: flex;
     flex-direction: row;
@@ -59,6 +85,7 @@
     padding: 0 10px;
     padding-top: 7px;
     padding-bottom: 7px;
+    position: relative;
     .whisperData {
         color: $chatTextColor;
         font-weight: normal;

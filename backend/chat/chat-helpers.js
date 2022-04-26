@@ -25,6 +25,8 @@ const utils = require("../utility");
  * @property {boolean} whisper
  * @property {boolean} action
  * @property {boolean} isCheer
+ * @property {boolean} isAnnouncement
+ * @property {"PRIMARY" | "BLUE" | "GREEN" | "ORANGE" | "PURPLE"} announcementColor
  * @property {boolean} tagged
  * @property {boolean} isFounder
  * @property {boolean} isBroadcaster
@@ -374,6 +376,8 @@ exports.buildFirebotChatMessage = async (msg, msgText, whisper = false, action =
         userId: msg.userInfo.userId,
         customRewardId: msg.tags.get("custom-reward-id"),
         isHighlighted: msg.tags.get("msg-id") === "highlighted-message",
+        isAnnouncement: false,
+
         rawText: msgText,
         whisper: whisper,
         action: action,

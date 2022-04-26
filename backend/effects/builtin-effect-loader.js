@@ -7,6 +7,7 @@ exports.loadEffects = () => {
         'active-user-lists',
         'ad-break',
         'add-quote',
+        'announcement',
         'api',
         'celebration',
         'chat-feed-alert',

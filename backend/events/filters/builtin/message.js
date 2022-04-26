@@ -7,7 +7,8 @@ module.exports = {
     name: "Message Text",
     description: "Filter based on chat message text",
     events: [
-        { eventSourceId: "twitch", eventId: "chat-message" }
+        { eventSourceId: "twitch", eventId: "chat-message" },
+        { eventSourceId: "twitch", eventId: "announcement" }
     ],
     comparisonTypes: [
         ComparisonType.IS,

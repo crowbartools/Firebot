@@ -99,6 +99,11 @@
                             token: "/",
                             items: [
                                 {
+                                    display: "/announce [message]",
+                                    description: "Send an announcement to chat",
+                                    text: "/announce"
+                                },
+                                {
                                     display: "/ban @username",
                                     description: "Ban a user",
                                     text: "/ban"
