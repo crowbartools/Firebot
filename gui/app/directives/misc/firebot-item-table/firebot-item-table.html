@@ -1,10 +1,10 @@
 <div class="firebot-item-table">
   <div>
-    <scroll-sentinel
-      element-class="{{$ctrl.headerClass}}"
-    ></scroll-sentinel>
-    <div class="light-bg sticky-top fit-header p-6 mx-0 my-6 {{$ctrl.headerClass}}">
-      <div class="flex-row">
+    <scroll-sentinel element-class="{{$ctrl.headerClass}}"></scroll-sentinel>
+    <div
+      class="light-bg sticky-top fit-header p-6 mx-0 my-6 {{$ctrl.headerClass}}"
+    >
+      <div class="flex-row" ng-if="$ctrl.selectedItemIds.length === 0">
         <button
           ng-click="$ctrl.onAddNewClicked()"
           class="btn btn-primary hvr-icon-grow mr-4"
@@ -15,6 +15,35 @@
         </button>
 
         <div ng-transclude="toolbar"></div>
+      </div>
+
+      <div
+        class="flex-row"
+        style="align-items: center"
+        ng-if="$ctrl.selectedItemIds.length > 0"
+      >
+        <div><b>{{$ctrl.selectedItemIds.length}}</b> selected</div>
+        <div
+          style="
+            margin-left: 20px;
+            margin-right: 10px;
+            font-size: 20px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: 1fr;
+            grid-column-gap: 10px;
+          "
+        >
+          <i class="far fa-copy"></i>
+          <i class="far fa-clone"></i>
+          <i class="far fa-toggle-off"></i>
+          <i class="far fa-trash-alt" style="color: #fb7373"></i>
+        </div>
+        <div>
+          <button class="btn btn-link" ng-click="$ctrl.unselectAll()">
+            Dismiss
+          </button>
+        </div>
       </div>
 
       <div class="fit-header-sort-search" ng-show="$ctrl.items.length > 0">
@@ -31,10 +60,7 @@
       </div>
     </div>
     <div class="p-6">
-      <div
-        ng-if="$ctrl.items.length === 0"
-        class="noselect muted pl-5"
-      >
+      <div ng-if="$ctrl.items.length === 0" class="noselect muted pl-5">
         <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span
         ><span class="ml-3">{{$ctrl.noDataMessage}}</span>
       </div>
@@ -46,11 +72,21 @@
       </div>
       <table
         ng-show="$ctrl.items.length > 0 && (filteredItems == null || filteredItems.length > 0)"
-        class="fb-table fit-table"
+        class="fb-table fit-table selectable-items"
       >
         <thead class="fit-table-header">
           <tr>
-            <th ng-if="$ctrl.testButton == true" class="fit-test-button-header"></th>
+            <th style="width: 35px">
+              <firebot-checkbox
+                toggle-model="$ctrl.allItemsSelected"
+                on-toggle="$ctrl.toggleSelectAll()"
+                tooltip="Select all"
+              />
+            </th>
+            <th
+              ng-if="$ctrl.testButton == true"
+              class="fit-test-button-header"
+            ></th>
 
             <th
               ng-repeat="header in $ctrl.headers track by $index"
@@ -59,7 +95,11 @@
             >
               <div>
                 <span>
-                  <i ng-show="header.icon" class="fas" ng-class="header.icon"></i>
+                  <i
+                    ng-show="header.icon"
+                    class="fas"
+                    ng-class="header.icon"
+                  ></i>
                 </span>
                 <span ng-show="header.name" class="mx-2 my-0">
                   {{header.name}}
@@ -76,12 +116,25 @@
             <th></th>
           </tr>
         </thead>
-        <tbody ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.items" class="fit-table-body">
+        <tbody
+          ui-sortable="$ctrl.sortableOptions"
+          ng-model="$ctrl.items"
+          class="fit-table-body"
+        >
           <tr
             ng-repeat="item in filteredItems = ($ctrl.items | sortTagSearch:sts.getSelectedSortTag($ctrl.sortTagContext) | filter:searchQuery) as visible track by item.id"
             context-menu="$ctrl.getContextMenu(item)"
             context-menu-class="angular-context-menu"
+            ng-click="$ctrl.selectItemFromClick(item.id, $event)"
+            ng-class="{ 'item-selected': $ctrl.itemIsSelected(item.id) }"
           >
+            <td style="width: 35px">
+              <firebot-checkbox
+                toggle-model="$ctrl.itemIsSelected(item.id)"
+                on-toggle="$ctrl.toggleSelectItem(item.id)"
+                tooltip="Select"
+              />
+            </td>
             <td ng-if="$ctrl.testButton == true" class="fit-test-button-body">
               <span
                 ng-click="$ctrl.onTestButtonClicked({ itemId: item.id })"
@@ -107,7 +160,11 @@
               ng-if="$ctrl.sortTagContext != null"
               class="fit-table-sort-tags py-4"
             >
-              <sort-tags-row item="item" context="$ctrl.sortTagContext" on-update="$ctrl.triggerItemsUpdate()"></sort-tags-row>
+              <sort-tags-row
+                item="item"
+                context="$ctrl.sortTagContext"
+                on-update="$ctrl.triggerItemsUpdate()"
+              ></sort-tags-row>
             </td>
 
             <td ng-if="$ctrl.showStatusIndicator">
@@ -134,7 +191,7 @@
                     context-menu-bottom-offset="60px"
                   >
                     <i class="fal fa-ellipsis-h"></i>
-                </button>
+                  </button>
                 </div>
               </div>
             </td>
@@ -142,12 +199,7 @@
         </tbody>
       </table>
     </div>
-    <div
-      class="light-bg sticky-bottom fit-footer"
-      ng-transclude="footer"
-    ></div>
-    <scroll-sentinel
-      element-class="fit-footer"
-    ></scroll-sentinel>
+    <div class="light-bg sticky-bottom fit-footer" ng-transclude="footer"></div>
+    <scroll-sentinel element-class="fit-footer"></scroll-sentinel>
   </div>
 </div>

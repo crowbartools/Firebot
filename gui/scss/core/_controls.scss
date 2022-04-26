@@ -463,19 +463,82 @@ table.fb-table {
     width: 100%;
     border-collapse: separate; /* allow spacing between cell borders */
     border-spacing: 0 10px; /* NOTE: syntax is <horizontal value> <vertical value> */
-    & td {
-        height: 45px;
-        background: $fb-table-row-bg;
-    }
     & tbody tr {
         box-shadow: $fb-table-shadow;
     }
-    & tr > :first-child {
-        border-top-left-radius: 5px;
-        border-bottom-left-radius: 5px;
-        padding-left: 20px;
-        padding-right: 20px;
+
+    &:not(.selectable-items) {
+        & td {
+            height: 45px;
+            background: $fb-table-row-bg;
+        }
+
+        & tr > :first-child  {
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
     }
+    
+    &.selectable-items {
+
+        & th {
+            padding-bottom: 5px;
+        }
+
+        & td {
+            height: 50px;
+            background: $fb-table-row-bg;
+            border-top: 2px solid transparent;
+            border-bottom: 2px solid transparent;
+        }
+
+        & tr > :nth-child(2) {
+            border-left: 2px solid transparent;
+        }
+        & tr > :last-child {
+            border-right: 2px solid transparent;
+        }
+
+        & tr.item-selected {
+
+            & > td {
+                border-top-color: #259dbd;
+                border-bottom-color: #259dbd;
+            }
+
+            & > :nth-child(2) {
+                border-left-color: #259dbd;
+            }
+
+            & > :last-child {
+                border-right-color: #259dbd;
+            }
+
+            & > :first-child {
+                border-top-color: transparent;
+                border-bottom-color: transparent;
+            }
+        }
+
+        // & tr:not(.item-selected) {
+        //     & > :first-child {
+
+        //     }
+        // }
+
+        & tr > :first-child {
+            background: transparent !important;
+        }
+        & tr > :nth-child(2) {
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+    }
+
     & tr > :last-child {
         border-top-right-radius: 5px;
         border-bottom-right-radius: 5px;
@@ -774,6 +837,19 @@ table.fb-table-alt {
     line-height: 1;
     &.toggled-on {
         color: #2fbbde;
+    }
+    &:hover {
+        opacity: 0.8;
+    }
+}
+
+.firebot-checkbox {
+    cursor: pointer;
+    color: #686c73;
+    font-size: 20px;
+    line-height: 1;
+    &.toggled-on {
+        color: #35d4ff
     }
     &:hover {
         opacity: 0.8;

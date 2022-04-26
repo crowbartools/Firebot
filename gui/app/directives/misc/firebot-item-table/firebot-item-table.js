@@ -31,6 +31,71 @@
 
                 $scope.sts = sortTagsService;
 
+                $ctrl.selectedItemIds = [];
+
+                $ctrl.allItemsSelected = false;
+
+                function updateAllItemsSelected() {
+                    $ctrl.allItemsSelected = $ctrl.selectedItemIds.length === $ctrl.items.length;
+                }
+
+                $ctrl.unselectAll = () => {
+                    $ctrl.selectedItemIds = [];
+                    $ctrl.allItemsSelected = false;
+                };
+
+                $ctrl.toggleSelectAll = () => {
+                    if ($ctrl.allItemsSelected) {
+                        $ctrl.selectedItemIds = [];
+                    } else {
+                        $ctrl.selectedItemIds = $ctrl.items.map(i => i.id);
+                    }
+                    updateAllItemsSelected();
+                };
+
+                $ctrl.toggleSelectItem = (itemId) => {
+                    if ($ctrl.selectedItemIds.includes(itemId)) {
+                        $ctrl.selectedItemIds = $ctrl.selectedItemIds.filter(id => id !== itemId);
+                    } else {
+                        $ctrl.selectedItemIds.push(itemId);
+                    }
+                    updateAllItemsSelected();
+                };
+
+                $ctrl.selectItemFromClick = (itemId, event) => {
+                    if (!event.metaKey && !event.ctrlKey) {
+                        return;
+                    }
+                    $ctrl.toggleSelectItem(itemId);
+                };
+
+                $ctrl.itemIsSelected = (itemId) => {
+                    return $ctrl.selectedItemIds.includes(itemId);
+                };
+
+                function getSelectedItems() {
+                    return $ctrl.selectedItemIds
+                        .map(id => $ctrl.items.find(i => i.id === id))
+                        .filter(i => !!i);
+                }
+
+                $ctrl.getBulkActions = () => {
+                    const actions = [];
+
+                    if ($ctrl.statusField) {
+                        actions.push({
+                            label: "Toggle active",
+                            icon: "",
+                            onClick: () => {
+                                const selectedItems = getSelectedItems();
+                                const allItemsInactive = selectedItems.every(i => !$ctrl.getStatus(i));
+                                selectedItems.forEach(i => $ctrl.setStatus(i, allItemsInactive ? true : false));
+                                $ctrl.triggerItemsUpdate();
+                            }
+                        });
+                    }
+                };
+
                 $ctrl.$onInit = () => {
                     if ($ctrl.items == null) {
                         $ctrl.items = [];
@@ -58,6 +123,23 @@
                         status = status[node];
                     }
                     return status;
+                };
+
+                $ctrl.setStatus = (item, status) => {
+                    if (item == null || $ctrl.statusField == null) {
+                        return;
+                    }
+                    const nodes = $ctrl.statusField.split(".");
+                    const lastIndex = nodes.length - 1;
+                    let itemCursor = item;
+                    for (let i = 0; i < nodes.length; i++) {
+                        const property = nodes[i];
+                        if (i !== lastIndex) {
+                            itemCursor = itemCursor[property];
+                        } else {
+                            itemCursor[property] = status;
+                        }
+                    }
                 };
 
                 $ctrl.sortableOptions = {
