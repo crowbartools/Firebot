@@ -22,6 +22,7 @@ exports.loadReplaceVariables = () => {
         'bits-badge-tier',
         'bits-badge-unlocked-message',
         'bot',
+        'category',
         'category-image-url',
         'chat-message-emote-urls',
         'chat-message',
