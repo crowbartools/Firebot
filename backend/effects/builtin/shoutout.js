@@ -94,6 +94,7 @@ const shoutoutStyles = `
         font-weight: 600;
         font-size: 1.1vw;
         text-align: center;
+        text-transform: uppercase;
     }
 `;
 
@@ -157,13 +158,13 @@ const effect = {
             <firebot-input style="margin-top:10px" input-title="Scale" model="effect.scale" placeholder-text="Enter number (ie 1, 1.25, 0.75, etc)" input-type="number" disable-variables="true" />
 
             <div style="padding-top:20px">
-                <label class="control-fb control--checkbox"> Show last game
+                <label class="control-fb control--checkbox"> Show last game/category
                     <input type="checkbox" ng-model="effect.showLastGame">
                     <div class="control__indicator"></div>
                 </label>
             </div>
 
-            <firebot-input input-title="Last Playing Text" model="effect.lastGameText" placeholder-text="Enter text" />
+            <firebot-input ng-if="effect.showLastGame" input-title="Last Seen Text" model="effect.lastGameText" placeholder-text="Enter text" />
 
         </eos-container>
         <eos-container header="Username" pad-top="true">
