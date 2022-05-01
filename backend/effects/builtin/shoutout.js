@@ -223,6 +223,10 @@ const effect = {
             $scope.effect.scale = 1.0;
         }
 
+        if ($scope.effect.lastGameText == null) {
+            $scope.effect.lastGameText = "Last seen streaming";
+        }
+
         $scope.showOverlayInfoModal = function(overlayInstance) {
             utilityService.showOverlayInfoModal(overlayInstance);
         };
@@ -331,7 +335,7 @@ const effect = {
                             <div class="firebot-shoutout-game-dimmer" />
                             <div class="firebot-shoutout-game-text-wrapper">
                                 <div class="firebot-shoutout-game-lastseen">
-                                    ${data.lastGameText}
+                                    ${data.lastGameText || "LAST SEEN STREAMING"}
                                 </div>
                                 ${data.gameName}
                             </div>
