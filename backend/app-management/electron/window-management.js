@@ -45,7 +45,7 @@ function createMainWindow() {
         frame: false,
         webPreferences: {
             nodeIntegration: true,
-            nativeWindowOpen: false,
+            nativeWindowOpen: true,
             backgroundThrottling: false,
             contextIsolation: false,
             worldSafeExecuteJavaScript: false,
@@ -53,26 +53,25 @@ function createMainWindow() {
         }
     });
 
-    mainWindow.webContents.on('new-window',
-        (event, _url, frameName, _disposition, options) => {
-            if (frameName === 'modal') {
-                // open window as modal
-                event.preventDefault();
-                Object.assign(options, {
+    mainWindow.webContents.setWindowOpenHandler(({ frameName, url }) => {
+        if (frameName === 'modal') {
+            return {
+                action: 'allow',
+                overrideBrowserWindowOptions: {
+                    title: "Firebot",
                     frame: true,
                     titleBarStyle: "default",
                     parent: mainWindow,
                     width: 250,
                     height: 400,
-                    javascript: false,
-                    webPreferences: {
-                        webviewTag: true
-                    }
+                    javascript: false
+                }
+            };
+        }
 
-                });
-                event.newGuest = new BrowserWindow(options);
-            }
-        });
+        shell.openExternal(url);
+        return { action: "deny" };
+    });
 
     //set a global reference, lots of backend files depend on this being available globally
     exports.mainWindow = mainWindow;
@@ -228,10 +227,6 @@ function createMainWindow() {
         fileOpenHelpers.setWindowReady(true);
     });
 
-    mainWindow.webContents.on('new-window', function(e, url) {
-        e.preventDefault();
-        shell.openExternal(url);
-    });
 
     mainWindow.on("close", (event) => {
         const connectionManager = require("../../common/connection-manager");
