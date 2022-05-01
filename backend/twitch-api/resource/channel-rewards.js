@@ -46,6 +46,20 @@ const accountAccess = require("../../common/account-access");
  * @returns {import("@twurple/api").HelixCreateCustomRewardData}
  */
 const mapCustomRewardToCreateRewardPayload = (reward) => {
+    let maxRedemptionsPerStream = null, maxRedemptionsPerUserPerStream = null, globalCooldown = null;
+
+    if (reward.maxPerStreamSetting?.isEnabled === true && reward.maxPerStreamSetting?.maxPerStream > 0) {
+        maxRedemptionsPerStream = reward.maxPerStreamSetting.maxPerStream;
+    }
+
+    if (reward.maxPerUserPerStreamSetting?.isEnabled === true && reward.maxPerUserPerStreamSetting?.maxPerUserPerStream > 0) {
+        maxRedemptionsPerUserPerStream = reward.maxPerUserPerStreamSetting.maxPerUserPerStream;
+    }
+
+    if (reward.globalCooldownSetting?.isEnabled === true && reward.globalCooldownSetting?.globalCooldownSeconds > 0) {
+        globalCooldown = reward.globalCooldownSetting.globalCooldownSeconds;
+    }
+
     return {
         title: reward.title,
         prompt: reward.prompt,
@@ -53,9 +67,9 @@ const mapCustomRewardToCreateRewardPayload = (reward) => {
         isEnabled: reward.isEnabled,
         backgroundColor: reward.backgroundColor,
         userInputRequired: reward.isUserInputRequired,
-        maxRedemptionsPerStream: reward.maxPerStreamSetting.maxPerStream || null,
-        maxRedemptionsPerUserPerStream: reward.maxPerUserPerStreamSetting.maxPerUserPerStream || null,
-        globalCooldown: reward.globalCooldownSetting.globalCooldownSeconds || null,
+        maxRedemptionsPerStream: maxRedemptionsPerStream,
+        maxRedemptionsPerUserPerStream: maxRedemptionsPerUserPerStream,
+        globalCooldown: globalCooldown,
         isPaused: reward.isPaused,
         autoFulfill: reward.shouldRedemptionsSkipRequestQueue
     };

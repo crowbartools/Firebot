@@ -55,12 +55,12 @@
 
                     <div>
                         <div class="modal-subheader" style="padding: 0 0 4px 0">
-                            GAME
+                            CATEGORY/GAME
                         </div>
                         <div style="width: 100%; position: relative;">
                             <div class="form-group" ng-class="{'has-error': $ctrl.gameError}">
                                 <input type="text" id="gameField" class="form-control" ng-model="$ctrl.quote.game" ng-keyup="$event.keyCode == 13 && $ctrl.save() " aria-describedby="gameHelpBlock" placeholder="Enter game">
-                                <span id="gameHelpBlock" class="help-block" ng-show="$ctrl.gameError">Please provide a game name.</span>
+                                <span id="gameHelpBlock" class="help-block" ng-show="$ctrl.gameError">Please provide a category/game name.</span>
                             </div>
                         </div>
                     </div>
