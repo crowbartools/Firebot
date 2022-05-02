@@ -174,16 +174,16 @@ async function processEffects(processEffectsRequest) {
     return runEffects(runEffectsContext);
 }
 
-function runEffectsManually(effects) {
+function runEffectsManually(effects, metadata = {}, triggerType = EffectTrigger.MANUAL) {
     if (effects == null) {
         return;
     }
 
-    let streamerName = accountAccess.getAccounts().streamer.username || "";
+    const streamerName = accountAccess.getAccounts().streamer.username || "";
 
-    let processEffectsRequest = {
+    const processEffectsRequest = {
         trigger: {
-            type: EffectTrigger.MANUAL,
+            type: triggerType,
             metadata: {
                 username: streamerName,
                 eventData: {
@@ -210,7 +210,8 @@ function runEffectsManually(effects) {
                     },
                     args: ["@TestArg1", "TestArg2", "@TestArg3", "TestArg4", "@TestArg5"]
                 },
-                chatEvent: {}
+                chatEvent: {},
+                ...metadata
             }
         },
         effects: effects
@@ -223,8 +224,8 @@ function runEffectsManually(effects) {
 
 // Manually play a button.
 // This listens for an event from the render and will activate a button manually.
-ipcMain.on('runEffectsManually', function(event, effects) {
-    runEffectsManually(effects);
+ipcMain.on('runEffectsManually', function(event, {effects, metadata, triggerType}) {
+    runEffectsManually(effects, metadata, triggerType);
 });
 
 exports.processEffects = processEffects;

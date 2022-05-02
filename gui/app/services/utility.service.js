@@ -921,7 +921,7 @@
                         };
 
                         $scope.runEffect = function() {
-                            ipcRenderer.send('runEffectsManually', { list: [$scope.effect] });
+                            ipcRenderer.send('runEffectsManually', { effects: { list: [$scope.effect] } });
                         };
 
                         $scope.delete = function() {

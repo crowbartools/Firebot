@@ -63,10 +63,16 @@ class QuickActionManager extends JsonDbManager {
 
         if (triggeredQuickAction.type === 'custom') {
             let effects = [];
+            let presetArgValues = undefined;
 
             if (triggeredQuickAction.presetListId != null) {
                 const presetList = presetEffectListManager.getItem(triggeredQuickAction.presetListId);
-                effects = presetList.effects;
+                if (triggeredQuickAction.promptForArgs && presetList?.args?.length > 0) {
+                    frontendCommunicator.send("show-run-preset-list-modal", triggeredQuickAction.presetListId);
+                    return;
+                }
+                effects = presetList?.effects;
+                presetArgValues = triggeredQuickAction.presetArgValues;
             } else if (triggeredQuickAction.effectList != null) {
                 effects = triggeredQuickAction.effectList;
             }
@@ -75,7 +81,8 @@ class QuickActionManager extends JsonDbManager {
                 trigger: {
                     type: EffectTrigger.QUICK_ACTION,
                     metadata: {
-                        username: accountAccess.getAccounts().streamer.username
+                        username: accountAccess.getAccounts().streamer.username,
+                        presetListArgs: presetArgValues
                     }
                 },
                 effects: effects

@@ -62,9 +62,44 @@
                 return service.presetEffectLists.some(pel => pel.name === name);
             };
 
-            service.manuallyTriggerPresetEffectList = (presetEffectListId) => {
+            service.showRunPresetListModal = (id, isQuickAction = false) => {
+                const list = service.getPresetEffectList(id);
+                if (list == null) {
+                    return;
+                }
+
+                if (list.args?.length < 1) {
+                    service.manuallyTriggerPresetEffectList(id);
+                    if (!isQuickAction) {
+                        ngToast.create({
+                            className: 'success',
+                            content: `Ran "${list.name}"!`
+                        });
+                    }
+                    return;
+                }
+
+                utilityService.showModal({
+                    component: "triggerPresetEffectListModal",
+                    size: "md",
+                    resolveObj: {
+                        presetEffectList: () => list,
+                        isQuickAction: () => isQuickAction
+                    }
+                });
+            };
+
+            backendCommunicator.on("show-run-preset-list-modal", (id) => {
+                service.showRunPresetListModal(id, true);
+            });
+
+            service.manuallyTriggerPresetEffectList = (presetEffectListId, args, isQuickAction) => {
                 const presetEffectList = service.presetEffectLists.find(pel => pel.id === presetEffectListId);
-                ipcRenderer.send('runEffectsManually', presetEffectList.effects);
+                ipcRenderer.send('runEffectsManually', {
+                    effects: presetEffectList.effects,
+                    metadata: args ? { presetListArgs: args } : undefined,
+                    triggerType: isQuickAction ? "quick_action" : undefined
+                });
             };
 
             service.duplicatePresetEffectList = (presetEffectListId) => {

@@ -26,7 +26,7 @@
                         <p class="muted">The effect list that will be run when the Quick Action is triggered.</p>
                         <dropdown-select options="{ custom: 'Custom', preset: 'Preset'}" selected="$ctrl.listType"></dropdown-select>
                         <div ng-if="$ctrl.listType === 'preset'" class="mt-8">
-                            <ui-select ng-model="$ctrl.quickAction.presetListId" theme="bootstrap" on-select="presetListSelected($item)">
+                            <ui-select ng-model="$ctrl.quickAction.presetListId" theme="bootstrap" on-select="$ctrl.presetListSelected($item)">
                                 <ui-select-match placeholder="Select or search for a preset effect list... ">{{$select.selected.name}}</ui-select-match>
                                 <ui-select-choices repeat="presetList.id as presetList in $ctrl.presetEffectLists | filter: { name: $select.search }" style="position:relative;">
                                     <div ng-bind-html="presetList.name | highlight: $select.search"></div>
@@ -40,6 +40,35 @@
                                 update="$ctrl.effectListUpdated(effects)"
                                 modalId="{{modalId}}"
                             ></effect-list>
+                        </div>               
+                    </div>
+                    <div ng-if="$ctrl.listType === 'preset' && $ctrl.currentPresetArgs.length > 0">
+                        <h3>Arguments</h3>
+                        <div style="margin: 15px 0;display:flex;align-items:center;">
+                            <toggle-button
+                                toggle-model="$ctrl.quickAction.promptForArgs"
+                                auto-update-value="true"
+                                style="display:inline-block;"
+                            />
+                            <span class="ml-2">
+                                Prompt for args when quick action triggered
+                            </span>
+                        </div>
+                        <div ng-if="!$ctrl.quickAction.promptForArgs">
+                            <div
+                                ng-repeat="arg in $ctrl.currentPresetArgs" 
+                                style="margin-bottom: 20px;"
+                            >
+                                <div style="font-size: 15px;font-weight: 600;margin-bottom:5px;">
+                                    {{arg.name}}
+                                </div>
+                                <firebot-input 
+                                    model="$ctrl.quickAction.presetArgValues[arg.name]" 
+                                    input-type="string" 
+                                    disable-variables="true" 
+                                    placeholder-text="Enter value" 
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -56,7 +85,7 @@
             controller: function(presetEffectListsService, quickActionsService, settingsService, ngToast) {
                 const $ctrl = this;
 
-                $ctrl.presetEffectLists = presetEffectListsService.getPresetEffectLists().map(pel => ({id: pel.id, name: pel.name}));
+                $ctrl.presetEffectLists = presetEffectListsService.getPresetEffectLists();
                 $ctrl.settings = settingsService.getQuickActionSettings();
                 $ctrl.listType = "custom";
                 $ctrl.triggerMeta = {};
@@ -71,11 +100,17 @@
                     type: "custom",
                     icon: "far fa-magic",
                     presetListId: null,
+                    presetArgValues: {},
+                    promptForArgs: false,
                     effectList: null
                 };
 
+                $ctrl.currentPresetArgs = [];
+
                 $ctrl.presetListSelected = (presetList) => {
+                    $ctrl.currentPresetArgs = presetList.args || [];
                     $ctrl.quickAction.presetListId = presetList.id;
+                    $ctrl.quickAction.presetArgValues = {};
                 };
 
                 $ctrl.$onInit = () => {
@@ -95,6 +130,11 @@
                     }
 
                     $ctrl.listType = $ctrl.quickAction.presetListId != null ? "preset" : "custom";
+
+                    if ($ctrl.listType === "preset") {
+                        const list = $ctrl.presetEffectLists.find(l => l.id === $ctrl.quickAction.presetListId);
+                        $ctrl.currentPresetArgs = list?.args || [];
+                    }
                 };
 
                 $ctrl.save = function() {

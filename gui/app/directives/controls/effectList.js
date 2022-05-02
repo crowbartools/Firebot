@@ -437,7 +437,7 @@
                     ctrl.effectsData.list[index].type = effectType.id;
                 };
                 ctrl.testEffects = function() {
-                    ipcRenderer.send('runEffectsManually', ctrl.effectsData);
+                    ipcRenderer.send('runEffectsManually', { effects: ctrl.effectsData });
                 };
 
                 ctrl.getLabelButtonTextForLabel = function(labelModel) {
