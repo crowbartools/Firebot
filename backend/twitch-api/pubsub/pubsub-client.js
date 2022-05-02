@@ -1,6 +1,7 @@
 "use strict";
 const logger = require("../../logwrapper");
 const accountAccess = require("../../common/account-access");
+const frontendCommunicator = require("../../common/frontend-communicator");
 const refreshingAuthProvider = require("../../auth/refreshing-auth-provider");
 const { PubSubClient } = require("@twurple/pubsub");
 
@@ -143,6 +144,28 @@ async function createClient() {
             }
         });
         listeners.push(modListener);
+
+        const chatRoomListener = await pubSubClient.onCustomTopic(streamer.userId, "stream-chat-room-v1", async (event) => {
+            const message = event?.data;
+            if (message?.type === "extension_message") {
+                const twitchApi = require("../api").getClient();
+                const extension = await twitchApi.extensions.getReleasedExtension(message.data.sender.extension_client_id);
+
+                const { buildFirebotChatMessageFromExtensionMessage } = require("../../chat/chat-helpers");
+                const firebotChatMessage = await buildFirebotChatMessageFromExtensionMessage(
+                    message.data.content.text,
+                    message.data.sender.display_name,
+                    extension.getIconUrl("100x100"),
+                    message.data.sender.badges,
+                    message.data.sender.chat_color,
+                    message.data.id
+                );
+
+                frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
+            }
+        });
+        listeners.push(chatRoomListener);
+
     } catch (err) {
         logger.error("Failed to connect to Twitch PubSub!", err);
         return;

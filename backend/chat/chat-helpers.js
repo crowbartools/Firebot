@@ -258,6 +258,10 @@ function parseMessageParts(firebotChatMessage, parts) {
 }
 
 const getChatBadges = (badges) => {
+    if (badgeCache == null) {
+        return [];
+    }
+
     const chatBadges = [];
 
     for (const [setName, version] of badges.entries()) {
@@ -285,6 +289,83 @@ const getChatBadges = (badges) => {
     return chatBadges;
 };
 
+/**
+ *
+ * @param {string} text
+ */
+const getMessageParts = (text) => {
+    if (!twitchEmotes) {
+        /**@type {import('@twurple/common').ParsedMessagePart} */
+        const part = {
+            type: "text",
+            text: text
+        };
+        return [part];
+    }
+
+    const words = text.split(" ");
+    return words.map(word => {
+        let emoteId = null;
+        let url = "";
+        try {
+            const foundEmote = Object.values(twitchEmotes || {})
+                .flat()
+                .find(e => e.name === word);
+            if (foundEmote) {
+                emoteId = foundEmote.id;
+                url = foundEmote.getImageUrl(1);
+            }
+        } catch (err) {
+            //logger.silly(`Failed to find emote id for ${word}`, err);
+        }
+
+        /**@type {import('@twurple/common').ParsedMessagePart} */
+        let part;
+        if (emoteId != null) {
+            part = {
+                type: "emote",
+                url: url,
+                id: emoteId,
+                name: word
+            };
+        } else {
+            part = {
+                type: "text",
+                text: `${word} `
+            };
+        }
+        return part;
+    });
+};
+
+exports.buildFirebotChatMessageFromExtensionMessage = async (text = "", extensionName, extensionIconUrl, badges, color, id) => {
+    /**@type {FirebotChatMessage} */
+    const firebotChatMessage = {
+        id: id,
+        username: extensionName,
+        userId: extensionName,
+        rawText: text,
+        profilePicUrl: extensionIconUrl,
+        whisper: false,
+        isExtension: true,
+        action: false,
+        tagged: false,
+        isBroadcaster: false,
+        color: color,
+        badges: badges ? getChatBadges(new Map(
+            badges.map(badge => {
+                return [badge.id, badge.version];
+            })
+        )) : [],
+        parts: getMessageParts(text),
+        roles: []
+    };
+
+    firebotChatMessage.parts = parseMessageParts(firebotChatMessage, firebotChatMessage.parts);
+
+    return firebotChatMessage;
+};
+
 exports.buildFirebotChatMessageFromText = async (text = "") => {
     const streamer = accountAccess.getAccounts().streamer;
 
@@ -307,52 +388,11 @@ exports.buildFirebotChatMessageFromText = async (text = "") => {
         isBroadcaster: true,
         color: streamerData.color,
         badges: [],
-        parts: [],
+        parts: getMessageParts(text),
         roles: [
             "broadcaster"
         ]
     };
-
-    if (twitchEmotes) {
-        const words = text.split(" ");
-        for (const word of words) {
-            let emoteId = null;
-            let url = "";
-            try {
-                const foundEmote = Object.values(twitchEmotes || {})
-                    .flat()
-                    .find(e => e.name === word);
-                if (foundEmote) {
-                    emoteId = foundEmote.id;
-                    url = foundEmote.getImageUrl(1);
-                }
-            } catch (err) {
-                //logger.silly(`Failed to find emote id for ${word}`, err);
-            }
-
-            /**@type {import('@twurple/common').ParsedMessagePart} */
-            let part;
-            if (emoteId != null) {
-                part = {
-                    type: "emote",
-                    url: url,
-                    id: emoteId,
-                    name: word
-                };
-            } else {
-                part = {
-                    type: "text",
-                    text: `${word} `
-                };
-            }
-            streamerFirebotChatMessage.parts.push(part);
-        }
-    } else {
-        streamerFirebotChatMessage.parts.push({
-            type: "text",
-            text: text
-        });
-    }
 
     streamerFirebotChatMessage.parts = parseMessageParts(streamerFirebotChatMessage, streamerFirebotChatMessage.parts);
 

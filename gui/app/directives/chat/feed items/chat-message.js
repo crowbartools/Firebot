@@ -41,7 +41,7 @@
                         ng-attr-messageId="{{$ctrl.message.id}}"
                         context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
                         context-menu-class="chat-message-context-menu"
-                        context-menu-on="contextmenu"
+                        context-menu-on="{{$ctrl.message.isExtension ? 'disabled' : 'contextmenu'}}"
                     >
                         <div
                             ng-if="!$ctrl.compactDisplay"
@@ -49,7 +49,7 @@
                             class="chat-user-avatar-wrapper"
                             context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
                             context-menu-class="chat-message-context-menu"
-                            context-menu-on="click"
+                            context-menu-on="{{$ctrl.message.isExtension ? 'disabled' : 'click'}}"
                         >
                             <img class="chat-user-avatar" ng-src="{{$ctrl.message.profilePicUrl}}">
                         </div>
@@ -65,7 +65,7 @@
                                 ng-show="$ctrl.showAvatar"
                                 context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
                                 context-menu-class="chat-message-context-menu"
-                                context-menu-on="click"
+                                context-menu-on="{{$ctrl.message.isExtension ? 'disabled' : 'click'}}"
                             >
                                 <img class="chat-user-avatar" ng-src="{{$ctrl.message.profilePicUrl}}">
                             </div>
@@ -74,7 +74,7 @@
                                 class="chat-username"
                                 context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
                                 context-menu-class="chat-message-context-menu"
-                                context-menu-on="click"
+                                context-menu-on="{{$ctrl.message.isExtension ? 'disabled' : 'click'}}"
                             >
                                 <div ng-show="$ctrl.message.badges.length > 0" class="user-badges">
                                     <img ng-repeat="badge in $ctrl.message.badges"
