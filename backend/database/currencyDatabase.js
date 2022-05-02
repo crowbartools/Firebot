@@ -162,7 +162,7 @@ function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value, igno
 
         // Run our checks. Stop if we have a bad value, currency, or roles.
         value = parseInt(value);
-        if (roleIds === [] || currencyId === null || value === null || value === 0 || isNaN(value)) {
+        if (roleIds === [] || currencyId === null || value === null || (value === 0 && adjustType.toLowerCase() !== "set") || isNaN(value)) {
             return resolve();
         }
 
@@ -222,9 +222,9 @@ function addCurrencyToOnlineUsers(currencyId, value, ignoreDisable = false, adju
             return reject();
         }
 
-        // Don't do anything for 0 points or non numbers.
+        // Don't do anything for non numbers or 0 if we're not specifically setting a value.
         value = parseInt(value);
-        if (isNaN(value) || value === 0) {
+        if (isNaN(value) || (value === 0 && adjustType.toLowerCase() !== "set")) {
             return resolve();
         }
 
@@ -257,9 +257,9 @@ function adjustCurrencyForAllUsers(currencyId, value, ignoreDisable = false,
             return reject();
         }
 
-        // Don't do anything for 0 points or non numbers.
+        // Don't do anything for non numbers or 0 if we're not specifically setting a value.
         value = parseInt(value);
-        if (isNaN(value) || value === 0) {
+        if (isNaN(value) || (value === 0 && adjustType.toLowerCase() !== "set")) {
             return resolve();
         }
 
