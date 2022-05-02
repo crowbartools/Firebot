@@ -6,7 +6,7 @@ const twitchChat = require("../../chat/twitch-chat");
 const effect = {
     definition: {
         id: "firebot:announcement",
-        name: "Announcement",
+        name: "Announce",
         description: "Send an announcement to your chat",
         icon: "fad fa-bullhorn",
         categories: [EffectCategory.COMMON, EffectCategory.CHAT_BASED, EffectCategory.TWITCH],
