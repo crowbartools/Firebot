@@ -16,19 +16,20 @@
                 disableVariables: "<",
                 onInputUpdate: "&",
                 model: "=",
-                style: "@"
+                style: "@",
+                menuPosition: "@?"
             },
             template: `
                 <div style="{{$ctrl.style}}">
                     <div ng-if="$ctrl.useInputGroup" class="input-group">
                         <span class="input-group-addon" id="{{$ctrl.inputGroupId}}">{{$ctrl.inputTitle}}</span>
-                        <input ng-if="!$ctrl.useTextArea" type="{{$ctrl.disableVariables ? $ctrl.inputType || 'text' : 'text'}}" class="form-control" ng-model="$ctrl.model" ng-change="$ctrl.onChange($ctrl.model)" placeholder="{{$ctrl.placeholderText}}"  replace-variables="{{$ctrl.dataType}}" disable-variable-menu="$ctrl.disableVariables">
-                        <textarea ng-if="$ctrl.useTextArea" ng-model="$ctrl.model" ng-change="$ctrl.onChange($ctrl.model)" class="form-control" placeholder="{{$ctrl.placeholderText}}" rows="4" cols="40"  replace-variables="{{$ctrl.dataType}}" disable-variable-menu="$ctrl.disableVariables"></textarea>
+                        <input ng-if="!$ctrl.useTextArea" type="{{$ctrl.disableVariables ? $ctrl.inputType || 'text' : 'text'}}" class="form-control" ng-model="$ctrl.model" ng-change="$ctrl.onChange($ctrl.model)" placeholder="{{$ctrl.placeholderText}}"  replace-variables="{{$ctrl.dataType}}" disable-variable-menu="$ctrl.disableVariables" menu-position="{{$ctrl.menuPosition}}">
+                        <textarea ng-if="$ctrl.useTextArea" ng-model="$ctrl.model" ng-change="$ctrl.onChange($ctrl.model)" class="form-control" placeholder="{{$ctrl.placeholderText}}" rows="4" cols="40"  replace-variables="{{$ctrl.dataType}}" disable-variable-menu="$ctrl.disableVariables" menu-position="{{$ctrl.menuPosition}}"></textarea>
                     </div>
 
                     <div ng-if="!$ctrl.useInputGroup">
-                        <input ng-if="!$ctrl.useTextArea" type="{{$ctrl.disableVariables ? $ctrl.inputType || 'text' : 'text'}}" class="form-control" ng-model="$ctrl.model" ng-change="$ctrl.onChange($ctrl.model)" placeholder="{{$ctrl.placeholderText}}"  replace-variables="{{$ctrl.dataType}}" disable-variable-menu="$ctrl.disableVariables">
-                        <textarea ng-if="$ctrl.useTextArea" ng-model="$ctrl.model" ng-change="$ctrl.onChange($ctrl.model)" class="form-control" placeholder="{{$ctrl.placeholderText}}" rows="4" cols="40" replace-variables="{{$ctrl.dataType}}" disable-variable-menu="$ctrl.disableVariables"></textarea>
+                        <input ng-if="!$ctrl.useTextArea" type="{{$ctrl.disableVariables ? $ctrl.inputType || 'text' : 'text'}}" class="form-control" ng-model="$ctrl.model" ng-change="$ctrl.onChange($ctrl.model)" placeholder="{{$ctrl.placeholderText}}"  replace-variables="{{$ctrl.dataType}}" disable-variable-menu="$ctrl.disableVariables" menu-position="{{$ctrl.menuPosition}}">
+                        <textarea ng-if="$ctrl.useTextArea" ng-model="$ctrl.model" ng-change="$ctrl.onChange($ctrl.model)" class="form-control" placeholder="{{$ctrl.placeholderText}}" rows="4" cols="40" replace-variables="{{$ctrl.dataType}}" disable-variable-menu="$ctrl.disableVariables" menu-position="{{$ctrl.menuPosition}}"></textarea>
                     </div>
 
                 </div>

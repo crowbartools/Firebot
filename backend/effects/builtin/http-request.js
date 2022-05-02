@@ -31,7 +31,7 @@ const effect = {
     globalSettings: {},
     optionsTemplate: `
     <eos-container header="URL">
-        <firebot-input model="effect.url" placeholder-text="Enter url"></firebot-input>
+        <firebot-input model="effect.url" placeholder-text="Enter url" menu-position="below"></firebot-input>
     </eos-container>
 
     <eos-container header="Method" pad-top="true">
