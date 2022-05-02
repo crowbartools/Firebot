@@ -382,6 +382,15 @@
                 pushDataToFile('/settings/chatAlternateBackgrounds', alternate === true);
             };
 
+            service.chatHideBotAccountMessages = function() {
+                const shouldHide = getDataFromFile('/settings/chatHideBotAccountMessages');
+                return shouldHide != null ? shouldHide : false;
+            };
+
+            service.setChatHideBotAccountMessages = function(shouldHide) {
+                pushDataToFile('/settings/chatHideBotAccountMessages', shouldHide === true);
+            };
+
             service.getShowUptimeStat = function() {
                 const value = getDataFromFile("/settings/showUptimeStat");
                 return value != null ? value : true;

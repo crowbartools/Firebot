@@ -520,6 +520,23 @@
         };
     });
 
+    app.filter("hideBotMessages", function(settingsService, accountAccess) {
+        return function(elements) {
+            const shouldHide = settingsService.chatHideBotAccountMessages();
+            if (!shouldHide) {
+                return elements;
+            }
+            const botAccountName = accountAccess.accounts.bot.username.toLowerCase();
+            return elements.filter(e => {
+                if (e.type !== 'message') {
+                    return true;
+                }
+                return e.data.username?.toLowerCase() !== botAccountName;
+            }
+            );
+        };
+    });
+
     app.filter("chatUserRole", function() {
         return function(users, role) {
             if (users == null || role == null) {
@@ -617,4 +634,5 @@
             return input ? input.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "";
         };
     });
+
 }(angular));

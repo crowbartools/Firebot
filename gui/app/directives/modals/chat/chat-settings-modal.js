@@ -142,6 +142,13 @@
                                 on-update="setChatFeedMode(option)"
                             ></dropdown-select>
                         </div>
+
+                        <chat-settings-toggle
+                            setting="settings.chatHideBotAccountMessages()"
+                            title="Hide messages from Bot account"
+                            input-id="hideBotMessages"
+                            on-update="settings.setChatHideBotAccountMessages(setting)"
+                        ></chat-settings-toggle>
                     </div>
                 </div>
                 <div class="modal-footer"></div>
