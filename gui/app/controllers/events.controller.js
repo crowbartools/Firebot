@@ -330,36 +330,31 @@
                 const options = [
                     {
                         html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
-                        click: ($itemScope) => {
-                            const event = $itemScope.event;
+                        click: () => {
                             $scope.showAddOrEditEventModal(event.id);
                         }
                     },
                     {
                         html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> Toggle Enabled</a>`,
-                        click: ($itemScope) => {
-                            const event = $itemScope.event;
+                        click: () => {
                             $scope.toggleEventActiveStatus(event.id);
                         }
                     },
                     {
                         html: `<a href ><i class="far fa-copy" style="margin-right: 10px;"></i> Copy</a>`,
-                        click: ($itemScope) => {
-                            const event = $itemScope.event;
+                        click: () => {
                             $scope.copyEvent(event.id);
                         }
                     },
                     {
                         html: `<a href ><i class="far fa-clone" style="margin-right: 10px;"></i> Duplicate</a>`,
-                        click: ($itemScope) => {
-                            const event = $itemScope.event;
+                        click: () => {
                             $scope.duplicateEvent(event.id);
                         }
                     },
                     {
                         html: `<a href style="color: #fb7373;"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>`,
-                        click: ($itemScope) => {
-                            const event = $itemScope.event;
+                        click: () => {
                             $scope.showDeleteEventModal(event.id, event.name ? event.name : 'Unnamed');
                         }
                     },
