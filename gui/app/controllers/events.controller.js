@@ -5,11 +5,47 @@
     angular
         .module("firebotApp")
         .controller("eventsController", function($scope, eventsService, utilityService,
-            listenerService, objectCopyHelper, sortTagsService, effectQueuesService) {
+            listenerService, objectCopyHelper) {
 
             $scope.es = eventsService;
 
-            $scope.sts = sortTagsService;
+            const sources = listenerService.fireEventSync("getAllEventSources");
+
+            function friendlyEventTypeName(sourceId, eventId) {
+                let source = sources.find(s => s.id === sourceId);
+                if (source != null) {
+                    let event = source.events.find(e => e.id === eventId);
+                    if (event != null) {
+                        return `${event.name} (${source.name})`;
+                    }
+                }
+                return null;
+            }
+
+            $scope.tableConfig = [
+                {
+                    name: "NAME",
+                    icon: "fa-tag",
+                    headerStyles: {
+                        'min-width': '150px'
+                    },
+                    cellTemplate: `{{data.name}}`,
+                    cellController: () => {}
+                },
+                {
+                    name: "TYPE",
+                    icon: "fa-exclamation-square",
+                    headerStyles: {
+                        'min-width': '100px'
+                    },
+                    cellTemplate: `{{data.eventId && data.sourceId ?
+                        friendlyEventTypeName(data.sourceId, data.eventId) : "No
+                        Type"}}`,
+                    cellController: ($scope) => {
+                        $scope.friendlyEventTypeName = friendlyEventTypeName;
+                    }
+                }
+            ];
 
             $scope.getSelectedEvents = function() {
                 let selectedTab = eventsService.getSelectedTab();
@@ -51,6 +87,10 @@
                     eventsService.saveGroup(group);
                 }
             }
+
+            $scope.updateEventsForCurrentGroup = (events) => {
+                eventsService.updateEventsForCurrentGroup(events);
+            };
 
             $scope.showCreateEventGroupModal = function() {
                 utilityService.openGetInputModal(
@@ -171,30 +211,6 @@
                     });
             };
 
-            $scope.getEventActiveStatus = function(active) {
-                let groupId = eventsService.getSelectedTab();
-                if (groupId !== "mainevents") {
-                    let group = eventsService.getEventGroup(groupId);
-                    if (group && !group.active) {
-                        return false;
-                    }
-                }
-                return active;
-            };
-
-            $scope.getEventActiveStatusDisplay = function(active) {
-
-                let groupId = eventsService.getSelectedTab();
-                if (groupId !== "mainevents") {
-                    let group = eventsService.getEventGroup(groupId);
-                    if (!group || !group.active) {
-                        return "Disabled (Set not active)";
-                    }
-                }
-
-                return active ? "Enabled" : "Disabled";
-            };
-
             $scope.toggleEventActiveStatus = function(eventId) {
                 const groupId = eventsService.getSelectedTab();
                 if (groupId === "mainevents") {
@@ -303,61 +319,6 @@
                 eventsService.setSelectedTab(groupId);
             };
 
-            $scope.selectedGroupIsActive = function() {
-                let groupId = eventsService.getSelectedTab();
-                if (groupId === "mainevents") {
-                    return true;
-                }
-                let group = eventsService.getEventGroup(groupId);
-                return group ? group.active === true : false;
-            };
-
-            $scope.addToEffectQueue = (event, queueId) => {
-                if (event == null) {
-                    return;
-                }
-
-                if (event.effects) {
-                    event.effects.queue = queueId;
-                }
-
-                const selectedGroupId = eventsService.getSelectedTab();
-                updateEvent(selectedGroupId, event);
-            };
-
-            $scope.clearEffectQueue = (event) => {
-                event.effects.queue = null;
-            };
-
-            $scope.getEffectQueueMenuOption = (event) => {
-                const queues = effectQueuesService.getEffectQueues();
-                if (event.effects != null && queues != null && queues.length > 0) {
-                    const children = queues.map(q => {
-                        const isSelected = event.effects.queue && event.effects.queue === q.id;
-                        return {
-                            html: `<a href><i class="${isSelected ? 'fas fa-check' : ''}" style="margin-right: ${isSelected ? '10' : '27'}px;"></i> ${q.name}</a>`,
-                            click: () => {
-                                $scope.addToEffectQueue(event, q.id);
-                            }
-                        };
-                    });
-
-                    const hasEffectQueue = event.effects.queue != null && event.effects.queue !== "";
-                    children.push({
-                        html: `<a href><i class="${!hasEffectQueue ? 'fas fa-check' : ''}" style="margin-right: ${!hasEffectQueue ? '10' : '27'}px;"></i> None</a>`,
-                        click: () => {
-                            $scope.clearEffectQueue(event);
-                        },
-                        hasTopDivider: true
-                    });
-
-                    return {
-                        text: `Effect Queues...`,
-                        children: children
-                    };
-                }
-            };
-
             $scope.eventMenuOptions = function(event) {
 
                 const currentGroupId = eventsService.getSelectedTab();
@@ -416,11 +377,6 @@
                     }
                 ];
 
-                const effectQueueMenuOption = $scope.getEffectQueueMenuOption(event);
-                if (effectQueueMenuOption != null) {
-                    options.push(effectQueueMenuOption);
-                }
-
                 return options;
             };
 
@@ -469,7 +425,6 @@
             };
 
             $scope.simulateEventsByType = function() {
-
                 utilityService.showModal({
                     component: "simulateGroupEventsModal",
                     size: "sm"
@@ -486,30 +441,16 @@
                 return 0;
             };
 
-            /**
-             * Gets user friendly event name from the EventType list.
-             */
-
-            let sources = listenerService.fireEventSync("getAllEventSources");
-
-            $scope.friendlyEventTypeName = function(sourceId, eventId) {
-                let source = sources.find(s => s.id === sourceId);
-                if (source != null) {
-                    let event = source.events.find(e => e.id === eventId);
-                    if (event != null) {
-                        return `${event.name} (${source.name})`;
-                    }
-                }
-                return null;
-            };
-
             // Fire event manually
-            $scope.fireEventManually = function(event) {
-                ipcRenderer.send("triggerManualEvent", {
-                    eventId: event.eventId,
-                    sourceId: event.sourceId,
-                    eventSettingsId: event.id
-                });
+            $scope.fireEventManually = function(eventId) {
+                const event = $scope.getSelectedEvents().find(e => e.id === eventId);
+                if (event != null) {
+                    ipcRenderer.send("triggerManualEvent", {
+                        eventId: event.eventId,
+                        sourceId: event.sourceId,
+                        eventSettingsId: event.id
+                    });
+                }
             };
         });
 }());

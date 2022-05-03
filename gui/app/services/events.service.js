@@ -58,6 +58,19 @@
             return groups.find(g => g.id === groupId);
         };
 
+        service.updateEventsForCurrentGroup = function(events) {
+            if (service.getSelectedTab() === "mainevents") {
+                mainEvents = events;
+                service.saveMainEvents();
+            } else {
+                const group = service.getEventGroup(service.getSelectedTab());
+                if (group != null) {
+                    group.events = events;
+                    service.saveGroup(group);
+                }
+            }
+        };
+
         service.createGroup = function(name) {
             let newId = uuidv1();
             const newGroup = {
