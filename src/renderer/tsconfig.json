@@ -4,14 +4,18 @@
         "baseUrl": ".",
         "jsx": "react",
         "lib": [ "DOM" ],
+        "rootDirs": [
+            "../renderer",
+            "../shared"
+        ],
         "paths": {
             "SharedUtils": ["../shared/util/index.ts"],
             "SharedTypes/*": ["../shared/typings/*"]
         }
     },
     "include": [
-        "../shared/typings/**/*.ts",
-        "index.tsx"
+        "../shared/typings/**/*",
+        "../renderer/**/*",
     ],
     "exclude": ["../../node_modules/**/*"]
 }
