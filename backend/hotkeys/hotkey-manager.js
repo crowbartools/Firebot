@@ -39,9 +39,16 @@ function unregisterAllHotkeys() {
 }
 
 function registerHotkey(accelerator) {
-    globalShortcut.register(accelerator, () => {
-        runHotkey(accelerator);
-    });
+    try {
+        const success = globalShortcut.register(accelerator, () => {
+            runHotkey(accelerator);
+        });
+        if (!success) {
+            logger.warn(`Unable to register hotkey ${accelerator} with OS. This typically means it's already taken by another application.`);
+        }
+    } catch (error) {
+        logger.error(`Error while registering hotkey ${accelerator} with OS`, error);
+    }
 }
 
 function registerAllHotkeys() {
@@ -70,7 +77,7 @@ function refreshHotkeyCache(retry = 1) {
                 registerAllHotkeys();
             } catch (err) {
                 logger.error(
-                    `Hotkeys cache update failed. Retrying. (Try ${retry++}/3)`
+                    `Hotkeys cache update failed. Retrying. (Try ${retry++}/3)`, err
                 );
                 refreshHotkeyCache(retry);
             }
