@@ -24,11 +24,12 @@
     },
     "main": "./dist/index.js",
     "scripts": {
-        "start:dev": "concurrently -k -s=first \"webpack serve -c ./config/webpack/renderer.js --hot\" \"webpack build -c ./config/webpack/main.js && electron ./build/main/index.js\"",
-        "start:prod": "webpack build -c ./config/webpack/all.js --node-env production && electron ./build/main/index.js"
+        "dev": "concurrently -k -s=first \"webpack serve -c ./config/webpack/renderer.js --hot\" \"webpack build -c ./config/webpack/main.js && electron ./build/main/index.js\"",
+        "prod": "webpack build -c ./config/webpack/all.js --node-env production && electron ./build/main/index.js",
+        "setup": "npm ci && npm rebuild"
     },
     "volta": {
-        "node": "14.18.1"
+        "node": "18.1.0"
     },
     "devDependencies": {
         "@pmmmwh/react-refresh-webpack-plugin": "^0.5.5",
