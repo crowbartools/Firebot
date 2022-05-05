@@ -38,6 +38,7 @@ exports.loadReplaceVariables = () => {
         'count',
         'counter',
         'currency',
+        'currency-rank',
         'current-viewer-count',
         'custom-role-user-count',
         'custom-role-users',
