@@ -16,7 +16,7 @@ const model = {
         let length = 0;
         if (jsonArray) {
             try {
-                let array = JSON.parse(jsonArray);
+                const array = JSON.parse(jsonArray);
                 if (Array.isArray(array)) {
                     length = array.length;
                 }

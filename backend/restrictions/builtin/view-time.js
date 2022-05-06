@@ -16,7 +16,7 @@ const model = {
         </div>
     `,
     optionsValueDisplay: (restriction) => {
-        let time = restriction.time || 0;
+        const time = restriction.time || 0;
 
         return time + "+ min(s)";
     },
@@ -27,8 +27,8 @@ const model = {
         return new Promise(async (resolve, reject) => {
             let passed = false;
             const viewerDB = require('../../database/userDatabase');
-            let viewer = await viewerDB.getUserByUsername(triggerData.metadata.username);
-            let viewtime = viewer.minutesInChannel;
+            const viewer = await viewerDB.getUserByUsername(triggerData.metadata.username);
+            const viewtime = viewer.minutesInChannel;
 
             if (viewtime >= restrictionData.time) {
                 passed = true;

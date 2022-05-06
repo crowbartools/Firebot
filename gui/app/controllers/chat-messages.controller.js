@@ -88,7 +88,7 @@
                     return;
                 }
 
-                let closeFunc = () => {};
+                const closeFunc = () => {};
                 utilityService.showModal({
                     component: "viewerDetailsModal",
                     backdrop: true,
@@ -128,7 +128,7 @@
             };
 
             // This happens when a chat message is submitted.
-            let chatHistory = [];
+            const chatHistory = [];
             let currrentHistoryIndex = -1;
             $scope.submitChat = function() {
                 if ($scope.chatMessage == null || $scope.chatMessage.length < 1) {
@@ -145,7 +145,7 @@
             };
 
             $scope.onMessageFieldKeypress = $event => {
-                let keyCode = $event.which || $event.keyCode;
+                const keyCode = $event.which || $event.keyCode;
                 if (keyCode === 38) {
                     //up arrow
                     if (

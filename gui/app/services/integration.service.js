@@ -10,7 +10,7 @@
             backendCommunicator,
             utilityService
         ) {
-            let service = {};
+            const service = {};
 
             let integrations = [];
 
@@ -45,7 +45,7 @@
             };
 
             service.connectIntegration = function(id) {
-                let integration = getIntegrationById(id);
+                const integration = getIntegrationById(id);
                 if (integration == null || integration.connected) {
                     return;
                 }
@@ -55,7 +55,7 @@
             };
 
             service.disconnectIntegration = function(id) {
-                let integration = getIntegrationById(id);
+                const integration = getIntegrationById(id);
                 if (integration == null || !integration.connected) {
                     return;
                 }
@@ -65,7 +65,7 @@
             };
 
             service.toggleConnectionForIntegration = function(id) {
-                let integration = getIntegrationById(id);
+                const integration = getIntegrationById(id);
                 if (integration == null || !integration.linked) {
                     return;
                 }
@@ -83,7 +83,7 @@
                 shouldConnect
             ) {
                 return new Promise(resolve => {
-                    let listenerId = listenerService.registerListener(
+                    const listenerId = listenerService.registerListener(
                         {
                             type: listenerService.ListenerType.INTEGRATION_CONNECTION_UPDATE
                         },
@@ -107,7 +107,7 @@
             };
 
             service.integrationIsConnected = function(id) {
-                let integration = getIntegrationById(id);
+                const integration = getIntegrationById(id);
                 if (integration == null) {
                     return false;
                 }
@@ -116,7 +116,7 @@
             };
 
             service.integrationIsLinked = function(id) {
-                let integration = getIntegrationById(id);
+                const integration = getIntegrationById(id);
                 if (integration == null) {
                     return false;
                 }
@@ -187,8 +187,8 @@
             );
 
             backendCommunicator.on("integrationLinked", (intId) => {
-                let sidebarControlledServices = settingsService.getSidebarControlledServices();
-                let service = "integration." + intId;
+                const sidebarControlledServices = settingsService.getSidebarControlledServices();
+                const service = "integration." + intId;
                 if (!sidebarControlledServices.includes(service)) {
                     sidebarControlledServices.push(service);
                 }
@@ -197,7 +197,7 @@
 
             backendCommunicator.on("integrationUnlinked", (intId) => {
                 let sidebarControlledServices = settingsService.getSidebarControlledServices();
-                let service = "integration." + intId;
+                const service = "integration." + intId;
                 if (sidebarControlledServices.includes(service)) {
                     sidebarControlledServices = sidebarControlledServices.filter(s => s !== service);
                 }
@@ -209,7 +209,7 @@
                     type: listenerService.ListenerType.INTEGRATION_CONNECTION_UPDATE
                 },
                 data => {
-                    let integration = integrations.find(i => i.id === data.id);
+                    const integration = integrations.find(i => i.id === data.id);
                     if (integration != null) {
                         integration.connected = data.connected;
                     }

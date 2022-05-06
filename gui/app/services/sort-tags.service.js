@@ -12,7 +12,7 @@
         .module("firebotApp")
         .factory("sortTagsService", function(logger, profileManager,
             utilityService, settingsService, backendCommunicator) {
-            let service = {};
+            const service = {};
 
             /**
              * @type {Object.<string, SortTag[]>}

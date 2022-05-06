@@ -47,7 +47,7 @@
                 dismiss: '&'
             },
             controller: function($sce) {
-                let $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.model = "";
 
@@ -92,7 +92,7 @@
                 };
 
                 $ctrl.save = function() {
-                    let validate = $ctrl.validationFn($ctrl.model);
+                    const validate = $ctrl.validationFn($ctrl.model);
 
                     Promise.resolve(validate).then((valid) => {
 

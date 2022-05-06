@@ -19,7 +19,7 @@
             </eos-collapsable-panel>
             `,
         controller: function($rootScope) {
-            let $ctrl = this;
+            const $ctrl = this;
             $ctrl.openLinkExternally = $rootScope.openLinkExternally;
 
             $ctrl.variables = [];

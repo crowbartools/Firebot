@@ -167,8 +167,7 @@ function getCommandTriggerAndArgs(req) {
     let args, username, metadata;
 
     // GET
-    if (req.method === "GET")
-    {
+    if (req.method === "GET") {
         args = query.args;
         username = query.username;
 

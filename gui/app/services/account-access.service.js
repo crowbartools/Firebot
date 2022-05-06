@@ -5,7 +5,7 @@
     angular
         .module("firebotApp")
         .factory("accountAccess", function(backendCommunicator) {
-            let service = {};
+            const service = {};
 
             service.accounts = {
                 streamer: {

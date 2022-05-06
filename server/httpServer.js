@@ -29,7 +29,7 @@ exports.start = function() {
         return;
     }
 
-    let app = express();
+    const app = express();
 
     app.use(cors());
 
@@ -55,7 +55,7 @@ exports.start = function() {
     app.set("view engine", "ejs");
 
     // get our router for the current v1 api methods
-    let v1Router = require("./api/v1/v1Router");
+    const v1Router = require("./api/v1/v1Router");
     app.use("/api/v1", v1Router);
 
     app.get('/loginsuccess', function(_, res) {
@@ -66,12 +66,12 @@ exports.start = function() {
     app.use("/overlay/", express.static("resources/overlay"));
     app.get("/overlay", function(req, res) {
 
-        let effectDefs = effectManager.getEffectOverlayExtensions();
+        const effectDefs = effectManager.getEffectOverlayExtensions();
 
-        let combinedCssDeps = [...new Set([].concat.apply([], effectDefs
+        const combinedCssDeps = [...new Set([].concat.apply([], effectDefs
             .filter(ed => ed.dependencies != null && ed.dependencies.css != null)
             .map(ed => ed.dependencies.css)))];
-        let combinedJsDeps = [...new Set([].concat.apply([], effectDefs
+        const combinedJsDeps = [...new Set([].concat.apply([], effectDefs
             .filter(ed => ed.dependencies != null && ed.dependencies.js != null)
             .map(ed => ed.dependencies.js)))];
 
@@ -93,7 +93,7 @@ exports.start = function() {
 
     // set up resource endpoint
     app.get("/resource/:token", function(req, res) {
-        let token = req.params.token || null;
+        const token = req.params.token || null;
         if (token !== null) {
             let resourcePath = resourceTokenManager.getResourcePath(token) || null;
             if (resourcePath !== null) {
@@ -129,7 +129,7 @@ exports.sendToOverlay = function(eventName, meta = {}, overlayInstance) {
         return;
     }
 
-    let data = { event: eventName, meta: meta, overlayInstance: overlayInstance },
+    const data = { event: eventName, meta: meta, overlayInstance: overlayInstance },
         dataRaw = JSON.stringify(data);
 
     wss.clients.forEach(function each(client) {
@@ -144,7 +144,7 @@ exports.sendToOverlay = function(eventName, meta = {}, overlayInstance) {
 };
 
 setInterval(() => {
-    let clientsConnected = wss == null ? false : wss.clients.size > 0;
+    const clientsConnected = wss == null ? false : wss.clients.size > 0;
 
     if (clientsConnected !== overlayHasClients) {
         renderWindow.webContents.send("overlayStatusUpdate", {

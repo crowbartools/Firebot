@@ -51,7 +51,7 @@ const model = {
         $scope.hasCounters = countersService.counters.length > 0;
 
         $scope.counters = {};
-        for (let counter of countersService.counters) {
+        for (const counter of countersService.counters) {
             $scope.counters[counter.id] = counter.name;
         }
 
@@ -61,7 +61,7 @@ const model = {
 
     },
     optionsValidator: (effect, $scope) => {
-        let errors = [];
+        const errors = [];
         if (effect.counterId == null) {
             errors.push("Please select a counter.");
         } else if (effect.mode == null) {
@@ -79,7 +79,7 @@ const model = {
         return errors;
     },
     onTriggerEvent: async event => {
-        let { effect } = event;
+        const { effect } = event;
 
         if (effect.counterId == null || effect.mode == null || effect.value === undefined) {
             return true;

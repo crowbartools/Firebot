@@ -162,7 +162,7 @@
                         return;
                     }
 
-                    let closeFunc = () => {};
+                    const closeFunc = () => {};
                     utilityService.showModal({
                         component: "viewerDetailsModal",
                         backdrop: true,

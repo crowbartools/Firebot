@@ -7,7 +7,7 @@
     angular
         .module("firebotApp")
         .factory("notificationService", function($http, $interval, logger) {
-            let service = {};
+            const service = {};
             let notifications = [];
 
             const NotificationType = {
@@ -39,7 +39,7 @@
                 return data;
             }
             function getSavedNotifications() {
-                let saveNotis = getDataFromFile("/notifications");
+                const saveNotis = getDataFromFile("/notifications");
                 return saveNotis ? saveNotis : [];
             }
             function pushDataToFile(path, data) {
@@ -61,7 +61,7 @@
             }
 
             function getKnownExternalNotifications() {
-                let externalNotiIds = getDataFromFile("/knownExternalIds");
+                const externalNotiIds = getDataFromFile("/knownExternalIds");
                 return externalNotiIds ? externalNotiIds : [];
             }
 
@@ -73,7 +73,7 @@
                 let foundIndex = null;
 
                 for (let i = 0; i < notifications.length; i++) {
-                    let n = notifications[i];
+                    const n = notifications[i];
                     if (n.uuid === uuid) {
                         foundIndex = i;
                         break;
@@ -102,11 +102,11 @@
                         "https://raw.githubusercontent.com/Firebottle/Firebot/master/resources/notifications.json"
                     )
                     .then(response => {
-                        let externalNotifications = response.data;
+                        const externalNotifications = response.data;
 
-                        let knownExtNotis = getKnownExternalNotifications();
+                        const knownExtNotis = getKnownExternalNotifications();
 
-                        let newKnownExtNotis = [];
+                        const newKnownExtNotis = [];
 
                         externalNotifications.forEach(
                             n => {
@@ -153,7 +153,7 @@
                 notification.read = true;
 
                 if (notification.saved) {
-                    let index = getIndexOfUuid(notification.uuid);
+                    const index = getIndexOfUuid(notification.uuid);
                     if (index != null) {
                         updateSavedNotificationAtIndex(notification, index);
                     }
@@ -162,7 +162,7 @@
 
             service.deleteNotification = function(notification) {
                 if (notification.saved) {
-                    let index = getIndexOfUuid(notification.uuid);
+                    const index = getIndexOfUuid(notification.uuid);
                     if (index != null) {
                         deleteSavedNotificationAtIndex(index);
                     }

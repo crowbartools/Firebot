@@ -12,7 +12,7 @@ class RestrictionsManager extends EventEmitter {
     }
 
     registerRestriction(restriction) {
-        let idConflict = this._registeredRestrictions.some(
+        const idConflict = this._registeredRestrictions.some(
             r => r.definition.id === restriction.definition.id
         );
 
@@ -41,18 +41,18 @@ class RestrictionsManager extends EventEmitter {
             restrictionData.restrictions.length < 1) {
             return Promise.resolve(true);
         }
-        let restrictions = restrictionData.restrictions;
-        let permissions = restrictions.filter(r => r.type === "firebot:permissions");
+        const restrictions = restrictionData.restrictions;
+        const permissions = restrictions.filter(r => r.type === "firebot:permissions");
         if (permissions == null) {
             return Promise.resolve(true);
         }
 
-        let permRestrictionData = {
+        const permRestrictionData = {
             restrictions: permissions,
             mode: restrictionData.mode
         };
 
-        let triggerData = {
+        const triggerData = {
             metadata: {
                 username: username,
                 userTwitchRoles: twitchRoles
@@ -67,13 +67,13 @@ class RestrictionsManager extends EventEmitter {
             restrictionData.restrictions.length < 1) {
             return Promise.resolve();
         }
-        let restrictions = restrictionData.restrictions;
+        const restrictions = restrictionData.restrictions;
 
         if (restrictionData.mode === "any" || restrictionData.mode === "none") {
-            let reasons = [];
+            const reasons = [];
             let restrictionPassed = false;
-            for (let restriction of restrictions) {
-                let restrictionDef = this.getRestrictionById(restriction.type);
+            for (const restriction of restrictions) {
+                const restrictionDef = this.getRestrictionById(restriction.type);
                 if (restrictionDef && restrictionDef.predicate) {
                     try {
                         await restrictionDef.predicate(triggerData, restriction);
@@ -104,17 +104,17 @@ class RestrictionsManager extends EventEmitter {
             return Promise.resolve();
 
         } else if (restrictionData.mode !== "any" && restrictionData.mode !== "none") {
-            let predicatePromises = [];
-            for (let restriction of restrictions) {
-                let restrictionDef = this.getRestrictionById(restriction.type);
+            const predicatePromises = [];
+            for (const restriction of restrictions) {
+                const restrictionDef = this.getRestrictionById(restriction.type);
                 if (restrictionDef && restrictionDef.predicate) {
                     predicatePromises.push(restrictionDef.predicate(triggerData, restriction));
                 }
             }
 
             return Promise.all(predicatePromises).then(() => {
-                for (let restriction of restrictions) {
-                    let restrictionDef = this.getRestrictionById(restriction.type);
+                for (const restriction of restrictions) {
+                    const restrictionDef = this.getRestrictionById(restriction.type);
                     if (restrictionDef && restrictionDef.onSuccessful) {
                         restrictionDef.onSuccessful(triggerData, restriction);
                     }

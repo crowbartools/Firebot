@@ -4,7 +4,7 @@
     angular
         .module("firebotApp")
         .factory("quotesService", function(backendCommunicator, $q) {
-            let service = {};
+            const service = {};
 
             service.quotes = [];
 
@@ -24,7 +24,7 @@
             };
 
             service.updateQuote = (quote) => {
-                let index = service.quotes.findIndex(q => q._id === quote._id);
+                const index = service.quotes.findIndex(q => q._id === quote._id);
                 if (index > -1) {
                     service.quotes[index] = quote;
                     backendCommunicator.fireEvent("update-quote", quote);
@@ -32,7 +32,7 @@
             };
 
             service.deleteQuote = (quoteId) => {
-                let index = service.quotes.findIndex(q => q._id === quoteId);
+                const index = service.quotes.findIndex(q => q._id === quoteId);
                 if (index > -1) {
                     service.quotes.splice(index, 1);
                     backendCommunicator.fireEvent("delete-quote", quoteId);

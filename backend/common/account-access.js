@@ -43,7 +43,7 @@ function AccountCache(streamer, bot) {
     this.bot = bot;
 }
 
-let cache = new AccountCache(
+const cache = new AccountCache(
     {
         username: "Streamer",
         loggedIn: false
@@ -73,8 +73,8 @@ async function updateStreamerAccountSettings(streamerAccount) {
 }
 
 function saveAccountDataToFile(accountType) {
-    let authDb = profileManager.getJsonDbInProfile("/auth-twitch");
-    let account = cache[accountType];
+    const authDb = profileManager.getJsonDbInProfile("/auth-twitch");
+    const account = cache[accountType];
     try {
         authDb.push(`/${accountType}`, account);
     } catch (error) {
@@ -89,9 +89,9 @@ function saveAccountDataToFile(accountType) {
  * @param {boolean} [emitUpdate=true] - If an account update event should be emitted
  */
 async function loadAccountData(emitUpdate = true) {
-    let authDb = profileManager.getJsonDbInProfile("/auth-twitch");
+    const authDb = profileManager.getJsonDbInProfile("/auth-twitch");
     try {
-        let dbData = authDb.getData("/"),
+        const dbData = authDb.getData("/"),
             streamer = dbData.streamer,
             bot = dbData.bot;
 
@@ -180,7 +180,7 @@ function updateAccount(accountType, account, emitUpdate = true) {
     }
 
     // dont let streamer and bot be the same
-    let otherAccount = accountType === "streamer" ? cache.bot : cache.streamer;
+    const otherAccount = accountType === "streamer" ? cache.bot : cache.streamer;
     if (otherAccount != null && otherAccount.loggedIn) {
         if (otherAccount.userId === account.userId) {
             renderWindow.webContents.send("error", "You cannot sign into the same user for both Streamer and Bot accounts. The bot account should be a seperate Twitch user. If you don't have a seperate user, simply don't use the Bot account feature as it's not required.");
@@ -204,7 +204,7 @@ function removeAccount(accountType) {
         return;
     }
 
-    let authDb = profileManager.getJsonDbInProfile("/auth-twitch");
+    const authDb = profileManager.getJsonDbInProfile("/auth-twitch");
     try {
         authDb.delete(`/${accountType}`);
     } catch (error) {

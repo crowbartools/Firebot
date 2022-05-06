@@ -18,7 +18,7 @@
                 </div>
             `,
         controller: function() {
-            let ctrl = this;
+            const ctrl = this;
 
             ctrl.$onInit = function() {
                 if (ctrl.defaultShow === true) {

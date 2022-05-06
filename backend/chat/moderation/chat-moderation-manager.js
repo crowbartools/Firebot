@@ -7,10 +7,10 @@ const rolesManager = require("../../roles/custom-roles-manager");
 const permitCommand = require("./url-permit-command");
 const utils = require("../../utility");
 
-let getChatModerationSettingsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/chat-moderation-settings");
-let getBannedWordsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-words", false);
-let getbannedRegularExpressionsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-regular-expressions", false);
-let getUrlAllowlistDb = () => profileManager.getJsonDbInProfile("/chat/moderation/url-allowlist", false);
+const getChatModerationSettingsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/chat-moderation-settings");
+const getBannedWordsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-words", false);
+const getbannedRegularExpressionsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-regular-expressions", false);
+const getUrlAllowlistDb = () => profileManager.getJsonDbInProfile("/chat/moderation/url-allowlist", false);
 
 // default settings
 let chatModerationSettings = {
@@ -47,7 +47,7 @@ let bannedRegularExpressions = {
 
 let urlAllowlist = {
     urls: []
-}
+};
 
 function getBannedWordsList() {
     if (!bannedWords || !bannedWords.words) {
@@ -236,28 +236,28 @@ async function moderateMessage(chatMessage) {
                 if (settings.viewTime && settings.viewTime.enabled) {
                     const viewerDB = require('../../database/userDatabase');
                     const viewer = await viewerDB.getUserByUsername(chatMessage.username);
-    
+
                     const viewerViewTime = viewer.minutesInChannel / 60;
                     const minimumViewTime = settings.viewTime.viewTimeInHours;
-    
+
                     if (viewerViewTime <= minimumViewTime) {
                         outputMessage = outputMessage.replace("{viewTime}", minimumViewTime.toString());
-    
+
                         logger.debug("Url moderation: Not enough view time.");
                         shouldDeleteMessage = true;
                     }
                 } else {
                     shouldDeleteMessage = true;
                 }
-    
+
                 if (shouldDeleteMessage) {
                     chat.deleteMessage(chatMessage.id);
-    
+
                     if (outputMessage) {
                         outputMessage = outputMessage.replace("{userName}", chatMessage.username);
                         chat.sendChatMessage(outputMessage);
                     }
-    
+
                     return;
                 }
             }
@@ -393,7 +393,7 @@ frontendCommunicator.on("getChatModerationData", () => {
 
 function load() {
     try {
-        let settings = getChatModerationSettingsDb().getData("/");
+        const settings = getChatModerationSettingsDb().getData("/");
         if (settings && Object.keys(settings).length > 0) {
             chatModerationSettings = settings;
             if (settings.exemptRoles == null) {
@@ -437,17 +437,17 @@ function load() {
             }
         }
 
-        let words = getBannedWordsDb().getData("/");
+        const words = getBannedWordsDb().getData("/");
         if (words && Object.keys(words).length > 0) {
             bannedWords = words;
         }
 
-        let regularExpressions = getbannedRegularExpressionsDb().getData("/");
+        const regularExpressions = getbannedRegularExpressionsDb().getData("/");
         if (regularExpressions && Object.keys(regularExpressions).length > 0) {
             bannedRegularExpressions = regularExpressions;
         }
 
-        let allowlist = getUrlAllowlistDb().getData("/");
+        const allowlist = getUrlAllowlistDb().getData("/");
         if (allowlist && Object.keys(allowlist).length > 0) {
             urlAllowlist = allowlist;
         }

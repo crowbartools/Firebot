@@ -5,19 +5,19 @@ const logger = require("../../logwrapper");
 const profileManager = require("../../common/profile-manager");
 const frontendCommunicator = require("../../common/frontend-communicator");
 
-let getCommandsDb = () => profileManager.getJsonDbInProfile("/chat/commands");
+const getCommandsDb = () => profileManager.getJsonDbInProfile("/chat/commands");
 
 // in memory commands storage
-let commandsCache = {
+const commandsCache = {
     systemCommandOverrides: {},
     customCommands: []
 };
 
 function saveSystemCommandOverride(command) {
-    let commandDb = getCommandsDb();
+    const commandDb = getCommandsDb();
 
     // remove forward slashes just in case
-    let id = command.id.replace("/", "");
+    const id = command.id.replace("/", "");
 
     try {
         commandDb.push("/systemCommandOverrides/" + id, command);
@@ -25,7 +25,7 @@ function saveSystemCommandOverride(command) {
 }
 
 function removeSystemCommandOverride(id) {
-    let commandDb = getCommandsDb();
+    const commandDb = getCommandsDb();
 
     // remove forward slashes just in case
     id = id.replace("/", "");
@@ -41,7 +41,7 @@ function refreshCommandCache(retry = 1) {
     // of sync.
 
     // Get commands file
-    let commandsDb = getCommandsDb();
+    const commandsDb = getCommandsDb();
 
     if (commandsDb != null) {
         if (retry <= 3) {
@@ -82,7 +82,7 @@ function refreshCommandCache(retry = 1) {
 }
 
 function saveCustomCommand(command) {
-    let commandDb = getCommandsDb();
+    const commandDb = getCommandsDb();
 
     if (command.id == null || command.id === "") {
         // generate id for new command

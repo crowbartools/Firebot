@@ -7,14 +7,14 @@
     angular
         .module("firebotApp")
         .factory("overlayUrlHelper", function(settingsService) {
-            let service = {};
+            const service = {};
 
             service.getOverlayPath = function(instanceName) {
                 let overlayPath = dataAccess.getPathInUserData("overlay.html");
 
-                let port = settingsService.getWebServerPort();
+                const port = settingsService.getWebServerPort();
 
-                let params = {};
+                const params = {};
                 if (port !== 7472 && !isNaN(port)) {
                     params["port"] = settingsService.getWebServerPort();
                 }
@@ -25,10 +25,10 @@
 
                 let paramCount = 0;
                 Object.entries(params).forEach(p => {
-                    let key = p[0],
+                    const key = p[0],
                         value = p[1];
 
-                    let prefix = paramCount === 0 ? "?" : "&";
+                    const prefix = paramCount === 0 ? "?" : "&";
 
                     overlayPath += `${prefix}${key}=${value}`;
 

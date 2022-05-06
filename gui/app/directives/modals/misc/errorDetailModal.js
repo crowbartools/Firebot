@@ -26,7 +26,7 @@
                 dismiss: '&'
             },
             controller: function() {
-                let $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.title = "Error";
                 $ctrl.details = [];

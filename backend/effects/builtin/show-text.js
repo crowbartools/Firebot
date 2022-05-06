@@ -187,7 +187,7 @@ const showText = {
             $scope.editor.summernote('restoreRange');
             $scope.editor.summernote("focus");
             $timeout(() => {
-                let display = variable.usage ? variable.usage : variable.handle;
+                const display = variable.usage ? variable.usage : variable.handle;
                 $scope.editor.summernote("insertText", "$" + display);
             }, 100);
 
@@ -209,7 +209,7 @@ const showText = {
             fontNamesIgnoreCheck: ['Open Sans', 'Roboto']
         };
 
-        let installedFontNames = fontManager.getInstalledFonts().map(f => f.name);
+        const installedFontNames = fontManager.getInstalledFonts().map(f => f.name);
         $scope.editorOptions.fontNames = $scope.editorOptions.fontNames.concat(installedFontNames);
         $scope.editorOptions.fontNamesIgnoreCheck = $scope.editorOptions.fontNamesIgnoreCheck.concat(installedFontNames);
 
@@ -222,7 +222,7 @@ const showText = {
    * Used to validate fields in the option template.
    */
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.text == null) {
             errors.push("Please enter some text to show.");
         }
@@ -234,10 +234,10 @@ const showText = {
     onTriggerEvent: async event => {
 
         // What should this do when triggered.
-        let effect = event.effect;
+        const effect = event.effect;
 
         //data transfer object
-        let dto = {
+        const dto = {
             text: effect.text,
             inbetweenAnimation: effect.inbetweenAnimation,
             inbetweenDelay: effect.inbetweenDelay,
@@ -260,7 +260,7 @@ const showText = {
             overlayInstance: effect.overlayInstance
         };
 
-        let position = dto.position;
+        const position = dto.position;
         if (position === "Random") {
             logger.debug("Getting random preset location");
             dto.position = getRandomPresetLocation(); //eslint-disable-line no-undef
@@ -319,14 +319,14 @@ const showText = {
             name: "text",
             onOverlayEvent: event => {
 
-                let data = event;
+                const data = event;
 
-                let positionData = {
+                const positionData = {
                     position: data.position,
                     customCoords: data.customCoords
                 };
 
-                let animationData = {
+                const animationData = {
                     enterAnimation: data.enterAnimation,
                     enterDuration: data.enterDuration,
                     inbetweenAnimation: data.inbetweenAnimation,
@@ -338,7 +338,7 @@ const showText = {
                     totalDuration: parseFloat(data.duration) * 1000
                 };
 
-                let params = new URL(location).searchParams;
+                const params = new URL(location).searchParams;
 
                 let textAlign = data.justify;
                 if (data.justify === "flex-start") {
@@ -371,7 +371,7 @@ const showText = {
                     styles += `border: 2px solid ${borderColor};`;
                 }
 
-                let textDiv = `
+                const textDiv = `
                     <div class="text-container"
                         style="${styles}">
                         <div style="${innerStyles}">${data.text}</div>

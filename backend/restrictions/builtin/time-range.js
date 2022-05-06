@@ -69,9 +69,9 @@ const model = {
             'Saturday'
         ];
 
-        $scope.getAllDays = function (){
+        $scope.getAllDays = function () {
             return $scope.allDays;
-        }
+        };
 
         $scope.isDayChecked = function(day) {
             return $scope.restriction.days.includes(day);
@@ -90,23 +90,23 @@ const model = {
             date = new Date(date);
             let hours = date.getHours();
             let minutes = date.getMinutes();
-            let ampm = hours >= 12 ? 'pm' : 'am';
+            const ampm = hours >= 12 ? 'pm' : 'am';
             hours = hours % 12;
             hours = hours ? hours : 12; // the hour '0' should be '12'
             minutes = minutes < 10 ? '0' + minutes : minutes;
 
-            if(isNaN(hours)){
+            if (isNaN(hours)) {
                 hours = 12;
             }
 
-            if(isNaN(minutes)){
+            if (isNaN(minutes)) {
                 minutes = "00";
             }
 
             return hours + ':' + minutes + ' ' + ampm;
         }
 
-        function daySorter(a,b){
+        function daySorter(a, b) {
             const dayOrder = [
                 'Sunday',
                 'Monday',
@@ -123,14 +123,14 @@ const model = {
             const days = restriction.days;
             let output = "None selected";
             if (days.length > 0) {
-                let sortedDays = days.sort(daySorter);
+                const sortedDays = days.sort(daySorter);
                 output = sortedDays.join(", ");
             }
             return `Days (${output})`;
         } else if (restriction.mode === "time") {
             const startTime = formatAMPM(restriction.startTime);
             const endTime = formatAMPM(restriction.endTime);
-    
+
             return "Between " + startTime + " - " + endTime;
         }
 
@@ -142,19 +142,19 @@ const model = {
     */
     predicate: async (trigger, restrictionData) => {
         return new Promise(async (resolve, reject) => {
-            
+
             if (restrictionData.mode === "days") {
-                const currentDayOfWeek = new Date().toLocaleString('en-us', {  weekday: 'long' });
+                const currentDayOfWeek = new Date().toLocaleString('en-us', { weekday: 'long' });
                 const restrictionDays = restrictionData.days;
-                if(restrictionDays.includes(currentDayOfWeek)){
+                if (restrictionDays.includes(currentDayOfWeek)) {
                     resolve();
                 } else {
                     reject('Day must be ' + restrictionDays.join(", ") + '.');
                 }
-                
+
             } else if (restrictionData.mode === "time") {
                 const time = moment(),
-                startTime = moment(restrictionData.startTime);
+                    startTime = moment(restrictionData.startTime);
                 let endTime = moment(restrictionData.endTime);
 
                 if (endTime.isSameOrBefore(startTime)) {

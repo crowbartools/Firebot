@@ -81,7 +81,7 @@
             integrationService,
             connectionManager
         ) {
-            let $ctrl = this;
+            const $ctrl = this;
 
             $ctrl.$onInit = function() {
                 $ctrl.conn = connectionService;
@@ -103,13 +103,13 @@
             };
 
             $ctrl.serviceIsChecked = function(service) {
-                let sidebarControlledServices = settingsService.getSidebarControlledServices();
+                const sidebarControlledServices = settingsService.getSidebarControlledServices();
                 return sidebarControlledServices.includes(service);
             };
 
             let overlayStatusId = 0;
             $ctrl.overlayConnectionMessage = function() {
-                let connectionStatus = connectionManager.getConnectionStatusForService(
+                const connectionStatus = connectionManager.getConnectionStatusForService(
                     "overlay"
                 );
 

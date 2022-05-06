@@ -25,7 +25,7 @@ let splashscreenWindow;
 
 
 function createMainWindow() {
-    let mainWindowState = windowStateKeeper({
+    const mainWindowState = windowStateKeeper({
         defaultWidth: 1280,
         defaultHeight: 720
     });

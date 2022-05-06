@@ -34,7 +34,7 @@ const model = {
         if (isObjectOrArray(data)) {
             return JSON.stringify(data);
         }
-        
+
         return data;
     }
 };

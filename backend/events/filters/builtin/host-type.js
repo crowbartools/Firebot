@@ -39,10 +39,10 @@ module.exports = {
     },
     predicate: (filterSettings, eventData) => {
 
-        let { value } = filterSettings;
-        let { eventMeta } = eventData;
+        const { value } = filterSettings;
+        const { eventMeta } = eventData;
 
-        let isAutohost = eventMeta.auto === true;
+        const isAutohost = eventMeta.auto === true;
 
         switch (value) {
         case "auto": {

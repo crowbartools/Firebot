@@ -9,7 +9,7 @@
         .module("firebotApp")
         .factory("activityFeedService", function($sce, backendCommunicator, utilityService,
             settingsService, ngToast) {
-            let service = {};
+            const service = {};
 
             service.allActivities = [];
             service.activities = [];

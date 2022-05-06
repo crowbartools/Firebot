@@ -5,7 +5,7 @@ const { OutputDataType, VariableCategory } = require("../../../shared/variable-c
 
 const { viewerHasRoleByName } = require('../../roles/role-helpers');
 
-let triggers = {};
+const triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
 triggers[EffectTrigger.EVENT] = true;
 triggers[EffectTrigger.MANUAL] = true;

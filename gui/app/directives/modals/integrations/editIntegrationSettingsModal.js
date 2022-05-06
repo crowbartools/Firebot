@@ -32,7 +32,7 @@
             dismiss: "&"
         },
         controller: function(ngToast, utilityService) {
-            let $ctrl = this;
+            const $ctrl = this;
 
             $ctrl.integration = null;
 
@@ -79,8 +79,8 @@
 
             function validate() {
                 if ($ctrl.integration.settingCategories) {
-                    for (let category of Object.values($ctrl.integration.settingCategories)) {
-                        for (let setting of Object.values(category.settings)) {
+                    for (const category of Object.values($ctrl.integration.settingCategories)) {
+                        for (const setting of Object.values(category.settings)) {
                             if (setting.validation) {
                                 if (setting.validation.required) {
                                     if (setting.type === 'string' && setting.value === "") {

@@ -162,7 +162,7 @@
             </div>
         `,
         controller: function(viewerRolesService, utilityService) {
-            let $ctrl = this;
+            const $ctrl = this;
 
             $ctrl.subcommandTypeTitle = "";
 
@@ -224,9 +224,9 @@
             };
 
             $ctrl.getPermissionType = () => {
-                let command = $ctrl.subcommand;
+                const command = $ctrl.subcommand;
 
-                let permissions = command.restrictionData && command.restrictionData.restrictions &&
+                const permissions = command.restrictionData && command.restrictionData.restrictions &&
                 command.restrictionData.restrictions.find(r => r.type === "firebot:permissions");
 
                 if (permissions) {
@@ -241,13 +241,13 @@
             };
 
             $ctrl.getPermissionTooltip = () => {
-                let command = $ctrl.subcommand;
-                let permissions = command.restrictionData && command.restrictionData.restrictions &&
+                const command = $ctrl.subcommand;
+                const permissions = command.restrictionData && command.restrictionData.restrictions &&
                 command.restrictionData.restrictions.find(r => r.type === "firebot:permissions");
 
                 if (permissions) {
                     if (permissions.mode === "roles") {
-                        let roleIds = permissions.roleIds;
+                        const roleIds = permissions.roleIds;
                         let output = "None selected";
                         if (roleIds.length > 0) {
                             output = roleIds

@@ -37,7 +37,7 @@ const addFirebotLogMessage = {
         $scope.effect.logLevel = $scope.effect.logLevel ?? "Info";
     },
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (!(effect.logMessage?.length > 0)) {
             errors.push("Please input a log message.");
         }
@@ -48,22 +48,22 @@ const addFirebotLogMessage = {
     },
     onTriggerEvent: async ({ effect }) => {
         switch (effect.logLevel) {
-            case "Error":
-                logger.error(effect.logMessage);
-                break;
+        case "Error":
+            logger.error(effect.logMessage);
+            break;
 
-            case "Warning":
-                logger.warn(effect.logMessage);
-                break;
+        case "Warning":
+            logger.warn(effect.logMessage);
+            break;
 
-            case "Debug":
-                logger.debug(effect.logMessage);
-                break;
+        case "Debug":
+            logger.debug(effect.logMessage);
+            break;
 
             // Use Info as default
-            default:
-                logger.info(effect.logMessage);
-                break;
+        default:
+            logger.info(effect.logMessage);
+            break;
         }
     }
 };

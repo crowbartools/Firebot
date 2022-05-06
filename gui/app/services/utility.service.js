@@ -18,7 +18,7 @@
             $timeout,
             backendCommunicator
         ) {
-            let service = {};
+            const service = {};
 
 
             backendCommunicator.on("requestIntegrationAccountId", (data) => {
@@ -54,12 +54,12 @@
                 });
             };
 
-            let slidingModals = [];
+            const slidingModals = [];
             const shiftAmount = 125;
             service.addSlidingModal = function(promise) {
                 // update previous values
                 slidingModals.forEach(em => {
-                    let newAmount = em.transform + shiftAmount;
+                    const newAmount = em.transform + shiftAmount;
                     em.transform = newAmount;
                     em.element.css("transform", `translate(-${newAmount}px, 0)`);
                 });
@@ -75,18 +75,18 @@
 
                 // update previous values
                 slidingModals.forEach(em => {
-                    let newAmount = em.transform - shiftAmount;
+                    const newAmount = em.transform - shiftAmount;
                     em.transform = newAmount;
                     em.element.css("transform", `translate(-${newAmount}px, 0)`);
                 });
             };
 
             service.closeToModalId = function(modalId) {
-                let minId = modalId.replace("modal", "");
+                const minId = modalId.replace("modal", "");
 
-                let closeList = [];
+                const closeList = [];
                 slidingModals.forEach(m => {
-                    let nextId = m.id.replace("modal", "");
+                    const nextId = m.id.replace("modal", "");
                     if (minId < nextId && minId !== nextId) {
                         closeList.push(m);
                     }
@@ -98,9 +98,9 @@
             };
 
             service.saveAllSlidingModals = function() {
-                let lastEditModalId = slidingModals[0].id;
+                const lastEditModalId = slidingModals[0].id;
 
-                let saveList = [];
+                const saveList = [];
                 slidingModals.forEach(m => {
                     if (m.id !== lastEditModalId) {
                         saveList.push(m);
@@ -132,20 +132,20 @@
                 }
 
                 // Pull values out of the context
-                let component = showModalContext.component;
-                let templateUrl = showModalContext.templateUrl;
-                let controllerFunc = showModalContext.controllerFunc;
-                let resolveObj = showModalContext.resolveObj || {};
+                const component = showModalContext.component;
+                const templateUrl = showModalContext.templateUrl;
+                const controllerFunc = showModalContext.controllerFunc;
+                const resolveObj = showModalContext.resolveObj || {};
                 let closeCallback = showModalContext.closeCallback;
                 let dismissCallback = showModalContext.dismissCallback;
-                let windowClass = showModalContext.windowClass ? showModalContext.windowClass : "";
+                const windowClass = showModalContext.windowClass ? showModalContext.windowClass : "";
 
-                let modalId = "modal" + _.uniqueId().toString();
+                const modalId = "modal" + _.uniqueId().toString();
                 resolveObj.modalId = () => {
                     return modalId;
                 };
 
-                let modal = {
+                const modal = {
                     ariaLabelledBy: "modal-title",
                     ariaDescribedBy: "modal-body",
                     resolve: resolveObj,
@@ -164,7 +164,7 @@
                 }
 
                 // Show the modal
-                let modalInstance = $uibModal.open(modal);
+                const modalInstance = $uibModal.open(modal);
 
                 // If no callbacks were defined, create blank ones. This avoids a console error
                 if (typeof closeCallback !== "function") {
@@ -255,7 +255,7 @@
              * OVERLAY INFO MODAL
              */
             service.showOverlayInfoModal = function(instanceName) {
-                let overlayInfoModalContext = {
+                const overlayInfoModalContext = {
                     templateUrl: "overlayInfoModal.html",
                     // This is the controller to be used for the modal.
                     controllerFunc: (
@@ -284,13 +284,13 @@
                         $scope.buildOverlayPath = () => {
                             let overlayPath = dataAccess.getPathInUserData("overlay.html");
 
-                            let port = settingsService.getWebServerPort();
+                            const port = settingsService.getWebServerPort();
 
                             if ($scope.selectedBroadcastingSoftware === "Direct Link/2 PC Setup") {
                                 overlayPath = `http://localhost:${port}/overlay`;
                             }
 
-                            let params = {};
+                            const params = {};
                             if ($scope.selectedBroadcastingSoftware !== "Direct Link/2 PC Setup") {
                                 if (port !== 7472 && !isNaN(port)) {
                                     params["port"] = settingsService.getWebServerPort();
@@ -305,10 +305,10 @@
 
                             let paramCount = 0;
                             Object.entries(params).forEach(p => {
-                                let key = p[0],
+                                const key = p[0],
                                     value = p[1];
 
-                                let prefix = paramCount === 0 ? "?" : "&";
+                                const prefix = paramCount === 0 ? "?" : "&";
 
                                 overlayPath += `${prefix}${key}=${value}`;
 
@@ -349,7 +349,7 @@
              * OVERLAY INFO MODAL
              */
             service.showOverlayEventsModal = function() {
-                let overlayEventsModalContext = {
+                const overlayEventsModalContext = {
                     templateUrl: "overlayEventsModal.html",
                     // This is the controller to be used for the modal.
                     controllerFunc: (
@@ -377,11 +377,11 @@
              * JUST UPDATED MODAL
              */
             service.showUpdatedModal = function() {
-                let justUpdatedModalContext = {
+                const justUpdatedModalContext = {
                     templateUrl: "updatedModal.html",
                     // This is the controller to be used for the modal.
                     controllerFunc: ($scope, $uibModalInstance) => {
-                        let appVersion = electron.remote.app.getVersion();
+                        const appVersion = electron.remote.app.getVersion();
 
                         $scope.appVersion = `v${appVersion}`;
 
@@ -408,7 +408,7 @@
                 previousErrorMessage = errorMessage;
 
                 $rootScope.showSpinner = false;
-                let errorModalContext = {
+                const errorModalContext = {
                     templateUrl: "errorModal.html",
                     // This is the controller to be used for the modal.
                     controllerFunc: ($scope, $uibModalInstance, message) => {
@@ -454,7 +454,7 @@
              * DOWNLOAD MODAL
              */
             service.showDownloadModal = function() {
-                let downloadModalContext = {
+                const downloadModalContext = {
                     templateUrl: "downloadModal.html",
                     keyboard: false,
                     backdrop: "static",
@@ -472,7 +472,7 @@
                         $scope.downloadComplete = false;
 
                         // Update error listener
-                        let registerRequest = {
+                        const registerRequest = {
                             type: listenerService.ListenerType.UPDATE_ERROR,
                             runOnce: true
                         };
@@ -483,7 +483,7 @@
                         });
 
                         // Update downloaded listener
-                        let updateDownloadedListenerRequest = {
+                        const updateDownloadedListenerRequest = {
                             type: listenerService.ListenerType.UPDATE_DOWNLOADED,
                             runOnce: true
                         };
@@ -557,7 +557,7 @@
                 previousInfoMessage = infoMessage;
 
                 $rootScope.showSpinner = false;
-                let infoModalContext = {
+                const infoModalContext = {
                     templateUrl: "infoModal.html",
                     // This is the controller to be used for the modal.
                     controllerFunc: ($scope, $uibModalInstance, message) => {
@@ -595,7 +595,7 @@
                 triggerMeta,
                 isNew
             ) {
-                let showEditEffectContext = {
+                const showEditEffectContext = {
                     templateUrl: "editEffectModal.html",
                     keyboard: false,
                     backdrop: "static",
@@ -700,7 +700,7 @@
                                 return;
                             }
 
-                            let currentId = $scope.effect.id;
+                            const currentId = $scope.effect.id;
                             $scope.effect = {
                                 id: currentId,
                                 type: effectType.id
@@ -714,7 +714,7 @@
 
                         utilityService.addSlidingModal(
                             $uibModalInstance.rendered.then(() => {
-                                let modalElement = $("." + modalId).children();
+                                const modalElement = $("." + modalId).children();
                                 return {
                                     element: modalElement,
                                     name:
@@ -748,7 +748,7 @@
                                     if (resp == null) {
                                         return;
                                     }
-                                    let { selectedEffectDef } = resp;
+                                    const { selectedEffectDef } = resp;
 
                                     $scope.effectTypeChanged(selectedEffectDef);
                                 }
@@ -763,13 +763,13 @@
                             }
 
                             // validate options
-                            let errors = $scope.effectDefinition.optionsValidator(
+                            const errors = $scope.effectDefinition.optionsValidator(
                                 $scope.effect,
                                 $scope
                             );
 
                             if (errors != null && errors.length > 0) {
-                                for (let error of errors) {
+                                for (const error of errors) {
                                     ngToast.create(error);
                                 }
                                 return false;
@@ -777,7 +777,7 @@
 
                             const { triggerType, triggerMeta } = $scope;
                             try {
-                                let variableErrors = await backendCommunicator.fireEventAsync("validateVariables", {
+                                const variableErrors = await backendCommunicator.fireEventAsync("validateVariables", {
                                     data: $scope.effect,
                                     trigger: {
                                         type: triggerType,
@@ -788,7 +788,7 @@
                                 if (variableErrors && variableErrors.length > 0) {
                                     const firstError = variableErrors[0];
 
-                                    let errorDetails = [];
+                                    const errorDetails = [];
 
                                     if (firstError.varname) {
                                         errorDetails.push({
@@ -852,7 +852,7 @@
 
 
                         $scope.saveAll = async function() {
-                            let valid = await validateEffect();
+                            const valid = await validateEffect();
                             if (!valid) {
                                 return;
                             }
@@ -862,7 +862,7 @@
 
                         $scope.save = async function() {
 
-                            let valid = await validateEffect();
+                            const valid = await validateEffect();
 
                             if (!valid) {
                                 return;
@@ -890,7 +890,7 @@
                         };
 
                         $scope.editLabel = () => {
-                            let label = $scope.effect.effectLabel;
+                            const label = $scope.effect.effectLabel;
                             utilityService.openGetInputModal(
                                 {
                                     model: label,
@@ -979,7 +979,7 @@
 
             service.showConfirmationModal = function(confirmModalRequest) {
                 return new Promise(resolve => {
-                    let deleteBoardModalContext = {
+                    const deleteBoardModalContext = {
                         templateUrl: "./templates/misc-modals/confirmationModal.html",
                         resolveObj: {
                             title: () => {
@@ -1082,17 +1082,17 @@
                 let timeout;
 
                 return function executedFunction() {
-                    let context = this;
-                    let args = arguments;
+                    const context = this;
+                    const args = arguments;
 
-                    let later = function() {
+                    const later = function() {
                         timeout = null;
                         if (!immediate) {
                             func.apply(context, args);
                         }
                     };
 
-                    let callNow = immediate && !timeout;
+                    const callNow = immediate && !timeout;
 
                     $timeout.cancel(timeout);
 

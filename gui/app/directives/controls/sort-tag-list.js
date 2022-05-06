@@ -21,7 +21,7 @@
                 </div>
             `,
             controller: function(utilityService) {
-                let $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.getTagName = id => {
                     const tag = $ctrl.allTags.find(t => t.id === id);
@@ -40,7 +40,7 @@
 
                 $ctrl.addTag = () => {
 
-                    let remainingTags = $ctrl.allTags.filter(t => !$ctrl.currentTagIds.some(id => id === t.id));
+                    const remainingTags = $ctrl.allTags.filter(t => !$ctrl.currentTagIds.some(id => id === t.id));
 
                     utilityService.openSelectModal(
                         {

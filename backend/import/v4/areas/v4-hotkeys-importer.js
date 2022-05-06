@@ -10,9 +10,9 @@ const frontendCommunicator = require("../../../common/frontend-communicator");
 const effectsMapper = require("../v4-effect-mapper");
 
 function saveHotkeysToFile(hotkeys) {
-    let hotkeyDb = profileManager.getJsonDbInProfile("/hotkeys");
+    const hotkeyDb = profileManager.getJsonDbInProfile("/hotkeys");
     try {
-        let hotkeyData = hotkeyDb.getData("/");
+        const hotkeyData = hotkeyDb.getData("/");
         let currentHotkeys = [];
         if (hotkeyData != null && hotkeyData.length > 0) {
             currentHotkeys = hotkeyData;
@@ -33,14 +33,14 @@ async function checkForV4Hotkeys() {
 }
 
 exports.run = async () => {
-    let incompatibilityWarnings = [];
+    const incompatibilityWarnings = [];
 
-    let v4HotkeysExist = await checkForV4Hotkeys();
+    const v4HotkeysExist = await checkForV4Hotkeys();
 
     if (v4HotkeysExist) {
         let v4Hotkeys;
         try {
-            let v4HotkeysDb = importHelpers.getJsonDbInV4Data("/hotkeys.json");
+            const v4HotkeysDb = importHelpers.getJsonDbInV4Data("/hotkeys.json");
             v4Hotkeys = v4HotkeysDb.getData("/");
         } catch (err) {
             logger.warn("Error while attempting to load v4 hotkeys db.", err);
@@ -48,25 +48,25 @@ exports.run = async () => {
 
         if (v4Hotkeys != null) {
 
-            let v5Hotkeys = [];
-            for (let v4Hotkey of v4Hotkeys) {
+            const v5Hotkeys = [];
+            for (const v4Hotkey of v4Hotkeys) {
 
                 if (v4Hotkey.action == null || v4Hotkey.action.type !== "Run Effects") {
                     incompatibilityWarnings.push(`Could not import hotkey '${v4Hotkey.name}' because: V5 hotkeys have fundementally changed and don't support v4 action type '${v4Hotkey.action.type}'`);
                     continue;
                 }
 
-                let v5Hotkey = {
+                const v5Hotkey = {
                     id: uuid(),
                     active: v4Hotkey.active !== false,
                     code: v4Hotkey.code,
                     name: v4Hotkey.name
                 };
 
-                let effects = v4Hotkey.action.metadata != null ? v4Hotkey.action.metadata.effects : [];
+                const effects = v4Hotkey.action.metadata != null ? v4Hotkey.action.metadata.effects : [];
 
                 if (effects != null) {
-                    let effectsMapResult = effectsMapper.mapV4EffectList(effects, { type: "Event", name: v4Hotkey.name });
+                    const effectsMapResult = effectsMapper.mapV4EffectList(effects, { type: "Event", name: v4Hotkey.name });
                     if (effectsMapResult) {
                         v5Hotkey.effects = effectsMapResult.effects;
                         effectsMapResult.incompatibilityWarnings.forEach(w => incompatibilityWarnings.push(w));

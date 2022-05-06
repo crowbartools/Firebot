@@ -35,8 +35,8 @@ class ReplaceVariableManager extends EventEmitter {
 
     getReplaceVariables () {
         // Map register variables Map to array
-        let registeredVariables = this._registeredVariableHandlers;
-        let variables = [];
+        const registeredVariables = this._registeredVariableHandlers;
+        const variables = [];
         /* eslint-disable-next-line no-unused-vars */
         for (const [key, value] of registeredVariables) {
             variables.push(value);
@@ -57,16 +57,16 @@ class ReplaceVariableManager extends EventEmitter {
     }
 
     async findAndReplaceVariables(data, trigger) {
-        let keys = Object.keys(data);
+        const keys = Object.keys(data);
 
-        for (let key of keys) {
-            let value = data[key];
+        for (const key of keys) {
+            const value = data[key];
 
             if (value && typeof value === "string") {
 
                 if (value.includes("$")) {
                     let replacedValue = value;
-                    let triggerId = util.getTriggerIdFromTriggerData(trigger);
+                    const triggerId = util.getTriggerIdFromTriggerData(trigger);
                     try {
                         replacedValue = await expressionish({
                             handlers: this._registeredVariableHandlers,
@@ -96,10 +96,10 @@ class ReplaceVariableManager extends EventEmitter {
             errors = [];
         }
 
-        let keys = Object.keys(data);
-        for (let key of keys) {
+        const keys = Object.keys(data);
+        for (const key of keys) {
 
-            let value = data[key];
+            const value = data[key];
 
             if (value && typeof value === "string") {
                 if (value.includes("$")) {
@@ -173,7 +173,7 @@ frontendCommunicator.on("getReplaceVariableDefinitions", trigger => {
                     return true;
                 }
 
-                let variableTrigger = v.triggers[trigger.type];
+                const variableTrigger = v.triggers[trigger.type];
                 if (variableTrigger === true) {
                     return true;
                 }
@@ -193,7 +193,7 @@ frontendCommunicator.on("getReplaceVariableDefinitions", trigger => {
 
 frontendCommunicator.onAsync("validateVariables", async eventData => {
     logger.debug("got 'validateVariables' request");
-    let { data, trigger } = eventData;
+    const { data, trigger } = eventData;
 
     let errors = [];
     try {

@@ -7,7 +7,7 @@
         .module("firebotApp")
         .factory("connectionService", function(listenerService, soundService, $rootScope, backendCommunicator,
             logger, accountAccess, settingsService, utilityService, integrationService) {
-            let service = {};
+            const service = {};
 
             backendCommunicator.on("accountUpdate", accounts => {
                 service.accounts = accounts;
@@ -18,7 +18,7 @@
             };
             service.getAccounts();
 
-            let defaultPhotoUrl = "../images/placeholders/nologin.png";
+            const defaultPhotoUrl = "../images/placeholders/nologin.png";
 
             /**
              * Login Stuff
@@ -88,7 +88,7 @@
 
                 let activeProfileIds;
                 try {
-                    let globalSettingDb = dataAccess.getJsonDbInUserData("./global-settings");
+                    const globalSettingDb = dataAccess.getJsonDbInUserData("./global-settings");
                     activeProfileIds = globalSettingDb.getData("./profiles/activeProfiles");
                 } catch (err) {
                     logger.warn("Couldnt load active profiles.");
@@ -99,9 +99,9 @@
                     return;
                 }
 
-                let profiles = [];
-                for (let profileId of activeProfileIds) {
-                    let profile = {
+                const profiles = [];
+                for (const profileId of activeProfileIds) {
+                    const profile = {
                         username: "User",
                         avatar: defaultPhotoUrl,
                         profileId: profileId
@@ -111,7 +111,7 @@
                     // If it exists, overwrite defaults.
                     let streamer;
                     try {
-                        let profileDb = dataAccess.getJsonDbInUserData("./profiles/" + profileId + "/auth-twitch");
+                        const profileDb = dataAccess.getJsonDbInUserData("./profiles/" + profileId + "/auth-twitch");
                         streamer = profileDb.getData("/streamer");
                     } catch (err) {
                         logger.info("Couldnt get streamer data for profile " + profileId + " while updating the UI. Its possible this account hasnt logged in yet.");
@@ -260,7 +260,7 @@
             });
 
             const playConnectionStatusSound = utilityService.debounce(connectionState => {
-                let soundType = connectionState === ConnectionState.Connected ? "Online" : "Offline";
+                const soundType = connectionState === ConnectionState.Connected ? "Online" : "Offline";
                 soundService.connectSound(soundType);
             }, 250);
 
@@ -317,7 +317,7 @@
 
             // Connection Monitor for Overlay
             // Recieves event from main process that connection has been established or disconnected.
-            let ListenerType = listenerService.ListenerType;
+            const ListenerType = listenerService.ListenerType;
             listenerService.registerListener(
                 { type: ListenerType.OVERLAY_CONNECTION_STATUS },
                 overlayStatusData => {

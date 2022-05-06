@@ -26,7 +26,7 @@ function cacheNewEvent(sourceId, eventId, eventSettingId, ttlInSecs = undefined,
         key += `:${eventMetaKey}`;
     }
 
-    let eventCached = userEventCache.get(key);
+    const eventCached = userEventCache.get(key);
     if (!eventCached) {
         // event for this user hasnt fired yet
         // Update the cache.
@@ -81,7 +81,7 @@ async function onEventTriggered(event, source, meta, isManual = false, isRetrigg
         es => es.sourceId === source.id && es.eventId === event.id
     );
 
-    for (let eventSetting of eventSettings) {
+    for (const eventSetting of eventSettings) {
 
         if (!isRetrigger && (isSimulation || !isManual) && (eventSetting.customCooldown || event.cached)) {
             let cacheTtlInSecs;
@@ -95,14 +95,14 @@ async function onEventTriggered(event, source, meta, isManual = false, isRetrigg
                 cacheMetaKey = event.cacheMetaKey && meta ? meta[event.cacheMetaKey] : null;
             }
 
-            let alreadyCached = cacheNewEvent(source.id, event.id, eventSetting.id, cacheTtlInSecs, cacheMetaKey);
+            const alreadyCached = cacheNewEvent(source.id, event.id, eventSetting.id, cacheTtlInSecs, cacheMetaKey);
             if (alreadyCached) {
                 return;
             }
         }
 
         if (eventSetting.filterData && (isSimulation || !isManual)) {
-            let passed = await filterManager.runFilters(eventSetting.filterData, {
+            const passed = await filterManager.runFilters(eventSetting.filterData, {
                 eventSourceId: source.id,
                 eventId: event.id,
                 eventMeta: meta

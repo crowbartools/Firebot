@@ -103,7 +103,7 @@ async function getUserCurrent(accessToken) {
 }
 
 authManager.on("auth-success", async authData => {
-    let { providerId, tokenData } = authData;
+    const { providerId, tokenData } = authData;
 
     if (providerId === STREAMER_ACCOUNT_PROVIDER_ID || providerId === BOT_ACCOUNT_PROVIDER_ID) {
         const userData = await getUserCurrent(tokenData.access_token);
@@ -111,8 +111,8 @@ authManager.on("auth-success", async authData => {
             return;
         }
 
-        let accountType = providerId === STREAMER_ACCOUNT_PROVIDER_ID ? "streamer" : "bot";
-        let accountObject = {
+        const accountType = providerId === STREAMER_ACCOUNT_PROVIDER_ID ? "streamer" : "bot";
+        const accountObject = {
             username: userData.login,
             displayName: userData.display_name,
             channelId: userData.id,

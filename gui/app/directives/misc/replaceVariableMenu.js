@@ -56,7 +56,7 @@
                     }
 
                     function getVariables() {
-                        let { trigger, triggerMeta } = findTriggerDataScope();
+                        const { trigger, triggerMeta } = findTriggerDataScope();
 
                         if (!$scope.disableVariableMenu) {
                             $scope.variables = backendCommunicator.fireEventSync("getReplaceVariableDefinitions", {
@@ -104,13 +104,13 @@
                             $scope.onVariableInsert({ variable: variable});
                             $scope.toggleMenu();
                         } else {
-                            let currentModel = $scope.modelValue ? $scope.modelValue : "";
+                            const currentModel = $scope.modelValue ? $scope.modelValue : "";
 
-                            let insertIndex = $element.prop("selectionStart") || currentModel.length;
+                            const insertIndex = $element.prop("selectionStart") || currentModel.length;
 
-                            let display = variable.usage ? variable.usage : variable.handle;
+                            const display = variable.usage ? variable.usage : variable.handle;
 
-                            let updatedModel = insertAt(currentModel, "$" + display, insertIndex);
+                            const updatedModel = insertAt(currentModel, "$" + display, insertIndex);
 
                             $scope.modelValue = updatedModel;
                         }
@@ -119,13 +119,13 @@
                 },
                 link: function(scope, element) {
 
-                    let wrapper = angular.element(`
+                    const wrapper = angular.element(`
                         <div style="position: relative;"></div>`
                     );
-                    let compiled = $compile(wrapper)(scope);
+                    const compiled = $compile(wrapper)(scope);
                     element.wrap(compiled);
 
-                    let button = angular.element(`<span class="variables-btn ${scope.buttonPosition ? scope.buttonPosition : ''}" ng-click="toggleMenu()">$vars</span>`);
+                    const button = angular.element(`<span class="variables-btn ${scope.buttonPosition ? scope.buttonPosition : ''}" ng-click="toggleMenu()">$vars</span>`);
                     $compile(button)(scope);
 
                     if (!scope.disableVariableMenu) {

@@ -20,7 +20,7 @@
                 </div>
             `,
             controller: function(keyHelper, logger) {
-                let $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.keyDisplay = null;
                 $ctrl.isCapturingKey = false;
@@ -32,7 +32,7 @@
 
                 $ctrl.$onInit = function() {
                     if ($ctrl.keyCode != null) {
-                        let keyName = keyHelper.getKeyboardKeyName($ctrl.keyCode);
+                        const keyName = keyHelper.getKeyboardKeyName($ctrl.keyCode);
                         if (keyName != null && keyName.length > 0) {
                             $ctrl.keyDisplay = keyName;
                         } else {
@@ -46,7 +46,7 @@
                         return;
                     }
 
-                    let keyName = keyHelper.getKeyboardKeyName(event.keyCode);
+                    const keyName = keyHelper.getKeyboardKeyName(event.keyCode);
 
                     //if key name is empty we dont support this keycode
                     if (keyName != null && keyName.length > 0) {

@@ -9,7 +9,7 @@
             logger,
             listenerService
         ) {
-            let service = {};
+            const service = {};
 
             function showEvents(data) {
                 let showEventsPosition = data.showEventsPosition;
@@ -19,8 +19,8 @@
                 let showEventsColor = data.showEventsColor;
                 let showEventsBackgroundColor = data.showEventsBackgroundColor;
                 let showEventsFontSize = data.showEventsFontSize;
-                let showEventsType = data.showEventsType;
-                let showEventsAlignment = data.showEventsAlignment;
+                const showEventsType = data.showEventsType;
+                const showEventsAlignment = data.showEventsAlignment;
 
                 // Set defaults if they werent filled out.
                 if (showEventsPosition === "" || showEventsPosition == null) {
@@ -49,7 +49,7 @@
                 }
 
                 // Compile data and send to overlay.
-                let broadCastData = {
+                const broadCastData = {
                     event: "showEvents",
                     showEventsType: showEventsType,
                     resourceToken: data.resourceToken,
@@ -71,7 +71,7 @@
             }
 
             function showImage(data) {
-                let filepath = data.filepath;
+                const filepath = data.filepath;
                 let imagePosition = data.imagePosition;
                 let imageHeight = data.imageHeight;
                 let imageWidth = data.imageWidth;
@@ -92,7 +92,7 @@
                 }
 
                 // Compile data and send to overlay.
-                let broadCastData = {
+                const broadCastData = {
                     event: "image",
                     filepath: filepath,
                     url: data.url,
@@ -116,15 +116,15 @@
             }
 
             function showVideo(data) {
-                let videoType = data.videoType;
-                let filepath = data.filepath;
-                let youtubeId = data.youtubeId;
+                const videoType = data.videoType;
+                const filepath = data.filepath;
+                const youtubeId = data.youtubeId;
                 let videoPosition = data.videoPosition;
                 let videoHeight = data.videoHeight;
                 let videoWidth = data.videoWidth;
                 let videoDuration = parseFloat(data.videoDuration);
-                let videoVolume = data.videoVolume;
-                let videoStarttime = data.videoStarttime;
+                const videoVolume = data.videoVolume;
+                const videoStarttime = data.videoStarttime;
 
                 // Set defaults if they werent filled out.
                 if (videoPosition === "" || videoPosition == null) {
@@ -145,7 +145,7 @@
                 }
 
                 // Compile data and send to overlay.
-                let broadcastdata = {
+                const broadcastdata = {
                     event: "video",
                     videoType: videoType,
                     filepath: filepath,

@@ -205,12 +205,12 @@ const quotesManagement = {
             const twitchChannels = require("../../../twitch-api/resource/channels");
             const frontendCommunicator = require("../../../common/frontend-communicator");
 
-            let { commandOptions } = event;
+            const { commandOptions } = event;
 
-            let args = event.userCommand.args;
+            const args = event.userCommand.args;
 
             const getFormattedQuoteString = (quote) => {
-                let prettyDate = quote.createdAt != null ? moment(quote.createdAt).format('L') : "No Date";
+                const prettyDate = quote.createdAt != null ? moment(quote.createdAt).format('L') : "No Date";
                 return commandOptions.quoteDisplayTemplate
                     .replace("{id}", quote._id)
                     .replace("{text}", quote.text)
@@ -233,7 +233,7 @@ const quotesManagement = {
                 const quote = await quotesManager.getRandomQuote();
 
                 if (quote) {
-                    let formattedQuote = getFormattedQuoteString(quote);
+                    const formattedQuote = getFormattedQuoteString(quote);
                     twitchChat.sendChatMessage(formattedQuote);
                     sendToTTS(formattedQuote);
 
@@ -244,13 +244,13 @@ const quotesManagement = {
                 return resolve();
             }
 
-            let triggeredArg = args[0];
+            const triggeredArg = args[0];
 
             if (event.userCommand.subcommandId === "quotelookup") {
-                let quoteId = parseInt(triggeredArg);
+                const quoteId = parseInt(triggeredArg);
                 const quote = await quotesManager.getQuote(quoteId);
                 if (quote) {
-                    let formattedQuote = getFormattedQuoteString(quote);
+                    const formattedQuote = getFormattedQuoteString(quote);
                     twitchChat.sendChatMessage(formattedQuote);
                     sendToTTS(formattedQuote);
                     logger.debug('We pulled a quote using an id: ' + formattedQuote);
@@ -270,18 +270,18 @@ const quotesManagement = {
 
                 const channelData = await twitchChannels.getChannelInformation();
 
-                let currentGameName = channelData && channelData.gameName ? channelData.gameName : "Unknown game";
+                const currentGameName = channelData && channelData.gameName ? channelData.gameName : "Unknown game";
 
-                let newQuote = {
+                const newQuote = {
                     text: args.slice(2, args.length).join(" "),
                     originator: args[1].replace(/@/g, ""),
                     creator: event.userCommand.commandSender,
                     game: currentGameName,
                     createdAt: moment().toISOString()
                 };
-                let newQuoteId = await quotesManager.addQuote(newQuote);
-                let newQuoteText = await quotesManager.getQuote(newQuoteId);
-                let formattedQuote = getFormattedQuoteString(newQuoteText);
+                const newQuoteId = await quotesManager.addQuote(newQuote);
+                const newQuoteText = await quotesManager.getQuote(newQuoteId);
+                const formattedQuote = getFormattedQuoteString(newQuoteText);
                 twitchChat.sendChatMessage(
                     `Added ${formattedQuote}`
                 );
@@ -290,7 +290,7 @@ const quotesManagement = {
                 return resolve();
             }
             case "remove": {
-                let quoteId = parseInt(args[1]);
+                const quoteId = parseInt(args[1]);
                 if (!isNaN(quoteId)) {
                     await quotesManager.removeQuote(quoteId);
                     twitchChat.sendChatMessage(`Quote ${quoteId} was removed.`);
@@ -305,13 +305,13 @@ const quotesManagement = {
             case "list": {
                 const cloudSync = require('../../../cloud-sync/profile-sync');
 
-                let profileJSON = {
+                const profileJSON = {
                     username: event.chatMessage.username,
                     userRoles: event.chatMessage.roles,
                     profilePage: 'quotes'
                 };
 
-                let binId = await cloudSync.syncProfileData(profileJSON);
+                const binId = await cloudSync.syncProfileData(profileJSON);
 
                 if (binId == null) {
                     twitchChat.sendChatMessage("There are no quotes to pull!");
@@ -333,7 +333,7 @@ const quotesManagement = {
                 if (quote != null) {
 
                     // format quote
-                    let formattedQuote = getFormattedQuoteString(quote);
+                    const formattedQuote = getFormattedQuoteString(quote);
 
                     // send to chat
                     twitchChat.sendChatMessage(formattedQuote);
@@ -410,7 +410,7 @@ const quotesManagement = {
                     return resolve();
                 }
 
-                let quoteId = parseInt(args[1]);
+                const quoteId = parseInt(args[1]);
                 if (isNaN(quoteId)) {
                     twitchChat.sendChatMessage(`Invalid Quote Id!`);
                     return resolve();
@@ -433,7 +433,7 @@ const quotesManagement = {
                     return resolve();
                 }
 
-                let formattedQuote = getFormattedQuoteString(quote);
+                const formattedQuote = getFormattedQuoteString(quote);
 
                 twitchChat.sendChatMessage(
                     `Edited ${formattedQuote}`
@@ -448,7 +448,7 @@ const quotesManagement = {
                     return resolve();
                 }
 
-                let quoteId = parseInt(args[1]);
+                const quoteId = parseInt(args[1]);
                 if (isNaN(quoteId)) {
                     twitchChat.sendChatMessage(`Invalid Quote Id!`);
                     return resolve();
@@ -471,7 +471,7 @@ const quotesManagement = {
                     return resolve();
                 }
 
-                let formattedQuote = getFormattedQuoteString(quote);
+                const formattedQuote = getFormattedQuoteString(quote);
                 twitchChat.sendChatMessage(
                     `Edited ${formattedQuote}`
                 );
@@ -488,7 +488,7 @@ const quotesManagement = {
                     return resolve();
                 }
 
-                let quoteId = parseInt(args[1]);
+                const quoteId = parseInt(args[1]);
                 if (isNaN(quoteId)) {
                     twitchChat.sendChatMessage(`Invalid Quote Id!`);
                     return resolve();
@@ -518,7 +518,7 @@ const quotesManagement = {
                     return resolve();
                 }
 
-                let formattedQuote = getFormattedQuoteString(quote);
+                const formattedQuote = getFormattedQuoteString(quote);
                 twitchChat.sendChatMessage(
                     `Edited ${formattedQuote}`
                 );
@@ -533,7 +533,7 @@ const quotesManagement = {
                     return resolve();
                 }
 
-                let quoteId = parseInt(args[1]);
+                const quoteId = parseInt(args[1]);
                 if (isNaN(quoteId)) {
                     twitchChat.sendChatMessage(
                         `Invalid Quote Id!`);
@@ -559,7 +559,7 @@ const quotesManagement = {
                     return resolve();
                 }
 
-                let formattedQuote = getFormattedQuoteString(quote);
+                const formattedQuote = getFormattedQuoteString(quote);
                 twitchChat.sendChatMessage(
                     `Edited ${formattedQuote}`
                 );
@@ -573,7 +573,7 @@ const quotesManagement = {
                 const quote = await quotesManager.getRandomQuote();
 
                 if (quote) {
-                    let formattedQuote = getFormattedQuoteString(quote);
+                    const formattedQuote = getFormattedQuoteString(quote);
                     twitchChat.sendChatMessage(formattedQuote);
                     sendToTTS(formattedQuote);
 

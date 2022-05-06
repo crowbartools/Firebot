@@ -59,8 +59,8 @@ exports.postQuote = async function(req, res) {
         return res.status(201).send(newQuote);
     } catch (e) {
         return res.status(500).send({
-           status: "error",
-           message: `Error creating quote: ${e}`
+            status: "error",
+            message: `Error creating quote: ${e}`
         });
     }
 };
@@ -89,7 +89,7 @@ exports.putQuote = async function(req, res) {
 
     // If no existing quote, create new
     if (quote == null) {
-        let newQuote = {
+        const newQuote = {
             _id: quoteId,
             text: quotePut.text,
             originator: quotePut.originator.replace(/@/g, ""),
@@ -112,7 +112,7 @@ exports.putQuote = async function(req, res) {
         quote.originator = quotePut.originator.replace(/@/g, "");
         quote.creator = quotePut.creator.replace(/@/g, "");
         quote.game = quotePut.game;
-    
+
         if (quotePut.createdAt && quotePut.createdAt != null && quotePut.createdAt !== "") {
             quote.createdAt = moment(quotePut.createdAt).toISOString();
         }
@@ -121,8 +121,8 @@ exports.putQuote = async function(req, res) {
             quote = await quotesManager.updateQuote(quote);
         } catch (e) {
             return res.status(500).send({
-               status: "error",
-               message: `Error storing quote ${quoteId}: ${e}`
+                status: "error",
+                message: `Error storing quote ${quoteId}: ${e}`
             });
         }
     }
@@ -131,7 +131,7 @@ exports.putQuote = async function(req, res) {
         return res.status(500).send({
             status: "error",
             message: `Error storing quote ${quoteId}`
-         });
+        });
     }
 
     return res.status(201).send(formatQuote(quote));
@@ -162,7 +162,7 @@ exports.patchQuote = async function(req, res) {
     if (quotePatch.originator?.length > 0) {
         quote.originator = quotePatch.originator.replace(/@/g, "");
     }
-    
+
     if (quotePatch.creator?.length > 0) {
         quote.creator = quotePatch.creator.replace(/@/g, "");
     }
@@ -179,13 +179,13 @@ exports.patchQuote = async function(req, res) {
         quote = await quotesManager.updateQuote(quote);
     } catch (e) {
         return res.status(500).send({
-           status: "error",
-           message: `Error updating quote ${quoteId}: ${e}`
+            status: "error",
+            message: `Error updating quote ${quoteId}: ${e}`
         });
     }
 
     return res.json(formatQuote(quote));
-}
+};
 
 exports.deleteQuote = async function(req, res) {
     let { quoteId } = req.params;
@@ -226,7 +226,7 @@ function validateQuoteId(quoteId, res) {
         });
         return false;
     }
-    
+
     return quoteId;
 }
 
@@ -246,11 +246,11 @@ function formatQuote(quote) {
 function validateQuote(quote) {
     quote = quote ?? {};
     const validationErrors = [];
-    
+
     if (!(quote.text?.length > 0)) {
         validationErrors.push("Missing quote text");
     }
-    
+
     if (!(quote.creator?.length > 0)) {
         validationErrors.push("Missing quote creator");
     }

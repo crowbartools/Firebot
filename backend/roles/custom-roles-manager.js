@@ -23,10 +23,10 @@ function getCustomRolesDb() {
 function loadCustomRoles() {
     logger.debug(`Attempting to load roles data...`);
 
-    let rolesDb = getCustomRolesDb();
+    const rolesDb = getCustomRolesDb();
 
     try {
-        let customRolesData = rolesDb.getData("/");
+        const customRolesData = rolesDb.getData("/");
 
         if (customRolesData) {
             customRoles = customRolesData;
@@ -46,7 +46,7 @@ function saveCustomRole(role) {
     customRoles[role.id] = role;
 
     try {
-        let rolesDb = getCustomRolesDb();
+        const rolesDb = getCustomRolesDb();
 
         rolesDb.push("/" + role.id, role);
 
@@ -65,7 +65,7 @@ function deleteCustomRole(roleId) {
     delete customRoles[roleId];
 
     try {
-        let rolesDb = getCustomRolesDb();
+        const rolesDb = getCustomRolesDb();
 
         rolesDb.delete("/" + roleId);
 
@@ -89,7 +89,7 @@ function addViewerToRole(roleId, username) {
     if (username == null || username.length < 1) {
         return;
     }
-    let role = customRoles[roleId];
+    const role = customRoles[roleId];
     if (role) {
         if (findIndexIgnoreCase(role.viewers, username) !== -1) {
             return;
@@ -104,7 +104,7 @@ function addViewerToRole(roleId, username) {
 }
 
 function removeAllViewersFromRole(roleId) {
-    let role = customRoles[roleId];
+    const role = customRoles[roleId];
     if (role) {
         role.viewers = [];
 
@@ -118,7 +118,7 @@ function removeViewerFromRole(roleId, username) {
     if (username == null || username.length < 1) {
         return;
     }
-    let role = customRoles[roleId];
+    const role = customRoles[roleId];
     if (role) {
         const index = findIndexIgnoreCase(role.viewers, username);
 
@@ -170,7 +170,7 @@ exports.triggerUiRefresh = () => {
 
 exports.getRoleByName = name => {
     const roles = Object.values(customRoles);
-    let roleIndex = findIndexIgnoreCase(roles.map(r => r.name), name);
+    const roleIndex = findIndexIgnoreCase(roles.map(r => r.name), name);
     if (roleIndex < 0) {
         return null;
     }

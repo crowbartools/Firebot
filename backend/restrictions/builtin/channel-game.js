@@ -29,7 +29,7 @@ const model = {
         </div>
     `,
     optionsController: ($scope, $q, backendCommunicator) => {
-        let restriction = $scope.restriction;
+        const restriction = $scope.restriction;
 
         $scope.games = [];
         $scope.searchGames = function(gameQuery) {

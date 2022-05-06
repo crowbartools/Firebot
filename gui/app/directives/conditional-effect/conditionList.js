@@ -49,7 +49,7 @@
             </div>
             `,
             controller: function(utilityService, backendCommunicator, $injector) {
-                let $ctrl = this;
+                const $ctrl = this;
 
                 // when the element is initialized
                 let conditionDefintions = [];
@@ -59,22 +59,22 @@
                             && $ctrl.conditionData.conditions.length > 0) {
 
                         for (let i = 0; i < $ctrl.conditionData.conditions.length; i++) {
-                            let condition = $ctrl.conditionData.conditions[i];
+                            const condition = $ctrl.conditionData.conditions[i];
                             if (!condition || !condition.value) {
                                 continue;
                             }
 
-                            let conditionType = $ctrl.getConditionType(condition.type);
+                            const conditionType = $ctrl.getConditionType(condition.type);
                             if (!conditionType) {
                                 continue;
                             }
 
-                            let valid = $injector.invoke(conditionType.valueIsStillValid, {}, {
+                            const valid = $injector.invoke(conditionType.valueIsStillValid, {}, {
                                 condition: condition
                             });
 
                             if (!valid) {
-                                let updatedCondition = $ctrl.conditionData.conditions[i];
+                                const updatedCondition = $ctrl.conditionData.conditions[i];
                                 updatedCondition.rightSideValue = undefined;
                                 updatedCondition.leftSideValue = undefined;
                                 $ctrl.conditionData.conditions[i] = updatedCondition;
@@ -139,7 +139,7 @@
                 };
 
                 $ctrl.openAddOrEditConditionModal = function(index) {
-                    let availableConditions = getConditionTypes({
+                    const availableConditions = getConditionTypes({
                         type: $ctrl.trigger,
                         id: $ctrl.triggerMeta && $ctrl.triggerMeta.triggerId
                     });
@@ -154,7 +154,7 @@
                             index: () => index
                         },
                         closeCallback: resp => {
-                            let action = resp.action;
+                            const action = resp.action;
 
                             switch (action) {
                             case "add":

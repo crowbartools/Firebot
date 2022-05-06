@@ -15,7 +15,7 @@ const { wait } = require("../../../utility");
 const { PollyClient, DescribeVoicesCommand, SynthesizeSpeechCommand } = require('@aws-sdk/client-polly');
 
 frontendCommunicator.onAsync("getAwsPollyVoices", async () => {
-    let response = {
+    const response = {
         error: false,
         voices: []
     };
@@ -37,7 +37,7 @@ frontendCommunicator.onAsync("getAwsPollyVoices", async () => {
 
             do {
                 try {
-                    let describeVoicesCommand = new DescribeVoicesCommand({
+                    const describeVoicesCommand = new DescribeVoicesCommand({
                         NextToken: describeVoicesResponse ? describeVoicesResponse.NextToken : undefined
                     });
                     describeVoicesResponse = await polly.send(describeVoicesCommand);
@@ -205,7 +205,7 @@ const playSound = {
         $scope.openLink = $rootScope.openLinkExternally;
 
         $scope.getSelectedLanguageCode = () => {
-            let voiceId = $scope.effect.voiceId;
+            const voiceId = $scope.effect.voiceId;
 
             if ($scope.validVoices[voiceId]) {
                 return $scope.validVoices[voiceId].LanguageCode;
@@ -215,7 +215,7 @@ const playSound = {
         };
 
         $scope.getSelectedLanguageName = () => {
-            let voiceId = $scope.effect.voiceId;
+            const voiceId = $scope.effect.voiceId;
 
             if ($scope.validVoices[voiceId]) {
                 return $scope.validVoices[voiceId].LanguageFormattedName;
@@ -225,7 +225,7 @@ const playSound = {
         };
 
         $scope.getSelectedVoiceName = () => {
-            let voiceId = $scope.effect.voiceId;
+            const voiceId = $scope.effect.voiceId;
 
             if ($scope.validVoices[voiceId]) {
                 return $scope.getVoiceDisplayName($scope.validVoices[voiceId]);
@@ -243,12 +243,12 @@ const playSound = {
         };
 
         $scope.selectValidVoiceForLanguageCode = (langCode) => {
-            let engine = $scope.effect.engine;
+            const engine = $scope.effect.engine;
 
             let validVoiceId = undefined;
-            let voices = Object.values($scope.validVoices);
+            const voices = Object.values($scope.validVoices);
 
-            for (let voice of voices) {
+            for (const voice of voices) {
                 if (voice.LanguageCode !== langCode) {
                     continue;
                 }
@@ -274,8 +274,8 @@ const playSound = {
         };
 
         $scope.ensureSelectedVoiceValid = () => {
-            let engine = $scope.effect.engine;
-            let voiceId = $scope.effect.voiceId;
+            const engine = $scope.effect.engine;
+            const voiceId = $scope.effect.voiceId;
 
             if (!$scope.validVoices[voiceId] || $scope.validVoices[voiceId].SupportedEngines.indexOf(engine) === -1) {
                 $scope.selectValidVoiceForLanguageCode('en-US');
@@ -338,7 +338,7 @@ const playSound = {
                     if (localesObj[voice.LanguageCode]) {
                         const localeObj = localesObj[voice.LanguageCode];
 
-                        for (let engine of voice.SupportedEngines) {
+                        for (const engine of voice.SupportedEngines) {
                             if (localeObj.SupportedEngines.indexOf(engine) === -1) {
                                 localeObj.SupportedEngines.push(engine);
                             }
@@ -383,7 +383,7 @@ const playSound = {
    * When the effect is saved
    */
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
 
         if (effect.engine !== "standard" && effect.engine !== "neural") {
             errors.push("Please select a valid Polly engine.");
@@ -403,7 +403,7 @@ const playSound = {
    * When the effect is triggered by something
    */
     onTriggerEvent: async event => {
-        let effect = event.effect;
+        const effect = event.effect;
 
         const awsIntegration = integrationManager.getIntegrationDefinitionById("aws");
 
@@ -454,7 +454,7 @@ const playSound = {
             return false;
         }
 
-        let data = {
+        const data = {
             filepath: mp3Path,
             volume: effect.volume,
             overlayInstance: effect.overlayInstance
@@ -469,7 +469,7 @@ const playSound = {
 
         // Generate token if going to overlay, otherwise send to gui.
         if (selectedOutputDevice.deviceId === "overlay") {
-            let resourceToken = resourceTokenManager.storeResourcePath(
+            const resourceToken = resourceTokenManager.storeResourcePath(
                 data.filepath,
                 30
             );

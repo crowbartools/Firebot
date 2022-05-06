@@ -9,12 +9,12 @@
     angular
         .module("firebotApp")
         .factory("soundService", function(logger, settingsService, listenerService, $q, websocketService, backendCommunicator) {
-            let service = {};
+            const service = {};
 
             // Connection Sounds
             service.connectSound = function(type) {
                 if (settingsService.soundsEnabled() === "On") {
-                    let outputDevice = settingsService.getAudioOutputDevice();
+                    const outputDevice = settingsService.getAudioOutputDevice();
                     if (type === "Online") {
                         service.playSound("../sounds/connect_new_b.mp3", 0.2, outputDevice);
                     } else {
@@ -26,12 +26,12 @@
             let popCounter = 0;
             service.popSound = function() {
                 if (settingsService.soundsEnabled() === "On") {
-                    let outputDevice = settingsService.getAudioOutputDevice();
+                    const outputDevice = settingsService.getAudioOutputDevice();
                     popCounter++;
                     if (popCounter > 4) {
                         popCounter = 1;
                     }
-                    let popSoundName = `pop${popCounter}.wav`;
+                    const popSoundName = `pop${popCounter}.wav`;
                     service.playSound(`../sounds/pops/${popSoundName}`, 0.1, outputDevice);
                 }
             };
@@ -91,7 +91,7 @@
                     );
                 }
 
-                let volume = settingsService.getTaggedNotificationVolume() / 100 * 10;
+                const volume = settingsService.getTaggedNotificationVolume() / 100 * 10;
                 if (selectedSound.path != null && selectedSound.path !== "") {
                     service.playSound(selectedSound.path, volume);
                 }
@@ -124,12 +124,12 @@
             service.getHowlSound = function(path, volume, outputDevice = settingsService.getAudioOutputDevice(), fileType = null) {
                 return navigator.mediaDevices.enumerateDevices()
                     .then(deviceList => {
-                        let filteredDevice = deviceList.filter(d => d.label === outputDevice.label
+                        const filteredDevice = deviceList.filter(d => d.label === outputDevice.label
                             || d.deviceId === outputDevice.deviceId);
 
-                        let sinkId = filteredDevice.length > 0 ? filteredDevice[0].deviceId : 'default';
+                        const sinkId = filteredDevice.length > 0 ? filteredDevice[0].deviceId : 'default';
 
-                        let sound = new Howl({
+                        const sound = new Howl({
                             src: [path],
                             volume: volume,
                             format: fileType,
@@ -147,7 +147,7 @@
 
                     console.log("duration for", path, format);
 
-                    let sound = new Howl({
+                    const sound = new Howl({
                         src: [path],
                         format: format || []
                     });
@@ -172,8 +172,8 @@
             listenerService.registerListener(
                 { type: listenerService.ListenerType.PLAY_SOUND },
                 data => {
-                    let filepath = data.filepath;
-                    let volume = data.volume / 100 * 10;
+                    const filepath = data.filepath;
+                    const volume = data.volume / 100 * 10;
 
                     let selectedOutputDevice = data.audioOutputDevice;
                     if (

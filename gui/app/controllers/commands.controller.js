@@ -30,7 +30,7 @@
 
             $scope.getPermissionType = command => {
 
-                let permissions = command.restrictionData && command.restrictionData.restrictions &&
+                const permissions = command.restrictionData && command.restrictionData.restrictions &&
                     command.restrictionData.restrictions.find(r => r.type === "firebot:permissions");
 
                 if (permissions) {
@@ -46,12 +46,12 @@
 
             $scope.getPermissionTooltip = command => {
 
-                let permissions = command.restrictionData && command.restrictionData.restrictions &&
+                const permissions = command.restrictionData && command.restrictionData.restrictions &&
                     command.restrictionData.restrictions.find(r => r.type === "firebot:permissions");
 
                 if (permissions) {
                     if (permissions.mode === "roles") {
-                        let roleIds = permissions.roleIds;
+                        const roleIds = permissions.roleIds;
                         let output = "None selected";
                         if (roleIds.length > 0) {
                             output = roleIds
@@ -100,7 +100,7 @@
             };
 
             $scope.duplicateCustomCommand = command => {
-                let copiedCommand = objectCopyHelper.copyObject("command", command);
+                const copiedCommand = objectCopyHelper.copyObject("command", command);
 
                 while (commandsService.triggerExists(copiedCommand.trigger)) {
                     copiedCommand.trigger += "copy";
@@ -117,7 +117,7 @@
                         command: () => command
                     },
                     closeCallback: resp => {
-                        let action = resp.action,
+                        const action = resp.action,
                             command = resp.command;
 
                         switch (action) {

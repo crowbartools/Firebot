@@ -77,11 +77,11 @@
                 dismiss: "&"
             },
             controller: function(accountAccess) {
-                let $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.isNewQuote = true;
 
-                let isUSLocale = electron.remote.app.getLocale() === "en-US";
+                const isUSLocale = electron.remote.app.getLocale() === "en-US";
                 $ctrl.dateFormat = isUSLocale ? "MM/dd/yyyy" : "dd/MM/yyyy";
 
                 $ctrl.quote = {
@@ -98,7 +98,7 @@
 
                 $ctrl.$onInit = function() {
                     if ($ctrl.resolve.quote != null) {
-                        let copiedQuote = JSON.parse(angular.toJson($ctrl.resolve.quote));
+                        const copiedQuote = JSON.parse(angular.toJson($ctrl.resolve.quote));
 
                         $ctrl.createdAtDate = moment(copiedQuote.createdAt).toDate();
 
@@ -140,7 +140,7 @@
 
                     $ctrl.quote.createdAt = $ctrl.createdAtDate != null ? moment($ctrl.createdAtDate).toISOString() : null;
 
-                    let action = $ctrl.isNewQuote ? "add" : "update";
+                    const action = $ctrl.isNewQuote ? "add" : "update";
                     $ctrl.close({
                         $value: {
                             quote: $ctrl.quote,

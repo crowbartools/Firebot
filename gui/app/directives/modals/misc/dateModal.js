@@ -38,9 +38,9 @@
                 dismiss: '&'
             },
             controller: function() {
-                let $ctrl = this;
+                const $ctrl = this;
 
-                let isUSLocale = electron.remote.app.getLocale() === "en-US";
+                const isUSLocale = electron.remote.app.getLocale() === "en-US";
                 $ctrl.dateFormat = isUSLocale ? "MM/dd/yyyy" : "dd/MM/yyyy";
 
                 $ctrl.model = "";
@@ -86,7 +86,7 @@
                 };
 
                 $ctrl.save = function() {
-                    let validate = $ctrl.validationFn($ctrl.model);
+                    const validate = $ctrl.validationFn($ctrl.model);
 
                     Promise.resolve(validate).then((valid) => {
 

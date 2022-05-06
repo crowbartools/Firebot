@@ -1,7 +1,7 @@
 "use strict";
 
 const userDb = require("../../../../backend/database/userDatabase");
-const customRolesManager = require("../../../../backend/roles/custom-roles-manager")
+const customRolesManager = require("../../../../backend/roles/custom-roles-manager");
 const currencyDb = require("../../../../backend/database/currencyDatabase");
 
 exports.getAllUsers = async function(req, res) {

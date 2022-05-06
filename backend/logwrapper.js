@@ -10,7 +10,7 @@ const fs = require("fs-extra");
 
 const LOG_FOLDER = dataAccess.getPathInUserData("/logs");
 
-let settingsfile = dataAccess.getJsonDbInUserData("/global-settings");
+const settingsfile = dataAccess.getJsonDbInUserData("/global-settings");
 let rotateFileLogLevel = "info";
 
 let debugMode = false;
@@ -36,7 +36,7 @@ if (!fs.existsSync(LOG_FOLDER)) {
     }
 });*/
 
-let rotateFileTransport = new (require("winston-daily-rotate-file"))({
+const rotateFileTransport = new (require("winston-daily-rotate-file"))({
     level: rotateFileLogLevel,
     filename: LOG_FOLDER + "/log",
     datePattern: "yyyy-MM-dd.",
@@ -51,13 +51,13 @@ let rotateFileTransport = new (require("winston-daily-rotate-file"))({
     }
 });
 
-let consoleTransport = new winston.transports.Console({
+const consoleTransport = new winston.transports.Console({
     level: "silly",
     prettyPrint: true,
     colorize: true
 });
 
-let logger = new winston.Logger({
+const logger = new winston.Logger({
     level: "silly",
     exitOnError: false,
     transports: [consoleTransport, rotateFileTransport]

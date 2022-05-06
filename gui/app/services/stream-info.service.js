@@ -5,7 +5,7 @@
     angular
         .module("firebotApp")
         .factory("streamInfoService", function($q, backendCommunicator) {
-            let service = {};
+            const service = {};
 
             service.streamInfo = {
                 isLive: false,

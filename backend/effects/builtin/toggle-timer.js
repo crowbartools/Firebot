@@ -57,7 +57,7 @@ const chat = {
         }
     },
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.selectedTimerId == null) {
             errors.push("Please select a timer.");
         }

@@ -3,7 +3,7 @@
 const { EffectTrigger } = require("../../../shared/effect-constants");
 const { OutputDataType } = require("../../../shared/variable-constants");
 
-let triggers = {};
+const triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
 triggers[EffectTrigger.EVENT] = true;
 triggers[EffectTrigger.MANUAL] = true;

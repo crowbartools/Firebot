@@ -52,7 +52,7 @@ async function importV4Data(settings) {
 
         await wait(2000);
 
-        let commandsResult = await commandsImporter.run();
+        const commandsResult = await commandsImporter.run();
 
         incompatibilityWarnings = incompatibilityWarnings.concat(commandsResult.incompatibilityWarnings);
     }
@@ -65,7 +65,7 @@ async function importV4Data(settings) {
 
         await wait(2000);
 
-        let viewerGroupsResult = await viewerGroupsImporter.run();
+        const viewerGroupsResult = await viewerGroupsImporter.run();
 
         incompatibilityWarnings = incompatibilityWarnings.concat(viewerGroupsResult.incompatibilityWarnings);
     }
@@ -78,7 +78,7 @@ async function importV4Data(settings) {
 
         await wait(2000);
 
-        let hotkeysResult = await hotkeysImporter.run();
+        const hotkeysResult = await hotkeysImporter.run();
 
         incompatibilityWarnings = incompatibilityWarnings.concat(hotkeysResult.incompatibilityWarnings);
     }
@@ -90,7 +90,7 @@ async function importV4Data(settings) {
 
         await wait(2000);
 
-        let scriptsResult = await scriptsImporter.run();
+        const scriptsResult = await scriptsImporter.run();
 
         incompatibilityWarnings = incompatibilityWarnings.concat(scriptsResult.incompatibilityWarnings);
 
@@ -99,7 +99,7 @@ async function importV4Data(settings) {
 
         await wait(2000);
 
-        let fontsResult = await fontsImporter.run();
+        const fontsResult = await fontsImporter.run();
 
         incompatibilityWarnings = incompatibilityWarnings.concat(fontsResult.incompatibilityWarnings);
 
@@ -108,7 +108,7 @@ async function importV4Data(settings) {
 
         await wait(2000);
 
-        let overlayInstancesResult = await overlayInstancesImporter.run();
+        const overlayInstancesResult = await overlayInstancesImporter.run();
 
         incompatibilityWarnings = incompatibilityWarnings.concat(overlayInstancesResult.incompatibilityWarnings);
     }

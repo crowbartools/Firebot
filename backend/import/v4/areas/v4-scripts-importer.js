@@ -13,7 +13,7 @@ const v5ScriptsPath = profileManager.getPathInProfile("/scripts");
 async function checkForV4Scripts() {
     let hasScripts = false;
     try {
-        let files = await fse.readdir(v4ScriptsPath);
+        const files = await fse.readdir(v4ScriptsPath);
         hasScripts = files != null && files.length > 0;
     } catch (err) {
         logger.warn("Unable to read scripts folder.", err);
@@ -22,9 +22,9 @@ async function checkForV4Scripts() {
 }
 
 exports.run = async () => {
-    let incompatibilityWarnings = [];
+    const incompatibilityWarnings = [];
 
-    let v4ScriptsExist = await checkForV4Scripts();
+    const v4ScriptsExist = await checkForV4Scripts();
 
     if (v4ScriptsExist) {
         try {
@@ -34,7 +34,7 @@ exports.run = async () => {
             logger.warn("Unable to copy v4 scripts.", err);
         }
 
-        let v4SettingsDb = importHelpers.getJsonDbInV4Data("/settings.json");
+        const v4SettingsDb = importHelpers.getJsonDbInV4Data("/settings.json");
 
         let allV4Settings;
         try {
@@ -44,7 +44,7 @@ exports.run = async () => {
         }
 
         if (allV4Settings != null) {
-            let runCustomScripts = allV4Settings.settings.runCustomScripts === true;
+            const runCustomScripts = allV4Settings.settings.runCustomScripts === true;
             settings.setCustomScriptsEnabled(runCustomScripts);
 
             settings.flushSettingsCache();

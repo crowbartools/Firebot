@@ -30,9 +30,9 @@ const model = {
             count = parseInt(count, 10);
         }
 
-        let topMetadataUsers = await userDatabase.getTopMetadata(metadataKey, count);
+        const topMetadataUsers = await userDatabase.getTopMetadata(metadataKey, count);
 
-        let topUsersDisplay = topMetadataUsers
+        const topUsersDisplay = topMetadataUsers
             // filter out any results not containing key in metadata
             .filter(user => (user.metadata && user.metadata[metadataKey] != null))
 

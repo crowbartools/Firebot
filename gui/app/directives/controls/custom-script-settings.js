@@ -76,14 +76,14 @@
                     logger.info("Attempting to load custom script parameters...");
                     $scope.isLoadingParameters = true;
 
-                    let scriptsFolder = profileManager.getPathInProfile("/scripts");
-                    let scriptFilePath = path.resolve(scriptsFolder, scriptName);
+                    const scriptsFolder = profileManager.getPathInProfile("/scripts");
+                    const scriptFilePath = path.resolve(scriptsFolder, scriptName);
                     // Attempt to load the script
                     try {
                         // Make sure we first remove the cached version, incase there was any changes
                         delete require.cache[require.resolve(scriptFilePath)];
 
-                        let customScript = require(scriptFilePath);
+                        const customScript = require(scriptFilePath);
 
                         //grab the manifest
                         if (typeof customScript.getScriptManifest === "function") {
@@ -108,25 +108,25 @@
                             utilityService.showInfoModal("The selected script may not have been written for Firebot V5 and so might not function as expected. Please reach out to us on Discord or Twitter if you need assistance.");
                         }
 
-                        let currentParameters = $scope.effect.parameters;
+                        const currentParameters = $scope.effect.parameters;
                         if (typeof customScript.getDefaultParameters === "function") {
-                            let parameterRequest = {
+                            const parameterRequest = {
                                 modules: {
                                     request: require("request")
                                 }
                             };
-                            let parametersPromise = customScript.getDefaultParameters(
+                            const parametersPromise = customScript.getDefaultParameters(
                                 parameterRequest
                             );
 
                             $q.when(parametersPromise).then(parameters => {
-                                let defaultParameters = parameters;
+                                const defaultParameters = parameters;
 
                                 if (currentParameters != null) {
                                     //get rid of old params that no longer exist
                                     Object.keys(currentParameters).forEach(
                                         currentParameterName => {
-                                            let currentParamInDefaults = defaultParameters[currentParameterName];
+                                            const currentParamInDefaults = defaultParameters[currentParameterName];
                                             if (currentParamInDefaults == null) {
                                                 delete currentParameters[currentParameterName];
                                             }
@@ -136,8 +136,8 @@
                                     //handle any new params
                                     Object.keys(defaultParameters).forEach(
                                         defaultParameterName => {
-                                            let currentParam = currentParameters[defaultParameterName];
-                                            let defaultParam = defaultParameters[defaultParameterName];
+                                            const currentParam = currentParameters[defaultParameterName];
+                                            const defaultParam = defaultParameters[defaultParameterName];
                                             if (currentParam != null) {
                                                 //Current param exists lets update the value.
                                                 defaultParam.value = currentParam.value;

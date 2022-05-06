@@ -68,9 +68,9 @@
                 };
 
                 $ctrl.openAddRoleModal = () => {
-                    let allRoles = viewerRolesService.getTwitchRoles().concat(viewerRolesService.getCustomRoles()).concat(viewerRolesService.getTeamRoles());
+                    const allRoles = viewerRolesService.getTwitchRoles().concat(viewerRolesService.getCustomRoles()).concat(viewerRolesService.getTeamRoles());
 
-                    let options = allRoles
+                    const options = allRoles
                         .filter(r =>
                             !$ctrl.model.roles.some(rd => rd.roleId === r.id))
                         .map(r => {

@@ -7,7 +7,7 @@ const { app } = require("electron");
 let db;
 
 function connectStatsDatabase() {
-    let path = profileManager.getPathInProfile("db/stats.db");
+    const path = profileManager.getPathInProfile("db/stats.db");
     db = new Datastore({ filename: path });
     db.loadDatabase(err => {
         if (err) {
@@ -17,7 +17,7 @@ function connectStatsDatabase() {
     });
 }
 
-let EventType = {
+const EventType = {
     EFFECT_RAN: "effectRan",
     CONTROL_PRESSED: "controlPressed",
     COMMAND_ISSUED: "commandIssued",
@@ -38,7 +38,7 @@ function insertStatRecord(eventType, userId, meta) {
 
     meta.event = eventType;
 
-    let ins = {
+    const ins = {
         userid: userId,
         date: Date.now(),
         version: app.getVersion(),

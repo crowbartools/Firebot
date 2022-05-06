@@ -97,7 +97,7 @@
                 modalInstance: "<"
             },
             controller: function($injector, $scope) {
-                let $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.availableConditions = [];
 
@@ -109,14 +109,14 @@
                 $ctrl.leftSidePresetValues = [];
                 async function loadPresetValues() {
                     if ($ctrl.currentConditionDef && $ctrl.currentConditionDef.rightSideValueType === "preset") {
-                        let rightSidePresetValues = await $injector.invoke($ctrl.currentConditionDef.getRightSidePresetValues, {}, {});
+                        const rightSidePresetValues = await $injector.invoke($ctrl.currentConditionDef.getRightSidePresetValues, {}, {});
                         if (rightSidePresetValues != null && Array.isArray(rightSidePresetValues)) {
                             $ctrl.rightSidePresetValues = rightSidePresetValues;
                         }
                     }
 
                     if ($ctrl.currentConditionDef && $ctrl.currentConditionDef.leftSideValueType === "preset") {
-                        let leftSidePresetValues = await $injector.invoke($ctrl.currentConditionDef.getLeftSidePresetValues, {}, {});
+                        const leftSidePresetValues = await $injector.invoke($ctrl.currentConditionDef.getLeftSidePresetValues, {}, {});
                         if (leftSidePresetValues != null && Array.isArray(leftSidePresetValues)) {
                             $ctrl.leftSidePresetValues = leftSidePresetValues;
                         }
@@ -126,7 +126,7 @@
                 $ctrl.getSelectedRightSidePresetValueDisplay = function() {
                     if ($ctrl.rightSidePresetValues.length > 0 && $ctrl.selectedCondition && $ctrl.selectedCondition.rightSideValue) {
 
-                        let presetValue = $ctrl.rightSidePresetValues.find(pv => pv.value === $ctrl.selectedCondition.rightSideValue);
+                        const presetValue = $ctrl.rightSidePresetValues.find(pv => pv.value === $ctrl.selectedCondition.rightSideValue);
 
                         if (presetValue) {
                             return presetValue.display;
@@ -138,7 +138,7 @@
                 $ctrl.getSelectedLeftSidePresetValueDisplay = function() {
                     if ($ctrl.leftSidePresetValues.length > 0 && $ctrl.selectedCondition && $ctrl.selectedCondition.leftSideValue) {
 
-                        let presetValue = $ctrl.leftSidePresetValues.find(pv => pv.value === $ctrl.selectedCondition.leftSideValue);
+                        const presetValue = $ctrl.leftSidePresetValues.find(pv => pv.value === $ctrl.selectedCondition.leftSideValue);
 
                         if (presetValue) {
                             return presetValue.display;
@@ -160,7 +160,7 @@
                 };
 
                 $ctrl.getConditionName = function(conditionId) {
-                    let conditionDef = $ctrl.availableConditions.find(f => f.id === conditionId);
+                    const conditionDef = $ctrl.availableConditions.find(f => f.id === conditionId);
                     return conditionDef ? conditionDef.name : conditionId;
                 };
 
@@ -177,7 +177,7 @@
                         $ctrl.isNewCondition = true;
 
                         if ($ctrl.availableConditions.length > 0) {
-                            let firstConditionDef = $ctrl.availableConditions[0];
+                            const firstConditionDef = $ctrl.availableConditions[0];
                             $ctrl.selectedCondition.type = firstConditionDef.id;
                             $ctrl.selectedCondition.comparisonType = firstConditionDef.comparisonTypes[0];
                             $ctrl.currentConditionDef = firstConditionDef;

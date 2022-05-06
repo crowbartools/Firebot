@@ -3,7 +3,7 @@
 const { EffectTrigger } = require("../../../shared/effect-constants");
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
-let triggers = {};
+const triggers = {};
 triggers[EffectTrigger.EVENT] = ["twitch:channel-reward-redemption"];
 triggers[EffectTrigger.CHANNEL_REWARD] = true;
 triggers[EffectTrigger.PRESET_LIST] = true;

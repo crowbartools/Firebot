@@ -16,7 +16,7 @@ const model = {
         </div>
     `,
     optionsValueDisplay: (restriction) => {
-        let messages = restriction.messages || 0;
+        const messages = restriction.messages || 0;
 
         return messages + "+";
     },
@@ -27,8 +27,8 @@ const model = {
         return new Promise(async (resolve, reject) => {
             let passed = false;
             const viewerDB = require('../../database/userDatabase');
-            let viewer = await viewerDB.getUserByUsername(triggerData.metadata.username);
-            let chatMessages = viewer.chatMessages;
+            const viewer = await viewerDB.getUserByUsername(triggerData.metadata.username);
+            const chatMessages = viewer.chatMessages;
 
             if (chatMessages >= restrictionData.messages) {
                 passed = true;

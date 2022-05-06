@@ -26,7 +26,7 @@ function restartApp() {
 // This app will active a new profile. It will set the loggedInProfile setting in globalsettings and then restart the app.
 function logInProfile(profileId) {
     logger.info("Logging in to profile #" + profileId + ". Restarting now.");
-    let globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings");
+    const globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings");
     globalSettingsDb.push("./profiles/loggedInProfile", profileId);
 
     restartApp();
@@ -80,7 +80,7 @@ function getLoggedInProfile() {
     // Otherwise, let's get it from the global settings file.
     try {
         // We have a value in global settings! Set it to our cache, then return.
-        let globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings");
+        const globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings");
         loggedInUser = globalSettingsDb.getData("./profiles/loggedInProfile");
         if (loggedInUser != null) {
             logger.info("Setting logged in user cache.");
@@ -89,7 +89,7 @@ function getLoggedInProfile() {
     } catch (err) {
         // We dont have a value in our global settings. So, lets try some other things.
         try {
-            let globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings"),
+            const globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings"),
                 activeProfiles = globalSettingsDb.getData("./activeProfiles");
 
             logger.log("No logged in profile in global settings file. Attempting to set one and restart the app.");
@@ -102,7 +102,7 @@ function getLoggedInProfile() {
 }
 
 function renameProfile(newProfileId) {
-    let profileId = getLoggedInProfile();
+    const profileId = getLoggedInProfile();
     logger.warn("User wants to rename profile: " + profileId + ". Restarting the app.");
 
     let sanitizedNewProfileId = sanitizeFileName(newProfileId);
@@ -115,7 +115,7 @@ function renameProfile(newProfileId) {
     let activeProfiles = [];
     try {
         // This means we have "Active" profiles that are being used.
-        let globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings");
+        const globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings");
         activeProfiles = globalSettingsDb.getData("./profiles/activeProfiles");
     } catch (err) {
         logger.debug("No active profiles found");
@@ -136,19 +136,19 @@ function renameProfile(newProfileId) {
 // This will mark a profile for deletion on next restart.
 // We can't delete a profile while the app is running (and using the files), so we'll delete it while launching next time.
 function deleteProfile() {
-    let profileId = getLoggedInProfile();
+    const profileId = getLoggedInProfile();
     logger.warn("User wants to delete profile: " + profileId + ". Restarting the app.");
 
     // Lets set this profile to be deleted on restart. (When no files are in use).
-    let globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings");
+    const globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings");
     globalSettingsDb.push("./profiles/deleteProfile", profileId);
 
     // Restart the app.
     restartApp();
 }
 
-let getPathInProfile = function(filepath) {
-    let profilePath =
+const getPathInProfile = function(filepath) {
+    const profilePath =
     dataAccess.getUserDataPath() + "/profiles/" + getLoggedInProfile();
     return path.join(profilePath, filepath);
 };
@@ -156,15 +156,15 @@ let getPathInProfile = function(filepath) {
 /**
  * @returns JsonDB
  */
-let getJsonDbInProfile = function(filepath, humanReadable = true) {
-    let profilePath =
+const getJsonDbInProfile = function(filepath, humanReadable = true) {
+    const profilePath =
       dataAccess.getUserDataPath() + "/profiles/" + getLoggedInProfile(),
         jsonDbPath = path.join(profilePath, filepath);
     return new JsonDB(jsonDbPath, true, humanReadable);
 };
 
-let profileDataPathExistsSync = function(filePath) {
-    let profilePath = "/profiles/" + getLoggedInProfile(),
+const profileDataPathExistsSync = function(filePath) {
+    const profilePath = "/profiles/" + getLoggedInProfile(),
         joinedPath = path.join(profilePath, filePath);
     return dataAccess.userDataPathExistsSync(joinedPath);
 };

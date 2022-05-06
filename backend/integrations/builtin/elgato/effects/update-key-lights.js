@@ -124,7 +124,7 @@ const effect = {
         };
     },
     optionsValidator: (effect) => {
-        let errors = [];
+        const errors = [];
         if (Object.keys(effect.selectedLights).length === 0) {
             errors.push("Please select a Key Light.");
         }

@@ -139,7 +139,7 @@
                 });
 
                 $scope.showBackupListModal = function() {
-                    let showBackupListModalContext = {
+                    const showBackupListModalContext = {
                         templateUrl: "backupListModal.html",
                         size: "sm",
                         controllerFunc: (
@@ -152,22 +152,22 @@
                         ) => {
                             $scope.backups = [];
 
-                            let backupFolderPath = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups") + path.sep;
+                            const backupFolderPath = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups") + path.sep;
 
                             $scope.loadingBackups = true;
                             $q
                                 .when(
                                     new Promise(resolve => {
                                         fs.readdir(backupFolderPath, (err, files) => {
-                                            let backups = files
+                                            const backups = files
                                                 .filter(f => f.endsWith(".zip"))
                                                 .map(function(v) {
-                                                    let fileStats = fs.statSync(backupFolderPath + v);
-                                                    let backupDate = moment(fileStats.birthtime);
+                                                    const fileStats = fs.statSync(backupFolderPath + v);
+                                                    const backupDate = moment(fileStats.birthtime);
 
                                                     let version = "Unknown Version";
-                                                    let versionRe = /_(v?\d+\.\d+\.\d+(?:-[a-zA-Z0-9]+(?:\.\d+)?)?)(?:_|\b)/;
-                                                    let match = v.match(versionRe);
+                                                    const versionRe = /_(v?\d+\.\d+\.\d+(?:-[a-zA-Z0-9]+(?:\.\d+)?)?)(?:_|\b)/;
+                                                    const match = v.match(versionRe);
                                                     if (match != null) {
                                                         version = match[1];
                                                     }
@@ -206,7 +206,7 @@
 
                             $scope.togglePreventDeletion = function(backup) {
                                 backup.neverDelete = !backup.neverDelete;
-                                let oldName = backup.name + ".zip";
+                                const oldName = backup.name + ".zip";
                                 backup.name = backup.neverDelete
                                     ? (backup.name += "_NODELETE")
                                     : backup.name.replace("_NODELETE", "");

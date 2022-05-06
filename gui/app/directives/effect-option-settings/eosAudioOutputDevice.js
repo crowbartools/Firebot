@@ -26,7 +26,7 @@
             </eos-container>
             `,
             controller: function($q, settingsService) {
-                let ctrl = this;
+                const ctrl = this;
 
                 ctrl.settings = settingsService;
 

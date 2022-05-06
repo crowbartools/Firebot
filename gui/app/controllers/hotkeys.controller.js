@@ -24,7 +24,7 @@
                         hotkey: () => hotkey
                     },
                     closeCallback: resp => {
-                        let action = resp.action,
+                        const action = resp.action,
                             hotkey = resp.hotkey;
 
                         switch (action) {

@@ -48,7 +48,7 @@
                 dismiss: "&"
             },
             controller: function($q, backendCommunicator, settingsService) {
-                let $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.events = [];
 

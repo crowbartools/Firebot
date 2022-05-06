@@ -5,14 +5,14 @@ const axios = require("axios");
 
 function postPicker(posts) {
     while (posts.length) {
-        let randomNum = Math.floor(Math.random() * posts.length);
-        let item = posts[randomNum]['data'];
+        const randomNum = Math.floor(Math.random() * posts.length);
+        const item = posts[randomNum]['data'];
 
         // Tests
-        let over18 = item['over_18'];
-        let image = item['preview']['images'][0]['source']['url'];
-        let ups = item['ups'];
-        let downs = item['downs'];
+        const over18 = item['over_18'];
+        const image = item['preview']['images'][0]['source']['url'];
+        const ups = item['ups'];
+        const downs = item['downs'];
         if (over18 !== true && image != null && ups > downs) {
             return image;
         }
@@ -25,8 +25,8 @@ function postPicker(posts) {
 }
 
 async function getSubredditData(subName) {
-    let normalizedSubName = subName.replace("/r/", '').replace("r/", '');
-    let url = "https://www.reddit.com/r/" + normalizedSubName + "/hot.json?count=15&raw_json=1";
+    const normalizedSubName = subName.replace("/r/", '').replace("r/", '');
+    const url = "https://www.reddit.com/r/" + normalizedSubName + "/hot.json?count=15&raw_json=1";
 
     return await axios.get(url)
         .then(function(response) {
@@ -39,7 +39,7 @@ async function getSubredditData(subName) {
 
 // Pulls a random image from a subreddit.
 async function randomImageFromSubReddit(subreddit) {
-    let subData = await getSubredditData(subreddit);
+    const subData = await getSubredditData(subreddit);
 
     if (subData == null) {
         logger.error("Couldn't find any valid posts in the subreddit.");
@@ -51,7 +51,7 @@ async function randomImageFromSubReddit(subreddit) {
     }
 
     // Get our random post image url.
-    let imageUrl = postPicker(subData);
+    const imageUrl = postPicker(subData);
     if (imageUrl === false) {
         logger.error("Couldn't find any valid posts in the subreddit.");
         renderWindow.webContents.send(

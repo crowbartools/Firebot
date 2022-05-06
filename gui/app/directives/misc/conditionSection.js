@@ -39,7 +39,7 @@
                 </div>    
                 `,
             controller: function($scope, utilityService) {
-                let $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.$onInit = () => {
                     if ($ctrl.draggable == null) {

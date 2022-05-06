@@ -9,9 +9,9 @@ const teamRolesManager = require("../../../roles/team-roles-manager");
 function seperateTriggerFromArgs(args) {
     let trigger, remainingData = "";
     if (args[1].startsWith("\"")) {
-        let combined = args.slice(1).join(" ");
-        let quotedTriggerRegex = /(?<=(?:\s|^)")(?:[^"]|(?:\\"))*(?=(?:(?:"(?<!\\"))(?:\s|$)))/i;
-        let results = quotedTriggerRegex.exec(combined);
+        const combined = args.slice(1).join(" ");
+        const quotedTriggerRegex = /(?<=(?:\s|^)")(?:[^"]|(?:\\"))*(?=(?:(?:"(?<!\\"))(?:\s|$)))/i;
+        const results = quotedTriggerRegex.exec(combined);
 
         if (results === null) {
             trigger = args[1];
@@ -205,16 +205,16 @@ const commandManagement = {
             const commandManager = require("../CommandManager");
             const chat = require("../../twitch-chat");
 
-            let activeCustomCommands = commandManager
+            const activeCustomCommands = commandManager
                 .getAllCustomCommands()
                 .filter(c => c.active);
 
-            let triggeredArg = event.userCommand.triggeredArg;
+            const triggeredArg = event.userCommand.triggeredArg;
 
             //grab usage
             let usage = event.command.usage ? event.command.usage : "";
             if (triggeredArg != null) {
-                let subCommand = event.command.subCommands.find(
+                const subCommand = event.command.subCommands.find(
                     sc => sc.arg === triggeredArg
                 );
                 if (subCommand != null) {
@@ -222,7 +222,7 @@ const commandManagement = {
                 }
             }
 
-            let args = event.userCommand.args;
+            const args = event.userCommand.args;
 
             if (args.length < 2) {
                 chat.sendChatMessage(
@@ -230,7 +230,7 @@ const commandManagement = {
                 return resolve();
             }
 
-            let { trigger, remainingData } = seperateTriggerFromArgs(args);
+            const { trigger, remainingData } = seperateTriggerFromArgs(args);
 
             if (trigger == null || trigger === "") {
                 chat.sendChatMessage(
@@ -255,7 +255,7 @@ const commandManagement = {
                     return resolve();
                 }
 
-                let command = {
+                const command = {
                     trigger: trigger,
                     autoDeleteTrigger: false,
                     ignoreBot: true,
@@ -293,7 +293,7 @@ const commandManagement = {
                     return resolve();
                 }
 
-                let command = activeCustomCommands.find(c => c.trigger === trigger);
+                const command = activeCustomCommands.find(c => c.trigger === trigger);
                 if (command == null) {
                     chat.sendChatMessage(
                         `Could not find a command with the trigger '${trigger}', please try again.`
@@ -301,7 +301,7 @@ const commandManagement = {
                     return resolve();
                 }
 
-                let chatEffectsCount = command.effects ? command.effects.list.filter(e => e.type === "firebot:chat").length : 0;
+                const chatEffectsCount = command.effects ? command.effects.list.filter(e => e.type === "firebot:chat").length : 0;
 
                 if (chatEffectsCount > 1) {
                     chat.sendChatMessage(
@@ -310,10 +310,10 @@ const commandManagement = {
                     return resolve();
                 }
                 if (chatEffectsCount === 1) {
-                    let chatEffect = command.effects.list.find(e => e.type === "firebot:chat");
+                    const chatEffect = command.effects.list.find(e => e.type === "firebot:chat");
                     chatEffect.message = remainingData;
                 } else {
-                    let chatEffect = {
+                    const chatEffect = {
                         id: uuidv1(),
                         type: "firebot:chat",
                         message: remainingData
@@ -330,7 +330,7 @@ const commandManagement = {
                 break;
             }
             case "setcount": {
-                let countArg = remainingData.trim();
+                const countArg = remainingData.trim();
                 if (countArg === "" || isNaN(countArg)) {
                     chat.sendChatMessage(
                         `Invalid command. Usage: ${event.command.trigger} ${usage}`
@@ -338,7 +338,7 @@ const commandManagement = {
                     return resolve();
                 }
 
-                let command = activeCustomCommands.find(c => c.trigger === trigger);
+                const command = activeCustomCommands.find(c => c.trigger === trigger);
                 if (command == null) {
                     chat.sendChatMessage(
                         `Could not find a command with the trigger '${trigger}', please try again.`
@@ -389,7 +389,7 @@ const commandManagement = {
                 break;
             }
             case "cooldown": {
-                let cooldownArgs = remainingData.trim().split(" ");
+                const cooldownArgs = remainingData.trim().split(" ");
                 if (args.length < 3 || remainingData === "" || cooldownArgs.length < 2 || isNaN(cooldownArgs[0])
                     || isNaN(cooldownArgs[1])) {
                     chat.sendChatMessage(
@@ -398,7 +398,7 @@ const commandManagement = {
                     return resolve();
                 }
 
-                let command = activeCustomCommands.find(c => c.trigger === trigger);
+                const command = activeCustomCommands.find(c => c.trigger === trigger);
                 if (command == null) {
                     chat.sendChatMessage(
                         `Could not find a command with the trigger '${trigger}', please try again.`
@@ -438,7 +438,7 @@ const commandManagement = {
                     return resolve();
                 }
 
-                let command = activeCustomCommands.find(c => c.trigger === trigger);
+                const command = activeCustomCommands.find(c => c.trigger === trigger);
                 if (command == null) {
                     chat.sendChatMessage(
                         `Could not find a command with the trigger '${trigger}', please try again.`
@@ -446,8 +446,8 @@ const commandManagement = {
                     return resolve();
                 }
 
-                let restrictions = [];
-                let roleIds = await mapPermArgToRoleIds(remainingData);
+                const restrictions = [];
+                const roleIds = await mapPermArgToRoleIds(remainingData);
 
 
                 if (roleIds === false) {
@@ -476,7 +476,7 @@ const commandManagement = {
             }
             case "remove": {
 
-                let command = activeCustomCommands.find(c => c.trigger === trigger);
+                const command = activeCustomCommands.find(c => c.trigger === trigger);
                 if (command == null) {
                     chat.sendChatMessage(
                         `Could not find a command with the trigger '${trigger}', please try again.`

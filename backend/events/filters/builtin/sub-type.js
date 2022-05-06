@@ -51,14 +51,14 @@ module.exports = {
     },
     predicate: (filterSettings, eventData) => {
 
-        let { comparisonType, value } = filterSettings;
-        let { eventMeta } = eventData;
+        const { comparisonType, value } = filterSettings;
+        const { eventMeta } = eventData;
 
         if (value == null) {
             return true;
         }
 
-        let subPlan = eventMeta.subPlan;
+        const subPlan = eventMeta.subPlan;
 
         if (comparisonType === ComparisonType.IS) {
             return subPlan === value;

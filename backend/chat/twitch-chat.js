@@ -240,7 +240,7 @@ class TwitchChat extends EventEmitter {
             .filter(mf => mf !== "");
 
         // Send all message fragments
-        for (let fragment of messageFragments) {
+        for (const fragment of messageFragments) {
             if (shouldWhisper) {
                 this._whisper(fragment, username, accountType);
             } else {
@@ -475,7 +475,7 @@ class TwitchChat extends EventEmitter {
     getViewerList() {
         // eslint-disable-next-line no-warning-comments
         //TODO: Needs updated for twitch.
-        let users = [];
+        const users = [];
         return users;
     }
 }
@@ -487,7 +487,7 @@ frontendCommunicator.on("send-chat-message", async sendData => {
 
     // Run commands from firebot chat.
     if (accountType === "Streamer") {
-        let firebotMessage = await chatHelpers.buildFirebotChatMessageFromText(message);
+        const firebotMessage = await chatHelpers.buildFirebotChatMessageFromText(message);
         commandHandler.handleChatMessage(firebotMessage);
 
         const twitchEventsHandler = require("../events/twitch-events");

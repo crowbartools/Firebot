@@ -60,7 +60,7 @@
                 dismiss: "&"
             },
             controller: function($timeout) {
-                let $ctrl = this;
+                const $ctrl = this;
 
                 $timeout(() => {
                     angular.element("#nameField").trigger("focus");
@@ -83,7 +83,7 @@
                 $ctrl.urlError = false;
 
                 function validateName() {
-                    let name = $ctrl.channel.name;
+                    const name = $ctrl.channel.name;
                     return name != null && name.length > 0;
                 }
 

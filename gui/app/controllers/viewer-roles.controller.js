@@ -17,7 +17,7 @@
                         role: () => role
                     },
                     closeCallback: resp => {
-                        let { action, role } = resp;
+                        const { action, role } = resp;
 
                         switch (action) {
                         case "save":

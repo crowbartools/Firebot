@@ -8,7 +8,7 @@ const uuidv1 = require("uuid/v1");
     angular
         .module("firebotApp")
         .factory("hotkeyService", function($rootScope, logger, backendCommunicator) {
-            let service = {};
+            const service = {};
 
             /**
        * Hotkey Capturing
@@ -86,7 +86,7 @@ const uuidv1 = require("uuid/v1");
                     return;
                 }
 
-                let alreadyPressed = cachedKeys.some(
+                const alreadyPressed = cachedKeys.some(
                     k => k.rawKey.toUpperCase() === event.key.toUpperCase()
                 );
 
@@ -101,7 +101,7 @@ const uuidv1 = require("uuid/v1");
 
                 //clear out any keys that have since been released
                 releasedKeyCodes.forEach(k => {
-                    let normalizedK = k.toUpperCase();
+                    const normalizedK = k.toUpperCase();
                     if (
                         cachedKeys.some(key => key.rawKey.toUpperCase() === normalizedK)
                     ) {
@@ -113,7 +113,7 @@ const uuidv1 = require("uuid/v1");
                 releasedKeyCodes = [];
 
                 if (!alreadyPressed) {
-                    let mappedKey = mapKeyToAcceleratorCode(event.key),
+                    const mappedKey = mapKeyToAcceleratorCode(event.key),
                         displayName = getDisplayNameFromKeyCode(mappedKey),
                         isModifier = keyCodeIsModifier(mappedKey);
 
@@ -201,9 +201,9 @@ const uuidv1 = require("uuid/v1");
             let userHotkeys = [];
 
             service.loadHotkeys = function() {
-                let hotkeyDb = profileManager.getJsonDbInProfile("/hotkeys");
+                const hotkeyDb = profileManager.getJsonDbInProfile("/hotkeys");
                 try {
-                    let hotkeyData = hotkeyDb.getData("/");
+                    const hotkeyData = hotkeyDb.getData("/");
                     if (hotkeyData != null && hotkeyData.length > 0) {
                         userHotkeys = hotkeyData || [];
                     }
@@ -213,7 +213,7 @@ const uuidv1 = require("uuid/v1");
             };
 
             function saveHotkeysToFile() {
-                let hotkeyDb = profileManager.getJsonDbInProfile("/hotkeys");
+                const hotkeyDb = profileManager.getJsonDbInProfile("/hotkeys");
                 try {
                     hotkeyDb.push("/", userHotkeys);
                 } catch (err) {
@@ -233,7 +233,7 @@ const uuidv1 = require("uuid/v1");
             };
 
             service.updateHotkey = function(hotkey) {
-                let index = userHotkeys.findIndex(k => k.id === hotkey.id);
+                const index = userHotkeys.findIndex(k => k.id === hotkey.id);
 
                 userHotkeys[index] = hotkey;
 

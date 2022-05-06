@@ -69,7 +69,7 @@
             modalInstance: "<"
         },
         controller: function(effectQueuesService, ngToast) {
-            let $ctrl = this;
+            const $ctrl = this;
 
             $ctrl.isNewQueue = true;
 

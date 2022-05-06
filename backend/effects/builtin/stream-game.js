@@ -80,7 +80,7 @@ const model = {
         };
     },
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.mode === "specific" && (effect.gameId == null || effect.gameId === "")) {
             errors.push("Please search for and select a category/game.");
         } else if (effect.mode === "custom" && effect.gameName == null) {

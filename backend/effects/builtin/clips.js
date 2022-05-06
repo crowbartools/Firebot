@@ -160,7 +160,7 @@ const clip = {
             });
     },
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.postInDiscord && effect.discordChannelId == null) {
             errors.push("Please select Discord channel.");
         }

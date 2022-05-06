@@ -12,11 +12,11 @@ module.exports = {
     comparisonTypes: [ComparisonType.IS, ComparisonType.IS_NOT, ComparisonType.CONTAINS, ComparisonType.MATCHES_REGEX],
     valueType: "text",
     predicate: (filterSettings, eventData) => {
-        let { comparisonType, value } = filterSettings;
-        let { eventMeta } = eventData;
+        const { comparisonType, value } = filterSettings;
+        const { eventMeta } = eventData;
 
-        let eventCategory = eventMeta.category ? eventMeta.category.toLowerCase() : "";
-        let filterCategory = value ? value.toLowerCase() : "";
+        const eventCategory = eventMeta.category ? eventMeta.category.toLowerCase() : "";
+        const filterCategory = value ? value.toLowerCase() : "";
 
         switch (comparisonType) {
         case ComparisonType.IS:
@@ -26,7 +26,7 @@ module.exports = {
         case ComparisonType.CONTAINS:
             return eventCategory.includes(filterCategory);
         case ComparisonType.MATCHES_REGEX: {
-            let regex = new RegExp(filterCategory, "gi");
+            const regex = new RegExp(filterCategory, "gi");
             return regex.test(eventCategory);
         }
         default:

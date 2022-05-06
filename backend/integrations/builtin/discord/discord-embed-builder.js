@@ -129,7 +129,7 @@ async function buildScreenshotEmbed(imageUrl) {
 async function buildEmbed(embedType, customEmbedData) {
     switch (embedType) {
     case "channel": {
-        let channelEmbed = await buildChannelEmbed();
+        const channelEmbed = await buildChannelEmbed();
         if (channelEmbed) {
             channelEmbed.allowed_mentions = { //eslint-disable-line camelcase
                 parse: ["users", "roles", "everyone"]

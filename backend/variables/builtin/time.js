@@ -14,7 +14,7 @@ const model = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, template = 'h:mm a') => {
-        let now = moment();
+        const now = moment();
         return now.format(template.toString());
     }
 };

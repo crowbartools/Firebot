@@ -9,11 +9,11 @@ module.exports = {
     rightSideValueType: "text",
     predicate: (conditionSettings, trigger) => {
 
-        let { comparisonType, rightSideValue } = conditionSettings;
+        const { comparisonType, rightSideValue } = conditionSettings;
 
         // normalize usernames
-        let triggerUsername = trigger.metadata.username ? trigger.metadata.username.toLowerCase() : "";
-        let conditionUsername = rightSideValue ? rightSideValue.toLowerCase() : "";
+        const triggerUsername = trigger.metadata.username ? trigger.metadata.username.toLowerCase() : "";
+        const conditionUsername = rightSideValue ? rightSideValue.toLowerCase() : "";
 
         switch (comparisonType) {
         case "is":
@@ -23,7 +23,7 @@ module.exports = {
         case "contains":
             return triggerUsername.includes(conditionUsername);
         case "matches regex": {
-            let regex = new RegExp(conditionUsername, "gi");
+            const regex = new RegExp(conditionUsername, "gi");
             return regex.test(triggerUsername);
         }
         default:

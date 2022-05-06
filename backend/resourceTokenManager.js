@@ -24,7 +24,7 @@ function newToken() {
 }
 
 function getResourcePath(token) {
-    let resource = tokens[token];
+    const resource = tokens[token];
 
     // delete the token if we actually had something saved.
     // delay for the given length before deletion to allow multiple requests at once and loading.
@@ -45,7 +45,7 @@ function storeResourcePath(path, length) {
         length = 5;
     }
 
-    let token = newToken();
+    const token = newToken();
     tokens[token] = { path: path, length: length * 1000 };
     return token;
 }

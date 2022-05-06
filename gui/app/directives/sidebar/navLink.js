@@ -26,7 +26,7 @@
             </li>
             `,
         controller: function(sidebarManager) {
-            let ctrl = this;
+            const ctrl = this;
 
             ctrl.sbm = sidebarManager;
 
@@ -38,7 +38,7 @@
             };
 
             ctrl.getClass = function() {
-                let isSelected = sidebarManager.tabIsSelected(ctrl.page);
+                const isSelected = sidebarManager.tabIsSelected(ctrl.page);
                 return `${isSelected ? "fad" : "fal"} ${ctrl.icon}`;
             };
         }

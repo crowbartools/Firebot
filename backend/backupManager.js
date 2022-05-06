@@ -7,16 +7,16 @@ const fs = require("fs-extra");
 const { app } = require("electron");
 const logger = require("./logwrapper");
 
-let backupFolderPath =
+const backupFolderPath =
   path.resolve(dataAccess.getPathInUserData("/") + path.sep + "backups") +
   path.sep;
 
 function cleanUpOldBackups(callback) {
-    let maxBackups = settings.maxBackupCount();
+    const maxBackups = settings.maxBackupCount();
 
     if (maxBackups !== "All") {
         fs.readdir(backupFolderPath, (err, files) => {
-            let fileNames = files
+            const fileNames = files
                 .map(function(v) {
                     return {
                         name: v,
@@ -53,18 +53,18 @@ function cleanUpOldBackups(callback) {
 
 function startBackup(manualActivation = false, callback) {
     logger.info("Backup manualActivation: " + manualActivation);
-    let archiver = require("archiver");
+    const archiver = require("archiver");
 
-    let version = app.getVersion(),
+    const version = app.getVersion(),
         milliseconds = Date.now(),
         fileExtension = "zip";
 
-    let filename = `backup_${milliseconds}_v${version}${
+    const filename = `backup_${milliseconds}_v${version}${
         manualActivation ? "_manual" : ""
     }.${fileExtension}`;
 
-    let output = fs.createWriteStream(backupFolderPath + filename);
-    let archive = archiver(fileExtension, {
+    const output = fs.createWriteStream(backupFolderPath + filename);
+    const archive = archiver(fileExtension, {
         zlib: { level: 9 } // Sets the compression level.
     });
 
@@ -106,7 +106,7 @@ function startBackup(manualActivation = false, callback) {
     archive.pipe(output);
 
     // Add directory to package
-    let folderPath = path.resolve(dataAccess.getPathInUserData("/"));
+    const folderPath = path.resolve(dataAccess.getPathInUserData("/"));
     //archive.directory(folderPath, "profiles");
 
     archive.glob('**/*', {
@@ -119,12 +119,12 @@ function startBackup(manualActivation = false, callback) {
 }
 
 function onceADayBackUpCheck() {
-    let shouldBackUp = settings.backupOnceADay(),
+    const shouldBackUp = settings.backupOnceADay(),
         lastBackupDate = settings.lastBackupDate(),
         todayDate = new Date();
 
     if (shouldBackUp) {
-        let isSameDay =
+        const isSameDay =
       lastBackupDate != null &&
       lastBackupDate.getDate() === todayDate.getDate() &&
       lastBackupDate.getMonth() === todayDate.getMonth() &&

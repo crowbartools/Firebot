@@ -44,10 +44,10 @@ module.exports = {
     },
     predicate: (filterSettings, eventData) => {
 
-        let { comparisonType, value } = filterSettings;
-        let { eventMeta } = eventData;
+        const { comparisonType, value } = filterSettings;
+        const { eventMeta } = eventData;
 
-        let cardRarity = eventMeta.cardRarity;
+        const cardRarity = eventMeta.cardRarity;
 
         if (!cardRarity) {
             return false;

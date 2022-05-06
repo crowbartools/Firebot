@@ -42,7 +42,7 @@ const effect = {
     `,
     optionsController: () => {},
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.message == null || effect.message === "") {
             errors.push("Chat message can't be blank.");
         }

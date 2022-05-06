@@ -96,8 +96,8 @@
             };
 
             $scope.getSelectedVoiceName = () => {
-                let selectedVoiceId = settingsService.getDefaultTtsVoiceId();
-                let voice = ttsService.getVoiceById(selectedVoiceId);
+                const selectedVoiceId = settingsService.getDefaultTtsVoiceId();
+                const voice = ttsService.getVoiceById(selectedVoiceId);
                 return voice ? voice.name : "Unknown Voice";
             };
 
@@ -135,7 +135,7 @@
                 }
             };
 
-            let streamerName = accountAccess.accounts.streamer.username;
+            const streamerName = accountAccess.accounts.streamer.username;
 
             const testTTSMessages = [
                 "I hope you are having a nice day.",
@@ -210,7 +210,7 @@
             };
 
             $scope.toggleWhileLoops = () => {
-                let whileLoopsEnabled = settingsService.getWhileLoopEnabled();
+                const whileLoopsEnabled = settingsService.getWhileLoopEnabled();
 
                 if (whileLoopsEnabled) {
                     settingsService.setWhileLoopEnabled(false);
@@ -358,7 +358,7 @@
             };
 
             $scope.showBackupListModal = function() {
-                let showBackupListModalContext = {
+                const showBackupListModalContext = {
                     templateUrl: "backupListModal.html",
                     size: "sm",
                     controllerFunc: (
@@ -371,22 +371,22 @@
                     ) => {
                         $scope.backups = [];
 
-                        let backupFolderPath = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups") + path.sep;
+                        const backupFolderPath = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups") + path.sep;
 
                         $scope.loadingBackups = true;
                         $q
                             .when(
                                 new Promise(resolve => {
                                     fs.readdir(backupFolderPath, (err, files) => {
-                                        let backups = files
+                                        const backups = files
                                             .filter(f => f.endsWith(".zip"))
                                             .map(function(v) {
-                                                let fileStats = fs.statSync(backupFolderPath + v);
-                                                let backupDate = moment(fileStats.birthtime);
+                                                const fileStats = fs.statSync(backupFolderPath + v);
+                                                const backupDate = moment(fileStats.birthtime);
 
                                                 let version = "Unknown Version";
-                                                let versionRe = /_(v?\d+\.\d+\.\d+(?:-[a-zA-Z0-9]+(?:\.\d+)?)?)(?:_|\b)/;
-                                                let match = v.match(versionRe);
+                                                const versionRe = /_(v?\d+\.\d+\.\d+(?:-[a-zA-Z0-9]+(?:\.\d+)?)?)(?:_|\b)/;
+                                                const match = v.match(versionRe);
                                                 if (match != null) {
                                                     version = match[1];
                                                 }
@@ -425,7 +425,7 @@
 
                         $scope.togglePreventDeletion = function(backup) {
                             backup.neverDelete = !backup.neverDelete;
-                            let oldName = backup.name + ".zip";
+                            const oldName = backup.name + ".zip";
                             backup.name = backup.neverDelete
                                 ? (backup.name += "_NODELETE")
                                 : backup.name.replace("_NODELETE", "");
@@ -483,7 +483,7 @@
             };
 
             $scope.showChangePortModal = function() {
-                let showChangePortModalContext = {
+                const showChangePortModalContext = {
                     templateUrl: "changePortModal.html",
                     size: "sm",
                     controllerFunc: ($scope, settingsService, $uibModalInstance) => {
@@ -494,7 +494,7 @@
                         // When the user clicks a call to action that will close the modal, such as "Save"
                         $scope.changePort = function() {
                             // validate port number
-                            let newPort = $scope.newPort;
+                            const newPort = $scope.newPort;
                             if (
                                 newPort == null ||
                 newPort === "" ||

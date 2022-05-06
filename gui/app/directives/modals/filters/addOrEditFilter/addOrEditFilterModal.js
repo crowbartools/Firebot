@@ -70,7 +70,7 @@
             modalInstance: "<"
         },
         controller: function($injector) {
-            let $ctrl = this;
+            const $ctrl = this;
 
             $ctrl.availableFilters = [];
 
@@ -81,7 +81,7 @@
             $ctrl.presetValues = [];
             async function loadPresetValues() {
                 if ($ctrl.currentFilterDef && $ctrl.currentFilterDef.valueType === "preset") {
-                    let presetValues = await $injector.invoke($ctrl.currentFilterDef.getPresetValues, {}, {});
+                    const presetValues = await $injector.invoke($ctrl.currentFilterDef.getPresetValues, {}, {});
                     if (presetValues != null && Array.isArray(presetValues)) {
                         $ctrl.presetValues = presetValues;
                     }
@@ -91,7 +91,7 @@
             $ctrl.getSelectedPresetValueDisplay = function() {
                 if ($ctrl.presetValues.length > 0 && $ctrl.selectedFilter && $ctrl.selectedFilter.value) {
 
-                    let presetValue = $ctrl.presetValues.find(pv => pv.value === $ctrl.selectedFilter.value);
+                    const presetValue = $ctrl.presetValues.find(pv => pv.value === $ctrl.selectedFilter.value);
 
                     if (presetValue) {
                         return presetValue.display;
@@ -113,7 +113,7 @@
             };
 
             $ctrl.getFilterName = function(filterId) {
-                let filterDef = $ctrl.availableFilters.find(f => f.id === filterId);
+                const filterDef = $ctrl.availableFilters.find(f => f.id === filterId);
                 return filterDef ? filterDef.name : filterId;
             };
 
@@ -127,7 +127,7 @@
                     $ctrl.isNewFilter = true;
 
                     if ($ctrl.availableFilters.length > 0) {
-                        let firstFilterDef = $ctrl.availableFilters[0];
+                        const firstFilterDef = $ctrl.availableFilters[0];
                         $ctrl.selectedFilter.type = firstFilterDef.id;
                         $ctrl.selectedFilter.comparisonType = firstFilterDef.comparisonTypes[0];
                         $ctrl.currentFilterDef = firstFilterDef;

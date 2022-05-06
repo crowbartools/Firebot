@@ -59,14 +59,14 @@ const fileWriter = {
         };
     },
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.name == null || effect.name === "") {
             errors.push("Please provide a variable name.");
         }
         return errors;
     },
     onTriggerEvent: async event => {
-        let { effect } = event;
+        const { effect } = event;
 
         customVariableManager.addCustomVariable(effect.name, effect.variableData, effect.ttl, effect.propertyPath);
 

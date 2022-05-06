@@ -6,7 +6,7 @@
         .module("firebotApp")
         .factory("channelRewardsService", function($q,
             backendCommunicator, utilityService, objectCopyHelper, ngToast) {
-            let service = {};
+            const service = {};
 
             service.channelRewards = [];
 

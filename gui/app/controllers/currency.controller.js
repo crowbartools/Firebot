@@ -22,7 +22,7 @@
                         currency: () => currency
                     },
                     closeCallback: resp => {
-                        let action = resp.action,
+                        const action = resp.action,
                             currency = resp.currency;
 
                         switch (action) {

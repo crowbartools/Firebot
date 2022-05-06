@@ -106,7 +106,7 @@ class EffectQueue {
 /**
  * @type {Object.<string, EffectQueue>}
  */
-let queues = {};
+const queues = {};
 
 function addEffectsToQueue(queueConfig, runEffectsContext, duration, priority) {
     if (queueConfig == null || runEffectsContext == null) {
@@ -126,7 +126,7 @@ function updateQueueConfig(queueConfig) {
     if (queueConfig == null) {
         return;
     }
-    let queue = queues[queueConfig.id];
+    const queue = queues[queueConfig.id];
     if (queue != null) {
         queue.mode = queueConfig.mode;
         queue.interval = queueConfig.interval;
@@ -137,7 +137,7 @@ function removeQueue(queueId) {
     if (queueId == null) {
         return;
     }
-    let queue = queues[queueId];
+    const queue = queues[queueId];
 
     if (queue != null) {
         logger.debug(`Removing queue ${queue.id}`);

@@ -33,7 +33,7 @@ exports.pathExists = (path) => {
  * @returns JsonDB
  */
 exports.getJsonDbInV4Data = function(filePath) {
-    let jsonDbPath = path.join(v4DataPath, filePath);
+    const jsonDbPath = path.join(v4DataPath, filePath);
     return new JsonDB(jsonDbPath, false, true);
 };
 

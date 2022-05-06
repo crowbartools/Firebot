@@ -140,7 +140,7 @@ const playSound = {
         // Generate token if going to overlay, otherwise send to gui.
         if (selectedOutputDevice.deviceId === "overlay") {
             if (effect.soundType !== "url") {
-                let resourceToken = resourceTokenManager.storeResourcePath(
+                const resourceToken = resourceTokenManager.storeResourcePath(
                     data.filepath,
                     30
                 );

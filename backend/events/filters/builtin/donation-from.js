@@ -21,12 +21,12 @@ module.exports = {
     },*/
     predicate: (filterSettings, eventData) => {
 
-        let { comparisonType, value } = filterSettings;
-        let { eventMeta } = eventData;
+        const { comparisonType, value } = filterSettings;
+        const { eventMeta } = eventData;
 
         // normalize usernames
-        let eventUsername = eventMeta.from ? eventMeta.from.toLowerCase() : "";
-        let filterUsername = value ? value.toLowerCase() : "";
+        const eventUsername = eventMeta.from ? eventMeta.from.toLowerCase() : "";
+        const filterUsername = value ? value.toLowerCase() : "";
 
         switch (comparisonType) {
         case ComparisonType.IS:
@@ -36,7 +36,7 @@ module.exports = {
         case ComparisonType.CONTAINS:
             return eventUsername.includes(filterUsername);
         case ComparisonType.MATCHES_REGEX: {
-            let regex = new RegExp(filterUsername, "gi");
+            const regex = new RegExp(filterUsername, "gi");
             return regex.test(eventUsername);
         }
         default:

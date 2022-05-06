@@ -39,7 +39,7 @@
         `,
         controller: function($timeout) {
 
-            let ctrl = this;
+            const ctrl = this;
 
             ctrl.objectMode = false;
 
@@ -65,7 +65,7 @@
             };
 
             function loadOptions() {
-                let options = ctrl.options;
+                const options = ctrl.options;
                 if (!Array.isArray(options) && options instanceof Object) {
                     ctrl.objectMode = true;
                 }

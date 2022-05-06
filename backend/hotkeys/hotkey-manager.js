@@ -11,15 +11,15 @@ const logger = require("../logwrapper");
 let hotkeysCache = [];
 
 function runHotkey(code) {
-    let hotkey = hotkeysCache.find(k => k.code === code);
+    const hotkey = hotkeysCache.find(k => k.code === code);
 
-    let effects = hotkey.effects;
+    const effects = hotkey.effects;
 
     if (effects == null) {
         return;
     }
 
-    let processEffectsRequest = {
+    const processEffectsRequest = {
         trigger: {
             type: TriggerType.HOTKEY,
             metadata: {
@@ -62,13 +62,13 @@ function registerAllHotkeys() {
 
 function refreshHotkeyCache(retry = 1) {
     // Setup events db.
-    let dbEvents = profileManager.getJsonDbInProfile("/hotkeys");
+    const dbEvents = profileManager.getJsonDbInProfile("/hotkeys");
 
     try {
         if (retry <= 3) {
             try {
                 // Update Cache
-                let hkraw = dbEvents.getData("/");
+                const hkraw = dbEvents.getData("/");
                 if (hkraw != null && Array.isArray(hkraw)) {
                     hotkeysCache = hkraw;
                 }

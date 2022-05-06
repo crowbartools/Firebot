@@ -209,7 +209,7 @@
                 };
 
                 $scope.saveSelectedNotification = function() {
-                    let sound = $scope.selectedNotificationSound;
+                    const sound = $scope.selectedNotificationSound;
 
                     settingsService.setTaggedNotificationSound({
                         name: sound.name,

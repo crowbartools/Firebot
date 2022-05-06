@@ -12,11 +12,11 @@
             listenerService,
             backendCommunicator
         ) {
-            let service = {};
+            const service = {};
 
             service.customCommandSearch = "";
 
-            let getCommandsDb = () =>
+            const getCommandsDb = () =>
                 profileManager.getJsonDbInProfile("/chat/commands");
 
             // in memory commands storage
@@ -27,7 +27,7 @@
 
             // Refresh commands cache
             service.refreshCommands = function() {
-                let commandsDb = getCommandsDb();
+                const commandsDb = getCommandsDb();
 
                 let cmdData;
                 try {
@@ -80,13 +80,13 @@
                     command.count = 0;
                 }
 
-                let commandDb = getCommandsDb();
+                const commandDb = getCommandsDb();
 
                 // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
                 // and other magical things. Angular has a .toJson() convienence method that coverts an object to a json string
                 // while removing internal angular properties. We then convert this string back to an object with
                 // JSON.parse. It's kinda hacky, but it's an easy way to ensure we arn't accidentally saving anything extra.
-                let cleanedCommand = JSON.parse(angular.toJson(command));
+                const cleanedCommand = JSON.parse(angular.toJson(command));
 
                 try {
                     commandDb.push("/customCommands/" + command.id, cleanedCommand);
@@ -113,7 +113,7 @@
                     JSON.parse(angular.toJson(command))
                 );
 
-                let index = service.commandsCache.systemCommands.findIndex(
+                const index = service.commandsCache.systemCommands.findIndex(
                     c => c.id === command.id
                 );
 
@@ -127,12 +127,12 @@
 
                 trigger = trigger != null ? trigger.toLowerCase() : "";
 
-                let foundDuplicateCustomCmdTrigger = service.commandsCache.customCommands.some(
+                const foundDuplicateCustomCmdTrigger = service.commandsCache.customCommands.some(
                     command =>
                         command.id !== id && command.trigger && command.trigger.toLowerCase() === trigger
                 );
 
-                let foundDuplicateSystemCmdTrigger = service.commandsCache.systemCommands.some(
+                const foundDuplicateSystemCmdTrigger = service.commandsCache.systemCommands.some(
                     command => command.active && command.trigger && command.trigger.toLowerCase() === trigger
                 );
 
@@ -141,7 +141,7 @@
 
             // Deletes a command.
             service.deleteCustomCommand = function(command) {
-                let commandDb = getCommandsDb();
+                const commandDb = getCommandsDb();
 
                 if (command == null || command.id == null || command.id === "") {
                     return;
@@ -164,7 +164,7 @@
             );
 
             ipcRenderer.on("commandCountUpdate", function(event, data) {
-                let command = service
+                const command = service
                     .getCustomCommands()
                     .find(c => c.id === data.commandId);
                 if (command != null) {
@@ -180,7 +180,7 @@
                 (data) => {
                     service.saveCustomCommand(data.command, data.user);
 
-                    let currentIndex = service.commandsCache.customCommands.findIndex(c => c.trigger === data.command.trigger);
+                    const currentIndex = service.commandsCache.customCommands.findIndex(c => c.trigger === data.command.trigger);
 
                     if (currentIndex === -1) {
                         service.commandsCache.customCommands.push(data.command);
@@ -199,7 +199,7 @@
                 },
                 (data) => {
 
-                    let command = service.commandsCache.customCommands.find(c => c.trigger === data.trigger);
+                    const command = service.commandsCache.customCommands.find(c => c.trigger === data.trigger);
 
                     service.deleteCustomCommand(command);
 

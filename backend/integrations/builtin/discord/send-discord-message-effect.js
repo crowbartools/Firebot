@@ -7,7 +7,7 @@ const discord = require("./discord-message-sender");
 const frontEndCommunicator = require("../../../common/frontend-communicator");
 
 frontEndCommunicator.onAsync("getDiscordChannels", async () => {
-    let channels = [];
+    const channels = [];
     const discordIntegration = integrationManager.getIntegrationDefinitionById("discord");
     if (discordIntegration && discordIntegration.userSettings) {
         if (discordIntegration.userSettings.webhookSettings &&

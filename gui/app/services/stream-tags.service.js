@@ -4,7 +4,7 @@
     angular
         .module("firebotApp")
         .factory("streamTagsService", function(backendCommunicator) {
-            let service = {};
+            const service = {};
 
             service.allStreamTags = [];
 

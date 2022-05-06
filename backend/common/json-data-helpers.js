@@ -12,7 +12,7 @@ exports.readData = (data, propertyPath) => {
     }
 
     try {
-        let pathNodes = propertyPath.split(".");
+        const pathNodes = propertyPath.split(".");
         for (let i = 0; i < pathNodes.length; i++) {
             if (data == null) {
                 break;
@@ -56,7 +56,7 @@ exports.parseData = (newData, currentData, propertyPath) => {
     }
 
     let cursor = currentData;
-    let pathNodes = propertyPath.split(".");
+    const pathNodes = propertyPath.split(".");
     for (let i = 0; i < pathNodes.length; i++) {
         let node = pathNodes[i];
 
@@ -65,7 +65,7 @@ exports.parseData = (newData, currentData, propertyPath) => {
             node = parseInt(node);
         }
 
-        let isLastItem = i === pathNodes.length - 1;
+        const isLastItem = i === pathNodes.length - 1;
         if (isLastItem) {
             // if data recognized as null and cursor is an array, remove index instead of setting value
             if (dataIsNull && Array.isArray(cursor) && !isNaN(node)) {

@@ -134,11 +134,11 @@ const bidCommand = {
                 "topBidder": ""
             };
 
-            let raiseMinimum = bidSettings.settings.currencySettings.minIncrement;
-            let minimumBidWithRaise = activeBiddingInfo.currentBid + raiseMinimum;
+            const raiseMinimum = bidSettings.settings.currencySettings.minIncrement;
+            const minimumBidWithRaise = activeBiddingInfo.currentBid + raiseMinimum;
             twitchChat.sendChatMessage(`Bidding has started at ${bidAmount} ${currencyName}. Type !bid ${minimumBidWithRaise} to start bidding.`, null, chatter);
 
-            let timeLimit = bidSettings.settings.timeSettings.timeLimit * 60000;
+            const timeLimit = bidSettings.settings.timeSettings.timeLimit * 60000;
             bidTimer = setTimeout(function() {
                 stopBidding(chatter);
             }, timeLimit);
@@ -156,7 +156,7 @@ const bidCommand = {
                 return;
             }
 
-            let cooldownExpireTime = cooldownCache.get(username);
+            const cooldownExpireTime = cooldownCache.get(username);
             if (cooldownExpireTime && moment().isBefore(cooldownExpireTime)) {
                 const timeRemainingDisplay = util.secondsForHumans(Math.abs(moment().diff(cooldownExpireTime, 'seconds')));
                 twitchChat.sendChatMessage(`You placed a bid recently! Please wait ${timeRemainingDisplay} before placing another bid.`, null, chatter, chatEvent.id);
@@ -187,28 +187,28 @@ const bidCommand = {
                 return;
             }
 
-            let raiseMinimum = bidSettings.settings.currencySettings.minIncrement;
-            let minimumBidWithRaise = activeBiddingInfo.currentBid + raiseMinimum;
+            const raiseMinimum = bidSettings.settings.currencySettings.minIncrement;
+            const minimumBidWithRaise = activeBiddingInfo.currentBid + raiseMinimum;
             if (bidAmount < minimumBidWithRaise) {
                 twitchChat.sendChatMessage(`You must bid at least ${minimumBidWithRaise} ${currencyName}.`, null, chatter, chatEvent.id);
                 return;
             }
 
-            let previousHighBidder = activeBiddingInfo.topBidder;
-            let previousHighBidAmount = activeBiddingInfo.currentBid;
+            const previousHighBidder = activeBiddingInfo.topBidder;
+            const previousHighBidAmount = activeBiddingInfo.currentBid;
             if (previousHighBidder != null && previousHighBidder !== "") {
                 await currencyDatabase.adjustCurrencyForUser(previousHighBidder, currencyId, previousHighBidAmount);
                 twitchChat.sendChatMessage(`You have been out bid! You've been refunded ${previousHighBidAmount} ${currencyName}.`, null, chatter, chatEvent.id);
             }
 
             await currencyDatabase.adjustCurrencyForUser(username, currencyId, -Math.abs(bidAmount));
-            let newTopBidWithRaise = bidAmount + raiseMinimum;
+            const newTopBidWithRaise = bidAmount + raiseMinimum;
             twitchChat.sendChatMessage(`${username} is the new high bidder at ${bidAmount} ${currencyName}. To bid, type !bid ${newTopBidWithRaise} (or higher).`);
 
             // eslint-disable-next-line no-use-before-define
             setNewHighBidder(username, bidAmount);
 
-            let cooldownSecs = bidSettings.settings.cooldownSettings.cooldown;
+            const cooldownSecs = bidSettings.settings.cooldownSettings.cooldown;
             if (cooldownSecs && cooldownSecs > 0) {
                 const expireTime = moment().add(cooldownSecs, 'seconds');
                 cooldownCache.set(username, expireTime, cooldownSecs);

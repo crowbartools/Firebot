@@ -14,14 +14,14 @@ async function checkForV4ViewerGroups() {
 }
 
 exports.run = async () => {
-    let incompatibilityWarnings = [];
+    const incompatibilityWarnings = [];
 
-    let v4ViewerGroupsExist = await checkForV4ViewerGroups();
+    const v4ViewerGroupsExist = await checkForV4ViewerGroups();
 
     if (v4ViewerGroupsExist) {
         let v4ViewerGroupsObj;
         try {
-            let v4ViewerGroupsDb = importHelpers.getJsonDbInV4Data("/groups.json");
+            const v4ViewerGroupsDb = importHelpers.getJsonDbInV4Data("/groups.json");
             v4ViewerGroupsObj = v4ViewerGroupsDb.getData("/");
         } catch (err) {
             logger.warn("Error while attempting to load v4 events db.", err);
@@ -31,8 +31,8 @@ exports.run = async () => {
             let viewerGroups = Object.values(v4ViewerGroupsObj) || [];
             viewerGroups = viewerGroups.filter(g => g.groupName !== "banned");
 
-            for (let viewerGroup of viewerGroups) {
-                let customRole = {
+            for (const viewerGroup of viewerGroups) {
+                const customRole = {
                     id: uuid(),
                     name: viewerGroup.groupName,
                     viewers: viewerGroup.users

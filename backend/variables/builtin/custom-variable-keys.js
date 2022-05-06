@@ -29,10 +29,10 @@ const model = {
     evaluator: (_, name, propertyPath) => {
         const data = customVariableManager.getCustomVariable(name, propertyPath);
         if (data == null || !isObject(data)) {
-           return "[]"; // same as JSON.stringify([]);
+            return "[]"; // same as JSON.stringify([]);
         }
 
-        let keys = Object.keys(data);
+        const keys = Object.keys(data);
         return JSON.stringify(keys);
     }
 };

@@ -172,7 +172,7 @@ const triviaCommand = {
                 return;
             }
 
-            let cooldownSecs = triviaSettings.settings.cooldownSettings.cooldown;
+            const cooldownSecs = triviaSettings.settings.cooldownSettings.cooldown;
             if (cooldownSecs && cooldownSecs > 0) {
                 const expireTime = moment().add(cooldownSecs, 'seconds');
                 cooldownCache.set(username, expireTime, cooldownSecs);
@@ -217,7 +217,7 @@ const triviaCommand = {
             if (winningsMultiplierSettings) {
                 winningsMultiplier = winningsMultiplierSettings.base;
 
-                for (let role of winningsMultiplierSettings.roles) {
+                for (const role of winningsMultiplierSettings.roles) {
                     if (allRoles.some(r => r.id === role.roleId)) {
                         winningsMultiplier = role.value;
                         break;

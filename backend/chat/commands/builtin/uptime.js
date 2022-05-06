@@ -34,7 +34,7 @@ const model = {
      * When the command is triggered
      */
     onTriggerEvent: async event => {
-        let uptimeString = await util.getUptime();
+        const uptimeString = await util.getUptime();
         const { commandOptions } = event;
         chat.sendChatMessage(commandOptions.uptimeDisplayTemplate
             .replace("{uptime}", uptimeString));

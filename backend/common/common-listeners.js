@@ -40,7 +40,7 @@ exports.setupCommonListeners = () => {
     });
 
     frontendCommunicator.onAsync("open-file-browser", async data => {
-        let uuid = data.uuid,
+        const uuid = data.uuid,
             options = data.options || {};
 
         let dialogResult = null;
@@ -120,7 +120,7 @@ exports.setupCommonListeners = () => {
             dataAccess.getUserDataPath() + path.sep + "backups" + path.sep
         );
 
-        let fs = require("fs-extra");
+        const fs = require("fs-extra");
         let backupsFolderExists = false;
         try {
             backupsFolderExists = fs.existsSync(backupsFolderPath);
@@ -128,7 +128,7 @@ exports.setupCommonListeners = () => {
             logger.warn("cannot check if backup folder exists", err);
         }
 
-        let zipPath = dialog.showOpenDialogSync({
+        const zipPath = dialog.showOpenDialogSync({
             title: "Select backup zp",
             buttonLabel: "Select Backup",
             defaultPath: backupsFolderExists ? backupsFolderPath : undefined,
@@ -141,7 +141,7 @@ exports.setupCommonListeners = () => {
     ipcMain.on("openBackupFolder", () => {
         // We include "fakefile.txt" as a workaround to make it open into the 'root' folder instead
         // of opening to the poarent folder with 'Firebot'folder selected.
-        let backupFolder = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups" + path.sep);
+        const backupFolder = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups" + path.sep);
         shell.openPath(backupFolder);
     });
 
@@ -174,10 +174,10 @@ exports.setupCommonListeners = () => {
     // Get Any kind of file Path
     // This listens for an event from the front end.
     ipcMain.on("getAnyFilePath", (event, data) => {
-        let uuid = data.uuid,
+        const uuid = data.uuid,
             options = data.options || {};
 
-        let path = dialog.showOpenDialogSync({
+        const path = dialog.showOpenDialogSync({
             title: options.title ? options.title : undefined,
             buttonLabel: options.buttonLabel ? options.buttonLabel : undefined,
             properties: options.directoryOnly ? ["openDirectory"] : ["openFile"],
@@ -206,12 +206,12 @@ exports.setupCommonListeners = () => {
         }
 
         // Download Update
-        let options = {
+        const options = {
             repo: "crowbartools/firebot",
             currentVersion: app.getVersion()
         };
 
-        let updater = new GhReleases(options);
+        const updater = new GhReleases(options);
 
         updater.check(err => {
             // Download the update

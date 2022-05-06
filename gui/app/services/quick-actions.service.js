@@ -6,7 +6,7 @@
     angular
         .module("firebotApp")
         .factory("quickActionsService", function(backendCommunicator, utilityService) {
-            let service = {};
+            const service = {};
 
             /** @type {QuickAction[]} */
             service.quickActions = [];

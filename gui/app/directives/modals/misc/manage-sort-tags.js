@@ -39,7 +39,7 @@
                 modalInstance: "<"
             },
             controller: function($scope, utilityService) {
-                let $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.sortableOptions = {
                     handle: ".dragHandle",
@@ -89,7 +89,7 @@
                     const modalId = $ctrl.resolve.modalId;
                     utilityService.addSlidingModal(
                         $ctrl.modalInstance.rendered.then(() => {
-                            let modalElement = $("." + modalId).children();
+                            const modalElement = $("." + modalId).children();
                             return {
                                 element: modalElement,
                                 name: "",

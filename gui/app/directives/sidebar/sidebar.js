@@ -108,7 +108,7 @@
             utilityService,
             settingsService
         ) {
-            let ctrl = this;
+            const ctrl = this;
 
             ctrl.sbm = sidebarManager;
 

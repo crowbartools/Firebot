@@ -154,7 +154,7 @@ exports.loadReplaceVariables = () => {
         'whisper-message',
         'word'
     ].forEach(filename => {
-        let definition = require(`./builtin/${filename}.js`);
+        const definition = require(`./builtin/${filename}.js`);
         replaceVariableManager.registerReplaceVariable(definition);
     });
 };

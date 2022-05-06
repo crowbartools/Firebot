@@ -78,7 +78,7 @@ const model = {
    * When the effect is saved
    */
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.commandType === "custom" && (effect.commandId == null || effect.commandId === "")) {
             errors.push("Please select a custom command to run.");
         }
@@ -92,7 +92,7 @@ const model = {
    */
     onTriggerEvent: event => {
         return new Promise(resolve => {
-            let { effect, trigger } = event;
+            const { effect, trigger } = event;
 
             const clonedTrigger = JSON.parse(JSON.stringify(trigger));
             if (effect.username != null && effect.username.length > 0) {

@@ -7,7 +7,7 @@
     angular
         .module("firebotApp")
         .factory("chatModerationService", function(backendCommunicator) {
-            let service = {};
+            const service = {};
 
             service.chatModerationData = {
                 settings: {
@@ -39,7 +39,7 @@
             };
 
             service.loadChatModerationData = () => {
-                let data = backendCommunicator.fireEventSync("getChatModerationData");
+                const data = backendCommunicator.fireEventSync("getChatModerationData");
                 if (data != null) {
                     service.chatModerationData = data;
                     if (service.chatModerationData.settings.exemptRoles == null) {
@@ -86,11 +86,11 @@
 
             service.addBannedWords = (words) => {
 
-                let normalizedWords = words
+                const normalizedWords = words
                     .filter(w => w != null && w.trim().length > 0 && w.trim().length < 360)
                     .map(w => w.trim().toLowerCase());
 
-                let mapped = [...new Set(normalizedWords)].map(w => {
+                const mapped = [...new Set(normalizedWords)].map(w => {
                     return {
                         text: w,
                         createdAt: moment().valueOf()
@@ -103,7 +103,7 @@
             };
 
             service.addBannedRegex = (regex) => {
-                let mapped = [
+                const mapped = [
                     {
                         text: regex,
                         createdAt: moment().valueOf()
@@ -116,7 +116,7 @@
             };
 
             service.removeBannedWordAtIndex = (index) => {
-                let word = service.chatModerationData.bannedWords[index];
+                const word = service.chatModerationData.bannedWords[index];
                 if (word) {
                     backendCommunicator.fireEvent("removeBannedWord", word.text);
                     service.chatModerationData.bannedWords.splice(index, 1);
@@ -124,7 +124,7 @@
             };
 
             service.removeBannedWordByText = (text) => {
-                let index = service.chatModerationData.bannedWords.findIndex(w => w.text === text);
+                const index = service.chatModerationData.bannedWords.findIndex(w => w.text === text);
                 if (index > -1) {
                     service.removeBannedWordAtIndex(index);
                 }
@@ -136,7 +136,7 @@
             };
 
             service.removeRegexAtIndex = (index) => {
-                let regex = service.chatModerationData.bannedRegularExpressions[index];
+                const regex = service.chatModerationData.bannedRegularExpressions[index];
                 if (regex) {
                     backendCommunicator.fireEvent("removeBannedRegularExpression", regex.text);
                     service.chatModerationData.bannedRegularExpressions.splice(index, 1);
@@ -144,7 +144,7 @@
             };
 
             service.removeRegex = (regex) => {
-                let index = service.chatModerationData.bannedRegularExpressions.findIndex(r => r.text === regex);
+                const index = service.chatModerationData.bannedRegularExpressions.findIndex(r => r.text === regex);
                 if (index > -1) {
                     service.removeRegexAtIndex(index);
                 }
@@ -156,11 +156,11 @@
             };
 
             service.addAllowedUrls = (urls) => {
-                let normalizedUrls = urls
+                const normalizedUrls = urls
                     .filter(u => u != null && u.trim().length > 0 && u.trim().length < 360)
                     .map(u => u.trim().toLowerCase());
 
-                let mapped = [...new Set(normalizedUrls)].map(u => {
+                const mapped = [...new Set(normalizedUrls)].map(u => {
                     return {
                         text: u,
                         createdAt: moment().valueOf()
@@ -174,7 +174,7 @@
             };
 
             service.removeAllowedUrlAtIndex = (index) => {
-                let word = service.chatModerationData.urlAllowlist[index];
+                const word = service.chatModerationData.urlAllowlist[index];
                 if (word) {
                     backendCommunicator.fireEvent("removeAllowedUrl", word.text);
                     service.chatModerationData.urlAllowlist.splice(index, 1);
@@ -182,7 +182,7 @@
             };
 
             service.removeAllowedUrlByText = (text) => {
-                let index = service.chatModerationData.urlAllowlist.findIndex(u => u.text === text);
+                const index = service.chatModerationData.urlAllowlist.findIndex(u => u.text === text);
                 if (index > -1) {
                     service.removeAllowedUrlAtIndex(index);
                 }

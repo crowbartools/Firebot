@@ -5,9 +5,9 @@
     const _ = require("underscore")._;
 
     angular.module("firebotApp").factory("listenerService", function($q) {
-        let service = {};
+        const service = {};
 
-        let registeredListeners = {
+        const registeredListeners = {
             filePath: {},
             connectionStatus: {},
             connectionChangeRequest: {},
@@ -42,7 +42,7 @@
             periodPatronageUpdate: {}
         };
 
-        let ListenerType = {
+        const ListenerType = {
             IMAGE_FILE: "imageFile",
             SOUND_FILE: "soundFile",
             VIDEO_FILE: "videoFile",
@@ -85,7 +85,7 @@
 
         function runListener(listener, returnPayload) {
             if (listener != null) {
-                let callback = listener.callback;
+                const callback = listener.callback;
                 if (typeof callback === "function") {
                     // $q is angulars implementation of the promise protocol. We are creating and instantly resolving a promise, then we run the callback.
                     // This simply ensures any scope varibles are updated if needed.
@@ -98,13 +98,13 @@
         }
 
         function parseFilePathEvent(data) {
-            let uuid = data.id;
+            const uuid = data.id;
             let filepath = "";
             if (data.path != null) {
                 filepath = data.path[0];
             }
 
-            let listener = registeredListeners.filePath[uuid];
+            const listener = registeredListeners.filePath[uuid];
             runListener(listener, filepath);
         }
 
@@ -122,14 +122,14 @@
 
             request.data["uuid"] = uuid;
 
-            let listener = {
+            const listener = {
                 uuid: uuid,
                 type: request.type,
                 callback: callback, // the callback when this listener is triggered
                 runOnce: request.runOnce === true // Means the listener will remove itself after the first time its called
             };
 
-            let publishEvent = request.publishEvent === true;
+            const publishEvent = request.publishEvent === true;
 
             switch (listener.type) {
             case ListenerType.VIDEO_FILE:
@@ -180,7 +180,7 @@
         /*
     * Events
     */
-        let EventType = {
+        const EventType = {
             DOWNLOAD_UPDATE: "downloadUpdate",
             OPEN_ROOT: "openRootFolder",
             GET_IMAGE: "getImagePath",
@@ -239,7 +239,7 @@
         // Chat Connection Monitor
         // Recieves event from main process that connection has been established or disconnected.
         ipcRenderer.on("chatConnection", function(event, data) {
-            let isChatConnected = data ? data.toLowerCase() === "online" : false;
+            const isChatConnected = data ? data.toLowerCase() === "online" : false;
             _.forEach(registeredListeners.chatConnectionStatus, listener => {
                 runListener(listener, isChatConnected);
             });
@@ -255,7 +255,7 @@
 
         // Toggle Services Request Monitor
         ipcRenderer.on("toggleServicesRequest", function(event, data) {
-            let services = data ? data : [];
+            const services = data ? data : [];
             _.forEach(registeredListeners.toggleServicesRequest, listener => {
                 runListener(listener, services);
             });

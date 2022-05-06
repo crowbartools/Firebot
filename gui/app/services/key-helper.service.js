@@ -5,10 +5,10 @@
     angular
         .module("firebotApp")
         .factory("keyHelper", function() {
-            let service = {};
+            const service = {};
 
             // names of known key codes (0-255)
-            let keyboardNameMap = [ //eslint-disable-line no-unused-vars
+            const keyboardNameMap = [ //eslint-disable-line no-unused-vars
                 "", // [0]
                 "", // [1]
                 "", // [2]
@@ -269,7 +269,7 @@
 
             // This has the UnShifted and Shifted characters that each key maps to
             // Ones that are to be ignored for character input are empty.
-            let keyboardCharMap = [
+            const keyboardCharMap = [
                 ["", ""], // [0]
                 ["", ""], // [1]
                 ["", ""], // [2]
@@ -535,9 +535,9 @@
                 // array having 2 columns - un-shifted, and shifted values.
                 // column = 0 is the un-shifted value, while column=1 is the shifted value.
                 // See the "keyboardCharMap" for printable characters.
-                let column = 0;
+                const column = 0;
 
-                let keyMap = keyboardCharMap[keyCode];
+                const keyMap = keyboardCharMap[keyCode];
                 if (!keyMap) {
                     return "";
                 }

@@ -3,8 +3,8 @@
 const quoteManager = require("../../quotes/quotes-manager");
 
 async function getQuoteListForSync() {
-    let quotes = await quoteManager.getAllQuotes();
-    let quotesData = {
+    const quotes = await quoteManager.getAllQuotes();
+    const quotesData = {
         'quotes': quotes
     };
 

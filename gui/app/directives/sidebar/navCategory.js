@@ -13,7 +13,7 @@
             </div>
             `,
         controller: function(sidebarManager) {
-            let $ctrl = this;
+            const $ctrl = this;
 
             $ctrl.sbm = sidebarManager;
         }

@@ -4,7 +4,7 @@
 const { EffectTrigger } = require("../../../shared/effect-constants");
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
-let triggers = {};
+const triggers = {};
 triggers[EffectTrigger.MANUAL] = true;
 triggers[EffectTrigger.COMMAND] = true;
 triggers[EffectTrigger.EVENT] = ["twitch:chat-message", "firebot:highlight-message", "twitch:announcement"];
@@ -24,7 +24,7 @@ const model = {
         if (trigger.type === EffectTrigger.COMMAND) {
 
             //if trigger is command, rebuild chat message with trigger and args
-            let userCommand = trigger.metadata.userCommand;
+            const userCommand = trigger.metadata.userCommand;
             chatMessage = `${userCommand.trigger} ${userCommand.args.join(" ")}`;
 
         } else if (trigger.type === EffectTrigger.EVENT) {

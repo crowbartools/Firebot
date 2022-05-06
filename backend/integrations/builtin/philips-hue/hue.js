@@ -20,7 +20,7 @@ const integrationDefinition = {
 };
 
 async function connectToHue(hueUser) {
-    let connection = await hueManager.connectHueBridge(hueUser);
+    const connection = await hueManager.connectHueBridge(hueUser);
 
     if (connection) {
         return true;

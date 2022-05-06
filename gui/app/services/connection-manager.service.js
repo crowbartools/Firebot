@@ -13,7 +13,7 @@
             integrationService,
             logger
         ) {
-            let service = {};
+            const service = {};
 
             let overlayStatus = listenerService.fireEventSync("getOverlayStatus");
 
@@ -80,7 +80,7 @@
                         break;
                     default:
                         if (s.startsWith("integration.")) {
-                            let intId = s.replace("integration.", "");
+                            const intId = s.replace("integration.", "");
                             if (integrationService.integrationIsConnected(intId)) {
                                 count++;
                             }
@@ -92,25 +92,25 @@
             };
 
             service.partialServicesConnected = function() {
-                let services = settingsService.getSidebarControlledServices();
-                let connectedCount = service.connectedServiceCount();
+                const services = settingsService.getSidebarControlledServices();
+                const connectedCount = service.connectedServiceCount();
 
                 return connectedCount > 0 && services.length > connectedCount;
             };
 
             service.allServicesConnected = function() {
-                let services = settingsService.getSidebarControlledServices();
-                let connectedCount = service.connectedServiceCount();
+                const services = settingsService.getSidebarControlledServices();
+                const connectedCount = service.connectedServiceCount();
 
                 return services.length === connectedCount;
             };
 
             service.toggleSidebarServices = function() {
-                let services = settingsService.getSidebarControlledServices();
+                const services = settingsService.getSidebarControlledServices();
 
                 // we only want to connect if none of the connections are currently connected
                 // otherwise we will attempt to disconnect everything.
-                let shouldConnect = service.connectedServiceCount() === 0;
+                const shouldConnect = service.connectedServiceCount() === 0;
 
                 service.toggleConnectionForServices(services, shouldConnect);
             };
@@ -131,11 +131,11 @@
                 soundService.resetPopCounter();
 
                 for (let i = 0; i < services.length; i++) {
-                    let s = services[i];
+                    const s = services[i];
                     switch (s) {
                     case "chat":
                         if (shouldConnect) {
-                            let didConnect = await service.setConnectionToChat(true);
+                            const didConnect = await service.setConnectionToChat(true);
                             if (didConnect) {
                                 soundService.popSound();
                                 await delay(100);
@@ -146,11 +146,11 @@
                         break;
                     default:
                         if (s.startsWith("integration.")) {
-                            let intId = s.replace("integration.", "");
+                            const intId = s.replace("integration.", "");
                             logger.info("Connecting to " + intId);
                             if (integrationService.integrationIsLinked(intId)) {
                                 if (shouldConnect) {
-                                    let didConnect = await integrationService.setConnectionForIntegration(intId, true);
+                                    const didConnect = await integrationService.setConnectionForIntegration(intId, true);
                                     if (didConnect) {
                                         soundService.popSound();
                                     }
@@ -163,7 +163,7 @@
                 }
                 connectionService.isConnectingAll = false;
 
-                let soundType = service.connectedServiceCount() > 0 ? "Online" : "Offline";
+                const soundType = service.connectedServiceCount() > 0 ? "Online" : "Offline";
                 soundService.connectSound(soundType);
             };
 
@@ -189,7 +189,7 @@
                     break;
                 }
                 case "integrations": {
-                    let sidebarControlledIntegrations = settingsService
+                    const sidebarControlledIntegrations = settingsService
                         .getSidebarControlledServices()
                         .filter(s => s.startsWith("integration."))
                         .map(s => s.replace("integration.", ""));

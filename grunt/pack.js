@@ -9,7 +9,7 @@ grunt pack
 module.exports = function (grunt) {
     const { version } = grunt.file.readJSON('./node_modules/electron/package.json');
 
-    let flags = [
+    const flags = [
         '--out="./dist/pack"',
         '--arch=x64',
         `--electronVersion=${version}`,
@@ -42,6 +42,6 @@ module.exports = function (grunt) {
         }
     });
 
-    let platform = grunt.config.get('platform');
+    const platform = grunt.config.get('platform');
     grunt.registerTask('pack', ['cleanup:pack', `shell:pack${platform}`, 'copy']);
 };

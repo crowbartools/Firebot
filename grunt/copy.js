@@ -9,7 +9,7 @@ const fs = require('fs-extra');
 const path = require('path');
 
 function remFiles(scope) {
-    let dir = path.join(__dirname, `../dist/pack/Firebot-${scope}-x64/resources/`);
+    const dir = path.join(__dirname, `../dist/pack/Firebot-${scope}-x64/resources/`);
 
     fs.removeSync(path.join(dir, './overlay/'));
     fs.removeSync(path.join(dir, './overlay.html'));
@@ -53,7 +53,7 @@ module.exports = function (grunt) {
     grunt.task.renameTask('copy', 'xcopy');
 
     grunt.registerTask('copy', function () {
-        let platform = grunt.config.get('platform');
+        const platform = grunt.config.get('platform');
         remFiles(platform);
         grunt.task.run(`xcopy:${platform}`);
     });

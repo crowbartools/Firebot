@@ -5,7 +5,7 @@
     angular
         .module("firebotApp")
         .factory("viewersService", function(settingsService, backendCommunicator, $q) {
-            let service = {};
+            const service = {};
 
             // Check to see if the DB is turned on or not.
             service.isViewerDbOn = function() {
@@ -39,7 +39,7 @@
                         });
                 }).then(viewer => {
                     if (viewer) {
-                        let index = service.viewers.findIndex(v => v._id === viewer._id);
+                        const index = service.viewers.findIndex(v => v._id === viewer._id);
                         if (index >= 0) {
                             service.viewers[index] = viewer;
                         }

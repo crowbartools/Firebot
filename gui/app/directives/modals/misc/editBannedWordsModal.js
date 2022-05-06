@@ -73,7 +73,7 @@
                 dismiss: "&"
             },
             controller: function(chatModerationService, utilityService, logger) {
-                let $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.search = "";
 
@@ -223,7 +223,7 @@
                         size: 'sm',
                         resolveObj: {},
                         closeCallback: data => {
-                            let filePath = data.filePath,
+                            const filePath = data.filePath,
                                 delimiter = data.delimiter;
 
                             let contents;

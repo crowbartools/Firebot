@@ -32,7 +32,7 @@
                 </span>
             `,
             controller: function($injector, $q) {
-                let $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.getConditionName = function() {
                     if ($ctrl.conditionType != null && $ctrl.conditionType.leftSideValueType != null &&
@@ -50,7 +50,7 @@
                         if ($ctrl.condition == null || $ctrl.condition.rightSideValue == null) {
                             resolve("[Not Set]");
                         } else {
-                            let value = await $injector.invoke($ctrl.conditionType.getRightSideValueDisplay, {}, {
+                            const value = await $injector.invoke($ctrl.conditionType.getRightSideValueDisplay, {}, {
                                 condition: $ctrl.condition
                             });
                             resolve(value);
@@ -63,7 +63,7 @@
                         if ($ctrl.condition == null || $ctrl.condition.leftSideValue == null) {
                             resolve("[Not Set]");
                         } else {
-                            let value = await $injector.invoke($ctrl.conditionType.getLeftSideValueDisplay, {}, {
+                            const value = await $injector.invoke($ctrl.conditionType.getLeftSideValueDisplay, {}, {
                                 condition: $ctrl.condition
                             });
                             resolve(value);

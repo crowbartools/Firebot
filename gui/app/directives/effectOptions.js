@@ -17,18 +17,18 @@
                 template: `<div><div id="child"></div></div>`,
                 link: function($scope, element) {
                     $scope.$watch("type", function() {
-                        let effectDef = $scope.effectDef;
+                        const effectDef = $scope.effectDef;
 
                         if (effectDef == null) {
                             return;
                         }
 
-                        let optionsTemplate = effectDef.optionsTemplate || "";
-                        let el = angular.element(
+                        const optionsTemplate = effectDef.optionsTemplate || "";
+                        const el = angular.element(
                             `<div id="child">${optionsTemplate}</div>`
                         );
 
-                        let template = $compile(el)($scope);
+                        const template = $compile(el)($scope);
 
                         element.children("#child").replaceWith(template);
                     });
@@ -41,7 +41,7 @@
                     // and run it.
                     function findController() {
 
-                        let effectDef = listenerService.fireEventSync(
+                        const effectDef = listenerService.fireEventSync(
                             "getEffectDefinition",
                             $scope.type
                         );
@@ -51,7 +51,7 @@
                             // Note(erik) : I know this is bad practice, but it was the only way I could figure out
                             // how to send over a controller function thats defined in the main process over to the render process
                             // as the message system between the two sends serialized objects via JSON.stringify (which strips out funcs)
-                            let effectController = eval(effectDef.optionsControllerRaw); // eslint-disable-line no-eval
+                            const effectController = eval(effectDef.optionsControllerRaw); // eslint-disable-line no-eval
 
                             if (effectController != null) {
                                 // Invoke the controller and inject any dependancies

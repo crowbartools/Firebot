@@ -35,7 +35,7 @@ function processCurrencyTimer(currency, basePayout) {
 function applyCurrency() {
     logger.debug("Running currency timer...");
 
-    let currencyData = currencyDatabase.getCurrencies();
+    const currencyData = currencyDatabase.getCurrencies();
 
     Object.values(currencyData).forEach(currency => {
         let basePayout = currency.payout;
@@ -47,8 +47,8 @@ function applyCurrency() {
             basePayout = currency.offline;
         }
 
-        let currentMinutes = moment().minutes();
-        let intervalMod = currentMinutes % currency.interval;
+        const currentMinutes = moment().minutes();
+        const intervalMod = currentMinutes % currency.interval;
         const chatConnected = twitchChat.chatIsConnected();
         if (intervalMod === 0 && currency.active && chatConnected) {
             // do payout
@@ -79,11 +79,11 @@ function stopTimer() {
 // Start up our currency timers at the next full minute mark.
 // Then we'll check all of our currencies each minute to see if any need to be applied.
 function startTimer() {
-    let currentTime = moment();
-    let nextMinute = moment()
+    const currentTime = moment();
+    const nextMinute = moment()
         .endOf("minute")
         .add(1, "s");
-    let diff = nextMinute.diff(currentTime, "seconds");
+    const diff = nextMinute.diff(currentTime, "seconds");
 
     logger.debug(`Currency timer will start in ${diff} seconds`);
 
@@ -102,7 +102,7 @@ function startTimer() {
  * @param {*} currencyName
  */
 function createCurrencyCommandDefinition(currency) {
-    let currencyId = currency.id,
+    const currencyId = currency.id,
         currencyName = currency.name,
         cleanName = currencyName.replace(/\s+/g, '-').toLowerCase(); // lowecase and replace spaces with dash.
 
@@ -259,10 +259,10 @@ function createCurrencyCommandDefinition(currency) {
 
             const twitchChat = require("../chat/twitch-chat");
 
-            let { commandOptions } = event;
-            let triggeredArg = event.userCommand.triggeredArg;
-            let args = event.userCommand.args;
-            let currencyName = event.command.currency.name;
+            const { commandOptions } = event;
+            const triggeredArg = event.userCommand.triggeredArg;
+            const args = event.userCommand.args;
+            const currencyName = event.command.currency.name;
 
             // No args, tell the user how much currency they have.
             if (args.length === 0) {
@@ -286,7 +286,7 @@ function createCurrencyCommandDefinition(currency) {
             switch (triggeredArg) {
             case "add": {
                 // Get username and make sure our currency amount is a positive integer.
-                let username = args[1].replace(/^@/, ''),
+                const username = args[1].replace(/^@/, ''),
                     currencyAdjust = Math.abs(parseInt(args[2]));
 
                 // Adjust currency, it will return true on success and false on failure.
@@ -309,11 +309,11 @@ function createCurrencyCommandDefinition(currency) {
             }
             case "remove": {
                 // Get username and make sure our currency amount is a negative integer.
-                let username = args[1].replace(/^@/, ''),
+                const username = args[1].replace(/^@/, ''),
                     currencyAdjust = -Math.abs(parseInt(args[2]));
 
                 // Adjust currency, it will return true on success and false on failure.
-                let adjustSuccess = await currencyDatabase.adjustCurrencyForUser(username, currencyId, currencyAdjust);
+                const adjustSuccess = await currencyDatabase.adjustCurrencyForUser(username, currencyId, currencyAdjust);
                 if (adjustSuccess) {
                     const removeMessageTemplate = commandOptions.removeMessageTemplate
                         .replace("{user}", username)
@@ -331,12 +331,12 @@ function createCurrencyCommandDefinition(currency) {
             }
             case "give": {
                 // Get username and make sure our currency amount is a positive integer.
-                let username = args[1].replace(/^@/, ''),
+                const username = args[1].replace(/^@/, ''),
                     currencyAdjust = Math.abs(parseInt(args[2])),
                     currencyAdjustNeg = -Math.abs(parseInt(args[2]));
 
                 // Does this currency have transfer active?
-                let currencyCheck = currencyDatabase.getCurrencies();
+                const currencyCheck = currencyDatabase.getCurrencies();
                 if (currencyCheck[currencyId].transfer === "Disallow") {
                     twitchChat.sendChatMessage('Transfers are not allowed for this currency.');
                     logger.debug(event.userCommand.commandSender + ' tried to give currency, but transfers are turned off for it. ' + currencyId);
@@ -353,7 +353,7 @@ function createCurrencyCommandDefinition(currency) {
 
                 // eslint-disable-next-line no-warning-comments
                 // Need to check to make sure they have enough currency before continuing.
-                let userAmount = await currencyDatabase.getUserCurrencyAmount(event.userCommand.commandSender, currencyId);
+                const userAmount = await currencyDatabase.getUserCurrencyAmount(event.userCommand.commandSender, currencyId);
 
                 // If we get false, there was an error.
                 if (userAmount === false) {
@@ -369,7 +369,7 @@ function createCurrencyCommandDefinition(currency) {
 
                 // Okay, try to add to user first. User is not guaranteed to be in the DB because of possible typos.
                 // So we check this first, then remove from the command sender if this succeeds.
-                let adjustCurrencySuccess = await currencyDatabase.adjustCurrencyForUser(username, currencyId, currencyAdjust);
+                const adjustCurrencySuccess = await currencyDatabase.adjustCurrencyForUser(username, currencyId, currencyAdjust);
                 if (adjustCurrencySuccess) {
                     // Subtract currency from command user now.
                     currencyDatabase.adjustCurrencyForUser(event.userCommand.commandSender, currencyId, currencyAdjustNeg).then(function(status) {
@@ -395,7 +395,7 @@ function createCurrencyCommandDefinition(currency) {
                 break;
             }
             case "addall": {
-                let currencyAdjust = Math.abs(parseInt(args[1]));
+                const currencyAdjust = Math.abs(parseInt(args[1]));
                 if (isNaN(currencyAdjust)) {
                     twitchChat.sendChatMessage(
                         `Error: Could not add currency to all online users.`);
@@ -411,7 +411,7 @@ function createCurrencyCommandDefinition(currency) {
                 break;
             }
             case "removeall": {
-                let currencyAdjust = -Math.abs(parseInt(args[1]));
+                const currencyAdjust = -Math.abs(parseInt(args[1]));
                 if (isNaN(currencyAdjust)) {
                     twitchChat.sendChatMessage(
                         `Error: Could not remove currency from all online users.`);
@@ -492,7 +492,7 @@ function refreshCurrencyCommands(action = false, currency = false) {
  */
 function createAllCurrencyCommands() {
     logger.log('Creating all currency commands.');
-    let currencyData = currencyDatabase.getCurrencies();
+    const currencyData = currencyDatabase.getCurrencies();
 
     Object.values(currencyData).forEach(currency => {
         refreshCurrencyCommands('create', currency);

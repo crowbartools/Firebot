@@ -27,7 +27,7 @@ const getUrlRegex = () => {
  * @return {string}         The phrase describing the the amount of time
  */
 const secondsForHumans = (seconds) => {
-    let levels = [
+    const levels = [
         [Math.floor(seconds / 31536000), "years"],
         [Math.floor((seconds % 31536000) / 86400), "days"],
         [Math.floor(((seconds % 31536000) % 86400) / 3600), "hours"],
@@ -55,15 +55,15 @@ const formattedSeconds = (secs, simpleOutput = false) => {
     let allSecs = secs;
 
     allSecs = Math.round(allSecs);
-    let hours = Math.floor(allSecs / (60 * 60));
+    const hours = Math.floor(allSecs / (60 * 60));
 
-    let divisorForMinutes = allSecs % (60 * 60);
-    let minutes = Math.floor(divisorForMinutes / 60);
+    const divisorForMinutes = allSecs % (60 * 60);
+    const minutes = Math.floor(divisorForMinutes / 60);
 
-    let divisorForSeconds = divisorForMinutes % 60;
-    let seconds = Math.ceil(divisorForSeconds);
+    const divisorForSeconds = divisorForMinutes % 60;
+    const seconds = Math.ceil(divisorForSeconds);
 
-    let hasHours = hours > 0,
+    const hasHours = hours > 0,
         hasMins = minutes > 0,
         hasSecs = seconds > 0;
 
@@ -117,7 +117,7 @@ const populateStringWithTriggerData = async (string = "", trigger) => {
         return string;
     }
 
-    let triggerId = getTriggerIdFromTriggerData(trigger);
+    const triggerId = getTriggerIdFromTriggerData(trigger);
 
     return await replaceVariableManager.evaluateText(string, trigger, { type: trigger.type, id: triggerId });
 };
@@ -141,13 +141,13 @@ const getUptime = async () => {
 };
 
 const getDateDiffString = (date1, date2) => {
-    let b = moment(date1),
+    const b = moment(date1),
         a = moment(date2),
         intervals = ["years", "months", "days", "hours", "minutes"],
         out = [];
 
     for (let i = 0; i < intervals.length; i++) {
-        let diff = a.diff(b, intervals[i]);
+        const diff = a.diff(b, intervals[i]);
         b.add(diff, intervals[i]);
 
         if (diff === 0) {
@@ -161,7 +161,7 @@ const getDateDiffString = (date1, date2) => {
         out.push(diff + " " + interval);
     }
     if (out.length > 1) {
-        let last = out[out.length - 1];
+        const last = out[out.length - 1];
         out[out.length - 1] = "and " + last;
     }
     return out.length === 2 ? out.join(" ") : out.join(", ");
@@ -183,9 +183,9 @@ const commafy = (number) => {
  * @returns {[]} A shuffled copy of the passed array
  */
 const shuffleArray = (array) => {
-    let arrayCopy = array.slice(0);
+    const arrayCopy = array.slice(0);
     for (let i = arrayCopy.length - 1; i > 0; i--) {
-        let j = Math.floor(Math.random() * (i + 1));
+        const j = Math.floor(Math.random() * (i + 1));
         [arrayCopy[i], arrayCopy[j]] = [arrayCopy[j], arrayCopy[i]];
     }
     return arrayCopy;

@@ -131,7 +131,7 @@ const delay = {
    * When the effect is saved
    */
     optionsValidator: () => {
-        let errors = [];
+        const errors = [];
         return errors;
     },
     /**

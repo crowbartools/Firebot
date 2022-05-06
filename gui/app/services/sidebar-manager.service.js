@@ -4,7 +4,7 @@
     angular
         .module("firebotApp")
         .factory("sidebarManager", function($timeout, $rootScope, settingsService) {
-            let service = {};
+            const service = {};
 
             service.navExpanded = settingsService.getSidebarExpanded();
 

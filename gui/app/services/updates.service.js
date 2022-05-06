@@ -69,7 +69,7 @@
                         let latestRelease = null;
                         let latestUpdateType = null;
                         let foundMajorRelease = false;
-                        for (let release of releases) {
+                        for (const release of releases) {
                             // Now lets look to see if there is a newer version.
                             const updateType = VersionCompare.compareVersions(release.tag_name, APP_VERSION);
 
@@ -97,17 +97,17 @@
                         const gitNewest = latestRelease;
 
                         if (gitNewest != null) {
-                            let gitName = gitNewest.name;
-                            let gitDate = gitNewest.published_at;
-                            let gitLink = gitNewest.html_url;
-                            let gitNotes = sanitize(marked(gitNewest.body));
-                            let gitZipDownloadUrl = gitNewest.assets[0].browser_download_url;
+                            const gitName = gitNewest.name;
+                            const gitDate = gitNewest.published_at;
+                            const gitLink = gitNewest.html_url;
+                            const gitNotes = sanitize(marked(gitNewest.body));
+                            const gitZipDownloadUrl = gitNewest.assets[0].browser_download_url;
 
                             // Now lets look to see if there is a newer version.
 
                             let updateIsAvailable = false;
                             if (latestUpdateType !== UpdateType.NONE) {
-                                let autoUpdateLevel = settingsService.getAutoUpdateLevel();
+                                const autoUpdateLevel = settingsService.getAutoUpdateLevel();
 
                                 // Check if we should auto update based on the users setting
                                 if (shouldAutoUpdate(autoUpdateLevel, latestUpdateType)) {

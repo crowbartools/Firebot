@@ -135,7 +135,7 @@ const api = {
    * When the effect is triggered by something
    */
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.api == null) {
             errors.push("Please select an API from the list.");
         }

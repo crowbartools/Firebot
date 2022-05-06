@@ -20,7 +20,7 @@ const model = {
     `,
     optionsController: () => {},
     optionsValidator: () => {
-        let errors = [];
+        const errors = [];
         return errors;
     },
     onTriggerEvent: async () => {

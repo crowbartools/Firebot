@@ -4,7 +4,7 @@
     const logger = require("../../backend/logwrapper");
 
     angular.module("firebotApp").factory("logger", function() {
-        let service = {};
+        const service = {};
 
         function prefixMsgInArgs(...args) {
             let msg = "(Renderer)";
@@ -21,11 +21,11 @@
             if (type != null && args != null) {
                 // Connection issues should be logged as "warn".
                 if (args[0] === "read ECONNRESET") {
-                    let argsNew = prefixMsgInArgs(...args);
+                    const argsNew = prefixMsgInArgs(...args);
                     return logger["warn"](...argsNew);
                 }
 
-                let argsNew = prefixMsgInArgs(...args);
+                const argsNew = prefixMsgInArgs(...args);
                 return logger[type](...argsNew);
             }
         }
@@ -64,7 +64,7 @@
 
         service.log = (type, ...args) => {
             if (type != null && args != null) {
-                let argsNew = prefixMsgInArgs(...args);
+                const argsNew = prefixMsgInArgs(...args);
                 return logger.log(type, ...argsNew);
             }
         };

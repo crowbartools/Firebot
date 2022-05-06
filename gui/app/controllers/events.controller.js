@@ -12,9 +12,9 @@
             const sources = listenerService.fireEventSync("getAllEventSources");
 
             function friendlyEventTypeName(sourceId, eventId) {
-                let source = sources.find(s => s.id === sourceId);
+                const source = sources.find(s => s.id === sourceId);
                 if (source != null) {
-                    let event = source.events.find(e => e.id === eventId);
+                    const event = source.events.find(e => e.id === eventId);
                     if (event != null) {
                         return `${event.name} (${source.name})`;
                     }
@@ -48,7 +48,7 @@
             ];
 
             $scope.getSelectedEvents = function() {
-                let selectedTab = eventsService.getSelectedTab();
+                const selectedTab = eventsService.getSelectedTab();
                 if (selectedTab === "mainevents") {
                     return eventsService.getMainEvents();
                 }
@@ -156,7 +156,7 @@
 
             $scope.showAddOrEditEventModal = function(eventId) {
 
-                let selectedGroupId = eventsService.getSelectedTab();
+                const selectedGroupId = eventsService.getSelectedTab();
                 let event;
 
                 if (eventId != null) {
@@ -171,7 +171,7 @@
                         groupId: () => selectedGroupId
                     },
                     closeCallback: resp => {
-                        let { action, event, groupId } = resp;
+                        const { action, event, groupId } = resp;
 
                         switch (action) {
                         case "add":
@@ -179,7 +179,7 @@
                                 eventsService.getMainEvents().push(event);
                                 eventsService.saveMainEvents();
                             } else {
-                                let group = eventsService.getEventGroup(groupId);
+                                const group = eventsService.getEventGroup(groupId);
                                 group.events.push(event);
                                 eventsService.saveGroup(group);
                             }
@@ -283,10 +283,10 @@
 
             $scope.copyEvents = function(groupId) {
                 if (groupId === "mainevents") {
-                    let events = eventsService.getMainEvents();
+                    const events = eventsService.getMainEvents();
                     objectCopyHelper.copyObject("events", events);
                 } else {
-                    let group = eventsService.getEventGroup(groupId);
+                    const group = eventsService.getEventGroup(groupId);
                     objectCopyHelper.copyObject("events", group.events);
                 }
             };
@@ -297,19 +297,19 @@
                 }
 
                 if (groupId === "mainevents") {
-                    let copiedEvents = objectCopyHelper.getCopiedObject("events");
+                    const copiedEvents = objectCopyHelper.getCopiedObject("events");
 
-                    for (let copiedEvent of copiedEvents) {
+                    for (const copiedEvent of copiedEvents) {
                         eventsService.getMainEvents().push(copiedEvent);
                     }
 
                     eventsService.saveMainEvents();
 
                 } else {
-                    let group = eventsService.getEventGroup(groupId);
-                    let copiedEvents = objectCopyHelper.getCopiedObject("events");
+                    const group = eventsService.getEventGroup(groupId);
+                    const copiedEvents = objectCopyHelper.getCopiedObject("events");
 
-                    for (let copiedEvent of copiedEvents) {
+                    for (const copiedEvent of copiedEvents) {
                         group.events.push(copiedEvent);
 
                     }

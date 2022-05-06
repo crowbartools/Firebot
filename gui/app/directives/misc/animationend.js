@@ -5,10 +5,10 @@ angular.module('firebotApp').
         return {
             restrict: 'A',
             link: function(element, attrs) {
-                let events = 'animationend webkitAnimationEnd MSAnimationEnd' +
+                const events = 'animationend webkitAnimationEnd MSAnimationEnd' +
 						'transitionend webkitTransitionEnd';
 
-                let classNames = attrs.animationend;
+                const classNames = attrs.animationend;
                 let animationNames = classNames.split(",");
                 animationNames = animationNames.map(a => a.trim());
 

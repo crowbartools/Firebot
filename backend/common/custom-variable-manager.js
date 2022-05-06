@@ -85,10 +85,10 @@ exports.addCustomVariable = (name, data, ttl = 0, propertyPath = null) => {
         //silently fail
     }
 
-    let dataRaw = data != null ? data.toString().toLowerCase() : "null";
-    let dataIsNull = dataRaw === "null" || dataRaw === "undefined";
+    const dataRaw = data != null ? data.toString().toLowerCase() : "null";
+    const dataIsNull = dataRaw === "null" || dataRaw === "undefined";
 
-    let currentData = cache.get(name);
+    const currentData = cache.get(name);
 
     if (propertyPath == null || propertyPath.length < 1) {
         let dataToSet = dataIsNull ? undefined : data;
@@ -98,13 +98,13 @@ exports.addCustomVariable = (name, data, ttl = 0, propertyPath = null) => {
         }
         cache.set(name, dataToSet, ttl === "" ? 0 : ttl);
     } else {
-        let currentData = cache.get(name);
+        const currentData = cache.get(name);
         if (!currentData) {
             return;
         }
         try {
             let cursor = currentData;
-            let pathNodes = propertyPath.split(".");
+            const pathNodes = propertyPath.split(".");
             for (let i = 0; i < pathNodes.length; i++) {
                 let node = pathNodes[i];
 
@@ -113,7 +113,7 @@ exports.addCustomVariable = (name, data, ttl = 0, propertyPath = null) => {
                     node = parseInt(node);
                 }
 
-                let isLastItem = i === pathNodes.length - 1;
+                const isLastItem = i === pathNodes.length - 1;
                 if (isLastItem) {
 
                     // if data recognized as null and cursor is an array, remove index instead of setting value
@@ -150,7 +150,7 @@ exports.getCustomVariable = (name, propertyPath, defaultData = null) => {
     }
 
     try {
-        let pathNodes = propertyPath.split(".");
+        const pathNodes = propertyPath.split(".");
         for (let i = 0; i < pathNodes.length; i++) {
             if (data == null) {
                 break;
@@ -178,7 +178,7 @@ function deleteCustomVariable(name) {
 
     try {
         cache.del(name);
-        
+
         logger.debug(`Custom variable ${name} deleted`);
     } catch (error) {
         logger.debug(`Error deleting custom variable ${name}: ${error}`);

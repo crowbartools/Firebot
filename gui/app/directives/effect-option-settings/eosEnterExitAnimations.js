@@ -108,7 +108,7 @@
             </eos-container>
        `,
             controller: function() {
-                let ctrl = this;
+                const ctrl = this;
                 ctrl.selected = {
                     enter: null,
                     enterDurationValue: 1,
@@ -140,7 +140,7 @@
                         return ani.class === ctrl.effect.inbetweenAnimation;
                     })[0];
 
-                    let enterDuration = ctrl.effect.enterDuration;
+                    const enterDuration = ctrl.effect.enterDuration;
                     if (enterDuration != null) {
                         if (enterDuration.endsWith("ms")) {
                             ctrl.selected.enterDurationType = "ms";
@@ -151,7 +151,7 @@
                         }
                     }
 
-                    let exitDuration = ctrl.effect.exitDuration;
+                    const exitDuration = ctrl.effect.exitDuration;
                     if (exitDuration != null) {
                         if (exitDuration.endsWith("ms")) {
                             ctrl.selected.exitDurationType = "ms";
@@ -162,7 +162,7 @@
                         }
                     }
 
-                    let inbetweenDuration = ctrl.effect.inbetweenDuration;
+                    const inbetweenDuration = ctrl.effect.inbetweenDuration;
                     if (inbetweenDuration != null) {
                         if (inbetweenDuration.endsWith("ms")) {
                             ctrl.selected.inbetweenDurationType = "ms";
@@ -173,7 +173,7 @@
                         }
                     }
 
-                    let inbetweenDelay = ctrl.effect.inbetweenDelay;
+                    const inbetweenDelay = ctrl.effect.inbetweenDelay;
                     if (inbetweenDelay != null) {
                         if (inbetweenDelay.endsWith("ms")) {
                             ctrl.selected.inbetweenDelayType = "ms";

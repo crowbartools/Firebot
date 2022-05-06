@@ -233,7 +233,7 @@ const effect = {
         };
     },
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.username == null || effect.username === "") {
             errors.push("Please provide a username.");
         }
@@ -346,7 +346,7 @@ const effect = {
                 `;
 
                 // eslint-disable-next-line no-undef
-                let positionWrappedHtml = getPositionWrappedHTML(uniqueId, positionData, shoutoutElement);
+                const positionWrappedHtml = getPositionWrappedHTML(uniqueId, positionData, shoutoutElement);
 
                 $('.wrapper').append(positionWrappedHtml);
 

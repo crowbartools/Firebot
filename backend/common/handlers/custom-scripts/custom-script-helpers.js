@@ -146,7 +146,7 @@ function mapParameters(parameterData) {
     const simpleParams = {};
     if (parameterData != null) {
         Object.keys(parameterData).forEach(k => {
-            let param = parameterData[k];
+            const param = parameterData[k];
             if (param != null) {
                 simpleParams[k] = param.value == null && param.value !== ""
                     ? param.default

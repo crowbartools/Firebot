@@ -182,7 +182,7 @@
             `,
             controller: function(utilityService, effectHelperService, objectCopyHelper, effectQueuesService,
                 backendCommunicator, ngToast, $http) {
-                let ctrl = this;
+                const ctrl = this;
 
                 ctrl.effectsData = {
                     list: []
@@ -348,7 +348,7 @@
                 };
 
                 ctrl.shareEffects = async () => {
-                    let shareCode = await backendCommunicator.fireEventAsync("getEffectsShareCode", ctrl.effectsData.list);
+                    const shareCode = await backendCommunicator.fireEventAsync("getEffectsShareCode", ctrl.effectsData.list);
                     if (shareCode == null) {
                         ngToast.create("Unable to share effects.");
                     } else {
@@ -389,7 +389,7 @@
                                         resolve(false);
                                     }
 
-                                    let effectsData = await getSharedEffects(shareCode);
+                                    const effectsData = await getSharedEffects(shareCode);
 
                                     if (effectsData == null || effectsData.effects == null) {
                                         resolve(false);
@@ -402,7 +402,7 @@
 
                         },
                         async (shareCode) => {
-                            let effectsData = await getSharedEffects(shareCode);
+                            const effectsData = await getSharedEffects(shareCode);
                             if (effectsData.effects != null) {
                                 ctrl.effectsData.list = ctrl.effectsData.list.concat(effectsData.effects);
                             }
@@ -448,8 +448,8 @@
                 };
 
                 ctrl.editLabelForEffectAtIndex = function(index) {
-                    let effect = ctrl.effectsData.list[index];
-                    let label = effect.effectLabel;
+                    const effect = ctrl.effectsData.list[index];
+                    const label = effect.effectLabel;
                     utilityService.openGetInputModal(
                         {
                             model: label,
@@ -471,7 +471,7 @@
                 };
 
                 ctrl.duplicateEffectAtIndex = function(index) {
-                    let effect = JSON.parse(angular.toJson(ctrl.effectsData.list[index]));
+                    const effect = JSON.parse(angular.toJson(ctrl.effectsData.list[index]));
                     effect.id = uuidv1();
                     ctrl.effectsData.list.splice(index + 1, 0, effect);
                     ctrl.effectsUpdate();
@@ -547,9 +547,9 @@
                                 return;
                             }
 
-                            let { selectedEffectDef } = resp;
+                            const { selectedEffectDef } = resp;
 
-                            let newEffect = {
+                            const newEffect = {
                                 id: uuidv1(),
                                 type: selectedEffectDef.id,
                                 active: true

@@ -14,7 +14,7 @@
                         quote: () => quote
                     },
                     closeCallback: (data) => {
-                        let {action, quote} = data;
+                        const {action, quote} = data;
                         switch (action) {
                         case "add":
                             quotesService.addQuote(quote);

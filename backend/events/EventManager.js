@@ -19,7 +19,7 @@ class EventManager extends EventEmitter {
     registerEventSource(eventSource) {
         // TODO: validate eventSource
 
-        let idConflict = this._registeredEventSources.some(
+        const idConflict = this._registeredEventSources.some(
             es => es.id === eventSource.id
         );
 
@@ -29,7 +29,7 @@ class EventManager extends EventEmitter {
 
         //make sure all events reference this eventsource id
         if (eventSource.events != null) {
-            for (let event of eventSource.events) {
+            for (const event of eventSource.events) {
                 event.sourceId = eventSource.id;
             }
         }
@@ -46,8 +46,8 @@ class EventManager extends EventEmitter {
     }
 
     getEventById(sourceId, eventId) {
-        let source = this._registeredEventSources.find(es => es.id === sourceId);
-        let event = source.events.find(e => e.id === eventId);
+        const source = this._registeredEventSources.find(es => es.id === sourceId);
+        const event = source.events.find(e => e.id === eventId);
         return event;
     }
 
@@ -56,16 +56,16 @@ class EventManager extends EventEmitter {
     }
 
     getAllEvents() {
-        let eventArrays = this._registeredEventSources
+        const eventArrays = this._registeredEventSources
             .map(es => es.events);
-        let events = util.flattenArray(eventArrays);
+        const events = util.flattenArray(eventArrays);
 
         return events;
     }
 
     triggerEvent(sourceId, eventId, meta, isManual = false, isRetrigger = false, isSimulation = false) {
-        let source = this.getEventSourceById(sourceId);
-        let event = this.getEventById(sourceId, eventId);
+        const source = this.getEventSourceById(sourceId);
+        const event = this.getEventById(sourceId, eventId);
         if (event == null) {
             return;
         }
@@ -115,21 +115,21 @@ ipcMain.on("getAllEvents", (event) => {
 // This will manually trigger an event for testing purposes.
 ipcMain.on("triggerManualEvent", function(_, data) {
 
-    let { sourceId, eventId, eventSettingsId } = data;
+    const { sourceId, eventId, eventSettingsId } = data;
 
-    let source = manager.getEventSourceById(sourceId);
-    let event = manager.getEventById(sourceId, eventId);
+    const source = manager.getEventSourceById(sourceId);
+    const event = manager.getEventById(sourceId, eventId);
     if (event == null) {
         return;
     }
 
-    let meta = event.manualMetadata || {};
+    const meta = event.manualMetadata || {};
     if (meta.username == null) {
         const accountAccess = require("../common/account-access");
         meta.username = accountAccess.getAccounts().streamer.username;
     }
 
-    let eventSettings = eventsAccess.getAllActiveEvents().find(e => e.id === eventSettingsId);
+    const eventSettings = eventsAccess.getAllActiveEvents().find(e => e.id === eventSettingsId);
     if (eventSettings == null) {
         return;
     }

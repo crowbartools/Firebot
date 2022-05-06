@@ -59,7 +59,7 @@
                 notificationService,
                 utilityService
             ) {
-                let ctrl = this;
+                const ctrl = this;
 
                 ctrl.notiService = notificationService;
 
@@ -71,7 +71,7 @@
                 $scope.deleteNotification = notificationService.deleteNotification;
 
                 $scope.getBadgeText = () => {
-                    let unreadCount = notificationService.getUnreadCount();
+                    const unreadCount = notificationService.getUnreadCount();
 
                     if (unreadCount > 9) {
                         return '9+';
@@ -82,7 +82,7 @@
                 };
 
                 $scope.getIconTypeText = function(iconType) {
-                    let NotificationIconType = notificationService.NotificationIconType;
+                    const NotificationIconType = notificationService.NotificationIconType;
                     switch (iconType) {
                     case NotificationIconType.UPDATE:
                         return "UPDATE";
@@ -97,7 +97,7 @@
                 };
 
                 $scope.getIconClass = function(iconType) {
-                    let NotificationIconType = notificationService.NotificationIconType;
+                    const NotificationIconType = notificationService.NotificationIconType;
                     let iconClass = "";
                     switch (iconType) {
                     case NotificationIconType.UPDATE:
@@ -118,7 +118,7 @@
 
                 ctrl.openNotification = function(notification, index) {
                     notificationService.markNotificationAsRead(notification, index);
-                    let justUpdatedModalContext = {
+                    const justUpdatedModalContext = {
                         templateUrl: "notificationModal.html",
                         size: "sm",
                         resolveObj: {
@@ -151,12 +151,12 @@
                     },
                     replace: true,
                     link: function(scope, element) {
-                        let htmlWrap = `<div style="width:100%; height: 100%; position: relative;">${
+                        const htmlWrap = `<div style="width:100%; height: 100%; position: relative;">${
                             scope.message
                         }</div>`.trim();
 
-                        let el = angular.element(htmlWrap);
-                        let template = $compile(el)(scope);
+                        const el = angular.element(htmlWrap);
+                        const template = $compile(el)(scope);
                         element.replaceWith(template);
                     },
                     controller: [

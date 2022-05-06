@@ -20,7 +20,7 @@ function saveGroup(group) {
     if (group == null) {
         return;
     }
-    let eventsDb = getEventsDb();
+    const eventsDb = getEventsDb();
     try {
         groups[group.id] = group;
         eventsDb.push("/groups/" + group.id, group);
@@ -34,7 +34,7 @@ function saveAllGroups(groupsToSave) {
     if (groupsToSave == null) {
         return;
     }
-    let eventsDb = getEventsDb();
+    const eventsDb = getEventsDb();
     try {
         groups = groupsToSave;
         eventsDb.push("/groups", groupsToSave);
@@ -45,9 +45,9 @@ function saveAllGroups(groupsToSave) {
 }
 
 function removeEventFromGroups(eventId) {
-    for (let group in groups) {
+    for (const group in groups) {
         if (groups.hasOwnProperty(group)) {
-            let events = groups[group].events;
+            const events = groups[group].events;
 
             groups[group].events = events.filter(e => e.id !== eventId);
         }
@@ -57,7 +57,7 @@ function removeEventFromGroups(eventId) {
 }
 
 function saveSortTags() {
-    let eventsDb = getEventsDb();
+    const eventsDb = getEventsDb();
     try {
         eventsDb.push("/sortTags", sortTags);
         logger.debug(`Saved event tags.`);
@@ -69,10 +69,10 @@ function saveSortTags() {
 function loadEventsAndGroups() {
     logger.debug(`Attempting to load event data...`);
 
-    let eventsDb = getEventsDb();
+    const eventsDb = getEventsDb();
 
     try {
-        let eventsData = eventsDb.getData("/");
+        const eventsData = eventsDb.getData("/");
 
         if (eventsData.mainEvents) {
             mainEvents = eventsData.mainEvents;
@@ -107,7 +107,7 @@ function deleteGroup(groupId) {
     if (groupId == null) {
         return;
     }
-    let eventsDb = getEventsDb();
+    const eventsDb = getEventsDb();
     try {
         eventsDb.delete("/groups/" + groupId);
         delete groups[groupId];
@@ -121,7 +121,7 @@ function saveMainEvents(events) {
     if (events == null) {
         return;
     }
-    let eventsDb = getEventsDb();
+    const eventsDb = getEventsDb();
     try {
         mainEvents = events;
         eventsDb.push("/mainEvents", events);
@@ -162,7 +162,7 @@ function saveGroupFromImport(group) {
     }
 
     // IF present, remove existing events with the same id.
-    for (let event of group.events) {
+    for (const event of group.events) {
         removeEventFromMainEvents(event.id);
         removeEventFromGroups(event.id);
     }

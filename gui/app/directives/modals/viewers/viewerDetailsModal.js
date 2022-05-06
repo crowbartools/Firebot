@@ -152,7 +152,7 @@
                 dismiss: "&"
             },
             controller: function($rootScope, $q, backendCommunicator, viewersService, currencyService, utilityService, viewerRolesService, connectionService) {
-                let $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.loading = true;
 
@@ -236,7 +236,7 @@
                         followDateDisplay = moment($ctrl.viewerDetails.twitchData.followDate).format("L");
                     }
 
-                    let roles = [];
+                    const roles = [];
                     if (userFollowsStreamer) {
                         roles.push({
                             name: "Follower",
@@ -248,7 +248,7 @@
                     if ($ctrl.viewerDetails.twitchData.isBanned) {
                         roles.push(bannedRole);
                     }
-                    for (let role of twitchRoles) {
+                    for (const role of twitchRoles) {
                         switch (role) {
                         case "vip":
                             roles.push({
@@ -298,8 +298,8 @@
                         }
                     }
 
-                    for (let teamRole of teamRoles) {
-                        let rank = 8;
+                    for (const teamRole of teamRoles) {
+                        const rank = 8;
 
                         roles.push({
                             name: teamRole.name,
@@ -355,7 +355,7 @@
                         return;
                     }
 
-                    let actions = [];
+                    const actions = [];
 
                     if (connectionService.connections['chat'] === 'connected') {
                         const isMod = userRoles.includes("mod");
@@ -369,7 +369,7 @@
                                 return mod ? "fas fa-user-minus" : "fal fa-user-plus";
                             },
                             mod => {
-                                let newMod = !mod;
+                                const newMod = !mod;
                                 viewersService.updateModStatus($ctrl.viewerDetails.twitchData.username, newMod);
                                 if (newMod) {
                                     $ctrl.roles.push(modRole);
@@ -393,7 +393,7 @@
                                 return banned ? "fas fa-ban" : "fal fa-ban";
                             },
                             banned => {
-                                let newBanned = !banned;
+                                const newBanned = !banned;
                                 viewersService.updateBannedStatus($ctrl.viewerDetails.twitchData.username, newBanned);
                                 if (newBanned) {
                                     $ctrl.roles.push(bannedRole);
@@ -440,7 +440,7 @@
                     }
 
                     onClick() {
-                        let valueToEdit = this._beforeEditFunc(this.value);
+                        const valueToEdit = this._beforeEditFunc(this.value);
 
                         if (this._valueType === "text" || this._valueType === "number") {
                             utilityService.openGetInputModal(
@@ -499,13 +499,13 @@
                     /**
                      * @type ViewerDataPoint[]
                      */
-                    let dataPoints = [];
+                    const dataPoints = [];
 
                     if (!$ctrl.hasFirebotData) {
                         return;
                     }
 
-                    let joinDate = $ctrl.viewerDetails.firebotData.joinDate;
+                    const joinDate = $ctrl.viewerDetails.firebotData.joinDate;
                     dataPoints.push(new ViewerDataPoint(
                         "Join Date",
                         "fa-sign-in",
@@ -523,7 +523,7 @@
                         }
                     ));
 
-                    let lastSeen = $ctrl.viewerDetails.firebotData.lastSeen;
+                    const lastSeen = $ctrl.viewerDetails.firebotData.lastSeen;
                     dataPoints.push(new ViewerDataPoint(
                         "Last Seen",
                         "fa-eye",
@@ -541,7 +541,7 @@
                         }
                     ));
 
-                    let minsInChannel = $ctrl.viewerDetails.firebotData.minutesInChannel || 0;
+                    const minsInChannel = $ctrl.viewerDetails.firebotData.minutesInChannel || 0;
                     dataPoints.push(new ViewerDataPoint(
                         "View Time",
                         "fa-tv",
@@ -555,13 +555,13 @@
                             return value ? parseInt(value / 60) : 0;
                         },
                         value => {
-                            let mins = parseInt(value) * 60;
+                            const mins = parseInt(value) * 60;
 
                             return mins;
                         }
                     ));
 
-                    let chatMessages = $ctrl.viewerDetails.firebotData.chatMessages || 0;
+                    const chatMessages = $ctrl.viewerDetails.firebotData.chatMessages || 0;
                     dataPoints.push(new ViewerDataPoint(
                         "Chat Messages",
                         "fa-comments",
@@ -577,9 +577,9 @@
                         }
                     ));
 
-                    let currencies = currencyService.getCurrencies();
+                    const currencies = currencyService.getCurrencies();
 
-                    for (let currency of currencies) {
+                    for (const currency of currencies) {
                         dataPoints.push(new ViewerDataPoint(
                             currency.name,
                             "fa-money-bill",
@@ -602,9 +602,9 @@
                 $ctrl.hasCustomRoles = viewerRolesService.getCustomRoles().length > 0;
                 $ctrl.customRoles = [];
                 function loadCustomRoles() {
-                    let username = $ctrl.viewerDetails.twitchData.displayName;
+                    const username = $ctrl.viewerDetails.twitchData.displayName;
 
-                    let viewerRoles = viewerRolesService.getCustomRoles();
+                    const viewerRoles = viewerRolesService.getCustomRoles();
                     $ctrl.hasCustomRolesAvailable = viewerRoles
                         .filter(r => !r.viewers.some(v => v.toLowerCase() === username.toLowerCase()))
                         .length > 0;
@@ -612,8 +612,8 @@
                 }
 
                 $ctrl.openAddCustomRoleModal = () => {
-                    let username = $ctrl.viewerDetails.twitchData.displayName;
-                    let options = viewerRolesService.getCustomRoles()
+                    const username = $ctrl.viewerDetails.twitchData.displayName;
+                    const options = viewerRolesService.getCustomRoles()
                         .filter(r => !r.viewers.some(v => v.toLowerCase() === username.toLowerCase()))
                         .map(r => {
                             return {
@@ -634,7 +634,7 @@
                                 return;
                             }
 
-                            let username = $ctrl.viewerDetails.twitchData.displayName;
+                            const username = $ctrl.viewerDetails.twitchData.displayName;
 
                             viewerRolesService.addUserToRole(roleId, username);
                             loadCustomRoles();
@@ -642,7 +642,7 @@
                 };
 
                 $ctrl.removeUserFromRole = (roleId) => {
-                    let username = $ctrl.viewerDetails.twitchData.displayName;
+                    const username = $ctrl.viewerDetails.twitchData.displayName;
                     viewerRolesService.removeUserFromRole(roleId, username);
                     loadCustomRoles();
                 };
@@ -696,7 +696,7 @@
                     const relationshipData = $ctrl.viewerDetails.twitchData.relationship;
                     const channelRoles = relationshipData ? relationshipData.roles : [];
 
-                    let createViewerRequest = {
+                    const createViewerRequest = {
                         id: $ctrl.resolve.userId,
                         username: $ctrl.viewerDetails.twitchData.displayName,
                         roles: channelRoles

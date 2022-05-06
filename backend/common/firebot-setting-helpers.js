@@ -10,8 +10,8 @@ function setValuesForFrontEnd(settingCategories, currentSavedSettings) {
         currentSavedSettings = {};
     }
     if (settingCategories) {
-        for (let categoryId of Object.keys(settingCategories)) {
-            for (let settingId of Object.keys(settingCategories[categoryId].settings)) {
+        for (const categoryId of Object.keys(settingCategories)) {
+            for (const settingId of Object.keys(settingCategories[categoryId].settings)) {
                 if (currentSavedSettings[categoryId] != null) {
                     settingCategories[categoryId].settings[settingId].value = currentSavedSettings[categoryId][settingId];
                 } else {
@@ -34,11 +34,11 @@ function buildSaveDataFromSettingValues(settingCategories, currentSavedSettings)
         currentSavedSettings = {};
     }
     if (settingCategories) {
-        for (let categoryId of Object.keys(settingCategories)) {
+        for (const categoryId of Object.keys(settingCategories)) {
             if (currentSavedSettings[categoryId] == null) {
                 currentSavedSettings[categoryId] = {};
             }
-            for (let settingId of Object.keys(settingCategories[categoryId].settings)) {
+            for (const settingId of Object.keys(settingCategories[categoryId].settings)) {
                 currentSavedSettings[categoryId][settingId] = settingCategories[categoryId].settings[settingId].value;
             }
         }
