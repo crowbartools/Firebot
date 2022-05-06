@@ -346,6 +346,43 @@ async function getUserCurrencies(usernameOrId, isUsername = false) {
     return user.currency;
 }
 
+async function getUserCurrencyRank(currencyId, usernameOrId, isUsername = false) {
+    if (!isViewerDBOn()) {
+        return 0;
+    }
+
+    const user = isUsername ?
+        await userDatabase.getUserByUsername(usernameOrId) :
+        await userDatabase.getUserById(usernameOrId);
+
+    if (user == null) {
+        return 0;
+    }
+
+    const db = userDatabase.getUserDb();
+
+    const sortObj = {};
+    sortObj[`currency.${currencyId}`] = -1;
+
+    const projectionObj = { username: 1, displayName: 1};
+    projectionObj[`currency.${currencyId}`] = 1;
+
+    const rank = await new Promise ((resolve) => {
+        db.find({ twitch: true })
+            .sort(sortObj)
+            .projection(projectionObj)
+            .exec(function (err, docs) {
+                if (err) {
+                    logger.error("Error getting user currency rank: ", err);
+                    return resolve(0);
+                }
+                return resolve(docs.findIndex(d => d.username === user.username) + 1);
+            });
+    });
+
+    return rank;
+}
+
 function getTopCurrencyPosition(currencyId, position = 1) {
     return new Promise(resolve => {
         if (!isViewerDBOn()) {
@@ -553,6 +590,7 @@ exports.adjustCurrencyForUserById = adjustCurrencyForUserById;
 exports.addCurrencyToOnlineUsers = addCurrencyToOnlineUsers;
 exports.getUserCurrencyAmount = getUserCurrencyAmount;
 exports.getUserCurrencies = getUserCurrencies;
+exports.getUserCurrencyRank = getUserCurrencyRank;
 exports.purgeCurrencyById = purgeCurrencyById;
 exports.addCurrencyToNewUser = addCurrencyToNewUser;
 exports.refreshCurrencyCache = refreshCurrencyCache;
