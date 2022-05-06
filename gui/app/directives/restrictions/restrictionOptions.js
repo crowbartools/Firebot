@@ -10,6 +10,7 @@
                 scope: {
                     restriction: "=",
                     restrictionDefinition: "<",
+                    restrictionMode: "<",
                     trigger: "@",
                     triggerMeta: "<"
                 },

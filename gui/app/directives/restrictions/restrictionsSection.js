@@ -45,6 +45,7 @@
                         <restriction-item ng-repeat="restriction in $ctrl.restrictionData.restrictions"
                             restriction="restriction"
                             restriction-definition="$ctrl.getRestrictionDefinition(restriction.type)"
+                            restriction-mode="$ctrl.restrictionData.mode"
                             on-delete="$ctrl.deleteRestriction(restriction.id)">
                         </restriction-item>
                     </div>

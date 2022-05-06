@@ -22,9 +22,9 @@ const model = {
                 </div>
                 <div>
                     <select class="fb-select" ng-model="restriction.comparison">
-                        <option label="Less than (or equal to)" value="less">Less than (or equal to)</option>
-                        <option label="Greater than (or equal to)" value="greater">Greater than (or equal to)</option>
-                        <option label="Equal to" value="equal">Equal to</option>
+                    <option label="Greater than (or equal to)" value="greater">Greater than (or equal to)</option>
+                    <option label="Less than" value="less">Less than</option>
+                    <option label="Equal to" value="equal">Equal to</option>
                     </select>
                 </div>
 
@@ -34,6 +34,13 @@ const model = {
                 <div class="form-group">
                     <input type="number" class="form-control" ng-model="restriction.amount" placeholder="Enter currency amount">
                 </div>
+
+                <div ng-if="showAutoDeduct()" style="margin-top:20px">
+                    <label class="control-fb control--checkbox"> Automatically deduct currency from user if restrictions pass</tooltip>
+                        <input type="checkbox" ng-model="restriction.autoDeductCurrency">
+                        <div class="control__indicator"></div>
+                    </label>
+                </div>
             </div>
             <div ng-show="!hasCurrencies">
                 <p>You have not created any currencies to use with this restriction!</p>
@@ -42,7 +49,11 @@ const model = {
     `,
     optionsController: ($scope, currencyService) => {
 
-        // Get list of currencies
+        $scope.showAutoDeduct = () => {
+            return ['greater', 'equal'].includes($scope.restriction.comparison) &&
+                ['any', 'all'].includes($scope.restrictionMode);
+        };
+
         $scope.currencies = currencyService.getCurrencies();
 
         $scope.hasCurrencies = $scope.currencies.length > 0;
@@ -53,73 +64,81 @@ const model = {
         }
 
         if ($scope.restriction.comparison == null) {
-            $scope.restriction.comparison = "less";
+            $scope.restriction.comparison = "greater";
         }
     },
     optionsValueDisplay: (restriction, currencyService) => {
-        let comparison = restriction.comparison;
-        let currencyId = restriction.selectedCurrency;
-        let amount = restriction.amount;
+        const comparison = restriction.comparison?.toLowerCase();
+        const currencyId = restriction.selectedCurrency;
+        const amount = restriction.amount;
 
-        if (comparison != null) {
-            comparison = comparison.toLowerCase();
-        } else {
+        if (comparison == null) {
             return "";
         }
 
+        let comparisonDisplay;
         if (comparison === "less") {
-            comparison = "less than";
+            comparisonDisplay = "less than";
         } else if (comparison === "greater") {
-            comparison = "greater than";
+            comparisonDisplay = "greater than";
         } else if (comparison === "equal") {
-            comparison = "equal to";
+            comparisonDisplay = "equal to";
         }
 
-        let currency = currencyService.getCurrency(currencyId);
+        const currency = currencyService.getCurrency(currencyId);
 
-        let currencyName = currency ? currency.name : "[None Selected]";
+        const currencyName = currency ? currency.name : "[None Selected]";
 
-        return currencyName + " is " + comparison + " " + amount;
+        return `${currencyName} is ${comparisonDisplay} ${amount}`;
     },
-    /*
-      function that resolves/rejects a promise based on if the restriction critera is met
-    */
-    predicate: (triggerData, restrictionData) => {
-        return new Promise(async (resolve, reject) => {
-            let currencyDatabase = require("../../database/currencyDatabase");
-            let username = triggerData.metadata.username;
-            let userCurrency = await currencyDatabase.getUserCurrencyAmount(username, restrictionData.selectedCurrency);
+    predicate: async ({ metadata }, { selectedCurrency, comparison, amount: currencyAmount }) => {
+        // we require this here to workaround circle dep issues :(
+        const currencyDatabase = require("../../database/currencyDatabase");
 
-            let comparison = restrictionData.comparison;
-            let currencyAmount = restrictionData.amount;
+        const username = metadata.username;
+        const userCurrency = await currencyDatabase.getUserCurrencyAmount(username, selectedCurrency);
 
-            let passed = false;
-            if (comparison === "less" && userCurrency <= currencyAmount) {
-                passed = true;
-            }
+        let passed = false;
+        if (comparison === "less" && userCurrency < currencyAmount) {
+            passed = true;
+        }
 
-            if (comparison === "greater" && userCurrency >= currencyAmount) {
-                passed = true;
-            }
+        if (comparison === "greater" && userCurrency >= currencyAmount) {
+            passed = true;
+        }
 
-            if (comparison === "equal" && userCurrency === currencyAmount) {
-                passed = true;
-            }
+        if (comparison === "equal" && userCurrency === currencyAmount) {
+            passed = true;
+        }
 
-            if (passed) {
-                resolve();
-            } else {
-                let currency = currencyDatabase.getCurrencyById(restrictionData.selectedCurrency);
-                let currencyName = currency ? currency.name.toLowerCase() : "Unknown currency";
-                let amountText = "";
-                if (comparison !== "equal") {
-                    amountText = `${comparison} than ${currencyAmount}`;
-                } else {
-                    amountText = `${currencyAmount}`;
-                }
-                reject(`you need ${amountText} ${currencyName}`);
-            }
-        });
+        if (!passed) {
+            const currency = currencyDatabase.getCurrencyById(selectedCurrency);
+            const currencyName = currency ? currency.name.toLowerCase() : "Unknown currency";
+            const amountText = comparison !== "equal" ? `${comparison} than ${currencyAmount}` : `${currencyAmount}`;
+            throw new Error(`you need ${amountText} ${currencyName}`);
+        }
+    },
+    onSuccessful: async ({ metadata }, {
+        selectedCurrency: currencyId,
+        comparison,
+        amount: currencyAmount,
+        autoDeductCurrency
+    }) => {
+
+        if (!['greater', 'equal'].includes(comparison) || !autoDeductCurrency) {
+            return;
+        }
+
+        // we require this here to workaround circle dep issues :(
+        const currencyDatabase = require("../../database/currencyDatabase");
+
+        const username = metadata.username;
+
+        await currencyDatabase.adjustCurrencyForUser(
+            username,
+            currencyId,
+            -Math.abs(currencyAmount) // force value negative to make it deduct the amount from user
+        );
     }
 };
 
