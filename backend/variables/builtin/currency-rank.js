@@ -13,28 +13,17 @@ const model = {
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: async (_, currencyName, username) => {
-
         if (currencyName == null || username == null) {
             return 0;
         }
 
-        let currencyData = currencyDatabase.getCurrencies();
-
-        if (currencyData == null) {
-            return 0;
-        }
-
-        let currencies = Object.values(currencyData);
-
-        let currency = currencies.find(c => c.name.toLowerCase() === currencyName.toLowerCase());
+        const currency = currencyDatabase.getCurrencyByName(currencyName);
 
         if (currency == null) {
             return 0;
         }
 
-        let rank = await currencyDatabase.getUserCurrencyRank(currency.id, username, true);
-
-        return rank;
+        return await currencyDatabase.getUserCurrencyRank(currency.id, username, true);
     }
 };
 
