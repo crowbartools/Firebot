@@ -88,6 +88,10 @@ const delay = {
         }
 
         $scope.getSelectedOverlayDisplay = () => {
+            if ($scope.effect.overlayInstance == null) {
+                return "Default";
+            }
+
             if ($scope.effect.overlayInstance === "all") {
                 return "All";
             }
