@@ -60,7 +60,7 @@ const chat = {
         }
     },
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.commandId == null) {
             errors.push("Please select a command.");
         }

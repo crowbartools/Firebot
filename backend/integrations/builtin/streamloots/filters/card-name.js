@@ -13,8 +13,8 @@ module.exports = {
     valueType: "text",
     predicate: (filterSettings, eventData) => {
 
-        let { comparisonType, value } = filterSettings;
-        let { eventMeta } = eventData;
+        const { comparisonType, value } = filterSettings;
+        const { eventMeta } = eventData;
 
         let cardName = eventMeta.cardName;
 
@@ -24,7 +24,7 @@ module.exports = {
 
         cardName = cardName.toLowerCase();
 
-        let filterCardName = value && value.toLowerCase();
+        const filterCardName = value && value.toLowerCase();
 
         switch (comparisonType) {
         case ComparisonType.IS:
@@ -34,7 +34,7 @@ module.exports = {
         case ComparisonType.CONTAINS:
             return cardName.includes(filterCardName);
         case ComparisonType.MATCHES_REGEX: {
-            let regex = new RegExp(filterCardName, "gi");
+            const regex = new RegExp(filterCardName, "gi");
             return regex.test(cardName);
         }
         default:

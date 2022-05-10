@@ -66,7 +66,7 @@ const { EffectCategory } = require("../../shared/effect-constants");
             modalInstance: "<"
         },
         controller: function(ngToast, backendCommunicator, utilityService, $scope, $timeout) {
-            let $ctrl = this;
+            const $ctrl = this;
 
             $ctrl.activeCategory = null;
             $ctrl.categories = Object.values(EffectCategory);
@@ -75,15 +75,15 @@ const { EffectCategory } = require("../../shared/effect-constants");
 
             $ctrl.effectDefs = [];
             $ctrl.$onInit = async function() {
-                let effectDefs = await backendCommunicator
+                const effectDefs = await backendCommunicator
                     .fireEventAsync("getEffectDefinitions", {
                         triggerType: $ctrl.resolve.trigger,
                         triggerMeta: $ctrl.resolve.triggerMeta
                     });
                 $ctrl.effectDefs = effectDefs
                     .sort((a, b) => {
-                        let textA = a.name.toUpperCase();
-                        let textB = b.name.toUpperCase();
+                        const textA = a.name.toUpperCase();
+                        const textB = b.name.toUpperCase();
                         return textA < textB ? -1 : textA > textB ? 1 : 0;
                     })
                     .filter(e => !e.hidden);
@@ -93,10 +93,10 @@ const { EffectCategory } = require("../../shared/effect-constants");
                 }
 
                 if (!$ctrl.selectedEffectDef) {
-                    let modalId = $ctrl.resolve.modalId;
+                    const modalId = $ctrl.resolve.modalId;
                     utilityService.addSlidingModal(
                         $ctrl.modalInstance.rendered.then(() => {
-                            let modalElement = $("." + modalId).children();
+                            const modalElement = $("." + modalId).children();
                             return {
                                 element: modalElement,
                                 name: "Select New Effect",

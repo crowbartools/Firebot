@@ -18,7 +18,7 @@ const model = {
             return 0;
         }
 
-        let customRole = customRolesManager.getRoleByName(roleName);
+        const customRole = customRolesManager.getRoleByName(roleName);
 
         if (customRole !== null) {
             return customRole.viewers.length;

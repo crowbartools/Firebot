@@ -198,7 +198,7 @@ const effectDefinitions = [
 
 function getEffects(triggerType) {
     // filter effects list to given triggerType
-    let filteredEffects = effectDefinitions.filter(e => {
+    const filteredEffects = effectDefinitions.filter(e => {
         if (triggerType != null) {
             return e.triggers[triggerType] != null && e.triggers[triggerType] !== false;
         }
@@ -208,8 +208,8 @@ function getEffects(triggerType) {
 }
 
 function generateEffectObjects(triggerType, triggerMeta, useV5Ids = false) {
-    let effectsObject = {};
-    let filteredEffects = getEffects(triggerType, triggerMeta);
+    const effectsObject = {};
+    const filteredEffects = getEffects(triggerType, triggerMeta);
     filteredEffects.forEach(e => {
         effectsObject[e.id] = useV5Ids ? e.v5Id : e.name;
     });
@@ -217,7 +217,7 @@ function generateEffectObjects(triggerType, triggerMeta, useV5Ids = false) {
 }
 
 function getEffectByName(effectName) {
-    let effect = effectDefinitions.filter(e => e.name === effectName);
+    const effect = effectDefinitions.filter(e => e.name === effectName);
     if (effect.length < 1) {
         return null;
     }
@@ -225,7 +225,7 @@ function getEffectByName(effectName) {
 }
 
 function getEffectById(effectId) {
-    let effect = effectDefinitions.filter(e => e.id === effectId);
+    const effect = effectDefinitions.filter(e => e.id === effectId);
     if (effect.length < 1) {
         return null;
     }
@@ -233,7 +233,7 @@ function getEffectById(effectId) {
 }
 
 function getTriggerTypesForEffect(effectName) {
-    let effect = getEffectByName(effectName);
+    const effect = getEffectByName(effectName);
     if (effect == null) {
         return null;
     }
@@ -241,7 +241,7 @@ function getTriggerTypesForEffect(effectName) {
 }
 
 function getDependenciesForEffect(effectName) {
-    let effect = getEffectByName(effectName);
+    const effect = getEffectByName(effectName);
     if (effect == null) {
         return null;
     }
@@ -249,7 +249,7 @@ function getDependenciesForEffect(effectName) {
 }
 
 // Generate 'Enum' objects for all effects
-let EffectType = generateEffectObjects();
+const EffectType = generateEffectObjects();
 
 //export types
 exports.DependencyType = Dependency;
@@ -265,7 +265,7 @@ exports.getDependenciesForEffect = getDependenciesForEffect;
 exports.getEffectById = getEffectById;
 
 exports.effectCanBeTriggered = function(effectName, triggerType) {
-    let triggerTypes = getTriggerTypesForEffect(effectName);
+    const triggerTypes = getTriggerTypesForEffect(effectName);
     if (triggerTypes == null) {
         return false;
     }
@@ -277,14 +277,14 @@ exports.getEffectDictionary = generateEffectObjects;
 
 exports.getAllEffectTypes = function(triggerType, triggerMeta) {
     // if triggerType is null, all effects are returned
-    let effects = getEffects(triggerType, triggerMeta);
+    const effects = getEffects(triggerType, triggerMeta);
 
     //map to just an array of names and return
     return effects.map(e => e.name);
 };
 
 exports.getEffect = function(effectIdOrName) {
-    let effects = effectDefinitions.filter(
+    const effects = effectDefinitions.filter(
         e => e.id === effectIdOrName || e.name === effectIdOrName
     );
 

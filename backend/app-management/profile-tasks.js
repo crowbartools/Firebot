@@ -8,10 +8,10 @@ function handleProfileRename() {
     if (!profileManager.hasProfileRename()) {
         return;
     }
-    let globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings");
+    const globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings");
 
     try {
-        let currentProfileId = profileManager.getLoggedInProfile(),
+        const currentProfileId = profileManager.getLoggedInProfile(),
             newProfileId = profileManager.getNewProfileName(),
             activeProfiles = globalSettingsDb.getData("./profiles/activeProfiles");
 
@@ -20,8 +20,8 @@ function handleProfileRename() {
             // Delete the profile.
             logger.warn("Profile " + currentProfileId + " is marked for renaming. Renaming it now.");
 
-            let currentProfilePath = dataAccess.getPathInUserData("/profiles/" + currentProfileId);
-            let renamedProfilePath = dataAccess.getPathInUserData("/profiles/" + newProfileId);
+            const currentProfilePath = dataAccess.getPathInUserData("/profiles/" + currentProfileId);
+            const renamedProfilePath = dataAccess.getPathInUserData("/profiles/" + newProfileId);
             logger.warn(currentProfilePath);
 
             try {
@@ -32,7 +32,7 @@ function handleProfileRename() {
             }
 
             // Remove old id from active profiles and add new
-            let profilePosition = activeProfiles.indexOf(currentProfileId);
+            const profilePosition = activeProfiles.indexOf(currentProfileId);
             activeProfiles[profilePosition] = newProfileId;
             globalSettingsDb.push("/profiles/activeProfiles", activeProfiles);
 
@@ -49,7 +49,7 @@ function handleProfileRename() {
 }
 
 function handleProfileDeletion() {
-    let globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings");
+    const globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings");
 
     let deletedProfile, activeProfiles;
     try {

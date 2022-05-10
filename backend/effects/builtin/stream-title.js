@@ -21,7 +21,7 @@ const model = {
     `,
     optionsController: () => {},
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.title == null) {
             errors.push("Please input the title you'd like to use for the stream.");
         }

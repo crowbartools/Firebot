@@ -31,7 +31,7 @@ async function sendDiscordMessage(discordChannelId, content, embed, files = null
         content = content.substring(0, 1999);
     }
 
-    let payload = {
+    const payload = {
         username: discordSettings.botOverrides.botName,
         avatar_url: discordSettings.botOverrides.botImageUrl, // eslint-disable-line camelcase
         content: content,

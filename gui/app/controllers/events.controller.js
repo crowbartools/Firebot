@@ -5,14 +5,50 @@
     angular
         .module("firebotApp")
         .controller("eventsController", function($scope, eventsService, utilityService,
-            listenerService, objectCopyHelper, sortTagsService, effectQueuesService) {
+            listenerService, objectCopyHelper) {
 
             $scope.es = eventsService;
 
-            $scope.sts = sortTagsService;
+            const sources = listenerService.fireEventSync("getAllEventSources");
+
+            function friendlyEventTypeName(sourceId, eventId) {
+                const source = sources.find(s => s.id === sourceId);
+                if (source != null) {
+                    const event = source.events.find(e => e.id === eventId);
+                    if (event != null) {
+                        return `${event.name} (${source.name})`;
+                    }
+                }
+                return null;
+            }
+
+            $scope.tableConfig = [
+                {
+                    name: "NAME",
+                    icon: "fa-tag",
+                    headerStyles: {
+                        'min-width': '150px'
+                    },
+                    cellTemplate: `{{data.name}}`,
+                    cellController: () => {}
+                },
+                {
+                    name: "TYPE",
+                    icon: "fa-exclamation-square",
+                    headerStyles: {
+                        'min-width': '100px'
+                    },
+                    cellTemplate: `{{data.eventId && data.sourceId ?
+                        friendlyEventTypeName(data.sourceId, data.eventId) : "No
+                        Type"}}`,
+                    cellController: ($scope) => {
+                        $scope.friendlyEventTypeName = friendlyEventTypeName;
+                    }
+                }
+            ];
 
             $scope.getSelectedEvents = function() {
-                let selectedTab = eventsService.getSelectedTab();
+                const selectedTab = eventsService.getSelectedTab();
                 if (selectedTab === "mainevents") {
                     return eventsService.getMainEvents();
                 }
@@ -51,6 +87,10 @@
                     eventsService.saveGroup(group);
                 }
             }
+
+            $scope.updateEventsForCurrentGroup = (events) => {
+                eventsService.updateEventsForCurrentGroup(events);
+            };
 
             $scope.showCreateEventGroupModal = function() {
                 utilityService.openGetInputModal(
@@ -116,7 +156,7 @@
 
             $scope.showAddOrEditEventModal = function(eventId) {
 
-                let selectedGroupId = eventsService.getSelectedTab();
+                const selectedGroupId = eventsService.getSelectedTab();
                 let event;
 
                 if (eventId != null) {
@@ -131,7 +171,7 @@
                         groupId: () => selectedGroupId
                     },
                     closeCallback: resp => {
-                        let { action, event, groupId } = resp;
+                        const { action, event, groupId } = resp;
 
                         switch (action) {
                         case "add":
@@ -139,7 +179,7 @@
                                 eventsService.getMainEvents().push(event);
                                 eventsService.saveMainEvents();
                             } else {
-                                let group = eventsService.getEventGroup(groupId);
+                                const group = eventsService.getEventGroup(groupId);
                                 group.events.push(event);
                                 eventsService.saveGroup(group);
                             }
@@ -169,30 +209,6 @@
                             deleteEvent(groupId, eventId);
                         }
                     });
-            };
-
-            $scope.getEventActiveStatus = function(active) {
-                let groupId = eventsService.getSelectedTab();
-                if (groupId !== "mainevents") {
-                    let group = eventsService.getEventGroup(groupId);
-                    if (group && !group.active) {
-                        return false;
-                    }
-                }
-                return active;
-            };
-
-            $scope.getEventActiveStatusDisplay = function(active) {
-
-                let groupId = eventsService.getSelectedTab();
-                if (groupId !== "mainevents") {
-                    let group = eventsService.getEventGroup(groupId);
-                    if (!group || !group.active) {
-                        return "Disabled (Set not active)";
-                    }
-                }
-
-                return active ? "Enabled" : "Disabled";
             };
 
             $scope.toggleEventActiveStatus = function(eventId) {
@@ -267,10 +283,10 @@
 
             $scope.copyEvents = function(groupId) {
                 if (groupId === "mainevents") {
-                    let events = eventsService.getMainEvents();
+                    const events = eventsService.getMainEvents();
                     objectCopyHelper.copyObject("events", events);
                 } else {
-                    let group = eventsService.getEventGroup(groupId);
+                    const group = eventsService.getEventGroup(groupId);
                     objectCopyHelper.copyObject("events", group.events);
                 }
             };
@@ -281,19 +297,19 @@
                 }
 
                 if (groupId === "mainevents") {
-                    let copiedEvents = objectCopyHelper.getCopiedObject("events");
+                    const copiedEvents = objectCopyHelper.getCopiedObject("events");
 
-                    for (let copiedEvent of copiedEvents) {
+                    for (const copiedEvent of copiedEvents) {
                         eventsService.getMainEvents().push(copiedEvent);
                     }
 
                     eventsService.saveMainEvents();
 
                 } else {
-                    let group = eventsService.getEventGroup(groupId);
-                    let copiedEvents = objectCopyHelper.getCopiedObject("events");
+                    const group = eventsService.getEventGroup(groupId);
+                    const copiedEvents = objectCopyHelper.getCopiedObject("events");
 
-                    for (let copiedEvent of copiedEvents) {
+                    for (const copiedEvent of copiedEvents) {
                         group.events.push(copiedEvent);
 
                     }
@@ -301,61 +317,6 @@
                 }
 
                 eventsService.setSelectedTab(groupId);
-            };
-
-            $scope.selectedGroupIsActive = function() {
-                let groupId = eventsService.getSelectedTab();
-                if (groupId === "mainevents") {
-                    return true;
-                }
-                let group = eventsService.getEventGroup(groupId);
-                return group ? group.active === true : false;
-            };
-
-            $scope.addToEffectQueue = (event, queueId) => {
-                if (event == null) {
-                    return;
-                }
-
-                if (event.effects) {
-                    event.effects.queue = queueId;
-                }
-
-                const selectedGroupId = eventsService.getSelectedTab();
-                updateEvent(selectedGroupId, event);
-            };
-
-            $scope.clearEffectQueue = (event) => {
-                event.effects.queue = null;
-            };
-
-            $scope.getEffectQueueMenuOption = (event) => {
-                const queues = effectQueuesService.getEffectQueues();
-                if (event.effects != null && queues != null && queues.length > 0) {
-                    const children = queues.map(q => {
-                        const isSelected = event.effects.queue && event.effects.queue === q.id;
-                        return {
-                            html: `<a href><i class="${isSelected ? 'fas fa-check' : ''}" style="margin-right: ${isSelected ? '10' : '27'}px;"></i> ${q.name}</a>`,
-                            click: () => {
-                                $scope.addToEffectQueue(event, q.id);
-                            }
-                        };
-                    });
-
-                    const hasEffectQueue = event.effects.queue != null && event.effects.queue !== "";
-                    children.push({
-                        html: `<a href><i class="${!hasEffectQueue ? 'fas fa-check' : ''}" style="margin-right: ${!hasEffectQueue ? '10' : '27'}px;"></i> None</a>`,
-                        click: () => {
-                            $scope.clearEffectQueue(event);
-                        },
-                        hasTopDivider: true
-                    });
-
-                    return {
-                        text: `Effect Queues...`,
-                        children: children
-                    };
-                }
             };
 
             $scope.eventMenuOptions = function(event) {
@@ -369,36 +330,31 @@
                 const options = [
                     {
                         html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
-                        click: ($itemScope) => {
-                            const event = $itemScope.event;
+                        click: () => {
                             $scope.showAddOrEditEventModal(event.id);
                         }
                     },
                     {
                         html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> Toggle Enabled</a>`,
-                        click: ($itemScope) => {
-                            const event = $itemScope.event;
+                        click: () => {
                             $scope.toggleEventActiveStatus(event.id);
                         }
                     },
                     {
                         html: `<a href ><i class="far fa-copy" style="margin-right: 10px;"></i> Copy</a>`,
-                        click: ($itemScope) => {
-                            const event = $itemScope.event;
+                        click: () => {
                             $scope.copyEvent(event.id);
                         }
                     },
                     {
                         html: `<a href ><i class="far fa-clone" style="margin-right: 10px;"></i> Duplicate</a>`,
-                        click: ($itemScope) => {
-                            const event = $itemScope.event;
+                        click: () => {
                             $scope.duplicateEvent(event.id);
                         }
                     },
                     {
                         html: `<a href style="color: #fb7373;"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>`,
-                        click: ($itemScope) => {
-                            const event = $itemScope.event;
+                        click: () => {
                             $scope.showDeleteEventModal(event.id, event.name ? event.name : 'Unnamed');
                         }
                     },
@@ -415,11 +371,6 @@
                         hasTopDivider: true
                     }
                 ];
-
-                const effectQueueMenuOption = $scope.getEffectQueueMenuOption(event);
-                if (effectQueueMenuOption != null) {
-                    options.push(effectQueueMenuOption);
-                }
 
                 return options;
             };
@@ -469,7 +420,6 @@
             };
 
             $scope.simulateEventsByType = function() {
-
                 utilityService.showModal({
                     component: "simulateGroupEventsModal",
                     size: "sm"
@@ -486,30 +436,16 @@
                 return 0;
             };
 
-            /**
-             * Gets user friendly event name from the EventType list.
-             */
-
-            let sources = listenerService.fireEventSync("getAllEventSources");
-
-            $scope.friendlyEventTypeName = function(sourceId, eventId) {
-                let source = sources.find(s => s.id === sourceId);
-                if (source != null) {
-                    let event = source.events.find(e => e.id === eventId);
-                    if (event != null) {
-                        return `${event.name} (${source.name})`;
-                    }
-                }
-                return null;
-            };
-
             // Fire event manually
-            $scope.fireEventManually = function(event) {
-                ipcRenderer.send("triggerManualEvent", {
-                    eventId: event.eventId,
-                    sourceId: event.sourceId,
-                    eventSettingsId: event.id
-                });
+            $scope.fireEventManually = function(eventId) {
+                const event = $scope.getSelectedEvents().find(e => e.id === eventId);
+                if (event != null) {
+                    ipcRenderer.send("triggerManualEvent", {
+                        eventId: event.eventId,
+                        sourceId: event.sourceId,
+                        eventSettingsId: event.id
+                    });
+                }
             };
         });
 }());

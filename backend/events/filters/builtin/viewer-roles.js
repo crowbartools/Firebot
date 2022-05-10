@@ -37,21 +37,21 @@ module.exports = {
 
     },
     valueIsStillValid: (filterSettings, viewerRolesService) => {
-        let allRoles = viewerRolesService
+        const allRoles = viewerRolesService
             .getCustomRoles()
             .concat(viewerRolesService.getTeamRoles())
             .concat(viewerRolesService.getTwitchRoles());
 
-        let role = allRoles.find(r => r.id === filterSettings.value);
+        const role = allRoles.find(r => r.id === filterSettings.value);
 
         return role != null && role.name != null;
     },
     getSelectedValueDisplay: (filterSettings, viewerRolesService) => {
-        let allRoles = viewerRolesService.getCustomRoles()
+        const allRoles = viewerRolesService.getCustomRoles()
             .concat(viewerRolesService.getTeamRoles())
             .concat(viewerRolesService.getTwitchRoles());
 
-        let role = allRoles.find(r => r.id === filterSettings.value);
+        const role = allRoles.find(r => r.id === filterSettings.value);
 
         if (role) {
             return role.name;
@@ -61,10 +61,10 @@ module.exports = {
     },
     predicate: async (filterSettings, eventData) => {
 
-        let { comparisonType, value } = filterSettings;
-        let { eventMeta } = eventData;
+        const { comparisonType, value } = filterSettings;
+        const { eventMeta } = eventData;
 
-        let username = eventMeta.username;
+        const username = eventMeta.username;
         if (username == null || username === "") {
             return false;
         }

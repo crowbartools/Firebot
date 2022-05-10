@@ -5,14 +5,14 @@
     const uuidv1 = require("uuid/v1");
 
     angular.module("firebotApp").factory("eventsService", function(backendCommunicator, objectCopyHelper) {
-        let service = {};
+        const service = {};
 
         let mainEvents = [];
         let groups = [];
 
 
         function loadAllEventData() {
-            let eventData = backendCommunicator.fireEventSync("getAllEventData");
+            const eventData = backendCommunicator.fireEventSync("getAllEventData");
 
             if (eventData.mainEvents) {
                 mainEvents = eventData.mainEvents;
@@ -58,8 +58,21 @@
             return groups.find(g => g.id === groupId);
         };
 
+        service.updateEventsForCurrentGroup = function(events) {
+            if (service.getSelectedTab() === "mainevents") {
+                mainEvents = events;
+                service.saveMainEvents();
+            } else {
+                const group = service.getEventGroup(service.getSelectedTab());
+                if (group != null) {
+                    group.events = events;
+                    service.saveGroup(group);
+                }
+            }
+        };
+
         service.createGroup = function(name) {
-            let newId = uuidv1();
+            const newId = uuidv1();
             const newGroup = {
                 id: newId,
                 name: name,
@@ -73,7 +86,7 @@
 
         service.duplicateEventGroup = function(group) {
 
-            let duplicatedGroup = objectCopyHelper.copyObject("eventgroup", group);
+            const duplicatedGroup = objectCopyHelper.copyObject("eventgroup", group);
 
             duplicatedGroup.name += " copy";
 
@@ -101,7 +114,7 @@
         };
 
         service.saveGroup = function(group) {
-            let existingIndex = groups.findIndex(g => g.id === group.id);
+            const existingIndex = groups.findIndex(g => g.id === group.id);
             if (existingIndex >= 0) {
                 groups[existingIndex] = group;
             } else {

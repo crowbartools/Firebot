@@ -8,7 +8,7 @@
             template: `
             <div class="modal-header">
                 <button type="button" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
-                <h4 class="modal-title">Import Words From TXT</h4>
+                <h4 class="modal-title">Import Items From TXT</h4>
             </div>
             <div class="modal-body">
 
@@ -21,7 +21,7 @@
 
                 <div style="margin-top: 15px;">
                     <div class="modal-subheader" style="padding: 0 0 4px 0">
-                        Seperator <tooltip text="'Tell Firebot how the words/phrases in the txt file are seperated'"></tooltip>
+                        Seperator <tooltip text="'Tell Firebot how the items in the txt file are seperated'"></tooltip>
                     </div>
                     <div class="dropdown">
                         <button class="btn btn-default dropdown-toggle" type="button" id="options-sounds" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -48,7 +48,7 @@
                 dismiss: "&"
             },
             controller: function() {
-                let $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.filePath = "";
 

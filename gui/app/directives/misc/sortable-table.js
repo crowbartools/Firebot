@@ -59,7 +59,7 @@
           </div>
           `,
             controller: function() {
-                let $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.$onInit = () => {
                     if ($ctrl.tableDataSet == null) {
@@ -94,7 +94,7 @@
                 };
 
                 $ctrl.getRangeMax = function(filteredLength) {
-                    let max = $ctrl.pagination.pageSize * $ctrl.pagination.currentPage;
+                    const max = $ctrl.pagination.pageSize * $ctrl.pagination.currentPage;
                     return max <= filteredLength ? max : filteredLength;
                 };
 
@@ -117,12 +117,12 @@
                 };
 
                 $ctrl.dynamicOrder = function(data) {
-                    let field = $ctrl.order.field;
+                    const field = $ctrl.order.field;
 
                     if (field.includes(".")) {
-                        let nodes = field.split(".");
+                        const nodes = field.split(".");
                         let currentData = data;
-                        for (let node of nodes) {
+                        for (const node of nodes) {
                             currentData = currentData[node];
                         }
                         return currentData;

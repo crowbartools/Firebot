@@ -13,7 +13,7 @@ const model = {
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (_, ...args) => {
-        let max = Math.max(...args);
+        const max = Math.max(...args);
 
         if (isNaN(max)) {
             return 0;

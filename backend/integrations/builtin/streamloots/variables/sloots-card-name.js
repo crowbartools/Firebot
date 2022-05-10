@@ -3,7 +3,7 @@
 const { EffectTrigger } = require("../../../../../shared/effect-constants");
 const { OutputDataType, VariableCategory } = require("../../../../../shared/variable-constants");
 
-let triggers = {};
+const triggers = {};
 triggers[EffectTrigger.EVENT] = ["streamloots:redemption"];
 triggers[EffectTrigger.MANUAL] = true;
 
@@ -16,7 +16,7 @@ const model = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
-        let cardName = trigger.metadata.eventData && trigger.metadata.eventData.cardName;
+        const cardName = trigger.metadata.eventData && trigger.metadata.eventData.cardName;
 
         return cardName || "";
     }

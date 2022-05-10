@@ -14,8 +14,8 @@ function hasBannedWord(input) {
 }
 
 function matchesBannedRegex(input) {
-    let expressions = regularExpressions.map(regex => new RegExp(regex, "gi"));
-    let inputWords = input.split(" ");
+    const expressions = regularExpressions.map(regex => new RegExp(regex, "gi"));
+    const inputWords = input.split(" ");
 
     for (const exp of expressions) {
         for (const word of inputWords) {
@@ -49,11 +49,11 @@ parentPort.on("message", event => {
             return;
         }
         if (event.scanForBannedWords) {
-            let bannedWordFound = hasBannedWord(event.message);
+            const bannedWordFound = hasBannedWord(event.message);
             if (bannedWordFound) {
                 parentPort.postMessage({ type: "deleteMessage", messageId: event.messageId, username: event.username });
             } else {
-                let bannedRegexMatched = matchesBannedRegex(event.message);
+                const bannedRegexMatched = matchesBannedRegex(event.message);
                 if (bannedRegexMatched) {
                     parentPort.postMessage({ type: "deleteMessage", messageId: event.messageId, username: event.username });
                 }

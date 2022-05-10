@@ -20,10 +20,10 @@
       </ui-select>
       `,
         controller: function(listenerService) {
-            let ctrl = this;
+            const ctrl = this;
 
-            let events = listenerService.fireEventSync("getAllEvents", false);
-            let sources = listenerService.fireEventSync("getAllEventSources", false);
+            const events = listenerService.fireEventSync("getAllEvents", false);
+            const sources = listenerService.fireEventSync("getAllEventSources", false);
 
             const getSelected = () => {
                 // sort events by name

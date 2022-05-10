@@ -39,25 +39,25 @@ const model = {
         $scope.ttsVoices = ttsService.getVoices();
 
         $scope.getSelectedVoiceName = () => {
-            let voiceId = $scope.effect.voiceId;
+            const voiceId = $scope.effect.voiceId;
             if (voiceId === "default" || voiceId == null) {
                 return "Default";
             }
 
-            let voice = ttsService.getVoiceById(voiceId);
+            const voice = ttsService.getVoiceById(voiceId);
 
             return voice ? voice.name : "Unknown Voice";
         };
     },
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.text == null || effect.text.length < 1) {
             errors.push("Please input some text.");
         }
         return errors;
     },
     onTriggerEvent: async event => {
-        let effect = event.effect;
+        const effect = event.effect;
 
         frontendCommunicator.send("read-tts", {
             text: effect.text,

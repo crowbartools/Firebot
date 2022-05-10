@@ -297,6 +297,17 @@ module.exports = {
             }
         },
         {
+            id: "announcement",
+            name: "Announcement",
+            description: "When you or a mod sends an announcement in your channel",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                username: "Firebot",
+                messageText: "Test announcement"
+            }
+        },
+        {
             id: "banned",
             name: "Viewer Banned",
             description: "When someone is banned in your channel",

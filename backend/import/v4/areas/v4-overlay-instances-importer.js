@@ -12,13 +12,13 @@ async function checkForV4SettingsFile() {
 }
 
 exports.run = async () => {
-    let incompatibilityWarnings = [];
+    const incompatibilityWarnings = [];
 
-    let v4SettingsExists = await checkForV4SettingsFile();
+    const v4SettingsExists = await checkForV4SettingsFile();
 
     if (v4SettingsExists) {
 
-        let v4SettingsDb = importHelpers.getJsonDbInV4Data("/settings.json");
+        const v4SettingsDb = importHelpers.getJsonDbInV4Data("/settings.json");
 
         let allV4Settings;
         try {
@@ -28,10 +28,10 @@ exports.run = async () => {
         }
 
         if (allV4Settings != null) {
-            let useOverlayInstances = allV4Settings.settings.useOverlayInstances === true;
+            const useOverlayInstances = allV4Settings.settings.useOverlayInstances === true;
             settings.setUseOverlayInstances(useOverlayInstances);
 
-            let overlayInstances = allV4Settings.settings.overlayInstances || [];
+            const overlayInstances = allV4Settings.settings.overlayInstances || [];
             settings.setOverlayInstances(overlayInstances);
 
             settings.flushSettingsCache();

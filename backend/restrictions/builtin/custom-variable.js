@@ -21,8 +21,8 @@ const model = {
         </div>
     `,
     optionsValueDisplay: (restriction) => {
-        let name = restriction.name;
-        let value = restriction.value;
+        const name = restriction.name;
+        const value = restriction.value;
 
         if (name == null || value == null) {
             return "";
@@ -35,10 +35,10 @@ const model = {
     */
     predicate: (_, restrictionData) => {
         return new Promise(async (resolve, reject) => {
-            let customVariableManager = require("../../common/custom-variable-manager");
+            const customVariableManager = require("../../common/custom-variable-manager");
 
             let passed = false;
-            let cachedVariable = customVariableManager.getCustomVariable(restrictionData.name);
+            const cachedVariable = customVariableManager.getCustomVariable(restrictionData.name);
 
             let value = restrictionData.value;
             try {

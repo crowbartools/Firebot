@@ -7,10 +7,10 @@
 
     angular.module("firebotApp").factory("currencyService", function(logger, utilityService,
         backendCommunicator) {
-        let service = {};
+        const service = {};
 
         // The currency settings.
-        let currencyDb = profileManager.getJsonDbInProfile("/currency/currency");
+        const currencyDb = profileManager.getJsonDbInProfile("/currency/currency");
 
         // This will get currency information.
         // Can pass option param to just get one currency, otherwise it gets all of them.
@@ -43,7 +43,7 @@
 
         // Saved the currency modal.
         service.saveCurrency = function(currency, updateName = false) {
-            let currencyId = currency.id,
+            const currencyId = currency.id,
                 allCurrencies = service.getCurrencies();
 
             // Check to make sure we don't have a currency with the same name.
@@ -87,7 +87,7 @@
 
         // Updated a pre-existing currency through the modal.
         service.updateCurrency = function(currency) {
-            let currencyId = currency.id;
+            const currencyId = currency.id;
             currencyDb.push("/" + currencyId, currency);
             ipcRenderer.send("refreshCurrencyCache");
             ipcRenderer.send("refreshCurrencyCommands", {"action": "update", "currency": currency});
@@ -100,7 +100,7 @@
 
         // Deleted a currency through the modal.
         service.deleteCurrency = function(currency) {
-            let currencyId = currency.id;
+            const currencyId = currency.id;
             currencyDb.delete("/" + currencyId);
             ipcRenderer.send("deleteCurrency", currencyId);
             ipcRenderer.send("refreshCurrencyCache");

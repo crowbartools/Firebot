@@ -5,7 +5,7 @@
     angular
         .module("firebotApp")
         .factory("gamesService", function($q, backendCommunicator) {
-            let service = {};
+            const service = {};
 
             service.games = [];
 

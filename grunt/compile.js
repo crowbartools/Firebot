@@ -39,6 +39,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-electron-installer');
     grunt.loadNpmTasks('grunt-contrib-compress');
 
-    let task = grunt.config.get('platform') === 'win64' ? 'create-windows-installer:win64' : 'compress:linux';
+    const task = grunt.config.get('platform') === 'win64' ? 'create-windows-installer:win64' : 'compress:linux';
     grunt.registerTask('compile', ['cleanup:install', task]);
 };

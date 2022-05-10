@@ -32,10 +32,10 @@ const model = {
         }
 
         if (quote != null) {
-            let ts = new Date(quote.createdAt);
-            let timestamp = ts.toLocaleString();
-            let quoteText = decodeURIComponent(quote.text);
-            let quoteString = quoteText + ' - ' + quote.originator + '. [' + quote.game + '] - ' + timestamp;
+            const ts = new Date(quote.createdAt);
+            const timestamp = ts.toLocaleString();
+            const quoteText = decodeURIComponent(quote.text);
+            const quoteString = quoteText + ' - ' + quote.originator + '. [' + quote.game + '] - ' + timestamp;
             logger.debug("Found a quote!");
             return quoteString;
         }

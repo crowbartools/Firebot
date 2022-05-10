@@ -115,7 +115,7 @@ const effectGroup = {
 
     },
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.listType === 'preset' && effect.presetListId == null) {
             errors.push("Please select a preset list");
         }

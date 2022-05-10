@@ -1,9 +1,18 @@
 <div class="chat-tab-content flex">
-  <quick-actions id="dashboardQuickActions" class="quick-actions-column flex flex-col justify-between" ng-style="{'width': layout.dashboardQuickActions }"></quick-actions>
+  <quick-actions
+    id="dashboardQuickActions"
+    class="quick-actions-column flex flex-col justify-between"
+    ng-style="{'width': layout.dashboardQuickActions }"
+  ></quick-actions>
 
-  <div style="width: 2px;background: #373c3e;position: relative;"></div>
+  <div style="width: 2px; background: #373c3e; position: relative"></div>
 
-  <div id="dashboardViewerList" class="viewer-list-column" ng-show="getChatViewerListSetting()" ng-style="{'width': layout.dashboardViewerList }">
+  <div
+    id="dashboardViewerList"
+    class="viewer-list-column"
+    ng-show="getChatViewerListSetting()"
+    ng-style="{'width': layout.dashboardViewerList }"
+  >
     <div class="viewer-list-header">
       <span> CHAT USERS </span>
     </div>
@@ -15,9 +24,16 @@
     </div>
   </div>
 
-  <column-resizer on-update="updateLayoutSettings(updatedSettings)" ng-show="getChatViewerListSetting()"></column-resizer>
+  <column-resizer
+    on-update="updateLayoutSettings(updatedSettings)"
+    ng-show="getChatViewerListSetting()"
+  ></column-resizer>
 
-  <div id="dashboardChatWindow" class="chat-window-column" ng-style="{'width': layout.dashboardChatWindow }">
+  <div
+    id="dashboardChatWindow"
+    class="chat-window-column"
+    ng-style="{'width': layout.dashboardChatWindow }"
+  >
     <div class="chat-window-wrapper">
       <div ng-hide="chatFeedIsEnabled()" class="chatfeed-disabled-overlay">
         <span style="color: white; font-size: 1.2em; text-align: center"
@@ -48,7 +64,7 @@
         style="{{customFontSizeStyle}}"
       >
         <div
-          ng-repeat="chatItem in cms.chatQueue | limitTo:messageDisplayLimit track by chatItem.id"
+          ng-repeat="chatItem in cms.chatQueue | hideBotMessages | limitTo:messageDisplayLimit track by chatItem.id"
           class="chat-item"
           ng-class="{ alternate: alternateBackgrounds}"
           scroll-glue-anchor
@@ -100,9 +116,7 @@
             <span class="ml-4" style="width: 100%; text-align: center"
               >{{chatSender}}</span
             >
-            <div
-              class="fb-arrow down mx-4 mb-1"
-            ></div>
+            <div class="fb-arrow down mx-4 mb-1"></div>
           </span>
           <ul class="dropdown-menu">
             <li ng-click="chatSender = 'Streamer'"><a href>Streamer</a></li>
@@ -138,9 +152,17 @@
     </div>
   </div>
 
-  <column-resizer on-update="updateLayoutSettings(updatedSettings)" ng-show="settings.showActivityFeed()"></column-resizer>
+  <column-resizer
+    on-update="updateLayoutSettings(updatedSettings)"
+    ng-show="settings.showActivityFeed()"
+  ></column-resizer>
 
-  <div id="dashboardActivityFeed" class="activity-feed-column" ng-show="settings.showActivityFeed()" ng-style="{'width': layout.dashboardActivityFeed }">
+  <div
+    id="dashboardActivityFeed"
+    class="activity-feed-column"
+    ng-show="settings.showActivityFeed()"
+    ng-style="{'width': layout.dashboardActivityFeed }"
+  >
     <div class="activity-feed-header">
       <div style="display: flex; align-items: center">
         <span>ACTIVITY FEED</span>
@@ -185,10 +207,7 @@
           </li>
           <li>
             <a href ng-click="afs.showEditActivityFeedEventsModal()"
-              ><i
-                class="far fa-toggle-off mr-4"
-                aria-label="Edit events"
-              ></i>
+              ><i class="far fa-toggle-off mr-4" aria-label="Edit events"></i>
               Edit events</a
             >
           </li>
@@ -228,11 +247,7 @@
         ></div>
         <div
           class="ml-4"
-          style="
-            font-size: 15px;
-            display: flex;
-            align-items: center;
-          "
+          style="font-size: 15px; display: flex; align-items: center"
         >
           <i
             class="clickable far fa-redo mr-4"

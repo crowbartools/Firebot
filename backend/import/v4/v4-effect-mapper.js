@@ -59,10 +59,10 @@ function updateReplaceVariables(effect) {
         return effect;
     }
 
-    let keys = Object.keys(effect);
+    const keys = Object.keys(effect);
 
-    for (let key of keys) {
-        let value = effect[key];
+    for (const key of keys) {
+        const value = effect[key];
 
         if (value && typeof value === "string") {
             effect[key] = value.replace(/\$\(user\)/, "$user");
@@ -82,7 +82,7 @@ function mapV4Effect (v4Effect, triggerData, incompatibilityWarnings) {
 
     // Null signifies we dont support this v4 effect
     if (v5EffectTypeId == null) {
-        let reason = v4IncompatibilityReasonMap[v4Effect.type] || "Unknown effect";
+        const reason = v4IncompatibilityReasonMap[v4Effect.type] || "Unknown effect";
         throw new IncompatibilityError(reason);
     }
 
@@ -97,7 +97,7 @@ function mapV4Effect (v4Effect, triggerData, incompatibilityWarnings) {
 
     if (v5Effect.type === "firebot:randomeffect" || v5Effect.type === "firebot:run-effect-list") {
 
-        let mapResult = exports.mapV4EffectList(v5Effect.effectList, triggerData);
+        const mapResult = exports.mapV4EffectList(v5Effect.effectList, triggerData);
 
         mapResult.incompatibilityWarnings.forEach(iw => incompatibilityWarnings.push(iw));
 
@@ -110,26 +110,26 @@ function mapV4Effect (v4Effect, triggerData, incompatibilityWarnings) {
 }
 
 exports.mapV4EffectList = (v4EffectList, triggerData) => {
-    let incompatibilityWarnings = [];
+    const incompatibilityWarnings = [];
 
     if (v4EffectList == null) {
         return { effects: null, incompatibilityWarnings: incompatibilityWarnings};
     }
 
     // v4 effect lists can be objects or arrays
-    let v4Effects = Array.isArray(v4EffectList) ? v4EffectList : Object.values(v4EffectList);
+    const v4Effects = Array.isArray(v4EffectList) ? v4EffectList : Object.values(v4EffectList);
 
-    let v5EffectObj = {
+    const v5EffectObj = {
         id: uuid(),
         list: []
     };
 
-    for (let v4Effect of v4Effects) {
+    for (const v4Effect of v4Effects) {
         if (v4Effect == null || v4Effect.type == null) {
             continue;
         }
         try {
-            let mappedV5Effect = mapV4Effect(v4Effect, triggerData, incompatibilityWarnings);
+            const mappedV5Effect = mapV4Effect(v4Effect, triggerData, incompatibilityWarnings);
             if (mappedV5Effect) {
                 v5EffectObj.list.push(mappedV5Effect);
             }
@@ -141,7 +141,7 @@ exports.mapV4EffectList = (v4EffectList, triggerData) => {
                 logger.warn("Error during v4 effect import", error);
                 reason = "An unexpected error occurred";
             }
-            let message = `Could not import V4 Effect '${v4Effect.type}' in ${triggerData.type} '${triggerData.name}' because: ${reason}`;
+            const message = `Could not import V4 Effect '${v4Effect.type}' in ${triggerData.type} '${triggerData.name}' because: ${reason}`;
             incompatibilityWarnings.push(message);
         }
     }

@@ -12,7 +12,7 @@ const v5FontsPath = profileManager.getPathInProfile("/fonts");
 async function checkForV4Fonts() {
     let hasFonts = false;
     try {
-        let files = await fse.readdir(v4FontsPath);
+        const files = await fse.readdir(v4FontsPath);
         hasFonts = files != null && files.length > 0;
     } catch (err) {
         logger.warn("Unable to read fonts folder.", err);
@@ -21,9 +21,9 @@ async function checkForV4Fonts() {
 }
 
 exports.run = async () => {
-    let incompatibilityWarnings = [];
+    const incompatibilityWarnings = [];
 
-    let v4FontsExist = await checkForV4Fonts();
+    const v4FontsExist = await checkForV4Fonts();
 
     if (v4FontsExist) {
         try {

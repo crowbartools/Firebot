@@ -15,7 +15,7 @@ exports.loadRestrictions = () => {
         'view-time',
         'viewer-count'
     ].forEach(filename => {
-        let definition = require(`./builtin/${filename}.js`);
+        const definition = require(`./builtin/${filename}.js`);
         restrictionsManager.registerRestriction(definition);
     });
 };

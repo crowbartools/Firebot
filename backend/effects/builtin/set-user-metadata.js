@@ -46,7 +46,7 @@ const effect = {
     `,
     optionsController: () => {},
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.username == null || effect.username === "") {
             errors.push("Please provide a username.");
         }

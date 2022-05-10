@@ -17,7 +17,7 @@ exports.execute = function(command, userCommand, firebotChatMessage, manual = fa
         }
     }
 
-    let processEffectsRequest = {
+    const processEffectsRequest = {
         trigger: {
             type: manual ? TriggerType.MANUAL : TriggerType.COMMAND,
             metadata: {

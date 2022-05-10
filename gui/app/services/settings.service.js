@@ -8,7 +8,7 @@
     angular
         .module("firebotApp")
         .factory("settingsService", function(utilityService, logger, profileManager, dataAccess, backendCommunicator) {
-            let service = {};
+            const service = {};
 
             let settingsCache = {};
 
@@ -20,7 +20,7 @@
                 if (settingsUpdate == null) {
                     return;
                 }
-                let { path, data } = settingsUpdate;
+                const { path, data } = settingsUpdate;
                 if (path == null || path === '') {
                     return;
                 }
@@ -42,7 +42,7 @@
             function getDataFromFile(path, forceCacheUpdate) {
                 try {
                     if (settingsCache[path] == null || forceCacheUpdate) {
-                        let data = getSettingsFile().getData(path);
+                        const data = getSettingsFile().getData(path);
                         settingsCache[path] = data;
                     }
                 } catch (err) {
@@ -124,7 +124,7 @@
             };
 
             service.getViewerListPageSize = function() {
-                let viewerListPageSize = getDataFromFile("/settings/viewerListDatabase/pageSize");
+                const viewerListPageSize = getDataFromFile("/settings/viewerListDatabase/pageSize");
                 return viewerListPageSize != null ? viewerListPageSize : 10;
             };
 
@@ -133,7 +133,7 @@
             };
 
             service.isBetaTester = function() {
-                let betaTester = getDataFromFile("/settings/beta");
+                const betaTester = getDataFromFile("/settings/beta");
                 return betaTester != null ? betaTester : "No";
             };
 
@@ -142,7 +142,7 @@
             };
 
             service.getEmulator = function() {
-                let emulator = getDataFromFile("/settings/emulation");
+                const emulator = getDataFromFile("/settings/emulation");
                 return emulator != null ? emulator : "Robotjs";
             };
 
@@ -174,7 +174,7 @@
 
             // Used for settings menu.
             service.getChatFeed = function() {
-                let chatFeed = getDataFromFile("/settings/chatFeed");
+                const chatFeed = getDataFromFile("/settings/chatFeed");
                 if (chatFeed === true) {
                     return "On";
                 }
@@ -194,7 +194,7 @@
 
             // Used for settings menu.
             service.getChatViewCount = function() {
-                let chatViewCount = getDataFromFile("/settings/chatViewCount");
+                const chatViewCount = getDataFromFile("/settings/chatViewCount");
                 if (chatViewCount === true) {
                     return "On";
                 }
@@ -296,7 +296,7 @@
             };
 
             service.isChatCompactMode = function() {
-                let compact = getDataFromFile("/settings/chatCompactMode");
+                const compact = getDataFromFile("/settings/chatCompactMode");
                 return compact != null ? compact : false;
             };
 
@@ -374,12 +374,21 @@
             };
 
             service.chatAlternateBackgrounds = function() {
-                let alternate = getDataFromFile('/settings/chatAlternateBackgrounds');
+                const alternate = getDataFromFile('/settings/chatAlternateBackgrounds');
                 return alternate != null ? alternate : true;
             };
 
             service.setChatAlternateBackgrounds = function(alternate) {
                 pushDataToFile('/settings/chatAlternateBackgrounds', alternate === true);
+            };
+
+            service.chatHideBotAccountMessages = function() {
+                const shouldHide = getDataFromFile('/settings/chatHideBotAccountMessages');
+                return shouldHide != null ? shouldHide : false;
+            };
+
+            service.setChatHideBotAccountMessages = function(shouldHide) {
+                pushDataToFile('/settings/chatHideBotAccountMessages', shouldHide === true);
             };
 
             service.getShowUptimeStat = function() {
@@ -398,7 +407,7 @@
             };
 
             service.chatHideDeletedMessages = function() {
-                let hide = getDataFromFile('/settings/chatHideDeletedMessages');
+                const hide = getDataFromFile('/settings/chatHideDeletedMessages');
                 return hide != null ? hide : false;
             };
 
@@ -407,17 +416,17 @@
             };
 
             service.getOverlayCompatibility = function() {
-                let overlay = getDataFromFile("/settings/overlayImages");
+                const overlay = getDataFromFile("/settings/overlayImages");
                 return overlay != null ? overlay : "Other";
             };
 
             service.setOverlayCompatibility = function(overlay) {
-                let overlaySetting = overlay === "OBS" ? overlay : "Other";
+                const overlaySetting = overlay === "OBS" ? overlay : "Other";
                 pushDataToFile("/settings/overlayImages", overlaySetting);
             };
 
             service.getTheme = function() {
-                let theme = getDataFromFile("/settings/theme");
+                const theme = getDataFromFile("/settings/theme");
                 return theme != null ? theme : "Obsidian";
             };
 
@@ -426,7 +435,7 @@
             };
 
             service.soundsEnabled = function() {
-                let sounds = getDataFromFile("/settings/sounds");
+                const sounds = getDataFromFile("/settings/sounds");
                 return sounds != null ? sounds : "On";
             };
 
@@ -435,7 +444,7 @@
             };
 
             service.getActiveChatUserListTimeout = function() {
-                let inactiveTimer = getDataFromFile("/settings/activeChatUsers/inactiveTimer");
+                const inactiveTimer = getDataFromFile("/settings/activeChatUsers/inactiveTimer");
                 return inactiveTimer != null ? parseInt(inactiveTimer) : 5;
             };
 
@@ -451,7 +460,7 @@
             * 4 = betas
             */
             service.getAutoUpdateLevel = function() {
-                let updateLevel = getDataFromFile("/settings/autoUpdateLevel");
+                const updateLevel = getDataFromFile("/settings/autoUpdateLevel");
                 return updateLevel != null ? updateLevel : 2;
             };
 
@@ -460,7 +469,7 @@
             };
 
             service.notifyOnBeta = function() {
-                let beta = getDataFromFile("/settings/notifyOnBeta");
+                const beta = getDataFromFile("/settings/notifyOnBeta");
                 return beta != null ? beta : false;
             };
 
@@ -469,7 +478,7 @@
             };
 
             service.isFirstTimeUse = function() {
-                let ftu = getDataFromFile("/settings/firstTimeUse");
+                const ftu = getDataFromFile("/settings/firstTimeUse");
                 return ftu != null ? ftu : true;
             };
 
@@ -478,7 +487,7 @@
             };
 
             service.hasJustUpdated = function() {
-                let updated = getDataFromFile("/settings/justUpdated");
+                const updated = getDataFromFile("/settings/justUpdated");
                 return updated != null ? updated : false;
             };
 
@@ -487,7 +496,7 @@
             };
 
             service.getOverlayVersion = function() {
-                let version = getDataFromFile("/settings/copiedOverlayVersion");
+                const version = getDataFromFile("/settings/copiedOverlayVersion");
                 return version != null ? version : "";
             };
 
@@ -496,7 +505,7 @@
             };
 
             service.getWebServerPort = function() {
-                let serverPort = getDataFromFile("/settings/webServerPort");
+                const serverPort = getDataFromFile("/settings/webServerPort");
                 return serverPort != null ? serverPort : 7472;
             };
 
@@ -509,7 +518,7 @@
                 // Save to settings file for app front end
                 pushDataToFile("/settings/webServerPort", port);
 
-                let path = dataAccess.getPathInWorkingDir(
+                const path = dataAccess.getPathInWorkingDir(
                     "/resources/overlay/js/port.js"
                 );
 
@@ -540,7 +549,7 @@
             };
 
             service.getOverlayEventsSettings = function() {
-                let settings = getDataFromFile("/settings/eventSettings");
+                const settings = getDataFromFile("/settings/eventSettings");
                 return settings != null ? settings : {};
             };
 
@@ -549,7 +558,7 @@
             };
 
             service.getClearCustomScriptCache = function() {
-                let clear = getDataFromFile("/settings/clearCustomScriptCache");
+                const clear = getDataFromFile("/settings/clearCustomScriptCache");
                 return clear != null ? clear : false;
             };
 
@@ -558,7 +567,7 @@
             };
 
             service.useOverlayInstances = function() {
-                let oi = getDataFromFile("/settings/useOverlayInstances");
+                const oi = getDataFromFile("/settings/useOverlayInstances");
                 return oi != null ? oi : false;
             };
 
@@ -567,7 +576,7 @@
             };
 
             service.getOverlayInstances = function() {
-                let ois = getDataFromFile("/settings/overlayInstances");
+                const ois = getDataFromFile("/settings/overlayInstances");
                 return ois != null ? ois : [];
             };
 
@@ -576,7 +585,7 @@
             };
 
             service.backupKeepAll = function() {
-                let backupKeepAll = getDataFromFile("/settings/backupKeepAll");
+                const backupKeepAll = getDataFromFile("/settings/backupKeepAll");
                 return backupKeepAll != null ? backupKeepAll : false;
             };
 
@@ -585,7 +594,7 @@
             };
 
             service.backupOnExit = function() {
-                let save = getDataFromFile("/settings/backupOnExit");
+                const save = getDataFromFile("/settings/backupOnExit");
                 return save != null ? save : true;
             };
 
@@ -594,7 +603,7 @@
             };
 
             service.backupBeforeUpdates = function() {
-                let backupBeforeUpdates = getDataFromFile(
+                const backupBeforeUpdates = getDataFromFile(
                     "/settings/backupBeforeUpdates"
                 );
                 return backupBeforeUpdates != null ? backupBeforeUpdates : true;
@@ -608,7 +617,7 @@
             };
 
             service.backupOnceADay = function() {
-                let backupOnceADay = getDataFromFile("/settings/backupOnceADay");
+                const backupOnceADay = getDataFromFile("/settings/backupOnceADay");
                 return backupOnceADay != null ? backupOnceADay : true;
             };
 
@@ -617,7 +626,7 @@
             };
 
             service.maxBackupCount = function() {
-                let maxBackupCount = getDataFromFile("/settings/maxBackupCount");
+                const maxBackupCount = getDataFromFile("/settings/maxBackupCount");
                 return maxBackupCount != null ? maxBackupCount : 25;
             };
 
@@ -626,7 +635,7 @@
             };
 
             service.getAudioOutputDevice = function() {
-                let device = getDataFromFile("/settings/audioOutputDevice");
+                const device = getDataFromFile("/settings/audioOutputDevice");
                 return device != null
                     ? device
                     : { label: "System Default", deviceId: "default" };
@@ -637,7 +646,7 @@
             };
 
             service.getSidebarControlledServices = function() {
-                let services = getDataFromFile("/settings/sidebarControlledServices");
+                const services = getDataFromFile("/settings/sidebarControlledServices");
                 return services != null
                     ? services
                     : ["chat"];
@@ -648,7 +657,7 @@
             };
 
             service.getTaggedNotificationSound = function() {
-                let sound = getDataFromFile("/settings/chat/tagged/sound");
+                const sound = getDataFromFile("/settings/chat/tagged/sound");
                 return sound != null ? sound : { name: "None" };
             };
 
@@ -657,7 +666,7 @@
             };
 
             service.getTaggedNotificationVolume = function() {
-                let volume = getDataFromFile("/settings/chat/tagged/volume");
+                const volume = getDataFromFile("/settings/chat/tagged/volume");
                 return volume != null ? volume : 5;
             };
 
@@ -666,7 +675,7 @@
             };
 
             service.debugModeEnabled = function() {
-                let globalSettings = dataAccess.getJsonDbInUserData("/global-settings");
+                const globalSettings = dataAccess.getJsonDbInUserData("/global-settings");
                 let enabled;
                 try {
                     enabled = globalSettings.getData("/settings/debugMode");
@@ -675,14 +684,14 @@
             };
 
             service.setDebugModeEnabled = function(enabled) {
-                let globalSettings = dataAccess.getJsonDbInUserData("/global-settings");
+                const globalSettings = dataAccess.getJsonDbInUserData("/global-settings");
                 try {
                     globalSettings.push("/settings/debugMode", enabled === true);
                 } catch (err) {} //eslint-disable-line no-empty
             };
 
             service.getViewerColumnPreferences = function() {
-                let prefs = getDataFromFile("/settings/viewerColumnPreferences");
+                const prefs = getDataFromFile("/settings/viewerColumnPreferences");
                 return prefs != null ? prefs : { lastSeen: true };
             };
 
@@ -695,7 +704,7 @@
             };
 
             service.getDefaultTtsVoiceId = function() {
-                let id = getDataFromFile('/settings/defaultTtsVoiceId');
+                const id = getDataFromFile('/settings/defaultTtsVoiceId');
                 return id;
             };
 
@@ -704,7 +713,7 @@
             };
 
             service.getTtsVoiceVolume = function() {
-                let volume = getDataFromFile('/settings/ttsVoiceVolume');
+                const volume = getDataFromFile('/settings/ttsVoiceVolume');
                 return volume !== undefined ? volume : 0.5;
             };
 
@@ -713,7 +722,7 @@
             };
 
             service.getTtsVoiceRate = function() {
-                let rate = getDataFromFile('/settings/ttsVoiceRate');
+                const rate = getDataFromFile('/settings/ttsVoiceRate');
                 return rate !== undefined ? rate : 1;
             };
 
@@ -723,7 +732,7 @@
 
 
             service.getWhileLoopEnabled = function() {
-                let enabled = getDataFromFile('/settings/whileLoopEnabled');
+                const enabled = getDataFromFile('/settings/whileLoopEnabled');
                 return enabled !== undefined ? enabled : false;
             };
 

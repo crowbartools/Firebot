@@ -10,20 +10,20 @@ module.exports = {
     leftSideValueType: "none",
     rightSideValueType: "text",
     predicate: async (conditionSettings, trigger) => {
-        let { rightSideValue } = conditionSettings;
+        const { rightSideValue } = conditionSettings;
 
-        let triggerUsername = trigger.metadata.username;
-        let followListString = rightSideValue;
+        const triggerUsername = trigger.metadata.username;
+        const followListString = rightSideValue;
 
         if (followListString == null) {
             return false;
         }
 
-        let followCheckList = followListString.split(',')
+        const followCheckList = followListString.split(',')
             .filter(f => f != null)
             .map(f => f.toLowerCase().trim());
 
-        let followCheck = await userAccess.userFollowsChannels(triggerUsername, followCheckList);
+        const followCheck = await userAccess.userFollowsChannels(triggerUsername, followCheckList);
         return followCheck;
     }
 };

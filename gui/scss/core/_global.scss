@@ -1773,3 +1773,7 @@ column-resizer {
   cursor: col-resize;
   z-index: 10000
 }
+
+.note-palette-title {
+  color: $change-note-palette-title-color;
+}

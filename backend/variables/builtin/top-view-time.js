@@ -24,9 +24,9 @@ const model = {
             count = 1;
         }
 
-        let topViewTimeUsers = await userDatabase.getTopViewTimeUsers(count);
+        const topViewTimeUsers = await userDatabase.getTopViewTimeUsers(count);
 
-        let topViewTimeUsersDisplay = topViewTimeUsers.map((u, i) => {
+        const topViewTimeUsersDisplay = topViewTimeUsers.map((u, i) => {
             const hours = u.minutesInChannel > 59 ? Math.floor(u.minutesInChannel / 60) : 0;
             return `#${i + 1}) ${u.username} - ${util.commafy(hours)}`;
         }).join(", ");

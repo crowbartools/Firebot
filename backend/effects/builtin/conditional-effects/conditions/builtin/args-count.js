@@ -4,7 +4,7 @@ const {
     EffectTrigger
 } = require("../../../../../../shared/effect-constants");
 
-let triggers = {};
+const triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
 triggers[EffectTrigger.MANUAL] = true;
 
@@ -18,11 +18,11 @@ module.exports = {
     rightSideValueType: "number",
     predicate: (conditionSettings, trigger) => {
 
-        let { comparisonType, rightSideValue } = conditionSettings;
+        const { comparisonType, rightSideValue } = conditionSettings;
 
-        let args = trigger.metadata.userCommand.args || [];
+        const args = trigger.metadata.userCommand.args || [];
 
-        let argsCount = args.length;
+        const argsCount = args.length;
 
         switch (comparisonType) {
         case "is":

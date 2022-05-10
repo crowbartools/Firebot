@@ -11,7 +11,7 @@
 
     agGrid.initialiseAgGridWithAngular1(angular); // eslint-disable-line no-undef
 
-    let app = angular.module("firebotApp", [
+    const app = angular.module("firebotApp", [
         "ngAnimate",
         "ngRoute",
         "ui.bootstrap",
@@ -198,7 +198,7 @@
         };
 
         $rootScope.copyTextToClipboard = function(text) {
-            let textArea = document.createElement("textarea");
+            const textArea = document.createElement("textarea");
             // Place in top-left corner of screen regardless of scroll position.
             textArea.style.position = "fixed";
             textArea.style.top = 0;
@@ -227,8 +227,8 @@
             textArea.select();
 
             try {
-                let successful = document.execCommand("copy");
-                let msg = successful ? "successful" : "unsuccessful";
+                const successful = document.execCommand("copy");
+                const msg = successful ? "successful" : "unsuccessful";
                 logger.info("Copying text command was " + msg);
             } catch (err) {
                 logger.error("Oops, unable to copy text to clipboard.");
@@ -245,7 +245,7 @@
         * MANAGE LOGINS MODAL
         */
         $scope.showManageLoginsModal = function() {
-            let showManageLoginsModal = {
+            const showManageLoginsModal = {
                 templateUrl: "manageLoginsModal.html",
                 // This is the controller to be used for the modal.
                 controllerFunc: ($scope, $uibModalInstance, connectionService) => {
@@ -275,7 +275,7 @@
         * New Profile MODAL
         */
         $scope.showNewProfileModal = function() {
-            let showNewProfileModal = {
+            const showNewProfileModal = {
                 templateUrl: "newProfileModal.html",
                 size: 'sm',
                 // This is the controller to be used for the modal.
@@ -304,7 +304,7 @@
         * Rename Profile MODAL
         */
         $scope.showRenameProfileModal = function() {
-            let renameProfileModal = {
+            const renameProfileModal = {
                 templateUrl: "renameProfileModal.html",
                 size: 'sm',
                 resolveObj: {
@@ -340,7 +340,7 @@
         * Delete Profile MODAL
         */
         $scope.showDeleteProfileModal = function() {
-            let deleteProfileModal = {
+            const deleteProfileModal = {
                 templateUrl: "deleteProfileModal.html",
                 size: 'sm',
                 // This is the controller to be used for the modal.
@@ -400,7 +400,7 @@
          */
 
         // Get app version and change titlebar.
-        let appVersion = electron.remote.app.getVersion();
+        const appVersion = electron.remote.app.getVersion();
         $scope.appTitle = `Firebot v${appVersion}`;
 
         $scope.customFontCssPath = profileManager.getPathInProfile("/fonts/fonts.css");
@@ -520,6 +520,23 @@
         };
     });
 
+    app.filter("hideBotMessages", function(settingsService, accountAccess) {
+        return function(elements) {
+            const shouldHide = settingsService.chatHideBotAccountMessages();
+            if (!shouldHide) {
+                return elements;
+            }
+            const botAccountName = accountAccess.accounts.bot.username.toLowerCase();
+            return elements.filter(e => {
+                if (e.type !== 'message') {
+                    return true;
+                }
+                return e.data.username?.toLowerCase() !== botAccountName;
+            }
+            );
+        };
+    });
+
     app.filter("chatUserRole", function() {
         return function(users, role) {
             if (users == null || role == null) {
@@ -550,7 +567,7 @@
             if (variables == null || query == null) {
                 return variables;
             }
-            let normalizedQuery = query.replace("$", "").toLowerCase();
+            const normalizedQuery = query.replace("$", "").toLowerCase();
             return variables
                 .filter(v =>
                     v.handle.toLowerCase().includes(normalizedQuery)
@@ -617,4 +634,5 @@
             return input ? input.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "";
         };
     });
+
 }(angular));

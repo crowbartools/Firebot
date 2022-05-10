@@ -66,16 +66,16 @@
                 $scope.settings = settingsService;
 
                 $scope.getSelectedVoiceName = () => {
-                    let selectedVoiceId = settingsService.getDefaultTtsVoiceId();
-                    let voice = ttsService.getVoiceById(selectedVoiceId);
+                    const selectedVoiceId = settingsService.getDefaultTtsVoiceId();
+                    const voice = ttsService.getVoiceById(selectedVoiceId);
                     return voice ? voice.name : "Unknown Voice";
                 };
 
                 $scope.ttsVoices = ttsService.getVoices();
 
                 $scope.getSelectedVoiceName = () => {
-                    let selectedVoiceId = settingsService.getDefaultTtsVoiceId();
-                    let voice = ttsService.getVoiceById(selectedVoiceId);
+                    const selectedVoiceId = settingsService.getDefaultTtsVoiceId();
+                    const voice = ttsService.getVoiceById(selectedVoiceId);
                     return voice ? voice.name : "Unknown Voice";
                 };
 

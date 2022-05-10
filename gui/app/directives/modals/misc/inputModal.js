@@ -60,7 +60,7 @@
                 modalInstance: "<"
             },
             controller: function($scope, $timeout, utilityService) {
-                let $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.model = "";
 
@@ -130,7 +130,7 @@
                     const modalId = $ctrl.resolve.modalId;
                     utilityService.addSlidingModal(
                         $ctrl.modalInstance.rendered.then(() => {
-                            let modalElement = $("." + modalId).children();
+                            const modalElement = $("." + modalId).children();
                             return {
                                 element: modalElement,
                                 name: "",
@@ -151,7 +151,7 @@
                 };
 
                 $ctrl.save = function() {
-                    let validate = $ctrl.validationFn($ctrl.model);
+                    const validate = $ctrl.validationFn($ctrl.model);
 
                     Promise.resolve(validate).then(valid => {
 

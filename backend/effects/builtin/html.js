@@ -100,7 +100,7 @@ const html = {
    * Used to validate fields in the option template.
    */
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.html == null) {
             errors.push("Please enter some HTML to show in the overlay.");
         }
@@ -114,15 +114,15 @@ const html = {
    */
     onTriggerEvent: async event => {
         // What should this do when triggered.
-        let effect = event.effect;
+        const effect = event.effect;
 
         // They have an image loaded up for this one.
-        let HTML = effect.html;
-        let duration = effect.length;
-        let removal = effect.removal;
+        const HTML = effect.html;
+        const duration = effect.length;
+        const removal = effect.removal;
 
         // Send data back to media.js in the gui.
-        let data = {
+        const data = {
             html: HTML,
             length: duration,
             removal: removal,

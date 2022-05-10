@@ -27,7 +27,7 @@ const model = {
     optionsController: () => {},
     optionsValidator: () => {},
     onTriggerEvent: async event => {
-        let { effect } = event;
+        const { effect } = event;
         return {
             success: true,
             execution: {

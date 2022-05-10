@@ -84,14 +84,14 @@ class CommandManager extends EventEmitter {
     }
 
     getAllSystemCommandDefinitions() {
-        let cmdDefs = this._registeredSysCommands.map(c => {
-            let override = this._sysCommandOverrides[c.definition.id];
+        const cmdDefs = this._registeredSysCommands.map(c => {
+            const override = this._sysCommandOverrides[c.definition.id];
             if (override != null) {
                 if (c.definition.options) {
                     override.options = Object.assign(c.definition.options, override.options);
 
                     //remove now nonexistent options
-                    for (let overrideOptionName of Object.keys(override.options)) {
+                    for (const overrideOptionName of Object.keys(override.options)) {
                         if (c.definition.options[overrideOptionName] == null) {
                             delete override.options[overrideOptionName];
                         }
@@ -109,7 +109,7 @@ class CommandManager extends EventEmitter {
                         override.subCommands = c.definition.subCommands;
                     } else {
                         //add new args
-                        for (let subCommand of c.definition.subCommands) {
+                        for (const subCommand of c.definition.subCommands) {
                             if (!override.subCommands.some(sc => sc.arg === subCommand.arg)) {
                                 override.subCommands.push(subCommand);
                             }
@@ -117,7 +117,7 @@ class CommandManager extends EventEmitter {
 
                         //remove now nonexistent args
                         for (let i = 0; i < override.subCommands.length; i++) {
-                            let overrideSubCommand = override.subCommands[i];
+                            const overrideSubCommand = override.subCommands[i];
                             if (!c.definition.subCommands.some(sc => sc.arg === overrideSubCommand.arg)) {
                                 override.subCommands.splice(i, 1);
                             }
@@ -158,13 +158,13 @@ class CommandManager extends EventEmitter {
 
     // this updates the trigger even if the user has saved an override of the default trigger
     forceUpdateSysCommandTrigger(id, newTrigger) {
-        let override = this._sysCommandOverrides[id];
+        const override = this._sysCommandOverrides[id];
         if (override != null) {
             override.trigger = newTrigger;
             this.saveSystemCommandOverride(override);
         }
 
-        let defaultCmd = this._registeredSysCommands.find(
+        const defaultCmd = this._registeredSysCommands.find(
             c => c.definition.id === id
         );
         if (defaultCmd != null) {

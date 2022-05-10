@@ -51,7 +51,7 @@
                 dismiss: "&"
             },
             controller: function($timeout) {
-                let $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.nameErrorText = 'Please provide trigger text.';
 

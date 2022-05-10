@@ -20,7 +20,7 @@
                 </div>
             `,
         controller: function(hotkeyService, $rootScope, $scope) {
-            let $ctrl = this;
+            const $ctrl = this;
 
             $ctrl.hks = hotkeyService;
 

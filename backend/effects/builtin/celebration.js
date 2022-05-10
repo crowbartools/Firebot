@@ -76,7 +76,7 @@ const celebration = {
    * Used to validate fields in the option template.
    */
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.celebration == null) {
             errors.push("Please select how you'd like to celebrate.");
         }
@@ -126,21 +126,21 @@ const celebration = {
 
                 // Celebrate Packet
                 //{"event": "celebration", "celebrationType": celebrationType, "celebrationDuration":celebrationDuration};
-                let type = data.celebrationType;
-                let duration = parseFloat(data.celebrationDuration) * 1000; //convert to milliseconds.
+                const type = data.celebrationType;
+                const duration = parseFloat(data.celebrationDuration) * 1000; //convert to milliseconds.
 
                 // Get time in milliseconds to use as class name.
-                let d = new Date();
-                let divClass = d.getTime();
+                const d = new Date();
+                const divClass = d.getTime();
 
                 if (type === "Fireworks") {
-                    let canvas = '<canvas id="fireworks" class="' + divClass + '-fireworks celebration ' + type + '" style="display:none; z-index: 99;"></canvas>';
+                    const canvas = '<canvas id="fireworks" class="' + divClass + '-fireworks celebration ' + type + '" style="display:none; z-index: 99;"></canvas>';
 
                     // Throw div on page and start up.
                     $('.wrapper').append(canvas);
                     $('.' + divClass + '-fireworks').fadeIn('fast');
 
-                    let stage = fireworks(); // eslint-disable-line no-undef
+                    const stage = fireworks(); // eslint-disable-line no-undef
 
                     setTimeout(function(stage) {
 
@@ -156,18 +156,18 @@ const celebration = {
                 }
 
                 if (type === "Confetti") {
-                    let canvas = '<canvas id="confetti" class="' + divClass + '-confetti celebration ' + type + '" style="display:none; z-index: 99;"></canvas>';
+                    const canvas = '<canvas id="confetti" class="' + divClass + '-confetti celebration ' + type + '" style="display:none; z-index: 99;"></canvas>';
 
                     // Throw div on page and start up.
                     $('.wrapper').append(canvas);
                     $('.' + divClass + '-confetti').fadeIn('fast');
 
-                    let confettiStage = confetti.create(document.getElementsByClassName(divClass + '-confetti')[0], { // eslint-disable-line no-undef
+                    const confettiStage = confetti.create(document.getElementsByClassName(divClass + '-confetti')[0], { // eslint-disable-line no-undef
                         resize: true,
                         useWorker: true
                     });
 
-                    let confettiParty = setInterval(function() {
+                    const confettiParty = setInterval(function() {
                         // launch a few confetti from the left edge
                         confettiStage({ // eslint-disable-line no-undef
                             particleCount: 10,

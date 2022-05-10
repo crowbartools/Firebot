@@ -3,7 +3,7 @@
 const { EffectTrigger } = require("../../../shared/effect-constants");
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
-let triggers = {};
+const triggers = {};
 triggers[EffectTrigger.EVENT] = ["twitch:subs-gifted", "twitch:community-subs-gifted", "twitch:gift-sub-upgraded"];
 triggers[EffectTrigger.MANUAL] = true;
 
@@ -16,7 +16,7 @@ const model = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
-        let gifterUsername = trigger.metadata.eventData.gifterUsername;
+        const gifterUsername = trigger.metadata.eventData.gifterUsername;
         return gifterUsername || "UnknownUser";
     }
 };

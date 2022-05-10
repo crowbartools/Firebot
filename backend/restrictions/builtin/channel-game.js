@@ -6,14 +6,14 @@ const channelAccess = require("../../twitch-api/resource/channels");
 const model = {
     definition: {
         id: "firebot:channelGame",
-        name: "Channel Game",
-        description: "Restricts use to when the game is a specific game.",
+        name: "Channel Category/Game",
+        description: "Restricts use to when the category/game is a specific category/game.",
         triggers: []
     },
     optionsTemplate: `
         <div>
             <ui-select ng-model="selectedGame" theme="bootstrap" spinner-enabled="true" on-select="gameSelected($item)" style="margin-bottom:10px;">
-                <ui-select-match placeholder="Search for game">
+                <ui-select-match placeholder="Search for category/game">
                     <div style="height: 21px; display:flex; flex-direction: row; align-items: center;">
                         <img style="height: 28px; width: 21px; border-radius: 5px; margin-right:5px;" ng-src="{{$select.selected.boxArtUrl}}">
                         <div style="font-weight: 100;font-size: 17px;">{{$select.selected.name}}</div>
@@ -29,7 +29,7 @@ const model = {
         </div>
     `,
     optionsController: ($scope, $q, backendCommunicator) => {
-        let restriction = $scope.restriction;
+        const restriction = $scope.restriction;
 
         $scope.games = [];
         $scope.searchGames = function(gameQuery) {
@@ -60,7 +60,7 @@ const model = {
             if (restriction.name != null) {
                 resolve(restriction.name);
             } else {
-                resolve('[Game Not Set]');
+                resolve('[Category/Game Not Set]');
             }
         });
     },
@@ -81,7 +81,7 @@ const model = {
 
             const currentGameId = channel.gameId;
             if (currentGameId == null) {
-                return reject(`Can't determine the game being played.`);
+                return reject(`Can't determine the category/game being played.`);
             }
 
             let passed = false;
@@ -92,7 +92,7 @@ const model = {
             if (passed) {
                 resolve();
             } else {
-                reject(`Channel game isn't set to the correct game.`);
+                reject(`Channel category/game isn't set to the correct category/game.`);
             }
         });
     }

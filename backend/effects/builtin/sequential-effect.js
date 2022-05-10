@@ -60,8 +60,8 @@ const model = {
     onTriggerEvent: event => {
         return new Promise(resolve => {
 
-            let effect = event.effect;
-            let effectList = effect.effectList;
+            const effect = event.effect;
+            const effectList = effect.effectList;
 
             if (!effectList || !effectList.list) {
                 return resolve(true);
@@ -73,7 +73,7 @@ const model = {
                 arr2.every(arr2Item => arr1.includes(arr2Item));
 
             // get array of effect ids in this seq effect
-            let newEffectIds = effectList.list.map(e => e.id);
+            const newEffectIds = effectList.list.map(e => e.id);
 
             // try to find queue in cache
             let cacheEntry = sequentialQueuesCache[effect.id];
@@ -89,7 +89,7 @@ const model = {
             } else {
                 // theres an existing queue in the cache, check if the effect list has changed at all since last time
                 // and if so, rebuild the queue
-                let effectsHaventChanged = containsAll(newEffectIds, cacheEntry.currentEffectIds);
+                const effectsHaventChanged = containsAll(newEffectIds, cacheEntry.currentEffectIds);
                 if (!effectsHaventChanged) {
                     cacheEntry.currentEffectIds = newEffectIds;
                     cacheEntry.queue = newEffectIds;
@@ -103,7 +103,7 @@ const model = {
             }
 
             // gets the next effect from beginning of queue and removes it
-            let chosenEffectId = cacheEntry.queue.shift();
+            const chosenEffectId = cacheEntry.queue.shift();
             cacheEntry.lastEffectId = chosenEffectId;
             chosenEffect = effectList.list.find(e => e.id === chosenEffectId);
 
@@ -111,7 +111,7 @@ const model = {
                 return resolve(true);
             }
 
-            let processEffectsRequest = {
+            const processEffectsRequest = {
                 trigger: event.trigger,
                 effects: {
                     id: effectList.id,

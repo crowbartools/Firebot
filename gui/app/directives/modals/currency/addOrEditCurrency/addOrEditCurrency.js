@@ -14,7 +14,7 @@
         },
         controller: function($scope, utilityService, currencyService, viewerRolesService, logger) {
             const uuidv1 = require("uuid/v1");
-            let $ctrl = this;
+            const $ctrl = this;
 
             $ctrl.currency = {
                 id: uuidv1(),
@@ -34,10 +34,10 @@
                     $ctrl.currency = JSON.parse(JSON.stringify($ctrl.resolve.currency));
                 }
 
-                let modalId = $ctrl.resolve.modalId;
+                const modalId = $ctrl.resolve.modalId;
                 utilityService.addSlidingModal(
                     $ctrl.modalInstance.rendered.then(() => {
-                        let modalElement = $("." + modalId).children();
+                        const modalElement = $("." + modalId).children();
                         return {
                             element: modalElement,
                             name: "Edit Currency",
@@ -75,7 +75,7 @@
 
                 logger.debug($ctrl.currency);
 
-                let action = $ctrl.isNewCurrency ? "add" : "update";
+                const action = $ctrl.isNewCurrency ? "add" : "update";
                 $ctrl.close({
                     $value: {
                         currency: $ctrl.currency,

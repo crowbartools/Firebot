@@ -102,7 +102,7 @@ const delay = {
         $scope.roles = viewerRolesService.getCustomRoles();
 
         $scope.getRoleName = (roleId) => {
-            let role = $scope.roles.find(r => r.id === roleId);
+            const role = $scope.roles.find(r => r.id === roleId);
             return role ? role.name : "Select one";
         };
     },
@@ -110,7 +110,7 @@ const delay = {
    * When the effect is triggered by something
    */
     onTriggerEvent: async event => {
-        let effect = event.effect;
+        const effect = event.effect;
 
         let username = "";
         if (effect.viewerType === "current") {

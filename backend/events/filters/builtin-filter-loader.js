@@ -28,7 +28,7 @@ exports.loadFilters = () => {
         'username',
         'viewer-roles'
     ].forEach(filename => {
-        let definition = require(`./builtin/${filename}.js`);
+        const definition = require(`./builtin/${filename}.js`);
         filterManager.registerFilter(definition);
     });
 };

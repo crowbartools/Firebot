@@ -13,7 +13,7 @@ function stripFontFileType(f) {
 }
 
 function getFontFormatFromFilename(f) {
-    let normalized = f.toLowerCase();
+    const normalized = f.toLowerCase();
     if (normalized.endsWith(".ttf")) {
         return "truetype";
     }
@@ -29,11 +29,11 @@ function getFontFormatFromFilename(f) {
 }
 
 function getInstalledFonts() {
-    let fontFolder = profileManager.getPathInProfile("/fonts");
+    const fontFolder = profileManager.getPathInProfile("/fonts");
 
-    let fonts = fs.readdirSync(fontFolder)
+    const fonts = fs.readdirSync(fontFolder)
         .filter(f => {
-            let normalized = f.toLowerCase();
+            const normalized = f.toLowerCase();
             return normalized.endsWith(".ttf")
                 || normalized.endsWith(".woff")
                 || normalized.endsWith(".woff2")
@@ -53,7 +53,7 @@ function getInstalledFonts() {
 
 function removeFont(name) {
     return new Promise((resolve, reject) => {
-        let font = getInstalledFonts().find(f => f.name === name);
+        const font = getInstalledFonts().find(f => f.name === name);
         if (font != null) {
             fs.unlink(font.path, (err) => {
                 if (err) {
@@ -69,13 +69,13 @@ function removeFont(name) {
 }
 
 function generateAppFontCssFile() {
-    let fontFolder = profileManager.getPathInProfile("/fonts");
+    const fontFolder = profileManager.getPathInProfile("/fonts");
 
     let cssFileRaw = "";
 
-    let fonts = getInstalledFonts();
+    const fonts = getInstalledFonts();
     fonts.forEach(font => {
-        let fontPath = "file:///" + font.path;
+        const fontPath = "file:///" + font.path;
 
         cssFileRaw +=
             `@font-face {
@@ -85,7 +85,7 @@ function generateAppFontCssFile() {
             `;
     });
 
-    let fontCssPath = path.join(fontFolder, path.sep, "fonts.css");
+    const fontCssPath = path.join(fontFolder, path.sep, "fonts.css");
     fs.writeFileSync(fontCssPath, cssFileRaw, 'utf8');
 }
 
@@ -93,7 +93,7 @@ exports.generateAppFontCssFile = generateAppFontCssFile;
 exports.getInstalledFonts = getInstalledFonts;
 exports.removeFont = removeFont;
 exports.getFont = (name) => {
-    let font = getInstalledFonts().find(f => f.name === name);
+    const font = getInstalledFonts().find(f => f.name === name);
     return font;
 };
 

@@ -13,19 +13,19 @@
 
             const uuidv1 = require("uuid/v1");
 
-            let service = {};
+            const service = {};
 
             const knownEvents = new Set();
 
-            let listeners = {};
+            const listeners = {};
 
             function registerEventWithElectron(eventName) {
                 knownEvents.add(eventName);
 
                 return (function(name) {
                     ipcRenderer.on(name, function(_, data) {
-                        let eventListeners = listeners[name];
-                        for (let listener of eventListeners) {
+                        const eventListeners = listeners[name];
+                        for (const listener of eventListeners) {
                             if (listener.async) {
                                 listener.callback(data).then(returnValue => {
                                     service.fireEvent(`${name}:reply`, returnValue);
@@ -44,7 +44,7 @@
                     throw new Error("Can't register an event without a callback.");
                 }
 
-                let id = uuidv1(),
+                const id = uuidv1(),
                     event = {
                         id: id,
                         callback: callback,

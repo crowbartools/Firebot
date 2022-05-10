@@ -28,23 +28,23 @@ const model = {
             count = 1;
         }
 
-        let currencyData = currencyDatabase.getCurrencies();
+        const currencyData = currencyDatabase.getCurrencies();
 
         if (currencyData == null) {
             return "[No currencies created]";
         }
 
-        let currencies = Object.values(currencyData);
+        const currencies = Object.values(currencyData);
 
-        let currency = currencies.find(c => c.name.toLowerCase() === currencyName.toLowerCase());
+        const currency = currencies.find(c => c.name.toLowerCase() === currencyName.toLowerCase());
 
         if (currency == null) {
             return "[Invalid currency name]";
         }
 
-        let topCurrencyHolders = await currencyDatabase.getTopCurrencyHolders(currency.id, count);
+        const topCurrencyHolders = await currencyDatabase.getTopCurrencyHolders(currency.id, count);
 
-        let topHoldersDisplay = topCurrencyHolders.map((u, i) => {
+        const topHoldersDisplay = topCurrencyHolders.map((u, i) => {
             return `#${i + 1}) ${u.displayName} - ${util.commafy(u.currency[currency.id])}`;
         }).join(", ");
 

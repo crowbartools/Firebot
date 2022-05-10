@@ -8,7 +8,7 @@
         .module('firebotApp')
         .factory('chatMessagesService', function (logger, listenerService, settingsService,
             soundService, backendCommunicator, pronounsService, accountAccess) {
-            let service = {};
+            const service = {};
 
             // Chat Message Queue
             service.chatQueue = [];
@@ -39,7 +39,7 @@
             // Return User List
             service.getChatUsers = function() {
                 // Sort list so we are in alphabetical order
-                let userList = service.chatUsers;
+                const userList = service.chatUsers;
                 if (userList.length > 0) {
                     userList.sort(function(a, b) {
                         return a.username.localeCompare(b.username);
@@ -56,7 +56,7 @@
             // Full Chat User Refresh
             // This replaces chat users with a fresh list pulled from the backend in the chat processor file.
             service.chatUserRefresh = function(data) {
-                let users = data.chatUsers.map(u => {
+                const users = data.chatUsers.map(u => {
                     u.id = u.userId;
                     return u;
                 });
@@ -72,7 +72,7 @@
 
             // User left the channel.
             service.chatUserLeft = function(data) {
-                let userId = data.id,
+                const userId = data.id,
                     arr = service.chatUsers,
                     userList = arr.filter(x => x.id !== userId);
 
@@ -86,7 +86,7 @@
 
             // Purge Chat Message
             service.purgeChatMessages = function(data) {
-                let chatQueue = service.chatQueue;
+                const chatQueue = service.chatQueue;
 
                 let cachedUserName = null;
                 chatQueue.forEach(message => {
@@ -229,7 +229,7 @@
 
             // Gets view count setting for ui.
             service.getChatViewCountSetting = function() {
-                let viewCount = settingsService.getChatViewCount();
+                const viewCount = settingsService.getChatViewCount();
                 if (viewCount === "On") {
                     return true;
                 }

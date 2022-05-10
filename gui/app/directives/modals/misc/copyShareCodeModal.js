@@ -27,7 +27,7 @@
                 dismiss: "&"
             },
             controller: function($rootScope, ngToast) {
-                let $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.shareCode = ``;
 

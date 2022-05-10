@@ -10,29 +10,30 @@
                 scope: {
                     restriction: "=",
                     restrictionDefinition: "<",
+                    restrictionMode: "<",
                     trigger: "@",
                     triggerMeta: "<"
                 },
                 replace: true,
                 template: `<div><div id="child"></div></div>`,
                 link: function($scope, element) {
-                    let def = $scope.restrictionDefinition;
+                    const def = $scope.restrictionDefinition;
 
-                    let optionsTemplate = def.optionsTemplate || "";
-                    let el = angular.element(
+                    const optionsTemplate = def.optionsTemplate || "";
+                    const el = angular.element(
                         `<div id="child">${optionsTemplate}</div>`
                     );
 
-                    let template = $compile(el)($scope);
+                    const template = $compile(el)($scope);
 
                     element.children("#child").replaceWith(template);
                 },
                 controller: ($scope, $injector) => {
 
-                    let def = $scope.restrictionDefinition;
+                    const def = $scope.restrictionDefinition;
 
                     if (def) {
-                        let restrictionController = def.optionsController;
+                        const restrictionController = def.optionsController;
 
                         if (restrictionController != null) {
                             // Invoke the controller and inject any dependancies

@@ -4,11 +4,11 @@ const conditionManager = require("./condition-manager");
 
 
 exports.registerConditionTypes = () => {
-    let username = require("./builtin/username");
-    let custom = require("./builtin/custom");
-    let viewerRoles = require("./builtin/viewer-roles");
-    let argsCount = require("./builtin/args-count");
-    let followCheck = require("./builtin/follow-check");
+    const username = require("./builtin/username");
+    const custom = require("./builtin/custom");
+    const viewerRoles = require("./builtin/viewer-roles");
+    const argsCount = require("./builtin/args-count");
+    const followCheck = require("./builtin/follow-check");
 
     conditionManager.registerConditionType(username);
     conditionManager.registerConditionType(custom);

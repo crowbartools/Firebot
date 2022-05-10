@@ -44,7 +44,7 @@ const model = {
     },
     optionsValueDisplay: (restriction) => {
         let comparison = restriction.comparison;
-        let amount = restriction.amount;
+        const amount = restriction.amount;
 
         if (comparison != null) {
             comparison = comparison.toLowerCase();
@@ -82,8 +82,8 @@ const model = {
                 return reject(`Can't determine the current number of viewers.`);
             }
 
-            let comparison = restrictionData.comparison;
-            let numViewers = restrictionData.amount;
+            const comparison = restrictionData.comparison;
+            const numViewers = restrictionData.amount;
             let comparisonText = "";
 
             let passed = false;

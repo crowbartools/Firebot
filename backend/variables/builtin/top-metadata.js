@@ -30,12 +30,26 @@ const model = {
             count = parseInt(count, 10);
         }
 
-        let topMetadataUsers = await userDatabase.getTopMetadata(metadataKey, count);
+        const topMetadataUsers = await userDatabase.getTopMetadata(metadataKey, count);
 
-        let topUsersDisplay = topMetadataUsers.map((u, i) => {
-            return `#${i + 1}) ${u.displayName} - ${util.commafy(u.metadata[metadataKey])}`;
-        }).join(", ");
+        const topUsersDisplay = topMetadataUsers
+            // filter out any results not containing key in metadata
+            .filter(user => (user.metadata && user.metadata[metadataKey] != null))
 
+            // map each entry to #position) name - amount
+            .map((user, idx) => {
+                return `#${idx + 1}) ${user.displayName} - ${util.commafy(user.metadata[metadataKey])}`;
+            })
+
+            // convert to commafied string
+            .join(', ');
+
+        // no one in list: output none
+        if (topUsersDisplay === '') {
+            return '(none)';
+        }
+
+        // return list
         return topUsersDisplay;
     }
 };

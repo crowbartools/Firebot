@@ -27,7 +27,7 @@
                 dismiss: "&"
             },
             controller: function($rootScope, settingsService, ngToast, backendCommunicator) {
-                let $ctrl = this;
+                const $ctrl = this;
 
                 backendCommunicator.on("accountUpdate", accounts => {
                     if (accounts.bot.loggedIn) {

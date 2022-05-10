@@ -7,7 +7,7 @@ const eventManager = require("../../events/EventManager");
 const logger = require("../../logwrapper");
 const moment = require("moment");
 
-const communitySubCache = new NodeCache({ stdTTL: 3, checkperiod: 3 });
+const communitySubCache = new NodeCache({ stdTTL: 10, checkperiod: 2 });
 
 /** @param {import("@twurple/chat").ChatCommunitySubInfo} subInfo */
 exports.triggerCommunitySubGift = (subInfo) => {
@@ -17,11 +17,11 @@ exports.triggerCommunitySubGift = (subInfo) => {
     communitySubCache.set(`${gifterDisplayName}:${subInfo.plan}`, {subCount: subInfo.count, giftReceivers: []});
 };
 
-/** @param {import("@twurple/pubsub").PubSubSubscriptionMessage} subInfo */
+/** @param {import("@twurple/chat").ChatSubGiftInfo} subInfo */
 exports.triggerSubGift = (subInfo) => {
     if (settings.ignoreSubsequentSubEventsAfterCommunitySub()) {
-        logger.debug(`Attempting to process community gift sub from ${subInfo.gifterDisplayName}  at ${moment().format("HH:mm:ss:SS")}`);
-        const cacheKey = `${subInfo.gifterDisplayName}:${subInfo.subPlan}`;
+        logger.debug(`Attempting to process community gift sub from ${subInfo.gifterDisplayName} at ${moment().format("HH:mm:ss:SS")}`);
+        const cacheKey = `${subInfo.gifterDisplayName}:${subInfo.plan}`;
 
         const cache = communitySubCache.get(cacheKey);
         if (cache != null) {
@@ -31,7 +31,7 @@ exports.triggerSubGift = (subInfo) => {
             if (communityCount != null) {
                 if (communityCount > 0) {
                     const newCount = communityCount - 1;
-                    giftReceivers.push({ gifteeUsername: subInfo.userDisplayName, giftSubMonths: subInfo.cumulativeMonths || 1});
+                    giftReceivers.push({ gifteeUsername: subInfo.displayName, giftSubMonths: subInfo.streak || 1});
 
                     if (newCount > 0) {
                         communitySubCache.set(cacheKey, {subCount: newCount, giftReceivers: giftReceivers});
@@ -39,8 +39,8 @@ exports.triggerSubGift = (subInfo) => {
                         eventManager.triggerEvent("twitch", "community-subs-gifted", {
                             username: subInfo.gifterDisplayName,
                             subCount: giftReceivers.length,
-                            subPlan: subInfo.subPlan,
-                            isAnonymous: subInfo.isAnonymous,
+                            subPlan: subInfo.planName,
+                            isAnonymous: !!subInfo.gifterUserId,
                             gifterUsername: subInfo.gifterDisplayName,
                             giftReceivers: giftReceivers
                         });
@@ -60,12 +60,12 @@ exports.triggerSubGift = (subInfo) => {
     }
 
     eventManager.triggerEvent("twitch", "subs-gifted", {
-        username: subInfo.userDisplayName,
-        giftSubMonths: subInfo.cumulativeMonths || 1,
-        gifteeUsername: subInfo.userDisplayName,
-        gifterUsername: subInfo.gifterDisplayName || subInfo.userDisplayName,
-        subPlan: subInfo.subPlan,
-        isAnonymous: subInfo.isAnonymous,
+        username: subInfo.gifterDisplayName || subInfo.gifter || "Anonymous",
+        giftSubMonths: subInfo.months || 1,
+        gifteeUsername: subInfo.displayName,
+        gifterUsername: subInfo.gifterDisplayName || subInfo.gifter,
+        subPlan: subInfo.planName,
+        isAnonymous: !subInfo.gifterUserId,
         giftDuration: subInfo.giftDuration
     });
     logger.debug(`Gift Sub event triggered`);

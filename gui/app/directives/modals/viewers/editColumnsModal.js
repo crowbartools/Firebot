@@ -34,7 +34,7 @@
             dismiss: "&"
         },
         controller: function(viewersService) {
-            let $ctrl = this;
+            const $ctrl = this;
 
             //turns the object into an array so we can ng-repeat it. we dont need the keys since they are also in the object
             $ctrl.columns = Object.values(viewersService.fieldDefs);

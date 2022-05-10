@@ -7,6 +7,7 @@ exports.loadEffects = () => {
         'active-user-lists',
         'ad-break',
         'add-quote',
+        'announcement',
         'api',
         'celebration',
         'chat-feed-alert',
@@ -27,6 +28,7 @@ exports.loadEffects = () => {
         'file-writer',
         'html',
         'http-request',
+        'log-message',
         'loop-effects',
         'mark-all-activity-acknowledged',
         'moderator-ban',
@@ -37,6 +39,7 @@ exports.loadEffects = () => {
         'play-video', // No migration needed.
         'random-effect',
         'random-reddit-image',
+        'remove-user-metadata',
         'reset-timer',
         'run-command',
         'run-program',

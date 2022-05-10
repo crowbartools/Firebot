@@ -5,7 +5,7 @@ const eventManager = require("../../events/EventManager");
 /** @param {import("@twurple/pubsub").PubSubBitsMessage} cheerInfo */
 exports.triggerCheer = (cheerInfo) => {
     eventManager.triggerEvent("twitch", "cheer", {
-        username: cheerInfo.userName,
+        username: cheerInfo.userName || "An Anonymous Cheerer",
         isAnonymous: cheerInfo.isAnonymous,
         bits: cheerInfo.bits,
         totalBits: cheerInfo.totalBits,
@@ -16,7 +16,7 @@ exports.triggerCheer = (cheerInfo) => {
 /** @param {import("@twurple/pubsub").PubSubBitsBadgeUnlockMessage} unlockInfo */
 exports.triggerBitsBadgeUnlock = (unlockInfo) => {
     eventManager.triggerEvent("twitch", "bits-badge-unlocked", {
-        username: unlockInfo.userName,
+        username: unlockInfo.userName || "An Anonymous Cheerer",
         message: unlockInfo.message || "",
         badgeTier: unlockInfo.badgeTier
     });

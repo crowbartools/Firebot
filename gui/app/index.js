@@ -86,7 +86,7 @@ window.onerror = function(error, url, line) {
 // pointless fancy firebot at the top of the log
 function printRow(colorOne, colorTwo, ...args) {
     let msg = "";
-    let styles = [];
+    const styles = [];
 
     const size = "13px";
 
@@ -161,7 +161,7 @@ function printLogToBrowserConsole(transport, level, msg, meta) {
 
 // Back end log feed
 ipcRenderer.on("logging", (event, data) => {
-    let transport = data.transport,
+    const transport = data.transport,
         level = data.level,
         msg = data.msg,
         meta = data.meta;

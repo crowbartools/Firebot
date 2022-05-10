@@ -53,7 +53,7 @@ const model = {
      */
     onTriggerEvent: async event => {
 
-        let { args, triggeredArg } = event.userCommand;
+        const { args, triggeredArg } = event.userCommand;
 
         if (args.length < 1) {
             chat.sendChatMessage("Incorrect command usage!");
@@ -62,24 +62,24 @@ const model = {
 
         switch (triggeredArg) {
         case "add": {
-            let roleName = args.slice(2);
-            let role = customRoleManager.getRoleByName(roleName);
+            const roleName = args.slice(2);
+            const role = customRoleManager.getRoleByName(roleName);
             if (role == null) {
                 chat.sendChatMessage("Can't find a role by that name.");
             } else {
-                let username = args[1].replace("@", "");
+                const username = args[1].replace("@", "");
                 customRoleManager.addViewerToRole(role.id, username);
                 chat.sendChatMessage(`Added role ${role.name} to ${username}`);
             }
             break;
         }
         case "remove": {
-            let roleName = args.slice(2);
-            let role = customRoleManager.getRoleByName(roleName);
+            const roleName = args.slice(2);
+            const role = customRoleManager.getRoleByName(roleName);
             if (role == null) {
                 chat.sendChatMessage("Can't find a role by that name.");
             } else {
-                let username = args[1].replace("@", "");
+                const username = args[1].replace("@", "");
                 customRoleManager.removeViewerFromRole(role.id, username);
                 chat.sendChatMessage(`Removed role ${role.name} from ${username}`);
             }
@@ -87,8 +87,8 @@ const model = {
         }
         case "list": {
             if (args.length > 1) {
-                let username = args[1].replace("@", "");
-                let roleNames = customRoleManager.getAllCustomRolesForViewer(username).map(r => r.name);
+                const username = args[1].replace("@", "");
+                const roleNames = customRoleManager.getAllCustomRolesForViewer(username).map(r => r.name);
                 if (roleNames.length < 1) {
                     chat.sendChatMessage(`${username} has no custom roles assigned.`);
                 } else {
@@ -96,7 +96,7 @@ const model = {
                 }
 
             } else {
-                let roleNames = customRoleManager.getCustomRoles().map(r => r.name);
+                const roleNames = customRoleManager.getCustomRoles().map(r => r.name);
                 if (roleNames.length < 1) {
                     chat.sendChatMessage(`There are no custom roles available.`);
                 } else {

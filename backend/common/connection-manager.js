@@ -201,7 +201,7 @@ manager.on("service-connection-update", (data) => {
         return;
     }
 
-    let { serviceId, connectionState } = data;
+    const { serviceId, connectionState } = data;
 
     if (connectionState !== ConnectionState.Connected && connectionState !== ConnectionState.Disconnected) {
         return;

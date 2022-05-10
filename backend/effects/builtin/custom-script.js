@@ -36,7 +36,7 @@ const fileWriter = {
 
     },
     optionsValidator: () => {
-        let errors = [];
+        const errors = [];
         return errors;
     },
     onTriggerEvent: event => {

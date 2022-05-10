@@ -40,7 +40,7 @@
                 const fsExtra = require('fs-extra');
                 const path = require("path");
 
-                let $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.installError = null;
                 $ctrl.installSuccessful = false;
@@ -68,7 +68,7 @@
                 $ctrl.openFileExplorer = function() {
                     $ctrl.installError = null;
                     $ctrl.installSuccessful = null;
-                    let registerRequest = {
+                    const registerRequest = {
                         type: listenerService.ListenerType.ANY_FILE,
                         runOnce: true,
                         publishEvent: true,
@@ -88,8 +88,8 @@
                         if (filepath == null || filepath.length === 0) {
                             return;
                         }
-                        let filename = path.parse(filepath).base;
-                        let destination = path.join(fontManager.FONTS_FOLDER, path.sep, filename);
+                        const filename = path.parse(filepath).base;
+                        const destination = path.join(fontManager.FONTS_FOLDER, path.sep, filename);
 
                         fsExtra.copy(filepath, destination)
                             .then(() => {

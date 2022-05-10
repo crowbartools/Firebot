@@ -160,7 +160,7 @@ const showImage = {
    * Used to validate fields in the option template.
    */
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.imageType == null) {
             errors.push("Please select an image type.");
         }
@@ -174,14 +174,14 @@ const showImage = {
    */
     onTriggerEvent: async event => {
         // What should this do when triggered.
-        let effect = event.effect;
+        const effect = event.effect;
 
         let position = effect.position;
         if (position === "Random") {
             position = mediaProcessor.randomLocation();
         }
 
-        let data = {
+        const data = {
             filepath: effect.file,
             url: effect.url,
             folder: effect.folder,
@@ -214,7 +214,7 @@ const showImage = {
         }
 
         if (effect.imageType === "local") {
-            let resourceToken = resourceTokenManager.storeResourcePath(
+            const resourceToken = resourceTokenManager.storeResourcePath(
                 effect.file,
                 effect.length
             );
@@ -230,13 +230,13 @@ const showImage = {
                 logger.warn("Unable to read image folder", err);
             }
 
-            let filteredFiles = files.filter(i => (/\.(gif|jpg|jpeg|png)$/i).test(i));
+            const filteredFiles = files.filter(i => (/\.(gif|jpg|jpeg|png)$/i).test(i));
 
-            let chosenFile = filteredFiles[Math.floor(Math.random() * filteredFiles.length)];
+            const chosenFile = filteredFiles[Math.floor(Math.random() * filteredFiles.length)];
 
-            let fullFilePath = path.join(effect.folder, chosenFile);
+            const fullFilePath = path.join(effect.folder, chosenFile);
 
-            let resourceToken = resourceTokenManager.storeResourcePath(
+            const resourceToken = resourceTokenManager.storeResourcePath(
                 fullFilePath,
                 effect.length
             );
@@ -260,25 +260,25 @@ const showImage = {
             onOverlayEvent: event => {
                 // Image Handling
                 // This will take the data that is sent to it from the GUI and render an image on the overlay.
-                let data = event;
+                const data = event;
 
                 let filepathNew;
                 if (data.imageType === "url") {
                     filepathNew = data.url;
                 } else {
-                    let token = encodeURIComponent(data.resourceToken);
+                    const token = encodeURIComponent(data.resourceToken);
                     filepathNew = `http://${
                         window.location.hostname
                     }:7472/resource/${token}`;
                 }
 
                 // NEW WAY EXAMPLE:
-                let positionData = {
+                const positionData = {
                     position: data.imagePosition,
                     customCoords: data.customCoords
                 };
 
-                let animationData = {
+                const animationData = {
                     enterAnimation: data.enterAnimation,
                     enterDuration: data.enterDuration,
                     inbetweenAnimation: data.inbetweenAnimation,
@@ -291,9 +291,9 @@ const showImage = {
                     resourceToken: data.resourceToken
                 };
 
-                let styles = (data.imageWidth ? `width: ${data.imageWidth};` : '') +
+                const styles = (data.imageWidth ? `width: ${data.imageWidth};` : '') +
                             (data.imageHeight ? `height: ${data.imageHeight};` : '');
-                let imageTag = `<img src="${filepathNew}" style="${styles}">`;
+                const imageTag = `<img src="${filepathNew}" style="${styles}">`;
 
                 showElement(imageTag, positionData, animationData); // eslint-disable-line no-undef
             }

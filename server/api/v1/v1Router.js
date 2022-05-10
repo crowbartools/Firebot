@@ -31,15 +31,39 @@ router
     .get(effects.getEffects)
     .post(effects.runEffects);
 
-router.route("/effects/preset/:presetListId")
-    .post(effects.runPresetList);
-
-router.route("/effects/preset/:presetListId")
-    .post(effects.runPresetList)
-    .get(effects.runPresetList);
+router.route("/effects/preset")
+    .get(effects.getPresetLists);
 
 router.route("/effects/:effectId")
     .get(effects.getEffect);
+
+router.route("/effects/preset/:presetListId")
+    .get(effects.runPresetList)
+    .post(effects.runPresetList);
+
+
+// Commands
+const commands = require("./controllers/commandsApiController");
+
+router.route("/commands/system")
+    .get(commands.getSystemCommands);
+
+router.route("/commands/system/:sysCommandId")
+    .get(commands.getSystemCommand);
+
+router.route("/commands/system/:sysCommandId/run")
+    .get(commands.runSystemCommand)
+    .post(commands.runSystemCommand);
+
+router.route("/commands/custom")
+    .get(commands.getCustomCommands);
+
+router.route("/commands/custom/:customCommandId")
+    .get(commands.getCustomCommand);
+
+router.route("/commands/custom/:customCommandId/run")
+    .get(commands.runCustomCommand)
+    .post(commands.runCustomCommand);
 
 
 // Fonts
@@ -98,5 +122,20 @@ router
 router
     .route("/currency/:currencyName/top")
     .get(currency.getTopCurrencyHolders);
+
+// Quotes
+const quotes = require("./controllers/quotesApiController");
+
+router
+    .route("/quotes")
+    .get(quotes.getQuotes)
+    .post(quotes.postQuote);
+
+router
+    .route("/quotes/:quoteId")
+    .get(quotes.getQuote)
+    .put(quotes.putQuote)
+    .patch(quotes.patchQuote)
+    .delete(quotes.deleteQuote);
 
 module.exports = router;

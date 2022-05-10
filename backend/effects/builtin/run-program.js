@@ -10,7 +10,7 @@ const splitArgumentsText = (argsString) => {
     const re = /^"[^"]*"$/; // Check if argument is surrounded with double-quotes
     const re2 = /^([^"]|[^"].*?[^"])$/; // Check if argument is NOT surrounded with double-quotes
 
-    let arr = [];
+    const arr = [];
     let argPart = null;
 
     if (argsString) {
@@ -83,7 +83,7 @@ const model = {
         }
     },
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.programPath == null) {
             errors.push("Please select a program executable");
         }
@@ -91,7 +91,7 @@ const model = {
     },
     onTriggerEvent: event => {
         return new Promise(resolve => {
-            let { effect } = event;
+            const { effect } = event;
 
             let { programPath, programArgs, waitForFinish, hideWindow, runDetached } = effect;
 

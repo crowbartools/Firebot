@@ -3,8 +3,8 @@
 const commandManager = require("../../chat/commands/CommandManager");
 
 async function getCommandListForSync() {
-    let allCommands = commandManager.getAllActiveCommands();
-    let commandData = {
+    const allCommands = commandManager.getAllActiveCommands();
+    const commandData = {
         'allowedCmds': []
     };
 

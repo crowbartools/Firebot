@@ -16,7 +16,7 @@ const model = {
         </div>
     `,
     optionsValueDisplay: (restriction) => {
-        let value = restriction.value;
+        const value = restriction.value;
 
         if (value == null) {
             return "";
@@ -31,18 +31,18 @@ const model = {
         return new Promise(async (resolve, reject) => {
             const userAccess = require("../../common/user-access");
 
-            let triggerUsername = trigger.metadata.username || "";
-            let followListString = restrictionData.value || "";
+            const triggerUsername = trigger.metadata.username || "";
+            const followListString = restrictionData.value || "";
 
             if (triggerUsername === "", followListString === "") {
                 return resolve();
             }
 
-            let followCheckList = followListString.split(',')
+            const followCheckList = followListString.split(',')
                 .filter(f => f != null)
                 .map(f => f.toLowerCase().trim());
 
-            let followCheck = await userAccess.userFollowsChannels(triggerUsername, followCheckList);
+            const followCheck = await userAccess.userFollowsChannels(triggerUsername, followCheckList);
 
             if (followCheck) {
                 return resolve();

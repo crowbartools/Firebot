@@ -55,12 +55,12 @@
 
                     <div>
                         <div class="modal-subheader" style="padding: 0 0 4px 0">
-                            GAME
+                            CATEGORY/GAME
                         </div>
                         <div style="width: 100%; position: relative;">
                             <div class="form-group" ng-class="{'has-error': $ctrl.gameError}">
                                 <input type="text" id="gameField" class="form-control" ng-model="$ctrl.quote.game" ng-keyup="$event.keyCode == 13 && $ctrl.save() " aria-describedby="gameHelpBlock" placeholder="Enter game">
-                                <span id="gameHelpBlock" class="help-block" ng-show="$ctrl.gameError">Please provide a game name.</span>
+                                <span id="gameHelpBlock" class="help-block" ng-show="$ctrl.gameError">Please provide a category/game name.</span>
                             </div>
                         </div>
                     </div>
@@ -77,11 +77,11 @@
                 dismiss: "&"
             },
             controller: function(accountAccess) {
-                let $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.isNewQuote = true;
 
-                let isUSLocale = electron.remote.app.getLocale() === "en-US";
+                const isUSLocale = electron.remote.app.getLocale() === "en-US";
                 $ctrl.dateFormat = isUSLocale ? "MM/dd/yyyy" : "dd/MM/yyyy";
 
                 $ctrl.quote = {
@@ -98,7 +98,7 @@
 
                 $ctrl.$onInit = function() {
                     if ($ctrl.resolve.quote != null) {
-                        let copiedQuote = JSON.parse(angular.toJson($ctrl.resolve.quote));
+                        const copiedQuote = JSON.parse(angular.toJson($ctrl.resolve.quote));
 
                         $ctrl.createdAtDate = moment(copiedQuote.createdAt).toDate();
 
@@ -140,7 +140,7 @@
 
                     $ctrl.quote.createdAt = $ctrl.createdAtDate != null ? moment($ctrl.createdAtDate).toISOString() : null;
 
-                    let action = $ctrl.isNewQuote ? "add" : "update";
+                    const action = $ctrl.isNewQuote ? "add" : "update";
                     $ctrl.close({
                         $value: {
                             quote: $ctrl.quote,

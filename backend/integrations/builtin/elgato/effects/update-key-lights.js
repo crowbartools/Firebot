@@ -15,7 +15,7 @@ const effect = {
     globalSettings: {},
     optionsTemplate: `
         <eos-container ng-if="!hasKeylights">
-            No key lights are connected currently.
+            No Key Lights are connected currently.
         </eos-container>
         <eos-container ng-if="hasKeylights" header="Key Lights">
             <div ng-repeat="light in keyLights" class="mb-16">
@@ -80,7 +80,7 @@ const effect = {
 
         $q.when(backendCommunicator.fireEventAsync("getKeyLights"))
             .then(keyLights => {
-                if (keyLights) {
+                if (keyLights?.length > 0) {
                     $scope.keyLights = keyLights;
 
                     $scope.hasKeylights = true;
@@ -124,9 +124,9 @@ const effect = {
         };
     },
     optionsValidator: (effect) => {
-        let errors = [];
+        const errors = [];
         if (Object.keys(effect.selectedLights).length === 0) {
-            errors.push("Please select a key light.");
+            errors.push("Please select a Key Light.");
         }
         return errors;
     },

@@ -274,7 +274,7 @@
         },
         controller: function($rootScope, connectionService, connectionManager,
             overlayUrlHelper, ngToast, backendCommunicator, backupService) {
-            let $ctrl = this;
+            const $ctrl = this;
 
             $ctrl.step = 0;
 
@@ -351,7 +351,7 @@
                 case 2:
                     return connectionService.accounts.streamer.loggedIn;
                 case 3: {
-                    let overlayStatus = connectionManager.getOverlayStatus();
+                    const overlayStatus = connectionManager.getOverlayStatus();
                     return !overlayStatus.serverStarted || overlayStatus.clientsConnected;
                 }
                 }
@@ -459,7 +459,7 @@
 
             let overlayStatusId = 0;
             $ctrl.overlayConnectionMessage = function() {
-                let connectionStatus = connectionManager
+                const connectionStatus = connectionManager
                     .getConnectionStatusForService("overlay");
                 if (connectionStatus === "connected") {
                     overlayStatusId = 1;

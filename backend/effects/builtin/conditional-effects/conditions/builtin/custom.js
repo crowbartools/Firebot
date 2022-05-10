@@ -36,11 +36,11 @@ module.exports = {
         case "does not contain":
             return !leftSideValue.toString().includes(rightSideValue);
         case "matches regex": {
-            let regex = new RegExp(rightSideValue, "gi");
+            const regex = new RegExp(rightSideValue, "gi");
             return regex.test(leftSideValue);
         }
         case "does not match regex": {
-            let regex = new RegExp(rightSideValue, "gi");
+            const regex = new RegExp(rightSideValue, "gi");
             return !regex.test(leftSideValue);
         }
         default:

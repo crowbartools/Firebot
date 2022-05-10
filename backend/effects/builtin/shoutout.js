@@ -94,6 +94,7 @@ const shoutoutStyles = `
         font-weight: 600;
         font-size: 1.1vw;
         text-align: center;
+        text-transform: uppercase;
     }
 `;
 
@@ -136,7 +137,7 @@ const effect = {
                             <div class="firebot-shoutout-game-dimmer" />
                             <div class="firebot-shoutout-game-text-wrapper">
                                 <div class="firebot-shoutout-game-lastseen">
-                                    LAST SEEN PLAYING
+                                {{effect.lastGameText}}
                                 </div>
                                 Science & Technology
                             </div>
@@ -157,11 +158,14 @@ const effect = {
             <firebot-input style="margin-top:10px" input-title="Scale" model="effect.scale" placeholder-text="Enter number (ie 1, 1.25, 0.75, etc)" input-type="number" disable-variables="true" />
 
             <div style="padding-top:20px">
-                <label class="control-fb control--checkbox"> Show last game
+                <label class="control-fb control--checkbox"> Show last game/category
                     <input type="checkbox" ng-model="effect.showLastGame">
                     <div class="control__indicator"></div>
                 </label>
             </div>
+
+            <firebot-input ng-if="effect.showLastGame" input-title="Last Seen Text" model="effect.lastGameText" placeholder-text="Enter text" />
+
         </eos-container>
         <eos-container header="Username" pad-top="true">
             <firebot-input model="effect.username" placeholder-text="Enter username" />
@@ -220,12 +224,16 @@ const effect = {
             $scope.effect.scale = 1.0;
         }
 
+        if ($scope.effect.lastGameText == null) {
+            $scope.effect.lastGameText = "Last seen streaming";
+        }
+
         $scope.showOverlayInfoModal = function(overlayInstance) {
             utilityService.showOverlayInfoModal(overlayInstance);
         };
     },
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.username == null || effect.username === "") {
             errors.push("Please provide a username.");
         }
@@ -328,7 +336,7 @@ const effect = {
                             <div class="firebot-shoutout-game-dimmer" />
                             <div class="firebot-shoutout-game-text-wrapper">
                                 <div class="firebot-shoutout-game-lastseen">
-                                    LAST SEEN PLAYING
+                                    ${data.lastGameText || "LAST SEEN STREAMING"}
                                 </div>
                                 ${data.gameName}
                             </div>
@@ -338,7 +346,7 @@ const effect = {
                 `;
 
                 // eslint-disable-next-line no-undef
-                let positionWrappedHtml = getPositionWrappedHTML(uniqueId, positionData, shoutoutElement);
+                const positionWrappedHtml = getPositionWrappedHTML(uniqueId, positionData, shoutoutElement);
 
                 $('.wrapper').append(positionWrappedHtml);
 

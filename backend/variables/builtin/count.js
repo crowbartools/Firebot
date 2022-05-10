@@ -5,7 +5,7 @@
 const { EffectTrigger } = require("../../../shared/effect-constants");
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
-let triggers = {};
+const triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
 triggers[EffectTrigger.PRESET_LIST] = true;
 triggers[EffectTrigger.MANUAL] = true;
@@ -20,7 +20,7 @@ const model = {
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {
-        let count = trigger.metadata.command && trigger.metadata.command.count;
+        const count = trigger.metadata.command && trigger.metadata.command.count;
         return count || 0;
     }
 };

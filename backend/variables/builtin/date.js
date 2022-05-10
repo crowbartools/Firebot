@@ -28,7 +28,7 @@ const model = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, template = 'MMM Do YYYY', steps = 0, key) => {
-        let now = moment();
+        const now = moment();
 
         if (steps > 0 && key !== null) {
             now.add(steps, key);

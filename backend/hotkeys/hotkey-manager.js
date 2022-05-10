@@ -11,15 +11,15 @@ const logger = require("../logwrapper");
 let hotkeysCache = [];
 
 function runHotkey(code) {
-    let hotkey = hotkeysCache.find(k => k.code === code);
+    const hotkey = hotkeysCache.find(k => k.code === code);
 
-    let effects = hotkey.effects;
+    const effects = hotkey.effects;
 
     if (effects == null) {
         return;
     }
 
-    let processEffectsRequest = {
+    const processEffectsRequest = {
         trigger: {
             type: TriggerType.HOTKEY,
             metadata: {
@@ -39,9 +39,16 @@ function unregisterAllHotkeys() {
 }
 
 function registerHotkey(accelerator) {
-    globalShortcut.register(accelerator, () => {
-        runHotkey(accelerator);
-    });
+    try {
+        const success = globalShortcut.register(accelerator, () => {
+            runHotkey(accelerator);
+        });
+        if (!success) {
+            logger.warn(`Unable to register hotkey ${accelerator} with OS. This typically means it's already taken by another application.`);
+        }
+    } catch (error) {
+        logger.error(`Error while registering hotkey ${accelerator} with OS`, error);
+    }
 }
 
 function registerAllHotkeys() {
@@ -55,13 +62,13 @@ function registerAllHotkeys() {
 
 function refreshHotkeyCache(retry = 1) {
     // Setup events db.
-    let dbEvents = profileManager.getJsonDbInProfile("/hotkeys");
+    const dbEvents = profileManager.getJsonDbInProfile("/hotkeys");
 
     try {
         if (retry <= 3) {
             try {
                 // Update Cache
-                let hkraw = dbEvents.getData("/");
+                const hkraw = dbEvents.getData("/");
                 if (hkraw != null && Array.isArray(hkraw)) {
                     hotkeysCache = hkraw;
                 }
@@ -70,7 +77,7 @@ function refreshHotkeyCache(retry = 1) {
                 registerAllHotkeys();
             } catch (err) {
                 logger.error(
-                    `Hotkeys cache update failed. Retrying. (Try ${retry++}/3)`
+                    `Hotkeys cache update failed. Retrying. (Try ${retry++}/3)`, err
                 );
                 refreshHotkeyCache(retry);
             }

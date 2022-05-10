@@ -57,7 +57,7 @@
             </eos-container>
        `,
             controller: function() {
-                let ctrl = this;
+                const ctrl = this;
 
                 ctrl.topOrBottom = "top";
                 ctrl.topOrBottomValue = 0;

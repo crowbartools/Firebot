@@ -10,7 +10,7 @@ const webServer = require("../../../server/httpServer");
 // Get Sound File Path
 // This listens for an event from the render media.js file to open a dialog to get a filepath.
 ipcMain.on("getSoundPath", function(event, uniqueid) {
-    let path = dialog.showOpenDialogSync({
+    const path = dialog.showOpenDialogSync({
         properties: ["openFile"],
         filters: [{ name: "Audio", extensions: ["mp3", "ogg", "wav", "flac"] }]
     });
@@ -20,7 +20,7 @@ ipcMain.on("getSoundPath", function(event, uniqueid) {
 // Get Video File Path
 // This listens for an event from the render media.js file to open a dialog to get a filepath.
 ipcMain.on("getVideoPath", function(event, uniqueid) {
-    let path = dialog.showOpenDialogSync({
+    const path = dialog.showOpenDialogSync({
         properties: ["openFile"],
         filters: [{ name: "Video", extensions: ["mp4", "webm", "ogv"] }]
     });
@@ -30,7 +30,7 @@ ipcMain.on("getVideoPath", function(event, uniqueid) {
 // Get Image File Path
 // This listens for an event from the render media.js file to open a dialog to get a filepath.
 ipcMain.on("getImagePath", function(event, uniqueid) {
-    let path = dialog.showOpenDialogSync({
+    const path = dialog.showOpenDialogSync({
         properties: ["openFile"],
         filters: [{ name: "Image", extensions: ["jpg", "gif", "png", "jpeg"] }]
     });
@@ -44,7 +44,7 @@ function getRandomInt(min, max) {
 }
 
 function getRandomPresetLocation() {
-    let presetPositions = [
+    const presetPositions = [
         "Top Left",
         "Top Middle",
         "Top Right",
@@ -56,14 +56,14 @@ function getRandomPresetLocation() {
         "Bottom Right"
     ];
 
-    let randomIndex = getRandomInt(0, presetPositions.length - 1);
+    const randomIndex = getRandomInt(0, presetPositions.length - 1);
     return presetPositions[randomIndex];
 }
 
 // Sound Processor
 // This takes info passed from the controls router and sends it back to the render process in order to play media.
 function soundProcessor(effect) {
-    let data = {
+    const data = {
         filepath: effect.file,
         volume: effect.volume
     };
@@ -78,7 +78,7 @@ function soundProcessor(effect) {
     data.audioOutputDevice = selectedOutputDevice;
 
     if (selectedOutputDevice.deviceId === "overlay") {
-        let resourceToken = resourceTokenManager.storeResourcePath(effect.file, 30);
+        const resourceToken = resourceTokenManager.storeResourcePath(effect.file, 30);
         data.resourceToken = resourceToken;
     }
 
@@ -106,7 +106,7 @@ async function imageProcessor(effect, trigger) {
         position = getRandomPresetLocation();
     }
 
-    let data = {
+    const data = {
         "filepath": effect.file,
         "url": effect.url,
         "imageType": effect.imageType,
@@ -138,7 +138,7 @@ async function imageProcessor(effect, trigger) {
     }
 
     if (effect.imageType === "local") {
-        let resourceToken = resourceTokenManager.storeResourcePath(
+        const resourceToken = resourceTokenManager.storeResourcePath(
             effect.file,
             effect.length
         );
@@ -159,7 +159,7 @@ function videoProcessor(effect) {
     }
 
     // Send data back to media.js in the gui.
-    let data = {
+    const data = {
         "videoType": effect.videoType,
         "filepath": effect.file,
         "youtubeId": effect.youtube,
@@ -189,7 +189,7 @@ function videoProcessor(effect) {
         }
     }
 
-    let resourceToken = resourceTokenManager.storeResourcePath(
+    const resourceToken = resourceTokenManager.storeResourcePath(
         effect.file,
         effect.length
     );
@@ -201,7 +201,7 @@ function videoProcessor(effect) {
 // Display Text Processor
 async function showText(effect, trigger) {
     //data transfer object
-    let dto = {
+    const dto = {
         text: effect.text,
         enterAnimation: effect.enterAnimation,
         exitAnimation: effect.exitAnimation,
@@ -224,7 +224,7 @@ async function showText(effect, trigger) {
     logger.debug("Populating show text effect text with variables");
     dto.text = await util.populateStringWithTriggerData(dto.text, trigger);
 
-    let position = dto.position;
+    const position = dto.position;
     if (position === "Random") {
         logger.debug("Getting random preset location");
         dto.position = getRandomPresetLocation();

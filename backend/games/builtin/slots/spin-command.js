@@ -87,7 +87,7 @@ const spinCommand = {
             return;
         }
 
-        let cooldownExpireTime = cooldownCache.get(username);
+        const cooldownExpireTime = cooldownCache.get(username);
         if (cooldownExpireTime && moment().isBefore(cooldownExpireTime)) {
             if (slotsSettings.settings.generalMessages.onCooldown) {
                 const timeRemainingDisplay = util.secondsForHumans(Math.abs(moment().diff(cooldownExpireTime, 'seconds')));
@@ -160,7 +160,7 @@ const spinCommand = {
 
         activeSpinners.set(username, true);
 
-        let cooldownSecs = slotsSettings.settings.cooldownSettings.cooldown;
+        const cooldownSecs = slotsSettings.settings.cooldownSettings.cooldown;
         if (cooldownSecs && cooldownSecs > 0) {
             const expireTime = moment().add(cooldownSecs, 'seconds');
             cooldownCache.set(username, expireTime, cooldownSecs);
@@ -177,7 +177,7 @@ const spinCommand = {
 
         let successChance = 50;
 
-        let successChancesSettings = slotsSettings.settings.spinSettings.successChances;
+        const successChancesSettings = slotsSettings.settings.spinSettings.successChances;
         if (successChancesSettings) {
             try {
                 successChance = successChancesSettings.basePercent;
@@ -194,7 +194,7 @@ const spinCommand = {
                     ...userCustomRoles
                 ];
 
-                for (let role of successChancesSettings.roles) {
+                for (const role of successChancesSettings.roles) {
                     if (allRoles.some(r => r.id === role.roleId)) {
                         successChance = role.percent;
                         break;

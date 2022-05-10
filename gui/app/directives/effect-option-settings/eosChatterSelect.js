@@ -24,7 +24,7 @@
                 </eos-container>
                 `,
             controller: function(connectionService) {
-                let ctrl = this;
+                const ctrl = this;
 
                 ctrl.botLoggedIn = connectionService.accounts.bot.loggedIn;
 

@@ -4,7 +4,7 @@
     angular
         .module("firebotApp")
         .factory("iconsService", function(backendCommunicator) {
-            let service = {};
+            const service = {};
 
             /** @type {import("../../../shared/types").FontAwesomeIcon[]} */
             service.icons = [];

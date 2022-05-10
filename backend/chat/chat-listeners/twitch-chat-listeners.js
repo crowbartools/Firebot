@@ -27,6 +27,18 @@ const HIGHLIGHT_MESSAGE_REWARD_ID = "highlight-message";
 
 /** @arg {import('@twurple/chat').ChatClient} streamerChatClient */
 exports.setupChatListeners = (streamerChatClient) => {
+
+    streamerChatClient.onAnnouncement(async (_channel, _user, announcementInfo, msg) => {
+        const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, msg.message.value);
+
+        firebotChatMessage.isAnnouncement = true;
+        firebotChatMessage.announcementColor = announcementInfo.color ?? "PRIMARY";
+
+        frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
+
+        twitchEventsHandler.announcement.triggerAnnouncement(firebotChatMessage);
+    });
+
     streamerChatClient.onMessage(async (_channel, user, messageText, msg) => {
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText);
 
@@ -112,6 +124,10 @@ exports.setupChatListeners = (streamerChatClient) => {
 
     streamerChatClient.onCommunitySub((_channel, _user, subInfo) => {
         twitchEventsHandler.giftSub.triggerCommunitySubGift(subInfo);
+    });
+
+    streamerChatClient.onSubGift((_channel, _user, subInfo) => {
+        twitchEventsHandler.giftSub.triggerSubGift(subInfo);
     });
 
     streamerChatClient.onGiftPaidUpgrade((_channel, _user, subInfo) => {

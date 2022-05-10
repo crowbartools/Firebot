@@ -33,7 +33,7 @@ const addQuoteEffect = {
     `,
     optionsController: () => {},
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.creator == null || effect.creator === "") {
             errors.push("Please provide a quote creator.");
         }
@@ -60,12 +60,12 @@ const addQuoteEffect = {
             creator: effect.creator.replace(/@/g, ""),
             game: currentGameName,
             createdAt: moment().toISOString()
-        }
+        };
 
         quotesManager.addQuote(newQuote);
 
         return true;
     }
-}
+};
 
 module.exports = addQuoteEffect;

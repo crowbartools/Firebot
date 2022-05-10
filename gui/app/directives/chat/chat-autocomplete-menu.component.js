@@ -12,11 +12,11 @@
     }
 
     function getWordByPosition(str, pos) {
-        let leftSideString = str.substr(0, pos);
-        let rightSideString = str.substr(pos);
+        const leftSideString = str.substr(0, pos);
+        const rightSideString = str.substr(pos);
 
-        let leftMatch = leftSideString.match(/[^.,\s]*$/);
-        let rightMatch = rightSideString.match(/^[^.,\s]*/);
+        const leftMatch = leftSideString.match(/[^.,\s]*$/);
+        const rightMatch = rightSideString.match(/^[^.,\s]*/);
 
         let resultStr = '';
 
@@ -98,6 +98,11 @@
                             onlyStart: true,
                             token: "/",
                             items: [
+                                {
+                                    display: "/announce [message]",
+                                    description: "Send an announcement to chat",
+                                    text: "/announce"
+                                },
                                 {
                                     display: "/ban @username",
                                     description: "Ban a user",

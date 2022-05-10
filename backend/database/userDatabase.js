@@ -41,7 +41,7 @@ const jsonDataHelpers = require("../common/json-data-helpers");
 let db;
 let updateTimeIntervalId;
 let updateLastSeenIntervalId;
-let dbCompactionInterval = 30000;
+const dbCompactionInterval = 30000;
 
 function getUserDb() {
     return db;
@@ -79,7 +79,7 @@ function getUserByUsername(username) {
             return resolve(false);
         }
 
-        let searchTerm = new RegExp(`^${username}$`, 'i');
+        const searchTerm = new RegExp(`^${username}$`, 'i');
 
         db.findOne({ username: { $regex: searchTerm }, twitch: true }, (err, doc) => {
             if (err) {
@@ -101,7 +101,7 @@ function getTwitchUserByUsername(username) {
             return resolve(null);
         }
 
-        let searchTerm = new RegExp(`^${username}$`, 'i');
+        const searchTerm = new RegExp(`^${username}$`, 'i');
 
         db.findOne({ username: { $regex: searchTerm }, twitch: true }, (err, doc) => {
             if (err) {
@@ -157,11 +157,12 @@ async function updateUserMetadata(username, key, value, propertyPath) {
     }
 }
 
-frontendCommunicator.onAsync("update-user-metadata", async ({ username, key, value }) => {
-    updateUserMetadata(username, key, value);
-});
+async function removeUserMetadata(username, key) {
 
-frontendCommunicator.onAsync("delete-user-metadata", async ({ username, key }) => {
+    if (username == null || username.length < 1 || key == null || key.length < 1) {
+        return;
+    }
+
     const user = await getTwitchUserByUsername(username);
     if (user == null) {
         return;
@@ -174,6 +175,14 @@ frontendCommunicator.onAsync("delete-user-metadata", async ({ username, key }) =
     user.metadata = metadata;
 
     await updateUser(user);
+}
+
+frontendCommunicator.onAsync("update-user-metadata", async ({ username, key, value }) => {
+    updateUserMetadata(username, key, value);
+});
+
+frontendCommunicator.onAsync("delete-user-metadata", async ({ username, key }) => {
+    removeUserMetadata(username, key);
 });
 
 async function getUserMetadata(username, key, propertyPath) {
@@ -302,8 +311,8 @@ function userViewTimeUpdate(user, previousTotalMinutes, newTotalMinutes) {
     if (user == null) {
         return;
     }
-    let previousHours = previousTotalMinutes > 0 ? parseInt(previousTotalMinutes / 60) : 0;
-    let newHours = newTotalMinutes > 0 ? parseInt(newTotalMinutes / 60) : 0;
+    const previousHours = previousTotalMinutes > 0 ? parseInt(previousTotalMinutes / 60) : 0;
+    const newHours = newTotalMinutes > 0 ? parseInt(newTotalMinutes / 60) : 0;
     if (newHours < 1) {
         return;
     }
@@ -392,10 +401,10 @@ function createNewUser(userId, username, displayName, profilePicUrl, twitchRoles
             return resolve(null);
         }
 
-        let streamerUserId = accountAccess.getAccounts().streamer.userId;
-        let botUserId = accountAccess.getAccounts().bot.userId;
+        const streamerUserId = accountAccess.getAccounts().streamer.userId;
+        const botUserId = accountAccess.getAccounts().bot.userId;
 
-        let disableAutoStatAccrual = userId === streamerUserId || userId === botUserId;
+        const disableAutoStatAccrual = userId === streamerUserId || userId === botUserId;
 
         /**@type {FirebotUser} */
         let user = {
@@ -639,7 +648,7 @@ function connectUserDatabase() {
         return;
     }
 
-    let path = profileManager.getPathInProfile("db/users.db");
+    const path = profileManager.getPathInProfile("db/users.db");
     db = new Datastore({ filename: path });
     db.loadDatabase(err => {
         if (err) {
@@ -735,13 +744,13 @@ function getRowsForUI() {
         if (!isViewerDBOn()) {
             return resolve();
         }
-        let rowData = [];
+        const rowData = [];
 
         // Find all documents in the collection
         // Make sure the row ids you're sending back match the DB defs.
         db.find({}, function(err, users) {
             Object.keys(users).forEach(function(k, user) {
-                let userEntry = users[user];
+                const userEntry = users[user];
                 // Push to row.
                 rowData.push(userEntry);
             });
@@ -778,11 +787,11 @@ function updateDbCell(changePacket) {
     }
 
     sanitizeDbInput(changePacket).then(function(changePacket) {
-        let id = changePacket.userId,
+        const id = changePacket.userId,
             field = changePacket.field,
             newValue = changePacket.value;
 
-        let updateDoc = {};
+        const updateDoc = {};
         updateDoc[field] = newValue;
 
         db.update({ _id: id }, { $set: updateDoc }, {}, function(err) {
@@ -799,14 +808,14 @@ function incrementDbField(userId, fieldName) {
             return resolve();
         }
 
-        let updateDoc = {};
+        const updateDoc = {};
         updateDoc[fieldName] = 1;
         db.update({ _id: userId, disableAutoStatAccrual: { $ne: true } }, { $inc: updateDoc }, { returnUpdatedDocs: true }, function(err, _, updatedDoc) {
             if (err) {
                 logger.error(err);
             } else {
                 if (updatedDoc != null) {
-                    let updateObj = {};
+                    const updateObj = {};
                     updateObj[fieldName] = util.commafy(updatedDoc[fieldName]);
                 }
             }
@@ -854,7 +863,7 @@ frontendCommunicator.onAsync("getViewerDetails", (userId) => {
 frontendCommunicator.on("updateViewerDataField", (data) => {
     const { userId, field, value } = data;
 
-    let updateObject = {};
+    const updateObject = {};
     updateObject[field] = value;
 
     db.update({ _id: userId }, { $set: updateObject }, { returnUpdatedDocs: true }, function(err, _, updatedDoc) { //eslint-disable-line no-unused-vars
@@ -921,6 +930,7 @@ exports.setChatUsersOnline = setChatUsersOnline;
 exports.getTopViewTimeUsers = getTopViewTimeUsers;
 exports.addNewUserFromChat = addNewUserFromChat;
 exports.getOnlineUsers = getOnlineUsers;
+exports.removeUserMetadata = removeUserMetadata;
 exports.updateUserMetadata = updateUserMetadata;
 exports.getUserMetadata = getUserMetadata;
 exports.getAllUsernames = getAllUsernames;

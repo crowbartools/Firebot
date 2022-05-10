@@ -35,10 +35,10 @@ module.exports = {
     },
     predicate: (filterSettings, eventData) => {
 
-        let { value } = filterSettings;
-        let { eventMeta } = eventData;
+        const { value } = filterSettings;
+        const { eventMeta } = eventData;
 
-        let isAnonymous = eventMeta.isAnonymous === true;
+        const isAnonymous = eventMeta.isAnonymous === true;
 
         return value === "true" ? isAnonymous : !isAnonymous;
     }

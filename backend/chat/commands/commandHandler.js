@@ -42,7 +42,7 @@ function UserCommand(trigger, args, commandSender, senderRoles) {
 }
 
 function buildCommandRegexStr(trigger, scanWholeMessage) {
-    let escapedTrigger = util.escapeRegExp(trigger);
+    const escapedTrigger = util.escapeRegExp(trigger);
     if (scanWholeMessage) {
         return `(?:^|\\s)${escapedTrigger}(?!-)(?:\\b|$|(?=\\s))`;
     }
@@ -113,23 +113,23 @@ function flushCooldownCache() {
 }
 
 function getRemainingCooldown(command, triggeredSubcmd, username) {
-    let globalCacheKey = `${command.id}${
+    const globalCacheKey = `${command.id}${
         triggeredSubcmd ? `:${triggeredSubcmd.id || triggeredSubcmd.arg}` : ""
     }`;
 
-    let userCacheKey = `${command.id}${
+    const userCacheKey = `${command.id}${
         triggeredSubcmd ? `:${triggeredSubcmd.id || triggeredSubcmd.arg}` : ""
     }:${username}`;
 
     let remainingGlobal = 0,
         remainingUser = 0;
 
-    let globalCooldown = cooldownCache.get(globalCacheKey);
+    const globalCooldown = cooldownCache.get(globalCacheKey);
     if (globalCooldown != null) {
         remainingGlobal = globalCooldown.diff(moment(), "s");
     }
 
-    let userCooldown = cooldownCache.get(userCacheKey);
+    const userCooldown = cooldownCache.get(userCacheKey);
     if (userCooldown != null) {
         remainingUser = userCooldown.diff(moment(), "s");
     }
@@ -219,11 +219,11 @@ function cooldownCommand(command, triggeredSubcmd, username) {
     }
     logger.debug("Triggering cooldown for command");
 
-    let globalCacheKey = `${command.id}${
+    const globalCacheKey = `${command.id}${
         triggeredSubcmd ? `:${triggeredSubcmd.id || triggeredSubcmd.arg}` : ""
     }`;
 
-    let userCacheKey = `${command.id}${
+    const userCacheKey = `${command.id}${
         triggeredSubcmd ? `:${triggeredSubcmd.id || triggeredSubcmd.arg}` : ""
     }:${username}`;
 
@@ -254,7 +254,7 @@ function buildUserCommand(command, rawMessage, sender, senderRoles) {
         if (command.scanWholeMessage) {
             args = rawMessage.split(" ");
         } else {
-            let rawArgs = rawMessage.split(" ");
+            const rawArgs = rawMessage.split(" ");
             if (rawArgs.length > 0) {
                 trigger = rawArgs[0];
                 args = rawArgs.splice(1);
@@ -286,12 +286,12 @@ function fireCommand(
     if (command.type === "system") {
         logger.info("Executing system command");
         //get system command from manager
-        let cmdDef = commandManager.getSystemCommandById(command.id);
+        const cmdDef = commandManager.getSystemCommandById(command.id);
 
-        let commandOptions = {};
+        const commandOptions = {};
         if (command.options != null) {
-            for (let optionName of Object.keys(command.options)) {
-                let option = command.options[optionName];
+            for (const optionName of Object.keys(command.options)) {
+                const option = command.options[optionName];
                 if (option) {
                     let value = option.value;
                     if (value == null) {
@@ -372,12 +372,12 @@ async function handleChatMessage(firebotChatMessage) {
 
     let triggeredSubcmd = null;
     if (!command.scanWholeMessage && !command.triggerIsRegex && userCmd.args.length > 0 && command.subCommands && command.subCommands.length > 0) {
-        for (let subcmd of command.subCommands) {
+        for (const subcmd of command.subCommands) {
             if (subcmd.active === false) {
                 continue;
             }
             if (subcmd.regex) {
-                let regex = new RegExp(`^${subcmd.arg}$`, "gi");
+                const regex = new RegExp(`^${subcmd.arg}$`, "gi");
                 if (regex.test(userCmd.args[0])) {
                     triggeredSubcmd = subcmd;
                     userCmd.triggeredArg = subcmd.arg;
@@ -411,7 +411,7 @@ async function handleChatMessage(firebotChatMessage) {
     // check if command meets min args requirement
     const minArgs = triggeredSubcmd ? triggeredSubcmd.minArgs || 0 : command.minArgs || 0;
     if (userCmd.args.length < minArgs) {
-        let usage = triggeredSubcmd ? triggeredSubcmd.usage : command.usage;
+        const usage = triggeredSubcmd ? triggeredSubcmd.usage : command.usage;
         twitchChat.sendChatMessage(`Invalid command. Usage: ${command.trigger} ${usage || ""}`);
         return false;
     }
@@ -425,7 +425,7 @@ async function handleChatMessage(firebotChatMessage) {
     // Handle restrictions
     if (restrictionData) {
         logger.debug("Command has restrictions...checking them.");
-        let triggerData = {
+        const triggerData = {
             type: TriggerType.COMMAND,
             metadata: {
                 username: commandSender,
@@ -508,31 +508,31 @@ async function handleChatMessage(firebotChatMessage) {
 }
 
 function triggerCustomCommand(id, isManual = true) {
-    let command = commandManager.getCustomCommandById(id);
+    const command = commandManager.getCustomCommandById(id);
     if (command) {
         console.log("firing command manually", command);
-        let commandSender = accountAccess.getAccounts().streamer.username,
+        const commandSender = accountAccess.getAccounts().streamer.username,
             userCmd = buildUserCommand(command, null, commandSender);
         fireCommand(command, userCmd, null, commandSender, isManual);
     }
 }
 
 function runCommandFromEffect(command, trigger, args) {
-    let message = command.trigger + " " + args;
+    const message = command.trigger + " " + args;
 
     if (command) {
-        let userCmd = buildUserCommand(command, message, trigger.metadata.username);
+        const userCmd = buildUserCommand(command, message, trigger.metadata.username);
         fireCommand(command, userCmd, message, trigger.metadata.username, false);
     }
 }
 
 function runSystemCommandFromEffect(id, trigger, args) {
-    let command = commandManager.getSystemCommandById(id).definition;
+    const command = commandManager.getSystemCommandById(id).definition;
     runCommandFromEffect(command, trigger, args);
 }
 
 function runCustomCommandFromEffect(id, trigger, args) {
-    let command = commandManager.getCustomCommandById(id);
+    const command = commandManager.getCustomCommandById(id);
     runCommandFromEffect(command, trigger, args);
 }
 

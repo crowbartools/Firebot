@@ -6,6 +6,7 @@
             bindings: {
                 restriction: "=",
                 restrictionDefinition: "<",
+                restrictionMode: "<",
                 onDelete: "&"
             },
             template: `
@@ -31,7 +32,11 @@
                     </div>
                     <div uib-collapse="hidePanel" class="expandable-item-expanded">
                         <div style="padding: 15px 20px 10px 20px;">
-                            <restriction-options restriction="$ctrl.restriction" restriction-definition="$ctrl.restrictionDefinition"></restriction-options>
+                            <restriction-options 
+                                restriction="$ctrl.restriction" 
+                                restriction-definition="$ctrl.restrictionDefinition" 
+                                restriction-mode="$ctrl.restrictionMode"
+                            ></restriction-options>
                             <div style="padding-top: 10px">
                                 <button class="btn btn-danger" ng-click="$ctrl.delete()" aria-label="Delete restriction"><i class="far fa-trash"></i></button>
                             </div>
@@ -49,7 +54,7 @@
                         return "";
                     }
 
-                    let displayValueFunc = $ctrl.restrictionDefinition.optionsValueDisplay;
+                    const displayValueFunc = $ctrl.restrictionDefinition.optionsValueDisplay;
                     if (displayValueFunc != null && $ctrl.restriction != null) {
                         // Invoke the func and inject any dependancies
                         $q.when($injector.invoke(displayValueFunc, {}, { restriction: $ctrl.restriction }))

@@ -2,7 +2,7 @@
 
 const { ipcMain } = require("electron");
 const logger = require("../logwrapper");
-let EventEmitter = require("events");
+const EventEmitter = require("events");
 const { EffectTrigger } = require("../../shared/effect-constants");
 const frontendCommunicator = require("../common/frontend-communicator");
 const cloudSync = require("../cloud-sync/cloud-sync");
@@ -70,10 +70,10 @@ class EffectManager extends EventEmitter {
             return effects;
         }
 
-        let keys = Object.keys(effects);
+        const keys = Object.keys(effects);
 
-        for (let key of keys) {
-            let value = effects[key];
+        for (const key of keys) {
+            const value = effects[key];
 
             if (key != null && key.toLowerCase() === "filepath" || key.toLowerCase() === "file") {
                 effects[key] = undefined;
@@ -100,25 +100,25 @@ frontendCommunicator.onAsync("getEffectsShareCode", async (effectList) => {
 
 frontendCommunicator.onAsync("getAllEffectDefinitions", async () => {
     logger.debug("got get all effects request");
-    let mapped = manager._registeredEffects.map(manager.mapEffectForFrontEnd);
+    const mapped = manager._registeredEffects.map(manager.mapEffectForFrontEnd);
     return mapped;
 });
 
 frontendCommunicator.onAsync("getEffectDefinitions", async (triggerData) => {
     logger.debug("got get effects def request");
-    let effects = manager._registeredEffects;
+    const effects = manager._registeredEffects;
 
     const triggerType = triggerData.triggerType,
         triggerMeta = triggerData.triggerMeta;
 
-    let filteredEffectDefs = effects
+    const filteredEffectDefs = effects
         .map(e => e.definition)
         .filter(e => {
             if (triggerType != null) {
                 if (e.triggers == null) {
                     return true;
                 }
-                let supported = e.triggers[triggerType] != null && e.triggers[triggerType] !== false;
+                const supported = e.triggers[triggerType] != null && e.triggers[triggerType] !== false;
                 if (!supported) {
                     return false;
                 }

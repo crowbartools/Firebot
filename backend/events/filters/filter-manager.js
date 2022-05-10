@@ -12,7 +12,7 @@ class FilterManager extends EventEmitter {
     }
 
     registerFilter(filter) {
-        let idConflict = this._registeredFilters.some(
+        const idConflict = this._registeredFilters.some(
             f => f.id === filter.id
         );
 
@@ -44,7 +44,7 @@ class FilterManager extends EventEmitter {
     }
 
     getFiltersForEvent(eventSourceId, eventId) {
-        let filters = this._registeredFilters
+        const filters = this._registeredFilters
             .filter(f => f.events
                 .some(e => e.eventSourceId === eventSourceId && e.eventId === eventId));
         return filters;
@@ -52,14 +52,14 @@ class FilterManager extends EventEmitter {
 
     async runFilters(filterData, eventData) {
         if (filterData != null) {
-            let filterSettings = filterData.filters;
+            const filterSettings = filterData.filters;
 
             let didPass = filterData.mode !== "inclusive";
-            for (let filterSetting of filterSettings) {
+            for (const filterSetting of filterSettings) {
                 const filter = this.getFilterById(filterSetting.type);
                 if (filter) {
                     try {
-                        let successful = await filter.predicate(filterSetting, eventData);
+                        const successful = await filter.predicate(filterSetting, eventData);
 
                         if (filterData.mode === "inclusive") {
                             if (successful) {
@@ -89,7 +89,7 @@ const manager = new FilterManager();
 
 ipcMain.on("getFiltersForEvent", (event, data) => {
     logger.info("got 'get all filters' request");
-    let { eventSourceId, eventId } = data;
+    const { eventSourceId, eventId } = data;
     event.returnValue = manager.getFiltersForEvent(eventSourceId, eventId).map(f => {
         return {
             id: f.id,

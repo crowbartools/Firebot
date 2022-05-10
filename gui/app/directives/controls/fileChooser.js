@@ -20,7 +20,7 @@
             </div>
             `,
             controller: function($scope, $q, backendCommunicator, utilityService) {
-                let ctrl = this;
+                const ctrl = this;
 
                 ctrl.isFile = true;
                 ctrl.$onInit = function() {

@@ -17,7 +17,7 @@ const model = {
 
         let result = '';
         while (text.length) {
-            let idx = Math.floor(Math.random() * text.length);
+            const idx = Math.floor(Math.random() * text.length);
             result += text[idx];
             text.splice(idx, 1);
         }

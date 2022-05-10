@@ -112,7 +112,7 @@ class TipeeeStreamIntegration extends EventEmitter {
         });
 
         this._socket.on("new-event", data => {
-            let eventData = data.event;
+            const eventData = data.event;
             tsEventHandler.processTipeeeStreamEvent(eventData);
         });
 

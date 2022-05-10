@@ -7,24 +7,25 @@ const accountAccess = require('./account-access');
 const replaceVariableManager = require("./../variables/replace-variable-manager");
 const effectQueueManager = require("../effects/queues/effect-queue-manager");
 const effectQueueRunner = require("../effects/queues/effect-queue-runner");
+const webServer = require("../../server/httpServer");
 const util = require("../utility");
 
 const findAndReplaceVariables = async (data, trigger) => {
-    let keys = Object.keys(data);
+    const keys = Object.keys(data);
 
-    for (let key of keys) {
+    for (const key of keys) {
 
         // skip nested effect lists and conditions so we dont replace variables too early
         if (key === "list" || key === "leftSideValue" || key === "rightSideValue") {
             continue;
         }
 
-        let value = data[key];
+        const value = data[key];
 
         if (value && typeof value === "string") {
             if (value.includes("$")) {
                 let replacedValue = value;
-                let triggerId = util.getTriggerIdFromTriggerData(trigger);
+                const triggerId = util.getTriggerIdFromTriggerData(trigger);
                 try {
                     replacedValue = await replaceVariableManager.evaluateText(value, trigger, {
                         type: trigger.type,
@@ -46,11 +47,11 @@ const findAndReplaceVariables = async (data, trigger) => {
 // This returns true if all dependency checks pass.
 // NOTE: I don't know of a way to check for overlay status right now so this skips that check.
 function validateEffectCanRun(effectId, triggerType) {
-    let effectDefinition = effectManager.getEffectById(effectId).definition;
+    const effectDefinition = effectManager.getEffectById(effectId).definition;
 
     // Validate trigger
     if (effectDefinition.triggers) {
-        let supported = effectDefinition.triggers[triggerType] != null
+        const supported = effectDefinition.triggers[triggerType] != null
         && effectDefinition.triggers[triggerType] !== false;
         if (!supported) {
             logger.info(`${effectId} cannot be triggered by: ${triggerType}`);
@@ -84,13 +85,20 @@ async function triggerEffect(effect, trigger) {
     // For each effect, send it off to the appropriate handler.
     logger.debug(`Running ${effect.type}(${effect.id}) effect...`);
 
-    let effectDef = effectManager.getEffectById(effect.type);
+    const effectDef = effectManager.getEffectById(effect.type);
 
-    return effectDef.onTriggerEvent({ effect: effect, trigger: trigger });
+    const sendDataToOverlay = (data, overlayInstance) => {
+        const overlayEventName = effectDef.overlayExtension?.event?.name;
+        if (overlayEventName) {
+            webServer.sendToOverlay(overlayEventName, data, overlayInstance);
+        }
+    };
+
+    return effectDef.onTriggerEvent({ effect, trigger, sendDataToOverlay });
 }
 
 async function runEffects(runEffectsContext) {
-    let trigger = runEffectsContext.trigger,
+    const trigger = runEffectsContext.trigger,
         effects = runEffectsContext.effects.list;
 
     for (const effect of effects) {
@@ -113,7 +121,7 @@ async function runEffects(runEffectsContext) {
         await findAndReplaceVariables(effect, trigger);
 
         try {
-            let response = await triggerEffect(effect, trigger);
+            const response = await triggerEffect(effect, trigger);
             if (response === null || response === undefined) {
                 continue;
             }
@@ -121,7 +129,7 @@ async function runEffects(runEffectsContext) {
                 logger.error(`An effect of type ${effect.type} and id ${effect.id} failed to run.`, response.reason);
             } else {
                 if (typeof response !== "boolean") {
-                    let { execution } = response;
+                    const { execution } = response;
                     if (execution && execution.stop) {
                         logger.info(`Stop effect execution triggered for effect list id ${runEffectsContext.effects.id}`);
                         return {
@@ -149,7 +157,7 @@ async function processEffects(processEffectsRequest) {
     }
 
     // Add some values to our wrapper
-    let runEffectsContext = processEffectsRequest;
+    const runEffectsContext = processEffectsRequest;
     runEffectsContext["username"] = username;
 
     runEffectsContext.effects = JSON.parse(JSON.stringify(runEffectsContext.effects));
@@ -166,16 +174,16 @@ async function processEffects(processEffectsRequest) {
     return runEffects(runEffectsContext);
 }
 
-function runEffectsManually(effects) {
+function runEffectsManually(effects, metadata = {}, triggerType = EffectTrigger.MANUAL) {
     if (effects == null) {
         return;
     }
 
-    let streamerName = accountAccess.getAccounts().streamer.username || "";
+    const streamerName = accountAccess.getAccounts().streamer.username || "";
 
-    let processEffectsRequest = {
+    const processEffectsRequest = {
         trigger: {
-            type: EffectTrigger.MANUAL,
+            type: triggerType,
             metadata: {
                 username: streamerName,
                 eventData: {
@@ -202,7 +210,8 @@ function runEffectsManually(effects) {
                     },
                     args: ["@TestArg1", "TestArg2", "@TestArg3", "TestArg4", "@TestArg5"]
                 },
-                chatEvent: {}
+                chatEvent: {},
+                ...metadata
             }
         },
         effects: effects
@@ -215,8 +224,8 @@ function runEffectsManually(effects) {
 
 // Manually play a button.
 // This listens for an event from the render and will activate a button manually.
-ipcMain.on('runEffectsManually', function(event, effects) {
-    runEffectsManually(effects);
+ipcMain.on('runEffectsManually', function(event, {effects, metadata, triggerType}) {
+    runEffectsManually(effects, metadata, triggerType);
 });
 
 exports.processEffects = processEffects;

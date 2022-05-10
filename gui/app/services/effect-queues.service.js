@@ -6,7 +6,7 @@
         .module("firebotApp")
         .factory("effectQueuesService", function(backendCommunicator, utilityService,
             objectCopyHelper, ngToast) {
-            let service = {};
+            const service = {};
 
             service.effectQueues = [];
 

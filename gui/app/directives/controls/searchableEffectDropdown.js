@@ -20,7 +20,7 @@
       </ui-select>
       `,
         controller: function(backendCommunicator) {
-            let ctrl = this;
+            const ctrl = this;
             let effectDefs;
 
             async function getSelected() {
@@ -35,13 +35,13 @@
 
                 // grab the effect definitions for the given trigger
                 ctrl.options = effectDefs.sort((a, b) => {
-                    let textA = a.name.toUpperCase();
-                    let textB = b.name.toUpperCase();
+                    const textA = a.name.toUpperCase();
+                    const textB = b.name.toUpperCase();
                     return textA < textB ? -1 : textA > textB ? 1 : 0;
                 }).filter(e => !e.hidden);
 
                 //find the selected effect in the list
-                let selected = ctrl.options.filter(e => e.id === ctrl.selected);
+                const selected = ctrl.options.filter(e => e.id === ctrl.selected);
 
                 //if we have a match, set it as selected
                 if (selected.length > 0) {

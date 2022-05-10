@@ -4,7 +4,7 @@ const uuidv1 = require("uuid/v1");
 
 const { ipcMain } = require("electron");
 
-let listeners = {};
+const listeners = {};
 
 function send(eventName, data) {
     if (global.renderWindow != null) {
@@ -15,14 +15,14 @@ function send(eventName, data) {
 function registerEventWithElectron(eventName) {
     return (function(name) {
         ipcMain.on(name, function(event, data) {
-            let eventListeners = listeners[name];
-            for (let listener of eventListeners) {
+            const eventListeners = listeners[name];
+            for (const listener of eventListeners) {
                 if (listener.async) {
                     listener.callback(data).then(returnValue => {
                         send(`${name}:reply`, returnValue);
                     });
                 } else {
-                    let returnValue = listener.callback(data);
+                    const returnValue = listener.callback(data);
                     event.returnValue = returnValue;
                 }
             }
@@ -42,7 +42,7 @@ function fireEventAsync(type, data) {
 }
 
 function on(eventName, callback, async = false) {
-    let id = uuidv1(),
+    const id = uuidv1(),
         event = {
             id: id,
             callback: callback,

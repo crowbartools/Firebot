@@ -180,7 +180,7 @@ const currency = {
         $scope.currencies = currencyService.getCurrencies();
 
         $scope.getCurrencyName = function(currencyId) {
-            let currency = currencyService.getCurrencies(currencyId);
+            const currency = currencyService.getCurrencies(currencyId);
             return currency.name;
         };
 
@@ -208,7 +208,7 @@ const currency = {
    * Used to validate fields in the option template.
    */
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.currency == null) {
             errors.push("Please select a currency to use.");
         }
@@ -237,7 +237,7 @@ const currency = {
             }
 
             // If "Remove" make number negative, otherwise just use number.
-            let currency = event.effect.action === "Remove" ? -Math.abs(amount) : Math.abs(amount);
+            const currency = event.effect.action === "Remove" ? -Math.abs(amount) : Math.abs(amount);
 
             // PEOPLE GONNA GET PAID
             try {

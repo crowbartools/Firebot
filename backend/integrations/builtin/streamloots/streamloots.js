@@ -36,7 +36,7 @@ class StreamLootsIntegration extends EventEmitter {
         slootsFilterLoader.registerFilters();
     }
     connect(integrationData) {
-        let { accountId } = integrationData;
+        const { accountId } = integrationData;
 
         if (accountId == null) {
             this.emit("disconnected", integrationDefinition.id);
@@ -50,7 +50,7 @@ class StreamLootsIntegration extends EventEmitter {
 
         this._eventSource.onmessage = (event) => {
             if (event.data) {
-                let parsedData = JSON.parse(event.data);
+                const parsedData = JSON.parse(event.data);
                 slootsEventHandler.processStreamLootsEvent(parsedData);
             }
         };

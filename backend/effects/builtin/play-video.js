@@ -165,7 +165,7 @@ const playVideo = {
         <eos-container header="Volume" pad-top="true" ng-if="effect.videoType != 'Random Twitch Clip' && effect.videoType != 'Twitch Clip'">
             <div class="volume-slider-wrapper">
                 <i class="fal fa-volume-down volume-low"></i>
-                <rzslider rz-slider-model="effect.volume" rz-slider-options="{floor: 1, ceil: 10, hideLimitLabels: true}"></rzslider>
+                <rzslider rz-slider-model="effect.volume" rz-slider-options="{floor: 0, ceil: 10, hideLimitLabels: true}"></rzslider>
                 <i class="fal fa-volume-up volume-high"></i>
             </div>
         </eos-container>
@@ -281,7 +281,7 @@ const playVideo = {
      * Used to validate fields in the option template.
      */
     optionsValidator: (effect) => {
-        let errors = [];
+        const errors = [];
         if (effect.videoType == null) {
             errors.push("Please select a video type.");
         }
@@ -291,7 +291,7 @@ const playVideo = {
      * When the effect is triggered by something
      */
     onTriggerEvent: async (event) => {
-        let effect = event.effect;
+        const effect = event.effect;
         // What should this do when triggered.
         let position = effect.position;
         if (position === "Random") {
@@ -299,7 +299,7 @@ const playVideo = {
         }
 
         // Send data back to media.js in the gui.
-        let data = {
+        const data = {
             videoType: effect.videoType,
             filepath: effect.file,
             youtubeId: effect.youtube,
@@ -429,7 +429,7 @@ const playVideo = {
             return true;
         }
 
-        let resourceToken = resourceTokenManager.storeResourcePath(data.filepath, effect.length);
+        const resourceToken = resourceTokenManager.storeResourcePath(data.filepath, effect.length);
         data.resourceToken = resourceToken;
 
         webServer.sendToOverlay("video", data);
@@ -475,60 +475,60 @@ const playVideo = {
                 //let firstScriptTag = document.getElementsByTagName("script")[0];
                 //firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-                let data = event;
+                const data = event;
 
-                let videoType = data.videoType;
-                let filepath = data.filepath;
+                const videoType = data.videoType;
+                const filepath = data.filepath;
                 let fileExt = filepath.split(".").pop();
                 if (fileExt === "ogv") {
                     fileExt = "ogg";
                 }
                 let youtubeId = data.youtubeId;
-                let videoDuration =
+                const videoDuration =
                     data.videoDuration != null && data.videoDuration !== ""
                         ? parseFloat(data.videoDuration) * 1000
                         : null;
                 let videoVolume = data.videoVolume;
                 let videoStarttime = data.videoStarttime || 0;
-                let loop = data.loop;
+                const loop = data.loop;
 
-                let token = encodeURIComponent(data.resourceToken);
-                let filepathNew = `http://${window.location.hostname}:7472/resource/${token}`;
+                const token = encodeURIComponent(data.resourceToken);
+                const filepathNew = `http://${window.location.hostname}:7472/resource/${token}`;
 
                 // Get time in milliseconds to use as id
-                let time = new Date().getTime();
-                let videoPlayerId = `${time}-video`;
+                const time = new Date().getTime();
+                const videoPlayerId = `${time}-video`;
 
-                let enterAnimation = data.enterAnimation ? data.enterAnimation : "fadeIn";
-                let exitAnimation = data.exitAnimation ? data.exitAnimation : "fadeIn";
-                let enterDuration = data.enterDuration;
-                let exitDuration = data.exitDuration;
+                const enterAnimation = data.enterAnimation ? data.enterAnimation : "fadeIn";
+                const exitAnimation = data.exitAnimation ? data.exitAnimation : "fadeIn";
+                const enterDuration = data.enterDuration;
+                const exitDuration = data.exitDuration;
 
-                let inbetweenAnimation = data.inbetweenAnimation ? data.inbetweenAnimation : "none";
-                let inbetweenDuration = data.inbetweenDuration;
-                let inbetweenDelay = data.inbetweenDelay;
-                let inbetweenRepeat = data.inbetweenRepeat;
+                const inbetweenAnimation = data.inbetweenAnimation ? data.inbetweenAnimation : "none";
+                const inbetweenDuration = data.inbetweenDuration;
+                const inbetweenDelay = data.inbetweenDelay;
+                const inbetweenRepeat = data.inbetweenRepeat;
 
-                let positionData = {
+                const positionData = {
                     position: data.videoPosition,
                     customCoords: data.customCoords
                 };
 
-                let sizeStyles =
+                const sizeStyles =
                     (data.videoWidth ? `width: ${data.videoWidth}px;` : "") +
                     (data.videoHeight ? `height: ${data.videoHeight}px;` : "");
 
                 if (videoType === "Local Video") {
                     const loopAttribute = loop ? "loop" : "";
 
-                    let videoElement = `
+                    const videoElement = `
                         <video id="${videoPlayerId}" class="player" ${loopAttribute} style="display:none;${sizeStyles}">
                             <source src="${filepathNew}" type="video/${fileExt}">
                         </video>
                     `;
 
-                    let wrapperId = new Date().getTime();
-                    let wrappedHtml = getPositionWrappedHTML(wrapperId, positionData, videoElement); // eslint-disable-line no-undef
+                    const wrapperId = new Date().getTime();
+                    const wrappedHtml = getPositionWrappedHTML(wrapperId, positionData, videoElement); // eslint-disable-line no-undef
 
                     $(".wrapper").append(wrappedHtml);
 
@@ -540,7 +540,7 @@ const playVideo = {
                     videoVolume = parseInt(videoVolume) / 10;
                     $(`#${videoPlayerId}`).prop("volume", videoVolume);
 
-                    let video = document.getElementById(videoPlayerId);
+                    const video = document.getElementById(videoPlayerId);
                     video.oncanplay = function () {
                         // eslint-disable-next-line no-undef
                         if (startedVidCache[this.id]) {
@@ -555,7 +555,7 @@ const playVideo = {
                         } catch (err) {
                             console.log(err);
                         }
-                        let videoEl = $(`#${videoPlayerId}`);
+                        const videoEl = $(`#${videoPlayerId}`);
                         videoEl.show();
 
                         $(`#${wrapperId}`)
@@ -588,12 +588,12 @@ const playVideo = {
                         }
                     };
                 } else {
-                    let ytPlayerId = `yt-${new Date().getTime()}`;
+                    const ytPlayerId = `yt-${new Date().getTime()}`;
 
-                    let youtubeElement = `<div id="${ytPlayerId}" style="display:none;${sizeStyles}"></div>`;
+                    const youtubeElement = `<div id="${ytPlayerId}" style="display:none;${sizeStyles}"></div>`;
 
-                    let wrapperId = new Date().getTime();
-                    let wrappedHtml = getPositionWrappedHTML(wrapperId, positionData, youtubeElement); // eslint-disable-line no-undef
+                    const wrapperId = new Date().getTime();
+                    const wrappedHtml = getPositionWrappedHTML(wrapperId, positionData, youtubeElement); // eslint-disable-line no-undef
 
                     $(".wrapper").append(wrappedHtml);
 
@@ -622,7 +622,7 @@ const playVideo = {
 
                     // Add iframe.
 
-                    let playerVars = {
+                    const playerVars = {
                         autoplay: 1,
                         controls: 0,
                         start: videoStarttime,
@@ -636,7 +636,7 @@ const playVideo = {
                         playerVars["playlist"] = youtubeId;
                     }
 
-                    let ytOptions = {
+                    const ytOptions = {
                         videoId: youtubeId,
                         playerVars: playerVars,
                         events: {

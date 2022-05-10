@@ -105,7 +105,7 @@
                 </div>
                 `,
         controller: function(utilityService) {
-            let ctrl = this;
+            const ctrl = this;
 
             ctrl.openPresetModal = function() {
                 utilityService.showOverlayEventsModal();

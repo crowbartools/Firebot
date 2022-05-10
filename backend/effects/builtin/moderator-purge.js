@@ -23,7 +23,7 @@ const model = {
     `,
     optionsController: () => {},
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.username == null && effect.username !== "") {
             errors.push("Please put in a username.");
         }

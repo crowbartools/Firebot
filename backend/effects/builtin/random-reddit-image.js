@@ -105,7 +105,7 @@ const model = {
 
     },
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.reddit == null) {
             errors.push("Please enter a subreddit.");
         }
@@ -116,9 +116,9 @@ const model = {
         return errors;
     },
     onTriggerEvent: async event => {
-        let chatter = event.effect.chatter;
-        let subName = event.effect.reddit;
-        let imageUrl = await redditProcessor.getRandomImage(subName);
+        const chatter = event.effect.chatter;
+        const subName = event.effect.reddit;
+        const imageUrl = await redditProcessor.getRandomImage(subName);
 
         try {
             if (event.effect.show === "chat" || event.effect.show === "both") {

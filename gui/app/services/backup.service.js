@@ -11,7 +11,7 @@
         .module("firebotApp")
         .factory("backupService", function($q, logger, backendCommunicator, listenerService,
             dataAccess, utilityService) {
-            let service = {};
+            const service = {};
 
             const RESTORE_FOLDER_PATH = dataAccess.getPathInTmpDir("/restore");
             const USER_DATA_FOLDER_PATH = dataAccess.getPathInUserData("/");
@@ -129,7 +129,7 @@
 
                 // Validate backup zip
                 try {
-                    let valid = await validateBackupZip(backupFilePath);
+                    const valid = await validateBackupZip(backupFilePath);
                     if (!valid) {
                         return {
                             success: false,

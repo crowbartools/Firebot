@@ -83,7 +83,7 @@ const heistCommand = {
         // parse the wager amount
         let wagerAmount;
         if (event.userCommand.args.length < 1) {
-            let defaultWager = heistSettings.settings.currencySettings.defaultWager;
+            const defaultWager = heistSettings.settings.currencySettings.defaultWager;
             if ((defaultWager == null || defaultWager < 1)) {
                 if (heistSettings.settings.entryMessages.noWagerAmount) {
                     const noWagerAmountMsg = heistSettings.settings.entryMessages.noWagerAmount
@@ -171,11 +171,11 @@ const heistCommand = {
 
         // get the users success percentage
         let successChance = 50;
-        let successChancesSettings = heistSettings.settings.successChanceSettings.successChances;
+        const successChancesSettings = heistSettings.settings.successChanceSettings.successChances;
         if (successChancesSettings) {
             successChance = successChancesSettings.basePercent;
 
-            for (let role of successChancesSettings.roles) {
+            for (const role of successChancesSettings.roles) {
                 if (allRoles.some(r => r.id === role.roleId)) {
                     successChance = role.percent;
                     break;
@@ -185,11 +185,11 @@ const heistCommand = {
 
         // get the users winnings multiplier
         let winningsMultiplier = 1.5;
-        let winningsMultiplierSettings = heistSettings.settings.winningsMultiplierSettings.multipliers;
+        const winningsMultiplierSettings = heistSettings.settings.winningsMultiplierSettings.multipliers;
         if (winningsMultiplierSettings) {
             winningsMultiplier = winningsMultiplierSettings.base;
 
-            for (let role of winningsMultiplierSettings.roles) {
+            for (const role of winningsMultiplierSettings.roles) {
                 if (allRoles.some(r => r.id === role.roleId)) {
                     winningsMultiplier = role.value;
                     break;

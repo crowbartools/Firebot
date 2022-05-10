@@ -3,7 +3,7 @@
 const profileManager = require("../common/profile-manager");
 const frontendCommunicator = require("../common/frontend-communicator");
 
-let getGameDb = () => profileManager.getJsonDbInProfile("/games");
+const getGameDb = () => profileManager.getJsonDbInProfile("/games");
 
 /**
  * @typedef {"string" | "number" | "boolean" | "enum" | "filepath" | "currency-select" | "chatter-select" | "editable-list" | "role-percentages" | "role-numbers"} SettingType
@@ -107,11 +107,11 @@ function buildGameSettings(game, savedSettings) {
     }
 
     if (game.settingCategories) {
-        for (let categoryId of Object.keys(game.settingCategories)) {
+        for (const categoryId of Object.keys(game.settingCategories)) {
             if (settingsData.settings[categoryId] == null) {
                 settingsData.settings[categoryId] = {};
             }
-            for (let settingId of Object.keys(game.settingCategories[categoryId].settings)) {
+            for (const settingId of Object.keys(game.settingCategories[categoryId].settings)) {
                 if (settingsData.settings[categoryId][settingId] === undefined) {
                     settingsData.settings[categoryId][settingId] = game.settingCategories[categoryId].settings[settingId].default;
                 }
@@ -123,8 +123,8 @@ function buildGameSettings(game, savedSettings) {
 
 function setGameSettingValues(settingCategories, savedSettings) {
     if (settingCategories && savedSettings) {
-        for (let categoryId of Object.keys(settingCategories)) {
-            for (let settingId of Object.keys(settingCategories[categoryId].settings)) {
+        for (const categoryId of Object.keys(settingCategories)) {
+            for (const settingId of Object.keys(settingCategories[categoryId].settings)) {
                 if (savedSettings.settings[categoryId]) {
                     settingCategories[categoryId].settings[settingId].value = savedSettings.settings[categoryId][settingId];
                 }
@@ -136,8 +136,8 @@ function setGameSettingValues(settingCategories, savedSettings) {
 
 function getGameSettingsFromValues(settingCategories, savedSettings) {
     if (settingCategories && savedSettings) {
-        for (let categoryId of Object.keys(settingCategories)) {
-            for (let settingId of Object.keys(settingCategories[categoryId].settings)) {
+        for (const categoryId of Object.keys(settingCategories)) {
+            for (const settingId of Object.keys(settingCategories[categoryId].settings)) {
                 savedSettings.settings[categoryId][settingId] = settingCategories[categoryId].settings[settingId].value;
             }
         }
@@ -160,7 +160,7 @@ function getGameSettings(gameId) {
 
 function loadGameSettings() {
     try {
-        let savedGameSettings = getGameDb().getData("/");
+        const savedGameSettings = getGameDb().getData("/");
         if (savedGameSettings != null) {
             allGamesSettings = savedGameSettings;
         }
@@ -203,8 +203,8 @@ function updateGameSettings(gameId, settingCategories, activeStatus) {
     }
 
 
-    let previousSettings = buildGameSettings(game, allGamesSettings[game.id]);
-    let previousActiveStatus = previousSettings.active;
+    const previousSettings = buildGameSettings(game, allGamesSettings[game.id]);
+    const previousActiveStatus = previousSettings.active;
 
     let gameSettings;
     if (settingCategories == null) {

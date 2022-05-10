@@ -7,7 +7,8 @@ module.exports = {
     name: "Message Text",
     description: "Filter based on chat message text",
     events: [
-        { eventSourceId: "twitch", eventId: "chat-message" }
+        { eventSourceId: "twitch", eventId: "chat-message" },
+        { eventSourceId: "twitch", eventId: "announcement" }
     ],
     comparisonTypes: [
         ComparisonType.IS,
@@ -26,13 +27,13 @@ module.exports = {
     valueType: "text",
     predicate: (filterSettings, eventData) => {
 
-        let { comparisonType, value } = filterSettings;
-        let { eventMeta } = eventData;
+        const { comparisonType, value } = filterSettings;
+        const { eventMeta } = eventData;
 
         /**
          * @type {string}
          */
-        let chatMessage = eventMeta.messageText || "";
+        const chatMessage = eventMeta.messageText || "";
 
         switch (comparisonType) {
         case ComparisonType.IS:
@@ -52,19 +53,19 @@ module.exports = {
         case ComparisonType.DOESNT_END_WITH:
             return !chatMessage.endsWith(value);
         case ComparisonType.MATCHES_REGEX: {
-            let regex = new RegExp(value, "gi");
+            const regex = new RegExp(value, "gi");
             return regex.test(chatMessage);
         }
         case ComparisonType.DOESNT_MATCH_REGEX: {
-            let regex = new RegExp(value, "gi");
+            const regex = new RegExp(value, "gi");
             return !regex.test(chatMessage);
         }
         case ComparisonType.MATCHES_REGEX_CS: {
-            let regex = new RegExp(value, "g");
+            const regex = new RegExp(value, "g");
             return regex.test(chatMessage);
         }
         case ComparisonType.DOESNT_MATCH_REGEX_CS: {
-            let regex = new RegExp(value, "g");
+            const regex = new RegExp(value, "g");
             return !regex.test(chatMessage);
         }
         default:

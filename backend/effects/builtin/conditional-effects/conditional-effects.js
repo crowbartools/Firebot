@@ -93,7 +93,7 @@ const model = {
         };
 
         $scope.effectListUpdated = (effects, index) => {
-            let ifCondition = $scope.effect.ifs[index];
+            const ifCondition = $scope.effect.ifs[index];
             if (ifCondition) {
                 ifCondition.effectData = effects;
             }
@@ -104,22 +104,22 @@ const model = {
         };
     },
     optionsValidator: () => {
-        let errors = [];
+        const errors = [];
         return errors;
     },
     onTriggerEvent: event => {
         return new Promise(async (resolve) => {
             // What should this do when triggered.
-            let { effect, trigger } = event;
+            const { effect, trigger } = event;
 
             let effectsToRun = null;
             if (effect.ifs != null) {
-                for (let ifCondition of effect.ifs) {
+                for (const ifCondition of effect.ifs) {
                     if (ifCondition.conditionData == null || ifCondition.effectData == null) {
                         continue;
                     }
 
-                    let didPass = await conditionManager.runConditions(ifCondition.conditionData, trigger);
+                    const didPass = await conditionManager.runConditions(ifCondition.conditionData, trigger);
                     if (didPass) {
                         effectsToRun = ifCondition.effectData;
                         break;
@@ -132,7 +132,7 @@ const model = {
             }
 
             if (effectsToRun != null) {
-                let processEffectsRequest = {
+                const processEffectsRequest = {
                     trigger: event.trigger,
                     effects: effectsToRun
                 };

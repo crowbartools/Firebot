@@ -24,9 +24,9 @@ class IntegrationManager extends EventEmitter {
             authManager.registerAuthProvider(integration.definition.authProviderDetails);
         }
 
-        let integrationDb = profileManager.getJsonDbInProfile("/integrations");
+        const integrationDb = profileManager.getJsonDbInProfile("/integrations");
         try {
-            let integrationSettings = integrationDb.getData(`/${integration.definition.id}`);
+            const integrationSettings = integrationDb.getData(`/${integration.definition.id}`);
             if (integrationSettings != null) {
                 integration.definition.settings = integrationSettings.settings;
                 integration.definition.userSettings = integrationSettings.userSettings;
@@ -84,10 +84,10 @@ class IntegrationManager extends EventEmitter {
 
         integration.integration.on("settings-update", (id, settings) => {
             try {
-                let integrationDb = profileManager.getJsonDbInProfile("/integrations");
+                const integrationDb = profileManager.getJsonDbInProfile("/integrations");
                 integrationDb.push(`/${id}/settings`, settings);
 
-                let int = this.getIntegrationById(id);
+                const int = this.getIntegrationById(id);
                 if (int != null) {
                     int.definition.linked = true;
                     int.definition.settings = settings;
@@ -101,10 +101,10 @@ class IntegrationManager extends EventEmitter {
 
     saveIntegrationUserSettings(id, settings, notifyInt = true) {
         try {
-            let integrationDb = profileManager.getJsonDbInProfile("/integrations");
+            const integrationDb = profileManager.getJsonDbInProfile("/integrations");
             integrationDb.push(`/${id}/userSettings`, settings);
 
-            let int = this.getIntegrationById(id);
+            const int = this.getIntegrationById(id);
             if (int != null) {
                 int.definition.userSettings = settings;
             }
@@ -166,7 +166,7 @@ class IntegrationManager extends EventEmitter {
         integration.definition.auth = authData;
 
         try {
-            let integrationDb = profileManager.getJsonDbInProfile("/integrations");
+            const integrationDb = profileManager.getJsonDbInProfile("/integrations");
             integrationDb.push(`/${integration.definition.id}/auth`, authData);
         } catch (error) {
             logger.warn(error);
@@ -178,7 +178,7 @@ class IntegrationManager extends EventEmitter {
         integration.definition.accountId = accountId;
 
         try {
-            let integrationDb = profileManager.getJsonDbInProfile("/integrations");
+            const integrationDb = profileManager.getJsonDbInProfile("/integrations");
             integrationDb.push(`/${integration.definition.id}/accountId`, accountId);
         } catch (error) {
             logger.warn(error);
@@ -187,7 +187,7 @@ class IntegrationManager extends EventEmitter {
     }
 
     startIntegrationLink(integrationId) {
-        let int = this.getIntegrationById(integrationId);
+        const int = this.getIntegrationById(integrationId);
         if (int == null || int.definition.linked) {
             return;
         }
@@ -214,7 +214,7 @@ class IntegrationManager extends EventEmitter {
             return; // link failed, return.
         }
 
-        let integrationDb = profileManager.getJsonDbInProfile(
+        const integrationDb = profileManager.getJsonDbInProfile(
             "/integrations"
         );
         integrationDb.push(`/${int.definition.id}/linked`, true);
@@ -225,7 +225,7 @@ class IntegrationManager extends EventEmitter {
     }
 
     unlinkIntegration(integrationId) {
-        let int = this.getIntegrationById(integrationId);
+        const int = this.getIntegrationById(integrationId);
         if (int == null || !int.definition.linked) {
             return;
         }
@@ -234,7 +234,7 @@ class IntegrationManager extends EventEmitter {
 
         try {
             int.integration.unlink();
-            let integrationDb = profileManager.getJsonDbInProfile("/integrations");
+            const integrationDb = profileManager.getJsonDbInProfile("/integrations");
             integrationDb.delete(`/${integrationId}`);
             int.definition.settings = null;
             int.definition.linked = false;
@@ -250,13 +250,13 @@ class IntegrationManager extends EventEmitter {
     }
 
     async connectIntegration(integrationId) {
-        let int = this.getIntegrationById(integrationId);
+        const int = this.getIntegrationById(integrationId);
         if (int == null || !int.definition.linked) {
             this.emit("integration-disconnected", integrationId);
             return;
         }
 
-        let integrationData = {
+        const integrationData = {
             settings: int.definition.settings,
             userSettings: int.definition.userSettings
         };
@@ -296,7 +296,7 @@ class IntegrationManager extends EventEmitter {
     }
 
     disconnectIntegration(integrationId) {
-        let int = this.getIntegrationById(integrationId);
+        const int = this.getIntegrationById(integrationId);
         if (int == null || !int.definition.linked || !int.integration.connected) {
             return;
         }
@@ -332,7 +332,7 @@ frontEndCommunicator.on("enteredIntegrationAccountId", async (idData) => {
 });
 
 authManager.on("auth-success", (authData) => {
-    let { providerId, tokenData } = authData;
+    const { providerId, tokenData } = authData;
     const int = manager._integrations.find(i => i.definition.linkType === "auth" &&
         i.definition.authProviderDetails.id === providerId);
     if (int != null) {

@@ -17,11 +17,11 @@ function toTitleCase(str) {
 }
 
 async function randomAdvice() {
-    let url = "http://api.adviceslip.com/advice";
+    const url = "http://api.adviceslip.com/advice";
 
     return await axios.get(url)
         .then(function(response) {
-            let advice = response.data.slip["advice"];
+            const advice = response.data.slip["advice"];
             logger.info("Advice: " + advice);
             return advice;
         })
@@ -37,11 +37,11 @@ async function randomAdvice() {
 
 async function randomCatFact() {
     //http://catfacts-api.appspot.com/api/facts
-    let url = "https://catfact.ninja/fact";
+    const url = "https://catfact.ninja/fact";
 
     return await axios.get(url)
         .then(function(response) {
-            let fact = response.data.fact;
+            const fact = response.data.fact;
             logger.info("Cat Fact: " + fact);
             return fact;
         })
@@ -57,11 +57,11 @@ async function randomCatFact() {
 
 async function randomDogFact() {
     //https://dog-api.kinduff.com/api/facts
-    let url = "https://dog-api.kinduff.com/api/facts";
+    const url = "https://dog-api.kinduff.com/api/facts";
 
     return await axios.get(url)
         .then(function(response) {
-            let fact = response.data.facts[0];
+            const fact = response.data.facts[0];
             logger.info("Dog Fact: " + fact);
             return fact;
         })
@@ -77,20 +77,20 @@ async function randomDogFact() {
 
 async function randomPokemon() {
     //http://pokeapi.co/api/v2/pokemon/NUMBER (811 max)
-    let random = Math.floor(Math.random() * 721) + 1,
+    const random = Math.floor(Math.random() * 721) + 1,
         url = "http://pokeapi.co/api/v2/pokemon/" + random + "/";
 
     return await axios.get(url)
         .then(function(response) {
-            let name = response.data.name;
-            let nameCap = toTitleCase(name);
-            let info = "http://pokemondb.net/pokedex/" + name;
+            const name = response.data.name;
+            const nameCap = toTitleCase(name);
+            const info = "http://pokemondb.net/pokedex/" + name;
 
-            let moveset = response.data.moves;
-            let movedata = moveset[Math.floor(Math.random() * moveset.length)];
-            let move = movedata["move"];
-            let movename = move.name;
-            let text = "I choose you " + nameCap + "! " + nameCap + " used " + movename + "! " + info;
+            const moveset = response.data.moves;
+            const movedata = moveset[Math.floor(Math.random() * moveset.length)];
+            const move = movedata["move"];
+            const movename = move.name;
+            const text = "I choose you " + nameCap + "! " + nameCap + " used " + movename + "! " + info;
 
             logger.info("Pokemon: " + text);
             return text;
@@ -107,7 +107,7 @@ async function randomPokemon() {
 
 async function numberTrivia() {
     // http://numbersapi.com/random
-    let url = "http://numbersapi.com/random";
+    const url = "http://numbersapi.com/random";
 
     return await axios.get(url)
         .then(function(response) {
@@ -125,7 +125,7 @@ async function numberTrivia() {
 }
 
 async function dadJoke() {
-    let options = {
+    const options = {
         url: "https://icanhazdadjoke.com/",
         headers: {
             'Accept': "Application/json",
@@ -135,7 +135,7 @@ async function dadJoke() {
 
     return await axios.get(options.url, options)
         .then(function(response) {
-            let joke = response.data.joke;
+            const joke = response.data.joke;
             logger.info("Dad Joke: " + joke);
             return joke;
         })

@@ -16,14 +16,14 @@
             utilityService,
             ngToast
         ) {
-            let $ctrl = this;
+            const $ctrl = this;
 
             $ctrl.onHotkeyCapture = function(hotkey) {
                 $ctrl.hotkey.code = hotkey;
             };
 
             $ctrl.onAddVirtualButtonToHotkey = function() {
-                let button = $ctrl.virtualBtn;
+                const button = $ctrl.virtualBtn;
                 if ($ctrl.hotkey.code != null && $ctrl.hotkey.code.length !== 0) {
                     if (!$ctrl.hotkey.code.includes(button)) {
                         $ctrl.hotkey.code += "+" + button;
@@ -38,10 +38,10 @@
             };
 
             $ctrl.$onInit = function() {
-                let modalId = $ctrl.resolve.modalId;
+                const modalId = $ctrl.resolve.modalId;
                 utilityService.addSlidingModal(
                     $ctrl.modalInstance.rendered.then(() => {
-                        let modalElement = $("." + modalId).children();
+                        const modalElement = $("." + modalId).children();
                         return {
                             element: modalElement,
                             name: "Edit Hotkey",
@@ -102,7 +102,7 @@
                     return;
                 }
 
-                let action = $ctrl.isNewHotkey ? "add" : "update";
+                const action = $ctrl.isNewHotkey ? "add" : "update";
                 $ctrl.close({
                     $value: {
                         hotkey: $ctrl.hotkey,

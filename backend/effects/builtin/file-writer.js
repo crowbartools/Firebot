@@ -127,7 +127,7 @@ const fileWriter = {
    * Used to validate fields in the option template.
    */
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.filepath == null || effect.filepath === "") {
             errors.push("Please select a text file to write to.");
         }

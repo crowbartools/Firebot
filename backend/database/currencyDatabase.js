@@ -23,7 +23,7 @@ function refreshCurrencyCache() {
     if (!isViewerDBOn()) {
         return;
     }
-    let db = profileManager.getJsonDbInProfile("/currency/currency");
+    const db = profileManager.getJsonDbInProfile("/currency/currency");
     currencyCache = db.getData("/");
 }
 
@@ -36,7 +36,7 @@ function getCurrencies() {
 }
 
 function getCurrencyById(currencyId) {
-    let currencies = Object.values(currencyCache);
+    const currencies = Object.values(currencyCache);
     return currencies.find(c => c.id === currencyId);
 }
 
@@ -78,9 +78,9 @@ function adjustCurrency(user, currencyId, value, adjustType = "adjust") {
             newUserValue = (user.currency[currencyId] += parseInt(value));
         }
 
-        let db = userDatabase.getUserDb();
-        let updateDoc = {};
-        let currencyLimit = isNaN(currencyCache[currencyId].limit) ? 0 : currencyCache[currencyId].limit;
+        const db = userDatabase.getUserDb();
+        const updateDoc = {};
+        const currencyLimit = isNaN(currencyCache[currencyId].limit) ? 0 : currencyCache[currencyId].limit;
 
         // If new value would put them over the currency limit set by the user...
         // Just set them at currency limit. Otherwise add currency to what they have now.
@@ -101,7 +101,7 @@ function adjustCurrency(user, currencyId, value, adjustType = "adjust") {
             if (err) {
                 logger.error("Currency: Error setting currency on user.", err);
             } else {
-                let updateObj = {};
+                const updateObj = {};
                 updateObj[`currency:${currencyId}`] = util.commafy(valueToSet);
             }
             return resolve();
@@ -128,7 +128,7 @@ async function adjustCurrencyForUser(username, currencyId, value, adjustType = "
     username = username.trim();
 
     // Okay, it passes... let's try to add it.
-    let user = await userDatabase.getUserByUsername(username);
+    const user = await userDatabase.getUserByUsername(username);
 
     if (user !== false && user != null) {
         await adjustCurrency(user, currencyId, value, adjustType);
@@ -162,7 +162,7 @@ function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value, igno
 
         // Run our checks. Stop if we have a bad value, currency, or roles.
         value = parseInt(value);
-        if (roleIds === [] || currencyId === null || value === null || value === 0 || isNaN(value)) {
+        if (roleIds === [] || currencyId === null || value === null || (value === 0 && adjustType.toLowerCase() !== "set") || isNaN(value)) {
             return resolve();
         }
 
@@ -199,10 +199,10 @@ function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value, igno
         }
 
         // GIVE DEM BOBS.
-        let db = userDatabase.getUserDb();
+        const db = userDatabase.getUserDb();
         db.find({ online: true, _id: { $in: userIdsInRoles } }, async (err, docs) => {
             if (!err) {
-                for (let user of docs) {
+                for (const user of docs) {
                     if (user != null && (ignoreDisable || !user.disableAutoStatAccrual)) {
                         await adjustCurrency(user, currencyId, value, adjustType);
                     }
@@ -222,13 +222,13 @@ function addCurrencyToOnlineUsers(currencyId, value, ignoreDisable = false, adju
             return reject();
         }
 
-        // Don't do anything for 0 points or non numbers.
+        // Don't do anything for non numbers or 0 if we're not specifically setting a value.
         value = parseInt(value);
-        if (isNaN(value) || value === 0) {
+        if (isNaN(value) || (value === 0 && adjustType.toLowerCase() !== "set")) {
             return resolve();
         }
 
-        let db = userDatabase.getUserDb();
+        const db = userDatabase.getUserDb();
         db.find({ online: true }, async (err, docs) => {
             // If error
             if (err) {
@@ -236,7 +236,7 @@ function addCurrencyToOnlineUsers(currencyId, value, ignoreDisable = false, adju
             }
 
             // Do the loop!
-            for (let user of docs) {
+            for (const user of docs) {
                 if (user != null && user.disableActiveUserList !== true &&
                     (ignoreDisable || !user.disableAutoStatAccrual)) {
                     await adjustCurrency(user, currencyId, value, adjustType);
@@ -257,9 +257,9 @@ function adjustCurrencyForAllUsers(currencyId, value, ignoreDisable = false,
             return reject();
         }
 
-        // Don't do anything for 0 points or non numbers.
+        // Don't do anything for non numbers or 0 if we're not specifically setting a value.
         value = parseInt(value);
-        if (isNaN(value) || value === 0) {
+        if (isNaN(value) || (value === 0 && adjustType.toLowerCase() !== "set")) {
             return resolve();
         }
 
@@ -288,8 +288,8 @@ function addCurrencyToAllUsers(currencyId, value) {
     if (!isViewerDBOn()) {
         return;
     }
-    let db = userDatabase.getUserDb();
-    let updateDoc = {};
+    const db = userDatabase.getUserDb();
+    const updateDoc = {};
     updateDoc[`currency.${currencyId}`] = value;
     db.update({}, { $set: updateDoc }, { multi: true }, function(
         err
@@ -305,7 +305,7 @@ function addCurrencyToNewUser(user) {
     if (!isViewerDBOn()) {
         return;
     }
-    let currencies = getCurrencies();
+    const currencies = getCurrencies();
     Object.keys(currencies).forEach(function(currency) {
         currency = currencies[currency];
         user.currency[currency.id] = 0;
@@ -344,6 +344,43 @@ async function getUserCurrencies(usernameOrId, isUsername = false) {
     }
 
     return user.currency;
+}
+
+async function getUserCurrencyRank(currencyId, usernameOrId, isUsername = false) {
+    if (!isViewerDBOn()) {
+        return 0;
+    }
+
+    const user = isUsername ?
+        await userDatabase.getUserByUsername(usernameOrId) :
+        await userDatabase.getUserById(usernameOrId);
+
+    if (user == null) {
+        return 0;
+    }
+
+    const db = userDatabase.getUserDb();
+
+    const sortObj = {};
+    sortObj[`currency.${currencyId}`] = -1;
+
+    const projectionObj = { username: 1, displayName: 1};
+    projectionObj[`currency.${currencyId}`] = 1;
+
+    const rank = await new Promise ((resolve) => {
+        db.find({ twitch: true })
+            .sort(sortObj)
+            .projection(projectionObj)
+            .exec(function (err, docs) {
+                if (err) {
+                    logger.error("Error getting user currency rank: ", err);
+                    return resolve(0);
+                }
+                return resolve(docs.findIndex(d => d.username === user.username) + 1);
+            });
+    });
+
+    return rank;
 }
 
 function getTopCurrencyPosition(currencyId, position = 1) {
@@ -386,7 +423,7 @@ function getTopCurrencyHolders(currencyIdOrName, count, byName = false) {
             currencyId = (getCurrencyByName(currencyIdOrName)).id;
         }
 
-        let db = userDatabase.getUserDb();
+        const db = userDatabase.getUserDb();
 
         const sortObj = {};
         sortObj[`currency.${currencyId}`] = -1;
@@ -414,8 +451,8 @@ function purgeCurrencyById(currencyId) {
     if (!isViewerDBOn()) {
         return;
     }
-    let db = userDatabase.getUserDb();
-    let updateDoc = {};
+    const db = userDatabase.getUserDb();
+    const updateDoc = {};
     updateDoc[`currency.${currencyId}`] = 0;
     db.update({}, { $set: updateDoc }, { multi: true }, function(
         err
@@ -432,10 +469,10 @@ function deleteCurrencyById(currencyId) {
     if (!isViewerDBOn()) {
         return;
     }
-    let db = userDatabase.getUserDb();
+    const db = userDatabase.getUserDb();
     db.find({}, function(err, docs) {
         for (let i = 0; i < docs.length; i++) {
-            let user = docs[i];
+            const user = docs[i];
             delete user.currency[currencyId];
             db.update({ _id: user._id }, { $set: user }, {}, function(
                 err
@@ -553,6 +590,7 @@ exports.adjustCurrencyForUserById = adjustCurrencyForUserById;
 exports.addCurrencyToOnlineUsers = addCurrencyToOnlineUsers;
 exports.getUserCurrencyAmount = getUserCurrencyAmount;
 exports.getUserCurrencies = getUserCurrencies;
+exports.getUserCurrencyRank = getUserCurrencyRank;
 exports.purgeCurrencyById = purgeCurrencyById;
 exports.addCurrencyToNewUser = addCurrencyToNewUser;
 exports.refreshCurrencyCache = refreshCurrencyCache;

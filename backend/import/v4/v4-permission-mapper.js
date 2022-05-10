@@ -29,14 +29,14 @@ function mapV4RolesToMixerRoles(permissions) {
 }
 
 exports.mapV4Permissions = (permissionType, permissions) => {
-    let restrictionData = {
+    const restrictionData = {
         restrictions: [],
         mode: "all"
     };
 
     if (permissionType === "Group") {
         permissions = mapV4RolesToMixerRoles(permissions);
-        let restriction = {
+        const restriction = {
             id: uuid(),
             type: "firebot:permissions",
             mode: "roles",
@@ -45,7 +45,7 @@ exports.mapV4Permissions = (permissionType, permissions) => {
 
         restrictionData.restrictions.push(restriction);
     } else if (permissionType === "Individual") {
-        let restriction = {
+        const restriction = {
             id: uuid(),
             type: "firebot:permissions",
             mode: "viewer",

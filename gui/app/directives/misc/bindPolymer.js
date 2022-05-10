@@ -8,16 +8,16 @@ angular.module('firebotApp').
                 control: "="
             },
             compile: function bindPolymerCompile($element, $attr) {
-                let attrMap = {};
+                const attrMap = {};
 
                 // eslint-disable-next-line guard-for-in
-                for (let prop in $attr) {
-                    let dashProp = prop.
+                for (const prop in $attr) {
+                    const dashProp = prop.
                         replace(/([a-z])([A-Z])/g, '$1-$2').
                         toLowerCase();
 
                     if (angular.isString($attr[prop])) {
-                        let _match = $attr[prop].match(/\{\{\s*([\.\w]+)\s*\}\}/); // eslint-disable-line no-useless-escape
+                        const _match = $attr[prop].match(/\{\{\s*([\.\w]+)\s*\}\}/); // eslint-disable-line no-useless-escape
                         if (_match) {
                             attrMap[prop] = $parse(_match[1]);
                             if (dashProp !== prop) {
@@ -31,7 +31,7 @@ angular.module('firebotApp').
 
                     // When Polymer sees a change to the bound variable,
                     // $apply / $digest the changes here in Angular
-                    let observer = new MutationObserver(function processMutations(mutations) {
+                    const observer = new MutationObserver(function processMutations(mutations) {
                         mutations.forEach(function processMutation(mutation) {
                             let attributeName, newValue, oldValue, getter;
                             attributeName = mutation.attributeName;

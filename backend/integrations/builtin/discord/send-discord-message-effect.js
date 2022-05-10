@@ -7,7 +7,7 @@ const discord = require("./discord-message-sender");
 const frontEndCommunicator = require("../../../common/frontend-communicator");
 
 frontEndCommunicator.onAsync("getDiscordChannels", async () => {
-    let channels = [];
+    const channels = [];
     const discordIntegration = integrationManager.getIntegrationDefinitionById("discord");
     if (discordIntegration && discordIntegration.userSettings) {
         if (discordIntegration.userSettings.webhookSettings &&
@@ -71,6 +71,14 @@ module.exports = {
                                 <firebot-input input-title="Author Icon URL" model="effect.customEmbed.authorIconUrl"></firebot-input>
                             </div>
 
+                            <div style="margin-top:10px;">
+                                <firebot-input input-title="Image URL" model="effect.customEmbed.imageUrl"></firebot-input>
+                            </div>
+
+                        </div>
+
+                        <div ng-show="effect.embedType === 'channel'">
+                            <br /><b>*</b> Must be live for this to post.
                         </div>
 
                         <div ng-show="effect.embedType === 'channel'">

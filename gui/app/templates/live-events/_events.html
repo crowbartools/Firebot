@@ -48,20 +48,14 @@
               ></span>
               <ul class="dropdown-menu" uib-dropdown-menu>
                 <li ng-click="copyEvents('mainevents')">
-                  <a href
-                    ><i class="far fa-copy mr-4"></i> Copy
-                    events</a
-                  >
+                  <a href><i class="far fa-copy mr-4"></i> Copy events</a>
                 </li>
                 <li
                   ng-class="{'disabled': !hasCopiedEvents()}"
                   ng-click="pasteEvents('mainevents')"
                   ng-disabled="!hasCopiedEvents()"
                 >
-                  <a href
-                    ><i class="far fa-paste mr-4"></i>
-                    Paste event(s)</a
-                  >
+                  <a href><i class="far fa-paste mr-4"></i> Paste event(s)</a>
                 </li>
               </ul>
             </div>
@@ -69,12 +63,8 @@
         </div>
 
         <div
-        class="mt-6 mb-4 mx-0"
-          style="
-            height: 2px;
-            background: #3e3f40;
-            flex-shrink: 0;
-          "
+          class="mt-6 mb-4 mx-0"
+          style="height: 2px; background: #3e3f40; flex-shrink: 0"
         ></div>
 
         <div
@@ -125,137 +115,42 @@
               ></span>
               <button
                 class="noselect clickable text-3xl mx-5"
-                style="background: transparent;border: none;"
+                style="background: transparent; border: none"
                 context-menu="eventSetMenuOptions(group)"
                 context-menu-class="angular-context-menu"
                 context-menu-on="click"
                 context-menu-orientation="left"
-                ><i class="fal fa-ellipsis-v"></i
-              ></button>
+              >
+                <i class="fal fa-ellipsis-v"></i>
+              </button>
             </div>
           </div>
         </div>
       </div>
 
-      <div style="width: 100%; overflow-y: scroll">
-        <div>
-          <scroll-sentinel element-class="events-sticky"></scroll-sentinel>
-          <div class="events-tab-header events-sticky sticky-top">
-            <div>
-              <button
-                ng-click="showAddOrEditEventModal()"
-                class="btn btn-primary"
-              >
-                <i class="fas fa-plus-circle mr-2"></i> New
-                Event
-              </button>
-              <button
-                ng-click="simulateEventsByType()"
-                class="btn btn-default"
-              >
-                <i class="fas fa-play-circle ml-2"></i> Simulate
-                Event
-              </button>
-            </div>
-
-            <div
-              ng-hide="getSelectedEvents().length < 1"
-              style="display: flex; flex-direction: row; align-items: center"
-            >
-              <sort-tag-dropdown context="events" class="mr-4" />
-
-              <searchbar
-                placeholder-text="Search Events"
-                query="eventSearch"
-                style="flex-basis: 250px"
-              ></searchbar>
-            </div>
-          </div>
-
-          <div class="pt-0 px-8 pb-8">
-            <div
-              ng-if="getSelectedEvents().length < 1"
-              class="noselect muted mt-5 ml-5 mb-0 mr-0"
-            >
-              <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span>
-              <span class="ml-3">No events saved. You should make one! :)</span>
-            </div>
-
-            <div
-              ng-if="getSelectedEvents().length > 0 && filteredEvents && filteredEvents.length < 1"
-              class="noselect muted mt-5 ml-5 mb-0 mr-0"
-            >
-              <span class="ml-3">No events found.</span>
-            </div>
-
-            <table
-              class="fb-table"
-              ng-hide="getSelectedEvents().length < 1 || (filteredEvents && filteredEvents.length < 1)"
-            >
-              <thead>
-                <tr style="font-size: 11px">
-                  <th style="width: 5%"></th>
-                  <th class="muted"><i class="fas fa-tag"></i> NAME</th>
-                  <th class="muted">
-                    <i class="fas fa-exclamation-square"></i> TYPE
-                  </th>
-                  <th class="muted"><i class="fas fa-tag"></i> TAGS</th>
-                  <th style="width: 210px"></th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  ng-repeat="event in (getSelectedEvents() | sortTagSearch:sts.getSelectedSortTag('events') | filter:eventSearch) as filteredEvents track by event.id"
-                  context-menu="eventMenuOptions(event)"
-                  context-menu-class="angular-context-menu"
-                >
-                  <td style="text-align: center">
-                    <span
-                      style="color: #16809c; font-size: 20px"
-                      ng-click="fireEventManually(event)"
-                      uib-tooltip="Test Effects"
-                      tooltip-append-to-body="true"
-                    >
-                      <i class="fas fa-play-circle clickable"></i>
-                    </span>
-                  </td>
-                  <td>{{event.name ? event.name : "Unnamed"}}</td>
-                  <td>
-                    {{event.eventId && event.sourceId ?
-                    friendlyEventTypeName(event.sourceId, event.eventId) : "No
-                    Type"}}
-                  </td>
-                  <td style="max-width: 180px; min-width: 100px" class="py-4">
-                    <sort-tags-row item="event" context="'events'" on-update="es.saveEvent(event);"></sort-tags-row>
-                  </td>
-                  <td>
-                    <div>
-                      <span
-                        class="status-dot"
-                        ng-class="{'active': getEventActiveStatus(event.active), 'notactive': !getEventActiveStatus(event.active)}"
-                      ></span>
-                      {{getEventActiveStatusDisplay(event.active)}}
-                    </div>
-                  </td>
-                  <td>
-                    <div style="text-align: right; margin-left: auto">
-                      <button
-                        class="noselect clickable text-5xl"
-                        style="background: transparent;border: none;"
-                        context-menu="eventMenuOptions(event)"
-                        context-menu-class="angular-context-menu"
-                        context-menu-on="click"
-                        context-menu-orientation="left"
-                        ><i class="fal fa-ellipsis-h"></i
-                      ></button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+      <div style="width: 100%; height: 100%">
+        <firebot-item-table
+          items="getSelectedEvents()"
+          on-items-update="updateEventsForCurrentGroup(items)"
+          headers="tableConfig"
+          sort-tag-context="events"
+          orderable="true"
+          add-new-button-text="New Event"
+          on-add-new-clicked="showAddOrEditEventModal()"
+          context-menu-options="eventMenuOptions(item)"
+          no-data-message="No events saved. You should make one! :)"
+          none-found-message="No events found."
+          search-placeholder="Search events"
+          test-button="true"
+          on-test-button-clicked="fireEventManually(itemId)"
+          status-field="active"
+        >
+          <fb-item-table-toolbar>
+            <button ng-click="simulateEventsByType()" class="btn btn-default">
+              <i class="fas fa-play-circle ml-2"></i> Simulate Event
+            </button>
+          </fb-item-table-toolbar>
+        </firebot-item-table>
       </div>
     </div>
   </div>

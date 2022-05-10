@@ -11,10 +11,10 @@ module.exports = {
     valueType: "number",
     predicate: (filterSettings, eventData) => {
 
-        let { comparisonType, value } = filterSettings;
-        let { eventMeta } = eventData;
+        const { comparisonType, value } = filterSettings;
+        const { eventMeta } = eventData;
 
-        let quantity = eventMeta.quantity;
+        const quantity = eventMeta.quantity;
 
         if (quantity === undefined || quantity === null) {
             return false;

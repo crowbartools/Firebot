@@ -14,7 +14,7 @@
                         quote: () => quote
                     },
                     closeCallback: (data) => {
-                        let {action, quote} = data;
+                        const {action, quote} = data;
                         switch (action) {
                         case "add":
                             quotesService.addQuote(quote);
@@ -109,7 +109,7 @@
                     cellController: () => {}
                 },
                 {
-                    name: "GAME",
+                    name: "CATEGORY/GAME",
                     icon: "fa-gamepad-alt",
                     dataField: "game",
                     sortable: true,
@@ -121,7 +121,7 @@
                         'width': '175px',
                         'padding': '0px 3px'
                     },
-                    cellTemplate: `<div style="width:175px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{data.game || "Unknown Game"}}</div>`,
+                    cellTemplate: `<div style="width:175px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{data.game || "Unknown Category/Game"}}</div>`,
                     cellController: () => {}
                 },
                 {

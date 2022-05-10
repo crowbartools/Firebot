@@ -3,7 +3,7 @@
 const { EffectTrigger } = require("../../../shared/effect-constants");
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
-let triggers = {};
+const triggers = {};
 triggers[EffectTrigger.EVENT] = ["twitch:bits-badge-unlocked"];
 triggers[EffectTrigger.MANUAL] = true;
 
@@ -16,7 +16,7 @@ const model = {
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {
-        let badgeTier = trigger.metadata.eventData.badgeTier || 0;
+        const badgeTier = trigger.metadata.eventData.badgeTier || 0;
         return badgeTier;
     }
 };

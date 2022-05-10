@@ -38,7 +38,7 @@
             modalInstance: "<"
         },
         controller: function($timeout, $q, logger, backupService, listenerService) {
-            let $ctrl = this;
+            const $ctrl = this;
 
             $ctrl.restoreComplete = false;
 
@@ -64,7 +64,7 @@
 
                 $q(async function(resolve) {
                     try {
-                        let restoreResult = await backupService.restoreBackup($ctrl.backupFilePath);
+                        const restoreResult = await backupService.restoreBackup($ctrl.backupFilePath);
 
                         if (restoreResult.success) {
                             $ctrl.restoreComplete = true;

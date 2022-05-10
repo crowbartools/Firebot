@@ -7,7 +7,7 @@
     angular
         .module("firebotApp")
         .factory("objectCopyHelper", function(backendCommunicator) {
-            let service = {};
+            const service = {};
 
             let copiedEffects = [];
 
@@ -16,8 +16,8 @@
             service.copiedEffectsCount = () => copiedEffects.length;
 
             service.copyEffects = function(effects) {
-                let clonedEffects = [];
-                for (let effect of effects) {
+                const clonedEffects = [];
+                for (const effect of effects) {
                     clonedEffects.push(JSON.parse(angular.toJson(effect)));
                 }
                 copiedEffects = clonedEffects;
@@ -42,14 +42,14 @@
                     });
             };
 
-            let copiedObjectsCache = {};
+            const copiedObjectsCache = {};
 
             service.copyAndReplaceIds = function(object) {
-                let copiedObject = JSON.parse(angular.toJson(object));
-                let keys = Object.keys(copiedObject);
+                const copiedObject = JSON.parse(angular.toJson(object));
+                const keys = Object.keys(copiedObject);
 
-                for (let key of keys) {
-                    let value = copiedObject[key];
+                for (const key of keys) {
+                    const value = copiedObject[key];
 
                     if (key === "id") {
                         copiedObject[key] = uuid();
@@ -70,7 +70,7 @@
             service.hasObjectCopied = (key) => copiedObjectsCache[key] != null;
 
             service.getCopiedObject = (key) => {
-                let object = copiedObjectsCache[key];
+                const object = copiedObjectsCache[key];
                 if (!object) {
                     return null;
                 }

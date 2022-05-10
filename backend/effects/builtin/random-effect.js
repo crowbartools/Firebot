@@ -70,8 +70,8 @@ const randomEffect = {
     onTriggerEvent: event => {
         return new Promise(resolve => {
 
-            let effect = event.effect;
-            let effectList = effect.effectList;
+            const effect = event.effect;
+            const effectList = effect.effectList;
 
             if (!effectList || !effectList.list) {
                 return resolve(true);
@@ -79,7 +79,7 @@ const randomEffect = {
 
             let chosenEffect = null;
 
-            let dontRepeat = effect.dontRepeat;
+            const dontRepeat = effect.dontRepeat;
 
             // if we shouldnt repeat, we need to use queues
             if (dontRepeat) {
@@ -88,7 +88,7 @@ const randomEffect = {
                     arr2.every(arr2Item => arr1.includes(arr2Item));
 
                 // get array of effect ids in this random effect
-                let newEffectIds = effectList.list.map(e => e.id);
+                const newEffectIds = effectList.list.map(e => e.id);
 
                 // try to find queue in cache
                 let cacheEntry = randomQueuesCache[effect.id];
@@ -104,7 +104,7 @@ const randomEffect = {
                 } else {
                     // theres an existing queue in the cache, check if the effect list has changed at all since last time
                     // and if so, rebuild the queue
-                    let effectsHaventChanged = containsAll(newEffectIds, cacheEntry.currentEffectIds);
+                    const effectsHaventChanged = containsAll(newEffectIds, cacheEntry.currentEffectIds);
                     if (!effectsHaventChanged) {
                         cacheEntry.currentEffectIds = newEffectIds;
                         cacheEntry.queue = util.shuffleArray(newEffectIds);
@@ -126,13 +126,13 @@ const randomEffect = {
                 }
 
                 // gets the next effect from beginning of queue and removes it
-                let chosenEffectId = cacheEntry.queue.shift();
+                const chosenEffectId = cacheEntry.queue.shift();
                 cacheEntry.lastEffectId = chosenEffectId;
                 chosenEffect = effectList.list.find(e => e.id === chosenEffectId);
 
             } else {
                 // we dont care about repeats, just get an effect via random index
-                let randomIndex = util.getRandomInt(0, effectList.list.length - 1);
+                const randomIndex = util.getRandomInt(0, effectList.list.length - 1);
                 chosenEffect = effectList.list[randomIndex];
 
                 //removed any cached queues
@@ -145,7 +145,7 @@ const randomEffect = {
                 return resolve(true);
             }
 
-            let processEffectsRequest = {
+            const processEffectsRequest = {
                 trigger: event.trigger,
                 effects: {
                     id: effectList.id,

@@ -10,7 +10,7 @@
             $scope.viewerTablePageSize = settingsService.getViewerListPageSize();
 
             $scope.showUserDetailsModal = (userId) => {
-                let closeFunc = () => {
+                const closeFunc = () => {
                     viewersService.updateViewers();
                 };
                 utilityService.showModal({
@@ -117,7 +117,7 @@
 
             $scope.currencies = currencyService.getCurrencies();
 
-            for (let currency of $scope.currencies) {
+            for (const currency of $scope.currencies) {
                 $scope.headers.push({
                     name: currency.name.toUpperCase(),
                     icon: "fa-money-bill",

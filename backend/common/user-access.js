@@ -16,11 +16,11 @@ const followCache = new NodeCache({ stdTTL: 10, checkperiod: 10 });
 async function userFollowsChannels(username, channelNames) {
     let userfollowsAllChannels = true;
 
-    for (let channelName of channelNames) {
+    for (const channelName of channelNames) {
         let userFollowsChannel = false;
 
         // check cache first
-        let cachedFollow = followCache.get(`${username}:${channelName}`);
+        const cachedFollow = followCache.get(`${username}:${channelName}`);
         if (cachedFollow !== undefined) {
             userFollowsChannel = cachedFollow;
         } else {

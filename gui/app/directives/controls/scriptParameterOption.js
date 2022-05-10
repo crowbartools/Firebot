@@ -46,7 +46,7 @@
        <hr ng-if="$ctrl.metadata.showBottomHr" style="margin-top:10px; margin-bottom:15px;" />
        `,
         controller: function() {
-            let ctrl = this;
+            const ctrl = this;
 
             //If there is no value, supply the default.
             ctrl.$onInit = function() {

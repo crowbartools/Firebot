@@ -20,7 +20,7 @@
             connectionService,
             integrationService
         ) {
-            let ctrl = this;
+            const ctrl = this;
 
             ctrl.connectionIcon = "";
             ctrl.connectionStatus = ""; // connected, disconnected, warning
@@ -53,7 +53,7 @@
             };
 
             function setBubbleClasses() {
-                let connectionStatus = ctrl.connectionStatus;
+                const connectionStatus = ctrl.connectionStatus;
 
                 ctrl.bubbleClass = connectionStatus + " animated bounceIn";
 
@@ -115,7 +115,7 @@
                         if (count !== 0) {
                             intTooltip += "<br/>";
                         }
-                        let connectionStatus = i.connected ? "Connected" : "Disconnected";
+                        const connectionStatus = i.connected ? "Connected" : "Disconnected";
                         intTooltip += `<b>${i.name}</b>: ${connectionStatus}`;
                         count++;
                     });

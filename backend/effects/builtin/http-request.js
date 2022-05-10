@@ -31,7 +31,7 @@ const effect = {
     globalSettings: {},
     optionsTemplate: `
     <eos-container header="URL">
-        <firebot-input model="effect.url" placeholder-text="Enter url"></firebot-input>
+        <firebot-input model="effect.url" placeholder-text="Enter url" menu-position="below"></firebot-input>
     </eos-container>
 
     <eos-container header="Method" pad-top="true">
@@ -241,12 +241,16 @@ const effect = {
             }
         }
 
+        const sendBodyData = effect.method.toLowerCase() === "post" ||
+            effect.method.toLowerCase() === "put" ||
+            effect.method.toLowerCase() === "patch";
+
         try {
             const response = await axios({
                 method: effect.method.toLowerCase(),
                 url: effect.url,
                 headers,
-                data: bodyData
+                data: sendBodyData === true ? bodyData : null
             });
 
             if (effect.options.putResponseInVariable) {

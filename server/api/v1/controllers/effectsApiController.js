@@ -8,7 +8,7 @@ exports.getEffects = function(req, res) {
     let effectDefs = effectsManager.getEffectDefinitions();
 
     if (req.query.trigger) {
-        effectDefs = effectDefs.filter(e => e.triggers == null || e.triggers[req.query.trigger]);
+        effectDefs = effectDefs.filter(effect => effect.triggers == null || effect.triggers[req.query.trigger]);
     }
 
     res.json(effectDefs);
@@ -55,6 +55,27 @@ exports.runEffects = async function(req, res) {
     }
 };
 
+exports.getPresetLists = async function(req, res) {
+    const presetLists = presetEffectListManager.getAllItems();
+
+    if (presetLists == null) {
+        return res.status(500).send({
+            status: "error",
+            message: "Unknown error getting preset effect lists"
+        });
+    }
+
+    const formattedPresetLists = presetLists.map(presetList => {
+        return {
+            id: presetList.id,
+            name: presetList.name,
+            args: presetList.args.map(arg => arg.name)
+        };
+    });
+
+    return res.json(formattedPresetLists);
+};
+
 exports.runPresetList = async function(req, res) {
     const presetListId = req.params.presetListId;
 
@@ -76,10 +97,9 @@ exports.runPresetList = async function(req, res) {
     const body = req.body || {};
     const query = req.query || {};
     let args, username;
-    
+
     // GET
-    if (req.method === "GET")
-    {
+    if (req.method === "GET") {
         username = query.username;
         args = query;
 
@@ -87,7 +107,7 @@ exports.runPresetList = async function(req, res) {
     } else if (req.method === "POST") {
         username = body.username;
         args = body.args;
-        
+
     // Not GET or POST
     } else {
         return res.status(404).send({ status: "error", message: "Invalid request method" });

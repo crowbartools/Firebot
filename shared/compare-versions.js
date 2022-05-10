@@ -16,7 +16,7 @@
 */
 const semverRegex = /^v?(\d+)(?:[.](\d+))?(?:[.](\d+))?(?:-([a-z]*)[\W]?([\d]*))?$/i;
 
-let UpdateType = {
+const UpdateType = {
     NONE: "none",
     PREVIOUS_VERSION: "previousversion", // 1.0.0 -> 1.1.0-beta,
     PRERELEASE: "prerelease", // 1.0.0 -> 1.1.0-beta
@@ -37,7 +37,7 @@ function validate(version) {
 }
 
 function parseVersion(version) {
-    let elements = version.match(semverRegex);
+    const elements = version.match(semverRegex);
     return {
         major: +elements[1],
         minor: elements[2] ? +elements[2] : 0,
@@ -52,12 +52,12 @@ function compareVersions(newVersion, currentVersion) {
 
     let updateType = UpdateType.NONE;
 
-    let pNewVersion = parseVersion(newVersion);
-    let pCurrentVersion = parseVersion(currentVersion);
+    const pNewVersion = parseVersion(newVersion);
+    const pCurrentVersion = parseVersion(currentVersion);
 
-    let majorsAreEqual = pNewVersion.major === pCurrentVersion.major;
-    let minorsAreEqual = pNewVersion.minor === pCurrentVersion.minor;
-    let patchesAreEqual = pNewVersion.patch === pCurrentVersion.patch;
+    const majorsAreEqual = pNewVersion.major === pCurrentVersion.major;
+    const minorsAreEqual = pNewVersion.minor === pCurrentVersion.minor;
+    const patchesAreEqual = pNewVersion.patch === pCurrentVersion.patch;
 
     // check if previous version
     if (pNewVersion.major < pCurrentVersion.major ||

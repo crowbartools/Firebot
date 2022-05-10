@@ -13,7 +13,7 @@ class ConditionManager extends EventEmitter {
     }
 
     registerConditionType(conditionType) {
-        let idConflict = this._registeredConditionTypes.some(
+        const idConflict = this._registeredConditionTypes.some(
             ct => ct.id === conditionType.id
         );
 
@@ -41,10 +41,10 @@ class ConditionManager extends EventEmitter {
 
     async runConditions(conditionData, triggerData) {
         if (conditionData != null && conditionData.conditions != null) {
-            let conditions = JSON.parse(JSON.stringify(conditionData.conditions));
+            const conditions = JSON.parse(JSON.stringify(conditionData.conditions));
 
             let didPass = conditionData.mode !== "inclusive";
-            for (let condition of conditions) {
+            for (const condition of conditions) {
                 const conditionType = this.getConditionTypeById(condition.type);
                 if (conditionType) {
                     try {
@@ -65,7 +65,7 @@ class ConditionManager extends EventEmitter {
                             }
                         }
 
-                        let successful = await conditionType.predicate(condition, triggerData);
+                        const successful = await conditionType.predicate(condition, triggerData);
 
                         if (conditionData.mode === "inclusive") {
                             if (successful) {
@@ -106,7 +106,7 @@ frontendCommunicator.on("getConditionTypes", (trigger) => {
                     return true;
                 }
 
-                let conditionTrigger = c.triggers[trigger.type];
+                const conditionTrigger = c.triggers[trigger.type];
                 if (conditionTrigger === true) {
                     return true;
                 }

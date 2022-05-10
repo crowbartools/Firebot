@@ -4,7 +4,7 @@
 
 (function() {
 
-    let uuidv1 = require("uuid/v1");
+    const uuidv1 = require("uuid/v1");
 
     angular.module("firebotApp").component("addOrEditEventModal", {
         template:
@@ -79,7 +79,7 @@
             modalInstance: "<"
         },
         controller: function($scope, utilityService, ngToast) {
-            let $ctrl = this;
+            const $ctrl = this;
 
             $ctrl.isNewEvent = true;
 
@@ -113,10 +113,10 @@
                     $ctrl.event = JSON.parse(angular.toJson($ctrl.resolve.event));
                 }
 
-                let modalId = $ctrl.resolve.modalId;
+                const modalId = $ctrl.resolve.modalId;
                 utilityService.addSlidingModal(
                     $ctrl.modalInstance.rendered.then(() => {
-                        let modalElement = $("." + modalId).children();
+                        const modalElement = $("." + modalId).children();
                         return {
                             element: modalElement,
                             name: "Edit Event",

@@ -56,7 +56,7 @@ const chat = {
         }
     },
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.selectedEventGroupId == null) {
             errors.push("Please select an event set.");
         }

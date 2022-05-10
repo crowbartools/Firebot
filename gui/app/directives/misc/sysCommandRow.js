@@ -72,7 +72,7 @@
       </div>
     `,
         controller: function(utilityService, commandsService, listenerService, viewerRolesService) {
-            let $ctrl = this;
+            const $ctrl = this;
 
             $ctrl.$onInit = function() {};
 
@@ -106,7 +106,7 @@
 
             $ctrl.getPermissionType = (command, isSub) => {
 
-                let permissions = command.restrictionData && command.restrictionData.restrictions &&
+                const permissions = command.restrictionData && command.restrictionData.restrictions &&
                   command.restrictionData.restrictions.find(r => r.type === "firebot:permissions");
 
                 if (permissions) {
@@ -125,12 +125,12 @@
 
             $ctrl.getPermissionTooltip = (command, isSub) => {
 
-                let permissions = command.restrictionData && command.restrictionData.restrictions &&
+                const permissions = command.restrictionData && command.restrictionData.restrictions &&
                   command.restrictionData.restrictions.find(r => r.type === "firebot:permissions");
 
                 if (permissions) {
                     if (permissions.mode === "roles") {
-                        let roleIds = permissions.roleIds;
+                        const roleIds = permissions.roleIds;
                         let output = "None selected";
                         if (roleIds.length > 0) {
                             output = roleIds
@@ -151,7 +151,7 @@
             };
 
             $ctrl.openEditSystemCommandModal = function() {
-                let cmd = $ctrl.command;
+                const cmd = $ctrl.command;
 
                 utilityService.showModal({
                     component: "editSystemCommandModal",
@@ -160,7 +160,7 @@
                         command: () => cmd
                     },
                     closeCallback: resp => {
-                        let action = resp.action;
+                        const action = resp.action;
                         if (action === "save") {
                             commandsService.saveSystemCommandOverride(resp.command);
                         } else if (action === "reset") {

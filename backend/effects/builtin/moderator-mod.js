@@ -38,7 +38,7 @@ const model = {
     `,
     optionsController: () => {},
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.action == null) {
             errors.push("Please choose an action.");
         }

@@ -21,7 +21,7 @@ const model = {
         </eos-container>
     `,
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.delay == null || effect.delay.length < 1) {
             errors.push("Please input a delay duration.");
         }
@@ -29,7 +29,7 @@ const model = {
     },
     onTriggerEvent: event => {
         return new Promise(resolve => {
-            let { effect } = event;
+            const { effect } = event;
 
             // wait for the specified time before resolving.
             setTimeout(() => {

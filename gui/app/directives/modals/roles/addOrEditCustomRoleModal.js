@@ -2,7 +2,7 @@
 
 (function() {
 
-    let uuidv1 = require("uuid/v1");
+    const uuidv1 = require("uuid/v1");
 
     angular.module("firebotApp").component("addOrEditCustomRoleModal", {
         template: `
@@ -64,7 +64,7 @@
             modalInstance: "<"
         },
         controller: function($scope, ngToast, utilityService) {
-            let $ctrl = this;
+            const $ctrl = this;
 
             $ctrl.isNewRole = true;
 
@@ -121,10 +121,10 @@
                     $ctrl.isNewRole = false;
                 }
 
-                let modalId = $ctrl.resolve.modalId;
+                const modalId = $ctrl.resolve.modalId;
                 utilityService.addSlidingModal(
                     $ctrl.modalInstance.rendered.then(() => {
-                        let modalElement = $("." + modalId).children();
+                        const modalElement = $("." + modalId).children();
                         return {
                             element: modalElement,
                             name: "Add/Edit Custom Role",

@@ -15,7 +15,7 @@
             modalInstance: "<"
         },
         controller: function($scope, utilityService, commandsService, ngToast, settingsService) {
-            let $ctrl = this;
+            const $ctrl = this;
 
             $ctrl.command = {
                 active: true,
@@ -135,10 +135,10 @@
                     $ctrl.command.aliases = [];
                 }
 
-                let modalId = $ctrl.resolve.modalId;
+                const modalId = $ctrl.resolve.modalId;
                 utilityService.addSlidingModal(
                     $ctrl.modalInstance.rendered.then(() => {
-                        let modalElement = $("." + modalId).children();
+                        const modalElement = $("." + modalId).children();
                         return {
                             element: modalElement,
                             name: "Edit Command",
@@ -248,7 +248,7 @@
                 }
 
 
-                let action = $ctrl.isNewCommand ? "add" : "update";
+                const action = $ctrl.isNewCommand ? "add" : "update";
                 $ctrl.close({
                     $value: {
                         command: $ctrl.command,

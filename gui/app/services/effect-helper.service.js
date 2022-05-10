@@ -8,14 +8,14 @@
             listenerService,
             backendCommunicator
         ) {
-            let service = {};
+            const service = {};
 
             service.getEffectDefinition = function(id) {
                 if (id == null) {
                     return null;
                 }
 
-                let effectDef = listenerService.fireEventSync(
+                const effectDef = listenerService.fireEventSync(
                     "getEffectDefinition",
                     id
                 );
@@ -24,7 +24,7 @@
                     return null;
                 }
 
-                let def = {
+                const def = {
                     definition: effectDef.definition,
                     optionsTemplate: effectDef.optionsTemplate,
                     optionsTemplateUrl: effectDef.optionsTemplateUrl,
@@ -36,7 +36,7 @@
             };
 
             service.getAllEffectDefinitions = async function() {
-                let effectDefs = (await backendCommunicator
+                const effectDefs = (await backendCommunicator
                     .fireEventAsync("getAllEffectDefinitions")
                 ).map(e => e.definition);
 

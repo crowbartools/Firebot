@@ -32,7 +32,7 @@
                 </div>
                 `,
             controller: function($scope) {
-                let $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.$onInit = () => {
                     if ($ctrl.initiallyOpen !== undefined) {

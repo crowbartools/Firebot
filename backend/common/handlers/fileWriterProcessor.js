@@ -4,7 +4,7 @@ const fs = require("fs-extra");
 const logger = require("../../logwrapper");
 
 function doesTextExistInFile(filepath, text) {
-    let contents = fs.readFileSync(filepath, "utf8");
+    const contents = fs.readFileSync(filepath, "utf8");
     return contents.includes(text);
 }
 
@@ -13,7 +13,7 @@ const doesFileExist = (filepath) => {
 };
 
 function removeLines(filepath, lines = []) {
-    let contents = fs.readFileSync(filepath, "utf8");
+    const contents = fs.readFileSync(filepath, "utf8");
 
     return contents
         .split('\n')
@@ -23,7 +23,7 @@ function removeLines(filepath, lines = []) {
 }
 
 function removeLinesWithText(filepath, text) {
-    let contents = fs.readFileSync(filepath, "utf8");
+    const contents = fs.readFileSync(filepath, "utf8");
     return contents
         .split('\n')
         .filter(l => l != null && l.trim() !== "")
@@ -32,7 +32,7 @@ function removeLinesWithText(filepath, text) {
 }
 
 function replaceLines(filepath, lineNumbers = [], replacement) {
-    let contents = fs.readFileSync(filepath, "utf8");
+    const contents = fs.readFileSync(filepath, "utf8");
 
     return contents
         .split('\n')
@@ -44,7 +44,7 @@ function replaceLines(filepath, lineNumbers = [], replacement) {
 }
 
 function replaceLinesWithText(filepath, text, replacement) {
-    let contents = fs.readFileSync(filepath, "utf8");
+    const contents = fs.readFileSync(filepath, "utf8");
     return contents
         .split('\n')
         .filter(l => l != null && l.trim() !== "")
@@ -78,7 +78,7 @@ exports.run = async effect => {
 
             if (effect.deleteLineMode === 'lines' || effect.deleteLineMode == null) {
 
-                let lines = effect.lineNumbers
+                const lines = effect.lineNumbers
                     .split(",")
                     .map(l => l.trim())
                     .filter(l => !isNaN(l))
@@ -94,7 +94,7 @@ exports.run = async effect => {
 
             if (effect.replaceLineMode === 'lineNumbers' || effect.replaceLineMode == null) {
 
-                let lines = effect.lineNumbers
+                const lines = effect.lineNumbers
                     .split(",")
                     .map(l => l.trim())
                     .filter(l => !isNaN(l))

@@ -37,12 +37,12 @@ module.exports = {
     },
     predicate: (filterSettings, eventData) => {
 
-        let { value } = filterSettings;
-        let { eventMeta } = eventData;
+        const { value } = filterSettings;
+        const { eventMeta } = eventData;
 
-        let filterGiftValue = value === "true";
+        const filterGiftValue = value === "true";
 
-        let isGift = eventMeta.giftee != null;
+        const isGift = eventMeta.giftee != null;
 
         return filterGiftValue === isGift;
     }

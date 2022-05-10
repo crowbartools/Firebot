@@ -8,13 +8,14 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
     angular
         .module("firebotApp")
         .factory("viewerRolesService", function(backendCommunicator) {
-            let service = {};
+            const service = {};
 
             let customRoles = {};
-            let teamRoles = {};
+
+            let teamRoles = [];
 
             service.loadCustomRoles = async function() {
-                let roles = await backendCommunicator.fireEventAsync("getCustomRoles");
+                const roles = await backendCommunicator.fireEventAsync("getCustomRoles");
                 if (roles != null) {
                     customRoles = roles;
                 }
@@ -38,7 +39,7 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
                     return;
                 }
 
-                let role = service.getCustomRole(roleId);
+                const role = service.getCustomRole(roleId);
                 if (!role) {
                     return;
                 }
@@ -56,7 +57,7 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
                     return;
                 }
 
-                let role = service.getCustomRole(roleId);
+                const role = service.getCustomRole(roleId);
                 if (!role) {
                     return;
                 }

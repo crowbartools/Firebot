@@ -7,8 +7,8 @@ const twitchApi = require("../../twitch-api/api");
 const model = {
     definition: {
         id: "firebot:streamgame",
-        name: "Set Stream Game",
-        description: "Set the stream game.",
+        name: "Set Stream Category",
+        description: "Set the stream category/game.",
         icon: "fad fa-gamepad",
         categories: [EffectCategory.COMMON, EffectCategory.MODERATION, EffectCategory.TWITCH],
         dependencies: []
@@ -16,21 +16,21 @@ const model = {
     optionsTemplate: `
         <eos-container header="Mode">
             <div class="controls-fb" style="padding-bottom: 5px;">
-                <label class="control-fb control--radio">Set specific game  <tooltip text="'Search for a specific game to set.'"></tooltip>
+                <label class="control-fb control--radio">Set specific category  <tooltip text="'Search for a specific category to set.'"></tooltip>
                     <input type="radio" ng-model="effect.mode" value="specific"/>
                     <div class="control__indicator"></div>
                 </label>
-                <label class="control-fb control--radio">Custom game <tooltip text="'Input any name and Firebot will set the closest game it finds when effect is ran (useful with replace variables).'"></tooltip>
+                <label class="control-fb control--radio">Custom category <tooltip text="'Input any name and Firebot will set the closest category it finds when effect is ran (useful with replace variables).'"></tooltip>
                     <input type="radio" ng-model="effect.mode" value="custom"/>
                     <div class="control__indicator"></div>
                 </label>
             </div>
         </eos-container>
 
-        <eos-container header="Specific Game" pad-top="true" ng-if="effect.mode === 'specific'" >
+        <eos-container header="Specific Category" pad-top="true" ng-if="effect.mode === 'specific'" >
 
             <ui-select ng-model="selectedGame" theme="bootstrap" spinner-enabled="true" on-select="gameSelected($item)" style="margin-bottom:10px;">
-                <ui-select-match placeholder="Search for game">
+                <ui-select-match placeholder="Search for category/game">
                     <div style="height: 21px; display:flex; flex-direction: row; align-items: center;">
                         <img style="height: 21px; width: 21px; border-radius: 5px; margin-right:5px;" ng-src="{{$select.selected.boxArtUrl}}">
                         <div style="font-weight: 100;font-size: 17px;">{{$select.selected.name}}</div>
@@ -46,8 +46,8 @@ const model = {
 
         </eos-container>
 
-        <eos-container header="Custom Game" pad-top="true" ng-if="effect.mode === 'custom'">
-            <input ng-model="effect.gameName" class="form-control" type="text" placeholder="Enter game name" replace-variables>
+        <eos-container header="Custom Category" pad-top="true" ng-if="effect.mode === 'custom'">
+            <input ng-model="effect.gameName" class="form-control" type="text" placeholder="Enter category/game name" replace-variables>
         </eos-container>
     `,
     optionsController: ($scope, $q, backendCommunicator) => {
@@ -80,11 +80,11 @@ const model = {
         };
     },
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.mode === "specific" && (effect.gameId == null || effect.gameId === "")) {
-            errors.push("Please search for and select a game.");
+            errors.push("Please search for and select a category/game.");
         } else if (effect.mode === "custom" && effect.gameName == null) {
-            errors.push("Please input a title for a game.");
+            errors.push("Please input a title for a category/game.");
         }
         return errors;
     },
@@ -97,7 +97,7 @@ const model = {
                 const category = categories.find(c => c.name.toLowerCase() === event.effect.gameName.toLowerCase());
 
                 if (!category) {
-                    logger.error("Couldn't find a category with this name");
+                    logger.error("Couldn't find a category/game with this name");
                     return;
                 }
 

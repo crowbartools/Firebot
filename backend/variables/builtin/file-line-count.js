@@ -23,8 +23,8 @@ const model = {
         }
 
         try {
-            let contents = fs.readFileSync(filePath, "utf8");
-            let lines = contents
+            const contents = fs.readFileSync(filePath, "utf8");
+            const lines = contents
                 .split('\n')
                 .filter(l => l != null && l.trim() !== "");
 

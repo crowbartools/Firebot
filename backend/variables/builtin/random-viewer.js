@@ -19,10 +19,10 @@ const model = {
         //return util.getRandomInt(internalMin, internalMax);
         logger.debug("Getting random viewer...");
 
-        let currentViewers = await twitchChat.getViewerList();
+        const currentViewers = await twitchChat.getViewerList();
 
         if (currentViewers && currentViewers.length > 0) {
-            let randIndex = util.getRandomInt(0, currentViewers.length - 1);
+            const randIndex = util.getRandomInt(0, currentViewers.length - 1);
             return currentViewers[randIndex].username;
         }
 

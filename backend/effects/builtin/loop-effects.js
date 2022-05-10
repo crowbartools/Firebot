@@ -97,8 +97,8 @@ const model = {
     onTriggerEvent: event => {
         return new Promise(async resolve => {
 
-            let { effect, trigger } = event;
-            let effectList = effect.effectList;
+            const { effect, trigger } = event;
+            const effectList = effect.effectList;
 
             if (!effectList || !effectList.list) {
                 return resolve(true);
@@ -108,11 +108,11 @@ const model = {
                 return resolve(true);
             }
 
-            let runEffects = async (loopCount = 0, loopItem = null) => {
+            const runEffects = async (loopCount = 0, loopItem = null) => {
                 const trigger = event.trigger;
                 trigger.metadata.loopCount = loopCount;
                 trigger.metadata.loopItem = loopItem;
-                let processEffectsRequest = {
+                const processEffectsRequest = {
                     trigger: trigger,
                     effects: {
                         id: effectList.id,
@@ -175,7 +175,7 @@ const model = {
                         break;
                     }
 
-                    let conditionsPass = await conditionManager.runConditions(effect.conditionData, trigger);
+                    const conditionsPass = await conditionManager.runConditions(effect.conditionData, trigger);
 
                     if (conditionsPass) {
                         const result = await runEffects(currentLoopCount);

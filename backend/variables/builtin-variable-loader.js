@@ -10,6 +10,7 @@ exports.loadReplaceVariables = () => {
         'arg-count',
         'arg',
         'array-add',
+        'array-element',
         'array-filter',
         'array-find',
         'array-find-index',
@@ -21,6 +22,7 @@ exports.loadReplaceVariables = () => {
         'bits-badge-tier',
         'bits-badge-unlocked-message',
         'bot',
+        'category',
         'category-image-url',
         'chat-message-emote-urls',
         'chat-message',
@@ -36,8 +38,10 @@ exports.loadReplaceVariables = () => {
         'count',
         'counter',
         'currency',
+        'currency-rank',
         'current-viewer-count',
         'custom-role-user-count',
+        'custom-role-users',
         'custom-variable',
         'custom-variable-keys',
         'custom-variable-created-data',
@@ -83,6 +87,7 @@ exports.loadReplaceVariables = () => {
         'quote',
         'raid-viewer-count',
         'random-active-viewer',
+        'random-custom-role-user',
         'random-number',
         'random-viewer',
         'random-reddit-image',
@@ -90,6 +95,7 @@ exports.loadReplaceVariables = () => {
         'random-advice',
         'read-api',
         'read-file',
+        'regex-matches',
         'regexExec',
         'regexTest',
         'replace',
@@ -149,7 +155,7 @@ exports.loadReplaceVariables = () => {
         'whisper-message',
         'word'
     ].forEach(filename => {
-        let definition = require(`./builtin/${filename}.js`);
+        const definition = require(`./builtin/${filename}.js`);
         replaceVariableManager.registerReplaceVariable(definition);
     });
 };

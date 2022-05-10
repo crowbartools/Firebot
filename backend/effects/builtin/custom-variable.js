@@ -16,7 +16,7 @@ const fileWriter = {
     optionsTemplate: `
         <eos-container header="Variable Name">
             <p class="muted">You'll use this name to reference this elsewhere via $customVariable[name].</p>
-            <input ng-model="effect.name" type="text" class="form-control" id="chat-text-setting" placeholder="Enter name" replace-variables>
+            <input ng-model="effect.name" type="text" class="form-control" id="chat-text-setting" placeholder="Enter name" replace-variables menu-position="below">
         </eos-container>
 
         <eos-container header="Variable Data" pad-top="true">
@@ -59,14 +59,14 @@ const fileWriter = {
         };
     },
     optionsValidator: effect => {
-        let errors = [];
+        const errors = [];
         if (effect.name == null || effect.name === "") {
             errors.push("Please provide a variable name.");
         }
         return errors;
     },
     onTriggerEvent: async event => {
-        let { effect } = event;
+        const { effect } = event;
 
         customVariableManager.addCustomVariable(effect.name, effect.variableData, effect.ttl, effect.propertyPath);
 

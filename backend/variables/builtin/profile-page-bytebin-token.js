@@ -12,8 +12,8 @@ const model = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async (trigger, page = "commands") => {
-        let event = trigger.metadata.chatEvent;
-        let profileJSON = {
+        const event = trigger.metadata.chatEvent;
+        const profileJSON = {
             'username': event.chatEvent.user_name,
             'userRoles': event.chatEvent.user_roles,
             'profilePage': page

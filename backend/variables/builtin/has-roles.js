@@ -4,7 +4,7 @@ const { EffectTrigger } = require("../../../shared/effect-constants");
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 const { getAllRolesForViewer } = require('../../roles/role-helpers');
 
-let triggers = {};
+const triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
 triggers[EffectTrigger.EVENT] = true;
 triggers[EffectTrigger.MANUAL] = true;

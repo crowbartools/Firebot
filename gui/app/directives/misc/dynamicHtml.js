@@ -12,10 +12,10 @@
                 },
                 replace: true,
                 link: function(scope, element) {
-                    let htmlWrap = `<div>${scope.html}</div>`.trim();
+                    const htmlWrap = `<div>${scope.html}</div>`.trim();
 
-                    let el = angular.element(htmlWrap);
-                    let template = $compile(el)(scope);
+                    const el = angular.element(htmlWrap);
+                    const template = $compile(el)(scope);
                     element.replaceWith(template);
                 },
                 controller: [

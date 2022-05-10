@@ -12,7 +12,7 @@
                 </span>
             `,
             controller: function($injector, $q) {
-                let $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.getFilterName = function() {
                     return $ctrl.filterType ? $ctrl.filterType.name : "Unknown";
@@ -25,7 +25,7 @@
                         if ($ctrl.filter == null || $ctrl.filter.value == null) {
                             resolve("[Not Set]");
                         } else {
-                            let value = await $injector.invoke($ctrl.filterType.getSelectedValueDisplay, {}, {
+                            const value = await $injector.invoke($ctrl.filterType.getSelectedValueDisplay, {}, {
                                 filterSettings: $ctrl.filter
                             });
                             resolve(value);

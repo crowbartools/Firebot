@@ -13,13 +13,26 @@ const regExpEscape = input => input.replace(/[$^|.*+?(){}\\[\]]/g, '\\$&');
 let db;
 
 function loadQuoteDatabase() {
-    let path = profileManager.getPathInProfile("db/quotes.db");
+    const path = profileManager.getPathInProfile("db/quotes.db");
     db = new Datastore({ filename: path });
     db.loadDatabase(err => {
         if (err) {
             logger.error("Error Loading Database: ", err.message);
             logger.debug("Failed Database Path: ", path);
         }
+    });
+}
+
+function getCurrentQuoteId() {
+    return new Promise(resolve => {
+        db.find({ _id: '__autoid__' },
+            function (err, autoid) {
+                if (err) {
+                    resolve(null);
+                }
+                resolve(autoid[0].seq);
+            }
+        );
     });
 }
 
@@ -57,14 +70,25 @@ function setQuoteIdIncrementer(number) {
 
 function addQuote(quote) {
     return new Promise(async (resolve, reject) => {
+        // If no/invalid ID is specified, get the next one
+        if (!quote._id || isNaN(quote._id)) {
+            const newQuoteId = await getNextQuoteId();
+            if (newQuoteId == null) {
+                logger.error("Unable to add quote as we could not generate a new ID");
+                return reject();
+            }
 
-        let newQuoteId = await getNextQuoteId();
-        if (newQuoteId == null) {
-            logger.error("Unable to add quote as we could not generate a new ID");
-            return reject();
+            quote._id = newQuoteId;
+
+        // Otherwise, use the ID passed in
+        } else {
+            // If the specified ID is higher than the next autoincrement,
+            // set the autoincrement to the new ID
+            const highestQuoteId = await getCurrentQuoteId();
+            if (highestQuoteId < quote._id) {
+                await setQuoteIdIncrementer(quote._id);
+            }
         }
-
-        quote._id = newQuoteId;
 
         db.insert(quote, err => {
             if (err) {
@@ -72,7 +96,7 @@ function addQuote(quote) {
                 return reject();
             }
             frontendCommunicator.send("quotes-update");
-            resolve(newQuoteId);
+            resolve(quote._id);
         });
     });
 }
@@ -80,7 +104,7 @@ function addQuote(quote) {
 const addQuotes = (quotes) => {
     return new Promise(async (resolve, reject) => {
         quotes.forEach(async q => {
-            let newQuoteId = await getNextQuoteId();
+            const newQuoteId = await getNextQuoteId();
 
             if (newQuoteId == null) {
                 logger.error("Unable to add quote as we could not generate a new ID");
@@ -166,7 +190,7 @@ function getRandomQuoteByDate(dateConfig) {
                 if (err || !docs.length) {
                     resolve(null);
                 }
-                let doc = docs[Math.floor(Math.random() * docs.length)];
+                const doc = docs[Math.floor(Math.random() * docs.length)];
                 return resolve(doc);
             });
     });
@@ -184,7 +208,7 @@ function getRandomQuoteByAuthor(author) {
                 }
 
                 // get a random doc from the list
-                let doc = docs[Math.floor(Math.random() * docs.length)];
+                const doc = docs[Math.floor(Math.random() * docs.length)];
 
                 // return the chosen doc
                 return resolve(doc);
@@ -201,7 +225,7 @@ function getRandomQuoteByGame(gameSearch) {
                 if (err || !docs.length) {
                     resolve(null);
                 }
-                let doc = docs[Math.floor(Math.random() * docs.length)];
+                const doc = docs[Math.floor(Math.random() * docs.length)];
                 return resolve(doc);
             });
     });
@@ -229,7 +253,7 @@ function getRandomQuoteContainingText(text) {
                 }
 
                 // get a random doc from the list
-                let doc = docs[Math.floor(Math.random() * docs.length)];
+                const doc = docs[Math.floor(Math.random() * docs.length)];
 
                 // return the chosen doc
                 return resolve(doc);
@@ -243,7 +267,7 @@ function getRandomQuote() {
             // we minus one here because we filter out our auto inc id field below
             count = count - 1;
             if (!err && count > 0) {
-                let skipCount = Math.floor(Math.random() * count);
+                const skipCount = Math.floor(Math.random() * count);
                 db.find({
                     $where: function () {
                         //filter out our auto inc id field
@@ -303,13 +327,13 @@ async function recalculateQuoteIds() {
         return;
     }
 
-    let quotes = await getAllQuotes();
+    const quotes = await getAllQuotes();
     if (quotes == null) {
         return;
     }
 
     let idCounter = 1;
-    for (let quote of quotes) {
+    for (const quote of quotes) {
         await updateQuoteId(quote, idCounter);
         idCounter++;
     }
@@ -339,7 +363,7 @@ frontendCommunicator.on("delete-quote", quoteId => {
 });
 
 frontendCommunicator.onAsync("get-all-quotes", async () => {
-    let quotes = await getAllQuotes();
+    const quotes = await getAllQuotes();
     return quotes || [];
 });
 

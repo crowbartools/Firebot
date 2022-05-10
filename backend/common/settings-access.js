@@ -6,7 +6,7 @@ const frontendCommunicator = require("./frontend-communicator");
 
 // This file centralizes access to the settings db
 // We will need to refactor other files to use this.
-let settings = {};
+const settings = {};
 
 let settingsCache = {};
 
@@ -19,7 +19,7 @@ frontendCommunicator.on("settings-updated-renderer", (settingsUpdate) => {
     if (settingsUpdate == null) {
         return;
     }
-    let { path, data } = settingsUpdate;
+    const { path, data } = settingsUpdate;
     if (path == null || path === '') {
         return;
     }
@@ -47,7 +47,7 @@ function pushDataToFile(path, data) {
 function getDataFromFile(path, forceCacheUpdate = false) {
     try {
         if (settingsCache[path] == null || forceCacheUpdate) {
-            let data = getSettingsFile().getData(path);
+            const data = getSettingsFile().getData(path);
             settingsCache[path] = data;
         }
     } catch (err) {
@@ -76,7 +76,7 @@ settings.ignoreSubsequentSubEventsAfterCommunitySub = function() {
 };
 
 settings.hasJustUpdated = function() {
-    let updated = getDataFromFile("/settings/justUpdated");
+    const updated = getDataFromFile("/settings/justUpdated");
     return updated != null ? updated : false;
 };
 
@@ -85,7 +85,7 @@ settings.setJustUpdated = function(justUpdated) {
 };
 
 settings.getOverlayVersion = function() {
-    let version = getDataFromFile("/settings/copiedOverlayVersion");
+    const version = getDataFromFile("/settings/copiedOverlayVersion");
     return version != null ? version : "";
 };
 
@@ -94,7 +94,7 @@ settings.setOverlayVersion = function(newVersion) {
 };
 
 settings.getClearCustomScriptCache = function() {
-    let clear = getDataFromFile("/settings/clearCustomScriptCache");
+    const clear = getDataFromFile("/settings/clearCustomScriptCache");
     return clear != null ? clear : false;
 };
 
@@ -119,7 +119,7 @@ settings.setPersistCustomVariables = function(enabled) {
 };
 
 settings.useOverlayInstances = function() {
-    let oi = getDataFromFile("/settings/useOverlayInstances");
+    const oi = getDataFromFile("/settings/useOverlayInstances");
     return oi != null ? oi : false;
 };
 
@@ -128,7 +128,7 @@ settings.setUseOverlayInstances = function(oi) {
 };
 
 settings.getOverlayInstances = function() {
-    let ois = getDataFromFile("/settings/overlayInstances");
+    const ois = getDataFromFile("/settings/overlayInstances");
     return ois != null ? ois : [];
 };
 
@@ -137,22 +137,22 @@ settings.setOverlayInstances = function(ois) {
 };
 
 settings.backupKeepAll = function() {
-    let backupKeepAll = getDataFromFile("/settings/backupKeepAll");
+    const backupKeepAll = getDataFromFile("/settings/backupKeepAll");
     return backupKeepAll != null ? backupKeepAll : false;
 };
 
 settings.backupOnExit = function() {
-    let backupOnExit = getDataFromFile("/settings/backupOnExit");
+    const backupOnExit = getDataFromFile("/settings/backupOnExit");
     return backupOnExit != null ? backupOnExit : true;
 };
 
 settings.backupBeforeUpdates = function() {
-    let backupBeforeUpdates = getDataFromFile("/settings/backupBeforeUpdates");
+    const backupBeforeUpdates = getDataFromFile("/settings/backupBeforeUpdates");
     return backupBeforeUpdates != null ? backupBeforeUpdates : true;
 };
 
 settings.backupOnceADay = function() {
-    let backupOnceADay = getDataFromFile("/settings/backupOnceADay");
+    const backupOnceADay = getDataFromFile("/settings/backupOnceADay");
     return backupOnceADay != null ? backupOnceADay : true;
 };
 
@@ -161,7 +161,7 @@ settings.setBackupOnceADay = function(backupOnceADay) {
 };
 
 settings.lastBackupDate = function() {
-    let lastBackup = getDataFromFile("/settings/lastBackupDate");
+    const lastBackup = getDataFromFile("/settings/lastBackupDate");
     return lastBackup != null ? new Date(lastBackup) : null;
 };
 
@@ -170,7 +170,7 @@ settings.setLastBackupDate = function(lastBackup) {
 };
 
 settings.maxBackupCount = function() {
-    let maxBackupCount = getDataFromFile("/settings/maxBackupCount");
+    const maxBackupCount = getDataFromFile("/settings/maxBackupCount");
     return maxBackupCount != null ? maxBackupCount : 25;
 };
 
@@ -183,22 +183,22 @@ settings.getAllowQuoteCSVDownloads = function() {
 };
 
 settings.getActiveChatUserListTimeout = function() {
-    let inactiveTimer = getDataFromFile("/settings/activeChatUsers/inactiveTimer");
+    const inactiveTimer = getDataFromFile("/settings/activeChatUsers/inactiveTimer");
     return inactiveTimer != null ? parseInt(inactiveTimer) : 5;
 };
 
 settings.getWebSocketPort = function() {
-    let websocketPort = getDataFromFile("/settings/websocketPort");
+    const websocketPort = getDataFromFile("/settings/websocketPort");
     return websocketPort != null ? websocketPort : 8080;
 };
 
 settings.getWebServerPort = function() {
-    let serverPort = getDataFromFile("/settings/webServerPort");
+    const serverPort = getDataFromFile("/settings/webServerPort");
     return serverPort != null ? serverPort : 7472;
 };
 
 settings.getViewerDbStatus = function() {
-    let status = getDataFromFile("/settings/viewerDB");
+    const status = getDataFromFile("/settings/viewerDB");
     return status != null ? status : true;
 };
 
@@ -210,24 +210,24 @@ settings.getViewerDbStatus = function() {
 * 4 = betas
 */
 settings.getAutoUpdateLevel = function() {
-    let updateLevel = getDataFromFile("/settings/autoUpdateLevel");
+    const updateLevel = getDataFromFile("/settings/autoUpdateLevel");
     return updateLevel != null ? updateLevel : 2;
 };
 
 settings.getAudioOutputDevice = function() {
-    let device = getDataFromFile("/settings/audioOutputDevice");
+    const device = getDataFromFile("/settings/audioOutputDevice");
     return device != null
         ? device
         : { label: "System Default", deviceId: "default" };
 };
 
 settings.debugModeEnabled = function() {
-    let enabled = getDataFromFile("/settings/debugMode");
+    const enabled = getDataFromFile("/settings/debugMode");
     return enabled != null ? enabled : false;
 };
 
 settings.getWhileLoopEnabled = function() {
-    let enabled = getDataFromFile('/settings/whileLoopEnabled');
+    const enabled = getDataFromFile('/settings/whileLoopEnabled');
     return enabled !== undefined ? enabled : false;
 };
 
@@ -244,7 +244,7 @@ settings.getSidebarControlledServices = function() {
 };
 
 settings.getMinimizeToTray = function () {
-    let minimizeToTray = getDataFromFile('/settings/minimizeToTray');
+    const minimizeToTray = getDataFromFile('/settings/minimizeToTray');
     return minimizeToTray === true;
 };
 settings.setMinimizeToTray = function (minimizeToTray) {

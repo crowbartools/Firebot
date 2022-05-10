@@ -45,6 +45,7 @@
                         <restriction-item ng-repeat="restriction in $ctrl.restrictionData.restrictions"
                             restriction="restriction"
                             restriction-definition="$ctrl.getRestrictionDefinition(restriction.type)"
+                            restriction-mode="$ctrl.restrictionData.mode"
                             on-delete="$ctrl.deleteRestriction(restriction.id)">
                         </restriction-item>
                     </div>
@@ -87,9 +88,9 @@
                 </div>
             `,
             controller: function(utilityService, backendCommunicator) {
-                let $ctrl = this;
+                const $ctrl = this;
 
-                let restrictionDefinitions = backendCommunicator.fireEventSync("getRestrictions")
+                const restrictionDefinitions = backendCommunicator.fireEventSync("getRestrictions")
                     .map(r => {
                         return {
                             definition: r.definition,
@@ -160,7 +161,7 @@
 
                 $ctrl.showAddRestrictionModal = function() {
 
-                    let options = restrictionDefinitions
+                    const options = restrictionDefinitions
                         .filter(r => !r.definition.hidden)
                         .map(r => {
                             return {
@@ -169,8 +170,8 @@
                                 description: r.definition.description
                             };
                         }).sort((a, b) => {
-                            let textA = a.name.toUpperCase();
-                            let textB = b.name.toUpperCase();
+                            const textA = a.name.toUpperCase();
+                            const textB = b.name.toUpperCase();
                             return textA < textB ? -1 : textA > textB ? 1 : 0;
                         });
 

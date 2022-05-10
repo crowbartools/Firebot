@@ -3,7 +3,7 @@
 const chat = require("../../../../backend/chat/twitch-chat");
 
 exports.getStatus = function(req, res) {
-    let status = {
+    const status = {
         connections: {
             chat: chat.chatIsConnected()
         }

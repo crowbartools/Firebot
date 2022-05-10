@@ -8,7 +8,7 @@
     angular
         .module("firebotApp")
         .factory("countersService", function($q, backendCommunicator, profileManager, utilityService, objectCopyHelper, ngToast) {
-            let service = {};
+            const service = {};
 
             service.counters = [];
 

@@ -3,7 +3,7 @@
     angular
         .module("firebotApp")
         .factory("timerService", function(backendCommunicator, $q, utilityService, objectCopyHelper, ngToast) {
-            let service = {};
+            const service = {};
 
             service.timers = [];
 
