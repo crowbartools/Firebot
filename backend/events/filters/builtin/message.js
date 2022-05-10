@@ -68,14 +68,6 @@ module.exports = {
             const regex = new RegExp(value, "g");
             return !regex.test(chatMessage);
         }
-        case ComparisonType.MATCHES_REGEX_CS: {
-            let regex = new RegExp(value, "g");
-            return regex.test(chatMessage);
-        }
-        case ComparisonType.DOESNT_MATCH_REGEX_CS: {
-            let regex = new RegExp(value, "g");
-            return !regex.test(chatMessage);
-        }
         default:
             return false;
         }
