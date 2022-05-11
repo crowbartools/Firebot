@@ -162,6 +162,8 @@ const delay = {
                         webServer.sendToOverlay("OVERLAY:REFRESH", { overlayInstance: i });
                     });
 
+                    webServer.sendToOverlay("OVERLAY:REFRESH");
+
                     return true;
                 }
 
