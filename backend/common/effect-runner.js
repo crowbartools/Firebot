@@ -10,7 +10,7 @@ const effectQueueRunner = require("../effects/queues/effect-queue-runner");
 const webServer = require("../../server/httpServer");
 const util = require("../utility");
 
-const findAndReplaceVariables = async (data, trigger) => {
+const findAndReplaceVariables = async (data, trigger, effectOutputs) => {
     const keys = Object.keys(data);
 
     for (const key of keys) {
@@ -27,7 +27,10 @@ const findAndReplaceVariables = async (data, trigger) => {
                 let replacedValue = value;
                 const triggerId = util.getTriggerIdFromTriggerData(trigger);
                 try {
-                    replacedValue = await replaceVariableManager.evaluateText(value, trigger, {
+                    replacedValue = await replaceVariableManager.evaluateText(value, {
+                        ...trigger,
+                        effectOutputs
+                    }, {
                         type: trigger.type,
                         id: triggerId
                     });
@@ -118,19 +121,29 @@ async function runEffects(runEffectsContext) {
         // run all strings through replace variable system
         logger.debug("Looking and handling replace variables...");
 
-        await findAndReplaceVariables(effect, trigger);
+        await findAndReplaceVariables(effect, trigger, Object.freeze({
+            ...(runEffectsContext.outputs ?? {})
+        }));
 
         try {
             const response = await triggerEffect(effect, trigger);
-            if (response === null || response === undefined) {
+            if (!response) {
                 continue;
             }
             if (!response || response.success === false) {
                 logger.error(`An effect of type ${effect.type} and id ${effect.id} failed to run.`, response.reason);
             } else {
                 if (typeof response !== "boolean") {
-                    const { execution } = response;
-                    if (execution && execution.stop) {
+                    const { outputs, execution } = response;
+
+                    if (outputs) {
+                        Object.entries(outputs).forEach(([defaultName, value]) => {
+                            const name = effect.outputNames[defaultName] ?? defaultName;
+                            runEffectsContext.outputs[name] = value;
+                        });
+                    }
+
+                    if (execution?.stop) {
                         logger.info(`Stop effect execution triggered for effect list id ${runEffectsContext.effects.id}`);
                         return {
                             success: true,
@@ -161,6 +174,10 @@ async function processEffects(processEffectsRequest) {
     runEffectsContext["username"] = username;
 
     runEffectsContext.effects = JSON.parse(JSON.stringify(runEffectsContext.effects));
+
+    if (runEffectsContext.outputs == null) {
+        runEffectsContext.outputs = {};
+    }
 
     const queueId = processEffectsRequest.effects.queue;
     const queue = effectQueueManager.getItem(queueId);

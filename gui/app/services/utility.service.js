@@ -734,6 +734,30 @@
                             utilityService.removeSlidingModal();
                         });
 
+                        $scope.openOutputsModal = function() {
+                            utilityService.showModal({
+                                component: "viewEffectOutputsModal",
+                                backdrop: false,
+                                size: "md",
+                                resolveObj: {
+                                    effectDefinition: () => $scope.effectDefinition.definition,
+                                    effect: () => $scope.effect
+                                },
+                                closeCallback: resp => {
+                                    if (resp == null) {
+                                        return;
+                                    }
+                                    const { outputNames } = resp;
+
+                                    if (!$scope.effect) {
+                                        $scope.effect = {};
+                                    }
+
+                                    $scope.effect.outputNames = outputNames;
+                                }
+                            });
+                        };
+
                         $scope.openNewEffectModal = function() {
                             utilityService.showModal({
                                 component: "addNewEffectModal",
