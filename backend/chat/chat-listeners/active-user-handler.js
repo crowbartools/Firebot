@@ -96,7 +96,6 @@ async function updateUserOnlineStatus(userDetails, updateDb = false) {
         onlineUsers.set(userDetails.id, true, ONLINE_TIMEOUT);
 
         const roles = await chatRolesManager.getUsersChatRoles(userDetails.id);
-        const details = await userDatabase.getUserById(userDetails.id);
 
         frontendCommunicator.send("twitch:chat:user-joined", {
             id: userDetails.id,
@@ -104,7 +103,7 @@ async function updateUserOnlineStatus(userDetails, updateDb = false) {
             roles: roles,
             profilePicUrl: userDetails.profilePicUrl,
             active: exports.userIsActive(userDetails.id),
-            disableViewerList: details.disableViewerList ? details.disableViewerList : false
+            disableViewerList: userDetails.disableViewerList
         });
 
         if (updateDb) {
@@ -134,7 +133,8 @@ exports.addOnlineUser = async (username) => {
                 username: twitchUser.name,
                 displayName: twitchUser.displayName,
                 twitchRoles: [],
-                profilePicUrl: twitchUser.profilePictureUrl
+                profilePicUrl: twitchUser.profilePictureUrl,
+                disableViewerList: false
             };
 
             chatHelpers.setUserProfilePicUrl(twitchUser.id, twitchUser.profilePictureUrl);
@@ -149,7 +149,8 @@ exports.addOnlineUser = async (username) => {
                 username: firebotUser.username,
                 displayName: firebotUser.displayName,
                 twitchRoles: firebotUser.twitchRoles,
-                profilePicUrl: firebotUser.profilePicUrl
+                profilePicUrl: firebotUser.profilePicUrl,
+                disableViewerList: !!firebotUser.disableViewerList
             };
             await updateUserOnlineStatus(userDetails, true);
         }
@@ -188,7 +189,8 @@ exports.addActiveUser = async (chatUser, includeInOnline = false, forceActive = 
             ...(chatUser.isMod ? ['mod'] : []),
             ...(chatUser.isVip ? ['vip'] : [])
         ],
-        profilePicUrl: (await chatHelpers.getUserProfilePicUrl(chatUser.userId))
+        profilePicUrl: (await chatHelpers.getUserProfilePicUrl(chatUser.userId)),
+        disableViewerList: !!user.disableViewerList
     };
 
     if (user == null) {
