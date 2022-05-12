@@ -96,13 +96,15 @@ async function updateUserOnlineStatus(userDetails, updateDb = false) {
         onlineUsers.set(userDetails.id, true, ONLINE_TIMEOUT);
 
         const roles = await chatRolesManager.getUsersChatRoles(userDetails.id);
+        const details = await userDatabase.getUserById(userDetails.id);
 
         frontendCommunicator.send("twitch:chat:user-joined", {
             id: userDetails.id,
             username: userDetails.displayName,
             roles: roles,
             profilePicUrl: userDetails.profilePicUrl,
-            active: exports.userIsActive(userDetails.id)
+            active: exports.userIsActive(userDetails.id),
+            disableViewerList: details.disableViewerList ? details.disableViewerList : false
         });
 
         if (updateDb) {
