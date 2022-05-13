@@ -36,13 +36,15 @@ class StreamLootsIntegration extends EventEmitter {
         slootsFilterLoader.registerFilters();
     }
     connect(integrationData) {
-        const { accountId } = integrationData;
+        let { accountId } = integrationData;
 
         if (accountId == null) {
             this.emit("disconnected", integrationDefinition.id);
             this.connected = false;
             return;
         }
+
+        accountId = accountId.replace("https://widgets.streamloots.com/alerts/", "").replace("/media-stream", "");
 
         this._eventSource = new EventSource(`https://widgets.streamloots.com/alerts/${accountId}/media-stream`, {
             rejectUnauthorized: false
