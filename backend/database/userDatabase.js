@@ -31,6 +31,7 @@ const jsonDataHelpers = require("../common/json-data-helpers");
  * @property {number} chatMessages
  * @property {boolean} disableAutoStatAccrual
  * @property {boolean} disableActiveUserList
+ * @property {boolean} disableViewerList
  * @property {Object.<string, *>=} metadata
  * @property {Object.<string, number>} currency
  */
@@ -422,6 +423,7 @@ function createNewUser(userId, username, displayName, profilePicUrl, twitchRoles
             chatMessages: 0,
             disableAutoStatAccrual: disableAutoStatAccrual,
             disableActiveUserList: false,
+            disableViewerList: false,
             metadata: {},
             currency: {}
         };
