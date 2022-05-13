@@ -172,7 +172,7 @@ class HttpServerManager extends EventEmitter {
 
     startHttpServer(name, port, instance) {
         try {
-            if (this.serverInstances.some()) {
+            if (this.serverInstances.some(si => si.name === name)) {
                 logger.error(`Web server instance named "${name}" is already running`);
                 return;
             }
