@@ -3,7 +3,7 @@
 const { getPathInTmpDir } = require("../../../common/data-access");
 const { settings } = require("../../../common/settings-access");
 const resourceTokenManager = require("../../../resourceTokenManager");
-const webServer = require("../../../../server/httpServer");
+const webServer = require("../../../../server/http-server-manager");
 const uuid = require("uuid/v4");
 const fs = require('fs-extra');
 const path = require("path");

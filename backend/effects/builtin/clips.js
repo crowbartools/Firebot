@@ -4,7 +4,7 @@ const clipProcessor = require("../../common/handlers/createClipProcessor");
 const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
 const { settings } = require("../../common/settings-access");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
-const webServer = require("../../../server/httpServer");
+const webServer = require("../../../server/http-server-manager");
 const utils = require("../../utility");
 const customVariableManager = require("../../common/custom-variable-manager");
 
