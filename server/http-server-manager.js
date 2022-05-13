@@ -172,6 +172,11 @@ class HttpServerManager extends EventEmitter {
 
     startHttpServer(name, port, instance) {
         try {
+            if (this.serverInstances.some()) {
+                logger.error(`Web server instance named "${name}" is already running`);
+                return;
+            }
+
             let newHttpServer = http.createServer(instance);
             newHttpServer = newHttpServer.listen(port);
 
@@ -191,6 +196,11 @@ class HttpServerManager extends EventEmitter {
 
     stopHttpServer(name) {
         try {
+            if (name === "Default") {
+                logger.error("Default web server instance cannot be stopped");
+                return false;
+            }
+
             const instanceIndex = this.serverInstances.findIndex(si => si.name === name);
 
             if (instanceIndex === -1) {
