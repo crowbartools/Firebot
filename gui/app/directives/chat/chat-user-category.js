@@ -15,7 +15,7 @@
                 <div style="font-size: 12px; opacity: 0.6;">{{$ctrl.category}}</div>
                 <div
                     class="chat-user-wrapper"
-                    ng-repeat="user in cms.chatUsers | chatUserRole:$ctrl.roleKey | orderBy:'username':true | orderBy:'active':true as filtered track by user.id"
+                    ng-repeat="user in cms.getFilteredChatUserList() | chatUserRole:$ctrl.roleKey | orderBy:'username':true | orderBy:'active':true as filtered track by user.id"
                 >
                     <div class="chat-user-img-wrapper">
                         <img ng-src="{{user.profilePicUrl}}" />
