@@ -15,7 +15,14 @@ const clip = {
         description: "Creates a clip on Twitch.",
         icon: "fad fa-film",
         categories: [EffectCategory.COMMON, EffectCategory.FUN, EffectCategory.TWITCH],
-        dependencies: [EffectDependency.CHAT]
+        dependencies: [EffectDependency.CHAT],
+        outputs: [
+            {
+                label: "Clip Url",
+                description: "The url of the created clip",
+                defaultName: "clipUrl"
+            }
+        ]
     },
     globalSettings: {},
     optionsTemplate: `

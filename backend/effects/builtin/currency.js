@@ -18,7 +18,14 @@ const currency = {
         description: "Update a viewers currency.",
         icon: "fad fa-money-bill",
         categories: [EffectCategory.COMMON, EffectCategory.FUN],
-        dependencies: []
+        dependencies: [],
+        outputs: [
+            {
+                label: "Currency Amount",
+                description: "The amount of currency given. Useful if you use a random amount",
+                defaultName: "currencyAmount"
+            }
+        ]
     },
     /**
    * Global settings that will be available in the Settings tab
@@ -292,7 +299,12 @@ const currency = {
                 logger.error("Error updating currency", error);
             }
 
-            resolve(true);
+            return resolve({
+                succuss: true,
+                outputs: {
+                    currencyAmount: amount
+                }
+            });
         });
     },
     /**
