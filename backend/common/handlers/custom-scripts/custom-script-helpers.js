@@ -94,7 +94,7 @@ function buildModules(scriptManifest) {
         },
         twitchChat: twitchChat,
         twitchApi: require("../../../twitch-api/api"),
-        httpServerManager: require("../../../../server/http-server-manager"),
+        httpServer: require("../../../../server/http-server-manager"),
         effectManager: require("../../../effects/effectManager"),
         conditionManager: require("../../../effects/builtin/conditional-effects/conditions/condition-manager"),
         restrictionManager: require("../../../restrictions/restriction-manager"),
