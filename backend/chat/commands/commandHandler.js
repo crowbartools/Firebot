@@ -416,13 +416,39 @@ async function handleChatMessage(firebotChatMessage) {
         return false;
     }
 
+    logger.debug("Checking cooldowns for command...");
+    // Check if the command is on cooldown
+    const remainingCooldown = getRemainingCooldown(
+        command,
+        triggeredSubcmd,
+        commandSender
+    );
+
+    if (remainingCooldown > 0) {
+        logger.debug("Command is still on cooldown, alerting viewer...");
+        if (command.sendCooldownMessage || command.sendCooldownMessage == null) {
+
+            const cooldownMessage = command.useCustomCooldownMessage ? command.cooldownMessage : DEFAULT_COOLDOWN_MESSAGE;
+
+            twitchChat.sendChatMessage(
+                cooldownMessage
+                    .replace("{user}", commandSender)
+                    .replace("{timeLeft}", util.secondsForHumans(remainingCooldown)),
+                null,
+                null,
+                firebotChatMessage.id
+            );
+        }
+        return false;
+    }
+
+    // Check if command passes all restrictions
     const restrictionData =
         triggeredSubcmd && triggeredSubcmd.restrictionData && triggeredSubcmd.restrictionData.restrictions
             && triggeredSubcmd.restrictionData.restrictions.length > 0
             ? triggeredSubcmd.restrictionData
             : command.restrictionData;
 
-    // Handle restrictions
     if (restrictionData) {
         logger.debug("Command has restrictions...checking them.");
         const triggerData = {
@@ -468,33 +494,7 @@ async function handleChatMessage(firebotChatMessage) {
         }
     }
 
-    logger.debug("Checking cooldowns for command...");
-    // Check if the command is on cooldown
-    const remainingCooldown = getRemainingCooldown(
-        command,
-        triggeredSubcmd,
-        commandSender
-    );
-
-    if (remainingCooldown > 0) {
-        logger.debug("Command is still on cooldown, alerting viewer...");
-        if (command.sendCooldownMessage || command.sendCooldownMessage == null) {
-
-            const cooldownMessage = command.useCustomCooldownMessage ? command.cooldownMessage : DEFAULT_COOLDOWN_MESSAGE;
-
-            twitchChat.sendChatMessage(
-                cooldownMessage
-                    .replace("{user}", commandSender)
-                    .replace("{timeLeft}", util.secondsForHumans(remainingCooldown)),
-                null,
-                null,
-                firebotChatMessage.id
-            );
-        }
-        return false;
-    }
-
-    // add cooldown to cache if commmand has cooldowns set
+    // If command is not on cooldown AND it passes restrictions, then we can run it. Store the cooldown.
     cooldownCommand(command, triggeredSubcmd, commandSender);
 
     //update the count for the command
