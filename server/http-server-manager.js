@@ -24,6 +24,7 @@ class HttpServerManager extends EventEmitter {
         this.overlayServer = null;
         this.isDefaultServerStarted = false;
         this.overlayHasClients = false;
+        this.customRoutes = [];
     }
 
     start() {
@@ -98,6 +99,44 @@ class HttpServerManager extends EventEmitter {
             res
                 .status(404)
                 .send({ status: "error", message: req.originalUrl + " not found" });
+        });
+
+        // List custom routes
+        app.get("/integrations", (req, res) => {
+            const registeredCustomRoutes = this.customRoutes.map((cr) => {
+                return {
+                    path: `/integrations/${cr.fullRoute}`,
+                    method: cr.method
+                };
+            });
+
+            res.json(registeredCustomRoutes);
+        });
+
+        // Handle custom routes
+        app.use("/integrations/:customRoute", (req, res) => {
+            const { customRoute } = req.params;
+
+            // app.use only provides the predicate in req.path, not the full mount point
+            // See here: https://expressjs.com/en/4x/api.html#req.path
+            //
+            // Also, remove the trailing slash for matching reasons
+            const customRoutePredicate = req.path.toLowerCase().replace(/\/$/, '');
+            const fullCustomRoute = `${customRoute}${customRoutePredicate}`;
+
+            // Find the matching registered custom route
+            const customRouteEntry = this.customRoutes.find((cr) =>
+                cr.fullRoute === fullCustomRoute &&
+                cr.method === req.method
+            );
+
+            if (customRouteEntry == null) {
+                res
+                    .status(404)
+                    .send({ status: "error", message: req.originalUrl + " not found" });
+            } else {
+                customRouteEntry.callback(req, res);
+            }
         });
 
         // Catch all remaining paths and send the caller a 404
@@ -205,6 +244,7 @@ class HttpServerManager extends EventEmitter {
 
             if (instanceIndex === -1) {
                 logger.warn(`No web server instance found with name "${name}"`);
+                return true;
             }
 
             this.serverInstances[instanceIndex].server.close((error) => {
@@ -220,6 +260,41 @@ class HttpServerManager extends EventEmitter {
             logger.error(`Unable to stop web server instance "${name}": ${error}`);
             return false;
         }
+    }
+
+    registerCustomRoute(prefix, route, method, callback) {
+        if (prefix == null || prefix === "") {
+            logger.error(`Failed to register custom route: No custom route prefix specified`);
+            return false;
+
+        }
+        if (method == null || method === "") {
+            logger.error(`Failed to register custom route: No custom route HTTP method specified`);
+            return false;
+        }
+
+        if (callback == null || !(callback instanceof Function)) {
+            logger.error(`Failed to register custom route: No/invalid callback function specified`);
+            return false;
+        }
+
+        const normalizedPrefix = prefix.toLowerCase();
+        const normalizedRoute = route.toLowerCase().replace(/\/$/, '');
+        const normalizedMethod = method.toUpperCase();
+
+        const fullRoute = path.join(normalizedPrefix, normalizedRoute)
+            .replace("\\", "/");
+
+        this.customRoutes.push({
+            prefix: normalizedPrefix,
+            route: normalizedRoute,
+            fullRoute: fullRoute,
+            method: normalizedMethod,
+            callback: callback
+        });
+
+        logger.info(`Registered custom route "${normalizedMethod} /integrations/${fullRoute}"`);
+        return true;
     }
 }
 
