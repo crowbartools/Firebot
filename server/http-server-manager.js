@@ -285,7 +285,7 @@ class HttpServerManager extends EventEmitter {
         const fullRoute = path.join(normalizedPrefix, normalizedRoute)
             .replace("\\", "/");
 
-        if (this.customRoutes.findIndex((cr) => cr.fullRoute) > -1) {
+        if (this.customRoutes.findIndex((cr) => cr.fullRoute === fullRoute) > -1) {
             logger.error(`Failed to register custom route: Custom route already registered at "${fullRoute}"`);
             return false;
         }
