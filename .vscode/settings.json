@@ -4,5 +4,28 @@
         "editor.defaultFormatter": "dbaeumer.vscode-eslint",
         "files.eol": "\n"
     },
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "conventionalCommits.scopes": [
+        "effects",
+        "events",
+        "integratins",
+        "variables",
+        "filters",
+        "commands",
+        "timers",
+        "hotkeys",
+        "quick-actions",
+        "chat",
+        "conditionals",
+        "restrictions",
+        "twitch-api",
+        "games",
+        "counters",
+        "channel-rewards",
+        "auth",
+        "local-api",
+        "ui",
+        "overlay",
+        "scripts"
+    ]
 }
