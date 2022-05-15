@@ -266,8 +266,8 @@ class HttpServerManager extends EventEmitter {
         if (prefix == null || prefix === "") {
             logger.error(`Failed to register custom route: No custom route prefix specified`);
             return false;
-
         }
+
         if (method == null || method === "") {
             logger.error(`Failed to register custom route: No custom route HTTP method specified`);
             return false;
@@ -278,12 +278,14 @@ class HttpServerManager extends EventEmitter {
             return false;
         }
 
-        const normalizedPrefix = prefix.toLowerCase();
-        const normalizedRoute = route.toLowerCase().replace(/\/$/, '');
-        const normalizedMethod = method.toUpperCase();
+        route = route ?? "";
 
-        const fullRoute = path.join(normalizedPrefix, normalizedRoute)
-            .replace("\\", "/");
+        const {
+            normalizedPrefix,
+            normalizedRoute,
+            normalizedMethod,
+            fullRoute
+        } = this.buildCustomRouteParameters(prefix, route, method);
 
         if (this.customRoutes.findIndex((cr) => cr.fullRoute === fullRoute) > -1) {
             logger.error(`Failed to register custom route: Custom route already registered at "${fullRoute}"`);
@@ -300,6 +302,60 @@ class HttpServerManager extends EventEmitter {
 
         logger.info(`Registered custom route "${normalizedMethod} /integrations/${fullRoute}"`);
         return true;
+    }
+
+    unregisterCustomRoute(prefix, route, method) {
+        if (prefix == null || prefix === "") {
+            logger.error(`Failed to unregister custom route: No custom route prefix specified`);
+            return false;
+        }
+
+        if (method == null || method === "") {
+            logger.error(`Failed to unregister custom route: No custom route HTTP method specified`);
+            return false;
+        }
+
+        route = route ?? "";
+
+        const {
+            normalizedPrefix,
+            normalizedRoute,
+            normalizedMethod,
+            fullRoute
+        } = this.buildCustomRouteParameters(prefix, route, method);
+
+        const customRouteIndex = this.customRoutes.findIndex((cr) =>
+            cr.prefix === normalizedPrefix &&
+            cr.route === normalizedRoute &&
+            cr.method === normalizedMethod &&
+            cr.fullRoute === fullRoute
+        );
+
+        if (customRouteIndex === -1) {
+            logger.error(`No custom route found with prefix "${normalizedPrefix}", route "${normalizedRoute}", and method "${normalizedMethod}"`);
+            return false;
+        }
+
+        this.customRoutes.splice(customRouteIndex, 1);
+
+        logger.info(`Unegistered custom route "${normalizedMethod} /integrations/${fullRoute}"`);
+        return true;
+    }
+
+    buildCustomRouteParameters(prefix, route, method) {
+        const normalizedPrefix = prefix.toLowerCase();
+        const normalizedRoute = route.toLowerCase().replace(/\/$/, '');
+        const normalizedMethod = method.toUpperCase();
+
+        const fullRoute = path.join(normalizedPrefix, normalizedRoute)
+            .replace("\\", "/");
+
+        return {
+            normalizedPrefix,
+            normalizedRoute,
+            normalizedMethod,
+            fullRoute
+        };
     }
 }
 
