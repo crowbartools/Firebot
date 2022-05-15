@@ -3,9 +3,19 @@
 const logger = require("../../../logwrapper");
 const profileManager = require("../../../common/profile-manager");
 const frontendCommunicator = require("../../../common/frontend-communicator");
-const { EffectTrigger } = require("../../../../shared/effect-constants");
-const effectRunner = require("../../../common/effect-runner");
+const { runStartUpScript, startUpScriptSaved, startUpScriptDeleted } = require("./custom-script-runner");
 
+/**
+ * @typedef ScriptData
+ * @property {string} id
+ * @property {string} name
+ * @property {string} scriptName
+ * @property {Record<string,{ value: unknown; default: unknown; }>} parameters
+ */
+
+/**
+ * @type {Record<string,ScriptData>}
+ */
 let startupScripts = {};
 
 function getStartupScriptsConfig() {
@@ -31,6 +41,9 @@ function loadStartupConfig() {
     }
 }
 
+/**
+ * @param {ScriptData} startupScriptData
+ */
 function saveStartupScriptData(startupScriptData) {
     if (startupScriptData == null) {
         return;
@@ -47,11 +60,21 @@ function saveStartupScriptData(startupScriptData) {
     } catch (err) {
         logger.warn(`There was an error saving a preset effect list.`, err);
     }
+
+    startUpScriptSaved(startupScriptData);
 }
 
+/**
+ * @param {ScriptData} startupScriptData
+ */
 function deleteStartupScriptData(startupScriptDataId) {
     if (startupScriptDataId == null) {
         return;
+    }
+
+    const startUpScriptData = startupScripts[startupScriptDataId];
+    if (startUpScriptData != null) {
+        startUpScriptDeleted(startUpScriptData);
     }
 
     delete startupScripts[startupScriptDataId];
@@ -79,27 +102,8 @@ function getStartupScriptData(startupScriptDataId) {
  * Turns startup script data into valid Custom Script effects and runs them
  */
 async function runStartupScripts() {
-    const scriptEffects = Object.values(JSON.parse(JSON.stringify(startupScripts))).map(s => {
-        s.type = "firebot:customscript";
-        return s;
-    });
-
-    const processEffectsRequest = {
-        trigger: {
-            type: EffectTrigger.STARTUP_SCRIPT,
-            metadata: {
-                username: "Firebot"
-            }
-        },
-        effects: {
-            list: scriptEffects
-        }
-    };
-
-    try {
-        await effectRunner.processEffects(processEffectsRequest);
-    } catch (error) {
-        logger.error("Error running startup scripts", error);
+    for (const startupScriptConfig of Object.values(startupScripts)) {
+        await runStartUpScript(startupScriptConfig);
     }
 }
 
