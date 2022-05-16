@@ -122,9 +122,9 @@ function buildModules(scriptManifest) {
 function buildRunRequest(scriptManifest, params, trigger) {
     return {
         modules: buildModules(scriptManifest),
-        command: trigger.metadata.userCommand,
+        command: trigger?.metadata?.userCommand,
         user: {
-            name: trigger.metadata.username
+            name: trigger?.metadata?.username
         },
         firebot: {
             accounts: accountAccess.getAccounts(),
