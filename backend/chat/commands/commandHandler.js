@@ -32,6 +32,8 @@ let handledMessageIds = [];
 function UserCommand(trigger, args, commandSender, senderRoles) {
     this.trigger = trigger;
     this.args = args;
+    this.triggeredSubcmd = null;
+    this.isInvalidSubcommandTrigger = false;
     this.triggeredArg = null;
     this.subcommandId = null;
     this.commandSender = commandSender;
@@ -247,8 +249,7 @@ function cooldownCommand(command, triggeredSubcmd, username) {
 
 function buildUserCommand(command, rawMessage, sender, senderRoles) {
     let trigger = command.trigger,
-        args = [],
-        commandSender = sender;
+        args = [];
 
     if (rawMessage != null) {
         if (command.scanWholeMessage) {
@@ -264,7 +265,44 @@ function buildUserCommand(command, rawMessage, sender, senderRoles) {
 
     args = args.filter(a => a.trim() !== "");
 
-    return new UserCommand(trigger, args, commandSender, senderRoles);
+    const userCmd = new UserCommand(trigger, args, sender, senderRoles);
+
+    if (!command.scanWholeMessage &&
+        !command.triggerIsRegex &&
+        userCmd.args.length > 0 &&
+        command.subCommands?.length > 0) {
+
+        for (const subcmd of command.subCommands) {
+            if (subcmd.active === false) {
+                continue;
+            }
+            if (subcmd.regex) {
+                const regex = new RegExp(`^${subcmd.arg}$`, "gi");
+                if (regex.test(userCmd.args[0])) {
+                    userCmd.triggeredSubcmd = subcmd;
+                }
+            } else {
+                if (subcmd.arg.toLowerCase() === userCmd.args[0].toLowerCase()) {
+                    userCmd.triggeredSubcmd = subcmd;
+                }
+            }
+        }
+
+        if (command.type !== "system" && userCmd.triggeredSubcmd == null) {
+            if (command.fallbackSubcommand == null || !command.fallbackSubcommand.active) {
+                userCmd.isInvalidSubcommandTrigger = true;
+            } else {
+                userCmd.triggeredSubcmd = command.fallbackSubcommand;
+            }
+        }
+
+        if (userCmd.triggeredSubcmd != null) {
+            userCmd.triggeredArg = userCmd.triggeredSubcmd.arg;
+            userCmd.subcommandId = userCmd.triggeredSubcmd.id;
+        }
+    }
+
+    return userCmd;
 }
 
 function fireCommand(
@@ -366,41 +404,14 @@ async function handleChatMessage(firebotChatMessage) {
 
     // build usercommand object
     const userCmd = buildUserCommand(command, rawMessage, commandSender, firebotChatMessage.roles);
+    const triggeredSubcmd = userCmd.triggeredSubcmd;
 
     // update trigger with the one we matched
     userCmd.trigger = matchedTrigger;
 
-    let triggeredSubcmd = null;
-    if (!command.scanWholeMessage && !command.triggerIsRegex && userCmd.args.length > 0 && command.subCommands && command.subCommands.length > 0) {
-        for (const subcmd of command.subCommands) {
-            if (subcmd.active === false) {
-                continue;
-            }
-            if (subcmd.regex) {
-                const regex = new RegExp(`^${subcmd.arg}$`, "gi");
-                if (regex.test(userCmd.args[0])) {
-                    triggeredSubcmd = subcmd;
-                    userCmd.triggeredArg = subcmd.arg;
-                    userCmd.subcommandId = subcmd.id;
-                }
-            } else {
-                if (subcmd.arg.toLowerCase() === userCmd.args[0].toLowerCase()) {
-                    triggeredSubcmd = subcmd;
-                    userCmd.triggeredArg = subcmd.arg;
-                    userCmd.subcommandId = subcmd.id;
-                }
-            }
-        }
-
-        if (command.type !== "system" && triggeredSubcmd == null) {
-            if (command.fallbackSubcommand == null || !command.fallbackSubcommand.active) {
-                twitchChat.sendChatMessage(`Invalid Command: unknown arg used.`);
-                return false;
-            }
-            triggeredSubcmd = command.fallbackSubcommand;
-            userCmd.triggeredArg = command.fallbackSubcommand.arg;
-            userCmd.subcommandId = command.fallbackSubcommand.id;
-        }
+    if (userCmd.isInvalidSubcommandTrigger === true) {
+        twitchChat.sendChatMessage(`Invalid Command: unknown arg used.`);
+        return false;
     }
 
     if (command.autoDeleteTrigger || (triggeredSubcmd && triggeredSubcmd.autoDeleteTrigger)) {
