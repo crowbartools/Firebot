@@ -7,7 +7,7 @@ const accountAccess = require('./account-access');
 const replaceVariableManager = require("./../variables/replace-variable-manager");
 const effectQueueManager = require("../effects/queues/effect-queue-manager");
 const effectQueueRunner = require("../effects/queues/effect-queue-runner");
-const webServer = require("../../server/httpServer");
+const webServer = require("../../server/http-server-manager");
 const util = require("../utility");
 
 const findAndReplaceVariables = async (data, trigger, effectOutputs) => {
@@ -138,7 +138,8 @@ async function runEffects(runEffectsContext) {
 
                     if (outputs) {
                         Object.entries(outputs).forEach(([defaultName, value]) => {
-                            const name = effect.outputNames[defaultName] ?? defaultName;
+                            const outputNames = effect.outputNames ?? {};
+                            const name = outputNames[defaultName] ?? defaultName;
                             runEffectsContext.outputs[name] = value;
                         });
                     }

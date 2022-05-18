@@ -1,6 +1,6 @@
 "use strict";
 
-const webServer = require("../../../server/httpServer");
+const webServer = require("../../../server/http-server-manager");
 const frontendCommunicator = require("../../common/frontend-communicator");
 const effectQueueRunner = require("../../effects/queues/effect-queue-runner");
 const { EffectCategory } = require('../../../shared/effect-constants');
