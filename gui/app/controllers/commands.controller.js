@@ -102,6 +102,11 @@
             $scope.duplicateCustomCommand = command => {
                 const copiedCommand = objectCopyHelper.copyObject("command", command);
 
+                // Make sure fallback ID is correct
+                if (copiedCommand.fallbackSubcommand?.id != null) {
+                    copiedCommand.fallbackSubcommand.id = "fallback-subcommand";
+                }
+
                 while (commandsService.triggerExists(copiedCommand.trigger)) {
                     copiedCommand.trigger += "copy";
                 }
