@@ -154,7 +154,7 @@ const currency = {
                 <eos-chatter-select effect="effect" title="Chat as"></eos-chatter-select>
 
                 <eos-container header="Message To Send" pad-top="true">
-                    <textarea ng-model="effect.message" class="form-control" name="text" placeholder="Enter message" rows="4" cols="40"></textarea>
+                    <textarea ng-model="effect.message" class="form-control" name="text" placeholder="Enter message" rows="4" cols="40" replace-variables></textarea>
                     <div style="color: #fb7373;" ng-if="effect.message && effect.message.length > 360">Chat messages cannot be longer than 360 characters. This message will get automatically trimmed if the length is still too long after all replace variables have been populated.</div>
                     <div style="display: flex; flex-direction: row; width: 100%; height: 36px; margin: 10px 0 10px; align-items: center;">
                         <label class="control-fb control--checkbox" style="margin: 0px 15px 0px 0px"> Whisper
