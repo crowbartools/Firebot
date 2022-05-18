@@ -13,7 +13,7 @@ exports.setupCommonListeners = () => {
     const profileManager = require("./profile-manager");
     const { settings } = require("./settings-access");
     const backupManager = require("../backupManager");
-    const webServer = require("../../server/httpServer");
+    const webServer = require("../../server/http-server-manager");
 
     frontendCommunicator.on("show-twitch-preview", () => {
         const windowManagement = require("../app-management/electron/window-management");

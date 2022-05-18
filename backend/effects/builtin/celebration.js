@@ -1,6 +1,6 @@
 "use strict";
 
-const webServer = require("../../../server/httpServer");
+const webServer = require("../../../server/http-server-manager");
 const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
 const { settings } = require("../../common/settings-access");
 

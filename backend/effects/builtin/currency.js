@@ -238,7 +238,7 @@ const currency = {
 
             if (isNaN(amount)) {
                 return resolve({
-                    succuss: false,
+                    success: false,
                     reason: "Amount not a number: " + amount
                 });
             }
@@ -300,7 +300,7 @@ const currency = {
             }
 
             return resolve({
-                succuss: true,
+                success: true,
                 outputs: {
                     currencyAmount: amount
                 }

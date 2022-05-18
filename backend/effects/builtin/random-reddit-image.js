@@ -5,7 +5,7 @@ const twitchChat = require("../../chat/twitch-chat");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const settings = require("../../common/settings-access").settings;
 const logger = require("../../logwrapper");
-const webServer = require("../../../server/httpServer");
+const webServer = require("../../../server/http-server-manager");
 const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
 
 const model = {
