@@ -138,7 +138,8 @@ async function runEffects(runEffectsContext) {
 
                     if (outputs) {
                         Object.entries(outputs).forEach(([defaultName, value]) => {
-                            const name = effect.outputNames[defaultName] ?? defaultName;
+                            const outputNames = effect.outputNames ?? {};
+                            const name = outputNames[defaultName] ?? defaultName;
                             runEffectsContext.outputs[name] = value;
                         });
                     }
