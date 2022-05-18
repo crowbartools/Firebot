@@ -36,6 +36,7 @@ const eventSourceDefinition = {
             manualMetadata: {
                 username: "Firebot",
                 message: "Test message",
+                alertMessage: "Alert Message",
                 cardRarity: {
                     type: "enum",
                     options: {
@@ -72,11 +73,12 @@ exports.processStreamLootsEvent = (eventData) => {
     const metadata = {
         imageUrl: eventData.imageUrl,
         soundUrl: eventData.soundUrl,
-        message: eventData.message
+        message: getFieldValue("message", eventData.data.fields),
+        alertMessage: eventData.message
     };
 
     if (metadata.message == null) {
-        metadata.message = getFieldValue("message", eventData.data.fields);
+        metadata.message = eventData.message;
     }
 
     metadata.username = getFieldValue("username", eventData.data.fields);
