@@ -78,6 +78,9 @@ const randomEffect = {
             }
 
             const enabledEffectList = effectList.list.filter(e => (e.active == null || !!e.active));
+            if (!enabledEffectList.length) {
+                return resolve(true);
+            }
 
             let chosenEffect = null;
 
