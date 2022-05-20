@@ -194,6 +194,16 @@ const commandManagement = {
                 arg: "disable",
                 usage: "disable [!trigger or \"phrase\"]",
                 description: "Disables the given custom command."
+            },
+            {
+                arg: "addalias",
+                usage: "addalias [!trigger or \"phrase\"] !alias",
+                description: "Adds the specified alias to the given custom command."
+            },
+            {
+                arg: "removealias",
+                usage: "removealias [!trigger or \"phrase\"] !alias",
+                description: "Removed the specified alias from the given custom command."
             }
         ]
     },
@@ -518,6 +528,82 @@ const commandManagement = {
                 chat.sendChatMessage(
                     `${util.capitalize(triggeredArg)}d "${trigger}"`
                 );
+                break;
+            }
+            case "addalias": {
+                const alias = remainingData.trim();
+
+                if (args.length < 3 || alias === "") {
+                    chat.sendChatMessage(
+                        `Invalid command. Usage: ${event.command.trigger} ${usage}`
+                    );
+                    return resolve();
+                }
+
+                const command = commandManager.getAllCustomCommands().find(c => c.trigger === trigger);
+
+                if (command == null) {
+                    chat.sendChatMessage(
+                        `Could not find a command with the trigger '${trigger}', please try again.`
+                    );
+                    return resolve();
+                }
+
+                const aliasIndex = command.aliases.findIndex((a) =>
+                    a.toLowerCase() === alias.toLowerCase());
+
+                if (aliasIndex > -1) {
+                    chat.sendChatMessage(
+                        `Alias '${alias}' already exists for command with the trigger '${trigger}'.`
+                    );
+                    return resolve();
+                }
+
+                command.aliases.push(alias);
+                commandManager.saveCustomCommand(command, event.userCommand.commandSender);
+
+                chat.sendChatMessage(
+                    `Added alias '${alias}' to custom command '${trigger}'!`
+                );
+
+                break;
+            }
+            case "removealias": {
+                const alias = remainingData.trim();
+
+                if (args.length < 3 || alias === "") {
+                    chat.sendChatMessage(
+                        `Invalid command. Usage: ${event.command.trigger} ${usage}`
+                    );
+                    return resolve();
+                }
+
+                const command = commandManager.getAllCustomCommands().find(c => c.trigger === trigger);
+
+                if (command == null) {
+                    chat.sendChatMessage(
+                        `Could not find a command with the trigger '${trigger}', please try again.`
+                    );
+                    return resolve();
+                }
+
+                const aliasIndex = command.aliases.findIndex((a) =>
+                    a.toLowerCase() === alias.toLowerCase());
+
+                if (aliasIndex === -1) {
+                    chat.sendChatMessage(
+                        `Alias '${alias}' does not exist for command with the trigger '${trigger}'.`
+                    );
+                    return resolve();
+                }
+
+                command.aliases.splice(aliasIndex, 1);
+                commandManager.saveCustomCommand(command, event.userCommand.commandSender);
+
+                chat.sendChatMessage(
+                    `Removed alias '${alias}' from custom command '${trigger}'!`
+                );
+
                 break;
             }
             default:
