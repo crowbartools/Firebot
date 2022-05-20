@@ -77,6 +77,8 @@ const randomEffect = {
                 return resolve(true);
             }
 
+            const enabledEffectList = effectList.list.filter(e => (e.active == null || !!e.active));
+
             let chosenEffect = null;
 
             const dontRepeat = effect.dontRepeat;
@@ -88,7 +90,7 @@ const randomEffect = {
                     arr2.every(arr2Item => arr1.includes(arr2Item));
 
                 // get array of effect ids in this random effect
-                const newEffectIds = effectList.list.map(e => e.id);
+                const newEffectIds = enabledEffectList.map(e => e.id);
 
                 // try to find queue in cache
                 let cacheEntry = randomQueuesCache[effect.id];
@@ -132,8 +134,8 @@ const randomEffect = {
 
             } else {
                 // we dont care about repeats, just get an effect via random index
-                const randomIndex = util.getRandomInt(0, effectList.list.length - 1);
-                chosenEffect = effectList.list[randomIndex];
+                const randomIndex = util.getRandomInt(0, enabledEffectList.length - 1);
+                chosenEffect = enabledEffectList[randomIndex];
 
                 //removed any cached queues
                 if (randomQueuesCache[effect.id]) {
