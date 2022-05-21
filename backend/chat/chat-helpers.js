@@ -378,7 +378,7 @@ exports.buildFirebotChatMessageFromText = async (text = "") => {
     /**@type {FirebotChatMessage} */
     const streamerFirebotChatMessage = {
         id: uuid(),
-        username: streamer.displayName,
+        username: streamer.username,
         userId: streamer.userId,
         rawText: text,
         profilePicUrl: streamer.avatar,
