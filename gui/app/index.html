@@ -346,7 +346,7 @@
 
       <div class="fb-tab-content">
         <div class="tab-header">
-          <span class="noselect" style="flex: 1">{{sbm.currentTabName}}</span>
+          <span class="noselect" style="flex: 1" role="heading" aria-level="1">{{sbm.currentTabName}}</span>
           <div style="flex: 1">
             <stream-info />
           </div>
@@ -448,7 +448,7 @@
           <div
             class="tab-body"
             ng-class="{ 'fullpage-tab': sbm.currentTabIsFullScreen() }"
-          >
+          role="main">
             <!-- angular templating -->
             <!-- this is where tab content will be injected -->
             <div ng-view style="width: 100%"></div>
@@ -705,7 +705,7 @@
                 <h4 class="modal-title" style="display:inline;">{{isAddMode ? "Add New Effect" : "Edit Effect"}}</h4>
 
                 <div class="flex-row acenter jspacebetween">
-                    <div class="test-effects-btn clickable" uib-tooltip="Test Effect" ng-hide="effect == null || effect.type === 'Nothing'">
+                    <div class="test-effects-btn clickable" uib-tooltip="Test Effect" ng-hide="effect == null || effect.type === 'Nothing'" aria-label="Test Effect">
                         <i class="far fa-play-circle" style="cursor: pointer;" ng-click="runEffect()"></i>
                     </div>
                     <div
@@ -713,7 +713,7 @@
                       uib-dropdown-toggle
                       context-menu="getOverflowMenu()"
                       context-menu-on="click"
-                      context-menu-class="effect-overflow-menu"
+                      context-menu-class="effect-overflow-menu" aria-label="Open Effect Menu"
                     >
                         <span class="noselect pointer effects-actions-btn" style="font-size: 31px"><i class="fal fa-ellipsis-v"></i></span>
                     </div>
@@ -749,7 +749,7 @@
           <button ng-if="openModals.length < 2" type="button" class="btn btn-primary" ng-click="save()" ng-disabled="effect.type === 'Nothing'">{{isAddMode ? "Add" : "Save"}}</button>
           <div ng-if="openModals.length >= 2" class="btn-group" uib-dropdown>
             <button id="split-button" type="button" class="btn btn-primary" ng-click="save()" ng-disabled="effect.type === 'Nothing'">{{isAddMode ? "Add" : "Save"}}</button>
-            <button type="button" class="btn btn-primary" uib-dropdown-toggle>
+            <button type="button" class="btn btn-primary" uib-dropdown-toggle aria-label="Open Menu">
               <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" style="min-width: 100%" uib-dropdown-menu role="menu" aria-labelledby="split-button">
