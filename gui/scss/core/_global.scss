@@ -1077,6 +1077,14 @@ body {
   cursor: pointer;
 }
 
+.clickable-icon-on-dark {
+    color: #d0d0d0;
+    cursor: pointer;
+    &:hover {
+        color: white;
+    }
+}
+
 //////
 // animations
 //////
@@ -1776,4 +1784,8 @@ column-resizer {
 
 .note-palette-title {
   color: $change-note-palette-title-color;
+}
+
+.display-1{
+  font-size: 1.2em;
 }

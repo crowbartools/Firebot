@@ -16,7 +16,14 @@ const api = {
         description: "Pulls info from a pre-selected api.",
         icon: "fad fa-chart-network",
         categories: [EffectCategory.FUN, EffectCategory.CHAT_BASED, EffectCategory.OVERLAY],
-        dependencies: [EffectDependency.CHAT]
+        dependencies: [EffectDependency.CHAT],
+        outputs: [
+            {
+                label: "API Response",
+                description: "The raw response from the API",
+                defaultName: "apiResponse"
+            }
+        ]
     },
     /**
    * Global settings that will be available in the Settings tab
@@ -156,7 +163,12 @@ const api = {
 
         twitchChat.sendChatMessage(`${apiType}: ${apiResponse}`, null, chatter);
 
-        return true;
+        return {
+            success: true,
+            outputs: {
+                apiResponse: apiResponse
+            }
+        };
     },
     /**
    * Code to run in the overlay

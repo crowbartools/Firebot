@@ -94,7 +94,7 @@ function buildModules(scriptManifest) {
         },
         twitchChat: twitchChat,
         twitchApi: require("../../../twitch-api/api"),
-        httpServer: require("../../../../server/httpServer"),
+        httpServer: require("../../../../server/http-server-manager"),
         effectManager: require("../../../effects/effectManager"),
         conditionManager: require("../../../effects/builtin/conditional-effects/conditions/condition-manager"),
         restrictionManager: require("../../../restrictions/restriction-manager"),
@@ -122,9 +122,9 @@ function buildModules(scriptManifest) {
 function buildRunRequest(scriptManifest, params, trigger) {
     return {
         modules: buildModules(scriptManifest),
-        command: trigger.metadata.userCommand,
+        command: trigger?.metadata?.userCommand,
         user: {
-            name: trigger.metadata.username
+            name: trigger?.metadata?.username
         },
         firebot: {
             accounts: accountAccess.getAccounts(),

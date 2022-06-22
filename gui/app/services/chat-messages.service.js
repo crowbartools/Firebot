@@ -48,6 +48,11 @@
                 return userList;
             };
 
+            // Return User List with people in role filtered out.
+            service.getFilteredChatUserList = function() {
+                return service.chatUsers.filter((user) => !user.disableViewerList);
+            };
+
             // Clear User List
             service.clearUserList = function() {
                 service.chatUsers = [];

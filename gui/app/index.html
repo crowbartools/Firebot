@@ -14,10 +14,7 @@
 
     <!--Webfont version of font awesome 5, use these from now on-->
 
-    <script
-      ng-src="{{fontAwesome5KitUrl}}"
-      crossorigin="anonymous"
-    ></script>
+    <script ng-src="{{fontAwesome5KitUrl}}" crossorigin="anonymous"></script>
 
     <link ng-href="{{customFontCssPath}}" rel="stylesheet" type="text/css" />
 
@@ -25,7 +22,7 @@
       href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto:100,300,400,500,700|Roboto+Mono:300|Quicksand:300,400,700"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
     <link
       rel="stylesheet"
       type="text/css"
@@ -266,6 +263,7 @@
     <script type="text/javascript" src="./directives/modals/effects/add-edit-preset-effect-list-modal.js"></script>
     <script type="text/javascript" src="./directives/modals/effects/add-new-effect-modal.js"></script>
     <script type="text/javascript" src="./directives/modals/effects/trigger-preset-effect-list-modal.js"></script>
+    <script type="text/javascript" src="./directives/modals/effects/view-effect-outputs-modal.js"></script>
     <script type="text/javascript" src="./directives/modals/events/addOrEditEventModal.js"></script>
     <script type="text/javascript" src="./directives/modals/events/simulateGroupEventsModal.js"></script>
     <script type="text/javascript" src="./directives/modals/filters/addOrEditFilter/addOrEditFilterModal.js"></script>
@@ -376,7 +374,10 @@
                 ng-src="{{cs.getAccountAvatar('bot')}}"
               />
               <div class="fb-arrow down login-arrow"></div>
-              <ul class="dropdown-menu right-justified-dropdown" uib-dropdown-menu>
+              <ul
+                class="dropdown-menu right-justified-dropdown"
+                uib-dropdown-menu
+              >
                 <li>
                   <a
                     href
@@ -744,6 +745,16 @@
           </div>
       </div>
       <div class="modal-footer sticky-footer edit-effect-footer">
+
+        <button
+          ng-if="effectDefinition.definition.outputs != null && effectDefinition.definition.outputs.length > 0"
+          class="btn btn-link pull-left"
+          ng-click="openOutputsModal()"
+        >
+          <i class="fas fa-sign-out"></i>
+          <span>Outputs</span>
+        </button>
+
           <button class="btn btn-link" ng-click="dismiss()">Cancel</button>
 
           <button ng-if="openModals.length < 2" type="button" class="btn btn-primary" ng-click="save()" ng-disabled="effect.type === 'Nothing'">{{isAddMode ? "Add" : "Save"}}</button>
