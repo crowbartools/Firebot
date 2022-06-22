@@ -77,7 +77,7 @@
               text="'Event Sets allow you to create different sets of events (ie for specific games or holiday themes) and selectively activate them.'"
             ></tooltip
           ></span>
-          <div class="clickable" ng-click="showCreateEventGroupModal()">
+          <div class="clickable" ng-click="showCreateEventGroupModal()" aria-label="New Event Set">
             <i class="fas fa-plus-circle"></i>
           </div>
         </div>
@@ -107,13 +107,13 @@
               </div>
             </div>
             <div class="flex-row-center jspacebetween">
-              <span
+              <span aria-label="Currently Active"
                 ng-if="group.active"
                 class="status-dot active"
                 uib-tooltip="This event set is active"
                 tooltip-append-to-body="true"
               ></span>
-              <button
+              <button aria-label=" Event Set Options"
                 class="noselect clickable text-3xl mx-5"
                 style="background: transparent; border: none"
                 context-menu="eventSetMenuOptions(group)"
