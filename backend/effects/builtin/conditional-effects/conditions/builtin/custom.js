@@ -4,25 +4,32 @@ module.exports = {
     id: "firebot:custom",
     name: "Custom",
     description: "Condition based on custom values (useful with $variables)",
-    comparisonTypes: ["is", "is not", "is less than", "is less than or equal to", "is greater than", "is greater than or equal to", "contains", "does not contain", "matches regex", "does not match regex"],
+    comparisonTypes: ["is", "is not", "is strictly", "is not strictly", "is less than", "is less than or equal to", "is greater than", "is greater than or equal to", "contains", "does not contain", "matches regex", "does not match regex"],
     leftSideValueType: "text",
     rightSideValueType: "text",
     predicate: (conditionSettings) => {
 
         let { comparisonType, leftSideValue, rightSideValue } = conditionSettings;
 
-        if (!isNaN(leftSideValue)) {
-            leftSideValue = Number(leftSideValue);
+        if (comparisonType !== "is strictly" && comparisonType !== "is not strictly") {
+            if (!isNaN(leftSideValue)) {
+                leftSideValue = Number(leftSideValue);
+            }
+            if (!isNaN(rightSideValue)) {
+                rightSideValue = Number(rightSideValue);
+            }
         }
-        if (!isNaN(rightSideValue)) {
-            rightSideValue = Number(rightSideValue);
-        }
+
 
         switch (comparisonType) {
         case "is":
             return leftSideValue == rightSideValue; //eslint-disable-line eqeqeq
         case "is not":
             return leftSideValue != rightSideValue; //eslint-disable-line eqeqeq
+        case "is strictly":
+            return leftSideValue === rightSideValue;
+        case "is not strictly":
+            return leftSideValue !== rightSideValue;
         case "is less than":
             return leftSideValue < rightSideValue;
         case "is less than or equal to":
