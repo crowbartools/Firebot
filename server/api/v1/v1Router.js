@@ -38,8 +38,12 @@ router.route("/effects/:effectId")
     .get(effects.getEffect);
 
 router.route("/effects/preset/:presetListId")
-    .get(effects.runPresetList)
-    .post(effects.runPresetList);
+    .get(effects.runPresetListSynchronous)
+    .post(effects.runPresetListSynchronous);
+
+router.route("/effects/preset/:presetListId/run")
+    .get(effects.triggerPresetListAsync)
+    .post(effects.triggerPresetListAsync);
 
 
 // Commands
