@@ -42,7 +42,7 @@ exports.triggerSubGift = (subInfo) => {
                             username: gifterDisplayName,
                             subCount: giftReceivers.length,
                             subPlan: subInfo.planName,
-                            isAnonymous: !!subInfo.gifterUserId,
+                            isAnonymous: !subInfo.gifterUserId,
                             gifterUsername: gifterDisplayName,
                             giftReceivers: giftReceivers
                         });
