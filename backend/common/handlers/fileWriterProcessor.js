@@ -26,6 +26,9 @@ function removeLinesWithText(filepath, text) {
     const contents = fs.readFileSync(filepath, "utf8");
     return contents
         .split('\n')
+        .map(l => {
+            return l.replace('\r', "");
+        })
         .filter(l => l != null && l.trim() !== "")
         .filter(l => l !== text)
         .join('\n') + "\n";
