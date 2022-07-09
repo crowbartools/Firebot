@@ -602,6 +602,15 @@
                 pushDataToFile("/settings/backupOnExit", backupOnExit === true);
             };
 
+            service.backupIncludeResources = function() {
+                const save = getDataFromFile("/settings/backupIncludeResources");
+                return save != null ? save : true;
+            };
+
+            service.setBackupIncludeResources = function(backupIncludeResources) {
+                pushDataToFile("/settings/backupIncludeResources", backupIncludeResources === true);
+            };
+
             service.backupBeforeUpdates = function() {
                 const backupBeforeUpdates = getDataFromFile(
                     "/settings/backupBeforeUpdates"

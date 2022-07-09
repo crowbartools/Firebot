@@ -50,6 +50,19 @@
                             <div class="control__indicator"></div>
                         </label>
                         <label class="control-fb control--checkbox"
+                            >Include overlay resources folder
+                            <tooltip
+                                text="'If your overlay-resource folder has become quite large, and slowing down the backup system turn this off. Note: you will need to manually backup this folder.'"
+                            ></tooltip>
+                            <input
+                                type="checkbox"
+                                ng-click="settings.setBackupIncludeResources(!settings.backupIncludeResources())"
+                                ng-checked="settings.backupIncludeResources()"
+                                aria-label="..."
+                            />
+                            <div class="control__indicator"></div>
+                        </label>
+                        <label class="control-fb control--checkbox"
                             >Before viewer purges
                             <tooltip
                                 text="'Firebot will always backup before you do viewer purges (Database > View Purge Options)'"

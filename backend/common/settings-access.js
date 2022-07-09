@@ -146,6 +146,15 @@ settings.backupOnExit = function() {
     return backupOnExit != null ? backupOnExit : true;
 };
 
+settings.backupIncludeResources = function() {
+    const save = getDataFromFile("/settings/backupIncludeResources");
+    return save != null ? save : true;
+};
+
+settings.setBackupIncludeResources = function(backupIncludeResources) {
+    pushDataToFile("/settings/backupIncludeResources", backupIncludeResources === true);
+};
+
 settings.backupBeforeUpdates = function() {
     const backupBeforeUpdates = getDataFromFile("/settings/backupBeforeUpdates");
     return backupBeforeUpdates != null ? backupBeforeUpdates : true;
