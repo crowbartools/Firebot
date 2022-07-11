@@ -199,6 +199,18 @@
               />
               <div class="control__indicator"></div>
             </label>
+            <label class="control-fb control--checkbox"
+              >Treat quoted text as single argument
+              <tooltip
+                text="'When this option is enabled, text inside of double quotes will be treated as a single argument without the quotes. Example: !command &quot;This is an argument&quot; will have a single argument with the value: This is an argument'"
+              ></tooltip>
+              <input
+                type="checkbox"
+                ng-model="$ctrl.command.treatQuotedTextAsSingleArg"
+                aria-label="..."
+              />
+              <div class="control__indicator"></div>
+            </label>
           </div>
           <div class="controls-fb-inline mt-4"></div>
         </div>

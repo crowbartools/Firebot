@@ -247,15 +247,24 @@ function cooldownCommand(command, triggeredSubcmd, username) {
     }
 }
 
-function buildUserCommand(command, rawMessage, sender, senderRoles) {
-    let trigger = command.trigger,
-        args = [];
+function parseCommandTriggerAndArgs(trigger, rawMessage, scanWholeMessage = false, treatQuotedTextAsSingleArg = false) {
+    let args = [], rawArgs = [];
 
     if (rawMessage != null) {
-        if (command.scanWholeMessage) {
-            args = rawMessage.split(" ");
+        if (treatQuotedTextAsSingleArg) {
+            // Get args
+            const quotedArgRegExp = /"([^"]+)"|(\S+)/g;
+            rawArgs = rawMessage.match(quotedArgRegExp);
+
+            // Strip surrounding quotes from quoted args
+            rawArgs = rawArgs.map(rawArg => rawArg.replace(/^"(.+)"$/, '$1'));
         } else {
-            const rawArgs = rawMessage.split(" ");
+            rawArgs = rawMessage.split(" ");
+        }
+
+        if (scanWholeMessage) {
+            args = rawArgs;
+        } else {
             if (rawArgs.length > 0) {
                 trigger = rawArgs[0];
                 args = rawArgs.splice(1);
@@ -264,6 +273,12 @@ function buildUserCommand(command, rawMessage, sender, senderRoles) {
     }
 
     args = args.filter(a => a.trim() !== "");
+
+    return { trigger, args };
+}
+
+function buildUserCommand(command, rawMessage, sender, senderRoles) {
+    const { trigger, args } = parseCommandTriggerAndArgs(command.trigger, rawMessage, command.scanWholeMessage, command.treatQuotedTextAsSingleArg);
 
     const userCmd = new UserCommand(trigger, args, sender, senderRoles);
 
