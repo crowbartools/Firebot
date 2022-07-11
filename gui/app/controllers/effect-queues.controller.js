@@ -39,7 +39,7 @@
                 {
                     name: "INTERVAL",
                     icon: "fa-clock",
-                    cellTemplate: `{{data.mode === 'interval' ? data.interval + 's' : 'n/a'}}`,
+                    cellTemplate: `{{(data.mode === 'interval' || data.mode === 'sequential') ? data.interval + 's' : 'n/a'}}`,
                     cellController: () => {}
                 }
             ];

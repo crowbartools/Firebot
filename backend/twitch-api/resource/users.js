@@ -46,7 +46,7 @@ const doesUserFollowChannel = async (username, channelName) => {
 
     const userFollow = await client.users.userFollowsBroadcaster(user.id, channel.id);
 
-    return userFollow != null;
+    return userFollow != null ? userFollow : false;
 };
 
 exports.getFollowDateForUser = getFollowDateForUser;
