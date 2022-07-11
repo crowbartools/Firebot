@@ -50,14 +50,14 @@
                             <div class="control__indicator"></div>
                         </label>
                         <label class="control-fb control--checkbox"
-                            >Include overlay resources folder
+                            >Ignore overlay resources folder
                             <tooltip
-                                text="'If your overlay-resource folder has become quite large, and slowing down the backup system turn this off. Note: you will need to manually backup this folder.'"
+                                text="'If your overlay-resource folder has become quite large, and slowing down the backup system turn this on. Note: Manual backups are not affected.'"
                             ></tooltip>
                             <input
                                 type="checkbox"
-                                ng-click="settings.setBackupIncludeResources(!settings.backupIncludeResources())"
-                                ng-checked="settings.backupIncludeResources()"
+                                ng-click="settings.setBackupIgnoreResources(!settings.backupIgnoreResources())"
+                                ng-checked="settings.backupIgnoreResources()"
                                 aria-label="..."
                             />
                             <div class="control__indicator"></div>

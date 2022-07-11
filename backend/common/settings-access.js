@@ -146,13 +146,13 @@ settings.backupOnExit = function() {
     return backupOnExit != null ? backupOnExit : true;
 };
 
-settings.backupIncludeResources = function() {
-    const save = getDataFromFile("/settings/backupIncludeResources");
+settings.backupIgnoreResources = function() {
+    const save = getDataFromFile("/settings/backupIgnoreResources");
     return save != null ? save : true;
 };
 
-settings.setBackupIncludeResources = function(backupIncludeResources) {
-    pushDataToFile("/settings/backupIncludeResources", backupIncludeResources === true);
+settings.setBackupIgnoreResources = function(backupIgnoreResources) {
+    pushDataToFile("/settings/backupIgnoreResources", backupIgnoreResources === false);
 };
 
 settings.backupBeforeUpdates = function() {

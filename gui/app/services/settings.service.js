@@ -602,13 +602,13 @@
                 pushDataToFile("/settings/backupOnExit", backupOnExit === true);
             };
 
-            service.backupIncludeResources = function() {
-                const save = getDataFromFile("/settings/backupIncludeResources");
+            service.backupIgnoreResources = function() {
+                const save = getDataFromFile("/settings/backupIgnoreResources");
                 return save != null ? save : true;
             };
 
-            service.setBackupIncludeResources = function(backupIncludeResources) {
-                pushDataToFile("/settings/backupIncludeResources", backupIncludeResources === true);
+            service.setBackupIgnoreResources = function(backupIgnoreResources) {
+                pushDataToFile("/settings/backupIgnoreResources", backupIgnoreResources === true);
             };
 
             service.backupBeforeUpdates = function() {
