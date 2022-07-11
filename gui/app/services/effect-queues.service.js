@@ -50,6 +50,12 @@
                     display: "Interval",
                     description: "Runs effect lists on a set interval.",
                     iconClass: "fa-stopwatch"
+                },
+                {
+                    id: "sequential",
+                    display: "Sequential",
+                    description: "Runs effects in the list sequentially. Priority items will be added before non-priority. Optional delay defaults to 0s.",
+                    iconClass: "fa-arrow-down-1-9"
                 }
             ];
 
