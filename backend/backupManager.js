@@ -113,8 +113,7 @@ function startBackup(manualActivation = false, callback) {
     const ignoreResources = settings.backupIgnoreResources();
 
     if (ignoreResources && !manualActivation) {
-        logger.info("Ignoring overlay-resources folder");
-        varIgnoreInArchive.push('overlay-resources/**');
+        varIgnoreInArchive = ['overlay-resources/**', 'backups/**', 'clips/**', 'logs/**', 'overlay.html'];
     }
 
     archive.glob('**/*', {
