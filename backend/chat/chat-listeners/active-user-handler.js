@@ -190,7 +190,7 @@ exports.addActiveUser = async (chatUser, includeInOnline = false, forceActive = 
             ...(chatUser.isVip ? ['vip'] : [])
         ],
         profilePicUrl: (await chatHelpers.getUserProfilePicUrl(chatUser.userId)),
-        disableViewerList: !!user.disableViewerList
+        disableViewerList: !!user?.disableViewerList
     };
 
     if (user == null) {
