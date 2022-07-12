@@ -109,15 +109,16 @@ function startBackup(manualActivation = false, callback) {
     const folderPath = path.resolve(dataAccess.getPathInUserData("/"));
     //archive.directory(folderPath, "profiles");
 
-    let varIgnore = ['overlay-resources/**', 'backups/**', 'clips/**', 'logs/**', 'overlay.html'];
-    const includeResources = settings.backupIncludeResources();
+    let varIgnoreInArchive = ['backups/**', 'clips/**', 'logs/**', 'overlay.html'];
+    const ignoreResources = settings.backupIgnoreResources();
 
-    if (includeResources) {
-        varIgnore = ['backups/**', 'clips/**', 'logs/**', 'overlay.html'];
+    if (ignoreResources && !manualActivation) {
+        logger.info("Ignoring overlay-resources folder");
+        varIgnoreInArchive.push('overlay-resources/**');
     }
 
     archive.glob('**/*', {
-        ignore: varIgnore,
+        ignore: varIgnoreInArchive,
         cwd: folderPath
     });
 
