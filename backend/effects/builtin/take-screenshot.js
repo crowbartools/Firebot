@@ -3,7 +3,7 @@
 const { EffectCategory } = require('../../../shared/effect-constants');
 const { settings } = require("../../common/settings-access");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
-const webServer = require("../../../server/httpServer");
+const webServer = require("../../../server/http-server-manager");
 const frontendCommunicator = require("../../common/frontend-communicator");
 const path = require("path");
 const discordEmbedBuilder = require("../../integrations/builtin/discord/discord-embed-builder");

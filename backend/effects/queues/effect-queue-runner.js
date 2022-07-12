@@ -66,6 +66,16 @@ class EffectQueue {
                 setTimeout(() => {
                     resolve(this.runQueue());
                 }, (duration || 0) * 1000);
+            } else if (this.mode === "sequential") {
+                effectRunner.runEffects(runEffectsContext)
+                    .catch(err => {
+                        logger.warn(`Error while processing effects for queue ${this.id}`, err);
+                    })
+                    .finally(() => {
+                        setTimeout(() => {
+                            resolve(this.runQueue());
+                        }, (this.interval || 0) * 1000);
+                    });
             } else {
                 resolve();
             }

@@ -79,6 +79,13 @@
                             </label>
                         </div>
 
+                        <div ng-show="$ctrl.hasFirebotData" style="margin-top:20px; margin-bottom: 30px;">
+                            <label class="control-fb control--checkbox"> Don't show in viewer list <tooltip text="'Prevent the user from showing up in the viewer list next to chat.'"></tooltip>
+                                <input type="checkbox" ng-model="$ctrl.viewerDetails.firebotData.disableViewerList" ng-change="$ctrl.disableViewerListChange()">
+                                <div class="control__indicator"></div>
+                            </label>
+                        </div>
+
                         <div ng-hide="$ctrl.hasFirebotData" style="padding: left: 15px;">
                             <p class="muted">There is no Firebot data saved for this Twitch user.</p>
                             <button type="button" class="btn btn-default" ng-click="$ctrl.saveUser()">Save User in Firebot</button>
@@ -423,6 +430,14 @@
                         userId: $ctrl.resolve.userId,
                         field: "disableActiveUserList",
                         value: $ctrl.viewerDetails.firebotData.disableActiveUserList
+                    });
+                };
+
+                $ctrl.disableViewerListChange = () => {
+                    backendCommunicator.fireEvent("updateViewerDataField", {
+                        userId: $ctrl.resolve.userId,
+                        field: "disableViewerList",
+                        value: $ctrl.viewerDetails.firebotData.disableViewerList
                     });
                 };
 

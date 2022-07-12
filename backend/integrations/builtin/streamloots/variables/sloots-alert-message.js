@@ -9,16 +9,16 @@ triggers[EffectTrigger.MANUAL] = true;
 
 const model = {
     definition: {
-        handle: "slootsMessage",
-        description: "The users message included with a StreamLoots Chest/Card.",
+        handle: "slootsAlertMessage",
+        description: "The alert message included with a StreamLoots Chest/Card.",
         triggers: triggers,
         categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
-        const message = trigger.metadata.eventData && trigger.metadata.eventData.message;
+        const alertMessage = trigger.metadata.eventData && trigger.metadata.eventData.alertMessage;
 
-        return message || "";
+        return alertMessage || "";
     }
 };
 

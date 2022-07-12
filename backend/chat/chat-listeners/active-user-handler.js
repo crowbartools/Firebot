@@ -102,7 +102,8 @@ async function updateUserOnlineStatus(userDetails, updateDb = false) {
             username: userDetails.displayName,
             roles: roles,
             profilePicUrl: userDetails.profilePicUrl,
-            active: exports.userIsActive(userDetails.id)
+            active: exports.userIsActive(userDetails.id),
+            disableViewerList: userDetails.disableViewerList
         });
 
         if (updateDb) {
@@ -132,7 +133,8 @@ exports.addOnlineUser = async (username) => {
                 username: twitchUser.name,
                 displayName: twitchUser.displayName,
                 twitchRoles: [],
-                profilePicUrl: twitchUser.profilePictureUrl
+                profilePicUrl: twitchUser.profilePictureUrl,
+                disableViewerList: false
             };
 
             chatHelpers.setUserProfilePicUrl(twitchUser.id, twitchUser.profilePictureUrl);
@@ -147,7 +149,8 @@ exports.addOnlineUser = async (username) => {
                 username: firebotUser.username,
                 displayName: firebotUser.displayName,
                 twitchRoles: firebotUser.twitchRoles,
-                profilePicUrl: firebotUser.profilePicUrl
+                profilePicUrl: firebotUser.profilePicUrl,
+                disableViewerList: !!firebotUser.disableViewerList
             };
             await updateUserOnlineStatus(userDetails, true);
         }
@@ -178,7 +181,7 @@ exports.addActiveUser = async (chatUser, includeInOnline = false, forceActive = 
 
     const userDetails = {
         id: chatUser.userId,
-        username: chatUser.userName,
+        username: chatUser.userName.toLowerCase(),
         displayName: chatUser.displayName,
         twitchRoles: [
             ...(chatUser.isBroadcaster ? ['broadcaster'] : []),
@@ -186,7 +189,8 @@ exports.addActiveUser = async (chatUser, includeInOnline = false, forceActive = 
             ...(chatUser.isMod ? ['mod'] : []),
             ...(chatUser.isVip ? ['vip'] : [])
         ],
-        profilePicUrl: (await chatHelpers.getUserProfilePicUrl(chatUser.userId))
+        profilePicUrl: (await chatHelpers.getUserProfilePicUrl(chatUser.userId)),
+        disableViewerList: !!user.disableViewerList
     };
 
     if (user == null) {
@@ -197,24 +201,24 @@ exports.addActiveUser = async (chatUser, includeInOnline = false, forceActive = 
         await updateUserOnlineStatus(userDetails, true);
     }
 
-    await userDatabase.incrementDbField(chatUser.userId, "chatMessages");
+    await userDatabase.incrementDbField(userDetails.id, "chatMessages");
 
     if (!forceActive && user.disableActiveUserList) {
         return;
     }
 
-    const userActive = activeUsers.get(chatUser.userId);
+    const userActive = activeUsers.get(userDetails.id);
     if (!userActive) {
-        logger.debug(`Marking user ${chatUser.displayName} as active with ttl of ${ttl} secs`, ttl);
-        activeUsers.set(chatUser.userId, chatUser.userName, ttl);
-        activeUsers.set(chatUser.userName, chatUser.userId, ttl);
-        frontendCommunicator.send("twitch:chat:user-active", chatUser.userId);
+        logger.debug(`Marking user ${userDetails.displayName} as active with ttl of ${ttl} secs`, ttl);
+        activeUsers.set(userDetails.id, userDetails.username, ttl);
+        activeUsers.set(userDetails.username, userDetails.id, ttl);
+        frontendCommunicator.send("twitch:chat:user-active", userDetails.id);
     } else {
         // user is still active reset ttl
-        logger.debug(`Updating user ${chatUser.displayName}'s "active" ttl to ${ttl} secs`, ttl);
-        activeUsers.ttl(chatUser.userId, ttl);
-        activeUsers.ttl(chatUser.userName, ttl);
-        frontendCommunicator.send("twitch:chat:user-active", chatUser.userId);
+        logger.debug(`Updating user ${userDetails.displayName}'s "active" ttl to ${ttl} secs`, ttl);
+        activeUsers.ttl(userDetails.id, ttl);
+        activeUsers.ttl(userDetails.username, ttl);
+        frontendCommunicator.send("twitch:chat:user-active", userDetails.id);
     }
 };
 

@@ -20,8 +20,10 @@ exports.triggerCommunitySubGift = (subInfo) => {
 /** @param {import("@twurple/chat").ChatSubGiftInfo} subInfo */
 exports.triggerSubGift = (subInfo) => {
     if (settings.ignoreSubsequentSubEventsAfterCommunitySub()) {
-        logger.debug(`Attempting to process community gift sub from ${subInfo.gifterDisplayName} at ${moment().format("HH:mm:ss:SS")}`);
-        const cacheKey = `${subInfo.gifterDisplayName}:${subInfo.plan}`;
+        const gifterDisplayName = subInfo.gifterDisplayName ? subInfo.gifterDisplayName : "An Anonymous Gifter";
+
+        logger.debug(`Attempting to process community gift sub from ${gifterDisplayName} at ${moment().format("HH:mm:ss:SS")}`);
+        const cacheKey = `${gifterDisplayName}:${subInfo.plan}`;
 
         const cache = communitySubCache.get(cacheKey);
         if (cache != null) {
@@ -37,11 +39,11 @@ exports.triggerSubGift = (subInfo) => {
                         communitySubCache.set(cacheKey, {subCount: newCount, giftReceivers: giftReceivers});
                     } else {
                         eventManager.triggerEvent("twitch", "community-subs-gifted", {
-                            username: subInfo.gifterDisplayName,
+                            username: gifterDisplayName,
                             subCount: giftReceivers.length,
                             subPlan: subInfo.planName,
-                            isAnonymous: !!subInfo.gifterUserId,
-                            gifterUsername: subInfo.gifterDisplayName,
+                            isAnonymous: !subInfo.gifterUserId,
+                            gifterUsername: gifterDisplayName,
                             giftReceivers: giftReceivers
                         });
 

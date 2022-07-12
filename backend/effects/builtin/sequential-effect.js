@@ -67,13 +67,18 @@ const model = {
                 return resolve(true);
             }
 
+            const enabledEffectList = effect.list.filter(e => (e.active == null || !!e.active));
+            if (!enabledEffectList.length) {
+                return resolve(true);
+            }
+
             let chosenEffect = null;
 
             const containsAll = (arr1, arr2) =>
                 arr2.every(arr2Item => arr1.includes(arr2Item));
 
             // get array of effect ids in this seq effect
-            const newEffectIds = effectList.list.map(e => e.id);
+            const newEffectIds = enabledEffectList.map(e => e.id);
 
             // try to find queue in cache
             let cacheEntry = sequentialQueuesCache[effect.id];

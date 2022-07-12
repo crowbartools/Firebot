@@ -32,6 +32,8 @@ let handledMessageIds = [];
 function UserCommand(trigger, args, commandSender, senderRoles) {
     this.trigger = trigger;
     this.args = args;
+    this.triggeredSubcmd = null;
+    this.isInvalidSubcommandTrigger = false;
     this.triggeredArg = null;
     this.subcommandId = null;
     this.commandSender = commandSender;
@@ -245,16 +247,24 @@ function cooldownCommand(command, triggeredSubcmd, username) {
     }
 }
 
-function buildUserCommand(command, rawMessage, sender, senderRoles) {
-    let trigger = command.trigger,
-        args = [],
-        commandSender = sender;
+function parseCommandTriggerAndArgs(trigger, rawMessage, scanWholeMessage = false, treatQuotedTextAsSingleArg = false) {
+    let args = [], rawArgs = [];
 
     if (rawMessage != null) {
-        if (command.scanWholeMessage) {
-            args = rawMessage.split(" ");
+        if (treatQuotedTextAsSingleArg) {
+            // Get args
+            const quotedArgRegExp = /"([^"]+)"|(\S+)/g;
+            rawArgs = rawMessage.match(quotedArgRegExp);
+
+            // Strip surrounding quotes from quoted args
+            rawArgs = rawArgs.map(rawArg => rawArg.replace(/^"(.+)"$/, '$1'));
         } else {
-            const rawArgs = rawMessage.split(" ");
+            rawArgs = rawMessage.split(" ");
+        }
+
+        if (scanWholeMessage) {
+            args = rawArgs;
+        } else {
             if (rawArgs.length > 0) {
                 trigger = rawArgs[0];
                 args = rawArgs.splice(1);
@@ -264,7 +274,50 @@ function buildUserCommand(command, rawMessage, sender, senderRoles) {
 
     args = args.filter(a => a.trim() !== "");
 
-    return new UserCommand(trigger, args, commandSender, senderRoles);
+    return { trigger, args };
+}
+
+function buildUserCommand(command, rawMessage, sender, senderRoles) {
+    const { trigger, args } = parseCommandTriggerAndArgs(command.trigger, rawMessage, command.scanWholeMessage, command.treatQuotedTextAsSingleArg);
+
+    const userCmd = new UserCommand(trigger, args, sender, senderRoles);
+
+    if (!command.scanWholeMessage &&
+        !command.triggerIsRegex &&
+        userCmd.args.length > 0 &&
+        command.subCommands?.length > 0) {
+
+        for (const subcmd of command.subCommands) {
+            if (subcmd.active === false) {
+                continue;
+            }
+            if (subcmd.regex) {
+                const regex = new RegExp(`^${subcmd.arg}$`, "gi");
+                if (regex.test(userCmd.args[0])) {
+                    userCmd.triggeredSubcmd = subcmd;
+                }
+            } else {
+                if (subcmd.arg.toLowerCase() === userCmd.args[0].toLowerCase()) {
+                    userCmd.triggeredSubcmd = subcmd;
+                }
+            }
+        }
+
+        if (command.type !== "system" && userCmd.triggeredSubcmd == null) {
+            if (command.fallbackSubcommand == null || !command.fallbackSubcommand.active) {
+                userCmd.isInvalidSubcommandTrigger = true;
+            } else {
+                userCmd.triggeredSubcmd = command.fallbackSubcommand;
+            }
+        }
+
+        if (userCmd.triggeredSubcmd != null) {
+            userCmd.triggeredArg = userCmd.triggeredSubcmd.arg;
+            userCmd.subcommandId = userCmd.triggeredSubcmd.id;
+        }
+    }
+
+    return userCmd;
 }
 
 function fireCommand(
@@ -366,41 +419,14 @@ async function handleChatMessage(firebotChatMessage) {
 
     // build usercommand object
     const userCmd = buildUserCommand(command, rawMessage, commandSender, firebotChatMessage.roles);
+    const triggeredSubcmd = userCmd.triggeredSubcmd;
 
     // update trigger with the one we matched
     userCmd.trigger = matchedTrigger;
 
-    let triggeredSubcmd = null;
-    if (!command.scanWholeMessage && !command.triggerIsRegex && userCmd.args.length > 0 && command.subCommands && command.subCommands.length > 0) {
-        for (const subcmd of command.subCommands) {
-            if (subcmd.active === false) {
-                continue;
-            }
-            if (subcmd.regex) {
-                const regex = new RegExp(`^${subcmd.arg}$`, "gi");
-                if (regex.test(userCmd.args[0])) {
-                    triggeredSubcmd = subcmd;
-                    userCmd.triggeredArg = subcmd.arg;
-                    userCmd.subcommandId = subcmd.id;
-                }
-            } else {
-                if (subcmd.arg.toLowerCase() === userCmd.args[0].toLowerCase()) {
-                    triggeredSubcmd = subcmd;
-                    userCmd.triggeredArg = subcmd.arg;
-                    userCmd.subcommandId = subcmd.id;
-                }
-            }
-        }
-
-        if (command.type !== "system" && triggeredSubcmd == null) {
-            if (command.fallbackSubcommand == null || !command.fallbackSubcommand.active) {
-                twitchChat.sendChatMessage(`Invalid Command: unknown arg used.`);
-                return false;
-            }
-            triggeredSubcmd = command.fallbackSubcommand;
-            userCmd.triggeredArg = command.fallbackSubcommand.arg;
-            userCmd.subcommandId = command.fallbackSubcommand.id;
-        }
+    if (userCmd.isInvalidSubcommandTrigger === true) {
+        twitchChat.sendChatMessage(`Invalid Command: unknown arg used.`);
+        return false;
     }
 
     if (command.autoDeleteTrigger || (triggeredSubcmd && triggeredSubcmd.autoDeleteTrigger)) {
@@ -416,13 +442,39 @@ async function handleChatMessage(firebotChatMessage) {
         return false;
     }
 
+    logger.debug("Checking cooldowns for command...");
+    // Check if the command is on cooldown
+    const remainingCooldown = getRemainingCooldown(
+        command,
+        triggeredSubcmd,
+        commandSender
+    );
+
+    if (remainingCooldown > 0) {
+        logger.debug("Command is still on cooldown, alerting viewer...");
+        if (command.sendCooldownMessage || command.sendCooldownMessage == null) {
+
+            const cooldownMessage = command.useCustomCooldownMessage ? command.cooldownMessage : DEFAULT_COOLDOWN_MESSAGE;
+
+            twitchChat.sendChatMessage(
+                cooldownMessage
+                    .replace("{user}", commandSender)
+                    .replace("{timeLeft}", util.secondsForHumans(remainingCooldown)),
+                null,
+                null,
+                firebotChatMessage.id
+            );
+        }
+        return false;
+    }
+
+    // Check if command passes all restrictions
     const restrictionData =
         triggeredSubcmd && triggeredSubcmd.restrictionData && triggeredSubcmd.restrictionData.restrictions
             && triggeredSubcmd.restrictionData.restrictions.length > 0
             ? triggeredSubcmd.restrictionData
             : command.restrictionData;
 
-    // Handle restrictions
     if (restrictionData) {
         logger.debug("Command has restrictions...checking them.");
         const triggerData = {
@@ -468,33 +520,7 @@ async function handleChatMessage(firebotChatMessage) {
         }
     }
 
-    logger.debug("Checking cooldowns for command...");
-    // Check if the command is on cooldown
-    const remainingCooldown = getRemainingCooldown(
-        command,
-        triggeredSubcmd,
-        commandSender
-    );
-
-    if (remainingCooldown > 0) {
-        logger.debug("Command is still on cooldown, alerting viewer...");
-        if (command.sendCooldownMessage || command.sendCooldownMessage == null) {
-
-            const cooldownMessage = command.useCustomCooldownMessage ? command.cooldownMessage : DEFAULT_COOLDOWN_MESSAGE;
-
-            twitchChat.sendChatMessage(
-                cooldownMessage
-                    .replace("{user}", commandSender)
-                    .replace("{timeLeft}", util.secondsForHumans(remainingCooldown)),
-                null,
-                null,
-                firebotChatMessage.id
-            );
-        }
-        return false;
-    }
-
-    // add cooldown to cache if commmand has cooldowns set
+    // If command is not on cooldown AND it passes restrictions, then we can run it. Store the cooldown.
     cooldownCommand(command, triggeredSubcmd, commandSender);
 
     //update the count for the command
