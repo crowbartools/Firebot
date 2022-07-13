@@ -602,6 +602,15 @@
                 pushDataToFile("/settings/backupOnExit", backupOnExit === true);
             };
 
+            service.backupIgnoreResources = function() {
+                const save = getDataFromFile("/settings/backupIgnoreResources");
+                return save != null ? save : true;
+            };
+
+            service.setBackupIgnoreResources = function(backupIgnoreResources) {
+                pushDataToFile("/settings/backupIgnoreResources", backupIgnoreResources === true);
+            };
+
             service.backupBeforeUpdates = function() {
                 const backupBeforeUpdates = getDataFromFile(
                     "/settings/backupBeforeUpdates"

@@ -23,7 +23,28 @@
                             on-update="settings.setMaxBackupCount(option)"
                         ></dropdown-select>
                     </firebot-setting>
-
+                    
+                    <firebot-setting
+                        name="Automatic Backup Options"
+                        description="Choose what Firebot should ignore in automatic backups."
+                    >
+                        <div>
+                        <label class="control-fb control--checkbox"
+                            >Don't include overlay resource folder
+                            <tooltip
+                                text="'If your overlay-resource folder has become quite large, and slowing down the backup system turn this on. Note: Manual backups are not affected .'"
+                            ></tooltip>
+                            <input
+                                type="checkbox"
+                                ng-click="settings.setBackupIgnoreResources(!settings.backupIgnoreResources())"
+                                ng-checked="settings.backupIgnoreResources()"
+                                aria-label="..."
+                            />
+                            <div class="control__indicator"></div>
+                        </label>
+                        </div>
+                    </firebot-setting>
+                    
                     <firebot-setting
                         name="Automatic Backups"
                         description="Choose when Firebot should make automatic backups."
