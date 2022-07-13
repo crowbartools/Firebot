@@ -39,7 +39,7 @@ const model = {
                 </ui-select-choices>
             </ui-select>
 
-            <div ng-show="subcommands && !!subcommands.length" class="mb-4 pl-4">
+            <div ng-show="subcommands && !!subcommands.length" class="mt-4 pl-4">
                 <label class="control-fb control--radio">Cooldown base command
                     <input type="radio" ng-model="showSubcommands" ng-value="false" ng-click="effect.subcommandId = null"/>
                     <div class="control__indicator"></div>
