@@ -67,7 +67,7 @@ const model = {
                 return resolve(true);
             }
 
-            const enabledEffectList = effect.list.filter(e => (e.active == null || !!e.active));
+            const enabledEffectList = effectList.list.filter(e => (e.active == null || !!e.active));
             if (!enabledEffectList.length) {
                 return resolve(true);
             }

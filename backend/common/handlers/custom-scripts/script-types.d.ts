@@ -59,7 +59,7 @@ export type CustomScript = {
   getDefaultParameters(): ScriptParameters;
   run(
     runRequest: RunRequest
-  ): void | ScriptReturnObject | PromiseLike<ScriptReturnObject>;
+  ): void | PromiseLike<void> | ScriptReturnObject | PromiseLike<ScriptReturnObject>;
   parametersUpdated?: (parameters: Record<string, unknown>) => void | PromiseLike<void>;
   stop?: () => void | PromiseLike<void>;
 };

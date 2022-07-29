@@ -2,7 +2,8 @@ firebotOverlay = new EventEmitter();
 
 let params = new URL(location).searchParams;
 
-OVERLAY_PORT = 7472;
+const overlayPort = window.location.port || (window.location.protocol === 'https:' ? 443 : 80);
+const baseUrl = window.location.hostname + (overlayPort ? `:${overlayPort}` : '');
 
 startedVidCache = { test: true };
 
@@ -11,13 +12,12 @@ startedVidCache = { test: true };
 function overlaySocketConnect(){
 	if ("WebSocket" in window){
 		// Let us open a web socket
-		let port = new URL(window.location.href).port;
+		const websocketProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
 
-		ws = new ReconnectingWebSocket(`ws://${window.location.hostname}:${port}`);
+		ws = new ReconnectingWebSocket(`${websocketProtocol}//${baseUrl}`);
 		ws.onopen = function(){
-			OVERLAY_PORT = port;
 			notification('close');
-			console.log(`Connection is opened on port ${port}...`);
+			console.log(`Connection is opened on port ${overlayPort}...`);
 		};
 
 		// When we get a message from the Firebot GUI...
@@ -55,11 +55,11 @@ function overlaySocketConnect(){
 
 		// Connection closed for some reason. Reconnecting Websocket will try to reconnect.
 		ws.onclose = function(){
-		  console.log(`Connection is closed on port ${port}...`);
+		  console.log(`Connection is closed on port ${overlayPort}...`);
 		};
 
 		ws.onerror = function(){
-			notification('open', `Connecting to Firebot... (${port}).`);
+			notification('open', `Connecting to Firebot... (${overlayPort}).`);
 		}
 
 	} else {
@@ -78,12 +78,12 @@ function sendWebsocketEvent(name, data) {
 
 
 function loadFonts() {
-	$.get(`http://${window.location.hostname}:${OVERLAY_PORT}/api/v1/fonts`, (fonts) => {
+	$.get(`//${baseUrl}/api/v1/fonts`, (fonts) => {
 
 		let fontStyleBlock = `<style type="text/css">`;
 
 		fonts.forEach(font => {
-			let fontPath = `http://${window.location.hostname}:${OVERLAY_PORT}/api/v1/fonts/${font.name}`
+			let fontPath = `//${baseUrl}/api/v1/fonts/${font.name}`
 			fontStyleBlock +=
                 `@font-face {
                     font-family: '${font.name}';

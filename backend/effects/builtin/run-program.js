@@ -43,7 +43,7 @@ const model = {
     globalSettings: {},
     optionsTemplate: `
         <eos-container header="Program File Path">
-            <file-chooser model="effect.programPath" options="{ filters: [ {name:'Program',extensions:['exe', 'bat', 'cmd']} ]}"></file-chooser>
+            <file-chooser model="effect.programPath" options="{ filters: [ { name:'Program', extensions:['exe', 'bat', 'cmd'] }, { name:'All Files', extensions:['*'] } ] }"></file-chooser>
         </eos-container>
         <eos-container header="Program Arguments (Optional)" pad-top="true">
             <div class="input-group">

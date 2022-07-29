@@ -162,7 +162,7 @@ module.exports = {
                     title: "Amount Too High",
                     description: "When the wager amount is too high (leave empty for no message).",
                     useTextArea: true,
-                    default: "{username}, your wager amount must be at least {maxWager}.",
+                    default: "{username}, your wager amount can be no more than {maxWager}.",
                     tip: "Available variables: {username}, {maxWager}",
                     sortRank: 7
                 },
