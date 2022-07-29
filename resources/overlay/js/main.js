@@ -2,7 +2,7 @@ firebotOverlay = new EventEmitter();
 
 let params = new URL(location).searchParams;
 
-OVERLAY_PORT = 7472;
+const OVERLAY_PORT = window.location.port;
 
 startedVidCache = { test: true };
 
@@ -11,15 +11,12 @@ startedVidCache = { test: true };
 function overlaySocketConnect(){
 	if ("WebSocket" in window){
 		// Let us open a web socket
-		let port = new URL(window.location.href).port;
-
 		const websocketProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
 
-		ws = new ReconnectingWebSocket(`${websocketProtocol}//${window.location.hostname}:${port}`);
+		ws = new ReconnectingWebSocket(`${websocketProtocol}//${window.location.hostname}:${OVERLAY_PORT}`);
 		ws.onopen = function(){
-			OVERLAY_PORT = port;
 			notification('close');
-			console.log(`Connection is opened on port ${port}...`);
+			console.log(`Connection is opened on port ${OVERLAY_PORT}...`);
 		};
 
 		// When we get a message from the Firebot GUI...
@@ -57,11 +54,11 @@ function overlaySocketConnect(){
 
 		// Connection closed for some reason. Reconnecting Websocket will try to reconnect.
 		ws.onclose = function(){
-		  console.log(`Connection is closed on port ${port}...`);
+		  console.log(`Connection is closed on port ${OVERLAY_PORT}...`);
 		};
 
 		ws.onerror = function(){
-			notification('open', `Connecting to Firebot... (${port}).`);
+			notification('open', `Connecting to Firebot... (${OVERLAY_PORT}).`);
 		}
 
 	} else {
@@ -80,12 +77,12 @@ function sendWebsocketEvent(name, data) {
 
 
 function loadFonts() {
-	$.get(`${window.location.protocol}//${window.location.hostname}:${OVERLAY_PORT}/api/v1/fonts`, (fonts) => {
+	$.get(`//${window.location.hostname}:${OVERLAY_PORT}/api/v1/fonts`, (fonts) => {
 
 		let fontStyleBlock = `<style type="text/css">`;
 
 		fonts.forEach(font => {
-			let fontPath = `${window.location.protocol}//${window.location.hostname}:${OVERLAY_PORT}/api/v1/fonts/${font.name}`
+			let fontPath = `//${window.location.hostname}:${OVERLAY_PORT}/api/v1/fonts/${font.name}`
 			fontStyleBlock +=
                 `@font-face {
                     font-family: '${font.name}';
