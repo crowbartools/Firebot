@@ -260,9 +260,15 @@ const clip = {
                 const styles = (width ? `width: ${width}px;` : '') +
                     (height ? `height: ${height}px;` : '');
 
+                const muted = "false";
+                let clipUrl = `https://clips.twitch.tv/embed?clip=${clipSlug}&controls=false&autoplay=true&muted=${muted}&parent=localhost`;
+
+                if (location.hostname !== "localhost") {
+                    clipUrl += "&parent=" + location.hostname;
+                }
                 const videoElement = `
                     <iframe
-                        src="https://clips.twitch.tv/embed?clip=${clipSlug}&parent=localhost&autoplay=true&muted=false&controls=false"
+                        src="${clipUrl}"
                         height="${height || ""}"
                         width="${width || ""}"
                         style="border: none;${styles}"
