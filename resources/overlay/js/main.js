@@ -13,7 +13,9 @@ function overlaySocketConnect(){
 		// Let us open a web socket
 		let port = new URL(window.location.href).port;
 
-		ws = new ReconnectingWebSocket(`ws://${window.location.hostname}:${port}`);
+		const websocketProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+
+		ws = new ReconnectingWebSocket(`${websocketProtocol}//${window.location.hostname}:${port}`);
 		ws.onopen = function(){
 			OVERLAY_PORT = port;
 			notification('close');
@@ -78,12 +80,12 @@ function sendWebsocketEvent(name, data) {
 
 
 function loadFonts() {
-	$.get(`http://${window.location.hostname}:${OVERLAY_PORT}/api/v1/fonts`, (fonts) => {
+	$.get(`${window.location.protocol}//${window.location.hostname}:${OVERLAY_PORT}/api/v1/fonts`, (fonts) => {
 
 		let fontStyleBlock = `<style type="text/css">`;
 
 		fonts.forEach(font => {
-			let fontPath = `http://${window.location.hostname}:${OVERLAY_PORT}/api/v1/fonts/${font.name}`
+			let fontPath = `${window.location.protocol}//${window.location.hostname}:${OVERLAY_PORT}/api/v1/fonts/${font.name}`
 			fontStyleBlock +=
                 `@font-face {
                     font-family: '${font.name}';
