@@ -18,7 +18,7 @@ const getChannelInformation = async (broadcasterId) => {
 
     const client = twitchApi.getClient();
     try {
-        const response = await client.channels.getChannelInfo(broadcasterId);
+        const response = await client.channels.getChannelInfoById(broadcasterId);
         return response;
     } catch (error) {
         logger.error("Failed to get twitch channel info", error);
