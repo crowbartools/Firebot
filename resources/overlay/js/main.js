@@ -2,7 +2,7 @@ firebotOverlay = new EventEmitter();
 
 let params = new URL(location).searchParams;
 
-const OVERLAY_PORT = window.location.port;
+const OVERLAY_PORT = window.location.port || (window.location.protocol === 'https:' ? 443 : 80);
 
 startedVidCache = { test: true };
 
