@@ -150,33 +150,33 @@ function getRemainingCooldown(command, triggeredSubcmd, username) {
  * @param {string} config.commandId
  * @param {string} [config.subcommandId]
  * @param {string} config.username
- * @param {object} config.cooldowns
- * @param {number} [config.cooldowns.global]
- * @param {number} [config.cooldowns.user]
+ * @param {object} config.cooldown
+ * @param {number} [config.cooldown.global]
+ * @param {number} [config.cooldown.user]
  */
 exports.manuallyCooldownCommand = (config) => {
-    if (config.commandId == null || config.cooldowns == null ||
-        (config.cooldowns.global == null && config.cooldowns.user == null)) {
+    if (config.commandId == null || config.cooldown == null ||
+        (config.cooldown.global == null && config.cooldown.user == null)) {
         return;
     }
 
     const globalCacheKey = `${config.commandId}${config.subcommandId ? `:${config.subcommandId}` : ''}`;
     const userCacheKey = `${config.commandId}:${config.subcommandId ? `${config.subcommandId}:` : ''}${config.username}`;
 
-    if (config.cooldowns.global > 0) {
+    if (config.cooldown.global > 0) {
         if (cooldownCache.get(globalCacheKey) == null) {
             cooldownCache.set(
                 globalCacheKey,
-                moment().add(config.cooldowns.global, "s"),
-                config.cooldowns.global
+                moment().add(config.cooldown.global, "s"),
+                config.cooldown.global
             );
         }
     }
-    if (config.cooldowns.user > 0 && config.username != null) {
+    if (config.cooldown.user > 0 && config.username != null) {
         cooldownCache.set(
             userCacheKey,
-            moment().add(config.cooldowns.user, "s"),
-            config.cooldowns.user
+            moment().add(config.cooldown.user, "s"),
+            config.cooldown.user
         );
     }
 };
@@ -187,24 +187,24 @@ exports.manuallyCooldownCommand = (config) => {
  * @param {string} config.commandId
  * @param {string} [config.subcommandId]
  * @param {string} config.username
- * @param {object} config.cooldowns
- * @param {boolean} [config.cooldowns.global]
- * @param {boolean} [config.cooldowns.user]
+ * @param {object} config.cooldown
+ * @param {boolean} [config.cooldown.global]
+ * @param {boolean} [config.cooldown.user]
  */
 exports.manuallyClearCooldownCommand = (config) => {
-    if (config.commandId == null || config.cooldowns == null ||
-        (config.cooldowns.global == null && config.cooldowns.user == null)) {
+    if (config.commandId == null || config.cooldown == null ||
+        (config.cooldown.global == null && config.cooldown.user == null)) {
         return;
     }
 
     const globalCacheKey = `${config.commandId}${config.subcommandId ? `:${config.subcommandId}` : ''}`;
     const userCacheKey = `${config.commandId}:${config.subcommandId ? `${config.subcommandId}:` : ''}${config.username}`;
 
-    if (cooldownCache.get(globalCacheKey) !== null && config.cooldowns.global === true) {
+    if (cooldownCache.get(globalCacheKey) !== null && config.cooldown.global === true) {
         cooldownCache.del(globalCacheKey);
     }
 
-    if (cooldownCache.get(userCacheKey) !== null && config.cooldowns.user === true) {
+    if (cooldownCache.get(userCacheKey) !== null && config.cooldown.user === true) {
         cooldownCache.del(userCacheKey);
     }
 };
