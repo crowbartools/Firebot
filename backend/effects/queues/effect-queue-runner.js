@@ -14,7 +14,7 @@ const effectRunner = require("../../common/effect-runner");
  * Effect queue class
  */
 class EffectQueue {
-    constructor(id, mode, interval = 10) {
+    constructor(id, mode, interval = 0) {
         this.id = id;
         this.mode = mode;
         this.interval = interval;
@@ -51,12 +51,13 @@ class EffectQueue {
                 }, this.interval * 1000);
             } else if (this.mode === "auto") {
                 effectRunner.runEffects(runEffectsContext)
-                    .then(() => {
-                        resolve(this.runQueue());
-                    })
                     .catch(err => {
                         logger.warn(`Error while processing effects for queue ${this.id}`, err);
-                        resolve(this.runQueue());
+                    })
+                    .finally(() => {
+                        setTimeout(() => {
+                            resolve(this.runQueue());
+                        }, (this.interval ?? 0) * 1000);
                     });
             } else if (this.mode === "custom") {
                 effectRunner.runEffects(runEffectsContext)

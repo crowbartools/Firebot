@@ -41,9 +41,9 @@
                 },
                 {
                     id: "auto",
-                    display: "Delay",
-                    description: "Requires a 'Delay Effect' to be present to have any effect.",
-                    iconClass: "fa-hourglass-half"
+                    display: "Sequential",
+                    description: "Runs effect list in the queue sequentially. Priority items will be added before non-priority. Optional delay defaults to 0s.",
+                    iconClass: "fa-arrow-down-1-9"
                 },
                 {
                     id: "interval",

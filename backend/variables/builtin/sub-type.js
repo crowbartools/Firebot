@@ -10,7 +10,7 @@ triggers[EffectTrigger.MANUAL] = true;
 const model = {
     definition: {
         handle: "subType",
-        description: "The type of sub (ie Tier 1, 2, 3, etc).",
+        description: "The type of subscription (Tier 1, Tier 2, Tier 3, Prime)",
         triggers: triggers,
         categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.TEXT]

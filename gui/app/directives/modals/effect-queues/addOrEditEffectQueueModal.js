@@ -47,8 +47,8 @@
                     </div>
                 </div>
 
-                <div class="mt-6" ng-show="$ctrl.effectQueue.mode != null && $ctrl.effectQueue.mode ==='interval'">
-                    <div class="modal-subheader pb-2 pt-0 px-0">Interval (secs)</div>
+                <div class="mt-6" ng-show="$ctrl.effectQueue.mode != null && ($ctrl.effectQueue.mode ==='interval' || $ctrl.effectQueue.mode ==='auto')">
+                    <div class="modal-subheader pb-2 pt-0 px-0">Interval/Delay (secs)</div>
                     <div style="width: 100%; position: relative;">
                         <div class="form-group">
                             <input type="number" class="form-control" ng-model="$ctrl.effectQueue.interval" placeholder="Enter interval">

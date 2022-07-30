@@ -103,7 +103,7 @@
 
                                     <span ng-if="part.type === 'text'" style="{{$ctrl.chatSizeStyle}}">{{part.text}}</span>
 
-                                    <a ng-if="part.type === 'link'" ng-href="{{part.url}}" target="_blank">{{part.text}}</a>
+                                    <a ng-if="part.type === 'link'" style="{{$ctrl.chatSizeStyle}}" ng-href="{{part.url}}" target="_blank">{{part.text}}</a>
 
                                     <span
                                         ng-if="part.type === 'emote'"

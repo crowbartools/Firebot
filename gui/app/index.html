@@ -14,10 +14,7 @@
 
     <!--Webfont version of font awesome 5, use these from now on-->
 
-    <script
-      ng-src="{{fontAwesome5KitUrl}}"
-      crossorigin="anonymous"
-    ></script>
+    <script ng-src="{{fontAwesome5KitUrl}}" crossorigin="anonymous"></script>
 
     <link ng-href="{{customFontCssPath}}" rel="stylesheet" type="text/css" />
 
@@ -25,7 +22,7 @@
       href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto:100,300,400,500,700|Roboto+Mono:300|Quicksand:300,400,700"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
     <link
       rel="stylesheet"
       type="text/css"
@@ -266,6 +263,7 @@
     <script type="text/javascript" src="./directives/modals/effects/add-edit-preset-effect-list-modal.js"></script>
     <script type="text/javascript" src="./directives/modals/effects/add-new-effect-modal.js"></script>
     <script type="text/javascript" src="./directives/modals/effects/trigger-preset-effect-list-modal.js"></script>
+    <script type="text/javascript" src="./directives/modals/effects/view-effect-outputs-modal.js"></script>
     <script type="text/javascript" src="./directives/modals/events/addOrEditEventModal.js"></script>
     <script type="text/javascript" src="./directives/modals/events/simulateGroupEventsModal.js"></script>
     <script type="text/javascript" src="./directives/modals/filters/addOrEditFilter/addOrEditFilterModal.js"></script>
@@ -346,7 +344,7 @@
 
       <div class="fb-tab-content">
         <div class="tab-header">
-          <span class="noselect" style="flex: 1">{{sbm.currentTabName}}</span>
+          <span class="noselect" style="flex: 1" role="heading" aria-level="1">{{sbm.currentTabName}}</span>
           <div style="flex: 1">
             <stream-info />
           </div>
@@ -376,7 +374,10 @@
                 ng-src="{{cs.getAccountAvatar('bot')}}"
               />
               <div class="fb-arrow down login-arrow"></div>
-              <ul class="dropdown-menu right-justified-dropdown" uib-dropdown-menu>
+              <ul
+                class="dropdown-menu right-justified-dropdown"
+                uib-dropdown-menu
+              >
                 <li>
                   <a
                     href
@@ -448,7 +449,7 @@
           <div
             class="tab-body"
             ng-class="{ 'fullpage-tab': sbm.currentTabIsFullScreen() }"
-          >
+          role="main">
             <!-- angular templating -->
             <!-- this is where tab content will be injected -->
             <div ng-view style="width: 100%"></div>
@@ -705,7 +706,7 @@
                 <h4 class="modal-title" style="display:inline;">{{isAddMode ? "Add New Effect" : "Edit Effect"}}</h4>
 
                 <div class="flex-row acenter jspacebetween">
-                    <div class="test-effects-btn clickable" uib-tooltip="Test Effect" ng-hide="effect == null || effect.type === 'Nothing'">
+                    <div class="test-effects-btn clickable" uib-tooltip="Test Effect" ng-hide="effect == null || effect.type === 'Nothing'" aria-label="Test Effect">
                         <i class="far fa-play-circle" style="cursor: pointer;" ng-click="runEffect()"></i>
                     </div>
                     <div
@@ -713,7 +714,7 @@
                       uib-dropdown-toggle
                       context-menu="getOverflowMenu()"
                       context-menu-on="click"
-                      context-menu-class="effect-overflow-menu"
+                      context-menu-class="effect-overflow-menu" aria-label="Open Effect Menu"
                     >
                         <span class="noselect pointer effects-actions-btn" style="font-size: 31px"><i class="fal fa-ellipsis-v"></i></span>
                     </div>
@@ -744,12 +745,22 @@
           </div>
       </div>
       <div class="modal-footer sticky-footer edit-effect-footer">
+
+        <button
+          ng-if="effectDefinition.definition.outputs != null && effectDefinition.definition.outputs.length > 0"
+          class="btn btn-link pull-left"
+          ng-click="openOutputsModal()"
+        >
+          <i class="fas fa-sign-out"></i>
+          <span>Outputs</span>
+        </button>
+
           <button class="btn btn-link" ng-click="dismiss()">Cancel</button>
 
           <button ng-if="openModals.length < 2" type="button" class="btn btn-primary" ng-click="save()" ng-disabled="effect.type === 'Nothing'">{{isAddMode ? "Add" : "Save"}}</button>
           <div ng-if="openModals.length >= 2" class="btn-group" uib-dropdown>
             <button id="split-button" type="button" class="btn btn-primary" ng-click="save()" ng-disabled="effect.type === 'Nothing'">{{isAddMode ? "Add" : "Save"}}</button>
-            <button type="button" class="btn btn-primary" uib-dropdown-toggle>
+            <button type="button" class="btn btn-primary" uib-dropdown-toggle aria-label="Open Menu">
               <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" style="min-width: 100%" uib-dropdown-menu role="menu" aria-labelledby="split-button">

@@ -5,7 +5,7 @@ const settings = require("../settings-access").settings;
 const resourceTokenManager = require("../../resourceTokenManager.js");
 const util = require("../../utility");
 const logger = require("../../logwrapper");
-const webServer = require("../../../server/httpServer");
+const webServer = require("../../../server/http-server-manager");
 
 // Get Sound File Path
 // This listens for an event from the render media.js file to open a dialog to get a filepath.

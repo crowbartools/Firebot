@@ -164,8 +164,8 @@ exports.whenReady = async () => {
     backupManager.onceADayBackUpCheck();
 
     // start the REST api server
-    const webServer = require("../../../../server/httpServer");
-    webServer.start();
+    const httpServerManager = require("../../../../server/http-server-manager");
+    httpServerManager.start();
 
     const channelRewardManager = require("../../../channel-rewards/channel-reward-manager");
     await channelRewardManager.loadChannelRewards();

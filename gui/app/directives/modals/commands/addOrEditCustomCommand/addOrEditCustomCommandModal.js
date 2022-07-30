@@ -33,7 +33,8 @@
                     sendFailMessage: true
                 },
                 aliases: [],
-                sortTags: []
+                sortTags: [],
+                treatQuotedTextAsSingleArg: false
             };
 
             $scope.trigger = "command";
@@ -133,6 +134,10 @@
 
                 if ($ctrl.command.aliases == null) {
                     $ctrl.command.aliases = [];
+                }
+
+                if ($ctrl.command.treatQuotedTextAsSingleArg == null) {
+                    $ctrl.command.treatQuotedTextAsSingleArg = false;
                 }
 
                 const modalId = $ctrl.resolve.modalId;

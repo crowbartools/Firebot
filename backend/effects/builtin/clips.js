@@ -4,7 +4,7 @@ const clipProcessor = require("../../common/handlers/createClipProcessor");
 const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
 const { settings } = require("../../common/settings-access");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
-const webServer = require("../../../server/httpServer");
+const webServer = require("../../../server/http-server-manager");
 const utils = require("../../utility");
 const customVariableManager = require("../../common/custom-variable-manager");
 
@@ -15,7 +15,14 @@ const clip = {
         description: "Creates a clip on Twitch.",
         icon: "fad fa-film",
         categories: [EffectCategory.COMMON, EffectCategory.FUN, EffectCategory.TWITCH],
-        dependencies: [EffectDependency.CHAT]
+        dependencies: [EffectDependency.CHAT],
+        outputs: [
+            {
+                label: "Clip Url",
+                description: "The url of the created clip",
+                defaultName: "clipUrl"
+            }
+        ]
     },
     globalSettings: {},
     optionsTemplate: `
@@ -253,9 +260,15 @@ const clip = {
                 const styles = (width ? `width: ${width}px;` : '') +
                     (height ? `height: ${height}px;` : '');
 
+                const muted = "false";
+                let clipUrl = `https://clips.twitch.tv/embed?clip=${clipSlug}&controls=false&autoplay=true&muted=${muted}&parent=localhost`;
+
+                if (location.hostname !== "localhost") {
+                    clipUrl += "&parent=" + location.hostname;
+                }
                 const videoElement = `
                     <iframe
-                        src="https://clips.twitch.tv/embed?clip=${clipSlug}&parent=localhost&autoplay=true&muted=false&controls=false"
+                        src="${clipUrl}"
                         height="${height || ""}"
                         width="${width || ""}"
                         style="border: none;${styles}"

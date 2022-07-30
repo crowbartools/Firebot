@@ -76,7 +76,7 @@ exports.getPresetLists = async function(req, res) {
     return res.json(formattedPresetLists);
 };
 
-exports.runPresetList = async function(req, res) {
+async function runPresetEffectList(req, res, waitForCompletion = false) {
     const presetListId = req.params.presetListId;
 
     if (presetListId == null) {
@@ -125,9 +125,21 @@ exports.runPresetList = async function(req, res) {
     };
 
     try {
-        await effectRunner.processEffects(processEffectsRequest);
+        if (waitForCompletion === true) {
+            await effectRunner.processEffects(processEffectsRequest);
+        } else {
+            effectRunner.processEffects(processEffectsRequest);
+        }
         res.status(200).send({ status: "success" });
     } catch (err) {
         res.status(500).send({ status: "error", message: err.message });
     }
+}
+
+exports.runPresetListSynchronous = async function(req, res) {
+    runPresetEffectList(req, res, true);
+};
+
+exports.triggerPresetListAsync = async function(req, res) {
+    runPresetEffectList(req, res, false);
 };
