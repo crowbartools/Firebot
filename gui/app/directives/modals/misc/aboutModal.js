@@ -3,39 +3,60 @@
 (function() {
     angular.module("firebotApp").component("aboutModal", {
         template: `
+            <style>
+                #aboutModalHeaderDismissButton {
+                    z-index: 10;
+                }
+
+                #aboutModalBody > section:not(:first-child) {
+                    margin-top: 1.5em;
+                }
+
+                #aboutModalSocialButtons > a:not(:first-child) {
+                    margin-left: 1em;
+                }
+            </style>
             <div class="modal-header" style="text-align: center;">
-                <button type="button" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
-                <h4 class="modal-title">About Firebot</h4>
+                <button type="button" id="aboutModalHeaderDismissButton" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
             </div>
-            <div class="modal-body" style="text-align: center;">
-                <h5><b>Version</b></h5>
-                <p>{{$ctrl.version}}</p>
+            <div id="aboutModalBody" class="modal-body" style="text-align: center; margin-top: -50px;">
+                <section>
+                    <a href ng-click="$root.openLinkExternally('https://firebot.app')"><img style="width: 160px; height: 160px" src="../images/logo_transparent.png"></a>
+                </section>
 
-                <h5><b>Source</b></h5>
-                <p><a href ng-click="$root.openLinkExternally('https://github.com/crowbartools/Firebot')">GitHub</a></p>
+                <section>
+                    <h5><b>Connect With Us</b></h5>
+                    <div id="aboutModalSocialButtons" style="font-size: 28px;">
+                        <a href ng-click="$root.openLinkExternally('https://discord.gg/tTmMbrG')" title="Discord"><i class="fab fa-discord"></i></a>
+                        <a href ng-click="$root.openLinkExternally('https://twitter.com/FirebotApp')" title="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href ng-click="$root.openLinkExternally('https://github.com/crowbartools/Firebot')" title="GitHub"><i class="fab fa-github"></i></a>
+                    </div>
+                </section>
 
-                <h5><b>Support</b></h5> 
-                <span>Experiencing a problem or have a suggestion?</span></br>
-                <p> Visit our <a href ng-click="$root.openLinkExternally('https://github.com/crowbartools/Firebot/issues')">Issues page</a> or come chat with us in the <i>#firebot</i> channels of our <a href ng-click="$root.openLinkExternally('https://discord.gg/tTmMbrG')">Discord server</a>.</p>
+                <section>
+                    <h5><b>Versions</b></h5>
+                    <p>
+                        Firebot: {{$ctrl.version}}<br/>
+                        OS: {{$ctrl.osType}} {{$ctrl.osVersion}}
+                    </p>
+                </section>
 
-                <h5><b>Team Crowbar</b></h5> 
-                <div>
-                    <div uib-tooltip="The Boss">Firebottle</div>
-                    <div uib-tooltip="The Optimizer">ebiggz</div>
-                    <div uib-tooltip="The Video Guy">ThePerry</div>
-                    <div uib-tooltip="The Janitor">SReject</div>
-                    <div uib-tooltip="The Refactorer">CaveMobster</div>
-                </div>
+                <section>
+                    <h5><b>License</b></h5>
+                    <p>
+                        Firebot is licensed under GPLv3<br/>
+                        <a href ng-click="$root.openLinkExternally('https://github.com/crowbartools/Firebot/blob/master/license.txt')">View License</a>
+                    </p>
+                </section>
 
-                <h5><b>Contributors</b></h5> 
-                <div>
-                    <div>baamang</div>
-                    <div>Skriglitz</div>
-                    <div>DragynsLair</div>
-                    <div uib-tooltip="The Mature One">Kateract</div>    
-                    <div uib-tooltip="The Professor">Nitrocell</div>
-                    <div>ebrayton</div>
-                </div>
+                <section>
+                    <h5><b>Support</b></h5>
+                    <p>
+                        <a href ng-click="$root.openLinkExternally('https://github.com/crowbartools/Firebot/issues/new?assignees=&labels=Bug&template=bug_report.yml&title=%5BBug%5D+')">Report a Bug</a> |
+                        <a href ng-click="$root.openLinkExternally('https://github.com/crowbartools/Firebot/issues/new?assignees=&labels=Enhancement&template=feature_request.md&title=%5BFeature+Request%5D+')">Request a Feature</a> |
+                        <a href ng-click="$root.openLinkExternally('https://opencollective.com/crowbartools')">Donate</a>
+                    </p>
+                </section>
             </div>
             `,
         bindings: {
@@ -47,7 +68,11 @@
             const $ctrl = this;
 
             $ctrl.$onInit = function() {
+                const os = require('os');
+
                 $ctrl.version = electron.remote.app.getVersion();
+                $ctrl.osType = os.type();
+                $ctrl.osVersion = os.release();
             };
         }
     });
