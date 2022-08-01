@@ -56,6 +56,7 @@ exports.loadReplaceVariables = () => {
         'effect-output',
         'ensure-number',
         'eval-vars',
+        'file-exists',
         'file-line-count',
         'follow-age',
         'follow-count',
