@@ -180,7 +180,52 @@ function createMainWindow() {
             role: 'Help',
             submenu: [
                 {
-                    label: 'About',
+                    label: 'Join our Discord',
+                    click: () => {
+                        shell.openExternal("https://discord.gg/tTmMbrG");
+                    }
+                },
+                {
+                    label: 'Follow @FirebotApp on Twitter',
+                    click: () => {
+                        shell.openExternal("https://twitter.com/FirebotApp");
+                    }
+                },
+                {
+                    type: 'separator'
+                },
+                {
+                    label: 'View Source on GitHub',
+                    click: () => {
+                        shell.openExternal("https://github.com/crowbartools/Firebot");
+                    }
+                },
+                {
+                    label: 'Report a Bug',
+                    click: () => {
+                        shell.openExternal("https://github.com/crowbartools/Firebot/issues/new?assignees=&labels=Bug&template=bug_report.yml&title=%5BBug%5D+");
+                    }
+                },
+                {
+                    label: 'Request a Feature',
+                    click: () => {
+                        shell.openExternal("https://github.com/crowbartools/Firebot/issues/new?assignees=&labels=Enhancement&template=feature_request.md&title=%5BFeature+Request%5D+");
+                    }
+                },
+                {
+                    type: 'separator'
+                },
+                {
+                    label: 'Donate',
+                    click: () => {
+                        shell.openExternal("https://opencollective.com/crowbartools");
+                    }
+                },
+                {
+                    type: 'separator'
+                },
+                {
+                    label: 'About Firebot...',
                     click: () => {
                         frontendCommunicator.send("open-about-modal");
                     }
