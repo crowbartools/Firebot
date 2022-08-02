@@ -180,9 +180,7 @@ const clip = {
         const { effect } = event;
         const clip = await clipProcessor.createClip(effect);
         if (clip != null) {
-
-            const rawDataSymbol = Object.getOwnPropertySymbols(clip)[0];
-            const clipDuration = clip[rawDataSymbol].duration;
+            const clipDuration = clip.duration;
 
             if (effect.showInOverlay) {
 
@@ -241,7 +239,8 @@ const clip = {
             name: "playTwitchClip",
             onOverlayEvent: event => {
                 const {
-                    clipSlug,
+                    clipVideoUrl,
+                    volume,
                     width,
                     height,
                     duration,
@@ -260,20 +259,14 @@ const clip = {
                 const styles = (width ? `width: ${width}px;` : '') +
                     (height ? `height: ${height}px;` : '');
 
-                const muted = "false";
-                let clipUrl = `https://clips.twitch.tv/embed?clip=${clipSlug}&controls=false&autoplay=true&muted=${muted}&parent=localhost`;
-
-                if (location.hostname !== "localhost") {
-                    clipUrl += "&parent=" + location.hostname;
-                }
                 const videoElement = `
-                    <iframe
-                        src="${clipUrl}"
+                    <video autoplay
+                        src="${clipVideoUrl}"
                         height="${height || ""}"
                         width="${width || ""}"
                         style="border: none;${styles}"
-                        allowfullscreen="false">
-                    </iframe>
+                        onloadstart="this.volume=${volume}"
+                        allowfullscreen="false" />
                 `;
 
                 const positionData = {
