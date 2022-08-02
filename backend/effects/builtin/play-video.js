@@ -162,7 +162,7 @@ const playVideo = {
             </label>
         </eos-container>
 
-        <eos-container header="Volume" pad-top="true" ng-if="effect.videoType != 'Random Twitch Clip' && effect.videoType != 'Twitch Clip'">
+        <eos-container header="Volume" pad-top="true">
             <div class="volume-slider-wrapper">
                 <i class="fal fa-volume-down volume-low"></i>
                 <rzslider rz-slider-model="effect.volume" rz-slider-options="{floor: 0, ceil: 10, hideLimitLabels: true}"></rzslider>
@@ -393,8 +393,9 @@ const playVideo = {
                 }
             }
 
-            const rawDataSymbol = Object.getOwnPropertySymbols(clip)[0];
-            const clipDuration = clip[rawDataSymbol].duration;
+            const clipVideoUrl = clip.thumbnailUrl.split("-preview-")[0] + ".mp4";
+            const clipDuration = clip.duration;
+            const volume = parseInt(effect.volume) / 10;
 
             let effectDuration = effect.length || clipDuration;
             if (effectDuration < 1) {
@@ -405,7 +406,8 @@ const playVideo = {
             }
 
             webServer.sendToOverlay("playTwitchClip", {
-                clipSlug: clipId,
+                clipVideoUrl: clipVideoUrl,
+                volume: volume,
                 width: effect.width,
                 height: effect.height,
                 duration: effectDuration,
