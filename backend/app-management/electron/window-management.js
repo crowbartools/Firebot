@@ -82,45 +82,19 @@ function createMainWindow() {
     const dataAccess = require("../../common/data-access");
     const menuTemplate = [
         {
-            label: 'Edit',
+            label: 'File',
             submenu: [
                 {
-                    role: 'cut'
+                    label: 'Import Firebot Setup...',
+                    click: () => {
+                        frontendCommunicator.send("open-modal", {
+                            component: "importSetupModal"
+                        });
+                    }
                 },
                 {
-                    role: 'copy'
+                    type: 'separator'
                 },
-                {
-                    role: 'paste'
-                },
-                {
-                    role: "undo"
-                },
-                {
-                    role: "redo"
-                },
-                {
-                    role: "selectAll"
-                }
-            ]
-        },
-        {
-            label: 'Window',
-            submenu: [
-                {
-                    role: 'minimize'
-                },
-                {
-                    role: 'close'
-                },
-                {
-                    role: 'quit'
-                }
-            ]
-        },
-        {
-            label: 'Tools',
-            submenu: [
                 {
                     label: 'Open Data Folder',
                     toolTip: "Open the folder where Firebot data is stored",
@@ -151,6 +125,51 @@ function createMainWindow() {
                         shell.openPath(backupFolder);
                     }
                 },
+                {
+                    type: 'separator'
+                },
+                {
+                    role: 'quit'
+                }
+            ]
+        },
+        {
+            label: 'Edit',
+            submenu: [
+                {
+                    role: 'cut'
+                },
+                {
+                    role: 'copy'
+                },
+                {
+                    role: 'paste'
+                },
+                {
+                    role: "undo"
+                },
+                {
+                    role: "redo"
+                },
+                {
+                    role: "selectAll"
+                }
+            ]
+        },
+        {
+            label: 'Window',
+            submenu: [
+                {
+                    role: 'minimize'
+                },
+                {
+                    role: 'close'
+                }
+            ]
+        },
+        {
+            label: 'Tools',
+            submenu: [
                 {
                     label: 'Setup Wizard',
                     toolTip: "Run the setup wizard again",
