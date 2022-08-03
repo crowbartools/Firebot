@@ -177,8 +177,10 @@ function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value, igno
 
         const userIdsInRoles = onlineUsers
             .map(u => {
+                const twitchRoles = u.twitchRoles ?? [];
+
                 u.allRoles = [
-                    ...u.twitchRoles.map(tr => twitchRolesManager.mapTwitchRole(tr)),
+                    ...twitchRoles.map(tr => twitchRolesManager.mapTwitchRole(tr)),
                     ...customRolesManager.getAllCustomRolesForViewer(u.username),
                     ...teamRoles[u.username],
                     ...firebotRolesManager.getAllFirebotRolesForViewer(u.username)
