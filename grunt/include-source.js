@@ -9,7 +9,7 @@ module.exports = function (grunt) {
         includeSource: {
             options: {
                 //This is the directory inside which grunt-include-source will be looking for files
-                basePath: 'gui/app/',
+                basePath: 'src/gui/app/',
                 templates: {
                     html: {
                         js: '<script type="text/javascript" src="./{filePath}"></script>',
@@ -20,7 +20,7 @@ module.exports = function (grunt) {
             app: {
                 files: {
                     //Overwriting index.html
-                    'gui/app/index.html': 'gui/app/index.html'
+                    'src/gui/app/index.html': 'src/gui/app/index.html'
                 }
             }
         }

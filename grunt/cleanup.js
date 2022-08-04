@@ -27,14 +27,14 @@ module.exports = function (grunt) {
         // Removes compiled css directories
         // Removes /dist/ directory
         if (area == null || area === '') {
-            fs.removeSync(path.join(__dirname, '../gui/css'));
-            fs.removeSync(path.join(__dirname, '../resources/overlay/css'));
+            fs.removeSync(path.join(__dirname, '../src/gui/css'));
+            fs.removeSync(path.join(__dirname, '../src/resources/overlay/css'));
             fs.removeSync(path.join(__dirname, '../dist'));
 
         // Removes compiled css directories
         } else if (area === 'css') {
-            fs.removeSync(path.join(__dirname, '../gui/css'));
-            fs.removeSync(path.join(__dirname, '../resources/overlay/css'));
+            fs.removeSync(path.join(__dirname, '../src/gui/css'));
+            fs.removeSync(path.join(__dirname, '../src/resources/overlay/css'));
 
         // Removes /dist/
         } else if (area === 'dist') {

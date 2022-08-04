@@ -11,9 +11,9 @@ module.exports = function (grunt) {
             win64: {
                 appDirectory: path.join(__dirname, '../dist/pack/Firebot-win32-x64/'),
                 outputDirectory: path.join(__dirname, '../dist/install/Windows/'),
-                loadingGif: path.join(__dirname, '../gui/images/animated.gif'),
-                iconUrl: path.join(__dirname, '../gui/images/icon_transparent.ico'),
-                setupIcon: path.join(__dirname, '../gui/images/icon_transparent.ico'),
+                loadingGif: path.join(__dirname, '../src/gui/images/animated.gif'),
+                iconUrl: path.join(__dirname, '../src/gui/images/icon_transparent.ico'),
+                setupIcon: path.join(__dirname, '../src/gui/images/icon_transparent.ico'),
                 exe: "Firebot v5.exe",
                 title: "Firebot v5",
                 setupExe: "FirebotV5Setup.exe",

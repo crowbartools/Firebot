@@ -23,27 +23,27 @@ module.exports = function (grunt) {
         xcopy: {
             win64: {
                 files: [
-                    {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['resources/overlay/**', '!resources/overlay/scss/**']},
-                    {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['resources/overlay.html']},
-                    {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['resources/firebot-setup-file-icon.ico']},
-                    {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['resources/kbm-java/**']},
-                    {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['resources/ffmpeg/**']}
+                    {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['src/resources/overlay/**', '!src/resources/overlay/scss/**']},
+                    {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['src/resources/overlay.html']},
+                    {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['src/resources/firebot-setup-file-icon.ico']},
+                    {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['src/resources/kbm-java/**']},
+                    {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['src/resources/ffmpeg/**']}
                 ]
             },
             linux: {
                 files: [
-                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['resources/overlay/**', '!resources/overlay/scss/**']},
-                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['resources/overlay.html']},
-                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['resources/kbm-java/**']},
-                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['resources/ffmpeg/**']}
+                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['src/resources/overlay/**', '!src/resources/overlay/scss/**']},
+                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['src/resources/overlay.html']},
+                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['src/resources/kbm-java/**']},
+                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['src/resources/ffmpeg/**']}
                 ]
             },
             darwin: {
                 files: [
-                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['resources/overlay/**', '!resources/overlay/scss/**']},
-                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['resources/overlay.html']},
-                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['resources/kbm-java/**']},
-                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['resources/ffmpeg/**']}
+                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['src/resources/overlay/**', '!src/resources/overlay/scss/**']},
+                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['src/resources/overlay.html']},
+                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['src/resources/kbm-java/**']},
+                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['src/resources/ffmpeg/**']}
                 ]
             }
         }

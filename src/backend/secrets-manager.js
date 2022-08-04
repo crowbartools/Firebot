@@ -2,6 +2,10 @@
 
 const logger = require("./logwrapper");
 
+const test = require("./test");
+
+test.foo();
+
 /**
  * @typedef FirebotSecrets
  * @property {string} twitchClientId
