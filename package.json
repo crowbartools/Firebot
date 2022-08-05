@@ -4,10 +4,8 @@
   "description": "Powerful all-in-one bot for Twitch streamers.",
   "scripts": {
     "build": "tsc",
-    "clean": "rimraf build/",
-    "copy": "copyfiles -u 1 -V \"src/**/*\" -e **/*.ts build/",
     "start": "grunt scss && grunt include-source && npm run start:electron",
-    "start:electron": "npm run clean && npm run copy && npm run build && electron ./build/main.js --dev",
+    "start:electron": "grunt cleanup:build && grunt copysrc && npm run build && electron ./build/main.js --dev",
     "rebuild": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=12.2.2 --arch=x64 --dist-url=https://atom.io/download/atom-shell --abi=87 --force-process-config",
     "rebuild:new": "npm rebuild --runtime=electron --target=12.2.2 --disturl=https://atom.io/download/atom-shell --abi=87",
     "rebuild:darwin": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=12.2.2 --arch=darwin --dist-url=https://atom.io/download/atom-shell",
