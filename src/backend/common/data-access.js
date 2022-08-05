@@ -7,7 +7,8 @@ const { JsonDB } = require("node-json-db");
 
 // This is the path to folder the app is currently living in. IE: C:\Users\<user>\AppData\Local\Firebot\app-4.0.0\
 // This will change after every update.
-const workingDirectoryPath = process.cwd();
+//const workingDirectoryPath = process.cwd();
+const workingDirectoryPath = (electron.app || electron.remote.app).getAppPath();
 
 const getWorkingDirectoryPath = function() {
     return workingDirectoryPath;
