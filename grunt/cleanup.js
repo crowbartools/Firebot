@@ -26,10 +26,12 @@ module.exports = function (grunt) {
 
         // Removes compiled css directories
         // Removes /dist/ directory
+        // Removes /build/ directory
         if (area == null || area === '') {
             fs.removeSync(path.join(__dirname, '../src/gui/css'));
             fs.removeSync(path.join(__dirname, '../src/resources/overlay/css'));
             fs.removeSync(path.join(__dirname, '../dist'));
+            fs.removeSync(path.join(__dirname, '../build'));
 
         // Removes compiled css directories
         } else if (area === 'css') {
