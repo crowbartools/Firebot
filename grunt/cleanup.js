@@ -48,6 +48,10 @@ module.exports = function (grunt) {
         } else if (area === 'install') {
             fs.removeSync(path.join(__dirname, '../dist/install'));
 
+        // Remove /build
+        } else if (area === 'build') {
+            fs.removeSync(path.join(__dirname, '../build'));
+
         } else {
             grunt.fail.fatal(new Error('unknown cleanup property'), 1);
         }

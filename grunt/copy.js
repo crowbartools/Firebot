@@ -45,6 +45,11 @@ module.exports = function (grunt) {
                     {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['src/resources/kbm-java/**']},
                     {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['src/resources/ffmpeg/**']}
                 ]
+            },
+            src: {
+                files: [
+                    {expand: true, dest: 'build/', cwd: 'src', src: ['**', '!**/*.ts']}
+                ]
             }
         }
     });
@@ -56,5 +61,9 @@ module.exports = function (grunt) {
         const platform = grunt.config.get('platform');
         remFiles(platform);
         grunt.task.run(`xcopy:${platform}`);
+    });
+
+    grunt.registerTask('copysrc', function() {
+        grunt.task.run('xcopy:src');
     });
 };
