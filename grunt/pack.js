@@ -21,11 +21,12 @@ module.exports = function (grunt) {
         '--icon="./build/gui/images/icon_transparent.ico"',
         '--ignore=/.github',
         '--ignore=/.vscode',
+        '--ignore=/build/resources',
+        '--ignore=/dist',
+        '--ignore=/doc',
         '--ignore=/grunt',
         '--ignore=/src',
-        '--ignore=/doc',
-        '--ignore=/profiles',
-        '--ignore=/dist'
+        '--ignore=/profiles'
     ].join(' ');
 
     grunt.config.merge({

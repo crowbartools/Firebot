@@ -24,19 +24,42 @@ module.exports = function (grunt) {
 
             src: {
                 files: [
-                    {expand: true, dest: 'build/', cwd: 'src/', src: ['**', '!**/*.ts', '!**/*.scss']}
+                    {
+                        expand: true,
+                        dest: 'build/',
+                        cwd: 'src/',
+                        src: [
+                            '**',
+                            '!secrets.template.json',
+                            '!**/*.ts',
+                            '!**/*.scss'
+                        ],
+                        filter: 'isFile'
+                    }
                 ]
             },
 
             win64: {
                 files: [
-                    {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['build/resources/']}
+                    {
+                        expand: true,
+                        dest: 'dist/pack/Firebot-win32-x64/resources/',
+                        cwd: 'build/resources/',
+                        src: ['**'],
+                        filter: 'isFile'
+                    }
                 ]
             },
 
             linux: {
                 files: [
-                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['build/resources/']}
+                    {
+                        expand: true,
+                        dest: 'dist/pack/Firebot-linux-x64/',
+                        cwd: 'build/resources/',
+                        src: ['**'],
+                        filter: 'isFile'
+                    }
                 ]
             }
         }
