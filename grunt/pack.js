@@ -22,7 +22,8 @@ module.exports = function (grunt) {
         '--ignore=/.github',
         '--ignore=/.vscode',
         '--ignore=/grunt',
-        '--ignore=/resources',
+        '--ignore=/src',
+        '--ignore=/build/resources',
         '--ignore=/doc',
         '--ignore=/profiles',
         '--ignore=/dist/install'
@@ -31,13 +32,13 @@ module.exports = function (grunt) {
     grunt.config.merge({
         shell: {
             packwin64: {
-                command: `npx --no-install --ignore-existing electron-packager ./src Firebot --platform=win32 ${flags}`
+                command: `npx --no-install --ignore-existing electron-packager . Firebot --platform=win32 ${flags}`
             },
             packlinux: {
-                command: `npx --no-install --ignore-existing electron-packager ./src Firebot --platform=linux ${flags}`
+                command: `npx --no-install --ignore-existing electron-packager . Firebot --platform=linux ${flags}`
             },
             packdarwin: {
-                command: `npx --no-install --ignore-existing electron-packager ./src Firebot --platform=darwin ${flags}`
+                command: `npx --no-install --ignore-existing electron-packager . Firebot --platform=darwin ${flags}`
             }
         }
     });
