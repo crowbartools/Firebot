@@ -5,7 +5,7 @@
   "scripts": {
     "build": "tsc",
     "clean": "rimraf build/",
-    "copy": "copyup -V \"src/**/*\" -e **/*.ts build/",
+    "copy": "copyfiles -u 1 -V \"src/**/*\" -e **/*.ts build/",
     "start": "grunt scss && grunt include-source && npm run start:electron",
     "start:electron": "npm run clean && npm run copy && npm run build && electron ./build/main.js --dev",
     "rebuild": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=12.2.2 --arch=x64 --dist-url=https://atom.io/download/atom-shell --abi=87 --force-process-config",
