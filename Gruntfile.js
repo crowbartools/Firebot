@@ -64,6 +64,6 @@ module.exports = function(grunt) {
     require('./grunt/typescript.js')(grunt);
 
     grunt.registerTask('prep', ['cleanup:build', 'xcopy:src', 'scss', 'tsc', 'include-source']);
-
-    grunt.registerTask('fullpack', ['scss', 'include-source', 'pack']);
+    grunt.registerTask('fullpack', ['prep', 'pack']);
+    grunt.registerTask('build', ['fullpack', 'compile']);
 };
