@@ -18,15 +18,14 @@ module.exports = function (grunt) {
         '--overwrite',
         '--version-string.ProductName="Firebot v5"',
         '--executable-name="Firebot v5"',
-        '--icon="./src/gui/images/icon_transparent.ico"',
+        '--icon="./build/gui/images/icon_transparent.ico"',
         '--ignore=/.github',
         '--ignore=/.vscode',
         '--ignore=/grunt',
         '--ignore=/src',
-        '--ignore=/build/resources',
         '--ignore=/doc',
         '--ignore=/profiles',
-        '--ignore=/dist/install'
+        '--ignore=/dist'
     ].join(' ');
 
     grunt.config.merge({
@@ -36,9 +35,6 @@ module.exports = function (grunt) {
             },
             packlinux: {
                 command: `npx --no-install --ignore-existing electron-packager . Firebot --platform=linux ${flags}`
-            },
-            packdarwin: {
-                command: `npx --no-install --ignore-existing electron-packager . Firebot --platform=darwin ${flags}`
             }
         }
     });

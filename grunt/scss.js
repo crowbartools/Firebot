@@ -17,7 +17,7 @@ module.exports = function (grunt) {
                     expand: true,
                     cwd: 'src/gui/scss/',
                     src: ['*.scss'],
-                    dest: 'src/gui/css/',
+                    dest: 'build/gui/css/',
                     ext: '.css'
                 }]
             },
@@ -26,7 +26,7 @@ module.exports = function (grunt) {
                     expand: true,
                     cwd: 'src/resources/overlay/scss/',
                     src: ['*.scss'],
-                    dest: 'src/resources/overlay/css/',
+                    dest: 'build/resources/overlay/css/',
                     ext: '.css'
                 }]
             }

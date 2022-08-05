@@ -21,34 +21,22 @@ function remFiles(scope) {
 module.exports = function (grunt) {
     grunt.config.merge({
         xcopy: {
-            win64: {
-                files: [
-                    {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['src/resources/overlay/**', '!src/resources/overlay/scss/**']},
-                    {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['src/resources/overlay.html']},
-                    {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['src/resources/firebot-setup-file-icon.ico']},
-                    {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['src/resources/kbm-java/**']},
-                    {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['src/resources/ffmpeg/**']}
-                ]
-            },
-            linux: {
-                files: [
-                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['src/resources/overlay/**', '!src/resources/overlay/scss/**']},
-                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['src/resources/overlay.html']},
-                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['src/resources/kbm-java/**']},
-                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['src/resources/ffmpeg/**']}
-                ]
-            },
-            darwin: {
-                files: [
-                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['src/resources/overlay/**', '!src/resources/overlay/scss/**']},
-                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['src/resources/overlay.html']},
-                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['src/resources/kbm-java/**']},
-                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['src/resources/ffmpeg/**']}
-                ]
-            },
+
             src: {
                 files: [
-                    {expand: true, dest: 'build/', cwd: 'src', src: ['**', '!**/*.ts']}
+                    {expand: true, dest: 'build/', cwd: 'src/', src: ['**', '!**/*.ts', '!**/*.scss']}
+                ]
+            },
+
+            win64: {
+                files: [
+                    {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['build/resources/']}
+                ]
+            },
+
+            linux: {
+                files: [
+                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['build/resources/']}
                 ]
             }
         }
