@@ -2,7 +2,7 @@
   "name": "firebotv5",
   "version": "5.53.2",
   "description": "Powerful all-in-one bot for Twitch streamers.",
-  "main": "/build/main.js",
+  "main": "./build/main.js",
   "scripts": {
     "start": "grunt prep && electron ./build/main.js --dev",
     "rebuild": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=12.2.2 --arch=x64 --dist-url=https://atom.io/download/atom-shell --abi=87 --force-process-config",
