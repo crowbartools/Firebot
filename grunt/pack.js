@@ -4,10 +4,26 @@ grunt pack
     Runs electron packager for the current platform
     Copies Resources into /dist/pack/{platform}/resources/
 */
-
 'use strict';
+
+const path = require('path');
+
 module.exports = function (grunt) {
     const { version } = grunt.file.readJSON('./node_modules/electron/package.json');
+
+    const safeDir = path.resolve(__dirname, '../').replace(/[\\/:[\]{}.*+()]/g, char => ('\\' + char));
+
+    const ignoreRegex = '^' + safeDir + (`[\\\\\\/](?:
+        (?:\\.github)|
+        (?:\\.vscode)|
+        (?:dist)|
+        (?:doc)|
+        (?:grunt)|
+        (?:src)|
+        (?:profiles)
+    )(?:[\\\\\\/]|$)"`).replace(/[\r\n ]/g, '');
+
+    console.log(ignoreRegex);
 
     const flags = [
         '--out="./dist/pack"',
@@ -19,14 +35,7 @@ module.exports = function (grunt) {
         '--version-string.ProductName="Firebot v5"',
         '--executable-name="Firebot v5"',
         '--icon="./build/gui/images/icon_transparent.ico"',
-        '--ignore=/.github',
-        '--ignore=/.vscode',
-        '--ignore=/build/resources',
-        '--ignore=/dist',
-        '--ignore=/doc',
-        '--ignore=/grunt',
-        '--ignore=/src',
-        '--ignore=/profiles'
+        `--ignore=${ignoreRegex}`
     ].join(' ');
 
     grunt.config.merge({
