@@ -13,7 +13,7 @@ module.exports = function (grunt) {
 
     const safeDir = path.resolve(__dirname, '../').replace(/[\\/:[\]{}.*+()]/g, char => ('\\' + char));
 
-    const ignoreRegex = '^' + safeDir + (`[\\\\\\/](?:
+    const ignoreRegex = '^' + safeDir + (`"[\\\\\\/](?:
         (?:\\.github)|
         (?:\\.vscode)|
         (?:dist)|
@@ -22,8 +22,6 @@ module.exports = function (grunt) {
         (?:src)|
         (?:profiles)
     )(?:[\\\\\\/]|$)"`).replace(/[\r\n ]/g, '');
-
-    console.log(ignoreRegex);
 
     const flags = [
         '--out="./dist/pack"',
