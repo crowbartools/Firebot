@@ -13,6 +13,10 @@ const { settings } = require("../backend/common/settings-access");
 const effectManager = require("../backend/effects/effectManager");
 const resourceTokenManager = require("../backend/resourceTokenManager");
 
+const electron = require('electron');
+const cwd = !(electron.app || electron.remote.app).isPackaged ? (electron.app || electron.remote.app).getAppPath() : process.cwd();
+
+
 class HttpServerManager extends EventEmitter {
     constructor() {
         super();
@@ -57,13 +61,14 @@ class HttpServerManager extends EventEmitter {
 
 
         // Set up route to serve overlay
-        app.use("/overlay/", express.static("resources/overlay"));
-        app.get("/overlay", function(req, res) {
+        app.use("/overlay/", express.static(path.join(cwd, './resources/overlay/')));
+        app.get("/overlay/", function(req, res) {
             const effectDefs = effectManager.getEffectOverlayExtensions();
 
             const combinedCssDeps = [...new Set([].concat.apply([], effectDefs
                 .filter(ed => ed.dependencies != null && ed.dependencies.css != null)
                 .map(ed => ed.dependencies.css)))];
+
             const combinedJsDeps = [...new Set([].concat.apply([], effectDefs
                 .filter(ed => ed.dependencies != null && ed.dependencies.js != null)
                 .map(ed => ed.dependencies.js)))];
@@ -72,7 +77,8 @@ class HttpServerManager extends EventEmitter {
                 .filter(ed => ed != null && ed.dependencies != null && ed.dependencies.globalStyles != null)
                 .map(ed => ed.dependencies.globalStyles);
 
-            res.render("../resources/overlay", {
+            const overlayTemplate = path.join(cwd, './resources/overlay');
+            res.render(overlayTemplate, {
                 events: effectDefs.map(ed => ed.event),
                 dependancies: {
                     css: combinedCssDeps,
