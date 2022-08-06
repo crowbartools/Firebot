@@ -18,6 +18,9 @@ jobs:
         with:
           node-version: "14.x"
 
+      - name: Install Correct NPM Version
+        run: npm install -g npm@8.16.0
+
       - name: Checkout branch
         uses: 'actions/checkout@v2'
 

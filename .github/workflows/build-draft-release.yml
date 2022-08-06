@@ -38,6 +38,9 @@ jobs:
         with:
           node-version: '14.x'
 
+      - name: Install Correct NPM Version
+        run: npm install -g npm@8.16.0
+
       - name: Build Prep for Windows
         if: steps.tagged.outputs.tagged == 1 && runner.os == 'windows'
         shell: bash
