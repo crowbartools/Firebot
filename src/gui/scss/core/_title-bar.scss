@@ -6,22 +6,22 @@
     margin-top: 40px !important;
 }
 
-.menubar-menu-container .menu-item-icon {
-    width: 0px !important;
+.cet-window-icon {
+    display: none !important;
 }
 
-.titlebar.windows, .titlebar.linux {
+.cet-titlebar.cet-windows, .cet-titlebar.cet-linux {
     font-family: 'Open Sans';
     font-size: 12px;
     font-weight: 100;
 }
 
-.titlebar.windows {
-    .window-title {
+.cet-titlebar.cet-windows {
+    .cet-window-title {
         display: none;
     }
     
-    .menubar {
+    .cet-menubar {
         margin-right: auto;
     }
 }
