@@ -8,6 +8,9 @@ const windowStateKeeper = require("electron-window-state");
 const fileOpenHelpers = require("../file-open-helpers");
 const createTray = require('./tray-creation.js');
 const logger = require("../../logwrapper");
+const { setupTitlebar, attachTitlebarToWindow } = require("custom-electron-titlebar/main");
+
+setupTitlebar();
 
 /**
  * Firebot's main window
@@ -255,6 +258,8 @@ function createMainWindow() {
 
     const menu = Menu.buildFromTemplate(menuTemplate);
     Menu.setApplicationMenu(menu);
+
+    attachTitlebarToWindow(mainWindow);
 
     // register listeners on the window, so we can update the state
     // automatically (the listeners will be removed when the window is closed)

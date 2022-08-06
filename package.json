@@ -80,7 +80,7 @@
     "compare-versions": "^3.5.1",
     "cors": "^2.8.5",
     "countup.js-angular1": "^1.0.0",
-    "custom-electron-titlebar": "^3.2.2-hotfix62",
+    "custom-electron-titlebar": "^4.1.0",
     "deepmerge": "^4.2.2",
     "dompurify": "^2.2.2",
     "ejs": "^2.7.1",
