@@ -38,25 +38,25 @@
 
     <link
       rel="stylesheet"
-      href="../../node_modules/ng-toast/dist/ngToast.min.css"
+      href="../../../node_modules/ng-toast/dist/ngToast.min.css"
     />
 
     <link
       rel="stylesheet"
-      href="../../node_modules/angularjs-color-picker/dist/angularjs-color-picker.min.css"
+      href="../../../node_modules/angularjs-color-picker/dist/angularjs-color-picker.min.css"
     />
     <link
       rel="stylesheet"
-      href="../../node_modules/angularjs-color-picker/dist/themes/angularjs-color-picker-bootstrap.min.css"
+      href="../../../node_modules/angularjs-color-picker/dist/themes/angularjs-color-picker-bootstrap.min.css"
     />
 
     <link
       rel="stylesheet"
-      href="../../node_modules/codemirror/lib/codemirror.css"
+      href="../../../node_modules/codemirror/lib/codemirror.css"
     />
     <link
       rel="stylesheet"
-      href="../../node_modules/codemirror/theme/blackboard.css"
+      href="../../../node_modules/codemirror/theme/blackboard.css"
     />
 
     <script src="../js/plugins/jquery-3.1.1.slim.min.js"></script>
@@ -66,11 +66,11 @@
     <script src="../js/plugins/jquery-ui.min.js"></script>
     <script src="../js/plugins/jquery-ui-pack.min.js"></script>
 
-    <script src="../../node_modules/codemirror/lib/codemirror.js"></script>
-    <script src="../../node_modules/codemirror/mode/xml/xml.js"></script>
-    <script src="../../node_modules/codemirror/mode/javascript/javascript.js"></script>
-    <script src="../../node_modules/codemirror/mode/css/css.js"></script>
-    <script src="../../node_modules/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+    <script src="../../../node_modules/codemirror/lib/codemirror.js"></script>
+    <script src="../../../node_modules/codemirror/mode/xml/xml.js"></script>
+    <script src="../../../node_modules/codemirror/mode/javascript/javascript.js"></script>
+    <script src="../../../node_modules/codemirror/mode/css/css.js"></script>
+    <script src="../../../node_modules/codemirror/mode/htmlmixed/htmlmixed.js"></script>
 
     <!-- include summernote css/js -->
     <link
@@ -84,7 +84,7 @@
     <script type="text/javascript" src="./index.js"></script>
     <script
       type="text/javascript"
-      src="../../node_modules/countup.js/dist/countUp.min.js"
+      src="../../../node_modules/countup.js/dist/countUp.min.js"
     ></script>
 
     <script src="./app-main.js"></script>
@@ -344,7 +344,9 @@
 
       <div class="fb-tab-content">
         <div class="tab-header">
-          <span class="noselect" style="flex: 1" role="heading" aria-level="1">{{sbm.currentTabName}}</span>
+          <span class="noselect" style="flex: 1" role="heading" aria-level="1"
+            >{{sbm.currentTabName}}</span
+          >
           <div style="flex: 1">
             <stream-info />
           </div>
@@ -449,7 +451,8 @@
           <div
             class="tab-body"
             ng-class="{ 'fullpage-tab': sbm.currentTabIsFullScreen() }"
-          role="main">
+            role="main"
+          >
             <!-- angular templating -->
             <!-- this is where tab content will be injected -->
             <div ng-view style="width: 100%"></div>

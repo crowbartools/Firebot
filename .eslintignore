@@ -1,11 +1,12 @@
 .git/
 node_modules/
-gui/js/
-resources/
+src/gui/js/
+src/gui/fonts/
+src/resources/
 Gruntfile.js
 eslintrc.js
 package.json
 package-lock.json
-gui/fonts/
 dist/
 doc/
+build/

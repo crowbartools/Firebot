@@ -19,6 +19,7 @@ exports.setupApiClients = () => {
         }
 
         client = new ApiClient({ authProvider: streamerProvider });
+
         logger.info("Finished setting up Twitch API client for streamer account.");
     }
 

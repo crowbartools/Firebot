@@ -4,10 +4,52 @@ grunt pack
     Runs electron packager for the current platform
     Copies Resources into /dist/pack/{platform}/resources/
 */
-
 'use strict';
+
+const formatIgnoreList = ignoreList => {
+    return ignoreList.map(item => {
+        if (item.dotfiles) {
+            return '--ignore="^[\\\\\\/]?\\.[^\\\\\\/]+$"';
+        }
+        if (item.dotdirs) {
+            return '--ignore="^[\\\\\\/]?\\.[^\\\\\\/]+[\\\\\\/]"';
+        }
+
+        if (item.path == null) {
+            throw new Error('invalid ignore path');
+        }
+
+        const escapedPath = item.path.replace(/[()[\]{}.?+*\\/^$]/, char => ('\\' + char));
+
+        return `--ignore="^[\\\\\\/]?${escapedPath}` + (item.isFile ? '$"' : '(?:$|[\\\\\\/])"');
+    });
+};
+
 module.exports = function (grunt) {
     const { version } = grunt.file.readJSON('./node_modules/electron/package.json');
+
+    let ignoreFlags;
+    try {
+        ignoreFlags = formatIgnoreList([
+            {dotfiles: true},
+            {dotdirs: true},
+            {path: 'build/resources'},
+            {path: 'dist'},
+            {path: 'doc'},
+            {path: 'docs'},
+            {path: 'grunt'},
+            {path: 'profiles'},
+            {path: 'src'},
+            {path: 'Gruntfile.js', isFile: true},
+            {path: 'package.lock', isFile: true},
+            {path: 'README.md', isFile: true},
+            {path: 'secrets.gpg', isFile: true},
+            {path: 'tsconfig.json', isFile: true}
+        ]);
+    } catch (err) {
+        grunt.fail.fatal(err);
+        return;
+    }
 
     const flags = [
         '--out="./dist/pack"',
@@ -18,14 +60,8 @@ module.exports = function (grunt) {
         '--overwrite',
         '--version-string.ProductName="Firebot v5"',
         '--executable-name="Firebot v5"',
-        '--icon="./gui/images/icon_transparent.ico"',
-        '--ignore=/.github',
-        '--ignore=/.vscode',
-        '--ignore=/grunt',
-        '--ignore=/resources',
-        '--ignore=/doc',
-        '--ignore=/profiles',
-        '--ignore=/dist/install'
+        '--icon="./build/gui/images/icon_transparent.ico"',
+        ...ignoreFlags
     ].join(' ');
 
     grunt.config.merge({
@@ -35,9 +71,6 @@ module.exports = function (grunt) {
             },
             packlinux: {
                 command: `npx --no-install --ignore-existing electron-packager . Firebot --platform=linux ${flags}`
-            },
-            packdarwin: {
-                command: `npx --no-install --ignore-existing electron-packager . Firebot --platform=darwin ${flags}`
             }
         }
     });

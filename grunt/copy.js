@@ -21,29 +21,45 @@ function remFiles(scope) {
 module.exports = function (grunt) {
     grunt.config.merge({
         xcopy: {
+
+            src: {
+                files: [
+                    {
+                        expand: true,
+                        dest: 'build/',
+                        cwd: 'src/',
+                        src: [
+                            '**',
+                            '!secrets.template.json',
+                            '!**/*.ts',
+                            '!**/*.scss'
+                        ],
+                        filter: 'isFile'
+                    }
+                ]
+            },
+
             win64: {
                 files: [
-                    {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['resources/overlay/**', '!resources/overlay/scss/**']},
-                    {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['resources/overlay.html']},
-                    {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['resources/firebot-setup-file-icon.ico']},
-                    {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['resources/kbm-java/**']},
-                    {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['resources/ffmpeg/**']}
+                    {
+                        expand: true,
+                        dest: 'dist/pack/Firebot-win32-x64/resources/',
+                        cwd: 'build/resources/',
+                        src: ['**'],
+                        filter: 'isFile'
+                    }
                 ]
             },
+
             linux: {
                 files: [
-                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['resources/overlay/**', '!resources/overlay/scss/**']},
-                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['resources/overlay.html']},
-                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['resources/kbm-java/**']},
-                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['resources/ffmpeg/**']}
-                ]
-            },
-            darwin: {
-                files: [
-                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['resources/overlay/**', '!resources/overlay/scss/**']},
-                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['resources/overlay.html']},
-                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['resources/kbm-java/**']},
-                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['resources/ffmpeg/**']}
+                    {
+                        expand: true,
+                        dest: 'dist/pack/Firebot-linux-x64/',
+                        cwd: 'build/resources/',
+                        src: ['**'],
+                        filter: 'isFile'
+                    }
                 ]
             }
         }
@@ -56,5 +72,9 @@ module.exports = function (grunt) {
         const platform = grunt.config.get('platform');
         remFiles(platform);
         grunt.task.run(`xcopy:${platform}`);
+    });
+
+    grunt.registerTask('copysrc', function() {
+        grunt.task.run('xcopy:src');
     });
 };
