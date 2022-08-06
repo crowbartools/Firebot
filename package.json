@@ -9,9 +9,7 @@
     "rebuild:new": "npm rebuild --runtime=electron --target=12.2.2 --disturl=https://atom.io/download/atom-shell --abi=87",
     "rebuild:darwin": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=12.2.2 --arch=darwin --dist-url=https://atom.io/download/atom-shell",
     "setup": "npm ci && npm rebuild && npm run rebuild",
-    "pack": "grunt pack",
-    "compile": "grunt compile",
-    "build:installer": "grunt pack && grunt compile",
+    "build": "grunt build",
     "lint": "grunt lint"
   },
   "repository": "https://github.com/crowbartools/Firebot",
