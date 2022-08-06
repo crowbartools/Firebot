@@ -28,7 +28,7 @@ jobs:
         run: eslint . --quiet
 
       - name: Compile GUI CSS
-        run: node-sass --quiet --source-map=false ./gui/scss/ --output=./gui/css
+        run: node-sass --quiet --source-map=false ./src/gui/scss/ --output=./src/gui/css
 
       - name: Compile Overlay CSS
-        run: node-sass --quiet --source-map=false ./resources/overlay/scss/ --output=./resources/overlay/css/
+        run: node-sass --quiet --source-map=false ./src/resources/overlay/scss/ --output=./src/resources/overlay/css/
