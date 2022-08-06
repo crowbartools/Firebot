@@ -15,18 +15,18 @@ module.exports = function (grunt) {
             gui: {
                 files: [{
                     expand: true,
-                    cwd: 'gui/scss/',
+                    cwd: 'src/gui/scss/',
                     src: ['*.scss'],
-                    dest: 'gui/css/',
+                    dest: 'build/gui/css/',
                     ext: '.css'
                 }]
             },
             overlay: {
                 files: [{
                     expand: true,
-                    cwd: 'resources/overlay/scss/',
+                    cwd: 'src/resources/overlay/scss/',
                     src: ['*.scss'],
-                    dest: 'resources/overlay/css/',
+                    dest: 'build/resources/overlay/css/',
                     ext: '.css'
                 }]
             }

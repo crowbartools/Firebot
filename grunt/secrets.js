@@ -7,10 +7,10 @@ module.exports = function (grunt) {
     grunt.config.merge({
         shell: {
             encryptsecrets: {
-                command: `${gpgBase} --output secrets.gpg --symmetric secrets.json`
+                command: `${gpgBase} --output secrets.gpg --symmetric src/secrets.json`
             },
             decryptsecrets: {
-                command: `${gpgBase} --output secrets.json --decrypt secrets.gpg`
+                command: `${gpgBase} --output src/secrets.json --decrypt secrets.gpg`
             }
         }
     });
@@ -21,8 +21,8 @@ module.exports = function (grunt) {
         }
 
         if (action === 'encrypt') {
-            if (!fs.existsSync(path.join(__dirname, '../secrets.json'))) {
-                throw new Error('secrets.json not found');
+            if (!fs.existsSync(path.join(__dirname, '../src/secrets.json'))) {
+                throw new Error('src/secrets.json not found');
             }
 
             if (fs.existsSync(path.join(__dirname, '../secrets.gpg'))) {
@@ -36,8 +36,8 @@ module.exports = function (grunt) {
                 throw new Error('secrets.gpg not found');
             }
 
-            if (fs.existsSync(path.join(__dirname, '../secrets.json'))) {
-                fs.unlink('../secrets.json');
+            if (fs.existsSync(path.join(__dirname, '../src/secrets.json'))) {
+                fs.unlink('../src/secrets.json');
             }
 
             grunt.task.run('shell:decryptsecrets');

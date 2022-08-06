@@ -67,6 +67,7 @@ typings/
 
 # Repo Specific
 dist
+build
 user-settings
 app-settings
 scripts

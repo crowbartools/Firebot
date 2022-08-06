@@ -24,17 +24,16 @@ const fs = require('fs-extra');
 module.exports = function (grunt) {
     grunt.registerTask('cleanup', function (area) {
 
-        // Removes compiled css directories
         // Removes /dist/ directory
+        // Removes /build/ directory
         if (area == null || area === '') {
-            fs.removeSync(path.join(__dirname, '../gui/css'));
-            fs.removeSync(path.join(__dirname, '../resources/overlay/css'));
             fs.removeSync(path.join(__dirname, '../dist'));
+            fs.removeSync(path.join(__dirname, '../build'));
 
         // Removes compiled css directories
         } else if (area === 'css') {
-            fs.removeSync(path.join(__dirname, '../gui/css'));
-            fs.removeSync(path.join(__dirname, '../resources/overlay/css'));
+            fs.removeSync(path.join(__dirname, '../build/gui/css'));
+            fs.removeSync(path.join(__dirname, '../build/resources/overlay/css'));
 
         // Removes /dist/
         } else if (area === 'dist') {
@@ -47,6 +46,10 @@ module.exports = function (grunt) {
         // Removes /dist/install/
         } else if (area === 'install') {
             fs.removeSync(path.join(__dirname, '../dist/install'));
+
+        // Remove /build
+        } else if (area === 'build') {
+            fs.removeSync(path.join(__dirname, '../build'));
 
         } else {
             grunt.fail.fatal(new Error('unknown cleanup property'), 1);
