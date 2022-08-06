@@ -61,7 +61,7 @@ class HttpServerManager extends EventEmitter {
 
 
         // Set up route to serve overlay
-        app.use("/overlay/", express.static("resources/overlay"));
+        app.use("/overlay/", express.static(path.join(cwd, './resources/overlay/')));
         app.get("/overlay/", function(req, res) {
             const effectDefs = effectManager.getEffectOverlayExtensions();
 
