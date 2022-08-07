@@ -9,7 +9,7 @@ const isDev = !app.isPackaged;
 
 // This is the path to folder the app is currently living in. IE: C:\Users\<user>\AppData\Local\Firebot\app-4.0.0\
 // This will change after every update.
-const workingDirectoryPath = isDev ? app.getAppPath() : process.cwd();
+const workingDirectoryPath = isDev ? path.join(app.getAppPath(), "build") : process.cwd();
 
 const getWorkingDirectoryPath = function() {
     return workingDirectoryPath;
@@ -151,8 +151,8 @@ const copyResourceToUserData = function(
     try {
         const source = getPathInWorkingDir(
             resourcePath == null || resourcePath === ""
-                ? path.join("/resources/", resourceName)
-                : path.join("/resources/", resourcePath, resourceName)
+                ? path.join("resources", resourceName)
+                : path.join("resources", resourcePath, resourceName)
         );
 
         const destination = getPathInUserData(
