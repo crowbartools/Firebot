@@ -49,6 +49,7 @@ const STREAMER_ACCOUNT_PROVIDER = {
         'clips:edit',
         'user:manage:blocked_users',
         'user:read:broadcast',
+        'user:manage:whispers',
         'whispers:read',
         'whispers:edit',
         'moderation:read',
@@ -71,7 +72,14 @@ const BOT_ACCOUNT_PROVIDER = {
         tokenPath: TOKEN_PATH,
         authorizePath: AUTHORIZE_PATH
     },
-    scopes: 'channel:moderate chat:edit chat:read whispers:edit channel_read'
+    scopes: [
+        'channel:moderate',
+        'chat:edit',
+        'chat:read',
+        'user:manage:whispers',
+        'whispers:edit',
+        'channel_read'
+    ].join(' ')
 };
 
 exports.registerTwitchAuthProviders = () => {
