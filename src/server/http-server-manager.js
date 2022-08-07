@@ -293,7 +293,7 @@ class HttpServerManager extends EventEmitter {
             fullRoute
         } = this.buildCustomRouteParameters(prefix, route, method);
 
-        if (this.customRoutes.findIndex((cr) => cr.fullRoute === fullRoute) > -1) {
+        if (this.customRoutes.findIndex((cr) => cr.fullRoute === fullRoute && cr.method === normalizedMethod) > -1) {
             logger.error(`Failed to register custom route: Custom route already registered at "${fullRoute}"`);
             return false;
         }
