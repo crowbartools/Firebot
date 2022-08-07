@@ -43,3 +43,4 @@ exports.users = require("./resource/users");
 exports.teams = require("./resource/teams");
 exports.categories = require("./resource/categories");
 exports.streamTags = require("./resource/stream-tags");
+exports.whispers = require("./resource/whispers");
