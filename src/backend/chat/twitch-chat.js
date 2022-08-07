@@ -191,14 +191,12 @@ class TwitchChat extends EventEmitter {
      * @param {string} accountType The type of account to whisper with ('streamer' or 'bot')
      */
     async _whisper(message, username = "", accountType) {
-        const chatClient = accountType === 'bot' ? this._botChatClient : this._streamerChatClient;
+        const client = twitchApi.getClient();
         try {
             logger.debug(`Sending whisper as ${accountType} to ${username}.`);
 
-            const streamer = accountAccess.getAccounts().streamer;
-            const whisperMessage = `/w @${username.replace("@", "")} ${message}`;
-            chatClient.say(streamer.username, whisperMessage);
-            //chatClient.whisper(username, message);
+            const recipient = await client.users.getUserByName(username);
+            await twitchApi.whispers.sendWhisper(recipient.id, message, accountType === 'bot');
         } catch (error) {
             logger.error(`Error attempting to send whisper with ${accountType}`, error);
         }
