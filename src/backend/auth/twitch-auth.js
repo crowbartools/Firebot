@@ -35,11 +35,16 @@ const STREAMER_ACCOUNT_PROVIDER = {
     scopes: [
         'bits:read',
         'channel:edit:commercial',
+        'channel:manage:broadcast',
+        'channel:manage:moderators',
+        'channel:manage:raids',
+        'channel:manage:redemptions',
+        'channel:manage:vips',
         'channel:moderate',
         'channel:read:hype_train',
-        'channel:read:subscriptions',
         'channel:read:redemptions',
-        'channel:manage:redemptions',
+        'channel:read:subscriptions',
+        'channel:read:vips',
         'channel_commercial',
         'channel_editor',
         'channel_read',
@@ -47,16 +52,20 @@ const STREAMER_ACCOUNT_PROVIDER = {
         'chat:edit',
         'chat:read',
         'clips:edit',
-        'user:manage:blocked_users',
-        'user:read:broadcast',
-        'user:manage:whispers',
-        'whispers:read',
-        'whispers:edit',
         'moderation:read',
+        'moderator:manage:announcements',
+        'moderator:manage:banned_users',
+        'moderator:manage:chat_messages',
+        'moderator:manage:chat_settings',
         'user:edit:broadcast',
+        'user:manage:blocked_users',
+        'user:manage:whispers',
+        'user:read:broadcast',
         'user_subscriptions',
         'user_follows_edit',
-        'user_read'
+        'user_read',
+        'whispers:edit',
+        'whispers:read'
     ].join(' ')
 };
 
@@ -76,8 +85,10 @@ const BOT_ACCOUNT_PROVIDER = {
         'channel:moderate',
         'chat:edit',
         'chat:read',
+        'moderator:manage:announcements',
         'user:manage:whispers',
         'whispers:edit',
+        'whispers:read',
         'channel_read'
     ].join(' ')
 };

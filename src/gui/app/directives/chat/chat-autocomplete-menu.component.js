@@ -100,8 +100,28 @@
                             items: [
                                 {
                                     display: "/announce [message]",
-                                    description: "Send an announcement to chat",
+                                    description: "Send an announcement to chat in the channel's branding color",
                                     text: "/announce"
+                                },
+                                {
+                                    display: "/announceblue [message]",
+                                    description: "Send an announcement to chat in blue",
+                                    text: "/announceblue"
+                                },
+                                {
+                                    display: "/announcegreen [message]",
+                                    description: "Send an announcement to chat in green",
+                                    text: "/announcegreen"
+                                },
+                                {
+                                    display: "/announceorange [message]",
+                                    description: "Send an announcement to chat in orange",
+                                    text: "/announceorange"
+                                },
+                                {
+                                    display: "/announcepurple [message]",
+                                    description: "Send an announcement to chat in purple",
+                                    text: "/announcepurple"
                                 },
                                 {
                                     display: "/ban @username",
@@ -187,6 +207,21 @@
                                     display: "/emoteonlyoff",
                                     description: "Turn off emote-only mode",
                                     text: "/emoteonlyoff"
+                                },
+                                {
+                                    display: "/uniquechat",
+                                    description: "Restrict chat to unique messages",
+                                    text: "/uniquechat"
+                                },
+                                {
+                                    display: "/uniquechatoff",
+                                    description: "Turn off unique mode",
+                                    text: "/uniquechatoff"
+                                },
+                                {
+                                    display: "/commercial [30, 60, 90, 120, 150, 180]",
+                                    description: "Runs a commercial on the channel for the specified number of seconds",
+                                    text: "/commercial"
                                 }
                             ]
                         },
