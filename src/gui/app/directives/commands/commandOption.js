@@ -19,6 +19,10 @@
             <input ng-if="!$ctrl.metadata.useTextArea" class="form-control" type="text" placeholder="Enter text" ng-model="$ctrl.metadata.value">
           </div>
 
+          <div ng-switch-when="password">
+            <input class="form-control" type="password" placeholder="Enter password" ng-model="$ctrl.metadata.value">
+          </div>
+
           <div ng-switch-when="number">
             <input class="form-control" type="number" placeholder="{{$ctrl.metadata.placeholder ? $ctrl.metadata.placeholder : 'Enter a number'}}" ng-model="$ctrl.metadata.value">
           </div>
@@ -72,6 +76,10 @@
             <gift-receivers-list model="$ctrl.metadata.value"></gift-receivers-list>
           </div>
 
+          <div ng-switch-when="effectlist">
+            <effect-list effects="$ctrl.metadata.value" trigger="unknown" trigger-meta="$ctrl.triggerMeta" update="$ctrl.effectListUpdated(effects)" modalId="{{$ctrl.modalId}}" is-array="true"></effect-list>
+          </div>
+
           <div ng-if="$ctrl.metadata.tip != null && $ctrl.metadata.tip !== ''" class="muted" style="font-size:12px; padding-top: 3px;">{{$ctrl.metadata.tip}}</div>
        </div>
 
@@ -98,6 +106,10 @@
                         }
                     }
                 }
+            };
+
+            ctrl.effectListUpdated = function(effects) {
+                ctrl.metadata.value = effects;
             };
         }
     });
