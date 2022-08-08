@@ -108,8 +108,51 @@ const triggerAdBreak = async (adLength = 30) => {
     }
 };
 
+/**
+ * Starts a raid
+ *
+ * @param {string} targetUserId The Twitch user ID whose channel to raid
+ * @returns {Promise<boolean>}
+ */
+const raidChannel = async (targetUserId) => {
+    try {
+        const client = twitchApi.getClient();
+        const streamerId = accountAccess.getAccounts().streamer.userId;
+
+        await client.raids.startRaid(streamerId, targetUserId);
+
+        return true;
+    } catch (error) {
+        logger.error("Unable to start raid", error);
+    }
+
+    return false;
+};
+
+/**
+ * Cancels a raid
+ *
+ * @returns {Promise<boolean>}
+ */
+const cancelRaid = async () => {
+    try {
+        const client = twitchApi.getClient();
+        const streamerId = accountAccess.getAccounts().streamer.userId;
+
+        await client.raids.cancelRaid(streamerId);
+
+        return true;
+    } catch (error) {
+        logger.error("Unable to cancel raid", error);
+    }
+
+    return false;
+};
+
 exports.getChannelInformation = getChannelInformation;
 exports.getChannelInformationByUsername = getChannelInformationByUsername;
 exports.updateChannelInformation = updateChannelInformation;
 exports.triggerAdBreak = triggerAdBreak;
 exports.getOnlineStatus = getOnlineStatus;
+exports.raidChannel = raidChannel;
+exports.cancelRaid = cancelRaid;

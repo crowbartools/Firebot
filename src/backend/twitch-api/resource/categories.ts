@@ -1,14 +1,21 @@
-"use strict";
+import { ApiClient, HelixGame } from "@twurple/api";
 
 const logger = require("../../logwrapper");
 const twitchApi = require("../api");
 
 /**
- * @typedef TwitchCategory
- * @property {string} id - The ID of this category
- * @property {string} name - The name of this category
- * @property {string} boxArtUrl - The box art or cover image url of this category
+ * Defines a Twitch category
  */
+export interface TwitchCategory {
+    /** The Twitch ID of the category */
+    id: string,
+
+    /** The name of the category */
+    name: string,
+
+    /** The box art or cover image URL of the category */
+    boxArtUrl: string
+};
 
 
 /**
@@ -16,18 +23,12 @@ const twitchApi = require("../api");
  * @param {string} size
  * @returns {TwitchCategory}
  * */
-const mapTwitchCategory = (category, size) => {
-    const mappedCategory = {
+function mapTwitchCategory(category: HelixGame, size?: string): TwitchCategory {
+    return {
         id: category.id,
         name: category.name,
-        boxArtUrl: ""
+        boxArtUrl: category.boxArtUrl.replace("{width}x{height}", size)
     };
-    if (category.box_art_url) {
-        mappedCategory.boxArtUrl = category.box_art_url.replace("{width}x{height}", size);
-    } else {
-        mappedCategory.boxArtUrl = category.boxArtUrl.replace("{width}x{height}", size);
-    }
-    return mappedCategory;
 };
 
 /**
@@ -35,7 +36,7 @@ const mapTwitchCategory = (category, size) => {
  * @param {string} [size]
  * @returns {Promise.<TwitchCategory>}
  */
-const getCategoryById = async (categoryId, size = "285x380") => {
+export async function getCategoryById(categoryId: string, size = "285x380"): Promise<TwitchCategory> {
     const client = twitchApi.getClient();
     try {
         const category = await client.games.getGameById(categoryId);
@@ -53,21 +54,18 @@ const getCategoryById = async (categoryId, size = "285x380") => {
  * @param {string} categoryName
  * @returns {Promise.<TwitchCategory[]>}
  */
-const searchCategories = async (categoryName) => {
-    const client = twitchApi.getClient();
-    let categories = [];
+export async function searchCategories(categoryName: string): Promise<TwitchCategory[]> {
+    const client: ApiClient = twitchApi.getClient();
+    let categories: HelixGame[] = [];
 
     try {
         const response = await client.search.searchCategories(categoryName);
         if (response && response.data) {
             categories = response.data;
         }
-    } catch (err) {
-        logger.error("Failed to search twitch categories", err);
+    } catch (error) {
+        logger.error("Failed to search Twitch categories", error);
     }
 
     return categories.map(c => mapTwitchCategory(c));
 };
-
-exports.getCategoryById = getCategoryById;
-exports.searchCategories = searchCategories;
