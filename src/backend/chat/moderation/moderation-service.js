@@ -1,7 +1,6 @@
 "use strict";
 
 const { parentPort } = require("worker_threads");
-const logger = require("../../logwrapper");
 
 let bannedWords = [];
 let regularExpressions = [];
@@ -15,13 +14,15 @@ function hasBannedWord(input) {
 }
 
 function matchesBannedRegex(input) {
-    const expressions = regularExpressions.map(regex => {
+    const expressions = regularExpressions.reduce(function(newArray, regex) {
         try {
-            return new RegExp(regex, "gi");
+            newArray.push(new RegExp(regex, "gi"));
         } catch (error) {
-            logger.warn(`Unable to parse banned RegEx: ${regex}`, error);
+            parentPort.postMessage({ type: "logWarn", logMessage: `Unable to parse banned RegEx: ${regex}`, meta: error });
         }
-    });
+
+        return newArray;
+    }, []);
     const inputWords = input.split(" ");
 
     for (const exp of expressions) {
