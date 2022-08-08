@@ -32,4 +32,4 @@ export async function sendWhisper(
     }
     
     return false;
-}
+};

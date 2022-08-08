@@ -13,6 +13,7 @@ const commandHandler = require("./commands/commandHandler");
 const activeUserHandler = require("./chat-listeners/active-user-handler");
 const twitchApi = require("../twitch-api/api");
 const chatRolesManager = require("../roles/chat-roles-manager");
+const twitchSlashCommandHandler = require("./twitch-slash-command-handler");
 
 /**@extends NodeJS.EventEmitter */
 class TwitchChat extends EventEmitter {
@@ -212,7 +213,7 @@ class TwitchChat extends EventEmitter {
      * @param {string} [accountType] Which account to chat as. Defaults to bot if available otherwise, the streamer.
      * @param {string} [replyToMessageId] A message id to reply to
      */
-    sendChatMessage(message, username, accountType, replyToMessageId) {
+    async sendChatMessage(message, username, accountType, replyToMessageId) {
         if (message == null || message?.length < 1) {
             return null;
         }
@@ -231,6 +232,15 @@ class TwitchChat extends EventEmitter {
             accountType = "streamer";
         }
 
+        const slashCommandValidationResult = twitchSlashCommandHandler.validateChatCommand(message);
+
+        // If the slash command handler finds, validates, and successfully executes a command, no need to continue.
+        if (slashCommandValidationResult != null && slashCommandValidationResult.success === true) {
+            const slashCommandResult = await twitchSlashCommandHandler.processChatCommand(message, accountType === "bot");
+            if (slashCommandResult === true) {
+                return;
+            }
+        }
 
         // split message into fragments that don't exceed the max message length
         const messageFragments = message.match(/[\s\S]{1,500}/g)
@@ -240,9 +250,9 @@ class TwitchChat extends EventEmitter {
         // Send all message fragments
         for (const fragment of messageFragments) {
             if (shouldWhisper) {
-                this._whisper(fragment, username, accountType);
+                await this._whisper(fragment, username, accountType);
             } else {
-                this._say(fragment, accountType, replyToMessageId);
+                await this._say(fragment, accountType, replyToMessageId);
             }
         }
     }
@@ -252,8 +262,9 @@ class TwitchChat extends EventEmitter {
      *
      * @param {string} message The message to send
      * @param {string} [accountType] Which account to chat as. Defaults to bot if available otherwise, the streamer.
+     * @param {string} [color] Announcement color. Options are `primary`, `blue`, `green`, `orange`, and `purple`.
      */
-    async sendAnnouncement(message, accountType) {
+    async sendAnnouncement(message, accountType, color = "primary") {
         if (message?.length < 1) {
             return;
         }
@@ -268,17 +279,13 @@ class TwitchChat extends EventEmitter {
 
         logger.debug(`Sending announcement as ${accountType}.`);
 
-        const chatClient = accountType === 'bot' ? this._botChatClient : this._streamerChatClient;
-
-        const streamer = accountAccess.getAccounts().streamer;
-
         // split message into fragments so we don't exceed the max message length
         const messageFragments = message.match(/[\s\S]{1,500}/g)
             .map(mf => mf.trim())
             .filter(mf => mf !== "");
 
         for (const fragment of messageFragments) {
-            await chatClient.announce(streamer.username, fragment);
+            await twitchApi.chat.sendAnnouncement(fragment, color, accountType === "bot");
         }
     }
 

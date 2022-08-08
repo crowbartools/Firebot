@@ -38,10 +38,10 @@ export async function sendAnnouncement(
     }
 
     return false;
-}
+};
 
 /**
- * Deletes a chat message from the streamer's chat
+ * Deletes a chat message from the streamer's chat.
  * 
  * @param messageId The ID of the message to delete
  * @returns `true` if the message was deleted or `false` if it failed
@@ -59,10 +59,10 @@ export async function deleteChatMessage(messageId: string): Promise<boolean> {
     }
 
     return false;
-}
+};
 
 /**
- * Clears the streamer's chat
+ * Clears the streamer's chat.
  * 
  * @returns `true` if chat was cleared or `false` if it failed
  */
@@ -79,10 +79,10 @@ export async function clearChat(): Promise<boolean> {
     }
 
     return false;
-}
+};
 
 /**
- * Turns emote-only mode on or off in the streamer's chat
+ * Turns emote-only mode on or off in the streamer's chat.
  * 
  * @param enable `true` will enable emote-only mode. `false` will disable emote-only mode. Defaults to `true`.
  * @returns `true` if the update succeeded or `false` if it failed
@@ -100,8 +100,112 @@ export async function setEmoteOnlyMode(enable: boolean = true) {
 
         return true;
     } catch (error) {
-        logger.error("Error setting emote only mode", error);
+        logger.error("Error setting emote-only mode", error);
     }
 
     return false;
-}
+};
+
+/**
+ * Turns follower-only mode on or off in the streamer's chat.
+ * 
+ * @param enable `true` will enable follower-only mode. `false` will disable follower-only mode. Defaults to `true`.
+ * @param duration Duration in minutes that a user must be following the channel before they're allowed to chat. Default is `0`.
+ * @returns `true` if the update succeeded or `false` if it failed
+ */
+export async function setFollowerOnlyMode(enable: boolean = true, duration: number = 0) {
+    const client: ApiClient = twitchApi.getClient();
+    const streamerUserId: number = accountAccess.getAccounts().streamer.userId;
+
+    try {
+        const chatSettings: HelixUpdateChatSettingsParams = {
+            followerOnlyModeEnabled: enable,
+            followerOnlyModeDelay: duration
+        };
+
+        await client.chat.updateSettings(streamerUserId, streamerUserId, chatSettings);
+
+        return true;
+    } catch (error) {
+        logger.error("Error setting follower-only mode", error);
+    }
+
+    return false;
+};
+
+/**
+ * Turns subscriber-only mode on or off in the streamer's chat.
+ * 
+ * @param enable `true` will enable subscriber-only mode. `false` will disable subscriber-only mode. Defaults to `true`.
+ * @returns `true` if the update succeeded or `false` if it failed
+ */
+export async function setSubscriberOnlyMode(enable: boolean = true) {
+    const client: ApiClient = twitchApi.getClient();
+    const streamerUserId: number = accountAccess.getAccounts().streamer.userId;
+
+    try {
+        const chatSettings: HelixUpdateChatSettingsParams = {
+            subscriberOnlyModeEnabled: enable
+        };
+
+        await client.chat.updateSettings(streamerUserId, streamerUserId, chatSettings);
+
+        return true;
+    } catch (error) {
+        logger.error("Error setting subscriber-only mode", error);
+    }
+
+    return false;
+};
+
+/**
+ * Turns slow mode on or off in the streamer's chat.
+ * 
+ * @param enable `true` will enable slow mode. `false` will disable slow mode. Defaults to `true`.
+ * @param duration Duration in seconds that a user must wait between sending messages. Default is `5`.
+ * @returns `true` if the update succeeded or `false` if it failed
+ */
+export async function setSlowMode(enable: boolean = true, duration: number = 5) {
+    const client: ApiClient = twitchApi.getClient();
+    const streamerUserId: number = accountAccess.getAccounts().streamer.userId;
+
+    try {
+        const chatSettings: HelixUpdateChatSettingsParams = {
+            slowModeEnabled: enable,
+            slowModeDelay: enable === true ? duration : null
+        };
+
+        await client.chat.updateSettings(streamerUserId, streamerUserId, chatSettings);
+
+        return true;
+    } catch (error) {
+        logger.error("Error setting slow mode", error);
+    }
+
+    return false;
+};
+
+/**
+ * Turns unique mode on or off in the streamer's chat.
+ * 
+ * @param enable `true` will enable unique mode. `false` will disable unique mode. Defaults to `true`.
+ * @returns `true` if the update succeeded or `false` if it failed
+ */
+export async function setUniqueMode(enable: boolean = true) {
+    const client: ApiClient = twitchApi.getClient();
+    const streamerUserId: number = accountAccess.getAccounts().streamer.userId;
+
+    try {
+        const chatSettings: HelixUpdateChatSettingsParams = {
+            uniqueChatModeEnabled: enable
+        };
+
+        await client.chat.updateSettings(streamerUserId, streamerUserId, chatSettings);
+
+        return true;
+    } catch (error) {
+        logger.error("Error setting unique mode", error);
+    }
+
+    return false;
+};
