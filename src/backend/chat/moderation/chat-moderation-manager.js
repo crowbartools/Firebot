@@ -108,6 +108,10 @@ function startModerationService() {
             }
             break;
         }
+        case "logWarn": {
+            logger.warn(event.logMessage, event.meta);
+            break;
+        }
         }
     });
 

@@ -181,6 +181,15 @@
                                             reason: `Regex already exists.`
                                         });
                                     }
+                                    try {
+                                        new RegExp(value, "gi");
+                                    } catch (error) {
+                                        logger.warn(`Invalid RegEx entered: ${value}`, error);
+                                        return resolve({
+                                            success: false,
+                                            reason: `Please enter a valid RegEx.`
+                                        });
+                                    }
                                     resolve(true);
                                 });
                             }
