@@ -11,9 +11,9 @@
               class="integration-row"
               ng-repeat="integration in integrations.getIntegrations()"
             >
-              <div>
+              <div style="display: flex; align-items: center;">
                 <span><b>{{integration.name}}</b></span>
-                <span class="muted" style="font-size: 13px; padding-left: 10px"
+                <span class="muted" style="font-size: 13px; padding: 0 10px"
                   >{{integration.description}}</span
                 >
               </div>
@@ -42,6 +42,7 @@
 
                 $scope.integrations = integrationService;
 
+                integrationService.updateIntegrations();
             }
         });
 }());

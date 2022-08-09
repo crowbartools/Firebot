@@ -14,7 +14,15 @@ function hasBannedWord(input) {
 }
 
 function matchesBannedRegex(input) {
-    const expressions = regularExpressions.map(regex => new RegExp(regex, "gi"));
+    const expressions = regularExpressions.reduce(function(newArray, regex) {
+        try {
+            newArray.push(new RegExp(regex, "gi"));
+        } catch (error) {
+            parentPort.postMessage({ type: "logWarn", logMessage: `Unable to parse banned RegEx: ${regex}`, meta: error });
+        }
+
+        return newArray;
+    }, []);
     const inputWords = input.split(" ");
 
     for (const exp of expressions) {
