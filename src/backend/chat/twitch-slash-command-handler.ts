@@ -49,8 +49,8 @@ const handlers: TwitchSlashCommandHandler[] = [
     timeoutHandler,
     banHandler,
     unbanHandler,
-    //vipHandler,
-    //unvipHandler,
+    vipHandler,
+    unvipHandler,
     modHandler,
     unmodHandler,
     
