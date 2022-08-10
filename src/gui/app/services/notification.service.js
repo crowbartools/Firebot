@@ -99,7 +99,7 @@
             function loadExternalNotifications() {
                 $http
                     .get(
-                        "https://raw.githubusercontent.com/Firebottle/Firebot/master/resources/notifications.json"
+                        "https://raw.githubusercontent.com/crowbartools/Firebot/metadata/notifications/notifications.json"
                     )
                     .then(response => {
                         const externalNotifications = response.data;
