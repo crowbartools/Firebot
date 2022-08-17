@@ -422,6 +422,11 @@ const playSound = {
             region: awsIntegration.userSettings.iamCredentials.region || 'us-east-1'
         });
 
+        if (effect.isSsml) {
+            effect.text = "<speak>"+effect.text+"</speak>";
+            effect.text = effect.text.replace("&", "&amp;");
+        }
+
         const synthSpeechCommand = new SynthesizeSpeechCommand({
             Engine: effect.engine,
             OutputFormat: "mp3",
