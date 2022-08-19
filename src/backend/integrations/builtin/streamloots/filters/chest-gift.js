@@ -24,7 +24,6 @@ module.exports = {
         ];
     },
     getSelectedValueDisplay: (filterSettings) => {
-
         if (filterSettings.value == null) {
             return "[Not set]";
         }
