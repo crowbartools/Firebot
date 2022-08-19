@@ -24,16 +24,11 @@ module.exports = {
         ];
     },
     getSelectedValueDisplay: (filterSettings) => {
-
         if (filterSettings.value == null) {
             return "[Not set]";
         }
 
-        if (filterSettings.value) {
-            return "A Gift";
-        }
-
-        return "Not A Gift";
+        return filterSettings.value === "true" ? "A Gift" : "Not A Gift";
     },
     predicate: (filterSettings, eventData) => {
 
