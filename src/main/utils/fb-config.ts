@@ -16,11 +16,11 @@ export class FbConfig<Settings> {
         this.load(filePath);
     }
 
-    get<K extends KeysMatching<Settings, string>>(key: K): Settings[K] {
+    get<K extends keyof Settings>(key: K): Settings[K] {
         return this.settings[key] ?? this.defaultSettings[key];
     }
 
-    set<K extends KeysMatching<Settings, string>, V extends Settings[K]>(
+    set<K extends keyof Settings, V extends Settings[K]>(
         key: K,
         value: V
     ): void {
