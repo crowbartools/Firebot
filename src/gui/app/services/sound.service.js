@@ -98,7 +98,7 @@
             };
 
 
-            service.playSound = function(path, volume, outputDevice, fileType = null) {
+            service.playSound = function(path, volume, outputDevice, fileType = null, maxSoundLength = null) {
 
                 if (outputDevice == null) {
                     outputDevice = settingsService.getAudioOutputDevice();
@@ -107,14 +107,24 @@
                 $q.when(service.getHowlSound(path, volume, outputDevice, fileType))
                     .then(sound => {
 
+                        let maxSoundLengthTimeout
                         // Clear listener after first call.
                         sound.once('load', function() {
                             sound.play();
+
+                            const intMaxSoundLength = parseInt(maxSoundLength);
+                            if (intMaxSoundLength > 0) {
+                                maxSoundLengthTimeout = setTimeout(function() {
+                                    sound.stop();
+                                    sound.unload();
+                                }, maxSoundLength * 1000)
+                            }
                         });
 
                         // Fires when the sound finishes playing.
                         sound.once('end', function() {
                             sound.unload();
+                            clearInterval(maxSoundLengthTimeout)
                         });
 
                         sound.load();
@@ -193,11 +203,12 @@
                             format: data.format,
                             volume: volume,
                             resourceToken: data.resourceToken,
-                            overlayInstance: data.overlayInstance
+                            overlayInstance: data.overlayInstance,
+                            maxSoundLength: data.maxSoundLength
                         });
 
                     } else {
-                        service.playSound(data.isUrl ? data.url : data.filepath, volume, selectedOutputDevice, data.format);
+                        service.playSound(data.isUrl ? data.url : data.filepath, volume, selectedOutputDevice, data.format, data.maxSoundLength);
                     }
                 }
             );
