@@ -3,6 +3,7 @@
 const userDb = require("../../../../backend/database/userDatabase");
 const customRolesManager = require("../../../../backend/roles/custom-roles-manager");
 const currencyDb = require("../../../../backend/database/currencyDatabase");
+const customRolesApiController = require("./customRolesApiController");
 
 exports.getAllUsers = async function(req, res) {
     return res.json(await userDb.getAllUsernamesWithIds());
@@ -79,4 +80,42 @@ exports.setUserCurrency = async function(req, res) {
     }
 
     res.status(204).send();
+};
+
+exports.getUserCustomRoles = async function(req, res) {
+    const { userId } = req.params;
+    const { username } = req.query;
+
+    if (userId == null) {
+        return res.status(400).send({
+            status: "error",
+            message: `No viewerIdOrName provided`
+        });
+    }
+
+    let metadata;
+    if (username === "true") {
+        metadata = await userDb.getUserByUsername(userId);
+    } else {
+        metadata = await userDb.getUserById(userId);
+    }
+
+    if (metadata === null) {
+        return res.status(404).send({
+            status: "error",
+            message: `Specified viewer does not exist`
+        });
+    }
+
+    const customRoles = customRolesManager.getAllCustomRolesForViewer(metadata.username) ?? [];
+
+    return res.json(customRoles);
+};
+
+exports.addUserToCustomRole = async function(req, res) {
+    return customRolesApiController.addUserToCustomRole(req, res);
+};
+
+exports.removeUserFromCustomRole = async function(req, res) {
+    return customRolesApiController.removeUserFromCustomRole(req, res);
 };

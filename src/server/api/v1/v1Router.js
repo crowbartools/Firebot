@@ -111,6 +111,30 @@ router
     .get(viewers.getUserCurrency)
     .post(viewers.setUserCurrency);
 
+router
+    .route("/viewers/:userId/customRoles")
+    .get(viewers.getUserCustomRoles);
+
+router
+    .route("/viewers/:userId/customRoles/:customRoleId")
+    .post(viewers.addUserToCustomRole)
+    .delete(viewers.removeUserFromCustomRole);
+
+// Custom Roles
+const customRoles = require("./controllers/customRolesApiController");
+
+router
+    .route("/customRoles")
+    .get(customRoles.getCustomRoles);
+
+router
+    .route("/customRoles/:customRoleId")
+    .get(customRoles.getCustomRoleById);
+
+router
+    .route("/customRoles/:customRoleId/viewer/:userId")
+    .post(customRoles.addUserToCustomRole)
+    .delete(customRoles.removeUserFromCustomRole);
 
 // currencies
 const currency = require("./controllers/currencyApiController");
@@ -141,5 +165,27 @@ router
     .put(quotes.putQuote)
     .patch(quotes.patchQuote)
     .delete(quotes.deleteQuote);
+
+// Counters
+const counters = require("./controllers/countersApiController");
+
+router
+    .route("/counters")
+    .get(counters.getCounters);
+
+router
+    .route("/counters/:counterId")
+    .get(counters.getCounterById);
+
+// Timers
+const timers = require("./controllers/timersApiController");
+
+router
+    .route("/timers")
+    .get(timers.getTimers);
+
+router
+    .route("/timers/:timerId")
+    .get(timers.getTimerById);
 
 module.exports = router;
