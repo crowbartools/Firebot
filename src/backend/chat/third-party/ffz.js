@@ -12,6 +12,11 @@ exports.getAllFfzEmotes = async () => {
     let globalEmotes = [];
     try {
         globalEmotes = (await axios.get(GLOBAL_EMOTES_URL)).data;
+
+        if (!Array.isArray(globalEmotes)) {
+            logger.warn(`Invalid global FFZ emote response: ${JSON.stringify(globalEmotes)}`);
+            globalEmotes = [];
+        }
     } catch (error) {
         logger.error("Failed to get global ffz emotes", error);
     }
@@ -19,6 +24,11 @@ exports.getAllFfzEmotes = async () => {
     let channelEmotes = [];
     try {
         channelEmotes = (await axios.get(getChannelEmotesUrl())).data;
+
+        if (!Array.isArray(channelEmotes)) {
+            logger.warn(`Invalid channel FFZ emote response: ${JSON.stringify(channelEmotes)}`);
+            channelEmotes = [];
+        }
     } catch (error) {
         logger.error("Failed to get channel ffz emotes", error);
     }
