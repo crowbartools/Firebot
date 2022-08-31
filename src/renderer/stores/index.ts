@@ -2,10 +2,12 @@ import { createContext, useContext } from "react";
 
 import { profilesStore } from "./profiles-store";
 import { settingsStore } from "./settings-store";
+import { navbarStore } from "./nav-bar-store";
 
 export const initialStore = {
     profilesStore,
     settingsStore,
+    navbarStore,
 };
 
 const RootStoreContext = createContext(initialStore);

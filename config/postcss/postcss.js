@@ -4,7 +4,7 @@ module.exports = {
     plugins: {
         autoprefixer: {},
         tailwindcss: {
-            config: path.resolve(__dirname, '../tailwindcss/tailwindcss.js')
+            config: path.resolve(__dirname, '../tailwindcss/tailwind.config.js')
         }
     }
 }
