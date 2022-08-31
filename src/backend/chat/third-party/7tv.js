@@ -13,6 +13,11 @@ exports.getAllSevenTvEmotes = async () => {
     let globalEmotes = [];
     try {
         globalEmotes = (await axios.get(GLOBAL_EMOTES_URL)).data;
+
+        if (!Array.isArray(globalEmotes)) {
+            logger.warn(`Invalid global 7TV emote response: ${JSON.stringify(globalEmotes)}`);
+            globalEmotes = [];
+        }
     } catch (error) {
         logger.error("Failed to get global 7TV emotes", error.message);
     }
@@ -20,6 +25,11 @@ exports.getAllSevenTvEmotes = async () => {
     let channelEmotes = [];
     try {
         channelEmotes = (await axios.get(getChannelEmotesUrl())).data;
+
+        if (!Array.isArray(channelEmotes)) {
+            logger.warn(`Invalid channel 7TV emote response: ${JSON.stringify(channelEmotes)}`);
+            channelEmotes = [];
+        }
     } catch (error) {
         logger.error("Failed to get channel 7TV emotes:", error.message);
     }
