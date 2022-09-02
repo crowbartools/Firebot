@@ -179,7 +179,7 @@
     });
 
     app.controller("MainController", function($scope, $rootScope, $timeout, connectionService, utilityService,
-        settingsService, sidebarManager, logger, backendCommunicator) {
+        settingsService, backupService, sidebarManager, logger, backendCommunicator) {
         $rootScope.showSpinner = true;
 
         $scope.fontAwesome5KitUrl = `https://kit.fontawesome.com/${secrets.fontAwesome5KitId}.js`;
@@ -437,6 +437,25 @@
                     setupFilePath: () => path
                 }
             });
+        });
+
+        backendCommunicator.on("restore-backup", () => {
+            backupService.openBackupZipFilePicker()
+                .then(backupFilePath => {
+                    if (backupFilePath != null) {
+                        utilityService
+                            .showConfirmationModal({
+                                title: "Restore From Backup",
+                                question: "Are you sure you'd like to restore from this backup?",
+                                confirmLabel: "Restore"
+                            })
+                            .then(confirmed => {
+                                if (confirmed) {
+                                    backupService.initiateBackupRestore(backupFilePath);
+                                }
+                            });
+                    }
+                });
         });
 
         backendCommunicator.onAsync("takeScreenshot", async (data) => {

@@ -183,6 +183,13 @@ function createMainWindow() {
                     }
                 },
                 {
+                    label: 'Restore from backup...',
+                    toolTip: "Restores Firebot from a backup",
+                    click: async () => {
+                        frontendCommunicator.send("restore-backup");
+                    }
+                },
+                {
                     label: 'Custom Variable Inspector',
                     toolTip: "Open the custom variable inspector",
                     click: () => {
