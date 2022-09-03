@@ -19,11 +19,11 @@ const model = {
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (_, number, places) => {
-        if (isNaN(number)) {
+        if (Number.isNaN(number)) {
             return 0;
         }
 
-        if (isNaN(places) || places < 0 || places > 100) {
+        if (Number.isNaN(places) || places < 0 || places > 100) {
             return Math.round(Number(number));
         }
 
