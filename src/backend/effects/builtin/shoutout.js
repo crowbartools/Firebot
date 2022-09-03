@@ -305,6 +305,7 @@ const effect = {
 
                 const scale = data.scale == null ? 1.0 : data.scale;
 
+                // eslint-disable-next-line no-undef
                 const uniqueId = uuidv4();
 
                 const fittyId = `fit-text-${uniqueId}`;

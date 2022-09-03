@@ -186,6 +186,7 @@ const playSound = {
                 }:7472/resource/${token}`;
 
                 // Generate UUID to use as class name.
+                // eslint-disable-next-line no-undef
                 const uuid = uuidv4();
 
                 const filepath = data.isUrl ? data.url : data.filepath.toLowerCase();

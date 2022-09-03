@@ -130,6 +130,7 @@ const celebration = {
                 const duration = parseFloat(data.celebrationDuration) * 1000; //convert to milliseconds.
 
                 // Generate UUID to use as class name.
+                // eslint-disable-next-line no-undef
                 const divClass = uuidv4();
 
                 if (type === "Fireworks") {

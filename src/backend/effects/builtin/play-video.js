@@ -498,6 +498,7 @@ const playVideo = {
                 const filepathNew = `http://${window.location.hostname}:7472/resource/${token}`;
 
                 // Generate UUID to use as id
+                // eslint-disable-next-line no-undef
                 const uuid = uuidv4();
                 const videoPlayerId = `${uuid}-video`;
 
@@ -529,6 +530,7 @@ const playVideo = {
                         </video>
                     `;
 
+                    // eslint-disable-next-line no-undef
                     const wrapperId = uuidv4();
                     const wrappedHtml = getPositionWrappedHTML(wrapperId, positionData, videoElement); // eslint-disable-line no-undef
 
@@ -590,10 +592,12 @@ const playVideo = {
                         }
                     };
                 } else {
+                    // eslint-disable-next-line no-undef
                     const ytPlayerId = `yt-${uuidv4()}`;
 
                     const youtubeElement = `<div id="${ytPlayerId}" style="display:none;${sizeStyles}"></div>`;
 
+                    // eslint-disable-next-line no-undef
                     const wrapperId = uuidv4();
                     const wrappedHtml = getPositionWrappedHTML(wrapperId, positionData, youtubeElement); // eslint-disable-line no-undef
 
