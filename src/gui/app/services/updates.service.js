@@ -17,7 +17,11 @@
 
             const FIREBOT_RELEASES_URL = "https://api.github.com/repos/crowbartools/Firebot/releases";
 
-            const APP_VERSION = require('electron').remote.app.getVersion();
+            const electron = require('electron');
+
+            const APP_VERSION = electron.remote.app.getVersion();
+            const isDev = !electron.remote.app.isPackaged;
+            const isWindows = process.platform === "win32";
 
             service.updateData = null;
 
@@ -34,6 +38,11 @@
             function shouldAutoUpdate(autoUpdateLevel, updateType) {
                 // if auto updating is completely disabled
                 if (autoUpdateLevel === 0) {
+                    return false;
+                }
+
+                // Skip auto update if this is dev build or is not running on Windows
+                if (isDev || !isWindows) {
                     return false;
                 }
 
