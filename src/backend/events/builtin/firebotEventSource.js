@@ -26,6 +26,7 @@ const firebotEventSource = {
             description: "When a viewer's view time updates automatically.",
             cached: false,
             manualMetadata: {
+                username: "Firebot",
                 previousViewTime: 1,
                 newViewTime: 2
             }
