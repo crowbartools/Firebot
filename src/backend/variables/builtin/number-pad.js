@@ -11,13 +11,19 @@ const model = {
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (_, value, places) => {
-        if (!value || !places) {
+        // because !value|!places would result in this condition being true for an input of 0
+        const numValue = Number(value);
+        const numPlaces = Number(places);
+        if (
+            value == null || value === "" || !Number.isFinite(numValue) ||
+            places == null || places === "" || !Number.isFinite(numPlaces)
+        ) {
             return value;
         }
 
-        const [integer, fraction] = `0${value}.0`.split(/\./g);
+        const [integer, fraction] = `${numValue}.0`.split(/\./g);
 
-        return `${Number(integer)}.${fraction.padEnd(places, "0")}`;
+        return `${integer}.${fraction.padEnd(numPlaces, "0")}`;
     }
 };
 

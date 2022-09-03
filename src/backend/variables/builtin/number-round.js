@@ -23,8 +23,7 @@ const model = {
             return 0;
         }
 
-        if (isNaN(places) || places < 0 || places > 100)
-        {
+        if (isNaN(places) || places < 0 || places > 100) {
             return Math.round(Number(number));
         }
 
