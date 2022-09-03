@@ -48,7 +48,7 @@ async function getUserDetails(userId) {
 
     const firebotUserData = await userDb.getUserById(userId);
 
-    if (!firebotUserData.twitch) {
+    if (firebotUserData != null && !firebotUserData.twitch) {
         return {
             firebotData: firebotUserData || {}
         };
@@ -77,7 +77,7 @@ async function getUserDetails(userId) {
 
     const userRoles = await chatRolesManager.getUsersChatRoles(twitchUser.id);
 
-    if (firebotUserData.profilePicUrl !== twitchUser.profilePictureUrl) {
+    if (firebotUserData && firebotUserData.profilePicUrl !== twitchUser.profilePictureUrl) {
         chatHelpers.setUserProfilePicUrl(twitchUser.id, twitchUser.profilePictureUrl);
 
         firebotUserData.profilePicUrl = twitchUser.profilePictureUrl;

@@ -21,13 +21,13 @@
                     </div>
                 </div>
                 <div ng-if="!$ctrl.loading">
-                    <img ng-src="{{ $ctrl.viewerDetails.firebotData.twitch && $ctrl.viewerDetails.twitchData ? $ctrl.viewerDetails.twitchData.iconUrl : '../images/placeholders/default-profile-pic.png'}}"
+                    <img ng-src="{{ $ctrl.isTwitchOrNewUser() && $ctrl.viewerDetails.twitchData ? $ctrl.viewerDetails.twitchData.iconUrl : '../images/placeholders/default-profile-pic.png'}}"
                         style="width: 200px;height: 200px;border-radius: 200px;position: absolute;left: -50px;top: -50px;"/>
                     <div style="padding-left: 150px;min-height: 125px;">
                         <div style="display:flex;align-items: center;">
-                            <div style="font-size:40px;font-weight: 200;">{{$ctrl.viewerDetails.firebotData.twitch && $ctrl.viewerDetails.twitchData ? $ctrl.viewerDetails.twitchData.displayName : $ctrl.viewerDetails.firebotData.username }}</div>
+                            <div style="font-size:40px;font-weight: 200;">{{$ctrl.isTwitchOrNewUser() && $ctrl.viewerDetails.twitchData ? $ctrl.viewerDetails.twitchData.displayName : $ctrl.viewerDetails.firebotData.username }}</div>
                             <a
-                                ng-if="$ctrl.viewerDetails.firebotData.twitch && $ctrl.viewerDetails.twitchData"
+                                ng-if="$ctrl.isTwitchOrNewUser() && $ctrl.viewerDetails.twitchData"
                                 ng-click="$ctrl.openLink('https://twitch.tv/' + $ctrl.viewerDetails.twitchData.displayName)"
                                 class="clickable"
                                 style="line-height: 1;margin-left: 5px;background: #9147FF;padding: 5px;border-radius: 100%;color: white;font-size: 15px;"
@@ -37,20 +37,20 @@
                                     <i class="fab fa-twitch" style="transform: translateY(2px);" />
                             </a>
                         </div>
-                        <div ng-show="$ctrl.viewerDetails.firebotData.twitch && $ctrl.viewerDetails.twitchData" style="display:flex;margin-top:7px;">
+                        <div ng-show="$ctrl.isTwitchOrNewUser() && $ctrl.viewerDetails.twitchData" style="display:flex;margin-top:7px;">
                             <div style="margin-right: 11px;" uib-tooltip="Twitch Age"><i class="fas fa-user-circle"></i> {{$ctrl.getAccountAge($ctrl.viewerDetails.twitchData.creationDate)}}</div>
                         </div>
-                        <div ng-show="$ctrl.viewerDetails.firebotData.twitch && $ctrl.viewerDetails.twitchData" style="display:flex;margin-top:10px;">
+                        <div ng-show="$ctrl.isTwitchOrNewUser() && $ctrl.viewerDetails.twitchData" style="display:flex;margin-top:10px;">
                             <div ng-repeat="role in $ctrl.roles | orderBy : 'rank'" uib-tooltip="{{role.tooltip}}" ng-style="role.style" style="margin-right: 10px;font-size: 13px;text-transform: uppercase;font-weight: bold;font-family: "Roboto";">{{role.name}}</div>
                         </div>
-                        <div ng-show="$ctrl.viewerDetails.firebotData.twitch && $ctrl.viewerDetails.twitchData" style="display:flex;margin-top:10px;">
+                        <div ng-show="$ctrl.isTwitchOrNewUser() && $ctrl.viewerDetails.twitchData" style="display:flex;margin-top:10px;">
                             <div ng-repeat="action in $ctrl.actions" ng-click="action.onClick()" class="clickable" aria-label="{{action.name}}" uib-tooltip="{{action.name}}" style="margin-right: 10px; display:flex; width: 30px; height:30px; align-items:center; justify-content: center; border-radius: 18px; border: 1.5px solid whitesmoke;">
                                 <i ng-class="action.icon"></i>
                             </div>
                         </div>
                     </div>
 
-                    <div style="margin-top: 45px;margin-left: 10px;">
+                    <div ng-if="$ctrl.viewerDbEnabled" style="margin-top: 45px;margin-left: 10px;">
                         <div style="display:flex;margin-bottom:5px;">
                             <div style="font-size:13px;font-weight: bold;opacity:0.9;">FIREBOT DATA</div>
                             <span ng-show="$ctrl.hasFirebotData" ng-click="$ctrl.removeViewer()" style="color:#f96f6f;margin-left: 10px;font-size:12px;" class="clickable" uib-tooltip="Remove this viewer's Firebot data" aria-label="Remove viewer's firebot data"><i class="far fa-trash-alt"></i></span>
@@ -112,18 +112,18 @@
                                             <span>{{value}}</span>
                                         </td>
                                         <td style="display:flex; align-items: center; justify-content: flex-end;">
-                                            <i 
-                                                class="fal fa-edit clickable" 
-                                                style="margin-right: 10px;" 
-                                                ng-click="$ctrl.showAddOrEditMetadataModal({ key: key, value: value })" 
-                                                uib-tooltip="Edit" 
+                                            <i
+                                                class="fal fa-edit clickable"
+                                                style="margin-right: 10px;"
+                                                ng-click="$ctrl.showAddOrEditMetadataModal({ key: key, value: value })"
+                                                uib-tooltip="Edit"
                                                 tooltip-append-to-body="true">
                                             </i>
-                                            <i 
-                                                class="fal fa-trash-alt clickable" 
-                                                style="color:#ff3737;" 
-                                                ng-click="$ctrl.deleteMetadata(key)" 
-                                                uib-tooltip="Delete" 
+                                            <i
+                                                class="fal fa-trash-alt clickable"
+                                                style="color:#ff3737;"
+                                                ng-click="$ctrl.deleteMetadata(key)"
+                                                uib-tooltip="Delete"
                                                 tooltip-append-to-body="true">
                                             </i>
                                         </td>
@@ -158,7 +158,7 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function($rootScope, $q, backendCommunicator, viewersService, currencyService, utilityService, viewerRolesService, connectionService) {
+            controller: function($rootScope, $q, backendCommunicator, viewersService, currencyService, utilityService, viewerRolesService, connectionService, settingsService) {
                 const $ctrl = this;
 
                 $ctrl.loading = true;
@@ -168,6 +168,8 @@
                 $ctrl.viewerDetails = {};
 
                 $ctrl.hasFirebotData = false;
+
+                $ctrl.viewerDbEnabled = settingsService.getViewerDB();
 
                 $ctrl.getAccountAge = function(date) {
                     return moment(date).fromNow(true);
@@ -669,18 +671,22 @@
                         buildActions();
                         loadRoles();
                         loadCustomRoles();
-                        if ($ctrl.viewerDetails.firebotData.metadata == null) {
+                        if ($ctrl.hasFirebotData && $ctrl.viewerDetails.firebotData.metadata == null) {
                             $ctrl.viewerDetails.firebotData.metadata = {};
                         }
                     }
                 }
+
+                $ctrl.isTwitchOrNewUser = () => {
+                    return !Object.keys($ctrl.viewerDetails.firebotData).length || !!$ctrl.viewerDetails.firebotData.twitch;
+                };
 
                 $ctrl.removeViewer = function() {
                     if (!$ctrl.hasFirebotData) {
                         return;
                     }
 
-                    const displayName = $ctrl.viewerDetails.firebotData.twitch && $ctrl.viewerDetails.twitchData ?
+                    const displayName = $ctrl.isTwitchOrNewUser() && $ctrl.viewerDetails.twitchData ?
                         $ctrl.viewerDetails.twitchData.displayName :
                         $ctrl.viewerDetails.firebotData.username;
 
@@ -738,6 +744,7 @@
                                 resolve(viewerDetails);
                             });
                     }).then(viewerDetails => {
+                        console.log(viewerDetails);
                         $ctrl.viewerDetails = viewerDetails;
                         init();
                         $ctrl.loading = false;

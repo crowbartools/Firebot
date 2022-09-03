@@ -151,7 +151,7 @@ const integrationConfig: Integration<ObsSettings> = {
           logging: {
             title: "Enable logging for OBS Errors",
             type: "boolean",
-            default: true,
+            default: false,
           },
         },
       },

@@ -203,7 +203,7 @@ exports.addActiveUser = async (chatUser, includeInOnline = false, forceActive = 
 
     await userDatabase.incrementDbField(userDetails.id, "chatMessages");
 
-    if (!forceActive && user.disableActiveUserList) {
+    if (!forceActive && user?.disableActiveUserList) {
         return;
     }
 
