@@ -497,9 +497,9 @@ const playVideo = {
                 const token = encodeURIComponent(data.resourceToken);
                 const filepathNew = `http://${window.location.hostname}:7472/resource/${token}`;
 
-                // Get time in milliseconds to use as id
-                const time = new Date().getTime();
-                const videoPlayerId = `${time}-video`;
+                // Generate UUID to use as id
+                const uuid = uuidv4();
+                const videoPlayerId = `${uuid}-video`;
 
                 const enterAnimation = data.enterAnimation ? data.enterAnimation : "fadeIn";
                 const exitAnimation = data.exitAnimation ? data.exitAnimation : "fadeIn";
@@ -529,7 +529,7 @@ const playVideo = {
                         </video>
                     `;
 
-                    const wrapperId = new Date().getTime();
+                    const wrapperId = uuidv4();
                     const wrappedHtml = getPositionWrappedHTML(wrapperId, positionData, videoElement); // eslint-disable-line no-undef
 
                     $(".wrapper").append(wrappedHtml);
@@ -590,11 +590,11 @@ const playVideo = {
                         }
                     };
                 } else {
-                    const ytPlayerId = `yt-${new Date().getTime()}`;
+                    const ytPlayerId = `yt-${uuidv4()}`;
 
                     const youtubeElement = `<div id="${ytPlayerId}" style="display:none;${sizeStyles}"></div>`;
 
-                    const wrapperId = new Date().getTime();
+                    const wrapperId = uuidv4();
                     const wrappedHtml = getPositionWrappedHTML(wrapperId, positionData, youtubeElement); // eslint-disable-line no-undef
 
                     $(".wrapper").append(wrappedHtml);

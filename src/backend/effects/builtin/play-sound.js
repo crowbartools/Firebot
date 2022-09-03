@@ -185,9 +185,8 @@ const playSound = {
                     window.location.hostname
                 }:7472/resource/${token}`;
 
-                // Get time in milliseconds to use as class name.
-                const d = new Date();
-                const uuid = d.getTime().toString();
+                // Generate UUID to use as class name.
+                const uuid = uuidv4();
 
                 const filepath = data.isUrl ? data.url : data.filepath.toLowerCase();
                 let mediaType;

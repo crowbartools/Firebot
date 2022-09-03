@@ -129,9 +129,8 @@ const celebration = {
                 const type = data.celebrationType;
                 const duration = parseFloat(data.celebrationDuration) * 1000; //convert to milliseconds.
 
-                // Get time in milliseconds to use as class name.
-                const d = new Date();
-                const divClass = d.getTime();
+                // Generate UUID to use as class name.
+                const divClass = uuidv4();
 
                 if (type === "Fireworks") {
                     const canvas = '<canvas id="fireworks" class="' + divClass + '-fireworks celebration ' + type + '" style="display:none; z-index: 99;"></canvas>';
