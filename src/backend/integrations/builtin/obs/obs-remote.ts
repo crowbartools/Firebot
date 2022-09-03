@@ -433,8 +433,8 @@ async function maintainConnection(
         }
       });
     } catch (error) {
-      logger.debug("Failed to connect, attempting again in 10 secs.");
       if (logging) {
+        logger.debug("Failed to connect, attempting again in 10 secs.");
         logger.debug(error);
       }
       reconnectTimeout = setTimeout(
