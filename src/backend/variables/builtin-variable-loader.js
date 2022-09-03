@@ -81,6 +81,7 @@ exports.loadReplaceVariables = () => {
         'number-floor',
         'number-max',
         'number-min',
+        'number-pad',
         'number-round',
         'ordinal-indicator',
         'preset-list-arg',
