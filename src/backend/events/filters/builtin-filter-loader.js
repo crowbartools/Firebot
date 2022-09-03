@@ -9,6 +9,7 @@ exports.loadFilters = () => {
         'chat-mode-setting',
         'chat-mode',
         'cheer-bits-amount',
+        'custom-variable-name',
         'donation-amount',
         'donation-from',
         'gift-count',
