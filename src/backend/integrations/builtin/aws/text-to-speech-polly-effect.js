@@ -146,6 +146,13 @@ const playSound = {
             </div>
         </eos-container>
 
+        <eos-container header="Maximum Duration" pad-top="true">
+            <div class="input-group">
+                <span class="input-group-addon" id="delay-length-effect-type">Seconds</span>
+                <input ng-model="effect.maxSoundLength" type="text" class="form-control" aria-describedby="delay-length-effect-type" type="text" replace-variables="number">
+            </div>
+        </eos-container>
+
         <eos-container header="Sound" pad-top="true">
             <label class="control-fb control--checkbox"> Wait for sound to finish <tooltip text="'Wait for the sound to finish before letting the next effect play.'"></tooltip>
                 <input type="checkbox" ng-model="effect.waitForSound">
@@ -462,7 +469,8 @@ const playSound = {
         const data = {
             filepath: mp3Path,
             volume: effect.volume,
-            overlayInstance: effect.overlayInstance
+            overlayInstance: effect.overlayInstance,
+            maxSoundLength: effect.maxSoundLength
         };
 
         // Set output device.
