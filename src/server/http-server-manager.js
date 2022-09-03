@@ -338,7 +338,7 @@ class HttpServerManager extends EventEmitter {
         );
 
         if (customRouteIndex === -1) {
-            logger.error(`No custom route found with prefix "${normalizedPrefix}", route "${normalizedRoute}", and method "${normalizedMethod}"`);
+            logger.warn(`No custom route found with prefix "${normalizedPrefix}", route "${normalizedRoute}", and method "${normalizedMethod}"`);
             return false;
         }
 
