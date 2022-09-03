@@ -13,6 +13,11 @@ exports.getAllBttvEmotes = async () => {
     let globalEmotes = [];
     try {
         globalEmotes = (await axios.get(GLOBAL_EMOTES_URL)).data;
+
+        if (!Array.isArray(globalEmotes)) {
+            logger.warn(`Invalid global BTTV emote response: ${JSON.stringify(globalEmotes)}`);
+            globalEmotes = [];
+        }
     } catch (error) {
         logger.error("Failed to get global bttv emotes", error.message);
     }
@@ -20,10 +25,16 @@ exports.getAllBttvEmotes = async () => {
     let channelEmotes = [];
     try {
         const channelEmoteData = (await axios.get(getChannelEmotesUrl())).data;
-        channelEmotes = [
-            ...channelEmoteData.channelEmotes,
-            ...channelEmoteData.sharedEmotes
-        ];
+
+        if (!Array.isArray(channelEmoteData.channelEmotes) || !Array.isArray(channelEmoteData.sharedEmotes)) {
+            logger.warn(`Invalid channel BTTV emote response: ${JSON.stringify(channelEmoteData)}`);
+            channelEmotes = [];
+        } else {
+            channelEmotes = [
+                ...channelEmoteData.channelEmotes,
+                ...channelEmoteData.sharedEmotes
+            ];
+        }
     } catch (error) {
         logger.error("Failed to get channel bttv emotes:", error.message);
     }
