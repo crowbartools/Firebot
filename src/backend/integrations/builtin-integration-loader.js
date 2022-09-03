@@ -11,7 +11,8 @@ exports.loadIntegrations = () => {
         'streamelements/streamelements',
         'streamlabs/streamlabs',
         'streamloots/streamloots',
-        'tipeeestream/tipeeestream'
+        'tipeeestream/tipeeestream',
+        'obs/obs-integration'
     ].forEach(filename => {
         const definition = require(`./builtin/${filename}.js`);
         integrationManager.registerIntegration(definition);

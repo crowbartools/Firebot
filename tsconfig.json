@@ -1,11 +1,16 @@
 {
     "compilerOptions": {
-      "module": "commonjs",
-      "noImplicitAny": true,
+      "module": "CommonJS",
+      "noImplicitAny": false,
+      "esModuleInterop": true,
       "sourceMap": true,
       "outDir": "build",
       "baseUrl": ".",
       "rootDir": "./src",
+      "moduleResolution": "node",
+      "skipLibCheck": true,
+      "experimentalDecorators": true,
+      "downlevelIteration": true,
       "paths": {
         "*": ["node_modules/*"]
       }
