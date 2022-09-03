@@ -305,7 +305,7 @@ const effect = {
 
                 const scale = data.scale == null ? 1.0 : data.scale;
 
-                const uniqueId = new Date().getTime();
+                const uniqueId = uuidv4();
 
                 const fittyId = `fit-text-${uniqueId}`;
 
