@@ -32,6 +32,8 @@ module.exports = function (grunt) {
                             '**',
                             '!secrets.template.json',
                             '!**/*.ts',
+                            '!**/*.js',
+                            '**/*.min.js',
                             '!**/*.scss'
                         ],
                         filter: 'isFile'

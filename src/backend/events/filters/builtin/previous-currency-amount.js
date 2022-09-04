@@ -1,13 +1,13 @@
 "use strict";
 
-const { buildNumberFilter } = require("../filter-factory");
+const { createNumberFilter } = require("../filter-factory");
 
-module.exports = buildNumberFilter({
+module.exports = createNumberFilter({
     id: "firebot:previous-currency-amount",
     name: "Previous Currency Amount",
     description: "Filter by the viewers previous currency amount",
     eventMetaKey: "previousCurrencyAmount",
     events: [
-        { eventId: "firebot", eventSourceId: "currency-update" }
+        { eventSourceId: "firebot", eventId: "currency-update" }
     ]
 });

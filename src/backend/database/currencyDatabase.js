@@ -106,6 +106,7 @@ function adjustCurrency(user, currencyId, value, adjustType = "adjust") {
                 const eventManager = require("../events/EventManager");
                 eventManager.triggerEvent("firebot", "currency-update", {
                     username: user?.username,
+                    currencyId: currencyId,
                     currencyName: currencyCache[currencyId]?.name,
                     previousCurrencyAmount: previousValue,
                     newCurrencyAmount: valueToSet

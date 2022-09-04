@@ -13,7 +13,7 @@ type FilterConfig = {
   caseInsensitive?: boolean;
 };
 
-export function buildTextFilter({
+export function createTextFilter({
   eventMetaKey,
   caseInsensitive,
   ...config
@@ -56,50 +56,52 @@ export function buildTextFilter({
   };
 }
 
-export function buildNumberFilter({
-    eventMetaKey,
-    caseInsensitive,
-    ...config
-  }: FilterConfig): Omit<EventFilter, "presetValues" | "valueType"> & { valueType: "number" } {
-    return {
-        ...config,
-        comparisonTypes: [
-            ComparisonType.IS,
-            ComparisonType.IS_NOT,
-            ComparisonType.LESS_THAN,
-            ComparisonType.LESS_THAN_OR_EQUAL_TO,
-            ComparisonType.GREATER_THAN,
-            ComparisonType.GREATER_THAN_OR_EQUAL_TO
-        ],
-        valueType: "number",
-        async predicate(filterSettings, eventData) {
-            const { comparisonType, value } = filterSettings;
-            const { eventMeta } = eventData;
-    
-            const eventValue = eventMeta[eventMetaKey] ?? 0;
-    
-            switch (comparisonType) {
-            case ComparisonType.IS: {
-                return eventValue === value;
-            }
-            case ComparisonType.IS_NOT: {
-                return eventValue !== value;
-            }
-            case ComparisonType.LESS_THAN: {
-                return eventValue < value;
-            }
-            case ComparisonType.LESS_THAN_OR_EQUAL_TO: {
-                return eventValue <= value;
-            }
-            case ComparisonType.GREATER_THAN: {
-                return eventValue > value;
-            }
-            case ComparisonType.GREATER_THAN_OR_EQUAL_TO: {
-                return eventValue >= value;
-            }
-            default:
-                return false;
-            }
-        },
-    };
-  }
+export function createNumberFilter({
+  eventMetaKey,
+  caseInsensitive,
+  ...config
+}: FilterConfig): Omit<EventFilter, "presetValues" | "valueType"> & {
+  valueType: "number";
+} {
+  return {
+    ...config,
+    comparisonTypes: [
+      ComparisonType.IS,
+      ComparisonType.IS_NOT,
+      ComparisonType.LESS_THAN,
+      ComparisonType.LESS_THAN_OR_EQUAL_TO,
+      ComparisonType.GREATER_THAN,
+      ComparisonType.GREATER_THAN_OR_EQUAL_TO,
+    ],
+    valueType: "number",
+    async predicate(filterSettings, eventData) {
+      const { comparisonType, value } = filterSettings;
+      const { eventMeta } = eventData;
+
+      const eventValue = eventMeta[eventMetaKey] ?? 0;
+
+      switch (comparisonType) {
+        case ComparisonType.IS: {
+          return eventValue === value;
+        }
+        case ComparisonType.IS_NOT: {
+          return eventValue !== value;
+        }
+        case ComparisonType.LESS_THAN: {
+          return eventValue < value;
+        }
+        case ComparisonType.LESS_THAN_OR_EQUAL_TO: {
+          return eventValue <= value;
+        }
+        case ComparisonType.GREATER_THAN: {
+          return eventValue > value;
+        }
+        case ComparisonType.GREATER_THAN_OR_EQUAL_TO: {
+          return eventValue >= value;
+        }
+        default:
+          return false;
+      }
+    },
+  };
+}

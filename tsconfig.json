@@ -15,7 +15,8 @@
       "downlevelIteration": true,
       "paths": {
         "*": ["node_modules/*"]
-      }
+      },
+      "target": "ES2020"
     },
     "include": [
       "src/**/*",
