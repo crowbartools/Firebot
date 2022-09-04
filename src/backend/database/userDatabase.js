@@ -438,6 +438,9 @@ function createNewUser(userId, username, displayName, profilePicUrl, twitchRoles
                 logger.error("ViewerDB: Error adding user", err);
                 resolve(null);
             } else {
+                eventManager.triggerEvent("firebot", "viewer-created", {
+                    username: displayName
+                });
                 resolve(user);
             }
         });

@@ -44,6 +44,15 @@ const firebotEventSource = {
             }
         },
         {
+            id: "viewer-created",
+            name: "Viewer Created",
+            description: "When a viewer is first saved in the Viewer Database",
+            cached: false,
+            manualMetadata: {
+                username: "Firebot"
+            }
+        },
+        {
             id: "firebot-started",
             name: "Firebot Started",
             description: "When Firebot has started running.",

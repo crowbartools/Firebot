@@ -25,6 +25,7 @@ module.exports = {
         { eventSourceId: "twitch", eventId: "whisper" },
         { eventSourceId: "firebot", eventId: "view-time-update" },
         { eventSourceId: "firebot", eventId: "currency-update" },
+        { eventSourceId: "firebot", eventId: "viewer-created" },
         { eventSourceId: "streamloots", eventId: "purchase" },
         { eventSourceId: "streamloots", eventId: "redemption" },
         { eventSourceId: "streamlabs", eventId: "follow" }
