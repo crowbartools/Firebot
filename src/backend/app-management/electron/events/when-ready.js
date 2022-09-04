@@ -88,6 +88,9 @@ exports.whenReady = async () => {
     const customRolesManager = require("../../../roles/custom-roles-manager");
     customRolesManager.loadCustomRoles();
 
+    const chatRolesManager = require("../../../roles/chat-roles-manager");
+    chatRolesManager.cacheViewerListBots();
+
     const effectQueueManager = require("../../../effects/queues/effect-queue-manager");
     effectQueueManager.loadItems();
 

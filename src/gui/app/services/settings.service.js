@@ -47,7 +47,6 @@
                     }
                 } catch (err) {
                     if (defaultValue !== undefined) {
-                        console.log(path, defaultValue, settingsCache);
                         settingsCache[path] = defaultValue;
                     }
                     if (err.name !== "DataError") {

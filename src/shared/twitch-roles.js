@@ -28,6 +28,10 @@ const twitchRoles = [
     {
         id: "tier3",
         name: "Tier 3 Sub"
+    },
+    {
+        id: "viewerlistbot",
+        name: "Viewerlist Bot"
     }
 ];
 

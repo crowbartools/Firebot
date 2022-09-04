@@ -567,11 +567,14 @@
                 } else if (role === "viewer") {
                     return !u.roles.includes("broadcaster")
                         && !u.roles.includes("mod")
-                        && !u.roles.includes("vip");
+                        && !u.roles.includes("vip")
+                        && !u.roles.includes("viewerlistbot");
                 } else if (role === "mod") {
                     return u.roles.includes("mod");
                 } else if (role === "vip") {
                     return u.roles.includes("vip");
+                } else if (role === "viewerlistbot") {
+                    return u.roles.includes("viewerlistbot");
                 }
                 return true;
             }

@@ -1,8 +1,26 @@
 "use strict";
-
+const axios = require("axios").default;
 const twitchApi = require("../twitch-api/api");
 const accountAccess = require("../common/account-access");
 const logger = require("../logwrapper");
+
+const VIEWLIST_BOTS_URL = "https://api.twitchinsights.net/v1/bots/all";
+
+let viewerlistBotMap = {};
+
+const cacheViewerListBots = async () => {
+    try {
+        const responseData = (await axios.get(VIEWLIST_BOTS_URL)).data;
+        if (responseData.bots) {
+            viewerlistBotMap = responseData?.bots?.reduce((acc, [username, _channels, id]) => {
+                acc[username.toLowerCase()] = id;
+                return acc;
+            }, {}) ?? {};
+        }
+    } catch {
+        // silently fail
+    }
+};
 
 /** @type {string[]} */
 let vips = [];
@@ -83,6 +101,10 @@ const getUsersChatRoles = async (userIdOrName = "") => {
         const client = twitchApi.getClient();
         const username = isName ? userIdOrName : (await client.users.getUserById(userIdOrName)).name;
 
+        if (viewerlistBotMap[username?.toLowerCase() ?? ""] != null) {
+            roles.push("viewerlistbot");
+        }
+
         const streamer = accountAccess.getAccounts().streamer;
         if (!userIdOrName || userIdOrName === streamer.userId || userIdOrName === streamer.username) {
             roles.push("broadcaster");
@@ -116,3 +138,4 @@ exports.loadUsersInVipRole = loadUsersInVipRole;
 exports.addVipToVipList = addVipToVipList;
 exports.removeVipFromVipList = removeVipFromVipList;
 exports.getUsersChatRoles = getUsersChatRoles;
+exports.cacheViewerListBots = cacheViewerListBots;
