@@ -40,7 +40,6 @@ module.exports = {
         // normalize
         const actual = eventMeta.rewardId;
         const expected = value;
-        console.log(actual, expected);
 
         switch (comparisonType) {
         case "is":

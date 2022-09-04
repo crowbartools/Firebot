@@ -1,6 +1,6 @@
 import { initRemote } from "./obs-remote";
 import { TypedEmitter } from "tiny-typed-emitter";
-import eventManager from "../../../events/EventManager.js";
+import eventManager from "../../../events/EventManager";
 import {
   Integration,
   IntegrationController,

@@ -3,8 +3,10 @@
       "module": "CommonJS",
       "noImplicitAny": false,
       "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
       "sourceMap": true,
       "outDir": "build",
+      "allowJs": true,
       "baseUrl": ".",
       "rootDir": "./src",
       "moduleResolution": "node",
@@ -13,7 +15,8 @@
       "downlevelIteration": true,
       "paths": {
         "*": ["node_modules/*"]
-      }
+      },
+      "target": "ES2020"
     },
     "include": [
       "src/**/*",

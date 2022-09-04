@@ -94,6 +94,8 @@ function adjustCurrency(user, currencyId, value, adjustType = "adjust") {
             valueToSet = newUserValue;
         }
 
+        const previousValue = user.currency[currencyId] ?? 0;
+
         updateDoc[`currency.${currencyId}`] = valueToSet;
 
         // Update the DB with our new currency value.
@@ -101,8 +103,14 @@ function adjustCurrency(user, currencyId, value, adjustType = "adjust") {
             if (err) {
                 logger.error("Currency: Error setting currency on user.", err);
             } else {
-                const updateObj = {};
-                updateObj[`currency:${currencyId}`] = util.commafy(valueToSet);
+                const eventManager = require("../events/EventManager");
+                eventManager.triggerEvent("firebot", "currency-update", {
+                    username: user?.username,
+                    currencyId: currencyId,
+                    currencyName: currencyCache[currencyId]?.name,
+                    previousCurrencyAmount: previousValue,
+                    newCurrencyAmount: valueToSet
+                });
             }
             return resolve();
         });
