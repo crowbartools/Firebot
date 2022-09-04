@@ -31,7 +31,7 @@ const twitchRoles = [
     },
     {
         id: "viewerlistbot",
-        name: "Viewerlist Bot"
+        name: "Known Bot"
     }
 ];
 
