@@ -32,6 +32,18 @@ const firebotEventSource = {
             }
         },
         {
+            id: "currency-update",
+            name: "Currency Update",
+            description: "When a viewer's currency changes.",
+            cached: false,
+            manualMetadata: {
+                username: "Firebot",
+                currencyName: "Coins",
+                previousCurrencyAmount: 1,
+                newCurrencyAmount: 2
+            }
+        },
+        {
             id: "firebot-started",
             name: "Firebot Started",
             description: "When Firebot has started running.",

@@ -23,6 +23,8 @@ module.exports = {
         { eventSourceId: "twitch", eventId: "chat-message" },
         { eventSourceId: "twitch", eventId: "announcement" },
         { eventSourceId: "twitch", eventId: "whisper" },
+        { eventSourceId: "firebot", eventId: "view-time-update" },
+        { eventSourceId: "firebot", eventId: "currency-update" },
         { eventSourceId: "streamloots", eventId: "purchase" },
         { eventSourceId: "streamloots", eventId: "redemption" },
         { eventSourceId: "streamlabs", eventId: "follow" }
