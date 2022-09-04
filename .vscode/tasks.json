@@ -1,0 +1,13 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "grunt-prep",
+            "type": "shell",
+            "command": "grunt",
+            "args": [ "prep" ],
+            "group": "build",
+            "problemMatcher": []
+        }
+    ]
+}
