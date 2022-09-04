@@ -3,6 +3,7 @@
 const profileManager = require("./profile-manager");
 const logger = require("../logwrapper");
 const frontendCommunicator = require("./frontend-communicator");
+const fs = require("fs-extra");
 
 // This file centralizes access to the settings db
 // We will need to refactor other files to use this.
@@ -44,6 +45,18 @@ function pushDataToFile(path, data) {
     }
 }
 
+
+function handleCorruptSettingsFile() {
+    logger.warn("settings.json file appears to be corrupt. Resetting file...");
+
+    const settingsPath = profileManager.getPathInProfile("settings.json");
+    fs.writeJSONSync(settingsPath, {
+        settings: {
+            firstTimeUse: false
+        }
+    });
+}
+
 function getDataFromFile(path, forceCacheUpdate = false) {
     try {
         if (settingsCache[path] == null || forceCacheUpdate) {
@@ -53,6 +66,13 @@ function getDataFromFile(path, forceCacheUpdate = false) {
     } catch (err) {
         if (err.name !== "DataError") {
             logger.warn(err);
+            if (
+                err.name === 'DatabaseError' &&
+                err.inner instanceof SyntaxError &&
+                err.inner.stack.includes('JSON.parse')
+            ) {
+                handleCorruptSettingsFile();
+            }
         }
     }
     return settingsCache[path];

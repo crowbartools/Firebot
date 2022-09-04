@@ -39,13 +39,17 @@
                 } catch (err) {} //eslint-disable-line no-empty
             }
 
-            function getDataFromFile(path, forceCacheUpdate) {
+            function getDataFromFile(path, forceCacheUpdate, defaultValue) {
                 try {
                     if (settingsCache[path] == null || forceCacheUpdate) {
                         const data = getSettingsFile().getData(path);
-                        settingsCache[path] = data;
+                        settingsCache[path] = data ?? defaultValue;
                     }
                 } catch (err) {
+                    if (defaultValue !== undefined) {
+                        console.log(path, defaultValue, settingsCache);
+                        settingsCache[path] = defaultValue;
+                    }
                     if (err.name !== "DataError") {
                         logger.warn(err);
                     }
@@ -67,7 +71,7 @@
             };
 
             service.getCustomScriptsEnabled = function() {
-                return getDataFromFile("/settings/runCustomScripts") === true;
+                return getDataFromFile("/settings/runCustomScripts", false, false) === true;
             };
 
             service.setCustomScriptsEnabled = function(enabled) {
@@ -75,7 +79,7 @@
             };
 
             service.getSidebarExpanded = function() {
-                const expanded = getDataFromFile("/settings/sidebarExpanded");
+                const expanded = getDataFromFile("/settings/sidebarExpanded", false, true);
                 return expanded != null ? expanded : true;
             };
 
@@ -84,7 +88,7 @@
             };
 
             service.getDefaultToAdvancedCommandMode = function() {
-                return getDataFromFile("/settings/defaultToAdvancedCommandMode") === true;
+                return getDataFromFile("/settings/defaultToAdvancedCommandMode", false, false) === true;
             };
 
             service.setDefaultToAdvancedCommandMode = function(defaultToAdvanced) {
@@ -92,7 +96,7 @@
             };
 
             service.getSeenAdvancedCommandModePopup = function() {
-                return getDataFromFile("/settings/seenAdvancedCommandModePopup") === true;
+                return getDataFromFile("/settings/seenAdvancedCommandModePopup", false, false) === true;
             };
 
             service.setSeenAdvancedCommandModePopup = function(seen) {
@@ -100,7 +104,7 @@
             };
 
             service.getPersistCustomVariables = function() {
-                return getDataFromFile("/settings/persistCustomVariables") === true;
+                return getDataFromFile("/settings/persistCustomVariables", false, false) === true;
             };
 
             service.setPersistCustomVariables = function(enabled) {
@@ -108,7 +112,7 @@
             };
 
             service.getAllowQuoteCSVDownloads = function() {
-                return getDataFromFile("/settings/allowQuoteCSVDownloads") !== false;
+                return getDataFromFile("/settings/allowQuoteCSVDownloads", false, true) !== false;
             };
 
             service.setAllowQuoteCSVDownloads = function(enabled) {
@@ -116,7 +120,7 @@
             };
 
             service.legacySortTagsImported = function() {
-                return getDataFromFile("/settings/legacySortTagsImported") === true;
+                return getDataFromFile("/settings/legacySortTagsImported", false, false) === true;
             };
 
             service.setLegacySortTagsImported = function(enabled) {
@@ -124,7 +128,7 @@
             };
 
             service.getViewerListPageSize = function() {
-                const viewerListPageSize = getDataFromFile("/settings/viewerListDatabase/pageSize");
+                const viewerListPageSize = getDataFromFile("/settings/viewerListDatabase/pageSize", false, 10);
                 return viewerListPageSize != null ? viewerListPageSize : 10;
             };
 
@@ -133,7 +137,7 @@
             };
 
             service.isBetaTester = function() {
-                const betaTester = getDataFromFile("/settings/beta");
+                const betaTester = getDataFromFile("/settings/beta", false, "No");
                 return betaTester != null ? betaTester : "No";
             };
 
@@ -142,7 +146,7 @@
             };
 
             service.getEmulator = function() {
-                const emulator = getDataFromFile("/settings/emulation");
+                const emulator = getDataFromFile("/settings/emulation", false, "Robotjs");
                 return emulator != null ? emulator : "Robotjs";
             };
 
@@ -174,7 +178,7 @@
 
             // Used for settings menu.
             service.getChatFeed = function() {
-                const chatFeed = getDataFromFile("/settings/chatFeed");
+                const chatFeed = getDataFromFile("/settings/chatFeed", false, false);
                 if (chatFeed === true) {
                     return "On";
                 }
@@ -194,7 +198,7 @@
 
             // Used for settings menu.
             service.getChatViewCount = function() {
-                const chatViewCount = getDataFromFile("/settings/chatViewCount");
+                const chatViewCount = getDataFromFile("/settings/chatViewCount", false, "Off");
                 if (chatViewCount === true) {
                     return "On";
                 }
@@ -226,7 +230,7 @@
             };
 
             service.getShowChatViewerList = function() {
-                const value = getDataFromFile("/settings/chatUsersList");
+                const value = getDataFromFile("/settings/chatUsersList", false, true);
                 return value == null ? true : value;
             };
 
@@ -235,7 +239,7 @@
             };
 
             service.showActivityFeed = function() {
-                const show = getDataFromFile("/settings/activityFeed");
+                const show = getDataFromFile("/settings/activityFeed", false, true);
                 return show == null ? true : show;
             };
 
@@ -269,7 +273,7 @@
             };
 
             service.ignoreSubsequentSubEventsAfterCommunitySub = function() {
-                const ignoreSubEvents = getDataFromFile("/settings/ignoreSubsequentSubEventsAfterCommunitySub");
+                const ignoreSubEvents = getDataFromFile("/settings/ignoreSubsequentSubEventsAfterCommunitySub", false, true);
                 return ignoreSubEvents != null ? ignoreSubEvents : true;
             };
 
@@ -278,7 +282,7 @@
             };
 
             service.getWysiwygBackground = function() {
-                const bg = getDataFromFile("/settings/wysiwygBackground");
+                const bg = getDataFromFile("/settings/wysiwygBackground", false, 'white');
                 return bg != null ? bg : 'white';
             };
 
@@ -287,7 +291,7 @@
             };
 
             service.getClearChatFeedMode = function() {
-                const mode = getDataFromFile("/settings/clearChatFeedMode");
+                const mode = getDataFromFile("/settings/clearChatFeedMode", false, 'onlyStreamer');
                 return mode != null ? mode : 'onlyStreamer';
             };
 
@@ -296,7 +300,7 @@
             };
 
             service.isChatCompactMode = function() {
-                const compact = getDataFromFile("/settings/chatCompactMode");
+                const compact = getDataFromFile("/settings/chatCompactMode", false, false);
                 return compact != null ? compact : false;
             };
 
@@ -305,7 +309,7 @@
             };
 
             service.getShowAvatars = function() {
-                const value = getDataFromFile("/settings/chatAvatars");
+                const value = getDataFromFile("/settings/chatAvatars", false, true);
                 return value != null ? value : true;
             };
             service.setShowAvatars = function(value) {
@@ -313,7 +317,7 @@
             };
 
             service.getShowTimestamps = function() {
-                const value = getDataFromFile("/settings/chatTimestamps");
+                const value = getDataFromFile("/settings/chatTimestamps", false, true);
                 return value != null ? value : true;
             };
             service.setShowTimestamps = function(value) {
@@ -321,12 +325,12 @@
             };
 
             service.getShowThirdPartyEmotes = function() {
-                const value = getDataFromFile("/settings/chatThirdPartyEmotes");
+                const value = getDataFromFile("/settings/chatThirdPartyEmotes", false, true);
                 return value != null ? value : true;
             };
 
             service.getShowBttvEmotes = function() {
-                const value = getDataFromFile("/settings/chat/emotes/bttv");
+                const value = getDataFromFile("/settings/chat/emotes/bttv", false, service.getShowThirdPartyEmotes());
                 return value != null ? value : service.getShowThirdPartyEmotes();
             };
             service.setShowBttvEmotes = function(value) {
@@ -334,7 +338,7 @@
             };
 
             service.getShowFfzEmotes = function() {
-                const value = getDataFromFile("/settings/chat/emotes/ffz");
+                const value = getDataFromFile("/settings/chat/emotes/ffz", false, service.getShowThirdPartyEmotes());
                 return value != null ? value : service.getShowThirdPartyEmotes();
             };
             service.setShowFfzEmotes = function(value) {
@@ -342,7 +346,7 @@
             };
 
             service.getShowSevenTvEmotes = function() {
-                const value = getDataFromFile("/settings/chat/emotes/seventv");
+                const value = getDataFromFile("/settings/chat/emotes/seventv", false, service.getShowThirdPartyEmotes());
                 return value != null ? value : service.getShowThirdPartyEmotes();
             };
             service.setShowSevenTvEmotes = function(value) {
@@ -350,7 +354,7 @@
             };
 
             service.getShowPronouns = function() {
-                const value = getDataFromFile("/settings/chatPronouns");
+                const value = getDataFromFile("/settings/chatPronouns", false, true);
                 return value != null ? value : true;
             };
             service.setShowPronouns = function(value) {
@@ -358,7 +362,7 @@
             };
 
             service.getChatCustomFontSizeEnabled = function() {
-                const value = getDataFromFile("/settings/chatCustomFontSizeEnabled");
+                const value = getDataFromFile("/settings/chatCustomFontSizeEnabled", false, false);
                 return value != null ? value : false;
             };
             service.setChatCustomFontSizeEnabled = function(value) {
@@ -366,7 +370,7 @@
             };
 
             service.getChatCustomFontSize = function() {
-                const value = getDataFromFile("/settings/chatCustomFontSize");
+                const value = getDataFromFile("/settings/chatCustomFontSize", false, 17);
                 return value != null ? value : 17;
             };
             service.setChatCustomFontSize = function(value) {
@@ -374,7 +378,7 @@
             };
 
             service.chatAlternateBackgrounds = function() {
-                const alternate = getDataFromFile('/settings/chatAlternateBackgrounds');
+                const alternate = getDataFromFile('/settings/chatAlternateBackgrounds', false, true);
                 return alternate != null ? alternate : true;
             };
 
@@ -383,7 +387,7 @@
             };
 
             service.chatHideBotAccountMessages = function() {
-                const shouldHide = getDataFromFile('/settings/chatHideBotAccountMessages');
+                const shouldHide = getDataFromFile('/settings/chatHideBotAccountMessages', false, false);
                 return shouldHide != null ? shouldHide : false;
             };
 
@@ -392,14 +396,14 @@
             };
 
             service.getShowUptimeStat = function() {
-                const value = getDataFromFile("/settings/showUptimeStat");
+                const value = getDataFromFile("/settings/showUptimeStat", false, true);
                 return value != null ? value : true;
             };
             service.setShowUptimeStat = function(value) {
                 pushDataToFile("/settings/showUptimeStat", value === true);
             };
             service.getShowViewerCountStat = function() {
-                const value = getDataFromFile("/settings/showViewerCountStat");
+                const value = getDataFromFile("/settings/showViewerCountStat", false, true);
                 return value != null ? value : true;
             };
             service.setShowViewerCountStat = function(value) {
@@ -407,7 +411,7 @@
             };
 
             service.chatHideDeletedMessages = function() {
-                const hide = getDataFromFile('/settings/chatHideDeletedMessages');
+                const hide = getDataFromFile('/settings/chatHideDeletedMessages', false, false);
                 return hide != null ? hide : false;
             };
 
@@ -416,7 +420,7 @@
             };
 
             service.getOverlayCompatibility = function() {
-                const overlay = getDataFromFile("/settings/overlayImages");
+                const overlay = getDataFromFile("/settings/overlayImages", false, "Other");
                 return overlay != null ? overlay : "Other";
             };
 
@@ -426,7 +430,7 @@
             };
 
             service.getTheme = function() {
-                const theme = getDataFromFile("/settings/theme");
+                const theme = getDataFromFile("/settings/theme", false, "Obsidian");
                 return theme != null ? theme : "Obsidian";
             };
 
@@ -435,7 +439,7 @@
             };
 
             service.soundsEnabled = function() {
-                const sounds = getDataFromFile("/settings/sounds");
+                const sounds = getDataFromFile("/settings/sounds", false, "On");
                 return sounds != null ? sounds : "On";
             };
 
@@ -444,7 +448,7 @@
             };
 
             service.getActiveChatUserListTimeout = function() {
-                const inactiveTimer = getDataFromFile("/settings/activeChatUsers/inactiveTimer");
+                const inactiveTimer = getDataFromFile("/settings/activeChatUsers/inactiveTimer", false, 5);
                 return inactiveTimer != null ? parseInt(inactiveTimer) : 5;
             };
 
@@ -460,7 +464,7 @@
             * 4 = betas
             */
             service.getAutoUpdateLevel = function() {
-                const updateLevel = getDataFromFile("/settings/autoUpdateLevel");
+                const updateLevel = getDataFromFile("/settings/autoUpdateLevel", false, 2);
                 return updateLevel != null ? updateLevel : 2;
             };
 
@@ -469,7 +473,7 @@
             };
 
             service.notifyOnBeta = function() {
-                const beta = getDataFromFile("/settings/notifyOnBeta");
+                const beta = getDataFromFile("/settings/notifyOnBeta", false, false);
                 return beta != null ? beta : false;
             };
 
@@ -478,7 +482,7 @@
             };
 
             service.isFirstTimeUse = function() {
-                const ftu = getDataFromFile("/settings/firstTimeUse");
+                const ftu = getDataFromFile("/settings/firstTimeUse", false, true);
                 return ftu != null ? ftu : true;
             };
 
@@ -487,7 +491,7 @@
             };
 
             service.hasJustUpdated = function() {
-                const updated = getDataFromFile("/settings/justUpdated");
+                const updated = getDataFromFile("/settings/justUpdated", false, false);
                 return updated != null ? updated : false;
             };
 
@@ -496,7 +500,7 @@
             };
 
             service.getOverlayVersion = function() {
-                const version = getDataFromFile("/settings/copiedOverlayVersion");
+                const version = getDataFromFile("/settings/copiedOverlayVersion", false, "");
                 return version != null ? version : "";
             };
 
@@ -505,7 +509,7 @@
             };
 
             service.getWebServerPort = function() {
-                const serverPort = getDataFromFile("/settings/webServerPort");
+                const serverPort = getDataFromFile("/settings/webServerPort", false, 7472);
                 return serverPort != null ? serverPort : 7472;
             };
 
@@ -549,7 +553,7 @@
             };
 
             service.getOverlayEventsSettings = function() {
-                const settings = getDataFromFile("/settings/eventSettings");
+                const settings = getDataFromFile("/settings/eventSettings", false, {});
                 return settings != null ? settings : {};
             };
 
@@ -558,7 +562,7 @@
             };
 
             service.getClearCustomScriptCache = function() {
-                const clear = getDataFromFile("/settings/clearCustomScriptCache");
+                const clear = getDataFromFile("/settings/clearCustomScriptCache", false, false);
                 return clear != null ? clear : false;
             };
 
@@ -567,7 +571,7 @@
             };
 
             service.useOverlayInstances = function() {
-                const oi = getDataFromFile("/settings/useOverlayInstances");
+                const oi = getDataFromFile("/settings/useOverlayInstances", false, false);
                 return oi != null ? oi : false;
             };
 
@@ -576,7 +580,7 @@
             };
 
             service.getOverlayInstances = function() {
-                const ois = getDataFromFile("/settings/overlayInstances");
+                const ois = getDataFromFile("/settings/overlayInstances", false, []);
                 return ois != null ? ois : [];
             };
 
@@ -585,7 +589,7 @@
             };
 
             service.backupKeepAll = function() {
-                const backupKeepAll = getDataFromFile("/settings/backupKeepAll");
+                const backupKeepAll = getDataFromFile("/settings/backupKeepAll", false, false);
                 return backupKeepAll != null ? backupKeepAll : false;
             };
 
@@ -594,7 +598,7 @@
             };
 
             service.backupOnExit = function() {
-                const save = getDataFromFile("/settings/backupOnExit");
+                const save = getDataFromFile("/settings/backupOnExit", false, true);
                 return save != null ? save : true;
             };
 
@@ -603,7 +607,7 @@
             };
 
             service.backupIgnoreResources = function() {
-                const save = getDataFromFile("/settings/backupIgnoreResources");
+                const save = getDataFromFile("/settings/backupIgnoreResources", false, true);
                 return save != null ? save : true;
             };
 
@@ -613,7 +617,7 @@
 
             service.backupBeforeUpdates = function() {
                 const backupBeforeUpdates = getDataFromFile(
-                    "/settings/backupBeforeUpdates"
+                    "/settings/backupBeforeUpdates", false, true
                 );
                 return backupBeforeUpdates != null ? backupBeforeUpdates : true;
             };
@@ -626,7 +630,7 @@
             };
 
             service.backupOnceADay = function() {
-                const backupOnceADay = getDataFromFile("/settings/backupOnceADay");
+                const backupOnceADay = getDataFromFile("/settings/backupOnceADay", false, true);
                 return backupOnceADay != null ? backupOnceADay : true;
             };
 
@@ -635,7 +639,7 @@
             };
 
             service.maxBackupCount = function() {
-                const maxBackupCount = getDataFromFile("/settings/maxBackupCount");
+                const maxBackupCount = getDataFromFile("/settings/maxBackupCount", false, 25);
                 return maxBackupCount != null ? maxBackupCount : 25;
             };
 
@@ -644,10 +648,11 @@
             };
 
             service.getAudioOutputDevice = function() {
-                const device = getDataFromFile("/settings/audioOutputDevice");
+                const defaultVal = { label: "System Default", deviceId: "default" };
+                const device = getDataFromFile("/settings/audioOutputDevice", false, defaultVal);
                 return device != null
                     ? device
-                    : { label: "System Default", deviceId: "default" };
+                    : defaultVal;
             };
 
             service.setAudioOutputDevice = function(device) {
@@ -655,7 +660,7 @@
             };
 
             service.getSidebarControlledServices = function() {
-                const services = getDataFromFile("/settings/sidebarControlledServices");
+                const services = getDataFromFile("/settings/sidebarControlledServices", false, ["chat"]);
                 return services != null
                     ? services
                     : ["chat"];
@@ -700,7 +705,7 @@
             };
 
             service.getViewerColumnPreferences = function() {
-                const prefs = getDataFromFile("/settings/viewerColumnPreferences");
+                const prefs = getDataFromFile("/settings/viewerColumnPreferences", false, { lastSeen: true });
                 return prefs != null ? prefs : { lastSeen: true };
             };
 
@@ -722,7 +727,7 @@
             };
 
             service.getTtsVoiceVolume = function() {
-                const volume = getDataFromFile('/settings/ttsVoiceVolume');
+                const volume = getDataFromFile('/settings/ttsVoiceVolume', false, 0.5);
                 return volume !== undefined ? volume : 0.5;
             };
 
@@ -731,7 +736,7 @@
             };
 
             service.getTtsVoiceRate = function() {
-                const rate = getDataFromFile('/settings/ttsVoiceRate');
+                const rate = getDataFromFile('/settings/ttsVoiceRate', false, 1);
                 return rate !== undefined ? rate : 1;
             };
 
@@ -741,7 +746,7 @@
 
 
             service.getWhileLoopEnabled = function() {
-                const enabled = getDataFromFile('/settings/whileLoopEnabled');
+                const enabled = getDataFromFile('/settings/whileLoopEnabled', false, false);
                 return enabled !== undefined ? enabled : false;
             };
 
@@ -750,7 +755,7 @@
             };
 
             service.getMinimizeToTray = function () {
-                return getDataFromFile('/settings/minimizeToTray') === true;
+                return getDataFromFile('/settings/minimizeToTray', false, false) === true;
             };
             service.setMinimizeToTray = function (minimizeToTray) {
                 pushDataToFile('/settings/minimizeToTray', minimizeToTray === true);
