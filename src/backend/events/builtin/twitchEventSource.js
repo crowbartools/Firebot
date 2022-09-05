@@ -272,7 +272,7 @@ module.exports = {
         {
             id: "viewer-arrived",
             name: "Viewer Arrived",
-            description: "When a viewer first chats in your channel.",
+            description: "When a viewer initially chats in any given stream.",
             cached: true,
             cacheMetaKey: "username",
             manualMetadata: {
