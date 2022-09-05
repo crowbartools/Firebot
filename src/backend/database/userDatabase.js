@@ -857,6 +857,10 @@ frontendCommunicator.onAsync("getViewerFirebotData", (userId) => {
     return getUserById(userId);
 });
 
+frontendCommunicator.onAsync("createViewerFirebotData", data => {
+    return createNewUser(data.id, data.username, data.roles);
+});
+
 frontendCommunicator.on("removeViewerFromDb", userId => {
     removeUser(userId);
 });

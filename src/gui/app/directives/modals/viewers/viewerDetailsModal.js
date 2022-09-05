@@ -140,7 +140,7 @@
                         <div style="font-size:13px;font-weight: bold;opacity:0.9;margin-bottom:5px;">CUSTOM ROLES</div>
                         <div class="role-bar" ng-repeat="customRole in $ctrl.customRoles track by customRole.id">
                             <span>{{customRole.name}}</span>
-                            <span class="clickable" style="padding-left: 10px;" ng-click="$ctrl.removeUserFromRole(customRole.id)" uib-tooltip="Remove role" tooltip-append-to-body="true">
+                            <span class="clickable" style="padding-left: 10px;" ng-click="$ctrl.removeUserFromRole(customRole.id, customRole.name)" uib-tooltip="Remove role" tooltip-append-to-body="true">
                                 <i class="far fa-times"></i>
                             </span>
                         </div>
@@ -658,10 +658,19 @@
                         });
                 };
 
-                $ctrl.removeUserFromRole = (roleId) => {
+                $ctrl.removeUserFromRole = (roleId, roleName) => {
                     const username = $ctrl.viewerDetails.twitchData.displayName;
-                    viewerRolesService.removeUserFromRole(roleId, username);
-                    loadCustomRoles();
+                    utilityService.showConfirmationModal({
+                        title: "Remove Viewer",
+                        question: `Are you sure you want to remove the role ${roleName}?`,
+                        confirmLabel: "Remove",
+                        confirmBtnType: "btn-danger"
+                    }).then(confirmed => {
+                        if (confirmed) {
+                            viewerRolesService.removeUserFromRole(roleId, username);
+                            loadCustomRoles();
+                        }
+                    });
                 };
 
                 function init() {

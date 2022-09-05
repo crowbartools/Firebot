@@ -88,17 +88,16 @@
             };
 
             $ctrl.addViewer = function() {
-                utilityService.openGetInputModal(
+                utilityService.openViewerSearchModal(
                     {
                         label: "Add Viewer",
                         saveText: "Add",
-                        validationFn: (username) => {
+                        validationFn: (user) => {
                             return new Promise(resolve => {
-                                if (username == null) {
+                                if (user == null) {
                                     return resolve(false);
                                 }
-
-                                if (findIndexIgnoreCase($ctrl.role.viewers, username) !== -1) {
+                                if (findIndexIgnoreCase($ctrl.role.viewers, user.username) !== -1) {
                                     return resolve(false);
                                 }
                                 resolve(true);
@@ -106,13 +105,22 @@
                         },
                         validationText: "Viewer already has this role."
                     },
-                    (username) => {
-                        $ctrl.role.viewers.push(username);
+                    (user) => {
+                        $ctrl.role.viewers.push(user.username);
                     });
             };
 
             $ctrl.deleteViewer = function(viewer) {
-                $ctrl.role.viewers = $ctrl.role.viewers.filter(v => v !== viewer);
+                utilityService.showConfirmationModal({
+                    title: "Remove Viewer",
+                    question: `Are you sure you want to remove ${viewer} from this role?`,
+                    confirmLabel: "Remove",
+                    confirmBtnType: "btn-danger"
+                }).then(confirmed => {
+                    if (confirmed) {
+                        $ctrl.role.viewers = $ctrl.role.viewers.filter(v => v !== viewer);
+                    }
+                });
             };
 
             $ctrl.$onInit = function() {

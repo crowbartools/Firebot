@@ -251,6 +251,24 @@
                 });
             };
 
+            service.openViewerSearchModal = function(options, callback) {
+                service.showModal({
+                    component: "viewerSearchModal",
+                    size: "sm",
+                    backdrop: true,
+                    resolveObj: {
+                        model: () => options.model,
+                        label: () => options.label,
+                        saveText: () => options.saveText,
+                        validationFn: () => options.validationFn,
+                        validationText: () => options.validationText
+                    },
+                    closeCallback: (resp) => {
+                        callback(resp.model);
+                    }
+                });
+            };
+
             /*
              * OVERLAY INFO MODAL
              */

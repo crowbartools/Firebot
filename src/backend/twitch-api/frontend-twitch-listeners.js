@@ -9,6 +9,15 @@ exports.setupListeners = () => {
         return twitchApi.categories.searchCategories(query);
     });
 
+    frontendCommunicator.onAsync("search-twitch-channels", async query => {
+        const response = await twitchApi.getClient().search.searchChannels(query, { limit: 10 });
+        return (response?.data ?? []).map(c => ({
+            id: c.id,
+            username: c.displayName,
+            avatarUrl: c.thumbnailUrl
+        }));
+    });
+
     frontendCommunicator.onAsync("get-twitch-game", gameId => {
         return twitchApi.categories.getCategoryById(gameId);
     });
@@ -55,5 +64,4 @@ exports.setupListeners = () => {
         const rewards = await twitchApi.channelRewards.getCustomChannelRewards();
         return rewards || [];
     });
-
 };
