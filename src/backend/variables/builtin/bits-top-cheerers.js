@@ -1,6 +1,8 @@
 "use strict";
 
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
+const expressionish = require('expressionish');
+const moment = require("moment");
 const twitchApi = require("../../twitch-api/api");
 
 const model = {
@@ -14,17 +16,46 @@ const model = {
             },
             {
                 usage: "topBitsCheerers[count, period]",
-                description: "Returns a JSON array of the usernames up to the specified count, of the users who have cheered the most bits in the streamer's channel during the specified period. Period can be 'day', 'week', 'month', 'year', or 'all'."
+                description: "Returns a JSON array of the usernames up to the specified count, of the users who have cheered the most bits in the streamer's channel during the current specified period. Period can be 'day', 'week', 'month', 'year', or 'all'."
+            },
+            {
+                usage: "topBitsCheerers[count, period, startDate]",
+                description: "Returns a JSON array of the usernames up to the specified count, of the users who have cheered the most bits in the streamer's channel during the specified period that occurred on the specified date. Period can be 'day', 'week', 'month', 'year', or 'all'."
             }
         ],
         categories: [VariableCategory.COMMON, VariableCategory.USER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: async (_, count = 1, period = "all") => {
-        count = count ?? 1;
+    argsCheck: (count = 1, period = "all", startDate = null) => {
+        if (count == null && period == null && startDate == null) {
+            return true;
+        }
+
         period = period ?? "all";
 
-        const users = await twitchApi.bits.getChannelBitsTopCheerers(count, period);
+        if (Number.isNaN(count) || count < 1 || count > 100) {
+            throw new expressionish.ExpressionArgumentsError("First argument needs to be either null or a number.", 0);
+        }
+
+        const validPeriods = ["day", "week", "month", "year", "all"];
+        period = period.toLowerCase();
+
+        if (validPeriods.indexOf(period) === -1) {
+            throw new expressionish.ExpressionArgumentsError("Second argument must be a valid period ('day', 'week', 'month', 'year', or 'all').", 0);
+        }
+
+        if (startDate != null && !moment(startDate).isValid()) {
+            throw new expressionish.ExpressionArgumentsError("Third argument must be a valid date string.", 0);
+        }
+
+        return true;
+    },
+    evaluator: async (_, count = 1, period = "all", startDate = null) => {
+        count = count ?? 1;
+        period = period ?? "all";
+        startDate = startDate == null ? moment() : moment(startDate);
+
+        const users = await twitchApi.bits.getChannelBitsTopCheerers(count, period, startDate.toDate());
 
         return JSON.stringify(users);
     }
