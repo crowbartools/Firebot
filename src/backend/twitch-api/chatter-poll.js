@@ -3,6 +3,7 @@
 const logger = require("../logwrapper");
 const accountAccess = require("../common/account-access");
 const twitchApi = require("../twitch-api/api");
+const activeChatUserHandler = require("../chat/chat-listeners/active-user-handler");
 
 // every 5 mins
 const POLL_INTERVAL = 300000;
@@ -23,27 +24,29 @@ async function handleChatters() {
 
     pollIsRunning = true;
 
-    const streamer = accountAccess.getAccounts().streamer;
-    const client = twitchApi.getClient();
+    try {
+        const streamer = accountAccess.getAccounts().streamer;
+        const client = twitchApi.getClient();
 
-    if (client == null || !streamer.loggedIn) {
-        return;
-    }
+        if (client == null || !streamer.loggedIn) {
+            return;
+        }
 
-    logger.debug("Getting connected chat users...");
+        logger.debug("Getting connected chat users...");
 
-    const chatters = await client.unsupported.getChatters(streamer.username);
+        const chatters = await client.unsupported.getChatters(streamer.username);
 
-    logger.debug(`There are ${chatters ? chatters.allChatters.length : 0} online chat users.`);
+        logger.debug(`There are ${chatters ? chatters.allChatters.length : 0} online chat users.`);
 
-    if (chatters == null || chatters.allChatters.length < 1) {
-        return;
-    }
+        if (chatters == null || chatters.allChatters.length < 1) {
+            return;
+        }
 
-    const activeChatUserHandler = require("../chat/chat-listeners/active-user-handler");
-
-    for (const username of chatters.allChatters) {
-        await activeChatUserHandler.addOnlineUser(username);
+        for (const username of chatters.allChatters) {
+            await activeChatUserHandler.addOnlineUser(username);
+        }
+    } catch (error) {
+        logger.error("There was an error getting connected chat users", error);
     }
 
     pollIsRunning = false;
