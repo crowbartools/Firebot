@@ -477,10 +477,12 @@ class TwitchChat extends EventEmitter {
         await this._streamerChatClient.timeout(streamer.username, username, parseInt(duration), reason);
     }
 
-    getViewerList() {
-        // eslint-disable-next-line no-warning-comments
-        //TODO: Needs updated for twitch.
-        const users = [];
+    async populateChatterList() {
+        await chatterPoll.runChatterPoll();
+    }
+
+    async getViewerList() {
+        const users = activeUserHandler.getAllOnlineUsers();
         return users;
     }
 }

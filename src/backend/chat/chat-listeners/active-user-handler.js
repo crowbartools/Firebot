@@ -26,7 +26,7 @@ const ONLINE_TIMEOUT = 450; // 7.50 mins
  * @property {string[]} twitchRoles
  */
 
-// this is used only for setting "online: true" in user db (which is the used for currency payouts)
+// this is used for online user features, mostly setting "online: true" in user db (which is the used for currency payouts)
 const onlineUsers = new NodeCache({ stdTTL: ONLINE_TIMEOUT, checkperiod: 15 });
 
 // this is used for general active user features
@@ -78,6 +78,42 @@ exports.getAllActiveUsers = () => {
     });
 };
 
+
+
+exports.getOnlineUserCount = () => {
+    return onlineUsers.keys().length;
+};
+
+exports.getRandomOnlineUser = (ignoreUser = "") => {
+    const allOnlineUsers = exports.getAllOnlineUsers();
+
+    /**@type {User} */
+    let randomUser;
+    do {
+        const randomIndex = utils.getRandomInt(0, allOnlineUsers.length - 1);
+        randomUser = allOnlineUsers[randomIndex];
+    } while (randomUser.username.toLowerCase() === ignoreUser.toLowerCase() && allOnlineUsers.length > 1);
+
+    if (ignoreUser && randomUser.username.toLowerCase() === ignoreUser.toLowerCase()) {
+        return null;
+    }
+
+    return randomUser;
+};
+
+/**
+  * @returns {User[]}
+  */
+exports.getAllOnlineUsers = () => {
+    return onlineUsers.keys().filter(v => !isNaN(v)).map(id => {
+        return {
+            id: parseInt(id),
+            username: onlineUsers.get(id).username,
+            twitchRoles: onlineUsers.get(id).twitchRoles
+        };
+    });
+};
+
 /**
  *
  * @param {UserDetails} userDetails
@@ -88,12 +124,12 @@ async function updateUserOnlineStatus(userDetails, updateDb = false) {
     const userDatabase = require("../../database/userDatabase");
 
     const userOnline = onlineUsers.get(userDetails.id);
-    if (userOnline) {
+    if (userOnline && userOnline.online === true) {
         logger.debug(`Updating user ${userDetails.displayName}'s "online" ttl to ${ONLINE_TIMEOUT} secs`);
         onlineUsers.ttl(userDetails.id, ONLINE_TIMEOUT);
     } else {
         logger.debug(`Marking user ${userDetails.displayName} as online with ttl of ${ONLINE_TIMEOUT} secs`);
-        onlineUsers.set(userDetails.id, true, ONLINE_TIMEOUT);
+        onlineUsers.set(userDetails.id, { username: userDetails.username, online: true }, ONLINE_TIMEOUT);
 
         const roles = await chatRolesManager.getUsersChatRoles(userDetails.id);
 

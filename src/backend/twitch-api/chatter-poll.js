@@ -1,13 +1,14 @@
 "use strict";
 
+const logger = require("../logwrapper");
 const accountAccess = require("../common/account-access");
-
-const twitchApi = require("./api");
+const twitchApi = require("../twitch-api/api");
 
 // every 5 mins
 const POLL_INTERVAL = 300000;
 
 let chatterPollIntervalId;
+let pollIsRunning = false;
 
 function clearPollInterval() {
     if (chatterPollIntervalId != null) {
@@ -16,14 +17,18 @@ function clearPollInterval() {
 }
 
 async function handleChatters() {
+    if (pollIsRunning === true) {
+        return;
+    }
+
+    pollIsRunning = true;
+
     const streamer = accountAccess.getAccounts().streamer;
     const client = twitchApi.getClient();
 
     if (client == null || !streamer.loggedIn) {
         return;
     }
-
-    const logger = require("../logwrapper");
 
     logger.debug("Getting connected chat users...");
 
@@ -40,6 +45,8 @@ async function handleChatters() {
     for (const username of chatters.allChatters) {
         await activeChatUserHandler.addOnlineUser(username);
     }
+
+    pollIsRunning = false;
 }
 
 exports.startChatterPoll = () => {
@@ -50,4 +57,8 @@ exports.startChatterPoll = () => {
 
 exports.stopChatterPoll = () => {
     clearPollInterval();
+};
+
+exports.runChatterPoll = async () => {
+    await handleChatters();
 };
