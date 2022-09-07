@@ -129,7 +129,11 @@ async function updateUserOnlineStatus(userDetails, updateDb = false) {
         onlineUsers.ttl(userDetails.id, ONLINE_TIMEOUT);
     } else {
         logger.debug(`Marking user ${userDetails.displayName} as online with ttl of ${ONLINE_TIMEOUT} secs`);
-        onlineUsers.set(userDetails.id, { username: userDetails.username, online: true }, ONLINE_TIMEOUT);
+        onlineUsers.set(userDetails.id, {
+            username: userDetails.username,
+            online: true,
+            twitchRoles: userDetails.twitchRoles
+        }, ONLINE_TIMEOUT);
 
         const roles = await chatRolesManager.getUsersChatRoles(userDetails.id);
 
