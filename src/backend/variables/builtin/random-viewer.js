@@ -1,11 +1,8 @@
-// Migration: todo - Need implentation info related to viewer list
-
 "use strict";
-const util = require("../../utility");
 const logger = require("../../logwrapper");
 
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
-const twitchChat = require("../../chat/twitch-chat");
+const activeUserHandler = require('../../chat/chat-listeners/active-user-handler');
 
 const model = {
     definition: {
@@ -14,16 +11,18 @@ const model = {
         categories: [VariableCategory.USER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: async () => {
-
-        //return util.getRandomInt(internalMin, internalMax);
+    evaluator: () => {
         logger.debug("Getting random viewer...");
 
-        const currentViewers = await twitchChat.getViewerList();
+        const onlineViewerCount = activeUserHandler.getOnlineUserCount();
 
-        if (currentViewers && currentViewers.length > 0) {
-            const randIndex = util.getRandomInt(0, currentViewers.length - 1);
-            return currentViewers[randIndex].username;
+        if (onlineViewerCount === 0) {
+            return "[Unable to get random viewer]";
+        }
+
+        if (onlineViewerCount > 0) {
+            const randomViewer = activeUserHandler.getRandomOnlineUser();
+            return randomViewer ? randomViewer.username : "[Unable to get random viewer]";
         }
 
         return "[Unable to get random viewer]";

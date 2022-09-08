@@ -569,6 +569,7 @@ function addNewUserFromChat(userDetails, isOnline = true) {
 
 // Sets chat users online using the same function we use to get the chat viewer list for the ui.
 async function setChatUsersOnline() {
+    await twitchChat.populateChatterList();
     const viewers = await twitchChat.getViewerList();
 
     if (viewers == null) {
@@ -580,9 +581,9 @@ async function setChatUsersOnline() {
         // Here we convert the viewer list viewer object to one that matches
         // what we get from chat messages...
         const viewerPacket = {
-            id: viewer.userId,
+            id: viewer.id,
             username: viewer.username,
-            roles: viewer.user_roles
+            twitchRoles: viewer.twitchRoles
         };
 
         setChatUserOnline(viewerPacket);
