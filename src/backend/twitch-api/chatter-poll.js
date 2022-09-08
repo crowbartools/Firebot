@@ -1,13 +1,15 @@
 "use strict";
 
+const logger = require("../logwrapper");
 const accountAccess = require("../common/account-access");
-
-const twitchApi = require("./api");
+const twitchApi = require("../twitch-api/api");
+const activeChatUserHandler = require("../chat/chat-listeners/active-user-handler");
 
 // every 5 mins
 const POLL_INTERVAL = 300000;
 
 let chatterPollIntervalId;
+let pollIsRunning = false;
 
 function clearPollInterval() {
     if (chatterPollIntervalId != null) {
@@ -16,30 +18,38 @@ function clearPollInterval() {
 }
 
 async function handleChatters() {
-    const streamer = accountAccess.getAccounts().streamer;
-    const client = twitchApi.getClient();
-
-    if (client == null || !streamer.loggedIn) {
+    if (pollIsRunning === true) {
         return;
     }
 
-    const logger = require("../logwrapper");
+    pollIsRunning = true;
 
-    logger.debug("Getting connected chat users...");
+    try {
+        const streamer = accountAccess.getAccounts().streamer;
+        const client = twitchApi.getClient();
 
-    const chatters = await client.unsupported.getChatters(streamer.username);
+        if (client == null || !streamer.loggedIn) {
+            return;
+        }
 
-    logger.debug(`There are ${chatters ? chatters.allChatters.length : 0} online chat users.`);
+        logger.debug("Getting connected chat users...");
 
-    if (chatters == null || chatters.allChatters.length < 1) {
-        return;
+        const chatters = await client.unsupported.getChatters(streamer.username);
+
+        logger.debug(`There are ${chatters ? chatters.allChatters.length : 0} online chat users.`);
+
+        if (chatters == null || chatters.allChatters.length < 1) {
+            return;
+        }
+
+        for (const username of chatters.allChatters) {
+            await activeChatUserHandler.addOnlineUser(username);
+        }
+    } catch (error) {
+        logger.error("There was an error getting connected chat users", error);
     }
 
-    const activeChatUserHandler = require("../chat/chat-listeners/active-user-handler");
-
-    for (const username of chatters.allChatters) {
-        await activeChatUserHandler.addOnlineUser(username);
-    }
+    pollIsRunning = false;
 }
 
 exports.startChatterPoll = () => {
@@ -50,4 +60,8 @@ exports.startChatterPoll = () => {
 
 exports.stopChatterPoll = () => {
     clearPollInterval();
+};
+
+exports.runChatterPoll = async () => {
+    await handleChatters();
 };
