@@ -88,6 +88,7 @@ exports.loadReplaceVariables = () => {
         'number-min',
         'number-pad',
         'number-round',
+        'object-set-property',
         'ordinal-indicator',
         'preset-list-arg',
         'previous-currency-amount',
