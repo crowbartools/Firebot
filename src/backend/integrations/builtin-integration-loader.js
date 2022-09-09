@@ -12,6 +12,7 @@ exports.loadIntegrations = () => {
         'streamlabs/streamlabs',
         'streamloots/streamloots',
         'tipeeestream/tipeeestream',
+        'extralife/extralife',
         'obs/obs-integration'
     ].forEach(filename => {
         const definition = require(`./builtin/${filename}.js`);

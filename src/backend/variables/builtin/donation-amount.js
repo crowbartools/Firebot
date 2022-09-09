@@ -10,7 +10,8 @@ triggers[EffectTrigger.EVENT] = [
     "streamlabs:donation",
     "streamlabs:eldonation",
     "tipeeestream:donation",
-    "streamelements:donation"
+    "streamelements:donation",
+    "extralife:donation"
 ];
 triggers[EffectTrigger.MANUAL] = true;
 

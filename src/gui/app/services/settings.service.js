@@ -258,6 +258,7 @@
                     "twitch:cheer",
                     "streamlabs:donation",
                     "streamlabs:eldonation",
+                    'extralife:donation',
                     "tipeeestream:donation",
                     "streamelements:donation",
                     "twitch:channel-reward-redemption"

@@ -9,6 +9,7 @@ module.exports = {
     events: [
         { eventSourceId: "streamlabs", eventId: "donation" },
         { eventSourceId: "streamlabs", eventId: "eldonation" },
+        { eventSourceId: "extralife", eventId: "donation" },
         { eventSourceId: "tipeeestream", eventId: "donation" },
         { eventSourceId: "streamelements", eventId: "donation" }
     ],

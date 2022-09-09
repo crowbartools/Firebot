@@ -6,7 +6,7 @@ const { EffectTrigger } = require("../../../shared/effect-constants");
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
 const triggers = {};
-triggers[EffectTrigger.EVENT] = ["streamlabs:donation", "streamlabs:eldonation", "tipeeestream:donation", "streamelements:donation"];
+triggers[EffectTrigger.EVENT] = ["streamlabs:donation", "streamlabs:eldonation", "tipeeestream:donation", "streamelements:donation", "extralife:donation"];
 triggers[EffectTrigger.MANUAL] = true;
 
 const model = {
