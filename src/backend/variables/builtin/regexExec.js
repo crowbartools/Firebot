@@ -21,7 +21,7 @@ const model = {
     evaluator: (_, stringToEvaluate, expression, flags) => {
         const regex = RegExp(expression, flags);
 
-        return regex.exec(stringToEvaluate);
+        return regex.exec(stringToEvaluate).filter(m => !!m).toString();
     }
 };
 
