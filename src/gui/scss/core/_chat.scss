@@ -75,6 +75,32 @@
             background: linear-gradient(#9146ff,#ff75e6);
         }
     }
+
+    .automod-bar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 3px;
+        &.ALLOWED {
+            background: #00db84;
+        }
+        &.PENDING {
+            background: #ffb31a
+        }
+        &.DENIED, &.EXPIRED {
+            background: #ff4662;
+        }
+    }
+
+    .automod-tag {
+        background: #00000052;
+        padding: 4px 8px;
+        border-radius: 4px;
+        display: inline-block;
+        margin-left: 10px;
+        margin-bottom: 4px;
+    }
 }
 
 .chat-message {
@@ -101,6 +127,9 @@
             height: 28px;
             width: 28px;
             display: inline-block;
+        }
+        .highlightText {
+            background: rgba(220, 15, 15, 0.75);
         }
     }
     &.isCompact {

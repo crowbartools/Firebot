@@ -171,7 +171,7 @@ class TwitchChat extends EventEmitter {
             chatClient.say(streamer.username, message, replyToId ? { replyTo: replyToId } : undefined);
 
             if (accountType === 'streamer' && (!message.startsWith("/") || message.startsWith("/me"))) {
-                const firebotChatMessage = await chatHelpers.buildFirebotChatMessageFromText(message);
+                const firebotChatMessage = await chatHelpers.buildStreamerFirebotChatMessageFromText(message);
                 await activeUserHandler.addActiveUser({
                     userId: firebotChatMessage.userId,
                     userName: firebotChatMessage.username,
@@ -494,7 +494,7 @@ frontendCommunicator.on("send-chat-message", async sendData => {
 
     // Run commands from firebot chat.
     if (accountType === "Streamer") {
-        const firebotMessage = await chatHelpers.buildFirebotChatMessageFromText(message);
+        const firebotMessage = await chatHelpers.buildStreamerFirebotChatMessageFromText(message);
         commandHandler.handleChatMessage(firebotMessage);
 
         const twitchEventsHandler = require("../events/twitch-events");

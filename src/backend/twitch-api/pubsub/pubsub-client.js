@@ -112,6 +112,26 @@ async function createClient() {
         });
         listeners.push(subsListener);
 
+        const autoModListener = await pubSubClient.onAutoModQueue(streamer.userId, streamer.userId, async (message) => {
+            if (message.status === "PENDING") {
+                const { buildViewerFirebotChatMessageFromAutoModMessage } = require("../../chat/chat-helpers");
+
+                const firebotChatMessage = await buildViewerFirebotChatMessageFromAutoModMessage(message);
+
+                frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
+            }
+            if (["ALLOWED", "DENIED", "EXPIRED"].includes(message.status)) {
+                frontendCommunicator.send("twitch:chat:automod-update", {
+                    messageId: message.messageId,
+                    newStatus: message.status,
+                    resolverName: message.resolverName,
+                    resolverId: message.resolverId,
+                    flaggedPhrases: message.foundMessageFragments.filter(f => !!f.automod).map(f => f.text)
+                });
+            }
+        });
+        listeners.push(autoModListener);
+
         const modListener = await pubSubClient.onModAction(streamer.userId, streamer.userId, (message) => {
             const frontendCommunicator = require("../../common/frontend-communicator");
 

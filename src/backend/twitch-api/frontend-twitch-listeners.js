@@ -2,6 +2,7 @@
 
 const twitchApi = require("./api");
 const frontendCommunicator = require("../common/frontend-communicator");
+const logger = require("../logwrapper");
 
 exports.setupListeners = () => {
 
@@ -16,6 +17,18 @@ exports.setupListeners = () => {
             username: c.displayName,
             avatarUrl: c.thumbnailUrl
         }));
+    });
+
+    frontendCommunicator.on("process-automod-message", async data => {
+        const accountAccess = require("../common/account-access");
+        const streamerChannelId = accountAccess.getAccounts().streamer.channelId;
+        try {
+            await twitchApi.getClient().moderation.processHeldAutoModMessage(streamerChannelId, data.messageId, data.allow);
+        } catch (error) {
+            const likelyExpired = error?.body?.includes("attempted to update a message status that was either already set");
+            frontendCommunicator.send("twitch:chat:automod-update-error", { messageId: data.messageId, likelyExpired });
+            logger.error(error);
+        }
     });
 
     frontendCommunicator.onAsync("get-twitch-game", gameId => {

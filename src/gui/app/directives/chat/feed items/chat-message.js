@@ -18,14 +18,20 @@
             },
             template: `
                 <div class="chat-message-wrapper">
-                    <div 
-                        ng-if="$ctrl.message.isAnnouncement" 
-                        class="announcement-bar" 
+                    <div
+                        ng-if="$ctrl.message.isAnnouncement"
+                        class="announcement-bar"
                         ng-class="$ctrl.message.announcementColor"
                     >
                     </div>
+                    <div
+                        ng-if="$ctrl.message.isAutoModHeld"
+                        class="automod-bar"
+                        ng-class="$ctrl.message.autoModStatus"
+                    >
+                    </div>
                     <div ng-if="$ctrl.message.isAnnouncement" style="background: #00000014;padding: 5px 10px;margin-top:5px">
-                    <i class="fad fa-bullhorn"></i> Announcement
+                        <i class="fad fa-bullhorn"></i> Announcement
                     </div>
                     <div class="chat-message"
                         ng-class="{
@@ -101,7 +107,7 @@
                             <div class="chatContent">
                                 <span ng-repeat="part in $ctrl.message.parts" class="chat-content-wrap">
 
-                                    <span ng-if="part.type === 'text'" style="{{$ctrl.chatSizeStyle}}">{{part.text}}</span>
+                                    <span ng-if="part.type === 'text'" style="{{$ctrl.chatSizeStyle}}" ng-class="{ highlightText: part.flagged }">{{part.text}}</span>
 
                                     <a ng-if="part.type === 'link'" style="{{$ctrl.chatSizeStyle}}" ng-href="{{part.url}}" target="_blank">{{part.text}}</a>
 
@@ -148,6 +154,28 @@
                             <div ng-show="$ctrl.message.whisper" class="muted">(Whispered to you)</div>
                         </div>
                     </div>
+                    <div class="automod-tag" ng-show="$ctrl.message.isAutoModHeld">
+                        <div ng-if="$ctrl.message.autoModStatus === 'PENDING' && !$ctrl.message.autoModErrorMessage">
+                            <span>Flagged by AutoMod ({{$ctrl.message.autoModReason}}): </span>
+                            <span ng-if="!$ctrl.respondedToAutoMod">
+                                <a href style="font-weight: 700;" ng-click="$ctrl.allowAutoModMessage()">Allow</a>
+                                <span> • </span>
+                                <a href style="font-weight: 700;" ng-click="$ctrl.denyAutoModMessage()">Deny</a>
+                            </span>
+                            <span ng-if="$ctrl.respondedToAutoMod" class="muted">
+                                Sending...
+                            </span>
+                        </div>
+                        <div ng-if="$ctrl.message.autoModStatus === 'PENDING' && $ctrl.message.autoModErrorMessage">
+                            <span style="color: rgb(255 149 149)">{{$ctrl.message.autoModErrorMessage}}</span>
+                        </div>
+                        <div ng-if="['ALLOWED', 'DENIED'].includes($ctrl.message.autoModStatus)">
+                            <span>{{$ctrl.message.autoModStatus === 'ALLOWED' ? 'Allowed' : 'Denied'}} by {{$ctrl.message.autoModResolvedBy}}</span>
+                        </div>
+                        <div ng-if="$ctrl.message.autoModStatus === 'EXPIRED'">
+                            <span>Expired</span>
+                        </div>
+                    </div>
                     <div ng-if="$ctrl.message.isAnnouncement" style="margin-bottom:5px">
                 </div>
             `,
@@ -156,6 +184,24 @@
                 const $ctrl = this;
 
                 $ctrl.pronouns = pronounsService;
+
+                $ctrl.respondedToAutoMod = false;
+
+                $ctrl.allowAutoModMessage = () => {
+                    if ($ctrl.respondedToAutoMod) {
+                        return;
+                    }
+                    $ctrl.respondedToAutoMod = true;
+                    backendCommunicator.fireEvent("process-automod-message", { messageId: $ctrl.message.id, allow: true });
+                };
+
+                $ctrl.denyAutoModMessage = () => {
+                    if ($ctrl.respondedToAutoMod) {
+                        return;
+                    }
+                    $ctrl.respondedToAutoMod = true;
+                    backendCommunicator.fireEvent("process-automod-message", { messageId: $ctrl.message.id, allow: false });
+                };
 
                 $ctrl.showUserDetailsModal = (userId) => {
                     if (userId == null) {

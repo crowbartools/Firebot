@@ -36,6 +36,9 @@ const utils = require("../utility");
  * @property {boolean} isVip
  * @property {boolean} isCheer
  * @property {boolean} isHighlighted
+ * @property {boolean} isAutoModHeld
+ * @property {string} autoModStatus
+ * @property {string} autoModReason
  *
  */
 
@@ -366,7 +369,45 @@ exports.buildFirebotChatMessageFromExtensionMessage = async (text = "", extensio
     return firebotChatMessage;
 };
 
-exports.buildFirebotChatMessageFromText = async (text = "") => {
+/**
+ * @arg {import("@twurple/pubsub").PubSubAutoModQueueMessage} msg
+ * @returns {Promise<FirebotChatMessage>}
+*/
+exports.buildViewerFirebotChatMessageFromAutoModMessage = async (msg) => {
+    const profilePicUrl = await getUserProfilePicUrl(msg.senderId);
+
+    const parts = msg.foundMessageFragments.map(f => ({
+        type: "text",
+        text: f.text,
+        flagged: f.automod != null
+    }));
+
+    /**@type {FirebotChatMessage} */
+    const viewerFirebotChatMessage = {
+        id: msg.messageId,
+        username: msg.senderDisplayName,
+        userId: msg.senderId,
+        rawText: msg.messageContent,
+        profilePicUrl: profilePicUrl,
+        whisper: false,
+        action: false,
+        tagged: false,
+        isBroadcaster: false,
+        color: msg.senderColor,
+        badges: [],
+        parts,
+        roles: [],
+        isAutoModHeld: true,
+        autoModStatus: msg.status,
+        autoModReason: msg.contentClassification.category
+    };
+
+    // viewerFirebotChatMessage.parts = parseMessageParts(viewerFirebotChatMessage, viewerFirebotChatMessage.parts);
+
+    return viewerFirebotChatMessage;
+};
+
+exports.buildStreamerFirebotChatMessageFromText = async (text = "") => {
     const streamer = accountAccess.getAccounts().streamer;
 
     const action = text.startsWith("/me");
@@ -414,7 +455,7 @@ exports.buildFirebotChatMessage = async (msg, msgText, whisper = false, action =
         id: msg.tags.get("id"),
         username: msg.userInfo.displayName,
         userId: msg.userInfo.userId,
-        customRewardId: msg.tags.get("custom-reward-id"),
+        customRewardId: msg.tags.get("custom-reward-id") || undefined,
         isHighlighted: msg.tags.get("msg-id") === "highlighted-message",
         isAnnouncement: false,
 
