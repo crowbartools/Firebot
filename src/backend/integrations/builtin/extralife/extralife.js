@@ -10,7 +10,7 @@ const integrationDefinition = {
     linkType: "id",
     idDetails: {
         steps:
-`1. Navigate to your ExtraLife Page via the **Your PagE** nav link.
+`1. Navigate to your ExtraLife Page via the **Your Page** nav link.
 
 2. Look for your "Participant ID" in the URL bar, it should be the numbers following \`participantID=\`.
 
