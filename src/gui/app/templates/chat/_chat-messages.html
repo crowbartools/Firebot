@@ -1,0 +1,275 @@
+<div class="chat-tab-content flex">
+  <quick-actions
+    id="dashboardQuickActions"
+    class="quick-actions-column flex flex-col justify-between"
+    ng-style="{'width': layout.dashboardQuickActions }"
+  ></quick-actions>
+
+  <div style="width: 2px; background: #373c3e; position: relative"></div>
+
+  <div
+    id="dashboardViewerList"
+    class="viewer-list-column"
+    ng-show="getChatViewerListSetting()"
+    ng-style="{'width': layout.dashboardViewerList }"
+  >
+    <div class="viewer-list-header">
+      <span role="heading" aria-level="2"> CHAT USERS </span>
+    </div>
+    <div class="chat-users mt-2">
+      <chat-user-category category="Moderators" role-key="mod" />
+      <chat-user-category category="VIPs" role-key="vip" />
+      <chat-user-category category="Viewers" role-key="viewer" />
+      <chat-user-category category="Broadcaster" role-key="broadcaster" />
+      <chat-user-category category="Known Bots" role-key="viewerlistbot" />
+    </div>
+  </div>
+
+  <column-resizer
+    on-update="updateLayoutSettings(updatedSettings)"
+    ng-show="getChatViewerListSetting()"
+  ></column-resizer>
+
+  <div
+    id="dashboardChatWindow"
+    class="chat-window-column"
+    ng-style="{'width': layout.dashboardChatWindow }"
+  >
+    <div class="chat-window-wrapper">
+      <div ng-hide="chatFeedIsEnabled()" class="chatfeed-disabled-overlay">
+        <span style="color: white; font-size: 1.2em; text-align: center"
+          >{{disabledMessage}}</span
+        >
+      </div>
+      <button
+        ng-hide="scrollGlued"
+        ng-click="scrollGlued = true"
+        class="btn-sm clickable mb-4"
+        style="
+          position: absolute;
+          bottom: 0px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: rgba(104, 105, 108, 0.6);
+          border: none;
+          color: white;
+          z-index: 100;
+        "
+      >
+        Chat Paused Due to Scroll
+      </button>
+      <div
+        class="chat-window"
+        ng-init="scrollGlued = true"
+        scroll-glue="scrollGlued"
+        style="{{customFontSizeStyle}}"
+      >
+        <div
+          ng-repeat="chatItem in cms.chatQueue | hideBotMessages | limitTo:messageDisplayLimit track by chatItem.id"
+          class="chat-item"
+          ng-class="{ alternate: alternateBackgrounds}"
+          scroll-glue-anchor
+        >
+          <chat-message
+            ng-if="chatItem.type === 'message'"
+            message="chatItem.data"
+            compact-display="compactDisplay"
+            alternate-backgrounds="alternateBackgrounds"
+            hide-deleted-messages="hideDeletedMessages"
+            show-avatar="showAvatars"
+            show-timestamp="showTimestamps"
+            show-bttv-emotes="showBttvEmotes"
+            show-ffz-emotes="showFfzEmotes"
+            show-seven-tv-emotes="showSevenTvEmotes"
+            show-pronoun="showPronouns"
+            update-chat-input="updateChatInput(text)"
+            chat-size-style="{{customFontSizeStyle}}"
+          />
+          <reward-redemption
+            ng-if="chatItem.type === 'redemption'"
+            redemption="chatItem.data"
+          />
+          <chat-alert
+            ng-if="chatItem.type === 'alert'"
+            message="chatItem.data"
+          />
+        </div>
+      </div>
+      <div class="chat-autodisconnected" ng-show="cms.autodisconnected">
+        Disconnected from chat, trying to reconnect...
+      </div>
+    </div>
+    <div class="text-input-wrapper">
+      <div
+        class="text-input"
+        chat-auto-complete-menu
+        ng-model="chatMessage"
+        input-id="chatMessageInput"
+      >
+        <div class="dropup">
+          <span
+            class="dropdown-toggle chatter-dropdown"
+            data-toggle="dropdown"
+            uib-tooltip="Chat as"
+            tooltip-placement="left"
+            tooltip-append-to-body="true"
+          >
+            <span class="ml-4" style="width: 100%; text-align: center"
+              >{{chatSender}}</span
+            >
+            <div class="fb-arrow down mx-4 mb-1"></div>
+          </span>
+          <ul class="dropdown-menu">
+            <li ng-click="chatSender = 'Streamer'"><a href>Streamer</a></li>
+            <li ng-click="chatSender = 'Bot'" ng-show="botLoggedIn">
+              <a href>Bot</a>
+            </li>
+          </ul>
+        </div>
+
+        <input
+          id="chatMessageInput"
+          type="text"
+          placeholder="Message the stream"
+          class="text-input-field"
+          style="height: 100%"
+          ng-maxlength="360"
+          ng-model="chatMessage"
+          ng-change="onMessageFieldUpdate()"
+          ng-keydown="onMessageFieldKeypress($event)"
+          ng-trim="false"
+          ng-disabled="!chatFeedIsEnabled()"
+        />
+      </div>
+      <div class="settings-btn-wrapper">
+        <button
+          class="settings-btn"
+          ng-click="showChatSettingsModal()"
+          aria-label="Chat Settings"
+        >
+          <i class="fas fa-cog"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <column-resizer
+    on-update="updateLayoutSettings(updatedSettings)"
+    ng-show="settings.showActivityFeed()"
+  ></column-resizer>
+
+  <div
+    id="dashboardActivityFeed"
+    class="activity-feed-column"
+    ng-show="settings.showActivityFeed()"
+    ng-style="{'width': layout.dashboardActivityFeed }"
+  >
+    <div class="activity-feed-header">
+      <div style="display: flex; align-items: center">
+        <span>ACTIVITY FEED</span>
+        <span
+          ng-show="afs.unacknowledgedCount() > 0"
+          uib-tooltip="Unacknowledged events"
+          tooltip-append-to-body="true"
+          class="ml-2 py-px px-2"
+          style="
+            background: rgb(119, 121, 121);
+            border-radius: 30%;
+            color: white;
+            font-size: 12px;
+            display: inline;
+            height: max-content;
+            flex-grow: 0;
+            flex-shrink: 0;
+          "
+          >{{afs.unacknowledgedCount()}}</span
+        >
+      </div>
+      <div uib-dropdown>
+        <a
+          href
+          uib-dropdown-toggle
+          class="clickable"
+          style="color: white; font-size: 20px; line-height: 1"
+          aria-label="Activity feed options"
+        >
+          <i class="far fa-ellipsis-v"></i>
+        </a>
+        <ul class="dropdown-menu right-justified-dropdown" uib-dropdown-menu>
+          <li ng-class="{'disabled': afs.activities.length < 1}">
+            <a href ng-click="afs.toggleMarkAllAcknowledged()"
+              ><i
+                class="far fa-check-square mr-4"
+                aria-label="Mark all events as acknowledged"
+              ></i>
+              Mark all as {{afs.allAcknowledged() ? 'Unacknowledged' :
+              'Acknowledged'}}</a
+            >
+          </li>
+          <li>
+            <a href ng-click="afs.showEditActivityFeedEventsModal()"
+              ><i class="far fa-toggle-off mr-4" aria-label="Edit events"></i>
+              Edit events</a
+            >
+          </li>
+          <!-- <li class="divider"></li> -->
+        </ul>
+      </div>
+    </div>
+    <div class="activity-list">
+      <div
+        class="activity alternate-bg"
+        ng-class="activity.acknowledged ? 'muted' : ''"
+        ng-repeat="activity in afs.activities track by activity.id"
+      >
+        <div
+          class="mr-4"
+          style="
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            align-items: center;
+          "
+        >
+          <i
+            class="{{activity.icon}}"
+            uib-tooltip="{{activity.source.name}}: {{activity.event.name}}"
+            style="font-size: 15px"
+          ></i>
+          <span style="font-size: 10px" class="muted"
+            >{{activity.timestamp}}</span
+          >
+        </div>
+        <div
+          style="width: 100%"
+          class="activity-message"
+          ng-hide="hideEventLabel"
+          ng-bind-html="activity.message"
+        ></div>
+        <div
+          class="ml-4"
+          style="font-size: 15px; display: flex; align-items: center"
+        >
+          <i
+            class="clickable far fa-redo mr-4"
+            ng-click="afs.retriggerEvent(activity.id)"
+            uib-tooltip="Retrigger event"
+            tooltip-placement="top-right"
+            tooltip-append-to-body="true"
+            aria-label="Retrigger {{activity.event.name}}"
+          ></i>
+
+          <i
+            class="clickable far"
+            ng-class="activity.acknowledged ? 'fa-check-square' : 'fa-square'"
+            ng-click="activity.acknowledged = !activity.acknowledged"
+            uib-tooltip="{{activity.acknowledged ? 'Acknowledged' : 'Acknowledge'}}"
+            tooltip-placement="top-right"
+            tooltip-append-to-body="true"
+            aria-label="Acknowledge {{activity.event.name}}"
+          ></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

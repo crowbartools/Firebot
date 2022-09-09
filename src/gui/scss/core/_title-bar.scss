@@ -1,0 +1,29 @@
+.modal-dialog {
+    margin-top: 60px !important;
+}
+
+.ng-toast {
+    margin-top: 40px !important;
+}
+
+.cet-window-icon {
+    display: none !important;
+}
+
+.cet-titlebar.cet-windows, .cet-titlebar.cet-linux {
+    font-family: 'Open Sans';
+    font-size: 12px;
+    font-weight: 100;
+}
+
+.cet-titlebar.cet-windows {
+    .cet-window-title {
+        display: none;
+    }
+    
+    .cet-menubar {
+        margin-right: auto;
+    }
+}
+
+

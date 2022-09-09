@@ -53,6 +53,9 @@ jobs:
         with:
           node-version: '14.x'
 
+      - name: Install Correct NPM Version
+        run: npm install -g npm@8.16.0
+
       - name: Install Global Dependencies
         shell: bash
         run: |
@@ -102,6 +105,9 @@ jobs:
         uses: 'actions/setup-node@v2'
         with:
           node-version: '14.x'
+
+      - name: Install Correct NPM Version
+        run: npm install -g npm@8.16.0
 
       - name: Install Global Dependencies
         run: npm install --quiet --global --production grunt-cli node-gyp
