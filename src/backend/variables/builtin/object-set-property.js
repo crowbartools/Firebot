@@ -37,6 +37,7 @@ const model = {
         }
 
         try {
+            let cursor = object;
             const valueRaw = value != null ? value.toString().toLowerCase() : "null";
             const valueIsNull = valueRaw === "null" || valueRaw === "undefined";
 
@@ -52,18 +53,18 @@ const model = {
                 const isLastItem = i === pathNodes.length - 1;
                 if (isLastItem) {
                     // If data recognized as null and cursor is an array, remove index instead of setting value
-                    if (valueIsNull && Array.isArray(object) && !isNaN(node)) {
-                        object.splice(node, 1);
+                    if (valueIsNull && Array.isArray(cursor) && !isNaN(node)) {
+                        cursor.splice(node, 1);
                     } else {
                         // If next node is an array and we detect we are not setting a new array or removing array, then push data to array
-                        if (Array.isArray(object[node]) && !Array.isArray(value) && !valueIsNull) {
-                            object[node].push(value);
+                        if (Array.isArray(cursor[node]) && !Array.isArray(value) && !valueIsNull) {
+                            cursor[node].push(value);
                         } else {
-                            object[node] = valueIsNull ? undefined : value;
+                            cursor[node] = valueIsNull ? undefined : value;
                         }
                     }
                 } else {
-                    object = object[node];
+                    cursor = cursor[node];
                 }
             }
         } catch (error) {
