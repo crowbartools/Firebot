@@ -4,5 +4,11 @@
         "title": "OBS Integration Update",
         "message": "<div>With the release of v5.54.0, our OBS integration is now built into Firebot natively. No script required! You can find it in Settings > Integrations. If you had our OBS Control script previously installed, please remove it via Settings > Scripts > Manage Startup Scripts.<br><br>The native integration is built to work with OBS 28 or obs-websocket v5. If you are not on OBS 28, you will need to update the obs-websocket plugin to v5. We have a version chart <a href ng-click=\"$rootScope.openLinkExternally('https://github.com/crowbartools/Firebot/wiki/Firebot-OBS-Integration-Chart')\">here</a> for reference.</div>",
         "icon": "alert"
+    },
+    {
+        "id": "auth-updates-5.54",
+        "title": "Reauth Streamer and Bot Account",
+        "message": "<div>v5.54.0 introduces new features that required us to request additional Twitch authorization scopes. At your earliest convenience, please re-log into both your Streamer and Bot accounts. This will ensure Firebot continues to run as expected. Thank you!</div>",
+        "icon": "alert"
     }
 ]
