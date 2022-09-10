@@ -14,7 +14,11 @@ class EffectManager extends EventEmitter {
     }
 
     registerEffect(effect) {
-        // do some validation on the incoming effect
+        if (this._registeredEffects.some(e => e?.definition?.id === effect.definition.id)) {
+            logger.warn(`Attempted to register duplicate effect: ${effect.definition.id}.`);
+            return;
+        }
+
         this._registeredEffects.push(effect);
 
         logger.debug(`Registered Effect ${effect.definition.id}`);
