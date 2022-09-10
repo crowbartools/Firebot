@@ -293,7 +293,7 @@ const showImage = {
 
                 const styles = (data.imageWidth ? `width: ${data.imageWidth};` : '') +
                             (data.imageHeight ? `height: ${data.imageHeight};` : '');
-                const imageTag = `<img src="${filepathNew}" style="${styles}">`;
+                const imageTag = `<img src="${filepathNew}" style="${styles}" />`;
 
                 showElement(imageTag, positionData, animationData); // eslint-disable-line no-undef
             }
