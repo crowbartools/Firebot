@@ -6,7 +6,7 @@ const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const settings = require("../../common/settings-access").settings;
 const logger = require("../../logwrapper");
 const webServer = require("../../../server/http-server-manager");
-const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
+const { EffectCategory } = require('../../../shared/effect-constants');
 
 const model = {
     definition: {
@@ -15,13 +15,13 @@ const model = {
         description: "Pulls a random image from a selected subreddit.",
         icon: "fab fa-reddit-alien",
         categories: [EffectCategory.FUN, EffectCategory.CHAT_BASED, EffectCategory.OVERLAY],
-        dependencies: [EffectDependency.CHAT]
+        dependencies: []
     },
     globalSettings: {},
     optionsTemplate: `
     <eos-container header="Subreddit Name">
         <div class="input-group">
-            <span class="input-group-addon" id="reddit-effect-type">To</span>
+            <span class="input-group-addon" id="reddit-effect-type">r/</span>
             <input ng-model="effect.reddit" type="text" class="form-control" id="reddit-setting" aria-describedby="chat-text-effect-type" placeholder="puppies">
         </div>
     </eos-container>
@@ -56,20 +56,20 @@ const model = {
                 <div class="input-group">
                     <span class="input-group-addon">Width</span>
                     <input
-                    type="number"
-                    class="form-control"
-                    aria-describeby="image-width-setting-type"
-                    type="number"
-                    ng-model="effect.width"
-                    placeholder="px">
+                        type="number"
+                        class="form-control"
+                        aria-describeby="image-width-setting-type"
+                        type="number"
+                        ng-model="effect.width"
+                        placeholder="px">
                     <span class="input-group-addon">Height</span>
                     <input
-                    type="number"
-                    class="form-control"
-                    aria-describeby="image-height-setting-type"
-                    type="number"
-                    ng-model="effect.height"
-                    placeholder="px">
+                        type="number"
+                        class="form-control"
+                        aria-describeby="image-height-setting-type"
+                        type="number"
+                        ng-model="effect.height"
+                        placeholder="px">
                 </div>
             </div>
         </div>
@@ -111,7 +111,7 @@ const model = {
         }
 
         if (effect.show == null) {
-            errors.push("Please select a place to show the API results.");
+            errors.push("Please select a place to show the reddit image.");
         }
         return errors;
     },
@@ -121,31 +121,27 @@ const model = {
         const imageUrl = await redditProcessor.getRandomImage(subName);
 
         try {
+            logger.debug("Random Reddit: " + imageUrl);
             if (event.effect.show === "chat" || event.effect.show === "both") {
-                // Send Chat
-                logger.debug("Random Reddit: " + imageUrl);
                 twitchChat.sendChatMessage("Random Reddit: " + imageUrl, null, chatter);
             }
 
             if (event.effect.show === "overlay" || event.effect.show === "both") {
                 // Send image to overlay.
-                let position = event.effect.position,
-                    data = {
-                        url: imageUrl,
-                        imageType: "url",
-                        imagePosition: position,
-                        imageHeight: event.effect.height,
-                        imageWidth: event.effect.width,
-                        imageDuration: event.effect.length,
-                        enterAnimation: event.effect.enterAnimation,
-                        exitAnimation: event.effect.exitAnimation,
-                        customCoords: event.effect.customCoords
-                    };
+                const position = event.effect.position !== "Random" ? event.effect.position : mediaProcessor.getRandomPresetLocation();
 
-                // Get random location.
-                if (position === "Random") {
-                    position = mediaProcessor.getRandomPresetLocation();
-                }
+                const data = {
+                    url: imageUrl,
+                    imageType: "url",
+                    imagePosition: position,
+                    imageHeight: event.effect.height ? event.effect.height + "px" : "auto",
+                    imageWidth: event.effect.width ? event.effect.width + "px" : "auto",
+                    imageDuration: event.effect.length,
+                    enterAnimation: event.effect.enterAnimation,
+                    exitAnimation: event.effect.exitAnimation,
+                    customCoords: event.effect.customCoords
+                };
+
 
                 if (settings.useOverlayInstances()) {
                     if (event.effect.overlayInstance != null) {
