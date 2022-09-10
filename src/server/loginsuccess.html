@@ -6,16 +6,19 @@
 
   <title>Login Successful!</title>
 
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     html {
       height: 100%;
     }
     body {
-      background: #1E2023;
+      background: rgb(30,32,35);
+      background: linear-gradient(59deg, rgb(32 35 39) 0%, rgb(46 47 52) 51%, rgb(42 44 48) 100%);
       color: rgb(240, 240, 240);
-      font-family: 'Open Sans', sans-serif;
+      font-family: 'Inter', sans-serif;
       height: 100%;
       margin: 0;
     }
@@ -32,6 +35,9 @@
       align-items: center;
       transform: translateY(-12%);
     }
+    .bold {
+      font-weight: 800;
+    }
   </style>
 
 </head>
@@ -39,9 +45,9 @@
 <body>
   <div class="centered">
     <div class="wrapper">
-      <img src="https://raw.githubusercontent.com/crowbartools/Firebot/master/gui/images/logo_transparent.png" style="width: 250px; height: 250px;">
-      <span style="font-size: 50px;font-weight: 100;"><strong id="providerName"></strong> login successful!</span>
-      <span style="margin-top:15px;font-size: 22px;">You can close this page and return to <strong>Firebot</strong>.</span>
+      <img src="https://raw.githubusercontent.com/crowbartools/Firebot/master/src/gui/images/logo_transparent_2.png" style="width: 250px; height: 250px;">
+      <span style="font-size: 50px;font-weight: 100;"><strong id="providerName" class="bold"></strong> login successful!</span>
+      <span style="margin-top:15px;font-size: 22px;">You can close this page and return to <strong class="bold">Firebot</strong>.</span>
     </div>
   </div>
   <script>
