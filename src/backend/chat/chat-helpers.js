@@ -346,6 +346,7 @@ exports.buildFirebotChatMessageFromExtensionMessage = async (text = "", extensio
     const firebotChatMessage = {
         id: id,
         username: extensionName,
+        useridname: extensionName,
         userId: extensionName,
         rawText: text,
         profilePicUrl: extensionIconUrl,
@@ -386,6 +387,7 @@ exports.buildViewerFirebotChatMessageFromAutoModMessage = async (msg) => {
     const viewerFirebotChatMessage = {
         id: msg.messageId,
         username: msg.senderDisplayName,
+        useridname: msg.senderName,
         userId: msg.senderId,
         rawText: msg.messageContent,
         profilePicUrl: profilePicUrl,
@@ -420,6 +422,7 @@ exports.buildStreamerFirebotChatMessageFromText = async (text = "") => {
     const streamerFirebotChatMessage = {
         id: uuid(),
         username: streamer.displayName,
+        useridname: streamer.username,
         userId: streamer.userId,
         rawText: text,
         profilePicUrl: streamer.avatar,
@@ -454,6 +457,7 @@ exports.buildFirebotChatMessage = async (msg, msgText, whisper = false, action =
     const firebotChatMessage = {
         id: msg.tags.get("id"),
         username: msg.userInfo.displayName,
+        useridname: msg.userInfo.userName,
         userId: msg.userInfo.userId,
         customRewardId: msg.tags.get("custom-reward-id") || undefined,
         isHighlighted: msg.tags.get("msg-id") === "highlighted-message",
