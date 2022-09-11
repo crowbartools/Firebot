@@ -96,7 +96,9 @@ class ExtraLifePollService extends TypedEmitter<ConnectionEvents> {
       return;
     }
 
-    donations.forEach(this.cacheDonation);
+    donations.forEach((d) => {
+      this.cacheDonation(d);
+    });
 
     this.pollId = setInterval(() => this.poll(), 15000);
 
