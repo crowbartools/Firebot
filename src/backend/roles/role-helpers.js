@@ -27,6 +27,19 @@ async function getAllRolesForViewer(username) {
 }
 
 /**
+ *
+ * @param {string} username
+ */
+async function getAllRolesForViewerNameSpaced(username) {
+    return {
+        twitchRoles: (await chatRolesManager.getUsersChatRoles(username)).map(twitchRolesManager.mapTwitchRole),
+        firebotRoles: firebotRolesManager.getAllFirebotRolesForViewer(username),
+        customRoles: customRolesManager.getAllCustomRolesForViewer(username),
+        teamRoles: await teamRolesManager.getAllTeamRolesForViewer(username)
+    }
+}
+
+/**
  * Check if user has the given role its id
  * @param {string} username
  * @param {string} expectedRoleName
@@ -68,6 +81,7 @@ async function viewerHasRolesByName(username, expectedRoleNames) {
 }
 
 exports.getAllRolesForViewer = getAllRolesForViewer;
+exports.getAllRolesForViewerNameSpaced = getAllRolesForViewerNameSpaced;
 exports.viewerHasRoles = viewerHasRoles;
 exports.viewerHasRolesByName = viewerHasRolesByName;
 exports.viewerHasRole = viewerHasRole;
