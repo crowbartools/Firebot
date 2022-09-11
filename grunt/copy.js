@@ -57,7 +57,7 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        dest: 'dist/pack/Firebot-linux-x64/',
+                        dest: 'dist/pack/Firebot-linux-x64/resources/',
                         cwd: 'build/resources/',
                         src: ['**'],
                         filter: 'isFile'
