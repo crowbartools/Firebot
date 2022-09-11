@@ -245,6 +245,12 @@ function createMainWindow() {
                     type: 'separator'
                 },
                 {
+                    label: 'Merch Store',
+                    click: () => {
+                        shell.openExternal("https://crowbar-tools.myspreadshop.com");
+                    }
+                },
+                {
                     label: 'Donate',
                     click: () => {
                         shell.openExternal("https://opencollective.com/crowbartools");
