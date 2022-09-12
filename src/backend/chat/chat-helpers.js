@@ -14,6 +14,7 @@ const utils = require("../utility");
  * @typedef FirebotChatMessage
  * @property {string} id
  * @property {string} username
+ * @property {string} useridname
  * @property {string} profilePicUrl
  * @property {number} userId
  * @property {string[]} roles

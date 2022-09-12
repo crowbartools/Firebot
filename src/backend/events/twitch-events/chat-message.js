@@ -7,6 +7,7 @@ const eventManager = require("../../events/EventManager");
  */
 exports.triggerChatMessage = (firebotChatMessage) => {
     eventManager.triggerEvent("twitch", "chat-message", {
+        useridname: firebotChatMessage.useridname,
         username: firebotChatMessage.username,
         twitchUserRoles: firebotChatMessage.roles,
         messageText: firebotChatMessage.rawText,
