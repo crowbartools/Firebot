@@ -2,9 +2,10 @@
 
 const eventManager = require("../../events/EventManager");
 
-exports.triggerFollow = (username, userId) => {
+exports.triggerFollow = (userId, userIdName, username) => {
     eventManager.triggerEvent("twitch", "follow", {
-        username,
-        userId
+        userId,
+        userIdName,
+        username
     });
 };

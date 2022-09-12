@@ -12,6 +12,7 @@ exports.triggerSub = (subInfo) => {
     const isPrime = subInfo.subPlan === "Prime";
 
     eventManager.triggerEvent("twitch", "sub", {
+        useridname: subInfo.userName,
         username: subInfo.userDisplayName,
         subPlan: subInfo.subPlan,
         totalMonths: totalMonths || 1,
