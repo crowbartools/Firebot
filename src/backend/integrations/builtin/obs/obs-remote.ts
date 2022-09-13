@@ -194,6 +194,12 @@ export type OBSSource = {
   filters: Array<OBSFilter>;
 };
 
+export type OBSTextSourceSettings = {
+  text?: string;
+  readFromFile?: boolean;
+  file?: string;
+};
+
 export async function getAllSources(): Promise<Array<OBSSource> | null> {
   if (!connected) return null;
   try {
@@ -320,6 +326,26 @@ export async function setSourceMuted(sourceName: string, muted: boolean) {
     });
   } catch (error) {
     logger.error("Failed to set mute for source", error);
+  }
+}
+
+export async function getTextSources(): Promise<Array<OBSSource>> {
+  const sources = await getAllSources();
+  return sources.filter((s) => s.typeId === "text_gdiplus_v2");
+}
+
+export async function setTextSourceSettings(sourceName: string, settings: OBSTextSourceSettings) {
+  try {
+    await obs.call("SetInputSettings", {
+      inputName: sourceName,
+      inputSettings: {
+        text: settings.text,
+        read_from_file: settings.readFromFile,
+        file: settings.file
+      }
+    });
+  } catch (error) {
+    logger.error("Failed to set text for source", error);
   }
 }
 
