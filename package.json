@@ -114,7 +114,7 @@
     "node-hue-api": "^4.0.11",
     "node-json-db": "^1.4.1",
     "node-xlsx": "^0.20.0",
-    "obs-websocket-js": "^5.0.0",
+    "obs-websocket-js": "^5.0.1",
     "parse-link-header": "^1.0.1",
     "probe-image-size": "^5.0.0",
     "request": "^2.85.0",
