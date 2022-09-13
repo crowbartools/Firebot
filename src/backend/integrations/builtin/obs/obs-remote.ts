@@ -99,7 +99,7 @@ export async function setCurrentSceneCollection(
   }
 }
 
-export type SourceData = Record<string, Array<{ id: number; name: string }>>;
+export type SourceData = Record<string, Array<{ id: number; name: string, groupName?: string }>>;
 
 export async function getSourceData(): Promise<SourceData> {
   if (!connected) return null;
@@ -110,10 +110,29 @@ export async function getSourceData(): Promise<SourceData> {
       const itemList = await obs.call("GetSceneItemList", {
         sceneName: scene.sceneName as string,
       });
-      data[scene.sceneName as string] = itemList.sceneItems.map((i) => ({
-        id: i.sceneItemId as number,
-        name: i.sourceName as string,
-      }));
+
+      data[scene.sceneName as string] = [];
+
+      for (const item of itemList.sceneItems) {
+        data[scene.sceneName as string].push({
+          id: item.sceneItemId as number,
+          name: item.sourceName as string,
+        });
+
+        if (item.isGroup === true) {
+          const groupItemList = await obs.call("GetGroupSceneItemList", {
+            sceneName: item.sourceName as string,
+          });
+          
+          const groupItems = groupItemList.sceneItems.map((gi) => ({
+            id: gi.sceneItemId as number,
+            name: gi.sourceName as string,
+            groupName: item.sourceName as string
+          }));
+
+          data[scene.sceneName as string].push(...groupItems);
+        }
+      }
     }
     return data;
   } catch (error) {
