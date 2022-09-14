@@ -3,7 +3,7 @@ import axios from "axios";
 import accountAccess from "../../common/account-access";
 import logger from "../../logwrapper";
 
-export class SevenTVEmoteProvider extends ThirdPartyEmoteProvider {
+export class SevenTVEmoteProvider implements ThirdPartyEmoteProvider {
     globalEmoteUrl = "https://api.7tv.app/v2/emotes/global";    
     getChannelEmotesUrl = () => `https://api.7tv.app/v2/users/${accountAccess.getAccounts().streamer.userId}/emotes`;
 

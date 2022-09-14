@@ -3,7 +3,7 @@ import axios from "axios";
 import accountAccess from "../../common/account-access";
 import logger from "../../logwrapper";
 
-export class BTTVEmoteProvider extends ThirdPartyEmoteProvider {
+export class BTTVEmoteProvider implements ThirdPartyEmoteProvider {
     globalEmoteUrl = "https://api.betterttv.net/3/cached/emotes/global";    
     getChannelEmotesUrl = () => `https://api.betterttv.net/3/cached/users/twitch/${accountAccess.getAccounts().streamer.userId}`;
 

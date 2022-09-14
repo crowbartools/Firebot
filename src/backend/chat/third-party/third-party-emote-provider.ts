@@ -5,8 +5,8 @@ export class ThirdPartyEmote {
     animated: boolean;
 }
 
-export abstract class ThirdPartyEmoteProvider {
+export interface ThirdPartyEmoteProvider {
     globalEmoteUrl: string;
-    abstract getChannelEmotesUrl(): string;
-    abstract getAllEmotes(): Promise<ThirdPartyEmote[]>;
+    getChannelEmotesUrl(): string;
+    getAllEmotes(): Promise<ThirdPartyEmote[]>;
 }
