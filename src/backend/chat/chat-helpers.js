@@ -4,9 +4,9 @@ const uuid = require("uuid/v4");
 const logger = require("../logwrapper");
 const accountAccess = require("../common/account-access");
 const twitchClient = require("../twitch-api/api");
-const bttv = require("./third-party/bttv");
-const ffz = require("./third-party/ffz");
-const sevenTv = require("./third-party/7tv");
+const { BTTVEmoteProvider } = require("./third-party/bttv");
+const { FFZEmoteProvider } = require("./third-party/ffz");
+const { SevenTVEmoteProvider } = require("./third-party/7tv");
 const frontendCommunicator = require("../common/frontend-communicator");
 const utils = require("../utility");
 
@@ -107,27 +107,24 @@ exports.cacheTwitchEmotes = async () => {
 };
 
 /**
- * @typedef ThirdPartyEmote
- * @property {string} url
- * @property {string} code
- * @property {string} origin
- * @property {boolean} animated
- */
-
-/**
- * @type {ThirdPartyEmote[]}
+ * @type {import('./third-party/third-party-emote-provider').ThirdPartyEmote[]}
  */
 let thirdPartyEmotes = [];
 
+/**
+ * @type {import('./third-party/third-party-emote-provider').ThirdPartyEmoteProvider[]}
+ */
+const thirdPartyEmoteProviders = [
+    new BTTVEmoteProvider(),
+    new FFZEmoteProvider(),
+    new SevenTVEmoteProvider()
+];
+
 exports.cacheThirdPartyEmotes = async () => {
-    const bttvEmotes = await bttv.getAllBttvEmotes();
-    const ffzEmotes = await ffz.getAllFfzEmotes();
-    const sevenTvEmotes = await sevenTv.getAllSevenTvEmotes();
-    thirdPartyEmotes = [
-        ...bttvEmotes,
-        ...ffzEmotes,
-        ...sevenTvEmotes
-    ];
+    thirdPartyEmotes = [];
+    for (const provider of thirdPartyEmoteProviders) {
+        thirdPartyEmotes.push(...await provider.getAllEmotes());
+    }
 };
 
 exports.handleChatConnect = async () => {
