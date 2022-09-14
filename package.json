@@ -79,7 +79,7 @@
     "cm-resize": "^1.0.1",
     "codemirror": "^5.59.1",
     "color-convert": "^2.0.1",
-    "compare-versions": "^3.5.1",
+    "compare-versions": "^5.0.1",
     "cors": "^2.8.5",
     "countup.js-angular1": "^1.0.0",
     "custom-electron-titlebar": "^4.1.0",
