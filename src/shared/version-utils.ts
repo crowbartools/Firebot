@@ -1,26 +1,4 @@
-import { compareVersions, compare, validate } from "compare-versions";
-
-class SemanticVersion {
-  private semverRegex =
-    /^[v^~<>=]*?(\d+)(?:\.([x*]|\d+)(?:\.([x*]|\d+)(?:\.([x*]|\d+))?(?:-([\da-z\-]+(?:\.[\da-z\-]+)*))?(?:\+[\da-z\-]+(?:\.[\da-z\-]+)*)?)?)?$/i;
-
-  public readonly major: number;
-  public readonly minor: number;
-  public readonly patch: number;
-  public readonly prerelease: string | undefined;
-
-  constructor(public readonly rawVersion: string) {
-    const result = rawVersion.match(this.semverRegex);
-
-    // get rid of first entry which is the full match
-    result.shift();
-
-    this.major = parseInt(result[0] ?? "0");
-    this.minor = parseInt(result[1] ?? "0");
-    this.patch = parseInt(result[2] ?? "0");
-    this.prerelease = result[4];
-  }
-}
+import { compareVersions, validate } from "compare-versions";
 
 export enum UpdateType {
   Unknown,
@@ -81,12 +59,16 @@ export function determineUpdateType(
     return UpdateType.Official;
   }
 
+  if (nextIsPrerelease && (isMinorUpdate || isPatchUpdate)) {
+    return UpdateType.Prerelease;
+  }
+
   if (isMinorUpdate) {
-    return nextIsPrerelease ? UpdateType.Prerelease : UpdateType.Minor;
+    return UpdateType.Minor;
   }
 
   if (isPatchUpdate) {
-    return nextIsPrerelease ? UpdateType.Prerelease : UpdateType.Patch;
+    return UpdateType.Patch;
   }
 
   if (currentIsPrerelease && nextIsPrerelease) {
@@ -94,4 +76,22 @@ export function determineUpdateType(
   }
 
   return UpdateType.Unknown;
+}
+
+class SemanticVersion {
+  private semverRegex =
+    /^[v^~<>=]*?(\d+)(?:\.([x*]|\d+)(?:\.([x*]|\d+)(?:\.([x*]|\d+))?(?:-([\da-z\-]+(?:\.[\da-z\-]+)*))?(?:\+[\da-z\-]+(?:\.[\da-z\-]+)*)?)?)?$/i;
+
+  public readonly major: number;
+  public readonly minor: number;
+  public readonly patch: number;
+  public readonly prerelease: string | undefined;
+
+  constructor(public readonly rawVersion: string) {
+    const result = rawVersion.match(this.semverRegex);
+    this.major = parseInt(result[1] ?? "0");
+    this.minor = parseInt(result[2] ?? "0");
+    this.patch = parseInt(result[3] ?? "0");
+    this.prerelease = result[5];
+  }
 }

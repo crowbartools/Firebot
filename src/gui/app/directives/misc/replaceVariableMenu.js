@@ -3,7 +3,7 @@
 
     const { VariableCategory } = require("../../shared/variable-constants");
 
-    const marked = require("marked");
+    const { marked } = require("marked");
     const { sanitize } = require("dompurify");
 
     angular.module("firebotApp")

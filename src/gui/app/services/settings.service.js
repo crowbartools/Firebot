@@ -754,6 +754,13 @@
                 pushDataToFile('/settings/whileLoopEnabled', enabled === true);
             };
 
+            service.getDelayedUpdateDateForVersion = function(version) {
+                return getDataFromFile(`/settings/delayedUpdatesAt/${version}`, false, null);
+            };
+            service.setDelayedUpdateDateForVersion = function (version, date) {
+                pushDataToFile(`/settings/delayedUpdatesAt/${version}`, date);
+            };
+
             service.getMinimizeToTray = function () {
                 return getDataFromFile('/settings/minimizeToTray', false, false) === true;
             };
