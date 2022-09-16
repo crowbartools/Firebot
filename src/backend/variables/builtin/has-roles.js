@@ -49,7 +49,7 @@ module.exports = {
             return false;
         }
 
-        const userRoles = await getAllRolesForViewer();
+        const userRoles = await getAllRolesForViewer(username);
 
         // any
         if (respective === 'any') {
