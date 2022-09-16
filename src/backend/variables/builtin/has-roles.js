@@ -15,7 +15,7 @@ triggers[EffectTrigger.CHANNEL_REWARD] = true;
 module.exports = {
     definition: {
         handle: "hasRoles",
-        usage: "hasRoles[user, any|all, role, rol2, ...]",
+        usage: "hasRoles[user, any|all, role, role2, ...]",
         description: "Returns true if the user has the specified role. Only valid within $if",
         examples: [
             {
