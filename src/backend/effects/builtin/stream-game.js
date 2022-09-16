@@ -92,9 +92,9 @@ const model = {
         if (event.effect.mode === "specific") {
             await twitchApi.channels.updateChannelInformation({gameId: event.effect.gameId });
         } else {
-            const categories = await twitchApi.categories.searchCategories(event.effect.gameName);
-            if (categories && categories.length > 0) {
-                const category = categories.find(c => c.name.toLowerCase() === event.effect.gameName.toLowerCase());
+            const categories = await twitchApi.categories.searchCategories(event.effect.gameName.trim());
+            if (categories?.length) {
+                const category = categories.find(c => c.name.toLowerCase() === event.effect.gameName.toLowerCase()) ?? categories[0];
 
                 if (!category) {
                     logger.error("Couldn't find a category/game with this name");
