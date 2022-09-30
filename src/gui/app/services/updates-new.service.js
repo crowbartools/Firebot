@@ -20,7 +20,7 @@
 
             const updatesDelayedAt = settingsService.getDelayedUpdateDateForVersion(APP_VERSION);
             const updatesAlreadyDelayed = updatesDelayedAt != null;
-            const delayedTimeElapsed = updatesAlreadyDelayed ? false : true;
+            const delayedTimeElapsed = updatesAlreadyDelayed ? moment().endOf().diff(moment(updatesDelayedAt).endOf("day"), "days") >= 7 : false;
 
             /** @type{import("../../../shared/github-release-service").GetApplicableReleasesResponse} */
             service.releases = {};
@@ -66,10 +66,13 @@
                     if (service.releases.minorUpdate) {
                         setAvailableUpdate(service.releases.minorUpdate);
                         if (canAutoUpdate) {
-                            if (/** week has passed */ false) {
-                                listenerService.fireEvent(listenerService.EventType.DOWNLOAD_UPDATE);
+                            if (updatesAlreadyDelayed) {
+                                if (delayedTimeElapsed) {
+                                    listenerService.fireEvent(listenerService.EventType.DOWNLOAD_UPDATE);
+                                }
                             } else {
-                                //start week
+                                //ask user
+                                //start week or start download
                             }
                         }
                     } else if (service.releases.patchUpdate) {
