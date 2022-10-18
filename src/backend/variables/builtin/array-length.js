@@ -1,6 +1,7 @@
 // Migration: done
 
 'use strict';
+const utils = require("../../utility");
 
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
@@ -15,13 +16,9 @@ const model = {
     evaluator: (_, jsonArray) => {
         let length = 0;
         if (jsonArray) {
-            try {
-                const array = JSON.parse(jsonArray);
-                if (Array.isArray(array)) {
-                    length = array.length;
-                }
-            } catch (error) {
-                //fail silently
+            const array = utils.jsonParse(jsonArray);
+            if (Array.isArray(array)) {
+                length = array.length;
             }
         }
         return length;
