@@ -27,6 +27,7 @@ exports.loadReplaceVariables = () => {
         'bot',
         'category',
         'category-image-url',
+        'chat-message-emote-names',
         'chat-message-emote-urls',
         'chat-message',
         'chat-messages',
