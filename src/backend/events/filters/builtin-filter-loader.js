@@ -15,8 +15,6 @@ exports.loadFilters = () => {
         'donation-from',
         'gift-count',
         'gift-duration',
-        'host-type',
-        'host-viewer-count',
         'is-anonymous',
         'message',
         'new-currency-amount',

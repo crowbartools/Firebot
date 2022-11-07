@@ -74,8 +74,6 @@ exports.loadReplaceVariables = () => {
         'gift-sub-type',
         'has-role',
         'has-roles',
-        'host-type',
-        'host-viewer-count',
         'loop-count',
         'loop-item',
         'math',
