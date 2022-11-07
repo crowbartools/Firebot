@@ -1,6 +1,7 @@
 // Migration: done
 
 'use strict';
+const utils = require("../../utility");
 
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
@@ -25,26 +26,17 @@ const model = {
     evaluator: (_, jsonArray, newElement, addToFront = false) => {
         if (jsonArray != null) {
             addToFront = addToFront === true || addToFront === 'true';
-            try {
-                const array = JSON.parse(jsonArray);
-                if (Array.isArray(array)) {
+            const array = utils.jsonParse(jsonArray);
+            if (Array.isArray(array)) {
+                //attempt to parse newElement as json
+                newElement = utils.jsonParse(newElement);
 
-                    //attempt to parse newElement as json
-                    try {
-                        newElement = JSON.parse(newElement);
-                    } catch (error) {
-                        //silently fail
-                    }
-
-                    if (addToFront) {
-                        array.unshift(newElement);
-                    } else {
-                        array.push(newElement);
-                    }
-                    return JSON.stringify(array);
+                if (addToFront) {
+                    array.unshift(newElement);
+                } else {
+                    array.push(newElement);
                 }
-            } catch (error) {
-                // fail silently
+                return JSON.stringify(array);
             }
         }
         return JSON.stringify([]);

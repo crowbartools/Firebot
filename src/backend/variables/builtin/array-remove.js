@@ -1,6 +1,7 @@
 // Migration: done
 
 'use strict';
+const utils = require("../../utility");
 
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
@@ -24,21 +25,17 @@ const model = {
     },
     evaluator: (_, jsonArray, index = 0) => {
         if (jsonArray != null) {
-            try {
-                const array = JSON.parse(jsonArray);
-                if (Array.isArray(array)) {
-                    if (isNaN(index) && index === "last") {
-                        index = array.length - 1;
-                    } else if (isNaN(index)) {
-                        index = -1;
-                    }
-                    if (index < array.length && index > -1) {
-                        array.splice(index, 1);
-                        return JSON.stringify(array);
-                    }
+            const array = utils.jsonParse(jsonArray);
+            if (Array.isArray(array)) {
+                if (isNaN(index) && index === "last") {
+                    index = array.length - 1;
+                } else if (isNaN(index)) {
+                    index = -1;
                 }
-            } catch (error) {
-                // fail silently
+                if (index < array.length && index > -1) {
+                    array.splice(index, 1);
+                    return JSON.stringify(array);
+                }
             }
             return jsonArray;
         }
