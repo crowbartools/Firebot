@@ -3,25 +3,8 @@
 module.exports = {
     id: "twitch",
     name: "Twitch",
-    description: "Events like Follow, Host, Subscribe and more from Twitch",
+    description: "Events like Follow, Subscribe, and more from Twitch",
     events: [
-        {
-            id: "host",
-            name: "Host",
-            description: "When someone hosts your channel.",
-            cached: true,
-            cacheMetaKey: "username",
-            manualMetadata: {
-                username: "Firebot",
-                viewerCount: 5
-            },
-            activityFeed: {
-                icon: "fad fa-house-user",
-                getMessage: (eventData) => {
-                    return `**${eventData.username}** hosted with **${eventData.viewerCount}** viewer(s)`;
-                }
-            }
-        },
         {
             id: "raid",
             name: "Raid",

@@ -18,7 +18,6 @@ module.exports = {
         { eventSourceId: "twitch", eventId: "follow" },
         { eventSourceId: "streamlabs", eventId: "follow" },
         { eventSourceId: "twitch", eventId: "raid" },
-        { eventSourceId: "twitch", eventId: "host" },
         { eventSourceId: "twitch", eventId: "viewer-arrived" },
         { eventSourceId: "twitch", eventId: "chat-message" },
         { eventSourceId: "twitch", eventId: "whisper" },

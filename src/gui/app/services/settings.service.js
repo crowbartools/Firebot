@@ -249,7 +249,6 @@
             service.getAllowedActivityEvents = function() {
                 const events = getDataFromFile("/settings/allowedActivityEvents");
                 return events == null ? [
-                    "twitch:host",
                     "twitch:raid",
                     "twitch:follow",
                     "twitch:sub",

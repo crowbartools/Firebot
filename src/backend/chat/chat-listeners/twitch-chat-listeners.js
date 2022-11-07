@@ -102,12 +102,6 @@ exports.setupChatListeners = (streamerChatClient) => {
         frontendCommunicator.send("twitch:chat:message:deleted", messageId);
     });
 
-    streamerChatClient.onHosted((_, byChannel, auto, viewers) => {
-        twitchEventsHandler.host.triggerHost(byChannel, auto, viewers);
-        const logger = require("../../logwrapper");
-        logger.debug(`Host triggered by ${byChannel}. Is auto: ${auto}`);
-    });
-
     streamerChatClient.onResub(async (_channel, _user, subInfo, msg) => {
         try {
             if (subInfo.message != null && subInfo.message.length > 0) {
