@@ -15,7 +15,6 @@ module.exports = {
         { eventSourceId: "twitch", eventId: "gift-sub-upgraded" },
         { eventSourceId: "twitch", eventId: "follow" },
         { eventSourceId: "twitch", eventId: "raid" },
-        { eventSourceId: "twitch", eventId: "host" },
         { eventSourceId: "twitch", eventId: "viewer-arrived" },
         { eventSourceId: "twitch", eventId: "community-subs-gifted" },
         { eventSourceId: "twitch", eventId: "channel-reward-redemption" },
