@@ -27,8 +27,8 @@ const model = {
             const userCommand = trigger.metadata.userCommand;
             chatMessage = `${userCommand.trigger} ${userCommand.args.join(" ")}`;
 
-        } else if (trigger.type === EffectTrigger.EVENT) {
-            // if trigger is event, build chat message from chat event data
+        } else if (trigger.type === EffectTrigger.EVENT || trigger.type === EffectTrigger.MANUAL) {
+            // if trigger is event/manual event, build chat message from chat event data
             chatMessage = trigger.metadata.chatMessage || trigger.metadata.eventData.messageText;
         }
 
