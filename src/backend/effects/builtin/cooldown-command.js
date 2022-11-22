@@ -14,12 +14,12 @@ const model = {
     globalSettings: {},
     optionsTemplate: `
         <eos-container header="Selection Type" ng-init="showSubcommands = effect.subcommandId != null">
-            <div ng-if="sortTags && sortTags.length">
+            <div>
                 <label class="control-fb control--radio">Single Command
                     <input type="radio" ng-model="effect.selectionType" value="command" />
                     <div class="control__indicator"></div>
                 </label>
-                <label class="control-fb control--radio">Commands With Tag
+                <label ng-if="sortTags && sortTags.length" class="control-fb control--radio">Commands With Tag
                     <input type="radio" ng-model="effect.selectionType" value="sortTag" />
                     <div class="control__indicator"></div>
                 </label>
@@ -132,6 +132,10 @@ const model = {
 
         if ($scope.effect.selectionType == null) {
             if ($scope.effect.commandId != null && $scope.effect.sortTagId == null) {
+                $scope.effect.selectionType = 'command';
+            }
+
+            if ($scope.commands != null) {
                 $scope.effect.selectionType = 'command';
             }
         }
