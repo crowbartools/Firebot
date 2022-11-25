@@ -12,8 +12,14 @@ const getFollowDateForUser = async (username) => {
     const streamerData = accountAccess.getAccounts().streamer;
 
     const userId = (await client.users.getUserByName(username)).id;
+    const user = await client.users.getUserByName(username);
+    let followerDate;
 
-    const followerDate = (await client.users.getFollowFromUserToBroadcaster(userId, streamerData.userId)).followDate;
+    if (username.toLowerCase() !== streamerData.username) {
+        followerDate = (await client.users.getFollowFromUserToBroadcaster(userId, streamerData.userId)).followDate;
+    } else {
+        followerDate = user.creationDate;
+    }
 
     if (followerDate == null || followerDate.length < 1) {
         return null;
