@@ -40,6 +40,11 @@ export function setupFrontendListeners(
   );
 
   frontendCommunicator.onAsync<never, Array<OBSSource>>(
+      "obs-get-all-sources",
+      getAllSources
+  );
+
+  frontendCommunicator.onAsync<never, Array<OBSSource>>(
     "obs-get-text-sources",
     getTextSources
   );

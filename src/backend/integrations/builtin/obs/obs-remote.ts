@@ -400,6 +400,40 @@ export async function stopVirtualCam(): Promise<void> {
   }
 }
 
+export async function saveSourceScreenshot(sourceName : string, imageFormat : string, imageFilePath : string, imageWidth : number, imageHeight : number, imageCompressionQuality : number) : Promise<void> {
+  if (!connected) return;
+  try {
+    await obs.call("SaveSourceScreenshot", {
+      "sourceName": sourceName,
+      "imageFormat": imageFormat,
+      "imageFilePath": imageFilePath,
+      "imageWidth": imageWidth,
+      "imageHeight": imageHeight,
+      "imageCompressionQuality": imageCompressionQuality
+    });
+  }
+  catch (error) {
+    logger.error("Failed to save screenshot: ", error);
+  }
+}
+
+export async function getSourceScreenshot(sourceName : string, imageFormat : string, imageWidth : number, imageHeight : number, imageCompressionQuality : number) : Promise<string> {
+  if (!connected) return null;
+  try {
+    return (await obs.call("GetSourceScreenshot", {
+      "sourceName": sourceName,
+      "imageFormat": imageFormat,
+      "imageWidth": imageWidth,
+      "imageHeight": imageHeight,
+      "imageCompressionQuality": imageCompressionQuality
+    })).imageData;
+  }
+  catch (error) {
+    logger.error("Failed to get screenshot: ", error);
+    return null;
+  }
+}
+
 function setupRemoteListeners() {
   obs.on("CurrentProgramSceneChanged", ({ sceneName }) => {
     eventManager?.triggerEvent(
