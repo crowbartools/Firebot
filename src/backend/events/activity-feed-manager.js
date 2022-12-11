@@ -8,7 +8,7 @@ const rewardManager = require("../channel-rewards/channel-reward-manager");
 const eventManager = require("./EventManager");
 
 const isUSLocale = app.getLocale() === "en-US";
-const timeFormat = isUSLocale ? "h:mm" : "k:mm";
+const timeFormat = isUSLocale ? "h:mm" : "H:mm";
 
 const previousActivity = [];
 
