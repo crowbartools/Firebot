@@ -1,6 +1,6 @@
+import twitchApi from "../../twitch-api/api";
 import { TwitchSlashCommandHandler } from "../twitch-slash-command-handler";
 import { TwitchCommandHelpers } from "./twitch-command-helpers";
-const twitchApi = require("../../twitch-api/api");
 
 export const commercialHandler: TwitchSlashCommandHandler<[number]> = {
     commands: [ "/commercial" ],
