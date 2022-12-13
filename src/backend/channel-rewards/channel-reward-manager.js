@@ -220,7 +220,7 @@ function getChannelRewardIdByName(channelRewardName) {
  * @property {string} rewardId
  * @property {string} rewardImage
  * @property {string} rewardName
- * @property {string} rewardCost
+ * @property {number} rewardCost
  */
 
 /**

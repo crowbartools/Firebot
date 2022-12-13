@@ -1,7 +1,7 @@
+import logger from '../../logwrapper';
+import twitchApi from "../api";
+import accountAccess from "../../common/account-access";
 import { ApiClient, HelixChatAnnoucementColor, HelixSendChatAnnoucementParams, HelixUpdateChatSettingsParams } from "@twurple/api";
-const twitchApi = require("../api");
-const accountAccess = require("../../common/account-access");
-const logger = require('../../logwrapper');
 
 /**
  * Sends an announcement to the streamer's chat.

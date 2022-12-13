@@ -1,7 +1,6 @@
+import logger from "../../logwrapper";
+import twitchApi from "../api";
 import { ApiClient, HelixBitsLeaderboardEntry, HelixBitsLeaderboardPeriod, HelixBitsLeaderboardQuery } from "@twurple/api/lib";
-
-const logger = require("../../logwrapper");
-const twitchApi = require("../api");
 
 export async function getChannelBitsLeaderboard(
     count: number = 10,
