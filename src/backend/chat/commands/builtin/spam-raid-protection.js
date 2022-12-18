@@ -144,7 +144,7 @@ const spamRaidProtection = {
             }
 
             if (commandOptions.banRaiders || commandOptions.blockRaiders) {
-                raidMessageChecker.enable(commandOptions.banRaiders, commandOptions.blockRaiders);
+                await raidMessageChecker.enable(commandOptions.banRaiders, commandOptions.blockRaiders);
             }
 
             chat.sendChatMessage(commandOptions.displayTemplate);

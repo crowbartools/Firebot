@@ -70,12 +70,12 @@ async function checkPreviousMessages() {
     }
 }
 
-function enable(shouldBan, shouldBlock) {
+async function enable(shouldBan, shouldBlock) {
     raidMessage = getRaidMessage();
     settings.shouldBan = shouldBan;
     settings.shouldBlock = shouldBlock;
 
-    checkPreviousMessages();
+    await checkPreviousMessages();
 
     checkerEnabled = true;
     logger.debug("Raid message checker enabled...");

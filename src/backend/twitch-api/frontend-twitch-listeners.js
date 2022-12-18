@@ -19,7 +19,7 @@ exports.setupListeners = () => {
         }));
     });
 
-    frontendCommunicator.on("process-automod-message", async data => {
+    frontendCommunicator.onAsync("process-automod-message", async data => {
         const accountAccess = require("../common/account-access");
         const streamerChannelId = accountAccess.getAccounts().streamer.channelId;
         try {

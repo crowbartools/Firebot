@@ -304,7 +304,7 @@ class TwitchChat extends EventEmitter {
 
 const twitchChat = new TwitchChat();
 
-frontendCommunicator.on("send-chat-message", async (sendData) => {
+frontendCommunicator.onAsync("send-chat-message", async (sendData) => {
     const { message, accountType } = sendData;
 
     // Run commands from firebot chat.
@@ -319,11 +319,11 @@ frontendCommunicator.on("send-chat-message", async (sendData) => {
     await twitchChat.sendChatMessage(message, null, accountType);
 });
 
-frontendCommunicator.on("delete-message", async (messageId) => {
+frontendCommunicator.onAsync("delete-message", async (messageId) => {
     await twitchApi.chat.deleteChatMessage(messageId);
 });
 
-frontendCommunicator.on("update-user-mod-status", async (data) => {
+frontendCommunicator.onAsync("update-user-mod-status", async (data) => {
     if (data == null) {
         return;
     }
@@ -339,7 +339,7 @@ frontendCommunicator.on("update-user-mod-status", async (data) => {
     }
 });
 
-frontendCommunicator.on("update-user-banned-status", async (data) => {
+frontendCommunicator.onAsync("update-user-banned-status", async (data) => {
     if (data == null) {
         return;
     }
@@ -355,7 +355,7 @@ frontendCommunicator.on("update-user-banned-status", async (data) => {
     }
 });
 
-frontendCommunicator.on("update-user-vip-status", async (data) => {
+frontendCommunicator.onAsync("update-user-vip-status", async (data) => {
     if (data == null) {
         return;
     }

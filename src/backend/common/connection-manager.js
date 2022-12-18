@@ -213,10 +213,10 @@ manager.on("service-connection-update", (data) => {
     }
 });
 
-frontendCommunicator.on("connect-sidebar-controlled-services", async () => {
+frontendCommunicator.onAync("connect-sidebar-controlled-services", async () => {
     const serviceIds = settings.getSidebarControlledServices();
 
-    manager.updateConnectionForServices(serviceIds.map(id => ({
+    await manager.updateConnectionForServices(serviceIds.map(id => ({
         id,
         action: true
     })));

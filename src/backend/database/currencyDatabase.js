@@ -514,7 +514,7 @@ function deleteCurrencyById(currencyId) {
  * @property {string} role
  */
 
-frontendCommunicator.on("give-currency", async (/** @type {CurrencyInfo} */ {
+frontendCommunicator.onAsync("give-currency", async (/** @type {CurrencyInfo} */ {
     currencyId,
     amount,
     sendChatMessage,
