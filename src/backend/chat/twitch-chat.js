@@ -257,41 +257,6 @@ class TwitchChat extends EventEmitter {
         }
     }
 
-    /**
-     * Sends an announcement to the chat channel
-     *
-     * @param {string} message The message to send
-     * @param {string} [accountType] Which account to chat as. Defaults to bot if available otherwise, the streamer.
-     * @param {string} [color] Announcement color. Options are `primary`, `blue`, `green`, `orange`, and `purple`.
-     *
-     * @deprecated This function will be removed in a future version. Please use the `twitchApi.chat` object instead:
-     * `twitchApi.chat.sendAnnouncement`
-     */
-    async sendAnnouncement(message, accountType, color = "primary") {
-        if (message?.length < 1) {
-            return;
-        }
-
-        accountType = accountType?.toLowerCase();
-        const botAvailable = accountAccess.getAccounts().bot.loggedIn && this._botChatClient && this._botChatClient.isConnected;
-        if (accountType == null) {
-            accountType = botAvailable ? "bot" : "streamer";
-        } else if (accountType === "bot" && !botAvailable) {
-            accountType = "streamer";
-        }
-
-        logger.debug(`Sending announcement as ${accountType}.`);
-
-        // split message into fragments so we don't exceed the max message length
-        const messageFragments = message.match(/[\s\S]{1,500}/g)
-            .map(mf => mf.trim())
-            .filter(mf => mf !== "");
-
-        for (const fragment of messageFragments) {
-            await twitchApi.chat.sendAnnouncement(fragment, color, accountType === "bot");
-        }
-    }
-
     async populateChatterList() {
         await chatterPoll.runChatterPoll();
     }
