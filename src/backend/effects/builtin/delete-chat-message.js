@@ -36,7 +36,7 @@ const model = {
         }
 
         if (messageId) {
-            twitchApi.chat.deleteChatMessage(messageId);
+            await twitchApi.chat.deleteChatMessage(messageId);
         }
 
         return true;

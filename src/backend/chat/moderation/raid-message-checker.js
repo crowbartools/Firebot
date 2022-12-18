@@ -28,7 +28,7 @@ async function handleRaider(message) {
  *
  * @param {import("../chat-helpers").FirebotChatMessage} firebotChatMessage
  */
-function sendMessageToCache(firebotChatMessage) {
+async function sendMessageToCache(firebotChatMessage) {
     if (messageCache.length >= chatCacheLimit) {
         messageCache.shift();
     }
@@ -40,7 +40,7 @@ function sendMessageToCache(firebotChatMessage) {
     messageCache.push(firebotChatMessage);
 
     if (firebotChatMessage && checkerEnabled && firebotChatMessage.rawText === raidMessage) {
-        handleRaider(firebotChatMessage);
+        await handleRaider(firebotChatMessage);
     }
 }
 
@@ -62,10 +62,10 @@ function getRaidMessage() {
     return Object.keys(raidMessages)[index];
 }
 
-function checkPreviousMessages() {
+async function checkPreviousMessages() {
     for (const message in messageCache) {
         if (messageCache[message].rawText === raidMessage) {
-            handleRaider(messageCache[message]);
+            await handleRaider(messageCache[message]);
         }
     }
 }

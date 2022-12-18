@@ -31,16 +31,16 @@ exports.setupListeners = () => {
         }
     });
 
-    frontendCommunicator.onAsync("get-twitch-game", gameId => {
-        return twitchApi.categories.getCategoryById(gameId);
+    frontendCommunicator.onAsync("get-twitch-game", async (gameId) => {
+        return await twitchApi.categories.getCategoryById(gameId);
     });
 
-    frontendCommunicator.onAsync("get-channel-stream-tags", () => {
-        return twitchApi.streamTags.getChannelStreamTags();
+    frontendCommunicator.onAsync("get-channel-stream-tags", async () => {
+        return await twitchApi.streamTags.getChannelStreamTags();
     });
 
-    frontendCommunicator.onAsync("get-all-stream-tags", () => {
-        return twitchApi.streamTags.getAllStreamTags();
+    frontendCommunicator.onAsync("get-all-stream-tags", async () => {
+        return await twitchApi.streamTags.getAllStreamTags();
     });
 
     frontendCommunicator.onAsync("get-channel-info", async () => {
