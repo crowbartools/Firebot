@@ -2,7 +2,7 @@
 
 const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
 const logger = require('../../logwrapper');
-const twitchChat = require("../../chat/twitch-chat");
+const twitchApi = require("../../twitch-api/api");
 
 const model = {
     definition: {
@@ -30,7 +30,7 @@ const model = {
         return errors;
     },
     onTriggerEvent: async event => {
-        twitchChat.purgeUserMessages(event.effect.username);
+        await twitchApi.moderation.timeoutUser(event.effect.username, 1, "Chat messages purged via Firebot");
         logger.debug(event.effect.username + " was purged via the purge effect.");
         return true;
     }

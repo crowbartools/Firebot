@@ -12,15 +12,15 @@ const settings = {
     shouldBlock: false
 };
 
-function handleRaider(message) {
-    const chat = require("../twitch-chat");
+async function handleRaider(message) {
+    const twitchApi = require("../../twitch-api/api");
 
     if (settings.shouldBan) {
-        chat.ban(message.username, "");
+        await twitchApi.moderation.banUser(message.username);
     }
 
     if (settings.shouldBlock) {
-        chat.block(message.userId, "");
+        await twitchApi.users.blockUser(message.userId);
     }
 }
 

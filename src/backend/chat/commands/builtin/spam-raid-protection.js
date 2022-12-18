@@ -1,5 +1,6 @@
 "use strict";
 
+const twitchApi = require('../../../twitch-api/api');
 const chat = require("../../twitch-chat");
 const raidMessageChecker = require("../../moderation/raid-message-checker");
 
@@ -123,23 +124,23 @@ const spamRaidProtection = {
 
         if (args.length === 0) {
             if (commandOptions.enableFollowerOnly) {
-                chat.enableFollowersOnly(commandOptions.enableFollowerOnlyDuration);
+                await twitchApi.chat.setFollowerOnlyMode(true, commandOptions.enableFollowerOnlyDuration);
             }
 
             if (commandOptions.enableSubscriberOnly) {
-                chat.enableSubscribersOnly();
+                await twitchApi.chat.setSubscriberOnlyMode(true);
             }
 
             if (commandOptions.enableEmoteOnly) {
-                chat.enableEmoteOnly();
+                await twitchApi.chat.setEmoteOnlyMode(true);
             }
 
             if (commandOptions.enableSlowMode) {
-                chat.enableSlowMode(commandOptions.enableSlowModeDelay);
+                await twitchApi.chat.setSlowMode(true, commandOptions.enableSlowModeDelay);
             }
 
             if (commandOptions.clearChat) {
-                chat.clearChat();
+                await twitchApi.chat.clearChat();
             }
 
             if (commandOptions.banRaiders || commandOptions.blockRaiders) {
@@ -150,10 +151,11 @@ const spamRaidProtection = {
         }
 
         if (args[0] === "off") {
-            chat.disableFollowersOnly();
-            chat.disableSubscribersOnly();
-            chat.disableEmoteOnly();
-            chat.disableSlowMode();
+            await twitchApi.chat.setFollowerOnlyMode(false);
+            await twitchApi.chat.setSubscriberOnlyMode(false);
+            await twitchApi.chat.setEmoteOnlyMode(false);
+            await twitchApi.chat.setSlowMode(false);
+
             raidMessageChecker.disable();
 
             chat.sendChatMessage("Protection turned off.");

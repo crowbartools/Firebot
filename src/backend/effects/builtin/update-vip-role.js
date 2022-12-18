@@ -2,7 +2,7 @@
 
 const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
 const logger = require('../../logwrapper');
-const twitchChat = require("../../chat/twitch-chat");
+const twitchApi = require("../../twitch-api/api");
 
 const model = {
     definition: {
@@ -49,10 +49,10 @@ const model = {
     },
     onTriggerEvent: async event => {
         if (event.effect.action === "Add VIP") {
-            await twitchChat.addVip(event.effect.username);
+            await twitchApi.moderation.addChannelVip(event.effect.username);
             logger.debug(event.effect.username + " was assigned VIP via the VIP effect.");
         } else if (event.effect.action === "Remove VIP") {
-            await twitchChat.removeVip(event.effect.username);
+            await twitchApi.moderation.removeChannelVip(event.effect.username);
             logger.debug(event.effect.username + " was unassigned VIP via the VIP effect.");
         }
 

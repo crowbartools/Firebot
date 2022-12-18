@@ -32,7 +32,7 @@ class TwitchChat extends EventEmitter {
      * Whether or not the streamer is currently connected
      */
     chatIsConnected() {
-        return this._streamerChatClient != null && this._streamerChatClient.isConnected;
+        return this._streamerChatClient?.isConnected === true;
     }
 
     /**
@@ -263,6 +263,9 @@ class TwitchChat extends EventEmitter {
      * @param {string} message The message to send
      * @param {string} [accountType] Which account to chat as. Defaults to bot if available otherwise, the streamer.
      * @param {string} [color] Announcement color. Options are `primary`, `blue`, `green`, `orange`, and `purple`.
+     *
+     * @deprecated This function will be removed in a future version. Please use the `twitchApi.chat` object instead:
+     * `twitchApi.chat.sendAnnouncement`
      */
     async sendAnnouncement(message, accountType, color = "primary") {
         if (message?.length < 1) {
@@ -289,194 +292,6 @@ class TwitchChat extends EventEmitter {
         }
     }
 
-    deleteMessage(messageId) {
-        const streamer = accountAccess.getAccounts().streamer;
-        if (this._streamerChatClient == null || !streamer.loggedIn) {
-            return;
-        }
-        this._streamerChatClient.deleteMessage(streamer.username, messageId);
-    }
-
-    mod(username) {
-        if (username == null) {
-            return;
-        }
-
-        const streamer = accountAccess.getAccounts().streamer;
-
-        return this._streamerChatClient.mod(streamer.username, username);
-    }
-
-    unmod(username) {
-        if (username == null) {
-            return;
-        }
-
-        const streamer = accountAccess.getAccounts().streamer;
-
-        return this._streamerChatClient.unmod(streamer.username, username);
-    }
-
-    async ban(username, reason) {
-        if (username == null) {
-            return;
-        }
-
-        const streamer = accountAccess.getAccounts().streamer;
-
-        try {
-            await this._streamerChatClient.ban(streamer.username, username, reason);
-        } catch (error) {
-            logger.error("Failed to ban user: ", error);
-
-            if (error === "already_banned") {
-                frontendCommunicator.send("chat-feed-system-message", `${username} is already banned from the channel`);
-            }
-        }
-    }
-
-    unban(username) {
-        if (username == null) {
-            return;
-        }
-
-        const streamer = accountAccess.getAccounts().streamer;
-
-        this._streamerChatClient.say(`#${streamer.username.replace("#", "")}`, `/unban ${username}`);
-    }
-
-    async block(username) {
-        if (username == null) {
-            return;
-        }
-
-        const client = twitchApi.getClient();
-        const user = await client.users.getUserByName(username);
-        await client.users.createBlock(user.id);
-    }
-
-    async unblock(username) {
-        if (username == null) {
-            return;
-        }
-
-        const client = twitchApi.getClient();
-        const user = await client.users.getUserByName(username);
-        await client.users.deleteBlock(user.id);
-    }
-
-    addVip(username) {
-        if (username == null) {
-            return;
-        }
-
-        const streamer = accountAccess.getAccounts().streamer;
-
-        return this._streamerChatClient.addVip(streamer.username, username);
-    }
-
-    removeVip(username) {
-        if (username == null) {
-            return;
-        }
-
-        const streamer = accountAccess.getAccounts().streamer;
-
-        return this._streamerChatClient.removeVip(streamer.username, username);
-    }
-
-    clearChat() {
-        if (this._streamerChatClient == null) {
-            return;
-        }
-        this._streamerChatClient.clear();
-    }
-
-    enableFollowersOnly(duration) {
-        if (this._streamerChatClient == null) {
-            return;
-        }
-        const streamer = accountAccess.getAccounts().streamer.username;
-
-        if (duration == null) {
-            this._streamerChatClient.enableFollowersOnly(streamer);
-        } else {
-            this._streamerChatClient.enableFollowersOnly(streamer, duration);
-        }
-    }
-
-    disableFollowersOnly() {
-        if (this._streamerChatClient == null) {
-            return;
-        }
-        const streamer = accountAccess.getAccounts().streamer.username;
-        this._streamerChatClient.disableFollowersOnly(streamer);
-    }
-
-    enableEmoteOnly() {
-        if (this._streamerChatClient == null) {
-            return;
-        }
-        const streamer = accountAccess.getAccounts().streamer.username;
-        this._streamerChatClient.enableEmoteOnly(streamer);
-    }
-
-    disableEmoteOnly() {
-        if (this._streamerChatClient == null) {
-            return;
-        }
-        const streamer = accountAccess.getAccounts().streamer.username;
-        this._streamerChatClient.disableEmoteOnly(streamer);
-    }
-
-    enableSubscribersOnly() {
-        if (this._streamerChatClient == null) {
-            return;
-        }
-        const streamer = accountAccess.getAccounts().streamer.username;
-        this._streamerChatClient.enableSubsOnly(streamer);
-    }
-
-    disableSubscribersOnly() {
-        if (this._streamerChatClient == null) {
-            return;
-        }
-        const streamer = accountAccess.getAccounts().streamer.username;
-        this._streamerChatClient.disableSubsOnly(streamer);
-    }
-
-    enableSlowMode(delay = 30) {
-        if (this._streamerChatClient == null) {
-            return;
-        }
-        const streamer = accountAccess.getAccounts().streamer.username;
-        this._streamerChatClient.enableSlow(streamer, delay);
-    }
-
-    disableSlowMode() {
-        if (this._streamerChatClient == null) {
-            return;
-        }
-        const streamer = accountAccess.getAccounts().streamer.username;
-        this._streamerChatClient.disableSlow(streamer);
-    }
-
-    purgeUserMessages(username, reason = "") {
-        const streamer = accountAccess.getAccounts().streamer;
-        if (this._streamerChatClient == null || !streamer.loggedIn) {
-            return;
-        }
-        this._streamerChatClient.purge(streamer.username, username, reason);
-    }
-
-    async timeoutUser(username, duration = 600, reason = "") {
-        const streamer = accountAccess.getAccounts().streamer;
-        if (this._streamerChatClient == null || !streamer.loggedIn) {
-            return;
-        }
-        await this._streamerChatClient.timeout(streamer.username, username, parseInt(duration), reason);
-    }
-
     async populateChatterList() {
         await chatterPoll.runChatterPoll();
     }
@@ -489,7 +304,7 @@ class TwitchChat extends EventEmitter {
 
 const twitchChat = new TwitchChat();
 
-frontendCommunicator.on("send-chat-message", async sendData => {
+frontendCommunicator.on("send-chat-message", async (sendData) => {
     const { message, accountType } = sendData;
 
     // Run commands from firebot chat.
@@ -501,14 +316,14 @@ frontendCommunicator.on("send-chat-message", async sendData => {
         twitchEventsHandler.chatMessage.triggerChatMessage(firebotMessage);
     }
 
-    twitchChat.sendChatMessage(message, null, accountType);
+    await twitchChat.sendChatMessage(message, null, accountType);
 });
 
-frontendCommunicator.on("delete-message", messageId => {
-    twitchChat.deleteMessage(messageId);
+frontendCommunicator.on("delete-message", async (messageId) => {
+    await twitchApi.chat.deleteChatMessage(messageId);
 });
 
-frontendCommunicator.on("update-user-mod-status", data => {
+frontendCommunicator.on("update-user-mod-status", async (data) => {
     if (data == null) {
         return;
     }
@@ -518,13 +333,13 @@ frontendCommunicator.on("update-user-mod-status", data => {
     }
 
     if (shouldBeMod) {
-        twitchChat.mod(username);
+        await twitchApi.moderation.addChannelModerator(username);
     } else {
-        twitchChat.unmod(username);
+        await twitchApi.moderation.removeChannelModerator(username);
     }
 });
 
-frontendCommunicator.on("update-user-banned-status", data => {
+frontendCommunicator.on("update-user-banned-status", async (data) => {
     if (data == null) {
         return;
     }
@@ -534,13 +349,13 @@ frontendCommunicator.on("update-user-banned-status", data => {
     }
 
     if (shouldBeBanned) {
-        twitchChat.ban(username, "Banned via Firebot");
+        await twitchApi.moderation.banUser(username, "Banned via Firebot");
     } else {
-        twitchChat.unban(username);
+        await twitchApi.moderation.unbanUser(username);
     }
 });
 
-frontendCommunicator.on("update-user-vip-status", data => {
+frontendCommunicator.on("update-user-vip-status", async (data) => {
     if (data == null) {
         return;
     }
@@ -550,15 +365,12 @@ frontendCommunicator.on("update-user-vip-status", data => {
     }
 
     if (shouldBeVip) {
-        twitchChat.addVip(username);
+        await twitchApi.moderation.addChannelVip(username);
         chatRolesManager.addVipToVipList(username);
     } else {
-        twitchChat.removeVip(username);
+        await twitchApi.moderation.removeChannelVip(username);
         chatRolesManager.removeVipFromVipList(username);
     }
 });
 
 module.exports = twitchChat;
-
-
-

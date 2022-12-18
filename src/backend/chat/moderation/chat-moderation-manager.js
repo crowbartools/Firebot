@@ -80,6 +80,7 @@ function startModerationService() {
         return;
     }
 
+    const twitchApi = require("../../twitch-api/api");
     const chat = require("../twitch-chat");
 
     let servicePath = require("path").resolve(__dirname, "./moderation-service.js");
@@ -90,7 +91,7 @@ function startModerationService() {
 
     moderationService = new Worker(servicePath);
 
-    moderationService.on("message", event => {
+    moderationService.on("message", async (event) => {
         if (event == null) {
             return;
         }
@@ -98,7 +99,7 @@ function startModerationService() {
         case "deleteMessage": {
             if (event.messageId) {
                 logger.debug(event.logMessage);
-                chat.deleteMessage(event.messageId);
+                await twitchApi.chat.deleteChatMessage(event.messageId);
 
                 let outputMessage = chatModerationSettings.bannedWordList.outputMessage || "";
                 if (outputMessage) {
@@ -180,6 +181,7 @@ async function moderateMessage(chatMessage) {
         return;
     }
 
+    const twitchApi = require("../../twitch-api/api");
     const chat = require("../twitch-chat");
 
     const userExemptForEmoteLimit = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, chatModerationSettings.emoteLimit.exemptRoles);
@@ -189,7 +191,7 @@ async function moderateMessage(chatMessage) {
             .filter(p => p.type === "text")
             .reduce((acc, part) => acc + countEmojis(part.text), 0);
         if ((emoteCount + emojiCount) > chatModerationSettings.emoteLimit.max) {
-            chat.deleteMessage(chatMessage.id);
+            await twitchApi.chat.deleteChatMessage(chatMessage.id);
 
             let outputMessage = chatModerationSettings.emoteLimit.outputMessage || "";
             if (outputMessage) {
@@ -255,7 +257,7 @@ async function moderateMessage(chatMessage) {
                 }
 
                 if (shouldDeleteMessage) {
-                    chat.deleteMessage(chatMessage.id);
+                    await twitchApi.chat.deleteChatMessage(chatMessage.id);
 
                     if (outputMessage) {
                         outputMessage = outputMessage.replace("{userName}", chatMessage.username);

@@ -2,7 +2,7 @@
 
 const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
 const logger = require('../../logwrapper');
-const twitchChat = require("../../chat/twitch-chat");
+const twitchApi = require("../../twitch-api/api");
 
 const model = {
     definition: {
@@ -39,7 +39,7 @@ const model = {
         return errors;
     },
     onTriggerEvent: async event => {
-        await twitchChat.timeoutUser(event.effect.username, event.effect.time);
+        await twitchApi.moderation.timeoutUser(event.effect.username, event.effect.time);
         logger.debug(event.effect.username + " was timed out for " + event.effect.time + "s via the timeout effect.");
         return true;
     }

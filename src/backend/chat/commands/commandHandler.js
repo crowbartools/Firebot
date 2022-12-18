@@ -375,6 +375,7 @@ function fireCommand(
 async function handleChatMessage(firebotChatMessage) {
 
     const twitchChat = require("../twitch-chat");
+    const twitchApi = require("../../twitch-api/api");
 
     logger.debug("Checking for command in message...");
 
@@ -431,7 +432,7 @@ async function handleChatMessage(firebotChatMessage) {
 
     if (command.autoDeleteTrigger || (triggeredSubcmd && triggeredSubcmd.autoDeleteTrigger)) {
         logger.debug("Auto delete trigger is on, attempting to delete chat message");
-        twitchChat.deleteMessage(firebotChatMessage.id);
+        twitchApi.chat.deleteChatMessage(firebotChatMessage.id);
     }
 
     // check if command meets min args requirement
