@@ -457,7 +457,7 @@ async function handleChatMessage(firebotChatMessage) {
 
             const cooldownMessage = command.useCustomCooldownMessage ? command.cooldownMessage : DEFAULT_COOLDOWN_MESSAGE;
 
-            twitchChat.sendChatMessage(
+            await twitchChat.sendChatMessage(
                 cooldownMessage
                     .replace("{user}", commandSender)
                     .replace("{timeLeft}", util.secondsForHumans(remainingCooldown)),
@@ -507,7 +507,7 @@ async function handleChatMessage(firebotChatMessage) {
                     restrictionData.failMessage :
                     DEFAULT_RESTRICTION_MESSAGE;
 
-                twitchChat.sendChatMessage(
+                await twitchChat.sendChatMessage(
                     restrictionMessage
                         .replace("{user}", commandSender)
                         .replace("{reason}", reason),

@@ -63,7 +63,7 @@ const model = {
         return errors;
     },
     onTriggerEvent: async ({ effect, trigger }) => {
-        handleDiceEffect(effect, trigger);
+        await handleDiceEffect(effect, trigger);
         return true;
     }
 };

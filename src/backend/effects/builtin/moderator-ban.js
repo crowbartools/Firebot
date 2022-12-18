@@ -49,12 +49,38 @@ const model = {
     },
     onTriggerEvent: async event => {
         if (event.effect.action === "Ban") {
-            await twitchApi.moderation.banUser(event.effect.username, "Banned by Firebot");
-            logger.debug(event.effect.username + " was banned via the ban effect.");
+            const user = await twitchApi.getClient().users.getUserByName(event.effect.username);
+
+            if (user != null) {
+                const result = await twitchApi.moderation.banUser(user.id, "Banned by Firebot");
+
+                if (result === true) {
+                    logger.debug(event.effect.username + " was banned via the Ban effect.");
+                } else {
+                    logger.error(event.effect.username + " was unable to be banned via the Ban effect.");
+                    return false;
+                }
+            } else {
+                logger.error(`User ${event.effect.username} does not exist and could not be banned via the Ban effect`);
+                return false;
+            }
         }
         if (event.effect.action === "Unban") {
-            await twitchApi.moderation.unbanUser(event.effect.username);
-            logger.debug(event.effect.username + " was unbanned via the ban effect.");
+            const user = await twitchApi.getClient().users.getUserByName(event.effect.username);
+
+            if (user != null) {
+                const result = await twitchApi.moderation.unban(user.id);
+
+                if (result === true) {
+                    logger.debug(event.effect.username + " was unbanned via the Ban effect.");
+                } else {
+                    logger.error(event.effect.username + " was unable to be unbanned via the Ban effect.");
+                    return false;
+                }
+            } else {
+                logger.warn(`User ${event.effect.username} does not exist and could not be unbanned via the Ban effect`);
+                return false;
+            }
         }
         return true;
     }

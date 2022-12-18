@@ -49,11 +49,33 @@ const model = {
     },
     onTriggerEvent: async event => {
         if (event.effect.action === "Add VIP") {
-            await twitchApi.moderation.addChannelVip(event.effect.username);
-            logger.debug(event.effect.username + " was assigned VIP via the VIP effect.");
+            const user = await twitchApi.getClient().users.getUserByName(event.effect.username);
+
+            if (user != null) {
+                const result = await twitchApi.moderation.addChannelVip(user.id);
+
+                if (result === true) {
+                    logger.debug(event.effect.username + " was assigned VIP via the VIP effect.");
+                } else {
+                    logger.error(event.effect.username + " was unable to be assigned VIP via the VIP effect.");
+                }
+            } else {
+                logger.warn(`User ${event.effect.username} does not exist and could not be assigned VIP via the VIP effect`);
+            }
         } else if (event.effect.action === "Remove VIP") {
-            await twitchApi.moderation.removeChannelVip(event.effect.username);
-            logger.debug(event.effect.username + " was unassigned VIP via the VIP effect.");
+            const user = await twitchApi.getClient().users.getUserByName(event.effect.username);
+
+            if (user != null) {
+                const result = await twitchApi.moderation.removeChannelVip(user.id);
+
+                if (result === true) {
+                    logger.debug(event.effect.username + " was unassigned VIP via the VIP effect.");
+                } else {
+                    logger.error(event.effect.username + " was unable to be unassigned VIP via the VIP effect.");
+                }
+            } else {
+                logger.warn(`User ${event.effect.username} does not exist and could not be unassigned VIP via the VIP effect`);
+            }
         }
 
         return true;

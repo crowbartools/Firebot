@@ -25,13 +25,27 @@ const model = {
     optionsValidator: effect => {
         const errors = [];
         if (effect.username == null && effect.username !== "") {
-            errors.push("Please put in a username.");
+            errors.push("Please enter a username.");
         }
         return errors;
     },
     onTriggerEvent: async event => {
-        await twitchApi.moderation.timeoutUser(event.effect.username, 1, "Chat messages purged via Firebot");
-        logger.debug(event.effect.username + " was purged via the purge effect.");
+        const user = await twitchApi.getClient().users.getUserByName(event.effect.username);
+
+        if (user != null) {
+            const result = await twitchApi.moderation.timeoutUser(user.id, 1, "Chat messages purged via Firebot");
+
+            if (result === true) {
+                logger.debug(`${event.effect.username} was purged via the Purge effect.`);
+            } else {
+                logger.error(`${event.effect.username} was unable to be purged via the Purge effect.`);
+                return false;
+            }
+        } else {
+            logger.warn(`User ${event.effect.username} does not exist and could not be purged via the Purge effect.`)
+            return false;
+        }
+
         return true;
     }
 };

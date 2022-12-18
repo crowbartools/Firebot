@@ -86,8 +86,8 @@ function buildModules(scriptManifest) {
         logger: logger,
         // thin chat shim for basic backwards compatibility
         chat: {
-            smartSend: (...args) => {
-                twitchChat.sendChatMessage(...args);
+            smartSend: async (...args) => {
+                await twitchChat.sendChatMessage(...args);
             },
             deleteChat: async (id) => {
                 await twitchApi.chat.deleteChatMessage(id);

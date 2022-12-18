@@ -12,11 +12,15 @@ const settings = {
     shouldBlock: false
 };
 
+/**
+ *
+ * @param {import("../chat-helpers").FirebotChatMessage} message
+ */
 async function handleRaider(message) {
     const twitchApi = require("../../twitch-api/api");
 
     if (settings.shouldBan) {
-        await twitchApi.moderation.banUser(message.username);
+        await twitchApi.moderation.banUser(message.userId);
     }
 
     if (settings.shouldBlock) {

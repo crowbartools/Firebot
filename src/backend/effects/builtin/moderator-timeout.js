@@ -39,8 +39,22 @@ const model = {
         return errors;
     },
     onTriggerEvent: async event => {
-        await twitchApi.moderation.timeoutUser(event.effect.username, event.effect.time);
-        logger.debug(event.effect.username + " was timed out for " + event.effect.time + "s via the timeout effect.");
+        const user = await twitchApi.getClient().users.getUserByName(event.effect.username);
+
+        if (user != null) {
+            const result = await twitchApi.moderation.timeoutUser(user.id, event.effect.time);
+
+            if (result === true) {
+                logger.debug(`${event.effect.username} was timed out for ${event.effect.time}s via the timeout effect.`);
+            } else {
+                logger.error(`${event.effect.username} was unable to be timed out for ${event.effect.time}s via the timeout effect.`);
+                return false;
+            }
+        } else {
+            logger.warn(`User ${event.effect.username} does not exist and messages could not be purged via the Purge effect.`)
+            return false;
+        }
+
         return true;
     }
 };

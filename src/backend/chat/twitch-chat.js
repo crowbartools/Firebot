@@ -332,10 +332,15 @@ frontendCommunicator.onAsync("update-user-mod-status", async (data) => {
         return;
     }
 
+    const user = await twitchApi.getClient().users.getUserByName(username);
+    if (user == null) {
+        return;
+    }
+
     if (shouldBeMod) {
-        await twitchApi.moderation.addChannelModerator(username);
+        await twitchApi.moderation.addChannelModerator(user.id);
     } else {
-        await twitchApi.moderation.removeChannelModerator(username);
+        await twitchApi.moderation.removeChannelModerator(user.id);
     }
 });
 
@@ -348,10 +353,15 @@ frontendCommunicator.onAsync("update-user-banned-status", async (data) => {
         return;
     }
 
+    const user = await twitchApi.getClient().users.getUserByName(username);
+    if (user == null) {
+        return;
+    }
+
     if (shouldBeBanned) {
-        await twitchApi.moderation.banUser(username, "Banned via Firebot");
+        await twitchApi.moderation.banUser(user.id, "Banned via Firebot");
     } else {
-        await twitchApi.moderation.unbanUser(username);
+        await twitchApi.moderation.unbanUser(user.id);
     }
 });
 
@@ -364,11 +374,16 @@ frontendCommunicator.onAsync("update-user-vip-status", async (data) => {
         return;
     }
 
+    const user = await twitchApi.getClient().users.getUserByName(username);
+    if (user == null) {
+        return;
+    }
+
     if (shouldBeVip) {
-        await twitchApi.moderation.addChannelVip(username);
+        await twitchApi.moderation.addChannelVip(user.id);
         chatRolesManager.addVipToVipList(username);
     } else {
-        await twitchApi.moderation.removeChannelVip(username);
+        await twitchApi.moderation.removeChannelVip(user.id);
         chatRolesManager.removeVipFromVipList(username);
     }
 });

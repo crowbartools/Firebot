@@ -104,7 +104,7 @@ function startModerationService() {
                 let outputMessage = chatModerationSettings.bannedWordList.outputMessage || "";
                 if (outputMessage) {
                     outputMessage = outputMessage.replace("{userName}", event.username);
-                    chat.sendChatMessage(outputMessage);
+                    await chat.sendChatMessage(outputMessage);
                 }
             }
             break;
@@ -196,7 +196,7 @@ async function moderateMessage(chatMessage) {
             let outputMessage = chatModerationSettings.emoteLimit.outputMessage || "";
             if (outputMessage) {
                 outputMessage = outputMessage.replace("{userName}", chatMessage.username);
-                chat.sendChatMessage(outputMessage);
+                await chat.sendChatMessage(outputMessage);
             }
 
             return;
@@ -261,7 +261,7 @@ async function moderateMessage(chatMessage) {
 
                     if (outputMessage) {
                         outputMessage = outputMessage.replace("{userName}", chatMessage.username);
-                        chat.sendChatMessage(outputMessage);
+                        await chat.sendChatMessage(outputMessage);
                     }
 
                     return;

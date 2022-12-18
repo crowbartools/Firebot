@@ -550,7 +550,7 @@ frontendCommunicator.onAsync("give-currency", async (/** @type {CurrencyInfo} */
             return;
         }
 
-        twitchChat.sendChatMessage(`${amount < 0 ? "Removed" : "Gave"} ${util.commafy(amount)} ${currency.name} ${amount < 0 ? "from" : "to"} ${messageTarget}!`);
+        await twitchChat.sendChatMessage(`${amount < 0 ? "Removed" : "Gave"} ${util.commafy(amount)} ${currency.name} ${amount < 0 ? "from" : "to"} ${messageTarget}!`);
     }
 });
 

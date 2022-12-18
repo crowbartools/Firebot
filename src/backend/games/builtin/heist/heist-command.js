@@ -52,7 +52,7 @@ const heistCommand = {
 
         // make sure the currency still exists
         if (currency == null) {
-            twitchChat.sendChatMessage("Unable to start a Heist game as the selected currency appears to not exist anymore.", null, chatter);
+            await twitchChat.sendChatMessage("Unable to start a Heist game as the selected currency appears to not exist anymore.", null, chatter);
             await twitchApi.chat.deleteChatMessage(chatEvent.id);
         }
 
@@ -63,7 +63,7 @@ const heistCommand = {
                 const cooldownMsg = heistSettings.settings.generalMessages.onCooldown
                     .replace("{cooldown}", timeRemainingDisplay);
 
-                twitchChat.sendChatMessage(cooldownMsg, null, chatter);
+                await twitchChat.sendChatMessage(cooldownMsg, null, chatter);
             }
 
             return;
@@ -75,7 +75,7 @@ const heistCommand = {
                 const alreadyJoinedMsg = heistSettings.settings.entryMessages.alreadyJoined
                     .replace("{user}", username);
 
-                twitchChat.sendChatMessage(alreadyJoinedMsg, null, chatter);
+                await twitchChat.sendChatMessage(alreadyJoinedMsg, null, chatter);
             }
 
             return;
@@ -90,7 +90,7 @@ const heistCommand = {
                     const noWagerAmountMsg = heistSettings.settings.entryMessages.noWagerAmount
                         .replace("{user}", username);
 
-                    twitchChat.sendChatMessage(noWagerAmountMsg, null, chatter);
+                    await twitchChat.sendChatMessage(noWagerAmountMsg, null, chatter);
                 }
 
                 return;
@@ -104,7 +104,7 @@ const heistCommand = {
                 const invalidWagerAmountMsg = heistSettings.settings.entryMessages.invalidWagerAmount
                     .replace("{user}", username);
 
-                twitchChat.sendChatMessage(invalidWagerAmountMsg, null, chatter);
+                await twitchChat.sendChatMessage(invalidWagerAmountMsg, null, chatter);
             }
 
             return;
@@ -121,7 +121,7 @@ const heistCommand = {
                         .replace("{user}", username)
                         .replace("minWager}", minWager);
 
-                    twitchChat.sendChatMessage(wagerAmountTooLowMsg, null, chatter);
+                    await twitchChat.sendChatMessage(wagerAmountTooLowMsg, null, chatter);
                 }
 
                 return;
@@ -135,7 +135,7 @@ const heistCommand = {
                         .replace("{user}", username)
                         .replace("minWager}", minWager);
 
-                    twitchChat.sendChatMessage(wagerAmountTooHighMsg, null, chatter);
+                    await twitchChat.sendChatMessage(wagerAmountTooHighMsg, null, chatter);
                 }
 
                 return;
@@ -149,7 +149,7 @@ const heistCommand = {
                 const notEnoughToWagerMsg = heistSettings.settings.entryMessages.notEnoughToWager
                     .replace("{user}", username);
 
-                twitchChat.sendChatMessage(notEnoughToWagerMsg, null, chatter);
+                await twitchChat.sendChatMessage(notEnoughToWagerMsg, null, chatter);
             }
 
             return;
@@ -212,7 +212,7 @@ const heistCommand = {
                 .replace("{requiredUsers}", heistSettings.settings.generalSettings.minimumUsers);
 
             if (teamCreationMessage) {
-                twitchChat.sendChatMessage(teamCreationMessage, null, chatter);
+                await twitchChat.sendChatMessage(teamCreationMessage, null, chatter);
             }
         }
 
@@ -230,7 +230,7 @@ const heistCommand = {
             .replace("{currency}", currency.name);
 
         if (onJoinMessage) {
-            twitchChat.sendChatMessage(onJoinMessage, null, chatter);
+            await twitchChat.sendChatMessage(onJoinMessage, null, chatter);
         }
     }
 };

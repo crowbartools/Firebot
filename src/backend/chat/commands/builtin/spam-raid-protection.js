@@ -147,7 +147,7 @@ const spamRaidProtection = {
                 await raidMessageChecker.enable(commandOptions.banRaiders, commandOptions.blockRaiders);
             }
 
-            chat.sendChatMessage(commandOptions.displayTemplate);
+            await chat.sendChatMessage(commandOptions.displayTemplate);
         }
 
         if (args[0] === "off") {
@@ -158,7 +158,7 @@ const spamRaidProtection = {
 
             raidMessageChecker.disable();
 
-            chat.sendChatMessage("Protection turned off.");
+            await chat.sendChatMessage("Protection turned off.");
         }
     }
 };
