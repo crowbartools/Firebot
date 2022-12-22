@@ -58,13 +58,13 @@ const permitCommand = {
         }
 
         if (args.length !== 1) {
-            twitchChat.sendChatMessage("Incorrect command usage!");
+            await twitchChat.sendChatMessage("Incorrect command usage!");
             return;
         }
 
         const target = args[0].replace("@", "");
         if (!target) {
-            twitchChat.sendChatMessage("Please specify a user to permit.");
+            await twitchChat.sendChatMessage("Please specify a user to permit.");
             return;
         }
 
@@ -74,7 +74,7 @@ const permitCommand = {
         const message = commandOptions.permitDisplayTemplate.replace("{target}", target).replace("{duration}", commandOptions.permitDuration);
 
         if (message) {
-            twitchChat.sendChatMessage(message);
+            await twitchChat.sendChatMessage(message);
         }
 
         setTimeout(() => {

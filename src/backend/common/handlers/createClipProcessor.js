@@ -25,7 +25,7 @@ exports.createClip = async function(effect) {
     }
 
     if (effect.postLink) {
-        twitchChat.sendChatMessage("Creating clip...");
+        await twitchChat.sendChatMessage("Creating clip...");
     }
 
     let clipId;
@@ -40,7 +40,7 @@ exports.createClip = async function(effect) {
 
     if (clipId == null) {
         if (effect.postLink) {
-            twitchChat.sendChatMessage("Whoops! Something went wrong when creating a clip. :(");
+            await twitchChat.sendChatMessage("Whoops! Something went wrong when creating a clip. :(");
         }
         return null;
     }
@@ -64,7 +64,7 @@ exports.createClip = async function(effect) {
     if (clip != null) {
         if (effect.postLink) {
             const message = `Clip created: ${clip.url}`;
-            twitchChat.sendChatMessage(message);
+            await twitchChat.sendChatMessage(message);
         }
 
         if (effect.postInDiscord) {
@@ -75,7 +75,7 @@ exports.createClip = async function(effect) {
         logger.info("Successfully created a clip!");
     } else {
         if (effect.postLink) {
-            twitchChat.sendChatMessage("Whoops! Something went wrong when creating a clip. :(");
+            await twitchChat.sendChatMessage("Whoops! Something went wrong when creating a clip. :(");
         }
     }
     return clip;
