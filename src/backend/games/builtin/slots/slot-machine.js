@@ -9,7 +9,7 @@ async function spin(showSpinInActionMsg, spinInActionMsg, successChance, chatter
     let successCount = 0;
 
     if (showSpinInActionMsg) {
-        twitchChat.sendChatMessage(spinInActionMsg, null, chatter);
+        await twitchChat.sendChatMessage(spinInActionMsg, null, chatter);
     }
 
     for (let currentSpin = 1; currentSpin <= SPIN_COUNT; currentSpin++) {

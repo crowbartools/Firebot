@@ -1,7 +1,7 @@
+import counterManager from "../../../../backend/counters/counter-manager";
 import { Request, Response } from "express";
-const counterManager = require("../../../../backend/counters/counter-manager");
 
-exports.getCounters = async function(req: Request, res: Response) {
+export async function getCounters(req: Request, res: Response): Promise<Response> {
     const counters = counterManager.getAllItems()
         .map((c: any) => {
             return {
@@ -14,7 +14,7 @@ exports.getCounters = async function(req: Request, res: Response) {
     return res.json(counters);
 };
 
-exports.getCounterById = async function(req: Request, res: Response) {
+export async function getCounterById(req: Request, res: Response): Promise<Response> {
     const counterId: string = req.params.counterId;
 
     if (!(counterId.length > 0)) {

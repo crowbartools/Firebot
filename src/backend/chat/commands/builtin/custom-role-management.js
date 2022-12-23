@@ -56,7 +56,7 @@ const model = {
         const { args, triggeredArg } = event.userCommand;
 
         if (args.length < 1) {
-            chat.sendChatMessage("Incorrect command usage!");
+            await chat.sendChatMessage("Incorrect command usage!");
             return;
         }
 
@@ -65,11 +65,11 @@ const model = {
             const roleName = args.slice(2);
             const role = customRoleManager.getRoleByName(roleName);
             if (role == null) {
-                chat.sendChatMessage("Can't find a role by that name.");
+                await chat.sendChatMessage("Can't find a role by that name.");
             } else {
                 const username = args[1].replace("@", "");
                 customRoleManager.addViewerToRole(role.id, username);
-                chat.sendChatMessage(`Added role ${role.name} to ${username}`);
+                await chat.sendChatMessage(`Added role ${role.name} to ${username}`);
             }
             break;
         }
@@ -77,11 +77,11 @@ const model = {
             const roleName = args.slice(2);
             const role = customRoleManager.getRoleByName(roleName);
             if (role == null) {
-                chat.sendChatMessage("Can't find a role by that name.");
+                await chat.sendChatMessage("Can't find a role by that name.");
             } else {
                 const username = args[1].replace("@", "");
                 customRoleManager.removeViewerFromRole(role.id, username);
-                chat.sendChatMessage(`Removed role ${role.name} from ${username}`);
+                await chat.sendChatMessage(`Removed role ${role.name} from ${username}`);
             }
             break;
         }
@@ -90,23 +90,23 @@ const model = {
                 const username = args[1].replace("@", "");
                 const roleNames = customRoleManager.getAllCustomRolesForViewer(username).map(r => r.name);
                 if (roleNames.length < 1) {
-                    chat.sendChatMessage(`${username} has no custom roles assigned.`);
+                    await chat.sendChatMessage(`${username} has no custom roles assigned.`);
                 } else {
-                    chat.sendChatMessage(`${username}'s custom roles: ${roleNames.join(", ")}`);
+                    await chat.sendChatMessage(`${username}'s custom roles: ${roleNames.join(", ")}`);
                 }
 
             } else {
                 const roleNames = customRoleManager.getCustomRoles().map(r => r.name);
                 if (roleNames.length < 1) {
-                    chat.sendChatMessage(`There are no custom roles available.`);
+                    await chat.sendChatMessage(`There are no custom roles available.`);
                 } else {
-                    chat.sendChatMessage(`Available custom roles: ${roleNames.join(", ")}`);
+                    await chat.sendChatMessage(`Available custom roles: ${roleNames.join(", ")}`);
                 }
             }
             break;
         }
         default:
-            chat.sendChatMessage("Incorrect command usage!");
+            await chat.sendChatMessage("Incorrect command usage!");
         }
     }
 };

@@ -2,7 +2,7 @@
 
 const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
 const logger = require('../../logwrapper');
-const twitchChat = require("../../chat/twitch-chat");
+const twitchApi = require("../../twitch-api/api");
 
 const model = {
     definition: {
@@ -49,11 +49,33 @@ const model = {
     },
     onTriggerEvent: async event => {
         if (event.effect.action === "Mod") {
-            await twitchChat.mod(event.effect.username);
-            logger.debug(event.effect.username + " was modded via the mod effect.");
+            const user = await twitchApi.getClient().users.getUserByName(event.effect.username);
+
+            if (user != null) {
+                const result = await twitchApi.moderation.addChannelModerator(user.id);
+
+                if (result === true) {
+                    logger.debug(event.effect.username + " was modded via the Mod effect.");
+                } else {
+                    logger.error(event.effect.username + " was unable to be modded via the Mod effect.");
+                }
+            } else {
+                logger.warn(`User ${event.effect.username} does not exist and could not be modded via the Mod effect`);
+            }
         } else if (event.effect.action === "Unmod") {
-            await twitchChat.unmod(event.effect.username);
-            logger.debug(event.effect.username + " was unmodded via the mod effect.");
+            const user = await twitchApi.getClient().users.getUserByName(event.effect.username);
+
+            if (user != null) {
+                const result = await twitchApi.moderation.removeChannelModerator(user.id);
+
+                if (result === true) {
+                    logger.debug(event.effect.username + " was unmodded via the Mod effect.");
+                } else {
+                    logger.error(event.effect.username + " was unable to be unmodded via the Mod effect.");
+                }
+            } else {
+                logger.warn(`User ${event.effect.username} does not exist and could not be unmodded via the Mod effect`);
+            }
         }
 
         return true;

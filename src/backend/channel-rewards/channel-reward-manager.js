@@ -172,7 +172,7 @@ async function saveAllChannelRewards(allChannelRewards, updateTwitch = false) {
     }
 }
 
-function deleteChannelReward(channelRewardId) {
+async function deleteChannelReward(channelRewardId) {
     if (channelRewardId == null) {
         return;
     }
@@ -184,7 +184,7 @@ function deleteChannelReward(channelRewardId) {
 
         channelRewardsDb.delete("/" + channelRewards);
 
-        twitchApi.channelRewards.deleteCustomChannelReward(channelRewardId);
+        await twitchApi.channelRewards.deleteCustomChannelReward(channelRewardId);
 
         logger.debug(`Deleted channel reward: ${channelRewards}`);
 
@@ -220,7 +220,7 @@ function getChannelRewardIdByName(channelRewardName) {
  * @property {string} rewardId
  * @property {string} rewardImage
  * @property {string} rewardName
- * @property {string} rewardCost
+ * @property {number} rewardCost
  */
 
 /**
@@ -268,8 +268,8 @@ frontendCommunicator.onAsync("syncChannelRewards", async () => {
     return Object.values(channelRewards);
 });
 
-frontendCommunicator.on("deleteChannelReward", (/** @type {string} */ channelRewardId) => {
-    deleteChannelReward(channelRewardId);
+frontendCommunicator.onAsync("deleteChannelReward", async (/** @type {string} */ channelRewardId) => {
+    await deleteChannelReward(channelRewardId);
 });
 
 frontendCommunicator.on("manuallyTriggerReward", (/** @type {string} */ channelRewardId) => {
