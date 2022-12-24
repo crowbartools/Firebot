@@ -57,7 +57,7 @@
                         'min-width': '100px'
                     },
                     cellTemplate: `{{data.effects ? data.effects.list.length : 0}}`,
-                    cellControler: () => {}
+                    cellController: () => {}
                 }
             ];
 
@@ -115,13 +115,26 @@
                     cellController: () => {}
                 },
                 {
+                    name: "SCHEDULE",
+                    icon: "fa-calendar-alt",
+                    headerStyles: {
+                        'min-width': '250px'
+                    },
+                    cellTemplate: `{{getFriendlyCronSchedule(data.schedule)}}`,
+                    cellController: ($scope) => {
+                        $scope.getFriendlyCronSchedule = (schedule) => {
+                            return scheduledTaskService.getFriendlyCronSchedule(schedule);
+                        };
+                    }
+                },
+                {
                     name: "EFFECTS",
                     icon: "fa-magic",
                     headerStyles: {
                         'min-width': '100px'
                     },
                     cellTemplate: `{{data.effects ? data.effects.list.length : 0}}`,
-                    cellControler: () => {}
+                    cellController: () => {}
                 }
             ];
 
@@ -132,10 +145,35 @@
                         click: function () {
                             scheduledTaskService.showAddEditScheduledTaskModal(item);
                         }
-                    },{
+                    },
+                    {
                         html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> Toggle Enabled</a>`,
                         click: function () {
                             scheduledTaskService.toggleScheduledTaskEnabledState(item);
+                        }
+                    },
+                    {
+                        html: `<a href ><i class="far fa-clone" style="margin-right: 10px;"></i> Duplicate</a>`,
+                        click: function () {
+                            scheduledTaskService.duplicateScheduledTask(item.id);
+                        }
+                    },
+                    {
+                        html: `<a href style="color: #fb7373;"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>`,
+                        click: function () {
+                            utilityService
+                                .showConfirmationModal({
+                                    title: "Delete Scheduled Task",
+                                    question: `Are you sure you want to delete the Scheduled Task "${item.name}"?`,
+                                    confirmLabel: "Delete",
+                                    confirmBtnType: "btn-danger"
+                                })
+                                .then(confirmed => {
+                                    if (confirmed) {
+                                        scheduledTaskService.deleteScheduledTask(item);
+                                    }
+                                });
+
                         }
                     }
                 ];

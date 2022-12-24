@@ -64,19 +64,19 @@
                 return service.scheduledTasks.some(t => t.name === name);
             };
 
-            service.duplicateScheduledTasks = (scheduledTaskId) => {
+            service.duplicateScheduledTask = (scheduledTaskId) => {
                 const scheduledTask = service.scheduledTasks.find(t => t.id === scheduledTaskId);
                 if (scheduledTask == null) {
                     return;
                 }
-                const copiedScheduledTasks = objectCopyHelper.copyObject("scheduledTask", scheduledTask);
-                copiedScheduledTasks.id = null;
+                const copiedScheduledTask = objectCopyHelper.copyObject("scheduled_task", scheduledTask);
+                copiedScheduledTask.id = null;
 
-                while (service.scheduledTaskNameExists(copiedScheduledTasks.name)) {
-                    copiedScheduledTasks.name += " copy";
+                while (service.scheduledTaskNameExists(copiedScheduledTask.name)) {
+                    copiedScheduledTask.name += " copy";
                 }
 
-                service.saveScheduledTask(copiedScheduledTasks).then(successful => {
+                service.saveScheduledTask(copiedScheduledTask).then(successful => {
                     if (successful) {
                         ngToast.create({
                             className: 'success',
@@ -112,6 +112,18 @@
                         }
                     });
                 });
+            };
+
+            service.getFriendlyCronSchedule = function(schedule) {
+                const cronstrue = require("cronstrue");
+                const { CronTime } = require("cron");
+                try {
+                    // First make sure cron likes it since it's more strict
+                    new CronTime(schedule);
+                    return cronstrue.toString(schedule);
+                } catch (error) {
+                    return "Invalid schedule";
+                }
             };
 
             return service;

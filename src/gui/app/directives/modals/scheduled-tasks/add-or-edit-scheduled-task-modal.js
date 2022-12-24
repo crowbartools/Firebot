@@ -19,10 +19,11 @@
                         <span class="input-group-addon">Name</span>
                         <input type="text" class="form-control" ng-model="$ctrl.scheduledTask.name">
                     </div>
-                    <div class="input-group pb-6 settings-commandGroup-scheduledTask">
+                    <div class="input-group pb-2 settings-commandGroup-scheduledTask">
                         <span class="input-group-addon">Schedule <tooltip text="'Schedule must be entered in crontab format.'"></tooltip></span>
-                        <input type="text" class="form-control" ng-model="$ctrl.scheduledTask.schedule">
+                        <input type="text" class="form-control" ng-model="$ctrl.scheduledTask.schedule" ng-change="$ctrl.updateFriendlyCronSchedule()">
                     </div>
+                    <div class="muted pb-6">{{$ctrl.scheduleFriendlyName}}</div>
                     <div class="controls-fb-inline">
                         <label class="control-fb control--checkbox" ng-hide="$ctrl.isNewScheduledTask">Enabled
                             <input type="checkbox" ng-model="$ctrl.scheduledTask.enabled" aria-label="...">
@@ -65,12 +66,16 @@
                 sortTags: []
             };
 
+            $ctrl.scheduleFriendlyName = "";
+
             $ctrl.$onInit = function() {
                 if ($ctrl.resolve.scheduledTask == null) {
                     $ctrl.isNewScheduledTask = true;
                 } else {
                     $ctrl.scheduledTask = JSON.parse(JSON.stringify($ctrl.resolve.scheduledTask));
                 }
+
+                $ctrl.updateFriendlyCronSchedule();
 
                 const modalId = $ctrl.resolve.modalId;
                 $ctrl.modalId = modalId;
@@ -119,6 +124,10 @@
                 }
                 return true;
             }
+
+            $ctrl.updateFriendlyCronSchedule = function() {
+                $ctrl.scheduleFriendlyName = scheduledTaskService.getFriendlyCronSchedule($ctrl.scheduledTask.schedule);
+            };
 
             $ctrl.save = function() {
                 if (!scheduledTaskValid()) {
