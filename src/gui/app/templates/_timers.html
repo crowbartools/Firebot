@@ -1,15 +1,63 @@
-<firebot-item-table
-    items="timerService.timers"
-    on-items-update="onTimersUpdated(items)"
-    headers="headers"
-    sort-tag-context="timers"
-    orderable="true"
-    add-new-button-text="New Timer"
-    on-add-new-clicked="timerService.showAddEditTimerModal()"
-    context-menu-options="timerOptions(item)"
-    no-data-message="No timers saved. You should make one! :)"
-    none-found-message="No timers found."
-    search-placeholder="Search timers"
-    test-button="false"
-    status-field="active"
-></firebot-item-table>
+<div
+  style="
+    min-width: 500px;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  "
+>
+  <div class="fb-tab-wrapper">
+    <ul class="nav nav-tabs fb-tabs">
+      <li
+        role="presentation"
+        ng-class="{'active' : activeTimerTab === 0}"
+        ng-click="activeTimerTab = 0"
+      >
+        <a href>TIMERS</a>
+      </li>
+      <li
+        role="presentation"
+        ng-class="{'active' : activeTimerTab === 1}"
+        ng-click="activeTimerTab = 1"
+      >
+        <a href>SCHEDULED TASKS</a>
+      </li>
+    </ul>
+  </div>
+  
+  <div style="overflow-y: scroll;">
+    <firebot-item-table
+      ng-if="activeTimerTab === 0"
+      items="timerService.timers"
+      on-items-update="onTimersUpdated(items)"
+      headers="timerHeaders"
+      sort-tag-context="timers"
+      orderable="true"
+      add-new-button-text="New Timer"
+      on-add-new-clicked="timerService.showAddEditTimerModal()"
+      context-menu-options="timerOptions(item)"
+      no-data-message="No timers saved. You should make one! :)"
+      none-found-message="No timers found."
+      search-placeholder="Search timers"
+      test-button="false"
+      status-field="active"
+    ></firebot-item-table>
+    <firebot-item-table
+      ng-if="activeTimerTab === 1"
+      items="scheduledTaskService.scheduledTasks"
+      on-items-update="onScheduledTasksUpdated(items)"
+      headers="scheduledTaskHeaders"
+      sort-tag-context="scheduled tasks"
+      orderable="true"
+      add-new-button-text="New Scheduled Task"
+      on-add-new-clicked="scheduledTaskService.addOrEditScheduledTaskModal()"
+      context-menu-options="scheduledTaskOptions(item)"
+      no-data-message="No scheduled tasks saved. You should make one! :)"
+      none-found-message="No scheduled tasks found."
+      search-placeholder="Search scheduled tasks"
+      test-button="false"
+      status-field="enabled"
+    ></firebot-item-table>
+  </div>
+</div>

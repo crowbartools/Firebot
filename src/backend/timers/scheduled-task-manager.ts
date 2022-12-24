@@ -130,14 +130,14 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
         }
     }
 
-    saveScheduledTask(task: ScheduledTask): void {
+    saveScheduledTask(task: ScheduledTask): ScheduledTask | null {
         logger.debug(`Saving scheduled task "${task.name}"...`);
         const savedTask = super.saveItem(task);
 
         if (savedTask) {
             if (this.taskCache.has(savedTask.id) &&
                 this.taskCache.get(savedTask.id).cronjob?.running) {
-                this.taskCache.get(savedTask.id).cronjob.stop();
+                this.stopTask(this.taskCache.get(savedTask.id));
             }
 
             this.taskCache.set(savedTask.id, {
@@ -148,7 +148,11 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
             if (savedTask.enabled) {
                 this.startTask(this.taskCache.get(savedTask.id));
             }
+
+            return savedTask;
         }
+
+        return null;
     }
 
     deleteScheduledTask(id: string): void {
@@ -172,19 +176,19 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
             logger.debug(`No scheduled task found with ID ${id}`);
         }
     }
+
+    triggerUiRefresh(): void {
+        frontendCommunicator.send("allScheduledTasksUpdated", this.getAllItems());
+    }
 }
 
 const scheduledTaskManager = new ScheduledTaskManager();
 
-frontendCommunicator.on("getScheduledTasks", () => {
-    scheduledTaskManager.getAllItems();
-});
+frontendCommunicator.onAsync("getScheduledTasks", async () => scheduledTaskManager.getAllItems());
 
-frontendCommunicator.on("saveScheduledTask", (task: ScheduledTask) => {
-    scheduledTaskManager.saveScheduledTask(task);
-});
+frontendCommunicator.onAsync("saveScheduledTask", async (task: ScheduledTask) => scheduledTaskManager.saveScheduledTask(task));
 
-frontendCommunicator.on("saveAllScheduledTasks", (tasks: ScheduledTask[]) => {
+frontendCommunicator.onAsync("saveAllScheduledTasks", async (tasks: ScheduledTask[]) => {
     scheduledTaskManager.saveAllItems(tasks);
 });
 

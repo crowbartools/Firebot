@@ -5,16 +5,24 @@
         .controller("timersController", function(
             $scope,
             timerService,
+            scheduledTaskService,
             utilityService
         ) {
 
             $scope.timerService = timerService;
+            $scope.scheduledTaskService = scheduledTaskService;
+
+            $scope.activeTimerTab = 0;
 
             $scope.onTimersUpdated = (timers) => {
                 timerService.saveAllTimers(timers);
             };
 
-            $scope.headers = [
+            $scope.onScheduledTasksUpdated = (tasks) => {
+                scheduledTaskService.saveAllScheduledTasks(tasks);
+            };
+
+            $scope.timerHeaders = [
                 {
                     name: "NAME",
                     icon: "fa-user",
@@ -89,6 +97,45 @@
                                     }
                                 });
 
+                        }
+                    }
+                ];
+
+                return options;
+            };
+
+            $scope.scheduledTaskHeaders = [
+                {
+                    name: "NAME",
+                    icon: "fa-user",
+                    headerStyles: {
+                        'min-width': '175px'
+                    },
+                    cellTemplate: `{{data.name}}`,
+                    cellController: () => {}
+                },
+                {
+                    name: "EFFECTS",
+                    icon: "fa-magic",
+                    headerStyles: {
+                        'min-width': '100px'
+                    },
+                    cellTemplate: `{{data.effects ? data.effects.list.length : 0}}`,
+                    cellControler: () => {}
+                }
+            ];
+
+            $scope.scheduledTaskOptions = (item) => {
+                const options = [
+                    {
+                        html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
+                        click: function () {
+                            scheduledTaskService.showAddEditScheduledTaskModal(item);
+                        }
+                    },{
+                        html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> Toggle Enabled</a>`,
+                        click: function () {
+                            scheduledTaskService.toggleScheduledTaskEnabledState(item);
                         }
                     }
                 ];

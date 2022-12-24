@@ -14,7 +14,7 @@
       "EVENTS": "Events",
       "PRESET_EFFECT_LISTS": "Preset Effect Lists",
       "EFFECT_QUEUES": "Effect Queues",
-      "TIMERS": "Timers",
+      "TIMERS": "Timers/Scheduled Tasks",
       "HOTKEYS": "Hotkeys",
       "CHANNELREWARDS": "Channel Rewards"
     },

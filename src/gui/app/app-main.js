@@ -118,6 +118,7 @@
         startupScriptsService,
         effectQueuesService,
         timerService,
+        scheduledTaskService,
         channelRewardsService,
         sortTagsService,
         streamTagsService,
@@ -134,6 +135,8 @@
         commandsService.refreshCommands();
 
         timerService.loadTimers();
+
+        scheduledTaskService.loadScheduledTasks();
 
         //get integrations from backend
         integrationService.updateIntegrations();
