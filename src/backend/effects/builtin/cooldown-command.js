@@ -50,7 +50,7 @@ const model = {
                 </div>
             </div>
         </eos-container>
-        
+
         <eos-container header="Action" pad-top="true" ng-show="effect.commandId != null || effect.sortTagId != null">
             <div class="btn-group">
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
