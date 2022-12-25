@@ -50,6 +50,7 @@ const model = {
                 </div>
             </div>
         </eos-container>
+        
         <eos-container header="Action" pad-top="true" ng-show="effect.commandId != null || effect.sortTagId != null">
             <div class="btn-group">
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -65,6 +66,7 @@ const model = {
                 </ul>
             </div>
         </eos-container>
+
         <eos-container header="Cooldowns" pad-top="true" ng-show="effect.action === 'Add'">
             <div class="mt-2">
                 <label class="control-fb control--checkbox"> Global Cooldown
@@ -96,6 +98,7 @@ const model = {
                 </div>
             </div>
         </eos-container>
+
         <eos-container header="Cooldowns" pad-top="true" ng-show="effect.action === 'Clear'">
             <div class="mt-2">
                 <label class="control-fb control--checkbox"> Clear Global Cooldown
