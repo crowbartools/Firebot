@@ -150,8 +150,7 @@ const playVideo = {
                     aria-describedby="video-length-effect-type"
                     placeholder="Optional"
                     replace-variables="number"
-                    ng-model="effect.length"
-                    ng-disabled="effect.wait && (effect.videoType === 'Local Video' || effect.videoType === 'Random From Folder')">
+                    ng-model="effect.length">
             </div>
             <label ng-if="effect.videoType != 'Random Twitch Clip' && effect.videoType != 'Twitch Clip'" class="control-fb control--checkbox" style="margin-top:15px;"> Loop <tooltip text="'Loop the video until the duration is reached.'"></tooltip>
                 <input type="checkbox" ng-model="effect.loop" ng-disabled="effect.wait">
@@ -226,7 +225,6 @@ const playVideo = {
         $scope.waitChange = () => {
             if ($scope.effect.wait) {
                 $scope.effect.loop = false;
-                $scope.effect.length = null;
             }
         };
         $scope.showOverlayInfoModal = function (overlayInstance) {
