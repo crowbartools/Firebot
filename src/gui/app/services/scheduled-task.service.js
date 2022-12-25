@@ -46,6 +46,71 @@
                     });
             };
 
+            function parseSchedulePart(part) {
+                const setValueRegex = /^\d+$/g;
+                const stepRegex = /^\*\/\d+$/g;
+                const rangeRegex = /^\d+-\d+$/g;
+                const setRegex = /^\d+(,\d+)*$/g;
+
+                if (part === "*") {
+                    return {
+                        type: "all"
+                    };
+                } else if (setValueRegex.test(part)) {
+                    return {
+                        type: "setValue",
+                        value: part
+                    };
+                } else if (stepRegex.test(part)) {
+                    return {
+                        type: "step",
+                        interval: part.split("/")[1]
+                    };
+                } else if (rangeRegex.test(part)) {
+                    const subparts = part.split("-");
+
+                    return {
+                        type: "range",
+                        start: subparts[0],
+                        end: subparts[1]
+                    };
+                } else if (setRegex.test(part)) {
+                    return {
+                        type: "set",
+                        items: part.split(",")
+                    };
+                }
+
+                return {
+                    type: "advanced",
+                    value: part
+                };
+            }
+
+            service.parseSchedule = (schedule) => {
+                const rawParts = schedule.split(" ");
+                if (rawParts.length === 6) {
+                    return {
+                        secondPart: parseSchedulePart(rawParts[0]),
+                        minutePart: parseSchedulePart(rawParts[1]),
+                        hourPart: parseSchedulePart(rawParts[2]),
+                        datePart: parseSchedulePart(rawParts[3]),
+                        monthPart: parseSchedulePart(rawParts[4]),
+                        dayOfWeekPart: parseSchedulePart(rawParts[5])
+                    };
+                } else if (rawParts.length === 5) {
+                    return {
+                        minutePart: parseSchedulePart(rawParts[0]),
+                        hourPart: parseSchedulePart(rawParts[1]),
+                        datePart: parseSchedulePart(rawParts[2]),
+                        monthPart: parseSchedulePart(rawParts[3]),
+                        dayOfWeekPart: parseSchedulePart(rawParts[4])
+                    };
+                }
+
+                return null;
+            };
+
             service.saveAllScheduledTasks = function(scheduledTasks) {
                 service.scheduledTasks = scheduledTasks;
                 backendCommunicator.fireEventAsync("saveAllScheduledTasks", scheduledTasks);

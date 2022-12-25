@@ -67,6 +67,7 @@
             };
 
             $ctrl.scheduleFriendlyName = "";
+            $ctrl.parsedSchedule = {};
 
             $ctrl.$onInit = function() {
                 if ($ctrl.resolve.scheduledTask == null) {
@@ -76,6 +77,7 @@
                 }
 
                 $ctrl.updateFriendlyCronSchedule();
+                $ctrl.updateParsedSchedule();
 
                 const modalId = $ctrl.resolve.modalId;
                 $ctrl.modalId = modalId;
@@ -127,6 +129,10 @@
 
             $ctrl.updateFriendlyCronSchedule = function() {
                 $ctrl.scheduleFriendlyName = scheduledTaskService.getFriendlyCronSchedule($ctrl.scheduledTask.schedule);
+            };
+
+            $ctrl.updateParsedSchedule = function() {
+                $ctrl.parsedSchedule = scheduledTaskService.parseSchedule($ctrl.scheduledTask.schedule);
             };
 
             $ctrl.save = function() {
