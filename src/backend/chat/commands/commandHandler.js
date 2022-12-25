@@ -375,6 +375,7 @@ function fireCommand(
 async function handleChatMessage(firebotChatMessage) {
 
     const twitchChat = require("../twitch-chat");
+    const twitchApi = require("../../twitch-api/api");
 
     logger.debug("Checking for command in message...");
 
@@ -425,20 +426,20 @@ async function handleChatMessage(firebotChatMessage) {
     userCmd.trigger = matchedTrigger;
 
     if (userCmd.isInvalidSubcommandTrigger === true) {
-        twitchChat.sendChatMessage(`Invalid Command: unknown arg used.`);
+        await twitchChat.sendChatMessage(`Invalid Command: unknown arg used.`);
         return false;
     }
 
     if (command.autoDeleteTrigger || (triggeredSubcmd && triggeredSubcmd.autoDeleteTrigger)) {
         logger.debug("Auto delete trigger is on, attempting to delete chat message");
-        twitchChat.deleteMessage(firebotChatMessage.id);
+        await twitchApi.chat.deleteChatMessage(firebotChatMessage.id);
     }
 
     // check if command meets min args requirement
     const minArgs = triggeredSubcmd ? triggeredSubcmd.minArgs || 0 : command.minArgs || 0;
     if (userCmd.args.length < minArgs) {
         const usage = triggeredSubcmd ? triggeredSubcmd.usage : command.usage;
-        twitchChat.sendChatMessage(`Invalid command. Usage: ${command.trigger} ${usage || ""}`);
+        await twitchChat.sendChatMessage(`Invalid command. Usage: ${command.trigger} ${usage || ""}`);
         return false;
     }
 
@@ -456,7 +457,7 @@ async function handleChatMessage(firebotChatMessage) {
 
             const cooldownMessage = command.useCustomCooldownMessage ? command.cooldownMessage : DEFAULT_COOLDOWN_MESSAGE;
 
-            twitchChat.sendChatMessage(
+            await twitchChat.sendChatMessage(
                 cooldownMessage
                     .replace("{user}", commandSender)
                     .replace("{timeLeft}", util.secondsForHumans(remainingCooldown)),
@@ -506,7 +507,7 @@ async function handleChatMessage(firebotChatMessage) {
                     restrictionData.failMessage :
                     DEFAULT_RESTRICTION_MESSAGE;
 
-                twitchChat.sendChatMessage(
+                await twitchChat.sendChatMessage(
                     restrictionMessage
                         .replace("{user}", commandSender)
                         .replace("{reason}", reason),

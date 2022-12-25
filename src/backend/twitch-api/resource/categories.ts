@@ -1,7 +1,6 @@
+import logger from "../../logwrapper";
+import twitchApi from "../api";
 import { ApiClient, HelixGame } from "@twurple/api";
-
-const logger = require("../../logwrapper");
-const twitchApi = require("../api");
 
 /**
  * Defines a Twitch category

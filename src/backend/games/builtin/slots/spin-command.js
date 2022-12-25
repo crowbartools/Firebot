@@ -56,7 +56,7 @@ const spinCommand = {
                     const noWagerAmountMsg = slotsSettings.settings.generalMessages.noWagerAmount
                         .replace("{user}", username);
 
-                    twitchChat.sendChatMessage(noWagerAmountMsg, null, chatter);
+                    await twitchChat.sendChatMessage(noWagerAmountMsg, null, chatter);
                 }
 
                 return;
@@ -70,7 +70,7 @@ const spinCommand = {
                 const invalidWagerAmountMsg = slotsSettings.settings.generalMessages.invalidWagerAmount
                     .replace("{user}", username);
 
-                twitchChat.sendChatMessage(invalidWagerAmountMsg, null, chatter);
+                await twitchChat.sendChatMessage(invalidWagerAmountMsg, null, chatter);
             }
 
             return;
@@ -81,7 +81,7 @@ const spinCommand = {
                 const alreadySpinningMsg = slotsSettings.settings.generalMessages.alreadySpinning
                     .replace("{username}", username);
 
-                twitchChat.sendChatMessage(alreadySpinningMsg, null, chatter);
+                await twitchChat.sendChatMessage(alreadySpinningMsg, null, chatter);
             }
 
             return;
@@ -94,7 +94,7 @@ const spinCommand = {
                 const cooldownMsg = slotsSettings.settings.generalMessages.onCooldown
                     .replace("{username}", username).replace("{timeRemaining}", timeRemainingDisplay);
 
-                twitchChat.sendChatMessage(cooldownMsg, null, chatter);
+                await twitchChat.sendChatMessage(cooldownMsg, null, chatter);
             }
 
             return;
@@ -105,7 +105,7 @@ const spinCommand = {
                 const moreThanZeroMsg = slotsSettings.settings.generalMessages.moreThanZero
                     .replace("{username}", username);
 
-                twitchChat.sendChatMessage(moreThanZeroMsg, null, chatter);
+                await twitchChat.sendChatMessage(moreThanZeroMsg, null, chatter);
             }
 
             return;
@@ -118,7 +118,7 @@ const spinCommand = {
                     const minWagerMsg = slotsSettings.settings.generalMessages.minWager
                         .replace("{username}", username).replace("{minWager}", minWager);
 
-                    twitchChat.sendChatMessage(minWagerMsg, null, chatter);
+                    await twitchChat.sendChatMessage(minWagerMsg, null, chatter);
                 }
 
                 return;
@@ -131,7 +131,7 @@ const spinCommand = {
                     const maxWagerMsg = slotsSettings.settings.generalMessages.maxWager
                         .replace("{username}", username).replace("{maxWager}", maxWager);
 
-                    twitchChat.sendChatMessage(maxWagerMsg, null, chatter);
+                    await twitchChat.sendChatMessage(maxWagerMsg, null, chatter);
                 }
 
                 return;
@@ -152,7 +152,7 @@ const spinCommand = {
                 const notEnoughMsg = slotsSettings.settings.generalMessages.notEnough
                     .replace("{username}", username);
 
-                twitchChat.sendChatMessage(notEnoughMsg, null, chatter);
+                await twitchChat.sendChatMessage(notEnoughMsg, null, chatter);
             }
 
             return;
@@ -170,7 +170,7 @@ const spinCommand = {
             await currencyDatabase.adjustCurrencyForUser(username, currencyId, -Math.abs(wagerAmount));
         } catch (error) {
             logger.error(error);
-            twitchChat.sendChatMessage(`Sorry ${username}, there was an error deducting currency from your balance so the spin has been canceled.`, null, chatter);
+            await twitchChat.sendChatMessage(`Sorry ${username}, there was an error deducting currency from your balance so the spin has been canceled.`, null, chatter);
             activeSpinners.del(username);
             return;
         }
@@ -224,7 +224,7 @@ const spinCommand = {
                 .replace("{successfulRolls}", successfulRolls)
                 .replace("{winningsAmount}", util.commafy(winnings))
                 .replace("{currencyName}", currency.name);
-            twitchChat.sendChatMessage(spinSuccessfulMsg, null, chatter);
+            await twitchChat.sendChatMessage(spinSuccessfulMsg, null, chatter);
         }
 
         activeSpinners.del(username);

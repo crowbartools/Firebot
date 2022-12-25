@@ -53,7 +53,7 @@ const steam = {
             }
         }
 
-        twitchChat.sendChatMessage(message);
+        await twitchChat.sendChatMessage(message);
     }
 };
 
