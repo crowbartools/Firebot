@@ -14,7 +14,7 @@ const model = {
     globalSettings: {},
     optionsTemplate: `
         <eos-container header="Selection Type" ng-init="showSubcommands = effect.subcommandId != null">
-            <div>
+            <div ng-if="sortTags && sortTags.length">
                 <label class="control-fb control--radio">Single Command
                     <input type="radio" ng-model="effect.selectionType" value="command" />
                     <div class="control__indicator"></div>
