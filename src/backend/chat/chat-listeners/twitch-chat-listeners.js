@@ -78,7 +78,7 @@ exports.setupChatListeners = (streamerChatClient) => {
         }
 
         twitchEventsHandler.chatMessage.triggerChatMessage(firebotChatMessage);
-        raidMessageChecker.sendMessageToCache(firebotChatMessage);
+        await raidMessageChecker.sendMessageToCache(firebotChatMessage);
     });
 
     streamerChatClient.onWhisper(async (_user, messageText, msg) => {

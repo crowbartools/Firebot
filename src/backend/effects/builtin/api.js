@@ -161,7 +161,7 @@ const api = {
 
         const apiResponse = await apiProcessor.getApiResponse(apiType);
 
-        twitchChat.sendChatMessage(`${apiType}: ${apiResponse}`, null, chatter);
+        await twitchChat.sendChatMessage(`${apiType}: ${apiResponse}`, null, chatter);
 
         return {
             success: true,

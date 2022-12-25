@@ -87,7 +87,7 @@ const getChannelInformationByUsername = async (username) => {
 
 /**
  * Trigger a Twitch ad break. Default length 30 seconds.
- * @param {string} [adLength] How long the ad should run.
+ * @param {number} [adLength] How long the ad should run.
  * @returns {Promise<boolean>}
  */
 const triggerAdBreak = async (adLength = 30) => {

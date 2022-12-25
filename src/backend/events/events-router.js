@@ -83,6 +83,17 @@ async function onEventTriggered(event, source, meta, isManual = false, isRetrigg
 
     for (const eventSetting of eventSettings) {
 
+        if (eventSetting.filterData && (isSimulation || !isManual)) {
+            const passed = await filterManager.runFilters(eventSetting.filterData, {
+                eventSourceId: source.id,
+                eventId: event.id,
+                eventMeta: meta
+            });
+            if (!passed) {
+                continue;
+            }
+        }
+
         if (!isRetrigger && (isSimulation || !isManual) && (eventSetting.customCooldown || event.cached)) {
             let cacheTtlInSecs;
             let cacheMetaKey;
@@ -97,17 +108,6 @@ async function onEventTriggered(event, source, meta, isManual = false, isRetrigg
 
             const alreadyCached = cacheNewEvent(source.id, event.id, eventSetting.id, cacheTtlInSecs, cacheMetaKey);
             if (alreadyCached) {
-                return;
-            }
-        }
-
-        if (eventSetting.filterData && (isSimulation || !isManual)) {
-            const passed = await filterManager.runFilters(eventSetting.filterData, {
-                eventSourceId: source.id,
-                eventId: event.id,
-                eventMeta: meta
-            });
-            if (!passed) {
                 continue;
             }
         }

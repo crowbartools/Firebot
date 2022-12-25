@@ -37,8 +37,8 @@ function triggerCooldown() {
         .replace("{command}", trigger ? trigger : '!heist');
 
     if (cooldownOverMessage) {
-        cooldownTimeoutId = setTimeout((msg) => {
-            twitchChat.sendChatMessage(msg, null, chatter);
+        cooldownTimeoutId = setTimeout(async (msg) => {
+            await twitchChat.sendChatMessage(msg, null, chatter);
         }, cooldownMins * 60000, cooldownOverMessage);
     }
 }
@@ -50,7 +50,7 @@ async function runHeist() {
     const startMessage = heistSettings.settings.generalMessages.startMessage;
 
     if (startMessage) {
-        twitchChat.sendChatMessage(startMessage, null, chatter);
+        await twitchChat.sendChatMessage(startMessage, null, chatter);
     }
 
     // wait a few secs for suspense
@@ -122,11 +122,11 @@ async function runHeist() {
 
     try {
         if (outcomeMessage) {
-            twitchChat.sendChatMessage(outcomeMessage, null, chatter);
+            await twitchChat.sendChatMessage(outcomeMessage, null, chatter);
         }
 
         if (winningsMessage) {
-            twitchChat.sendChatMessage(winningsMessage, null, chatter);
+            await twitchChat.sendChatMessage(winningsMessage, null, chatter);
         }
     } catch (error) {
         //weird error
@@ -167,7 +167,7 @@ exports.triggerLobbyStart = (startDelayMins) => {
                 teamTooSmallMessage = teamTooSmallMessage
                     .replace("{user}", usersInHeist[0].username);
 
-                twitchChat.sendChatMessage(teamTooSmallMessage, null, chatter);
+                await twitchChat.sendChatMessage(teamTooSmallMessage, null, chatter);
             }
 
             usersInHeist = [];

@@ -234,12 +234,12 @@ const quotesManagement = {
 
                 if (quote) {
                     const formattedQuote = getFormattedQuoteString(quote);
-                    twitchChat.sendChatMessage(formattedQuote);
+                    await twitchChat.sendChatMessage(formattedQuote);
                     sendToTTS(formattedQuote);
 
                     logger.debug('We pulled a quote by id: ' + formattedQuote);
                 } else {
-                    twitchChat.sendChatMessage(`Could not find a random quote!`);
+                    await twitchChat.sendChatMessage(`Could not find a random quote!`);
                 }
                 return resolve();
             }
@@ -251,12 +251,12 @@ const quotesManagement = {
                 const quote = await quotesManager.getQuote(quoteId);
                 if (quote) {
                     const formattedQuote = getFormattedQuoteString(quote);
-                    twitchChat.sendChatMessage(formattedQuote);
+                    await twitchChat.sendChatMessage(formattedQuote);
                     sendToTTS(formattedQuote);
                     logger.debug('We pulled a quote using an id: ' + formattedQuote);
                 } else {
                     // If we get here, it's likely the command was used wrong. Tell the sender they done fucked up
-                    twitchChat.sendChatMessage(`Sorry! We couldn't find a quote with that id.`);
+                    await twitchChat.sendChatMessage(`Sorry! We couldn't find a quote with that id.`);
                 }
                 return resolve();
             }
@@ -264,7 +264,7 @@ const quotesManagement = {
             switch (triggeredArg) {
             case "add": {
                 if (args.length < 3) {
-                    twitchChat.sendChatMessage(`Please provide some quote text!`);
+                    await twitchChat.sendChatMessage(`Please provide some quote text!`);
                     return resolve();
                 }
 
@@ -282,7 +282,7 @@ const quotesManagement = {
                 const newQuoteId = await quotesManager.addQuote(newQuote);
                 const newQuoteText = await quotesManager.getQuote(newQuoteId);
                 const formattedQuote = getFormattedQuoteString(newQuoteText);
-                twitchChat.sendChatMessage(
+                await twitchChat.sendChatMessage(
                     `Added ${formattedQuote}`
                 );
                 sendToTTS(formattedQuote);
@@ -293,12 +293,12 @@ const quotesManagement = {
                 const quoteId = parseInt(args[1]);
                 if (!isNaN(quoteId)) {
                     await quotesManager.removeQuote(quoteId);
-                    twitchChat.sendChatMessage(`Quote ${quoteId} was removed.`);
+                    await twitchChat.sendChatMessage(`Quote ${quoteId} was removed.`);
                     logger.debug('A quote was removed: ' + quoteId);
                     return resolve();
                 }
 
-                twitchChat.sendChatMessage(`Sorry! Couldnt find a quote with that id number.`);
+                await twitchChat.sendChatMessage(`Sorry! Couldnt find a quote with that id number.`);
                 logger.error('Quotes: NaN passed to remove quote command.');
                 return resolve();
             }
@@ -314,9 +314,9 @@ const quotesManagement = {
                 const binId = await cloudSync.syncProfileData(profileJSON);
 
                 if (binId == null) {
-                    twitchChat.sendChatMessage("There are no quotes to pull!");
+                    await twitchChat.sendChatMessage("There are no quotes to pull!");
                 } else {
-                    twitchChat.sendChatMessage(`Here a list of quotes! https://firebot.app/profile?id=${binId}`);
+                    await twitchChat.sendChatMessage(`Here a list of quotes! https://firebot.app/profile?id=${binId}`);
                 }
 
                 return resolve();
@@ -336,7 +336,7 @@ const quotesManagement = {
                     const formattedQuote = getFormattedQuoteString(quote);
 
                     // send to chat
-                    twitchChat.sendChatMessage(formattedQuote);
+                    await twitchChat.sendChatMessage(formattedQuote);
                     sendToTTS(formattedQuote);
 
                     // log (Maybe move this to the manager?)
@@ -345,7 +345,7 @@ const quotesManagement = {
                 // no matching quote found
                 } else {
 
-                    twitchChat.sendChatMessage(`Sorry! We couldnt find a quote using those terms.`);
+                    await twitchChat.sendChatMessage(`Sorry! We couldnt find a quote using those terms.`);
                 }
 
                 // resolve promise
@@ -360,9 +360,9 @@ const quotesManagement = {
 
                     const formattedQuote = getFormattedQuoteString(quote);
                     sendToTTS(formattedQuote);
-                    twitchChat.sendChatMessage(formattedQuote);
+                    await twitchChat.sendChatMessage(formattedQuote);
                 } else {
-                    twitchChat.sendChatMessage(`Sorry! We couldn't find a quote by ${username}`);
+                    await twitchChat.sendChatMessage(`Sorry! We couldn't find a quote by ${username}`);
                 }
                 return resolve();
             }
@@ -371,10 +371,10 @@ const quotesManagement = {
                 const quote = await quotesManager.getRandomQuoteByGame(searchTerm);
                 if (quote != null) {
                     const formattedQuote = getFormattedQuoteString(quote);
-                    twitchChat.sendChatMessage(formattedQuote);
+                    await twitchChat.sendChatMessage(formattedQuote);
                     sendToTTS(formattedQuote);
                 } else {
-                    twitchChat.sendChatMessage(`Sorry! We couldn't find a quote with game ${searchTerm}`);
+                    await twitchChat.sendChatMessage(`Sorry! We couldn't find a quote with game ${searchTerm}`);
                 }
                 return resolve();
             }
@@ -385,7 +385,7 @@ const quotesManagement = {
 
                 if (day == null || month == null || day > 31 || day < 1 ||
                     month > 12 || month < 1) {
-                    twitchChat.sendChatMessage(`Invalid quote date search!`);
+                    await twitchChat.sendChatMessage(`Invalid quote date search!`);
                     return resolve();
                 }
 
@@ -397,29 +397,29 @@ const quotesManagement = {
 
                 if (quote != null) {
                     const formattedQuote = getFormattedQuoteString(quote);
-                    twitchChat.sendChatMessage(formattedQuote);
+                    await twitchChat.sendChatMessage(formattedQuote);
                     sendToTTS(formattedQuote);
                 } else {
-                    twitchChat.sendChatMessage(`Sorry! We couldn't find a quote with date ${day}/${month}/${year || "*"}`);
+                    await twitchChat.sendChatMessage(`Sorry! We couldn't find a quote with date ${day}/${month}/${year || "*"}`);
                 }
                 return resolve();
             }
             case "edittext": {
                 if (args.length < 3) {
-                    twitchChat.sendChatMessage(`Invalid usage! ${event.userCommand.trigger} edittext [quoteId] [newText]`);
+                    await twitchChat.sendChatMessage(`Invalid usage! ${event.userCommand.trigger} edittext [quoteId] [newText]`);
                     return resolve();
                 }
 
                 const quoteId = parseInt(args[1]);
                 if (isNaN(quoteId)) {
-                    twitchChat.sendChatMessage(`Invalid Quote Id!`);
+                    await twitchChat.sendChatMessage(`Invalid Quote Id!`);
                     return resolve();
                 }
 
                 const quote = await quotesManager.getQuote(quoteId);
 
                 if (quote == null) {
-                    twitchChat.sendChatMessage(`Cannot find quote with id ${quoteId}`);
+                    await twitchChat.sendChatMessage(`Cannot find quote with id ${quoteId}`);
                     return resolve();
                 }
 
@@ -429,13 +429,13 @@ const quotesManagement = {
                 try {
                     await quotesManager.updateQuote(quote);
                 } catch (err) {
-                    twitchChat.sendChatMessage(`Failed to update quote ${quoteId}!`);
+                    await twitchChat.sendChatMessage(`Failed to update quote ${quoteId}!`);
                     return resolve();
                 }
 
                 const formattedQuote = getFormattedQuoteString(quote);
 
-                twitchChat.sendChatMessage(
+                await twitchChat.sendChatMessage(
                     `Edited ${formattedQuote}`
                 );
 
@@ -444,20 +444,20 @@ const quotesManagement = {
             }
             case "editgame": {
                 if (args.length < 3) {
-                    twitchChat.sendChatMessage(`Invalid usage! ${event.userCommand.trigger} editgame [quoteId] [newGame]`);
+                    await twitchChat.sendChatMessage(`Invalid usage! ${event.userCommand.trigger} editgame [quoteId] [newGame]`);
                     return resolve();
                 }
 
                 const quoteId = parseInt(args[1]);
                 if (isNaN(quoteId)) {
-                    twitchChat.sendChatMessage(`Invalid Quote Id!`);
+                    await twitchChat.sendChatMessage(`Invalid Quote Id!`);
                     return resolve();
                 }
 
                 const quote = await quotesManager.getQuote(quoteId);
 
                 if (quote == null) {
-                    twitchChat.sendChatMessage(`Cannot find quote with id ${quoteId}`);
+                    await twitchChat.sendChatMessage(`Cannot find quote with id ${quoteId}`);
                     return resolve();
                 }
 
@@ -467,12 +467,12 @@ const quotesManagement = {
                 try {
                     await quotesManager.updateQuote(quote);
                 } catch (err) {
-                    twitchChat.sendChatMessage(`Failed to update quote ${quoteId}!`);
+                    await twitchChat.sendChatMessage(`Failed to update quote ${quoteId}!`);
                     return resolve();
                 }
 
                 const formattedQuote = getFormattedQuoteString(quote);
-                twitchChat.sendChatMessage(
+                await twitchChat.sendChatMessage(
                     `Edited ${formattedQuote}`
                 );
 
@@ -484,20 +484,20 @@ const quotesManagement = {
                 const dateFormat = commandOptions.quoteDateFormat;
 
                 if (args.length < 3) {
-                    twitchChat.sendChatMessage(`Invalid usage! ${event.userCommand.trigger} editdate [quoteId] ${dateFormat}`);
+                    await twitchChat.sendChatMessage(`Invalid usage! ${event.userCommand.trigger} editdate [quoteId] ${dateFormat}`);
                     return resolve();
                 }
 
                 const quoteId = parseInt(args[1]);
                 if (isNaN(quoteId)) {
-                    twitchChat.sendChatMessage(`Invalid Quote Id!`);
+                    await twitchChat.sendChatMessage(`Invalid Quote Id!`);
                     return resolve();
                 }
 
                 const quote = await quotesManager.getQuote(quoteId);
 
                 if (quote == null) {
-                    twitchChat.sendChatMessage(`Cannot find quote with id ${quoteId}`);
+                    await twitchChat.sendChatMessage(`Cannot find quote with id ${quoteId}`);
                     return resolve();
                 }
 
@@ -505,7 +505,7 @@ const quotesManagement = {
 
                 const date = moment(newDate, dateFormat);
                 if (!date.isValid()) {
-                    twitchChat.sendChatMessage(`Invalid date format!`);
+                    await twitchChat.sendChatMessage(`Invalid date format!`);
                     return resolve();
                 }
 
@@ -514,12 +514,12 @@ const quotesManagement = {
                 try {
                     await quotesManager.updateQuote(quote);
                 } catch (err) {
-                    twitchChat.sendChatMessage(`Failed to update quote ${quoteId}!`);
+                    await twitchChat.sendChatMessage(`Failed to update quote ${quoteId}!`);
                     return resolve();
                 }
 
                 const formattedQuote = getFormattedQuoteString(quote);
-                twitchChat.sendChatMessage(
+                await twitchChat.sendChatMessage(
                     `Edited ${formattedQuote}`
                 );
 
@@ -528,14 +528,14 @@ const quotesManagement = {
             }
             case "edituser": {
                 if (args.length < 3) {
-                    twitchChat.sendChatMessage(
+                    await twitchChat.sendChatMessage(
                         `Invalid usage! ${event.userCommand.trigger} edituser [quoteId] [newUsername]`);
                     return resolve();
                 }
 
                 const quoteId = parseInt(args[1]);
                 if (isNaN(quoteId)) {
-                    twitchChat.sendChatMessage(
+                    await twitchChat.sendChatMessage(
                         `Invalid Quote Id!`);
                     return resolve();
                 }
@@ -543,7 +543,7 @@ const quotesManagement = {
                 const quote = await quotesManager.getQuote(quoteId);
 
                 if (quote == null) {
-                    twitchChat.sendChatMessage(
+                    await twitchChat.sendChatMessage(
                         `Cannot find quote with id ${quoteId}`);
                     return resolve();
                 }
@@ -554,13 +554,13 @@ const quotesManagement = {
                 try {
                     await quotesManager.updateQuote(quote);
                 } catch (err) {
-                    twitchChat.sendChatMessage(
+                    await twitchChat.sendChatMessage(
                         `Failed to update quote ${quoteId}!`);
                     return resolve();
                 }
 
                 const formattedQuote = getFormattedQuoteString(quote);
-                twitchChat.sendChatMessage(
+                await twitchChat.sendChatMessage(
                     `Edited ${formattedQuote}`
                 );
 
@@ -574,12 +574,12 @@ const quotesManagement = {
 
                 if (quote) {
                     const formattedQuote = getFormattedQuoteString(quote);
-                    twitchChat.sendChatMessage(formattedQuote);
+                    await twitchChat.sendChatMessage(formattedQuote);
                     sendToTTS(formattedQuote);
 
                     logger.debug('We pulled a quote by id: ' + formattedQuote);
                 } else {
-                    twitchChat.sendChatMessage(`Could not find a random quote!`);
+                    await twitchChat.sendChatMessage(`Could not find a random quote!`);
                 }
                 return resolve();
             }
