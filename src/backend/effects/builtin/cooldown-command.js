@@ -24,18 +24,21 @@ const model = {
                     <div class="control__indicator"></div>
                 </label>
             </div>
+
             <ui-select ng-if="effect.selectionType && effect.selectionType === 'command'" ng-model="effect.commandId" theme="bootstrap" on-select="commandSelected($item, $model)">
                 <ui-select-match placeholder="Select or search for a command... ">{{$select.selected.trigger}}</ui-select-match>
                 <ui-select-choices repeat="command.id as command in commands | filter: { trigger: $select.search }" style="position:relative;">
                     <div ng-bind-html="command.trigger | highlight: $select.search"></div>
                 </ui-select-choices>
             </ui-select>
+
             <ui-select ng-if="effect.selectionType && effect.selectionType === 'sortTag'" ng-model="effect.sortTagId" theme="bootstrap">
                 <ui-select-match placeholder="Select or search for a tag... ">{{$select.selected.name}}</ui-select-match>
                 <ui-select-choices repeat="sortTag.id as sortTag in sortTags | filter: { name: $select.search }" style="position:relative;">
                     <div ng-bind-html="sortTag.name | highlight: $select.search"></div>
                 </ui-select-choices>
             </ui-select>
+
             <div ng-show="subcommands && !!subcommands.length" class="mt-4 pl-4">
                 <label class="control-fb control--radio">Cooldown base command
                     <input type="radio" ng-model="showSubcommands" ng-value="false" ng-click="effect.subcommandId = null"/>
@@ -45,6 +48,7 @@ const model = {
                     <input type="radio" ng-model="showSubcommands" ng-value="true"/>
                     <div class="control__indicator"></div>
                 </label>
+
                 <div ng-show="showSubcommands">
                     <dropdown-select selected="effect.subcommandId" options="subcommandOptions" placeholder="Please select"></dropdown-select>
                 </div>
@@ -98,7 +102,6 @@ const model = {
                 </div>
             </div>
         </eos-container>
-
         <eos-container header="Cooldowns" pad-top="true" ng-show="effect.action === 'Clear'">
             <div class="mt-2">
                 <label class="control-fb control--checkbox"> Clear Global Cooldown
