@@ -150,14 +150,19 @@ const playVideo = {
                     aria-describedby="video-length-effect-type"
                     placeholder="Optional"
                     replace-variables="number"
-                    ng-model="effect.length">
+                    ng-model="effect.length"
+                    ng-disabled="effect.wait && (effect.videoType === 'Local Video' || effect.videoType === 'Random From Folder')">
             </div>
             <label ng-if="effect.videoType != 'Random Twitch Clip' && effect.videoType != 'Twitch Clip'" class="control-fb control--checkbox" style="margin-top:15px;"> Loop <tooltip text="'Loop the video until the duration is reached.'"></tooltip>
-                <input type="checkbox" ng-model="effect.loop">
+                <input type="checkbox" ng-model="effect.loop" ng-disabled="effect.wait">
                 <div class="control__indicator"></div>
             </label>
             <label ng-if="effect.videoType == 'Random Twitch Clip' || effect.videoType == 'Twitch Clip'" class="control-fb control--checkbox" style="margin-top:15px;"> Wait for clip to finish <tooltip text="'Wait for the twitch clip to finish before allowing the next effect to play.'"></tooltip>
                 <input type="checkbox" ng-model="effect.wait">
+                <div class="control__indicator"></div>
+            </label>
+            <label ng-if="effect.videoType === 'Local Video' || effect.videoType === 'Random From Folder'" class="control-fb control--checkbox" style="margin-top:15px;"> Wait for video to finish <tooltip text="'Wait for the video to finish before allowing the next effect to play.'"></tooltip>
+                <input type="checkbox" ng-model="effect.wait" ng-change="waitChange()">
                 <div class="control__indicator"></div>
             </label>
         </eos-container>
@@ -218,6 +223,12 @@ const playVideo = {
      * Port over from effectHelperService.js
      */
     optionsController: ($scope, $rootScope, $timeout, utilityService) => {
+        $scope.waitChange = () => {
+            if ($scope.effect.wait) {
+                $scope.effect.loop = false;
+                $scope.effect.length = null;
+            }
+        };
         $scope.showOverlayInfoModal = function (overlayInstance) {
             utilityService.showOverlayInfoModal(overlayInstance);
         };
@@ -424,7 +435,7 @@ const playVideo = {
                 overlayInstance: data.overlayInstance
             });
 
-            if (effect.wait) {
+            if (effect.wait && effect.videoType !== "Local Video" && effect.videoType !== "Random From Folder") {
                 await util.wait(effectDuration * 1000);
             }
 
@@ -435,6 +446,21 @@ const playVideo = {
         data.resourceToken = resourceToken;
 
         webServer.sendToOverlay("video", data);
+        if (effect.wait && (effect.videoType === "Local Video" || effect.videoType === "Random From Folder")) {
+            await new Promise(async (resolve, reject) => {
+                const listener = (event) => {
+                    try {
+                        if (event.name === "video-end" && event.data.resourceToken === resourceToken) {
+                            webServer.removeListener("overlay-event", listener);
+                            resolve();
+                        }
+                    } catch (err) {
+                        logger.error("Error while trying to process overlay-event for play-video: ", err);
+                    }
+                };
+                webServer.on("overlay-event", listener);
+            });
+        }
         return true;
     },
     /**
@@ -570,18 +596,18 @@ const playVideo = {
                                     .animateCss(inbetweenAnimation, inbetweenDuration, inbetweenDelay, inbetweenRepeat);
                             });
 
+                        const exitVideo = () => {
+                            delete startedVidCache[this.id]; // eslint-disable-line no-undef
+                            animateVideoExit(`#${wrapperId}`, exitAnimation, exitDuration, inbetweenAnimation);
+                            sendWebsocketEvent("video-end", {resourceToken: token}); // eslint-disable-line no-undef
+                        };
+
                         // Remove div after X time.
                         if (videoDuration) {
                             setTimeout(function () {
-                                delete startedVidCache[this.id]; // eslint-disable-line no-undef
-                                animateVideoExit(`#${wrapperId}`, exitAnimation, exitDuration, inbetweenAnimation);
+                                exitVideo();
                             }, videoDuration);
                         } else {
-                            const exitVideo = () => {
-                                delete startedVidCache[this.id]; // eslint-disable-line no-undef
-                                animateVideoExit(`#${wrapperId}`, exitAnimation, exitDuration, inbetweenAnimation);
-                            };
-
                             video.onended = function () {
                                 exitVideo();
                             };
