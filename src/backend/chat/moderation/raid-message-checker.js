@@ -12,15 +12,19 @@ const settings = {
     shouldBlock: false
 };
 
-function handleRaider(message) {
-    const chat = require("../twitch-chat");
+/**
+ *
+ * @param {import("../chat-helpers").FirebotChatMessage} message
+ */
+async function handleRaider(message) {
+    const twitchApi = require("../../twitch-api/api");
 
     if (settings.shouldBan) {
-        chat.ban(message.username, "");
+        await twitchApi.moderation.banUser(message.userId);
     }
 
     if (settings.shouldBlock) {
-        chat.block(message.userId, "");
+        await twitchApi.users.blockUser(message.userId);
     }
 }
 
@@ -28,7 +32,7 @@ function handleRaider(message) {
  *
  * @param {import("../chat-helpers").FirebotChatMessage} firebotChatMessage
  */
-function sendMessageToCache(firebotChatMessage) {
+async function sendMessageToCache(firebotChatMessage) {
     if (messageCache.length >= chatCacheLimit) {
         messageCache.shift();
     }
@@ -40,7 +44,7 @@ function sendMessageToCache(firebotChatMessage) {
     messageCache.push(firebotChatMessage);
 
     if (firebotChatMessage && checkerEnabled && firebotChatMessage.rawText === raidMessage) {
-        handleRaider(firebotChatMessage);
+        await handleRaider(firebotChatMessage);
     }
 }
 
@@ -62,20 +66,20 @@ function getRaidMessage() {
     return Object.keys(raidMessages)[index];
 }
 
-function checkPreviousMessages() {
+async function checkPreviousMessages() {
     for (const message in messageCache) {
         if (messageCache[message].rawText === raidMessage) {
-            handleRaider(messageCache[message]);
+            await handleRaider(messageCache[message]);
         }
     }
 }
 
-function enable(shouldBan, shouldBlock) {
+async function enable(shouldBan, shouldBlock) {
     raidMessage = getRaidMessage();
     settings.shouldBan = shouldBan;
     settings.shouldBlock = shouldBlock;
 
-    checkPreviousMessages();
+    await checkPreviousMessages();
 
     checkerEnabled = true;
     logger.debug("Raid message checker enabled...");

@@ -1,8 +1,8 @@
+import customRolesManager from "../../../../backend/roles/custom-roles-manager";
+import userDb, { FirebotUser } from "../../../../backend/database/userDatabase";
 import { Request, Response } from "express";
-const customRolesManager = require("../../../../backend/roles/custom-roles-manager");
-const userDb = require("../../../../backend/database/userDatabase");
 
-exports.getCustomRoles = async function(req: Request, res: Response) {
+export async function getCustomRoles(req: Request, res: Response): Promise<Response> {
     const customRoles = customRolesManager.getCustomRoles()
         .map((cr: any) => {
             return {
@@ -15,7 +15,7 @@ exports.getCustomRoles = async function(req: Request, res: Response) {
     return res.json(customRoles);
 };
 
-exports.getCustomRoleById = async function(req: Request, res: Response) {
+export async function getCustomRoleById(req: Request, res: Response): Promise<Response> {
     const customRoleId: string = req.params.customRoleId;
 
     if (!(customRoleId.length > 0)) {
@@ -25,7 +25,7 @@ exports.getCustomRoleById = async function(req: Request, res: Response) {
         });
     }
 
-    const customRole = customRolesManager.getItem(customRoleId);
+    const customRole = customRolesManager.getCustomRoles().find((role) => role.id.toLowerCase() == customRoleId.toLowerCase());
 
     if (customRole == null) {
         return res.status(404).send({
@@ -43,7 +43,7 @@ exports.getCustomRoleById = async function(req: Request, res: Response) {
     return res.json(formattedCustomRole);
 };
 
-exports.addUserToCustomRole = async function(req: Request, res: Response) {
+export async function addUserToCustomRole(req: Request, res: Response): Promise<Response> {
     const { userId, customRoleId } = req.params;
     const { username } = req.query;
 
@@ -61,7 +61,7 @@ exports.addUserToCustomRole = async function(req: Request, res: Response) {
         });
     }
 
-    let metadata;
+    let metadata: FirebotUser;
     if (username === "true") {
         metadata = await userDb.getUserByUsername(userId);
     } else {
@@ -89,7 +89,7 @@ exports.addUserToCustomRole = async function(req: Request, res: Response) {
     return res.status(201).send();
 };
 
-exports.removeUserFromCustomRole = async function(req: Request, res: Response) {
+export async function removeUserFromCustomRole(req: Request, res: Response): Promise<Response> {
     const { userId, customRoleId } = req.params;
     const { username } = req.query;
 
@@ -107,7 +107,7 @@ exports.removeUserFromCustomRole = async function(req: Request, res: Response) {
         });
     }
 
-    let metadata;
+    let metadata: FirebotUser;
     if (username === "true") {
         metadata = await userDb.getUserByUsername(userId);
     } else {

@@ -123,7 +123,7 @@ const model = {
         try {
             logger.debug("Random Reddit: " + imageUrl);
             if (event.effect.show === "chat" || event.effect.show === "both") {
-                twitchChat.sendChatMessage("Random Reddit: " + imageUrl, null, chatter);
+                await twitchChat.sendChatMessage("Random Reddit: " + imageUrl, null, chatter);
             }
 
             if (event.effect.show === "overlay" || event.effect.show === "both") {

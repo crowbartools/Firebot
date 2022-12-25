@@ -2,7 +2,7 @@
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 const logger = require('../../logwrapper');
-const twitchChat = require("../../chat/twitch-chat");
+const twitchApi = require("../../twitch-api/api");
 
 const model = {
     definition: {
@@ -49,12 +49,38 @@ const model = {
     },
     onTriggerEvent: async event => {
         if (event.effect.action === "Ban") {
-            twitchChat.ban(event.effect.username, "Banned by Firebot");
-            logger.debug(event.effect.username + " was banned via the ban effect.");
+            const user = await twitchApi.getClient().users.getUserByName(event.effect.username);
+
+            if (user != null) {
+                const result = await twitchApi.moderation.banUser(user.id, "Banned by Firebot");
+
+                if (result === true) {
+                    logger.debug(event.effect.username + " was banned via the Ban effect.");
+                } else {
+                    logger.error(event.effect.username + " was unable to be banned via the Ban effect.");
+                    return false;
+                }
+            } else {
+                logger.error(`User ${event.effect.username} does not exist and could not be banned via the Ban effect`);
+                return false;
+            }
         }
         if (event.effect.action === "Unban") {
-            twitchChat.unban(event.effect.username);
-            logger.debug(event.effect.username + " was unbanned via the ban effect.");
+            const user = await twitchApi.getClient().users.getUserByName(event.effect.username);
+
+            if (user != null) {
+                const result = await twitchApi.moderation.unban(user.id);
+
+                if (result === true) {
+                    logger.debug(event.effect.username + " was unbanned via the Ban effect.");
+                } else {
+                    logger.error(event.effect.username + " was unable to be unbanned via the Ban effect.");
+                    return false;
+                }
+            } else {
+                logger.warn(`User ${event.effect.username} does not exist and could not be unbanned via the Ban effect`);
+                return false;
+            }
         }
         return true;
     }

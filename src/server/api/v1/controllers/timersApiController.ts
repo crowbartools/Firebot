@@ -1,7 +1,7 @@
+import timersManager from "../../../../backend/timers/timer-manager";
 import { Request, Response } from "express";
-const timersManager = require("../../../../backend/timers/timer-manager");
 
-exports.getTimers = async function(req: Request, res: Response) {
+export async function getTimers(req: Request, res: Response): Promise<Response> {
     const timers = timersManager.getAllItems()
         .map((c: any) => {
             return {
@@ -14,7 +14,7 @@ exports.getTimers = async function(req: Request, res: Response) {
     return res.json(timers);
 };
 
-exports.getTimerById = async function(req: Request, res: Response) {
+export async function getTimerById(req: Request, res: Response): Promise<Response> {
     const timerId: string = req.params.timerId;
 
     if (!(timerId.length > 0)) {

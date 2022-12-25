@@ -23,7 +23,7 @@ function processDice(diceConfig, showEach) {
     return `${result} (${rolled.join(", ")})`;
 }
 
-function handleDiceEffect(effect, trigger) {
+async function handleDiceEffect(effect, trigger) {
 
     const { dice, chatter, whisper, resultType } = effect;
 
@@ -37,7 +37,7 @@ function handleDiceEffect(effect, trigger) {
         `Dice Roll: ${username} rolled a ${output} on ${dice}.` :
         `Unable to roll "${dice}" as it's not in the correct format.`;
 
-    twitchChat.sendChatMessage(message, whisper, chatter);
+    await twitchChat.sendChatMessage(message, whisper, chatter);
 }
 
 exports.handleDiceEffect = handleDiceEffect;

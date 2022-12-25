@@ -51,7 +51,7 @@
                     if (totalSecs < 60) {
                         display = `0:${pad(totalSecs)}`;
                     } else {
-                        const totalMins = Math.round(totalSecs / 60);
+                        const totalMins = Math.floor(totalSecs / 60);
                         const remainingSecs = totalSecs % 60;
 
                         display = `${totalMins}:${pad(remainingSecs)}`;

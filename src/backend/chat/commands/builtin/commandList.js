@@ -33,10 +33,10 @@ const commandList = {
         const binId = await cloudSync.syncProfileData(profileJSON);
 
         if (binId == null) {
-            twitchChat.sendChatMessage(
+            await twitchChat.sendChatMessage(
                 `${event.chatMessage.username}, there are no commands that you are allowed to run.`, null, "Bot");
         } else {
-            twitchChat.sendChatMessage(
+            await twitchChat.sendChatMessage(
                 `You can view the list of commands here: https://firebot.app/profile?id=${binId}`, null, "Bot");
         }
     }

@@ -46,13 +46,13 @@ const model = {
                 .createStreamMarker(streamer.userId, args.join(" "));
 
             if (marker == null) {
-                chat.sendChatMessage(`Unable to create a stream marker.`);
+                await chat.sendChatMessage(`Unable to create a stream marker.`);
                 return;
             }
-            chat.sendChatMessage(`Marker created at ${utils.formattedSeconds(marker.positionInSeconds, true)}`);
+            await chat.sendChatMessage(`Marker created at ${utils.formattedSeconds(marker.positionInSeconds, true)}`);
         } catch (error) {
             logger.error(error);
-            chat.sendChatMessage(`Failed to create a stream marker.`);
+            await chat.sendChatMessage(`Failed to create a stream marker.`);
         }
     }
 };

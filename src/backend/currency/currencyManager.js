@@ -266,18 +266,17 @@ function createCurrencyCommandDefinition(currency) {
 
             // No args, tell the user how much currency they have.
             if (args.length === 0) {
-                currencyDatabase.getUserCurrencyAmount(event.userCommand.commandSender, currencyId).then(function(amount) {
-                    if (!isNaN(amount)) {
-                        const balanceMessage = commandOptions.currencyBalanceMessageTemplate
-                            .replace("{user}", event.userCommand.commandSender)
-                            .replace("{currency}", currencyName)
-                            .replace("{amount}", util.commafy(amount));
+                const amount = await currencyDatabase.getUserCurrencyAmount(event.userCommand.commandSender, currencyId);
+                if (!isNaN(amount)) {
+                    const balanceMessage = commandOptions.currencyBalanceMessageTemplate
+                        .replace("{user}", event.userCommand.commandSender)
+                        .replace("{currency}", currencyName)
+                        .replace("{amount}", util.commafy(amount));
 
-                        twitchChat.sendChatMessage(balanceMessage, commandOptions.whisperCurrencyBalanceMessage ? event.userCommand.commandSender : null);
-                    } else {
-                        logger.log('Error while trying to show currency amount to user via chat command.');
-                    }
-                });
+                    await twitchChat.sendChatMessage(balanceMessage, commandOptions.whisperCurrencyBalanceMessage ? event.userCommand.commandSender : null);
+                } else {
+                    logger.log('Error while trying to show currency amount to user via chat command.');
+                }
 
                 return;
             }
@@ -290,20 +289,19 @@ function createCurrencyCommandDefinition(currency) {
                     currencyAdjust = Math.abs(parseInt(args[2]));
 
                 // Adjust currency, it will return true on success and false on failure.
-                currencyDatabase.adjustCurrencyForUser(username, currencyId, currencyAdjust).then(function(status) {
-                    if (status) {
-                        const addMessageTemplate = commandOptions.addMessageTemplate
-                            .replace("{user}", username)
-                            .replace("{currency}", currencyName)
-                            .replace("{amount}", util.commafy(currencyAdjust));
-                        twitchChat.sendChatMessage(addMessageTemplate);
-                    } else {
-                        // Error removing currency.
-                        twitchChat.sendChatMessage(
-                            `Error: Could not add currency to user.`);
-                        logger.error('Error adding currency for user (' + username + ') via chat command. Currency: ' + currencyId + '. Value: ' + currencyAdjust);
-                    }
-                });
+                const status = await currencyDatabase.adjustCurrencyForUser(username, currencyId, currencyAdjust);
+
+                if (status) {
+                    const addMessageTemplate = commandOptions.addMessageTemplate
+                        .replace("{user}", username)
+                        .replace("{currency}", currencyName)
+                        .replace("{amount}", util.commafy(currencyAdjust));
+                    await twitchChat.sendChatMessage(addMessageTemplate);
+                } else {
+                    // Error removing currency.
+                    await twitchChat.sendChatMessage(`Error: Could not add currency to user.`);
+                    logger.error('Error adding currency for user (' + username + ') via chat command. Currency: ' + currencyId + '. Value: ' + currencyAdjust);
+                }
 
                 break;
             }
@@ -319,11 +317,10 @@ function createCurrencyCommandDefinition(currency) {
                         .replace("{user}", username)
                         .replace("{currency}", currencyName)
                         .replace("{amount}", util.commafy(parseInt(args[2])));
-                    twitchChat.sendChatMessage(removeMessageTemplate);
+                    await twitchChat.sendChatMessage(removeMessageTemplate);
                 } else {
                     // Error removing currency.
-                    twitchChat.sendChatMessage(
-                        `Error: Could not remove currency from user.`);
+                    await twitchChat.sendChatMessage(`Error: Could not remove currency from user.`);
                     logger.error('Error removing currency for user (' + username + ') via chat command. Currency: ' + currencyId + '. Value: ' + currencyAdjust);
                 }
 
@@ -338,14 +335,14 @@ function createCurrencyCommandDefinition(currency) {
                 // Does this currency have transfer active?
                 const currencyCheck = currencyDatabase.getCurrencies();
                 if (currencyCheck[currencyId].transfer === "Disallow") {
-                    twitchChat.sendChatMessage('Transfers are not allowed for this currency.');
+                    await twitchChat.sendChatMessage('Transfers are not allowed for this currency.');
                     logger.debug(event.userCommand.commandSender + ' tried to give currency, but transfers are turned off for it. ' + currencyId);
                     return false;
                 }
 
                 // Dont allow person to give themselves currency.
                 if (event.userCommand.commandSender.toLowerCase() === username.toLowerCase()) {
-                    twitchChat.sendChatMessage(
+                    await twitchChat.sendChatMessage(
                         `${event.userCommand.commandSender}, you can't give yourself currency.`);
                     logger.debug(username + ' tried to give themselves currency.');
                     return false;
@@ -357,13 +354,13 @@ function createCurrencyCommandDefinition(currency) {
 
                 // If we get false, there was an error.
                 if (userAmount === false) {
-                    twitchChat.sendChatMessage('Error: Could not retrieve currency.');
+                    await twitchChat.sendChatMessage('Error: Could not retrieve currency.');
                     return false;
                 }
 
                 // Check to make sure we have enough currency to give.
                 if (userAmount < currencyAdjust) {
-                    twitchChat.sendChatMessage('You do not have enough ' + currencyName + ' to do this action.');
+                    await twitchChat.sendChatMessage('You do not have enough ' + currencyName + ' to do this action.');
                     return false;
                 }
 
@@ -372,22 +369,20 @@ function createCurrencyCommandDefinition(currency) {
                 const adjustCurrencySuccess = await currencyDatabase.adjustCurrencyForUser(username, currencyId, currencyAdjust);
                 if (adjustCurrencySuccess) {
                     // Subtract currency from command user now.
-                    currencyDatabase.adjustCurrencyForUser(event.userCommand.commandSender, currencyId, currencyAdjustNeg).then(function(status) {
-                        if (status) {
-                            twitchChat.sendChatMessage('Gave ' + util.commafy(currencyAdjust) + ' ' + currencyName + ' to ' + username + '.', null);
-                            return true;
-                        }
+                    const status = currencyDatabase.adjustCurrencyForUser(event.userCommand.commandSender, currencyId, currencyAdjustNeg);
+
+                    if (status) {
+                        await twitchChat.sendChatMessage('Gave ' + util.commafy(currencyAdjust) + ' ' + currencyName + ' to ' + username + '.', null);
+                    } else {
                         // Error removing currency.
-                        twitchChat.sendChatMessage(
+                        await twitchChat.sendChatMessage(
                             `Error: Could not remove currency to user during give transaction.`);
                         logger.error('Error removing currency during give transaction for user (' + username + ') via chat command. Currency: ' + currencyId + '. Value: ' + currencyAdjust);
                         return false;
-
-                    });
-
+                    }
                 } else {
                     // Error removing currency.
-                    twitchChat.sendChatMessage(`Error: Could not add currency to user. Was there a typo in the username?`);
+                    await twitchChat.sendChatMessage(`Error: Could not add currency to user. Was there a typo in the username?`);
                     logger.error('Error adding currency during give transaction for user (' + username + ') via chat command. Currency: ' + currencyId + '. Value: ' + currencyAdjust);
                     return false;
                 }
@@ -397,7 +392,7 @@ function createCurrencyCommandDefinition(currency) {
             case "addall": {
                 const currencyAdjust = Math.abs(parseInt(args[1]));
                 if (isNaN(currencyAdjust)) {
-                    twitchChat.sendChatMessage(
+                    await twitchChat.sendChatMessage(
                         `Error: Could not add currency to all online users.`);
                     return;
                 }
@@ -406,15 +401,14 @@ function createCurrencyCommandDefinition(currency) {
                 const addAllMessageTemplate = commandOptions.addAllMessageTemplate
                     .replace("{currency}", currencyName)
                     .replace("{amount}", util.commafy(currencyAdjust));
-                twitchChat.sendChatMessage(addAllMessageTemplate);
+                await twitchChat.sendChatMessage(addAllMessageTemplate);
 
                 break;
             }
             case "removeall": {
                 const currencyAdjust = -Math.abs(parseInt(args[1]));
                 if (isNaN(currencyAdjust)) {
-                    twitchChat.sendChatMessage(
-                        `Error: Could not remove currency from all online users.`);
+                    await twitchChat.sendChatMessage(`Error: Could not remove currency from all online users.`);
                     return;
                 }
                 currencyDatabase.addCurrencyToOnlineUsers(currencyId, currencyAdjust, true);
@@ -422,23 +416,22 @@ function createCurrencyCommandDefinition(currency) {
                 const removeAllMessageTemplate = commandOptions.removeAllMessageTemplate
                     .replace("{currency}", currencyName)
                     .replace("{amount}", util.commafy(parseInt(args[1])));
-                twitchChat.sendChatMessage(removeAllMessageTemplate);
+                await twitchChat.sendChatMessage(removeAllMessageTemplate);
 
                 break;
             }
             default: {
-                currencyDatabase.getUserCurrencyAmount(event.userCommand.commandSender, currencyId).then(function(amount) {
-                    if (!isNaN(amount)) {
-                        const balanceMessage = commandOptions.currencyBalanceMessageTemplate
-                            .replace("{user}", event.userCommand.commandSender)
-                            .replace("{currency}", currencyName)
-                            .replace("{amount}", util.commafy(amount));
+                const amount = await currencyDatabase.getUserCurrencyAmount(event.userCommand.commandSender, currencyId);
+                if (!isNaN(amount)) {
+                    const balanceMessage = commandOptions.currencyBalanceMessageTemplate
+                        .replace("{user}", event.userCommand.commandSender)
+                        .replace("{currency}", currencyName)
+                        .replace("{amount}", util.commafy(amount));
 
-                        twitchChat.sendChatMessage(balanceMessage, commandOptions.whisperCurrencyBalanceMessage ? event.userCommand.commandSender : null);
-                    } else {
-                        logger.log('Error while trying to show currency amount to user via chat command.');
-                    }
-                });
+                    await twitchChat.sendChatMessage(balanceMessage, commandOptions.whisperCurrencyBalanceMessage ? event.userCommand.commandSender : null);
+                } else {
+                    logger.log('Error while trying to show currency amount to user via chat command.');
+                }
             }
             }
         }
