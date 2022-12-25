@@ -411,8 +411,7 @@ label {
 }
 
 // This is for pages that use tabbed navigation. IE: Commands
-.fb-commands-tab-wrapper {
-    height: 55px;
+.fb-tab-wrapper {
     background: $fb-tab-wrapper-bg;
     display: flex;
     flex-direction: column;

@@ -42,7 +42,7 @@ const followage = {
         const followDate = await twitchApi.users.getFollowDateForUser(commandSender);
 
         if (followDate === null) {
-            chat.sendChatMessage(`${commandSender} is not following the channel.`);
+            await chat.sendChatMessage(`${commandSender} is not following the channel.`);
         } else {
             const followDateMoment = moment(followDate),
                 nowMoment = moment();
@@ -52,7 +52,7 @@ const followage = {
                 nowMoment
             );
 
-            chat.sendChatMessage(commandOptions.displayTemplate
+            await chat.sendChatMessage(commandOptions.displayTemplate
                 .replace("{user}", commandSender)
                 .replace("{followage}", followAgeString)
                 .replace("{followdate}", followDateMoment.format("DD MMMM YYYY HH:mm"))
