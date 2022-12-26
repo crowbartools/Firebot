@@ -14,6 +14,7 @@ export interface ScheduledTask {
     name: string,
     enabled: boolean,
     schedule: string,
+    inputType: string,
     onlyWhenLive: boolean,
     effects: EffectList[],
     sortTags: string[]

@@ -61,7 +61,7 @@
                 if (!ctrl.objectMode) {
                     return ctrl.selected;
                 }
-                return ctrl.options[ctrl.selected];
+                return ctrl.options[ctrl.selected] ?? ctrl.placeholder;
             };
 
             function loadOptions() {

@@ -28,11 +28,14 @@
                         <div class="control__indicator"></div>
                     </label>
                     <div class="input-group pb-6 settings-commandGroup-scheduledTask" ng-if="$ctrl.scheduledTask.inputType === 'simple'">
-                        Simple schdule input
+                        <dropdown-select
+                            options="$ctrl.simpleSchedules"
+                            selected="$ctrl.scheduledTask.schedule"
+                            on-update="$ctrl.updateScheduleData()"></dropdown-select>
                     </div>
-                    <div class="input-group pb-2 settings-commandGroup-scheduledTask" ng-if="$ctrl.scheduledTask.inputType === 'advanced'">
+                    <div class="input-group pb-6 settings-commandGroup-scheduledTask" ng-if="$ctrl.scheduledTask.inputType === 'advanced'">
                         <span class="input-group-addon">Schedule <tooltip text="'Schedule must be entered in crontab format.'"></tooltip></span>
-                        <input type="text" class="form-control" ng-model="$ctrl.scheduledTask.schedule" ng-change="$ctrl.updateAdvancedSchedule()">
+                        <input type="text" class="form-control" ng-model="$ctrl.scheduledTask.schedule" ng-change="$ctrl.updateScheduleData()">
                     </div>
                     <div class="muted pb-6">{{$ctrl.scheduleFriendlyName}}</div>
                     <div class="controls-fb-inline">
@@ -70,12 +73,21 @@
             const $ctrl = this;
 
             $ctrl.scheduledTask = {
-                enabled: true,
-                onlyWhenLive: true,
                 name: "",
+                enabled: true,
                 schedule: "0 * * * *",
                 inputType: "simple",
+                onlyWhenLive: true,
+                effects: [],
                 sortTags: []
+            };
+
+            $ctrl.simpleSchedules = {
+                "* * * * *": "Every Minute",
+                "0 * * * *": "Every Hour",
+                "0 0 * * *": "Every Day",
+                "0 0 1 * *": "Every Month",
+                "0 0 * * 1-5": "Every Weekday"
             };
 
             $ctrl.scheduleFriendlyName = "";
@@ -88,8 +100,7 @@
                     $ctrl.scheduledTask = JSON.parse(JSON.stringify($ctrl.resolve.scheduledTask));
                 }
 
-                $ctrl.updateFriendlyCronSchedule();
-                $ctrl.updateParsedSchedule();
+                $ctrl.updateScheduleData();
 
                 const modalId = $ctrl.resolve.modalId;
                 $ctrl.modalId = modalId;
@@ -139,7 +150,12 @@
                 return true;
             }
 
-            $ctrl.updateAdvancedSchedule = function() {
+            $ctrl.setSimpleSchedule = function(schedule) {
+                $ctrl.scheduledTask.schedule = schedule;
+                $ctrl.updateScheduleData();
+            };
+
+            $ctrl.updateScheduleData = function() {
                 $ctrl.updateFriendlyCronSchedule();
                 $ctrl.updateParsedSchedule();
             };
