@@ -19,11 +19,11 @@
                         <span class="input-group-addon">Name</span>
                         <input type="text" class="form-control" ng-model="$ctrl.scheduledTask.name">
                     </div>
-                    <label class="control-fb control--radio">Simple Scheduler
+                    <label class="control-fb control--radio">Simple Schedule
                         <input type="radio" ng-model="$ctrl.scheduledTask.inputType" value="simple"/>
                         <div class="control__indicator"></div>
                     </label>
-                    <label class="control-fb control--radio">Advanced Scheduler
+                    <label class="control-fb control--radio">Advanced Schedule
                         <input type="radio" ng-model="$ctrl.scheduledTask.inputType" value="advanced"/>
                         <div class="control__indicator"></div>
                     </label>
