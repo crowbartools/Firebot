@@ -19,9 +19,20 @@
                         <span class="input-group-addon">Name</span>
                         <input type="text" class="form-control" ng-model="$ctrl.scheduledTask.name">
                     </div>
-                    <div class="input-group pb-2 settings-commandGroup-scheduledTask">
+                    <label class="control-fb control--radio">Simple Scheduler
+                        <input type="radio" ng-model="$ctrl.scheduledTask.inputType" value="simple"/>
+                        <div class="control__indicator"></div>
+                    </label>
+                    <label class="control-fb control--radio">Advanced Scheduler
+                        <input type="radio" ng-model="$ctrl.scheduledTask.inputType" value="advanced"/>
+                        <div class="control__indicator"></div>
+                    </label>
+                    <div class="input-group pb-6 settings-commandGroup-scheduledTask" ng-if="$ctrl.scheduledTask.inputType === 'simple'">
+                        Simple schdule input
+                    </div>
+                    <div class="input-group pb-2 settings-commandGroup-scheduledTask" ng-if="$ctrl.scheduledTask.inputType === 'advanced'">
                         <span class="input-group-addon">Schedule <tooltip text="'Schedule must be entered in crontab format.'"></tooltip></span>
-                        <input type="text" class="form-control" ng-model="$ctrl.scheduledTask.schedule" ng-change="$ctrl.updateFriendlyCronSchedule()">
+                        <input type="text" class="form-control" ng-model="$ctrl.scheduledTask.schedule" ng-change="$ctrl.updateAdvancedSchedule()">
                     </div>
                     <div class="muted pb-6">{{$ctrl.scheduleFriendlyName}}</div>
                     <div class="controls-fb-inline">
@@ -63,6 +74,7 @@
                 onlyWhenLive: true,
                 name: "",
                 schedule: "0 * * * *",
+                inputType: "simple",
                 sortTags: []
             };
 
@@ -126,6 +138,11 @@
                 }
                 return true;
             }
+
+            $ctrl.updateAdvancedSchedule = function() {
+                $ctrl.updateFriendlyCronSchedule();
+                $ctrl.updateParsedSchedule();
+            };
 
             $ctrl.updateFriendlyCronSchedule = function() {
                 $ctrl.scheduleFriendlyName = scheduledTaskService.getFriendlyCronSchedule($ctrl.scheduledTask.schedule);
