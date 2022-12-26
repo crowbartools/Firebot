@@ -34,7 +34,7 @@
                             on-update="$ctrl.updateScheduleData()"></dropdown-select>
                     </div>
                     <div class="input-group pb-6 settings-commandGroup-scheduledTask" ng-if="$ctrl.scheduledTask.inputType === 'advanced'">
-                        <span class="input-group-addon">Schedule <tooltip text="'Schedule must be entered in crontab format.'"></tooltip></span>
+                        <span class="input-group-addon">Schedule <tooltip text="'Schedule must be entered in crontab format. For help with creating a crontab expression, visit crontab.guru'"></tooltip></span>
                         <input type="text" class="form-control" ng-model="$ctrl.scheduledTask.schedule" ng-change="$ctrl.updateScheduleData()">
                     </div>
                     <div class="muted pb-6">{{$ctrl.scheduleFriendlyName}}</div>
