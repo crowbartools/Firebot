@@ -179,6 +179,16 @@
                                     text: "/followersoff"
                                 },
                                 {
+                                    display: "/raid @username",
+                                    description: "Send viewers to another channel when your stream ends",
+                                    text: "/raid"
+                                },
+                                {
+                                    display: "/unraid",
+                                    description: "Cancel an ongoing Raid",
+                                    text: "/unraid"
+                                },
+                                {
                                     display: "/subscribers",
                                     description: "Restrict Chat to subscribers",
                                     text: "/subscribers"
