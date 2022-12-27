@@ -28,7 +28,7 @@
                             <div style="font-size:40px;font-weight: 200;">{{$ctrl.isTwitchOrNewUser() && $ctrl.viewerDetails.twitchData ? $ctrl.viewerDetails.twitchData.displayName : $ctrl.viewerDetails.firebotData.username }}</div>
                             <a
                                 ng-if="$ctrl.isTwitchOrNewUser() && $ctrl.viewerDetails.twitchData"
-                                ng-click="$ctrl.openLink('https://twitch.tv/' + $ctrl.viewerDetails.twitchData.displayName)"
+                                ng-click="$ctrl.openLink('https://twitch.tv/' + $ctrl.viewerDetails.twitchData.username)"
                                 class="clickable"
                                 style="line-height: 1;margin-left: 5px;background: #9147FF;padding: 5px;border-radius: 100%;color: white;font-size: 15px;"
                                 uib-tooltip="View Twitch Profile"
