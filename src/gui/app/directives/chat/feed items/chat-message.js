@@ -117,7 +117,8 @@
                                         uib-tooltip="{{part.origin}}: {{part.name}}"
                                         tooltip-append-to-body="true"
                                     >
-                                        <img ng-src="{{part.url}}" style="height: 100%;">
+                                        <img ng-if="part.animatedUrl != '' && part.animatedUrl != null" ng-src="{{part.animatedUrl}}" style="height: 100%;">
+                                        <img ng-if="part.animatedUrl == '' || part.animatedUrl == null" ng-src="{{part.url}}" style="height: 100%;">
                                     </span>
 
                                     <span
