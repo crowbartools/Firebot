@@ -47,4 +47,5 @@ exports.bits = require("./resource/bits");
 exports.categories = require("./resource/categories");
 exports.chat = require("./resource/chat");
 exports.moderation = require("./resource/moderation");
+exports.streams = require("./resource/streams");
 exports.whispers = require("./resource/whispers");

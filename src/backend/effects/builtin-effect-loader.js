@@ -18,6 +18,7 @@ exports.loadEffects = () => {
         'conditional-effects/conditional-effects',
         'control-emulation', // No migration needed.
         'cooldown-command',
+        'create-stream-marker',
         'currency',
         'custom-script',
         'custom-variable',
@@ -63,7 +64,7 @@ exports.loadEffects = () => {
         'update-role',
         'update-vip-role'
     ].forEach(filename => {
-        const definition = require(`./builtin/${filename}.js`);
+        const definition = require(`./builtin/${filename}`);
         effectManager.registerEffect(definition);
     });
 };
