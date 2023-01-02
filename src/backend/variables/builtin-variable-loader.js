@@ -32,6 +32,7 @@ exports.loadReplaceVariables = () => {
         'chat-message',
         'chat-messages',
         'chat-mode-duration',
+        'chat-mode-state',
         'chat-mode',
         'cheer-bits',
         'cheer-message',
@@ -166,7 +167,7 @@ exports.loadReplaceVariables = () => {
         'whisper-message',
         'word'
     ].forEach(filename => {
-        const definition = require(`./builtin/${filename}.js`);
+        const definition = require(`./builtin/${filename}`);
         replaceVariableManager.registerReplaceVariable(definition);
     });
 };
