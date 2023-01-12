@@ -7,6 +7,10 @@ exports.windowsAllClosed = async () => {
     const { settings } = require("../../../common/settings-access");
     const { startBackup } = require("../../../backupManager");
 
+    // Stop all scheduled tasks
+    const scheduledTaskManager = require("../../../timers/scheduled-task-manager");
+    scheduledTaskManager.stop();
+
     // Unregister all shortcuts.
     const hotkeyManager = require("../../../hotkeys/hotkey-manager");
     hotkeyManager.unregisterAllHotkeys();

@@ -24,7 +24,7 @@
                     name: "EFFECTS",
                     icon: "fa-magic",
                     cellTemplate: `{{data.effects ? data.effects.list.length : 0}}`,
-                    cellControler: () => {}
+                    cellController: () => {}
                 }
             ];
 
