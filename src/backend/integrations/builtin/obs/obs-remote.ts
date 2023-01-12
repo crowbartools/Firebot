@@ -200,6 +200,10 @@ export type OBSTextSourceSettings = {
   file?: string;
 };
 
+export type OBSBrowserSourceSettings = {
+  url: string;
+};
+
 export async function getAllSources(): Promise<Array<OBSSource> | null> {
   if (!connected) return null;
   try {
@@ -346,6 +350,24 @@ export async function setTextSourceSettings(sourceName: string, settings: OBSTex
     });
   } catch (error) {
     logger.error("Failed to set text for source", error);
+  }
+}
+
+export async function getBrowserSources(): Promise<Array<OBSSource>> {
+  const sources = await getAllSources();
+  return sources.filter((s) => s.typeId === "browser_source");
+}
+
+export async function setBrowserSourceSettings(sourceName: string, settings: OBSBrowserSourceSettings) {
+  try {
+    await obs.call("SetInputSettings", {
+      inputName: sourceName,
+      inputSettings: {
+        url: settings.url
+      }
+    });
+  } catch (error) {
+    logger.error("Failed to set URL for source", error);
   }
 }
 
