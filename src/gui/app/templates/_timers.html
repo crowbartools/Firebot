@@ -21,7 +21,7 @@
         ng-class="{'active' : activeTimerTab === 1}"
         ng-click="activeTimerTab = 1"
       >
-        <a href>SCHEDULED TASKS</a>
+        <a href>SCHEDULED EFFECT LISTS</a>
       </li>
     </ul>
   </div>
@@ -48,14 +48,14 @@
       items="scheduledTaskService.scheduledTasks"
       on-items-update="onScheduledTasksUpdated(items)"
       headers="scheduledTaskHeaders"
-      sort-tag-context="scheduled tasks"
+      sort-tag-context="scheduled effect lists"
       orderable="true"
-      add-new-button-text="New Scheduled Task"
+      add-new-button-text="New Scheduled Effect List"
       on-add-new-clicked="scheduledTaskService.showAddEditScheduledTaskModal()"
       context-menu-options="scheduledTaskOptions(item)"
-      no-data-message="No scheduled tasks saved. You should make one! :)"
-      none-found-message="No scheduled tasks found."
-      search-placeholder="Search scheduled tasks"
+      no-data-message="No scheduled effect lists saved. You should make one! :)"
+      none-found-message="No scheduled effect lists found."
+      search-placeholder="Search scheduled effect lists"
       test-button="false"
       status-field="enabled"
     ></firebot-item-table>

@@ -163,8 +163,8 @@
                         click: function () {
                             utilityService
                                 .showConfirmationModal({
-                                    title: "Delete Scheduled Task",
-                                    question: `Are you sure you want to delete the Scheduled Task "${item.name}"?`,
+                                    title: "Delete Scheduled Effect List",
+                                    question: `Are you sure you want to delete the Scheduled Effect List "${item.name}"?`,
                                     confirmLabel: "Delete",
                                     confirmBtnType: "btn-danger"
                                 })

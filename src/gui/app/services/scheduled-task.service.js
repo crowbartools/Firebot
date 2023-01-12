@@ -145,10 +145,10 @@
                     if (successful) {
                         ngToast.create({
                             className: 'success',
-                            content: 'Successfully duplicated a scheduled task!'
+                            content: 'Successfully duplicated scheduled effect list!'
                         });
                     } else {
-                        ngToast.create("Unable to duplicate scheduled task.");
+                        ngToast.create("Unable to duplicate scheduled effect list.");
                     }
                 });
             };

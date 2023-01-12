@@ -5,7 +5,7 @@
         template: `
             <context-menu-modal-header
                 on-close="$ctrl.dismiss()"
-                trigger-type="scheduled task"
+                trigger-type="scheduled effect list"
                 trigger-name="$ctrl.scheduledTask.name"
                 sort-tags="$ctrl.scheduledTask.sortTags"
                 show-trigger-name="true"
@@ -43,7 +43,7 @@
                             <input type="checkbox" ng-model="$ctrl.scheduledTask.enabled" aria-label="...">
                             <div class="control__indicator"></div>
                         </label>
-                        <label class="control-fb control--checkbox">Only Run When Live <tooltip text="'Uncheck this if you want this scheduled task to run effects even when you are not live.'"></tooltip>
+                        <label class="control-fb control--checkbox">Only Run When Live <tooltip text="'Uncheck this if you want this scheduled effect list to run effects even when you are not live.'"></tooltip>
                             <input type="checkbox" ng-model="$ctrl.scheduledTask.onlyWhenLive" aria-label="...">
                             <div class="control__indicator"></div>
                         </label>
@@ -51,10 +51,10 @@
                 </div>
 
                 <div class="function-button-settings" style="margin-top: 15px;">
-                    <effect-list header="What should this scheduled task do?" effects="$ctrl.scheduledTask.effects" trigger="scheduledTask" trigger-meta="$ctrl.triggerMeta" update="$ctrl.effectListUpdated(effects)" modalId="{{$ctrl.modalId}}"></effect-list>
+                    <effect-list header="What should this scheduled effect list do?" effects="$ctrl.scheduledTask.effects" trigger="scheduledTask" trigger-meta="$ctrl.triggerMeta" update="$ctrl.effectListUpdated(effects)" modalId="{{$ctrl.modalId}}"></effect-list>
                 </div>
                 <p class="muted" style="font-size:11px;margin-top:6px;">
-                    <b>ProTip:</b> If you want to have this scheduled task display a single chat message at a time, try the <b>Run Random Effect</b> or <b>Run Sequential Effect</b>
+                    <b>ProTip:</b> If you want to have this scheduled effect list display a single chat message at a time, try the <b>Run Random Effect</b> or <b>Run Sequential Effect</b>
                 </p>
             </div>
 
@@ -109,7 +109,7 @@
                         const modalElement = $("." + modalId).children();
                         return {
                             element: modalElement,
-                            name: "Edit Scheduled Task",
+                            name: "Edit Scheduled Effect List",
                             id: modalId,
                             instance: $ctrl.modalInstance
                         };
@@ -141,10 +141,10 @@
 
             function scheduledTaskValid() {
                 if ($ctrl.scheduledTask.name === "") {
-                    ngToast.create("Please provide a name for the Scheduled Task.");
+                    ngToast.create("Please provide a name for the Scheduled Effect List.");
                     return false;
                 } else if ($ctrl.scheduledTask.schedule.length < 1 || isScheduleValid($ctrl.scheduledTask.schedule) !== true) {
-                    ngToast.create("Please enter a valid cron schedule for the Scheduled Task.");
+                    ngToast.create("Please enter a valid cron schedule for the Scheduled Effect List.");
                     return false;
                 }
                 return true;
@@ -181,7 +181,7 @@
                             }
                         });
                     } else {
-                        ngToast.create("Failed to save scheduled Task. Please try again or view logs for details.");
+                        ngToast.create("Failed to save scheduled effect list. Please try again or view logs for details.");
                     }
                 });
             };
