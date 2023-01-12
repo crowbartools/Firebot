@@ -19,6 +19,7 @@ import { StopStreamEffectType } from "./effects/stop-stream";
 import { StartVirtualCamEffectType } from "./effects/start-virtual-cam";
 import { StopVirtualCamEffectType } from "./effects/stop-virtual-cam";
 import { SetOBSSourceTextEffectType } from "./effects/set-obs-source-text";
+import { SetOBSBrowserSourceUrlEffectType } from "./effects/set-obs-browser-source-url";
 import { OBSEventSource } from "./events/obs-event-source";
 import { SceneNameEventFilter } from "./filters/scene-name-filter";
 import { SceneNameVariable } from "./variables/scene-name-variable";
@@ -92,6 +93,7 @@ class ObsIntegration
     effectManager.registerEffect(StartVirtualCamEffectType);
     effectManager.registerEffect(StopVirtualCamEffectType);
     effectManager.registerEffect(SetOBSSourceTextEffectType);
+    effectManager.registerEffect(SetOBSBrowserSourceUrlEffectType);
 
     eventManager.registerEventSource(OBSEventSource);
 
