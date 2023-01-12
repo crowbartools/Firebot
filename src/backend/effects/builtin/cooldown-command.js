@@ -134,6 +134,10 @@ const model = {
             if ($scope.effect.commandId != null && $scope.effect.sortTagId == null) {
                 $scope.effect.selectionType = 'command';
             }
+
+            if ($scope.commands != null) {
+                $scope.effect.selectionType = 'command';
+            }
         }
 
         $scope.createSubcommandOptions = () => {
