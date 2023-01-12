@@ -46,6 +46,7 @@ const utils = require("../utility");
 /**
  * @typedef FirebotEmote
  * @property {string} url
+ * @property {string} animatedUrl
  * @property {string} origin
  * @property {string} code
  */
@@ -137,6 +138,7 @@ exports.handleChatConnect = async () => {
             .flat()
             .map(e => ({
                 url: e.getImageUrl(1),
+                animatedUrl: e.getAnimatedImageUrl("1.0"),
                 origin: "Twitch",
                 code: e.name
             })),
@@ -253,6 +255,7 @@ function parseMessageParts(firebotChatMessage, parts) {
             p.origin = "Twitch";
             const emote = twitchEmotes.find(e => e.name === p.name);
             p.url = emote ? emote.getImageUrl(1) : `https://static-cdn.jtvnw.net/emoticons/v2/${p.id}/default/dark/1.0`;
+            p.animatedUrl = emote ? emote.getAnimatedImageUrl("1.0") : null;
         }
         return p;
     });
@@ -308,6 +311,7 @@ const getMessageParts = (text) => {
     return words.map(word => {
         let emoteId = null;
         let url = "";
+        let animatedUrl = "";
         try {
             const foundEmote = Object.values(twitchEmotes || {})
                 .flat()
@@ -315,6 +319,7 @@ const getMessageParts = (text) => {
             if (foundEmote) {
                 emoteId = foundEmote.id;
                 url = foundEmote.getImageUrl(1);
+                animatedUrl = foundEmote.getAnimatedImageUrl("1.0");
             }
         } catch (err) {
             //logger.silly(`Failed to find emote id for ${word}`, err);
@@ -326,6 +331,7 @@ const getMessageParts = (text) => {
             part = {
                 type: "emote",
                 url: url,
+                animatedUrl: animatedUrl,
                 id: emoteId,
                 name: word
             };
