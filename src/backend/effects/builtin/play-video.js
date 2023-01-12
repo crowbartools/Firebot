@@ -153,11 +153,11 @@ const playVideo = {
                     ng-model="effect.length">
             </div>
             <label ng-if="effect.videoType != 'Random Twitch Clip' && effect.videoType != 'Twitch Clip'" class="control-fb control--checkbox" style="margin-top:15px;"> Loop <tooltip text="'Loop the video until the duration is reached.'"></tooltip>
-                <input type="checkbox" ng-model="effect.loop">
+                <input type="checkbox" ng-model="effect.loop" ng-disabled="effect.wait">
                 <div class="control__indicator"></div>
             </label>
-            <label ng-if="effect.videoType == 'Random Twitch Clip' || effect.videoType == 'Twitch Clip'" class="control-fb control--checkbox" style="margin-top:15px;"> Wait for clip to finish <tooltip text="'Wait for the twitch clip to finish before allowing the next effect to play.'"></tooltip>
-                <input type="checkbox" ng-model="effect.wait">
+            <label class="control-fb control--checkbox" style="margin-top:15px;"> Wait for video to finish <tooltip text="'Wait for the video to finish before allowing the next effect to play.'"></tooltip>
+                <input type="checkbox" ng-model="effect.wait" ng-change="waitChange()">
                 <div class="control__indicator"></div>
             </label>
         </eos-container>
@@ -218,6 +218,13 @@ const playVideo = {
      * Port over from effectHelperService.js
      */
     optionsController: ($scope, $rootScope, $timeout, utilityService) => {
+        $scope.waitChange = () => {
+            if ($scope.effect.videoType !== 'Random Twitch Clip' && $scope.effect.videoType !== 'Twitch Clip') {
+                if ($scope.effect.wait) {
+                    $scope.effect.loop = false;
+                }
+            }
+        };
         $scope.showOverlayInfoModal = function (overlayInstance) {
             utilityService.showOverlayInfoModal(overlayInstance);
         };
@@ -435,6 +442,21 @@ const playVideo = {
         data.resourceToken = resourceToken;
 
         webServer.sendToOverlay("video", data);
+        if (effect.wait) {
+            await new Promise(async (resolve, reject) => {
+                const listener = (event) => {
+                    try {
+                        if (event.name === "video-end" && event.data.resourceToken === resourceToken) {
+                            webServer.removeListener("overlay-event", listener);
+                            resolve();
+                        }
+                    } catch (err) {
+                        logger.error("Error while trying to process overlay-event for play-video: ", err);
+                    }
+                };
+                webServer.on("overlay-event", listener);
+            });
+        }
         return true;
     },
     /**
@@ -469,6 +491,17 @@ const playVideo = {
                         .animateCss(animation, duration, null, null, () => {
                             $(idString).remove();
                         });
+                }
+                function millisecondsFromString(time) {
+                    if (time === undefined) { // Default delay seems to be a second
+                        return 1000;
+                    }
+                    else if (time.includes('ms')) {
+                        return parseFloat(time.match(/[\d.]+/));
+                    }
+                    else { // Time is in seconds
+                        return parseFloat(time.match(/[\d.]+/)) * 1000;
+                    }
                 }
 
                 // Load youtube iframe api onto page.
@@ -570,18 +603,20 @@ const playVideo = {
                                     .animateCss(inbetweenAnimation, inbetweenDuration, inbetweenDelay, inbetweenRepeat);
                             });
 
+                        const exitVideo = () => {
+                            delete startedVidCache[this.id]; // eslint-disable-line no-undef
+                            animateVideoExit(`#${wrapperId}`, exitAnimation, exitDuration, inbetweenAnimation);
+                            setTimeout(function(){
+                                sendWebsocketEvent("video-end", {resourceToken: token}); // eslint-disable-line no-undef
+                            }, millisecondsFromString(exitDuration));
+                        };
+
                         // Remove div after X time.
                         if (videoDuration) {
                             setTimeout(function () {
-                                delete startedVidCache[this.id]; // eslint-disable-line no-undef
-                                animateVideoExit(`#${wrapperId}`, exitAnimation, exitDuration, inbetweenAnimation);
+                                exitVideo();
                             }, videoDuration);
                         } else {
-                            const exitVideo = () => {
-                                delete startedVidCache[this.id]; // eslint-disable-line no-undef
-                                animateVideoExit(`#${wrapperId}`, exitAnimation, exitDuration, inbetweenAnimation);
-                            };
-
                             video.onended = function () {
                                 exitVideo();
                             };
@@ -671,6 +706,9 @@ const playVideo = {
                             onStateChange: (event) => {
                                 if (event.data === 0 && !videoDuration) {
                                     animateVideoExit(`#${wrapperId}`, exitAnimation, exitDuration, inbetweenAnimation);
+                                    setTimeout(function(){
+                                        sendWebsocketEvent("video-end", {resourceToken: token}); // eslint-disable-line no-undef
+                                    }, millisecondsFromString(exitDuration));
                                 }
                             }
                         }
@@ -688,6 +726,9 @@ const playVideo = {
                     if (videoDuration) {
                         setTimeout(function () {
                             animateVideoExit(`#${wrapperId}`, exitAnimation, exitDuration, inbetweenAnimation);
+                            setTimeout(function(){
+                                sendWebsocketEvent("video-end", {resourceToken: token}); // eslint-disable-line no-undef
+                            }, millisecondsFromString(exitDuration));
                         }, videoDuration);
                     }
                 }
