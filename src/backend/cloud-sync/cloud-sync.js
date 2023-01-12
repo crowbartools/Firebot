@@ -10,8 +10,7 @@ const sync = async (jsonData) => {
             {
                 headers: {
                     'User-Agent': 'Firebot V5 - https://firebot.app',
-                    'Content-Type': 'json',
-                    'Content-Encoding': 'gzip'
+                    'Content-Type': 'json'
                 }
             });
 
