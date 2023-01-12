@@ -1,7 +1,7 @@
 import logger from '../../logwrapper';
 import twitchApi from "../api";
 import accountAccess from "../../common/account-access";
-import { ApiClient, HelixChatAnnoucementColor, HelixSendChatAnnoucementParams, HelixUpdateChatSettingsParams } from "@twurple/api";
+import { ApiClient, HelixChatAnnouncementColor, HelixSendChatAnnouncementParams, HelixUpdateChatSettingsParams } from "@twurple/api";
 
 /**
  * Sends an announcement to the streamer's chat.
@@ -15,7 +15,7 @@ import { ApiClient, HelixChatAnnoucementColor, HelixSendChatAnnoucementParams, H
  */
 export async function sendAnnouncement(
     message: string,
-    color: HelixChatAnnoucementColor = "primary",
+    color: HelixChatAnnouncementColor = "primary",
     sendAsBot: boolean = false
 ): Promise<boolean> {
     const client: ApiClient = sendAsBot === true ? twitchApi.getBotClient() : twitchApi.getClient();
@@ -35,7 +35,7 @@ export async function sendAnnouncement(
             .filter(mf => mf !== "");
 
         for (const fragment of messageFragments) {
-            const announcement: HelixSendChatAnnoucementParams = {
+            const announcement: HelixSendChatAnnouncementParams = {
                 message: fragment,
                 color: color
             };
