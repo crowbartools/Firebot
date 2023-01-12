@@ -41,7 +41,7 @@ exports.triggerSubGift = (subInfo) => {
                         eventManager.triggerEvent("twitch", "community-subs-gifted", {
                             username: gifterDisplayName,
                             subCount: giftReceivers.length,
-                            subPlan: subInfo.planName,
+                            subPlan: subInfo.plan,
                             isAnonymous: !subInfo.gifterUserId,
                             gifterUsername: gifterDisplayName,
                             giftReceivers: giftReceivers
@@ -66,7 +66,7 @@ exports.triggerSubGift = (subInfo) => {
         giftSubMonths: subInfo.months || 1,
         gifteeUsername: subInfo.displayName,
         gifterUsername: subInfo.gifterDisplayName || subInfo.gifter,
-        subPlan: subInfo.planName,
+        subPlan: subInfo.plan,
         isAnonymous: !subInfo.gifterUserId,
         giftDuration: subInfo.giftDuration
     });
