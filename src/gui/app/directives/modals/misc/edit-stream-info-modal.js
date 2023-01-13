@@ -152,7 +152,7 @@
                                     }
                                 });
                             },
-                            validationText: "Tag name cannot be empty, must contain only letters and numbers, must be a maximum of 25 characters, and must be unique."
+                            validationText: "Tag name cannot be empty, must contain a maximum of 25 alphanumeric characters, cannot contain spaces, and must be unique."
                         },
                         (tag) => {
                             $ctrl.streamInfo.tags.push(tag);
