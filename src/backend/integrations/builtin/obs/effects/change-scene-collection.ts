@@ -1,7 +1,7 @@
-import { Firebot } from "@crowbartools/firebot-custom-scripts-types";
+import { EffectType } from "../../../../effects/models/effect-models";
 import { setCurrentSceneCollection } from "../obs-remote";
 
-export const ChangeSceneCollectionEffectType: Firebot.EffectType<{
+export const ChangeSceneCollectionEffectType: EffectType<{
   sceneCollectionName: string;
 }> = {
   definition: {

@@ -1,5 +1,4 @@
-import { Effects } from "@crowbartools/firebot-custom-scripts-types/types/effects";
-import EffectType = Effects.EffectType;
+import { EffectType } from "models/effect-models";
 
 declare class EffectManager {
   registerEffect: <EffectModel>(effectType: EffectType<EffectModel>) => void;
