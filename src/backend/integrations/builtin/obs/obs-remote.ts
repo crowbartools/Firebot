@@ -1,5 +1,5 @@
 import { ScriptModules } from "@crowbartools/firebot-custom-scripts-types";
-import OBSWebSocket, { OBSResponseTypes } from "obs-websocket-js";
+import OBSWebSocket from "obs-websocket-js";
 import {
   OBS_EVENT_SOURCE_ID,
   OBS_SCENE_CHANGED_EVENT_ID,
@@ -419,6 +419,27 @@ export async function stopVirtualCam(): Promise<void> {
   } catch (error) {
     logger.error("Failed to stop virtual camera", error);
     return;
+  }
+}
+
+export async function sendRawObsRequest(functionName: string, payload?: any): Promise<void> {
+  if (!connected) return;
+  try {
+    // Attempt to parse it out first
+    let formattedPayload = null;
+    try {
+      formattedPayload = JSON.parse(payload);
+    } catch (error) { }
+
+    if (formattedPayload == null) {
+      formattedPayload = payload;
+    }
+
+    /** @ts-ignore */
+    await obs.call(functionName, formattedPayload);
+  } catch (error) {
+    logger.error("Failed to send raw OBS request", error);
+    return;    
   }
 }
 
