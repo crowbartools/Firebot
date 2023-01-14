@@ -148,7 +148,8 @@ async function runEffects(runEffectsContext) {
                         logger.info(`Stop effect execution triggered for effect list id ${runEffectsContext.effects.id}`);
                         return {
                             success: true,
-                            stopEffectExecution: execution.bubbleStop
+                            stopEffectExecution: execution.bubbleStop,
+                            outputs: runEffectsContext.outputs ?? {}
                         };
                     }
                 }
@@ -160,7 +161,8 @@ async function runEffects(runEffectsContext) {
 
     return {
         success: true,
-        stopEffectExecution: false
+        stopEffectExecution: false,
+        outputs: runEffectsContext.outputs ?? {}
     };
 }
 
