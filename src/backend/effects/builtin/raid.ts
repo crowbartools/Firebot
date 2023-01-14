@@ -33,10 +33,7 @@ const model: EffectType<{
         </eos-container>
         
         <eos-container header="Target" pad-top="true" ng-show="effect.action === 'Raid Channel'">
-            <div class="input-group">
-                <span class="input-group-addon" id="username-type">Username</span>
-                <input ng-model="effect.username" type="text" class="form-control" id="list-username-setting" aria-describedby="list-username-type" replace-variables>
-            </div>
+            <firebot-input model="effect.username" placeholder-text="Enter username" />
         </eos-container>
     `,
     optionsValidator: (effect) => {
