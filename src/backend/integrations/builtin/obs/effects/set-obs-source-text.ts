@@ -1,7 +1,7 @@
-import { Firebot } from "@crowbartools/firebot-custom-scripts-types";
+import { EffectType } from "../../../../effects/models/effect-models";
 import { OBSSource, setTextSourceSettings } from "../obs-remote";
 
-export const SetOBSSourceTextEffectType: Firebot.EffectType<{
+export const SetOBSSourceTextEffectType: EffectType<{
   textSourceName: string;
   textSource: "static" | "file";
   text: string;

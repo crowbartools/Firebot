@@ -422,8 +422,13 @@ export async function stopVirtualCam(): Promise<void> {
   }
 }
 
-export async function sendRawObsRequest(functionName: string, payload?: any): Promise<string> {
-  if (!connected) return;
+export type ObsRawResponse = { success: boolean; response?: string; }
+
+export async function sendRawObsRequest(functionName: string, payload?: any): Promise<ObsRawResponse> {
+  const rawResponse: ObsRawResponse = { success: false }
+
+  if (!connected) return rawResponse;
+
   try {
     // Attempt to parse it out first
     let formattedPayload = null;
@@ -437,11 +442,13 @@ export async function sendRawObsRequest(functionName: string, payload?: any): Pr
 
     /** @ts-ignore */
     const response = await obs.call(functionName, formattedPayload);
-    return JSON.stringify(response);
+    rawResponse.response = JSON.stringify(response);
+    rawResponse.success = true;
   } catch (error) {
-    logger.error("Failed to send raw OBS request", error);
-    return;    
+    logger.error("Failed to send raw OBS request", error);  
   }
+
+  return rawResponse;
 }
 
 function setupRemoteListeners() {

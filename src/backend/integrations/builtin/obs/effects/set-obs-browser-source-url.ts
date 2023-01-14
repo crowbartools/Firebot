@@ -1,7 +1,7 @@
-import { Firebot } from "@crowbartools/firebot-custom-scripts-types";
+import { EffectType } from "../../../../effects/models/effect-models";
 import { OBSSource, setBrowserSourceSettings } from "../obs-remote";
 
-export const SetOBSBrowserSourceUrlEffectType: Firebot.EffectType<{
+export const SetOBSBrowserSourceUrlEffectType: EffectType<{
   browserSourceName: string;
   url: string;
 }> = {

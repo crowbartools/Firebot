@@ -1,4 +1,4 @@
-import { Firebot } from "@crowbartools/firebot-custom-scripts-types";
+import { EffectType } from "../../../../effects/models/effect-models";
 import {
   getFilterEnabledStatus,
   OBSSource,
@@ -20,7 +20,7 @@ type Scope = {
   [x: string]: any;
 };
 
-export const ToggleSourceFilterEffectType: Firebot.EffectType<EffectProperties> =
+export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
   {
     definition: {
       id: "ebiggz:obs-toggle-source-filter",

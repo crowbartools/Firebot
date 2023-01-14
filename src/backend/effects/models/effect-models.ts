@@ -46,6 +46,12 @@ export type EffectTriggerResponse = {
     };
 };
 
+export type EffectOutput = {
+    label: string;
+    description: string;
+    defaultName: string;
+};
+
 export type EffectType<EffectModel, OverlayData = unknown> = {
     definition: {
         id: string;
@@ -55,6 +61,7 @@ export type EffectType<EffectModel, OverlayData = unknown> = {
         categories: EffectCategory[];
         triggers?: TriggerType[] | TriggersObject;
         dependencies?: Array<"chat">;
+        outputs?: EffectOutput[];
     };
     optionsTemplate: string;
     optionsController?: (

@@ -1,7 +1,7 @@
-import { Firebot } from "@crowbartools/firebot-custom-scripts-types";
+import { EffectType } from "../../../../effects/models/effect-models";
 import { startStreaming } from "../obs-remote";
 
-export const StartStreamEffectType: Firebot.EffectType<{}> = {
+export const StartStreamEffectType: EffectType<{}> = {
   definition: {
     id: "ebiggz:obs-start-stream",
     name: "OBS Start Stream",
