@@ -1,7 +1,7 @@
-import { Firebot } from "@crowbartools/firebot-custom-scripts-types";
+import { EffectType } from "../../../../effects/models/effect-models";
 import { stopStreaming } from "../obs-remote";
 
-export const StopStreamEffectType: Firebot.EffectType<{}> = {
+export const StopStreamEffectType: EffectType<{}> = {
   definition: {
     id: "ebiggz:obs-stop-stream",
     name: "OBS Stop Stream",
