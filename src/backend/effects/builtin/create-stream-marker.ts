@@ -6,7 +6,7 @@ const model: EffectType<{
     description: string;
 }>  = {
     definition: {
-        id: "firebot.create-stream-marker",
+        id: "firebot:create-stream-marker",
         name: "Create Stream Marker",
         description: "Create a stream marker in your Twitch VOD",
         icon: "fad fa-map-pin",
