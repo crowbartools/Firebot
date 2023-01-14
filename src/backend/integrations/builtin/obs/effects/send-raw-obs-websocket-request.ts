@@ -1,9 +1,16 @@
 import { Firebot } from "@crowbartools/firebot-custom-scripts-types";
 import { sendRawObsRequest } from "../obs-remote";
+import customVariableManager from "../../../../common/custom-variable-manager";
 
 export const SendRawOBSWebSocketRequestEffectType: Firebot.EffectType<{
     functionName: string,
-    payload: string
+    payload: string,
+    options: {
+        putResponseInVariable: boolean,
+        variableName?: string,
+        variableTtl?: number,
+        variablePropertyPath?: string
+    }
 }> = {
   definition: {
     id: "firebot:send-raw-obs-websocket-request",
@@ -24,6 +31,18 @@ export const SendRawOBSWebSocketRequestEffectType: Firebot.EffectType<{
             ng-model="effect.payload"
             replace-variables
             menu-position="under">
+        </div>
+    </eos-container>
+
+    <eos-container header="Options" pad-top="true">
+        <label class="control-fb control--checkbox"> Put response body in a variable <tooltip text="'Put the response body into a variable so you can use it later'"></tooltip>
+            <input type="checkbox" ng-model="effect.options.putResponseInVariable">
+            <div class="control__indicator"></div>
+        </label>
+        <div ng-if="effect.options.putResponseInVariable" style="padding-left: 15px;">
+            <firebot-input input-title="Variable Name" model="effect.options.variableName" placeholder-text="Enter name" />
+            <firebot-input style="margin-top: 10px;" input-title="Variable TTL" model="effect.options.variableTtl" input-type="number" disable-variables="true" placeholder-text="Enter secs | Optional" />
+            <firebot-input style="margin-top: 10px;" input-title="Variable Property Path" model="effect.options.variablePropertyPath" input-type="text" disable-variables="true" placeholder-text="Optional" />
         </div>
     </eos-container>
 
@@ -52,12 +71,31 @@ export const SendRawOBSWebSocketRequestEffectType: Firebot.EffectType<{
             resizableHeight: true
         });
     };
+
+    if ($scope.effect.options == null) {
+        $scope.effect.options = {
+            putResponseInVariable: false
+        };
+    }
   },
-  optionsValidator: () => {
+  optionsValidator: (effect) => {
+    if (effect.functionName == null || effect.functionName.length == 0) {
+        return [ "You must enter a function name." ]
+    }
     return [];
   },
   onTriggerEvent: async ({ effect }) => {
-    sendRawObsRequest(effect.functionName, effect.payload);
+    const response = await sendRawObsRequest(effect.functionName, effect.payload);
+
+    if (response && effect.options.putResponseInVariable === true) {
+        customVariableManager.addCustomVariable(
+            effect.options.variableName,
+            response,
+            effect.options.variableTtl || 0,
+            effect.options.variablePropertyPath || null
+        );
+    }
+
     return true;
   },
 };

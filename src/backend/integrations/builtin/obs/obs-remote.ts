@@ -422,7 +422,7 @@ export async function stopVirtualCam(): Promise<void> {
   }
 }
 
-export async function sendRawObsRequest(functionName: string, payload?: any): Promise<void> {
+export async function sendRawObsRequest(functionName: string, payload?: any): Promise<string> {
   if (!connected) return;
   try {
     // Attempt to parse it out first
@@ -436,7 +436,8 @@ export async function sendRawObsRequest(functionName: string, payload?: any): Pr
     }
 
     /** @ts-ignore */
-    await obs.call(functionName, formattedPayload);
+    const response = await obs.call(functionName, formattedPayload);
+    return JSON.stringify(response);
   } catch (error) {
     logger.error("Failed to send raw OBS request", error);
     return;    
