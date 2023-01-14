@@ -26,7 +26,14 @@ const effect = {
         description: "Send an HTTP request to a given url",
         icon: "fad fa-terminal",
         categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
-        dependencies: []
+        dependencies: [],
+        outputs: [
+            {
+                label: "Response Body",
+                description: "The raw response from the request",
+                defaultName: "httpResponse"
+            }
+        ]
     },
     globalSettings: {},
     optionsTemplate: `
@@ -75,7 +82,7 @@ const effect = {
                 <div class="control__indicator"></div>
             </label>
         </div>
-        <label class="control-fb control--checkbox"> Put response body in a variable <tooltip text="'Put the response body into a variable so you can use it later'"></tooltip>
+        <label ng-show="effect.options.putResponseInVariable" class="control-fb control--checkbox"> Put response body in a variable <tooltip text="'Put the response body into a variable so you can use it later'"></tooltip>
             <input type="checkbox" ng-model="effect.options.putResponseInVariable">
             <div class="control__indicator"></div>
         </label>
@@ -245,6 +252,8 @@ const effect = {
             effect.method.toLowerCase() === "put" ||
             effect.method.toLowerCase() === "patch";
 
+        let responseData;
+
         try {
             const response = await axios({
                 method: effect.method.toLowerCase(),
@@ -253,6 +262,11 @@ const effect = {
                 data: sendBodyData === true ? bodyData : null
             });
 
+            responseData = response.data;
+
+            /**
+             * Deprecated
+             */
             if (effect.options.putResponseInVariable) {
                 customVariableManager.addCustomVariable(
                     effect.options.variableName,
@@ -285,7 +299,12 @@ const effect = {
             }
         }
 
-        return true;
+        return {
+            success: true,
+            outputs: {
+                httpResponse: responseData
+            }
+        };
     },
     overlayExtension: {
         dependencies: {

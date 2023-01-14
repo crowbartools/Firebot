@@ -53,7 +53,13 @@ const randomEffect = {
             hide-numbers="true"></effect-list>
     </eos-container>
 
-
+    <eos-container header="Options" pad-top="true">
+        <firebot-checkbox
+            model="effect.bubbleOutputs"
+            label="Apply effect outputs to parent list"
+            tooltip="Whether or not you want any effect outputs to be made available to the parent effect list."
+        />
+    </eos-container>
     `,
     /**
    * The controller for the front end Options
@@ -165,6 +171,7 @@ const randomEffect = {
                         if (result.stopEffectExecution) {
                             return resolve({
                                 success: true,
+                                outputs: effect.bubbleOutputs ? result.outputs : undefined,
                                 execution: {
                                     stop: true,
                                     bubbleStop: true
@@ -172,7 +179,10 @@ const randomEffect = {
                             });
                         }
                     }
-                    resolve(true);
+                    resolve({
+                        success: true,
+                        outputs: effect.bubbleOutputs ? result?.outputs : undefined
+                    });
                 });
         });
     }
