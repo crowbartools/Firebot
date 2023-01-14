@@ -8,7 +8,7 @@ const model: EffectType<{
     username?: string;
 }>  = {
     definition: {
-        id: "firebot.raid",
+        id: "firebot:raid",
         name: "Raid/Unraid Twitch Channel",
         description: "Start or cancel a raid to another Twitch channel",
         icon: "fad fa-rocket-launch",
