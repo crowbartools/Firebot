@@ -48,6 +48,9 @@ exports.getActiveUserCount = () => {
 };
 
 exports.getRandomActiveUser = (ignoreUser = "") => {
+    // Ensure this isn't null
+    ignoreUser = ignoreUser ?? "";
+
     const allActiveUsers = exports.getAllActiveUsers();
 
     /**@type {User} */
@@ -55,9 +58,9 @@ exports.getRandomActiveUser = (ignoreUser = "") => {
     do {
         const randomIndex = utils.getRandomInt(0, allActiveUsers.length - 1);
         randomUser = allActiveUsers[randomIndex];
-    } while (randomUser.username.toLowerCase() === ignoreUser.toLowerCase() && allActiveUsers.length > 1);
+    } while (randomUser?.username?.toLowerCase() === ignoreUser.toLowerCase() && allActiveUsers.length > 1);
 
-    if (ignoreUser && randomUser.username.toLowerCase() === ignoreUser.toLowerCase()) {
+    if (ignoreUser && randomUser?.username?.toLowerCase() === ignoreUser.toLowerCase()) {
         return null;
     }
 
