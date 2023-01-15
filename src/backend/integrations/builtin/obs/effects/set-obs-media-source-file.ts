@@ -9,7 +9,7 @@ export const SetOBSMediaSourceFileEffectType: EffectType<{
     id: "firebot:obs-set-media-source-file",
     name: "Set OBS Media Source File",
     description: "Sets the file of an OBS media source",
-    icon: "fad fa-photo-video",
+    icon: "fad fa-film",
     categories: ["common"],
   },
   optionsTemplate: `
