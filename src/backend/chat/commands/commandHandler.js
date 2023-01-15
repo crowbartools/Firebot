@@ -288,17 +288,19 @@ function buildUserCommand(command, rawMessage, sender, senderRoles) {
         command.subCommands?.length > 0) {
 
         for (const subcmd of command.subCommands) {
-            if (subcmd.active === false) {
+            if (subcmd.active === false && command.type !== "system") {
                 continue;
             }
             if (subcmd.regex) {
                 const regex = new RegExp(`^${subcmd.arg}$`, "gi");
                 if (regex.test(userCmd.args[0])) {
                     userCmd.triggeredSubcmd = subcmd;
+                    break;
                 }
             } else {
                 if (subcmd.arg.toLowerCase() === userCmd.args[0].toLowerCase()) {
                     userCmd.triggeredSubcmd = subcmd;
+                    break;
                 }
             }
         }
@@ -424,6 +426,12 @@ async function handleChatMessage(firebotChatMessage) {
 
     // update trigger with the one we matched
     userCmd.trigger = matchedTrigger;
+
+    // command is disabld
+    if (triggeredSubcmd && triggeredSubcmd.active === false) {
+        logger.debug("This Command is disabled");
+        return false;
+    }
 
     if (userCmd.isInvalidSubcommandTrigger === true) {
         await twitchChat.sendChatMessage(`Invalid Command: unknown arg used.`);

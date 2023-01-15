@@ -38,6 +38,7 @@ exports.loadEffects = () => {
         'moderator-timeout',
         'play-sound',
         'play-video', // No migration needed.
+        'raid',
         'random-effect',
         'random-reddit-image',
         'remove-user-metadata',
