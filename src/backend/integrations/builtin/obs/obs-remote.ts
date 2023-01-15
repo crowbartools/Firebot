@@ -204,6 +204,20 @@ export type OBSBrowserSourceSettings = {
   url: string;
 };
 
+export type OBSImageSourceSettings = {
+  file: string;
+};
+
+export type OBSMediaSourceSettings = {
+  isLocalFile: boolean;
+  localFile?: string;
+  loop?: boolean;
+};
+
+export type OBSColorSourceSettings = {
+  color: number;
+};
+
 export async function getAllSources(): Promise<Array<OBSSource> | null> {
   if (!connected) return null;
   try {
@@ -368,6 +382,62 @@ export async function setBrowserSourceSettings(sourceName: string, settings: OBS
     });
   } catch (error) {
     logger.error("Failed to set URL for source", error);
+  }
+}
+
+export async function getImageSources(): Promise<Array<OBSSource>> {
+  const sources = await getAllSources();
+  return sources.filter((s) => s.typeId === "image_source");
+}
+
+export async function setImageSourceSettings(sourceName: string, settings: OBSImageSourceSettings) {
+  try {
+    await obs.call("SetInputSettings", {
+      inputName: sourceName,
+      inputSettings: {
+        file: settings.file
+      }
+    });
+  } catch (error) {
+    logger.error("Failed to set file for image source", error);
+  }
+}
+
+export async function getMediaSources(): Promise<Array<OBSSource>> {
+  const sources = await getAllSources();
+  return sources.filter((s) => s.typeId === "ffmpeg_source");
+}
+
+export async function setMediaSourceSettings(sourceName: string, settings: OBSMediaSourceSettings) {
+  try {
+    await obs.call("SetInputSettings", {
+      inputName: sourceName,
+      inputSettings: {
+        is_local_file: settings.isLocalFile,
+        local_file: settings.localFile,
+        looping: settings.loop
+      }
+    });
+  } catch (error) {
+    logger.error("Failed to set file for media source", error);
+  }
+}
+
+export async function getColorSources(): Promise<Array<OBSSource>> {
+  const sources = await getAllSources();
+  return sources.filter((s) => s.typeId === "color_source_v3");
+}
+
+export async function setColorSourceSettings(sourceName: string, settings: OBSColorSourceSettings) {
+  try {
+    await obs.call("SetInputSettings", {
+      inputName: sourceName,
+      inputSettings: {
+        color: settings.color
+      }
+    });
+  } catch (error) {
+    logger.error("Failed to set color for source", error);
   }
 }
 
