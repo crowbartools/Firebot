@@ -25,6 +25,7 @@ import { OBSEventSource } from "./events/obs-event-source";
 import { SceneNameEventFilter } from "./filters/scene-name-filter";
 import { SceneNameVariable } from "./variables/scene-name-variable";
 import { SceneCollectionNameVariable } from "./variables/scene-collection-name-variable";
+import { StreamIsRunningVariable } from "./variables/stream-is-running";
 import { setupFrontendListeners } from "./communicator";
 import effectManager from "../../../effects/effectManager";
 import eventFilterManager from "../../../events/filters/filter-manager";
@@ -103,6 +104,7 @@ class ObsIntegration
 
     replaceVariableManager.registerReplaceVariable(SceneNameVariable);
     replaceVariableManager.registerReplaceVariable(SceneCollectionNameVariable);
+    replaceVariableManager.registerReplaceVariable(StreamIsRunningVariable);
 
     this.setupConnection(integrationData.userSettings);
   }
