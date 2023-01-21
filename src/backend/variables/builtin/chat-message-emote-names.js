@@ -31,7 +31,7 @@ const model = {
             messageParts = trigger.metadata.eventData.chatMessage.parts;
         }
 
-        const emoteNames = messageParts.filter(p => p.type === "emote" || p.type === "third-party-emote").map(e => e.name ?? "");
+        const emoteNames = messageParts.filter(p => p.type === "emote" || p.type === "third-party-emote").map(e => e.name);
 
         if (target != null) {
             return emoteNames[target];
