@@ -204,6 +204,20 @@ export type OBSBrowserSourceSettings = {
   url: string;
 };
 
+export type OBSImageSourceSettings = {
+  file: string;
+};
+
+export type OBSMediaSourceSettings = {
+  isLocalFile: boolean;
+  localFile?: string;
+  loop?: boolean;
+};
+
+export type OBSColorSourceSettings = {
+  color: number;
+};
+
 export async function getAllSources(): Promise<Array<OBSSource> | null> {
   if (!connected) return null;
   try {
@@ -335,19 +349,34 @@ export async function setSourceMuted(sourceName: string, muted: boolean) {
 
 export async function getTextSources(): Promise<Array<OBSSource>> {
   const sources = await getAllSources();
-  return sources.filter((s) => s.typeId === "text_gdiplus_v2");
+  return sources.filter((s) => s.typeId === "text_gdiplus_v2" || s.typeId === "text_ft2_source_v2");
 }
 
 export async function setTextSourceSettings(sourceName: string, settings: OBSTextSourceSettings) {
   try {
-    await obs.call("SetInputSettings", {
-      inputName: sourceName,
-      inputSettings: {
-        text: settings.text,
-        read_from_file: settings.readFromFile,
-        file: settings.file
-      }
+    const source = await obs.call("GetInputSettings", {
+      inputName: sourceName
     });
+
+    if (source.inputKind === "text_ft2_source_v2") {
+      await obs.call("SetInputSettings", {
+        inputName: sourceName,
+        inputSettings: {
+          from_file: settings.readFromFile,
+          text: settings.text,
+          text_file: settings.file
+        }
+      });
+    } else {
+      await obs.call("SetInputSettings", {
+        inputName: sourceName,
+        inputSettings: {
+          read_from_file: settings.readFromFile,
+          text: settings.text,
+          file: settings.file
+        }
+      });
+    }
   } catch (error) {
     logger.error("Failed to set text for source", error);
   }
@@ -368,6 +397,62 @@ export async function setBrowserSourceSettings(sourceName: string, settings: OBS
     });
   } catch (error) {
     logger.error("Failed to set URL for source", error);
+  }
+}
+
+export async function getImageSources(): Promise<Array<OBSSource>> {
+  const sources = await getAllSources();
+  return sources.filter((s) => s.typeId === "image_source");
+}
+
+export async function setImageSourceSettings(sourceName: string, settings: OBSImageSourceSettings) {
+  try {
+    await obs.call("SetInputSettings", {
+      inputName: sourceName,
+      inputSettings: {
+        file: settings.file
+      }
+    });
+  } catch (error) {
+    logger.error("Failed to set file for image source", error);
+  }
+}
+
+export async function getMediaSources(): Promise<Array<OBSSource>> {
+  const sources = await getAllSources();
+  return sources.filter((s) => s.typeId === "ffmpeg_source");
+}
+
+export async function setMediaSourceSettings(sourceName: string, settings: OBSMediaSourceSettings) {
+  try {
+    await obs.call("SetInputSettings", {
+      inputName: sourceName,
+      inputSettings: {
+        is_local_file: settings.isLocalFile,
+        local_file: settings.localFile,
+        looping: settings.loop
+      }
+    });
+  } catch (error) {
+    logger.error("Failed to set file for media source", error);
+  }
+}
+
+export async function getColorSources(): Promise<Array<OBSSource>> {
+  const sources = await getAllSources();
+  return sources.filter((s) => s.typeId === "color_source_v3");
+}
+
+export async function setColorSourceSettings(sourceName: string, settings: OBSColorSourceSettings) {
+  try {
+    await obs.call("SetInputSettings", {
+      inputName: sourceName,
+      inputSettings: {
+        color: settings.color
+      }
+    });
+  } catch (error) {
+    logger.error("Failed to set color for source", error);
   }
 }
 
@@ -421,6 +506,33 @@ export async function stopVirtualCam(): Promise<void> {
     return;
   }
 }
+
+export async function isStreaming(): Promise<boolean> {
+  let isRunning: boolean = false;
+  if (!connected) return isRunning;
+  try {
+    const response = await obs.call("GetStreamStatus");
+    isRunning = response.outputActive;
+  } catch (error) {
+    logger.error("Failed to get OBS stream status", error);
+  }
+
+  return isRunning;
+}
+
+export async function isRecording(): Promise<boolean> {
+  let isRunning: boolean = false;
+  if (!connected) return isRunning;
+  try {
+    const response = await obs.call("GetRecordStatus");
+    isRunning = response.outputActive;
+  } catch (error) {
+    logger.error("Failed to get OBS record status", error);
+  }
+
+  return isRunning;
+}
+
 
 export type ObsRawResponse = { success: boolean; response?: string; }
 
