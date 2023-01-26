@@ -349,19 +349,34 @@ export async function setSourceMuted(sourceName: string, muted: boolean) {
 
 export async function getTextSources(): Promise<Array<OBSSource>> {
   const sources = await getAllSources();
-  return sources.filter((s) => s.typeId === "text_gdiplus_v2");
+  return sources.filter((s) => s.typeId === "text_gdiplus_v2" || s.typeId === "text_ft2_source_v2");
 }
 
 export async function setTextSourceSettings(sourceName: string, settings: OBSTextSourceSettings) {
   try {
-    await obs.call("SetInputSettings", {
-      inputName: sourceName,
-      inputSettings: {
-        text: settings.text,
-        read_from_file: settings.readFromFile,
-        file: settings.file
-      }
+    const source = await obs.call("GetInputSettings", {
+      inputName: sourceName
     });
+
+    if (source.inputKind === "text_ft2_source_v2") {
+      await obs.call("SetInputSettings", {
+        inputName: sourceName,
+        inputSettings: {
+          from_file: settings.readFromFile,
+          text: settings.text,
+          text_file: settings.file
+        }
+      });
+    } else {
+      await obs.call("SetInputSettings", {
+        inputName: sourceName,
+        inputSettings: {
+          read_from_file: settings.readFromFile,
+          text: settings.text,
+          file: settings.file
+        }
+      });
+    }
   } catch (error) {
     logger.error("Failed to set text for source", error);
   }
