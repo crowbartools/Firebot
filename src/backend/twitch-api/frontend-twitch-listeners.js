@@ -35,38 +35,22 @@ exports.setupListeners = () => {
         return await twitchApi.categories.getCategoryById(gameId);
     });
 
-    frontendCommunicator.onAsync("get-channel-stream-tags", async () => {
-        return await twitchApi.streamTags.getChannelStreamTags();
-    });
-
-    frontendCommunicator.onAsync("get-all-stream-tags", async () => {
-        return await twitchApi.streamTags.getAllStreamTags();
-    });
-
     frontendCommunicator.onAsync("get-channel-info", async () => {
         try {
             const channelInfo = await twitchApi.channels.getChannelInformation();
             return {
                 title: channelInfo.title,
-                gameId: channelInfo.gameId
+                gameId: channelInfo.gameId,
+                tags: channelInfo.tags
             };
         } catch (error) {
             return null;
         }
     });
 
-    frontendCommunicator.onAsync("set-channel-info", async ({ title, gameId }) => {
+    frontendCommunicator.onAsync("set-channel-info", async ({ title, gameId, tags }) => {
         try {
-            await twitchApi.channels.updateChannelInformation({ title, gameId });
-            return true;
-        } catch (error) {
-            return false;
-        }
-    });
-
-    frontendCommunicator.onAsync("set-stream-tags", async (tagIds) => {
-        try {
-            await twitchApi.streamTags.updateChannelStreamTags(tagIds);
+            await twitchApi.channels.updateChannelInformation({ title, gameId, tags });
             return true;
         } catch (error) {
             return false;
