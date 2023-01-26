@@ -20,6 +20,9 @@ import { StartVirtualCamEffectType } from "./effects/start-virtual-cam";
 import { StopVirtualCamEffectType } from "./effects/stop-virtual-cam";
 import { SetOBSSourceTextEffectType } from "./effects/set-obs-source-text";
 import { SetOBSBrowserSourceUrlEffectType } from "./effects/set-obs-browser-source-url";
+import { SetOBSImageSourceFileEffectType } from "./effects/set-obs-image-source-file";
+import { SetOBSMediaSourceFileEffectType } from "./effects/set-obs-media-source-file";
+import { SetOBSColorSourceColorEffectType } from "./effects/set-obs-color-source-color";
 import { SendRawOBSWebSocketRequestEffectType } from "./effects/send-raw-obs-websocket-request";
 import { OBSEventSource } from "./events/obs-event-source";
 import { SceneNameEventFilter } from "./filters/scene-name-filter";
@@ -95,6 +98,9 @@ class ObsIntegration
     effectManager.registerEffect(StopVirtualCamEffectType);
     effectManager.registerEffect(SetOBSSourceTextEffectType);
     effectManager.registerEffect(SetOBSBrowserSourceUrlEffectType);
+    effectManager.registerEffect(SetOBSImageSourceFileEffectType);
+    effectManager.registerEffect(SetOBSMediaSourceFileEffectType);
+    effectManager.registerEffect(SetOBSColorSourceColorEffectType);
     effectManager.registerEffect(SendRawOBSWebSocketRequestEffectType);
 
     eventManager.registerEventSource(OBSEventSource);
