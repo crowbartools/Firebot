@@ -97,7 +97,7 @@
     "empty-folder": "^2.0.2",
     "eventsource": "^1.0.7",
     "express": "^4.17.1",
-    "expressionish": "github:SReject/expressionish#26d8c9c3c9732a2a76a670f969df31747d8ef770",
+    "expressionish": "github:SReject/expressionish#0612b3d3c0f0ff2e73dfb4c3d8b92e929397c7cd",
     "form-data": "^4.0.0",
     "fs-extra": "^7.0.1",
     "fuse.js": "^3.4.6",
