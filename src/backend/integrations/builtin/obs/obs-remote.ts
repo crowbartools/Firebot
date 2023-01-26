@@ -492,6 +492,33 @@ export async function stopVirtualCam(): Promise<void> {
   }
 }
 
+export async function isStreaming(): Promise<boolean> {
+  let isRunning: boolean = false;
+  if (!connected) return isRunning;
+  try {
+    const response = await obs.call("GetStreamStatus");
+    isRunning = response.outputActive;
+  } catch (error) {
+    logger.error("Failed to get OBS stream status", error);
+  }
+
+  return isRunning;
+}
+
+export async function isRecording(): Promise<boolean> {
+  let isRunning: boolean = false;
+  if (!connected) return isRunning;
+  try {
+    const response = await obs.call("GetRecordStatus");
+    isRunning = response.outputActive;
+  } catch (error) {
+    logger.error("Failed to get OBS record status", error);
+  }
+
+  return isRunning;
+}
+
+
 export type ObsRawResponse = { success: boolean; response?: string; }
 
 export async function sendRawObsRequest(functionName: string, payload?: any): Promise<ObsRawResponse> {
