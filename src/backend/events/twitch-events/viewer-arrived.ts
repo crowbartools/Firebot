@@ -1,11 +1,11 @@
 import eventManager from "../../events/EventManager";
 
 export function triggerViewerArrived(
-    username: string,
+    userDisplayName: string,
     messageText: string
 ) {
     eventManager.triggerEvent("twitch", "viewer-arrived", {
-        username,
+        username: userDisplayName,
         messageText
     });
 }
