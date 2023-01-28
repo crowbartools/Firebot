@@ -47,7 +47,11 @@ exports.startFollowPoll = () => {
                 }
 
                 if (follow.userId !== lastUserId) {
-                    twitchEventsHandler.follow.triggerFollow(follow.userId, follow.userName, follow.userDisplayName);
+                    twitchEventsHandler.follow.triggerFollow(
+                        follow.userId,
+                        follow.userName,
+                        follow.userDisplayName
+                    );
                 } else {
                     break;
                 }
