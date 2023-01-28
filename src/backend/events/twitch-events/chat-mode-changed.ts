@@ -1,6 +1,5 @@
 import eventManager from "../EventManager";
 
-/** @param {import("@twurple/pubsub").PubSubChatModActionMessage} message */
 export function triggerChatModeChanged(
     chatMode: string,
     chatModeState: "disabled" | "enabled",
