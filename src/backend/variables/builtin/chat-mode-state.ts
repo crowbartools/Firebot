@@ -1,7 +1,5 @@
-"use strict";
-
-const { EffectTrigger } = require("../../../shared/effect-constants");
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
+import { EffectTrigger } from "../../../shared/effect-constants";
+import { OutputDataType, VariableCategory } from "../../../shared/variable-constants";
 
 const triggers = {};
 triggers[EffectTrigger.EVENT] = ["twitch:chat-mode-changed"];
