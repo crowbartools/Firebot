@@ -1,15 +1,13 @@
-"use strict";
+import logger from "../logwrapper";
+import accountAccess from "../common/account-access";
+import twitchApi from "../twitch-api/api";
+import activeChatUserHandler from "../chat/chat-listeners/active-user-handler";
 
-const logger = require("../logwrapper");
-const accountAccess = require("../common/account-access");
-const twitchApi = require("../twitch-api/api");
-const activeChatUserHandler = require("../chat/chat-listeners/active-user-handler");
+// Every 5 mins
+const POLL_INTERVAL: number = 5 * 60 * 1000;
 
-// every 5 mins
-const POLL_INTERVAL = 300000;
-
-let chatterPollIntervalId;
-let pollIsRunning = false;
+let chatterPollIntervalId: NodeJS.Timeout;
+let pollIsRunning: boolean = false;
 
 function clearPollInterval() {
     if (chatterPollIntervalId != null) {
@@ -34,15 +32,15 @@ async function handleChatters() {
 
         logger.debug("Getting connected chat users...");
 
-        const chatters = await client.unsupported.getChatters(streamer.username);
+        const chatters = await twitchApi.chat.getAllChatters();
 
-        logger.debug(`There are ${chatters ? chatters.allChatters.length : 0} online chat users.`);
+        logger.debug(`There are ${chatters.length} online chat users.`);
 
-        if (chatters == null || chatters.allChatters.length < 1) {
+        if (chatters.length < 1) {
             return;
         }
 
-        for (const username of chatters.allChatters) {
+        for (const username of chatters) {
             await activeChatUserHandler.addOnlineUser(username);
         }
     } catch (error) {
@@ -52,16 +50,16 @@ async function handleChatters() {
     pollIsRunning = false;
 }
 
-exports.startChatterPoll = () => {
+export function startChatterPoll(): void {
     clearPollInterval();
     handleChatters();
     chatterPollIntervalId = setInterval(handleChatters, POLL_INTERVAL);
 };
 
-exports.stopChatterPoll = () => {
+export function stopChatterPoll(): void {
     clearPollInterval();
 };
 
-exports.runChatterPoll = async () => {
+export async function runChatterPoll(): Promise<void> {
     await handleChatters();
 };

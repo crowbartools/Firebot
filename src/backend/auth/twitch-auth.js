@@ -73,6 +73,7 @@ const STREAMER_ACCOUNT_PROVIDER = {
         'moderator:read:automod_settings',
         'moderator:read:blocked_terms',
         'moderator:read:chat_settings',
+        'moderator:read:chatters',
         'user:edit:broadcast',
         'user:manage:blocked_users',
         'user:manage:blocked_users',
