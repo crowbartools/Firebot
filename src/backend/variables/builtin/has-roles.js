@@ -19,11 +19,11 @@ module.exports = {
         description: "Returns true if the user has the specified role. Only valid within $if",
         examples: [
             {
-                usage: 'hasRole[$user, any, mod, vip]',
+                usage: 'hasRoles[$user, any, mod, vip]',
                 description: "returns true if $user is a mod OR VIP"
             },
             {
-                usage: 'if[$user, all, mod, vip]',
+                usage: 'hasRoles[$user, all, mod, vip]',
                 description: "Returns true if $user is a mod AND a VIP"
             }
         ],

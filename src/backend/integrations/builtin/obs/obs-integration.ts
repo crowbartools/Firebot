@@ -20,11 +20,16 @@ import { StartVirtualCamEffectType } from "./effects/start-virtual-cam";
 import { StopVirtualCamEffectType } from "./effects/stop-virtual-cam";
 import { SetOBSSourceTextEffectType } from "./effects/set-obs-source-text";
 import { SetOBSBrowserSourceUrlEffectType } from "./effects/set-obs-browser-source-url";
+import { SetOBSImageSourceFileEffectType } from "./effects/set-obs-image-source-file";
+import { SetOBSMediaSourceFileEffectType } from "./effects/set-obs-media-source-file";
+import { SetOBSColorSourceColorEffectType } from "./effects/set-obs-color-source-color";
 import { SendRawOBSWebSocketRequestEffectType } from "./effects/send-raw-obs-websocket-request";
 import { OBSEventSource } from "./events/obs-event-source";
 import { SceneNameEventFilter } from "./filters/scene-name-filter";
 import { SceneNameVariable } from "./variables/scene-name-variable";
 import { SceneCollectionNameVariable } from "./variables/scene-collection-name-variable";
+import { IsStreamingVariable } from "./variables/is-streaming";
+import { IsRecordingVariable } from "./variables/is-recording";
 import { setupFrontendListeners } from "./communicator";
 import effectManager from "../../../effects/effectManager";
 import eventFilterManager from "../../../events/filters/filter-manager";
@@ -95,6 +100,9 @@ class ObsIntegration
     effectManager.registerEffect(StopVirtualCamEffectType);
     effectManager.registerEffect(SetOBSSourceTextEffectType);
     effectManager.registerEffect(SetOBSBrowserSourceUrlEffectType);
+    effectManager.registerEffect(SetOBSImageSourceFileEffectType);
+    effectManager.registerEffect(SetOBSMediaSourceFileEffectType);
+    effectManager.registerEffect(SetOBSColorSourceColorEffectType);
     effectManager.registerEffect(SendRawOBSWebSocketRequestEffectType);
 
     eventManager.registerEventSource(OBSEventSource);
@@ -103,6 +111,8 @@ class ObsIntegration
 
     replaceVariableManager.registerReplaceVariable(SceneNameVariable);
     replaceVariableManager.registerReplaceVariable(SceneCollectionNameVariable);
+    replaceVariableManager.registerReplaceVariable(IsStreamingVariable);
+    replaceVariableManager.registerReplaceVariable(IsRecordingVariable);
 
     this.setupConnection(integrationData.userSettings);
   }

@@ -46,6 +46,7 @@ exports.loadEffects = () => {
         'run-command',
         'run-program',
         'sequential-effect',
+        'set-chat-mode',
         'set-user-metadata',
         'shoutout',
         'show-image', // No migration needed.

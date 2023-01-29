@@ -1,19 +1,17 @@
-"use strict";
-
-const twitchApi = require("../api");
-const accountAccess = require("../../common/account-access");
-const logger = require('../../logwrapper');
+import twitchApi from "../api";
+import accountAccess from "../../common/account-access";
+import logger from '../../logwrapper';
+import { CommercialLength, HelixChannel, HelixChannelUpdate, HelixUser } from "@twurple/api";
 
 /**
  * Get channel info (game, title, etc) for the given broadcaster user id
- * @param {string} [broadcasterId] The id of the broadcaster to get channel info for. Defaults to Streamer channel if left blank.
- * @returns {Promise<import("@twurple/api").HelixChannel>}
+ * 
+ * @param broadcasterId The id of the broadcaster to get channel info for. Defaults to Streamer channel if left blank.
  */
-const getChannelInformation = async (broadcasterId) => {
-
+export async function getChannelInformation(broadcasterId: string): Promise<HelixChannel> {
     // default to streamer id
     if (broadcasterId == null || broadcasterId === "") {
-        broadcasterId = accountAccess.getAccounts().streamer.userId;
+        broadcasterId = accountAccess.getAccounts().streamer.userId.toString();
     }
 
     const client = twitchApi.getClient();
@@ -28,10 +26,10 @@ const getChannelInformation = async (broadcasterId) => {
 
 /**
  * Check whether a streamer is currently live.
- * @param {string} username
- * @returns {Promise<boolean>}
+ * 
+ * @param username
  */
-const getOnlineStatus = async (username) => {
+export async function getOnlineStatus(username: string): Promise<boolean> {
     const client = twitchApi.getClient();
     if (client == null) {
         return false;
@@ -51,27 +49,26 @@ const getOnlineStatus = async (username) => {
 
 /**
  * Update the information of a Twitch channel.
- * @param {import("@twurple/api").HelixChannelUpdate} data
- * @returns {Promise<void>}
+ * 
+ * @param data
  */
-const updateChannelInformation = async (data) => {
+export async function updateChannelInformation(data: HelixChannelUpdate): Promise<void> {
     const client = twitchApi.getClient();
     await client.channels.updateChannelInfo(accountAccess.getAccounts().streamer.userId, data);
 };
 
 /**
  * Get channel info (game, title, etc) for the given username
- * @param {string} username The id of the broadcaster to get channel info for.
- * @returns {Promise<import("@twurple/api").HelixChannel>}
+ * 
+ * @param username The id of the broadcaster to get channel info for.
  */
-const getChannelInformationByUsername = async (username) => {
+export async function getChannelInformationByUsername(username: string): Promise<HelixChannel> {
     if (username == null) {
         return null;
     }
 
     const client = twitchApi.getClient();
-    /**@type {import("@twurple/api").HelixUser} */
-    let user;
+    let user: HelixUser;
     try {
         user = await client.users.getUserByName(username);
     } catch (error) {
@@ -87,22 +84,23 @@ const getChannelInformationByUsername = async (username) => {
 
 /**
  * Trigger a Twitch ad break. Default length 30 seconds.
- * @param {number} [adLength] How long the ad should run.
- * @returns {Promise<boolean>}
+ * 
+ * @param adLength How long the ad should run.
  */
-const triggerAdBreak = async (adLength = 30) => {
+export async function triggerAdBreak(adLength: number = 30): Promise<boolean> {
     try {
         const client = twitchApi.getClient();
         const streamer = accountAccess.getAccounts().streamer;
 
         const isOnline = await getOnlineStatus(streamer.username);
         if (isOnline && streamer.broadcasterType !== "") {
-            await client.channels.startChannelCommercial(streamer.userId, adLength);
+            await client.channels.startChannelCommercial(streamer.userId, adLength as CommercialLength);
         }
 
         logger.debug(`A commercial was run. Length: ${adLength}. Twitch does not send confirmation, so we can't be sure it ran.`);
         return true;
     } catch (error) {
+        /** @ts-ignore */
         renderWindow.webContents.send("error", `Failed to trigger ad-break because: ${error.message}`);
         return false;
     }
@@ -111,10 +109,9 @@ const triggerAdBreak = async (adLength = 30) => {
 /**
  * Starts a raid
  *
- * @param {string} targetUserId The Twitch user ID whose channel to raid
- * @returns {Promise<boolean>}
+ * @param targetUserId The Twitch user ID whose channel to raid
  */
-const raidChannel = async (targetUserId) => {
+export async function raidChannel(targetUserId: string): Promise<boolean> {
     try {
         const client = twitchApi.getClient();
         const streamerId = accountAccess.getAccounts().streamer.userId;
@@ -131,10 +128,8 @@ const raidChannel = async (targetUserId) => {
 
 /**
  * Cancels a raid
- *
- * @returns {Promise<boolean>}
  */
-const cancelRaid = async () => {
+export async function cancelRaid(): Promise<boolean> {
     try {
         const client = twitchApi.getClient();
         const streamerId = accountAccess.getAccounts().streamer.userId;
@@ -148,11 +143,3 @@ const cancelRaid = async () => {
 
     return false;
 };
-
-exports.getChannelInformation = getChannelInformation;
-exports.getChannelInformationByUsername = getChannelInformationByUsername;
-exports.updateChannelInformation = updateChannelInformation;
-exports.triggerAdBreak = triggerAdBreak;
-exports.getOnlineStatus = getOnlineStatus;
-exports.raidChannel = raidChannel;
-exports.cancelRaid = cancelRaid;
