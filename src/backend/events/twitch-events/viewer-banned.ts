@@ -11,3 +11,13 @@ export function triggerBanned(
         modReason
     });
 };
+
+export function triggerUnbanned(
+    userDisplayName: string,
+    moderator: string
+) {
+    eventManager.triggerEvent("twitch", "unbanned", {
+        username: userDisplayName,
+        moderator
+    });
+};

@@ -205,6 +205,12 @@ async function createClient() {
                 );
                 frontendCommunicator.send("twitch:chat:user:delete-messages", message.args[0]);
                 break;
+            case "unban":
+                twitchEventsHandler.viewerBanned.triggerUnbanned(
+                    message.args[0],
+                    message.userName
+                );
+                break;
             case "emoteonly":
             case "emoteonlyoff":
             case "subscribers":
