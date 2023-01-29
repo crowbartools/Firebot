@@ -39,7 +39,7 @@ const effect = {
                             <li>1.value</li>
                         </ul>
                     </eos-collapsable-panel>
-                    <input ng-model="effect.propertyPath" type="text" class="form-control" id="propertyPath" placeholder="Enter path">
+                    <input ng-model="effect.propertyPath" type="text" class="form-control" id="propertyPath" placeholder="Enter path" replace-variables>
                 </eos-collapsable-panel>
             </div>
         </eos-container>
