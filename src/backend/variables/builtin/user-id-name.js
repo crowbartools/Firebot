@@ -21,6 +21,6 @@ module.exports = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
-        return trigger.metadata.useridname;
+        return trigger.metadata.userIdName ?? trigger.metadata.useridname;
     }
 };

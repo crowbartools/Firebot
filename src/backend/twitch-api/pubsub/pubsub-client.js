@@ -85,29 +85,78 @@ async function createClient() {
 
         const redemptionListener = await pubSubClient.onRedemption(streamer.userId,
             (message) => {
-                twitchEventsHandler.rewardRedemption.handleRewardRedemption(message);
+                logger.debug("Got reward redemption event!");
+
+                let imageUrl = "";
+                if (message && message.defaultImage) {
+                    const images = message.defaultImage;
+                    if (images.url_4x) {
+                        imageUrl = images.url_4x;
+                    } else if (images.url_2x) {
+                        imageUrl = images.url_2x;
+                    } else if (images.url_1x) {
+                        imageUrl = images.url_1x;
+                    }
+                }
+
+                twitchEventsHandler.rewardRedemption.handleRewardRedemption(
+                    message.id,
+                    message.status,
+                    message.rewardIsQueued,
+                    message.message ?? "",
+                    message.userId,
+                    message.userName,
+                    message.userDisplayName,
+                    message.rewardId,
+                    message.rewardTitle,
+                    message.rewardPrompt ?? "",
+                    message.rewardCost,
+                    imageUrl
+                );
             });
 
         listeners.push(redemptionListener);
 
         const whisperListener = await pubSubClient.onWhisper(streamer.userId, (message) => {
-            twitchEventsHandler.whisper.triggerWhisper(message.senderName, message.text);
+            twitchEventsHandler.whisper.triggerWhisper(
+                message.senderName,
+                message.text
+            );
         });
         listeners.push(whisperListener);
 
         const bitsListener = await pubSubClient.onBits(streamer.userId, (message) => {
-            twitchEventsHandler.cheer.triggerCheer(message);
+            twitchEventsHandler.cheer.triggerCheer(
+                message.userName ?? "An Anonymous Cheerer",
+                message.isAnonymous,
+                message.bits,
+                message.totalBits,
+                message.message ?? ""
+            );
         });
         listeners.push(bitsListener);
 
         const bitsBadgeUnlockListener = await pubSubClient.onBitsBadgeUnlock(streamer.userId, (message) => {
-            twitchEventsHandler.cheer.triggerBitsBadgeUnlock(message);
+            twitchEventsHandler.cheer.triggerBitsBadgeUnlock(
+                message.userName ?? "An Anonymous Cheerer",
+                message.message ?? "",
+                message.badgeTier
+            );
         });
         listeners.push(bitsBadgeUnlockListener);
 
         const subsListener = await pubSubClient.onSubscription(streamer.userId, (subInfo) => {
             if (!subInfo.isGift) {
-                twitchEventsHandler.sub.triggerSub(subInfo);
+                twitchEventsHandler.sub.triggerSub(
+                    subInfo.userName,
+                    subInfo.userDisplayName,
+                    subInfo.subPlan,
+                    subInfo.cumulativeMonths || 1,
+                    subInfo.message.message ?? "",
+                    subInfo.streakMonths || 1,
+                    subInfo.subPlan === "Prime",
+                    subInfo.isResub
+                );
             }
         });
         listeners.push(subsListener);
@@ -140,12 +189,27 @@ async function createClient() {
                 frontendCommunicator.send("twitch:chat:clear-feed", message.userName);
                 break;
             case "ban":
-                twitchEventsHandler.viewerBanned.triggerBanned(message);
+                twitchEventsHandler.viewerBanned.triggerBanned(
+                    message.args[0],
+                    message.userName,
+                    message.args[1] ?? ""
+                );
                 frontendCommunicator.send("twitch:chat:user:delete-messages", message.args[0]);
                 break;
             case "timeout":
-                twitchEventsHandler.viewerTimeout.triggerTimeout(message);
+                twitchEventsHandler.viewerTimeout.triggerTimeout(
+                    message.args[0],
+                    message.args[1],
+                    message.userName,
+                    message.args[2] ?? ""
+                );
                 frontendCommunicator.send("twitch:chat:user:delete-messages", message.args[0]);
+                break;
+            case "unban":
+                twitchEventsHandler.viewerBanned.triggerUnbanned(
+                    message.args[0],
+                    message.userName
+                );
                 break;
             case "emoteonly":
             case "emoteonlyoff":
@@ -157,7 +221,12 @@ async function createClient() {
             case "slowoff":
             case "r9kbeta": // Unique Chat
             case "r9kbetaoff":
-                twitchEventsHandler.chatModeChanged.triggerChatModeChanged(message);
+                twitchEventsHandler.chatModeChanged.triggerChatModeChanged(
+                    message.action,
+                    message.action.includes("off") ? "disabled" : "enabled",
+                    message.userName,
+                    message.args ? parseInt(message.args[0]) : null
+                );
                 break;
             default:
                 return;
@@ -197,4 +266,3 @@ async function createClient() {
 exports.createClient = createClient;
 exports.disconnectPubSub = disconnectPubSub;
 exports.removeListeners = removeListeners;
-

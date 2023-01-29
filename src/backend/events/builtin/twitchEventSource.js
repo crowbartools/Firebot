@@ -304,7 +304,30 @@ module.exports = {
             activityFeed: {
                 icon: "fad fa-gavel",
                 getMessage: (eventData) => {
-                    return `**${eventData.username}** was banned by **${eventData.moderator}**. Reason: **${eventData.modReason}**`;
+                    let message;
+                    if (eventData.modReason) {
+                        message = `**${eventData.username}** was banned by **${eventData.moderator}**. Reason: **${eventData.modReason}**`;
+                    } else {
+                        message = `**${eventData.username}** was banned by **${eventData.moderator}**.`;
+                    }
+                    return message;
+                }
+            }
+        },
+        {
+            id: "unbanned",
+            name: "Viewer Unbanned",
+            description: "When someone is unbanned in your channel",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                username: "CaveMobster",
+                moderator: "Firebot"
+            },
+            activityFeed: {
+                icon: "fad fa-gavel",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** was unbanned by **${eventData.moderator}**.`;
                 }
             }
         },
