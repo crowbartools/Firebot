@@ -4,6 +4,30 @@ import accountAccess from "../../common/account-access";
 import { ApiClient, HelixChatAnnouncementColor, HelixSendChatAnnouncementParams, HelixUpdateChatSettingsParams } from "@twurple/api";
 
 /**
+ * Gets the list of all chatters in the channel.
+ */
+export async function getAllChatters(): Promise<string[]> {
+    const chatters: string[] = [];
+
+    try {
+        const client: ApiClient = twitchApi.getClient();
+        const streamerUserId: number = accountAccess.getAccounts().streamer.userId;
+
+        let result = await client.chat.getChatters(streamerUserId, streamerUserId);
+        chatters.push(...result.data.map(c => c.userDisplayName));
+
+        while (result.cursor) {
+            result = await client.chat.getChatters(streamerUserId, streamerUserId, { after: result.cursor });
+            chatters.push(...result.data.map(c => c.userDisplayName));
+        }
+    } catch (error) {
+        logger.error("Error getting chatter list", error);
+    }
+
+    return chatters;
+};
+
+/**
  * Sends an announcement to the streamer's chat.
  * 
  * @param message The announcement to send
