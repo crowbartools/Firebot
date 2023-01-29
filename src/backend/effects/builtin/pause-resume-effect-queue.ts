@@ -17,7 +17,7 @@ const model: EffectType<{
     },
     optionsTemplate: `
         <eos-container header="Effect Queue">
-            <div class="btn-group">
+            <div class="btn-group" ng-if="effectQueues.length">
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="list-effect-type">{{effectQueueName ? effectQueueName : 'Pick one'}}</span> <span class="caret"></span>
                 </button>
@@ -26,6 +26,9 @@ const model: EffectType<{
                         <a href>{{queue.name}}</a>
                     </li>
                 </ul>
+            </div>
+            <div ng-if="!effectQueues.length">
+                You have no effect queues saved.
             </div>
         </eos-container>
         
