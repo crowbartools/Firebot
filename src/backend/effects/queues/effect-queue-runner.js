@@ -24,12 +24,13 @@ class EffectQueue {
          */
         this._queue = [];
         this._running = false;
+        this._paused = false;
         this.canceled = false;
     }
 
     runQueue() {
         return new Promise(resolve => {
-            if (this._queue.length === 0 || this.canceled) {
+            if (this._queue.length === 0 || this.canceled || this._paused === true) {
                 return resolve();
             }
 
@@ -93,13 +94,40 @@ class EffectQueue {
 
         logger.debug(`Added more effects to queue ${this.id}. Current length=${this._queue.length}`);
 
-        if (!this._running) {
-            logger.debug(`Queue ${this.id} is idle... spinning up.`);
-            this._running = true;
-            this.runQueue().then(() => {
-                logger.debug(`Queue ${this.id} is cleared... going idle.`);
-                this._running = false;
-            });
+        this.processEffectQueue();
+    }
+
+    processEffectQueue() {
+        if (this._paused) {
+            logger.debug(`Queue ${this.id} is paused. Will run effects once queue is resumed.`);
+        } else {
+            if (!this._running && this._queue.length > 0) {
+                logger.debug(`Queue ${this.id} is idle... spinning up.`);
+                this._running = true;
+                this.runQueue().then(() => {
+                    logger.debug(`Queue ${this.id} is ${this._paused && this._queue.length > 0 ? "paused" : "cleared"}... going idle.`);
+                    this._running = false;
+                });
+            }
+        }
+    }
+
+    pauseQueue() {
+        logger.debug(`Pausing queue ${this.id}...`);
+        this._paused = true;
+    }
+
+    resumeQueue() {
+        logger.debug(`Resuming queue ${this.id}...`);
+        this._paused = false;
+        this.processEffectQueue();
+    }
+
+    toggleQueue() {
+        if (this._paused) {
+            this.resumeQueue();
+        } else {
+            this.pauseQueue();
         }
     }
 }
@@ -134,6 +162,27 @@ function updateQueueConfig(queueConfig) {
     }
 }
 
+function pauseQueue(queueId) {
+    const queue = queues[queueId];
+    if (queue != null) {
+        queue.pauseQueue();
+    }
+}
+
+function resumeQueue(queueId) {
+    const queue = queues[queueId];
+    if (queue != null) {
+        queue.resumeQueue();
+    }
+}
+
+function toggleQueue(queueId) {
+    const queue = queues[queueId];
+    if (queue != null) {
+        queue.toggleQueue();
+    }
+}
+
 function removeQueue(queueId) {
     if (queueId == null) {
         return;
@@ -153,7 +202,8 @@ function clearAllQueues() {
 
 exports.addEffectsToQueue = addEffectsToQueue;
 exports.updateQueueConfig = updateQueueConfig;
+exports.pauseQueue = pauseQueue;
+exports.resumeQueue = resumeQueue;
+exports.toggleQueue = toggleQueue;
 exports.removeQueue = removeQueue;
 exports.clearAllQueues = clearAllQueues;
-
-

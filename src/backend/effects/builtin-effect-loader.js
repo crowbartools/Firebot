@@ -36,6 +36,7 @@ exports.loadEffects = () => {
         'moderator-mod',
         'moderator-purge',
         'moderator-timeout',
+        'pause-resume-effect-queue',
         'play-sound',
         'play-video', // No migration needed.
         'raid',
