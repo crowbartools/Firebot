@@ -1,6 +1,6 @@
 "use strict";
 
-const twitchApi = require("./api");
+const twitchApi = require("./api").default;
 const frontendCommunicator = require("../common/frontend-communicator");
 const logger = require("../logwrapper");
 

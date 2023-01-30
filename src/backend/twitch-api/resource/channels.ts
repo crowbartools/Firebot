@@ -1,7 +1,7 @@
 import twitchApi from "../api";
 import accountAccess from "../../common/account-access";
 import logger from '../../logwrapper';
-import { CommercialLength, HelixChannel, HelixChannelUpdate, HelixUser } from "@twurple/api";
+import { ApiClient, CommercialLength, HelixChannel, HelixChannelUpdate, HelixUser } from "@twurple/api";
 
 /**
  * Get channel info (game, title, etc) for the given broadcaster user id
@@ -11,7 +11,7 @@ import { CommercialLength, HelixChannel, HelixChannelUpdate, HelixUser } from "@
 export async function getChannelInformation(broadcasterId: string): Promise<HelixChannel> {
     // default to streamer id
     if (broadcasterId == null || broadcasterId === "") {
-        broadcasterId = accountAccess.getAccounts().streamer.userId.toString();
+        broadcasterId = accountAccess.getAccounts().streamer.userId;
     }
 
     const client = twitchApi.getClient();
@@ -142,4 +142,27 @@ export async function cancelRaid(): Promise<boolean> {
     }
 
     return false;
+};
+
+/**
+ * Gets all the VIPs in the streamer's channel
+ */
+export async function getVips(): Promise<string[]> {
+    const vips: string[] = [];
+    const client: ApiClient = twitchApi.getClient();
+    const streamerId = accountAccess.getAccounts().streamer.userId;
+
+    try {
+        let result = await client.channels.getVips(streamerId);
+        vips.push(...result.data.map(c => c.displayName));
+
+        while (result.cursor) {
+            result = await client.channels.getVips(streamerId, { after: result.cursor });
+            vips.push(...result.data.map(c => c.displayName));
+        }
+    } catch (error) {
+        logger.error("Error getting VIPs", error);
+    }
+
+    return vips;
 };

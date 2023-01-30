@@ -40,15 +40,16 @@ export async function doesUserFollowChannel(username: string, channelName: strin
     return userFollow ?? false;
 };
 
-export async function blockUser(username: UserIdResolvable, reason?: 'spam' | 'harassment' | 'other'): Promise<boolean> {
-    if (username == null) {
+export async function blockUser(userId: UserIdResolvable, reason?: 'spam' | 'harassment' | 'other'): Promise<boolean> {
+    if (userId == null) {
         return false;
     }
 
     const client = twitchApi.getClient();
+    const streamerId = accountAccess.getAccounts().streamer.userId;
 
     try {
-        await client.users.createBlock(username, {
+        await client.users.createBlock(streamerId, userId, {
             reason
         });
     } catch (error) {

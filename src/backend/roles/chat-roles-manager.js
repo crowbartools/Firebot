@@ -1,6 +1,6 @@
 "use strict";
 const axios = require("axios").default;
-const twitchApi = require("../twitch-api/api");
+const twitchApi = require("../twitch-api/api").default;
 const accountAccess = require("../common/account-access");
 const logger = require("../logwrapper");
 
@@ -30,11 +30,6 @@ let vips = [];
  * @return {void}
  */
 const loadUsersInVipRole = (usersInVipRole) => {
-    if (usersInVipRole.length > 0) {
-        const lastItem = usersInVipRole[usersInVipRole.length - 1].replace(".", "");
-        usersInVipRole[usersInVipRole.length - 1] = lastItem;
-    }
-
     vips = usersInVipRole;
 };
 

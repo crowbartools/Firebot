@@ -163,7 +163,7 @@ exports.addOnlineUser = async (username) => {
         const firebotUser = await userDatabase.getTwitchUserByUsername(username);
 
         if (firebotUser == null) {
-            const twitchApi = require("../../twitch-api/api");
+            const twitchApi = require("../../twitch-api/api").default;
             const twitchUser = await twitchApi.getClient().users.getUserByName(username);
 
             if (twitchUser == null) {

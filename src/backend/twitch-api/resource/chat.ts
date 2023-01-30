@@ -11,7 +11,7 @@ export async function getAllChatters(): Promise<string[]> {
 
     try {
         const client: ApiClient = twitchApi.getClient();
-        const streamerUserId: number = accountAccess.getAccounts().streamer.userId;
+        const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
 
         let result = await client.chat.getChatters(streamerUserId, streamerUserId);
         chatters.push(...result.data.map(c => c.userDisplayName));
@@ -42,9 +42,9 @@ export async function sendAnnouncement(
     color: HelixChatAnnouncementColor = "primary",
     sendAsBot: boolean = false
 ): Promise<boolean> {
-    const client: ApiClient = sendAsBot === true ? twitchApi.getBotClient() : twitchApi.getClient();
-    const streamerUserId: number = accountAccess.getAccounts().streamer.userId;
-    let senderUserId: number = sendAsBot === true && accountAccess.getAccounts().bot?.userId != null ?
+    const client: ApiClient = twitchApi.getClient();
+    const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
+    const senderUserId: string = sendAsBot === true && accountAccess.getAccounts().bot?.userId != null ?
         accountAccess.getAccounts().bot.userId :
         streamerUserId;
 
@@ -64,7 +64,9 @@ export async function sendAnnouncement(
                 color: color
             };
     
-            await client.chat.sendAnnouncement(streamerUserId, senderUserId, announcement);
+            await client.asUser(senderUserId, async (apiClient) => {
+                await apiClient.chat.sendAnnouncement(streamerUserId, senderUserId, announcement);
+            })
         }
 
         return true;
@@ -83,7 +85,7 @@ export async function sendAnnouncement(
  */
 export async function deleteChatMessage(messageId: string): Promise<boolean> {
     const client: ApiClient = twitchApi.getClient();
-    const streamerUserId: number = accountAccess.getAccounts().streamer.userId;
+    const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
 
     try {
         await client.moderation.deleteChatMessages(streamerUserId, streamerUserId, messageId);
@@ -103,7 +105,7 @@ export async function deleteChatMessage(messageId: string): Promise<boolean> {
  */
 export async function clearChat(): Promise<boolean> {
     const client: ApiClient = twitchApi.getClient();
-    const streamerUserId: number = accountAccess.getAccounts().streamer.userId;
+    const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
 
     try {
         await client.moderation.deleteChatMessages(streamerUserId, streamerUserId);
@@ -124,7 +126,7 @@ export async function clearChat(): Promise<boolean> {
  */
 export async function setEmoteOnlyMode(enable: boolean = true) {
     const client: ApiClient = twitchApi.getClient();
-    const streamerUserId: number = accountAccess.getAccounts().streamer.userId;
+    const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
 
     try {
         const chatSettings: HelixUpdateChatSettingsParams = {
@@ -150,7 +152,7 @@ export async function setEmoteOnlyMode(enable: boolean = true) {
  */
 export async function setFollowerOnlyMode(enable: boolean = true, duration: number = 0) {
     const client: ApiClient = twitchApi.getClient();
-    const streamerUserId: number = accountAccess.getAccounts().streamer.userId;
+    const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
 
     try {
         const chatSettings: HelixUpdateChatSettingsParams = {
@@ -176,7 +178,7 @@ export async function setFollowerOnlyMode(enable: boolean = true, duration: numb
  */
 export async function setSubscriberOnlyMode(enable: boolean = true) {
     const client: ApiClient = twitchApi.getClient();
-    const streamerUserId: number = accountAccess.getAccounts().streamer.userId;
+    const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
 
     try {
         const chatSettings: HelixUpdateChatSettingsParams = {
@@ -202,7 +204,7 @@ export async function setSubscriberOnlyMode(enable: boolean = true) {
  */
 export async function setSlowMode(enable: boolean = true, duration: number = 5) {
     const client: ApiClient = twitchApi.getClient();
-    const streamerUserId: number = accountAccess.getAccounts().streamer.userId;
+    const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
 
     try {
         const chatSettings: HelixUpdateChatSettingsParams = {
@@ -228,7 +230,7 @@ export async function setSlowMode(enable: boolean = true, duration: number = 5) 
  */
 export async function setUniqueMode(enable: boolean = true) {
     const client: ApiClient = twitchApi.getClient();
-    const streamerUserId: number = accountAccess.getAccounts().streamer.userId;
+    const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
 
     try {
         const chatSettings: HelixUpdateChatSettingsParams = {

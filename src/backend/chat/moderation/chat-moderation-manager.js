@@ -80,7 +80,7 @@ function startModerationService() {
         return;
     }
 
-    const twitchApi = require("../../twitch-api/api");
+    const twitchApi = require("../../twitch-api/api").default;
     const chat = require("../twitch-chat");
 
     let servicePath = require("path").resolve(__dirname, "./moderation-service.js");
@@ -181,7 +181,7 @@ async function moderateMessage(chatMessage) {
         return;
     }
 
-    const twitchApi = require("../../twitch-api/api");
+    const twitchApi = require("../../twitch-api/api").default;
     const chat = require("../twitch-chat");
 
     const userExemptForEmoteLimit = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles, chatModerationSettings.emoteLimit.exemptRoles);

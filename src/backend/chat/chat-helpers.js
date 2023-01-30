@@ -3,7 +3,7 @@
 const uuid = require("uuid/v4");
 const logger = require("../logwrapper");
 const accountAccess = require("../common/account-access");
-const twitchClient = require("../twitch-api/api");
+const twitchClient = require("../twitch-api/api").default;
 const { BTTVEmoteProvider } = require("./third-party/bttv");
 const { FFZEmoteProvider } = require("./third-party/ffz");
 const { SevenTVEmoteProvider } = require("./third-party/7tv");

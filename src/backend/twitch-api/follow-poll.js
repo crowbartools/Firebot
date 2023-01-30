@@ -2,7 +2,7 @@
 
 const accountAccess = require("../common/account-access");
 
-const twitchApi = require("./api");
+const twitchApi = require("./api").default;
 
 const twitchEventsHandler = require("../events/twitch-events");
 

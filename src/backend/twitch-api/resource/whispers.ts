@@ -18,13 +18,15 @@ export async function sendWhisper(
     message: string,
     sendAsBot: boolean = false
 ): Promise<boolean> {
-    const client: ApiClient = sendAsBot === true ? twitchApi.getBotClient() : twitchApi.getClient();
-    const senderUserId: number = sendAsBot === true ?
+    const client: ApiClient = twitchApi.getClient();
+    const senderUserId: string = sendAsBot === true && accountAccess.getAccounts().bot?.userId != null ?
         accountAccess.getAccounts().bot.userId :
         accountAccess.getAccounts().streamer.userId;
 
     try {
-        await client.whispers.sendWhisper(senderUserId, recipientUserId, message);
+        await client.asUser(senderUserId, async (apiClient) => {
+            await apiClient.whispers.sendWhisper(senderUserId, recipientUserId, message);
+        });
         
         return true;
     } catch (error) {

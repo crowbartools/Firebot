@@ -3,7 +3,7 @@
 
 const util = require("../../../utility");
 const twitchChat = require("../../../chat/twitch-chat");
-const twitchApi = require("../../../twitch-api/api");
+const twitchApi = require("../../../twitch-api/api").default;
 const commandManager = require("../../../chat/commands/CommandManager");
 const gameManager = require("../../game-manager");
 const currencyDatabase = require("../../../database/currencyDatabase");

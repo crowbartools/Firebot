@@ -1,7 +1,7 @@
 
 "use strict";
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
-const twitchApi = require("../../twitch-api/api");
+const twitchApi = require("../../twitch-api/api").default;
 const accountAccess = require("../../common/account-access");
 const moment = require("moment");
 const logger = require("../../logwrapper");

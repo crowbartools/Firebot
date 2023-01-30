@@ -1,6 +1,6 @@
 "use strict";
 
-const twitchApi = require("../../twitch-api/api");
+const twitchApi = require("../../twitch-api/api").default;
 const chatRolesManager = require("../../roles/chat-roles-manager");
 const frontendCommunicator = require("../../common/frontend-communicator");
 const logger = require("../../logwrapper");

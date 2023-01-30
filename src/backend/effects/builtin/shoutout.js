@@ -3,7 +3,7 @@
 const { settings } = require("../../common/settings-access");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/http-server-manager");
-const twitchApi = require("../../twitch-api/api");
+const twitchApi = require("../../twitch-api/api").default;
 const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
 const logger = require("../../logwrapper");
 

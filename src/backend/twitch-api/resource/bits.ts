@@ -1,6 +1,7 @@
 import logger from "../../logwrapper";
+import accountAccess from "../../common/account-access";
 import twitchApi from "../api";
-import { ApiClient, HelixBitsLeaderboardEntry, HelixBitsLeaderboardPeriod, HelixBitsLeaderboardQuery } from "@twurple/api/lib";
+import { ApiClient, HelixBitsLeaderboardEntry, HelixBitsLeaderboardPeriod, HelixBitsLeaderboardQuery } from "@twurple/api";
 
 export async function getChannelBitsLeaderboard(
     count: number = 10,
@@ -9,6 +10,7 @@ export async function getChannelBitsLeaderboard(
     userId?: string
 ): Promise<HelixBitsLeaderboardEntry[]> {
     const client: ApiClient = twitchApi.getClient();
+    const streamerId: string = accountAccess.getAccounts().streamer.userId;
     const leaderboard: HelixBitsLeaderboardEntry[] = [];
 
     try {
@@ -18,7 +20,7 @@ export async function getChannelBitsLeaderboard(
             startDate: startDate,
             contextUserId: userId
         };
-        leaderboard.push(...(await client.bits.getLeaderboard(params)).entries);
+        leaderboard.push(...(await client.bits.getLeaderboard(streamerId, params)).entries);
     } catch (error) {
         logger.error("Failed to get channel bits leaderboard", error);
     }

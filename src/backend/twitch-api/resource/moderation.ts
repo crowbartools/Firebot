@@ -1,6 +1,7 @@
 import logger from '../../logwrapper';
 import twitchApi from "../api";
 import accountAccess from "../../common/account-access";
+import chatRolesManager from "../../roles/chat-roles-manager";
 import { ApiClient, HelixBanUserRequest, UserIdResolvable } from "@twurple/api";
 
 /**
@@ -21,7 +22,7 @@ export async function timeoutUser(
 
     try {
         const timeoutRequest: HelixBanUserRequest = {
-            userId: userId.toString(),
+            user: userId,
             duration: duration,
             reason: reason
         };
@@ -49,7 +50,7 @@ export async function banUser(userId: UserIdResolvable, reason: string = null): 
 
     try {
         const banRequest: HelixBanUserRequest = {
-            userId: userId.toString(),
+            user: userId,
             duration: null,
             reason: reason
         };
@@ -139,6 +140,9 @@ export async function addChannelVip(userId: UserIdResolvable): Promise<boolean> 
 
     try {
         await client.channels.addVip(streamerId, userId);
+        const user = await client.users.getUserById(userId);
+
+        chatRolesManager.addVipToVipList(user.displayName);
 
         return true;
     } catch (error) {
@@ -160,6 +164,9 @@ export async function removeChannelVip(userId: UserIdResolvable): Promise<boolea
 
     try {
         await client.channels.removeVip(streamerId, userId);
+        const user = await client.users.getUserById(userId);
+
+        chatRolesManager.removeVipFromVipList(user.displayName);
 
         return true;
     } catch (error) {

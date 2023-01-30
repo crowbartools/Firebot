@@ -2,7 +2,7 @@
 const logger = require("../../logwrapper");
 const accountAccess = require("../../common/account-access");
 const frontendCommunicator = require("../../common/frontend-communicator");
-const refreshingAuthProvider = require("../../auth/refreshing-auth-provider");
+const firebotRefreshingAuthProvider = require("../../auth/firebot-refreshing-auth-provider").default;
 const { PubSubClient } = require("@twurple/pubsub");
 
 /**@type {PubSubClient} */
@@ -28,7 +28,7 @@ async function removeListeners(pubSubClient) {
         if (userListener) {
             for (const listener of listeners) {
                 try {
-                    await userListener.removeListener(listener);
+                    pubSubClient.removeListener(listener);
                     await listener.remove();
                 } catch (error) {
                     console.log(error);
@@ -50,8 +50,8 @@ async function removeListeners(pubSubClient) {
 async function disconnectPubSub() {
     await removeListeners(pubSubClient);
     try {
-        if (pubSubClient && pubSubClient._rootClient && pubSubClient._rootClient.isConnected) {
-            pubSubClient._rootClient.disconnect();
+        if (pubSubClient && pubSubClient._basicClient && pubSubClient._basicClient.isConnected) {
+            pubSubClient._basicClient.disconnect();
             logger.info("Disconnected from PubSub.");
         }
     } catch (err) {
@@ -67,23 +67,16 @@ async function createClient() {
 
     logger.info("Connecting to Twitch PubSub...");
 
-    pubSubClient = new PubSubClient();
+    const authProvider = firebotRefreshingAuthProvider.provider;
 
-    const authProvider = refreshingAuthProvider.getRefreshingAuthProviderForStreamer();
-
-    try {
-        // throws error if one doesn't exist
-        pubSubClient.getUserListener(streamer.userId);
-    } catch (err) {
-        await pubSubClient.registerUserListener(authProvider, streamer.userId);
-    }
+    pubSubClient = new PubSubClient({ authProvider });
 
     await removeListeners(pubSubClient);
 
     try {
         const twitchEventsHandler = require('../../events/twitch-events');
 
-        const redemptionListener = await pubSubClient.onRedemption(streamer.userId,
+        const redemptionListener = pubSubClient.onRedemption(streamer.userId,
             (message) => {
                 logger.debug("Got reward redemption event!");
 
@@ -237,7 +230,7 @@ async function createClient() {
         const chatRoomListener = await pubSubClient.onCustomTopic(streamer.userId, "stream-chat-room-v1", async (event) => {
             const message = event?.data;
             if (message?.type === "extension_message") {
-                const twitchApi = require("../api").getClient();
+                const twitchApi = require("../api").default.getClient();
                 const extension = await twitchApi.extensions.getReleasedExtension(message.data.sender.extension_client_id);
 
                 const { buildFirebotChatMessageFromExtensionMessage } = require("../../chat/chat-helpers");

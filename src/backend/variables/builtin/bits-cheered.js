@@ -4,7 +4,7 @@ const { OutputDataType, VariableCategory } = require("../../../shared/variable-c
 const expressionish = require('expressionish');
 const moment = require("moment");
 const logger = require("../../logwrapper");
-const twitchApi = require("../../twitch-api/api");
+const twitchApi = require("../../twitch-api/api").default;
 
 const model = {
     definition: {
