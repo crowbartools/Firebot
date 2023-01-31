@@ -17,22 +17,12 @@ let listeners = [];
  */
 async function removeListeners(pubSubClient) {
     if (pubSubClient) {
-        let userListener;
-        try {
-            userListener = pubSubClient.getUserListener(
-                accountAccess.getAccounts().streamer.userId
-            );
-        } catch (error) {
-            console.log(error);
-        }
-        if (userListener) {
-            for (const listener of listeners) {
-                try {
-                    pubSubClient.removeListener(listener);
-                    await listener.remove();
-                } catch (error) {
-                    console.log(error);
-                }
+        for (const listener of listeners) {
+            try {
+                pubSubClient.removeListener(listener);
+                await listener.remove();
+            } catch (error) {
+                console.log(error);
             }
         }
     } else {

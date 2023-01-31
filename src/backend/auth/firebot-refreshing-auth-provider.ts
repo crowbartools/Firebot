@@ -7,6 +7,9 @@ import { getExpiryDateOfAccessToken, RefreshingAuthProvider } from "@twurple/aut
 class FirebotRefreshingAuthProvider {
     provider: RefreshingAuthProvider;
 
+    STREAMER_INTENT: string = "firebot:streamer";
+    BOT_INTENT: string = "firebot:bot";
+
     setupRefreshingAuthProvider(): void {
         this.provider = new RefreshingAuthProvider({
             clientId: twitchAuth.TWITCH_CLIENT_ID,
@@ -47,8 +50,9 @@ class FirebotRefreshingAuthProvider {
                 accessToken: streamerAcccount.auth.access_token,
                 refreshToken: streamerAcccount.auth.refresh_token,
                 expiresIn: streamerAcccount.auth.expires_in,
-                obtainmentTimestamp: streamerAcccount.auth.obtainment_timestamp
-            }, [ "firebot_streamer" ]);
+                obtainmentTimestamp: streamerAcccount.auth.obtainment_timestamp,
+                scope: twitchAuth.STREAMER_ACCOUNT_PROVIDER.scopes.split(" ")
+            }, [ this.STREAMER_INTENT ]);
         }
     
         if (accountAccess.getAccounts().bot.loggedIn) {
@@ -58,8 +62,9 @@ class FirebotRefreshingAuthProvider {
                 accessToken: botAcccount.auth.access_token,
                 refreshToken: botAcccount.auth.refresh_token,
                 expiresIn: botAcccount.auth.expires_in,
-                obtainmentTimestamp: botAcccount.auth.obtainment_timestamp
-            }, [ "firebot_bot" ]);
+                obtainmentTimestamp: botAcccount.auth.obtainment_timestamp,
+                scope: twitchAuth.BOT_ACCOUNT_PROVIDER.scopes.split(" ")
+            }, [ this.BOT_INTENT ]);
         }
 
         if (this.provider) {
