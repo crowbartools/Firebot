@@ -176,7 +176,7 @@ const clip = {
         return errors;
     },
     onTriggerEvent: async event => {
-        const twitchApi = require('../../twitch-api/api');
+        const twitchApi = require('../../twitch-api/api').default;
 
         const { effect } = event;
 

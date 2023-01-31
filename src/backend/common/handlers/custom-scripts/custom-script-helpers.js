@@ -1,6 +1,6 @@
 "use strict";
 const twitchChat = require('../../../chat/twitch-chat');
-const twitchApi = require('../../../twitch-api/api');
+const twitchApi = require('../../../twitch-api/api').default;
 const profileManager = require("../../profile-manager");
 const settings = require('../../settings-access').settings;
 const path = require('path');
@@ -94,7 +94,7 @@ function buildModules(scriptManifest) {
             }
         },
         twitchChat: twitchChat,
-        twitchApi: twitchApi,
+        twitchApi: twitchApi.default,
         httpServer: require("../../../../server/http-server-manager"),
         effectManager: require("../../../effects/effectManager"),
         conditionManager: require("../../../effects/builtin/conditional-effects/conditions/condition-manager"),
