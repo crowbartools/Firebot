@@ -52,7 +52,7 @@
     "@crowbartools/firebot-custom-scripts-types": "^5.53.2-6",
     "@twurple/api": "^6.0.0-pre.3",
     "@twurple/auth": "^6.0.0-pre.3",
-    "@twurple/chat": "file:../twurple/packages/chat",
+    "@twurple/chat": "^6.0.0-pre.3",
     "@twurple/pubsub": "^6.0.0-pre.3",
     "@zunderscore/elgato-light-control": "^1.1.2",
     "angular": "^1.8.0",
