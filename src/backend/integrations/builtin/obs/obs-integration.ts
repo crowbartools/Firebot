@@ -18,6 +18,7 @@ import { StartStreamEffectType } from "./effects/start-stream";
 import { StopStreamEffectType } from "./effects/stop-stream";
 import { StartVirtualCamEffectType } from "./effects/start-virtual-cam";
 import { StopVirtualCamEffectType } from "./effects/stop-virtual-cam";
+import { SaveReplayBufferEffectType } from "./effects/save-replay-buffer";
 import { SetOBSSourceTextEffectType } from "./effects/set-obs-source-text";
 import { SetOBSBrowserSourceUrlEffectType } from "./effects/set-obs-browser-source-url";
 import { SetOBSImageSourceFileEffectType } from "./effects/set-obs-image-source-file";
@@ -98,6 +99,7 @@ class ObsIntegration
     effectManager.registerEffect(StopStreamEffectType);
     effectManager.registerEffect(StartVirtualCamEffectType);
     effectManager.registerEffect(StopVirtualCamEffectType);
+    effectManager.registerEffect(SaveReplayBufferEffectType);
     effectManager.registerEffect(SetOBSSourceTextEffectType);
     effectManager.registerEffect(SetOBSBrowserSourceUrlEffectType);
     effectManager.registerEffect(SetOBSImageSourceFileEffectType);
