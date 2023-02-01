@@ -36,7 +36,12 @@ exports.setupChatListeners = (streamerChatClient) => {
 
         frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
 
-        twitchEventsHandler.announcement.triggerAnnouncement(firebotChatMessage);
+        twitchEventsHandler.announcement.triggerAnnouncement(
+            firebotChatMessage.useridname,
+            firebotChatMessage.username,
+            firebotChatMessage.roles,
+            firebotChatMessage.rawText
+        );
     });
 
     streamerChatClient.onMessage(async (_channel, user, messageText, msg) => {
@@ -69,7 +74,7 @@ exports.setupChatListeners = (streamerChatClient) => {
 
         activeUserHandler.addActiveUser(msg.userInfo, true);
 
-        twitchEventsHandler.viewerArrived.triggerViewerArrived(msg.userInfo.displayName);
+        twitchEventsHandler.viewerArrived.triggerViewerArrived(msg.userInfo.displayName, messageText);
 
         const { streamer, bot } = accountAccess.getAccounts();
         if (user !== streamer.username && user !== bot.username) {
@@ -78,7 +83,7 @@ exports.setupChatListeners = (streamerChatClient) => {
         }
 
         twitchEventsHandler.chatMessage.triggerChatMessage(firebotChatMessage);
-        raidMessageChecker.sendMessageToCache(firebotChatMessage);
+        await raidMessageChecker.sendMessageToCache(firebotChatMessage);
     });
 
     streamerChatClient.onWhisper(async (_user, messageText, msg) => {
@@ -95,17 +100,11 @@ exports.setupChatListeners = (streamerChatClient) => {
 
         twitchEventsHandler.chatMessage.triggerChatMessage(firebotChatMessage);
 
-        twitchEventsHandler.viewerArrived.triggerViewerArrived(msg.userInfo.displayName);
+        twitchEventsHandler.viewerArrived.triggerViewerArrived(msg.userInfo.displayName, messageText);
     });
 
     streamerChatClient.onMessageRemove((_channel, messageId) => {
         frontendCommunicator.send("twitch:chat:message:deleted", messageId);
-    });
-
-    streamerChatClient.onHosted((_, byChannel, auto, viewers) => {
-        twitchEventsHandler.host.triggerHost(byChannel, auto, viewers);
-        const logger = require("../../logwrapper");
-        logger.debug(`Host triggered by ${byChannel}. Is auto: ${auto}`);
     });
 
     streamerChatClient.onResub(async (_channel, _user, subInfo, msg) => {
@@ -123,23 +122,45 @@ exports.setupChatListeners = (streamerChatClient) => {
     });
 
     streamerChatClient.onCommunitySub((_channel, _user, subInfo) => {
-        twitchEventsHandler.giftSub.triggerCommunitySubGift(subInfo);
+        twitchEventsHandler.giftSub.triggerCommunitySubGift(
+            subInfo.gifterDisplayName ?? "An Anonymous Gifter",
+            subInfo.plan,
+            subInfo.count
+        );
     });
 
     streamerChatClient.onSubGift((_channel, _user, subInfo) => {
-        twitchEventsHandler.giftSub.triggerSubGift(subInfo);
+        twitchEventsHandler.giftSub.triggerSubGift(
+            subInfo.gifterDisplayName ?? "Anonymous",
+            !subInfo.gifterUserId,
+            subInfo.displayName,
+            subInfo.plan,
+            subInfo.giftDuration,
+            subInfo.months,
+            subInfo.streak ?? 1
+        );
     });
 
     streamerChatClient.onGiftPaidUpgrade((_channel, _user, subInfo) => {
-        twitchEventsHandler.giftSub.triggerSubGiftUpgrade(subInfo);
+        twitchEventsHandler.giftSub.triggerSubGiftUpgrade(
+            subInfo.displayName,
+            subInfo.gifterDisplayName,
+            subInfo.plan
+        );
     });
 
     streamerChatClient.onPrimePaidUpgrade((_channel, _user, subInfo) => {
-        twitchEventsHandler.sub.triggerPrimeUpgrade(subInfo);
+        twitchEventsHandler.sub.triggerPrimeUpgrade(
+            subInfo.displayName,
+            subInfo.plan
+        );
     });
 
     streamerChatClient.onRaid((_channel, _username, raidInfo) => {
-        twitchEventsHandler.raid.triggerRaid(raidInfo.displayName, raidInfo.viewerCount);
+        twitchEventsHandler.raid.triggerRaid(
+            raidInfo.displayName,
+            raidInfo.viewerCount
+        );
     });
 
     streamerChatClient._onVipResult((_, username) => {

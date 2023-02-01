@@ -1,7 +1,7 @@
+import logger from '../../logwrapper';
+import twitchApi from "../api";
+import accountAccess from "../../common/account-access";
 import { ApiClient, HelixBanUserRequest, UserIdResolvable } from "@twurple/api";
-const twitchApi = require("../api");
-const accountAccess = require("../../common/account-access");
-const logger = require('../../logwrapper');
 
 /**
  * Times out a user in the streamer's channel for a specified duration.

@@ -1,7 +1,7 @@
-import { Firebot } from "@crowbartools/firebot-custom-scripts-types";
+import { EffectType } from "../../../../effects/models/effect-models";
 import { stopVirtualCam } from "../obs-remote";
 
-export const StopVirtualCamEffectType: Firebot.EffectType<{}> = {
+export const StopVirtualCamEffectType: EffectType<{}> = {
   definition: {
     id: "ebiggz:obs-stop-virtual-cam",
     name: "OBS Stop Virtual Camera",

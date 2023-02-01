@@ -1,4 +1,4 @@
-const logger = require('../logwrapper');
+import logger from '../logwrapper';
 
 import {
     timeoutHandler,

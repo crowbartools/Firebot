@@ -27,10 +27,13 @@ exports.loadReplaceVariables = () => {
         'bot',
         'category',
         'category-image-url',
+        'chat-message-animated-emote-urls',
+        'chat-message-emote-names',
         'chat-message-emote-urls',
         'chat-message',
         'chat-messages',
         'chat-mode-duration',
+        'chat-mode-state',
         'chat-mode',
         'cheer-bits',
         'cheer-message',
@@ -74,8 +77,6 @@ exports.loadReplaceVariables = () => {
         'gift-sub-type',
         'has-role',
         'has-roles',
-        'host-type',
-        'host-viewer-count',
         'loop-count',
         'loop-item',
         'math',
@@ -167,7 +168,7 @@ exports.loadReplaceVariables = () => {
         'whisper-message',
         'word'
     ].forEach(filename => {
-        const definition = require(`./builtin/${filename}.js`);
+        const definition = require(`./builtin/${filename}`);
         replaceVariableManager.registerReplaceVariable(definition);
     });
 };

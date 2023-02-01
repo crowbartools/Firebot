@@ -6,7 +6,6 @@ exports.chatModeChanged = require('./twitch-events/chat-mode-changed');
 exports.cheer = require('./twitch-events/cheer');
 exports.follow = require('./twitch-events/follow');
 exports.giftSub = require('./twitch-events/gift-sub');
-exports.host = require('./twitch-events/host');
 exports.raid = require('./twitch-events/raid');
 exports.rewardRedemption = require('./twitch-events/reward-redemption');
 exports.sub = require('./twitch-events/sub');

@@ -202,6 +202,22 @@ const flattenArray = arr => {
     return arr.reduce((flat, next) => flat.concat(next), []);
 };
 
+/**
+ *  parses a JSON string
+ *
+ * @param {string} string to parse as JSON
+ *
+ * @returns {string} Object, Array, string, number, boolean, or null value corresponding to the given JSON
+ */
+const jsonParse = (json) => {
+    try {
+        json = JSON.parse(json);
+    } catch (err) {
+        return json;
+    }
+    return json;
+};
+
 const wait = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
 };
@@ -219,4 +235,5 @@ exports.capitalize = capitalize;
 exports.commafy = commafy;
 exports.shuffleArray = shuffleArray;
 exports.flattenArray = flattenArray;
+exports.jsonParse = jsonParse;
 exports.wait = wait;

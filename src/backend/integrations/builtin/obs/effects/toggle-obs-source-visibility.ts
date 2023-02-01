@@ -1,4 +1,4 @@
-import { Firebot } from "@crowbartools/firebot-custom-scripts-types";
+import { EffectType } from "../../../../effects/models/effect-models";
 import {
   getSourceVisibility,
   setSourceVisibility,
@@ -11,6 +11,7 @@ type EffectProperties = {
   selectedSources: Array<{
     sceneName: string;
     sourceId: number;
+    groupName?: string;
     action: SourceAction;
   }>;
 };
@@ -20,7 +21,7 @@ type Scope = {
   [x: string]: any;
 };
 
-export const ToggleSourceVisibilityEffectType: Firebot.EffectType<EffectProperties> =
+export const ToggleSourceVisibilityEffectType: EffectType<EffectProperties> =
   {
     definition: {
       id: "ebiggz:obs-toggle-source-visibility",
@@ -35,7 +36,7 @@ export const ToggleSourceVisibilityEffectType: Firebot.EffectType<EffectProperti
         <div style="font-size: 16px;font-weight: 900;color: #b9b9b9;margin-bottom: 5px;">{{sceneName}}</div>
         <div ng-repeat="source in getSources(sceneName)">
           <label  class="control-fb control--checkbox">{{source.name}}
-              <input type="checkbox" ng-click="toggleSourceSelected(sceneName, source.id)" ng-checked="sourceIsSelected(sceneName, source.id)"  aria-label="..." >
+              <input type="checkbox" ng-click="toggleSourceSelected(sceneName, source.id, source.groupName)" ng-checked="sourceIsSelected(sceneName, source.id)"  aria-label="..." >
               <div class="control__indicator"></div>
           </label>
           <div ng-show="sourceIsSelected(sceneName, source.id)" style="margin-bottom: 15px;">
@@ -83,7 +84,7 @@ export const ToggleSourceVisibilityEffectType: Firebot.EffectType<EffectProperti
         );
       };
 
-      $scope.toggleSourceSelected = (sceneName: string, sourceId: number) => {
+      $scope.toggleSourceSelected = (sceneName: string, sourceId: number, groupName: string) => {
         if ($scope.sourceIsSelected(sceneName, sourceId)) {
           $scope.effect.selectedSources = $scope.effect.selectedSources.filter(
             (s) => !(s.sceneName === sceneName && s.sourceId === sourceId)
@@ -92,6 +93,7 @@ export const ToggleSourceVisibilityEffectType: Firebot.EffectType<EffectProperti
           $scope.effect.selectedSources.push({
             sceneName,
             sourceId,
+            groupName,
             action: true,
           });
         }
@@ -140,11 +142,11 @@ export const ToggleSourceVisibilityEffectType: Firebot.EffectType<EffectProperti
     onTriggerEvent: async ({ effect }) => {
       if (effect.selectedSources == null) return true;
 
-      for (const { sceneName, sourceId, action } of effect.selectedSources) {
+      for (const { sceneName, sourceId, action, groupName } of effect.selectedSources) {
         let newVisibility;
         if (action === "toggle") {
           const currentVisibility = await getSourceVisibility(
-            sceneName,
+            groupName ?? sceneName,
             sourceId
           );
           if (currentVisibility == null) continue;
@@ -153,7 +155,7 @@ export const ToggleSourceVisibilityEffectType: Firebot.EffectType<EffectProperti
           newVisibility = action === true;
         }
 
-        await setSourceVisibility(sceneName, sourceId, newVisibility);
+        await setSourceVisibility(groupName ?? sceneName, sourceId, newVisibility);
       }
 
       return true;

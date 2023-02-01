@@ -1,7 +1,31 @@
-import { ApiClient, HelixChatAnnoucementColor, HelixSendChatAnnoucementParams, HelixUpdateChatSettingsParams } from "@twurple/api";
-const twitchApi = require("../api");
-const accountAccess = require("../../common/account-access");
-const logger = require('../../logwrapper');
+import logger from '../../logwrapper';
+import twitchApi from "../api";
+import accountAccess from "../../common/account-access";
+import { ApiClient, HelixChatAnnouncementColor, HelixSendChatAnnouncementParams, HelixUpdateChatSettingsParams } from "@twurple/api";
+
+/**
+ * Gets the list of all chatters in the channel.
+ */
+export async function getAllChatters(): Promise<string[]> {
+    const chatters: string[] = [];
+
+    try {
+        const client: ApiClient = twitchApi.getClient();
+        const streamerUserId: number = accountAccess.getAccounts().streamer.userId;
+
+        let result = await client.chat.getChatters(streamerUserId, streamerUserId);
+        chatters.push(...result.data.map(c => c.userDisplayName));
+
+        while (result.cursor) {
+            result = await client.chat.getChatters(streamerUserId, streamerUserId, { after: result.cursor });
+            chatters.push(...result.data.map(c => c.userDisplayName));
+        }
+    } catch (error) {
+        logger.error("Error getting chatter list", error);
+    }
+
+    return chatters;
+};
 
 /**
  * Sends an announcement to the streamer's chat.
@@ -15,22 +39,33 @@ const logger = require('../../logwrapper');
  */
 export async function sendAnnouncement(
     message: string,
-    color: HelixChatAnnoucementColor = "primary",
+    color: HelixChatAnnouncementColor = "primary",
     sendAsBot: boolean = false
 ): Promise<boolean> {
     const client: ApiClient = sendAsBot === true ? twitchApi.getBotClient() : twitchApi.getClient();
     const streamerUserId: number = accountAccess.getAccounts().streamer.userId;
-    const senderUserId: number = sendAsBot === true ?
+    let senderUserId: number = sendAsBot === true && accountAccess.getAccounts().bot?.userId != null ?
         accountAccess.getAccounts().bot.userId :
         streamerUserId;
 
-    try {
-        const announcement: HelixSendChatAnnoucementParams = {
-            message: message,
-            color: color
-        };
+    if (message?.length < 1) {
+        return;
+    }
 
-        await client.chat.sendAnnouncement(streamerUserId, senderUserId, announcement);
+    try {        
+        // split message into fragments so we don't exceed the max message length
+        const messageFragments = message.match(/[\s\S]{1,500}/g)
+            .map(mf => mf.trim())
+            .filter(mf => mf !== "");
+
+        for (const fragment of messageFragments) {
+            const announcement: HelixSendChatAnnouncementParams = {
+                message: fragment,
+                color: color
+            };
+    
+            await client.chat.sendAnnouncement(streamerUserId, senderUserId, announcement);
+        }
 
         return true;
     } catch (error) {

@@ -14,13 +14,9 @@ const model = {
     },
     evaluator: (_, jsonArray) => {
         if (jsonArray) {
-            try {
-                const array = JSON.parse(jsonArray);
-                if (Array.isArray(array)) {
-                    return JSON.stringify(utils.shuffleArray(array));
-                }
-            } catch (error) {
-                //fail silently
+            const array = utils.jsonParse(jsonArray);
+            if (Array.isArray(array)) {
+                return JSON.stringify(utils.shuffleArray(array));
             }
         }
         return JSON.stringify([]);

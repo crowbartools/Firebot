@@ -1,4 +1,4 @@
-import { Firebot } from "@crowbartools/firebot-custom-scripts-types";
+import { EffectType } from "../../../../effects/models/effect-models";
 import { OBSSource, setSourceMuted, toggleSourceMuted } from "../obs-remote";
 
 type SourceAction = boolean | "toggle";
@@ -15,7 +15,7 @@ type Scope = {
   [x: string]: any;
 };
 
-export const ToggleSourceMutedEffectType: Firebot.EffectType<EffectProperties> =
+export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
   {
     definition: {
       id: "ebiggz:obs-toggle-source-muted",

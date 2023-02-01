@@ -1,6 +1,7 @@
 // Migration: done
 
 'use strict';
+const utils = require("../../utility");
 
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
@@ -45,36 +46,28 @@ const model = {
                 return null;
             }
 
-            try {
-                matcher = JSON.parse(matcher);
-            } catch (err) {
-                return null;
-            }
+            matcher = utils.jsonParse(matcher);
 
             if (propertyPath === 'null' || propertyPath === "") {
                 propertyPath = null;
             }
 
-            try {
-                const array = JSON.parse(jsonArray);
-                if (Array.isArray(array)) {
-                    let found;
+            const array = utils.jsonParse(jsonArray);
+            if (Array.isArray(array)) {
+                let found;
 
-                    // propertyPath arg not specified
-                    if (propertyPath == null || propertyPath === "") {
-                        found = array.findIndex(v => v === matcher);
+                // propertyPath arg not specified
+                if (propertyPath == null || propertyPath === "") {
+                    found = array.findIndex(v => v === matcher);
 
-                    // property path specified
-                    } else {
-                        found = array.findIndex(v => {
-                            const property = getPropertyAtPath(v, propertyPath);
-                            return property === matcher;
-                        });
-                    }
-                    return JSON.stringify(found != -1 ? found : null);
+                // property path specified
+                } else {
+                    found = array.findIndex(v => {
+                        const property = getPropertyAtPath(v, propertyPath);
+                        return property === matcher;
+                    });
                 }
-            } catch (error) {
-                return null;
+                return JSON.stringify(found !== -1 ? found : null);
             }
         }
         return null;

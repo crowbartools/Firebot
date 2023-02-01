@@ -41,10 +41,10 @@ exports.channels = require("./resource/channels");
 exports.channelRewards = require("./resource/channel-rewards");
 exports.users = require("./resource/users");
 exports.teams = require("./resource/teams");
-exports.streamTags = require("./resource/stream-tags");
 
 exports.bits = require("./resource/bits");
 exports.categories = require("./resource/categories");
 exports.chat = require("./resource/chat");
 exports.moderation = require("./resource/moderation");
+exports.streams = require("./resource/streams");
 exports.whispers = require("./resource/whispers");

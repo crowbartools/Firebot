@@ -1,5 +1,3 @@
-"use strict";
-
 import frontendCommunicator from "../common/frontend-communicator";
 import JsonDbManager from "../database/json-db-manager.js";
 

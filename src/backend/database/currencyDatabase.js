@@ -75,7 +75,7 @@ function adjustCurrency(user, currencyId, value, adjustType = "adjust") {
                 return resolve();
             }
             logger.debug("Currency: Adjusting " + value + " currency to " + user.username + ". " + currencyId);
-            newUserValue = (user.currency[currencyId] += parseInt(value));
+            newUserValue = (user.currency[currencyId] + parseInt(value));
         }
 
         const db = userDatabase.getUserDb();
@@ -514,7 +514,7 @@ function deleteCurrencyById(currencyId) {
  * @property {string} role
  */
 
-frontendCommunicator.on("give-currency", async (/** @type {CurrencyInfo} */ {
+frontendCommunicator.onAsync("give-currency", async (/** @type {CurrencyInfo} */ {
     currencyId,
     amount,
     sendChatMessage,
@@ -550,7 +550,7 @@ frontendCommunicator.on("give-currency", async (/** @type {CurrencyInfo} */ {
             return;
         }
 
-        twitchChat.sendChatMessage(`${amount < 0 ? "Removed" : "Gave"} ${util.commafy(amount)} ${currency.name} ${amount < 0 ? "from" : "to"} ${messageTarget}!`);
+        await twitchChat.sendChatMessage(`${amount < 0 ? "Removed" : "Gave"} ${util.commafy(amount)} ${currency.name} ${amount < 0 ? "from" : "to"} ${messageTarget}!`);
     }
 });
 

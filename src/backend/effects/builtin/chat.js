@@ -61,7 +61,7 @@ const effect = {
             messageId = trigger.metadata.eventData?.chatMessage?.id;
         }
 
-        twitchChat.sendChatMessage(effect.message, effect.whisper, effect.chatter, !effect.whisper && effect.sendAsReply ? messageId : undefined);
+        await twitchChat.sendChatMessage(effect.message, effect.whisper, effect.chatter, !effect.whisper && effect.sendAsReply ? messageId : undefined);
 
         if (effect.chatter === "Streamer" && (effect.whisper == null || !effect.whisper.length)) {
             const firebotMessage = await chatHelpers.buildStreamerFirebotChatMessageFromText(effect.message);

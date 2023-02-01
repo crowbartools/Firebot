@@ -60,7 +60,7 @@ module.exports = {
                             </div>
 
                             <div style="margin-top:10px;">
-                                <firebot-input input-title="Content" model="effect.customEmbed.description"></firebot-input>
+                                <firebot-input input-title="Content" use-text-area="true" model="effect.customEmbed.description"></firebot-input>
                             </div>
 
                             <div style="margin-top:10px;">
@@ -75,10 +75,6 @@ module.exports = {
                                 <firebot-input input-title="Image URL" model="effect.customEmbed.imageUrl"></firebot-input>
                             </div>
 
-                        </div>
-
-                        <div ng-show="effect.embedType === 'channel'">
-                            <br /><b>*</b> Must be live for this to post.
                         </div>
 
                         <div ng-show="effect.embedType === 'channel'">

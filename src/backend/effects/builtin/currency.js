@@ -293,7 +293,7 @@ const currency = {
                 // Send chat if we have it.
                 if (event.effect.sendChat) {
                     const { message, whisper, chatter } = event.effect;
-                    twitchChat.sendChatMessage(message, whisper, chatter);
+                    await twitchChat.sendChatMessage(message, whisper, chatter);
                 }
             } catch (error) {
                 logger.error("Error updating currency", error);

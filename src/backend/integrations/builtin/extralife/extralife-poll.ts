@@ -69,10 +69,10 @@ class ExtraLifePollService extends TypedEmitter<ConnectionEvents> {
       this.cacheDonation(d);
 
       eventManager.triggerEvent("extralife", "donation", {
-        formattedDonationAmount: "$" + d.amount,
+        formattedDonationAmount: `$${d.amount}`,
         donationAmount: d.amount,
-        donationMessage: d.amount,
-        from: d.message,
+        donationMessage: d.message,
+        from: d.displayName,
       });
     });
   }

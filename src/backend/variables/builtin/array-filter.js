@@ -1,6 +1,7 @@
 // Migration: done
 
 'use strict';
+const utils = require("../../utility");
 
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
@@ -49,11 +50,7 @@ const model = {
                 return jsonArray;
             }
 
-            try {
-                matcher = JSON.parse(matcher);
-            } catch (err) {
-                //fail silently
-            }
+            matcher = utils.jsonParse(matcher);
 
             if (propertyPath === 'null' || propertyPath === "") {
                 propertyPath = null;
@@ -62,21 +59,17 @@ const model = {
             // eslint-disable-next-line eqeqeq
             removeMatches = removeMatches === true || removeMatches === 'true';
 
-            try {
-                const array = JSON.parse(jsonArray);
-                if (Array.isArray(array)) {
-                    if (propertyPath == null || propertyPath === "") {
-                        const newArray = removeMatches ? array.filter(v => v !== matcher) : array.filter(v => v === matcher);
-                        return JSON.stringify(newArray);
-                    }
-                    const newArray = array.filter(v => {
-                        const property = getPropertyAtPath(v, propertyPath);
-                        return removeMatches ? property !== matcher : property === matcher;
-                    });
+            const array = utils.jsonParse(jsonArray);
+            if (Array.isArray(array)) {
+                if (propertyPath == null || propertyPath === "") {
+                    const newArray = removeMatches ? array.filter(v => v !== matcher) : array.filter(v => v === matcher);
                     return JSON.stringify(newArray);
                 }
-            } catch (error) {
-                // fail silently
+                const newArray = array.filter(v => {
+                    const property = getPropertyAtPath(v, propertyPath);
+                    return removeMatches ? property !== matcher : property === matcher;
+                });
+                return JSON.stringify(newArray);
             }
         }
         return JSON.stringify([]);

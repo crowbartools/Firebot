@@ -8,6 +8,11 @@ import {
   OBSSource,
   getSourcesWithFilters,
   getAudioSources,
+  getTextSources,
+  getBrowserSources,
+  getImageSources,
+  getMediaSources,
+  getColorSources,
 } from "./obs-remote";
 
 export function setupFrontendListeners(
@@ -36,5 +41,30 @@ export function setupFrontendListeners(
   frontendCommunicator.onAsync<never, Array<OBSSource>>(
     "obs-get-audio-sources",
     getAudioSources
+  );
+
+  frontendCommunicator.onAsync<never, Array<OBSSource>>(
+    "obs-get-text-sources",
+    getTextSources
+  );
+
+  frontendCommunicator.onAsync<never, Array<OBSSource>>(
+    "obs-get-browser-sources",
+    getBrowserSources
+  );
+
+  frontendCommunicator.onAsync<never, Array<OBSSource>>(
+    "obs-get-image-sources",
+    getImageSources
+  );
+
+  frontendCommunicator.onAsync<never, Array<OBSSource>>(
+    "obs-get-media-sources",
+    getMediaSources
+  );
+
+  frontendCommunicator.onAsync<never, Array<OBSSource>>(
+    "obs-get-color-sources",
+    getColorSources
   );
 }

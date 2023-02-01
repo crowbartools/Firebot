@@ -118,9 +118,9 @@
         startupScriptsService,
         effectQueuesService,
         timerService,
+        scheduledTaskService,
         channelRewardsService,
         sortTagsService,
-        streamTagsService,
         iconsService
     ) {
         // 'chatMessagesService' is included so its instantiated on app start
@@ -134,6 +134,8 @@
         commandsService.refreshCommands();
 
         timerService.loadTimers();
+
+        scheduledTaskService.loadScheduledTasks();
 
         //get integrations from backend
         integrationService.updateIntegrations();
@@ -155,8 +157,6 @@
         channelRewardsService.loadChannelRewards();
 
         sortTagsService.loadSortTags();
-
-        streamTagsService.loadAllStreamTags();
 
         iconsService.loadFontAwesomeIcons();
 

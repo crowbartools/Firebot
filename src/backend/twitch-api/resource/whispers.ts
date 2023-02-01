@@ -1,7 +1,7 @@
+import logger from '../../logwrapper';
+import twitchApi from "../api";
+import accountAccess from "../../common/account-access";
 import { ApiClient, UserIdResolvable } from "@twurple/api";
-const twitchApi = require("../api");
-const accountAccess = require("../../common/account-access");
-const logger = require('../../logwrapper');
 
 /**
  * Sends a whisper to another user.

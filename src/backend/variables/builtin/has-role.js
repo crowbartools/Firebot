@@ -31,6 +31,6 @@ module.exports = {
             return false;
         }
 
-        return viewerHasRoleByName(username, [role]);
+        return viewerHasRoleByName(username, role);
     }
 };

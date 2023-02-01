@@ -1,4 +1,5 @@
 'use strict';
+const utils = require("../../utility");
 
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
@@ -12,13 +13,9 @@ const model = {
     },
     evaluator: (_, jsonArray, separator = ",") => {
         if (jsonArray) {
-            try {
-                const array = JSON.parse(jsonArray);
-                if (Array.isArray(array)) {
-                    return array.join(separator);
-                }
-            } catch (error) {
-                //fail silently
+            const array = utils.jsonParse(jsonArray);
+            if (Array.isArray(array)) {
+                return array.join(separator);
             }
         }
         return jsonArray;

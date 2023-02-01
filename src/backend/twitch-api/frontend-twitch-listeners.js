@@ -19,7 +19,7 @@ exports.setupListeners = () => {
         }));
     });
 
-    frontendCommunicator.on("process-automod-message", async data => {
+    frontendCommunicator.onAsync("process-automod-message", async data => {
         const accountAccess = require("../common/account-access");
         const streamerChannelId = accountAccess.getAccounts().streamer.channelId;
         try {
@@ -31,16 +31,8 @@ exports.setupListeners = () => {
         }
     });
 
-    frontendCommunicator.onAsync("get-twitch-game", gameId => {
-        return twitchApi.categories.getCategoryById(gameId);
-    });
-
-    frontendCommunicator.onAsync("get-channel-stream-tags", () => {
-        return twitchApi.streamTags.getChannelStreamTags();
-    });
-
-    frontendCommunicator.onAsync("get-all-stream-tags", () => {
-        return twitchApi.streamTags.getAllStreamTags();
+    frontendCommunicator.onAsync("get-twitch-game", async (gameId) => {
+        return await twitchApi.categories.getCategoryById(gameId);
     });
 
     frontendCommunicator.onAsync("get-channel-info", async () => {
@@ -48,25 +40,17 @@ exports.setupListeners = () => {
             const channelInfo = await twitchApi.channels.getChannelInformation();
             return {
                 title: channelInfo.title,
-                gameId: channelInfo.gameId
+                gameId: channelInfo.gameId,
+                tags: channelInfo.tags
             };
         } catch (error) {
             return null;
         }
     });
 
-    frontendCommunicator.onAsync("set-channel-info", async ({ title, gameId }) => {
+    frontendCommunicator.onAsync("set-channel-info", async ({ title, gameId, tags }) => {
         try {
-            await twitchApi.channels.updateChannelInformation({ title, gameId });
-            return true;
-        } catch (error) {
-            return false;
-        }
-    });
-
-    frontendCommunicator.onAsync("set-stream-tags", async (tagIds) => {
-        try {
-            await twitchApi.streamTags.updateChannelStreamTags(tagIds);
+            await twitchApi.channels.updateChannelInformation({ title, gameId, tags });
             return true;
         } catch (error) {
             return false;

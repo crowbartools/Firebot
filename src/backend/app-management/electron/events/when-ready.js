@@ -34,6 +34,10 @@ exports.whenReady = async () => {
     await timerManager.loadItems();
     timerManager.startTimers();
 
+    const scheduledTaskManager = require("../../../timers/scheduled-task-manager");
+    scheduledTaskManager.loadItems();
+    scheduledTaskManager.start();
+
     await accountAccess.refreshTwitchData();
 
     const twitchFrontendListeners = require("../../../twitch-api/frontend-twitch-listeners");

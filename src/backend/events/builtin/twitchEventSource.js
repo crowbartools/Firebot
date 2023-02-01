@@ -3,25 +3,8 @@
 module.exports = {
     id: "twitch",
     name: "Twitch",
-    description: "Events like Follow, Host, Subscribe and more from Twitch",
+    description: "Events like Follow, Subscribe, and more from Twitch",
     events: [
-        {
-            id: "host",
-            name: "Host",
-            description: "When someone hosts your channel.",
-            cached: true,
-            cacheMetaKey: "username",
-            manualMetadata: {
-                username: "Firebot",
-                viewerCount: 5
-            },
-            activityFeed: {
-                icon: "fad fa-house-user",
-                getMessage: (eventData) => {
-                    return `**${eventData.username}** hosted with **${eventData.viewerCount}** viewer(s)`;
-                }
-            }
-        },
         {
             id: "raid",
             name: "Raid",
@@ -134,7 +117,7 @@ module.exports = {
             activityFeed: {
                 icon: "fad fa-gift",
                 getMessage: (eventData) => {
-                    return `**${eventData.gifterUsername}** gifted a ${eventData.giftDuration > 1 ? ` **${eventData.giftDuration} month** ` : ''} **Tier ${eventData.subPlan.replace("000", "")}** sub to **${eventData.gifteeUsername}** (Subbed for ${eventData.giftSubMonths} month${eventData.giftSubMonths > 1 ? 's' : ''} total)`;
+                    return `**${eventData.isAnonymous ? "An Anonymous Gifter" : eventData.gifterUsername}** gifted a ${eventData.giftDuration > 1 ? ` **${eventData.giftDuration} month** ` : ''} **Tier ${eventData.subPlan.replace("000", "")}** sub to **${eventData.gifteeUsername}** (Subbed for ${eventData.giftSubMonths} month${eventData.giftSubMonths > 1 ? 's' : ''} total)`;
                 }
             }
         },
@@ -321,7 +304,30 @@ module.exports = {
             activityFeed: {
                 icon: "fad fa-gavel",
                 getMessage: (eventData) => {
-                    return `**${eventData.username}** was banned by **${eventData.moderator}**. Reason: **${eventData.modReason}**`;
+                    let message;
+                    if (eventData.modReason) {
+                        message = `**${eventData.username}** was banned by **${eventData.moderator}**. Reason: **${eventData.modReason}**`;
+                    } else {
+                        message = `**${eventData.username}** was banned by **${eventData.moderator}**.`;
+                    }
+                    return message;
+                }
+            }
+        },
+        {
+            id: "unbanned",
+            name: "Viewer Unbanned",
+            description: "When someone is unbanned in your channel",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                username: "CaveMobster",
+                moderator: "Firebot"
+            },
+            activityFeed: {
+                icon: "fad fa-gavel",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** was unbanned by **${eventData.moderator}**.`;
                 }
             }
         },

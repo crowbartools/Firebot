@@ -1,7 +1,7 @@
 "use strict";
 
 const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
-const twitchChat = require("../../chat/twitch-chat");
+const twitchApi = require("../../twitch-api/api");
 
 const effect = {
     definition: {
@@ -45,11 +45,10 @@ const effect = {
         return errors;
     },
     onTriggerEvent: async ({ effect }) => {
-
         const { message, chatter } = effect;
         const color = effect.color ?? "primary";
 
-        await twitchChat.sendAnnouncement(message, chatter, color.toLowerCase());
+        await twitchApi.chat.sendAnnouncement(message, color.toLowerCase(), chatter?.toLowerCase() === "bot");
 
         return true;
     }

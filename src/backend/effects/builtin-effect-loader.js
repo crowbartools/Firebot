@@ -18,6 +18,7 @@ exports.loadEffects = () => {
         'conditional-effects/conditional-effects',
         'control-emulation', // No migration needed.
         'cooldown-command',
+        'create-stream-marker',
         'currency',
         'custom-script',
         'custom-variable',
@@ -35,8 +36,10 @@ exports.loadEffects = () => {
         'moderator-mod',
         'moderator-purge',
         'moderator-timeout',
+        'pause-resume-effect-queue',
         'play-sound',
         'play-video', // No migration needed.
+        'raid',
         'random-effect',
         'random-reddit-image',
         'remove-user-metadata',
@@ -44,6 +47,7 @@ exports.loadEffects = () => {
         'run-command',
         'run-program',
         'sequential-effect',
+        'set-chat-mode',
         'set-user-metadata',
         'shoutout',
         'show-image', // No migration needed.
@@ -63,7 +67,7 @@ exports.loadEffects = () => {
         'update-role',
         'update-vip-role'
     ].forEach(filename => {
-        const definition = require(`./builtin/${filename}.js`);
+        const definition = require(`./builtin/${filename}`);
         effectManager.registerEffect(definition);
     });
 };

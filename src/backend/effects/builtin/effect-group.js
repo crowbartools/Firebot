@@ -57,10 +57,19 @@ const effectGroup = {
         </eos-container>
 
         <eos-container header="Options" pad-top="true">
-            <label class="control-fb control--checkbox"> Don't wait for effects to finish <tooltip text="'Check this if you want the root effect list that triggers this list to continue its effect execution instead of waiting for these effects to complete.'"></tooltip>
-                <input type="checkbox" ng-model="effect.dontWait">
-                <div class="control__indicator"></div>
-            </label>
+            <firebot-checkbox
+                model="effect.dontWait"
+                label="Don't wait for effects to finish"
+                tooltip="Check this if you want the root effect list that triggers this list to continue its effect execution instead of waiting for these effects to complete."
+            />
+
+            <firebot-checkbox
+                ng-if="!effect.dontWait"
+                style="margin-top: 10px"
+                model="effect.bubbleOutputs"
+                label="Apply effect outputs to parent list"
+                tooltip="Whether or not you want any effect outputs to be made available to the parent effect list."
+            />
         </eos-container>
 
     `,
@@ -166,9 +175,11 @@ const effectGroup = {
             } else {
                 effectExecutionPromise.then(result => {
                     if (result != null && result.success === true) {
+
                         if (result.stopEffectExecution) {
                             return resolve({
                                 success: true,
+                                outputs: effect.bubbleOutputs ? result.outputs : undefined,
                                 execution: {
                                     stop: true,
                                     bubbleStop: true
@@ -176,7 +187,10 @@ const effectGroup = {
                             });
                         }
                     }
-                    resolve(true);
+                    resolve({
+                        success: true,
+                        outputs: effect.bubbleOutputs ? result?.outputs : undefined
+                    });
                 });
             }
         });

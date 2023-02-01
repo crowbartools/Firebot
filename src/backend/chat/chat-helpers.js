@@ -4,9 +4,9 @@ const uuid = require("uuid/v4");
 const logger = require("../logwrapper");
 const accountAccess = require("../common/account-access");
 const twitchClient = require("../twitch-api/api");
-const bttv = require("./third-party/bttv");
-const ffz = require("./third-party/ffz");
-const sevenTv = require("./third-party/7tv");
+const { BTTVEmoteProvider } = require("./third-party/bttv");
+const { FFZEmoteProvider } = require("./third-party/ffz");
+const { SevenTVEmoteProvider } = require("./third-party/7tv");
 const frontendCommunicator = require("../common/frontend-communicator");
 const utils = require("../utility");
 
@@ -14,6 +14,7 @@ const utils = require("../utility");
  * @typedef FirebotChatMessage
  * @property {string} id
  * @property {string} username
+ * @property {string} useridname
  * @property {string} profilePicUrl
  * @property {number} userId
  * @property {string[]} roles
@@ -45,6 +46,7 @@ const utils = require("../utility");
 /**
  * @typedef FirebotEmote
  * @property {string} url
+ * @property {string} animatedUrl
  * @property {string} origin
  * @property {string} code
  */
@@ -106,27 +108,24 @@ exports.cacheTwitchEmotes = async () => {
 };
 
 /**
- * @typedef ThirdPartyEmote
- * @property {string} url
- * @property {string} code
- * @property {string} origin
- * @property {boolean} animated
- */
-
-/**
- * @type {ThirdPartyEmote[]}
+ * @type {import('./third-party/third-party-emote-provider').ThirdPartyEmote[]}
  */
 let thirdPartyEmotes = [];
 
+/**
+ * @type {import('./third-party/third-party-emote-provider').ThirdPartyEmoteProvider[]}
+ */
+const thirdPartyEmoteProviders = [
+    new BTTVEmoteProvider(),
+    new FFZEmoteProvider(),
+    new SevenTVEmoteProvider()
+];
+
 exports.cacheThirdPartyEmotes = async () => {
-    const bttvEmotes = await bttv.getAllBttvEmotes();
-    const ffzEmotes = await ffz.getAllFfzEmotes();
-    const sevenTvEmotes = await sevenTv.getAllSevenTvEmotes();
-    thirdPartyEmotes = [
-        ...bttvEmotes,
-        ...ffzEmotes,
-        ...sevenTvEmotes
-    ];
+    thirdPartyEmotes = [];
+    for (const provider of thirdPartyEmoteProviders) {
+        thirdPartyEmotes.push(...await provider.getAllEmotes());
+    }
 };
 
 exports.handleChatConnect = async () => {
@@ -139,6 +138,7 @@ exports.handleChatConnect = async () => {
             .flat()
             .map(e => ({
                 url: e.getImageUrl(1),
+                animatedUrl: e.getAnimatedImageUrl("1.0"),
                 origin: "Twitch",
                 code: e.name
             })),
@@ -255,6 +255,7 @@ function parseMessageParts(firebotChatMessage, parts) {
             p.origin = "Twitch";
             const emote = twitchEmotes.find(e => e.name === p.name);
             p.url = emote ? emote.getImageUrl(1) : `https://static-cdn.jtvnw.net/emoticons/v2/${p.id}/default/dark/1.0`;
+            p.animatedUrl = emote ? emote.getAnimatedImageUrl("1.0") : null;
         }
         return p;
     });
@@ -310,6 +311,7 @@ const getMessageParts = (text) => {
     return words.map(word => {
         let emoteId = null;
         let url = "";
+        let animatedUrl = "";
         try {
             const foundEmote = Object.values(twitchEmotes || {})
                 .flat()
@@ -317,6 +319,7 @@ const getMessageParts = (text) => {
             if (foundEmote) {
                 emoteId = foundEmote.id;
                 url = foundEmote.getImageUrl(1);
+                animatedUrl = foundEmote.getAnimatedImageUrl("1.0");
             }
         } catch (err) {
             //logger.silly(`Failed to find emote id for ${word}`, err);
@@ -328,6 +331,7 @@ const getMessageParts = (text) => {
             part = {
                 type: "emote",
                 url: url,
+                animatedUrl: animatedUrl,
                 id: emoteId,
                 name: word
             };
@@ -346,6 +350,7 @@ exports.buildFirebotChatMessageFromExtensionMessage = async (text = "", extensio
     const firebotChatMessage = {
         id: id,
         username: extensionName,
+        useridname: extensionName,
         userId: extensionName,
         rawText: text,
         profilePicUrl: extensionIconUrl,
@@ -386,6 +391,7 @@ exports.buildViewerFirebotChatMessageFromAutoModMessage = async (msg) => {
     const viewerFirebotChatMessage = {
         id: msg.messageId,
         username: msg.senderDisplayName,
+        useridname: msg.senderName,
         userId: msg.senderId,
         rawText: msg.messageContent,
         profilePicUrl: profilePicUrl,
@@ -420,6 +426,7 @@ exports.buildStreamerFirebotChatMessageFromText = async (text = "") => {
     const streamerFirebotChatMessage = {
         id: uuid(),
         username: streamer.displayName,
+        useridname: streamer.username,
         userId: streamer.userId,
         rawText: text,
         profilePicUrl: streamer.avatar,
@@ -454,6 +461,7 @@ exports.buildFirebotChatMessage = async (msg, msgText, whisper = false, action =
     const firebotChatMessage = {
         id: msg.tags.get("id"),
         username: msg.userInfo.displayName,
+        useridname: msg.userInfo.userName,
         userId: msg.userInfo.userId,
         customRewardId: msg.tags.get("custom-reward-id") || undefined,
         isHighlighted: msg.tags.get("msg-id") === "highlighted-message",

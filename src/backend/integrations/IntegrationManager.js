@@ -319,7 +319,7 @@ frontEndCommunicator.on("integrationUserSettingsUpdate", (integrationData) => {
 });
 
 
-frontEndCommunicator.on("enteredIntegrationAccountId", async (idData) => {
+frontEndCommunicator.onAsync("enteredIntegrationAccountId", async (idData) => {
     const { integrationId, accountId } = idData;
     const int = manager.getIntegrationById(integrationId);
     if (int == null) {
