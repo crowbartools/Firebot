@@ -456,7 +456,8 @@ const playVideo = {
         });
 
         webServer.sendToOverlay("getVideoDuration", {
-            resourceToken: durationToken
+            resourceToken: durationToken,
+            overlayInstance: data.overlayInstance
         });
 
         const duration = await durationPromise;
