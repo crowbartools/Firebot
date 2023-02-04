@@ -14,6 +14,7 @@ exports.loadCommands = () => {
     const customRoleManagement = require("./builtin/custom-role-management");
     const marker = require('./builtin/marker');
     const spamRaidProtection = require('./builtin/spam-raid-protection');
+    const { QueueSystemCommandType } = require("./builtin/queue");
 
     // register them
     commandManager.registerSystemCommand(commandList);
@@ -25,6 +26,7 @@ exports.loadCommands = () => {
     commandManager.registerSystemCommand(customRoleManagement);
     commandManager.registerSystemCommand(marker);
     commandManager.registerSystemCommand(spamRaidProtection);
+    commandManager.registerSystemCommand(QueueSystemCommandType);
 
     currencyManager.createAllCurrencyCommands();
 };
