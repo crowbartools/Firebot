@@ -49,6 +49,21 @@ function overlaySocketConnect(){
 				return;
 			}
 
+            if(event == "getVideoDuration") {
+                const token = encodeURIComponent(data.meta.resourceToken);
+                const url = `http://${window.location.hostname}:7472/resource/${token}`;
+                const videoElement = `
+                        <video id="${token}" class="player" style="display:none;">
+                            <source src="${url}">
+                        </video>
+                    `;
+                $(".wrapper").append(videoElement);
+                const video = document.getElementById(token);
+                video.oncanplay = () => {
+                    sendWebsocketEvent("video-duration", {resourceToken: token, duration: Math.ceil(video.duration)});
+                    video.remove();
+                }
+            }
 
 			firebotOverlay.emit(event, data.meta);
 		};

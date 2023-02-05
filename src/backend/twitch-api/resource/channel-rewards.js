@@ -224,9 +224,30 @@ const deleteCustomChannelReward = async (rewardId) => {
     }
 };
 
+const approveOrRejectChannelRewardRedemption = async (rewardId, redemptionId, approve = true) => {
+    const client = twitchApi.getClient();
+
+    try {
+        const response = await client.channelPoints.updateRedemptionStatusByIds(
+            accountAccess.getAccounts().streamer.userId,
+            rewardId,
+            [redemptionId],
+            approve ? "FULFILLED" : "CANCELED"
+        );
+
+        logger.debug(`Redemption ${redemptionId} for channel reward ${rewardId} was ${response[0].isFulfilled ? "approved" : "rejected"}`);
+
+        return true;
+    } catch (error) {
+        logger.error(`Failed to ${approve ? "approve" : "reject"} channel reward redemption`);
+        return false;
+    }
+};
+
 exports.createCustomChannelReward = createCustomChannelReward;
 exports.getCustomChannelRewards = getCustomChannelRewards;
 exports.getUnmanageableCustomChannelRewards = getUnmanageableCustomChannelRewards;
 exports.updateCustomChannelReward = updateCustomChannelReward;
 exports.deleteCustomChannelReward = deleteCustomChannelReward;
 exports.getTotalChannelRewardCount = getTotalChannelRewardCount;
+exports.approveOrRejectChannelRewardRedemption = approveOrRejectChannelRewardRedemption;
