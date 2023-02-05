@@ -78,7 +78,7 @@ const model = {
             'R'
         ];
 
-        // Create dateString using current time if no dateString provided.
+        // Create dateString using current time if no dateString provided. 
         if (dateString == null || dateString === 'now') {
             dateString = moment().format('YYYY-MM-DD HH:mm:ss');
         }
