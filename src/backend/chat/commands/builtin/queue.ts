@@ -17,7 +17,7 @@ export const QueueSystemCommandType: SystemCommand = {
             user: 0,
             global: 0
         },
-        baseCommandDescription: "Adds a viewer to the queue",
+        baseCommandDescription: "Allows a viewer to add themselves to the queue",
         subCommands: [
             {
                 id: "start",
@@ -43,7 +43,7 @@ export const QueueSystemCommandType: SystemCommand = {
             {
                 id: "stop",
                 arg: "stop",
-                description: "Stops and clears the viewer queue",
+                description: "Stops and empties the viewer queue",
                 usage: "stop",
                 active: true,
                 restrictionData: {
@@ -143,7 +143,7 @@ export const QueueSystemCommandType: SystemCommand = {
             {
                 id: "setnext",
                 arg: "setnext",
-                description: "Moves a viewer to the top of the queue",
+                description: "Moves a viewer to the front of the queue",
                 usage: "setnext [target]",
                 active: true,
                 minArgs: 2,
@@ -237,7 +237,7 @@ export const QueueSystemCommandType: SystemCommand = {
                 if (isViewerQueueRunning === true) {
                     const newViewer = args[1]?.replace("@", "");
 
-                    if (newViewer) {
+                    if (newViewer != null) {
                         viewerQueue.push(newViewer);
                         TwitchChat.sendChatMessage(`${newViewer} has been added to the queue.`);
                     } else {
@@ -266,14 +266,15 @@ export const QueueSystemCommandType: SystemCommand = {
             case "remove":
                 if (isViewerQueueRunning === true) {
                     const viewer = args[1]?.replace("@", "");
-                    if (viewer) {
+
+                    if (viewer != null) {
                         const viewerQueuePosition = viewerQueue.findIndex(u => u.toLowerCase() === viewer.toLowerCase());
     
                         if (viewerQueuePosition > -1) {
                             viewerQueue.splice(viewerQueuePosition, 1);
-                            TwitchChat.sendChatMessage(`@${viewer} has been removed from the queue.`);
+                            TwitchChat.sendChatMessage(`${viewer} has been removed from the queue.`);
                         } else {
-                            TwitchChat.sendChatMessage(`@${viewer} is not currently in the queue.`);
+                            TwitchChat.sendChatMessage(`${viewer} is not currently in the queue.`);
                         }
                     } else {
                         TwitchChat.sendChatMessage(`@${event.userCommand.commandSender} You must specify a viewer to remove from the queue.`);
@@ -295,6 +296,29 @@ export const QueueSystemCommandType: SystemCommand = {
                 }
                 break;
 
+            case "setnext":
+                if (isViewerQueueRunning === true) {
+                    const nextViewer = args[1]?.replace("@", "");
+
+                    if (nextViewer != null) {
+                        const viewerQueuePosition = viewerQueue.findIndex(u => u.toLowerCase() === nextViewer.toLowerCase());
+
+                        // Remove them from the queue if they're already in it
+                        if (viewerQueuePosition > -1) {
+                            viewerQueue.splice(viewerQueuePosition, 1);
+                        }
+
+                        // Then put them at the front
+                        viewerQueue.unshift(nextViewer);
+                        TwitchChat.sendChatMessage(`${nextViewer} has been moved to the front of the queue.`);
+                    } else {
+                        TwitchChat.sendChatMessage(`@${event.userCommand.commandSender} You must specify a viewer to move to the front of the queue.`);
+                    }
+                } else {
+                    TwitchChat.sendChatMessage("Viewer queue is not currently active.");
+                }
+                break;
+
             case "list":
                 if (isViewerQueueRunning === true) {
                     if (viewerQueue.length > 0) {
@@ -305,9 +329,6 @@ export const QueueSystemCommandType: SystemCommand = {
                 } else {
                     TwitchChat.sendChatMessage("Viewer queue is not currently active.");
                 }
-                break;
-            
-            default:
                 break;
         }
     }
