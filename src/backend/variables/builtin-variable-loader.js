@@ -56,6 +56,7 @@ exports.loadReplaceVariables = () => {
         'custom-variable-expired-data',
         'custom-variable-expired-name',
         'date',
+        'discord-timestamp',
         'donation-amount-formatted',
         'donation-amount',
         'donation-from',
