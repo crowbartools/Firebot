@@ -134,8 +134,16 @@ const getUsersChatRoles = async (userIdOrName = "") => {
     }
 };
 
+function userIsKnownBot(username) {
+    if (viewerlistBotMap[username?.toLowerCase() ?? ""] != null) {
+        return true;
+    }
+    return false;
+}
+
 exports.loadUsersInVipRole = loadUsersInVipRole;
 exports.addVipToVipList = addVipToVipList;
 exports.removeVipFromVipList = removeVipFromVipList;
 exports.getUsersChatRoles = getUsersChatRoles;
 exports.cacheViewerListBots = cacheViewerListBots;
+exports.userIsKnownBot = userIsKnownBot;

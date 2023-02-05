@@ -22,6 +22,19 @@
                     </firebot-setting>
 
                     <firebot-setting
+                        name="Auto Flag Bots"
+                        description="Prevents known bots from generating stats or showing up in active viewer lists."
+                    >
+                        <firebot-select
+                            options="{ true: 'On', false: 'Off' }"
+                            ng-init="autoFlagBots = settings.getAutoFlagBots()"
+                            selected="autoFlagBots"
+                            on-update="settings.setAutoFlagBots(option === 'true')"
+                            right-justify="true"
+                        />
+                    </firebot-setting>
+
+                    <firebot-setting
                         name="Viewers Table Page Size"
                         description="Select how many viewers are displayed per page for the Viewers table."
                     >
