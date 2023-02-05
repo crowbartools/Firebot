@@ -103,8 +103,6 @@ const model = {
         // Convert dateString to unix for discord.
         timestamp = moment(dateString, 'YYYY-MM-DD HH:mm:ss').unix();
 
-        console.log(timestamp);
-
         // If no format given, use discord default.
         if (format == null || format === '') {
             return `<t:${timestamp}>`;
