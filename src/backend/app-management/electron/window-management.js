@@ -413,16 +413,18 @@ function createStreamPreviewWindow() {
         x: streamPreviewWindowState.x,
         y: streamPreviewWindowState.y,
         javascript: false,
-        webPreferences: {}
+        webPreferences: {},
+        icon: path.join(__dirname, "../../../gui/images/logo_transparent_2.png")
     });
+    streamPreview.setMenu(null);
 
     const view = new BrowserView();
     streamPreview.setBrowserView(view);
     view.setBounds({
         x: 0,
         y: 0,
-        width: streamPreviewWindowState.width,
-        height: streamPreviewWindowState.height - 10
+        width: streamPreview.getContentSize()[0],
+        height: streamPreview.getContentSize()[1]
     });
     view.setAutoResize({
         width: true,
@@ -477,8 +479,10 @@ async function createVariableInspectorWindow() {
         y: variableInspectorWindowState.y,
         webPreferences: {
             preload: path.join(__dirname, "../../../gui/variable-inspector/preload.js")
-        }
+        },
+        icon: path.join(__dirname, "../../../gui/images/logo_transparent_2.png")
     });
+    variableInspectorWindow.setMenu(null);
 
     variableInspectorWindowState.manage(variableInspectorWindow);
 
