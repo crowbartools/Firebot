@@ -1,4 +1,4 @@
-import { EffectCategory } from "../../../shared/effect-constants";
+import { TriggerType, TriggersObject, Trigger } from "./triggers";
 import ng from "angular";
 
 interface EffectScope<EffectModel> extends ng.IScope {
@@ -6,37 +6,16 @@ interface EffectScope<EffectModel> extends ng.IScope {
     [x: string]: unknown;
 };
 
-export type TriggerType =
-    | "command"
-    | "custom_script"
-    | "startup_script"
-    | "api"
-    | "event"
-    | "hotkey"
-    | "timer"
-    | "counter"
-    | "preset"
-    | "quick_action"
-    | "manual";
-
-export type Trigger = {
-    type: TriggerType;
-    metadata: {
-        username: string;
-        hotkey?: any;
-        command?: any;
-        userCommand?: { trigger: string; args: string[] };
-        chatMessage?: any;
-        event?: { id: string; name: string };
-        eventSource?: { id: string; name: string };
-        eventData?: Record<string, unknown>;
-        [x: string]: unknown;
-    };
-};
-
-export type TriggersObject = {
-    [T in TriggerType]?: T extends "event" ? string[] | boolean : boolean;
-};
+export type EffectCategory = 
+    | "common"
+    | "twitch"
+    | "chat based"
+    | "Moderation"
+    | "overlay"
+    | "fun"
+    | "integrations"
+    | "advanced"
+    | "scripting";
 
 export type EffectTriggerResponse = {
     success: boolean;
@@ -88,4 +67,9 @@ export type EffectType<EffectModel, OverlayData = unknown> = {
             onOverlayEvent: (data: OverlayData) => void;
         };
     };
+};
+
+export interface EffectList {
+    id: string,
+    list: any[]
 };
