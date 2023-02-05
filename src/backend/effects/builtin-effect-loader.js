@@ -9,6 +9,7 @@ exports.loadEffects = () => {
         'add-quote',
         'announcement',
         'api',
+        'approve-reject-channel-reward-redemption',
         'celebration',
         'chat-feed-alert',
         'chat',
