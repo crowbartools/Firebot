@@ -533,6 +533,16 @@ export async function isRecording(): Promise<boolean> {
   return isRunning;
 }
 
+export async function saveReplayBuffer(): Promise<boolean> {
+  try {
+    await obs.call("SaveReplayBuffer");
+  } catch (error) {
+    logger.error("Failed to save OBS replay buffer", error);
+    return false;
+  }
+  
+  return true;
+};
 
 export type ObsRawResponse = { success: boolean; response?: string; }
 
