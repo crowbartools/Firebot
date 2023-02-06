@@ -218,6 +218,14 @@ export type OBSColorSourceSettings = {
   color: number;
 };
 
+export type OBSSourceScreenshotSettings = {
+  sourceName: string;
+  imageFormat: string;
+  imageWidth?: number;
+  imageHeight?: number;
+  imageCompressionQuality?: number;
+}
+
 export async function getAllSources(): Promise<Array<OBSSource> | null> {
   if (!connected) return null;
   try {
@@ -571,6 +579,32 @@ export async function sendRawObsRequest(functionName: string, payload?: any): Pr
   }
 
   return rawResponse;
+}
+
+/**
+ * We ask OBS to return the base64 encoded image rather than save a screenshot
+ * to account for multi-PC setups where Firebot and OBS aren't on the same machine.
+ */
+export async function takeSourceScreenshot(settings: OBSSourceScreenshotSettings): Promise<string> {
+  if (!connected) return null;
+  try {
+    return (await obs.call("GetSourceScreenshot", settings)).imageData
+  }
+  catch (error) {
+    logger.error("Failed to take OBS Source Screenshot: ", error);
+    return null;
+  }
+}
+
+export async function getSupportedImageFormats(): Promise<string[]> {
+  if (!connected) return null;
+  try {
+    return (await obs.call("GetVersion")).supportedImageFormats;
+  }
+  catch (error) {
+    logger.error("Failed to get OBS supported image formats: ", error);
+    return null;
+  }
 }
 
 function setupRemoteListeners() {
