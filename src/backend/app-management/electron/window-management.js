@@ -257,6 +257,12 @@ function createMainWindow() {
                     }
                 },
                 {
+                    label: 'Submit a Testimonial',
+                    click: () => {
+                        shell.openExternal("https://firebot.app/testimonial-submission");
+                    }
+                },
+                {
                     type: 'separator'
                 },
                 {
