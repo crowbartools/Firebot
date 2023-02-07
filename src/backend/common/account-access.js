@@ -226,7 +226,7 @@ frontendCommunicator.on("getAccounts", () => {
 });
 
 frontendCommunicator.on("logoutAccount", accountType => {
-    logger.debug("got 'get accounts' request");
+    logger.debug("got logout request for", accountType);
     removeAccount(accountType);
 });
 
