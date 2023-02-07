@@ -29,15 +29,6 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
             </ui-select>
         </eos-container>
         
-        <!--<eos-container header="Image Format" class="setting-padtop">
-            <ui-select ng-model="effect.format" theme="bootstrap"> &lt;!&ndash; Image Format &ndash;&gt;
-                <ui-select-match>{{$select.selected}}</ui-select-match>
-                <ui-select-choices repeat="item in formats | filter: $select.search">
-                    <div ng-bind-html="item | highlight: $select.search"></div>
-                </ui-select-choices>
-            </ui-select>
-        </eos-container>-->
-        
         <div class="effect-setting-container setting-padtop">
     <div class="effect-specific-title"><h4>Image Settings</h4></div>
     <div class="effect-setting-content">
@@ -114,16 +105,15 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
         $scope.getSources = () => {
             $q.when(
                 backendCommunicator.fireEventAsync("obs-get-all-sources")
-            ).then((sources: OBSSource[]) => {
-                $scope.sources = sources ?? [];
-                if ($scope.effect.source == null) {
-                    $scope.effect.source = $scope.sources[0].name;
-                }
-            });
+            ).then(
+                (sources: OBSSource[]) => $scope.sources = sources ?? []
+            );
+            $q.when(
+                backendCommunicator.fireEventAsync("obs-get-supported-image-formats")
+            ).then(
+                (formats: string[]) => $scope.formats = formats ?? []
+            );
         };
-        $q.when(
-            backendCommunicator.fireEventAsync("obs-get-supported-image-formats")
-        ).then((formats: string[]) => $scope.formats = formats ?? []);
         $scope.getSources();
     },
     optionsValidator: (effect) => {
@@ -149,6 +139,12 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
         }
 
         let screenshot = await takeSourceScreenshot(screenshotSettings);
+
+        if (screenshot == null) {
+            logger.error("Source screenshot is null, ignoring.");
+            return true;
+        }
+
         fs.writeFileSync(effect.file, screenshot.split("base64,")[1], "base64");
         return true;
     },
