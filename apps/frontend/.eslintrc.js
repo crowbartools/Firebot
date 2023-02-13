@@ -1,5 +1,5 @@
 module.exports = {
     root: true,
-    extends: ["custom"],
+    extends: ["custom", "next/core-web-vitals"],
     env: ["browser"]
 }
