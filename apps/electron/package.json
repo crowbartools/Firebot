@@ -7,7 +7,6 @@
         "lint": "eslint --fix --ext .ts,.tsx src/**"
     },
     "devDependencies": {
-        "@types/node": "^18.13.0",
         "electron": "^23.0.0",
         "eslint-config-custom": "*",
         "tsconfig": "*"
