@@ -10,16 +10,18 @@ export default function Home() {
     const [helloWorld, setHelloWorld] = useState("");
     
     useEffect(() => {
-      const host = getServerUri();
-      const uri = `${host}/v1/example`;
-        fetch(uri)
-        .then((response) => {
-            return response.text();
-        })
-        .then(setHelloWorld)
-        .catch((err) => {
-            console.log("Failed to get hello world", err);
-        });
+      const fetchData = async () => {
+        const host = getServerUri();
+        try {
+          const response = await fetch(`${host}/v1/example`);
+          const text = await response.text();
+          setHelloWorld(text);
+        } catch(error) {
+          console.log("Failed to get hello world", error);
+        }
+      }
+
+      fetchData();
   }, []);
 
   return (
