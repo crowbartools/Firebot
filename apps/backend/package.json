@@ -11,11 +11,6 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
     "lint": "eslint --fix --ext .ts,.tsx src/**"
   },
   "dependencies": {
@@ -29,36 +24,13 @@
     "@nestjs/cli": "^9.2.0",
     "@nestjs/schematics": "^9.0.4",
     "@nestjs/testing": "^9.3.8",
-    "@types/jest": "29.2.4",
     "@types/supertest": "^2.0.11",
     "eslint-config-custom": "*",
-    "jest": "29.3.1",
-    "prettier": "^2.3.2",
     "source-map-support": "^0.5.20",
     "supertest": "^6.1.3",
-    "ts-jest": "29.0.3",
-    "ts-loader": "^9.2.3",
     "ts-node": "^10.0.0",
     "tsc-watch": "^6.0.0",
-    "tsconfig": "*",
     "tsconfig-paths": "4.1.1",
     "tsconfig": "*"
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
   }
 }
