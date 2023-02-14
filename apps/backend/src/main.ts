@@ -1,4 +1,5 @@
-import { NestFactory } from '@nestjs/core';
+import { VersioningType } from "@nestjs/common";
+import { NestFactory } from "@nestjs/core";
 import {
   FastifyAdapter,
   NestFastifyApplication,
@@ -8,8 +9,18 @@ import { AppModule } from "./app.module";
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter()
+    new FastifyAdapter({ trustProxy: true })
   );
-  await app.listen(3000);
+
+  app.enableCors({
+    allowedHeaders: "*"
+  });
+
+  app.enableVersioning({
+    type: VersioningType.URI,
+    defaultVersion: "1",
+  });
+
+  await app.listen(3001);
 }
 bootstrap();
