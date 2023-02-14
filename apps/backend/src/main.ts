@@ -12,6 +12,8 @@ async function bootstrap() {
     new FastifyAdapter({ trustProxy: true })
   );
 
+  app.setGlobalPrefix("api")
+
   app.enableCors({
     allowedHeaders: "*"
   });
