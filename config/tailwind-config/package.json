@@ -1,4 +1,5 @@
 {
+    "name": "tailwind-config",
     "private": true,
     "main": "./index.js"
 }
