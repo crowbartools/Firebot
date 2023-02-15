@@ -3,6 +3,7 @@
     "private": "true",
     "version": "6.0.0",
     "license": "GPL-3.0",
+    "main": "./dist/index.js",
     "scripts": {
         "lint": "eslint --fix --ext .ts,.tsx src/**"
     },

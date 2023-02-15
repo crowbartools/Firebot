@@ -1,10 +1,13 @@
+const { main : entryPoint } = require('../package.json');
+
 const ChildProcess = require('node:child_process');
 const { TscWatchClient } = require('tsc-watch/client');
 
 const path = require('path');
-const electronProjectDir = path.join(__dirname, '../');
-const appsDir = path.join(electronProjectDir, '../');
-const backendProjectDir = path.join(appsDir, '/backend/');
+const electronProjectDir = path.resolve(__dirname, '../');
+const electronEntryPoint = path.resolve(electronProjectDir, './dist/index.js');
+const appsDir = path.resolve(electronProjectDir, '../');
+const backendProjectDir = path.resolve(appsDir, './backend/');
 
 let procs = {}
 const close = (name) => {
@@ -32,8 +35,8 @@ const startElectron = () => {
     procs.electronInstance = ChildProcess.spawn(
         `node`,
         [
-            path.join(appsDir, '../node_modules/electron/cli.js'),
-            path.join(electronProjectDir, './dist/main.js')
+            path.resolve(appsDir, '../node_modules/electron/cli.js'),
+            electronEntryPoint
         ],
         {
             cwd: electronProjectDir,
@@ -41,6 +44,11 @@ const startElectron = () => {
             stdio: 'inherit'
         }
     );
+
+    procs.electronInstance.on('error', (code, message) => {
+        console.log(code, message);
+    });
+
     procs.electronInstance.on('close', () => {
         procs.electronInstance = null;
         shutdown();

@@ -1,9 +1,9 @@
 {
-  "name": "firebot-backend",
+  "name": "backend",
   "private": "true",
   "version": "6.0.0",
   "license": "GPL-3.0",
-  "main": "./dist/index.js",
+  "main": "./dist/main.js",
   "scripts": {
     "dev": "npm run start:dev",
     "build": "nest build",
@@ -11,7 +11,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "node dist/",
     "lint": "eslint --fix --ext .ts,.tsx src/**"
   },
   "dependencies": {

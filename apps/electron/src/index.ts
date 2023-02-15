@@ -1,12 +1,8 @@
 import { app, BrowserWindow} from 'electron';
-
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
 
-import path from 'node:path';
-
-import backendBootstrap from '../../backend/dist';
-
-import '../../backend';
+// ts/eslint will complain until apps/backend/ has been built
+const { default : backendStart } = require('../../backend');
 
 let backend : NestFastifyApplication | void;
 
@@ -21,13 +17,8 @@ const createWindow = () => {
         height: 600
     });
 
-    /*
-    const loadFile = path.join(__dirname, "../src/sample.html");
-    mainWindow.loadFile(loadFile);
-    */
-   mainWindow.loadURL('http://localhost:3001/api/v1/example');
+    mainWindow.loadURL('http://localhost:3001/api/v1/example');
 }
-
 
 process.on('uncaughtException', async function (err) {
     console.error(err.stack);
@@ -38,14 +29,15 @@ process.on('uncaughtException', async function (err) {
 });
 
 (async () => {
-    backend = await backendBootstrap();
+
+    backend = await backendStart();
     if (backend == null) {
         console.error('failed to start backend');
         app.quit();
         return;
     }
-    await app.whenReady();
 
+    await app.whenReady();
     app.on('window-all-closed', () => {
         if (process.platform !== 'darwin') {
             app.quit();
@@ -56,7 +48,6 @@ process.on('uncaughtException', async function (err) {
             createWindow();
         }
     });
-
 
     createWindow();
 })();

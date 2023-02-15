@@ -3,7 +3,8 @@
     "private": "true",
     "version": "6.0.0",
     "license": "GPL-3.0",
-    "main": "./dist/main.js",
+    "main": "./dist/index.js",
+
     "scripts": {
         "build": "tsc",
         "dev": "node ./scripts/watch.js",
@@ -16,7 +17,6 @@
         "tsconfig": "*"
     },
     "dependencies": {
-        "firebot-backend": "*",
-        "firebot-frontend": "*"
+        "backend": "*"
     }
 }
