@@ -62,12 +62,8 @@ const startElectronWatcher = () => {
             console.log('[electron] Compilation failed.');
         }
     });
-    electronWatcher.on('first_success', () => {
+    electronWatcher.on('success', () => {
         console.log('[electron] Compilation successful. Starting electron instance');
-        startElectron();
-    });
-    electronWatcher.on('subsequent_success', () => {
-        console.log('[electron] Recompilation successful. Restarting electron instance');
         startElectron();
     });
     electronWatcher.start('--silent', '--project', electronProjectDir);
@@ -91,12 +87,8 @@ backendWatcher.on('compile_errors', () => {
         console.log('[backend] Compilation failed.');
     }
 });
-backendWatcher.on('first_success', () => {
+backendWatcher.on('success', () => {
     console.log('[backend] Compilation successful. Starting electron watcher');
-    startElectronWatcher();
-});
-backendWatcher.on('subsequent_success', () => {
-    console.log('[backend] Compilation successful. (Re)Starting electron watcher');
     startElectronWatcher();
 });
 backendWatcher.start('--silent', '--project', backendProjectDir);
