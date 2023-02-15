@@ -1,3 +1,7 @@
+import path from 'path';
+
+import assetpath from 'assets';
+
 import { app, BrowserWindow} from 'electron';
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
 
@@ -14,7 +18,8 @@ const createWindow = () => {
 
     mainWindow = new BrowserWindow({
         width: 800,
-        height: 600
+        height: 600,
+        icon: path.join(assetpath, 'images/favicon.ico')
     });
 
     mainWindow.loadURL('http://localhost:3000');
