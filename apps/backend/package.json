@@ -1,18 +1,19 @@
 {
   "name": "backend",
-  "private": "true",
+  "private": true,
   "version": "6.0.0",
   "license": "GPL-3.0",
   "main": "./dist/main.js",
   "scripts": {
-    "dev": "npm run start:dev",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "nest start",
-    "start:dev": "nest start --watch",
-    "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/",
-    "lint": "eslint --fix --ext .ts,.tsx src/**"
+    "lint": "eslint --fix --ext .ts,.tsx src/**",
+
+    "nest:dev": "npm run start:dev",
+    "neststart": "nest start",
+    "neststart:dev": "nest start --watch",
+    "neststart:debug": "nest start --debug --watch",
+    "neststart:prod": "node dist/"
   },
   "dependencies": {
     "@nestjs/common": "^9.3.8",
