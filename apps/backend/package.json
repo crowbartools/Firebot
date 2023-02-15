@@ -3,7 +3,7 @@
   "private": "true",
   "version": "6.0.0",
   "license": "GPL-3.0",
-  "main": "./dist/main.js",
+  "main": "./dist/index.js",
   "scripts": {
     "dev": "npm run start:dev",
     "build": "nest build",

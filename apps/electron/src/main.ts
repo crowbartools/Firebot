@@ -1,5 +1,14 @@
 import { app, BrowserWindow} from 'electron';
+
+import { NestFastifyApplication } from '@nestjs/platform-fastify';
+
 import path from 'node:path';
+
+import backendBootstrap from '../../backend/dist';
+
+import '../../backend';
+
+let backend : NestFastifyApplication | void;
 
 let mainWindow : BrowserWindow;
 const createWindow = () => {
@@ -12,19 +21,29 @@ const createWindow = () => {
         height: 600
     });
 
+    /*
     const loadFile = path.join(__dirname, "../src/sample.html");
     mainWindow.loadFile(loadFile);
+    */
+   mainWindow.loadURL('http://localhost:3001/api/v1/example');
 }
 
 
-process.on('uncaughtException', function (err) {
+process.on('uncaughtException', async function (err) {
     console.error(err.stack);
-    console.log("Node NOT Exiting...");
+    if (backend) {
+        await backend.close();
+    }
     app.quit();
 });
 
 (async () => {
-
+    backend = await backendBootstrap();
+    if (backend == null) {
+        console.error('failed to start backend');
+        app.quit();
+        return;
+    }
     await app.whenReady();
 
     app.on('window-all-closed', () => {
@@ -37,7 +56,6 @@ process.on('uncaughtException', function (err) {
             createWindow();
         }
     });
-
 
 
     createWindow();
