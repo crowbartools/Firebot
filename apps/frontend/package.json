@@ -5,11 +5,12 @@
   "license": "GPL-3.0",
   "scripts": {
     "dev": "next dev",
-    "build": "next build && next export",
+    "build": "next build && next export -o dist/",
     "start": "next start",
     "lint": "next lint"
   },
   "devDependencies": {
+    "assets": "*",
     "@next/font": "13.1.6",
     "@types/node": "18.13.0",
     "@types/react": "18.0.28",

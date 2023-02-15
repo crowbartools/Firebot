@@ -1,6 +1,5 @@
 module.exports = {
-    root: true,
-    extends: ["custom", "next/core-web-vitals"],
+    extends: ["custom", "next"],
     rules: {
         'import/no-anonymous-default-export': 'off'
     }
