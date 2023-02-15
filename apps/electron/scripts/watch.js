@@ -15,12 +15,12 @@ const close = (name) => {
         proc[name] = null;
     }
 }
-const shutdown = (err) => {
+const shutdown = (code, message) => {
     close('electronInstance');
     close('electronWatcher');
     close('backendWatcher');
-    if (err != null) {
-        console.log(err);
+    if (code != null && code != 0) {
+        console.error(message);
     }
     process.exit();
 }
@@ -41,7 +41,10 @@ const startElectron = () => {
             stdio: 'inherit'
         }
     );
-    procs.on('close', shutdown);
+    procs.electronInstance.on('close', () => {
+        procs.electronInstance = null;
+        shutdown();
+    });
 };
 
 const startElectronWatcher = () => {
@@ -67,7 +70,7 @@ const startElectronWatcher = () => {
         console.log('[electron] Recompilation successful. Restarting electron instance');
         startElectron();
     });
-    electronWatcher.start('--project', electronProjectDir);
+    electronWatcher.start('--silent', '--project', electronProjectDir);
 };
 
 console.log('Starting...');
@@ -96,4 +99,4 @@ backendWatcher.on('subsequent_success', () => {
     console.log('[backend] Compilation successful. (Re)Starting electron watcher');
     startElectronWatcher();
 });
-backendWatcher.start('--project', backendProjectDir);
+backendWatcher.start('--silent', '--project', backendProjectDir);
