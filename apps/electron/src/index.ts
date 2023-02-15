@@ -17,7 +17,7 @@ const createWindow = () => {
         height: 600
     });
 
-    mainWindow.loadURL('http://localhost:3001/api/v1/example');
+    mainWindow.loadURL('http://localhost:3000');
 }
 
 process.on('uncaughtException', async function (err) {

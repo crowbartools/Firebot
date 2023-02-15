@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
     const [helloWorld, setHelloWorld] = useState("");
-    
+
     useEffect(() => {
       const fetchData = async () => {
         const host = getServerUri();
@@ -34,6 +34,7 @@ export default function Home() {
       </Head>
       <main>
         <div className={`text-2xl font-extrabold ${inter.className}`}>{helloWorld}</div>
+        <div>Does fast reloading work?</div>
       </main>
     </>
   );
