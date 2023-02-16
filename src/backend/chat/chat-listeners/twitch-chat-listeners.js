@@ -130,7 +130,7 @@ exports.setupChatListeners = (streamerChatClient) => {
 
     streamerChatClient.onSubGift((_channel, _user, subInfo) => {
         twitchEventsHandler.giftSub.triggerSubGift(
-            subInfo.gifterDisplayName ?? "Anonymous",
+            subInfo.gifterDisplayName ?? "An Anonymous Gifter",
             !subInfo.gifterUserId,
             subInfo.displayName,
             subInfo.plan,

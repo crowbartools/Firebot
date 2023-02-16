@@ -16,7 +16,7 @@ module.exports = {
     definition: {
         handle: "hasRoles",
         usage: "hasRoles[user, any|all, role, role2, ...]",
-        description: "Returns true if the user has the specified role. Only valid within $if",
+        description: "Returns true if the user has the specified roles. Only valid within $if",
         examples: [
             {
                 usage: 'hasRoles[$user, any, mod, vip]',

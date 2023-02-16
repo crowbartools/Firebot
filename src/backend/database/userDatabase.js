@@ -12,6 +12,7 @@ const userAccess = require("../common/user-access");
 const eventManager = require("../events/EventManager");
 const accountAccess = require("../common/account-access");
 const util = require("../utility");
+const chatRolesManager = require('../roles/chat-roles-manager');
 
 const jsonDataHelpers = require("../common/json-data-helpers");
 
@@ -534,19 +535,25 @@ function setChatUserOnline(userDetails) {
         }
 
         const now = Date.now();
+        const dbData = {
+            username: userDetails.username,
+            displayName: userDetails.displayName,
+            profilePicUrl: userDetails.profilePicUrl,
+            twitchRoles: userDetails.twitchRoles,
+            online: true,
+            onlineAt: now,
+            lastSeen: now
+        };
+
+        if (chatRolesManager.userIsKnownBot(userDetails.username) && settings.getAutoFlagBots()) {
+            dbData.disableAutoStatAccrual = true;
+            dbData.disableActiveUserList = true;
+        }
 
         db.update(
             { _id: userDetails.id },
             {
-                $set: {
-                    username: userDetails.username,
-                    displayName: userDetails.displayName,
-                    profilePicUrl: userDetails.profilePicUrl,
-                    twitchRoles: userDetails.twitchRoles,
-                    online: true,
-                    onlineAt: now,
-                    lastSeen: now
-                }
+                $set: dbData
             },
             {},
             function (err) {
@@ -830,6 +837,17 @@ function incrementDbField(userId, fieldName) {
     });
 }
 
+function updateViewerDataField(userId, field, value) {
+    const updateObject = {};
+    updateObject[field] = value;
+
+    db.update({ _id: userId }, { $set: updateObject }, { returnUpdatedDocs: true }, function(err, _, updatedDoc) { //eslint-disable-line no-unused-vars
+        if (err) {
+            logger.error("Error updating user.", err);
+        }
+    });
+}
+
 //////////////////
 // Event Listeners
 
@@ -872,15 +890,7 @@ frontendCommunicator.onAsync("getViewerDetails", (userId) => {
 
 frontendCommunicator.on("updateViewerDataField", (data) => {
     const { userId, field, value } = data;
-
-    const updateObject = {};
-    updateObject[field] = value;
-
-    db.update({ _id: userId }, { $set: updateObject }, { returnUpdatedDocs: true }, function(err, _, updatedDoc) { //eslint-disable-line no-unused-vars
-        if (err) {
-            logger.error("Error updating user.", err);
-        }
-    });
+    updateViewerDataField(userId, field, value);
 });
 
 // Return db rows for the ui to use.
@@ -947,3 +957,4 @@ exports.getAllUsernames = getAllUsernames;
 exports.getAllUsernamesWithIds = getAllUsernamesWithIds;
 exports.getTopMetadata = getTopMetadata;
 exports.getTopMetadataPosition = getTopMetadataPosition;
+exports.updateViewerDataField = updateViewerDataField;

@@ -55,7 +55,8 @@
                         <a href ng-click="$root.openLinkExternally('https://github.com/crowbartools/Firebot/issues/new?assignees=&labels=Bug&template=bug_report.yml&title=%5BBug%5D+')">Report a Bug</a> |
                         <a href ng-click="$root.openLinkExternally('https://github.com/crowbartools/Firebot/issues/new?assignees=&labels=Enhancement&template=feature_request.md&title=%5BFeature+Request%5D+')">Request a Feature</a> |
                         <a href ng-click="$root.openLinkExternally('https://opencollective.com/crowbartools')">Donate</a> |
-                        <a href ng-click="$root.openLinkExternally('https://crowbar-tools.myspreadshop.com')">Merch Store</a>
+                        <a href ng-click="$root.openLinkExternally('https://crowbar-tools.myspreadshop.com')">Merch Store</a> |
+                        <a href ng-click="$root.openLinkExternally('https://firebot.app/testimonial-submission')">Submit a Testimonial</a>
                     </p>
                 </section>
             </div>

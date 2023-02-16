@@ -175,6 +175,22 @@
                 }
             };
 
+            service.getAutoFlagBots = function() {
+                let autoFlagBots = getDataFromFile("/settings/autoFlagBots");
+
+                // If viewerDB setting is not set, default to true to avoid future "cant find datapath" errors.
+                if (autoFlagBots == null) {
+                    logger.debug('Auto Flag Bots setting not found. Defaulting to true.');
+                    service.setAutoFlagBots(true);
+                    autoFlagBots = getDataFromFile("/settings/viewerDB");
+                }
+                return autoFlagBots != null ? autoFlagBots : true;
+            };
+
+            service.setAutoFlagBots = function(status) {
+                pushDataToFile("/settings/autoFlagBots", status);
+            };
+
             // Used for settings menu.
             service.getChatFeed = function() {
                 const chatFeed = getDataFromFile("/settings/chatFeed", false, false);

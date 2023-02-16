@@ -16,12 +16,6 @@ function clearPollInterval() {
 }
 
 async function handleChatters() {
-    if (pollIsRunning === true) {
-        return;
-    }
-
-    pollIsRunning = true;
-
     try {
         const streamer = accountAccess.getAccounts().streamer;
         const client = twitchApi.getClient();
@@ -46,20 +40,26 @@ async function handleChatters() {
     } catch (error) {
         logger.error("There was an error getting connected chat users", error);
     }
+}
+
+export async function runChatterPoll(): Promise<void> {
+    if (pollIsRunning === true) {
+        return;
+    }
+
+    pollIsRunning = true;
+
+    await handleChatters();
 
     pollIsRunning = false;
-}
+};
 
 export function startChatterPoll(): void {
     clearPollInterval();
-    handleChatters();
-    chatterPollIntervalId = setInterval(handleChatters, POLL_INTERVAL);
+    runChatterPoll();
+    chatterPollIntervalId = setInterval(runChatterPoll, POLL_INTERVAL);
 };
 
 export function stopChatterPoll(): void {
     clearPollInterval();
-};
-
-export async function runChatterPoll(): Promise<void> {
-    await handleChatters();
 };
