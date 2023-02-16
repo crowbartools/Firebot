@@ -3,7 +3,7 @@
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 const expressionish = require('expressionish');
 const moment = require("moment");
-const twitchApi = require("../../twitch-api/api").default;
+const twitchApi = require("../../twitch-api/api");
 
 const model = {
     definition: {

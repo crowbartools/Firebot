@@ -3,7 +3,7 @@
 const logger = require("../logwrapper");
 const profileManager = require("../common/profile-manager");
 const frontendCommunicator = require("../common/frontend-communicator");
-const twitchApi = require("../twitch-api/api").default;
+const twitchApi = require("../twitch-api/api");
 const { EffectTrigger } = require("../../shared/effect-constants");
 const accountAccess = require("../common/account-access");
 

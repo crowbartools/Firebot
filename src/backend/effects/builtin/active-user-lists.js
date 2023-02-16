@@ -2,7 +2,7 @@
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 const logger = require('../../logwrapper');
-const twitchApi = require("../../twitch-api/api").default;
+const twitchApi = require("../../twitch-api/api");
 const activeUserHandler = require("../../chat/chat-listeners/active-user-handler");
 
 const model = {

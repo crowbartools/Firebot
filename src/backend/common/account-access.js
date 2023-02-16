@@ -123,7 +123,7 @@ async function loadAccountData(emitUpdate = true) {
 }
 
 const getTwitchData = async (accountType) => {
-    const twitchApi = require("../twitch-api/api").default;
+    const twitchApi = require("../twitch-api/api");
     const chatHelpers = require("../chat/chat-helpers");
 
     const account = accountType === "streamer" ? cache.streamer : cache.bot;

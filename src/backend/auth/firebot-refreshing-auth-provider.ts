@@ -79,4 +79,4 @@ accountAccess.events.on("account-update", () => {
     firebotRefreshingAuthProvider.setupRefreshingAuthProvider();
 });
 
-export default firebotRefreshingAuthProvider;
+export = firebotRefreshingAuthProvider;

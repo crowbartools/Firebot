@@ -1,6 +1,6 @@
 "use strict";
 
-const twitchApi = require("../../../twitch-api/api").default;
+const twitchApi = require("../../../twitch-api/api");
 const moment = require("moment");
 const chat = require("../../twitch-chat");
 const util = require("../../../utility");

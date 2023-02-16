@@ -7,7 +7,7 @@ const discordEmbedBuilder = require("../../integrations/builtin/discord/discord-
 const discord = require("../../integrations/builtin/discord/discord-message-sender");
 const utils = require("../../utility");
 
-const twitchApi = require("../../twitch-api/api").default;
+const twitchApi = require("../../twitch-api/api");
 const client = twitchApi.getClient();
 
 /**

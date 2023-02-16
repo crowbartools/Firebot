@@ -2,7 +2,7 @@
 
 const accountAccess = require("../../common/account-access");
 const logger = require("../../logwrapper");
-const twitchApi = require("../api").default;
+const twitchApi = require("../api");
 
 /**
  * @param {string} broadcasterId

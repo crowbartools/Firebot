@@ -2,7 +2,7 @@
 const logger = require("../../logwrapper");
 const accountAccess = require("../../common/account-access");
 const frontendCommunicator = require("../../common/frontend-communicator");
-const firebotRefreshingAuthProvider = require("../../auth/firebot-refreshing-auth-provider").default;
+const firebotRefreshingAuthProvider = require("../../auth/firebot-refreshing-auth-provider");
 const { PubSubClient } = require("@twurple/pubsub");
 
 /**@type {PubSubClient} */
@@ -220,7 +220,7 @@ async function createClient() {
         const chatRoomListener = await pubSubClient.onCustomTopic(streamer.userId, "stream-chat-room-v1", async (event) => {
             const message = event?.data;
             if (message?.type === "extension_message") {
-                const twitchApi = require("../api").default.getClient();
+                const twitchApi = require("../api").getClient();
                 const extension = await twitchApi.extensions.getReleasedExtension(message.data.sender.extension_client_id);
 
                 const { buildFirebotChatMessageFromExtensionMessage } = require("../../chat/chat-helpers");

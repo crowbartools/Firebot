@@ -1,7 +1,7 @@
 "use strict";
 
 const logger = require("../../logwrapper");
-const twitchApi = require("../api").default;
+const twitchApi = require("../api");
 const accountAccess = require("../../common/account-access");
 
 /**

@@ -377,7 +377,7 @@ function fireCommand(
 async function handleChatMessage(firebotChatMessage) {
 
     const twitchChat = require("../twitch-chat");
-    const twitchApi = require("../../twitch-api/api").default;
+    const twitchApi = require("../../twitch-api/api");
 
     logger.debug("Checking for command in message...");
 

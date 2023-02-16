@@ -23,7 +23,7 @@ const model = {
                 trigger.metadata;
         } else {
             const channelRewardManager = require("../../channel-rewards/channel-reward-manager");
-            const twitchApi = require("../../twitch-api/api").default;
+            const twitchApi = require("../../twitch-api/api");
             const accountAccess = require("../../common/account-access");
 
             const channelRewardId = channelRewardManager.getChannelRewardIdByName(rewardName);

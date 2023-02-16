@@ -17,7 +17,7 @@ const settings = {
  * @param {import("../chat-helpers").FirebotChatMessage} message
  */
 async function handleRaider(message) {
-    const twitchApi = require("../../twitch-api/api").default;
+    const twitchApi = require("../../twitch-api/api");
 
     if (settings.shouldBan) {
         await twitchApi.moderation.banUser(message.userId);

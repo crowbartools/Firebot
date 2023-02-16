@@ -3,7 +3,7 @@
 const moment = require("moment");
 const replaceVariableManager = require("./variables/replace-variable-manager");
 const accountAccess = require("./common/account-access");
-const twitchApi = require("./twitch-api/api").default;
+const twitchApi = require("./twitch-api/api");
 
 const getRandomInt = (min, max) => {
     min = Math.ceil(min);

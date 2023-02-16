@@ -2,7 +2,7 @@
 const logger = require("../logwrapper");
 const EventEmitter = require("events");
 const { ChatClient } = require("@twurple/chat");
-const firebotRefreshingAuthProvider = require("../auth/firebot-refreshing-auth-provider").default;
+const firebotRefreshingAuthProvider = require("../auth/firebot-refreshing-auth-provider");
 const accountAccess = require("../common/account-access");
 const frontendCommunicator = require("../common/frontend-communicator");
 const chatHelpers = require("./chat-helpers");
@@ -11,7 +11,7 @@ const followPoll = require("../twitch-api/follow-poll");
 const chatterPoll = require("../twitch-api/chatter-poll");
 const commandHandler = require("./commands/commandHandler");
 const activeUserHandler = require("./chat-listeners/active-user-handler");
-const twitchApi = require("../twitch-api/api").default;
+const twitchApi = require("../twitch-api/api");
 const chatRolesManager = require("../roles/chat-roles-manager");
 const twitchSlashCommandHandler = require("./twitch-slash-command-handler");
 

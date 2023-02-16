@@ -63,6 +63,4 @@ class TwitchApi {
     }
 }
 
-const twitchApi = new TwitchApi();
-
-export default twitchApi;
+export = new TwitchApi();

@@ -1,7 +1,7 @@
 "use strict";
 
 const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
-const twitchApi = require("../../twitch-api/api").default;
+const twitchApi = require("../../twitch-api/api");
 
 const effect = {
     definition: {

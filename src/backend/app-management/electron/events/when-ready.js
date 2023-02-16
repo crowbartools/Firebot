@@ -25,7 +25,7 @@ exports.whenReady = async () => {
     const accountAccess = require("../../../common/account-access");
     await accountAccess.updateAccountCache(false);
 
-    const firebotRefreshingAuthProvider = require("../../../auth/firebot-refreshing-auth-provider").default;
+    const firebotRefreshingAuthProvider = require("../../../auth/firebot-refreshing-auth-provider");
     firebotRefreshingAuthProvider.setupRefreshingAuthProvider();
 
     const connectionManager = require("../../../common/connection-manager");
