@@ -20,6 +20,7 @@
     "prettier-plugin-tailwind": "^2.2.12",
     "tailwind-config": "*",
     "tailwindcss": "^3.2.6",
+    "tailwindcss-themer": "^2.0.3",
     "tsconfig": "*"
   },
   "dependencies": {
