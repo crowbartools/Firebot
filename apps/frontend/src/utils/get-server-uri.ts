@@ -10,6 +10,6 @@ if (
     host = `${window.location.protocol}://${window.location.host}:${window.location.port}`
 }
 
-export default (() : string => {
+export const getServerUri = () : string => {
     return host;
-});
+}

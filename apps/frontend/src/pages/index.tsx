@@ -1,7 +1,7 @@
 import { Inter } from "@next/font/google";
 import Head from "next/head";
 import { useEffect, useState } from "react";
-import getServerUri from "@/utilities/get-server-uri";
+import { getServerUri } from "@/utils";
 
 import favIcon from 'assets/images/favIcon.ico'
 
@@ -9,21 +9,21 @@ const inter = Inter({ subsets: ["latin"] });
 
 
 export default function Home() {
-    const [helloWorld, setHelloWorld] = useState("");
+  const [helloWorld, setHelloWorld] = useState("");
 
-    useEffect(() => {
-      const fetchData = async () => {
-        const host = getServerUri();
-        try {
-          const response = await fetch(`${host}/api/v1/example`);
-          const text = await response.text();
-          setHelloWorld(text);
-        } catch(error) {
-          console.log("Failed to get hello world", error);
-        }
+  useEffect(() => {
+    const fetchData = async () => {
+      const host = getServerUri();
+      try {
+        const response = await fetch(`${host}/api/v1/example`);
+        const text = await response.text();
+        setHelloWorld(text);
+      } catch (error) {
+        console.log("Failed to get hello world", error);
       }
+    }
 
-      fetchData();
+    fetchData();
   }, []);
 
   return (
