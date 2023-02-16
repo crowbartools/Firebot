@@ -10,21 +10,30 @@
     "lint": "next lint"
   },
   "devDependencies": {
-    "assets": "*",
-    "@next/font": "13.1.6",
     "@types/node": "18.13.0",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.10",
     "autoprefixer": "^10.4.13",
     "eslint-config-custom": "*",
     "eslint-config-next": "13.1.6",
-    "next": "13.1.6",
     "postcss": "^8.4.21",
     "prettier-plugin-tailwind": "^2.2.12",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
     "tailwind-config": "*",
     "tailwindcss": "^3.2.6",
     "tsconfig": "*"
+  },
+  "dependencies": {
+    "@headlessui/react": "^1.7.11",
+    "@heroicons/react": "^2.0.15",
+    "@next/font": "13.1.6",
+    "assets": "*",
+    "clsx": "^1.2.1",
+    "framer-motion": "^9.0.3",
+    "mobx": "^6.8.0",
+    "mobx-react-lite": "^3.4.0",
+    "next": "13.1.6",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-use": "^17.4.0"
   }
 }
