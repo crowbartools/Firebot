@@ -1,6 +1,6 @@
 "use strict";
 
-const twitchApi = require('../../../twitch-api/api');
+const twitchApi = require("../../../twitch-api/api");
 const chat = require("../../twitch-chat");
 const raidMessageChecker = require("../../moderation/raid-message-checker");
 

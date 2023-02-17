@@ -80,7 +80,7 @@ class TwitchChat extends EventEmitter {
             this._streamerChatClient = new ChatClient({
                 authProvider: authProvider,
                 requestMembershipEvents: true,
-                authIntents: [firebotRefreshingAuthProvider.STREAMER_INTENT]
+                authIntents: [firebotRefreshingAuthProvider.STREAMER_CHAT_INTENT]
             });
 
             this._streamerChatClient.irc.onRegister(() => {
@@ -146,7 +146,7 @@ class TwitchChat extends EventEmitter {
             this._botChatClient = new ChatClient({
                 authProvider: firebotRefreshingAuthProvider.provider,
                 requestMembershipEvents: true,
-                authIntents: [firebotRefreshingAuthProvider.BOT_INTENT]
+                authIntents: [firebotRefreshingAuthProvider.BOT_CHAT_INTENT]
             });
 
             this._botChatClient.irc.onRegister(() => this._botChatClient.join(streamer.username));

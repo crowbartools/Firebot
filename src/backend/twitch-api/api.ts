@@ -1,18 +1,29 @@
 import logger from "../logwrapper";
 import accountAccess from "../common/account-access";
-import firebotRefreshingAuthProvider from "../auth/firebot-refreshing-auth-provider";
 import { ApiClient } from "@twurple/api";
+import { RefreshingAuthProvider } from "@twurple/auth";
+
+import { TwitchBitsApi } from "./resource/bits";
+import { TwitchCategoriesApi } from "./resource/categories";
+import { TwitchChannelRewardsApi } from "./resource/channel-rewards";
+import { TwitchChannelsApi } from "./resource/channels";
+import { TwitchChatApi } from "./resource/chat";
+import { TwitchModerationApi } from "./resource/moderation";
+import { TwitchStreamsApi } from "./resource/streams";
+import { TwitchTeamsApi } from "./resource/teams";
+import { TwitchUsersApi } from "./resource/users";
+import { TwitchWhispersApi } from "./resource/whispers";
 
 class TwitchApi {
     client: ApiClient;
 
-    setupApiClient(): void {
+    setupApiClient(provider: RefreshingAuthProvider): void {
         if (accountAccess.getAccounts().streamer.loggedIn || accountAccess.getAccounts().bot.loggedIn) {
-            if (!firebotRefreshingAuthProvider.provider) {
+            if (!provider) {
                 return;
             }
     
-            this.client = new ApiClient({ authProvider: firebotRefreshingAuthProvider.provider });
+            this.client = new ApiClient({ authProvider: provider });
     
             logger.info("Finished setting up Twitch API client");
         }
@@ -23,44 +34,46 @@ class TwitchApi {
     }
 
     get bits() {
-        return require("./resource/bits");
+        return new TwitchBitsApi(this.client);
     }
 
     get categories() {
-        return require("./resource/categories");
+        return new TwitchCategoriesApi(this.client);
     }
 
     get channelRewards() {
-        return require("./resource/channel-rewards");
+        return new TwitchChannelRewardsApi(this.client);
     }
 
     get channels() {
-        return require("./resource/channels");
+        return new TwitchChannelsApi(this.client);
     }
 
     get chat() {
-        return require("./resource/chat");
+        return new TwitchChatApi(this.client);
     }
 
     get moderation() {
-        return require("./resource/moderation");
+        return new TwitchModerationApi(this.client);
     }
 
     get streams() {
-        return require("./resource/streams");
+        return new TwitchStreamsApi(this.client);
     }
 
     get teams() {
-        return require("./resource/teams");
+        return new TwitchTeamsApi(this.client);
     }
 
     get users() {
-        return require("./resource/users");
+        return new TwitchUsersApi(this.client);
     }
 
     get whispers() {
-        return require("./resource/whispers");
+        return new TwitchWhispersApi(this.client);
     }
 }
 
-export = new TwitchApi();
+const twitchApi = new TwitchApi();
+
+export = twitchApi;

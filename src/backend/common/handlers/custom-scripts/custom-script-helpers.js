@@ -1,10 +1,10 @@
 "use strict";
-const twitchChat = require('../../../chat/twitch-chat');
-const twitchApi = require('../../../twitch-api/api');
+const twitchChat = require("../../../chat/twitch-chat");
+const twitchApi = require("../../../twitch-api/api");
 const profileManager = require("../../profile-manager");
 const settings = require('../../settings-access').settings;
-const path = require('path');
-const logger = require('../../../logwrapper');
+const path = require("path");
+const logger = require("../../../logwrapper");
 const {
     app
 } = require('electron');

@@ -1,14 +1,14 @@
 import logger from "../logwrapper";
 import accountAccess, { AuthDetails, FirebotAccount } from "../common/account-access";
 import twitchAuth from "./twitch-auth";
-import twitchApi from "../twitch-api/api";
+import TwitchApi = require("../twitch-api/api");
 import { getExpiryDateOfAccessToken, RefreshingAuthProvider } from "@twurple/auth";
 
 class FirebotRefreshingAuthProvider {
     provider: RefreshingAuthProvider;
 
-    STREAMER_INTENT: string = "firebot:streamer";
-    BOT_INTENT: string = "firebot:bot";
+    STREAMER_CHAT_INTENT: string = "chat:streamer";
+    BOT_CHAT_INTENT: string = "chat:bot";
 
     setupRefreshingAuthProvider(): void {
         this.provider = new RefreshingAuthProvider({
@@ -52,7 +52,7 @@ class FirebotRefreshingAuthProvider {
                 expiresIn: streamerAcccount.auth.expires_in,
                 obtainmentTimestamp: streamerAcccount.auth.obtainment_timestamp,
                 scope: twitchAuth.STREAMER_ACCOUNT_PROVIDER.scopes.split(" ")
-            }, [ this.STREAMER_INTENT ]);
+            }, [ this.STREAMER_CHAT_INTENT ]);
         }
     
         if (accountAccess.getAccounts().bot.loggedIn) {
@@ -64,11 +64,11 @@ class FirebotRefreshingAuthProvider {
                 expiresIn: botAcccount.auth.expires_in,
                 obtainmentTimestamp: botAcccount.auth.obtainment_timestamp,
                 scope: twitchAuth.BOT_ACCOUNT_PROVIDER.scopes.split(" ")
-            }, [ this.BOT_INTENT ]);
+            }, [ this.BOT_CHAT_INTENT ]);
         }
 
         if (this.provider) {
-            twitchApi.setupApiClient();
+            TwitchApi.setupApiClient(this.provider);
         }
     }
 }
