@@ -16,7 +16,7 @@ export default function App({ Component, pageProps }: AppProps) {
       >
           <div className="w-full h-full pb-5 pr-5">
           <div
-            className="bg-secondary-bg flex h-full rounded-xl rounded-l-none p-4"
+            className="bg-secondary-bg flex h-full rounded-xl p-4"
         >
               <Component {...pageProps} />
           </div>

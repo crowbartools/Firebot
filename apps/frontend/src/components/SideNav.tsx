@@ -17,7 +17,6 @@ export interface MenuItem {
     iconClassName: string;
     title: string;
     route: string;
-    pageComponent?: JSX.Element;
 }
 
 export const menu: Record<string, MenuItem[]> = {
@@ -26,8 +25,7 @@ export const menu: Record<string, MenuItem[]> = {
             icon: mdiViewDashboard,
             iconClassName: "",
             title: "Dashboard",
-            route: "/",
-            pageComponent: <></>,
+            route: "/"
         },
     ],
     Automation: [
@@ -156,8 +154,8 @@ const MenuItem: React.FC<MenuItemProps> =
             <li
                 key={menuItem.route}
                 className={clsx(
-                    "mb-1.5",
-                    isActive && !isOpen ? "pl-2" : "px-2"
+                    "mb-1.5 px-2",
+                    // isActive && !isOpen ? "pl-2" : "px-2"
                 )}
             >
                 <Link
@@ -173,7 +171,7 @@ const MenuItem: React.FC<MenuItemProps> =
                                 "bg-secondary-bg rounded-xl": isActive,
                                 "hover:bg-secondary-bg hover:bg-opacity-75 rounded-xl":
                                     !isActive,
-                                "rounded-r-none": isActive && !isOpen,
+                                // "rounded-r-none": isActive && !isOpen,
                             },
                             "transition duration-150 ease-in-out",
                             "flex items-center h-14 relative",
@@ -184,8 +182,8 @@ const MenuItem: React.FC<MenuItemProps> =
                             className={clsx(
                                 "w-16 flex justify-center items-center text-xl",
                                 {
-                                    "text-white text-opacity-75": !isActive,
-                                    "text-yellow-400": isActive,
+                                    "text-primary-text text-opacity-75": !isActive,
+                                    "text-firebot-sunglow": isActive,
                                 }
                             )}
                         >
@@ -214,7 +212,7 @@ const MenuItem: React.FC<MenuItemProps> =
                             <span
                                 className={clsx(
                                     {
-                                        "text-white": !menuItem.disabled,
+                                        "text-primary-text": !menuItem.disabled,
                                         "font-semibold": isActive,
                                     },
                                     "capitalize"
@@ -234,14 +232,14 @@ const CategoryHeader = (category: string, isOpen: boolean) => (
         <motion.div
             variants={categoryHeaderVariants}
             animate={isOpen ? variantType.visible : variantType.hidden}
-            className={clsx("ml-4 mb-1 mt-2 text text-gray-500 uppercase")}
+            className={clsx("ml-4 mb-1 mt-2 text text-primary-text/50 uppercase")}
         >
             {category}
         </motion.div>
         <motion.div
             variants={categoryHeaderVariants}
             animate={isOpen ? variantType.hidden : variantType.visible}
-            className="h-0.5 w-full bg-slate-900/75 absolute top-1/2 left-0 -translate-y-1/2"
+            className="h-0.5 w-[75%] bg-secondary-bg absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 rounded-md"
         ></motion.div>
     </li>
 );
@@ -256,7 +254,7 @@ const SidebarHeader = (isOpen: boolean) => (
             animate={isOpen ? variantType.visible : variantType.hidden}
             className={clsx("absolute inset-0 ml-20 w-64 flex items-center")}
         >
-            <span className="text-yellow-400 text-2xl font-thin">Firebot</span>
+            <span className="text-firebot-sunglow text-2xl font-thin">Firebot</span>
         </motion.div>
     </div>
 );

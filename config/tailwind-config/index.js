@@ -3,13 +3,13 @@ const root = path.resolve(__dirname, '../../');
 const defaultTheme = require('tailwindcss/defaultTheme');
 
 const FIREBOT_BRAND_COLORS = {
-    maximumBlueGreen: '#4BBABC',
-    fireOpal: '#D63837',
-    pear: '#D2D50D',
-    sunglow: '#FFBE00',
-    aero: '#5FA1D9',
-    honoluluBlue: '#005B9F',
-    richBlack: '#071018',
+    "maximum-blue-green": '#4BBABC',
+    "fire-opal": '#D63837',
+    "pear": '#D2D50D',
+    "sunglow": '#FFBE00',
+    "aero": '#5FA1D9',
+    "honolulu": '#005B9F',
+    "rich-black": '#071018'
 }
 
 // slab: {
@@ -28,13 +28,18 @@ module.exports = {
         './src/pages/**/*.{js,ts,jsx,tsx}',
         './src/components/**/*.{js,ts,jsx,tsx}',
     ],
-    // theme: {
-    //     extend: {
-    //         fontFamily: {
-    //             sans: ['Inter var', ...defaultTheme.fontFamily.sans],
-    //         },
-    //     },
-    // },
+    theme: {
+        extend: {
+            colors: {
+                firebot: {
+                    ...FIREBOT_BRAND_COLORS,
+                }
+            },
+            fontFamily: {
+                sans: ['Inter var', ...defaultTheme.fontFamily.sans],
+            },
+        },
+    },
     safelist: [
         'snow',
         'slate',
@@ -47,6 +52,8 @@ module.exports = {
                     colors: {
                         "primary-bg": "#0A0A0C",
                         "secondary-bg": "#18181B",
+                        "primary-text": "#D4D4D8",
+                        "muted-text": "#bdbdbf",
                     },
                 }
             },
@@ -57,6 +64,8 @@ module.exports = {
                         colors: {
                             "primary-bg": "#27272A",
                             "secondary-bg": "#36393F",
+                            "primary-text": "#D4D4D8",
+                            "muted-text": "#bdbdbf",
                         }
                     }
                 },
@@ -66,6 +75,8 @@ module.exports = {
                         colors: {
                             "primary-bg": "#FFFFFF",
                             "secondary-bg": "#D4D4D8",
+                            "primary-text": "black",
+                            "muted-text": "#374151",
                         }
                     }
                 },

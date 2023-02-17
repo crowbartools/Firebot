@@ -1,5 +1,31 @@
-import { action, observable } from "mobx";
+import { makeAutoObservable } from "mobx";
 
-class SettingsStore {}
+export type FirebotTheme = "shadow" | "slate" | "snow";
+
+class SettingsStore {
+
+    theme: FirebotTheme = "shadow";
+
+    constructor() {
+        makeAutoObservable(
+            this,
+            {},
+            {
+                autoBind: true
+            }
+        );
+    }
+
+    setTheme(theme: FirebotTheme) {
+        this.theme = theme;
+        if(document) {
+            const root = document.getElementById("root");
+            if(root) {
+                root.className = theme;
+                console.log("SET CLASS", theme);
+            }
+        }
+    }
+}
 
 export const settingsStore = new SettingsStore();
