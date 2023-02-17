@@ -1,0 +1,10 @@
+{
+    "name": "unicode-string",
+    "private": true,
+    "version": "1.0.0",
+    "main": "./dist/index.js",
+    "license": "ISC",
+    "scripts": {
+        "build": "tsc"
+    }
+}
