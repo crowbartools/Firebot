@@ -20,6 +20,10 @@ export class UnicodeString extends String {
         return this.chars.length;
     }
 
+    /** Retrieves the unicode character at the specified position
+     * @param position The character position to retrieve
+     * @returns Unicode character at the specified position
+     */
     at(position: number) : string | undefined {
         if (
             position == null ||
@@ -33,6 +37,11 @@ export class UnicodeString extends String {
         }
         return this.chars[position];
     }
+
+    /** Retrieves the unicode character at the specified position
+     * @param position The character position to retrieve
+     * @returns Unicode character at the specified position
+     */
     charAt(position: number) : string {
         position = Number(position);
         if (Number.isInteger(position)) {
@@ -44,12 +53,24 @@ export class UnicodeString extends String {
     // charCodeAt() - ??
     // codePointAt() - ??
 
+    /** Returns a new string with the specified arguments concatinated to the base
+     * @param args strings to concat to the instance's string
+     */
     concat(...args: Array<string | String | UnicodeString>) : string {
         return this.baseString.concat(...(args.map(value => '' + value)));
     }
+
+    /** Returns a new UnicodeString with the specified arguments concatinated to the base
+     * @param args strings to concat to the instance's string
+     */
     concatUS(...args: Array<string | String | UnicodeString>) : UnicodeString {
         return UnicodeString.from(this.baseString.concat(...(args.map((value : unknown) => value + ''))));
     }
+
+    /** Returns true if the searchTerm is found in the base string
+     * @param searchTerm The text to search for
+     * @param endPosition The ending position in the base string that the searchTerm should end at
+     */
     endsWith(searchTerm: string | UnicodeString, endPosition?: number) : boolean {
         let selfChars = this.characters;
         if (endPosition == null) {
@@ -77,6 +98,8 @@ export class UnicodeString extends String {
         }
         return true;
     }
+
+
     includes(searchTerm: string | UnicodeString, startPosition?: number) : boolean {
         return -1 < this.indexOf(searchTerm, startPosition);
     }
@@ -154,10 +177,10 @@ export class UnicodeString extends String {
     padEndUS(length: number, padding: string | UnicodeString = ' ') : UnicodeString {
         return UnicodeString.from(this.padEnd(length, padding));
     }
-    padStartUS(length: number, padding: string | UnicodeString = ' ') : UnicodeString {
+    padStart(length: number, padding: string | UnicodeString = ' ') : string {
         length = Number(length);
         if (!Number.isInteger(length) || length <= this.chars.length) {
-            return UnicodeString.from(this.toString());
+            return this.toString();
         }
         let padText : string;
         if (padding == null) {
@@ -168,7 +191,10 @@ export class UnicodeString extends String {
             padding = UnicodeString.from(padding);
             padText = padding.toString().repeat(Math.ceil(length / padding.length));
         }
-        return UnicodeString.from(padText + this.toString()).sliceUS(length - this.chars.length)
+        return UnicodeString.from(padText + this.toString()).slice(length - this.chars.length);
+    }
+    padStartUS(length: number, padding: string | UnicodeString = ' ') : UnicodeString {
+        return UnicodeString.from(this.padStart(length, padding));
     }
     repeat(count: number) : string {
         return this.valueOf().repeat(count);
