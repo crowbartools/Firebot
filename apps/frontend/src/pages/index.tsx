@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { getServerUri } from "@/utils";
 
 import favIcon from 'assets/images/favIcon.ico'
+import { PageWrapper } from "@/components/PageWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -34,10 +35,10 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href={favIcon.src} />
       </Head>
-      <main>
+      <PageWrapper>
         <div className={`text-2xl font-extrabold ${inter.className}`}>{helloWorld}</div>
         <div>Does fast reloading work?</div>
-      </main>
+      </PageWrapper>
     </>
   );
 }

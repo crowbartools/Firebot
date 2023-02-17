@@ -5,88 +5,72 @@ import { motion, Variants } from "framer-motion";
 import Image from 'next/image'
 import firebotLogo from "assets/images/firebot-logo.png";
 import Icon from "@mdi/react";
-import { mdiCash, mdiCog, mdiDiceMultiple, mdiExclamationThick, mdiFormatListText, mdiKeyboard, mdiSquareEditOutline, mdiTimer, mdiViewDashboard } from "@mdi/js";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { thunk } from "@/utils";
-
-export interface MenuItem {
-    className?: string;
-    disabled?: boolean;
-    icon: string;
-    iconClassName: string;
-    title: string;
-    route: string;
-}
-
-export const menu: Record<string, MenuItem[]> = {
-    [""]: [
-        {
-            icon: mdiViewDashboard,
-            iconClassName: "",
-            title: "Dashboard",
-            route: "/"
-        },
-    ],
-    Automation: [
-        {
-            icon: mdiExclamationThick,
-            iconClassName: "",
-            title: "Commands",
-            route: "/commands",
-        },
-        {
-            icon: mdiFormatListText,
-            iconClassName: "",
-            title: "Events",
-            route: "/events",
-        },
-        {
-            icon: mdiTimer,
-            iconClassName: "",
-            title: "Timers",
-            route: "/timer",
-        },
-        {
-            icon: mdiSquareEditOutline,
-            iconClassName: "",
-            title: "Preset Actions",
-            route: "/preset-actions",
-        },
-        {
-            icon: mdiKeyboard,
-            iconClassName: "",
-            title: "Hotkeys",
-            route: "/hotkeys",
-        },
-    ],
-    Engagement: [
-        {
-            icon: mdiDiceMultiple,
-            iconClassName: "",
-            title: "Games",
-            route: "/games",
-        },
-        {
-            icon: mdiCash,
-            iconClassName: "",
-            title: "Currency",
-            route: "/currency",
-        },
-    ],
-    Management: [
-        {
-            icon: mdiCog,
-            iconClassName: "",
-            title: "Settings",
-            route: "/settings",
-        },
-    ],
-};
+import { menuItems, MenuItem } from "./nav-menu-items";
 
 const variantType = {
     hidden: "hidden",
     visible: "visible",
+};
+
+const menuBackdropVariants: Variants = {
+    [variantType.hidden]: {
+        opacity: 0,
+        transition: {
+            duration: 0.1,
+        },
+    },
+    [variantType.visible]: { opacity: 0.33 },
+};
+
+export const SideNav = () => {
+    const [isOpen, toggleIsOpen] = useState(false);
+
+    return (
+        <>
+            <motion.div
+                className="fixed inset-0 z-20 pointer-events-none bg-black"
+                initial={variantType.hidden}
+                variants={menuBackdropVariants}
+                animate={isOpen ? variantType.visible : variantType.hidden}
+            />
+            <motion.aside
+                className={clsx(
+                    "fixed h-full z-30 rounded-r-xl overflow-hidden flex flex-col",
+                    isOpen ? "bg-primary-bg" : "bg-primary-bg"
+                )}
+                style={{ width: "85px" }}
+                whileHover={{ width: 300 }}
+                transition={{
+                    type: "spring",
+                    duration: 0.4,
+                    bounce: !isOpen ? 0.1 : 0.3,
+                }}
+                onHoverStart={thunk(toggleIsOpen, [true])}
+                onHoverEnd={thunk(toggleIsOpen, [false])}
+            >
+                {SidebarHeader(isOpen)}
+                <ul className="h-full overflow-auto pb-4">
+                    {Object.keys(menuItems).map((category) => (
+                        <div key={category}>
+                            {!!category?.length &&
+                                CategoryHeader(category, isOpen)}
+                            {menuItems[category].map((item, index) => (
+                                <MenuItem
+                                    index={index}
+                                    menuItem={item}
+                                    isOpen={isOpen}
+                                    key={item.route}
+                                />
+                            ))}
+                        </div>
+                    ))}
+                </ul>
+            </motion.aside>
+        </>
+    );
 };
 
 const menuItemTitleVariants: Variants = {
@@ -106,39 +90,6 @@ const menuItemTitleVariants: Variants = {
     }),
 };
 
-const categoryHeaderVariants: Variants = {
-    [variantType.hidden]: {
-        opacity: 0,
-        transition: {
-            duration: 0.1,
-        },
-    },
-    [variantType.visible]: {
-        opacity: 1,
-    },
-};
-
-const headerVariants: Variants = {
-    [variantType.hidden]: {
-        opacity: 0,
-        x: -15,
-    },
-    [variantType.visible]: {
-        opacity: 1,
-        x: 0,
-    },
-};
-
-const menuBackdropVariants: Variants = {
-    [variantType.hidden]: {
-        opacity: 0,
-        transition: {
-            duration: 0.1,
-        },
-    },
-    [variantType.visible]: { opacity: 0.33 },
-};
-
 interface MenuItemProps {
     isOpen: boolean;
     menuItem: MenuItem;
@@ -155,7 +106,6 @@ const MenuItem: React.FC<MenuItemProps> =
                 key={menuItem.route}
                 className={clsx(
                     "mb-1.5 px-2",
-                    // isActive && !isOpen ? "pl-2" : "px-2"
                 )}
             >
                 <Link
@@ -171,7 +121,6 @@ const MenuItem: React.FC<MenuItemProps> =
                                 "bg-secondary-bg rounded-xl": isActive,
                                 "hover:bg-secondary-bg hover:bg-opacity-75 rounded-xl":
                                     !isActive,
-                                // "rounded-r-none": isActive && !isOpen,
                             },
                             "transition duration-150 ease-in-out",
                             "flex items-center h-14 relative",
@@ -180,7 +129,7 @@ const MenuItem: React.FC<MenuItemProps> =
                     >
                         <div
                             className={clsx(
-                                "w-16 flex justify-center items-center text-xl",
+                                "w-[5rem] flex justify-center items-center text-xl",
                                 {
                                     "text-primary-text text-opacity-75": !isActive,
                                     "text-firebot-sunglow": isActive,
@@ -190,7 +139,6 @@ const MenuItem: React.FC<MenuItemProps> =
                             <Icon
                                 path={menuItem.icon}
                                 title={menuItem.title}
-                                // className="h-6 w-6"
                                 size={1}
                                 horizontal
                                 vertical
@@ -227,6 +175,18 @@ const MenuItem: React.FC<MenuItemProps> =
         );
     };
 
+const categoryHeaderVariants: Variants = {
+    [variantType.hidden]: {
+        opacity: 0,
+        transition: {
+            duration: 0.1,
+        },
+    },
+    [variantType.visible]: {
+        opacity: 1,
+    },
+};
+    
 const CategoryHeader = (category: string, isOpen: boolean) => (
     <li className="relative">
         <motion.div
@@ -244,6 +204,17 @@ const CategoryHeader = (category: string, isOpen: boolean) => (
     </li>
 );
 
+const headerVariants: Variants = {
+    [variantType.hidden]: {
+        opacity: 0,
+        x: -15,
+    },
+    [variantType.visible]: {
+        opacity: 1,
+        x: 0,
+    },
+};
+
 const SidebarHeader = (isOpen: boolean) => (
     <div className={clsx("flex items-center h-16 relative flex-shrink-0")}>
         <div className="w-24 flex justify-center items-center">
@@ -258,51 +229,3 @@ const SidebarHeader = (isOpen: boolean) => (
         </motion.div>
     </div>
 );
-
-export const SideNav = () => {
-    const [isOpen, toggleIsOpen] = useState(false);
-
-    return (
-        <>
-            <motion.div
-                className="fixed inset-0 z-20 pointer-events-none bg-black"
-                initial={variantType.hidden}
-                variants={menuBackdropVariants}
-                animate={isOpen ? variantType.visible : variantType.hidden}
-            />
-            <motion.aside
-                className={clsx(
-                    "fixed h-full z-30 rounded-r-xl overflow-hidden flex flex-col",
-                    isOpen ? "bg-primary-bg" : "bg-primary-bg"
-                )}
-                style={{ width: "85px" }}
-                whileHover={{ width: 300 }}
-                transition={{
-                    type: "spring",
-                    duration: 0.4,
-                    bounce: !isOpen ? 0.1 : 0.3,
-                }}
-                onHoverStart={thunk(toggleIsOpen, [true])}
-                onHoverEnd={thunk(toggleIsOpen, [false])}
-            >
-                {SidebarHeader(isOpen)}
-                <ul className="h-full overflow-auto pb-4">
-                    {Object.keys(menu).map((category) => (
-                        <div key={category}>
-                            {!!category?.length &&
-                                CategoryHeader(category, isOpen)}
-                            {menu[category].map((item, index) => (
-                                <MenuItem
-                                    index={index}
-                                    menuItem={item}
-                                    isOpen={isOpen}
-                                    key={item.route}
-                                />
-                            ))}
-                        </div>
-                    ))}
-                </ul>
-            </motion.aside>
-        </>
-    );
-};

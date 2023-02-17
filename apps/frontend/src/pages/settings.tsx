@@ -1,3 +1,4 @@
+import { PageWrapper } from "@/components/PageWrapper";
 import { SelectItem, SelectMenu } from "@/components/SelectMenu";
 import { useStores } from "@/stores";
 import { FirebotTheme } from "@/stores/settings-store";
@@ -11,14 +12,16 @@ const themes: SelectItem<FirebotTheme>[] = [
 
 export const SettingsPage: React.FC = observer(() => {
     const { settingsStore } = useStores();
-    return <div>
+    return <PageWrapper>
+        <div className="w-1/4">
         <SelectMenu 
             label="Theme"
             items={themes} 
             selected={settingsStore.theme} 
             setSelected={settingsStore.setTheme} 
         />
-    </div>
+        </div>
+    </PageWrapper>
 })
 
 export default SettingsPage;

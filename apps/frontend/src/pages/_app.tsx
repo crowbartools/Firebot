@@ -1,7 +1,7 @@
 import type { AppProps } from "next/app";
 import { initialStore, Provider as StoreProvider } from "../stores";
 import "@/styles/globals.css";
-import { SideNav } from "@/components/SideNav";
+import { SideNav } from "@/components/side-nav/SideNav";
 
 export default function App({ Component, pageProps }: AppProps) {
   return <StoreProvider value={initialStore}>
@@ -14,13 +14,7 @@ export default function App({ Component, pageProps }: AppProps) {
           }}
           className="h-full w-full"
       >
-          <div className="w-full h-full pb-5 pr-5">
-          <div
-            className="bg-secondary-bg flex h-full rounded-xl p-4"
-        >
-              <Component {...pageProps} />
-          </div>
-          </div>
+          <Component {...pageProps} />
       </div>
     </div>
   </StoreProvider>;
