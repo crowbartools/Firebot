@@ -287,7 +287,7 @@ export class UnicodeString extends String {
                     return target.chars[<number>(<unknown>property)];
                 }
 
-                Reflect.get(target, property, reciever);
+                return Reflect.get(target, property, reciever);
             },
             getOwnPropertyDescriptor(target, key) : PropertyDescriptor | undefined {
                 if (Number.isInteger(Number(key))) {
