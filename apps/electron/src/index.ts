@@ -43,8 +43,11 @@ process.on('uncaughtException', async function (err) {
     }
 
     await app.whenReady();
-    app.on('window-all-closed', () => {
+    app.on('window-all-closed', async () => {
         if (process.platform !== 'darwin') {
+            if (backend) {
+                await backend.close();
+            }
             app.quit();
         }
     });

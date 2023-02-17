@@ -5,7 +5,7 @@ import { SideNav } from "@/components/SideNav";
 
 export default function App({ Component, pageProps }: AppProps) {
   return <StoreProvider value={initialStore}>
-    <div className="bp3-dark w-full h-full bg-slab-900 text-white">
+    <div className="bp3-dark w-full h-full bg-primary-bg text-white">
       <SideNav />
       <div
           style={{
@@ -16,7 +16,7 @@ export default function App({ Component, pageProps }: AppProps) {
       >
           <div className="w-full h-full pb-5 pr-5">
           <div
-            className="bg-slab-700 flex h-full rounded-xl rounded-l-none p-4"
+            className="bg-secondary-bg flex h-full rounded-xl rounded-l-none p-4"
         >
               <Component {...pageProps} />
           </div>

@@ -170,8 +170,8 @@ const MenuItem: React.FC<MenuItemProps> =
                         whileTap={!isActive ? { scale: 0.95 } : undefined}
                         className={clsx(
                             {
-                                "bg-slab-700 rounded-xl": isActive,
-                                "hover:bg-slab-700 hover:bg-opacity-75 rounded-xl":
+                                "bg-secondary-bg rounded-xl": isActive,
+                                "hover:bg-secondary-bg hover:bg-opacity-75 rounded-xl":
                                     !isActive,
                                 "rounded-r-none": isActive && !isOpen,
                             },
@@ -275,7 +275,7 @@ export const SideNav = () => {
             <motion.aside
                 className={clsx(
                     "fixed h-full z-30 rounded-r-xl overflow-hidden flex flex-col",
-                    isOpen ? "bg-slab-900" : "bg-slab-900"
+                    isOpen ? "bg-primary-bg" : "bg-primary-bg"
                 )}
                 style={{ width: "85px" }}
                 whileHover={{ width: 300 }}
