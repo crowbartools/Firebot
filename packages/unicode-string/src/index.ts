@@ -123,11 +123,11 @@ export class UnicodeString extends String {
         return -1;
     }
 
-    // lastIndexOf() - TODO
+    // lastIndexOf()   - TODO
     // localeCompare() - TODO
 
-    // match() - regex
-    // matchAll() - regex
+    // match()    - Won't add: regex
+    // matchAll() - Won't add: regex
 
     normalize(form?: "NFC" | "NFD" | "NFKC" | "NFKD") : string {
         return this.toString().normalize(form);
@@ -177,10 +177,9 @@ export class UnicodeString extends String {
         return UnicodeString.from(this.repeat(count))
     }
 
-
-    // replace() - regex
-    // replaceAll() - regex
-    // search() - regex
+    // replace()    - Won't add: regex
+    // replaceAll() - Won't add: regex
+    // search()     - Won't add: regex
 
     slice(start: number, end?: number) : string {
         return this.chars.slice(start, end).join('');
@@ -189,7 +188,7 @@ export class UnicodeString extends String {
         return UnicodeString.from(this.slice(start, end));
     }
 
-    // split() - regex
+    // split() - Won't add: regex
 
     startsWith(searchTerm: string | UnicodeString, startPosition?: number) : boolean {
         if (searchTerm === '') {
@@ -271,6 +270,27 @@ export class UnicodeString extends String {
         return this.chars.join('');
     }
 
+    [Symbol.iterator]() {
+        const chars = this.chars;
+        const len = chars.length;
+        let idx = 0;
+        return <IterableIterator<string>>{
+            next() {
+                const value : string = chars[idx];
+                idx += 1;
+                return { done: idx + 1 === len, value };
+            },
+            return() {
+                idx = 0;
+                return {done: true}
+            }
+        }
+    }
+
+    [Symbol.toPrimitive]() {
+        return this.valueOf();
+    }
+
     static from(subject: unknown) : UnicodeString {
         if (typeof subject === 'function') {
             throw new Error('invalid input')
@@ -281,12 +301,12 @@ export class UnicodeString extends String {
         }
         return new Proxy(new UnicodeString(<string>subject), {
             get(target, property, reciever) {
-
-                // index handling
+                if (typeof property === 'symbol') {
+                    return Reflect.get(target, property, reciever);
+                }
                 if (typeof property === 'number' || Number.isFinite(Number(property))) {
                     return target.chars[<number>(<unknown>property)];
                 }
-
                 return Reflect.get(target, property, reciever);
             },
             getOwnPropertyDescriptor(target, key) : PropertyDescriptor | undefined {
