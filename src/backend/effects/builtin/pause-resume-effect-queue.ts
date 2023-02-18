@@ -1,4 +1,4 @@
-import { EffectType } from "../models/effect-models";
+import { EffectType } from "../../../types/effects";
 import { EffectCategory } from "../../../shared/effect-constants";
 import effectQueueManager, { EffectQueue } from "../queues/effect-queue-manager";
 import effectQueueRunner from "../queues/effect-queue-runner";

@@ -1,4 +1,4 @@
-import { EffectType } from "../../../../effects/models/effect-models";
+import { EffectType } from "../../../../../types/effects";
 import { stopVirtualCam } from "../obs-remote";
 
 export const StopVirtualCamEffectType: EffectType<{}> = {

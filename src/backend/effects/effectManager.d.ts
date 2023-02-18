@@ -1,4 +1,4 @@
-import { EffectType } from "models/effect-models";
+import { EffectType } from "../../types/effects";
 
 declare class EffectManager {
   registerEffect: <EffectModel>(effectType: EffectType<EffectModel>) => void;

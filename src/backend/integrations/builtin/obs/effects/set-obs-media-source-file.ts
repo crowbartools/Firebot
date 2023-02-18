@@ -1,4 +1,4 @@
-import { EffectType } from "../../../../effects/models/effect-models";
+import { EffectType } from "../../../../../types/effects";
 import { OBSSource, setMediaSourceSettings } from "../obs-remote";
 
 export const SetOBSMediaSourceFileEffectType: EffectType<{
