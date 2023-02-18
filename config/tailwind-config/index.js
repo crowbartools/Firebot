@@ -45,6 +45,7 @@ module.exports = {
         'slate',
     ],
     plugins: [
+        require('tailwind-scrollbar'),
         require('tailwindcss-themer')({
             // "Shadow" theme
             defaultTheme: {

@@ -52,7 +52,7 @@ export const SideNav = () => {
                 onHoverEnd={thunk(toggleIsOpen, [false])}
             >
                 {SidebarHeader(isOpen)}
-                <ul className="h-full overflow-auto pb-4">
+                <ul className={clsx("h-full overflow-x-hidden pb-4 scrollbar-thin scrollbar-thumb-gray-800/10 scrollbar-track-transparent", isOpen ? "overflow-y-auto" : "overflow-y-hidden")}>
                     {Object.keys(menuItems).map((category) => (
                         <div key={category}>
                             {!!category?.length &&
@@ -186,7 +186,7 @@ const categoryHeaderVariants: Variants = {
         opacity: 1,
     },
 };
-    
+
 const CategoryHeader = (category: string, isOpen: boolean) => (
     <li className="relative">
         <motion.div
