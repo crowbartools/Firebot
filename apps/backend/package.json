@@ -8,7 +8,6 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint --fix --ext .ts,.tsx src/**",
-
     "nest:dev": "npm run start:dev",
     "neststart": "nest start",
     "neststart:dev": "nest start --watch",
@@ -16,9 +15,11 @@
     "neststart:prod": "node dist/"
   },
   "dependencies": {
+    "@fastify/static": "^6.9.0",
     "@nestjs/common": "^9.3.8",
     "@nestjs/core": "^9.3.8",
     "@nestjs/platform-fastify": "^9.3.8",
+    "@nestjs/serve-static": "^3.0.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"
   },

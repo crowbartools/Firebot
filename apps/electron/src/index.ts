@@ -16,8 +16,6 @@ const createWindow = () => {
         return;
     }
 
-    console.log(assetpath);
-
     mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
