@@ -16,7 +16,7 @@
     "autoprefixer": "^10.4.13",
     "eslint-config-custom": "*",
     "eslint-config-next": "13.1.6",
-    "postcss": "^8.4.21",
+    "postcss": "^8.4",
     "prettier-plugin-tailwind": "^2.2.12",
     "tailwind-config": "*",
     "tailwind-scrollbar": "^2.1.0",
