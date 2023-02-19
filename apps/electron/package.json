@@ -8,7 +8,8 @@
     "scripts": {
         "build": "tsc",
         "dev": "node ./scripts/watch.js",
-        "lint": "eslint --fix --ext .ts,.tsx src/**"
+        "lint": "eslint --fix --ext .ts,.tsx src/**",
+        "precompile": "node ./scripts/pre-compile.js"
     },
     "devDependencies": {
         "electron": "^23.0.0",
