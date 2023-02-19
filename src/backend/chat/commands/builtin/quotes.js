@@ -202,7 +202,7 @@ const quotesManagement = {
             const quotesManager = require("../../../quotes/quotes-manager");
             const logger = require("../../../logwrapper");
             const twitchChat = require("../../twitch-chat");
-            const twitchChannels = require("../../../twitch-api/resource/channels");
+            const TwitchApi = require("../../../twitch-api/api");
             const frontendCommunicator = require("../../../common/frontend-communicator");
 
             const { commandOptions } = event;
@@ -268,7 +268,7 @@ const quotesManagement = {
                     return resolve();
                 }
 
-                const channelData = await twitchChannels.getChannelInformation();
+                const channelData = await TwitchApi.channels.getChannelInformation();
 
                 const currentGameName = channelData && channelData.gameName ? channelData.gameName : "Unknown game";
 

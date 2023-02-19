@@ -93,7 +93,7 @@ const fileWriter = {
         </eos-container>
 
         <eos-container header="Text" pad-top="true" ng-if="effect.writeMode === 'replace' || effect.writeMode === 'suffix' || effect.writeMode === 'append' || (effect.writeMode === 'delete' && effect.deleteLineMode === 'text') || (effect.writeMode === 'replace-line' && effect.replaceLineMode === 'text')">
-            <firebot-input ng-model="effect.text" type="text" placeholder-text="Enter text" use-text-area="true"></firebot-input>
+            <firebot-input model="effect.text" type="text" placeholder-text="Enter text" use-text-area="true"></firebot-input>
         </eos-container>
 
         <eos-container header="Line Number(s)" pad-top="true" ng-if="(effect.writeMode === 'delete' && effect.deleteLineMode === 'lines') || (effect.writeMode === 'replace-line' && effect.replaceLineMode === 'lineNumbers')">
@@ -102,7 +102,7 @@ const fileWriter = {
         </eos-container>
 
         <eos-container header="Replacement Text" pad-top="true" ng-if="effect.writeMode === 'replace-line'">
-            <firebot-input ng-model="effect.replacementText" type="text" placeholder-text="Enter text" use-text-area="true"></firebot-input>
+            <firebot-input model="effect.replacementText" type="text" placeholder-text="Enter text" use-text-area="true"></firebot-input>
         </eos-container>
     `,
     /**

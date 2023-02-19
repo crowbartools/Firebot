@@ -2,7 +2,7 @@
 
 const Steam = require("./steam-access");
 const twitchChat = require("../../../twitch-chat");
-const twitchChannels = require("../../../../twitch-api/resource/channels");
+const TwitchApi = require("../../../../twitch-api/api");
 
 const steam = {
     definition: {
@@ -35,7 +35,7 @@ const steam = {
 
         if (gameName == null || gameName.length < 1) {
 
-            const channelData = await twitchChannels.getChannelInformation();
+            const channelData = await TwitchApi.channels.getChannelInformation();
 
             gameName = channelData && channelData.gameName ? channelData.gameName : "";
         }
