@@ -19,9 +19,9 @@ const effectRunner = require("../common/effect-runner");
  * @prop {boolean} saveToTxtFile - whether the value of the counter should be saved in a text file
  * @prop {number} [minimum] - the minimum value the counter can be
  * @prop {number} [maximum] - the maximum value the counter can be
- * @prop {import("../effects/models/effect-list").EffectList} [updateEffects] - the effect list that is triggered when the counter is updated
- * @prop {import("../effects/models/effect-list").EffectList} [minimumEffects] - the effect list that is triggered when the minimum value is hit
- * @prop {import("../effects/models/effect-list").EffectList} [maximumEffects] - the effect list that is triggered when the maximum value is hit
+ * @prop {import("../../types/effects").EffectList} [updateEffects] - the effect list that is triggered when the counter is updated
+ * @prop {import("../../types/effects").EffectList} [minimumEffects] - the effect list that is triggered when the minimum value is hit
+ * @prop {import("../../types/effects").EffectList} [maximumEffects] - the effect list that is triggered when the maximum value is hit
  */
 
 /**
@@ -247,7 +247,7 @@ class CounterManager extends JsonDbManager {
     /**
      * @private
      * @param {Counter} counter
-     * @param {import("../effects/models/effect-list").EffectList} effects
+     * @param {import("../../types/effects").EffectList} effects
      * @returns {Promise.<void>}
      */
     _runEffects(counter, effects) {

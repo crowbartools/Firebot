@@ -1,4 +1,4 @@
-import { EventSource } from "@crowbartools/firebot-custom-scripts-types/types/modules/event-manager";
+import { EventSource } from "../../../../../types/events";
 import {
   OBS_EVENT_SOURCE_ID,
   OBS_SCENE_CHANGED_EVENT_ID,

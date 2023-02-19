@@ -1,4 +1,4 @@
-import { EffectList } from "../effects/models/effect-list";
+import { EffectList } from "../../types/effects";
 import { CronJob } from "cron";
 import { DateTime } from "luxon";
 import { TriggerType } from "../common/EffectType";

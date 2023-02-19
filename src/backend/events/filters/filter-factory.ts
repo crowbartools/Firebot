@@ -1,4 +1,4 @@
-import { EventFilter } from "@crowbartools/firebot-custom-scripts-types/types/modules/event-filter-manager";
+import { EventFilter } from "../../../types/events";
 import { ComparisonType } from "../../../shared/filter-constants";
 
 type FilterConfig = {
