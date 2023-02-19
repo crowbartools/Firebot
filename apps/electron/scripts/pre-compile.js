@@ -131,8 +131,3 @@ const npm = exec('npm install', { cwd: outPath }, err => {
         console.log('[compile:electron] npm install complete')
     }
 });
-
-
-/*
-TODO: pack for electron
-*/
