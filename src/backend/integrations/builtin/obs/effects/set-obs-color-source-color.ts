@@ -1,4 +1,4 @@
-import { EffectType } from "../../../../effects/models/effect-models";
+import { EffectType } from "../../../../../types/effects";
 import { OBSSource, setColorSourceSettings } from "../obs-remote";
 
 export const SetOBSColorSourceColorEffectType: EffectType<{

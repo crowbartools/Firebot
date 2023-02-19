@@ -1,4 +1,4 @@
-import { EffectType } from "../../../../effects/models/effect-models";
+import { EffectType } from "../../../../../types/effects";
 import { stopStreaming } from "../obs-remote";
 
 export const StopStreamEffectType: EffectType<{}> = {

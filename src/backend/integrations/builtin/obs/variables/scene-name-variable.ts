@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "@crowbartools/firebot-custom-scripts-types/types/modules/replace-variable-manager";
+import { ReplaceVariable } from "../../../../../types/variables";
 import { getCurrentSceneName } from "../obs-remote";
 
 export const SceneNameVariable: ReplaceVariable = {
