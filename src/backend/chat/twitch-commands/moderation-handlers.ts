@@ -122,7 +122,7 @@ export const vipHandler: TwitchSlashCommandHandler<[string]> = {
         }
 
         const result = await twitchApi.moderation.addChannelVip(targetUserId);
-        if (result) {
+        if (result === true) {
             chatRolesManager.addVipToVipList(targetUsername);
         }
         return result;
@@ -154,7 +154,7 @@ export const unvipHandler: TwitchSlashCommandHandler<[string]> = {
         }
 
         const result = await twitchApi.moderation.removeChannelVip(targetUserId);
-        if (result) {
+        if (result === true) {
             chatRolesManager.removeVipFromVipList(targetUsername);
         }
         return result;

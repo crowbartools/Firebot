@@ -21,9 +21,11 @@ class FirebotRefreshingAuthProvider {
                 if (accountAccess.getAccounts().bot?.userId === userId) {
                     account = accountAccess.getAccounts().bot;
                     accountType = "bot";
-                } else {
+                } else if (accountAccess.getAccounts().streamer?.userId === userId) {
                     account = accountAccess.getAccounts().streamer;
                     accountType = "streamer";
+                } else {
+                    logger.warn("Unknown Twitch account token refreshed");
                 }
     
                 logger.debug(`Persisting ${accountType} access token`);
@@ -31,12 +33,12 @@ class FirebotRefreshingAuthProvider {
                 const auth: AuthDetails = account.auth ?? { } as AuthDetails;
                 auth.access_token = token.accessToken;
                 auth.refresh_token = token.refreshToken;
+                auth.expires_in = token.expiresIn;
+                auth.obtainment_timestamp = token.obtainmentTimestamp;
                 auth.expires_at = getExpiryDateOfAccessToken({
                     expiresIn: token.expiresIn,
                     obtainmentTimestamp: token.obtainmentTimestamp
                 });
-                auth.expires_in = token.expiresIn;
-                auth.obtainment_timestamp = token.obtainmentTimestamp;
     
                 account.auth = auth;
                 accountAccess.updateAccount(accountType, account, false);
