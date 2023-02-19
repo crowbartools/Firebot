@@ -11,25 +11,55 @@ const appsDir = path.resolve(electronProjectDir, '../');
 const backendProjectDir = path.resolve(appsDir, './backend/');
 
 let procs = {}
-const close = (name) => {
+const close = (name, reason) => {
     const proc = procs[name];
     if (proc != null) {
         proc.removeAllListeners();
-        proc.kill();
+        proc.kill(reason || 'SIGINT');
         proc[name] = null;
     }
 }
-const shutdown = (code, message) => {
-    close('electronInstance');
-    close('electronWatcher');
-    close('backendWatcher');
-    if (code != null && code != 0) {
-        console.error(message);
+const shutdown = (reason) => {
+    close('electronInstance', reason.prockill);
+    close('electronWatcher', reason.prockill);
+    close('backendWatcher', reason.prockill);
+    if (reason.reason === 'ERROR') {
+        console.error(reason.message, reason.origin);
+        process.exit(1);
+        return;
     }
-    process.exit();
+    process.exit(reason.code);
 }
-process.on('uncaughtException', shutdown);
-process.on('exit', shutdown);
+
+process.on('uncaughtException', (error, origin) => shutdown({
+    reason: 'ERROR',
+    error,
+    origin
+}));
+process.on('SIGTERM', () => shutdown({
+    reason: 'EXIT',
+    prockill: 'SIGTERM',
+    code: 0
+}));
+process.on('SIGINT',  () => shutdown({
+    reason: 'EXIT',
+    prockill: 'SIGINT',
+    code: 0
+}));
+process.on('SIGBREAK', () => shutdown({
+    reason: 'EXIT',
+    prockill: 'SIGBREAK',
+    code: 0
+}));
+process.on('SIGHUP', () => shutdown({
+    reason: 'EXIT',
+    prockill: 'SIGHUP',
+    code: 0
+}));
+process.on('exit', (code) => shutdown({
+    reason: 'EXIT',
+    code
+}));
 
 const startElectron = () => {
     close('electronInstance');
