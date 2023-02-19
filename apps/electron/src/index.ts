@@ -2,7 +2,7 @@ import path from 'path';
 
 import assetpath from 'assets';
 
-import { app, BrowserWindow} from 'electron';
+import { app, BrowserWindow } from 'electron';
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
 
 // ts/eslint will complain until apps/backend/ has been built
@@ -16,13 +16,19 @@ const createWindow = () => {
         return;
     }
 
+    console.log(assetpath);
+
     mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
         icon: path.join(assetpath, 'images/favicon.ico')
     });
 
-    mainWindow.loadURL('http://localhost:3000');
+    if (process.env.NODE_ENV === 'development') {
+        mainWindow.loadURL('http://localhost:3000');
+    } else {
+        mainWindow.loadURL('http://localhost:3001');
+    }
 }
 
 process.on('uncaughtException', async function (err) {

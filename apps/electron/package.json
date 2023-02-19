@@ -9,16 +9,24 @@
         "build": "tsc",
         "dev": "node ./scripts/watch.js",
         "lint": "eslint --fix --ext .ts,.tsx src/**",
-        "precompile": "node ./scripts/pre-compile.js"
+        "precompile": "node ./scripts/pre-compile/index.js"
     },
     "devDependencies": {
         "electron": "^23.0.0",
         "eslint-config-custom": "*",
         "tsc-watch": "^6.0.0",
-        "tsconfig": "*",
-        "assets": "*"
+        "tsconfig": "*"
     },
     "dependencies": {
-        "backend": "*"
+        "backend": "*",
+        "assets": "*"
+    },
+    "engines": {
+        "node": ">=18.12.1",
+        "npm": ">=8.19.2"
+    },
+    "volta": {
+        "node": "18.12.1",
+        "npm": "8.19.2"
     }
 }

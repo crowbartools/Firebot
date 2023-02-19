@@ -29,6 +29,7 @@
         "npm": "8.19.2"
     },
     "scripts": {
+        "precompile": "turbo run precompile",
         "dev": "turbo dev"
     }
 }
