@@ -1,5 +1,5 @@
-import { EffectType } from "../../../../effects/models/effect-models";
-import {OBSSource, OBSSourceScreenshotSettings, setTextSourceSettings, takeSourceScreenshot} from "../obs-remote";
+import { EffectType } from "../../../../../types/effects";
+import {OBSSource, OBSSourceScreenshotSettings, takeSourceScreenshot} from "../obs-remote";
 import * as fs from "fs";
 import logger from "../../../../logwrapper";
 
@@ -20,7 +20,7 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
     },
     optionsTemplate: `
         <eos-container header="OBS Source">
-            <ui-select ng-model="effect.source" theme="bootstrap"> <!-- Source -->
+            <ui-select ng-model="effect.source" theme="bootstrap">
                 <ui-select-match>{{$select.selected.name}} ({{$select.selected.type}})</ui-select-match>
                 <ui-select-choices repeat="item.name as item in sources | filter: $select.search">
                     <div ng-bind-html="item.name | highlight: $select.search"></div>
