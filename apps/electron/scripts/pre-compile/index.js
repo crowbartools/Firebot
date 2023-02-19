@@ -112,7 +112,7 @@ base.workspaces = [
     'frontend/',
     'packages/*'
 ];
-base.scripts = { run: "electron ." }
+base.scripts = { start: "electron ." }
 write(join(outPath, 'package.json'), base);
 
 // run npm install - done so electron packaging only packages non dev deps
