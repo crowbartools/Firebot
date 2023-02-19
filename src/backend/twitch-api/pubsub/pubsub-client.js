@@ -71,8 +71,8 @@ async function createClient() {
                 logger.debug("Got reward redemption event!");
 
                 let imageUrl = "";
-                if (message && message.defaultImage) {
-                    const images = message.defaultImage;
+                if (message && message.rewardImage) {
+                    const images = message.rewardImage;
                     if (images.url_4x) {
                         imageUrl = images.url_4x;
                     } else if (images.url_2x) {
@@ -100,7 +100,7 @@ async function createClient() {
 
         listeners.push(redemptionListener);
 
-        const whisperListener = await pubSubClient.onWhisper(streamer.userId, (message) => {
+        const whisperListener = pubSubClient.onWhisper(streamer.userId, (message) => {
             twitchEventsHandler.whisper.triggerWhisper(
                 message.senderName,
                 message.text
@@ -108,7 +108,7 @@ async function createClient() {
         });
         listeners.push(whisperListener);
 
-        const bitsListener = await pubSubClient.onBits(streamer.userId, (message) => {
+        const bitsListener = pubSubClient.onBits(streamer.userId, (message) => {
             twitchEventsHandler.cheer.triggerCheer(
                 message.userName ?? "An Anonymous Cheerer",
                 message.isAnonymous,
@@ -119,7 +119,7 @@ async function createClient() {
         });
         listeners.push(bitsListener);
 
-        const bitsBadgeUnlockListener = await pubSubClient.onBitsBadgeUnlock(streamer.userId, (message) => {
+        const bitsBadgeUnlockListener = pubSubClient.onBitsBadgeUnlock(streamer.userId, (message) => {
             twitchEventsHandler.cheer.triggerBitsBadgeUnlock(
                 message.userName ?? "An Anonymous Cheerer",
                 message.message ?? "",
@@ -128,7 +128,7 @@ async function createClient() {
         });
         listeners.push(bitsBadgeUnlockListener);
 
-        const subsListener = await pubSubClient.onSubscription(streamer.userId, (subInfo) => {
+        const subsListener = pubSubClient.onSubscription(streamer.userId, (subInfo) => {
             if (!subInfo.isGift) {
                 twitchEventsHandler.sub.triggerSub(
                     subInfo.userName,
@@ -144,7 +144,7 @@ async function createClient() {
         });
         listeners.push(subsListener);
 
-        const autoModListener = await pubSubClient.onAutoModQueue(streamer.userId, streamer.userId, async (message) => {
+        const autoModListener = pubSubClient.onAutoModQueue(streamer.userId, streamer.userId, async (message) => {
             if (message.status === "PENDING") {
                 const { buildViewerFirebotChatMessageFromAutoModMessage } = require("../../chat/chat-helpers");
 
@@ -164,7 +164,7 @@ async function createClient() {
         });
         listeners.push(autoModListener);
 
-        const modListener = await pubSubClient.onModAction(streamer.userId, streamer.userId, (message) => {
+        const modListener = pubSubClient.onModAction(streamer.userId, streamer.userId, (message) => {
             const frontendCommunicator = require("../../common/frontend-communicator");
 
             switch (message.action) {
@@ -217,7 +217,7 @@ async function createClient() {
         });
         listeners.push(modListener);
 
-        const chatRoomListener = await pubSubClient.onCustomTopic(streamer.userId, "stream-chat-room-v1", async (event) => {
+        const chatRoomListener = pubSubClient.onCustomTopic(streamer.userId, "stream-chat-room-v1", async (event) => {
             const message = event?.data;
             if (message?.type === "extension_message") {
                 const twitchApi = require("../api").getClient();
