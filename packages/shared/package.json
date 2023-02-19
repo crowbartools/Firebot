@@ -1,9 +1,9 @@
 {
-    "name": "unicode-string",
-    "private": true,
+    "name": "shared-utilities",
     "version": "1.0.0",
+    "license": "GPL-v3.0",
+    "author": "CrowbarTools",
     "main": "./dist/index.js",
-    "license": "ISC",
     "scripts": {
         "build": "tsc"
     }

@@ -1,11 +1,11 @@
 import getUnicodeChars from './get-unicode-chars';
 
-export class UnicodeString extends String {
+export class UnicodeText extends String {
     private chars : string[];
 
-    constructor(text: string | String | UnicodeString) {
+    constructor(text: string | String | UnicodeText) {
         super(text = text + '');
-        this.chars = getUnicodeChars(UnicodeString.normalize(text));
+        this.chars = getUnicodeChars(UnicodeText.normalize(text));
     }
     get baseLength() : number {
         return super.length;
@@ -56,22 +56,22 @@ export class UnicodeString extends String {
     /** Returns a new string with the specified arguments concatinated to the base
      * @param args strings to concat to the instance's string
      */
-    concat(...args: Array<string | String | UnicodeString>) : string {
+    concat(...args: Array<string | String | UnicodeText>) : string {
         return this.baseString.concat(...(args.map(value => '' + value)));
     }
 
-    /** Returns a new UnicodeString with the specified arguments concatinated to the base
+    /** Returns a new UnicodeText with the specified arguments concatinated to the base
      * @param args strings to concat to the instance's string
      */
-    concatUS(...args: Array<string | String | UnicodeString>) : UnicodeString {
-        return UnicodeString.from(this.baseString.concat(...(args.map((value : unknown) => value + ''))));
+    concatUS(...args: Array<string | String | UnicodeText>) : UnicodeText {
+        return UnicodeText.from(this.baseString.concat(...(args.map((value : unknown) => value + ''))));
     }
 
     /** Returns true if the searchTerm is found in the base string
      * @param searchTerm The text to search for
      * @param endPosition The ending position in the base string that the searchTerm should end at
      */
-    endsWith(searchTerm: string | UnicodeString, endPosition?: number) : boolean {
+    endsWith(searchTerm: string | UnicodeText, endPosition?: number) : boolean {
         let selfChars = this.characters;
         if (endPosition == null) {
             endPosition = selfChars.length
@@ -86,10 +86,10 @@ export class UnicodeString extends String {
         selfChars = selfChars.slice(0, endPosition);
 
         let searchChars : string[];
-        if (searchTerm instanceof UnicodeString) {
+        if (searchTerm instanceof UnicodeText) {
             searchChars = searchTerm.characters;
         } else {
-            searchChars = UnicodeString.from('' + searchTerm).characters;
+            searchChars = UnicodeText.from('' + searchTerm).characters;
         }
         for (let idx = searchChars.length; idx > 0; idx -= 1) {
             if (selfChars[selfChars.length - idx] !== searchChars[searchChars.length - idx]) {
@@ -100,19 +100,19 @@ export class UnicodeString extends String {
     }
 
 
-    includes(searchTerm: string | UnicodeString, startPosition?: number) : boolean {
+    includes(searchTerm: string | UnicodeText, startPosition?: number) : boolean {
         return -1 < this.indexOf(searchTerm, startPosition);
     }
-    indexOf(searchTerm: string | UnicodeString, startPosition?: number) : number {
+    indexOf(searchTerm: string | UnicodeText, startPosition?: number) : number {
         if (searchTerm == null) {
             return -1;
         }
 
         let matchChars : string[];
-        if (searchTerm instanceof UnicodeString) {
+        if (searchTerm instanceof UnicodeText) {
             matchChars = searchTerm.characters;
         } else {
-            matchChars = UnicodeString.from(searchTerm + '').characters;
+            matchChars = UnicodeText.from(searchTerm + '').characters;
         }
         const matchLen = matchChars.length;
         if (matchLen === 0) {
@@ -155,10 +155,10 @@ export class UnicodeString extends String {
     normalize(form?: "NFC" | "NFD" | "NFKC" | "NFKD") : string {
         return this.toString().normalize(form);
     }
-    normalizeUS(form?: "NFC" | "NFD" | "NFKC" | "NFKD") : UnicodeString {
-        return UnicodeString.from(this.normalize(form));
+    normalizeUS(form?: "NFC" | "NFD" | "NFKC" | "NFKD") : UnicodeText {
+        return UnicodeText.from(this.normalize(form));
     }
-    padEnd(length: number, padding : string | UnicodeString = ' ') : string {
+    padEnd(length: number, padding : string | UnicodeText = ' ') : string {
         length = Number(length);
         if (!Number.isInteger(length) || length <= this.chars.length) {
             return this.toString();
@@ -166,18 +166,18 @@ export class UnicodeString extends String {
         let padText : string;
         if (padding == null) {
             padText = ' '.repeat(length - this.chars.length);
-        } else if (padding instanceof UnicodeString) {
+        } else if (padding instanceof UnicodeText) {
             padText = padding.toString().repeat(Math.ceil(length / padding.length));
         } else {
-            padding = UnicodeString.from(padding);
+            padding = UnicodeText.from(padding);
             padText = padding.toString().repeat(Math.ceil(length / padding.length));
         }
-        return UnicodeString.from(this.toString() + padText).slice(0, length);
+        return UnicodeText.from(this.toString() + padText).slice(0, length);
     }
-    padEndUS(length: number, padding: string | UnicodeString = ' ') : UnicodeString {
-        return UnicodeString.from(this.padEnd(length, padding));
+    padEndUS(length: number, padding: string | UnicodeText = ' ') : UnicodeText {
+        return UnicodeText.from(this.padEnd(length, padding));
     }
-    padStart(length: number, padding: string | UnicodeString = ' ') : string {
+    padStart(length: number, padding: string | UnicodeText = ' ') : string {
         length = Number(length);
         if (!Number.isInteger(length) || length <= this.chars.length) {
             return this.toString();
@@ -185,22 +185,22 @@ export class UnicodeString extends String {
         let padText : string;
         if (padding == null) {
             padText = ' '.repeat(length - this.chars.length);
-        } else if (padding instanceof UnicodeString) {
+        } else if (padding instanceof UnicodeText) {
             padText = padding.toString().repeat(Math.ceil(length / padding.length));
         } else {
-            padding = UnicodeString.from(padding);
+            padding = UnicodeText.from(padding);
             padText = padding.toString().repeat(Math.ceil(length / padding.length));
         }
-        return UnicodeString.from(padText + this.toString()).slice(length - this.chars.length);
+        return UnicodeText.from(padText + this.toString()).slice(length - this.chars.length);
     }
-    padStartUS(length: number, padding: string | UnicodeString = ' ') : UnicodeString {
-        return UnicodeString.from(this.padStart(length, padding));
+    padStartUS(length: number, padding: string | UnicodeText = ' ') : UnicodeText {
+        return UnicodeText.from(this.padStart(length, padding));
     }
     repeat(count: number) : string {
         return this.valueOf().repeat(count);
     }
-    repeatUS(count: number) : UnicodeString {
-        return UnicodeString.from(this.repeat(count))
+    repeatUS(count: number) : UnicodeText {
+        return UnicodeText.from(this.repeat(count))
     }
 
     // replace()    - Won't add: regex
@@ -210,13 +210,13 @@ export class UnicodeString extends String {
     slice(start: number, end?: number) : string {
         return this.chars.slice(start, end).join('');
     }
-    sliceUS(start: number, end?: number) : UnicodeString {
-        return UnicodeString.from(this.slice(start, end));
+    sliceUS(start: number, end?: number) : UnicodeText {
+        return UnicodeText.from(this.slice(start, end));
     }
 
     // split() - Won't add: regex
 
-    startsWith(searchTerm: string | UnicodeString, startPosition?: number) : boolean {
+    startsWith(searchTerm: string | UnicodeText, startPosition?: number) : boolean {
         if (searchTerm === '') {
             return true;
         }
@@ -225,10 +225,10 @@ export class UnicodeString extends String {
             return false;
         }
         let search : string[];
-        if (searchTerm instanceof UnicodeString) {
+        if (searchTerm instanceof UnicodeText) {
             search = searchTerm.characters;
         } else {
-            search = UnicodeString.from('' + searchTerm).characters;
+            search = UnicodeText.from('' + searchTerm).characters;
         }
         const chars = this.characters.slice(startPosition);
         for (let idx = 0, end = search.length; idx < end; idx += 1) {
@@ -249,8 +249,8 @@ export class UnicodeString extends String {
         }
         return this.slice(start, end);
     }
-    substringUS(start: number, end?: number) : UnicodeString {
-        return UnicodeString.from(this.substring(start, end));
+    substringUS(start: number, end?: number) : UnicodeText {
+        return UnicodeText.from(this.substring(start, end));
     }
     toJSON() {
         return this.valueOf();
@@ -262,8 +262,8 @@ export class UnicodeString extends String {
     toLowerCase() : string {
         return this.valueOf().toLowerCase();
     }
-    toLowerCaseUS() : UnicodeString {
-        return UnicodeString.from(this.toLowerCase());
+    toLowerCaseUS() : UnicodeText {
+        return UnicodeText.from(this.toLowerCase());
     }
     toString() {
         return this.valueOf();
@@ -271,26 +271,26 @@ export class UnicodeString extends String {
     toUpperCase() : string {
         return this.valueOf().toUpperCase();
     }
-    toUpperCaseUS() : UnicodeString {
-        return UnicodeString.from(this.toUpperCase());
+    toUpperCaseUS() : UnicodeText {
+        return UnicodeText.from(this.toUpperCase());
     }
     trim() : string {
         return this.valueOf().trim();
     }
-    trimUS() : UnicodeString {
-        return UnicodeString.from(this.trim())
+    trimUS() : UnicodeText {
+        return UnicodeText.from(this.trim())
     }
     trimEnd() : string {
         return this.valueOf().trimEnd();
     }
-    trimEndUS() : UnicodeString {
-        return UnicodeString.from(this.valueOf().trimEnd());
+    trimEndUS() : UnicodeText {
+        return UnicodeText.from(this.valueOf().trimEnd());
     }
     trimStart() : string {
         return this.valueOf().trimStart();
     }
-    trimStartUS() : UnicodeString {
-        return UnicodeString.from(this.valueOf().trimStart());
+    trimStartUS() : UnicodeText {
+        return UnicodeText.from(this.valueOf().trimStart());
     }
     valueOf() {
         return this.chars.join('');
@@ -317,7 +317,7 @@ export class UnicodeString extends String {
         return this.valueOf();
     }
 
-    static from(subject: unknown) : UnicodeString {
+    static from(subject: unknown) : UnicodeText {
         if (typeof subject === 'function') {
             throw new Error('invalid input')
         } else if (subject == null) {
@@ -325,7 +325,7 @@ export class UnicodeString extends String {
         } else if (typeof subject !== 'string') {
             subject = '' + subject;
         }
-        return new Proxy(new UnicodeString(<string>subject), {
+        return new Proxy(new UnicodeText(<string>subject), {
             get(target, property, reciever) {
                 if (typeof property === 'symbol') {
                     return Reflect.get(target, property, reciever);
@@ -350,9 +350,9 @@ export class UnicodeString extends String {
             }
         });
     }
-    static normalize(subject: string | String | UnicodeString) : string {
+    static normalize(subject: string | String | UnicodeText) : string {
         return ('' + subject).normalize("NFC");
     }
 }
 
-export default UnicodeString.from;
+export default UnicodeText.from;
