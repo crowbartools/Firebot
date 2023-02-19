@@ -27,7 +27,11 @@ const shutdown = (reason) => {
         process.exit(1);
         return;
     }
-    process.exit(reason.code);
+    if (reason) {
+        process.exit(reason.code);
+    } else {
+        process.exit(0);
+    }
 }
 
 process.on('uncaughtException', (error, origin) => shutdown({ reason: 'ERROR', error, origin }));
@@ -54,7 +58,7 @@ const startElectron = () => {
 
     electronInstance.on('close', () => {
         procs.electronInstance = null;
-        shutdown();
+        shutdown({ reason: 'EXIT', prockill: 'SIGHUP', code: 0 });
     });
 };
 
