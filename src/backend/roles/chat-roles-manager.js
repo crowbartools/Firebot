@@ -38,7 +38,9 @@ const loadUsersInVipRole = (usersInVipRole) => {
  * @return {void}
  */
 const addVipToVipList = (username) => {
-    vips.push(username);
+    if (!vips.includes(username)) {
+        vips.push(username);
+    }
 };
 
 /**

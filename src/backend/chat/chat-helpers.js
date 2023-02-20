@@ -16,7 +16,7 @@ const utils = require("../utility");
  * @property {string} username
  * @property {string} useridname
  * @property {string} profilePicUrl
- * @property {number} userId
+ * @property {string} userId
  * @property {string[]} roles
  * @property {any[]} badges
  * @property {string} customRewardId

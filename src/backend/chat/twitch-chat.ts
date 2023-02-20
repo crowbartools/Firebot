@@ -1,49 +1,62 @@
-"use strict";
-const logger = require("../logwrapper");
-const EventEmitter = require("events");
-const { ChatClient } = require("@twurple/chat");
-const firebotRefreshingAuthProvider = require("../auth/firebot-refreshing-auth-provider");
-const accountAccess = require("../common/account-access");
-const frontendCommunicator = require("../common/frontend-communicator");
-const chatHelpers = require("./chat-helpers");
-const twitchChatListeners = require("./chat-listeners/twitch-chat-listeners");
-const followPoll = require("../twitch-api/follow-poll");
-const chatterPoll = require("../twitch-api/chatter-poll");
-const commandHandler = require("./commands/commandHandler");
-const activeUserHandler = require("./chat-listeners/active-user-handler");
-const twitchApi = require("../twitch-api/api");
-const chatRolesManager = require("../roles/chat-roles-manager");
-const twitchSlashCommandHandler = require("./twitch-slash-command-handler");
+import { EventEmitter } from "events";
+import { ChatClient } from "@twurple/chat";
 
-/**@extends NodeJS.EventEmitter */
+import logger from "../logwrapper";
+import firebotRefreshingAuthProvider from "../auth/firebot-refreshing-auth-provider";
+import accountAccess from "../common/account-access";
+import frontendCommunicator from "../common/frontend-communicator";
+import chatHelpers from "./chat-helpers";
+import twitchChatListeners from "./chat-listeners/twitch-chat-listeners";
+import followPoll from "../twitch-api/follow-poll";
+import chatterPoll from "../twitch-api/chatter-poll";
+import commandHandler from "./commands/commandHandler";
+import activeUserHandler, { User } from "./chat-listeners/active-user-handler";
+import twitchApi from "../twitch-api/api";
+import chatRolesManager from "../roles/chat-roles-manager";
+import * as twitchSlashCommandHandler from "./twitch-slash-command-handler";
+
+interface UserModRequest {
+    username: string;
+    shouldBeMod: boolean;
+}
+
+interface UserBanRequest {
+    username: string;
+    shouldBeBanned: boolean;
+}
+
+interface UserVipRequest {
+    username: string;
+    shouldBeVip: boolean;
+}
+
 class TwitchChat extends EventEmitter {
+    private _streamerChatClient: ChatClient;
+    private _botChatClient: ChatClient;
 
     constructor() {
         super();
 
-        /** @type {ChatClient} */
         this._streamerChatClient = null;
-
-        /** @type {ChatClient} */
         this._botChatClient = null;
     }
 
     /**
      * Whether or not the streamer is currently connected
      */
-    chatIsConnected() {
+    get chatIsConnected(): boolean {
         return this._streamerChatClient?.irc?.isConnected === true;
     }
 
     /**
      * Disconnects the streamer and bot from chat
      */
-    async disconnect(emitDisconnectEvent = true) {
+    async disconnect(emitDisconnectEvent = true): Promise<void> {
         if (this._streamerChatClient != null) {
             this._streamerChatClient.quit();
             this._streamerChatClient = null;
         }
-        if (this._botChatClient != null && this._botChatClient.isConnected) {
+        if (this._botChatClient != null && this._botChatClient?.irc?.isConnected === true) {
             this._botChatClient.quit();
             this._botChatClient = null;
         }
@@ -62,7 +75,7 @@ class TwitchChat extends EventEmitter {
     /**
      * Connects the streamer and bot to chat
      */
-    async connect() {
+    async connect(): Promise<void> {
         const streamer = accountAccess.getAccounts().streamer;
         if (!streamer.loggedIn) {
             return;
@@ -103,6 +116,7 @@ class TwitchChat extends EventEmitter {
                     const userData = message.tags;
 
                     const color = userData.get("color");
+                    /** @ts-ignore */
                     const badges = new Map(userData.get("badges").split(',').map(b => b.split('/', 2)));
 
                     chatHelpers.setStreamerData({
@@ -164,7 +178,7 @@ class TwitchChat extends EventEmitter {
      * @param {string} message The message to send
      * @param {string} accountType The type of account to whisper with ('streamer' or 'bot')
      */
-    async _say(message, accountType, replyToId) {
+    async _say(message: string, accountType: string, replyToId?: string): Promise<void> {
         const chatClient = accountType === 'bot' ? this._botChatClient : this._streamerChatClient;
         try {
             logger.debug(`Sending message as ${accountType}.`);
@@ -179,7 +193,6 @@ class TwitchChat extends EventEmitter {
                     userName: firebotChatMessage.username,
                     displayName: firebotChatMessage.username
                 }, true, false);
-                //commandHandler.handleChatMessage(firebotChatMessage);
                 frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
                 twitchChatListeners.events.emit("chat-message", firebotChatMessage);
             }
@@ -193,7 +206,7 @@ class TwitchChat extends EventEmitter {
      * @param {string} message The message to send
      * @param {string} accountType The type of account to whisper with ('streamer' or 'bot')
      */
-    async _whisper(message, username = "", accountType) {
+    async _whisper(message: string, username: string = "", accountType: string): Promise<void> {
         const client = twitchApi.getClient();
         try {
             logger.debug(`Sending whisper as ${accountType} to ${username}.`);
@@ -210,12 +223,12 @@ class TwitchChat extends EventEmitter {
      * If a username is provided, the message will be whispered.
      * If the message is too long, it will be automatically broken into multiple fragments and sent individually.
      *
-     * @param {string} message The message to send
-     * @param {string} [username] If provided, message will be whispered to the given user.
-     * @param {string} [accountType] Which account to chat as. Defaults to bot if available otherwise, the streamer.
-     * @param {string} [replyToMessageId] A message id to reply to
+     * @param message The message to send
+     * @param username If provided, message will be whispered to the given user.
+     * @param accountType Which account to chat as. Defaults to bot if available otherwise, the streamer.
+     * @param replyToMessageId A message id to reply to
      */
-    async sendChatMessage(message, username, accountType, replyToMessageId) {
+    async sendChatMessage(message: string, username?: string, accountType?: string, replyToMessageId?: string): Promise<void> {
         if (message == null || message?.length < 1) {
             return null;
         }
@@ -259,11 +272,11 @@ class TwitchChat extends EventEmitter {
         }
     }
 
-    async populateChatterList() {
+    async populateChatterList(): Promise<void> {
         await chatterPoll.runChatterPoll();
     }
 
-    async getViewerList() {
+    async getViewerList(): Promise<User[]> {
         const users = activeUserHandler.getAllOnlineUsers();
         return users;
     }
@@ -271,7 +284,12 @@ class TwitchChat extends EventEmitter {
 
 const twitchChat = new TwitchChat();
 
-frontendCommunicator.onAsync("send-chat-message", async (sendData) => {
+interface ChatMessageRequest {
+    message: string;
+    accountType: string;
+}
+
+frontendCommunicator.onAsync("send-chat-message", async (sendData: ChatMessageRequest) => {
     const { message, accountType } = sendData;
 
     // Run commands from firebot chat.
@@ -286,11 +304,11 @@ frontendCommunicator.onAsync("send-chat-message", async (sendData) => {
     await twitchChat.sendChatMessage(message, null, accountType);
 });
 
-frontendCommunicator.onAsync("delete-message", async (messageId) => {
+frontendCommunicator.onAsync("delete-message", async (messageId: string) => {
     await twitchApi.chat.deleteChatMessage(messageId);
 });
 
-frontendCommunicator.onAsync("update-user-mod-status", async (data) => {
+frontendCommunicator.onAsync("update-user-mod-status", async (data: UserModRequest) => {
     if (data == null) {
         return;
     }
@@ -311,7 +329,7 @@ frontendCommunicator.onAsync("update-user-mod-status", async (data) => {
     }
 });
 
-frontendCommunicator.onAsync("update-user-banned-status", async (data) => {
+frontendCommunicator.onAsync("update-user-banned-status", async (data: UserBanRequest) => {
     if (data == null) {
         return;
     }
@@ -332,7 +350,7 @@ frontendCommunicator.onAsync("update-user-banned-status", async (data) => {
     }
 });
 
-frontendCommunicator.onAsync("update-user-vip-status", async (data) => {
+frontendCommunicator.onAsync("update-user-vip-status", async (data: UserVipRequest) => {
     if (data == null) {
         return;
     }
@@ -355,4 +373,4 @@ frontendCommunicator.onAsync("update-user-vip-status", async (data) => {
     }
 });
 
-module.exports = twitchChat;
+export = twitchChat;
