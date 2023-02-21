@@ -1,7 +1,7 @@
 import logger from "../logwrapper";
 import accountAccess, { AuthDetails, FirebotAccount } from "../common/account-access";
 import twitchAuth from "./twitch-auth";
-import TwitchApi = require("../twitch-api/api");
+import TwitchApi from "../twitch-api/api";
 import { getExpiryDateOfAccessToken, RefreshingAuthProvider } from "@twurple/auth";
 
 class FirebotRefreshingAuthProvider {
