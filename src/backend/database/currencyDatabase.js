@@ -546,7 +546,7 @@ frontendCommunicator.onAsync("give-currency", async (/** @type {CurrencyInfo} */
 
     if (sendChatMessage && messageTarget !== "") {
         const twitchChat = require("../chat/twitch-chat");
-        if (!twitchChat.chatIsConnected()) {
+        if (!twitchChat.chatIsConnected) {
             return;
         }
 
