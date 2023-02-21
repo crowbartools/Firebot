@@ -1,19 +1,21 @@
 import { EventEmitter } from "events";
 import { ChatClient } from "@twurple/chat";
 
+import chatHelpers from "./chat-helpers";
+import activeUserHandler, { User } from "./chat-listeners/active-user-handler";
+import twitchChatListeners from "./chat-listeners/twitch-chat-listeners";
+import commandHandler from "./commands/commandHandler";
+import * as twitchSlashCommandHandler from "./twitch-slash-command-handler";
+
 import logger from "../logwrapper";
 import firebotRefreshingAuthProvider from "../auth/firebot-refreshing-auth-provider";
 import accountAccess from "../common/account-access";
 import frontendCommunicator from "../common/frontend-communicator";
-import chatHelpers from "./chat-helpers";
-import twitchChatListeners from "./chat-listeners/twitch-chat-listeners";
-import followPoll from "../twitch-api/follow-poll";
-import chatterPoll from "../twitch-api/chatter-poll";
-import commandHandler from "./commands/commandHandler";
-import activeUserHandler, { User } from "./chat-listeners/active-user-handler";
-import twitchApi from "../twitch-api/api";
+import twitchEventsHandler from "../events/twitch-events";
 import chatRolesManager from "../roles/chat-roles-manager";
-import * as twitchSlashCommandHandler from "./twitch-slash-command-handler";
+import twitchApi from "../twitch-api/api";
+import chatterPoll from "../twitch-api/chatter-poll";
+import followPoll from "../twitch-api/follow-poll";
 
 interface UserModRequest {
     username: string;
@@ -67,9 +69,6 @@ class TwitchChat extends EventEmitter {
         chatterPoll.stopChatterPoll();
 
         activeUserHandler.clearAllActiveUsers();
-
-        const userDatabase = require("../database/userDatabase");
-        await userDatabase.setAllUsersOffline();
     }
 
     /**
@@ -296,7 +295,6 @@ frontendCommunicator.onAsync("send-chat-message", async (sendData: ChatMessageRe
         const firebotMessage = await chatHelpers.buildStreamerFirebotChatMessageFromText(message);
         commandHandler.handleChatMessage(firebotMessage);
 
-        const twitchEventsHandler = require("../events/twitch-events");
         twitchEventsHandler.chatMessage.triggerChatMessage(firebotMessage);
     }
 
