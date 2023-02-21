@@ -51,13 +51,11 @@ const model: EffectType<{
             </div>
         </eos-container>
     `,
-    optionsController: ($scope, effectQueuesService) => {
-        /** @ts-ignore */
+    optionsController: ($scope, effectQueuesService: any) => {
         $scope.effectQueues = effectQueuesService.getEffectQueues();
         $scope.effectQueueName = null;
 
         if ($scope.effect.effectQueue?.length > 0) {
-            /** @ts-ignore */
             const selectedQueue = effectQueuesService.getEffectQueue($scope.effect.effectQueue);
             $scope.effectQueueName = selectedQueue?.name;
 

@@ -116,8 +116,7 @@ class TwitchChat extends EventEmitter {
                     const userData = message.tags;
 
                     const color = userData.get("color");
-                    /** @ts-ignore */
-                    const badges = new Map(userData.get("badges").split(',').map(b => b.split('/', 2)));
+                    const badges = new Map(userData.get("badges").split(',').map(b => b.split('/', 2)) as Array<[string, string]>);
 
                     chatHelpers.setStreamerData({
                         color,
