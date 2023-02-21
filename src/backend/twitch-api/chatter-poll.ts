@@ -58,7 +58,7 @@ class TwitchChatterPoll {
     startChatterPoll(): void {
         this.clearPollInterval();
         this.runChatterPoll();
-        this._chatterPollIntervalId = setInterval(this.runChatterPoll, POLL_INTERVAL);
+        this._chatterPollIntervalId = setInterval(() => this.runChatterPoll(), POLL_INTERVAL);
     };
     
     stopChatterPoll(): void {
