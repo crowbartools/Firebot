@@ -14,16 +14,19 @@ export class TwitchUsersApi {
     
         const userId = (await this.client.users.getUserByName(username)).id;
     
-        const followData = await this.client.users.getFollowFromUserToBroadcaster(userId, streamerData.userId);
+        const followData = await this.client.channels.getChannelFollowers(streamerData.userId, streamerData.userId, userId);
     
-        if (followData == null) {
+        if (followData?.data[0] == null) {
             return null;
         }
     
-        return followData.followDate;
+        return followData.data[0].followDate;
     }
 
-    async doesUserFollowChannel(username: string, channelName: string): Promise<boolean> {
+    /**
+     * @deprecated This MUST be removed before August because #JustTwitchThings
+     */
+    async doesUserFollowChannelLegacy(username: string, channelName: string): Promise<boolean> {
         if (username == null || channelName == null) {
             return false;
         }
@@ -41,6 +44,34 @@ export class TwitchUsersApi {
         const userFollow = await this.client.users.userFollowsBroadcaster(user.id, channel.id);
     
         return userFollow ?? false;
+    }
+
+    async doesUserFollowChannel(username: string, channelName: string): Promise<boolean> {
+        if (username == null || channelName == null) {
+            return false;
+        }
+
+        if (username.toLowerCase() === channelName.toLowerCase()) {
+            return true;
+        }
+
+        const streamerData = accountAccess.getAccounts().streamer;
+
+        const [user, channel] = await this.client.users.getUsersByNames([username, channelName]);
+
+        if (user.id == null || channel.id == null) {
+            return false;
+        }
+
+        try {
+            const userFollowResponse = await this.client.channels.getChannelFollowers(channel.id, streamerData.userId, user.id);
+            const userFollow = userFollowResponse?.data?.length === 1;
+    
+            return userFollow ?? false;
+        } catch (err) {
+            logger.error(`Failed to check if ${username} follows ${channelName}`, err);
+            return false;
+        }
     }
 
     async blockUser(userId: UserIdResolvable, reason?: 'spam' | 'harassment' | 'other'): Promise<boolean> {

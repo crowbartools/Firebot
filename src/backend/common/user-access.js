@@ -24,7 +24,7 @@ async function userFollowsChannels(username, channelNames) {
         if (cachedFollow !== undefined) {
             userFollowsChannel = cachedFollow;
         } else {
-            userFollowsChannel = await twitchApi.users.doesUserFollowChannel(username, channelName);
+            userFollowsChannel = await twitchApi.users.doesUserFollowChannelLegacy(username, channelName);
 
             // set cache value
             followCache.set(`${username}:${channelName}`, userFollowsChannel);
