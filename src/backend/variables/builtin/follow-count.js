@@ -31,16 +31,19 @@ const model = {
     evaluator: async (_, username) => {
         let count = 0;
 
+        const streamer = accountAccess.getAccounts().streamer;
+
         if (username == null) {
-            username = accountAccess.getAccounts().streamer.username;
+            username = streamer.username;
         }
 
         try {
             const user = await api.getClient().users.getUserByName(username);
 
-            const response = await api.getClient().users.getFollows({
-                followedUser: user.id
-            });
+            const response = await api.getClient().channels.getChannelFollowers(
+                user.id,
+                streamer.userId
+            );
             if (response) {
                 count = response.total;
             }
