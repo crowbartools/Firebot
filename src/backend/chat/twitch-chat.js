@@ -137,16 +137,35 @@ class TwitchChat extends EventEmitter {
             followPoll.startFollowPoll();
             chatterPoll.startChatterPoll();
 
-            /* Vips the issue?
-            logger.debug('[chat:connect] retrieving VIPs');
-            const vips = await this._streamerChatClient.getVips(accountAccess.getAccounts().streamer.username);
-            if (vips) {
-                chatRolesManager.loadUsersInVipRole(vips);
+            try {
+                const vips = [];
+                let cursor = null;
+                do {
+                    try {
+                        const vipRequest = await twitchApi.getClient().channels.getVips(accountAccess.getAccounts().streamer.channelId, {
+                            limit: 100,
+                            cursor
+                        });
+
+                        vipRequest.data.forEach(user => {
+                            vips.push(user.name);
+                        });
+                        cursor = vipRequest.cursor;
+
+                    } catch (err) {
+                        logger.warn('[chat:connect] Failed to get VIPs list', err.message);
+                        break;
+                    }
+                } while (cursor);
+
+                if (vips.length) {
+                    chatRolesManager.loadUsersInVipRole(vips);
+                }
+
+                logger.debug(vips);
+            } catch (err) {
+                logger.debug('[chat:connect] Failed to retrieve VIPs list');
             }
-            logger.debug('[chat:connect] VIPs retrieved');
-            */
-
-
 
         } catch (error) {
             logger.error("[chat:connect] Failed to connect to streamer's chat:", error.message);
