@@ -1,8 +1,8 @@
 [
     {
-        "id": "auth-updates-5.55",
-        "title": "Reauth Streamer and Bot Account (v5.55)",
-        "message": "<div>v5.55.0 introduces new updates and features that required us to request additional Twitch authorization scopes. At your earliest convenience, please re-log into both your Streamer and Bot accounts. This will ensure Firebot continues to run as expected. Thank you!</div>",
+        "id": "auth-updates-5.56",
+        "title": "Reauth Streamer and Bot Account (v5.56)",
+        "message": "<div>v5.56.0 introduces even more new updates and features that required us to request additional Twitch authorization scopes. At your earliest convenience, please re-log into both your Streamer and Bot accounts. This will ensure Firebot continues to run as expected. Thank you!</div>",
         "icon": "alert"
     }
 ]
