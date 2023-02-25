@@ -77,6 +77,7 @@ class TwitchChat extends EventEmitter {
             logger.warn('[chat:connect] Failed to get auth provider from streamer account');
             return;
         }
+        logger.debug('[chat:connect] Attempting to connect to chat with streamer\'s account');
 
         this.emit("connecting");
 
@@ -135,6 +136,8 @@ class TwitchChat extends EventEmitter {
             if (vips) {
                 chatRolesManager.loadUsersInVipRole(vips);
             }
+            logger.info('[chat:connect] Connected streamer account to chat');
+
         } catch (error) {
             logger.error("[chat:connect] Failed to connect to streamer's chat:", error.message);
             await this.disconnect();
@@ -147,6 +150,7 @@ class TwitchChat extends EventEmitter {
             return;
         }
         try {
+            logger.info('[chat:connect] Connecting to chat with bot account');
             this._botChatClient = new ChatClient({
                 authProvider: refreshingAuthProvider.getRefreshingAuthProviderForBot(),
                 requestMembershipEvents: true
@@ -157,6 +161,8 @@ class TwitchChat extends EventEmitter {
             twitchChatListeners.setupBotChatListeners(this._botChatClient);
 
             await this._botChatClient.connect();
+            logger.info('[chat:connect] Connected bot account to chat');
+
         } catch (error) {
             logger.error("[chat:connect] Error joining streamer's chat channel with Bot account", error.message);
         }
@@ -219,6 +225,10 @@ class TwitchChat extends EventEmitter {
      * @param {string} [replyToMessageId] A message id to reply to
      */
     async sendChatMessage(message, username, accountType, replyToMessageId) {
+        if (!(this instanceof TwitchChat)) {
+            logger.error('[chat.sendChatMessage] Lost context of \'this\'');
+        }
+
         if (message == null || message?.length < 1) {
             return null;
         }
