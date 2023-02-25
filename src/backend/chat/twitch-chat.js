@@ -63,18 +63,22 @@ class TwitchChat extends EventEmitter {
      * Connects the streamer and bot to chat
      */
     async connect() {
+
+        await this.disconnect(false);
+
         const streamer = accountAccess.getAccounts().streamer;
         if (!streamer.loggedIn) {
+            logger.warn('[chat:connect] Streamer Account not logged in');
             return;
         }
 
         const authProvider = refreshingAuthProvider.getRefreshingAuthProviderForStreamer();
         if (authProvider == null) {
+            logger.warn('[chat:connect] Failed to get auth provider from streamer account');
             return;
         }
 
         this.emit("connecting");
-        await this.disconnect(false);
 
         try {
             this._streamerChatClient = new ChatClient({
@@ -88,7 +92,7 @@ class TwitchChat extends EventEmitter {
             });
 
             this._streamerChatClient.onPasswordError((event) => {
-                logger.error("Failed to connect to chat", event);
+                logger.error("[chat:connect] Failed to connect to chat", event);
                 frontendCommunicator.send("error", `Unable to connect to chat. Reason: "${event.message}". Try signing out and back into your streamer/bot account(s).`);
                 this.disconnect(true);
             });
@@ -113,7 +117,7 @@ class TwitchChat extends EventEmitter {
 
             this._streamerChatClient.onDisconnect((manual, reason) => {
                 if (!manual) {
-                    logger.error("Chat disconnected unexpectedly", reason);
+                    logger.error("[chat] Chat disconnected unexpectedly", reason);
                     frontendCommunicator.send("twitch:chat:autodisconnected", true);
                 }
             });
@@ -132,16 +136,17 @@ class TwitchChat extends EventEmitter {
                 chatRolesManager.loadUsersInVipRole(vips);
             }
         } catch (error) {
-            logger.error("Chat connect error", error);
+            logger.error("[chat:connect] Failed to connect to streamer's chat:", error.message);
             await this.disconnect();
+            return;
         }
 
+        const bot = accountAccess.getAccounts().bot;
+        if (!bot.loggedIn) {
+            logger.info('[chat:connect] No logged in bot account');
+            return;
+        }
         try {
-            const bot = accountAccess.getAccounts().bot;
-            if (!bot.loggedIn) {
-                return;
-            }
-
             this._botChatClient = new ChatClient({
                 authProvider: refreshingAuthProvider.getRefreshingAuthProviderForBot(),
                 requestMembershipEvents: true
@@ -153,7 +158,7 @@ class TwitchChat extends EventEmitter {
 
             await this._botChatClient.connect();
         } catch (error) {
-            logger.error("Error joining streamers chat channel with Bot account", error);
+            logger.error("[chat:connect] Error joining streamer's chat channel with Bot account", error.message);
         }
     }
 
@@ -182,7 +187,7 @@ class TwitchChat extends EventEmitter {
                 twitchChatListeners.events.emit("chat-message", firebotChatMessage);
             }
         } catch (error) {
-            logger.error(`Error attempting to send message with ${accountType}`, error);
+            logger.error(`[chat._say] Error attempting to send message with ${accountType}`, error.message);
         }
     }
 
@@ -199,7 +204,7 @@ class TwitchChat extends EventEmitter {
             const recipient = await client.users.getUserByName(username);
             await twitchApi.whispers.sendWhisper(recipient.id, message, accountType === 'bot');
         } catch (error) {
-            logger.error(`Error attempting to send whisper with ${accountType}`, error);
+            logger.error(`[chat._whisper] Error attempting to send whisper with ${accountType}`, error.message);
         }
     }
 
@@ -218,18 +223,32 @@ class TwitchChat extends EventEmitter {
             return null;
         }
 
-        // Normalize account type
-        if (accountType != null) {
-            accountType = accountType.toLowerCase();
-        }
-
         const shouldWhisper = username != null && username.trim() !== "";
 
-        const botAvailable = accountAccess.getAccounts().bot.loggedIn && this._botChatClient && this._botChatClient.isConnected;
-        if (accountType == null) {
-            accountType = botAvailable && !shouldWhisper ? "bot" : "streamer";
-        } else if (accountType === "bot" && !botAvailable) {
-            accountType = "streamer";
+        const accounts = accountAccess.getAccounts();
+        if (shouldWhisper) {
+            logger.info('[chat.sendChatMessage]: Sending message as whisper; using streamer account');
+            accountType = 'streamer';
+
+        } else if (accountType != null && accountType.toLowerCase() !== 'bot') {
+            logger.info('[chat.sendChatMessage]: Bot account not requested for use; using streamer account');
+            accountType = 'streamer';
+
+        } else if (accounts.bot == null || accounts.bot.loggedIn !== true) {
+            logger.warn(`[chat.sendChatMessage] Send as bot: Bot account not logged in; falling back to streamer account`);
+            accountType = 'streamer';
+
+        } else if (this._botChatClient == null) {
+            logger.warn('[chat.sendChatMessage]: botChatClient is null; falling back to streamer account');
+            accountType = 'streamer';
+
+        } else if (this._botChatClient.isConnected !== true) {
+            logger.warn('[chat.sendChatMessage]: botChatClient is not connected; falling back to streamer account');
+            accountType = 'streamer';
+
+        } else {
+            logger.warn('[chat.sendChatMessage]: bot passed validation; using it to send message');
+            accountType = 'bot';
         }
 
         const slashCommandValidationResult = twitchSlashCommandHandler.validateChatCommand(message);
