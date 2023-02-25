@@ -13,6 +13,7 @@ import {
   getImageSources,
   getMediaSources,
   getColorSources,
+  getSupportedImageFormats,
 } from "./obs-remote";
 
 export function setupFrontendListeners(
@@ -66,5 +67,15 @@ export function setupFrontendListeners(
   frontendCommunicator.onAsync<never, Array<OBSSource>>(
     "obs-get-color-sources",
     getColorSources
+  );
+
+  frontendCommunicator.onAsync<never, Array<string>>(
+      "obs-get-supported-image-formats",
+      getSupportedImageFormats
+  );
+
+  frontendCommunicator.onAsync<never, Array<OBSSource>>(
+      "obs-get-all-sources",
+      getAllSources
   );
 }
