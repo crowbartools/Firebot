@@ -438,32 +438,37 @@ const playVideo = {
             return true;
         }
 
-        const durationToken = resourceTokenManager.storeResourcePath(data.filepath, 5);
+        let resourceToken;
+        if (effect.videoType === "YouTube Video") {
+            resourceToken = resourceTokenManager.storeResourcePath(data.filepath, effect.length);
+        } else {
+            const durationToken = resourceTokenManager.storeResourcePath(data.filepath, 5);
 
-        const durationPromise = new Promise(async (resolve, reject) => {
-            const listener = (event) => {
-                try {
-                    if (event.name === "video-duration" && event.data.resourceToken === durationToken) {
-                        webServer.removeListener("overlay-event", listener);
-                        resolve(event.data.duration);
+            const durationPromise = new Promise(async (resolve, reject) => {
+                const listener = (event) => {
+                    try {
+                        if (event.name === "video-duration" && event.data.resourceToken === durationToken) {
+                            webServer.removeListener("overlay-event", listener);
+                            resolve(event.data.duration);
+                        }
+                    } catch (err) {
+                        logger.error("Error while trying to process overlay-event for getVideoDuration: ", err);
+                        reject(err);
                     }
-                } catch (err) {
-                    logger.error("Error while trying to process overlay-event for getVideoDuration: ", err);
-                    reject(err);
-                }
-            };
-            webServer.on("overlay-event", listener);
-        });
+                };
+                webServer.on("overlay-event", listener);
+            });
 
-        webServer.sendToOverlay("getVideoDuration", {
-            resourceToken: durationToken,
-            overlayInstance: data.overlayInstance
-        });
+            webServer.sendToOverlay("getVideoDuration", {
+                resourceToken: durationToken,
+                overlayInstance: data.overlayInstance
+            });
 
-        const duration = await durationPromise;
+            const duration = await durationPromise;
+            resourceToken = resourceTokenManager.storeResourcePath(data.filepath, duration + 5);
+            logger.info(`Retrieved duration for video: ${duration}`);
+        }
 
-        const resourceToken = resourceTokenManager.storeResourcePath(data.filepath, duration + 5);
-        logger.info(`Retrieved duration for video: ${duration}`);
         data.resourceToken = resourceToken;
 
         webServer.sendToOverlay("video", data);
