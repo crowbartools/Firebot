@@ -32,7 +32,7 @@ exports.createClip = async function(effect) {
 
     try {
         clipId = await client.clips.createClip({
-            channelId: channelId
+            channel: channelId
         });
     } catch (err) {
         //failed to create clip

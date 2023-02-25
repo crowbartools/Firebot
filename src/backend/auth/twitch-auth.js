@@ -118,6 +118,9 @@ const BOT_ACCOUNT_PROVIDER = {
     ].join(' ')
 };
 
+exports.STREAMER_ACCOUNT_PROVIDER = STREAMER_ACCOUNT_PROVIDER;
+exports.BOT_ACCOUNT_PROVIDER = BOT_ACCOUNT_PROVIDER;
+
 exports.registerTwitchAuthProviders = () => {
     authManager.registerAuthProvider(STREAMER_ACCOUNT_PROVIDER);
     authManager.registerAuthProvider(BOT_ACCOUNT_PROVIDER);

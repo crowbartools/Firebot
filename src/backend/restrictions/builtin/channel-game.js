@@ -1,7 +1,7 @@
 "use strict";
 
 const accountAccess = require("../../common/account-access");
-const channelAccess = require("../../twitch-api/resource/channels");
+const TwitchApi = require("../../twitch-api/api");
 
 const model = {
     definition: {
@@ -73,7 +73,7 @@ const model = {
             }
 
             const streamerName = accountAccess.getAccounts().streamer.username;
-            const channel = await channelAccess.getChannelInformationByUsername(streamerName);
+            const channel = await TwitchApi.channels.getChannelInformationByUsername(streamerName);
 
             if (channel == null) {
                 return reject(`Can't get channel information.`);

@@ -26,6 +26,18 @@ const ONLINE_TIMEOUT = 450; // 7.50 mins
  * @property {string[]} twitchRoles
  */
 
+/**
+ * @typedef {Object} ChatUser
+ * @property {string} userId
+ * @property {string} userName
+ * @property {string} displayName
+ * @property {boolean} [isBroadcaster]
+ * @property {boolean} [isFounder]
+ * @property {boolean} [isSubscriber]
+ * @property {boolean} [isMod]
+ * @property {boolean} [isVip]
+ */
+
 // this is used for online user features, mostly setting "online: true" in user db (which is the used for currency payouts)
 const onlineUsers = new NodeCache({ stdTTL: ONLINE_TIMEOUT, checkperiod: 15 });
 
@@ -206,7 +218,7 @@ exports.addOnlineUser = async (username) => {
 
 /**
  * Add or update an active user
- * @arg {import('@twurple/chat').ChatUser} chatUser
+ * @arg {ChatUser} chatUser
  */
 exports.addActiveUser = async (chatUser, includeInOnline = false, forceActive = false) => {
 

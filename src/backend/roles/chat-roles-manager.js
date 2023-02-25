@@ -30,11 +30,6 @@ let vips = [];
  * @return {void}
  */
 const loadUsersInVipRole = (usersInVipRole) => {
-    if (usersInVipRole.length > 0) {
-        const lastItem = usersInVipRole[usersInVipRole.length - 1].replace(".", "");
-        usersInVipRole[usersInVipRole.length - 1] = lastItem;
-    }
-
     vips = usersInVipRole;
 };
 
@@ -43,7 +38,9 @@ const loadUsersInVipRole = (usersInVipRole) => {
  * @return {void}
  */
 const addVipToVipList = (username) => {
-    vips.push(username);
+    if (!vips.includes(username)) {
+        vips.push(username);
+    }
 };
 
 /**

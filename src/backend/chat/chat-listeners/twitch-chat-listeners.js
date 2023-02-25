@@ -8,7 +8,6 @@ const accountAccess = require("../../common/account-access");
 const chatModerationManager = require("../moderation/chat-moderation-manager");
 const twitchEventsHandler = require("../../events/twitch-events");
 const raidMessageChecker = require(".././moderation/raid-message-checker");
-const chatRolesManager = require("../../roles/chat-roles-manager");
 const logger = require("../../logwrapper");
 
 const events = require("events");
@@ -161,13 +160,5 @@ exports.setupChatListeners = (streamerChatClient) => {
             raidInfo.displayName,
             raidInfo.viewerCount
         );
-    });
-
-    streamerChatClient._onVipResult((_, username) => {
-        chatRolesManager.addVipToVipList(username);
-    });
-
-    streamerChatClient._onUnvipResult((_, username) => {
-        chatRolesManager.removeVipFromVipList(username);
     });
 };

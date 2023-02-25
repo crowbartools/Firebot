@@ -13,7 +13,9 @@ const accountEvents = new EventEmitter();
  * @typedef {Object} AuthDetails
  * @property {string} access_token - The access token
  * @property {string} token_type - The type of access token
- * @property {string} expires_at - JSON representation of when access token expires
+ * @property {number} obtainment_timestamp - When the token was obtained, in epoch timestamp format
+ * @property {number} expires_in - How many seconds before the token expires
+ * @property {Date} expires_at - JSON representation of when access token expires
  * @property {string} refresh_token - The refresh token
  */
 
@@ -23,7 +25,7 @@ const accountEvents = new EventEmitter();
  * @typedef {Object} FirebotAccount
  * @property {string} username - The account username
  * @property {string} displayName - The users displayName
- * @property {number} userId - The user id for the account
+ * @property {string} userId - The user id for the account
  * @property {number} channelId - DEPRECATED: The channel id for the account (same as userId)
  * @property {string} avatar - The avatar url for the account
  * @property {string} broadcasterType - "partner", "affiliate" or ""

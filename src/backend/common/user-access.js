@@ -24,7 +24,7 @@ async function userFollowsChannels(username, channelNames) {
         if (cachedFollow !== undefined) {
             userFollowsChannel = cachedFollow;
         } else {
-            userFollowsChannel = await twitchApi.users.doesUserFollowChannel(username, channelName);
+            userFollowsChannel = await twitchApi.users.doesUserFollowChannelLegacy(username, channelName);
 
             // set cache value
             followCache.set(`${username}:${channelName}`, userFollowsChannel);
@@ -105,15 +105,16 @@ async function getUserDetails(userId) {
 
     const teamRoles = await teamRolesManager.getAllTeamRolesForViewer(twitchUser.name);
 
-    const userFollowsStreamerResponse = await client.users.getFollows({
-        user: userId,
-        followedUser: streamerData.userId
-    });
+    const userFollowsStreamerResponse = await client.channels.getChannelFollowers(
+        streamerData.userId,
+        streamerData.userId,
+        userId
+    );
 
-    const streamerFollowsUserResponse = await client.users.getFollows({
-        user: streamerData.userId,
-        followedUser: userId
-    });
+    const streamerFollowsUserResponse = await client.channels.getFollowedChannels(
+        streamerData.userId,
+        userId
+    );
 
     const streamerFollowsUser = streamerFollowsUserResponse.data != null &&
         streamerFollowsUserResponse.data.length === 1;
