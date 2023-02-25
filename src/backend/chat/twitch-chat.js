@@ -66,6 +66,8 @@ class TwitchChat extends EventEmitter {
 
         await this.disconnect(false);
 
+        logger.debug('[chat:connect] Starting chat...');
+
         const streamer = accountAccess.getAccounts().streamer;
         if (!streamer.loggedIn) {
             logger.warn('[chat:connect] Streamer Account not logged in');
@@ -78,9 +80,7 @@ class TwitchChat extends EventEmitter {
             return;
         }
         logger.debug('[chat:connect] Attempting to connect to chat with streamer\'s account');
-
         this.emit("connecting");
-
         try {
             this._streamerChatClient = new ChatClient({
                 authProvider: authProvider,
@@ -99,6 +99,7 @@ class TwitchChat extends EventEmitter {
             });
 
             this._streamerChatClient.onConnect(() => {
+                logger.info('[chat:connect] Connected streamer account to chat');
                 this.emit("connected");
             });
 
@@ -123,20 +124,26 @@ class TwitchChat extends EventEmitter {
                 }
             });
 
+            logger.debug('[chat:connect] calling streamerClient.connect()');
             await this._streamerChatClient.connect();
+            logger.debug('[chat:connect] streamerClient.connect promise returned');
 
+            logger.debug('[chat:connect] calling chatHelpers.handleChatConnect');
             await chatHelpers.handleChatConnect();
+            logger.debug('[chat:connect] calling chatHelpers.handleChatConnect returned');
 
             twitchChatListeners.setupChatListeners(this._streamerChatClient);
 
             followPoll.startFollowPoll();
             chatterPoll.startChatterPoll();
 
+            logger.debug('[chat:connect] retrieving VIPs');
             const vips = await this._streamerChatClient.getVips(accountAccess.getAccounts().streamer.username);
             if (vips) {
                 chatRolesManager.loadUsersInVipRole(vips);
             }
-            logger.info('[chat:connect] Connected streamer account to chat');
+            logger.debug('[chat:connect] VIPs retrieved');
+
 
         } catch (error) {
             logger.error("[chat:connect] Failed to connect to streamer's chat:", error.message);
