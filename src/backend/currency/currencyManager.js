@@ -49,7 +49,7 @@ function applyCurrency() {
 
         const currentMinutes = moment().minutes();
         const intervalMod = currentMinutes % currency.interval;
-        const chatConnected = twitchChat.chatIsConnected();
+        const chatConnected = twitchChat.chatIsConnected;
         if (intervalMod === 0 && currency.active && chatConnected) {
             // do payout
             logger.info("Currency: Paying out " + basePayout + " " + currency.name + ".");

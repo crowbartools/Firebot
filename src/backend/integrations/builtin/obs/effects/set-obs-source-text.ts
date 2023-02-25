@@ -1,4 +1,4 @@
-import { EffectType } from "../../../../effects/models/effect-models";
+import { EffectType } from "../../../../../types/effects";
 import { OBSSource, setTextSourceSettings } from "../obs-remote";
 
 export const SetOBSSourceTextEffectType: EffectType<{
@@ -41,7 +41,7 @@ export const SetOBSSourceTextEffectType: EffectType<{
             <input type="checkbox" ng-click="toggleSource()" ng-checked="effect.textSource === 'file'"  aria-label="..." >
             <div class="control__indicator"></div>
         </label>
-        <firebot-input ng-if="effect.textSource === 'static'" model="effect.text"></firebot-input>
+        <firebot-input ng-if="effect.textSource === 'static'" model="effect.text" use-text-area="true"></firebot-input>
         <file-chooser ng-if="effect.textSource === 'file'" model="effect.file" options="{ filters: [ {name: 'Text File', extensions: ['txt']}, {name: 'All Files', extensions: ['*']} ]}" on-update="textFileUpdated(filepath)"></file-chooser>
     </eos-container>
   `,

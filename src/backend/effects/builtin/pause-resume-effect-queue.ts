@@ -1,4 +1,4 @@
-import { EffectType } from "../models/effect-models";
+import { EffectType } from "../../../types/effects";
 import { EffectCategory } from "../../../shared/effect-constants";
 import effectQueueManager, { EffectQueue } from "../queues/effect-queue-manager";
 import effectQueueRunner from "../queues/effect-queue-runner";
@@ -51,13 +51,11 @@ const model: EffectType<{
             </div>
         </eos-container>
     `,
-    optionsController: ($scope, effectQueuesService) => {
-        /** @ts-ignore */
+    optionsController: ($scope, effectQueuesService: any) => {
         $scope.effectQueues = effectQueuesService.getEffectQueues();
         $scope.effectQueueName = null;
 
         if ($scope.effect.effectQueue?.length > 0) {
-            /** @ts-ignore */
             const selectedQueue = effectQueuesService.getEffectQueue($scope.effect.effectQueue);
             $scope.effectQueueName = selectedQueue?.name;
 

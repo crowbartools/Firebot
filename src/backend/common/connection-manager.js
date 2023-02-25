@@ -90,7 +90,7 @@ class ConnectionManager extends EventEmitter {
     }
 
     chatIsConnected() {
-        return twitchChat.chatIsConnected();
+        return twitchChat.chatIsConnected;
     }
 
     serviceIsConnected(serviceId) {

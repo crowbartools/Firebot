@@ -18,12 +18,14 @@ import { StartStreamEffectType } from "./effects/start-stream";
 import { StopStreamEffectType } from "./effects/stop-stream";
 import { StartVirtualCamEffectType } from "./effects/start-virtual-cam";
 import { StopVirtualCamEffectType } from "./effects/stop-virtual-cam";
+import { SaveReplayBufferEffectType } from "./effects/save-replay-buffer";
 import { SetOBSSourceTextEffectType } from "./effects/set-obs-source-text";
 import { SetOBSBrowserSourceUrlEffectType } from "./effects/set-obs-browser-source-url";
 import { SetOBSImageSourceFileEffectType } from "./effects/set-obs-image-source-file";
 import { SetOBSMediaSourceFileEffectType } from "./effects/set-obs-media-source-file";
 import { SetOBSColorSourceColorEffectType } from "./effects/set-obs-color-source-color";
 import { SendRawOBSWebSocketRequestEffectType } from "./effects/send-raw-obs-websocket-request";
+import { TakeOBSSourceScreenshotEffectType } from "./effects/take-obs-source-screenshot";
 import { OBSEventSource } from "./events/obs-event-source";
 import { SceneNameEventFilter } from "./filters/scene-name-filter";
 import { SceneNameVariable } from "./variables/scene-name-variable";
@@ -98,12 +100,14 @@ class ObsIntegration
     effectManager.registerEffect(StopStreamEffectType);
     effectManager.registerEffect(StartVirtualCamEffectType);
     effectManager.registerEffect(StopVirtualCamEffectType);
+    effectManager.registerEffect(SaveReplayBufferEffectType);
     effectManager.registerEffect(SetOBSSourceTextEffectType);
     effectManager.registerEffect(SetOBSBrowserSourceUrlEffectType);
     effectManager.registerEffect(SetOBSImageSourceFileEffectType);
     effectManager.registerEffect(SetOBSMediaSourceFileEffectType);
     effectManager.registerEffect(SetOBSColorSourceColorEffectType);
     effectManager.registerEffect(SendRawOBSWebSocketRequestEffectType);
+    effectManager.registerEffect(TakeOBSSourceScreenshotEffectType);
 
     eventManager.registerEventSource(OBSEventSource);
 

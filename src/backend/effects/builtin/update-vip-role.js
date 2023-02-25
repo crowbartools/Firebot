@@ -3,6 +3,7 @@
 const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
 const logger = require('../../logwrapper');
 const twitchApi = require("../../twitch-api/api");
+const chatRolesManager = require("../../roles/chat-roles-manager");
 
 const model = {
     definition: {
@@ -55,6 +56,7 @@ const model = {
                 const result = await twitchApi.moderation.addChannelVip(user.id);
 
                 if (result === true) {
+                    chatRolesManager.addVipToVipList(user.displayName);
                     logger.debug(event.effect.username + " was assigned VIP via the VIP effect.");
                 } else {
                     logger.error(event.effect.username + " was unable to be assigned VIP via the VIP effect.");
@@ -69,6 +71,7 @@ const model = {
                 const result = await twitchApi.moderation.removeChannelVip(user.id);
 
                 if (result === true) {
+                    chatRolesManager.removeVipFromVipList(user.displayName);
                     logger.debug(event.effect.username + " was unassigned VIP via the VIP effect.");
                 } else {
                     logger.error(event.effect.username + " was unable to be unassigned VIP via the VIP effect.");

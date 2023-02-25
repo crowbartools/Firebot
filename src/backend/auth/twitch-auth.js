@@ -76,6 +76,7 @@ const STREAMER_ACCOUNT_PROVIDER = {
         'moderator:read:blocked_terms',
         'moderator:read:chat_settings',
         'moderator:read:chatters',
+        'moderator:read:followers',
         'moderator:read:shield_mode',
         'moderator:read:shoutouts',
         'user:edit:broadcast',
@@ -116,6 +117,9 @@ const BOT_ACCOUNT_PROVIDER = {
         'channel_read'
     ].join(' ')
 };
+
+exports.STREAMER_ACCOUNT_PROVIDER = STREAMER_ACCOUNT_PROVIDER;
+exports.BOT_ACCOUNT_PROVIDER = BOT_ACCOUNT_PROVIDER;
 
 exports.registerTwitchAuthProviders = () => {
     authManager.registerAuthProvider(STREAMER_ACCOUNT_PROVIDER);

@@ -1,4 +1,4 @@
-import { EffectType } from "../models/effect-models";
+import { EffectType } from "../../../types/effects";
 import { EffectCategory } from "../../../shared/effect-constants";
 import twitchApi from "../../twitch-api/api";
 import { TwitchCommandHelpers } from "../../chat/twitch-commands/twitch-command-helpers";

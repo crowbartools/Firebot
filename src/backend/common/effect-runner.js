@@ -67,7 +67,7 @@ function validateEffectCanRun(effectId, triggerType) {
         const twitchChat = require("../chat/twitch-chat");
         const validDeps = effectDefinition.dependencies.every(d => {
             if (d === EffectDependency.CHAT) {
-                return twitchChat.chatIsConnected();
+                return twitchChat.chatIsConnected;
             }
 
             if (d === EffectDependency.OVERLAY) {

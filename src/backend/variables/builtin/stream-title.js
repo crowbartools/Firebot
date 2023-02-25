@@ -2,7 +2,7 @@
 
 "use strict";
 
-const twitchChannels = require("../../twitch-api/resource/channels");
+const TwitchApi = require("../../twitch-api/api");
 const accountAccess = require("../../common/account-access");
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
@@ -33,7 +33,7 @@ const model = {
             username = accountAccess.getAccounts().streamer.username;
         }
 
-        const channelInfo = await twitchChannels.getChannelInformationByUsername(username);
+        const channelInfo = await TwitchApi.channels.getChannelInformationByUsername(username);
 
         return channelInfo != null ? channelInfo.title : "[No channel found]";
     }

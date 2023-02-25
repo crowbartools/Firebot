@@ -30,11 +30,6 @@ let vips = [];
  * @return {void}
  */
 const loadUsersInVipRole = (usersInVipRole) => {
-    if (usersInVipRole.length > 0) {
-        const lastItem = usersInVipRole[usersInVipRole.length - 1].replace(".", "");
-        usersInVipRole[usersInVipRole.length - 1] = lastItem;
-    }
-
     vips = usersInVipRole;
 };
 
@@ -43,7 +38,9 @@ const loadUsersInVipRole = (usersInVipRole) => {
  * @return {void}
  */
 const addVipToVipList = (username) => {
-    vips.push(username);
+    if (!vips.includes(username)) {
+        vips.push(username);
+    }
 };
 
 /**
@@ -134,8 +131,16 @@ const getUsersChatRoles = async (userIdOrName = "") => {
     }
 };
 
+function userIsKnownBot(username) {
+    if (viewerlistBotMap[username?.toLowerCase() ?? ""] != null) {
+        return true;
+    }
+    return false;
+}
+
 exports.loadUsersInVipRole = loadUsersInVipRole;
 exports.addVipToVipList = addVipToVipList;
 exports.removeVipFromVipList = removeVipFromVipList;
 exports.getUsersChatRoles = getUsersChatRoles;
 exports.cacheViewerListBots = cacheViewerListBots;
+exports.userIsKnownBot = userIsKnownBot;

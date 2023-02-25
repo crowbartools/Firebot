@@ -1,4 +1,5 @@
 import twitchApi from "../../twitch-api/api";
+import chatRolesManager from "../../roles/chat-roles-manager";
 import { TwitchSlashCommandHandler } from "../twitch-slash-command-handler";
 import { TwitchCommandHelpers } from "./twitch-command-helpers";
 
@@ -120,7 +121,11 @@ export const vipHandler: TwitchSlashCommandHandler<[string]> = {
             return false;
         }
 
-        return await twitchApi.moderation.addChannelVip(targetUserId);
+        const result = await twitchApi.moderation.addChannelVip(targetUserId);
+        if (result === true) {
+            chatRolesManager.addVipToVipList(targetUsername);
+        }
+        return result;
     }
 };
 
@@ -148,7 +153,11 @@ export const unvipHandler: TwitchSlashCommandHandler<[string]> = {
             return false;
         }
 
-        return await twitchApi.moderation.removeChannelVip(targetUserId);
+        const result = await twitchApi.moderation.removeChannelVip(targetUserId);
+        if (result === true) {
+            chatRolesManager.removeVipFromVipList(targetUsername);
+        }
+        return result;
     }
 };
 
