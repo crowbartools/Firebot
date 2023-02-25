@@ -137,12 +137,15 @@ class TwitchChat extends EventEmitter {
             followPoll.startFollowPoll();
             chatterPoll.startChatterPoll();
 
+            /* Vips the issue?
             logger.debug('[chat:connect] retrieving VIPs');
             const vips = await this._streamerChatClient.getVips(accountAccess.getAccounts().streamer.username);
             if (vips) {
                 chatRolesManager.loadUsersInVipRole(vips);
             }
             logger.debug('[chat:connect] VIPs retrieved');
+            */
+
 
 
         } catch (error) {
