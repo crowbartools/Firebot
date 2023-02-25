@@ -137,8 +137,9 @@ class TwitchChat extends EventEmitter {
             followPoll.startFollowPoll();
             chatterPoll.startChatterPoll();
 
+            logger.debug('[chat:connect] Retriving channel VIPs');
+            const vips = [];
             try {
-                const vips = [];
                 let cursor = null;
                 do {
                     try {
@@ -157,14 +158,14 @@ class TwitchChat extends EventEmitter {
                         break;
                     }
                 } while (cursor);
-
-                if (vips.length) {
-                    chatRolesManager.loadUsersInVipRole(vips);
-                }
-
-                logger.debug(vips);
             } catch (err) {
                 logger.debug('[chat:connect] Failed to retrieve VIPs list');
+            }
+            if (vips.length) {
+                chatRolesManager.loadUsersInVipRole(vips);
+                logger.debug(`[chat:connect] Retrived ${vips.length} VIPs`);
+            } else {
+                logger.debug(`[chat:connect] Retrived 0 VIPs`);
             }
 
         } catch (error) {
