@@ -25,6 +25,7 @@ import { SetOBSImageSourceFileEffectType } from "./effects/set-obs-image-source-
 import { SetOBSMediaSourceFileEffectType } from "./effects/set-obs-media-source-file";
 import { SetOBSColorSourceColorEffectType } from "./effects/set-obs-color-source-color";
 import { SendRawOBSWebSocketRequestEffectType } from "./effects/send-raw-obs-websocket-request";
+import { TakeOBSSourceScreenshotEffectType } from "./effects/take-obs-source-screenshot";
 import { OBSEventSource } from "./events/obs-event-source";
 import { SceneNameEventFilter } from "./filters/scene-name-filter";
 import { SceneNameVariable } from "./variables/scene-name-variable";
@@ -106,6 +107,7 @@ class ObsIntegration
     effectManager.registerEffect(SetOBSMediaSourceFileEffectType);
     effectManager.registerEffect(SetOBSColorSourceColorEffectType);
     effectManager.registerEffect(SendRawOBSWebSocketRequestEffectType);
+    effectManager.registerEffect(TakeOBSSourceScreenshotEffectType);
 
     eventManager.registerEventSource(OBSEventSource);
 
