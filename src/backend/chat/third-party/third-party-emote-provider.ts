@@ -33,7 +33,7 @@ export abstract class ThirdPartyEmoteProvider<
                 globalEmotes = [];
             }
         } catch (error) {
-            logger.error(`Failed to get global ${this.providerName} emotes`, error);
+            logger.error(`Failed to get global ${this.providerName} emotes:`, error.message);
         }
     
         let channelEmotes: ThirdPartyEmote[] = [];
@@ -49,7 +49,7 @@ export abstract class ThirdPartyEmoteProvider<
                 channelEmotes = [];
             }
         } catch (error) {
-            logger.error(`Failed to get channel ${this.providerName} emotes`, error);
+            logger.error(`Failed to get channel ${this.providerName} emotes:`, error.message);
         }
     
         return [...globalEmotes, ...channelEmotes];
