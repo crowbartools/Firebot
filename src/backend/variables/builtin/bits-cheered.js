@@ -52,7 +52,7 @@ const model = {
         let amount = 0;
 
         try {
-            const user = await twitchApi.getClient().users.getUserByName(username);
+            const user = await twitchApi.users.getUserByName(username);
 
             if (user == null) {
                 logger.warn(`Could not found a Twitch user with the username ${username}`);

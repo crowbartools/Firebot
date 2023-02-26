@@ -27,7 +27,7 @@ export const whisperHandler: TwitchSlashCommandHandler<[string, string]> = {
         }
     },
     handle: async ([targetUsername, message], sendAsBot = false) => {
-        const targetUserId = (await twitchApi.getClient().users.getUserByName(targetUsername))?.id;
+        const targetUserId = (await twitchApi.users.getUserByName(targetUsername))?.id;
 
         if (targetUserId == null) {
             return false;

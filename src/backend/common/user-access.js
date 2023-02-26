@@ -40,8 +40,7 @@ async function userFollowsChannels(username, channelNames) {
 }
 
 function getUser(userId) {
-    const client = twitchApi.getClient();
-    return client.users.getUserById(userId);
+    return twitchApi.users.getUserById(userId);
 }
 
 async function getUserDetails(userId) {

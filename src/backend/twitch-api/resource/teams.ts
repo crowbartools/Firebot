@@ -1,5 +1,6 @@
 import logger from "../../logwrapper";
 import accountAccess from "../../common/account-access";
+import { TwitchUsersApi } from "./users";
 import { ApiClient, HelixTeam } from "@twurple/api";
 
 export class TwitchTeamsApi {
@@ -43,7 +44,7 @@ export class TwitchTeamsApi {
 
     async getMatchingTeamsByName(username: string): Promise<HelixTeam[]> {
         try {
-            const user = await this.client.users.getUserByName(username);
+            const user = await new TwitchUsersApi(this.client).getUserByName(username);
 
             if (user == null) {
                 return null;

@@ -30,7 +30,7 @@ export const timeoutHandler: TwitchSlashCommandHandler<[string, number, string]>
         };
     },
     handle: async ([targetUsername, duration, reason]) => {
-        const targetUserId = (await twitchApi.getClient().users.getUserByName(targetUsername))?.id;
+        const targetUserId = (await twitchApi.users.getUserByName(targetUsername))?.id;
 
         if (targetUserId == null) {
             return false;
@@ -59,7 +59,7 @@ export const banHandler: TwitchSlashCommandHandler<[string, string]> = {
         };
     },
     handle: async ([targetUsername, reason]) => {
-        const targetUserId = (await twitchApi.getClient().users.getUserByName(targetUsername))?.id;
+        const targetUserId = (await twitchApi.users.getUserByName(targetUsername))?.id;
 
         if (targetUserId == null) {
           return false;
@@ -87,7 +87,7 @@ export const unbanHandler: TwitchSlashCommandHandler<[string]> = {
         };
     },
     handle: async ([targetUsername]) => {
-        const targetUserId = (await twitchApi.getClient().users.getUserByName(targetUsername))?.id;
+        const targetUserId = (await twitchApi.users.getUserByName(targetUsername))?.id;
 
         if (targetUserId == null) {
             return false;
@@ -115,7 +115,7 @@ export const vipHandler: TwitchSlashCommandHandler<[string]> = {
         };
     },
     handle: async ([targetUsername]) => {
-        const targetUserId = (await twitchApi.getClient().users.getUserByName(targetUsername))?.id;
+        const targetUserId = (await twitchApi.users.getUserByName(targetUsername))?.id;
 
         if (targetUserId == null) {
             return false;
@@ -147,7 +147,7 @@ export const unvipHandler: TwitchSlashCommandHandler<[string]> = {
         };
     },
     handle: async ([targetUsername]) => {
-        const targetUserId = (await twitchApi.getClient().users.getUserByName(targetUsername))?.id;
+        const targetUserId = (await twitchApi.users.getUserByName(targetUsername))?.id;
 
         if (targetUserId == null) {
             return false;
@@ -179,7 +179,7 @@ export const modHandler: TwitchSlashCommandHandler<[string]> = {
         };
     },
     handle: async ([targetUsername]) => {
-        const targetUserId = (await twitchApi.getClient().users.getUserByName(targetUsername))?.id;
+        const targetUserId = (await twitchApi.users.getUserByName(targetUsername))?.id;
 
         if (targetUserId == null) {
             return false;
@@ -207,7 +207,7 @@ export const unmodHandler: TwitchSlashCommandHandler<[string]> = {
         };
     },
     handle: async ([targetUsername]) => {
-        const targetUserId = (await twitchApi.getClient().users.getUserByName(targetUsername))?.id;
+        const targetUserId = (await twitchApi.users.getUserByName(targetUsername))?.id;
 
         if (targetUserId == null) {
             return false;

@@ -30,7 +30,7 @@ const model = {
         }
 
         try {
-            const user = await twitchApi.getClient().users.getUserByName(username);
+            const user = await twitchApi.users.getUserByName(username);
             if (user != null) {
                 return user.id;
             }

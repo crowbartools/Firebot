@@ -1,5 +1,6 @@
 import accountAccess from "../../common/account-access";
 import logger from '../../logwrapper';
+import { TwitchUsersApi } from "./users";
 import { ApiClient, CommercialLength, HelixChannel, HelixChannelUpdate, HelixUser } from "@twurple/api";
 
 export class TwitchChannelsApi {
@@ -32,15 +33,15 @@ export class TwitchChannelsApi {
     /**
      * Check whether a streamer is currently live.
      * 
-     * @param username
+     * @param userId
      */
-    async getOnlineStatus(username: string): Promise<boolean> {
+    async getOnlineStatus(userId: string): Promise<boolean> {
         if (this.client == null) {
             return false;
         }
     
         try {
-            const stream = await this.client.streams.getStreamByUserName(username);
+            const stream = await this.client.streams.getStreamByUserId(userId);
             if (stream != null) {
                 return true;
             }
@@ -72,7 +73,7 @@ export class TwitchChannelsApi {
     
         let user: HelixUser;
         try {
-            user = await this.client.users.getUserByName(username);
+            user = await new TwitchUsersApi(this.client).getUserByName(username);
         } catch (error) {
             logger.error(`Error getting user with username ${username}`, error);
         }
@@ -93,7 +94,7 @@ export class TwitchChannelsApi {
         try {
             const streamer = accountAccess.getAccounts().streamer;
     
-            const isOnline = await this.getOnlineStatus(streamer.username);
+            const isOnline = await this.getOnlineStatus(streamer.userId);
             if (isOnline && streamer.broadcasterType !== "") {
                 await this.client.channels.startChannelCommercial(streamer.userId, adLength as CommercialLength);
             }

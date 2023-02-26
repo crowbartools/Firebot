@@ -130,7 +130,7 @@ const getTwitchData = async (accountType) => {
 
     let data;
     try {
-        data = await twitchApi.getClient().users.getUserById(account.userId);
+        data = await twitchApi.users.getUserById(account.userId);
     } catch (error) {
         logger.warn("[accounts.getTwitchData] Failed to get account data:", error.message);
         return account;

@@ -33,8 +33,7 @@ const model = {
         }
 
         try {
-            const client = twitchApi.getClient();
-            const user = await client.users.getUserByName(username);
+            const user = await twitchApi.users.getUserByName(username);
 
             if (user && user.creationDate) {
                 const creationDate = moment.utc(user.creationDate).format("YYYY-MM-DD HH:mm UTC");

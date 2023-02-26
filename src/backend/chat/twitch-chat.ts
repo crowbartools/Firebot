@@ -205,11 +205,10 @@ class TwitchChat extends EventEmitter {
      * @param {string} accountType The type of account to whisper with ('streamer' or 'bot')
      */
     async _whisper(message: string, username: string = "", accountType: string): Promise<void> {
-        const client = twitchApi.getClient();
         try {
             logger.debug(`Sending whisper as ${accountType} to ${username}.`);
 
-            const recipient = await client.users.getUserByName(username);
+            const recipient = await twitchApi.users.getUserByName(username);
             await twitchApi.whispers.sendWhisper(recipient.id, message, accountType === 'bot');
         } catch (error) {
             logger.error(`Error attempting to send whisper with ${accountType}`, error);
@@ -314,7 +313,7 @@ frontendCommunicator.onAsync("update-user-mod-status", async (data: UserModReque
         return;
     }
 
-    const user = await twitchApi.getClient().users.getUserByName(username);
+    const user = await twitchApi.users.getUserByName(username);
     if (user == null) {
         return;
     }
@@ -335,7 +334,7 @@ frontendCommunicator.onAsync("update-user-banned-status", async (data: UserBanRe
         return;
     }
 
-    const user = await twitchApi.getClient().users.getUserByName(username);
+    const user = await twitchApi.users.getUserByName(username);
     if (user == null) {
         return;
     }
@@ -356,7 +355,7 @@ frontendCommunicator.onAsync("update-user-vip-status", async (data: UserVipReque
         return;
     }
 
-    const user = await twitchApi.getClient().users.getUserByName(username);
+    const user = await twitchApi.users.getUserByName(username);
     if (user == null) {
         return;
     }

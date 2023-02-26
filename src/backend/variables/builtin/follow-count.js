@@ -38,7 +38,7 @@ const model = {
         }
 
         try {
-            const user = await api.getClient().users.getUserByName(username);
+            const user = await api.users.getUserByName(username);
 
             const response = await api.getClient().channels.getChannelFollowers(
                 user.id,

@@ -28,8 +28,8 @@ function updateOnlineStatus(online) {
 }
 
 async function checkOnline() {
-    const username = accountAccess.getAccounts().streamer.username;
-    const isOnline = await twitchApi.channels.getOnlineStatus(username);
+    const userId = accountAccess.getAccounts().streamer.userId;
+    const isOnline = await twitchApi.channels.getOnlineStatus(userId);
     updateOnlineStatus(isOnline);
 }
 

@@ -25,10 +25,9 @@ const model = {
         if (username == null) {
             username = trigger.metadata.username;
         }
-        const twitchClient = twitchApi.getClient();
 
         try {
-            const userInfo = await twitchClient.users.getUserByName(username);
+            const userInfo = await twitchApi.users.getUserByName(username);
             return userInfo.profilePictureUrl ? userInfo.profilePictureUrl : "[No Avatar Found]";
         } catch (err) {
             return "[No Avatar Found]";

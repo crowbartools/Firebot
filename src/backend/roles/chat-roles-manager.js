@@ -59,7 +59,7 @@ const getUserSubscriberRole = async (userIdOrName) => {
     const isName = isNaN(userIdOrName);
 
     const client = twitchApi.getClient();
-    const userId = isName ? (await client.users.getUserByName(userIdOrName)).id : userIdOrName;
+    const userId = isName ? (await twitchApi.users.getUserByName(userIdOrName)).id : userIdOrName;
 
     const streamer = accountAccess.getAccounts().streamer;
     const subInfo = await client.subscriptions.getSubscriptionForUser(streamer.userId, userId);
@@ -96,7 +96,7 @@ const getUsersChatRoles = async (userIdOrName = "") => {
 
     try {
         const client = twitchApi.getClient();
-        const username = isName ? userIdOrName : (await client.users.getUserById(userIdOrName)).name;
+        const username = isName ? userIdOrName : (await twitchApi.users.getUserById(userIdOrName)).name;
 
         if (viewerlistBotMap[username?.toLowerCase() ?? ""] != null) {
             roles.push("viewerlistbot");

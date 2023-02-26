@@ -42,7 +42,7 @@ export const raidHandler: TwitchSlashCommandHandler<[string]> = {
         };
     },
     handle: async([targetUsername]) => {
-        const targetUserId = (await twitchApi.getClient().users.getUserByName(targetUsername))?.id;
+        const targetUserId = (await twitchApi.users.getUserByName(targetUsername))?.id;
 
         if (targetUserId == null) {
             return false;

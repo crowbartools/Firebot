@@ -30,7 +30,7 @@ const model = {
         return errors;
     },
     onTriggerEvent: async event => {
-        const user = await twitchApi.getClient().users.getUserByName(event.effect.username);
+        const user = await twitchApi.users.getUserByName(event.effect.username);
 
         if (user != null) {
             const result = await twitchApi.moderation.timeoutUser(user.id, 1, "Chat messages purged via Firebot");

@@ -58,8 +58,7 @@ const model = {
             return true;
         }
 
-        const client = twitchApi.getClient();
-        const userId = (await client.users.getUserByName(event.effect.username)).id;
+        const userId = (await twitchApi.users.getUserByName(event.effect.username)).id;
         if (userId == null) {
             logger.debug("Couldn't get ids for username in active user list effect.");
             return true;
