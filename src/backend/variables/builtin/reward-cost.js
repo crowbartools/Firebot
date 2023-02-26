@@ -33,7 +33,7 @@ const model = {
                 return -1;
             }
 
-            const reward = await twitchApi.getClient().channelPoints.getCustomRewardById(
+            const reward = await twitchApi.streamerClient.channelPoints.getCustomRewardById(
                 accountAccess.getAccounts().streamer.userId,
                 channelRewardId
             );

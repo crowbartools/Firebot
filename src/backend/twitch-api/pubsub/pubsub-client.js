@@ -2,7 +2,7 @@
 const logger = require("../../logwrapper");
 const accountAccess = require("../../common/account-access");
 const frontendCommunicator = require("../../common/frontend-communicator");
-const firebotRefreshingAuthProvider = require("../../auth/firebot-refreshing-auth-provider");
+const firebotStaticAuthProvider = require("../../auth/firebot-static-auth-provider");
 const chatRolesManager = require("../../roles/chat-roles-manager");
 const { PubSubClient } = require("@twurple/pubsub");
 
@@ -58,7 +58,7 @@ async function createClient() {
 
     logger.info("Connecting to Twitch PubSub...");
 
-    const authProvider = firebotRefreshingAuthProvider.provider;
+    const authProvider = firebotStaticAuthProvider.streamerProvider;
 
     pubSubClient = new PubSubClient({ authProvider });
 
@@ -231,7 +231,7 @@ async function createClient() {
         const chatRoomListener = pubSubClient.onCustomTopic(streamer.userId, "stream-chat-room-v1", async (event) => {
             const message = event?.data;
             if (message?.type === "extension_message") {
-                const twitchApi = require("../api").getClient();
+                const twitchApi = require("../api").streamerClient;
                 const extension = await twitchApi.extensions.getReleasedExtension(message.data.sender.extension_client_id);
 
                 const { buildFirebotChatMessageFromExtensionMessage } = require("../../chat/chat-helpers");

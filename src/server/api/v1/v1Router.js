@@ -18,6 +18,7 @@ const auth = require("./controllers/authApiController");
 router.route("/auth").get(auth.getAuth);
 
 router.route("/auth/callback").get(auth.getAuthCallback);
+router.route("/auth/tokencallback").get(auth.getAuthCallback);
 
 // Status
 const status = require("./controllers/statusApiController");

@@ -359,7 +359,7 @@ const playVideo = {
 
         if (effect.videoType === "Twitch Clip" || effect.videoType === "Random Twitch Clip") {
             const twitchApi = require("../../twitch-api/api");
-            const client = twitchApi.getClient();
+            const client = twitchApi.streamerClient;
 
             let clipId;
 

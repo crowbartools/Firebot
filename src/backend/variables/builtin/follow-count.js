@@ -40,7 +40,7 @@ const model = {
         try {
             const user = await api.users.getUserByName(username);
 
-            const response = await api.getClient().channels.getChannelFollowers(
+            const response = await api.streamerClient.channels.getChannelFollowers(
                 user.id,
                 streamer.userId
             );

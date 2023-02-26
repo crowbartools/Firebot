@@ -3,17 +3,19 @@ import accountAccess from "../../common/account-access";
 import { ApiClient } from "@twurple/api";
 
 export class TwitchStreamsApi {
-    client: ApiClient;
+    streamerClient: ApiClient;
+    botClient: ApiClient;
 
-    constructor(apiClient: ApiClient) {
-        this.client = apiClient;
+    constructor(streamerClient: ApiClient, botClient: ApiClient) {
+        this.streamerClient = streamerClient;
+        this.botClient = botClient;
     }
 
     async createStreamMarker(descriotion?: string): Promise<void> {
         try {
             const streamerId = accountAccess.getAccounts().streamer.userId;
 
-            await this.client.streams.createStreamMarker(streamerId, descriotion);
+            await this.streamerClient.streams.createStreamMarker(streamerId, descriotion);
         } catch (error) {
             logger.error(`Failed to create stream marker`, error);
         }

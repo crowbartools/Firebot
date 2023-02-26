@@ -42,7 +42,7 @@ const model = {
         const streamer = accountAccess.getAccounts().streamer;
 
         try {
-            const marker = await twitchApi.getClient().streams
+            const marker = await twitchApi.streamerClient.streams
                 .createStreamMarker(streamer.userId, args.join(" "));
 
             if (marker == null) {

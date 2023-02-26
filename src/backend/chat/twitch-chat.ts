@@ -8,7 +8,7 @@ import commandHandler from "./commands/commandHandler";
 import * as twitchSlashCommandHandler from "./twitch-slash-command-handler";
 
 import logger from "../logwrapper";
-import firebotRefreshingAuthProvider from "../auth/firebot-refreshing-auth-provider";
+import firebotStaticAuthProvider from "../auth/firebot-static-auth-provider";
 import accountAccess from "../common/account-access";
 import frontendCommunicator from "../common/frontend-communicator";
 import twitchEventsHandler from "../events/twitch-events";
@@ -80,8 +80,9 @@ class TwitchChat extends EventEmitter {
             return;
         }
 
-        const authProvider = firebotRefreshingAuthProvider.provider;
-        if (authProvider == null) {
+        const streamerAuthProvider = firebotStaticAuthProvider.streamerProvider;
+        const botAuthProvider = firebotStaticAuthProvider.botProvider;
+        if (streamerAuthProvider == null && botAuthProvider == null) {
             return;
         }
 
@@ -90,9 +91,8 @@ class TwitchChat extends EventEmitter {
 
         try {
             this._streamerChatClient = new ChatClient({
-                authProvider: authProvider,
-                requestMembershipEvents: true,
-                authIntents: [firebotRefreshingAuthProvider.STREAMER_CHAT_INTENT]
+                authProvider: streamerAuthProvider,
+                requestMembershipEvents: true
             });
 
             this._streamerChatClient.irc.onRegister(() => {
@@ -156,9 +156,8 @@ class TwitchChat extends EventEmitter {
             }
 
             this._botChatClient = new ChatClient({
-                authProvider: firebotRefreshingAuthProvider.provider,
-                requestMembershipEvents: true,
-                authIntents: [firebotRefreshingAuthProvider.BOT_CHAT_INTENT]
+                authProvider: botAuthProvider,
+                requestMembershipEvents: true
             });
 
             this._botChatClient.irc.onRegister(() => this._botChatClient.join(streamer.username));

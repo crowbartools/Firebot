@@ -32,7 +32,7 @@ const model = {
                 return "[Can't find reward by name]";
             }
 
-            const reward = await twitchApi.getClient().channelPoints.getCustomRewardById(
+            const reward = await twitchApi.streamerClient.channelPoints.getCustomRewardById(
                 accountAccess.getAccounts().streamer.userId,
                 channelRewardId
             );
