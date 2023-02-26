@@ -36,6 +36,8 @@ if (!fs.existsSync(LOG_FOLDER)) {
     }
 });*/
 
+const pad = (subject, length, padText) => (subject + '').padStart(length, padText + '');
+
 const rotateFileTransport = new (require("winston-daily-rotate-file"))({
     level: rotateFileLogLevel,
     filename: LOG_FOLDER + "/log",
@@ -46,8 +48,21 @@ const rotateFileTransport = new (require("winston-daily-rotate-file"))({
     humanReadableUnhandledException: true,
     label: "v" + app.getVersion(),
     prettyPrint: true,
+
+    // YYYY-MM-DD hh:nn:ss
     timestamp: function() {
-        return new Date().toTimeString();
+        const currentDate = new Date();
+
+        const year = currentDate.getUTCFullYear() + '';
+        const month = pad(currentDate.getUTCMonth() + 1, 2, 0);
+        const day = pad(currentDate.getDate(), 2, 0);
+
+        const hour = pad(currentDate.getUTCHours(), 2, 0);
+        const minute = pad(currentDate.getUTCMinutes(), 2, 0);
+        const seconds = pad(currentDate.getUTCSeconds(), 2, 0);
+        const milliseconds = pad(currentDate.getUTCMilliseconds(), 4, 0);
+
+        return `${year}-${month}-${day} ${hour}:${minute}:${seconds}.${milliseconds}`;
     }
 });
 
