@@ -1,7 +1,7 @@
 import accountAccess, { AuthDetails, FirebotAccount } from "../common/account-access";
 import twitchAuth from "./twitch-auth";
 import TwitchApi from "../twitch-api/api";
-import { StaticAuthProvider } from "@twurple/auth/lib";
+import { StaticAuthProvider } from "@twurple/auth";
 
 class FirebotStaticAuthProvider {
     streamerProvider: StaticAuthProvider;

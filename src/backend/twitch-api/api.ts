@@ -29,7 +29,7 @@ class TwitchApi {
         }
         
         if (accountAccess.getAccounts().bot.loggedIn) {
-            this._botClient = new ApiClient({ authProvider: streamerProvider });
+            this._botClient = new ApiClient({ authProvider: botProvider });
         }
     
         logger.info("Finished setting up Twitch API client");

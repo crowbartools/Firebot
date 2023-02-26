@@ -1,0 +1,10 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <title>Redirecting...</title>
+    <script>
+        window.location = `/api/v1/auth/callback2?${window.location.hash.substring(1)}&${window.location.search.substring(1)}`;
+    </script>
+</body>
+</html>

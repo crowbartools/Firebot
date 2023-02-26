@@ -55,6 +55,10 @@ class HttpServerManager extends EventEmitter {
         const v1Router = require("./api/v1/v1Router");
         app.use("/api/v1", v1Router);
 
+        app.get("/api/v1/auth/callback", function(_, res) {
+            res.sendFile(path.join(__dirname + '/authcallback.html'));
+        });
+
         app.get('/loginsuccess', function(_, res) {
             res.sendFile(path.join(__dirname + '/loginsuccess.html'));
         });

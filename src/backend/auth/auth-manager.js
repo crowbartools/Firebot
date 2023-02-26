@@ -51,7 +51,7 @@ class AuthManager extends EventEmitter {
     /** @param {import("./auth-provider").AuthProviderDefinition} provider */
     buildOAuthClientForProvider(provider, redirectUri) {
         let scopes;
-        if (scopes) {
+        if (provider.scopes) {
             scopes = Array.isArray(provider.scopes)
                 ? scopes = provider.scopes
                 : scopes = provider.scopes.split(" ");

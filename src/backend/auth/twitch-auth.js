@@ -101,7 +101,7 @@ const BOT_ACCOUNT_PROVIDER = {
     auth: {
         tokenHost: HOST,
         authorizePath: AUTHORIZE_PATH,
-        type: "code"
+        type: "token"
     },
     scopes: [
         'channel:moderate',

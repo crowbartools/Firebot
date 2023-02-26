@@ -28,19 +28,20 @@ exports.getAuthCallback = async (
     }
 
     try {
+        const fullUrl = `http${req.secure ? "s" : ""}://${req.hostname}:${req.socket.localPort}${req.originalUrl}`.replace("callback2", "callback");
         /** @type {import("client-oauth2").Token} */
         let token;
 
-        switch (provider.details.auth.type) {
-        case "code":
-        {
-            const result = await provider.oauthClient.code.getToken(req.url);
-            token = await result.refresh();
-            break;
-        }
+        const authType = provider.details.auth.type ?? "code";
 
+        switch (authType) {
         case "token":
-            token = await provider.oauthClient.token.getToken(req.url);
+            token = await provider.oauthClient.token.getToken(fullUrl);
+            break;
+
+        case "code":
+            token = await provider.oauthClient.code.getToken(fullUrl);
+            token = await token.refresh();
             break;
 
         default:
@@ -48,7 +49,10 @@ exports.getAuthCallback = async (
         }
 
         logger.info(`Received token from provider id '${provider.id}'`);
-        authManager.successfulAuth(provider.id, token.data);
+        const tokenData = token.data;
+        tokenData.scope = tokenData.scope?.split(" ");
+
+        authManager.successfulAuth(provider.id, tokenData);
 
         return res.redirect(`/loginsuccess?provider=${encodeURIComponent(provider.details.name)}`);
     } catch (error) {
