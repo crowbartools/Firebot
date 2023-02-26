@@ -72,8 +72,8 @@ const model = {
                 return resolve();
             }
 
-            const streamerName = accountAccess.getAccounts().streamer.username;
-            const channel = await TwitchApi.channels.getChannelInformationByUsername(streamerName);
+            const streamerId = accountAccess.getAccounts().streamer.userId;
+            const channel = await TwitchApi.channels.getChannelInformation(streamerId);
 
             if (channel == null) {
                 return reject(`Can't get channel information.`);

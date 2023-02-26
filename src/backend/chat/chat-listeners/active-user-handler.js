@@ -176,7 +176,7 @@ exports.addOnlineUser = async (username) => {
 
         if (firebotUser == null) {
             const twitchApi = require("../../twitch-api/api");
-            const twitchUser = await twitchApi.getClient().users.getUserByName(username);
+            const twitchUser = await twitchApi.users.getUserByName(username);
 
             if (twitchUser == null) {
                 logger.warn(`Could not find twitch user with username '${username}'`);

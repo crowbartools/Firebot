@@ -1,6 +1,6 @@
 import accountAccess from "../../common/account-access";
 import logger from "../../logwrapper";
-import { ApiClient, UserIdResolvable } from "@twurple/api";
+import { ApiClient, HelixUser, UserIdResolvable } from "@twurple/api";
 
 export class TwitchUsersApi {
     client: ApiClient;
@@ -9,10 +9,31 @@ export class TwitchUsersApi {
         this.client = apiClient;
     }
 
+    async getUserById(userId: string): Promise<HelixUser> {
+        const streamerData = accountAccess.getAccounts().streamer;
+        return await this.client.asUser(streamerData.userId, async ctx => {
+            return await ctx.users.getUserById(userId);
+        });
+    }
+
+    async getUserByName(username: string): Promise<HelixUser> {
+        const streamerData = accountAccess.getAccounts().streamer;
+        return await this.client.asUser(streamerData.userId, async ctx => {
+            return await ctx.users.getUserByName(username);
+        });
+    }
+
+    async getUsersByNames(usernames: string[]): Promise<HelixUser[]> {
+        const streamerData = accountAccess.getAccounts().streamer;
+        return await this.client.asUser(streamerData.userId, async ctx => {
+            return await ctx.users.getUsersByNames(usernames);
+        });
+    }
+
     async getFollowDateForUser(username: string): Promise<Date> {
         const streamerData = accountAccess.getAccounts().streamer;
     
-        const userId = (await this.client.users.getUserByName(username)).id;
+        const userId = (await this.getUserByName(username)).id;
     
         const followData = await this.client.channels.getChannelFollowers(streamerData.userId, streamerData.userId, userId);
     
@@ -35,7 +56,7 @@ export class TwitchUsersApi {
             return true;
         }
     
-        const [user, channel] = await this.client.users.getUsersByNames([username, channelName]);
+        const [user, channel] = await this.getUsersByNames([username, channelName]);
     
         if (user.id == null || channel.id == null) {
             return false;
@@ -57,7 +78,7 @@ export class TwitchUsersApi {
 
         const streamerData = accountAccess.getAccounts().streamer;
 
-        const [user, channel] = await this.client.users.getUsersByNames([username, channelName]);
+        const [user, channel] = await this.getUsersByNames([username, channelName]);
 
         if (user.id == null || channel.id == null) {
             return false;

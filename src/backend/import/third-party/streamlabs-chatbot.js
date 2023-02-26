@@ -15,11 +15,9 @@ const addViewersFromTwitch = async (viewers) => {
     }
 
     for (const group of nameGroups) {
-        const client = twitchApi.getClient();
-
         try {
             const names = group.map(v => v.name);
-            const response = await client.users.getUsersByNames(names);
+            const response = await twitchApi.users.getUsersByNames(names);
 
             if (response) {
                 twitchViewers = [
@@ -33,7 +31,7 @@ const addViewersFromTwitch = async (viewers) => {
             if (err._statusCode === 400) {
                 for (const viewer of group) {
                     try {
-                        const response = await client.users.getUserByName(viewer.name);
+                        const response = await twitchApi.users.getUserByName(viewer.name);
 
                         if (response) {
                             twitchViewers.push(response);

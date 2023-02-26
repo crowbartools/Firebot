@@ -50,7 +50,7 @@ const model = {
     },
     onTriggerEvent: async event => {
         if (event.effect.action === "Add VIP") {
-            const user = await twitchApi.getClient().users.getUserByName(event.effect.username);
+            const user = await twitchApi.users.getUserByName(event.effect.username);
 
             if (user != null) {
                 const result = await twitchApi.moderation.addChannelVip(user.id);
@@ -65,7 +65,7 @@ const model = {
                 logger.warn(`User ${event.effect.username} does not exist and could not be assigned VIP via the VIP effect`);
             }
         } else if (event.effect.action === "Remove VIP") {
-            const user = await twitchApi.getClient().users.getUserByName(event.effect.username);
+            const user = await twitchApi.users.getUserByName(event.effect.username);
 
             if (user != null) {
                 const result = await twitchApi.moderation.removeChannelVip(user.id);

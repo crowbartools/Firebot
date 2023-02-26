@@ -256,8 +256,7 @@ const effect = {
             }
         }
 
-        const user = await twitchApi.getClient().users
-            .getUserByName(effect.username);
+        const user = await twitchApi.users.getUserByName(effect.username);
 
         if (user == null) {
             return;

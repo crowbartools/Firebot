@@ -376,7 +376,7 @@ const playVideo = {
             } else if (effect.videoType === "Random Twitch Clip") {
                 const username = effect.twitchClipUsername || accountAccess.getAccounts().streamer.username;
                 try {
-                    const user = await client.users.getUserByName(username);
+                    const user = await twitchApi.users.getUserByName(username);
 
                     if (user == null) {
                         logger.warn(`Could not found a user by the username ${username}`);

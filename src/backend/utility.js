@@ -126,7 +126,7 @@ const getUptime = async () => {
     const client = twitchApi.getClient();
 
     const streamerAccount = accountAccess.getAccounts().streamer;
-    const channelData = await client.streams.getStreamByUserName(streamerAccount.username);
+    const channelData = await client.streams.getStreamByUserId(streamerAccount.userId);
 
     if (channelData == null) {
         return "Not currently broadcasting";

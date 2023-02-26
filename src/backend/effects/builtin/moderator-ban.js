@@ -49,7 +49,7 @@ const model = {
     },
     onTriggerEvent: async event => {
         if (event.effect.action === "Ban") {
-            const user = await twitchApi.getClient().users.getUserByName(event.effect.username);
+            const user = await twitchApi.users.getUserByName(event.effect.username);
 
             if (user != null) {
                 const result = await twitchApi.moderation.banUser(user.id, "Banned by Firebot");
@@ -66,7 +66,7 @@ const model = {
             }
         }
         if (event.effect.action === "Unban") {
-            const user = await twitchApi.getClient().users.getUserByName(event.effect.username);
+            const user = await twitchApi.users.getUserByName(event.effect.username);
 
             if (user != null) {
                 const result = await twitchApi.moderation.unban(user.id);

@@ -59,7 +59,9 @@ exports.cacheBadges = async () => {
     if (streamer.loggedIn && client) {
         try {
             const channelBadges = await client.chat.getChannelBadges(streamer.userId);
-            const globalBadges = await client.chat.getGlobalBadges();
+            const globalBadges = await client.asUser(streamer.userId, async ctx => {
+                return await ctx.chat.getGlobalBadges();
+            });
             badgeCache = [
                 ...channelBadges,
                 ...globalBadges
@@ -91,7 +93,9 @@ exports.cacheTwitchEmotes = async () => {
 
     try {
         const channelEmotes = await client.chat.getChannelEmotes(streamer.userId);
-        const globalEmotes = await client.chat.getGlobalEmotes();
+        const globalEmotes = await client.asUser(streamer.userId, async ctx => {
+            return await ctx.chat.getGlobalEmotes();
+        });
 
         if (!channelEmotes && !globalEmotes) {
             return;
@@ -164,7 +168,7 @@ async function getUserProfilePicUrl(userId) {
     const streamer = accountAccess.getAccounts().streamer;
     const client = twitchClient.getClient();
     if (streamer.loggedIn && client) {
-        const user = await client.users.getUserById(userId);
+        const user = await twitchClient.users.getUserById(userId);
         if (user) {
             profilePicUrlCache[userId] = user.profilePictureUrl;
             return user.profilePictureUrl;

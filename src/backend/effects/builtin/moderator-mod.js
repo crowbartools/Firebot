@@ -49,7 +49,7 @@ const model = {
     },
     onTriggerEvent: async event => {
         if (event.effect.action === "Mod") {
-            const user = await twitchApi.getClient().users.getUserByName(event.effect.username);
+            const user = await twitchApi.users.getUserByName(event.effect.username);
 
             if (user != null) {
                 const result = await twitchApi.moderation.addChannelModerator(user.id);
@@ -63,7 +63,7 @@ const model = {
                 logger.warn(`User ${event.effect.username} does not exist and could not be modded via the Mod effect`);
             }
         } else if (event.effect.action === "Unmod") {
-            const user = await twitchApi.getClient().users.getUserByName(event.effect.username);
+            const user = await twitchApi.users.getUserByName(event.effect.username);
 
             if (user != null) {
                 const result = await twitchApi.moderation.removeChannelModerator(user.id);

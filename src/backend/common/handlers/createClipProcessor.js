@@ -16,8 +16,8 @@ const client = twitchApi.getClient();
 exports.createClip = async function(effect) {
 
     const streamerAccount = accountAccess.getAccounts().streamer;
-    const broadcast = await client.streams.getStreamByUserName(streamerAccount.username);
-    const channelId = (await client.users.getUserByName(streamerAccount.username)).id;
+    const broadcast = await client.streams.getStreamByUserId(streamerAccount.userId);
+    const channelId = (await twitchApi.users.getUserById(streamerAccount.userId)).id;
 
     if (broadcast == null) {
         renderWindow.webContents.send('error', `Failed to create a clip. Reason: Streamer is not live.`);

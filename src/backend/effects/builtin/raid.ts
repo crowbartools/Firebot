@@ -51,7 +51,7 @@ const model: EffectType<{
     optionsController: () => { },
     onTriggerEvent: async ({ effect }) => {
         if (effect.action === "Raid Channel") {
-            const targetUserId = (await twitchApi.getClient().users.getUserByName(effect.username))?.id;
+            const targetUserId = (await twitchApi.users.getUserByName(effect.username))?.id;
 
             if (targetUserId == null) {
                 logger.error(`Unable to start raid. Twitch user ${effect.username} does not exist.`);
