@@ -10,13 +10,13 @@ const HTTP_PORT = settings.getWebServerPort();
 class AuthManager extends EventEmitter {
     constructor() {
         super();
-        /** @type {import("./auth-provider").AuthProvider[]} */
+        /** @type {import("./auth").AuthProvider[]} */
         this._authProviders = [];
 
         this.REDIRECT_URI = 'http://localhost:' + HTTP_PORT + '/api/v1/auth/callback';
     }
 
-    /** @param {import("./auth-provider").AuthProviderDefinition} provider */
+    /** @param {import("./auth").AuthProviderDefinition} provider */
     registerAuthProvider(provider) {
         if (provider == null) {
             return;
@@ -48,7 +48,7 @@ class AuthManager extends EventEmitter {
         return this._authProviders.find(p => p.id === providerId);
     }
 
-    /** @param {import("./auth-provider").AuthProviderDefinition} provider */
+    /** @param {import("./auth").AuthProviderDefinition} provider */
     buildOAuthClientForProvider(provider, redirectUri) {
         let scopes;
         if (provider.scopes) {

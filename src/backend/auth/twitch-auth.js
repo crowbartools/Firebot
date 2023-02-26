@@ -17,7 +17,7 @@ const AUTHORIZE_PATH = "/oauth2/authorize";
 const STREAMER_ACCOUNT_PROVIDER_ID = "twitch:streamer-account";
 const BOT_ACCOUNT_PROVIDER_ID = "twitch:bot-account";
 
-/** @type {import("./auth-provider").AuthProviderDefinition} */
+/** @type {import("./auth").AuthProviderDefinition} */
 const STREAMER_ACCOUNT_PROVIDER = {
     id: STREAMER_ACCOUNT_PROVIDER_ID,
     name: "Streamer Account",
@@ -91,7 +91,7 @@ const STREAMER_ACCOUNT_PROVIDER = {
     ]
 };
 
-/** @type {import("./auth-provider").AuthProviderDefinition} */
+/** @type {import("./auth").AuthProviderDefinition} */
 const BOT_ACCOUNT_PROVIDER = {
     id: BOT_ACCOUNT_PROVIDER_ID,
     name: "Bot Account",

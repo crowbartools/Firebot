@@ -21,27 +21,33 @@ exports.getAuthCallback = async (
     /** @type {import("express").Response} */ res) => {
     const state = req.query.state;
 
-    /** @type {import("../../../../backend/auth/auth-provider").AuthProvider} */
+    /** @type {import("../../../../backend/auth/auth").AuthProvider} */
     const provider = authManager.getAuthProvider(state);
     if (provider == null) {
         return res.status(400).json('Invalid provider id in state');
     }
 
     try {
-        const fullUrl = `http${req.secure ? "s" : ""}://${req.hostname}:${req.socket.localPort}${req.originalUrl}`.replace("callback2", "callback");
+        const fullUrl = req.originalUrl.replace("callback2", "callback");
         /** @type {import("client-oauth2").Token} */
         let token;
 
         const authType = provider.details.auth.type ?? "code";
 
+        /** @type {import("client-oauth2").Options} */
+        const tokenOptions = { body: {} };
+
         switch (authType) {
         case "token":
-            token = await provider.oauthClient.token.getToken(fullUrl);
+            token = await provider.oauthClient.token.getToken(fullUrl, tokenOptions);
             break;
 
         case "code":
-            token = await provider.oauthClient.code.getToken(fullUrl);
-            token = await token.refresh();
+            // Force these because the library adds them as an auth header, not in the body
+            tokenOptions.body["client_id"] = provider.details.client.id;
+            tokenOptions.body["client_secret"] = provider.details.client.secret;
+
+            token = await provider.oauthClient.code.getToken(fullUrl, tokenOptions);
             break;
 
         default:

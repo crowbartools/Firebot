@@ -1,4 +1,4 @@
-import accountAccess, { AuthDetails, FirebotAccount } from "../common/account-access";
+import accountAccess from "../common/account-access";
 import twitchAuth from "./twitch-auth";
 import TwitchApi from "../twitch-api/api";
 import { StaticAuthProvider } from "@twurple/auth";
