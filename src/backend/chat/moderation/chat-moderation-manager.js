@@ -359,13 +359,13 @@ frontendCommunicator.on("removeAllBannedWords", () => {
     saveBannedWordList();
 });
 
-frontendCommunicator.on("addBannedRegularExpression", expressions => {
-    bannedRegularExpressions.regularExpressions = bannedRegularExpressions.regularExpressions.concat(expressions);
+frontendCommunicator.on("addBannedRegularExpression", expression => {
+    bannedRegularExpressions.regularExpressions.push(expression);
     saveBannedRegularExpressionsList();
 });
 
 frontendCommunicator.on("removeBannedRegularExpression", expression => {
-    bannedRegularExpressions.regularExpressions = bannedRegularExpressions.regularExpressions.filter(r => r.text !== expression);
+    bannedRegularExpressions.regularExpressions = bannedRegularExpressions.regularExpressions.filter(r => r.text !== expression.text);
     saveBannedRegularExpressionsList();
 });
 

@@ -102,15 +102,13 @@
                 backendCommunicator.fireEvent("addBannedWords", mapped);
             };
 
-            service.addBannedRegex = (regex) => {
-                const mapped = [
-                    {
-                        text: regex,
-                        createdAt: moment().valueOf()
-                    }
-                ];
+            service.addBannedRegex = (text) => {
+                const mapped = {
+                    text,
+                    createdAt: moment().valueOf()
+                };
 
-                service.chatModerationData.bannedRegularExpressions = service.chatModerationData.bannedRegularExpressions.concat(mapped);
+                service.chatModerationData.bannedRegularExpressions = service.chatModerationData.bannedRegularExpressions.push(mapped);
 
                 backendCommunicator.fireEvent("addBannedRegularExpression", mapped);
             };
@@ -138,13 +136,13 @@
             service.removeRegexAtIndex = (index) => {
                 const regex = service.chatModerationData.bannedRegularExpressions[index];
                 if (regex) {
-                    backendCommunicator.fireEvent("removeBannedRegularExpression", regex.text);
+                    backendCommunicator.fireEvent("removeBannedRegularExpression", regex);
                     service.chatModerationData.bannedRegularExpressions.splice(index, 1);
                 }
             };
 
-            service.removeRegex = (regex) => {
-                const index = service.chatModerationData.bannedRegularExpressions.findIndex(r => r.text === regex);
+            service.removeRegex = (text) => {
+                const index = service.chatModerationData.bannedRegularExpressions.findIndex(r => r.text === text);
                 if (index > -1) {
                     service.removeRegexAtIndex(index);
                 }
