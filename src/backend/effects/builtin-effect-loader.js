@@ -63,6 +63,7 @@ exports.loadEffects = () => {
         'toggle-event-set',
         'toggle-event',
         'toggle-timer',
+        'twitch-shoutout',
         'update-channel-reward',
         'update-counter',
         'update-role',

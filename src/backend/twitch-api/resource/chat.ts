@@ -28,7 +28,7 @@ export class TwitchChatApi {
                 chatters.push(...result.data.map(c => c.userDisplayName));
             }
         } catch (error) {
-            logger.error("Error getting chatter list", error);
+            logger.error("Error getting chatter list", error.message);
         }
     
         return chatters;
@@ -82,10 +82,28 @@ export class TwitchChatApi {
     
             return true;
         } catch (error) {
-            logger.error("Error sending announcemnt", error);
+            logger.error("Error sending announcemnt", error.message);
         }
     
         return false;
+    }
+
+    /**
+     * Sends a Twitch shoutout to another channel
+     * 
+     * @param targetUserId The Twitch user ID whose channel to shoutout
+     */
+    async sendShoutout(targetUserId: string): Promise<boolean> {
+        const streamerId = accountAccess.getAccounts().streamer.userId;
+
+        try {
+            await this.streamerClient.chat.shoutoutUser(streamerId, targetUserId, streamerId);
+        } catch (error) {
+            logger.error("Error sending shoutout", error.message);
+            return false;
+        }
+
+        return true;
     }
     
     /**
@@ -102,7 +120,7 @@ export class TwitchChatApi {
     
             return true;
         } catch (error) {
-            logger.error("Error clearing chat", error);
+            logger.error("Error clearing chat", error.message);
         }
     
         return false;
@@ -121,7 +139,7 @@ export class TwitchChatApi {
     
             return true;
         } catch (error) {
-            logger.error("Error clearing chat", error);
+            logger.error("Error clearing chat", error.message);
         }
     
         return false;
@@ -145,7 +163,7 @@ export class TwitchChatApi {
     
             return true;
         } catch (error) {
-            logger.error("Error setting emote-only mode", error);
+            logger.error("Error setting emote-only mode", error.message);
         }
     
         return false;
@@ -171,7 +189,7 @@ export class TwitchChatApi {
     
             return true;
         } catch (error) {
-            logger.error("Error setting follower-only mode", error);
+            logger.error("Error setting follower-only mode", error.message);
         }
     
         return false;
@@ -195,7 +213,7 @@ export class TwitchChatApi {
     
             return true;
         } catch (error) {
-            logger.error("Error setting subscriber-only mode", error);
+            logger.error("Error setting subscriber-only mode", error.message);
         }
     
         return false;
@@ -221,7 +239,7 @@ export class TwitchChatApi {
     
             return true;
         } catch (error) {
-            logger.error("Error setting slow mode", error);
+            logger.error("Error setting slow mode", error.message);
         }
     
         return false;
@@ -245,7 +263,7 @@ export class TwitchChatApi {
     
             return true;
         } catch (error) {
-            logger.error("Error setting unique mode", error);
+            logger.error("Error setting unique mode", error.message);
         }
     
         return false;
