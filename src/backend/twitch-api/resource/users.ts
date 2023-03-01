@@ -83,7 +83,7 @@ export class TwitchUsersApi {
     
             return userFollow ?? false;
         } catch (err) {
-            logger.error(`Failed to check if ${username} follows ${channelName}`, err);
+            logger.error(`Failed to check if ${username} follows ${channelName}`, err.message);
             return false;
         }
     }
@@ -100,7 +100,24 @@ export class TwitchUsersApi {
                 reason
             });
         } catch (error) {
-            logger.error("Error blocking user", error);
+            logger.error("Error blocking user", error.message);
+            return false;
+        }
+    
+        return true;
+    }
+
+    async unblockUser(userId: UserIdResolvable): Promise<boolean> {
+        if (userId == null) {
+            return false;
+        }
+
+        const streamerId = accountAccess.getAccounts().streamer.userId;
+    
+        try {
+            await this.streamerClient.users.deleteBlock(streamerId, userId);
+        } catch (error) {
+            logger.error("Error unblocking user", error.message);
             return false;
         }
     
