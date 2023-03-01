@@ -383,7 +383,7 @@ const playVideo = {
                         return true;
                     }
 
-                    const clips = await client.clips.getClipsForBroadcaster(user.id);
+                    const clips = await client.clips.getClipsForBroadcaster(user.id, { limit: 100 });
 
                     if (clips.data.length < 1) {
                         logger.warn(`User ${username} has no clips. Unable to get random.`);
