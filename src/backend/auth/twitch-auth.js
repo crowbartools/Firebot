@@ -8,29 +8,26 @@ const axios = require("axios").default;
 const { secrets } = require("../secrets-manager");
 
 const TWITCH_CLIENT_ID = secrets.twitchClientId;
-const TWITCH_CLIENT_SECRET = secrets.twitchClientSecret;
 
 exports.TWITCH_CLIENT_ID = TWITCH_CLIENT_ID;
-exports.TWITCH_CLIENT_SECRET = TWITCH_CLIENT_SECRET;
 
 const HOST = "https://id.twitch.tv";
-const TOKEN_PATH = "/oauth2/token";
 const AUTHORIZE_PATH = "/oauth2/authorize";
 
 const STREAMER_ACCOUNT_PROVIDER_ID = "twitch:streamer-account";
 const BOT_ACCOUNT_PROVIDER_ID = "twitch:bot-account";
 
+/** @type {import("./auth").AuthProviderDefinition} */
 const STREAMER_ACCOUNT_PROVIDER = {
     id: STREAMER_ACCOUNT_PROVIDER_ID,
     name: "Streamer Account",
     client: {
-        id: TWITCH_CLIENT_ID,
-        secret: TWITCH_CLIENT_SECRET
+        id: TWITCH_CLIENT_ID
     },
     auth: {
         tokenHost: HOST,
-        tokenPath: TOKEN_PATH,
-        authorizePath: AUTHORIZE_PATH
+        authorizePath: AUTHORIZE_PATH,
+        type: "token"
     },
     scopes: [
         'bits:read',
@@ -91,20 +88,20 @@ const STREAMER_ACCOUNT_PROVIDER = {
         'user_read',
         'whispers:edit',
         'whispers:read'
-    ].join(' ')
+    ]
 };
 
+/** @type {import("./auth").AuthProviderDefinition} */
 const BOT_ACCOUNT_PROVIDER = {
     id: BOT_ACCOUNT_PROVIDER_ID,
     name: "Bot Account",
     client: {
-        id: TWITCH_CLIENT_ID,
-        secret: TWITCH_CLIENT_SECRET
+        id: TWITCH_CLIENT_ID
     },
     auth: {
         tokenHost: HOST,
-        tokenPath: TOKEN_PATH,
-        authorizePath: AUTHORIZE_PATH
+        authorizePath: AUTHORIZE_PATH,
+        type: "token"
     },
     scopes: [
         'channel:moderate',
@@ -115,7 +112,7 @@ const BOT_ACCOUNT_PROVIDER = {
         'whispers:edit',
         'whispers:read',
         'channel_read'
-    ].join(' ')
+    ]
 };
 
 exports.STREAMER_ACCOUNT_PROVIDER = STREAMER_ACCOUNT_PROVIDER;

@@ -20,7 +20,7 @@ class TwitchChatterPoll {
         try {
             const streamer = accountAccess.getAccounts().streamer;
     
-            if (TwitchApi.getClient() == null || !streamer.loggedIn) {
+            if (TwitchApi.streamerClient == null || !streamer.loggedIn) {
                 return;
             }
     

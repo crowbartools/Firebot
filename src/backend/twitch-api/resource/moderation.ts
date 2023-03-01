@@ -3,10 +3,12 @@ import accountAccess from "../../common/account-access";
 import { ApiClient, HelixBanUserRequest, UserIdResolvable } from "@twurple/api";
 
 export class TwitchModerationApi {
-    client: ApiClient;
+    streamerClient: ApiClient;
+    botClient: ApiClient;
 
-    constructor(apiClient: ApiClient) {
-        this.client = apiClient;
+    constructor(streamerClient: ApiClient, botClient: ApiClient) {
+        this.streamerClient = streamerClient;
+        this.botClient = botClient;
     }
 
     /**
@@ -31,7 +33,7 @@ export class TwitchModerationApi {
                 reason: reason
             };
     
-            const response = await this.client.moderation.banUser(streamerId, streamerId, timeoutRequest);
+            const response = await this.streamerClient.moderation.banUser(streamerId, streamerId, timeoutRequest);
     
             return true;
         } catch (error) {
@@ -58,7 +60,7 @@ export class TwitchModerationApi {
                 reason: reason
             };
     
-            await this.client.moderation.banUser(streamerId, streamerId, banRequest);
+            await this.streamerClient.moderation.banUser(streamerId, streamerId, banRequest);
     
             return true;
         } catch (error) {
@@ -78,7 +80,7 @@ export class TwitchModerationApi {
         const streamerId = accountAccess.getAccounts().streamer.userId;
     
         try {
-            await this.client.moderation.unbanUser(streamerId, streamerId, userId);
+            await this.streamerClient.moderation.unbanUser(streamerId, streamerId, userId);
     
             return true;
         } catch (error) {
@@ -98,7 +100,7 @@ export class TwitchModerationApi {
         const streamerId = accountAccess.getAccounts().streamer.userId;
     
         try {
-            await this.client.moderation.addModerator(streamerId, userId);
+            await this.streamerClient.moderation.addModerator(streamerId, userId);
     
             return true;
         } catch (error) {
@@ -118,7 +120,7 @@ export class TwitchModerationApi {
         const streamerId = accountAccess.getAccounts().streamer.userId;
     
         try {
-            await this.client.moderation.removeModerator(streamerId, userId);
+            await this.streamerClient.moderation.removeModerator(streamerId, userId);
     
             return true;
         } catch (error) {
@@ -138,7 +140,7 @@ export class TwitchModerationApi {
         const streamerId = accountAccess.getAccounts().streamer.userId;
     
         try {
-            await this.client.channels.addVip(streamerId, userId);    
+            await this.streamerClient.channels.addVip(streamerId, userId);    
             return true;
         } catch (error) {
             logger.error("Error adding VIP", error);
@@ -157,7 +159,7 @@ export class TwitchModerationApi {
         const streamerId = accountAccess.getAccounts().streamer.userId;
     
         try {
-            await this.client.channels.removeVip(streamerId, userId);
+            await this.streamerClient.channels.removeVip(streamerId, userId);
             return true;
         } catch (error) {
             logger.error("Error removing VIP", error);

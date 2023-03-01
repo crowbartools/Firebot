@@ -19,7 +19,7 @@ const model = {
         const { streamer } = accountAccess.getAccounts();
         let points = 0;
         try {
-            const response = await api.getClient().subscriptions
+            const response = await api.streamerClient.subscriptions
                 .getSubscriptionsPaginated(streamer.channelId).getAll();
             if (response && response.length) {
                 response.forEach(sub => {

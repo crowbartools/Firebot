@@ -58,7 +58,7 @@ const removeVipFromVipList = (username) => {
 const getUserSubscriberRole = async (userIdOrName) => {
     const isName = isNaN(userIdOrName);
 
-    const client = twitchApi.getClient();
+    const client = twitchApi.streamerClient;
     const userId = isName ? (await twitchApi.users.getUserByName(userIdOrName)).id : userIdOrName;
 
     const streamer = accountAccess.getAccounts().streamer;
@@ -95,7 +95,7 @@ const getUsersChatRoles = async (userIdOrName = "") => {
     const roles = [];
 
     try {
-        const client = twitchApi.getClient();
+        const client = twitchApi.streamerClient;
         const username = isName ? userIdOrName : (await twitchApi.users.getUserById(userIdOrName)).name;
 
         if (viewerlistBotMap[username?.toLowerCase() ?? ""] != null) {

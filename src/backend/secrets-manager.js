@@ -5,7 +5,6 @@ const logger = require("./logwrapper");
 /**
  * @typedef FirebotSecrets
  * @property {string} twitchClientId
- * @property {string} twitchClientSecret
  * @property {string} tipeeeStreamClientId
  * @property {string} tipeeeStreamClientSecret
  * @property {string} streamLabsClientId
@@ -15,7 +14,6 @@ const logger = require("./logwrapper");
 /**@type {(keyof FirebotSecrets)[]} */
 const expectedKeys = [
     "twitchClientId",
-    "twitchClientSecret",
     "tipeeeStreamClientId",
     "tipeeeStreamClientSecret",
     "streamLabsClientId",

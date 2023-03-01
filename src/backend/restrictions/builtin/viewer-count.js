@@ -67,7 +67,7 @@ const model = {
     */
     predicate: (triggerData, restrictionData) => {
         return new Promise(async (resolve, reject) => {
-            const client = twitchApi.getClient();
+            const client = twitchApi.streamerClient;
             const streamer = accountAccess.getAccounts().streamer;
 
             let currentViewers = null;

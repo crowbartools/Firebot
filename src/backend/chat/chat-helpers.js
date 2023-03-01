@@ -55,7 +55,7 @@ const utils = require("../utility");
 let badgeCache = null;
 exports.cacheBadges = async () => {
     const streamer = accountAccess.getAccounts().streamer;
-    const client = twitchClient.getClient();
+    const client = twitchClient.streamerClient;
     if (streamer.loggedIn && client) {
         try {
             const channelBadges = await client.chat.getChannelBadges(streamer.userId);
@@ -84,7 +84,7 @@ exports.setStreamerData = function(newStreamerData) {
 let twitchEmotes = null;
 
 exports.cacheTwitchEmotes = async () => {
-    const client = twitchClient.getClient();
+    const client = twitchClient.streamerClient;
     const streamer = accountAccess.getAccounts().streamer;
 
     if (client == null || !streamer.loggedIn) {
@@ -166,7 +166,7 @@ async function getUserProfilePicUrl(userId) {
     }
 
     const streamer = accountAccess.getAccounts().streamer;
-    const client = twitchClient.getClient();
+    const client = twitchClient.streamerClient;
     if (streamer.loggedIn && client) {
         const user = await twitchClient.users.getUserById(userId);
         if (user) {

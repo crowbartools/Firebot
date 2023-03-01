@@ -29,7 +29,7 @@ class TwitchStreamInfoPoll {
 
     private async handleStreamInfo(): Promise<void> {
         const streamer = accountAccess.getAccounts().streamer;
-        const client = TwitchApi.getClient();
+        const client = TwitchApi.streamerClient;
 
         if (client == null || !streamer.loggedIn) {
             return;

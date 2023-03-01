@@ -1,18 +1,19 @@
 import logger from "../../logwrapper";
 import accountAccess from "../../common/account-access";
-import { TwitchUsersApi } from "./users";
 import { ApiClient, HelixTeam } from "@twurple/api";
 
 export class TwitchTeamsApi {
-    client: ApiClient;
+    streamerClient: ApiClient;
+    botClient: ApiClient;
 
-    constructor(apiClient: ApiClient) {
-        this.client = apiClient;
+    constructor(streamerClient: ApiClient, botClient: ApiClient) {
+        this.streamerClient = streamerClient;
+        this.botClient = botClient;
     }
 
     async getTeams(broadcasterId: string): Promise<HelixTeam[]> {
         try {
-            const teams = await this.client.teams.getTeamsForBroadcaster(broadcasterId);
+            const teams = await this.streamerClient.teams.getTeamsForBroadcaster(broadcasterId);
 
             if (teams != null) {
                 return teams;
@@ -44,7 +45,7 @@ export class TwitchTeamsApi {
 
     async getMatchingTeamsByName(username: string): Promise<HelixTeam[]> {
         try {
-            const user = await new TwitchUsersApi(this.client).getUserByName(username);
+            const user = await this.streamerClient.users.getUserByName(username);
 
             if (user == null) {
                 return null;

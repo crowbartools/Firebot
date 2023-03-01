@@ -8,7 +8,7 @@ const discord = require("../../integrations/builtin/discord/discord-message-send
 const utils = require("../../utility");
 
 const twitchApi = require("../../twitch-api/api");
-const client = twitchApi.getClient();
+const client = twitchApi.streamerClient;
 
 /**
  * @returns {Promise<HelixClip?>}

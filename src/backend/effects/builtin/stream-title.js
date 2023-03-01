@@ -28,7 +28,7 @@ const model = {
         return errors;
     },
     onTriggerEvent: async event => {
-        const client = twitchApi.getClient();
+        const client = twitchApi.streamerClient;
 
         await client.channels.updateChannelInfo(accountAccess.getAccounts().streamer.userId, {title: event.effect.title});
         return true;

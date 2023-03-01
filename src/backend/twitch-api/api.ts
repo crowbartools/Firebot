@@ -1,7 +1,8 @@
+import { ApiClient } from "@twurple/api";
+import { StaticAuthProvider } from "@twurple/auth";
+
 import logger from "../logwrapper";
 import accountAccess from "../common/account-access";
-import { ApiClient } from "@twurple/api";
-import { RefreshingAuthProvider } from "@twurple/auth";
 
 import { TwitchBitsApi } from "./resource/bits";
 import { TwitchCategoriesApi } from "./resource/categories";
@@ -15,62 +16,78 @@ import { TwitchUsersApi } from "./resource/users";
 import { TwitchWhispersApi } from "./resource/whispers";
 
 class TwitchApi {
-    client: ApiClient;
+    private _streamerClient: ApiClient;
+    private _botClient: ApiClient;
 
-    setupApiClient(provider: RefreshingAuthProvider): void {
-        if (accountAccess.getAccounts().streamer.loggedIn || accountAccess.getAccounts().bot.loggedIn) {
-            if (!provider) {
-                return;
-            }
-    
-            this.client = new ApiClient({ authProvider: provider });
-    
-            logger.info("Finished setting up Twitch API client");
+    setupApiClients(streamerProvider: StaticAuthProvider, botProvider: StaticAuthProvider): void {
+        if (!streamerProvider && !botProvider) {
+            return;
         }
+
+        if (accountAccess.getAccounts().streamer.loggedIn) {
+            this._streamerClient = new ApiClient({ authProvider: streamerProvider });
+        }
+        
+        if (accountAccess.getAccounts().bot.loggedIn) {
+            this._botClient = new ApiClient({ authProvider: botProvider });
+        }
+    
+        logger.info("Finished setting up Twitch API client");
     }
 
+    /**
+     * @deprecated Use the `streamerClient` and `botClient` properties going forward
+     */
     getClient(): ApiClient {
-        return this.client;
+        return this.streamerClient;
+    }
+
+    get streamerClient(): ApiClient {
+        return this._streamerClient;
+    }
+
+    get botClient(): ApiClient {
+        return this._botClient;
     }
 
     get bits() {
-        return new TwitchBitsApi(this.client);
+        return new TwitchBitsApi(this._streamerClient, this._botClient);
     }
 
     get categories() {
-        return new TwitchCategoriesApi(this.client);
+        return new TwitchCategoriesApi(this._streamerClient, this._botClient);
     }
 
     get channelRewards() {
-        return new TwitchChannelRewardsApi(this.client);
+        return new TwitchChannelRewardsApi(this._streamerClient, this._botClient);
     }
 
     get channels() {
-        return new TwitchChannelsApi(this.client);
+        return new TwitchChannelsApi(this._streamerClient, this._botClient);
     }
 
     get chat() {
-        return new TwitchChatApi(this.client);
+        return new TwitchChatApi(this._streamerClient, this._botClient);
     }
 
     get moderation() {
-        return new TwitchModerationApi(this.client);
+        return new TwitchModerationApi(this._streamerClient, this._botClient);
     }
 
     get streams() {
-        return new TwitchStreamsApi(this.client);
+        return new TwitchStreamsApi(this._streamerClient, this._botClient);
     }
 
     get teams() {
-        return new TwitchTeamsApi(this.client);
+        return new TwitchTeamsApi(this._streamerClient, this._botClient);
     }
 
     get users() {
-        return new TwitchUsersApi(this.client);
+        return new TwitchUsersApi(this._streamerClient, this._botClient);
     }
 
     get whispers() {
-        return new TwitchWhispersApi(this.client);
+        return new TwitchWhispersApi(this._streamerClient, this._botClient);
     }
 }
 
