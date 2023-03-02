@@ -38,7 +38,12 @@ module.exports = function(grunt) {
     if (platform == null || platform == '' || platform instanceof Boolean) {
         platform = process.platform === 'win32' ? 'win64' : process.platform;
     }
-    if (platform !== 'win64' && platform !== 'linux') {
+
+    if (
+        platform !== 'win64' &&
+        platform !== 'darwin' &&
+        platform !== 'linux'
+    ) {
         //grunt.fail.fatal(new Error('Platform not supported'), 1);
     }
 
