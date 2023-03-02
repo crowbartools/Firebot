@@ -33,12 +33,32 @@ module.exports = function (grunt) {
                     dest: '/'
                 }]
             }
+        },
+        shell: {
+            compiledmg: {
+                command: `npx --no-install --ignore-existing electron-installer-dmg ../dist/pack/Firebot-darwin-x64/ --out=../dist/install/macos`
+            }
         }
     });
 
     grunt.loadNpmTasks('grunt-electron-installer');
     grunt.loadNpmTasks('grunt-contrib-compress');
+    let compileCommand;
+    switch (grunt.config.get('platform')) {
+    case 'win64':
+        compileCommand = 'create-windows-installer:win64';
+        break;
 
-    const task = grunt.config.get('platform') === 'win64' ? 'create-windows-installer:win64' : 'compress:linux';
-    grunt.registerTask('compile', ['cleanup:install', task]);
+    case 'linux':
+        compileCommand = 'compress:linux';
+        break;
+
+    case 'darwin':
+        compileCommand = 'shell:compile-dmg';
+        break;
+
+    default:
+        throw new Error('unknonw platform');
+    }
+    grunt.registerTask('compile', ['cleanup:install', compileCommand]);
 };

@@ -30,6 +30,7 @@
     "@typescript-eslint/parser": "^5.32.0",
     "copyfiles": "^2.4.1",
     "electron": "^12.2.2",
+    "electron-installer-dmg": "^4.0.0",
     "electron-packager": "^12.2.0",
     "electron-rebuild": "^1.8.6",
     "eslint": "^8.4.1",
