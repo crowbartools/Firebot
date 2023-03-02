@@ -14,7 +14,8 @@ const effectManager = require("../backend/effects/effectManager");
 const resourceTokenManager = require("../backend/resourceTokenManager");
 
 const electron = require('electron');
-const cwd = !electron.app.isPackaged ? path.join(electron.app.getAppPath(), "build") : process.cwd();
+const workingDirectoryRoot = process.platform === 'darwin' ? process.resourcesPath : process.cwd();
+const cwd = !electron.app.isPackaged ? path.join(electron.app.getAppPath(), "build") : workingDirectoryRoot;
 
 
 class HttpServerManager extends EventEmitter {
