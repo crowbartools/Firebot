@@ -36,7 +36,7 @@ module.exports = function (grunt) {
         },
         shell: {
             'compile-darwin': {
-                command: `npx --no-install --ignore-existing electron-installer-dmg ../dist/pack/Firebot-darwin-x64/ --out=../dist/install/macos`
+                command: `npx --no-install --ignore-existing electron-installer-dmg ../dist/pack/Firebot-darwin-x64/Firebot.app --out=../dist/install/darin`
             }
         }
     });
