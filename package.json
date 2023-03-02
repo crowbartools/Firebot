@@ -7,7 +7,6 @@
     "start": "grunt prep && electron . --dev",
     "rebuild": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=12.2.2 --arch=x64 --dist-url=https://artifacts.electronjs.org/headers/dist --abi=87 --force-process-config",
     "rebuild:new": "npm rebuild --runtime=electron --target=12.2.2 --disturl=https://artifacts.electronjs.org/headers/dist --abi=87",
-    "rebuild:darwin": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=12.2.2 --arch=darwin --dist-url=https://artifacts.electronjs.org/headers/dist",
     "setup": "npm ci && npm rebuild && npm run rebuild",
     "build": "grunt build",
     "lint": "grunt lint"
