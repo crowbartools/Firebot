@@ -10,6 +10,7 @@ exports.loadEffects = () => {
         'announcement',
         'api',
         'approve-reject-channel-reward-redemption',
+        'block-unblock',
         'celebration',
         'chat-feed-alert',
         'chat',
