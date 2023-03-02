@@ -141,7 +141,7 @@
     "ws": "^8.2.2"
   },
   "optionalDependencies": {
-    "electron-installer-dmg": "github:SReject/electron-installer-dmg/commit/6b7370be9c63262db0cdae5e0d38cd4a591f62e7"
+    "electron-installer-dmg": "github:SReject/electron-installer-dmg#6b7370be9c63262db0cdae5e0d38cd4a591f62e7"
   },
   "volta": {
     "node": "14.18.1",
