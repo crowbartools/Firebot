@@ -52,6 +52,17 @@ module.exports = function (grunt) {
                     }
                 ]
             },
+            darwin: {
+                files: [
+                    {
+                        expand: true,
+                        dest: 'dist/pack/Firebot-darwin-x64/resources/',
+                        cwd: 'build/resources/',
+                        src: ['**'],
+                        filter: 'isFile'
+                    }
+                ]
+            },
 
             linux: {
                 files: [
