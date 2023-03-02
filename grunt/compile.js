@@ -35,7 +35,7 @@ module.exports = function (grunt) {
             }
         },
         shell: {
-            compiledmg: {
+            'compile-darwin': {
                 command: `npx --no-install --ignore-existing electron-installer-dmg ../dist/pack/Firebot-darwin-x64/ --out=../dist/install/macos`
             }
         }
@@ -54,7 +54,7 @@ module.exports = function (grunt) {
         break;
 
     case 'darwin':
-        compileCommand = 'shell:compile-dmg';
+        compileCommand = 'shell:compile-darwin';
         break;
 
     default:
