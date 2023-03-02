@@ -41,7 +41,7 @@ module.exports = function (grunt) {
         },
         shell: {
             'compile-darwin': {
-                command: `npx --no-install --ignore-existing electron-installer-dmg "${macPathIn}" Firebot --out="${macPathOut}"`
+                command: `npx --no-install electron-installer-dmg "${macPathIn}" Firebot --out="${macPathOut}"`
             }
         }
     });
