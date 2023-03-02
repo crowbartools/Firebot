@@ -101,8 +101,8 @@ const shoutoutStyles = `
 const effect = {
     definition: {
         id: "firebot:shoutout",
-        name: "Show Shoutout",
-        description: "Shows an shoutout graphic for a user in the overlay.",
+        name: "Firebot Shoutout",
+        description: "Display a shoutout graphic for a channel in the overlay.",
         icon: "fad fa-megaphone",
         categories: [EffectCategory.COMMON, EffectCategory.FUN, EffectCategory.OVERLAY],
         dependencies: [EffectDependency.OVERLAY]
