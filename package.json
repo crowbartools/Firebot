@@ -30,7 +30,6 @@
     "@typescript-eslint/parser": "^5.32.0",
     "copyfiles": "^2.4.1",
     "electron": "^12.2.2",
-    "electron-installer-dmg": "^4.0.0",
     "electron-packager": "^12.2.0",
     "electron-rebuild": "^1.8.6",
     "eslint": "^8.4.1",
@@ -140,6 +139,9 @@
     "winston-daily-rotate-file": "^1.4.6",
     "winston-raven-sentry": "^1.0.1",
     "ws": "^8.2.2"
+  },
+  "optionalDependencies": {
+    "electron-installer-dmg": "github:SReject/electron-installer-dmg/commit/6b7370be9c63262db0cdae5e0d38cd4a591f62e7"
   },
   "volta": {
     "node": "14.18.1",
