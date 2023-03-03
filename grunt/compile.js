@@ -9,7 +9,8 @@ module.exports = function (grunt) {
 
     const macPathIn = path.resolve(__dirname, `../dist/pack/Firebot-darwin-x64/Firebot.app`);
     const macPathOut = path.resolve(__dirname, '../dist/install/darwin');
-
+    const macDmgIcon = path.resolve(__dirname, `../build/gui/images/logo_transparent_2.png`);
+    const macDmgBg = path.resolve(__dirname, `../build/gui/images/firebot_dmg_bg.png`);
 
     grunt.config.merge({
         'create-windows-installer': {
@@ -41,7 +42,7 @@ module.exports = function (grunt) {
         },
         shell: {
             'compile-darwin': {
-                command: `npx --no-install electron-installer-dmg "${macPathIn}" Firebot --out="${macPathOut}"`
+                command: `npx --no-install electron-installer-dmg "${macPathIn}" Firebot --out="${macPathOut}" --background="${macDmgBg}" --icon="${macDmgIcon}" --title="Firebot Installer" --debug`
             }
         }
     });
