@@ -116,9 +116,9 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v1
         env:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          token: $token
+          token: ${{ env.GITHUB_TOKEN }}
           draft: true
           prerelease: false
           tag_name: v${{ needs.checkversion.outputs.version }}
