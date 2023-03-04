@@ -61,8 +61,8 @@ jobs:
         if: runner.os == 'windows'
         shell: bash
         run: |
-          npm config set msvs_version 2019
-          npm install --quiet --global --production windows-build-tools@4.0.0
+          npm config set msvs_version 2022
+          npm install --global --production windows-build-tools@4.0.0
 
       - name: Linux Build Prep
         if: runner.os == 'linux'
@@ -72,7 +72,7 @@ jobs:
         run: npm install --quiet --global --production grunt-cli node-gyp
 
       - name: Install Project Dependencies
-        run: npm ci --quiet
+        run: npm ci --silent
 
       - name: Rebuild Robotjs for electron
         run: npm run rebuild
