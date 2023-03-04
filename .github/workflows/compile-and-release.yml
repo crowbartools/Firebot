@@ -107,7 +107,7 @@ jobs:
           cd bundles/Windows
           mv FirebotV5Setup.exe firebot-v${{ needs.checkoutversion.outputs.version }}-setup.exe
           mv Firebotv5-${{ needs.checkoutversion.outputs.version }}-full.nupkg firebot-v${{ needs.checkoutversion.outputs.version }}-full.nupkg
-          cd ../Linus
+          cd ../Linux
           mv Firebot-linux-x64.tar.gz firebot-v${{ needs.checkoutversion.outputs.version }}-linux-x64.tar.gz
           cd ../macOS
           mv Firebot.dmg firebot-v${{ needs.checkoutversion.outputs.version }}-macos-x64.dmg
