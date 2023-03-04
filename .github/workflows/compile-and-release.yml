@@ -47,7 +47,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repo
-        uses: actions/check@v3
+        uses: actions/checkout@v3
 
       - name: Setup Nodejs
         uses: actions/setup-node@v1
