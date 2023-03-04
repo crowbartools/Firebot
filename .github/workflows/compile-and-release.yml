@@ -92,7 +92,7 @@ jobs:
         uses: 'actions/upload-artifact@v3'
         with:
           name: ${{ runner.os }}
-          path: './dist/install/${{ runner.os == 'macOS' && 'darwin' || runner.os }}/'
+          path: ./dist/install/${{ runner.os == 'macOS' && 'darwin' || runner.os }}/
 
   draft:
     name: Draft Github Release
