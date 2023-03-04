@@ -130,7 +130,7 @@ jobs:
           body: "## v${{ needs.checkversion.outputs.version }} Update Notes\n${{ needs.checkversion.outputs.commits }}\n\n"
           files: |
             ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-setup.exe
-            ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-full.nupgk
+            ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-full.nupkg
             ./bundles/Windows/RELEASES
             ./bundles/Linux/firebot-v${{ needs.checkversion.outputs.version }}-linux-x64.tar.gz
             ./bundles/macOS/firebot-v${{ needs.checkversion.outputs.version }}-macos-x64.dmg
