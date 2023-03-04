@@ -18,7 +18,7 @@ jobs:
       dobuild: ${{ steps.dobuild.outputs.dobuild }}
 
     steps:
-      - name: Checkout crowbartools/firebot:master
+      - name: Checkout crowbartools/firebot
         uses: actions/checkout@v3
 
       - name: Fetch tags
@@ -26,16 +26,16 @@ jobs:
 
       - name: Read package.json
         id: package
-        uses: gregoranders/nodejs-project-info@v0.0.1
+        uses: gregoranders/nodejs-project-info@v0.0.19
 
       - name: Retrieve package.json version
         id: version
-        run: echo "::set-output version=${{ steps.package.outputs.version }}"
+        run: echo "version=${{ steps.package.outputs.version }}" >> $GITHUB_OUTPUT
 
       - name: 'Check: package version has corrosponding git tag'
         id: dobuild
         shell: bash
-        run: git show-ref --tags --verify --quiet -- "refs/tags/v${{ steps.version.outputs.version }}" && echo "::set-output name=dobuild::0" || echo "::set-output name=dobuild::1"
+        run: echo dobuild=$(git show-ref --tags --verify --quiet -- "refs/tags/v${{ steps.version.outputs.version }}" && echo 1 || echo 0) >> $GITHUB_OUTPUT
 
   compile:
     name: 'Compile'
@@ -50,9 +50,9 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup Nodejs
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
-          node-version: '14.x'
+          node-version: '14'
 
       - name: Install correct npm version
         run: npm install -g npm@8.16.0
