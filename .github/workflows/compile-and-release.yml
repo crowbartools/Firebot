@@ -105,12 +105,12 @@ jobs:
       - name: Rename Artifacts
         run: |
           cd bundles/Windows
-          mv FirebotV5Setup.exe firebot-v${{ needs.checkoutversion.outputs.version }}-setup.exe
-          mv Firebotv5-${{ needs.checkoutversion.outputs.version }}-full.nupkg firebot-v${{ needs.checkoutversion.outputs.version }}-full.nupkg
+          mv FirebotV5Setup.exe firebot-v${{ needs.checkversion.outputs.version }}-setup.exe
+          mv Firebotv5-${{ needs.checkversion.outputs.version }}-full.nupkg firebot-v${{ needs.checkversion.outputs.version }}-full.nupkg
           cd ../Linux
-          mv Firebot-linux-x64.tar.gz firebot-v${{ needs.checkoutversion.outputs.version }}-linux-x64.tar.gz
+          mv Firebot-linux-x64.tar.gz firebot-v${{ needs.checkversion.outputs.version }}-linux-x64.tar.gz
           cd ../macOS
-          mv Firebot.dmg firebot-v${{ needs.checkoutversion.outputs.version }}-macos-x64.dmg
+          mv Firebot.dmg firebot-v${{ needs.checkversion.outputs.version }}-macos-x64.dmg
           cd ..
 
       - name: Create Release
