@@ -116,7 +116,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          token: $${{ GITHUB_TOKEN }}
+          token: ${{ GITHUB_TOKEN }}
           draft: true
           prerelease: false
           tag_name: v${{ needs.checkoutversion.outputs.version }}
