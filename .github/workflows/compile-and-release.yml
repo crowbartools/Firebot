@@ -35,7 +35,11 @@ jobs:
 
       - name: Get commit messages
         id: commits
-        run: echo commits=$(git log --pretty=format:'%s' $(git describe --tags `git rev-list --tags --max-count=1`)..HEAD) >> $GITHUB_OUTPUT
+        run: |
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "commits<<$EOF" >> $GITHUB_OUTPUT
+          git log --pretty=format:'%s' --branches=${GITHUB_REF##*/} $(git describe --tags `git rev-list --tags --max-count=1`)..HEAD >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
 
       - name: 'Check: package version has corrosponding git tag'
         id: dobuild
@@ -117,13 +121,6 @@ jobs:
           cd ../macOS
           mv Firebot.dmg firebot-v${{ needs.checkversion.outputs.version }}-macos-x64.dmg
           cd ..
-
-
-      - name: Get Commit Messages
-        id: messages
-        uses: 'SReject/pr-commit-messages@v1.0.3'
-        with:
-          sha: ${{ github.sha }}
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
