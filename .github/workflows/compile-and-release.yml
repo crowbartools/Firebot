@@ -43,7 +43,7 @@ jobs:
     if: needs.checkversion.outputs.dobuild == 1
     strategy:
       matrix:
-        os: [windows-2019, ubuntu-latest, macos-latest]
+        os: [windows-latest, ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repo
