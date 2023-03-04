@@ -48,7 +48,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: patch-notes
-          path: patch-notes.txt
+          path: ./patch-notes.txt
 
   compile:
     name: 'Compile'
@@ -134,7 +134,7 @@ jobs:
           prerelease: false
           tag_name: v${{ needs.checkversion.outputs.version }}
           name: Firebot v${{ needs.checkversion.outputs.version }}
-          body_path: './bundles/path-notes/path-notes.text'
+          body_path: './bundles/patch-notes/patch-notes.text'
           files: |
             ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-setup.exe
             ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-full.nupkg
