@@ -36,17 +36,19 @@ jobs:
       - name: Get commit messages
         id: commits
         run: |
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          RES=$(git log --pretty=format:'%s' --branches=${GITHUB_REF##*/} $(git describe --tags `git rev-list --tags --max-count=1`)..HEAD)
-          echo ${RES//\r{0,1}\n/  __EOL__  /}
-          echo "commits<<${EOF}" >> $GITHUB_OUTPUT
-          echo "${RES}" >> $GITHUB_OUTPUT
-          echo "${EOF}" >> $GITHUB_OUTPUT
+          echo "## ${{ steps.package.outputs.version }} Update Notes"
+          git log --pretty=format:'%s' --branches=${GITHUB_REF##*/} $(git describe --tags `git rev-list --tags --max-count=1`)..HEAD >> patch-notes.txt
 
       - name: 'Check: package version has corrosponding git tag'
         id: dobuild
         shell: bash
         run: echo dobuild=$(git show-ref --tags --verify --quiet -- "refs/tags/v${{ steps.version.outputs.version }}" && echo 0 || echo 1) >> $GITHUB_OUTPUT
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: patch-notes
+          path: patch-notes.txt
 
   compile:
     name: 'Compile'
@@ -113,6 +115,11 @@ jobs:
         with:
           path: ./bundles/
 
+      - name: Download Patch Notes
+        uses: actions/download-artifact@v3
+        with:
+          name: 'patch-notes'
+
       - name: Rename Artifacts
         run: |
           mv ./bundles/Windows/firebot-${{ needs.checkversion.outputs.version }}-full.nupkg ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-full.nupkg
@@ -127,8 +134,7 @@ jobs:
           prerelease: false
           tag_name: v${{ needs.checkversion.outputs.version }}
           name: Firebot v${{ needs.checkversion.outputs.version }}
-          generate_release_notes: true
-          body: "## v${{ needs.checkversion.outputs.version }} Update Notes\n${{ needs.checkversion.outputs.commits }}\n\n"
+          body_path: './bundles/path-notes/path-notes.text'
           files: |
             ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-setup.exe
             ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-full.nupkg
