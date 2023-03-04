@@ -15,14 +15,12 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
+      commits: ${{ steps.commits.outputs.commits }}
       dobuild: ${{ steps.dobuild.outputs.dobuild }}
 
     steps:
       - name: Checkout crowbartools/firebot
         uses: actions/checkout@v3
-
-      - name: Fetch tags
-        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
 
       - name: Read package.json
         id: package
@@ -31,6 +29,12 @@ jobs:
       - name: Retrieve package.json version
         id: version
         run: echo "version=${{ steps.package.outputs.version }}" >> $GITHUB_OUTPUT
+
+      - name: Fetch tags
+        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+
+      - name: Get commit messages
+        run: echo commits=$(git log --pretty=format:'%s' $(git describe --tags `git rev-list --tags --max-count=1`)..HEAD) >> $GITHUB_OUTPUT
 
       - name: 'Check: package version has corrosponding git tag'
         id: dobuild
@@ -113,6 +117,13 @@ jobs:
           mv Firebot.dmg firebot-v${{ needs.checkversion.outputs.version }}-macos-x64.dmg
           cd ..
 
+
+      - name: Get Commit Messages
+        id: messages
+        uses: 'SReject/pr-commit-messages@v1.0.3'
+        with:
+          sha: ${{ github.sha }}
+
       - name: Create Release
         uses: softprops/action-gh-release@v1
         env:
@@ -124,7 +135,7 @@ jobs:
           tag_name: v${{ needs.checkversion.outputs.version }}
           name: Firebot v${{ needs.checkversion.outputs.version }}
           generate_release_notes: true
-          body: '## v${{ steps.package.outputs.version }} Update Notes\n'
+          body: "## v${{ needs.checkversion.outputs.version }} Update Notes\n${{ needs.checkversion.outputs.commits }}\n\n"
           files: |
             ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-setup.exe
             ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-full.nupgk
