@@ -121,13 +121,13 @@ jobs:
           token: $token
           draft: true
           prerelease: false
-          tag_name: v${{ needs.checkoutversion.outputs.version }}
-          release_name: Firebot v${{ needs.checkoutversion.outputs.version }}
+          tag_name: v${{ needs.checkversion.outputs.version }}
+          name: Firebot v${{ needs.checkversion.outputs.version }}
           generate_release_notes: true
           body: '## v${{ steps.package.outputs.version }} Update Notes\n'
           files: |
-            ./bundles/Windows/firebot-v${{ needs.checkoutversion.outputs.version }}-setup.exe
-            ./bundles/Windows/firebot-v${{ needs.checkoutversion.outputs.version }}-full.nupgk
+            ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-setup.exe
+            ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-full.nupgk
             ./bundles/Windows/RELEASES
-            ./bundles/Linux/firebot-v${{ needs.checkoutversion.outputs.version }}-linux-x64.tar.gz
-            ./bundles/macOS/firebot-v${{ needs.checkoutversion.outputs.version }}-macos-x64.dmg
+            ./bundles/Linux/firebot-v${{ needs.checkversion.outputs.version }}-linux-x64.tar.gz
+            ./bundles/macOS/firebot-v${{ needs.checkversion.outputs.version }}-macos-x64.dmg
