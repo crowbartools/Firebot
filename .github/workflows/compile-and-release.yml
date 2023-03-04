@@ -6,36 +6,36 @@ name: Build and Create Draft Release
 on:
   workflow_dispatch:
   push:
-    branches: 'master'
+    branches: master
 
 jobs:
 
   checkversion:
-    name: 'Check if version has corrosponding tag'
-    runs-on: 'ubuntu-latest'
+    name: Check if version has corrosponding tag
+    runs-on: ubuntu-latest
     outputs:
-      version: '${{ steps.version.outputs.version }}'
-      dobuild: ''
+      version: ${{ steps.version.outputs.version }}
+      dobuild: ${{ steps.dobuild.outputs.dobuild }}
 
     steps:
-      - name: 'Checkout crowbartools/firebot:master'
-        uses: 'actions/checkout@v3'
+      - name: Checkout crowbartools/firebot:master
+        uses: actions/checkout@v3
 
-      - name: 'Fetch tags'
-        run: 'git fetch --depth=1 origin +refs/tags/*:refs/tags/*'
+      - name: Fetch tags
+        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
 
-      - name: 'Read package.json'
-        id: 'package'
-        uses: 'gregoranders/nodejs-project-info@v0.0.1'
+      - name: Read package.json
+        id: package
+        uses: gregoranders/nodejs-project-info@v0.0.1
 
-      - name: 'Retrieve package.json version'
-        id: 'version'
-        run: 'echo "::set-output version=${{ steps.package.outputs.version }}"'
+      - name: Retrieve package.json version
+        id: version
+        run: echo "::set-output version=${{ steps.package.outputs.version }}"
 
       - name: 'Check: package version has corrosponding git tag'
-        id: 'dobuild'
-        shell: 'bash'
-        run: 'git show-ref --tags --verify --quiet -- "refs/tags/v${{ steps.version.outputs.version }}" && echo "::set-output name=dobuild::0" || echo "::set-output name=dobuild::1"'
+        id: dobuild
+        shell: bash
+        run: git show-ref --tags --verify --quiet -- "refs/tags/v${{ steps.version.outputs.version }}" && echo "::set-output name=dobuild::0" || echo "::set-output name=dobuild::1"
 
   compile:
     name: 'Compile'
@@ -43,53 +43,50 @@ jobs:
     if: needs.checkversion.outputs.dobuild == 1
     strategy:
       matrix:
-        os: ['windows-2019', 'ubuntu-latest', 'macos-latest']
+        os: [windows-2019, ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: 'Checkout repo'
-        uses: 'actions/check@v3'
+      - name: Checkout repo
+        uses: actions/check@v3
 
-      - name: 'Setup Nodejs'
-        uses: 'actions/setup-node@v1'
+      - name: Setup Nodejs
+        uses: actions/setup-node@v1
         with:
           node-version: '14.x'
 
-      - name: 'Install correct npm version'
+      - name: Install correct npm version
         run: npm install -g npm@8.16.0
 
-      - name: 'Windows Build Prep'
+      - name: Windows Build Prep
         if: runner.os == 'windows'
         shell: bash
         run: |
           npm config set msvs_version 2019
           npm install --quiet --global --production windows-build-tools@4.0.0
 
-      - name: 'Linux Build Prep'
+      - name: Linux Build Prep
         if: runner.os == 'linux'
-        run: 'sudo apt-get install libx11-dev libxtst-dev libpng-dev'
+        run: sudo apt-get install libx11-dev libxtst-dev libpng-dev
 
-      # - name: 'MacOS Build Prep'
-      #   if: runner.os == 'macOS'
+      - name: Install Global Dependencies
+        run: npm install --quiet --global --production grunt-cli node-gyp
 
-      - name: 'Install Global Dependencies'
-        run: 'npm install --quiet --global --production grunt-cli node-gyp'
+      - name: Install Project Dependencies
+        run: npm ci --quiet
 
-      - name: 'Install Project Dependencies'
-        run: 'npm ci --quiet'
+      - name: Rebuild Robotjs for electron
+        run: npm run rebuild
 
-      - name: 'Rebuild Robotjs for electron'
-        run: 'npm run rebuild'
-
-      - name: 'Decrypt Secrets.gpg'
+      - name: Decrypt Secrets.gpg
         env:
           PASSKEY_FOR_FIREBOT_SECRETS: ${{ secrets.PASSKEY_FOR_FIREBOT_SECRETS }}
-        run: 'grunt secrets:decrypt'
+        run: grunt secrets:decrypt
 
-      - name: 'Build for Platform'
-        run: 'grunt build'
+      - name: Build for Platform
+        run: grunt build
 
-      - name: 'Upload Artifacts'
-        uses: 'actions/upload-artifact@v3'
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ runner.os }}
           path: ./dist/install/${{ runner.os == 'macOS' && 'darwin' || runner.os }}/
@@ -100,12 +97,12 @@ jobs:
     if: needs.checkversion.outputs.dobuild == 1
     runs-on: ubuntu-latest
     steps:
-      - name: 'Download Compilation Artifacts'
-        uses: 'actions/download-artifact@v3'
+      - name: Download Compilation Artifacts
+        uses: actions/download-artifact@v3
         with:
-          path: './bundles/'
+          path: ./bundles/
 
-      - name: 'Rename Artifacts'
+      - name: Rename Artifacts
         runs: |
           cd bundles
           mv FirebotV5Setup.exe firebot-v${{ needs.checkoutversion.outputs.version }}-setup.exe
@@ -125,7 +122,7 @@ jobs:
           tag_name: v${{ needs.checkoutversion.outputs.version }}
           release_name: Firebot v${{ needs.checkoutversion.outputs.version }}
           generate_release_notes: true
-          body: "## v${{ steps.package.outputs.version }} Update Notes\n"
+          body: '## v${{ steps.package.outputs.version }} Update Notes\n'
           files: |
             ./bundles/firebot-v${{ needs.checkoutversion.outputs.version }}-setup.exe
             ./bundles/firebot-v${{ needs.checkoutversion.outputs.version }}-full.nupgk
