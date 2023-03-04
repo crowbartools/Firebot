@@ -37,9 +37,10 @@ jobs:
         id: commits
         run: |
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "commits<<$EOF" >> $GITHUB_OUTPUT
-          git log --pretty=format:'%s' --branches=${GITHUB_REF##*/} $(git describe --tags `git rev-list --tags --max-count=1`)..HEAD >> $GITHUB_OUTPUT
-          echo "$EOF" >> $GITHUB_OUTPUT
+          RES=$(git log --pretty=format:'%s' --branches=${GITHUB_REF##*/} $(git describe --tags `git rev-list --tags --max-count=1`)..HEAD >> $GITHUB_OUTPUT)
+          echo "commits<<${EOF}" >> $GITHUB_OUTPUT
+          echo "${RES}" >> GITHUB_OUTPUT
+          echo "${EOF}" >> $GITHUB_OUTPUT
 
       - name: 'Check: package version has corrosponding git tag'
         id: dobuild
