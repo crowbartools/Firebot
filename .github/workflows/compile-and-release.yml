@@ -35,7 +35,7 @@ jobs:
       - name: 'Check: package version has corrosponding git tag'
         id: dobuild
         shell: bash
-        run: echo dobuild=$(git show-ref --tags --verify --quiet -- "refs/tags/v${{ steps.version.outputs.version }}" && echo 1 || echo 0) >> $GITHUB_OUTPUT
+        run: echo dobuild=$(git show-ref --tags --verify --quiet -- "refs/tags/v${{ steps.version.outputs.version }}" && echo 0 || echo 1) >> $GITHUB_OUTPUT
 
   compile:
     name: 'Compile'
