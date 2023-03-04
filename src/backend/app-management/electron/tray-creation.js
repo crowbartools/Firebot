@@ -3,13 +3,21 @@
 const path = require("path");
 
 const electron = require("electron");
-const { Menu, Tray, app } = electron;
+const { Menu, Tray, app, nativeImage } = electron;
 
 const frontendCommunicator = require('../../common/frontend-communicator.js');
 const { settings } = require("../../common/settings-access");
 
 let mainTray;
 let minimizedToTray = false;
+
+const createNativeImage = () => {
+    const iconPath =
+            process.platform === "darwin"
+                ? path.join(__dirname, "../../../gui/images/macTrayIcon.png")
+                : path.join(__dirname, "../../../gui/images/logo_transparent_2.png");
+    return nativeImage.createFromPath(iconPath);
+};
 
 module.exports = function createTray(mainWindow) {
     if (mainTray != null) {
@@ -40,7 +48,7 @@ module.exports = function createTray(mainWindow) {
             }
         }
     ]);
-    mainTray = new Tray(path.join(__dirname, "../../../gui/images/logo_transparent_2.png"));
+    mainTray = new Tray(createNativeImage());
     mainTray.setToolTip('Firebot');
     mainTray.setContextMenu(trayMenu);
 
