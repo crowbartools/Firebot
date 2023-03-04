@@ -104,10 +104,12 @@ jobs:
 
       - name: Rename Artifacts
         run: |
-          cd bundles
+          cd bundles/Windows
           mv FirebotV5Setup.exe firebot-v${{ needs.checkoutversion.outputs.version }}-setup.exe
-          mv Firebot-v${{ needs.checkoutversion.outputs.version }}-full.nupkg firebot-v${{ needs.checkoutversion.outputs.version }}-full.nupkg
+          mv Firebotv5-${{ needs.checkoutversion.outputs.version }}-full.nupkg firebot-v${{ needs.checkoutversion.outputs.version }}-full.nupkg
+          cd ../Linus
           mv Firebot-linux-x64.tar.gz firebot-v${{ needs.checkoutversion.outputs.version }}-linux-x64.tar.gz
+          cd ../macOS
           mv Firebot.dmg firebot-v${{ needs.checkoutversion.outputs.version }}-macos-x64.dmg
           cd ..
 
@@ -124,8 +126,8 @@ jobs:
           generate_release_notes: true
           body: '## v${{ steps.package.outputs.version }} Update Notes\n'
           files: |
-            ./bundles/firebot-v${{ needs.checkoutversion.outputs.version }}-setup.exe
-            ./bundles/firebot-v${{ needs.checkoutversion.outputs.version }}-full.nupgk
-            ./bundles/RELEASES
-            ./bundles/firebot-v${{ needs.checkoutversion.outputs.version }}-linux-x64.tar.gz
-            ./bundles/firebot-v${{ needs.checkoutversion.outputs.version }}-macos-x64.dmg
+            ./bundles/Windows/firebot-v${{ needs.checkoutversion.outputs.version }}-setup.exe
+            ./bundles/Windows/firebot-v${{ needs.checkoutversion.outputs.version }}-full.nupgk
+            ./bundles/Windows/RELEASES
+            ./bundles/Linux/firebot-v${{ needs.checkoutversion.outputs.version }}-linux-x64.tar.gz
+            ./bundles/macOS/firebot-v${{ needs.checkoutversion.outputs.version }}-macos-x64.dmg
