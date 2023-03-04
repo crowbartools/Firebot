@@ -1,4 +1,4 @@
-name: Build and Create Draft Release
+name: Build and Draft Release
 
 # Only runs
 # - after PRs have been merged into master
@@ -114,9 +114,9 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
         with:
-          token: ${{ GITHUB_TOKEN }}
+          token: $token
           draft: true
           prerelease: false
           tag_name: v${{ needs.checkoutversion.outputs.version }}
