@@ -103,7 +103,7 @@ jobs:
           path: ./bundles/
 
       - name: Rename Artifacts
-        runs: |
+        run: |
           cd bundles
           mv FirebotV5Setup.exe firebot-v${{ needs.checkoutversion.outputs.version }}-setup.exe
           mv Firebot-v${{ needs.checkoutversion.outputs.version }}-full.nupkg firebot-v${{ needs.checkoutversion.outputs.version }}-full.nupkg
