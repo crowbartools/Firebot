@@ -24,15 +24,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get commit messages
-        id: commits
-        shell: bash
-        run: |
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "## v${{ steps.package.outputs.version }} Update Notes<<${EOF}" >> $GITHUB_OUTPUT
-          git log --pretty=format:'%s' --branches=origin/v5 $(git describe --tags `git rev-list --tags --max-count=1`)..HEAD >> $GITHUB_OUTPUT
-          echo "${EOF}" >> $GITHUB_OUTPUT
-
       - name: Read package.json
         id: package
         uses: gregoranders/nodejs-project-info@v0.0.19
@@ -40,6 +31,17 @@ jobs:
       - name: Retrieve package.json version
         id: version
         run: echo "version=${{ steps.package.outputs.version }}" >> $GITHUB_OUTPUT
+
+      - name: Get commit messages
+        id: commits
+        shell: bash
+        run: |
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          RES=$(git log --pretty=format:'%s' --branches=origin/v5 $(git describe --tags `git rev-list --tags --max-count=1`)..HEAD)
+          echo "commits<<${EOF}" >> $GITHUB_OUTPUT
+          echo "## v${{ steps.package.outputs.version }} Update Notes" >> $GITHUB_OUTPUT
+          echo "${RES}" >> $GITHUB_OUTPUT
+          echo "${EOF}" >> $GITHUB_OUTPUT
 
       - name: 'Check: package version has corrosponding git tag'
         id: dobuild
@@ -117,8 +119,7 @@ jobs:
           name: 'patch-notes'
 
       - name: Rename Artifacts
-        run: |
-          mv ./bundles/Windows/firebot-${{ needs.checkversion.outputs.version }}-full.nupkg ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-full.nupkg
+        run: mv ./bundles/Windows/firebot-${{ needs.checkversion.outputs.version }}-full.nupkg ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-full.nupkg
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
