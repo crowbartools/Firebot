@@ -42,6 +42,7 @@ jobs:
           echo "## v${{ steps.package.outputs.version }} Update Notes" >> $GITHUB_OUTPUT
           echo "${RES}" >> $GITHUB_OUTPUT
           echo "${EOF}" >> $GITHUB_OUTPUT
+          echo "${RES}"
 
       - name: 'Check: package version has corrosponding git tag'
         id: dobuild
@@ -75,6 +76,13 @@ jobs:
           npm config set msvs_version 2022
           npm install --global --production --omit=dev windows-build-tools@4.0.0
 
+      - name: Restore Robotjs from cache
+        id: robotjs-cache
+        uses: actions/cache/restore@v3
+        with:
+          key: ${{ runner.os }}-robotjs
+          path: ./node_modules/robotjs/
+
       - name: Linux Build Prep
         if: runner.os == 'linux'
         run: sudo apt-get install libx11-dev libxtst-dev libpng-dev
@@ -85,8 +93,16 @@ jobs:
       - name: Install Project Dependencies
         run: npm install
 
-      - name: Rebuild Robotjs for electron
+      - name: Rebuild Robotjs for Electron
+        if: steps.robotjs-cache.outputs.cache-hit != 'true'
         run: npm run rebuild
+
+      - name: Cache Robotjs build
+        if: steps.robotjs-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v3
+        with:
+          key: ${{ runner.os }}-robotjs
+          path: ./node_modules/robotjs/
 
       - name: Decrypt Secrets.gpg
         env:
@@ -125,7 +141,7 @@ jobs:
           draft: true
           prerelease: false
           tag_name: v${{ needs.checkversion.outputs.version }}
-          name: Firebot v${{ needs.checkversion.outputs.version }}
+          name: Release v${{ needs.checkversion.outputs.version }}
           body: ${{ needs.checkversion.outputs.commits }}
           files: |
             ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-setup.exe
