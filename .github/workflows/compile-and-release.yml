@@ -21,6 +21,17 @@ jobs:
     steps:
       - name: Checkout crowbartools/firebot
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get commit messages
+        id: commits
+        shell: bash
+        run: |
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "## v${{ steps.package.outputs.version }} Update Notes<<$EOF" >> $GITHUB_OUTPUT
+          git log --pretty=format:'%s' --branches=origin/v5 $(git describe --tags `git rev-list --tags --max-count=1`)..HEAD >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
 
       - name: Read package.json
         id: package
@@ -30,25 +41,10 @@ jobs:
         id: version
         run: echo "version=${{ steps.package.outputs.version }}" >> $GITHUB_OUTPUT
 
-      - name: Fetch tags
-        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
-
-      - name: Get commit messages
-        id: commits
-        run: |
-          echo "## ${{ steps.package.outputs.version }} Update Notes"
-          git log --pretty=format:'%s' --branches=${GITHUB_REF##*/} $(git describe --tags `git rev-list --tags --max-count=1`)..HEAD >> patch-notes.txt
-
       - name: 'Check: package version has corrosponding git tag'
         id: dobuild
         shell: bash
         run: echo dobuild=$(git show-ref --tags --verify --quiet -- "refs/tags/v${{ steps.version.outputs.version }}" && echo 0 || echo 1) >> $GITHUB_OUTPUT
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: patch-notes
-          path: ./patch-notes.txt
 
   compile:
     name: 'Compile'
@@ -134,7 +130,7 @@ jobs:
           prerelease: false
           tag_name: v${{ needs.checkversion.outputs.version }}
           name: Firebot v${{ needs.checkversion.outputs.version }}
-          body_path: './bundles/patch-notes/patch-notes.text'
+          body: ${{ needs.checkversion.outputs.commits }}
           files: |
             ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-setup.exe
             ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-full.nupkg
