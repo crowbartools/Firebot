@@ -73,17 +73,17 @@ jobs:
         shell: bash
         run: |
           npm config set msvs_version 2022
-          npm install --global --production windows-build-tools@4.0.0
+          npm install --global --production --omit=dev windows-build-tools@4.0.0
 
       - name: Linux Build Prep
         if: runner.os == 'linux'
         run: sudo apt-get install libx11-dev libxtst-dev libpng-dev
 
       - name: Install Global Dependencies
-        run: npm install --quiet --global --production grunt-cli node-gyp
+        run: npm install --global --production --omit=dev grunt-cli node-gyp
 
       - name: Install Project Dependencies
-        run: npm ci --silent
+        run: npm install
 
       - name: Rebuild Robotjs for electron
         run: npm run rebuild
@@ -112,11 +112,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           path: ./bundles/
-
-      - name: Download Patch Notes
-        uses: actions/download-artifact@v3
-        with:
-          name: 'patch-notes'
 
       - name: Rename Artifacts
         run: mv ./bundles/Windows/firebot-${{ needs.checkversion.outputs.version }}-full.nupkg ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-full.nupkg
