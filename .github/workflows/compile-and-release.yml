@@ -42,7 +42,6 @@ jobs:
           echo "## v${{ steps.package.outputs.version }} Update Notes" >> $GITHUB_OUTPUT
           echo "${RES}" >> $GITHUB_OUTPUT
           echo "${EOF}" >> $GITHUB_OUTPUT
-          echo "${RES}"
 
       - name: 'Check: package version has corrosponding git tag'
         id: dobuild
@@ -131,6 +130,11 @@ jobs:
 
       - name: Rename Artifacts
         run: mv ./bundles/Windows/firebot-${{ needs.checkversion.outputs.version }}-full.nupkg ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-full.nupkg
+
+      - name: "Debug: check value of commits"
+        run: |
+          RES=${{ needs.checkversion.outputs.commits }}
+          echo "${RES}"
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
