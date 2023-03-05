@@ -29,9 +29,9 @@ jobs:
         shell: bash
         run: |
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "## v${{ steps.package.outputs.version }} Update Notes<<$EOF" >> $GITHUB_OUTPUT
+          echo "## v${{ steps.package.outputs.version }} Update Notes<<${EOF}" >> $GITHUB_OUTPUT
           git log --pretty=format:'%s' --branches=origin/v5 $(git describe --tags `git rev-list --tags --max-count=1`)..HEAD >> $GITHUB_OUTPUT
-          echo "$EOF" >> $GITHUB_OUTPUT
+          echo "${EOF}" >> $GITHUB_OUTPUT
 
       - name: Read package.json
         id: package
