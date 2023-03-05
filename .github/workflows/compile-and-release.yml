@@ -131,11 +131,6 @@ jobs:
       - name: Rename Artifacts
         run: mv ./bundles/Windows/firebot-${{ needs.checkversion.outputs.version }}-full.nupkg ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-full.nupkg
 
-      - name: "Debug: check value of commits"
-        run: |
-          RES=${{ needs.checkversion.outputs.commits }}
-          echo "${RES}"
-
       - name: Create Release
         uses: softprops/action-gh-release@v1
         env:
@@ -147,6 +142,7 @@ jobs:
           tag_name: v${{ needs.checkversion.outputs.version }}
           name: Release v${{ needs.checkversion.outputs.version }}
           body: ${{ needs.checkversion.outputs.commits }}
+          generate_release_notes: false
           files: |
             ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-setup.exe
             ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-full.nupkg
