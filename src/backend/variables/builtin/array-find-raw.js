@@ -33,7 +33,7 @@ const model = {
                 description: 'Searches each item in the array for "value" and returns the first matched item'
             },
             {
-                usage: 'arrayFind[someRawArray, value, key]',
+                usage: 'rawArrayFind[someRawArray, value, key]',
                 description: 'Searches each item in the array for an item that has a "key" property that equals "value"'
             }
         ],

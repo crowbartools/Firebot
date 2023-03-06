@@ -16,7 +16,7 @@ const model = {
                 description: "Returns a raw array of the bits leaderboard of the streamer's channel during the current specified period, up to the specified count. Each object in the array has a `username` and `amount`. Period can be 'day', 'week', 'month', 'year', or 'all'."
             },
             {
-                usage: "bitsLeaderboard[count, period, startDate]",
+                usage: "rawBitsLeaderboard[count, period, startDate]",
                 description: "Returns a raw array of the bits leaderboard of the streamer's channel during the specified period that occurred on the specified date, up to the specified count. Each object in the array has a `username` and `amount`. Period can be 'day', 'week', 'month', 'year', or 'all'."
             }
         ],
