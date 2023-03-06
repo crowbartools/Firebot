@@ -16,6 +16,7 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.version }}
       commits: ${{ steps.commits.outputs.commits }}
+      template: ${{ steps.template.outputs.template }}
       dobuild: ${{ steps.dobuild.outputs.dobuild }}
 
     steps:
@@ -40,6 +41,16 @@ jobs:
           RES=$(git log --pretty=format:'- %s' --branches=origin/v5 $(git describe --tags `git rev-list --tags --max-count=1`)..HEAD)
           echo "commits<<${EOF}" >> $GITHUB_OUTPUT
           echo "${RES}" >> $GITHUB_OUTPUT
+          echo "${EOF}" >> $GITHUB_OUTPUT
+
+      - name: Read Release Template
+        id: template
+        shell: bash
+        run: |
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          TEMPLATE=`cat './.github/release-template.md'`
+          echo "template<<${EOF}" >> $GITHUB_OUTPUT
+          echo "${TEMPLATE}" >> $GITHUB_OUTPUT
           echo "${EOF}" >> $GITHUB_OUTPUT
 
       - name: 'Check: package version has corrosponding git tag'
@@ -130,16 +141,6 @@ jobs:
       - name: Rename Artifacts
         run: mv ./bundles/Windows/firebot-${{ needs.checkversion.outputs.version }}-full.nupkg ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-full.nupkg
 
-      - name: Prepare Release notes
-        id: releasetemplate
-        shell: bash
-        run: |
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          TEMPLATE=$(<release-template.md)
-          echo "body<<${EOF}" >> $GITHUB_OUTPUT
-          echo "${TEMPLATE}" >> $GITHUB_OUTPUT
-          echo "${EOF}" >> $GITHUB_OUTPUT
-
       - name: Create Release
         uses: softprops/action-gh-release@v1
         env:
@@ -151,7 +152,7 @@ jobs:
           tag_name: v${{ needs.checkversion.outputs.version }}
           name: Release v${{ needs.checkversion.outputs.version }}
           # body: ${{ needs.checkversion.outputs.commits }}
-          body: ${{ format(steps.releasetemplate.outputs.body, needs.checkversion.outputs.version, needs.checkversion.outputs.commits) }}
+          body: ${{ format(needs.checkversion.outputs.template, needs.checkversion.outputs.version, needs.checkversion.outputs.commits) }}
           generate_release_notes: false
           files: |
             ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-setup.exe
