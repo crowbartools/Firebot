@@ -43,4 +43,7 @@ logger.info("...Single instance lock acquired [REMOVE LATER]");
 app.on('second-instance', secondInstance);
 app.on("window-all-closed", windowsAllClosed);
 app.on("will-quit", willQuit);
-app.whenReady().then(whenReady);
+app.whenReady().then(whenReady).catch(error => {
+    logger.info("Error on when ready step [REMOVE LATER]", error);
+    app.quit();
+});
