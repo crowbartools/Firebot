@@ -62,6 +62,59 @@
                 }
             };
 
+            service.validateAccounts = () => {
+                const invalidAccounts = [];
+
+                if (service.accounts["streamer"].loggedIn) {
+                    if (!backendCommunicator.fireEventSync("validate-twitch-account", {
+                        accountType: "streamer",
+                        authDetails: service.accounts["streamer"].auth
+                    })) {
+                        service.logout("streamer");
+                        invalidAccounts.push("streamer");
+                    }
+                }
+
+                if (service.accounts["bot"].loggedIn) {
+                    if (!backendCommunicator.fireEventSync("validate-twitch-account", {
+                        accountType: "bot",
+                        authDetails: service.accounts["bot"].auth
+                    })) {
+                        service.logout("bot");
+                        invalidAccounts.push("bot");
+                    }
+                }
+
+                if (invalidAccounts.length > 0) {
+                    const showManageLoginsModal = {
+                        templateUrl: "manageLoginsModal.html",
+                        // This is the controller to be used for the modal.
+                        controllerFunc: ($scope, $uibModalInstance, connectionService) => {
+                            $scope.cs = connectionService;
+
+                            // Login Kickoff
+                            $scope.loginOrLogout = function(type) {
+                                connectionService.loginOrLogout(type);
+                            };
+
+                            $scope.getAccountAvatar = connectionService.getAccountAvatar;
+
+                            $scope.invalidAccounts = invalidAccounts;
+
+                            $scope.close = function() {
+                                $uibModalInstance.close();
+                            };
+
+                            // When they hit cancel or click outside the modal, we dont want to do anything
+                            $scope.dismiss = function() {
+                                $uibModalInstance.dismiss("cancel");
+                            };
+                        }
+                    };
+                    utilityService.showModal(showManageLoginsModal);
+                }
+            };
+
             // Create new profile
             service.createNewProfile = function(profileId) {
                 ipcRenderer.send("createProfile", profileId);
