@@ -64,7 +64,9 @@ jobs:
     if: needs.checkversion.outputs.dobuild == 1
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        os: [windows-latest, ubuntu-latest]
+        # os: [windows-latest, ubuntu-latest, macos-latest]
+
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repo
@@ -151,7 +153,6 @@ jobs:
           prerelease: false
           tag_name: v${{ needs.checkversion.outputs.version }}
           name: Release v${{ needs.checkversion.outputs.version }}
-          # body: ${{ needs.checkversion.outputs.commits }}
           body: ${{ format(needs.checkversion.outputs.template, needs.checkversion.outputs.version, needs.checkversion.outputs.commits) }}
           generate_release_notes: false
           files: |
@@ -159,4 +160,4 @@ jobs:
             ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-full.nupkg
             ./bundles/Windows/RELEASES
             ./bundles/Linux/firebot-v${{ needs.checkversion.outputs.version }}-linux-x64.tar.gz
-            ./bundles/macOS/firebot-v${{ needs.checkversion.outputs.version }}-macos-x64.dmg
+          # ./bundles/macOS/firebot-v${{ needs.checkversion.outputs.version }}-macos-x64.dmg

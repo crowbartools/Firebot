@@ -47,7 +47,7 @@ export class TwitchCategoriesApi {
 
     async searchCategories(categoryName: string): Promise<TwitchCategory[]> {
         let categories: HelixGame[] = [];
-    
+
         try {
             const response = await this.streamerClient.search.searchCategories(categoryName);
             if (response && response.data) {
@@ -56,7 +56,7 @@ export class TwitchCategoriesApi {
         } catch (error) {
             logger.error("Failed to search Twitch categories", error.message);
         }
-    
+
         return categories.map(c => this.mapTwitchCategory(c));
     }
 };

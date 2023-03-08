@@ -2,6 +2,7 @@
 
 const authManager = require("./auth-manager");
 const accountAccess = require("../common/account-access");
+const frontendCommunicator = require("../common/frontend-communicator");
 const logger = require("../logwrapper");
 const axios = require("axios").default;
 
@@ -16,6 +17,28 @@ const AUTHORIZE_PATH = "/oauth2/authorize";
 
 const STREAMER_ACCOUNT_PROVIDER_ID = "twitch:streamer-account";
 const BOT_ACCOUNT_PROVIDER_ID = "twitch:bot-account";
+
+/**
+ * @param {import("./auth").AuthProviderDefinition} definition
+ * @param {import("./auth").AuthDetails} authDetails
+ * @returns boolean
+ */
+const validator = function(definition, authDetails) {
+    return (
+        // Ensure authDetails exist
+        authDetails &&
+
+        // Check for old auth code flow token
+        !authDetails.refresh_token &&
+
+        // Make sure there's at least some scopes
+        authDetails.scope &&
+        authDetails.scope.length > 0 &&
+
+        // check all required scopes are present
+        definition.scopes.every(scope => authDetails.scope.includes(scope))
+    );
+};
 
 /** @type {import("./auth").AuthProviderDefinition} */
 const STREAMER_ACCOUNT_PROVIDER = {
@@ -168,4 +191,27 @@ authManager.on("auth-success", async authData => {
 
         accountAccess.updateAccount(accountType, accountObject);
     }
+});
+
+frontendCommunicator.on("validate-twitch-account", ({ accountType, authDetails }) => {
+    let definition;
+
+    switch (accountType) {
+    case "streamer":
+        definition = STREAMER_ACCOUNT_PROVIDER;
+        break;
+
+    case "bot":
+        definition = BOT_ACCOUNT_PROVIDER;
+        break;
+
+    default:
+        break;
+    }
+
+    if (definition) {
+        return validator(definition, authDetails);
+    }
+
+    return true;
 });
