@@ -17,7 +17,7 @@ export class TwitchStreamsApi {
 
             await this.streamerClient.streams.createStreamMarker(streamerId, descriotion);
         } catch (error) {
-            logger.error(`Failed to create stream marker`, error);
+            logger.error(`Failed to create stream marker`, error.message);
         }
     }
 };

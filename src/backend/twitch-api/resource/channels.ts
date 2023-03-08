@@ -26,7 +26,7 @@ export class TwitchChannelsApi {
             const response = await this.streamerClient.channels.getChannelInfoById(broadcasterId);
             return response;
         } catch (error) {
-            logger.error("Failed to get twitch channel info", error);
+            logger.error("Failed to get twitch channel info", error.message);
             return null;
         }
     }

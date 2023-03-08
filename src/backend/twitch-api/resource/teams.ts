@@ -21,7 +21,7 @@ export class TwitchTeamsApi {
 
             return [];
         } catch (error) {
-            logger.error("Failed to get teams for broadcaster", error);
+            logger.error("Failed to get teams for broadcaster", error.message);
             return [];
         }
     }
@@ -58,7 +58,7 @@ export class TwitchTeamsApi {
 
             return [];
         } catch (error) {
-            logger.error("Failed to get teams for broadcaster", error);
+            logger.error("Failed to get teams for broadcaster", error.message);
             return [];
         }
     }
