@@ -6,6 +6,7 @@ module.exports = {
         "electron": true,
         "ipcRenderer": true,
         "remote": true,
+        "firebotAppDetails": true,
         "shell": true,
         "fs": true,
         "request": true,
