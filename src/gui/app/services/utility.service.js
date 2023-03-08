@@ -2,8 +2,6 @@
 (function() {
     // This contains utility functions
     // Just inject "utilityService" into any controller that you want access to these
-    const electron = require("electron");
-
     const _ = require("underscore")._;
 
     const dataAccess = require("../../backend/common/data-access.js");
@@ -399,7 +397,7 @@
                     templateUrl: "updatedModal.html",
                     // This is the controller to be used for the modal.
                     controllerFunc: ($scope, $uibModalInstance) => {
-                        const appVersion = electron.remote.app.getVersion();
+                        const appVersion = firebotAppDetails.version;
 
                         $scope.appVersion = `v${appVersion}`;
 

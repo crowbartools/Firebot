@@ -7,7 +7,7 @@
     const secrets = require("../../secrets.json");
 
     const moment = require("moment");
-    moment.locale(electron.remote.app.getLocale());
+    moment.locale(firebotAppDetails.locale);
 
     agGrid.initialiseAgGridWithAngular1(angular); // eslint-disable-line no-undef
 
@@ -403,7 +403,7 @@
          */
 
         // Get app version and change titlebar.
-        const appVersion = electron.remote.app.getVersion();
+        const appVersion = firebotAppDetails.version;
         $scope.appTitle = `Firebot v${appVersion}`;
 
         $scope.customFontCssPath = profileManager.getPathInProfile("/fonts/fonts.css");

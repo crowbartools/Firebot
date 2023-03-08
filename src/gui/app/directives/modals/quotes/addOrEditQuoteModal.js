@@ -3,7 +3,6 @@
 (function() {
 
     const moment = require("moment");
-    const electron = require('electron');
 
     angular.module("firebotApp")
         .component("addOrEditQuoteModal", {
@@ -81,7 +80,7 @@
 
                 $ctrl.isNewQuote = true;
 
-                const isUSLocale = electron.remote.app.getLocale() === "en-US";
+                const isUSLocale = firebotAppDetails.locale === "en-US";
                 $ctrl.dateFormat = isUSLocale ? "MM/dd/yyyy" : "dd/MM/yyyy";
 
                 $ctrl.quote = {
