@@ -3,7 +3,7 @@ All registered tasks accept a platform flag to override the default os platform
   Example: grunt pack --platform=linux
 
 Registered Tasks:
-    setup - runs npm install, npm rebuild, and rebuild for robotjs
+    setup - runs npm install and npm rebuild
 
     cleanup         - Deletes compiled CSS, and empties /dist/
     cleanup:css     - Deletes compiled CSS

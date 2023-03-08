@@ -5,9 +5,8 @@
   "main": "build/main.js",
   "scripts": {
     "start": "grunt prep && electron . --dev",
-    "rebuild": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=12.2.2 --arch=x64 --dist-url=https://artifacts.electronjs.org/headers/dist --abi=87 --force-process-config",
     "rebuild:new": "npm rebuild --runtime=electron --target=12.2.2 --disturl=https://artifacts.electronjs.org/headers/dist --abi=87",
-    "setup": "npm ci && npm rebuild && npm run rebuild",
+    "setup": "npm ci && npm rebuild",
     "build": "grunt build",
     "lint": "grunt lint"
   },
@@ -49,6 +48,7 @@
   "dependencies": {
     "@aws-sdk/client-polly": "^3.26.0",
     "@crowbartools/firebot-custom-scripts-types": "^5.53.2-6",
+    "@nut-tree/nut-js": "^3.1.1",
     "@twurple/api": "^6.0.6",
     "@twurple/auth": "^6.0.6",
     "@twurple/chat": "^6.0.6",
@@ -104,7 +104,6 @@
     "he": "^1.2.0",
     "howler": "https://github.com/ebiggz/howler.js/tarball/master",
     "js-convert-case": "^4.1.1",
-    "kbm-robot": "https://github.com/Skriglitz/kbm-robot/tarball/master",
     "list.js": "^1.5.0",
     "luxon": "^3.1.1",
     "m3u8stream": "^0.2.2",
@@ -125,7 +124,6 @@
     "request": "^2.85.0",
     "request-debug": "^0.2.0",
     "retry-as-promised": "^3.2.0",
-    "robotjs": "^0.6.0",
     "roll": "^1.2.0",
     "sanitize-filename": "^1.6.3",
     "socket.io-client": "^2.3.0",
