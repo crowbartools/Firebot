@@ -46,13 +46,15 @@ function createMainWindow() {
         titleBarStyle: "hiddenInset",
         backgroundColor: "#1E2023",
         frame: false,
+        preload: path.join(__dirname, './preload.js'),
         webPreferences: {
             nodeIntegration: true,
             nativeWindowOpen: true,
             backgroundThrottling: false,
             contextIsolation: false,
             worldSafeExecuteJavaScript: false,
-            enableRemoteModule: true
+            enableRemoteModule: true,
+            sandbox: false
         }
     });
 
