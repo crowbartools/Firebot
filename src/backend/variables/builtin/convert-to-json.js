@@ -3,7 +3,7 @@ const { OutputDataType, VariableCategory } = require("../../../shared/variable-c
 
 const model = {
     definition: {
-        handle: "converttoJSON",
+        handle: "convertToJSON",
         description: "Converts a raw value into JSON text",
         usage: "convertToJSON[raw value]",
         categories: [VariableCategory.ADVANCED],
@@ -13,7 +13,11 @@ const model = {
         if (jsonText == null) {
             return "null";
         }
-        return JSON.stringify(jsonText);
+        try {
+            return JSON.stringify(jsonText);
+        } catch (ignore) {
+            return "null";
+        }
     }
 };
 
