@@ -29,7 +29,7 @@ export class TwitchBitsApi {
             };
             leaderboard.push(...(await this.streamerClient.bits.getLeaderboard(streamerId, params)).entries);
         } catch (error) {
-            logger.error("Failed to get channel bits leaderboard", error);
+            logger.error("Failed to get channel bits leaderboard", error.message);
         }
     
         return leaderboard;

@@ -40,7 +40,7 @@ export class TwitchCategoriesApi {
             }
             return this.mapTwitchCategory(category, size);
         } catch (error) {
-            logger.error("Failed to get twitch category", error);
+            logger.error("Failed to get twitch category", error.message);
             return null;
         }
     }
@@ -54,7 +54,7 @@ export class TwitchCategoriesApi {
                 categories = response.data;
             }
         } catch (error) {
-            logger.error("Failed to search Twitch categories", error);
+            logger.error("Failed to search Twitch categories", error.message);
         }
     
         return categories.map(c => this.mapTwitchCategory(c));

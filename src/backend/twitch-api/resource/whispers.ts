@@ -42,7 +42,7 @@ export class TwitchWhispersApi {
             
             return true;
         } catch (error) {
-            logger.error("Error sending whisper", error);
+            logger.error("Error sending whisper", error.message);
         }
         
         return false;

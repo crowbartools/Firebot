@@ -26,7 +26,7 @@ export class TwitchChannelsApi {
             const response = await this.streamerClient.channels.getChannelInfoById(broadcasterId);
             return response;
         } catch (error) {
-            logger.error("Failed to get twitch channel info", error);
+            logger.error("Failed to get twitch channel info", error.message);
             return null;
         }
     }
@@ -47,7 +47,7 @@ export class TwitchChannelsApi {
                 return true;
             }
         } catch (error) {
-            logger.error("Error while trying to get streamers broadcast", error);
+            logger.error("Error while trying to get streamers broadcast", error.message);
         }
     
         return false;
@@ -122,7 +122,7 @@ export class TwitchChannelsApi {
     
             return true;
         } catch (error) {
-            logger.error("Unable to start raid", error);
+            logger.error("Unable to start raid", error.message);
         }
     
         return false;
@@ -139,7 +139,7 @@ export class TwitchChannelsApi {
     
             return true;
         } catch (error) {
-            logger.error("Unable to cancel raid", error);
+            logger.error("Unable to cancel raid", error.message);
         }
     
         return false;
@@ -161,7 +161,7 @@ export class TwitchChannelsApi {
                 vips.push(...result.data.map(c => c.displayName));
             }
         } catch (error) {
-            logger.error("Error getting VIPs", error);
+            logger.error("Error getting VIPs", error.message);
         }
     
         return vips;

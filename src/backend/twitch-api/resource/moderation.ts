@@ -37,7 +37,7 @@ export class TwitchModerationApi {
     
             return true;
         } catch (error) {
-            logger.error("Error timing out user", error);
+            logger.error("Error timing out user", error.message);
         }
     
         return false;
@@ -64,7 +64,7 @@ export class TwitchModerationApi {
     
             return true;
         } catch (error) {
-            logger.error("Error banning user", error);
+            logger.error("Error banning user", error.message);
         }
     
         return false;
@@ -84,7 +84,7 @@ export class TwitchModerationApi {
     
             return true;
         } catch (error) {
-            logger.error("Error unbanning/removing timeout for user", error);
+            logger.error("Error unbanning/removing timeout for user", error.message);
         }
     
         return false;
@@ -104,7 +104,7 @@ export class TwitchModerationApi {
     
             return true;
         } catch (error) {
-            logger.error("Error adding moderator", error);
+            logger.error("Error adding moderator", error.message);
         }
     
         return false;
@@ -124,7 +124,7 @@ export class TwitchModerationApi {
     
             return true;
         } catch (error) {
-            logger.error("Error removing moderator", error);
+            logger.error("Error removing moderator", error.message);
         }
     
         return false;
@@ -143,7 +143,7 @@ export class TwitchModerationApi {
             await this.streamerClient.channels.addVip(streamerId, userId);    
             return true;
         } catch (error) {
-            logger.error("Error adding VIP", error);
+            logger.error("Error adding VIP", error.message);
         }
     
         return false;
@@ -162,7 +162,7 @@ export class TwitchModerationApi {
             await this.streamerClient.channels.removeVip(streamerId, userId);
             return true;
         } catch (error) {
-            logger.error("Error removing VIP", error);
+            logger.error("Error removing VIP", error.message);
         }
     
         return false;
