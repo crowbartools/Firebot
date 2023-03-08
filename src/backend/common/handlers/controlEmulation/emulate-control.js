@@ -1,5 +1,5 @@
 "use strict";
-const robotjs = require("robotjs");
+// const robotjs = require("robotjs");
 const logger = require("../../../logwrapper");
 
 const mapKey = function(key) {
@@ -48,6 +48,7 @@ function emulateKeyPress(keyRaw, modifiers, pressDurationRaw) {
     const durationSecs = (parseFloat(pressDurationRaw) || 0.03);
 
     try {
+        /*
         if (isMouseClick) {
             robotjs.mouseClick(key);
         } else {
@@ -57,6 +58,7 @@ function emulateKeyPress(keyRaw, modifiers, pressDurationRaw) {
                 robotjs.keyToggle(key, "up", modifierIds);
             }, durationSecs * 1000);
         }
+        */
     } catch (error) {
         logger.error(`Robotjs: Error pressing "${key}"`, error);
     }
@@ -68,12 +70,13 @@ function typeString(string) {
     }
 
     logger.info(`Robotjs: Attempting to type string "${string}"`);
-
+    /*
     try {
         robotjs.typeStringDelayed(string, 10000);
     } catch (error) {
         logger.error("Failed to type string", error);
     }
+    */
 }
 
 exports.emulateKeyPress = emulateKeyPress;
