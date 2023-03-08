@@ -93,7 +93,7 @@ async function getUserDetails(userId) {
 
     const streamerData = accountAccess.getAccounts().streamer;
 
-    const client = twitchApi.getClient();
+    const client = twitchApi.streamerClient;
 
     let isBanned;
     try {

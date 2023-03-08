@@ -21,7 +21,7 @@ exports.startFollowPoll = () => {
     pollStartTime = Date.now();
     followPollIntervalId = setInterval(async () => {
         const streamer = accountAccess.getAccounts().streamer;
-        const client = twitchApi.getClient();
+        const client = twitchApi.streamerClient;
 
         if (client == null || !streamer.loggedIn) {
             return;

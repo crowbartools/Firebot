@@ -361,9 +361,11 @@ const createSplashScreen = async () => {
     splashscreenWindow = splash;
 
     splash.on("ready-to-show", () => {
+        logger.debug("...Showing splash screen");
         splash.show();
     });
 
+    logger.debug("...Attempting to load splash screen url");
     return splash.loadURL(
         url.format({
             pathname: path.join(__dirname, "../../../gui/splashscreen/splash.html"),

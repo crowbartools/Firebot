@@ -14,9 +14,12 @@ const {
 logger.info("Starting Firebot...");
 
 if (!secretsManager.testSecrets()) {
+    logger.debug("...Testing for secrets failed");
     app.quit();
     return;
 }
+
+logger.debug("...Secrets tested");
 
 // Handle any squirrel install/update events
 // returns false if the rest of app execution should stop.
@@ -24,15 +27,22 @@ if (!handleSquirrelEvents()) {
     return;
 }
 
+logger.debug("...Squirrel handled");
+
 // ensure only a single instance of the app runs
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
+    logger.debug("...Failed to get single instance lock");
     app.quit();
     return;
 }
+
+logger.debug("...Single instance lock acquired");
 
 // Setup app listeners
 app.on('second-instance', secondInstance);
 app.on("window-all-closed", windowsAllClosed);
 app.on("will-quit", willQuit);
-app.whenReady().then(whenReady);
+app.whenReady().then(whenReady).catch(error => {
+    logger.debug("Error on when ready step", error);
+});

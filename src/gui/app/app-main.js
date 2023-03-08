@@ -171,6 +171,9 @@
             updatesService.checkForUpdate();
         }
 
+        // Validate Twitch accounts
+        connectionService.validateAccounts();
+
         ttsService.obtainVoices().then(() => {
             if (settingsService.getDefaultTtsVoiceId() == null) {
                 settingsService.setDefaultTtsVoiceId(ttsService.getOsDefaultVoiceId());

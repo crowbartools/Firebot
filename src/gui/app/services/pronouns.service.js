@@ -42,10 +42,10 @@
                                 service.pronounCache[username] = pronoun.display;
                             }
                         } else {
-                            logger.error(`Failed to get pronoun for ${username}`, resp);
+                            logger.error(`Failed to get pronoun for ${username}`);
                         }
                     }, (error) => {
-                        logger.error(`Failed to get pronoun for ${username}`, error);
+                        logger.error(`Failed to get retrieve pronoun for ${username}`, error.message);
                     });
 
                 return null;
@@ -59,10 +59,10 @@
                         if (resp.status === 200) {
                             pronouns = resp.data;
                         } else {
-                            logger.error("Get all pronouns error", resp);
+                            logger.error("Failed to get pronouns list", resp);
                         }
                     }, (error) => {
-                        logger.error("Get all pronouns error", error);
+                        logger.error("Failed to get pronouns:", error.message);
                     });
             };
 

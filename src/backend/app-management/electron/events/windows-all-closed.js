@@ -4,6 +4,9 @@ const { app } = require("electron");
 
 exports.windowsAllClosed = async () => {
 
+    const logger = require("../../../logwrapper");
+    logger.debug("All windows closed triggered");
+
     const { settings } = require("../../../common/settings-access");
     const { startBackup } = require("../../../backupManager");
 

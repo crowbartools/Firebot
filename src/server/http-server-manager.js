@@ -14,7 +14,8 @@ const effectManager = require("../backend/effects/effectManager");
 const resourceTokenManager = require("../backend/resourceTokenManager");
 
 const electron = require('electron');
-const cwd = !electron.app.isPackaged ? path.join(electron.app.getAppPath(), "build") : process.cwd();
+const workingDirectoryRoot = process.platform === 'darwin' ? process.resourcesPath : process.cwd();
+const cwd = !electron.app.isPackaged ? path.join(electron.app.getAppPath(), "build") : workingDirectoryRoot;
 
 
 class HttpServerManager extends EventEmitter {
@@ -54,6 +55,10 @@ class HttpServerManager extends EventEmitter {
         // Get our router for the current v1 api methods
         const v1Router = require("./api/v1/v1Router");
         app.use("/api/v1", v1Router);
+
+        app.get("/api/v1/auth/callback", function(_, res) {
+            res.sendFile(path.join(__dirname + '/authcallback.html'));
+        });
 
         app.get('/loginsuccess', function(_, res) {
             res.sendFile(path.join(__dirname + '/loginsuccess.html'));

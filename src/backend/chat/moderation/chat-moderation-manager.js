@@ -9,7 +9,7 @@ const utils = require("../../utility");
 
 const getChatModerationSettingsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/chat-moderation-settings");
 const getBannedWordsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-words", false);
-const getbannedRegularExpressionsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-regular-expressions", false);
+const getBannedRegularExpressionsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-regular-expressions", false);
 const getUrlAllowlistDb = () => profileManager.getJsonDbInProfile("/chat/moderation/url-allowlist", false);
 
 // default settings
@@ -317,7 +317,8 @@ function saveBannedWordList() {
 
 function saveBannedRegularExpressionsList() {
     try {
-        getbannedRegularExpressionsDb().push("/", bannedRegularExpressions);
+        getBannedRegularExpressionsDb().push("/", bannedRegularExpressions);
+
     } catch (error) {
         if (error.name === 'DatabaseError') {
             logger.error("Error saving banned regular expressions data", error);
@@ -358,17 +359,17 @@ frontendCommunicator.on("removeAllBannedWords", () => {
     saveBannedWordList();
 });
 
-frontendCommunicator.on("addBannedRegularExpression", regularExpressions => {
-    bannedRegularExpressions.regularExpressions = bannedRegularExpressions.regularExpressions.concat(regularExpressions);
+frontendCommunicator.on("addBannedRegularExpression", expression => {
+    bannedRegularExpressions.regularExpressions.push(expression);
     saveBannedRegularExpressionsList();
 });
 
-frontendCommunicator.on("removeBannedRegularExpression", regexText => {
-    bannedRegularExpressions.regularExpressions = bannedRegularExpressions.regularExpressions.filter(r => r.text.toLowerCase() !== regexText);
+frontendCommunicator.on("removeBannedRegularExpression", expression => {
+    bannedRegularExpressions.regularExpressions = bannedRegularExpressions.regularExpressions.filter(r => r.text !== expression.text);
     saveBannedRegularExpressionsList();
 });
 
-frontendCommunicator.on("removeAllRegularExpressions", () => {
+frontendCommunicator.on("removeAllBannedRegularExpressions", () => {
     bannedRegularExpressions.regularExpressions = [];
     saveBannedRegularExpressionsList();
 });
@@ -448,7 +449,7 @@ function load() {
             bannedWords = words;
         }
 
-        const regularExpressions = getbannedRegularExpressionsDb().getData("/");
+        const regularExpressions = getBannedRegularExpressionsDb().getData("/");
         if (regularExpressions && Object.keys(regularExpressions).length > 0) {
             bannedRegularExpressions = regularExpressions;
         }

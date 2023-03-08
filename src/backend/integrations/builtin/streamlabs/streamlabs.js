@@ -24,6 +24,7 @@ const integrationDefinition = {
             secret: secrets.streamLabsClientSecret
         },
         auth: {
+            type: "code",
             tokenHost: 'https://streamlabs.com',
             tokenPath: '/api/v1.0/token',
             authorizePath: '/api/v1.0/authorize'

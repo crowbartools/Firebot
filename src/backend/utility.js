@@ -123,7 +123,7 @@ const populateStringWithTriggerData = async (string = "", trigger) => {
 };
 
 const getUptime = async () => {
-    const client = twitchApi.getClient();
+    const client = twitchApi.streamerClient;
 
     const streamerAccount = accountAccess.getAccounts().streamer;
     const channelData = await client.streams.getStreamByUserId(streamerAccount.userId);

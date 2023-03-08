@@ -11,7 +11,7 @@ exports.setupListeners = () => {
     });
 
     frontendCommunicator.onAsync("search-twitch-channels", async query => {
-        const response = await twitchApi.getClient().search.searchChannels(query, { limit: 10 });
+        const response = await twitchApi.streamerClient.search.searchChannels(query, { limit: 10 });
         return (response?.data ?? []).map(c => ({
             id: c.id,
             username: c.displayName,
@@ -23,7 +23,7 @@ exports.setupListeners = () => {
         const accountAccess = require("../common/account-access");
         const streamerChannelId = accountAccess.getAccounts().streamer.channelId;
         try {
-            await twitchApi.getClient().moderation.processHeldAutoModMessage(streamerChannelId, data.messageId, data.allow);
+            await twitchApi.streamerClient.moderation.processHeldAutoModMessage(streamerChannelId, data.messageId, data.allow);
         } catch (error) {
             const likelyExpired = error?.body?.includes("attempted to update a message status that was either already set");
             frontendCommunicator.send("twitch:chat:automod-update-error", { messageId: data.messageId, likelyExpired });

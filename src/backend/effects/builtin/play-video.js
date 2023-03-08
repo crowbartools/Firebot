@@ -359,11 +359,11 @@ const playVideo = {
 
         if (effect.videoType === "Twitch Clip" || effect.videoType === "Random Twitch Clip") {
             const twitchApi = require("../../twitch-api/api");
-            const client = twitchApi.getClient();
+            const client = twitchApi.streamerClient;
 
             let clipId;
 
-            /**@type {import('@twurple/api/lib').HelixClip} */
+            /**@type {import('@twurple/api').HelixClip} */
             let clip;
             if (effect.videoType === "Twitch Clip") {
                 clipId = effect.twitchClipUrl.replace("https://clips.twitch.tv/", "");
@@ -383,7 +383,7 @@ const playVideo = {
                         return true;
                     }
 
-                    const clips = await client.clips.getClipsForBroadcaster(user.id);
+                    const clips = await client.clips.getClipsForBroadcaster(user.id, { limit: 100 });
 
                     if (clips.data.length < 1) {
                         logger.warn(`User ${username} has no clips. Unable to get random.`);

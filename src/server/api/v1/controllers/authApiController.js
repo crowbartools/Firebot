@@ -16,29 +16,49 @@ exports.getAuth = (req, res) => {
     res.redirect(provider.authorizationUri);
 };
 
-exports.getAuthCallback = async (req, res) => {
-
+exports.getAuthCallback = async (
+    /** @type {import("express").Request} */ req,
+    /** @type {import("express").Response} */ res) => {
     const state = req.query.state;
 
+    /** @type {import("../../../../backend/auth/auth").AuthProvider} */
     const provider = authManager.getAuthProvider(state);
     if (provider == null) {
         return res.status(400).json('Invalid provider id in state');
     }
 
-    const code = req.query.code;
-    const options = {
-        code: code,
-        redirect_uri: provider.redirectUri //eslint-disable-line camelcase
-    };
-
     try {
-        const result = await provider.oauthClient.authorizationCode.getToken(options);
+        const fullUrl = req.originalUrl.replace("callback2", "callback");
+        /** @type {import("client-oauth2").Token} */
+        let token;
+
+        const authType = provider.details.auth.type ?? "code";
+
+        /** @type {import("client-oauth2").Options} */
+        const tokenOptions = { body: {} };
+
+        switch (authType) {
+        case "token":
+            token = await provider.oauthClient.token.getToken(fullUrl, tokenOptions);
+            break;
+
+        case "code":
+            // Force these because the library adds them as an auth header, not in the body
+            tokenOptions.body["client_id"] = provider.details.client.id;
+            tokenOptions.body["client_secret"] = provider.details.client.secret;
+
+            token = await provider.oauthClient.code.getToken(fullUrl, tokenOptions);
+            break;
+
+        default:
+            break;
+        }
 
         logger.info(`Received token from provider id '${provider.id}'`);
+        const tokenData = token.data;
+        tokenData.scope = tokenData.scope?.split(" ");
 
-        const token = provider.oauthClient.accessToken.create(result);
-
-        authManager.successfulAuth(provider.id, token.token);
+        authManager.successfulAuth(provider.id, tokenData);
 
         return res.redirect(`/loginsuccess?provider=${encodeURIComponent(provider.details.name)}`);
     } catch (error) {

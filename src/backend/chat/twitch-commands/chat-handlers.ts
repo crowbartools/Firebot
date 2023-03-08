@@ -137,6 +137,34 @@ export const announcepurpleHandler: TwitchSlashCommandHandler<[string]> = {
     }
 };
 
+export const shoutoutHandler: TwitchSlashCommandHandler<[string]> = {
+    commands: [ "/shoutout" ],
+    validateArgs: ([targetUsername]) => {
+        if (targetUsername == null || targetUsername.length < 1) {
+            return {
+                success: false,
+                errorMessage: "Please provide a username"
+            };
+        }
+
+        targetUsername = TwitchCommandHelpers.getNormalizedUsername(targetUsername);
+
+        return {
+            success: true,
+            args: [targetUsername]
+        };
+    },
+    handle: async ([targetUsername]) => {
+        const targetUserId = (await twitchApi.users.getUserByName(targetUsername))?.id;
+
+        if (targetUserId == null) {
+            return false;
+        }
+
+        return await twitchApi.chat.sendShoutout(targetUserId);
+    }
+};
+
 export const clearHandler: TwitchSlashCommandHandler<[]> = {
     commands: [ "/clear" ],
     validateArgs: () => {

@@ -2,6 +2,7 @@
 
 const express = require("express");
 const router = express.Router(); //eslint-disable-line new-cap
+const path = require('path');
 const logger = require("../../../backend/logwrapper");
 
 router.use(function log(req, res, next) {
@@ -17,7 +18,8 @@ const auth = require("./controllers/authApiController");
 
 router.route("/auth").get(auth.getAuth);
 
-router.route("/auth/callback").get(auth.getAuthCallback);
+router.route("/auth/callback2").get(auth.getAuthCallback);
+router.route("/auth/tokencallback").get(auth.getAuthCallback);
 
 // Status
 const status = require("./controllers/statusApiController");

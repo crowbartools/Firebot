@@ -22,7 +22,7 @@ const model = {
         const streamerId = accountAccess.getAccounts().streamer.userId;
 
         // retrieve stream data for user id
-        const twitchClient = twitchApi.getClient();
+        const twitchClient = twitchApi.streamerClient;
         const streamInfo = await twitchClient.asUser(streamerId, async ctx => {
             return await ctx.streams.getStreamByUserId(streamerId);
         });

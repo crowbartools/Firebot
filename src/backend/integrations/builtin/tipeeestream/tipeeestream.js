@@ -21,6 +21,7 @@ const integrationDefinition = {
             secret: secrets.tipeeeStreamClientSecret
         },
         auth: {
+            type: "code",
             tokenHost: 'https://api.tipeeestream.com',
             tokenPath: '/oauth/v2/token',
             authorizePath: '/oauth/v2/auth'

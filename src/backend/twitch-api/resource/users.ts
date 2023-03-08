@@ -3,31 +3,24 @@ import logger from "../../logwrapper";
 import { ApiClient, HelixUser, UserIdResolvable } from "@twurple/api";
 
 export class TwitchUsersApi {
-    client: ApiClient;
+    streamerClient: ApiClient;
+    botClient: ApiClient;
 
-    constructor(apiClient: ApiClient) {
-        this.client = apiClient;
+    constructor(streamerClient: ApiClient, botClient: ApiClient) {
+        this.streamerClient = streamerClient;
+        this.botClient = botClient;
     }
 
     async getUserById(userId: string): Promise<HelixUser> {
-        const streamerData = accountAccess.getAccounts().streamer;
-        return await this.client.asUser(streamerData.userId, async ctx => {
-            return await ctx.users.getUserById(userId);
-        });
+        return await this.streamerClient.users.getUserById(userId);
     }
 
     async getUserByName(username: string): Promise<HelixUser> {
-        const streamerData = accountAccess.getAccounts().streamer;
-        return await this.client.asUser(streamerData.userId, async ctx => {
-            return await ctx.users.getUserByName(username);
-        });
+        return await this.streamerClient.users.getUserByName(username);
     }
 
     async getUsersByNames(usernames: string[]): Promise<HelixUser[]> {
-        const streamerData = accountAccess.getAccounts().streamer;
-        return await this.client.asUser(streamerData.userId, async ctx => {
-            return await ctx.users.getUsersByNames(usernames);
-        });
+        return await this.streamerClient.users.getUsersByNames(usernames);
     }
 
     async getFollowDateForUser(username: string): Promise<Date> {
@@ -35,7 +28,7 @@ export class TwitchUsersApi {
     
         const userId = (await this.getUserByName(username)).id;
     
-        const followData = await this.client.channels.getChannelFollowers(streamerData.userId, streamerData.userId, userId);
+        const followData = await this.streamerClient.channels.getChannelFollowers(streamerData.userId, streamerData.userId, userId);
     
         if (followData?.data[0] == null) {
             return null;
@@ -62,7 +55,7 @@ export class TwitchUsersApi {
             return false;
         }
     
-        const userFollow = await this.client.users.userFollowsBroadcaster(user.id, channel.id);
+        const userFollow = await this.streamerClient.users.userFollowsBroadcaster(user.id, channel.id);
     
         return userFollow ?? false;
     }
@@ -85,12 +78,12 @@ export class TwitchUsersApi {
         }
 
         try {
-            const userFollowResponse = await this.client.channels.getChannelFollowers(channel.id, streamerData.userId, user.id);
+            const userFollowResponse = await this.streamerClient.channels.getChannelFollowers(channel.id, streamerData.userId, user.id);
             const userFollow = userFollowResponse?.data?.length === 1;
     
             return userFollow ?? false;
         } catch (err) {
-            logger.error(`Failed to check if ${username} follows ${channelName}`, err);
+            logger.error(`Failed to check if ${username} follows ${channelName}`, err.message);
             return false;
         }
     }
@@ -103,11 +96,28 @@ export class TwitchUsersApi {
         const streamerId = accountAccess.getAccounts().streamer.userId;
     
         try {
-            await this.client.users.createBlock(streamerId, userId, {
+            await this.streamerClient.users.createBlock(streamerId, userId, {
                 reason
             });
         } catch (error) {
-            logger.error("Error blocking user", error);
+            logger.error("Error blocking user", error.message);
+            return false;
+        }
+    
+        return true;
+    }
+
+    async unblockUser(userId: UserIdResolvable): Promise<boolean> {
+        if (userId == null) {
+            return false;
+        }
+
+        const streamerId = accountAccess.getAccounts().streamer.userId;
+    
+        try {
+            await this.streamerClient.users.deleteBlock(streamerId, userId);
+        } catch (error) {
+            logger.error("Error unblocking user", error.message);
             return false;
         }
     

@@ -184,6 +184,11 @@
                                     text: "/raid"
                                 },
                                 {
+                                    display: "/shoutout @username",
+                                    description: "Send a shoutout to another channel",
+                                    text: "/shoutout"
+                                },
+                                {
                                     display: "/unraid",
                                     description: "Cancel an ongoing Raid",
                                     text: "/unraid"

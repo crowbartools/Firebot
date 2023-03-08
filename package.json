@@ -1,13 +1,12 @@
 {
   "name": "firebotv5",
-  "version": "5.56.2",
+  "version": "5.57.0",
   "description": "Powerful all-in-one bot for Twitch streamers.",
   "main": "build/main.js",
   "scripts": {
     "start": "grunt prep && electron . --dev",
     "rebuild": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=12.2.2 --arch=x64 --dist-url=https://artifacts.electronjs.org/headers/dist --abi=87 --force-process-config",
     "rebuild:new": "npm rebuild --runtime=electron --target=12.2.2 --disturl=https://artifacts.electronjs.org/headers/dist --abi=87",
-    "rebuild:darwin": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=12.2.2 --arch=darwin --dist-url=https://artifacts.electronjs.org/headers/dist",
     "setup": "npm ci && npm rebuild && npm run rebuild",
     "build": "grunt build",
     "lint": "grunt lint"
@@ -50,10 +49,10 @@
   "dependencies": {
     "@aws-sdk/client-polly": "^3.26.0",
     "@crowbartools/firebot-custom-scripts-types": "^5.53.2-6",
-    "@twurple/api": "^6.0.4",
-    "@twurple/auth": "^6.0.4",
-    "@twurple/chat": "^6.0.4",
-    "@twurple/pubsub": "^6.0.4",
+    "@twurple/api": "^6.0.6",
+    "@twurple/auth": "^6.0.6",
+    "@twurple/chat": "^6.0.6",
+    "@twurple/pubsub": "^6.0.6",
     "@zunderscore/elgato-light-control": "^1.1.2",
     "angular": "^1.8.0",
     "angular-animate": "^1.7.8",
@@ -78,6 +77,7 @@
     "big-text.js": "^1.0.1",
     "body-parser": "^1.19.0",
     "carina": "^0.11.2",
+    "client-oauth2": "^4.3.3",
     "cm-resize": "^1.0.1",
     "codemirror": "^5.59.1",
     "color-convert": "^2.0.1",
@@ -128,7 +128,6 @@
     "robotjs": "^0.6.0",
     "roll": "^1.2.0",
     "sanitize-filename": "^1.6.3",
-    "simple-oauth2": "^3.4.0",
     "socket.io-client": "^2.3.0",
     "tiny-typed-emitter": "^2.1.0",
     "ui-select": "^0.19.8",
@@ -139,6 +138,9 @@
     "winston-daily-rotate-file": "^1.4.6",
     "winston-raven-sentry": "^1.0.1",
     "ws": "^8.2.2"
+  },
+  "optionalDependencies": {
+    "electron-installer-dmg": "github:SReject/electron-installer-dmg#9bdb5217b078c724918271549f34d362aecbf6bb"
   },
   "volta": {
     "node": "14.18.1",
