@@ -9,6 +9,8 @@ const fileOpenHelpers = require("../file-open-helpers");
 const createTray = require('./tray-creation.js');
 const logger = require("../../logwrapper");
 const { setupTitlebar, attachTitlebarToWindow } = require("custom-electron-titlebar/main");
+const os = require('os');
+
 
 setupTitlebar();
 
@@ -26,6 +28,19 @@ exports.mainWindow = null;
  */
 let splashscreenWindow;
 
+
+electron.ipcMain.on('preload.getAppDetails', (event) => (event.returnValue = {
+    version: electron.app.getVersion(),
+    locale: electron.app.getLocale(),
+    isPackaged: electron.app.isPackaged,
+    os: {
+        isWindows: process.platform === 'win32',
+        type: os.type(),
+        release: os.release()
+    }
+}));
+electron.ipcMain.on('preload.app.getAppPath', (event, ...args) => event.returnValue = electron.app.getAppPath(...args));
+electron.ipcMain.on('preload.app.getPath', (event, ...args) => event.returnValue = electron.app.getPath(...args));
 
 function createMainWindow() {
     const mainWindowState = windowStateKeeper({
@@ -46,7 +61,6 @@ function createMainWindow() {
         titleBarStyle: "hiddenInset",
         backgroundColor: "#1E2023",
         frame: false,
-        preload: path.join(__dirname, './preload.js'),
         webPreferences: {
             nodeIntegration: true,
             nativeWindowOpen: true,
@@ -54,7 +68,8 @@ function createMainWindow() {
             contextIsolation: false,
             worldSafeExecuteJavaScript: false,
             enableRemoteModule: true,
-            sandbox: false
+            sandbox: false,
+            preload: path.join(__dirname, './preload.js')
         }
     });
 
@@ -299,9 +314,13 @@ function createMainWindow() {
     // wait for the main window's content to load, then show it
     mainWindow.webContents.on("did-finish-load", () => {
 
+
         createTray(mainWindow);
 
+        // mainWindow.webContents.openDevTools();
         mainWindow.show();
+
+        // mainWindow.show();
         if (splashscreenWindow) {
             splashscreenWindow.destroy();
         }

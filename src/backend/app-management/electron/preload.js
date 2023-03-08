@@ -1,18 +1,22 @@
 'use strict';
 
-const os = require('node:os');
-const { app, contextBridge } = require('electron');
+const { ipcRenderer } = require('electron');
 
+const {
+    version,
+    isPackaged,
+    locale,
+    os
+} = ipcRenderer.sendSync('preload.getAppDetails');
 
-
-contextBridge.exposeInMainWorld('firebotAppDetails', {
-    version: app.getVersion(),
-    isPackaged: app.isPackaged,
-    locale: app.getLocale(),
-    os: {
-        isWindows: os.platform() === 'win32',
-        type: os.type(),
-        release: os.release()
-    },
-    screens: () => app.screen.getAllDisplays()
-});
+window.firebotAppDetails = {
+    getVersion: () => version,
+    version,
+    isPackaged,
+    getLocale: () => locale,
+    locale,
+    os,
+    screens: () => ipcRenderer.sendSync('preload.app.getAllDisplays'),
+    getAppPath: (...args) => ipcRenderer.sendSync('preload.app.getAppPath', ...args),
+    getPath: (...args) => ipcRenderer.sendSync('preload.app.getPath', ...args)
+};
