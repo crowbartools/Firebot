@@ -2,7 +2,7 @@
 
 exports.willQuit = () => {
     const logger = require("../../../logwrapper");
-    logger.info("Will quit triggered [REMOVE LATER]");
+    logger.debug("Will quit triggered");
     const {
         handleProfileDeletion,
         handleProfileRename

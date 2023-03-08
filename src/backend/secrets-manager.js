@@ -22,7 +22,7 @@ const expectedKeys = [
 ];
 
 exports.testSecrets = () => {
-    logger.info("...Starting secrets test [REMOVE LATER]");
+    logger.debug("...Starting secrets test");
     let missingKeys = expectedKeys;
     try {
         /**@type {FirebotSecrets} */

@@ -10,7 +10,7 @@ exports.secondInstance = (_, argv) => {
     // Someone tried to run a second instance, we should focus our window.
     const logger = require("../../../logwrapper");
     try {
-        logger.info("Second instance detected, focusing main window. [REMOVE LATER]");
+        logger.debug("Second instance detected, focusing main window.");
         const { mainWindow } = require("../window-management");
         if (mainWindow) {
             if (!mainWindow.isVisible()) {
@@ -24,7 +24,7 @@ exports.secondInstance = (_, argv) => {
             fileOpenHelpers.checkForFirebotSetupPath(argv);
         }
     } catch (error) {
-        logger.info("Error focusing [REMOVE LATER]", error);
+        logger.debug("Error focusing", error);
         // something has gone terribly wrong with this instance,
         // attempt restart
         const { restartApp } = require("../app-helpers");

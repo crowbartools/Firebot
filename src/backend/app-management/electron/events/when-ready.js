@@ -5,17 +5,17 @@ const {checkForFirebotSetupPath} = require("../../file-open-helpers");
 exports.whenReady = async () => {
     const logger = require("../../../logwrapper");
 
-    logger.info("...Checking for setup file [REMOVE LATER]");
+    logger.debug("...Checking for setup file");
 
     checkForFirebotSetupPath(process.argv);
 
-    logger.info("...Loading window management [REMOVE LATER]");
+    logger.debug("...Loading window management");
     const windowManagement = require("../window-management");
 
     logger.debug("Showing splash screen...");
     await windowManagement.createSplashScreen();
 
-    logger.info("...Ensuring required folders exist [REMOVE LATER]");
+    logger.debug("...Ensuring required folders exist");
     // Ensure required folders are created
     const { ensureRequiredFoldersExist } = require("../../data-tasks");
     ensureRequiredFoldersExist();
