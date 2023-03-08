@@ -470,6 +470,13 @@
         <h4 class="modal-title" aria-label="Manage Logins">{{'MAIN.MANAGE_LOGINS' | translate }}</h4>
       </div>
       <div class="modal-body">
+            <div ng-if="invalidAccounts && invalidAccounts.length > 0" class="row mb-8" style="text-align: center;">
+              The following account(s) have been logged out because they are out of date:
+              <br />
+              <strong>{{ invalidAccounts.join(", ") }}</strong>
+              <br /><br />
+              Please log back in to continue.
+            </div>
             <div class="row" style="text-align: center;">
               <div class="col-sm-6 streamer-login top-padding">
                 <img class="login-pic" ng-src="{{getAccountAvatar('streamer')}}">
