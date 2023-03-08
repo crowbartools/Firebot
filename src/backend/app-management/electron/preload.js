@@ -13,5 +13,6 @@ contextBridge.exposeInMainWorld('firebotAppDetails', {
         isWindows: os.platform() === 'win32',
         type: os.type(),
         release: os.release()
-    }
+    },
+    screens: () => app.screen.getAllDisplays()
 });

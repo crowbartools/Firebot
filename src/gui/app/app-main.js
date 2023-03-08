@@ -463,13 +463,10 @@
 
         backendCommunicator.onAsync("takeScreenshot", async (data) => {
 
-            const { desktopCapturer, remote } = require("electron");
+            const { desktopCapturer } = require("electron");
 
-            const screen = remote.screen;
-
-            const displays = screen.getAllDisplays();
-
-            const matchingDisplay = displays.find(d => d.id === data.displayId);
+            const screens = firebotAppDetails.screens();
+            const matchingDisplay = screens.find(d => d.id === data.displayId);
 
             const resolution = matchingDisplay ? {
                 width: matchingDisplay.size.width * matchingDisplay.scaleFactor,
