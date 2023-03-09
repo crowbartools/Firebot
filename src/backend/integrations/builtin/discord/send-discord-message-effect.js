@@ -163,7 +163,7 @@ module.exports = {
             embed = await discordEmbedBuilder.buildEmbed(effect.embedType, effect.customEmbed);
         }
 
-        if (effect.files.length !== 0) {
+        if (effect.files != null && effect.files.length !== 0) {
             files = [];
             effect.files.forEach(file => {
                 if (fs.existsSync(file.path)) {
