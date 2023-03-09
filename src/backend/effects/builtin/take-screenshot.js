@@ -150,12 +150,8 @@ const clip = {
                 }
             });
 
-        const { remote } = require("electron");
-
-        const screen = remote.screen;
-
-        const displays = screen.getAllDisplays();
-        const primaryDisplay = screen.getPrimaryDisplay();
+        const displays = firebotAppDetails.getAllDisplays();
+        const primaryDisplay = firebotAppDetails.getPrimaryDisplay();
 
         $scope.displayOptions = displays.reduce((acc, display, i) => {
             const isPrimary = display.id === primaryDisplay.id;

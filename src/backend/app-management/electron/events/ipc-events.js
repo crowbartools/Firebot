@@ -29,6 +29,12 @@ module.exports = function () {
     ipcMain.on('preload.app.getAppPath', (event, ...args) => {
         event.returnValue = app.getAppPath(...args);
     });
+    ipcMain.on('preload.screen.getAllDisplays', (event) => {
+        event.returnValue = screen.getAllDisplays();
+    });
+    ipcMain.on('preload.screen.getPrimaryDisplay', (event) => {
+        event.returnValue = screen.getPrimaryDisplay();
+    });
     ipcMain.on('preload.takeScreenshot', (event, displayId) => {
         const screens = screen.getAllDisplays();
         const matchingScreen = screens.find(d => d.id === displayId);
