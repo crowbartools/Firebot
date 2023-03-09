@@ -39,7 +39,6 @@
     "grunt-sass": "^3.1.0",
     "grunt-shell": "^3.0.1",
     "husky": "^0.14.3",
-    "node-gyp": "^8.4.1",
     "rimraf": "^3.0.2",
     "sass": "^1.58.3",
     "typescript": "^4.7.2"
@@ -142,8 +141,5 @@
   "volta": {
     "node": "18.12.1",
     "npm": "8.19.2"
-  },
-  "resolutions": {
-    "nan": "github:jkleinsc/nan#remove_accessor_signature"
   }
 }
