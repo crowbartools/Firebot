@@ -190,6 +190,7 @@ exports.whenReady = async () => {
     const streamInfoPoll = require("../../../twitch-api/stream-info-poll");
     streamInfoPoll.startStreamInfoPoll();
 
+    logger.debug('...loading main window');
     windowManagement.createMainWindow();
 
     // forward backend logs to front end

@@ -17,11 +17,9 @@
 
             const FIREBOT_RELEASES_URL = "https://api.github.com/repos/crowbartools/Firebot/releases";
 
-            const electron = require('electron');
-
-            const APP_VERSION = electron.remote.app.getVersion();
-            const isDev = !electron.remote.app.isPackaged;
-            const isWindows = process.platform === "win32";
+            const APP_VERSION = firebotAppDetails.version;
+            const isDev = !firebotAppDetails.isPackaged;
+            const isWindows = firebotAppDetails.os.isWindows;
 
             service.updateData = null;
 
