@@ -7,6 +7,8 @@ const axios = axiosDefault.create();
 
 const integrationManager = require("../../IntegrationManager");
 
+const logger = require("../../../logwrapper");
+
 /**
  *
  * @param {*} discordChannelId
@@ -66,18 +68,37 @@ async function sendDiscordMessage(discordChannelId, content, embed, files = null
         }
 
 
-        form.submit(channel.webhookUrl, (error) => {
+        /*form.submit(channel.webhookUrl + "?wait=true", (error, response) => {
             if (error) {
                 console.log("Error sending screenshot discord message", error);
             }
-        });
+        });*/
 
-        return;
+        return await new Promise((resolve, reject) => {
+            form.submit(`${channel.webhookUrl}?wait=true`, (error, response) => {
+                if (error) {
+                    logger.error("Error sending discord message with file(s)", error);
+                    reject(error);
+                }
+                //resolve(response);
+                const chunks = [];
+                response.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
+                response.on('error', (err) => reject(err));
+                response.on('end', () => {
+                    const result = Buffer.concat(chunks).toString('utf8');
+                    if (response.statusCode !== 200) {
+                        reject(response.statusMessage);
+                    } else {
+                        resolve(result);
+                    }
+                });
+            });
+        });
     }
 
-    axios.post(channel.webhookUrl, payload).catch(error => {
-        console.log("Failed to send webhook", error);
-    });
+    let response = await axios.post(channel.webhookUrl + "?wait=true", payload);
+    logger.debug("Discord message:", response);
+    return response;
 }
 
 exports.sendDiscordMessage = sendDiscordMessage;

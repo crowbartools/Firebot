@@ -5,6 +5,8 @@ const integrationManager = require("../../IntegrationManager");
 const discordEmbedBuilder = require('./discord-embed-builder');
 const discord = require("./discord-message-sender");
 const frontEndCommunicator = require("../../../common/frontend-communicator");
+const logger = require("../../../logwrapper");
+const fs = require("fs");
 
 frontEndCommunicator.onAsync("getDiscordChannels", async () => {
     const channels = [];
@@ -25,7 +27,19 @@ module.exports = {
         description: "Send a message and/or embed to a Discord channel",
         icon: "fab fa-discord",
         categories: [EffectCategory.INTEGRATIONS],
-        dependencies: []
+        dependencies: [],
+        outputs: [
+            {
+                label: "Success status",
+                description: "returns true if the message was sent successfully, false otherwise.",
+                defaultName: "discordSuccess"
+            },
+            {
+                label: "Message Output",
+                description: "returns the discord message object if the message was sent successfully, returns an error otherwise.",
+                defaultName: "discordMessage"
+            }
+        ]
     },
     globalSettings: {},
     optionsTemplate: `
@@ -38,6 +52,10 @@ module.exports = {
 
                 <eos-container header="Message" pad-top="true">
                     <textarea ng-model="effect.message" class="form-control" name="text" placeholder="Enter message" rows="4" cols="40" replace-variables></textarea>
+                </eos-container>
+
+                <eos-container header="Files ({{effect.files.length}}/10)" pad-top="true">
+                    <discord-file-upload-list model="effect.files"></discord-file-upload-list>
                 </eos-container>
 
                 <eos-container header="Rich Embed" pad-top="true">
@@ -126,8 +144,8 @@ module.exports = {
     },
     optionsValidator: (effect) => {
         const errors = [];
-        if (!effect.includeEmbed && (effect.message == null || effect.message.trim().length < 1)) {
-            errors.push("Please provide a message");
+        if (!effect.includeEmbed && !(Array.isArray(effect.files) && effect.files.length !== 0) && (effect.message == null || effect.message.trim().length < 1)) {
+            errors.push("Please provide a message, embed or file.");
         }
         if (effect.includeEmbed && (effect.embedType == null || effect.embedType === "")) {
             errors.push("Please select a rich embed type");
@@ -138,12 +156,45 @@ module.exports = {
         const { effect } = event;
 
         let embed;
+
+        let files;
+
         if (effect.includeEmbed) {
             embed = await discordEmbedBuilder.buildEmbed(effect.embedType, effect.customEmbed);
         }
 
-        await discord.sendDiscordMessage(effect.channelId, effect.message || "", embed);
+        if (effect.files.length !== 0) {
+            files = [];
+            effect.files.forEach(file => {
+                if (fs.existsSync(file.path)) {
+                    files.push({name: file.name, file: fs.readFileSync(file.path)});
+                } else {
+                    logger.info("File not found, skipping: ", file);
+                }
+            });
+            if (files.length === 0) {
+                files = null;
+            }
+        }
+        let response;
 
-        return true;
+        try {
+            response = await discord.sendDiscordMessage(effect.channelId, effect.message || "", embed, files);
+            return {
+                success: true,
+                outputs: {
+                    discordSuccess: true,
+                    discordMessage: response
+                }
+            };
+        } catch (err) {
+            return {
+                success: true,
+                outputs: {
+                    discordSuccess: false,
+                    discordMessage: err
+                }
+            };
+        }
     }
 };
