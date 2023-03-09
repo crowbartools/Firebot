@@ -462,34 +462,7 @@
         });
 
         backendCommunicator.onAsync("takeScreenshot", async (data) => {
-
-            const { desktopCapturer } = require("electron");
-
-            const screens = firebotAppDetails.screens();
-            const matchingDisplay = screens.find(d => d.id === data.displayId);
-
-            const resolution = matchingDisplay ? {
-                width: matchingDisplay.size.width * matchingDisplay.scaleFactor,
-                height: matchingDisplay.size.height * matchingDisplay.scaleFactor
-            } : {
-                width: 1920,
-                height: 1080
-            };
-
-            try {
-                const sources = await desktopCapturer.getSources({ types: ['screen'], thumbnailSize: resolution });
-
-                const foundSource = sources.find(s => s.display_id.toString() === data.displayId.toString());
-
-                if (foundSource) {
-                    return foundSource.thumbnail.toDataURL();
-                }
-                return null;
-
-            } catch (error) {
-                logger.error("Failed to take screenshot", error);
-                return null;
-            }
+            return firebotAppDetails.takeScreenshot(data.displayId);
         });
 
         //show puzzle

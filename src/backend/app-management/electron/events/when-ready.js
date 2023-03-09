@@ -1,9 +1,14 @@
 "use strict";
 
+
 const {checkForFirebotSetupPath} = require("../../file-open-helpers");
 
 exports.whenReady = async () => {
     const logger = require("../../../logwrapper");
+
+    logger.debug('...Applyig IPC events');
+    const setupIpcEvents = require('./ipc-events');
+    setupIpcEvents();
 
     logger.debug("...Checking for setup file");
 

@@ -9,8 +9,6 @@ const fileOpenHelpers = require("../file-open-helpers");
 const createTray = require('./tray-creation.js');
 const logger = require("../../logwrapper");
 const { setupTitlebar, attachTitlebarToWindow } = require("custom-electron-titlebar/main");
-const os = require('os');
-
 
 setupTitlebar();
 
@@ -27,20 +25,6 @@ exports.mainWindow = null;
  *@type {Electron.BrowserWindow}
  */
 let splashscreenWindow;
-
-
-electron.ipcMain.on('preload.getAppDetails', (event) => (event.returnValue = {
-    version: electron.app.getVersion(),
-    locale: electron.app.getLocale(),
-    isPackaged: electron.app.isPackaged,
-    os: {
-        isWindows: process.platform === 'win32',
-        type: os.type(),
-        release: os.release()
-    }
-}));
-electron.ipcMain.on('preload.app.getAppPath', (event, ...args) => event.returnValue = electron.app.getAppPath(...args));
-electron.ipcMain.on('preload.app.getPath', (event, ...args) => event.returnValue = electron.app.getPath(...args));
 
 function createMainWindow() {
     const mainWindowState = windowStateKeeper({

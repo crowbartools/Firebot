@@ -16,7 +16,8 @@ window.firebotAppDetails = {
     getLocale: () => locale,
     locale,
     os,
-    screens: () => ipcRenderer.sendSync('preload.app.getAllDisplays'),
     getAppPath: (...args) => ipcRenderer.sendSync('preload.app.getAppPath', ...args),
-    getPath: (...args) => ipcRenderer.sendSync('preload.app.getPath', ...args)
+    getPath: (...args) => ipcRenderer.sendSync('preload.app.getPath', ...args),
+    screen: () => ipcRenderer.sendSync('preload.screen.getAllDisplays'),
+    takeScreenshot: (displayId) => ipcRenderer.sendSync('preload.takeScreenshot', displayId)
 };
