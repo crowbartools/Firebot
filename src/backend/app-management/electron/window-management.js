@@ -1,7 +1,7 @@
 "use strict";
 
 const electron = require("electron");
-const { BrowserWindow, BrowserView, Menu, shell, dialog } = electron;
+const { ipcMain, BrowserWindow, BrowserView, Menu, shell, dialog } = electron;
 const path = require("path");
 const url = require("url");
 const windowStateKeeper = require("electron-window-state");
@@ -30,6 +30,14 @@ function createMainWindow() {
     const mainWindowState = windowStateKeeper({
         defaultWidth: 1280,
         defaultHeight: 720
+    });
+
+    ipcMain.on('preload.openDevTools', (event) => {
+        if (exports.mainWindow != null) {
+            exports.mainWindow.webContents.openDevTools();
+            event.returnValue = true;
+        }
+        event.returnValue = false;
     });
 
     // Create the browser window.

@@ -18,5 +18,6 @@ window.firebotAppDetails = {
     os,
     getAppPath: (...args) => ipcRenderer.sendSync('preload.app.getAppPath', ...args),
     getPath: (...args) => ipcRenderer.sendSync('preload.app.getPath', ...args),
-    takeScreenshot: (displayId) => ipcRenderer.sendSync('preload.takeScreenshot', displayId)
+    takeScreenshot: (displayId) => ipcRenderer.sendSync('preload.takeScreenshot', displayId),
+    openDevTools: () => ipcRenderer.sendSync('preload.openDevTools')
 };
