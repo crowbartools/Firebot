@@ -91,29 +91,11 @@ jobs:
         if: runner.os == 'linux'
         run: sudo apt-get install libx11-dev libxtst-dev libpng-dev
 
-      - name: Restore Robotjs from cache
-        id: robotjs-cache
-        uses: actions/cache/restore@v3
-        with:
-          key: ${{ runner.os }}-robotjs
-          path: ./node_modules/robotjs/
-
       - name: Install Global Dependencies
         run: npm install --global --production --omit=dev grunt-cli node-gyp
 
       - name: Install Project Dependencies
         run: npm install
-
-      - name: Rebuild Robotjs for Electron
-        if: steps.robotjs-cache.outputs.cache-hit != 'true'
-        run: npm run rebuild
-
-      - name: Cache Robotjs build
-        if: steps.robotjs-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v3
-        with:
-          key: ${{ runner.os }}-robotjs
-          path: ./node_modules/robotjs/
 
       - name: Decrypt Secrets.gpg
         env:

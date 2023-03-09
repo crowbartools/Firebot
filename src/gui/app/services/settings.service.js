@@ -145,8 +145,8 @@
             };
 
             service.getEmulator = function() {
-                const emulator = getDataFromFile("/settings/emulation", false, "Robotjs");
-                return emulator != null ? emulator : "Robotjs";
+                const emulator = getDataFromFile("/settings/emulation", false, "nut-js");
+                return emulator != null ? emulator : "nut-js";
             };
 
             service.setEmulator = function(emulator) {

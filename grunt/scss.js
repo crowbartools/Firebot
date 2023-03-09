@@ -10,7 +10,7 @@ module.exports = function (grunt) {
         sass: {
             options: {
                 sourceMap: false,
-                implementation: require('node-sass')
+                implementation: require('sass')
             },
             gui: {
                 files: [{
