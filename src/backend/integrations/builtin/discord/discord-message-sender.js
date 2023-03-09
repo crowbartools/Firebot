@@ -74,7 +74,7 @@ async function sendDiscordMessage(discordChannelId, content, embed, files = null
             }
         });*/
 
-        return await new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             form.submit(`${channel.webhookUrl}?wait=true`, (error, response) => {
                 if (error) {
                     logger.error("Error sending discord message with file(s)", error);
@@ -96,9 +96,8 @@ async function sendDiscordMessage(discordChannelId, content, embed, files = null
         });
     }
 
-    let response = await axios.post(channel.webhookUrl + "?wait=true", payload);
-    logger.debug("Discord message:", response);
-    return response;
+    const response = await axios.post(channel.webhookUrl + "?wait=true", payload);
+    return JSON.stringify(response.data);
 }
 
 exports.sendDiscordMessage = sendDiscordMessage;
