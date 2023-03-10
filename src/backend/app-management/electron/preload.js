@@ -21,5 +21,11 @@ window.firebotAppDetails = {
     getAllDisplays: () => ipcRenderer.sendSync('preload.screen.getAllDisplays'),
     getPrimaryDisplay: () => ipcRenderer.sendSync('preload.screen.getPrimaryDisplay'),
     takeScreenshot: (displayId) => ipcRenderer.sendSync('preload.takeScreenshot', displayId),
-    openDevTools: () => ipcRenderer.sendSync('preload.openDevTools')
+    openDevTools: () => ipcRenderer.sendSync('preload.openDevTools'),
+
+    updates: {
+        check: (...args) => ipcRenderer.invoke('preload.updates.check', ...args),
+        download: (...args) => ipcRenderer.invoke('preload.updates.download', ...args),
+        install: (...args) => ipcRenderer.invoke('preload.updates.install', ...args)
+    }
 };
