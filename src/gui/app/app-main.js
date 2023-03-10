@@ -461,10 +461,6 @@
                 });
         });
 
-        backendCommunicator.onAsync("takeScreenshot", async (data) => {
-            return firebotAppDetails.takeScreenshot(data.displayId);
-        });
-
         //show puzzle
         /*utilityService.showModal({
             component: "puzzleModal",

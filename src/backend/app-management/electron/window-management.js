@@ -9,6 +9,7 @@ const fileOpenHelpers = require("../file-open-helpers");
 const createTray = require('./tray-creation.js');
 const logger = require("../../logwrapper");
 const { setupTitlebar, attachTitlebarToWindow } = require("custom-electron-titlebar/main");
+const screenHelpers = require("./screen-helpers");
 
 setupTitlebar();
 
@@ -346,6 +347,18 @@ function createMainWindow() {
                 }
             }).catch(() => console.log("Error with close app confirmation"));
         }
+    });
+
+    frontendCommunicator.on("getAllDisplays", () => {
+        return screenHelpers.getAllDisplays();
+    });
+
+    frontendCommunicator.on("getPrimaryDisplay", () => {
+        return screenHelpers.getPrimaryDisplay();
+    });
+
+    frontendCommunicator.on("takeScreenshot", (displayId) => {
+        return screenHelpers.takeScreenshot(displayId);
     });
 }
 

@@ -1,14 +1,11 @@
 "use strict";
 const os = require('os');
 const electron = require("electron");
-const logger = require("../../../logwrapper");
 
 module.exports = function () {
     const {
         app,
-        desktopCapturer,
-        ipcMain,
-        screen
+        ipcMain
     } = electron;
 
     ipcMain.on('preload.getAppDetails', (event) => {
@@ -28,46 +25,5 @@ module.exports = function () {
     });
     ipcMain.on('preload.app.getAppPath', (event, ...args) => {
         event.returnValue = app.getAppPath(...args);
-    });
-    ipcMain.on('preload.screen.getAllDisplays', (event) => {
-        event.returnValue = screen.getAllDisplays();
-    });
-    ipcMain.on('preload.screen.getPrimaryDisplay', (event) => {
-        event.returnValue = screen.getPrimaryDisplay();
-    });
-    ipcMain.on('preload.takeScreenshot', (event, displayId) => {
-        const screens = screen.getAllDisplays();
-        const matchingScreen = screens.find(d => d.id === displayId);
-
-        const resolution = matchingScreen ? {
-            width: matchingScreen.size.width * matchingScreen.scaleFactor,
-            height: matchingScreen.size.height * matchingScreen.scaleFactor
-        } : {
-            width: 1920,
-            height: 1080
-        };
-
-        desktopCapturer
-            .getSources({
-                types: ['screen'],
-                thumbnailSize: resolution
-            })
-            .then(sources => {
-                const foundSource = sources.find(s => s.display_id.toString() === displayId.toString());
-
-                if (foundSource) {
-                    event.returnValue = foundSource.thumbnail.toDataURL();
-                }
-
-                event.returnValue = null;
-            }, err => {
-                logger.error("Failed to take screenshot", err.message);
-                event.returnValue = null;
-            })
-            .catch(err => {
-                logger.error('Failed to take screenshot', err.message);
-                event.returnValue = null;
-
-            });
     });
 };

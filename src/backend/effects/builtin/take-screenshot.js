@@ -4,7 +4,6 @@ const { EffectCategory } = require('../../../shared/effect-constants');
 const { settings } = require("../../common/settings-access");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/http-server-manager");
-const frontendCommunicator = require("../../common/frontend-communicator");
 const path = require("path");
 const discordEmbedBuilder = require("../../integrations/builtin/discord/discord-embed-builder");
 const discord = require("../../integrations/builtin/discord/discord-message-sender");
@@ -150,8 +149,8 @@ const clip = {
                 }
             });
 
-        const displays = firebotAppDetails.getAllDisplays();
-        const primaryDisplay = firebotAppDetails.getPrimaryDisplay();
+        const displays = backendCommunicator.fireEvent("getAllDisplays");
+        const primaryDisplay = backendCommunicator.fireEvent("getPrimaryDisplay");
 
         $scope.displayOptions = displays.reduce((acc, display, i) => {
             const isPrimary = display.id === primaryDisplay.id;
@@ -172,11 +171,12 @@ const clip = {
         return errors;
     },
     onTriggerEvent: async event => {
+        const screenHelpers = require("../../app-management/electron/screen-helpers");
         const twitchApi = require('../../twitch-api/api');
 
         const { effect } = event;
 
-        const screenshotDataUrl = await frontendCommunicator.fireEventAsync("takeScreenshot", { displayId: effect.displayId });
+        const screenshotDataUrl = screenHelpers.takeScreenshot(effect.displayId);
 
         if (screenshotDataUrl != null) {
 
