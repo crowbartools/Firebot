@@ -4,10 +4,22 @@
 const minimumTag = 'v5.50.0';
 
 const axios = require('axios');
-const processVersion = require('./process-version');
+const {
+    processVersion,
+    compareVersions
+} = require('./process-version');
 
 module.exports = async (version) => {
-    const currentTag = 'v' + version;
+    if (typeof version === 'string' || version instanceof String) {
+        version = '' + version;
+
+        if (version[0] !== 'v') {
+            version = `v${version}`;
+        }
+    } else {
+        version = version.full;
+    }
+    const currentTag = version;
 
     const releases = [];
 
@@ -33,6 +45,9 @@ module.exports = async (version) => {
         }
 
         result.data.find(value => {
+            if (value.draft) {
+                return;
+            }
             value.version = processVersion(value.tag_name);
             releases.push(value);
             return found = value.tag_name === currentTag || value.tag_name === minimumTag;
@@ -40,20 +55,19 @@ module.exports = async (version) => {
         page += 1;
     }
 
+    /* sort(newest releases first) */
+    releases.sort((r1, r2) => compareVersions(r1.version, r2.version));
+
     /* remove stale patch updates */
-    let lastRelease = releases[0].version, idx = 1;
+    let last = releases[0].version, idx = 1;
     while (idx < releases.length) {
-        const releaseItem = releases[idx].version;
-        if (
-            lastRelease.major === releaseItem.major &&
-            lastRelease.minor === releaseItem.minor
-        ) {
+        const cur = releases[idx].version;
+        if (last.major === cur.major && last.minor === cur.minor) {
             releases.splice(idx, 1);
         } else {
-            lastRelease = releaseItem;
+            last = cur;
             idx += 1;
         }
     }
-
     return { status: 'ok', data: releases };
 };

@@ -5,10 +5,10 @@
  * @property {'alpha' | 'beta' | 'rc' | 'nightly'} type - Type of prerelease
  * @property {number} typeNum - type enum: 0 = alpha, 1 = beta, 2 = rc, 0 = nightly
  * @property {boolean} isNightly - true if prerelease is a nightly
- * @property {string} version - The prerelease version
  * @property {number} major - The prerelease major version
  * @property {number} minor - The prerelease minor version
  * @property {number} patch - The prerelease patch version
+ * @property {string} version - The prerelease version
  */
 
 /**
@@ -37,7 +37,7 @@ const compareVersionSegments = (
     if (v1Major > v2Major) {
         return -1;
     }
-    if (v1Major > v2Major) {
+    if (v1Major < v2Major) {
         return 1;
     }
     if (v1Minor > v2Minor) {
@@ -61,35 +61,51 @@ const compareVersionSegments = (
  * @returns {ProcessedVersion}
  */
 const processVersion = (version) => {
-    if (version[0] === 'v') {
-        version = version.slice(1);
+    version = '' + version;
+
+    let workingVersion = version;
+
+    // cut off 'v' prefix
+    if (workingVersion[0] === 'v') {
+        workingVersion = workingVersion.slice(1);
     }
-    const parts = ('' + version).split('-');
+
+    // chop off semvar meta data
+    workingVersion = workingVersion.replace(/\+.*$/, '');
+
+    const parts = workingVersion.split('-');
 
     const [major, minor, patch] = parts[0].split('.');
 
     const result = {
-        full: version,
+        raw: version,
+        full: workingVersion,
         major: Number(major),
         minor: Number(minor),
         patch: Number(patch)
     };
 
 
-    if (parts[1] != null) {
-        parts[1] = parts[1].toLowerCase();
 
-        const [premajor, preminor, prepatch] = (parts[2] || '').split('.');
+    if (parts[1] != null && parts[1] !== '') {
+        const prerelease = (parts[1] || '').toLowerCase().split('.');
+
+        const [pretype, premajor, preminor, prepatch] = prerelease;
 
         result.prerelease = {
-            type: parts[1],
-            isNightly: parts[1] === 'nightly',
-            typeNum: {alpha: 1, beta: 2, rs: 3}[parts[1]] || 0,
-            version: parts[2] == null ? 0 : parts[2],
+            type: pretype,
+            isNightly: pretype === 'nightly',
+            typeNum: {alpha: 1, beta: 2, rc: 3}[pretype] || 0,
             major: premajor == null ? 0 : Number(premajor),
             minor: preminor == null ? 0 : Number(preminor),
             patch: prepatch == null ? 0 : Number(prepatch)
         };
+        result.prerelease.version = [
+            result.prerelease.type,
+            result.prerelease.major,
+            result.prerelease.minor,
+            result.prerelease.patch
+        ].join('.');
     }
 
     return result;
@@ -126,10 +142,10 @@ const compareVersions = (v1, v2) => {
     }
 
     // prerelease v non-prerelease
-    if (!v1.prerelease && v2.prelease) {
+    if (!v1.prerelease && v2.prerelease) {
         return -1;
     }
-    if (v1.prerelease && !v2.prelease) {
+    if (v1.prerelease && !v2.prerelease) {
         return 1;
     }
     if (
@@ -137,6 +153,13 @@ const compareVersions = (v1, v2) => {
         !v1.prerelease.isNightly && v2.prerelease.isNightly
     ) {
         return null;
+    }
+
+    if (v1.prerelease.typeNum > v2.prerelease.typeNum) {
+        return -1;
+    }
+    if (v1.prerelease.typeNum < v2.prerelease.typeNum) {
+        return 1;
     }
 
     // compare prerelease taggin
