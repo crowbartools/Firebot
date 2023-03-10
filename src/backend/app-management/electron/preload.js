@@ -26,6 +26,6 @@ window.firebotAppDetails = {
     updates: {
         check: (...args) => ipcRenderer.invoke('preload.updates.check', ...args),
         download: (...args) => ipcRenderer.invoke('preload.updates.download', ...args),
-        install: (...args) => ipcRenderer.invoke('preload.updates.install', ...args)
+        install: (...args) => ipcRenderer.send('preload.updates.install', ...args)
     }
 };

@@ -6,6 +6,10 @@ const {checkForFirebotSetupPath} = require("../../file-open-helpers");
 exports.whenReady = async () => {
     const logger = require("../../../logwrapper");
 
+    logger.debug('...Loading updater backend');
+    const setupUpdater = require('../../../updater/updater');
+    setupUpdater();
+
     logger.debug('...Applyig IPC events');
     const setupIpcEvents = require('./ipc-events');
     setupIpcEvents();

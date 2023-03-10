@@ -17,7 +17,7 @@ module.exports = async (version) => {
             version = `v${version}`;
         }
     } else {
-        version = version.full;
+        version = `v${version.full}`;
     }
     const currentTag = version;
 
