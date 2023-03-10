@@ -148,4 +148,12 @@ module.exports = function setupUpdater() {
             autoUpdater.quitAndInstall();
         }
     });
+
+    ipcMain.on('preload.updates.downloading', () => {
+        return updaterBusy;
+    });
+
+    ipcMain.on('preload.updates.updatePending', () => {
+        return updateDownloaded;
+    });
 };
