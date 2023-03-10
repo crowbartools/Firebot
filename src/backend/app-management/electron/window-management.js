@@ -10,6 +10,7 @@ const createTray = require('./tray-creation.js');
 const logger = require("../../logwrapper");
 const { setupTitlebar, attachTitlebarToWindow } = require("custom-electron-titlebar/main");
 const screenHelpers = require("./screen-helpers");
+const frontendCommunicator = require("../../common/frontend-communicator");
 
 setupTitlebar();
 
@@ -90,7 +91,6 @@ function createMainWindow() {
     exports.mainWindow = mainWindow;
     global.renderWindow = mainWindow;
 
-    const frontendCommunicator = require("../../common/frontend-communicator");
     const profileManager = require("../../common/profile-manager");
     const dataAccess = require("../../common/data-access");
     const menuTemplate = [
@@ -348,18 +348,6 @@ function createMainWindow() {
             }).catch(() => console.log("Error with close app confirmation"));
         }
     });
-
-    frontendCommunicator.on("getAllDisplays", () => {
-        return screenHelpers.getAllDisplays();
-    });
-
-    frontendCommunicator.on("getPrimaryDisplay", () => {
-        return screenHelpers.getPrimaryDisplay();
-    });
-
-    frontendCommunicator.on("takeScreenshot", (displayId) => {
-        return screenHelpers.takeScreenshot(displayId);
-    });
 }
 
 /**
@@ -567,6 +555,18 @@ function sendVariableDeleteToInspector(key) {
         key
     });
 }
+
+frontendCommunicator.on("getAllDisplays", () => {
+    return screenHelpers.getAllDisplays();
+});
+
+frontendCommunicator.on("getPrimaryDisplay", () => {
+    return screenHelpers.getPrimaryDisplay();
+});
+
+frontendCommunicator.on("takeScreenshot", (displayId) => {
+    return screenHelpers.takeScreenshot(displayId);
+});
 
 exports.createVariableInspectorWindow = createVariableInspectorWindow;
 exports.sendVariableCreateToInspector = sendVariableCreateToInspector;

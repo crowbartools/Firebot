@@ -149,8 +149,8 @@ const clip = {
                 }
             });
 
-        const displays = backendCommunicator.fireEvent("getAllDisplays");
-        const primaryDisplay = backendCommunicator.fireEvent("getPrimaryDisplay");
+        const displays = backendCommunicator.fireEventSync("getAllDisplays");
+        const primaryDisplay = backendCommunicator.fireEventSync("getPrimaryDisplay");
 
         $scope.displayOptions = displays.reduce((acc, display, i) => {
             const isPrimary = display.id === primaryDisplay.id;
@@ -176,7 +176,7 @@ const clip = {
 
         const { effect } = event;
 
-        const screenshotDataUrl = screenHelpers.takeScreenshot(effect.displayId);
+        const screenshotDataUrl = await screenHelpers.takeScreenshot(effect.displayId);
 
         if (screenshotDataUrl != null) {
 
