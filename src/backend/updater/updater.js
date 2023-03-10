@@ -21,6 +21,7 @@ module.exports = function setupUpdater() {
                 force: false,
                 dev: null,
                 stable: null,
+                'stable-minimum': null,
                 series: null
             };
         }
