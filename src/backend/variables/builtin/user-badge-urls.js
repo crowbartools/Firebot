@@ -15,7 +15,7 @@ const model = {
         examples: [
             {
                 usage: "userBadgeUrls[1]",
-                description: "Get the URL of a chaters selected badge image."
+                description: "Get the URL of a chatter's selected badge image."
             }
         ],
         description: "Outputs the URLs of a chatter's selected badge images from the associated command or event.",
