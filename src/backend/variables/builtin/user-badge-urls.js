@@ -15,10 +15,10 @@ const model = {
         examples: [
             {
                 usage: "userBadgeUrls[1]",
-                description: "Get the url of a chaters selected badges image."
+                description: "Get the URL of a chaters selected badges image."
             }
         ],
-        description: "Outputs the urls of a chaters selected badges images from the associated command or event.",
+        description: "Outputs the URLs of a chatter's selected badge images from the associated command or event.",
         triggers: triggers,
         categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.TEXT]
@@ -30,13 +30,13 @@ const model = {
         } else if (trigger.type === EffectTrigger.EVENT) {
             messageParts = trigger.metadata.eventData.chatMessage.badges;
         }
-        const emoteUrls = messageParts.map(e => e.url);
+        const badgeUrls = messageParts.map(e => e.url);
 
         if (target != null) {
-            return emoteUrls[target];
+            return badgeUrls[target];
         }
 
-        return emoteUrls;
+        return badgeUrls;
     }
 };
 
