@@ -1,3 +1,4 @@
+import { PageTitle } from "@/components/PageTitle";
 import { PageWrapper } from "@/components/PageWrapper";
 import { SelectItem, SelectMenu } from "@/components/SelectMenu";
 import { useStores } from "@/stores";
@@ -13,6 +14,7 @@ const themes: SelectItem<FirebotTheme>[] = [
 export const SettingsPage: React.FC = observer(() => {
     const { settingsStore } = useStores();
     return <PageWrapper>
+        <PageTitle title="Settings" />
         <div className="w-1/4">
         <SelectMenu 
             label="Theme"

@@ -1,4 +1,4 @@
-import { mdiCash, mdiCog, mdiDiceMultiple, mdiExclamationThick, mdiFormatListText, mdiKeyboard, mdiSquareEditOutline, mdiTimer, mdiViewDashboard } from "@mdi/js";
+import { mdiAccountGroup, mdiAccountTag, mdiCash, mdiCog, mdiDiceMultiple, mdiExclamationThick, mdiFormatListText, mdiFormatQuoteClose, mdiGavel, mdiGift, mdiKeyboard, mdiSquareEditOutline, mdiTallyMark5, mdiTimer, mdiTrayFull, mdiViewDashboard } from "@mdi/js";
 
 export interface MenuItem {
     className?: string;
@@ -34,8 +34,8 @@ export const menuItems: Record<string, MenuItem[]> = {
         {
             icon: mdiTimer,
             iconClassName: "",
-            title: "Timers",
-            route: "/timer",
+            title: "Time-Based",
+            route: "/time-based",
         },
         {
             icon: mdiSquareEditOutline,
@@ -48,6 +48,24 @@ export const menuItems: Record<string, MenuItem[]> = {
             iconClassName: "",
             title: "Hotkeys",
             route: "/hotkeys",
+        },
+        {
+            icon: mdiTallyMark5,
+            iconClassName: "",
+            title: "Counters",
+            route: "/counters",
+        },
+        {
+            icon: mdiGift,
+            iconClassName: "",
+            title: "Channel Rewards",
+            route: "/channel-rewards",
+        },
+        {
+            icon: mdiTrayFull,
+            iconClassName: "",
+            title: "Queues",
+            route: "/queues",
         },
     ],
     Engagement: [
@@ -63,8 +81,32 @@ export const menuItems: Record<string, MenuItem[]> = {
             title: "Currency",
             route: "/currency",
         },
+        {
+            icon: mdiFormatQuoteClose,
+            iconClassName: "",
+            title: "Quotes",
+            route: "/quotes",
+        },
     ],
     Management: [
+        {
+            icon: mdiGavel,
+            iconClassName: "",
+            title: "Moderation",
+            route: "/moderation"
+        },
+        {
+            icon: mdiAccountGroup,
+            iconClassName: "",
+            title: "Viewers",
+            route: "/viewers"
+        },
+        {
+            icon: mdiAccountTag,
+            iconClassName: "",
+            title: "Viewer Roles",
+            route: "/viewer-roles"
+        },
         {
             icon: mdiCog,
             iconClassName: "",

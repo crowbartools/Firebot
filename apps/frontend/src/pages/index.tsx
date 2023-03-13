@@ -1,12 +1,10 @@
-import { Inter } from "@next/font/google";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { getServerUri } from "@/utils";
 
 import favIcon from 'assets/images/favIcon.ico'
 import { PageWrapper } from "@/components/PageWrapper";
-
-const inter = Inter({ subsets: ["latin"] });
+import { PageTitle } from "@/components/PageTitle";
 
 
 export default function Home() {
@@ -36,7 +34,7 @@ export default function Home() {
         <link rel="icon" href={favIcon.src} />
       </Head>
       <PageWrapper>
-        <div className={`text-2xl font-extrabold ${inter.className}`}>{helloWorld}</div>
+        <PageTitle title={helloWorld} />
         <div>Does fast reloading work?</div>
       </PageWrapper>
     </>
