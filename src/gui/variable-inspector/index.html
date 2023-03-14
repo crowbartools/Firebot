@@ -205,6 +205,7 @@
         border: 1px solid transparent;
         border-radius: 4px;
         color: white;
+        fill: white;
         font-size: 14px;
         font-weight: 400;
         cursor: pointer;
@@ -214,17 +215,15 @@
           background-color: #c9302c;
           border-color: transparent;
         }
+
+      .delete-button > svg {
+        height: 18px;
+        display: block;
+      }
     </style>
   </head>
 
   <body>
-    <script>
-      // Load the FontAwesome assets
-      console.log(window.ipcRenderer.fontAwesome5KitUrl);
-      let myScript = document.createElement("script");
-      myScript.setAttribute("src", window.ipcRenderer.fontAwesome5KitUrl);
-      document.body.appendChild(myScript);
-    </script>
     <div id="app" style="font-family: sans-serif">
       <div
         style="
@@ -419,7 +418,7 @@
                             <div style="height: 1px; background: #807676; flex: 1;"></div>
                             <div style="margin: 0 13px; font-size: 12px; color: #909090;">History</div>
                             <div style="height: 1px; background: #807676; flex: 1;"></div>
-                            <button class="delete-button" @click.stop="deleteVariable" title="Delete Variable"><i class="fad fa-trash-alt"></i></a>
+                            <button class="delete-button" @click.stop="deleteVariable" title="Delete Variable"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z" /></svg></a>
                         </div>
                         <div v-for="h in history" style="display:flex; color: white;">
                             <div class="var-cell"></div>

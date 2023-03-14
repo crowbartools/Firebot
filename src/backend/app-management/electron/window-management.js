@@ -500,8 +500,7 @@ async function createVariableInspectorWindow() {
         x: variableInspectorWindowState.x,
         y: variableInspectorWindowState.y,
         webPreferences: {
-            preload: path.join(__dirname, "../../../gui/variable-inspector/preload.js"),
-            nodeIntegration: true
+            preload: path.join(__dirname, "../../../gui/variable-inspector/preload.js")
         },
         icon: path.join(__dirname, "../../../gui/images/logo_transparent_2.png")
     });
