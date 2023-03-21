@@ -179,8 +179,8 @@
                     $ctrl.streamInfo.tags = $ctrl.streamInfo.tags.filter(element => tag.toLowerCase() !== element.toLowerCase());
                 };
 
-                $ctrl.save = () => {
-                    backendCommunicator.fireEventAsync("set-channel-info", $ctrl.streamInfo);
+                $ctrl.save = async () => {
+                    await backendCommunicator.fireEventAsync("set-channel-info", $ctrl.streamInfo);
                     backendCommunicator.fireEvent("category-changed", $ctrl.streamInfo.gameName);
                     ngToast.create({
                         className: 'success',
