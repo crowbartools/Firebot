@@ -12,7 +12,7 @@ const frontendCommunicator = require("../../../common/frontend-communicator");
 const integrationManager = require("../../IntegrationManager");
 const { EffectCategory } = require('../../../../shared/effect-constants');
 const { wait } = require("../../../utility");
-const { PollyClient, DescribeVoicesCommand, SynthesizeSpeechCommand } = require('@aws-sdk/client-polly');
+const { PollyClient, DescribeVoicesCommand, SynthesizeSpeechCommand, ListLexiconsCommand } = require('@aws-sdk/client-polly');
 
 frontendCommunicator.onAsync("getAwsPollyVoices", async () => {
     const response = {
@@ -50,6 +50,51 @@ frontendCommunicator.onAsync("getAwsPollyVoices", async () => {
                 }
             }
             while (describeVoicesResponse && describeVoicesResponse.NextToken);
+        } else {
+            response.error = "NotConfigured";
+        }
+    } else {
+        response.error = "NotConfigured";
+    }
+
+    return response;
+});
+
+frontendCommunicator.onAsync("getAwsPollyLexicons", async () => {
+    const response = {
+        error: false,
+        lexicons: []
+    };
+    const awsIntegration = integrationManager.getIntegrationDefinitionById("aws");
+
+    if (awsIntegration && awsIntegration.userSettings) {
+        if (awsIntegration.userSettings.iamCredentials.accessKeyId &&
+            awsIntegration.userSettings.iamCredentials.secretAccessKey) {
+
+            const polly = new PollyClient({
+                credentials: {
+                    accessKeyId: awsIntegration.userSettings.iamCredentials.accessKeyId,
+                    secretAccessKey: awsIntegration.userSettings.iamCredentials.secretAccessKey
+                },
+                region: awsIntegration.userSettings.iamCredentials.region || 'us-east-1'
+            });
+
+            let listLexiconsResponse = null;
+
+            do {
+                try {
+                    const listLexiconsCommand = new ListLexiconsCommand({
+                        NextToken: listLexiconsResponse ? listLexiconsResponse.NextToken : undefined
+                    });
+                    listLexiconsResponse = await polly.send(listLexiconsCommand);
+                    listLexiconsResponse.Lexicons.forEach(lexicon => response.lexicons.push(lexicon.Name));
+                } catch (e) {
+                    response.lexicons = [];
+                    response.error = e;
+                    listLexiconsResponse = null;
+                    break;
+                }
+            } while (listLexiconsResponse && listLexiconsResponse.NextToken);
         } else {
             response.error = "NotConfigured";
         }
@@ -146,6 +191,15 @@ const playSound = {
             </div>
         </eos-container>
 
+        <eos-container header="Lexicon" pad-top="true" ng-hide="isFetchingLexicons || lexiconFetchError !== false || lexicons.length === 0">
+            <ui-select multiple limit="5" ng-model="effect.lexicons">
+                <ui-select-match>{{$item}}</ui-select-match>
+                <ui-select-choices repeat="lexicon in lexicons | filter: $select.search">
+                    <div ng-bind-html="lexicon | highlight: $select.search"></div>
+                </ui-select-choices>
+            </ui-select>
+        </eos-container>
+
         <eos-container header="Maximum Duration" pad-top="true">
             <div class="input-group">
                 <span class="input-group-addon" id="delay-length-effect-type">Seconds</span>
@@ -185,6 +239,12 @@ const playSound = {
         </eos-container>
     </div>
 
+    <div ng-hide="lexiconFetchError === false">
+        <eos-container>
+            <span class="muted">An error has occurred while trying to read available lexicons from AWS. The error was: <b>{{ lexiconFetchError }}</b>.</span>
+        </eos-container>
+    </div>
+
     <div ng-hide="fetchError !== 'NotConfigured'">
         <eos-container>
             <span class="muted">Your AWS Credentials are not configured yet! You can configure them in <b>Settings</b> > <b>Integrations</b> > <b>AWS</b></span>
@@ -203,11 +263,18 @@ const playSound = {
             $scope.effect.volume = 5;
         }
 
+        if ($scope.effect.lexicons == null) {
+            $scope.effect.lexicons = [];
+        }
+
         $scope.isFetchingVoices = true;
         $scope.fetchError = false;
+        $scope.isFetchingLexicons = true;
+        $scope.lexiconFetchError = false;
 
         $scope.validLanguages = [];
         $scope.validVoices = {};
+        $scope.lexicons = [];
 
         $scope.openLink = $rootScope.openLinkExternally;
 
@@ -385,6 +452,17 @@ const playSound = {
                     $scope.fetchError = voices.error;
                 }
             });
+
+        $q.when(backendCommunicator.fireEventAsync("getAwsPollyLexicons"))
+            .then(lexicons => {
+                $scope.isFetchingLexicons = false;
+
+                $scope.lexicons = lexicons.lexicons;
+
+                if (lexicons.error) {
+                    $scope.lexiconFetchError = lexicons.error;
+                }
+            });
     },
     /**
    * When the effect is saved
@@ -439,7 +517,8 @@ const playSound = {
             OutputFormat: "mp3",
             Text: effect.text,
             TextType: effect.isSsml ? "ssml" : "text",
-            VoiceId: effect.voiceId
+            VoiceId: effect.voiceId,
+            LexiconNames: effect.lexicons.length !== 0 ? effect.lexicons : undefined
         });
 
         let synthSpeedResponse = undefined;
