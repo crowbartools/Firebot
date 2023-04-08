@@ -193,7 +193,7 @@ const playSound = {
 
         <eos-container header="Lexicon" pad-top="true" ng-hide="isFetchingLexicons || lexiconFetchError !== false || lexicons.length === 0">
             <ui-select multiple limit="5" ng-model="effect.lexicons">
-                <ui-select-match>{{$item}}</ui-select-match>
+                <ui-select-match placeholder="Select up to 5 lexicons.">{{$item}}</ui-select-match>
                 <ui-select-choices repeat="lexicon in lexicons | filter: $select.search">
                     <div ng-bind-html="lexicon | highlight: $select.search"></div>
                 </ui-select-choices>
@@ -462,6 +462,9 @@ const playSound = {
                 if (lexicons.error) {
                     $scope.lexiconFetchError = lexicons.error;
                 }
+
+                // Filter out missing lexicons.
+                $scope.effect.lexicons = $scope.effect.lexicons.filter(lexicon => $scope.lexicons.includes(lexicon));
             });
     },
     /**
@@ -510,6 +513,32 @@ const playSound = {
         if (effect.isSsml) {
             effect.text = "<speak>"+effect.text+"</speak>";
             effect.text = effect.text.replace("&", "&amp;");
+        }
+
+        let listLexiconsResponse = null;
+        let lexicons = [];
+        let lexiconError;
+
+        do {
+            try {
+                const listLexiconsCommand = new ListLexiconsCommand({
+                    NextToken: listLexiconsResponse ? listLexiconsResponse.NextToken : undefined
+                });
+                listLexiconsResponse = await polly.send(listLexiconsCommand);
+                listLexiconsResponse.Lexicons.forEach(lexicon => lexicons.push(lexicon.Name));
+            } catch (e) {
+                lexicons = [];
+                lexiconError = e;
+                listLexiconsResponse = null;
+                break;
+            }
+        } while (listLexiconsResponse && listLexiconsResponse.NextToken);
+
+        if (lexiconError) {
+            logger.error("Error while trying to fetch lexicons before speech synthesis, proceeding without lexicons.");
+            effect.lexicons = [];
+        } else {
+            effect.lexicons = effect.lexicons.filter(lexicon => lexicons.includes(lexicon));
         }
 
         const synthSpeechCommand = new SynthesizeSpeechCommand({
