@@ -13,24 +13,15 @@ export const ChangeSceneEffectType: EffectType<{
   },
   optionsTemplate: `
     <eos-container header="New Scene">
-        <div class="btn-group" uib-dropdown>
-            <button type="button" class="btn btn-default" uib-dropdown-toggle>
-              {{effect.custom ? 'Custom': effect.sceneName}} <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                <li role="menuitem" ng-repeat="scene in scenes" ng-click="selectScene(scene)">
-                    <a href>{{scene}}</a>
-                </li>
-                <li role="menuitem" ng-show="scenes.length < 1" class="muted">
-                    <a>No scenes found.</a>
-                </li>
-                <li role="separator" class="divider"></li>
-                <li role="menuitem" ng-click="effect.custom = true;">
-                    <a href>Set custom</a>
-                </li>
-            </ul>
-        </div>
-        <p>
+        <ui-select ng-model="selected" on-select="selectScene($select.selected)">
+          <ui-select-match placeholder="Select a Scene...">{{$select.selected.name}}</ui-select-match>
+          <ui-select-choices repeat="scene in scenes | filter: {name: $select.search}">
+            <li ng-show="scene.custom === true" role="separator" class="divider"></li>
+            <div ng-bind-html="scene.name | highlight: $select.search"></div>
+          </ui-select-choices>
+        </ui-select>
+        
+        <p ng-hide="effect.custom === true">
             <button class="btn btn-link" ng-click="getScenes()">Refresh Scenes</button>
             <span class="muted">(Make sure OBS is running)</span>
         </p>
@@ -42,15 +33,31 @@ export const ChangeSceneEffectType: EffectType<{
   optionsController: ($scope: any, backendCommunicator: any, $q: any) => {
     $scope.scenes = [];
 
-    $scope.selectScene = (scene: string) => {
-      $scope.effect.custom = false;
-      $scope.effect.sceneName = scene;
+    $scope.customScene = {name: "Set Custom", custom: true};
+
+    $scope.selectScene = (scene: {name: string, custom: boolean}) => {
+      $scope.effect.custom = scene.custom;
+      if (!scene.custom) {
+        $scope.effect.Name = scene.name;
+      }
     };
 
     $scope.getScenes = () => {
       $q.when(backendCommunicator.fireEventAsync("obs-get-scene-list")).then(
         (scenes: string[]) => {
-          $scope.scenes = scenes ?? [];
+          $scope.scenes = [];
+          if (scenes != null) {
+            scenes.forEach(scene => {
+              $scope.scenes.push({name: scene, custom: false});
+            });
+          }
+          $scope.scenes.push($scope.customScene);
+          if ($scope.effect.custom) {
+            $scope.selected = $scope.customScene;
+          }
+          else {
+            $scope.selected = $scope.scenes.find(scene => scene.name === $scope.effect.sceneName);
+          }
         }
       );
     };
