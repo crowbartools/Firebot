@@ -16,7 +16,7 @@ export class TwitchChannelsApi {
      *
      * @param broadcasterId The id of the broadcaster to get channel info for. Defaults to Streamer channel if left blank.
      */
-    async getChannelInformation(broadcasterId: string): Promise<HelixChannel> {
+    async getChannelInformation(broadcasterId?: string): Promise<HelixChannel> {
         // default to streamer id
         if (broadcasterId == null || broadcasterId === "") {
             broadcasterId = accountAccess.getAccounts().streamer.userId;
