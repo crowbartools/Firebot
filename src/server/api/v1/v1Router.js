@@ -178,7 +178,7 @@ router
 router
     .route("/counters/:counterId")
     .get(counters.getCounterById)
-    .patch(counters.patchCounter);
+    .post(counters.updateCounter);
 
 // Timers
 const timers = require("./controllers/timersApiController");

@@ -36,9 +36,9 @@ export async function getCounterById(req: Request, res: Response): Promise<Respo
     return res.json(counter);
 };
 
-export async function patchCounter(req: Request, res: Response): Promise<Response> {
+export async function updateCounter(req: Request, res: Response): Promise<Response> {
     const counterId: string = req.params.counterId;
-    const change: number = req.body.value;
+    const value: number = req.body.value;
     const override: boolean = req.body.override ?? false;
 
     if (!(counterId.length > 0)) {
@@ -48,14 +48,14 @@ export async function patchCounter(req: Request, res: Response): Promise<Respons
         });
     }
 
-    if (change == null) {
+    if (value == null) {
         return res.status(400).send({
             status: "error",
             message: "value not present."
         });
     }
 
-    if (typeof change !== "number") {
+    if (typeof value !== "number") {
         return res.status(400).send({
             status: "error",
             message: "value must be a number."
@@ -78,7 +78,13 @@ export async function patchCounter(req: Request, res: Response): Promise<Respons
         });
     }
 
+    let response = {
+        oldValue: counter.value,
+        newValue: 0
+    };
+
     // @ts-ignore
-    await counterManager.updateCounterValue(counter.id, change, override);
-    return res.status(204).send();
+    await counterManager.updateCounterValue(counter.id, value, override);
+    response.newValue = counterManager.getItem(counterId).value;
+    return res.json(response);
 };
