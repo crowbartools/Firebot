@@ -189,6 +189,7 @@ exports.loadReplaceVariables = () => {
         'top-view-time-raw',
         'uptime',
         'user-avatar-url',
+        'user-badge-urls',
         'user-exists',
         'user-id',
         'user-metadata',
