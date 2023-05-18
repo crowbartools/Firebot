@@ -113,6 +113,8 @@ exports.loadReplaceVariables = () => {
         'number-round',
         'object-set-property',
         'object-set-property-raw',
+        'object-walk-path',
+        'object-walk-path-raw',
         'ordinal-indicator',
         'preset-list-arg',
         'previous-currency-amount',
