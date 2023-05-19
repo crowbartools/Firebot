@@ -209,7 +209,7 @@ const model = {
                     commandId: id,
                     subcommandId: effect.subcommandId,
                     username: effect.username,
-                    cooldowns: {
+                    cooldown: {
                         global: !isNaN(effect.globalCooldownSecs) ? parseInt(effect.globalCooldownSecs) : undefined,
                         user: !isNaN(effect.userCooldownSecs) && effect.username != null && effect.username !== '' ? parseInt(effect.userCooldownSecs) : undefined
                     }
@@ -219,7 +219,7 @@ const model = {
                     commandId: id,
                     subcommandId: effect.subcommandId,
                     username: effect.clearUsername,
-                    cooldowns: {
+                    cooldown: {
                         global: effect.clearGlobalCooldown,
                         user: effect.clearUserCooldown
                     }
