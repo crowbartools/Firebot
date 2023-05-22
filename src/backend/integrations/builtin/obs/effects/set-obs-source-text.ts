@@ -16,22 +16,15 @@ export const SetOBSSourceTextEffectType: EffectType<{
   },
   optionsTemplate: `
     <eos-container header="OBS Text Source">
-        <div ng-if="textSources != null" class="btn-group" uib-dropdown>
-            <button type="button" class="btn btn-default" uib-dropdown-toggle>
-              {{effect.textSourceName}} <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                <li role="menuitem" ng-repeat="textSource in textSources" ng-click="selectTextSource(textSource.name)">
-                    <a href>{{textSource.name}}</a>
-                </li>
-                <li role="menuitem" ng-show="textSources.length < 1" class="muted">
-                    <a>No text sources found.</a>
-                </li>
-            </ul>
-        </div>
-        <div ng-if="textSources == null" class="muted">
-            No sources found. Is OBS running?
-        </div>
+        <ui-select ng-model="selected" on-select="selectTextSource($select.selected.name)">
+          <ui-select-match placeholder="Select a Text Source...">{{$select.selected.name}}</ui-select-match>
+          <ui-select-choices repeat="source in textSources | filter: {name: $select.search}">
+            <div ng-bind-html="source.name | highlight: $select.search"></div>
+          </ui-select-choices>
+          <ui-select-no-choice>
+          <b>No text sources found.</b>
+          </ui-select-no-choice>
+        </ui-select>
         <p>
             <button class="btn btn-link" ng-click="getTextSources()">Refresh Source Data</button>
         </p>
@@ -69,6 +62,7 @@ export const SetOBSSourceTextEffectType: EffectType<{
         backendCommunicator.fireEventAsync("obs-get-text-sources")
       ).then((textSources: OBSSource[]) => {
         $scope.textSources = textSources ?? [];
+        $scope.selected = $scope.textSources.find(source => source.name === $scope.effect.textSourceName);
       });
     };
     $scope.getTextSources();

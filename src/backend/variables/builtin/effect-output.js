@@ -2,6 +2,10 @@
 
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
+function isObjectOrArray(data) {
+    return Array.isArray(data) || (typeof data === 'object' && !(data instanceof String));
+}
+
 const model = {
     definition: {
         handle: "effectOutput",
@@ -11,7 +15,11 @@ const model = {
         possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
     },
     evaluator: ({ effectOutputs }, name = "") => {
-        return (effectOutputs ?? {})[name] ?? "";
+        const output = (effectOutputs ?? {})[name];
+        if (isObjectOrArray(output)) {
+            return JSON.stringify(output);
+        }
+        return output ?? "";
     }
 };
 
