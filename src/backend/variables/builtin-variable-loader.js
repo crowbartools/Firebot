@@ -119,6 +119,8 @@ exports.loadReplaceVariables = () => {
         'profile-page-bytebin-token',
         'quick-store',
         'quote',
+        'quote-as-object',
+        'quote-as-raw-object',
         'raid-viewer-count',
         'random-active-viewer',
         'random-advice',
