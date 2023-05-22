@@ -81,9 +81,9 @@ const model = {
 
         $scope.loopModeChanged = () => {
             if ($scope.effect.loopMode === "count") {
-                $scope.effect.loopCount = 5;
+                $scope.effect.loopCount = "5";
             } else if ($scope.effect.loopMode === "conditional") {
-                $scope.effect.loopCount = 25;
+                $scope.effect.loopCount = "25";
             }
         };
 
