@@ -14,19 +14,17 @@ export const SetOBSColorSourceColorEffectType: EffectType<{
   },
   optionsTemplate: `
     <eos-container header="OBS Color Source">
-        <div ng-if="colorSources != null" class="btn-group" uib-dropdown>
-            <button type="button" class="btn btn-default" uib-dropdown-toggle>
-              {{effect.colorSourceName}} <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                <li role="menuitem" ng-repeat="colorSource in colorSources" ng-click="selectColorSource(colorSource.name)">
-                    <a href>{{colorSource.name}}</a>
-                </li>
-                <li role="menuitem" ng-show="colorSources.length < 1" class="muted">
-                    <a>No color sources found.</a>
-                </li>
-            </ul>
-        </div>
+        <ui-select ng-model="selected" on-select="selectColorSource($select.selected.name)">
+          <ui-select-match placeholder="Select a Color Source...">{{$select.selected.name}}</ui-select-match>
+          <ui-select-choices repeat="source in colorSources | filter: $select.search">
+            <li ng-show="scene.custom === true" role="separator" class="divider"></li>
+            <div ng-bind-html="source.name | highlight: $select.search"></div>
+            <ui-select-no-choice>
+          <b>No color sources found.</b>
+          </ui-select-no-choice>
+          </ui-select-choices>
+        </ui-select>
+        
         <div ng-if="colorSources == null" class="muted">
             No sources found. Is OBS running?
         </div>
@@ -51,6 +49,7 @@ export const SetOBSColorSourceColorEffectType: EffectType<{
         backendCommunicator.fireEventAsync("obs-get-color-sources")
       ).then((colorSources: OBSSource[]) => {
         $scope.colorSources = colorSources ?? [];
+        $scope.selected = $scope.colorSources.find(source => source.name === $scope.effect.colorSourceName);
       });
     };
     $scope.getColorSources();
