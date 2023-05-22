@@ -14,19 +14,15 @@ export const SetOBSBrowserSourceUrlEffectType: EffectType<{
   },
   optionsTemplate: `
     <eos-container header="OBS Browser Source">
-        <div ng-if="browserSources != null" class="btn-group" uib-dropdown>
-            <button type="button" class="btn btn-default" uib-dropdown-toggle>
-              {{effect.browserSourceName}} <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                <li role="menuitem" ng-repeat="browserSource in browserSources" ng-click="selectBrowserSource(browserSource.name)">
-                    <a href>{{browserSource.name}}</a>
-                </li>
-                <li role="menuitem" ng-show="browserSources.length < 1" class="muted">
-                    <a>No browser sources found.</a>
-                </li>
-            </ul>
-        </div>
+        <ui-select ng-model="selected" on-select="selectBrowserSource($select.selected.name)">
+          <ui-select-match placeholder="Select a Browser Source...">{{$select.selected.name}}</ui-select-match>
+          <ui-select-choices repeat="source in browserSources | filter: {name: $select.search}">
+            <div ng-bind-html="source.name | highlight: $select.search"></div>
+          </ui-select-choices>
+          <ui-select-no-choice>
+          <b>No browser sources found.</b>
+          </ui-select-no-choice>
+        </ui-select>
         <div ng-if="browserSources == null" class="muted">
             No sources found. Is OBS running?
         </div>
@@ -50,6 +46,7 @@ export const SetOBSBrowserSourceUrlEffectType: EffectType<{
         backendCommunicator.fireEventAsync("obs-get-browser-sources")
       ).then((browserSources: OBSSource[]) => {
         $scope.browserSources = browserSources ?? [];
+        $scope.selected = $scope.browserSources.find(source => source.name === $scope.effect.browserSourceName);
       });
     };
     $scope.getBrowserSources();

@@ -14,19 +14,15 @@ export const SetOBSMediaSourceFileEffectType: EffectType<{
   },
   optionsTemplate: `
     <eos-container header="OBS Media Source">
-        <div ng-if="mediaSources != null" class="btn-group" uib-dropdown>
-            <button type="button" class="btn btn-default" uib-dropdown-toggle>
-              {{effect.mediaSourceName}} <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                <li role="menuitem" ng-repeat="mediaSource in mediaSources" ng-click="selectMediaSource(mediaSource.name)">
-                    <a href>{{mediaSource.name}}</a>
-                </li>
-                <li role="menuitem" ng-show="mediaSources.length < 1" class="muted">
-                    <a>No media sources found.</a>
-                </li>
-            </ul>
-        </div>
+        <ui-select ng-model="selected" on-select="selectMediaSource($select.selected.name)">
+          <ui-select-match placeholder="Select a Media Source...">{{$select.selected.name}}</ui-select-match>
+          <ui-select-choices repeat="source in mediaSources | filter: {name: $select.search}">
+            <div ng-bind-html="source.name | highlight: $select.search"></div>
+          </ui-select-choices>
+          <ui-select-no-choice>
+          <b>No media sources found.</b>
+          </ui-select-no-choice>
+        </ui-select>
         <div ng-if="mediaSources == null" class="muted">
             No sources found. Is OBS running?
         </div>
@@ -51,6 +47,7 @@ export const SetOBSMediaSourceFileEffectType: EffectType<{
         backendCommunicator.fireEventAsync("obs-get-media-sources")
       ).then((mediaSources: OBSSource[]) => {
         $scope.mediaSources = mediaSources ?? [];
+        $scope.selected = $scope.mediaSources.find(source => source.name === $scope.effect.mediaSourceName);
       });
     };
     $scope.getMediaSources();
