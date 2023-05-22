@@ -91,7 +91,7 @@ const clip = {
             <eos-overlay-instance effect="effect" class="setting-padtop"></eos-overlay-instance>
 
         </div>
-        <eos-container pad-top="true"> 
+        <eos-container pad-top="true">
             <div class="effect-info alert alert-info">
                 Note: Screenshots will capture the entirety of the selected display.
             </div>
@@ -204,7 +204,7 @@ const clip = {
                     description: "Screenshot by Firebot"
                 }];
                 const screenshotEmbed = await discordEmbedBuilder.buildScreenshotEmbed(`attachment://${filename}`);
-                discord.sendDiscordMessage(effect.discordChannelId, "A new screenshot was taken!", screenshotEmbed, files);
+                await discord.sendDiscordMessage(effect.discordChannelId, "A new screenshot was taken!", screenshotEmbed, files);
             }
 
             if (effect.showInOverlay) {
