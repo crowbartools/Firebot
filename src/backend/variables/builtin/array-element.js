@@ -15,7 +15,7 @@ const model = {
         if (jsonArray) {
             const array = utils.jsonParse(jsonArray);
             if (Array.isArray(array)) {
-                return array[index];
+                return JSON.stringify(array[index]);
             }
         }
         return null;
