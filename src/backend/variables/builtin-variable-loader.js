@@ -31,6 +31,7 @@ exports.loadReplaceVariables = () => {
         'array-reverse',
         'array-shuffle-raw',
         'array-shuffle',
+        'audio-duration',
         'bits-badge-tier',
         'bits-badge-unlocked-message',
         'bits-cheered',
