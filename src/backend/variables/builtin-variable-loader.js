@@ -203,6 +203,7 @@ exports.loadReplaceVariables = () => {
         'username-array-raw',
         'username-array',
         'username',
+        'video-metadata',
         'view-time',
         'whisper-message',
         'word'
