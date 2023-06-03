@@ -10,7 +10,7 @@ const model = {
         usage: "videoMetadata[filePathOrUrl]",
         description: "Attempts to retrieve video metadata.",
         categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async (trigger, url) => {
         if (url == null) {

@@ -11,6 +11,7 @@ const util = require("../../utility");
 const fs = require('fs-extra');
 const path = require("path");
 const frontendCommunicator = require('../../common/frontend-communicator');
+const { wait } = require("../../utility");
 
 /**
  * The Play Video effect
@@ -440,17 +441,20 @@ const playVideo = {
         }
 
         let resourceToken;
+        let duration;
         if (effect.videoType === "YouTube Video") {
             resourceToken = resourceTokenManager.storeResourcePath(data.filepath, effect.length);
         } else {
-            resourceToken = resourceTokenManager.storeResourcePath(data.filepath,
-                await frontendCommunicator.fireEventAsync("getVideoMetadata", {path: data.filepath}));
+            duration = await frontendCommunicator.fireEventAsync("getVideoMetadata", {path: data.filepath});
+            resourceToken = resourceTokenManager.storeResourcePath(data.filepath, duration);
         }
 
         data.resourceToken = resourceToken;
 
         webServer.sendToOverlay("video", data);
-        if (effect.wait) {
+        if (effect.wait && effect.videoType === "YouTube Video") {
+            // Use overlay callback for youtube video, needs local way to get duration for production.
+            // If effect is ran with "Wait for video to finish" while overlay is not open, it may freeze an effect queue.
             await new Promise(async (resolve, reject) => {
                 const listener = (event) => {
                     try {
@@ -465,6 +469,12 @@ const playVideo = {
                 };
                 webServer.on("overlay-event", listener);
             });
+        } else if (effect.wait && data.videoType === "Local Video") {
+            let internalDuration = data.videoDuration;
+            if (internalDuration == null || duration > internalDuration) {
+                internalDuration = duration;
+            }
+            await wait(internalDuration * 1000);
         }
         return true;
     },
