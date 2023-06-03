@@ -10,6 +10,7 @@ const accountAccess = require("../../common/account-access");
 const util = require("../../utility");
 const fs = require('fs-extra');
 const path = require("path");
+const frontendCommunicator = require('../../common/frontend-communicator');
 
 /**
  * The Play Video effect
@@ -442,31 +443,8 @@ const playVideo = {
         if (effect.videoType === "YouTube Video") {
             resourceToken = resourceTokenManager.storeResourcePath(data.filepath, effect.length);
         } else {
-            const durationToken = resourceTokenManager.storeResourcePath(data.filepath, 5);
-
-            const durationPromise = new Promise(async (resolve, reject) => {
-                const listener = (event) => {
-                    try {
-                        if (event.name === "video-duration" && event.data.resourceToken === durationToken) {
-                            webServer.removeListener("overlay-event", listener);
-                            resolve(event.data.duration);
-                        }
-                    } catch (err) {
-                        logger.error("Error while trying to process overlay-event for getVideoDuration: ", err);
-                        reject(err);
-                    }
-                };
-                webServer.on("overlay-event", listener);
-            });
-
-            webServer.sendToOverlay("getVideoDuration", {
-                resourceToken: durationToken,
-                overlayInstance: data.overlayInstance
-            });
-
-            const duration = await durationPromise;
-            resourceToken = resourceTokenManager.storeResourcePath(data.filepath, duration + 5);
-            logger.info(`Retrieved duration for video: ${duration}`);
+            resourceToken = resourceTokenManager.storeResourcePath(data.filepath,
+                await frontendCommunicator.fireEventAsync("getVideoMetadata", {path: data.filepath}));
         }
 
         data.resourceToken = resourceToken;
