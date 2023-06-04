@@ -471,7 +471,7 @@ const playVideo = {
             });
         } else if (effect.wait && data.videoType === "Local Video") {
             let internalDuration = data.videoDuration;
-            if (internalDuration == null || duration > internalDuration) {
+            if (internalDuration == null || internalDuration === 0 || internalDuration === "") {
                 internalDuration = duration;
             }
             await wait(internalDuration * 1000);
