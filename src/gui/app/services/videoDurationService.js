@@ -43,7 +43,7 @@
             };
 
             backendCommunicator.onAsync("getVideoMetadata", async (data) => {
-                return await service.getVideoMetadata(data.url);
+                return await service.getVideoMetadata(data.path);
             });
 
             return service;

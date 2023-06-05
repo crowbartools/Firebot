@@ -445,8 +445,8 @@ const playVideo = {
         if (effect.videoType === "YouTube Video") {
             resourceToken = resourceTokenManager.storeResourcePath(data.filepath, effect.length);
         } else {
-            duration = await frontendCommunicator.fireEventAsync("getVideoMetadata", {path: data.filepath});
-            resourceToken = resourceTokenManager.storeResourcePath(data.filepath, duration);
+            const meta = await frontendCommunicator.fireEventAsync("getVideoMetadata", {path: data.filepath});
+            resourceToken = resourceTokenManager.storeResourcePath(data.filepath, meta.duration);
         }
 
         data.resourceToken = resourceToken;
