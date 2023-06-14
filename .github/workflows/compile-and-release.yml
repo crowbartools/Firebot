@@ -75,10 +75,10 @@ jobs:
       - name: Setup Nodejs
         uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          node-version: '18.12.1'
 
       - name: Install correct npm version
-        run: npm install -g npm@8.16.0
+        run: npm install -g npm@8.19.2
 
       - name: Windows Build Prep
         if: runner.os == 'windows'
