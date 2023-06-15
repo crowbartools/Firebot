@@ -286,10 +286,10 @@
                         $scope.usingOverlayInstances = settingsService.useOverlayInstances();
 
                         $scope.broadcastingSoftwares = [
-                            "OBS/Streamlabs Desktop", "XSplit", "Direct Link/2 PC Setup"
+                            "Local", "Direct Link/2 PC Setup"
                         ];
 
-                        $scope.selectedBroadcastingSoftware = "OBS/Streamlabs Desktop";
+                        $scope.selectedBroadcastingSoftware = "Local";
 
                         $scope.updateSelectedBroadcastingSoftware = (type) => {
                             $scope.selectedBroadcastingSoftware = type;
@@ -302,15 +302,15 @@
 
                             const port = settingsService.getWebServerPort();
 
+                            const params = {};
                             if ($scope.selectedBroadcastingSoftware === "Direct Link/2 PC Setup") {
                                 overlayPath = `http://localhost:${port}/overlay`;
-                            }
 
-                            const params = {};
-                            if ($scope.selectedBroadcastingSoftware !== "Direct Link/2 PC Setup") {
+                            } else {
                                 if (port !== 7472 && !isNaN(port)) {
                                     params["port"] = settingsService.getWebServerPort();
                                 }
+                                overlayPath = 'file://' + overlayPath;
                             }
 
 
@@ -330,10 +330,6 @@
 
                                 paramCount++;
                             });
-
-                            if ($scope.selectedBroadcastingSoftware === "XSplit") {
-                                overlayPath = "file:///" + overlayPath;
-                            }
 
                             $scope.overlayPath = overlayPath;
                         };
