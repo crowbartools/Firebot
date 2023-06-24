@@ -3,12 +3,13 @@
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
 const frontendCommunicator = require("../../common/frontend-communicator");
+const logger = require("../../logwrapper");
 
 const model = {
     definition: {
-        handle: "videoMetadata",
-        usage: "videoMetadata[filePathOrUrl]",
-        description: "Attempts to retrieve video metadata.",
+        handle: "videoDuration",
+        usage: "videoDuration[filePathOrUrl]",
+        description: "Attempts to retrieve video duration.",
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
@@ -16,11 +17,13 @@ const model = {
         if (url == null) {
             return "[NO URL PROVIDED]";
         }
-        try {
-            return JSON.stringify(await frontendCommunicator.fireEventAsync("getVideoMetadata", {url: url}));
-        } catch (err) {
-            return "[ERROR FETCHING METADATA]";
+        const result = await frontendCommunicator.fireEventAsync("getVideoDuration", url);
+
+        if (isNaN(result)) {
+            logger.error("Error while retrieving video duration", result);
+            return "[ERROR FETCHING DURATION]";
         }
+        return result;
     }
 };
 

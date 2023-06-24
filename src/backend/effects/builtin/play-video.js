@@ -12,6 +12,7 @@ const fs = require('fs-extra');
 const path = require("path");
 const frontendCommunicator = require('../../common/frontend-communicator');
 const { wait } = require("../../utility");
+const { parseYoutubeId } = require("../../../shared/youtube-url-parser");
 
 /**
  * The Play Video effect
@@ -443,10 +444,21 @@ const playVideo = {
         let resourceToken;
         let duration;
         if (effect.videoType === "YouTube Video") {
-            resourceToken = resourceTokenManager.storeResourcePath(data.filepath, effect.length);
+            const youtubeData = parseYoutubeId(data.youtubeId);
+            data.youtubeId = youtubeData.id;
+            const result = await frontendCommunicator.fireEventAsync("getYoutubeVideoDuration", data.youtubeId);
+            if (!isNaN(result)) {
+                duration = result;
+            }
+            if (data.videoStarttime == null || data.videoStarttime == "" || data.videoStarttime == 0) {
+                data.videoStarttime = youtubeData.startTime;
+            }
         } else {
-            const meta = await frontendCommunicator.fireEventAsync("getVideoMetadata", {path: data.filepath});
-            resourceToken = resourceTokenManager.storeResourcePath(data.filepath, meta.duration);
+            const result = await frontendCommunicator.fireEventAsync("getVideoDuration", data.filepath);
+            if (!isNaN(result)) {
+                duration = result;
+            }
+            resourceToken = resourceTokenManager.storeResourcePath(data.filepath, duration);
         }
 
         data.resourceToken = resourceToken;
@@ -625,9 +637,6 @@ const playVideo = {
                         const exitVideo = () => {
                             delete startedVidCache[this.id]; // eslint-disable-line no-undef
                             animateVideoExit(`#${wrapperId}`, exitAnimation, exitDuration, inbetweenAnimation);
-                            setTimeout(function(){
-                                sendWebsocketEvent("video-end", {resourceToken: token}); // eslint-disable-line no-undef
-                            }, millisecondsFromString(exitDuration));
                         };
 
                         // Remove div after X time.
@@ -656,29 +665,6 @@ const playVideo = {
                     const wrappedHtml = getPositionWrappedHTML(wrapperId, positionData, youtubeElement); // eslint-disable-line no-undef
 
                     $(".wrapper").append(wrappedHtml);
-
-                    try {
-                        const url = new URL(youtubeId);
-                        if (url.hostname.includes("www.youtube.com")) {
-                            for (const [key, value] of url.searchParams) {
-                                if (key === "v") {
-                                    youtubeId = value;
-                                } else if (key === "t") {
-                                    videoStarttime = value;
-                                }
-                            }
-                        }
-                        if (url.hostname.includes("youtu.be")) {
-                            youtubeId = url.pathname.replace("/", "");
-                            for (const [key, value] of url.searchParams) {
-                                if (key === "t") {
-                                    videoStarttime = value;
-                                }
-                            }
-                        }
-                    } catch (error) {
-                        //failed to convert url
-                    }
 
                     // Add iframe.
 
@@ -725,9 +711,6 @@ const playVideo = {
                             onStateChange: (event) => {
                                 if (event.data === 0 && !videoDuration) {
                                     animateVideoExit(`#${wrapperId}`, exitAnimation, exitDuration, inbetweenAnimation);
-                                    setTimeout(function(){
-                                        sendWebsocketEvent("video-end", {resourceToken: token}); // eslint-disable-line no-undef
-                                    }, millisecondsFromString(exitDuration));
                                 }
                             }
                         }
@@ -745,9 +728,6 @@ const playVideo = {
                     if (videoDuration) {
                         setTimeout(function () {
                             animateVideoExit(`#${wrapperId}`, exitAnimation, exitDuration, inbetweenAnimation);
-                            setTimeout(function(){
-                                sendWebsocketEvent("video-end", {resourceToken: token}); // eslint-disable-line no-undef
-                            }, millisecondsFromString(exitDuration));
                         }, videoDuration);
                     }
                 }
