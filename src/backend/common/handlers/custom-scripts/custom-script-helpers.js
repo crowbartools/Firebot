@@ -115,7 +115,8 @@ function buildModules(scriptManifest) {
         quotesManager: require("../../../quotes/quotes-manager"),
         frontendCommunicator: require("../../frontend-communicator"),
         counterManager: require("../../../counters/counter-manager"),
-        utils: require("../../../utility")
+        utils: require("../../../utility"),
+        resourceTokenManager: require("../../../resourceTokenManager")
     };
 }
 
