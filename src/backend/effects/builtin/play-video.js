@@ -366,7 +366,7 @@ const playVideo = {
             /**@type {import('@twurple/api').HelixClip} */
             let clip;
             if (effect.videoType === "Twitch Clip") {
-                clipId = effect.twitchClipUrl.replace("https://clips.twitch.tv/", "");
+                clipId = effect.twitchClipUrl.split("/").pop();
                 try {
                     clip = await client.clips.getClipById(clipId);
                 } catch (error) {
