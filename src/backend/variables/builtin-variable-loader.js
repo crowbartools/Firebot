@@ -1,7 +1,5 @@
 "use strict";
-
 const replaceVariableManager = require("./replace-variable-manager");
-
 exports.loadReplaceVariables = () => {
     [
         'account-creation-date',
@@ -164,6 +162,7 @@ exports.loadReplaceVariables = () => {
         'sub-points',
         'sub-streak',
         'sub-type',
+        'sub-users',
         'target',
         'text-capitalize',
         'text-contains',
@@ -211,3 +210,4 @@ exports.loadReplaceVariables = () => {
         replaceVariableManager.registerReplaceVariable(definition);
     });
 };
+//# sourceMappingURL=builtin-variable-loader.js.map
