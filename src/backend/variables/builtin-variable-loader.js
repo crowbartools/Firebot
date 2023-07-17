@@ -1,5 +1,7 @@
 "use strict";
+
 const replaceVariableManager = require("./replace-variable-manager");
+
 exports.loadReplaceVariables = () => {
     [
         'account-creation-date',
@@ -210,4 +212,3 @@ exports.loadReplaceVariables = () => {
         replaceVariableManager.registerReplaceVariable(definition);
     });
 };
-//# sourceMappingURL=builtin-variable-loader.js.map
