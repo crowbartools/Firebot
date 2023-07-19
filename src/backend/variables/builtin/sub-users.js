@@ -10,7 +10,13 @@ const model = {
     definition: {
         handle: "subNames",
         description: "Returns an array of subscriptions you currently have. Items contain 'username', 'tier' and 'isGift' properties",
-        usage: "Returns: [{username:Firebottle,tier:2000,isGift:false},{username:ebiggz,tier:1000,isGift:true},{username:SReject,tier:3000,isGift:false}]\nTo be used with array or custom variables",
+        usage: "subNames",
+        examples: [
+            {
+                usage: "subNames",
+                description: "Returns: [{username:Firebottle,tier:2000,isGift:false},{username:ebiggz,tier:1000,isGift:true},{username:SReject,tier:3000,isGift:false},{username:Perry,tier:1000,isGift:false}] To be used with array or custom variables"
+            }
+        ],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async () => {
