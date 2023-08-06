@@ -21,7 +21,7 @@ const model = {
                 path: url
             });
         } catch (err) {
-            return "[ERROR FETCHING METADATA]";
+            return "[ERROR FETCHING DURATION]";
         }
     }
 };
