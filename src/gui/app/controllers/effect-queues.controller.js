@@ -53,6 +53,12 @@
                         }
                     },
                     {
+                        html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> Toggle Enabled</a>`,
+                        click: function () {
+                            effectQueuesService.toggleEffectQueue(item);
+                        }
+                    },
+                    {
                         html: `<a href ><i class="far fa-clone mr-4"></i> Duplicate</a>`,
                         click: function () {
                             effectQueuesService.duplicateEffectQueue(item.id);

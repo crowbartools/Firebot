@@ -14,7 +14,7 @@ const effectRunner = require("../../common/effect-runner");
  * Effect queue class
  */
 class EffectQueue {
-    constructor(id, mode, interval = 0) {
+    constructor(id, mode, interval = 0, active = true) {
         this.id = id;
         this.mode = mode;
         this.interval = interval;
@@ -24,7 +24,7 @@ class EffectQueue {
          */
         this._queue = [];
         this._running = false;
-        this._paused = false;
+        this._paused = !active;
         this.canceled = false;
     }
 
@@ -144,7 +144,7 @@ function addEffectsToQueue(queueConfig, runEffectsContext, duration, priority) {
     let queue = queues[queueConfig.id];
     if (queue == null) {
         logger.debug(`Creating queue ${queueConfig.id}...`);
-        queue = new EffectQueue(queueConfig.id, queueConfig.mode, queueConfig.interval);
+        queue = new EffectQueue(queueConfig.id, queueConfig.mode, queueConfig.interval, queueConfig.active);
         queues[queueConfig.id] = queue;
     }
 
@@ -159,27 +159,11 @@ function updateQueueConfig(queueConfig) {
     if (queue != null) {
         queue.mode = queueConfig.mode;
         queue.interval = queueConfig.interval;
-    }
-}
-
-function pauseQueue(queueId) {
-    const queue = queues[queueId];
-    if (queue != null) {
-        queue.pauseQueue();
-    }
-}
-
-function resumeQueue(queueId) {
-    const queue = queues[queueId];
-    if (queue != null) {
-        queue.resumeQueue();
-    }
-}
-
-function toggleQueue(queueId) {
-    const queue = queues[queueId];
-    if (queue != null) {
-        queue.toggleQueue();
+        if (queueConfig.active) {
+            queue.resumeQueue();
+        } else {
+            queue.pauseQueue();
+        }
     }
 }
 
@@ -202,8 +186,5 @@ function clearAllQueues() {
 
 exports.addEffectsToQueue = addEffectsToQueue;
 exports.updateQueueConfig = updateQueueConfig;
-exports.pauseQueue = pauseQueue;
-exports.resumeQueue = resumeQueue;
-exports.toggleQueue = toggleQueue;
 exports.removeQueue = removeQueue;
 exports.clearAllQueues = clearAllQueues;
