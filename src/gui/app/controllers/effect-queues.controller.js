@@ -59,6 +59,12 @@
                         }
                     },
                     {
+                        html: `<a href ><i class="fad fa-minus-circle mr-4"></i> Clear Queue</a>`,
+                        click: function () {
+                            effectQueuesService.clearEffectQueue(item.id);
+                        }
+                    },
+                    {
                         html: `<a href ><i class="far fa-clone mr-4"></i> Duplicate</a>`,
                         click: function () {
                             effectQueuesService.duplicateEffectQueue(item.id);

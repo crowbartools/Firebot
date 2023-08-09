@@ -112,6 +112,9 @@ frontendCommunicator.onAsync("saveAllEffectQueues",
 frontendCommunicator.on("deleteEffectQueue",
     (/** @type {string} */ effectQueueId) => effectQueueManager.deleteItem(effectQueueId));
 
+frontendCommunicator.on("clearEffectQueue",
+    (/** @type {string} */ effectQueueId) => effectQueueRunner.removeQueue(effectQueueId));
+
 frontendCommunicator.on("toggleEffectQueue",
     (/** @type {string} */ effectQueueId) => effectQueueManager.toggleQueue(effectQueueId));
 

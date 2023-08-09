@@ -85,6 +85,10 @@
                 queue.active = !queue.active;
             };
 
+            service.clearEffectQueue = (queueId) => {
+                backendCommunicator.fireEvent("clearEffectQueue", queueId);
+            };
+
             service.saveAllEffectQueues = (effectQueues) => {
                 service.effectQueues = effectQueues;
                 backendCommunicator.fireEvent("saveAllEffectQueues", effectQueues);
