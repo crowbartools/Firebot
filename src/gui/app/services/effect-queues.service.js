@@ -32,6 +32,13 @@
                 }
             });
 
+            backendCommunicator.on("updateQueueLength", queue => {
+                const index = service.effectQueues.findIndex(eq => eq.id === queue.id);
+                if (service.effectQueues[index] != null) {
+                    service.effectQueues[index].length = queue.length;
+                }
+            });
+
             backendCommunicator.on("updateQueueStatus", queue => {
                 const index = service.effectQueues.findIndex(eq => eq.id === queue.id);
                 if (service.effectQueues[index] != null) {

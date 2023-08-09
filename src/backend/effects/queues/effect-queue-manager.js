@@ -12,6 +12,7 @@ const effectQueueRunner = require("./effect-queue-runner");
  * @prop {number} [interval] - the interval set for the interval mode
  * @prop {string[]} sortTags - the tags for the effect queue
  * @prop {boolean} active - the effect queue activity status
+ * @prop {number} length - amount of items currently in queue. don't save
  */
 
 /**
@@ -30,7 +31,6 @@ class EffectQueueManager extends JsonDbManager {
      */
     loadItems() {
         super.loadItems();
-        /** @type {EffectQueue[]} */
         const queues = this.getAllItems();
 
         let save = false;
@@ -52,6 +52,7 @@ class EffectQueueManager extends JsonDbManager {
      * @returns {EffectQueue | null}
      * */
     saveItem(effectQueue) {
+        delete effectQueue.length;
         const savedEffectQueue = super.saveItem(effectQueue);
 
         if (savedEffectQueue) {
@@ -60,6 +61,28 @@ class EffectQueueManager extends JsonDbManager {
         }
 
         return null;
+    }
+
+    /**
+     * @override
+     * @param allItems - array of all effect queues
+     */
+    saveAllItems(allItems) {
+        for (const item of allItems) {
+            delete item.length;
+        }
+        super.saveAllItems(allItems);
+    }
+
+    /**
+     * @override
+     */
+    getAllItems() {
+        const items = super.getAllItems();
+        for (let i = 0; i < items.length; i++) {
+            items[i].length = effectQueueRunner.getQueue(items[i].id).length;
+        }
+        return items;
     }
 
     /**

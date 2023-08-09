@@ -41,6 +41,12 @@
                     icon: "fa-clock",
                     cellTemplate: `{{(data.mode === 'interval' || data.mode === 'auto') ? (data.interval || 0) + 's' : 'n/a'}}`,
                     cellController: () => {}
+                },
+                {
+                    name: "QUEUE LENGTH",
+                    icon: "fa-tally",
+                    cellTemplate: `{{data.length}}`,
+                    cellController: () => {}
                 }
             ];
 

@@ -1,6 +1,7 @@
 "use strict";
 const logger = require("../../logwrapper");
 const effectRunner = require("../../common/effect-runner");
+const frontendCommunicator = require("../../common/frontend-communicator");
 
 /**
  * Queue Entry
@@ -28,6 +29,13 @@ class EffectQueue {
         this.canceled = false;
     }
 
+    sendQueueLengthUpdate(lengthOverride = null) {
+        frontendCommunicator.send("updateQueueLength", {
+            id: this.id,
+            length: lengthOverride ?? this._queue.length
+        });
+    }
+
     runQueue() {
         return new Promise(resolve => {
             if (this._queue.length === 0 || this.canceled || this._paused === true) {
@@ -41,6 +49,8 @@ class EffectQueue {
             }
 
             logger.debug(`Running next effects for queue ${this.id}. Mode=${this.mode}, Interval?=${this.interval}, Remaining queue length=${this._queue.length}`);
+
+            this.sendQueueLengthUpdate();
 
             if (this.mode === "interval") {
                 effectRunner.runEffects(runEffectsContext)
@@ -94,6 +104,8 @@ class EffectQueue {
 
         logger.debug(`Added more effects to queue ${this.id}. Current length=${this._queue.length}`);
 
+        this.sendQueueLengthUpdate();
+
         this.processEffectQueue();
     }
 
@@ -121,14 +133,6 @@ class EffectQueue {
         logger.debug(`Resuming queue ${this.id}...`);
         this._paused = false;
         this.processEffectQueue();
-    }
-
-    toggleQueue() {
-        if (this._paused) {
-            this.resumeQueue();
-        } else {
-            this.pauseQueue();
-        }
     }
 }
 
@@ -176,8 +180,17 @@ function removeQueue(queueId) {
     if (queue != null) {
         logger.debug(`Removing queue ${queue.id}`);
         queue.canceled = true;
+        queue.sendQueueLengthUpdate(0);
         delete queues[queueId];
     }
+}
+
+function getQueue(queueId) {
+    const queue = queues[queueId];
+    if (queue == null) {
+        return [];
+    }
+    return queue._queue;
 }
 
 function clearAllQueues() {
@@ -185,6 +198,7 @@ function clearAllQueues() {
 }
 
 exports.addEffectsToQueue = addEffectsToQueue;
+exports.getQueue = getQueue;
 exports.updateQueueConfig = updateQueueConfig;
 exports.removeQueue = removeQueue;
 exports.clearAllQueues = clearAllQueues;

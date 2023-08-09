@@ -77,7 +77,8 @@
                 name: "",
                 mode: "custom",
                 sortTags: [],
-                active: true
+                active: true,
+                length: 0
             };
 
             $ctrl.$onInit = () => {
