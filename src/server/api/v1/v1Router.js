@@ -216,4 +216,9 @@ router
     .get(queues.toggleQueue)
     .post(queues.toggleQueue);
 
+router
+    .route("/queues/:queueId/clear")
+    .get(queues.clearQueue)
+    .post(queues.clearQueue);
+
 module.exports = router;

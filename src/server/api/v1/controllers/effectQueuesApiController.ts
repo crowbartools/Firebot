@@ -1,4 +1,5 @@
 import effectQueueManager from "../../../../backend/effects/queues/effect-queue-manager";
+import effectQueueRunner from "../../../../backend/effects/queues/effect-queue-runner";
 import { Request, Response } from "express";
 
 function checkQueue(req: Request, res: Response): boolean {
@@ -65,6 +66,18 @@ export async function toggleQueue(req: Request, res: Response): Promise<Response
     const queueId = req.params.queueId;
 
     effectQueueManager.toggleQueue(queueId);
+
+    return res.json(effectQueueManager.getItem(queueId));
+}
+
+export async function clearQueue(req: Request, res: Response): Promise<Response> {
+    if (!checkQueue(req, res)) {
+        return res;
+    }
+
+    const queueId = req.params.queueId;
+
+    effectQueueRunner.removeQueue(queueId);
 
     return res.json(effectQueueManager.getItem(queueId));
 }
