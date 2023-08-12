@@ -13,6 +13,7 @@ const effectQueueRunner = require("./effect-queue-runner");
  * @prop {string[]} sortTags - the tags for the effect queue
  * @prop {boolean} active - the effect queue activity status
  * @prop {number} length - amount of items currently in queue. don't save
+ * @prop {any[]} queue - effects queue. don't save
  */
 
 /**
@@ -53,6 +54,7 @@ class EffectQueueManager extends JsonDbManager {
      * */
     saveItem(effectQueue) {
         delete effectQueue.length;
+        delete effectQueue.queue;
         const savedEffectQueue = super.saveItem(effectQueue);
 
         if (savedEffectQueue) {
@@ -70,6 +72,7 @@ class EffectQueueManager extends JsonDbManager {
     saveAllItems(allItems) {
         for (const item of allItems) {
             delete item.length;
+            delete item.queue;
         }
         super.saveAllItems(allItems);
     }
@@ -79,8 +82,8 @@ class EffectQueueManager extends JsonDbManager {
      */
     getAllItems() {
         const items = JSON.parse(JSON.stringify(super.getAllItems()));
-        for (let i = 0; i < items.length; i++) {
-            items[i].length = effectQueueRunner.getQueue(items[i].id).length;
+        for (const item of items) {
+            item.length = effectQueueRunner.getQueue(item.id).length;
         }
         return items;
     }
@@ -93,7 +96,7 @@ class EffectQueueManager extends JsonDbManager {
     getItem(itemId) {
         const item = JSON.parse(JSON.stringify(super.getItem(itemId)));
 
-        item.queue = effectQueueRunner.getQueue(item.id);
+        item.queue = effectQueueRunner.getQueue(itemId);
 
         return item;
     }
