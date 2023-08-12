@@ -45,7 +45,7 @@
                 {
                     name: "QUEUE LENGTH",
                     icon: "fa-tally",
-                    cellTemplate: `{{data.length}}`,
+                    cellTemplate: `{{data.length || 0}}`,
                     cellController: () => {}
                 }
             ];
