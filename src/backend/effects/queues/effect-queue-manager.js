@@ -78,7 +78,7 @@ class EffectQueueManager extends JsonDbManager {
      * @override
      */
     getAllItems() {
-        const items = super.getAllItems();
+        const items = JSON.parse(JSON.stringify(super.getAllItems()));
         for (let i = 0; i < items.length; i++) {
             items[i].length = effectQueueRunner.getQueue(items[i].id).length;
         }
@@ -91,7 +91,7 @@ class EffectQueueManager extends JsonDbManager {
      * @returns {T|null}
      */
     getItem(itemId) {
-        const item = super.getItem(itemId);
+        const item = JSON.parse(JSON.stringify(super.getItem(itemId)));
 
         item.queue = effectQueueRunner.getQueue(item.id);
 
