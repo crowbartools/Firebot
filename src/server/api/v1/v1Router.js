@@ -191,4 +191,10 @@ router
     .route("/timers/:timerId")
     .get(timers.getTimerById);
 
+const queues = require("./controllers/effectQueuesApiController");
+
+router
+    .route("/queues")
+    .get(queues.getQueues);
+
 module.exports = router;
