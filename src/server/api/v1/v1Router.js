@@ -197,4 +197,8 @@ router
     .route("/queues")
     .get(queues.getQueues);
 
+router
+    .route("/queues/:queueId")
+    .get(queues.getQueueById);
+
 module.exports = router;

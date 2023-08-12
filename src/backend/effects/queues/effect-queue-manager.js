@@ -86,6 +86,19 @@ class EffectQueueManager extends JsonDbManager {
     }
 
     /**
+     * @override
+     * @param itemId
+     * @returns {T|null}
+     */
+    getItem(itemId) {
+        const item = super.getItem(itemId);
+
+        item.queue = effectQueueRunner.getQueue(item.id);
+
+        return item;
+    }
+
+    /**
      * @returns {void}
      */
     triggerUiRefresh() {
