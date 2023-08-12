@@ -32,3 +32,39 @@ export async function getQueueById(req: Request, res: Response): Promise<Respons
 
     return res.json(effectQueueManager.getItem(req.params.queueId));
 }
+
+export async function pauseQueue(req: Request, res: Response): Promise<Response> {
+    if (!checkQueue(req, res)) {
+        return res;
+    }
+
+    const queueId = req.params.queueId;
+
+    effectQueueManager.pauseQueue(queueId);
+
+    return res.json(effectQueueManager.getItem(queueId));
+}
+
+export async function resumeQueue(req: Request, res: Response): Promise<Response> {
+    if (!checkQueue(req, res)) {
+        return res;
+    }
+
+    const queueId = req.params.queueId;
+
+    effectQueueManager.resumeQueue(queueId);
+
+    return res.json(effectQueueManager.getItem(queueId));
+}
+
+export async function toggleQueue(req: Request, res: Response): Promise<Response> {
+    if (!checkQueue(req, res)) {
+        return res;
+    }
+
+    const queueId = req.params.queueId;
+
+    effectQueueManager.toggleQueue(queueId);
+
+    return res.json(effectQueueManager.getItem(queueId));
+}

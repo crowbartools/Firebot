@@ -201,4 +201,19 @@ router
     .route("/queues/:queueId")
     .get(queues.getQueueById);
 
+router
+    .route("/queues/:queueId/pause")
+    .get(queues.pauseQueue)
+    .post(queues.pauseQueue);
+
+router
+    .route("/queues/:queueId/resume")
+    .get(queues.resumeQueue)
+    .post(queues.resumeQueue);
+
+router
+    .route("/queues/:queueId/toggle")
+    .get(queues.toggleQueue)
+    .post(queues.toggleQueue);
+
 module.exports = router;
