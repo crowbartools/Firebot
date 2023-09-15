@@ -31,6 +31,7 @@ exports.loadReplaceVariables = () => {
         'array-reverse',
         'array-shuffle-raw',
         'array-shuffle',
+        'audio-duration',
         'bits-badge-tier',
         'bits-badge-unlocked-message',
         'bits-cheered',
@@ -203,9 +204,11 @@ exports.loadReplaceVariables = () => {
         'username-array-raw',
         'username-array',
         'username',
+        'video-duration',
         'view-time',
         'whisper-message',
-        'word'
+        'word',
+        'youtube-video-duration'
     ].forEach(filename => {
         const definition = require(`./builtin/${filename}`);
         replaceVariableManager.registerReplaceVariable(definition);
