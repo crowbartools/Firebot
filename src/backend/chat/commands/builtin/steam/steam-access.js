@@ -108,6 +108,10 @@ const getSteamGameDetails = async (requestedGame) => {
         gameDetails.releaseDate = foundGame.release_date.date;
     }
 
+    if (foundGame.short_description) {
+        gameDetails.shortDescription = foundGame.short_description;
+    }
+
     return gameDetails;
 };
 
