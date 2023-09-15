@@ -88,11 +88,11 @@ const model: EffectType<{
             return false;
         } else {
             if (effect.action === "Pause") {
-                effectQueueRunner.pauseQueue(effect.effectQueue);
+                effectQueueManager.pauseQueue(effect.effectQueue);
             } else if (effect.action === "Resume") {
-                effectQueueRunner.resumeQueue(effect.effectQueue);
+                effectQueueManager.resumeQueue(effect.effectQueue);
             } else {
-                effectQueueRunner.toggleQueue(effect.effectQueue);
+                effectQueueManager.toggleQueue(effect.effectQueue);
             }
         }
 
