@@ -104,6 +104,40 @@
                 return data;
             };
 
+            service.parseMixItUpData = (filepath, dataType) => {
+                if (dataType === "quotes") {
+                    const data = {};
+                    //split the file into lines either \r\n or \n
+                    const file = fs.readFileSync(filepath, "utf8").split(/\r?\n/);
+                    const header = file.shift();
+                    if (header !== "#	Quote	Game	Date/Time") {
+                        return data;
+                    }
+                    //remove any empty lines
+                    file.forEach((line, index) => {
+                        if (line === "") {
+                            file.splice(index, 1);
+                        }
+                    });
+                    //split the file into quotes
+                    const quotes = file.map(q => {
+                        const splittedQuote = q.split("\t");
+                        return {
+                            _id: splittedQuote[0],
+                            text: splittedQuote[1],
+                            originator: "",
+                            creator: "",
+                            game: splittedQuote[2],
+                            createdAt: splittedQuote[3]
+                        };
+                    });
+                    //set the quotes property on the data object
+                    data.quotes = quotes;
+                    //return the data object
+                    return data;
+                }
+            };
+
             return service;
         });
 }());
