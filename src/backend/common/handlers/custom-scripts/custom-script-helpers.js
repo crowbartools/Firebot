@@ -97,6 +97,7 @@ function buildModules(scriptManifest) {
         twitchApi: twitchApi,
         httpServer: require("../../../../server/http-server-manager"),
         effectManager: require("../../../effects/effectManager"),
+        effectRunner: require("../../effect-runner"),
         conditionManager: require("../../../effects/builtin/conditional-effects/conditions/condition-manager"),
         restrictionManager: require("../../../restrictions/restriction-manager"),
         commandManager: require("../../../chat/commands/CommandManager"),
@@ -115,7 +116,8 @@ function buildModules(scriptManifest) {
         quotesManager: require("../../../quotes/quotes-manager"),
         frontendCommunicator: require("../../frontend-communicator"),
         counterManager: require("../../../counters/counter-manager"),
-        utils: require("../../../utility")
+        utils: require("../../../utility"),
+        resourceTokenManager: require("../../../resourceTokenManager")
     };
 }
 
