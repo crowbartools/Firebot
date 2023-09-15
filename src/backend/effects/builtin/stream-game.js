@@ -3,6 +3,7 @@
 const { EffectCategory } = require('../../../shared/effect-constants');
 const logger = require('../../logwrapper');
 const twitchApi = require("../../twitch-api/api");
+const eventsManager = require("../../events/EventManager");
 
 const model = {
     definition: {
@@ -104,6 +105,9 @@ const model = {
                 await twitchApi.channels.updateChannelInformation({ gameId: category.id });
             }
         }
+
+        const category = (await twitchApi.channels.getChannelInformation()).gameName;
+        eventsManager.triggerEvent("firebot", "category-changed", {category: category});
         return true;
     }
 };

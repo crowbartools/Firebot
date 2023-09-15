@@ -133,7 +133,7 @@ const heistCommand = {
                 if (heistSettings.settings.entryMessages.wagerAmountTooHigh) {
                     const wagerAmountTooHighMsg = heistSettings.settings.entryMessages.wagerAmountTooHigh
                         .replace("{user}", username)
-                        .replace("minWager}", minWager);
+                        .replace("{maxWager}", maxWager);
 
                     await twitchChat.sendChatMessage(wagerAmountTooHighMsg, null, chatter);
                 }

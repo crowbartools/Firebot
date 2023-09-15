@@ -76,7 +76,9 @@
             $ctrl.effectQueue = {
                 name: "",
                 mode: "custom",
-                sortTags: []
+                sortTags: [],
+                active: true,
+                length: 0
             };
 
             $ctrl.$onInit = () => {

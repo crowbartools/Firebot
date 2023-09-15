@@ -7,7 +7,7 @@ const model = {
     definition: {
         handle: "rawSetObjectProperty",
         description: "Adds or updates a property's value in the raw object. For nested properties, you can use dot notation (e.g. some.property). Set value to null to remove property.",
-        usage: "setObjectProperty[object, propertyPath, value]",
+        usage: "rawSetObjectProperty[object, propertyPath, value]",
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },

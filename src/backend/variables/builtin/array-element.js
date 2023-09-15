@@ -15,6 +15,11 @@ const model = {
         if (jsonArray) {
             const array = utils.jsonParse(jsonArray);
             if (Array.isArray(array)) {
+                // Check value for being array or object, otherwise return raw value
+                if (Array.isArray(array[index]) || Object.prototype.toString.call(array[index]) == "[object Object]")
+                {
+                    return JSON.stringify(array[index]);
+                }
                 return array[index];
             }
         }
