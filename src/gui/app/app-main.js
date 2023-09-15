@@ -121,9 +121,10 @@
         scheduledTaskService,
         channelRewardsService,
         sortTagsService,
-        iconsService
+        iconsService,
+        videoService
     ) {
-        // 'chatMessagesService' is included so its instantiated on app start
+        // 'chatMessagesService' and 'videoService' are included so they're instantiated on app start
 
         connectionService.loadProfiles();
 
