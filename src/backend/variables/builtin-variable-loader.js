@@ -165,6 +165,7 @@ exports.loadReplaceVariables = () => {
         'sub-points',
         'sub-streak',
         'sub-type',
+        'sub-users',
         'target',
         'text-capitalize',
         'text-contains',
