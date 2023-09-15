@@ -11,14 +11,15 @@
                 <div class="modal-body pb-0">
                     <div ng-hide="$ctrl.quotes">
                         <h4>Import from</h5>
-                        <p class="muted mb-12">Currently only quotes from Streamlabs Chatbot (desktop bot) can be imported.</p>
+                        <p class="muted mb-12">Currently only quotes from Streamlabs Chatbot (desktop bot) and Mix It Up can be imported.</p>
 
                         <h4>Choose file</h4>
-                        <p class="muted mb-8">To get the export file in Streamlabs Chatbot, go to Connections -> Cloud -> Create Split Excel and find the file called Quotes.xlsx.</p>
+                        <p class="muted mb-2">To get the export file in Streamlabs Chatbot, go to Connections -> Cloud -> Create Split Excel and find the file called Quotes.xlsx.</p>
+                        <p class="muted mb-8">To get the export file in Mix It Up, go to Quotes -> Export Quotes and find the file called Quotes.txt.</p>
                         <file-chooser
                             model="$ctrl.importFilePath"
                             on-update="$ctrl.onFileSelected(filepath)"
-                            options="{filters: [ {name: 'Microsoft Excel', extensions: '.xlsx'}]}"
+                            options="{filters: [ {name: 'Microsoft Excel', extensions: '.xlsx'}, {name: 'Text File', extensions: '.txt'} ]}"
                             hide-manual-edit="true"
                         >
                         </file-chooser>
@@ -97,7 +98,14 @@
                 ];
 
                 $ctrl.onFileSelected = (filepath) => {
-                    const data = importService.parseStreamlabsChatbotData(filepath);
+                    //get the file type from the filepath
+                    const fileType = filepath.split(".").pop();
+                    let data;
+                    if (fileType === "xlsx") {
+                        data = importService.parseStreamlabsChatbotData(filepath);
+                    } else if (fileType === "txt") {
+                        data = importService.parseMixItUpData(filepath, "quotes");
+                    }
                     if (data && data.quotes) {
                         $ctrl.quotes = data.quotes;
                         $ctrl.search = "";
