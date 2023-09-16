@@ -449,6 +449,10 @@ const playVideo = {
             const result = await frontendCommunicator.fireEventAsync("getYoutubeVideoDuration", data.youtubeId);
             if (!isNaN(result)) {
                 duration = result;
+            } else {
+                // Error
+                logger.error("Play Video Effect: Unable to retrieve Youtube Video Duration", result);
+                return;
             }
             if (data.videoStarttime == null || data.videoStarttime == "" || data.videoStarttime == 0) {
                 data.videoStarttime = youtubeData.startTime;
