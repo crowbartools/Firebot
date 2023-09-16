@@ -443,7 +443,9 @@ const playVideo = {
 
         let resourceToken;
         let duration;
-        if (effect.videoType === "YouTube Video") {
+        if (effect.videoType === "YouTube Video" && !effect.wait) {
+            logger.debug("Play Video Effect: Proceeding without Youtube Video Duration because wait is false");
+        } else if (effect.videoType === "YouTube Video" && effect.wait) {
             const youtubeData = parseYoutubeId(data.youtubeId);
             data.youtubeId = youtubeData.id;
             const result = await frontendCommunicator.fireEventAsync("getYoutubeVideoDuration", data.youtubeId);
@@ -457,7 +459,7 @@ const playVideo = {
             if (data.videoStarttime == null || data.videoStarttime == "" || data.videoStarttime == 0) {
                 data.videoStarttime = youtubeData.startTime;
             }
-        } else {
+        } else if (effect.videoType === "Local Video") {
             const result = await frontendCommunicator.fireEventAsync("getVideoDuration", data.filepath);
             if (!isNaN(result)) {
                 duration = result;
