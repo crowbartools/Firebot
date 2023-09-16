@@ -37,29 +37,6 @@ export class TwitchUsersApi {
         return followData.data[0].followDate;
     }
 
-    /**
-     * @deprecated This MUST be removed before August because #JustTwitchThings
-     */
-    async doesUserFollowChannelLegacy(username: string, channelName: string): Promise<boolean> {
-        if (username == null || channelName == null) {
-            return false;
-        }
-    
-        if (username.toLowerCase() === channelName.toLowerCase()) {
-            return true;
-        }
-    
-        const [user, channel] = await this.getUsersByNames([username, channelName]);
-    
-        if (user.id == null || channel.id == null) {
-            return false;
-        }
-    
-        const userFollow = await this.streamerClient.users.userFollowsBroadcaster(user.id, channel.id);
-    
-        return userFollow ?? false;
-    }
-
     async doesUserFollowChannel(username: string, channelName: string): Promise<boolean> {
         if (username == null || channelName == null) {
             return false;
