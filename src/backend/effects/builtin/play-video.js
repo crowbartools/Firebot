@@ -443,17 +443,23 @@ const playVideo = {
 
         let resourceToken;
         let duration;
-        if (effect.videoType === "YouTube Video") {
+        if (effect.videoType === "YouTube Video" && !effect.wait) {
+            logger.debug("Play Video Effect: Proceeding without Youtube Video Duration because wait is false");
+        } else if (effect.videoType === "YouTube Video" && effect.wait) {
             const youtubeData = parseYoutubeId(data.youtubeId);
             data.youtubeId = youtubeData.id;
             const result = await frontendCommunicator.fireEventAsync("getYoutubeVideoDuration", data.youtubeId);
             if (!isNaN(result)) {
                 duration = result;
+            } else {
+                // Error
+                logger.error("Play Video Effect: Unable to retrieve Youtube Video Duration", result);
+                return;
             }
             if (data.videoStarttime == null || data.videoStarttime == "" || data.videoStarttime == 0) {
                 data.videoStarttime = youtubeData.startTime;
             }
-        } else {
+        } else if (effect.videoType === "Local Video") {
             const result = await frontendCommunicator.fireEventAsync("getVideoDuration", data.filepath);
             if (!isNaN(result)) {
                 duration = result;
@@ -464,24 +470,7 @@ const playVideo = {
         data.resourceToken = resourceToken;
 
         webServer.sendToOverlay("video", data);
-        if (effect.wait && effect.videoType === "YouTube Video") {
-            // Use overlay callback for youtube video, needs local way to get duration for production.
-            // If effect is ran with "Wait for video to finish" while overlay is not open, it may freeze an effect queue.
-            await new Promise(async (resolve, reject) => {
-                const listener = (event) => {
-                    try {
-                        if (event.name === "video-end" && event.data.resourceToken === resourceToken) {
-                            webServer.removeListener("overlay-event", listener);
-                            resolve();
-                        }
-                    } catch (err) {
-                        logger.error("Error while trying to process overlay-event for play-video: ", err);
-                        reject(err);
-                    }
-                };
-                webServer.on("overlay-event", listener);
-            });
-        } else if (effect.wait && data.videoType === "Local Video") {
+        if (effect.wait) {
             let internalDuration = data.videoDuration;
             if (internalDuration == null || internalDuration === 0 || internalDuration === "") {
                 internalDuration = duration;
@@ -544,7 +533,7 @@ const playVideo = {
                 const data = event;
 
                 const videoType = data.videoType;
-                const filepath = data.filepath;
+                const filepath = data.filepath ?? "";
                 let fileExt = filepath.split(".").pop();
                 if (fileExt === "ogv") {
                     fileExt = "ogg";
