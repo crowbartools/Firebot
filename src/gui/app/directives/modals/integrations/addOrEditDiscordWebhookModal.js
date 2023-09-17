@@ -37,7 +37,7 @@
                         <collapsable-section show-text="Where do I get the Webhook URL?" hide-text="Where do I get the Webhook URL?"  text-color="#0b8dc6">
                             <ol style="font-weight: 100;font-size: 15px;">
                                 <li style="margin: 5px 0;">In Discord, open channel settings for the channel you want Firebot posting messages to <span class="muted">(click the Gear next to the channel name)</span></li>
-                                <li style="margin: 5px 0;">Go to the <b>Webhooks</b> tab</li>
+                                <li style="margin: 5px 0;">Go to the <b>Integrations</b> tab</li>
                                 <li style="margin: 5px 0;">Click <b>Create Webhook</b></li>
                                 <li style="margin: 5px 0;">Give the webhook a name <span class="muted">(Optional. You'll likely want this to be your channel name or your bot accounts name. You can also set an override for this in Firebot)</span></li>
                                 <li style="margin: 5px 0;">Upload an avatar image for the webhook <span class="muted">(Optional. You can also set an override for this in Firebot)</span></li>

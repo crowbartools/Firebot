@@ -87,16 +87,16 @@ jobs:
           npm config set msvs_version 2022
           npm install --global --production --omit=dev windows-build-tools@4.0.0
 
+      - name: Linux Build Prep
+        if: runner.os == 'linux'
+        run: sudo apt-get install libx11-dev libxtst-dev libpng-dev
+
       - name: Restore Robotjs from cache
         id: robotjs-cache
         uses: actions/cache/restore@v3
         with:
           key: ${{ runner.os }}-robotjs
           path: ./node_modules/robotjs/
-
-      - name: Linux Build Prep
-        if: runner.os == 'linux'
-        run: sudo apt-get install libx11-dev libxtst-dev libpng-dev
 
       - name: Install Global Dependencies
         run: npm install --global --production --omit=dev grunt-cli node-gyp
@@ -139,9 +139,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           path: ./bundles/
-
-      - name: Rename Artifacts
-        run: mv ./bundles/Windows/firebot-${{ needs.checkversion.outputs.version }}-full.nupkg ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-full.nupkg
 
       - name: Create Release
         uses: softprops/action-gh-release@v1

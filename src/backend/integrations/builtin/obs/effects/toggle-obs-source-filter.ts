@@ -31,9 +31,16 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
     },
     optionsTemplate: `
     <eos-container header="Filters">
-      <div ng-if="sourceList != null && sourceList.length > 0" ng-repeat="source in sourceList">
+      <div class="effect-setting-container">
+        <div class="input-group">
+          <span class="input-group-addon">Filter</span>
+          <input type="text" class="form-control" ng-change="filterSources(searchText)" ng-model="searchText" placeholder="Enter your search term here..." aria-describeby="obs-visibility-search-box">
+        </div>
+      </div>
+      <br>
+      <div ng-if="sourceList != null && sourceList.length > 0" ng-repeat="source in sourceListFiltered">
         <div style="font-size: 16px;color: #b9b9b9;margin-bottom: 5px;"><b>{{source.name}}</b> <span style="font-size: 13px;">({{formatSourceType(source.typeId)}})</span></div>
-        <div ng-repeat="filter in source.filters">
+        <div ng-repeat="filter in source.filters | filter: {name: searchText}">
           <label  class="control-fb control--checkbox">{{filter.name}}
               <input type="checkbox" ng-click="toggleFilterSelected(source.name, filter.name)" ng-checked="filterIsSelected(source.name, filter.name)"  aria-label="..." >
               <div class="control__indicator"></div>
@@ -65,6 +72,8 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
   `,
     optionsController: ($scope: Scope, backendCommunicator: any, $q: any) => {
       $scope.sourceList = null;
+
+      $scope.searchText = "";
 
       if ($scope.effect.selectedFilters == null) {
         $scope.effect.selectedFilters = [];
@@ -136,11 +145,23 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
         return capitalizeWords((type ?? "").replace(/_/, " "));
       };
 
+      $scope.filterSources = (searchText: string) => {
+        if ($scope.searchText != searchText) $scope.searchText = searchText;
+        $scope.sourceListFiltered = ($scope.sourceList as Array<OBSSource>).filter((source: OBSSource) => {
+          debugger;
+          return source.filters.some(filter => {
+            debugger;
+            return filter.name.toLowerCase().includes(searchText.toLowerCase());
+          })
+        });
+      }
+
       $scope.getSourceList = () => {
         $q.when(
           backendCommunicator.fireEventAsync("obs-get-sources-with-filters")
         ).then((sourceList: Array<OBSSource>) => {
           $scope.sourceList = sourceList ?? null;
+          $scope.filterSources($scope.searchText);
         });
       };
 

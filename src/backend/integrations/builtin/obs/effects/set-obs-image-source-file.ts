@@ -14,19 +14,16 @@ export const SetOBSImageSourceFileEffectType: EffectType<{
   },
   optionsTemplate: `
     <eos-container header="OBS Image Source">
-        <div ng-if="imageSources != null" class="btn-group" uib-dropdown>
-            <button type="button" class="btn btn-default" uib-dropdown-toggle>
-              {{effect.imageSourceName}} <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                <li role="menuitem" ng-repeat="imageSource in imageSources" ng-click="selectImageSource(imageSource.name)">
-                    <a href>{{imageSource.name}}</a>
-                </li>
-                <li role="menuitem" ng-show="imageSources.length < 1" class="muted">
-                    <a>No image sources found.</a>
-                </li>
-            </ul>
-        </div>
+        <ui-select ng-model="selected" on-select="selectImageSource($select.selected.name)">
+          <ui-select-match placeholder="Select an Image Source...">{{$select.selected.name}}</ui-select-match>
+          <ui-select-choices repeat="source in imageSources | filter: {name: $select.search}">
+            <div ng-bind-html="source.name | highlight: $select.search"></div>
+          </ui-select-choices>
+          <ui-select-no-choice>
+          <b>No image sources found.</b>
+          </ui-select-no-choice>
+        </ui-select>
+        
         <div ng-if="imageSources == null" class="muted">
             No sources found. Is OBS running?
         </div>
@@ -51,6 +48,7 @@ export const SetOBSImageSourceFileEffectType: EffectType<{
         backendCommunicator.fireEventAsync("obs-get-image-sources")
       ).then((imageSources: OBSSource[]) => {
         $scope.imageSources = imageSources ?? [];
+        $scope.selected = $scope.imageSources.find(source => source.name === $scope.effect.imageSourceName);
       });
     };
     $scope.getImageSources();

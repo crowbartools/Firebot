@@ -27,11 +27,7 @@ exports.startFollowPoll = () => {
             return;
         }
 
-        const followRequest = client.users.getFollowsPaginated({
-            followedUser: streamer.userId
-        });
-
-        const follows = await followRequest.getNext();
+        const follows = (await client.channels.getChannelFollowers(streamer.userId, streamer.userId)).data;
 
         if (follows == null || follows.length < 1) {
             return;
