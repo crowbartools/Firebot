@@ -31,7 +31,7 @@ const quotesManagement = {
             quoteDateFormat: {
                 type: "enum",
                 title: "Quote Date Format",
-                description: "How dates should be formatted for the 'editdate' mod command.",
+                description: "How dates should be formatted for the '!quote' and '!quote editdate' commands.",
                 options: [
                     "MM/DD/YYYY",
                     "DD/MM/YYYY"
@@ -210,7 +210,7 @@ const quotesManagement = {
             const args = event.userCommand.args;
 
             const getFormattedQuoteString = (quote) => {
-                const prettyDate = quote.createdAt != null ? moment(quote.createdAt).format('L') : "No Date";
+                const prettyDate = quote.createdAt != null ? moment(quote.createdAt).format(commandOptions.quoteDateFormat) : "No Date";
                 return commandOptions.quoteDisplayTemplate
                     .replace("{id}", quote._id)
                     .replace("{text}", quote.text)
