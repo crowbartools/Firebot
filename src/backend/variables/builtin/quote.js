@@ -2,6 +2,8 @@
 
 "use strict";
 const quoteManager = require("../../quotes/quotes-manager");
+const commandsManager = require("../../chat/commands/CommandManager");
+const moment = require("moment");
 const logger = require("../../logwrapper");
 
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
@@ -20,6 +22,8 @@ const model = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async (_, quoteId) => {
+        const quoteCommand = commandsManager.getSystemCommandById("firebot:quotesmanagement");
+        const quoteDateFormat = quoteCommand.definition.options.quoteDateFormat.value;
         let quote;
         quoteId = parseInt(quoteId);
 
@@ -32,10 +36,9 @@ const model = {
         }
 
         if (quote != null) {
-            const ts = new Date(quote.createdAt);
-            const timestamp = ts.toLocaleString();
+            const date = moment(quote.createdAt).format(quoteDateFormat);
             const quoteText = decodeURIComponent(quote.text);
-            const quoteString = quoteText + ' - ' + quote.originator + '. [' + quote.game + '] - ' + timestamp;
+            const quoteString = quoteText + ' - ' + quote.originator + '. [' + quote.game + '] - ' + date;
             logger.debug("Found a quote!");
             return quoteString;
         }
