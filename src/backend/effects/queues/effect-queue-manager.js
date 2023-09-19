@@ -94,11 +94,11 @@ class EffectQueueManager extends JsonDbManager {
      * @returns {T|null}
      */
     getItem(itemId) {
-        if (itemId == null) {
+        const item = JSON.parse(JSON.stringify(super.getItem(itemId)));
+
+        if (item == null) {
             return null;
         }
-        
-        const item = JSON.parse(JSON.stringify(super.getItem(itemId)));
 
         item.queue = effectQueueRunner.getQueue(itemId);
 
