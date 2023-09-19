@@ -459,14 +459,14 @@ const playVideo = {
             if (data.videoStarttime == null || data.videoStarttime == "" || data.videoStarttime == 0) {
                 data.videoStarttime = youtubeData.startTime;
             }
-        } else if (effect.videoType === "Local Video") {
+        } else if (effect.videoType === "Local Video" || effect.videoType === "Random From Folder") {
             const result = await frontendCommunicator.fireEventAsync("getVideoDuration", data.filepath);
             if (!isNaN(result)) {
                 duration = result;
             }
             resourceToken = resourceTokenManager.storeResourcePath(data.filepath, duration);
         }
-
+        data.videoDuration = duration;
         data.resourceToken = resourceToken;
 
         webServer.sendToOverlay("video", data);
