@@ -475,11 +475,7 @@ const playVideo = {
 
         webServer.sendToOverlay("video", data);
         if (effect.wait) {
-            let internalDuration = data.videoDuration;
-            if (internalDuration == null || internalDuration === 0 || internalDuration === "") {
-                internalDuration = duration;
-            }
-            await wait(internalDuration * 1000);
+            await wait(data.videoDuration * 1000);
         }
         return true;
     },
