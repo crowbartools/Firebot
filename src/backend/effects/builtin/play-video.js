@@ -443,11 +443,16 @@ const playVideo = {
 
         let resourceToken;
         let duration;
+        if (effect.videoType === "YouTube Video") {
+            const youtubeData = parseYoutubeId(data.youtubeId);
+            data.youtubeId = youtubeData.id;
+            if (data.videoStarttime == null || data.videoStarttime == "" || data.videoStarttime == 0) {
+                data.videoStarttime = youtubeData.startTime;
+            }
+        }
         if (effect.videoType === "YouTube Video" && !effect.wait) {
             logger.debug("Play Video Effect: Proceeding without Youtube Video Duration because wait is false");
         } else if (effect.videoType === "YouTube Video" && effect.wait) {
-            const youtubeData = parseYoutubeId(data.youtubeId);
-            data.youtubeId = youtubeData.id;
             const result = await frontendCommunicator.fireEventAsync("getYoutubeVideoDuration", data.youtubeId);
             if (!isNaN(result)) {
                 duration = result;
@@ -456,9 +461,6 @@ const playVideo = {
                 logger.error("Play Video Effect: Unable to retrieve Youtube Video Duration", result);
                 return;
             }
-            if (data.videoStarttime == null || data.videoStarttime == "" || data.videoStarttime == 0) {
-                data.videoStarttime = youtubeData.startTime;
-            }
         } else if (effect.videoType === "Local Video" || effect.videoType === "Random From Folder") {
             const result = await frontendCommunicator.fireEventAsync("getVideoDuration", data.filepath);
             if (!isNaN(result)) {
@@ -466,16 +468,14 @@ const playVideo = {
             }
             resourceToken = resourceTokenManager.storeResourcePath(data.filepath, duration);
         }
-        data.videoDuration = duration;
+        if ((data.videoDuration == null || data.videoDuration == "" || data.videoDuration == 0) && duration != null) {
+            data.videoDuration = duration;
+        }
         data.resourceToken = resourceToken;
 
         webServer.sendToOverlay("video", data);
         if (effect.wait) {
-            let internalDuration = data.videoDuration;
-            if (internalDuration == null || internalDuration === 0 || internalDuration === "") {
-                internalDuration = duration;
-            }
-            await wait(internalDuration * 1000);
+            await wait(data.videoDuration * 1000);
         }
         return true;
     },
