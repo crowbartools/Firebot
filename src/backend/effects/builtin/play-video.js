@@ -468,7 +468,9 @@ const playVideo = {
             }
             resourceToken = resourceTokenManager.storeResourcePath(data.filepath, duration);
         }
-        data.videoDuration = duration;
+        if ((data.videoDuration == null || data.videoDuration == "" || data.videoDuration == 0) && duration != null) {
+            data.videoDuration = duration;
+        }
         data.resourceToken = resourceToken;
 
         webServer.sendToOverlay("video", data);
