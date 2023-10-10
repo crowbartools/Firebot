@@ -108,7 +108,7 @@ exports.setupChatListeners = (streamerChatClient) => {
 
     streamerChatClient.onResub(async (_channel, _user, subInfo, msg) => {
         try {
-            if (subInfo.originalGiftInfo != null) { // Should only be not null on multi-month gifted subs
+            if (subInfo.originalGiftInfo != null) {
                 twitchEventsHandler.sub.triggerSub(
                     msg.userInfo.userName,
                     subInfo.displayName,
