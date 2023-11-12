@@ -94,11 +94,13 @@ export function triggerSubGift(
 
 export function triggerSubGiftUpgrade(
     gifteeDisplayName: string,
+    gifteeUserId: string,
     gifterDisplayName: string,
     subPlan: string
 ): void {
     eventManager.triggerEvent("twitch", "gift-sub-upgraded", {
         username: gifteeDisplayName,
+        userId: gifteeUserId,
         gifterUsername: gifterDisplayName,
         gifteeUsername: gifteeDisplayName,
         subPlan
