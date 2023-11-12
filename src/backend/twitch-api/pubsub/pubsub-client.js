@@ -112,6 +112,7 @@ async function createClient() {
         const bitsListener = pubSubClient.onBits(streamer.userId, (message) => {
             twitchEventsHandler.cheer.triggerCheer(
                 message.userName ?? "An Anonymous Cheerer",
+                message.userId,
                 message.isAnonymous,
                 message.bits,
                 message.totalBits,
