@@ -171,8 +171,9 @@ exports.setupChatListeners = (streamerChatClient) => {
         );
     });
 
-    streamerChatClient.onPrimePaidUpgrade((_channel, _user, subInfo) => {
+    streamerChatClient.onPrimePaidUpgrade((_channel, _user, subInfo, msg) => {
         twitchEventsHandler.sub.triggerPrimeUpgrade(
+            msg.userInfo.userName,
             subInfo.displayName,
             subInfo.userId,
             subInfo.plan
