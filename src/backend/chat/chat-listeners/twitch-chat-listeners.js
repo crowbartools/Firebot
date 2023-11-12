@@ -161,8 +161,9 @@ exports.setupChatListeners = (streamerChatClient) => {
         );
     });
 
-    streamerChatClient.onGiftPaidUpgrade((_channel, _user, subInfo) => {
+    streamerChatClient.onGiftPaidUpgrade((_channel, _user, subInfo, msg) => {
         twitchEventsHandler.giftSub.triggerSubGiftUpgrade(
+            msg.userInfo.userName,
             subInfo.displayName,
             subInfo.userId,
             subInfo.gifterDisplayName,
