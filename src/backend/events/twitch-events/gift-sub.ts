@@ -27,6 +27,8 @@ export function triggerCommunitySubGift(
 
 export function triggerSubGift(
     gifterDisplayName: string,
+    gifterUserName: string,
+    gifterUserId: string,
     isAnonymous: boolean,
     gifteeDisplayName: string,
     subPlan: string,
@@ -53,6 +55,8 @@ export function triggerSubGift(
                     } else {
                         eventManager.triggerEvent("twitch", "community-subs-gifted", {
                             username: gifterDisplayName,
+                            userIdName: gifterUserName,
+                            userId: gifterUserId,
                             subCount: giftReceivers.length,
                             subPlan,
                             isAnonymous,
@@ -76,6 +80,8 @@ export function triggerSubGift(
 
     eventManager.triggerEvent("twitch", "subs-gifted", {
         username: gifterDisplayName,
+        userIdName: gifterUserName,
+        userId: gifterUserId,
         giftSubMonths,
         gifteeUsername: gifteeDisplayName,
         gifterUsername: gifterDisplayName,
