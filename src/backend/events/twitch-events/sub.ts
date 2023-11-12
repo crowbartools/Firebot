@@ -26,10 +26,12 @@ export function triggerSub(
 
 export function triggerPrimeUpgrade(
     userDisplayName: string,
+    userId: string,
     subPlan: string
  ): void {
     eventManager.triggerEvent("twitch", "prime-sub-upgraded", {
         username: userDisplayName,
+        userId,
         subPlan
     });
 };

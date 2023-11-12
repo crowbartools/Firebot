@@ -155,6 +155,7 @@ exports.setupChatListeners = (streamerChatClient) => {
     streamerChatClient.onPrimePaidUpgrade((_channel, _user, subInfo) => {
         twitchEventsHandler.sub.triggerPrimeUpgrade(
             subInfo.displayName,
+            subInfo.userId,
             subInfo.plan
         );
     });
