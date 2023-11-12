@@ -133,6 +133,7 @@ async function createClient() {
             if (!subInfo.isGift) {
                 twitchEventsHandler.sub.triggerSub(
                     subInfo.userName,
+                    subInfo.userId,
                     subInfo.userDisplayName,
                     subInfo.subPlan,
                     subInfo.cumulativeMonths || 1,
