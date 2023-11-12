@@ -180,8 +180,10 @@ exports.setupChatListeners = (streamerChatClient) => {
         );
     });
 
-    streamerChatClient.onRaid((_channel, _username, raidInfo) => {
+    streamerChatClient.onRaid((_channel, _username, raidInfo, msg) => {
         twitchEventsHandler.raid.triggerRaid(
+            msg.userInfo.userName,
+            msg.userInfo.userId,
             raidInfo.displayName,
             raidInfo.viewerCount
         );
