@@ -37,6 +37,7 @@ exports.setupChatListeners = (streamerChatClient) => {
 
         twitchEventsHandler.announcement.triggerAnnouncement(
             firebotChatMessage.useridname,
+            firebotChatMessage.userId,
             firebotChatMessage.username,
             firebotChatMessage.roles,
             firebotChatMessage.rawText
