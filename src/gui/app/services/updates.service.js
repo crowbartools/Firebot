@@ -35,6 +35,8 @@
                 return service.hasCheckedForUpdates ? (service.updateData?.updateIsAvailable || service.majorUpdate != null) : false;
             };
 
+            service.updateIsDownloaded = false;
+
             function shouldAutoUpdate(autoUpdateLevel, updateType) {
                 // if auto updating is completely disabled
                 if (autoUpdateLevel === 0) {

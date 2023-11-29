@@ -511,6 +511,7 @@
                             () => {
                                 // the autoupdater has downloaded the update
                                 $scope.downloadComplete = true;
+                                updatesService.updateIsDownloaded = true;
                             }
                         );
 

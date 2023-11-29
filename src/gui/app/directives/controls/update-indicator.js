@@ -22,7 +22,7 @@
                 ctrl.tooltip = "<b>Firebot Update Ready:</b> Update will be installed next time you close/reopen Firebot.";
 
                 ctrl.updateIsAvailable = () => {
-                    return updatesService.updateIsAvailable();
+                    return updatesService.updateIsDownloaded;
                 };
             }
         });
