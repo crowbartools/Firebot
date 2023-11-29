@@ -482,7 +482,8 @@
                         $scope,
                         $uibModalInstance,
                         $timeout,
-                        listenerService
+                        listenerService,
+                        updatesService
                     ) => {
                         $scope.downloadHasError = false;
                         $scope.errorMessage = "";
@@ -508,8 +509,22 @@
                         listenerService.registerListener(
                             updateDownloadedListenerRequest,
                             () => {
-                                // the autoupdater has downloaded the update and restart shortly
+                                // the autoupdater has downloaded the update
                                 $scope.downloadComplete = true;
+                            }
+                        );
+
+                        // Install update listener
+                        const installUpdateListenerRequest = {
+                            type: listenerService.ListenerType.INSTALLING_UPDATE,
+                            runOnce: true
+                        };
+                        listenerService.registerListener(
+                            installUpdateListenerRequest,
+                            () => {
+                                // the autoupdater is installing the update
+                                $scope.downloadComplete = true;
+                                $scope.installing = true;
                             }
                         );
 
@@ -523,6 +538,10 @@
                   "Download is taking longer than normal. There may have been an error. You can keep waiting or close this and try again later.";
                             }
                         }, 180 * 1000);
+
+                        $scope.installUpdate = function() {
+                            updatesService.installUpdate();
+                        };
 
                         $scope.dismiss = function() {
                             $uibModalInstance.dismiss("cancel");

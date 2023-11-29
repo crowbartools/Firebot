@@ -364,9 +364,8 @@
               justify-content: center;
             "
           >
-            <notification-center
-              style="margin-left: auto"
-            ></notification-center>
+            <update-indicator style="margin-left: auto"></update-indicator>
+            <notification-center></notification-center>
             <div
               class="logins-wrapper noselect"
               uib-dropdown
@@ -684,20 +683,22 @@
     <!-- Download Modal -->
     <script type="text/ng-template" id="downloadModal.html">
       <div class="modal-header">
-        <h4 class="modal-title"></h4>
+        <h2 ng-if="!installing">{{downloadComplete ? 'Download complete!' : 'Downloading update...'}}</h2>
+        <h2 ng-if="installing">Installing update...</h2>
       </div>
       <div class="modal-body" style="text-align:center;">
-        <h1>{{downloadComplete ? 'Download complete!' : 'Downloading update...'}}</h1>
-        <h3 ng-if="downloadComplete" style="color:darkgray;">Firebot will restart shortly and install the update...</h3>
-        <div style="overflow: hidden;">
+        <div ng-if="(!downloadComplete && !downloadHasError) || installing" style="overflow: hidden;">
           <div class="loader">Loading...</div>
         </div>
+        <p ng-if="downloadComplete && !installing" style="color:darkgray;">Firebot has downloaded an update. Would you like to install it now, or when you exit?</p>
         <p ng-if="downloadHasError" style="color:red;">
           {{errorMessage}}
         </p>
-        <button ng-if="downloadHasError" class="btn btn-primary" ng-click="dismiss()">Close</button>
       </div>
       <div class="modal-footer">
+        <button ng-if="downloadHasError" class="btn btn-primary" ng-click="dismiss()">Close</button>
+        <button ng-if="!downloadHasError && downloadComplete && !installing" class="btn btn-primary" ng-click="installUpdate()">Install Now</button>
+        <button ng-if="!downloadHasError && downloadComplete && !installing" class="btn btn-default" ng-click="dismiss()">Install On Exit</button>
       </div>
     </script>
 
