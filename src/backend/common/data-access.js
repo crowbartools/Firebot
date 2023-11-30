@@ -4,7 +4,11 @@ const electron = require("electron");
 const path = require("path");
 const fs = require("fs-extra");
 const { JsonDB } = require("node-json-db");
-const app = (electron.app || electron.remote.app);
+
+let app = electron.app;
+if (app == null && firebotAppDetails != null) {
+    app = firebotAppDetails;
+}
 const isDev = !app.isPackaged;
 
 // This is the path to folder the app is currently living in. IE: C:\Users\<user>\AppData\Local\Firebot\app-4.0.0\
@@ -20,7 +24,7 @@ const getWorkingDirectoryPath = function() {
 // app.getPath('userData') will return a string of the user's app data directory path.
 // This is the path to the user data folder. IE: C:\Users\<user>\AppData\Roaming\Firebot\
 // This stays the same after every update.
-const appDataPath = (electron.app || electron.remote.app).getPath("appData");
+const appDataPath = app.getPath("appData");
 
 const rootUserDataPath = appDataPath + path.sep + "Firebot";
 const userDataPath = rootUserDataPath + path.sep + "v5";

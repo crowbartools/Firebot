@@ -195,6 +195,7 @@ function typeString(string) {
     if (string == null || string.length < 1) {
         return;
     }
+    logger.info(`nut-js: Attempting to type string "${string}"`);
 
     logger.info(`nut-js: Attempting to type string "${string}"`);
 

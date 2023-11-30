@@ -1,11 +1,10 @@
 {
   "name": "firebotv5",
-  "version": "5.57.0",
+  "version": "5.58.0-beta-1.0.0",
   "description": "Powerful all-in-one bot for Twitch streamers.",
   "main": "build/main.js",
   "scripts": {
     "start": "grunt prep && electron . --dev",
-    "rebuild:new": "npm rebuild --runtime=electron --target=12.2.2 --disturl=https://artifacts.electronjs.org/headers/dist --abi=87",
     "setup": "npm ci && npm rebuild",
     "build": "grunt build",
     "lint": "grunt lint"
@@ -27,8 +26,8 @@
     "@typescript-eslint/eslint-plugin": "^5.32.0",
     "@typescript-eslint/parser": "^5.32.0",
     "copyfiles": "^2.4.1",
-    "electron": "^12.2.2",
-    "electron-packager": "^12.2.0",
+    "electron": "^27.1.2",
+    "electron-packager": "^17.1.1",
     "electron-rebuild": "^1.8.6",
     "eslint": "^8.4.1",
     "eslint-plugin-angular": "^4.0.1",
@@ -40,7 +39,6 @@
     "grunt-sass": "^3.1.0",
     "grunt-shell": "^3.0.1",
     "husky": "^0.14.3",
-    "node-gyp": "^8.4.1",
     "rimraf": "^3.0.2",
     "sass": "^1.58.3",
     "typescript": "^4.7.2"
@@ -49,10 +47,10 @@
     "@aws-sdk/client-polly": "^3.26.0",
     "@crowbartools/firebot-custom-scripts-types": "^5.53.2-6",
     "@nut-tree/nut-js": "^3.1.1",
-    "@twurple/api": "^6.0.6",
-    "@twurple/auth": "^6.0.6",
-    "@twurple/chat": "^6.0.6",
-    "@twurple/pubsub": "^6.0.6",
+    "@twurple/api": "^6.0.9",
+    "@twurple/auth": "^6.0.9",
+    "@twurple/chat": "^6.0.9",
+    "@twurple/pubsub": "^6.0.9",
     "@zunderscore/elgato-light-control": "^1.1.2",
     "angular": "^1.8.0",
     "angular-animate": "^1.7.8",
@@ -141,7 +139,7 @@
     "electron-installer-dmg": "github:SReject/electron-installer-dmg#9bdb5217b078c724918271549f34d362aecbf6bb"
   },
   "volta": {
-    "node": "14.18.1",
-    "npm": "8.16.0"
+    "node": "18.12.1",
+    "npm": "8.19.2"
   }
 }

@@ -1,9 +1,7 @@
 "use strict";
 (function() {
-
-    const electron = require("electron");
     const moment = require("moment");
-    moment.locale(electron.remote.app.getLocale());
+    moment.locale(firebotAppDetails.locale);
 
     angular
         .module("firebotApp")

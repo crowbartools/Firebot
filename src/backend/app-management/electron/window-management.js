@@ -1,7 +1,7 @@
 "use strict";
 
 const electron = require("electron");
-const { BrowserWindow, BrowserView, Menu, shell, dialog } = electron;
+const { ipcMain, BrowserWindow, BrowserView, Menu, shell, dialog } = electron;
 const path = require("path");
 const url = require("url");
 const windowStateKeeper = require("electron-window-state");
@@ -9,6 +9,8 @@ const fileOpenHelpers = require("../file-open-helpers");
 const createTray = require('./tray-creation.js');
 const logger = require("../../logwrapper");
 const { setupTitlebar, attachTitlebarToWindow } = require("custom-electron-titlebar/main");
+const screenHelpers = require("./screen-helpers");
+const frontendCommunicator = require("../../common/frontend-communicator");
 
 setupTitlebar();
 
@@ -26,11 +28,18 @@ exports.mainWindow = null;
  */
 let splashscreenWindow;
 
-
 function createMainWindow() {
     const mainWindowState = windowStateKeeper({
         defaultWidth: 1280,
         defaultHeight: 720
+    });
+
+    ipcMain.on('preload.openDevTools', (event) => {
+        if (exports.mainWindow != null) {
+            exports.mainWindow.webContents.openDevTools();
+            event.returnValue = true;
+        }
+        event.returnValue = false;
     });
 
     // Create the browser window.
@@ -52,7 +61,9 @@ function createMainWindow() {
             backgroundThrottling: false,
             contextIsolation: false,
             worldSafeExecuteJavaScript: false,
-            enableRemoteModule: true
+            enableRemoteModule: true,
+            sandbox: false,
+            preload: path.join(__dirname, './preload.js')
         }
     });
 
@@ -80,7 +91,6 @@ function createMainWindow() {
     exports.mainWindow = mainWindow;
     global.renderWindow = mainWindow;
 
-    const frontendCommunicator = require("../../common/frontend-communicator");
     const profileManager = require("../../common/profile-manager");
     const dataAccess = require("../../common/data-access");
     const menuTemplate = [
@@ -297,9 +307,13 @@ function createMainWindow() {
     // wait for the main window's content to load, then show it
     mainWindow.webContents.on("did-finish-load", () => {
 
+
         createTray(mainWindow);
 
+        // mainWindow.webContents.openDevTools();
         mainWindow.show();
+
+        // mainWindow.show();
         if (splashscreenWindow) {
             splashscreenWindow.destroy();
         }
@@ -541,6 +555,18 @@ function sendVariableDeleteToInspector(key) {
         key
     });
 }
+
+frontendCommunicator.on("getAllDisplays", () => {
+    return screenHelpers.getAllDisplays();
+});
+
+frontendCommunicator.on("getPrimaryDisplay", () => {
+    return screenHelpers.getPrimaryDisplay();
+});
+
+frontendCommunicator.on("takeScreenshot", (displayId) => {
+    return screenHelpers.takeScreenshot(displayId);
+});
 
 exports.createVariableInspectorWindow = createVariableInspectorWindow;
 exports.sendVariableCreateToInspector = sendVariableCreateToInspector;

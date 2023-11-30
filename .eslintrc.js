@@ -20,7 +20,8 @@ module.exports = {
     // Project specific globals
     "globals": {
         "renderWindow": true,
-        "$": true
+        "$": true,
+        "firebotAppDetails": true
     },
 
     "rules": {
