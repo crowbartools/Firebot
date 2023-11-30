@@ -140,7 +140,7 @@ jobs:
           generate_release_notes: false
           files: |
             ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-setup.exe
-            ./bundles/Windows/firebot-v${{ needs.checkversion.outputs.version }}-full.nupkg
+            ./bundles/Windows/firebot-${{ needs.checkversion.outputs.version }}-full.nupkg
             ./bundles/Windows/RELEASES
             ./bundles/Linux/firebot-v${{ needs.checkversion.outputs.version }}-linux-x64.tar.gz
             ./bundles/macOS/firebot-v${{ needs.checkversion.outputs.version }}-macos-x64.dmg

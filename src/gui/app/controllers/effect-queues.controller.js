@@ -41,6 +41,12 @@
                     icon: "fa-clock",
                     cellTemplate: `{{(data.mode === 'interval' || data.mode === 'auto') ? (data.interval || 0) + 's' : 'n/a'}}`,
                     cellController: () => {}
+                },
+                {
+                    name: "QUEUE LENGTH",
+                    icon: "fa-tally",
+                    cellTemplate: `{{data.length || 0}}`,
+                    cellController: () => {}
                 }
             ];
 
@@ -50,6 +56,18 @@
                         html: `<a href ><i class="far fa-pen mr-4"></i> Edit</a>`,
                         click: function () {
                             effectQueuesService.showAddEditEffectQueueModal(item.id);
+                        }
+                    },
+                    {
+                        html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> Toggle Enabled</a>`,
+                        click: function () {
+                            effectQueuesService.toggleEffectQueue(item);
+                        }
+                    },
+                    {
+                        html: `<a href ><i class="fad fa-minus-circle mr-4"></i> Clear Queue</a>`,
+                        click: function () {
+                            effectQueuesService.clearEffectQueue(item.id);
                         }
                     },
                     {

@@ -22,7 +22,7 @@ const steam = {
             outputTemplate: {
                 type: "string",
                 title: "Output Template",
-                tip: "Variables: {gameName}, {price}, {releaseDate}, {metaCriticScore}, {steamUrl}",
+                tip: "Variables: {gameName}, {price}, {releaseDate}, {metaCriticScore}, {steamUrl}, {steamShortDescription}",
                 default: `{gameName} (Price: {price} - Released: {releaseDate} - Metacritic: {metaCriticScore}) {steamUrl}`,
                 useTextArea: true
             }
@@ -49,7 +49,8 @@ const steam = {
                     .replace("{price}", gameDetails.price || "Unknown")
                     .replace("{releaseDate}", gameDetails.releaseDate || "Unknown")
                     .replace("{metaCriticScore}", gameDetails.score || "Unknown")
-                    .replace("{steamUrl}", gameDetails.url);
+                    .replace("{steamUrl}", gameDetails.url)
+                    .replace("{steamShortDescription}", gameDetails.shortDescription || "Unknown");
             }
         }
 

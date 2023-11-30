@@ -1,6 +1,7 @@
 "use strict";
 
 const fs = require("fs-extra");
+const path = require("path");
 const logger = require("../../logwrapper");
 
 function doesTextExistInFile(filepath, text) {
@@ -75,6 +76,7 @@ exports.run = async effect => {
                     fs.appendFileSync(effect.filepath, text + "\n", "utf8");
                 }
             } else {
+                fs.ensureDirSync(path.dirname(effect.filepath));
                 fs.appendFileSync(effect.filepath, text + "\n", "utf8");
             }
         } else if (effect.writeMode === "delete") {

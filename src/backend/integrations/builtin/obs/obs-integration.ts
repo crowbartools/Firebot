@@ -32,6 +32,7 @@ import { SceneNameVariable } from "./variables/scene-name-variable";
 import { SceneCollectionNameVariable } from "./variables/scene-collection-name-variable";
 import { IsStreamingVariable } from "./variables/is-streaming";
 import { IsRecordingVariable } from "./variables/is-recording";
+import { ColorValueVariable } from "./variables/obs-color-value";
 import { setupFrontendListeners } from "./communicator";
 import effectManager from "../../../effects/effectManager";
 import eventFilterManager from "../../../events/filters/filter-manager";
@@ -117,6 +118,7 @@ class ObsIntegration
     replaceVariableManager.registerReplaceVariable(SceneCollectionNameVariable);
     replaceVariableManager.registerReplaceVariable(IsStreamingVariable);
     replaceVariableManager.registerReplaceVariable(IsRecordingVariable);
+    replaceVariableManager.registerReplaceVariable(ColorValueVariable);
 
     this.setupConnection(integrationData.userSettings);
   }

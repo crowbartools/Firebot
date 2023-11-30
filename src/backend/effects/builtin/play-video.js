@@ -10,6 +10,9 @@ const accountAccess = require("../../common/account-access");
 const util = require("../../utility");
 const fs = require('fs-extra');
 const path = require("path");
+const frontendCommunicator = require('../../common/frontend-communicator');
+const { wait } = require("../../utility");
+const { parseYoutubeId } = require("../../../shared/youtube-url-parser");
 
 /**
  * The Play Video effect
@@ -366,7 +369,7 @@ const playVideo = {
             /**@type {import('@twurple/api').HelixClip} */
             let clip;
             if (effect.videoType === "Twitch Clip") {
-                clipId = effect.twitchClipUrl.replace("https://clips.twitch.tv/", "");
+                clipId = effect.twitchClipUrl.split("/").pop();
                 try {
                     clip = await client.clips.getClipById(clipId);
                 } catch (error) {
@@ -439,54 +442,40 @@ const playVideo = {
         }
 
         let resourceToken;
+        let duration;
         if (effect.videoType === "YouTube Video") {
-            resourceToken = resourceTokenManager.storeResourcePath(data.filepath, effect.length);
-        } else {
-            const durationToken = resourceTokenManager.storeResourcePath(data.filepath, 5);
-
-            const durationPromise = new Promise(async (resolve, reject) => {
-                const listener = (event) => {
-                    try {
-                        if (event.name === "video-duration" && event.data.resourceToken === durationToken) {
-                            webServer.removeListener("overlay-event", listener);
-                            resolve(event.data.duration);
-                        }
-                    } catch (err) {
-                        logger.error("Error while trying to process overlay-event for getVideoDuration: ", err);
-                        reject(err);
-                    }
-                };
-                webServer.on("overlay-event", listener);
-            });
-
-            webServer.sendToOverlay("getVideoDuration", {
-                resourceToken: durationToken,
-                overlayInstance: data.overlayInstance
-            });
-
-            const duration = await durationPromise;
-            resourceToken = resourceTokenManager.storeResourcePath(data.filepath, duration + 5);
-            logger.info(`Retrieved duration for video: ${duration}`);
+            const youtubeData = parseYoutubeId(data.youtubeId);
+            data.youtubeId = youtubeData.id;
+            if (data.videoStarttime == null || data.videoStarttime == "" || data.videoStarttime == 0) {
+                data.videoStarttime = youtubeData.startTime;
+            }
         }
-
+        if (effect.videoType === "YouTube Video" && !effect.wait) {
+            logger.debug("Play Video Effect: Proceeding without Youtube Video Duration because wait is false");
+        } else if (effect.videoType === "YouTube Video" && effect.wait) {
+            const result = await frontendCommunicator.fireEventAsync("getYoutubeVideoDuration", data.youtubeId);
+            if (!isNaN(result)) {
+                duration = result;
+            } else {
+                // Error
+                logger.error("Play Video Effect: Unable to retrieve Youtube Video Duration", result);
+                return;
+            }
+        } else if (effect.videoType === "Local Video" || effect.videoType === "Random From Folder") {
+            const result = await frontendCommunicator.fireEventAsync("getVideoDuration", data.filepath);
+            if (!isNaN(result)) {
+                duration = result;
+            }
+            resourceToken = resourceTokenManager.storeResourcePath(data.filepath, duration);
+        }
+        if ((data.videoDuration == null || data.videoDuration == "" || data.videoDuration == 0) && duration != null) {
+            data.videoDuration = duration;
+        }
         data.resourceToken = resourceToken;
 
         webServer.sendToOverlay("video", data);
         if (effect.wait) {
-            await new Promise(async (resolve, reject) => {
-                const listener = (event) => {
-                    try {
-                        if (event.name === "video-end" && event.data.resourceToken === resourceToken) {
-                            webServer.removeListener("overlay-event", listener);
-                            resolve();
-                        }
-                    } catch (err) {
-                        logger.error("Error while trying to process overlay-event for play-video: ", err);
-                        reject(err);
-                    }
-                };
-                webServer.on("overlay-event", listener);
-            });
+            await wait(data.videoDuration * 1000);
         }
         return true;
     },
@@ -544,7 +533,7 @@ const playVideo = {
                 const data = event;
 
                 const videoType = data.videoType;
-                const filepath = data.filepath;
+                const filepath = data.filepath ?? "";
                 let fileExt = filepath.split(".").pop();
                 if (fileExt === "ogv") {
                     fileExt = "ogg";
@@ -637,9 +626,6 @@ const playVideo = {
                         const exitVideo = () => {
                             delete startedVidCache[this.id]; // eslint-disable-line no-undef
                             animateVideoExit(`#${wrapperId}`, exitAnimation, exitDuration, inbetweenAnimation);
-                            setTimeout(function(){
-                                sendWebsocketEvent("video-end", {resourceToken: token}); // eslint-disable-line no-undef
-                            }, millisecondsFromString(exitDuration));
                         };
 
                         // Remove div after X time.
@@ -668,29 +654,6 @@ const playVideo = {
                     const wrappedHtml = getPositionWrappedHTML(wrapperId, positionData, youtubeElement); // eslint-disable-line no-undef
 
                     $(".wrapper").append(wrappedHtml);
-
-                    try {
-                        const url = new URL(youtubeId);
-                        if (url.hostname.includes("www.youtube.com")) {
-                            for (const [key, value] of url.searchParams) {
-                                if (key === "v") {
-                                    youtubeId = value;
-                                } else if (key === "t") {
-                                    videoStarttime = value;
-                                }
-                            }
-                        }
-                        if (url.hostname.includes("youtu.be")) {
-                            youtubeId = url.pathname.replace("/", "");
-                            for (const [key, value] of url.searchParams) {
-                                if (key === "t") {
-                                    videoStarttime = value;
-                                }
-                            }
-                        }
-                    } catch (error) {
-                        //failed to convert url
-                    }
 
                     // Add iframe.
 
@@ -737,9 +700,6 @@ const playVideo = {
                             onStateChange: (event) => {
                                 if (event.data === 0 && !videoDuration) {
                                     animateVideoExit(`#${wrapperId}`, exitAnimation, exitDuration, inbetweenAnimation);
-                                    setTimeout(function(){
-                                        sendWebsocketEvent("video-end", {resourceToken: token}); // eslint-disable-line no-undef
-                                    }, millisecondsFromString(exitDuration));
                                 }
                             }
                         }
@@ -757,9 +717,6 @@ const playVideo = {
                     if (videoDuration) {
                         setTimeout(function () {
                             animateVideoExit(`#${wrapperId}`, exitAnimation, exitDuration, inbetweenAnimation);
-                            setTimeout(function(){
-                                sendWebsocketEvent("video-end", {resourceToken: token}); // eslint-disable-line no-undef
-                            }, millisecondsFromString(exitDuration));
                         }, videoDuration);
                     }
                 }
