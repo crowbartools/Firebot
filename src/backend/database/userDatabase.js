@@ -440,7 +440,9 @@ function createNewUser(userId, username, displayName, profilePicUrl, twitchRoles
                 resolve(null);
             } else {
                 eventManager.triggerEvent("firebot", "viewer-created", {
-                    username: displayName
+                    username: displayName,
+                    userIdName: username,
+                    userId
                 });
                 resolve(user);
             }

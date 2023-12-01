@@ -37,6 +37,7 @@ exports.setupChatListeners = (streamerChatClient) => {
 
         twitchEventsHandler.announcement.triggerAnnouncement(
             firebotChatMessage.useridname,
+            firebotChatMessage.userId,
             firebotChatMessage.username,
             firebotChatMessage.roles,
             firebotChatMessage.rawText
@@ -73,7 +74,7 @@ exports.setupChatListeners = (streamerChatClient) => {
 
         activeUserHandler.addActiveUser(msg.userInfo, true);
 
-        twitchEventsHandler.viewerArrived.triggerViewerArrived(msg.userInfo.displayName, messageText);
+        twitchEventsHandler.viewerArrived.triggerViewerArrived(msg.userInfo.displayName, msg.userInfo.userName, msg.userInfo.userId, messageText);
 
         const { streamer, bot } = accountAccess.getAccounts();
         if (user !== streamer.username && user !== bot.username) {
@@ -99,7 +100,7 @@ exports.setupChatListeners = (streamerChatClient) => {
 
         twitchEventsHandler.chatMessage.triggerChatMessage(firebotChatMessage);
 
-        twitchEventsHandler.viewerArrived.triggerViewerArrived(msg.userInfo.displayName, messageText);
+        twitchEventsHandler.viewerArrived.triggerViewerArrived(msg.userInfo.displayName, msg.userInfo.userName, msg.userInfo.userId, messageText);
     });
 
     streamerChatClient.onMessageRemove((_channel, messageId) => {
@@ -107,6 +108,24 @@ exports.setupChatListeners = (streamerChatClient) => {
     });
 
     streamerChatClient.onResub(async (_channel, _user, subInfo, msg) => {
+        try {
+            if (subInfo.originalGiftInfo != null) {
+                twitchEventsHandler.sub.triggerSub(
+                    msg.userInfo.userName,
+                    subInfo.userId,
+                    subInfo.displayName,
+                    subInfo.plan,
+                    subInfo.months || 1,
+                    subInfo.message ?? "",
+                    subInfo.streak || 1,
+                    false,
+                    true
+                );
+            }
+        } catch (error) {
+            logger.error("Failed to parse resub message (multi-month gifted sub)", error);
+        }
+
         try {
             if (subInfo.message != null && subInfo.message.length > 0) {
                 const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, subInfo.message);
@@ -131,6 +150,8 @@ exports.setupChatListeners = (streamerChatClient) => {
     streamerChatClient.onSubGift((_channel, _user, subInfo) => {
         twitchEventsHandler.giftSub.triggerSubGift(
             subInfo.gifterDisplayName ?? "An Anonymous Gifter",
+            subInfo.gifter,
+            subInfo.gifterUserId,
             !subInfo.gifterUserId,
             subInfo.displayName,
             subInfo.plan,
@@ -140,23 +161,29 @@ exports.setupChatListeners = (streamerChatClient) => {
         );
     });
 
-    streamerChatClient.onGiftPaidUpgrade((_channel, _user, subInfo) => {
+    streamerChatClient.onGiftPaidUpgrade((_channel, _user, subInfo, msg) => {
         twitchEventsHandler.giftSub.triggerSubGiftUpgrade(
+            msg.userInfo.userName,
             subInfo.displayName,
+            subInfo.userId,
             subInfo.gifterDisplayName,
             subInfo.plan
         );
     });
 
-    streamerChatClient.onPrimePaidUpgrade((_channel, _user, subInfo) => {
+    streamerChatClient.onPrimePaidUpgrade((_channel, _user, subInfo, msg) => {
         twitchEventsHandler.sub.triggerPrimeUpgrade(
+            msg.userInfo.userName,
             subInfo.displayName,
+            subInfo.userId,
             subInfo.plan
         );
     });
 
-    streamerChatClient.onRaid((_channel, _username, raidInfo) => {
+    streamerChatClient.onRaid((_channel, _username, raidInfo, msg) => {
         twitchEventsHandler.raid.triggerRaid(
+            msg.userInfo.userName,
+            msg.userInfo.userId,
             raidInfo.displayName,
             raidInfo.viewerCount
         );
