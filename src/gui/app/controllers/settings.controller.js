@@ -190,8 +190,7 @@
             };
 
             $scope.openDevTools = () => {
-                require("electron").remote.BrowserWindow
-                    .getFocusedWindow().webContents.openDevTools();
+                firebotAppDetails.openDevTools();
             };
 
             $scope.recalculateQuoteIds = () => {

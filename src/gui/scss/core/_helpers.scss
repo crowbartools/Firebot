@@ -89,7 +89,7 @@ font-weight: 900;
   } @else if ($size == "px") {
       @return 1px;
   } @else {
-      @return $size / 4 + rem;
+      @return calc($size / 4) + rem;
   }
 }
 

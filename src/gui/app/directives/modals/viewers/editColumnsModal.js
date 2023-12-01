@@ -14,12 +14,12 @@
                   <div style="display: flex;align-items: center;justify-content: space-between;margin-bottom:5px;">
                       <span style="font-weight: 900;">{{column.headerName}}</span>
                       <span>
-                          <input class="tgl tgl-light sr-only" id="{{column.field}}" type="checkbox" 
-                            ng-checked="$ctrl.columnIsChecked(column)" 
+                          <input class="tgl tgl-light sr-only" id="{{column.field}}" type="checkbox"
+                            ng-checked="$ctrl.columnIsChecked(column)"
                             ng-click="$ctrl.flipColumnPreference(column)"/>
                         <label class="tgl-btn" for="{{column.field}}"></label>
                       </span>
-                  </div>                   
+                  </div>
                 </div>
               </div>
             </div>
@@ -54,7 +54,7 @@
             $ctrl.$onInit = function() {
                 $ctrl.userColumnPrefs = $ctrl.resolve.columnPrefs;
 
-                $ctrl.version = electron.remote.app.getVersion();
+                $ctrl.version = firebotAppDetails.version;
             };
 
             $ctrl.save = function() {

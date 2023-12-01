@@ -64,8 +64,7 @@ jobs:
     if: needs.checkversion.outputs.dobuild == 1
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest]
-        # os: [windows-latest, ubuntu-latest, macos-latest]
+        os: [windows-latest, ubuntu-latest, macos-latest]
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -75,45 +74,32 @@ jobs:
       - name: Setup Nodejs
         uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          node-version: '18.12.1'
 
       - name: Install correct npm version
-        run: npm install -g npm@8.16.0
+        run: npm install -g npm@8.19.2
 
-      - name: Windows Build Prep
-        if: runner.os == 'windows'
-        shell: bash
-        run: |
-          npm config set msvs_version 2022
-          npm install --global --production --omit=dev windows-build-tools@4.0.0
+      # - name: Windows Build Prep
+      #   if: runner.os == 'windows'
+      #   shell: bash
+      #   run: |
+      #     npm config set msvs_version 2022
+      #     npm install --global --production --omit=dev windows-build-tools@4.0.0
 
       - name: Linux Build Prep
         if: runner.os == 'linux'
         run: sudo apt-get install libx11-dev libxtst-dev libpng-dev
 
-      - name: Restore Robotjs from cache
-        id: robotjs-cache
-        uses: actions/cache/restore@v3
-        with:
-          key: ${{ runner.os }}-robotjs
-          path: ./node_modules/robotjs/
+      - name: MacOS Build Prep
+        if: runner.os == 'macOS'
+        # Force install this dep until node-appdmg then electron-installer-dmg gets updated
+        run: npm install github:SReject/electron-installer-dmg#9bdb5217b078c724918271549f34d362aecbf6bb
 
       - name: Install Global Dependencies
-        run: npm install --global --production --omit=dev grunt-cli node-gyp
+        run: npm install --global --production --omit=dev grunt-cli
 
       - name: Install Project Dependencies
         run: npm install
-
-      - name: Rebuild Robotjs for Electron
-        if: steps.robotjs-cache.outputs.cache-hit != 'true'
-        run: npm run rebuild
-
-      - name: Cache Robotjs build
-        if: steps.robotjs-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v3
-        with:
-          key: ${{ runner.os }}-robotjs
-          path: ./node_modules/robotjs/
 
       - name: Decrypt Secrets.gpg
         env:
@@ -157,4 +143,4 @@ jobs:
             ./bundles/Windows/firebot-${{ needs.checkversion.outputs.version }}-full.nupkg
             ./bundles/Windows/RELEASES
             ./bundles/Linux/firebot-v${{ needs.checkversion.outputs.version }}-linux-x64.tar.gz
-          # ./bundles/macOS/firebot-v${{ needs.checkversion.outputs.version }}-macos-x64.dmg
+            ./bundles/macOS/firebot-v${{ needs.checkversion.outputs.version }}-macos-x64.dmg

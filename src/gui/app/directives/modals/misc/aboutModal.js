@@ -70,11 +70,9 @@
             const $ctrl = this;
 
             $ctrl.$onInit = function() {
-                const os = require('os');
-
-                $ctrl.version = electron.remote.app.getVersion();
-                $ctrl.osType = os.type();
-                $ctrl.osVersion = os.release();
+                $ctrl.version = firebotAppDetails.version;
+                $ctrl.osType = firebotAppDetails.os.type;
+                $ctrl.osVersion = firebotAppDetails.os.release;
             };
         }
     });

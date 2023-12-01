@@ -1,13 +1,11 @@
 {
   "name": "firebotv5",
-  "version": "5.58.1",
+  "version": "5.59.0-beta-1.0.0",
   "description": "Powerful all-in-one bot for Twitch streamers.",
   "main": "build/main.js",
   "scripts": {
     "start": "grunt prep && electron . --dev",
-    "rebuild": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=12.2.2 --arch=x64 --dist-url=https://artifacts.electronjs.org/headers/dist --abi=87 --force-process-config",
-    "rebuild:new": "npm rebuild --runtime=electron --target=12.2.2 --disturl=https://artifacts.electronjs.org/headers/dist --abi=87",
-    "setup": "npm ci && npm rebuild && npm run rebuild",
+    "setup": "npm ci && npm rebuild",
     "build": "grunt build",
     "lint": "grunt lint"
   },
@@ -28,8 +26,8 @@
     "@typescript-eslint/eslint-plugin": "^5.32.0",
     "@typescript-eslint/parser": "^5.32.0",
     "copyfiles": "^2.4.1",
-    "electron": "^12.2.2",
-    "electron-packager": "^12.2.0",
+    "electron": "^27.1.2",
+    "electron-packager": "^17.1.1",
     "electron-rebuild": "^1.8.6",
     "eslint": "^8.4.1",
     "eslint-plugin-angular": "^4.0.1",
@@ -41,14 +39,14 @@
     "grunt-sass": "^3.1.0",
     "grunt-shell": "^3.0.1",
     "husky": "^0.14.3",
-    "node-gyp": "^8.4.1",
-    "node-sass": "^4.14.1",
     "rimraf": "^3.0.2",
+    "sass": "^1.58.3",
     "typescript": "^4.7.2"
   },
   "dependencies": {
     "@aws-sdk/client-polly": "^3.26.0",
     "@crowbartools/firebot-custom-scripts-types": "^5.53.2-6",
+    "@nut-tree/nut-js": "^3.1.1",
     "@twurple/api": "^6.0.9",
     "@twurple/auth": "^6.0.9",
     "@twurple/chat": "^6.0.9",
@@ -104,7 +102,6 @@
     "he": "^1.2.0",
     "howler": "https://github.com/ebiggz/howler.js/tarball/master",
     "js-convert-case": "^4.1.1",
-    "kbm-robot": "https://github.com/Skriglitz/kbm-robot/tarball/master",
     "list.js": "^1.5.0",
     "luxon": "^3.1.1",
     "m3u8stream": "^0.2.2",
@@ -125,7 +122,6 @@
     "request": "^2.85.0",
     "request-debug": "^0.2.0",
     "retry-as-promised": "^3.2.0",
-    "robotjs": "^0.6.0",
     "roll": "^1.2.0",
     "sanitize-filename": "^1.6.3",
     "socket.io-client": "^2.3.0",
@@ -143,7 +139,7 @@
     "electron-installer-dmg": "github:SReject/electron-installer-dmg#9bdb5217b078c724918271549f34d362aecbf6bb"
   },
   "volta": {
-    "node": "14.18.1",
-    "npm": "8.16.0"
+    "node": "18.12.1",
+    "npm": "8.19.2"
   }
 }
