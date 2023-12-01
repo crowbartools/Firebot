@@ -196,8 +196,12 @@ exports.setupCommonListeners = () => {
         webServer.sendToOverlay(data.event, data.meta);
     });
 
-    ipcMain.on("downloadUpdate", () => {
+    const updaterOptions = {
+        repo: "crowbartools/firebot",
+        currentVersion: app.getVersion()
+    };
 
+    ipcMain.on("downloadUpdate", () => {
         const GhReleases = require("electron-gh-releases");
 
         //back up first
@@ -206,12 +210,7 @@ exports.setupCommonListeners = () => {
         }
 
         // Download Update
-        const options = {
-            repo: "crowbartools/firebot",
-            currentVersion: app.getVersion()
-        };
-
-        const updater = new GhReleases(options);
+        const updater = new GhReleases(updaterOptions);
 
         updater.check(err => {
             // Download the update
@@ -224,21 +223,28 @@ exports.setupCommonListeners = () => {
 
         // When an update has been downloaded
         updater.on("update-downloaded", () => {
-            logger.info("Updated downloaded. Installing...");
+            logger.info("Updated downloaded.");
             //let the front end know and wait a few secs.
             renderWindow.webContents.send("updateDownloaded");
 
-            setTimeout(function() {
-                // Restart the app and install the update
-                settings.setJustUpdated(true);
-
-                updater.install();
-            }, 3 * 1000);
+            // Prepare for update install on next run
+            settings.setJustUpdated(true);
         });
+    });
+
+    ipcMain.on("installUpdate", () => {
+        logger.info("Installing update...");
+        renderWindow.webContents.send("installingUpdate");
+
+        const GhReleases = require("electron-gh-releases");
+
+        // Download Update
+        const updater = new GhReleases(updaterOptions);
+
+        updater.install();
 
         // Access electrons autoUpdater
         // eslint-disable-next-line no-unused-expressions
         updater.autoUpdater;
     });
 };
-
