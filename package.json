@@ -139,7 +139,7 @@
     "electron-installer-dmg": "github:SReject/electron-installer-dmg#9bdb5217b078c724918271549f34d362aecbf6bb"
   },
   "volta": {
-    "node": "18.12.1",
-    "npm": "8.19.2"
+    "node": "18.17.1",
+    "npm": "10.2.4"
   }
 }

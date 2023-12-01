@@ -74,17 +74,10 @@ jobs:
       - name: Setup Nodejs
         uses: actions/setup-node@v3
         with:
-          node-version: '18.12.1'
+          node-version: '18.17.1'
 
       - name: Install correct npm version
-        run: npm install -g npm@8.19.2
-
-      # - name: Windows Build Prep
-      #   if: runner.os == 'windows'
-      #   shell: bash
-      #   run: |
-      #     npm config set msvs_version 2022
-      #     npm install --global --production --omit=dev windows-build-tools@4.0.0
+        run: npm install -g npm@10.2.4
 
       - name: Linux Build Prep
         if: runner.os == 'linux'
