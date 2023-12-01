@@ -19,6 +19,10 @@ const model = {
     },
     evaluator: async (trigger, username) => {
         if (username == null) {
+            const userId = trigger.metadata.userid ?? trigger.metadata.userId;
+            if (userId != null) {
+                return userId;
+            }
             username = trigger.metadata.username;
             if (username == null) {
                 return "[No username available]";

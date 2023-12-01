@@ -29,6 +29,12 @@ exports.execute = function(command, userCommand, firebotChatMessage, manual = fa
         },
         effects: effects
     };
+
+    if (firebotChatMessage != null) {
+        processEffectsRequest.trigger.metadata.userId = firebotChatMessage.userId;
+        processEffectsRequest.trigger.metadata.userIdName = firebotChatMessage.useridname;
+    }
+
     return effectRunner.processEffects(processEffectsRequest).catch(reason => {
         console.log("error when running effects: " + reason);
     });
