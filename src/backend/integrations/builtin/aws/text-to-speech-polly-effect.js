@@ -515,30 +515,36 @@ const playSound = {
             effect.text = effect.text.replace("&", "&amp;");
         }
 
-        let listLexiconsResponse = null;
-        let lexicons = [];
-        let lexiconError;
-
-        do {
-            try {
-                const listLexiconsCommand = new ListLexiconsCommand({
-                    NextToken: listLexiconsResponse ? listLexiconsResponse.NextToken : undefined
-                });
-                listLexiconsResponse = await polly.send(listLexiconsCommand);
-                listLexiconsResponse.Lexicons.forEach(lexicon => lexicons.push(lexicon.Name));
-            } catch (e) {
-                lexicons = [];
-                lexiconError = e;
-                listLexiconsResponse = null;
-                break;
-            }
-        } while (listLexiconsResponse && listLexiconsResponse.NextToken);
-
-        if (lexiconError) {
-            logger.error("Error while trying to fetch lexicons before speech synthesis, proceeding without lexicons.");
+        if (effect.lexicons == null) {
             effect.lexicons = [];
-        } else {
-            effect.lexicons = effect.lexicons.filter(lexicon => lexicons.includes(lexicon));
+        }
+
+        if (effect.lexicons.length !== 0) {
+            let listLexiconsResponse = null;
+            let lexicons = [];
+            let lexiconError;
+
+            do {
+                try {
+                    const listLexiconsCommand = new ListLexiconsCommand({
+                        NextToken: listLexiconsResponse ? listLexiconsResponse.NextToken : undefined
+                    });
+                    listLexiconsResponse = await polly.send(listLexiconsCommand);
+                    listLexiconsResponse.Lexicons.forEach(lexicon => lexicons.push(lexicon.Name));
+                } catch (e) {
+                    lexicons = [];
+                    lexiconError = e;
+                    listLexiconsResponse = null;
+                    break;
+                }
+            } while (listLexiconsResponse && listLexiconsResponse.NextToken);
+
+            if (lexiconError) {
+                logger.error("Error while trying to fetch lexicons before speech synthesis, proceeding without lexicons.");
+                effect.lexicons = [];
+            } else {
+                effect.lexicons = effect.lexicons.filter(lexicon => lexicons.includes(lexicon));
+            }
         }
 
         const synthSpeechCommand = new SynthesizeSpeechCommand({

@@ -1,9 +1,6 @@
 'use strict';
 
 (function() {
-
-    const electron = require('electron');
-
     angular
         .module('firebotApp')
         .component("dateModal", {
@@ -14,7 +11,7 @@
             </div>
             <div class="modal-body">
                 <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;margin-top: 15px;">
-                    <div style="width: 95%; position: relative;">        
+                    <div style="width: 95%; position: relative;">
                         <div class="form-group" ng-class="{'has-error': $ctrl.hasValidationError}">
                             <div class="input-group">
                                 <input type="text" class="form-control" uib-datepicker-popup="{{$ctrl.dateFormat}}" ng-model="$ctrl.model" is-open="$ctrl.datePickerOpen" datepicker-options="$ctrl.dateOptions" ng-required="true" show-button-bar="false" placeholder="{{$ctrl.inputPlaceholder}}" aria-describedby="helpBlock"/>
@@ -40,7 +37,7 @@
             controller: function() {
                 const $ctrl = this;
 
-                const isUSLocale = electron.remote.app.getLocale() === "en-US";
+                const isUSLocale = firebotAppDetails.locale === "en-US";
                 $ctrl.dateFormat = isUSLocale ? "MM/dd/yyyy" : "dd/MM/yyyy";
 
                 $ctrl.model = "";

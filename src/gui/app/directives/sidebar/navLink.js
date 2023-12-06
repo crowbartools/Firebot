@@ -19,7 +19,7 @@
                     </span>
                     </div>
                     <div class="nav-link-title" ng-class="{'contracted': !$ctrl.sbm.navExpanded}">{{$ctrl.name}}</div>
-                    <div ng-show="$ctrl.hasBadge" class="nav-update-badge" ng-class="{'contracted': !$ctrl.sbm.navExpanded}">
+                    <div ng-show="$ctrl.hasBadge()" class="nav-update-badge" ng-class="{'contracted': !$ctrl.sbm.navExpanded}">
                         <span class="label label-danger">{{$ctrl.badgeText}}</span>
                     </div>
                 </a>
@@ -31,10 +31,13 @@
             ctrl.sbm = sidebarManager;
 
             ctrl.$onInit = function() {
-                ctrl.hasBadge = ctrl.badgeText != null && ctrl.badgeText !== "";
                 ctrl.href = ctrl.isIndex
                     ? "#"
                     : "#!" + ctrl.page.toLowerCase().replace(/\W/g, "-");
+            };
+
+            ctrl.hasBadge = function () {
+                return ctrl.badgeText != null && ctrl.badgeText !== "";
             };
 
             ctrl.getClass = function() {

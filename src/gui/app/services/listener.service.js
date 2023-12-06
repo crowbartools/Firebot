@@ -20,6 +20,7 @@
             error: {},
             updateError: {},
             updateDownloaded: {},
+            installingUpdate: {},
             showEvents: {},
             playSound: {},
             showImage: {},
@@ -61,6 +62,7 @@
             ERROR: "error",
             UPDATE_ERROR: "updateError",
             UPDATE_DOWNLOADED: "updateDownloaded",
+            INSTALLING_UPDATE: "installingUpdate",
             API_BUTTON: "apiButton",
             SHOW_EVENTS: "showEvents",
             PLAY_SOUND: "playSound",
@@ -182,6 +184,7 @@
     */
         const EventType = {
             DOWNLOAD_UPDATE: "downloadUpdate",
+            INSTALL_UPDATE: "installUpdate",
             OPEN_ROOT: "openRootFolder",
             GET_IMAGE: "getImagePath",
             GET_SOUND: "getSoundPath",
@@ -325,6 +328,13 @@
      */
         ipcRenderer.on("updateDownloaded", function() {
             _.forEach(registeredListeners.updateDownloaded, listener => {
+                runListener(listener);
+            });
+        });
+
+        // Installing update listener
+        ipcRenderer.on(ListenerType.INSTALLING_UPDATE, function () {
+            _.forEach(registeredListeners[ListenerType.INSTALLING_UPDATE], listener => {
                 runListener(listener);
             });
         });

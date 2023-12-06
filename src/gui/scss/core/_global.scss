@@ -452,7 +452,7 @@ body {
   position: absolute;
   opacity: 1;
   visibility: visible;
-  top: 12px;
+  top: 9px;
   right: 15px;
   display: inline-block;
   transition: 0.4s;
@@ -1275,6 +1275,11 @@ thead th{
 
 /* notification center */
 
+.update-indicator-wrapper {
+  margin: 0 10px 0 0px;
+  font-size: 24px;
+  position: relative;
+}
 .notifications-wrapper {
   margin: 0 40px 0 0px;
   font-size: 24px;

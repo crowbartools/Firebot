@@ -17,11 +17,9 @@
 
             const FIREBOT_RELEASES_URL = "https://api.github.com/repos/crowbartools/Firebot/releases";
 
-            const electron = require('electron');
-
-            const APP_VERSION = electron.remote.app.getVersion();
-            const isDev = !electron.remote.app.isPackaged;
-            const isWindows = process.platform === "win32";
+            const APP_VERSION = firebotAppDetails.version;
+            const isDev = !firebotAppDetails.isPackaged;
+            const isWindows = firebotAppDetails.os.isWindows;
 
             service.updateData = null;
 
@@ -32,8 +30,10 @@
             service.hasReleaseData = false;
 
             service.updateIsAvailable = function() {
-                return service.hasCheckedForUpdates ? ((service.updateData && service.updateData.updateIsAvailable) || service.majorUpdate != null) : false;
+                return service.hasCheckedForUpdates ? (service.updateData?.updateIsAvailable || service.majorUpdate != null) : false;
             };
+
+            service.updateIsDownloaded = false;
 
             function shouldAutoUpdate(autoUpdateLevel, updateType) {
                 // if auto updating is completely disabled
@@ -116,15 +116,13 @@
 
                             let updateIsAvailable = false;
                             if (latestUpdateType !== UpdateType.NONE) {
+                                updateIsAvailable = true;
                                 const autoUpdateLevel = settingsService.getAutoUpdateLevel();
 
                                 // Check if we should auto update based on the users setting
                                 if (shouldAutoUpdate(autoUpdateLevel, latestUpdateType)) {
                                     utilityService.showDownloadModal();
                                     listenerService.fireEvent(listenerService.EventType.DOWNLOAD_UPDATE);
-                                } else {
-                                    // Dont autoupdate, just notify the user
-                                    updateIsAvailable = true;
                                 }
                             }
 
@@ -152,11 +150,23 @@
                 });
             };
 
-            service.downloadAndInstallUpdate = function() {
+            service.downloadUpdate = function() {
                 if (service.updateIsAvailable()) {
                     utilityService.showDownloadModal();
                     listenerService.fireEvent(listenerService.EventType.DOWNLOAD_UPDATE);
                 }
+            };
+
+            service.installUpdate = function() {
+                if (service.updateIsAvailable()) {
+                    utilityService.showDownloadModal();
+                    listenerService.fireEvent(listenerService.EventType.INSTALL_UPDATE);
+                }
+            };
+
+            service.downloadAndInstallUpdate = function() {
+                service.downloadUpdate();
+                service.installUpdate();
             };
 
             return service;

@@ -38,7 +38,7 @@ export const ChangeSceneEffectType: EffectType<{
     $scope.selectScene = (scene: {name: string, custom: boolean}) => {
       $scope.effect.custom = scene.custom;
       if (!scene.custom) {
-        $scope.effect.Name = scene.name;
+        $scope.effect.sceneName = scene.name;
       }
     };
 

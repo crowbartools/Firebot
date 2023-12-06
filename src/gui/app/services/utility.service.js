@@ -2,8 +2,6 @@
 (function() {
     // This contains utility functions
     // Just inject "utilityService" into any controller that you want access to these
-    const electron = require("electron");
-
     const _ = require("underscore")._;
 
     const dataAccess = require("../../backend/common/data-access.js");
@@ -288,10 +286,10 @@
                         $scope.usingOverlayInstances = settingsService.useOverlayInstances();
 
                         $scope.broadcastingSoftwares = [
-                            "OBS/Streamlabs Desktop", "XSplit", "Direct Link/2 PC Setup"
+                            "Local", "Direct Link/2 PC Setup"
                         ];
 
-                        $scope.selectedBroadcastingSoftware = "OBS/Streamlabs Desktop";
+                        $scope.selectedBroadcastingSoftware = "Local";
 
                         $scope.updateSelectedBroadcastingSoftware = (type) => {
                             $scope.selectedBroadcastingSoftware = type;
@@ -304,15 +302,15 @@
 
                             const port = settingsService.getWebServerPort();
 
+                            const params = {};
                             if ($scope.selectedBroadcastingSoftware === "Direct Link/2 PC Setup") {
                                 overlayPath = `http://localhost:${port}/overlay`;
-                            }
 
-                            const params = {};
-                            if ($scope.selectedBroadcastingSoftware !== "Direct Link/2 PC Setup") {
+                            } else {
                                 if (port !== 7472 && !isNaN(port)) {
                                     params["port"] = settingsService.getWebServerPort();
                                 }
+                                overlayPath = 'file://' + overlayPath;
                             }
 
 
@@ -332,10 +330,6 @@
 
                                 paramCount++;
                             });
-
-                            if ($scope.selectedBroadcastingSoftware === "XSplit") {
-                                overlayPath = "file:///" + overlayPath;
-                            }
 
                             $scope.overlayPath = overlayPath;
                         };
@@ -399,7 +393,7 @@
                     templateUrl: "updatedModal.html",
                     // This is the controller to be used for the modal.
                     controllerFunc: ($scope, $uibModalInstance) => {
-                        const appVersion = electron.remote.app.getVersion();
+                        const appVersion = firebotAppDetails.version;
 
                         $scope.appVersion = `v${appVersion}`;
 
@@ -482,7 +476,8 @@
                         $scope,
                         $uibModalInstance,
                         $timeout,
-                        listenerService
+                        listenerService,
+                        updatesService
                     ) => {
                         $scope.downloadHasError = false;
                         $scope.errorMessage = "";
@@ -508,8 +503,23 @@
                         listenerService.registerListener(
                             updateDownloadedListenerRequest,
                             () => {
-                                // the autoupdater has downloaded the update and restart shortly
+                                // the autoupdater has downloaded the update
                                 $scope.downloadComplete = true;
+                                updatesService.updateIsDownloaded = true;
+                            }
+                        );
+
+                        // Install update listener
+                        const installUpdateListenerRequest = {
+                            type: listenerService.ListenerType.INSTALLING_UPDATE,
+                            runOnce: true
+                        };
+                        listenerService.registerListener(
+                            installUpdateListenerRequest,
+                            () => {
+                                // the autoupdater is installing the update
+                                $scope.downloadComplete = true;
+                                $scope.installing = true;
                             }
                         );
 
@@ -523,6 +533,10 @@
                   "Download is taking longer than normal. There may have been an error. You can keep waiting or close this and try again later.";
                             }
                         }, 180 * 1000);
+
+                        $scope.installUpdate = function() {
+                            updatesService.installUpdate();
+                        };
 
                         $scope.dismiss = function() {
                             $uibModalInstance.dismiss("cancel");
