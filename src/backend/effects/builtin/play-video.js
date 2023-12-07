@@ -453,15 +453,20 @@ const playVideo = {
             }
 
             if (effect.wait) {
-                const result = await frontendCommunicator.fireEventAsync("getYoutubeVideoDuration", data.youtubeId);
-                if (!isNaN(result)) {
-                    duration = result;
+                try {
+                    const result = await frontendCommunicator.fireEventAsync("getYoutubeVideoDuration", data.youtubeId);
+                    if (!isNaN(result)) {
+                        duration = result;
 
-                } else {
-                    // Error
-                    logger.error("Play Video Effect: Unable to retrieve Youtube Video Duration", result);
-                    return;
+                    } else {
+                        // Error
+                        logger.error("Play Video Effect: Unable to retrieve Youtube Video Duration", result);
+                        return;
+                    }
+                } catch (err) {
+                    logger.error("Play Video Effect: Unable to retrieve Youtube Video Duration", err.message);
                 }
+
             } else {
                 logger.debug("Play Video Effect: Proceeding without Youtube Video Duration because wait is false");
             }
