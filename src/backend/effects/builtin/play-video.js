@@ -744,6 +744,7 @@ const playVideo = {
                             },
                             onError: (event) => {
                                 console.log(event);
+                                animateVideoExit(`#${wrapperId}`, exitAnimation, exitDuration, inbetweenAnimation);
                             },
                             onStateChange: (event) => {
                                 if (event.data === 0 && !videoDuration) {
