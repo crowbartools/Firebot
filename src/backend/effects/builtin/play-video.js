@@ -13,6 +13,7 @@ const path = require("path");
 const frontendCommunicator = require('../../common/frontend-communicator');
 const { wait } = require("../../utility");
 const { parseYoutubeId } = require("../../../shared/youtube-url-parser");
+const uuid = require("uuid");
 
 /**
  * The Play Video effect
@@ -443,24 +444,17 @@ const playVideo = {
 
         let resourceToken;
         let duration;
+
         if (effect.videoType === "YouTube Video") {
             const youtubeData = parseYoutubeId(data.youtubeId);
             data.youtubeId = youtubeData.id;
-            if (data.videoStarttime == null || data.videoStarttime == "" || data.videoStarttime == 0) {
+
+            if (data.videoStarttime == null || data.videoStarttime === "" || data.videoStarttime === 0) {
                 data.videoStarttime = youtubeData.startTime;
             }
-        }
-        if (effect.videoType === "YouTube Video" && !effect.wait) {
-            logger.debug("Play Video Effect: Proceeding without Youtube Video Duration because wait is false");
-        } else if (effect.videoType === "YouTube Video" && effect.wait) {
-            const result = await frontendCommunicator.fireEventAsync("getYoutubeVideoDuration", data.youtubeId);
-            if (!isNaN(result)) {
-                duration = result;
-            } else {
-                // Error
-                logger.error("Play Video Effect: Unable to retrieve Youtube Video Duration", result);
-                return;
-            }
+
+            resourceToken = uuid();
+
         } else if (effect.videoType === "Local Video" || effect.videoType === "Random From Folder") {
             const result = await frontendCommunicator.fireEventAsync("getVideoDuration", data.filepath);
             if (!isNaN(result)) {
@@ -468,14 +462,52 @@ const playVideo = {
             }
             resourceToken = resourceTokenManager.storeResourcePath(data.filepath, duration);
         }
-        if ((data.videoDuration == null || data.videoDuration == "" || data.videoDuration == 0) && duration != null) {
+        if ((data.videoDuration == null || data.videoDuration === "" || data.videoDuration === 0) && duration != null) {
             data.videoDuration = duration;
         }
         data.resourceToken = resourceToken;
 
+        let waitPromise;
+
+        if (effect.wait) {
+            if (effect.videoType === "YouTube Video") {
+
+                let overlayTimeout;
+                waitPromise = new Promise((resolve, reject) => {
+                    function callbackAvailable({name}) {
+                        if (name === `play-video:callback:available:${resourceToken}`) {
+                            clearTimeout(overlayTimeout);
+                            webServer.off("overlay-event", callbackAvailable);
+                        }
+                    }
+
+                    function callbackDuration({name, data}) {
+                        if (name === `play-video:callback:duration:${resourceToken}`) {
+                            webServer.off("overlay-event", callbackDuration);
+                            wait(data.duration).then(resolve);
+                        }
+                    }
+
+                    overlayTimeout = setTimeout(() => {
+                        webServer.off("overlay-event", callbackAvailable);
+                        webServer.off("overlay-event", callbackDuration);
+                        reject();
+                    }, 2500);
+                    webServer.on("overlay-event", callbackAvailable);
+                    webServer.on("overlay-event", callbackDuration);
+                });
+            } else {
+                waitPromise = wait(data.videoDuration * 1000);
+            }
+        }
+
         webServer.sendToOverlay("video", data);
         if (effect.wait) {
-            await wait(data.videoDuration * 1000);
+            try {
+                await waitPromise;
+            } catch (error) {
+                return false;
+            }
         }
         return true;
     },
@@ -494,6 +526,11 @@ const playVideo = {
                 if (!startedVidCache) {
                     // eslint-disable-line no-undef
                     startedVidCache = {}; // eslint-disable-line no-undef
+                }
+
+                if (event.videoType === "YouTube Video") {
+                    // eslint-disable-next-line no-undef
+                    sendWebsocketEvent(`play-video:callback:available:${event.resourceToken}`);
                 }
 
                 function animateVideoExit(idString, animation, duration, inbetweenAnimation) {
@@ -692,10 +729,22 @@ const playVideo = {
                                 event.target.setVolume(parseInt(videoVolume) * 10);
                                 event.target.playVideo();
 
+                                if (event.target.getDuration() === 0) { // Error state
+                                    // eslint-disable-next-line no-undef
+                                    sendWebsocketEvent(`play-video:callback:duration:${data.resourceToken}`, {duration: 0});
+                                } else if (videoDuration) {
+                                    // eslint-disable-next-line no-undef
+                                    sendWebsocketEvent(`play-video:callback:duration:${data.resourceToken}`, {duration: videoDuration});
+                                } else {
+                                    // eslint-disable-next-line no-undef
+                                    sendWebsocketEvent(`play-video:callback:duration:${data.resourceToken}`, {duration: (event.target.getDuration() - parseInt(videoStarttime)) * 1000});
+                                }
+
                                 $(`#${ytPlayerId}`).show();
                             },
                             onError: (event) => {
                                 console.log(event);
+                                animateVideoExit(`#${wrapperId}`, exitAnimation, exitDuration, inbetweenAnimation);
                             },
                             onStateChange: (event) => {
                                 if (event.data === 0 && !videoDuration) {

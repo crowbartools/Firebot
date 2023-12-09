@@ -49,11 +49,8 @@ function refreshCommandCache(retry = 1) {
             try {
                 cmdData = commandsDb.getData("/");
             } catch (err) {
-                logger.info(
-                    "Command cache update failed. Retrying. (Try " + retry + "/3)"
-                );
-                retry = retry + 1;
-                logger.error("error getting command data", err);
+                logger.info("Command cache update failed. Retrying. (Try " + retry + "/3)");
+                retry += 1;
                 refreshCommandCache(retry);
                 return;
             }
@@ -72,11 +69,9 @@ function refreshCommandCache(retry = 1) {
             }
 
             logger.info("Updated Command cache.");
+
         } else {
-            renderWindow.webContents.send(
-                "error",
-                "Could not sync up command cache. Reconnect to try resyncing."
-            );
+            logger.error("Could not sync up command cache. Reconnect to try resyncing.");
         }
     }
 }
@@ -124,7 +119,7 @@ function deleteCustomCommand(commandId) {
     try {
         commandDb.delete("/customCommands/" + commandId);
     } catch (err) {
-        logger.warn("error when deleting command", err);
+        logger.warn("error when deleting command", err.message);
     }
 }
 
