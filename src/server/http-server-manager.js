@@ -12,6 +12,7 @@ const logger = require("../backend/logwrapper");
 const { settings } = require("../backend/common/settings-access");
 const effectManager = require("../backend/effects/effectManager");
 const resourceTokenManager = require("../backend/resourceTokenManager");
+const localeManager = require('../backend/locale-manager');
 
 const electron = require('electron');
 const workingDirectoryRoot = process.platform === 'darwin' ? process.resourcesPath : process.cwd();
@@ -110,6 +111,23 @@ class HttpServerManager extends EventEmitter {
             res
                 .status(404)
                 .send({ status: "error", message: req.originalUrl + " not found" });
+        });
+
+        app.get("/locales", function (req, res) {
+            res.status(200).send({ status: 'ok', data: localeManager.getLocaleList()});
+        });
+
+        // Handle requests for a specific locale
+        app.get("/locales/:locale", function (req, res) {
+
+            // attempt to retrieve locale data;
+            // validation of params.locale is done by localeManager
+            const def = localeManager.getLocale(req.params.locale);
+            if (def != null) {
+                res.status(200).send({ status: 'ok', data: def });
+            } else {
+                res.status(404).send({ status: "error", message: `unknown locale`});
+            }
         });
 
         // List custom routes
