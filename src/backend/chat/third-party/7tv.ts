@@ -1,24 +1,35 @@
 import { ThirdPartyEmote, ThirdPartyEmoteProvider } from "./third-party-emote-provider";
 
-type SevenTVEmotesResponse = Array<{
-    name: string;
-    urls: Array<[string, string]>;
-    mime: string;
-}>;
+type SevenTVEmotesResponse = {
+    emotes: Array<{
+        name: string;
+        data: {
+            animated: boolean;
+            host: {
+                url: string;
+                files: Array<{
+                    name: string;
+                    static_name: string;
+                }>;
+            }
+            urls: Array<[string, string]>;
+        }
+    }>
+};
 
 export class SevenTVEmoteProvider extends ThirdPartyEmoteProvider<SevenTVEmotesResponse> {
     providerName = "7TV";
 
-    globalEmoteUrl = "https://api.7tv.app/v2/emotes/global";
+    globalEmoteUrl = "https://7tv.io/v3/emote-sets/global";
     getChannelEmotesUrl(streamerUserId: number): string {
-        return `https://api.7tv.app/v2/users/${streamerUserId}/emotes`;
+        return `https://7tv.io/v3/users/twitch/${streamerUserId}`;
     }
 
     private emoteMapper(response: SevenTVEmotesResponse): ThirdPartyEmote[] {
-        return response.map(e => ({
-            url: e.urls[0][1],
+        return response.emotes.map(e => ({
+            url: `https:${e.data.host.url}/${(e.data.animated ?? false) ? '4x.webp' : '4x_static.webp'}`,
             code: e.name,
-            animated: e.mime && e.mime.toLowerCase() === "image/gif",
+            animated: e.data.animated ?? false,
             origin: this.providerName
         }));
     }
