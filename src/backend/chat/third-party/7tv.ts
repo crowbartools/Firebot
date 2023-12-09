@@ -22,7 +22,7 @@ export class SevenTVEmoteProvider extends ThirdPartyEmoteProvider<SevenTVEmotesR
 
     globalEmoteUrl = "https://7tv.io/v3/emote-sets/global";
     getChannelEmotesUrl(streamerUserId: number): string {
-        return `https://7tv.io/v3/emote-sets/${streamerUserId}`;
+        return `https://7tv.io/v3/users/twitch/${streamerUserId}`;
     }
 
     private emoteMapper(response: SevenTVEmotesResponse): ThirdPartyEmote[] {
