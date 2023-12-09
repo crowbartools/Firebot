@@ -208,8 +208,7 @@ exports.loadReplaceVariables = () => {
         'video-duration',
         'view-time',
         'whisper-message',
-        'word',
-        'youtube-video-duration'
+        'word'
     ].forEach(filename => {
         const definition = require(`./builtin/${filename}`);
         replaceVariableManager.registerReplaceVariable(definition);
