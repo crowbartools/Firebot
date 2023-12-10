@@ -8,7 +8,8 @@ const {
     whenReady,
     windowsAllClosed,
     willQuit,
-    secondInstance
+    secondInstance,
+    openUrl
 } = require("./backend/app-management/electron/electron-events");
 
 logger.info("Starting Firebot...");
@@ -29,12 +30,31 @@ if (!handleSquirrelEvents()) {
 
 logger.debug("...Squirrel handled");
 
+// Register firebot:// URI handler
+if (process.defaultApp) {
+    if (process.argv.length >= 2) {
+        app.setAsDefaultProtocolClient("firebot", process.execPath, [path.resolve(process.argv[1])]);
+    }
+} else {
+    app.setAsDefaultProtocolClient("firebot");
+}
+
 // ensure only a single instance of the app runs
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
     logger.debug("...Failed to get single instance lock");
     app.quit();
     return;
+} else {
+    app.on('second-instance', (event, commandLine, workingDirectory) => {
+        // Someone tried to run a second instance, we should focus our window.
+        if (mainWindow) {
+            if (mainWindow.isMinimized()) mainWindow.restore()
+            mainWindow.focus()
+        }
+    
+        openUrl(event, commandLine.pop().slice(0, -1));
+    });
 }
 
 logger.debug("...Single instance lock acquired");
@@ -46,3 +66,4 @@ app.on("will-quit", willQuit);
 app.whenReady().then(whenReady).catch(error => {
     logger.debug("Error on when ready step", error);
 });
+app.on("open-url", openUrl);
