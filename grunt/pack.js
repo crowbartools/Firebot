@@ -61,6 +61,8 @@ module.exports = function (grunt) {
         '--version-string.ProductName="Firebot v5"',
         '--executable-name="Firebot v5"',
         '--icon="./build/gui/images/icon_transparent.ico"',
+        '--protocol=firebot',
+        '--protocol-name="Firebot"',
         ...ignoreFlags
     ].join(' ');
 
