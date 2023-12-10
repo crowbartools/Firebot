@@ -24,7 +24,7 @@ exports.secondInstance = (event, argv) => {
 
             fileOpenHelpers.checkForFirebotSetupPath(argv);
 
-            openUrl(event, argv.pop().slice(0, -1));
+            openUrl(event, argv.pop());
         }
     } catch (error) {
         logger.debug("Error focusing", error);
