@@ -1,5 +1,6 @@
 "use strict";
 const { app } = require("electron");
+const path = require('node:path');
 
 const logger = require("./backend/logwrapper");
 const secretsManager = require("./backend/secrets-manager");
@@ -39,22 +40,14 @@ if (process.defaultApp) {
     app.setAsDefaultProtocolClient("firebot");
 }
 
+logger.debug("...Registered Firebot URI handler");
+
 // ensure only a single instance of the app runs
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
     logger.debug("...Failed to get single instance lock");
     app.quit();
     return;
-} else {
-    app.on('second-instance', (event, commandLine, workingDirectory) => {
-        // Someone tried to run a second instance, we should focus our window.
-        if (mainWindow) {
-            if (mainWindow.isMinimized()) mainWindow.restore()
-            mainWindow.focus()
-        }
-    
-        openUrl(event, commandLine.pop().slice(0, -1));
-    });
 }
 
 logger.debug("...Single instance lock acquired");
