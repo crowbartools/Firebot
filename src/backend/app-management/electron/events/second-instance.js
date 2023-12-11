@@ -1,12 +1,13 @@
 "use strict";
 
 const fileOpenHelpers = require("../../file-open-helpers");
+const { openUrl } = require("./open-url");
 
 /**
  * @param {Electron.Event} event
  * @param {string[]} argv
  */
-exports.secondInstance = (_, argv) => {
+exports.secondInstance = (event, argv) => {
     // Someone tried to run a second instance, we should focus our window.
     const logger = require("../../../logwrapper");
     try {
@@ -22,6 +23,8 @@ exports.secondInstance = (_, argv) => {
             mainWindow.focus();
 
             fileOpenHelpers.checkForFirebotSetupPath(argv);
+
+            openUrl(event, argv.pop());
         }
     } catch (error) {
         logger.debug("Error focusing", error);
