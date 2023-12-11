@@ -8,7 +8,7 @@
     "conventionalCommits.scopes": [
       "effects",
       "events",
-      "integratins",
+      "integrations",
       "variables",
       "filters",
       "commands",
@@ -26,7 +26,6 @@
       "local-api",
       "ui",
       "overlay",
-      "scripts",
-      "integrations"
+      "scripts"
     ]
 }
