@@ -395,7 +395,7 @@ ipcMain.on("getOverlayStatus", event => {
 
 effectManager.on("effectRegistered", () => {
     // tell the overlay to refresh because a new effect has been registered
-    manager.sendToOverlay("OVERLAY:REFRESH");
+    manager.sendToOverlay("OVERLAY:REFRESH", { global: true });
 });
 
 module.exports = manager;
