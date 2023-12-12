@@ -3,10 +3,16 @@
     "private": true,
     "version": "6.0.0",
     "license": "GPL-3.0",
-    "types": "index.d.ts",
+    "main": "./dist/index.js",
+    "types": "src/index.ts",
     "devDependencies": {
+        "typescript": "^4.9.5",
         "tiny-typed-emitter": "2.1.0",
         "eslint-config-custom": "*",
         "tsconfig": "*"
+    },
+    "scripts": {
+        "build": "tsc",
+        "dev": "tsc"
     }
 }

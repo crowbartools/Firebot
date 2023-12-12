@@ -1,6 +1,7 @@
 import { TypedEmitter } from "tiny-typed-emitter";
 import { Id } from "./helpers";
 import { PlatformUser } from "./user";
+import { OnlyRequire } from "../misc/util";
 
 export interface Badge {
     id: string;

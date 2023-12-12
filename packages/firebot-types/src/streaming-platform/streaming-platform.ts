@@ -9,7 +9,7 @@ interface PlatformEvents {
 
 export class PlatformEventEmitter extends TypedEmitter<PlatformEvents> {}
 
-declare interface StreamingPlatform extends PlatformEventEmitter {
+export interface StreamingPlatform extends PlatformEventEmitter {
     id: string;
     name: string;
     init: VoidFunction;
