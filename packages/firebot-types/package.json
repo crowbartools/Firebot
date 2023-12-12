@@ -3,7 +3,9 @@
     "private": true,
     "version": "6.0.0",
     "license": "GPL-3.0",
+    "types": "index.d.ts",
     "devDependencies": {
+        "tiny-typed-emitter": "2.1.0",
         "eslint-config-custom": "*",
         "tsconfig": "*"
     }

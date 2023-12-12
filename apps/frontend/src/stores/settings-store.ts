@@ -22,7 +22,6 @@ class SettingsStore {
             const root = document.getElementById("root");
             if(root) {
                 root.className = theme;
-                console.log("SET CLASS", theme);
             }
         }
     }
