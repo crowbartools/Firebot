@@ -7,7 +7,7 @@ module.exports = {
     // "parser": "babel-parser",
     "parserOptions": {
         // "parser": "babel-parser",
-        "ecmaVersion": "2020"
+        "ecmaVersion": "2022"
     },
 
     "env": {
