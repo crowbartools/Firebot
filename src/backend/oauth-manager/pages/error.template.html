@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Firebot - Error</title>
+        <style>
+            html,body{
+                padding:0;
+                margin:0;
+                background:rgb(30,32,35);
+                background:linear-gradient(59deg,rgb(32,35,39) 0%,rgb(46,47,52) 51%,rgb(42,44,48) 100%);
+                color:rgb(240, 240, 240);
+                font-family:sans-serif;
+                width:100vw;
+                height:100vh;
+                font-size:18px
+            }
+            div.wrapper{
+                display:flex;
+                justify-content:center;
+                align-items:center;
+                width:100%;
+                height:100%
+            }
+            div.content {
+                padding: 2rem;
+                display: flex;
+                width: 800px;
+            }
+            div.content > div:first-child {
+                flex: 0 0 auto;
+                margin-right: 2rem;
+            }
+            div.content > div:not(:first-child) {
+                flex: 1 1 auto;
+            }
+            img {
+                width: 250px;
+                height: 250px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="wrapper">
+            <div class="content">
+                <div><img src="https://raw.githubusercontent.com/crowbartools/Firebot/master/src/gui/images/logo_transparent_2.png"></div>
+                <div>
+                    <h1>{{header}}</h1>
+                    <p>{{content}}</p>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

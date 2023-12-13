@@ -13,6 +13,8 @@ const { settings } = require("../backend/common/settings-access");
 const effectManager = require("../backend/effects/effectManager");
 const resourceTokenManager = require("../backend/resourceTokenManager");
 
+const { routeHandler: oauthRouteHandler } = require('../backend/oauth-manager/oauth-manager');
+
 const electron = require('electron');
 const workingDirectoryRoot = process.platform === 'darwin' ? process.resourcesPath : process.cwd();
 const cwd = !electron.app.isPackaged ? path.join(electron.app.getAppPath(), "build") : workingDirectoryRoot;
@@ -111,6 +113,8 @@ class HttpServerManager extends EventEmitter {
                 .status(404)
                 .send({ status: "error", message: req.originalUrl + " not found" });
         });
+
+        app.get("/external/oauth", oauthRouteHandler);
 
         // List custom routes
         app.get("/integrations", (req, res) => {
