@@ -159,17 +159,14 @@
 
                     const sound = new Howl({
                         src: [path],
-                        format: format || []
-                    });
-
-                    sound.on("loaderror", () => {
-                        resolve(0);
-                    });
-
-                    // Clear listener after first call.
-                    sound.once('load', function() {
-                        resolve(sound.duration());
-                        sound.unload();
+                        format: format || [],
+                        onload: () => {
+                            resolve(sound.duration());
+                            sound.unload();
+                        },
+                        onloaderror: () => {
+                            resolve(0);
+                        }
                     });
                 });
             };
