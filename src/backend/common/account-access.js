@@ -18,7 +18,7 @@ const accountEvents = new EventEmitter();
  * @property {string} avatar - The avatar url for the account
  * @property {string} broadcasterType - "partner", "affiliate" or ""
  * @property {import("../auth/auth").AuthDetails} auth - Auth token details for the account
- * @property {boolean} loggedIn - If the account is linked/logged in
+ * @property {boolean=} loggedIn - If the account is linked/logged in
  */
 
 

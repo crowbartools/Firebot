@@ -235,7 +235,7 @@ const effect = {
             headers = {
                 ...headers,
                 'Authorization': `Bearer ${accessToken}`,
-                'Client-ID': twitchAuth.TWITCH_CLIENT_ID
+                'Client-ID': twitchAuth.twitchClientId
             };
         }
 
