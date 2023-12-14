@@ -1,5 +1,4 @@
 "use strict";
-
 const { openExternal } = require('node:shell');
 
 const {
@@ -48,7 +47,11 @@ class OAuthConsumer {
     #onAuth;
     #scopes;
     #redirectUri;
+
+    #store = false;
     #tokens;
+
+    #saveInterval;
 
     constructor(options, redirectUri, tokens = {}) {
 
@@ -133,9 +136,17 @@ class OAuthConsumer {
             this.#onAuth = options.onAuth;
         }
 
+        if (options.autostore) {
+            this.#store = true;
+
+            // TODO: load tokens
+        }
+
         this.#scopes = [...(options.scopes || [])];
 
         this.#redirectUri = redirectUri;
+
+        // TODO: Load tokens from disk
         this.#tokens = new Map(Object.entries(tokens || {}));
     }
 

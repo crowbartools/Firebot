@@ -2,6 +2,7 @@
 const { join } = require('path');
 const { readFileSync } = require('fs');
 
+const { settings } = require("../common/settings-access");
 const logger = require("../logwrapper");
 const OAuthConsumer = require('./oauth-consumer');
 
@@ -85,5 +86,8 @@ module.exports.routeHandler = async function (req, res) {
  * @param {RegisterOptions} options
  */
 module.exports.register = (options) => {
-    // todo
+
+    // TODO: load tokens from harddrive
+
+    return new OAuthConsumer(options, `http://localhost:${settings.getWebServerPort()}/external/oauth`);
 };
