@@ -1,5 +1,6 @@
 "use strict";
 const { app } = require("electron");
+const path = require('node:path');
 
 const logger = require("./backend/logwrapper");
 const secretsManager = require("./backend/secrets-manager");
@@ -8,7 +9,8 @@ const {
     whenReady,
     windowsAllClosed,
     willQuit,
-    secondInstance
+    secondInstance,
+    openUrl
 } = require("./backend/app-management/electron/electron-events");
 
 logger.info("Starting Firebot...");
@@ -29,6 +31,17 @@ if (!handleSquirrelEvents()) {
 
 logger.debug("...Squirrel handled");
 
+// Register firebot:// URI handler
+if (process.defaultApp) {
+    if (process.argv.length >= 2) {
+        app.setAsDefaultProtocolClient("firebot", process.execPath, [path.resolve(process.argv[1])]);
+    }
+} else {
+    app.setAsDefaultProtocolClient("firebot");
+}
+
+logger.debug("...Registered Firebot URI handler");
+
 // ensure only a single instance of the app runs
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
@@ -46,3 +59,4 @@ app.on("will-quit", willQuit);
 app.whenReady().then(whenReady).catch(error => {
     logger.debug("Error on when ready step", error);
 });
+app.on("open-url", openUrl);

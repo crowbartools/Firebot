@@ -393,9 +393,12 @@ ipcMain.on("getOverlayStatus", event => {
     };
 });
 
-effectManager.on("effectRegistered", () => {
-    // tell the overlay to refresh because a new effect has been registered
-    manager.sendToOverlay("OVERLAY:REFRESH");
+
+effectManager.on("effectRegistered", (effect) => {
+    if (effect.overlayExtension) {
+        // tell the overlay to refresh because a new effect with an overlay extension has been registered
+        manager.sendToOverlay("OVERLAY:REFRESH", { global: true });
+    }
 });
 
 module.exports = manager;

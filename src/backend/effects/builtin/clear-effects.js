@@ -157,12 +157,7 @@ const delay = {
         if (effect.overlay) {
             if (settings.useOverlayInstances() && effect.overlayInstance != null) {
                 if (effect.overlayInstance === "all") {
-                    const instances = settings.getOverlayInstances();
-                    instances.forEach(i => {
-                        webServer.sendToOverlay("OVERLAY:REFRESH", { overlayInstance: i });
-                    });
-
-                    webServer.sendToOverlay("OVERLAY:REFRESH");
+                    webServer.sendToOverlay("OVERLAY:REFRESH", { global: true });
 
                     return true;
                 }

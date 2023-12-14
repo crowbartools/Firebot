@@ -34,6 +34,18 @@
                 });
             });
 
+            backendCommunicator.on("showViewerCard", (userId) => {
+                service.showModal({
+                    component: "viewerDetailsModal",
+                    backdrop: true,
+                    resolveObj: {
+                        userId: () => userId
+                    },
+                    closeCallback: () => {},
+                    dismissCallback: () => {}
+                });
+            });
+
             service.openGetIdEntyModal = function(options, callback) {
                 service.showModal({
                     component: "idEntryModal",

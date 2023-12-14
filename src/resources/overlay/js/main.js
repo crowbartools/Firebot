@@ -30,17 +30,21 @@ function overlaySocketConnect(){
 			console.log(`Received Event: ${event}`);
 			console.log(`Overlay Instance: ${olInstance}, Event Instance: ${data.meta.overlayInstance}`)
 
-			if(olInstance != null && olInstance != "") {
-				if(data.meta.overlayInstance != olInstance) {
-					console.log("Event is for a different instance. Ignoring.")
-					return;
-				}
-			} else {
-				if(data.meta.overlayInstance != null && data.meta.overlayInstance != "") {
-					console.log("Event is for a specific instance. Ignoring.")
-					return;
-				}
-			}
+            if(!data.meta.global) {
+                if(olInstance != null && olInstance != "") {
+                    if(data.meta.overlayInstance != olInstance) {
+                        console.log("Event is for a different instance. Ignoring.")
+                        return;
+                    }
+                } else {
+                    if(data.meta.overlayInstance != null && data.meta.overlayInstance != "") {
+                        console.log("Event is for a specific instance. Ignoring.")
+                        return;
+                    }
+                }
+            } else {
+                console.log("Event is global. Processing.")
+            }
 
 			if(event == "OVERLAY:REFRESH") {
 				console.log(`Refreshing ${data.meta.overlayInstance || ""} overlay...`);

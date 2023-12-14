@@ -59,6 +59,10 @@ class IntegrationManager extends EventEmitter {
 
         this.emit("integrationRegistered", integration);
 
+        if (global.renderWindow?.webContents != null) {
+            global.renderWindow.webContents.send("integrationsUpdated");
+        }
+
         integration.integration.on("connected", id => {
             renderWindow.webContents.send("integrationConnectionUpdate", {
                 id: id,
