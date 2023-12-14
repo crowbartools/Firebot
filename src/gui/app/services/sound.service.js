@@ -107,7 +107,7 @@
                 $q.when(service.getHowlSound(path, volume, outputDevice, fileType))
                     .then(sound => {
 
-                        let maxSoundLengthTimeout
+                        let maxSoundLengthTimeout;
                         // Clear listener after first call.
                         sound.once('load', function() {
                             sound.play();
@@ -117,14 +117,14 @@
                                 maxSoundLengthTimeout = setTimeout(function() {
                                     sound.stop();
                                     sound.unload();
-                                }, maxSoundLength * 1000)
+                                }, maxSoundLength * 1000);
                             }
                         });
 
                         // Fires when the sound finishes playing.
                         sound.once('end', function() {
                             sound.unload();
-                            clearInterval(maxSoundLengthTimeout)
+                            clearInterval(maxSoundLengthTimeout);
                         });
 
                         sound.load();
@@ -159,17 +159,14 @@
 
                     const sound = new Howl({
                         src: [path],
-                        format: format || []
-                    });
-
-                    sound.on("loaderror", () => {
-                        resolve(0);
-                    });
-
-                    // Clear listener after first call.
-                    sound.once('load', function() {
-                        resolve(sound.duration());
-                        sound.unload();
+                        format: format || [],
+                        onload: () => {
+                            resolve(sound.duration());
+                            sound.unload();
+                        },
+                        onloaderror: () => {
+                            resolve(0);
+                        }
                     });
                 });
             };
