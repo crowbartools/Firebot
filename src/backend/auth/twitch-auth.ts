@@ -124,13 +124,15 @@ class TwitchAuthProviders {
     };
 }
 
+const twitchAuthProviders = new TwitchAuthProviders();
+
 async function getUserCurrent(accessToken: string) {
     try {
         const response = await axios.get('https://api.twitch.tv/helix/users', {
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
                 'User-Agent': 'Firebot v5',
-                'Client-ID': this.twitchClientId
+                'Client-ID': twitchAuthProviders.twitchClientId
             },
             responseType: "json"
         });
@@ -146,8 +148,6 @@ async function getUserCurrent(accessToken: string) {
     }
     return null;
 }
-
-const twitchAuthProviders = new TwitchAuthProviders();
 
 authManager.on("auth-success", async authData => {
     const { providerId, tokenData } = authData;
