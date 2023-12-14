@@ -1,11 +1,11 @@
 "use strict";
 
 (function() {
-
+    const { basename, dirname, sep, resolve } = require('path');
+    const { mkdirSync, readFileSync, writeFileSync } = require('fs');
     const fs = require("fs-extra");
-    const path = require("path");
-    const unzipper = require("unzipper");
     const empty = require("empty-folder");
+    const { unzipSync } = require('fflate');
 
     angular
         .module("firebotApp")
@@ -16,7 +16,7 @@
             const RESTORE_FOLDER_PATH = dataAccess.getPathInTmpDir("/restore");
             const USER_DATA_FOLDER_PATH = dataAccess.getPathInUserData("/");
             const PROFILES_FOLDER_PATH = dataAccess.getPathInUserData("/profiles");
-            const BACKUPS_FOLDER_PATH = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups") + path.sep;
+            const BACKUPS_FOLDER_PATH = resolve(dataAccess.getUserDataPath() + sep + "backups") + sep;
 
             service.BACKUPS_FOLDER_PATH = BACKUPS_FOLDER_PATH;
 
@@ -55,22 +55,25 @@
             };
 
             function validateBackupZip(backupFilePath) {
-                let foundProfilesFolder = false;
-                let foundGlobalSettingsJson = false;
-                return fs.createReadStream(backupFilePath)
-                    .pipe(unzipper.Parse() //eslint-disable-line new-cap
-                        .on('entry', entry => {
-                            if (entry.path.includes("profiles")) {
-                                foundProfilesFolder = true;
-                            } else if (entry.path.includes("global-settings")) {
-                                foundGlobalSettingsJson = true;
-                            }
-                            entry.autodrain();
-                        }))
-                    .promise()
-                    .then(() => {
-                        return foundProfilesFolder && foundGlobalSettingsJson;
-                    });
+                let hasProfilesDir = false;
+                let hasGlobalSettings = false;
+
+                const unzippedData = unzipSync(readFileSync(backupFilePath));
+
+                for (const [filepath] of Object.entries(unzippedData)) {
+                    if (filepath.includes('profiles')) {
+                        if (hasGlobalSettings) {
+                            return true;
+                        }
+                        hasProfilesDir = true;
+                    } else if (basename(filepath).toLowerCase() === 'global-settings.json') {
+                        if (hasProfilesDir) {
+                            return true;
+                        }
+                        hasGlobalSettings = true;
+                    }
+                }
+                return false;
             }
 
             function clearRestoreFolder() {
@@ -85,16 +88,18 @@
             }
 
             function extractBackupZip(backupFilePath) {
-                return new Promise(resolve => {
-                    fs.createReadStream(backupFilePath).pipe(
-                        unzipper
-                            .Extract({ path: RESTORE_FOLDER_PATH }) //eslint-disable-line new-cap
-                            .on("close", () => {
-                                logger.debug("Extracted backup zip!");
-                                resolve();
-                            })
-                    );
-                });
+                mkdirSync(RESTORE_FOLDER_PATH, { recursive: true });
+
+                const unzippedData = unzipSync(readFileSync(backupFilePath));
+                for (const [filepath, bytes] of Object.entries(unzippedData)) {
+                    if (filepath.endsWith('/')) {
+                        continue;
+                    }
+
+                    const writeFilePath = resolve(`${RESTORE_FOLDER_PATH}/${filepath}`);
+                    mkdirSync(dirname(writeFilePath), { recursive: true });
+                    writeFileSync(writeFilePath, bytes);
+                }
             }
 
             function clearProfilesFolder() {
