@@ -75,11 +75,11 @@
                 }
             };
 
-            service.validateAccounts = () => {
+            service.validateAccounts = async () => {
                 const invalidAccounts = [];
 
                 if (service.accounts["streamer"].loggedIn) {
-                    if (!backendCommunicator.fireEventSync("validate-twitch-account", {
+                    if (!await backendCommunicator.fireEventAsync("validate-twitch-account", {
                         accountType: "streamer",
                         authDetails: service.accounts["streamer"].auth
                     })) {
@@ -89,7 +89,7 @@
                 }
 
                 if (service.accounts["bot"].loggedIn) {
-                    if (!backendCommunicator.fireEventSync("validate-twitch-account", {
+                    if (!await backendCommunicator.fireEventAsync("validate-twitch-account", {
                         accountType: "bot",
                         authDetails: service.accounts["bot"].auth
                     })) {
