@@ -38,8 +38,8 @@ exports.whenReady = async () => {
     const accountAccess = require("../../../common/account-access");
     await accountAccess.updateAccountCache(false);
 
-    const firebotStaticAuthProvider = require("../../../auth/firebot-static-auth-provider");
-    firebotStaticAuthProvider.setupStaticAuthProvider();
+    const firebotDeviceAuthProvider = require("../../../auth/firebot-device-auth-provider");
+    firebotDeviceAuthProvider.setupDeviceAuthProvider();
 
     const connectionManager = require("../../../common/connection-manager");
 

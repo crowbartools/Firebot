@@ -2,7 +2,7 @@
 const logger = require("../../logwrapper");
 const accountAccess = require("../../common/account-access");
 const frontendCommunicator = require("../../common/frontend-communicator");
-const firebotStaticAuthProvider = require("../../auth/firebot-static-auth-provider");
+const firebotDeviceAuthProvider = require("../../auth/firebot-device-auth-provider");
 const chatRolesManager = require("../../roles/chat-roles-manager");
 const { PubSubClient } = require("@twurple/pubsub");
 
@@ -58,7 +58,7 @@ async function createClient() {
 
     logger.info("Connecting to Twitch PubSub...");
 
-    const authProvider = firebotStaticAuthProvider.streamerProvider;
+    const authProvider = firebotDeviceAuthProvider.streamerProvider;
 
     pubSubClient = new PubSubClient({ authProvider });
 

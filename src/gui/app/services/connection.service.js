@@ -38,15 +38,28 @@
                     if (service.accounts.streamer.loggedIn) {
                         service.logout(type);
                     } else {
-                        shell.openExternal(`http://localhost:${settingsService.getWebServerPort()}/api/v1/auth?providerId=${encodeURIComponent("twitch:streamer-account")}`);
+                        utilityService.showModal({
+                            component: "twitchLoginModal",
+                            resolveObj: {
+                                accountType: () => type
+                            },
+                            closeCallback: () => {
+                                backendCommunicator.send("cancel-device-token-check");
+                            }
+                        });
                     }
                 } else if (type === "bot") {
                     if (service.accounts.bot.loggedIn) {
                         service.logout(type);
                     } else {
                         utilityService.showModal({
-                            component: "botLoginModal",
-                            size: 'sm'
+                            component: "twitchLoginModal",
+                            resolveObj: {
+                                accountType: () => type
+                            },
+                            closeCallback: () => {
+                                backendCommunicator.send("cancel-device-token-check");
+                            }
                         });
                     }
                 }
