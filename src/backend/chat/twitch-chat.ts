@@ -8,7 +8,7 @@ import commandHandler from "./commands/commandHandler";
 import * as twitchSlashCommandHandler from "./twitch-slash-command-handler";
 
 import logger from "../logwrapper";
-import firebotStaticAuthProvider from "../auth/firebot-static-auth-provider";
+import firebotDeviceAuthProvider from "../auth/firebot-device-auth-provider";
 import accountAccess from "../common/account-access";
 import frontendCommunicator from "../common/frontend-communicator";
 import twitchEventsHandler from "../events/twitch-events";
@@ -80,8 +80,8 @@ class TwitchChat extends EventEmitter {
             return;
         }
 
-        const streamerAuthProvider = firebotStaticAuthProvider.streamerProvider;
-        const botAuthProvider = firebotStaticAuthProvider.botProvider;
+        const streamerAuthProvider = firebotDeviceAuthProvider.streamerProvider;
+        const botAuthProvider = firebotDeviceAuthProvider.botProvider;
         if (streamerAuthProvider == null && botAuthProvider == null) {
             return;
         }
@@ -131,7 +131,7 @@ class TwitchChat extends EventEmitter {
                 }
             });
 
-            await this._streamerChatClient.connect();
+            this._streamerChatClient.connect();
 
             await chatHelpers.handleChatConnect();
 
@@ -164,7 +164,7 @@ class TwitchChat extends EventEmitter {
 
             twitchChatListeners.setupBotChatListeners(this._botChatClient);
 
-            await this._botChatClient.connect();
+            this._botChatClient.connect();
         } catch (error) {
             logger.error("Error joining streamers chat channel with Bot account", error);
         }

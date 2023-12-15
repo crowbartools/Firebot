@@ -1,9 +1,10 @@
 import { ApiClient } from "@twurple/api";
-import { StaticAuthProvider } from "@twurple/auth";
+import { AuthProvider } from "@twurple/auth";
 
 import logger from "../logwrapper";
 import accountAccess from "../common/account-access";
 
+import { TwitchAuthApi } from "./resource/auth";
 import { TwitchBitsApi } from "./resource/bits";
 import { TwitchCategoriesApi } from "./resource/categories";
 import { TwitchChannelRewardsApi } from "./resource/channel-rewards";
@@ -19,7 +20,7 @@ class TwitchApi {
     private _streamerClient: ApiClient;
     private _botClient: ApiClient;
 
-    setupApiClients(streamerProvider: StaticAuthProvider, botProvider: StaticAuthProvider): void {
+    setupApiClients(streamerProvider: AuthProvider, botProvider: AuthProvider): void {
         if (!streamerProvider && !botProvider) {
             return;
         }
@@ -48,6 +49,10 @@ class TwitchApi {
 
     get botClient(): ApiClient {
         return this._botClient;
+    }
+
+    get auth() {
+        return new TwitchAuthApi(this._streamerClient, this._botClient);
     }
 
     get bits() {
