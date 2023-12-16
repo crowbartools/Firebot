@@ -236,7 +236,7 @@
 
 
                 /**
-                 * @type {import('../../../../../backend/channel-rewards/channel-reward-manager').SavedChannelReward}
+                 * @type {import('../../../../../types/channel-rewards').SavedChannelReward}
                  */
                 $ctrl.reward = {
                     id: null,

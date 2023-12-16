@@ -170,9 +170,13 @@ export class TwitchChannelRewardsApi {
         return rewards.map(r => this.mapCustomRewardResponse(r));
     }
 
+    async getManageableCustomChannelRewards(): Promise<CustomReward[]> {
+        return await this.getCustomChannelRewards(true);
+    }
+
     async getUnmanageableCustomChannelRewards(): Promise<CustomReward[]> {
         const allRewards = await this.getCustomChannelRewards();
-        const onlyManageable = await this.getCustomChannelRewards(true);
+        const onlyManageable = await this.getManageableCustomChannelRewards();
         if (allRewards == null || onlyManageable == null) {
             return null;
         }
@@ -182,10 +186,7 @@ export class TwitchChannelRewardsApi {
 
     async getTotalChannelRewardCount(): Promise<number> {
         const rewards = await this.getCustomChannelRewards();
-        if (rewards == null) {
-            return 0;
-        }
-        return rewards.length;
+        return rewards?.length ?? 0;
     }
 
     async createCustomChannelReward(reward: CustomReward): Promise<CustomReward> {
