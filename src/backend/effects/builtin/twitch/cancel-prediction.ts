@@ -26,7 +26,7 @@ const model: EffectType<{}> = {
     onTriggerEvent: async () => {
         const latestPrediction = await twitchApi.predictions.getMostRecentPrediction();
 
-        if (latestPrediction?.status !== "ACTIVE") {
+        if (latestPrediction?.status !== "ACTIVE" && latestPrediction?.status !== "LOCKED") {
             logger.warn("There is no active Twitch prediction to cancel");
             return;
         }
