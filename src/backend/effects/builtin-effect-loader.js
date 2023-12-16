@@ -9,7 +9,6 @@ exports.loadEffects = () => {
         'add-quote',
         'announcement',
         'api',
-        'approve-reject-channel-reward-redemption',
         'block-unblock',
         'celebration',
         'chat-feed-alert',
@@ -20,7 +19,6 @@ exports.loadEffects = () => {
         'conditional-effects/conditional-effects',
         'control-emulation', // No migration needed.
         'cooldown-command',
-        'create-stream-marker',
         'currency',
         'custom-script',
         'custom-variable',
@@ -41,7 +39,6 @@ exports.loadEffects = () => {
         'pause-resume-effect-queue',
         'play-sound',
         'play-video', // No migration needed.
-        'raid',
         'random-effect',
         'random-reddit-image',
         'remove-user-metadata',
@@ -64,11 +61,24 @@ exports.loadEffects = () => {
         'toggle-event-set',
         'toggle-event',
         'toggle-timer',
-        'twitch-shoutout',
         'update-channel-reward',
         'update-counter',
         'update-role',
-        'update-vip-role'
+        'update-vip-role',
+
+        'twitch/raid',
+        'twitch/shoutout',
+        'twitch/create-stream-marker',
+
+        'twitch/approve-reject-channel-reward-redemption',
+
+        'twitch/create-poll',
+        'twitch/end-poll',
+
+        'twitch/cancel-prediction',
+        'twitch/create-prediction',
+        'twitch/lock-prediction',
+        'twitch/resolve-prediction'
     ].forEach(filename => {
         const definition = require(`./builtin/${filename}`);
         effectManager.registerEffect(definition);

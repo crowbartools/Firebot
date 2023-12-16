@@ -15,7 +15,6 @@ import twitchEventsHandler from "../events/twitch-events";
 import chatRolesManager from "../roles/chat-roles-manager";
 import twitchApi from "../twitch-api/api";
 import chatterPoll from "../twitch-api/chatter-poll";
-import followPoll from "../twitch-api/follow-poll";
 
 interface UserModRequest {
     username: string;
@@ -65,7 +64,6 @@ class TwitchChat extends EventEmitter {
         if (emitDisconnectEvent) {
             this.emit("disconnected");
         }
-        followPoll.stopFollowPoll();
         chatterPoll.stopChatterPoll();
 
         activeUserHandler.clearAllActiveUsers();
@@ -137,7 +135,6 @@ class TwitchChat extends EventEmitter {
 
             twitchChatListeners.setupChatListeners(this._streamerChatClient);
 
-            followPoll.startFollowPoll();
             chatterPoll.startChatterPoll();
 
             const vips = await twitchApi.channels.getVips();

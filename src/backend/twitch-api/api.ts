@@ -9,9 +9,13 @@ import { TwitchBitsApi } from "./resource/bits";
 import { TwitchCategoriesApi } from "./resource/categories";
 import { TwitchChannelRewardsApi } from "./resource/channel-rewards";
 import { TwitchChannelsApi } from "./resource/channels";
+import { TwitchCharityApi } from "./resource/charity";
 import { TwitchChatApi } from "./resource/chat";
 import { TwitchModerationApi } from "./resource/moderation";
+import { TwitchPollsApi } from "./resource/polls";
+import { TwitchPredictionsApi } from "./resource/predictions";
 import { TwitchStreamsApi } from "./resource/streams";
+import { TwitchSubscriptionsApi } from "./resource/subscriptions";
 import { TwitchTeamsApi } from "./resource/teams";
 import { TwitchUsersApi } from "./resource/users";
 import { TwitchWhispersApi } from "./resource/whispers";
@@ -71,6 +75,10 @@ class TwitchApi {
         return new TwitchChannelsApi(this._streamerClient, this._botClient);
     }
 
+    get charity() {
+        return new TwitchCharityApi(this._streamerClient, this._botClient);
+    }
+
     get chat() {
         return new TwitchChatApi(this._streamerClient, this._botClient);
     }
@@ -79,8 +87,20 @@ class TwitchApi {
         return new TwitchModerationApi(this._streamerClient, this._botClient);
     }
 
+    get polls() {
+        return new TwitchPollsApi(this._streamerClient, this._botClient);
+    }
+
+    get predictions() {
+        return new TwitchPredictionsApi(this._streamerClient, this._botClient);
+    }
+
     get streams() {
         return new TwitchStreamsApi(this._streamerClient, this._botClient);
+    }
+
+    get subscriptions() {
+        return new TwitchSubscriptionsApi(this._streamerClient, this._botClient);
     }
 
     get teams() {

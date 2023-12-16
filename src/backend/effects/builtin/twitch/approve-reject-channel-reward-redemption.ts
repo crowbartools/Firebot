@@ -1,6 +1,6 @@
-import { EffectType } from "../../../types/effects";
-import { EffectCategory } from "../../../shared/effect-constants";
-import twitchApi from "../../twitch-api/api";
+import { EffectType } from "../../../../types/effects";
+import { EffectCategory } from "../../../../shared/effect-constants";
+import twitchApi from "../../../twitch-api/api";
 
 const model: EffectType<{
     rewardId: string;

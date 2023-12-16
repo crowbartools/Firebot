@@ -41,6 +41,12 @@ exports.loadReplaceVariables = () => {
         'bot',
         'category-image-url',
         'category',
+        'charity-campaign-goal',
+        'charity-campaign-total',
+        'charity-description',
+        'charity-logo',
+        'charity-name',
+        'charity-website',
         'chat-message-animated-emote-urls',
         'chat-message-emote-names',
         'chat-message-emote-urls',
@@ -98,6 +104,8 @@ exports.loadReplaceVariables = () => {
         'gift-sub-type',
         'has-role',
         'has-roles',
+        'hype-train-level',
+        'hype-train-percent',
         'loop-count',
         'loop-item',
         'math',
@@ -115,6 +123,8 @@ exports.loadReplaceVariables = () => {
         'object-walk-path-raw',
         'object-walk-path',
         'ordinal-indicator',
+        'poll-winning-choice-name',
+        'prediction-winning-outcome-name',
         'preset-list-arg',
         'previous-currency-amount',
         'profile-page-bytebin-token',
@@ -159,10 +169,8 @@ exports.loadReplaceVariables = () => {
         'spoofed/or',
         'stream-title',
         'streamer',
-        'sub-count',
         'sub-message',
         'sub-months',
-        'sub-points',
         'sub-streak',
         'sub-type',
         'sub-users',
@@ -207,8 +215,12 @@ exports.loadReplaceVariables = () => {
         'username',
         'video-duration',
         'view-time',
+        'viewer-count',
         'whisper-message',
-        'word'
+        'word',
+
+        'twitch/sub-count',
+        'twitch/sub-points'
     ].forEach(filename => {
         const definition = require(`./builtin/${filename}`);
         replaceVariableManager.registerReplaceVariable(definition);

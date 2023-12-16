@@ -1,7 +1,8 @@
-import { EffectType } from "../../../types/effects";
-import { EffectCategory } from "../../../shared/effect-constants";
-import twitchApi from "../../twitch-api/api";
-import logger from "../../logwrapper";
+import { EffectType } from "../../../../types/effects";
+import { EffectCategory } from "../../../../shared/effect-constants";
+import logger from "../../../logwrapper";
+import accountAccess from "../../../common/account-access";
+import twitchApi from "../../../twitch-api/api";
 
 const model: EffectType<{
     action: "Raid Channel" | "Cancel Raid";
@@ -13,6 +14,7 @@ const model: EffectType<{
         description: "Start or cancel a raid to another Twitch channel",
         icon: "fad fa-rocket-launch",
         categories: [ EffectCategory.COMMON, EffectCategory.TWITCH ],
+        hidden: !accountAccess.getAccounts().streamer.loggedIn,
         dependencies: []
     },
     optionsTemplate: `

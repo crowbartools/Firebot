@@ -38,6 +38,7 @@ export type EffectType<EffectModel, OverlayData = unknown> = {
         description: string;
         icon: string;
         categories: EffectCategory[];
+        hidden?: boolean;
         triggers?: TriggerType[] | TriggersObject;
         dependencies?: Array<"chat">;
         outputs?: EffectOutput[];

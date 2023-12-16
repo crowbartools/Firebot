@@ -7,6 +7,7 @@ const { OutputDataType, VariableCategory } = require("../../../shared/variable-c
 
 const triggers = {};
 triggers[EffectTrigger.EVENT] = [
+    "twitch:charity-donation",
     "streamlabs:donation",
     "streamlabs:eldonation",
     "tipeeestream:donation",
@@ -18,7 +19,7 @@ triggers[EffectTrigger.MANUAL] = true;
 const model = {
     definition: {
         handle: "donationAmount",
-        description: "The amount of a donation from StreamLabs/Tipeee/StreamElements/ExtraLife",
+        description: "The amount of a donation from Twitch/StreamLabs/Tipeee/StreamElements/ExtraLife",
         triggers: triggers,
         categories: [VariableCategory.COMMON, VariableCategory.NUMBERS, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.NUMBER]

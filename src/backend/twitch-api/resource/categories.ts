@@ -16,12 +16,12 @@ export interface TwitchCategory {
 };
 
 export class TwitchCategoriesApi {
-    streamerClient: ApiClient;
-    botClient: ApiClient;
+    private _streamerClient: ApiClient;
+    private _botClient: ApiClient;
 
     constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        this.streamerClient = streamerClient;
-        this.botClient = botClient;
+        this._streamerClient = streamerClient;
+        this._botClient = botClient;
     }
 
     private mapTwitchCategory(category: HelixGame, size?: string): TwitchCategory {
@@ -34,7 +34,7 @@ export class TwitchCategoriesApi {
 
     async getCategoryById(categoryId: string, size = "285x380"): Promise<TwitchCategory> {
         try {
-            const category = await this.streamerClient.games.getGameById(categoryId);
+            const category = await this._streamerClient.games.getGameById(categoryId);
             if (category == null) {
                 return null;
             }
@@ -49,7 +49,7 @@ export class TwitchCategoriesApi {
         let categories: HelixGame[] = [];
 
         try {
-            const response = await this.streamerClient.search.searchCategories(categoryName);
+            const response = await this._streamerClient.search.searchCategories(categoryName);
             if (response && response.data) {
                 categories = response.data;
             }

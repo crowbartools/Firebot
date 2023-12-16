@@ -9,6 +9,7 @@ const { FFZEmoteProvider } = require("./third-party/ffz");
 const { SevenTVEmoteProvider } = require("./third-party/7tv");
 const frontendCommunicator = require("../common/frontend-communicator");
 const utils = require("../utility");
+const { parseChatMessage } = require("@twurple/chat");
 
 /**
  * @typedef FirebotChatMessage
@@ -206,20 +207,20 @@ function parseMessageParts(firebotChatMessage, parts) {
     }
     const { streamer, bot } = accountAccess.getAccounts();
     return parts.flatMap(p => {
-        if (p.type === "text" && p.text != null) {
+        if (p.type === "text" && p.text.text != null) {
 
             if (firebotChatMessage.username !== streamer.displayName &&
                 (!bot.loggedIn || firebotChatMessage.username !== bot.displayName)) {
                 if (!firebotChatMessage.whisper &&
                 !firebotChatMessage.tagged &&
                 streamer.loggedIn &&
-                (p.text.includes(streamer.username) || p.text.includes(streamer.displayName))) {
+                (p.text.text.includes(streamer.username) || p.text.text.includes(streamer.displayName))) {
                     firebotChatMessage.tagged = true;
                 }
             }
 
             const subParts = [];
-            for (const word of p.text.split(" ")) {
+            for (const word of p.text.text.split(" ")) {
                 // check for links
                 if (URL_REGEX.test(word)) {
                     subParts.push({
@@ -494,11 +495,10 @@ exports.buildFirebotChatMessage = async (msg, msgText, whisper = false, action =
      */
     if (action && msg._params && msg._params.length > 1) {
         msg._params[1].value = msgText;
-        msg.parseParams();
     }
 
-    const messageParts = parseMessageParts(firebotChatMessage, msg
-        .parseEmotes());
+    const messageParts = parseMessageParts(firebotChatMessage,
+        parseChatMessage(msgText, msg.emoteOffsets));
 
     firebotChatMessage.parts = messageParts;
 
