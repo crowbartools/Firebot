@@ -1,6 +1,6 @@
 "use strict";
 
-const integrationManager = require("./IntegrationManager");
+const integrationManager = require("./integration-manager");
 
 exports.loadIntegrations = () => {
     [

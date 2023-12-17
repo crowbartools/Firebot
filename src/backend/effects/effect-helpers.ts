@@ -1,6 +1,6 @@
 import logger from "../logwrapper";
 import accountAccess from "../common/account-access";
-import integrationManager from "../integrations/integrationManager";
+import integrationManager from "../integrations/integration-manager";
 import twitchChat from "../chat/twitch-chat";
 import { EffectType } from "../../types/effects";
 

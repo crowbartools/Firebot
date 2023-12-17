@@ -5,7 +5,7 @@ const axiosDefault = require("axios").default;
 
 const axios = axiosDefault.create();
 
-const integrationManager = require("../../IntegrationManager");
+const integrationManager = require("../../integration-manager");
 
 const logger = require("../../../logwrapper");
 

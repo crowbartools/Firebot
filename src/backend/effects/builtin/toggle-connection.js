@@ -130,7 +130,7 @@ const toggleConnection = {
     },
     onTriggerEvent: async ({ effect }) => {
         const connectionManager = require("../../common/connection-manager");
-        const integrationManager = require("../../integrations/IntegrationManager");
+        const integrationManager = require("../../integrations/integration-manager");
 
         let services;
         // here for backwards compat, just toggle twitch

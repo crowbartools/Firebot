@@ -8,7 +8,7 @@ const twitchApi = require("../twitch-api/api");
 const twitchChat = require("../chat/twitch-chat");
 const twitchPubSubClient = require("../twitch-api/pubsub/pubsub-client");
 const TwitchEventSubClient = require("../twitch-api/eventsub/eventsub-client");
-const integrationManager = require("../integrations/IntegrationManager");
+const integrationManager = require("../integrations/integration-manager");
 const accountAccess = require("../common/account-access");
 
 const { ConnectionState } = require("../../shared/connection-constants");

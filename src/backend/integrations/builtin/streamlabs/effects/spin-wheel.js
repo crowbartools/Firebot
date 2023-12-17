@@ -1,7 +1,7 @@
 "use strict";
 
 const { EffectCategory } = require("../../../../../shared/effect-constants");
-const integrationManager = require("../../../IntegrationManager");
+const integrationManager = require("../../../integration-manager");
 const axios = require("axios").default;
 const logger = require("../../../../logwrapper");
 

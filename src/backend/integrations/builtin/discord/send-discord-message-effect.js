@@ -1,7 +1,7 @@
 "use strict";
 
 const { EffectCategory } = require("../../../../shared/effect-constants");
-const integrationManager = require("../../IntegrationManager");
+const integrationManager = require("../../integration-manager");
 const discordEmbedBuilder = require('./discord-embed-builder');
 const discord = require("./discord-message-sender");
 const frontEndCommunicator = require("../../../common/frontend-communicator");
