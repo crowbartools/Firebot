@@ -1,7 +1,8 @@
-import { EffectType } from "../../../types/effects";
-import { EffectCategory } from "../../../shared/effect-constants";
-import twitchApi from "../../twitch-api/api";
-import { TwitchCommandHelpers } from "../../chat/twitch-commands/twitch-command-helpers";
+import { EffectType } from "../../../../types/effects";
+import { EffectCategory } from "../../../../shared/effect-constants";
+import { TwitchCommandHelpers } from "../../../chat/twitch-commands/twitch-command-helpers";
+import accountAccess from "../../../common/account-access";
+import twitchApi from "../../../twitch-api/api";
 
 const model: EffectType<{
     setFollowersOnly: boolean;
@@ -23,6 +24,7 @@ const model: EffectType<{
         name: "Set Chat Mode",
         description: "Sets the chat mode(s) for your Twitch channel",
         icon: "fad fa-comment-check",
+        hidden: () => !accountAccess.getAccounts().streamer.loggedIn,
         categories: [ EffectCategory.COMMON, EffectCategory.TWITCH ],
         dependencies: []
     },

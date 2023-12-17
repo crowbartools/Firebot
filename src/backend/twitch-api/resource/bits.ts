@@ -3,12 +3,12 @@ import accountAccess from "../../common/account-access";
 import { ApiClient, HelixBitsLeaderboardEntry, HelixBitsLeaderboardPeriod, HelixBitsLeaderboardQuery } from "@twurple/api";
 
 export class TwitchBitsApi {
-    streamerClient: ApiClient;
-    botClient: ApiClient;
+    private _streamerClient: ApiClient;
+    private _botClient: ApiClient;
 
     constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        this.streamerClient = streamerClient;
-        this.botClient = botClient;
+        this._streamerClient = streamerClient;
+        this._botClient = botClient;
     }
 
     async getChannelBitsLeaderboard(
@@ -27,7 +27,7 @@ export class TwitchBitsApi {
                 startDate: startDate,
                 contextUserId: userId
             };
-            leaderboard.push(...(await this.streamerClient.bits.getLeaderboard(streamerId, params)).entries);
+            leaderboard.push(...(await this._streamerClient.bits.getLeaderboard(streamerId, params)).entries);
         } catch (error) {
             logger.error("Failed to get channel bits leaderboard", error.message);
         }

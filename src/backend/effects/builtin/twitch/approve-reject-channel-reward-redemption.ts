@@ -1,6 +1,7 @@
-import { EffectType } from "../../../types/effects";
-import { EffectCategory } from "../../../shared/effect-constants";
-import twitchApi from "../../twitch-api/api";
+import { EffectType } from "../../../../types/effects";
+import { EffectCategory } from "../../../../shared/effect-constants";
+import accountAccess from "../../../common/account-access";
+import twitchApi from "../../../twitch-api/api";
 
 const model: EffectType<{
     rewardId: string;
@@ -12,6 +13,7 @@ const model: EffectType<{
         name: "Approve/Reject Channel Reward Redemption",
         description: "Approves or rejects a pending Twitch channel reward redemption",
         icon: "fad fa-check-circle",
+        hidden: () => !accountAccess.getAccounts().streamer.loggedIn,
         categories: [ EffectCategory.COMMON, EffectCategory.TWITCH ],
         dependencies: []
     },

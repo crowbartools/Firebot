@@ -159,7 +159,7 @@ const countEmojis = (str) => {
 
 /**
  *
- * @param {import("../chat-helpers").FirebotChatMessage} chatMessage
+ * @param {import("../../../types/chat").FirebotChatMessage} chatMessage
  */
 async function moderateMessage(chatMessage) {
     if (chatMessage == null) {

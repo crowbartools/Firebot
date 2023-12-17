@@ -28,7 +28,7 @@ const HIGHLIGHT_MESSAGE_REWARD_ID = "highlight-message";
 exports.setupChatListeners = (streamerChatClient) => {
 
     streamerChatClient.onAnnouncement(async (_channel, _user, announcementInfo, msg) => {
-        const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, msg.message.value);
+        const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, msg.text);
 
         firebotChatMessage.isAnnouncement = true;
         firebotChatMessage.announcementColor = announcementInfo.color ?? "PRIMARY";
@@ -177,15 +177,6 @@ exports.setupChatListeners = (streamerChatClient) => {
             subInfo.displayName,
             subInfo.userId,
             subInfo.plan
-        );
-    });
-
-    streamerChatClient.onRaid((_channel, _username, raidInfo, msg) => {
-        twitchEventsHandler.raid.triggerRaid(
-            msg.userInfo.userName,
-            msg.userInfo.userId,
-            raidInfo.displayName,
-            raidInfo.viewerCount
         );
     });
 };

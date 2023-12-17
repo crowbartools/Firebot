@@ -56,8 +56,17 @@ class EffectManager extends EventEmitter {
         if (!e) {
             return {};
         }
+
+        // Create a copy of the def with an evaluated hidden prop
+        const definition = {
+            ...e.definition,
+            hidden: typeof e.definition.hidden === "function"
+                ? e.definition.hidden()
+                : e.definition.hidden
+        };
+
         return {
-            definition: e.definition,
+            definition: definition,
             optionsTemplate: e.optionsTemplate,
             optionsTemplateUrl: e.optionsTemplateUrl,
             optionsControllerRaw: e.optionsController
@@ -116,6 +125,7 @@ frontendCommunicator.onAsync("getEffectDefinitions", async (triggerData) => {
         triggerMeta = triggerData.triggerMeta;
 
     const filteredEffectDefs = effects
+        .map(manager.mapEffectForFrontEnd)
         .map(e => e.definition)
         .filter(e => {
             if (triggerType != null) {

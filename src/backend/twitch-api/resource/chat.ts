@@ -3,12 +3,12 @@ import accountAccess from "../../common/account-access";
 import { ApiClient, HelixChatAnnouncementColor, HelixSendChatAnnouncementParams, HelixUpdateChatSettingsParams } from "@twurple/api";
 
 export class TwitchChatApi {
-    streamerClient: ApiClient;
-    botClient: ApiClient;
+    private _streamerClient: ApiClient;
+    private _botClient: ApiClient;
 
     constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        this.streamerClient = streamerClient;
-        this.botClient = botClient;
+        this._streamerClient = streamerClient;
+        this._botClient = botClient;
     }
 
     /**
@@ -20,11 +20,11 @@ export class TwitchChatApi {
         try {
             const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
     
-            let result = await this.streamerClient.chat.getChatters(streamerUserId, streamerUserId);
+            let result = await this._streamerClient.chat.getChatters(streamerUserId);
             chatters.push(...result.data.map(c => c.userDisplayName));
     
             while (result.cursor) {
-                result = await this.streamerClient.chat.getChatters(streamerUserId, streamerUserId, { after: result.cursor });
+                result = await this._streamerClient.chat.getChatters(streamerUserId, { after: result.cursor });
                 chatters.push(...result.data.map(c => c.userDisplayName));
             }
         } catch (error) {
@@ -52,7 +52,7 @@ export class TwitchChatApi {
         const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
         const willSendAsBot: boolean = sendAsBot === true
             && accountAccess.getAccounts().bot?.userId != null
-            && this.botClient != null;
+            && this._botClient != null;
         const senderUserId: string = willSendAsBot === true ?
             accountAccess.getAccounts().bot.userId :
             streamerUserId;
@@ -74,9 +74,11 @@ export class TwitchChatApi {
                 };
         
                 if (willSendAsBot === true) {
-                    await this.botClient.chat.sendAnnouncement(streamerUserId, senderUserId, announcement);
+                    await this._botClient.asUser(senderUserId, async ctx => {
+                        await ctx.chat.sendAnnouncement(streamerUserId, announcement);
+                    });
                 } else {
-                    await this.streamerClient.chat.sendAnnouncement(streamerUserId, senderUserId, announcement);
+                    await this._streamerClient.chat.sendAnnouncement(streamerUserId, announcement);
                 }
             }
     
@@ -97,7 +99,7 @@ export class TwitchChatApi {
         const streamerId = accountAccess.getAccounts().streamer.userId;
 
         try {
-            await this.streamerClient.chat.shoutoutUser(streamerId, targetUserId, streamerId);
+            await this._streamerClient.chat.shoutoutUser(streamerId, targetUserId);
         } catch (error) {
             logger.error("Error sending shoutout", error.message);
             return false;
@@ -116,7 +118,7 @@ export class TwitchChatApi {
         const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
     
         try {
-            await this.streamerClient.moderation.deleteChatMessages(streamerUserId, streamerUserId, messageId);
+            await this._streamerClient.moderation.deleteChatMessages(streamerUserId, messageId);
     
             return true;
         } catch (error) {
@@ -135,7 +137,7 @@ export class TwitchChatApi {
         const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
     
         try {
-            await this.streamerClient.moderation.deleteChatMessages(streamerUserId, streamerUserId);
+            await this._streamerClient.moderation.deleteChatMessages(streamerUserId, streamerUserId);
     
             return true;
         } catch (error) {
@@ -159,7 +161,7 @@ export class TwitchChatApi {
                 emoteOnlyModeEnabled: enable
             };
     
-            await this.streamerClient.chat.updateSettings(streamerUserId, streamerUserId, chatSettings);
+            await this._streamerClient.chat.updateSettings(streamerUserId, chatSettings);
     
             return true;
         } catch (error) {
@@ -185,7 +187,7 @@ export class TwitchChatApi {
                 followerOnlyModeDelay: duration
             };
     
-            await this.streamerClient.chat.updateSettings(streamerUserId, streamerUserId, chatSettings);
+            await this._streamerClient.chat.updateSettings(streamerUserId, chatSettings);
     
             return true;
         } catch (error) {
@@ -209,7 +211,7 @@ export class TwitchChatApi {
                 subscriberOnlyModeEnabled: enable
             };
     
-            await this.streamerClient.chat.updateSettings(streamerUserId, streamerUserId, chatSettings);
+            await this._streamerClient.chat.updateSettings(streamerUserId, chatSettings);
     
             return true;
         } catch (error) {
@@ -235,7 +237,7 @@ export class TwitchChatApi {
                 slowModeDelay: enable === true ? duration : null
             };
     
-            await this.streamerClient.chat.updateSettings(streamerUserId, streamerUserId, chatSettings);
+            await this._streamerClient.chat.updateSettings(streamerUserId, chatSettings);
     
             return true;
         } catch (error) {
@@ -259,7 +261,7 @@ export class TwitchChatApi {
                 uniqueChatModeEnabled: enable
             };
     
-            await this.streamerClient.chat.updateSettings(streamerUserId, streamerUserId, chatSettings);
+            await this._streamerClient.chat.updateSettings(streamerUserId, chatSettings);
     
             return true;
         } catch (error) {

@@ -12,7 +12,8 @@ export interface AuthProviderDefinition {
         tokenHost: string;
         authorizePath: string;
         tokenPath?: string;
-    }
+    };
+    redirectUriHost?: string;
     scopes?: string[] | string | undefined;
 }
 
@@ -21,6 +22,7 @@ export interface AuthProvider {
     oauthClient: ClientOAuth2;
     authorizationUri: string;
     redirectUri: string;
+    tokenUri: string;
     details: AuthProviderDefinition;
 }
 

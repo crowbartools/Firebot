@@ -1,13 +1,20 @@
 "use strict";
 
 exports.announcement = require('./twitch-events/announcement');
+exports.charity = require('./twitch-events/charity');
 exports.chatMessage = require('./twitch-events/chat-message');
 exports.chatModeChanged = require('./twitch-events/chat-mode-changed');
 exports.cheer = require('./twitch-events/cheer');
 exports.follow = require('./twitch-events/follow');
 exports.giftSub = require('./twitch-events/gift-sub');
+exports.goal = require('./twitch-events/goal');
+exports.hypeTrain = require('./twitch-events/hype-train');
+exports.poll = require('./twitch-events/poll');
+exports.prediction = require('./twitch-events/prediction');
 exports.raid = require('./twitch-events/raid');
 exports.rewardRedemption = require('./twitch-events/reward-redemption');
+exports.shoutout = require('./twitch-events/shoutout');
+exports.stream = require('./twitch-events/stream');
 exports.sub = require('./twitch-events/sub');
 exports.viewerArrived = require('./twitch-events/viewer-arrived');
 exports.viewerBanned = require('./twitch-events/viewer-banned');

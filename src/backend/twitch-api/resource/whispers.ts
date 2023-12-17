@@ -3,12 +3,12 @@ import accountAccess from "../../common/account-access";
 import { ApiClient, UserIdResolvable } from "@twurple/api";
 
 export class TwitchWhispersApi {
-    streamerClient: ApiClient;
-    botClient: ApiClient;
+    private _streamerClient: ApiClient;
+    private _botClient: ApiClient;
 
     constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        this.streamerClient = streamerClient;
-        this.botClient = botClient;
+        this._streamerClient = streamerClient;
+        this._botClient = botClient;
     }
 
     /**
@@ -28,16 +28,16 @@ export class TwitchWhispersApi {
     ): Promise<boolean> {
         const willSendAsBot: boolean = sendAsBot === true
             && accountAccess.getAccounts().bot?.userId != null
-            && this.botClient != null;
+            && this._botClient != null;
         const senderUserId: string = willSendAsBot === true ?
             accountAccess.getAccounts().bot.userId :
             accountAccess.getAccounts().streamer.userId;
     
         try {
             if (willSendAsBot === true) {
-                await this.botClient.whispers.sendWhisper(senderUserId, recipientUserId, message);
+                await this._botClient.whispers.sendWhisper(senderUserId, recipientUserId, message);
             } else {
-                await this.streamerClient.whispers.sendWhisper(senderUserId, recipientUserId, message);
+                await this._streamerClient.whispers.sendWhisper(senderUserId, recipientUserId, message);
             }
             
             return true;

@@ -3,12 +3,12 @@ import accountAccess from "../../common/account-access";
 import { ApiClient } from "@twurple/api";
 
 export class TwitchAuthApi {
-    streamerClient: ApiClient;
-    botClient: ApiClient;
+    private _streamerClient: ApiClient;
+    private _botClient: ApiClient;
 
     constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        this.streamerClient = streamerClient;
-        this.botClient = botClient;
+        this._streamerClient = streamerClient;
+        this._botClient = botClient;
     }
 
     async isTokenValid(type: "streamer" | "bot"): Promise<boolean> {
@@ -18,12 +18,12 @@ export class TwitchAuthApi {
             switch (type) {
                 case "streamer":
                     userId = accountAccess.getAccounts().streamer.userId;
-                    apiClient = this.streamerClient;
+                    apiClient = this._streamerClient;
                     break;
             
                 case "bot":
                     userId = accountAccess.getAccounts().bot.userId;
-                    apiClient = this.botClient;
+                    apiClient = this._botClient;
                     break;
             }
 

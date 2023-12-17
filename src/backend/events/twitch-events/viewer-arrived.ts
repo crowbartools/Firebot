@@ -12,4 +12,4 @@ export function triggerViewerArrived(
         userId,
         messageText
     });
-}
+};

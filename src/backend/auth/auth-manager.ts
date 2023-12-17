@@ -1,30 +1,28 @@
-"use strict";
-
-const EventEmitter = require("events");
-const logger = require("../logwrapper");
-const { settings } = require("../common/settings-access");
-const OAuthClient = require("client-oauth2");
-const frontendCommunicator = require("../common/frontend-communicator");
-
-const HTTP_PORT = settings.getWebServerPort();
+import { EventEmitter } from "events";
+import ClientOAuth2 from "client-oauth2";
+import logger from "../logwrapper";
+import { AuthProvider, AuthProviderDefinition } from "./auth";
+import { settings } from "../common/settings-access";
+import frontendCommunicator from "../common/frontend-communicator";
 
 class AuthManager extends EventEmitter {
+    private readonly _httpPort: string;
+    private _authProviders: AuthProvider[];
+
     constructor() {
         super();
-        /** @type {import("./auth").AuthProvider[]} */
-        this._authProviders = [];
 
-        this.REDIRECT_URI = 'http://localhost:' + HTTP_PORT + '/api/v1/auth/callback';
+        this._authProviders = [];
+        this._httpPort = settings.getWebServerPort()
     }
 
-    /** @param {import("./auth").AuthProviderDefinition} provider */
-    registerAuthProvider(provider) {
+    registerAuthProvider(provider: AuthProviderDefinition): void {
         if (provider == null) {
             return;
         }
 
         const redirectUrlHost = provider.redirectUriHost || "localhost";
-        const redirectUri = `http://${redirectUrlHost}:${HTTP_PORT}/api/v1/auth/callback`;
+        const redirectUri = `http://${redirectUrlHost}:${this._httpPort}/api/v1/auth/callback`;
 
         const oauthClient = this.buildOAuthClientForProvider(provider, redirectUri);
 
@@ -62,12 +60,11 @@ class AuthManager extends EventEmitter {
         logger.debug(`Registered Auth Provider ${provider.name}`);
     }
 
-    getAuthProvider(providerId) {
+    getAuthProvider(providerId: string): AuthProvider {
         return this._authProviders.find(p => p.id === providerId);
     }
 
-    /** @param {import("./auth").AuthProviderDefinition} provider */
-    buildOAuthClientForProvider(provider, redirectUri) {
+    buildOAuthClientForProvider(provider: AuthProviderDefinition, redirectUri: string): ClientOAuth2 {
         let scopes;
         if (provider.scopes) {
             scopes = Array.isArray(provider.scopes)
@@ -80,7 +77,7 @@ class AuthManager extends EventEmitter {
         const authUri = `${provider.auth.tokenHost}${provider.auth.authorizePath}`;
         const tokenUri = `${provider.auth.tokenHost}${provider.auth.tokenPath ?? ""}`;
 
-        return new OAuthClient({
+        return new ClientOAuth2({
             clientId: provider.client.id,
             clientSecret: provider.auth.type === "code" ? provider.client.secret : null,
             accessTokenUri: provider.auth.type === "token" ? null : tokenUri,
@@ -91,14 +88,16 @@ class AuthManager extends EventEmitter {
         });
     }
 
-    async refreshTokenIfExpired(providerId, tokenData) {
+    async refreshTokenIfExpired(providerId: string, tokenData: any): Promise<any> {
         const provider = this.getAuthProvider(providerId);
         let accessToken = provider.oauthClient.createToken(tokenData);
 
         if (accessToken.expired()) {
             try {
                 const params = {
-                    scope: provider.details.scopes
+                    scopes: Array.isArray(provider.details.scopes)
+                        ? provider.details.scopes
+                        : provider.details.scopes.split(" ")
                 };
 
                 accessToken = await accessToken.refresh(params);
@@ -110,7 +109,7 @@ class AuthManager extends EventEmitter {
         return accessToken.data;
     }
 
-    async revokeTokens(providerId, tokenData) {
+    async revokeTokens(providerId: string, tokenData: ClientOAuth2.Data): Promise<void> {
         const provider = this.getAuthProvider(providerId);
         if (provider == null) {
             return;
@@ -125,14 +124,14 @@ class AuthManager extends EventEmitter {
         }
     }
 
-    successfulAuth(providerId, tokenData) {
+    successfulAuth(providerId: string, tokenData: any): void {
         this.emit("auth-success", { providerId: providerId, tokenData: tokenData });
     }
 }
 
 const manager = new AuthManager();
 
-frontendCommunicator.onAsync("begin-device-auth", async (providerId) => {
+frontendCommunicator.onAsync("begin-device-auth", async (providerId: string): Promise<void> => {
     const provider = manager.getAuthProvider(providerId);
     if (provider?.details?.auth?.type !== "device") {
         return;
@@ -188,4 +187,4 @@ frontendCommunicator.onAsync("begin-device-auth", async (providerId) => {
     }
 });
 
-module.exports = manager;
+export = manager;

@@ -1,4 +1,4 @@
-import { FirebotChatMessage } from "../../chat/chat-helpers";
+import { FirebotChatMessage } from "../../../types/chat";
 import eventManager from "../../events/EventManager";
 
 export function triggerChatMessage(firebotChatMessage: FirebotChatMessage): void {
