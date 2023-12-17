@@ -11,7 +11,7 @@ const model: EffectType<{}> = {
         description: "Locks the currently active Twitch prediction so that no more predictions can be made",
         icon: "fad fa-lock",
         categories: [ EffectCategory.COMMON, EffectCategory.TWITCH ],
-        hidden: !accountAccess.getAccounts().streamer.loggedIn,
+        hidden: () => !accountAccess.getAccounts().streamer.loggedIn,
         dependencies: []
     },
     optionsTemplate: `

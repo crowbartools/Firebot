@@ -15,7 +15,7 @@ const model: EffectType<{
         description: "Creates a Twitch prediction",
         icon: "fad fa-question-circle",
         categories: [ EffectCategory.COMMON, EffectCategory.TWITCH ],
-        hidden: !accountAccess.getAccounts().streamer.loggedIn,
+        hidden: () => !accountAccess.getAccounts().streamer.loggedIn,
         dependencies: []
     },
     optionsTemplate: `

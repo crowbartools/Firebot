@@ -12,7 +12,7 @@ const model: EffectType<{
         description: "Create a stream marker in your Twitch VOD",
         icon: "fad fa-map-pin",
         categories: [ EffectCategory.COMMON, EffectCategory.TWITCH ],
-        hidden: !accountAccess.getAccounts().streamer.loggedIn,
+        hidden: () => !accountAccess.getAccounts().streamer.loggedIn,
         dependencies: []
     },
     optionsTemplate: `

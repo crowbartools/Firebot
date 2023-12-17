@@ -13,7 +13,7 @@ const model: EffectType<{
         description: "Send a Twitch shoutout to another channel",
         icon: "fad fa-bullhorn",
         categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
-        hidden: !accountAccess.getAccounts().streamer.loggedIn,
+        hidden: () => !accountAccess.getAccounts().streamer.loggedIn,
         dependencies: [],
     },
     optionsTemplate: `

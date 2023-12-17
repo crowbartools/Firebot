@@ -1,20 +1,20 @@
-"use strict";
+import { EffectType } from "../../../../types/effects";
+import { EffectCategory, EffectDependency } from '../../../../shared/effect-constants';
+import accountAccess from "../../../common/account-access";
+import twitchApi from "../../../twitch-api/api";
 
-const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
-const accountAccess = require("../../common/account-access");
-const twitchApi = require("../../twitch-api/api");
-
-const model = {
+const model: EffectType<{
+    adLength: number
+}> = {
     definition: {
         id: "firebot:ad-break",
         name: "Ad Break",
-        description: "Trigger an ad-break",
-        hidden: !accountAccess.getAccounts().streamer.loggedIn,
+        description: "Trigger an ad break",
+        hidden: () => !accountAccess.getAccounts().streamer.loggedIn,
         icon: "fad fa-ad",
         categories: [EffectCategory.COMMON, EffectCategory.MODERATION, EffectCategory.TWITCH],
         dependencies: [EffectDependency.CHAT]
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container header="Ad Duration" pad-top="true">
             <div class="btn-group">

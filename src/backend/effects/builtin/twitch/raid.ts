@@ -14,7 +14,7 @@ const model: EffectType<{
         description: "Start or cancel a raid to another Twitch channel",
         icon: "fad fa-rocket-launch",
         categories: [ EffectCategory.COMMON, EffectCategory.TWITCH ],
-        hidden: !accountAccess.getAccounts().streamer.loggedIn,
+        hidden: () => !accountAccess.getAccounts().streamer.loggedIn,
         dependencies: []
     },
     optionsTemplate: `

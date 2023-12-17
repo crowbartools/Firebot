@@ -38,7 +38,7 @@ export type EffectType<EffectModel, OverlayData = unknown> = {
         description: string;
         icon: string;
         categories: EffectCategory[];
-        hidden?: boolean;
+        hidden?: boolean | Func<bool>;
         triggers?: TriggerType[] | TriggersObject;
         dependencies?: Array<"chat">;
         outputs?: EffectOutput[];
@@ -46,7 +46,7 @@ export type EffectType<EffectModel, OverlayData = unknown> = {
     optionsTemplate: string;
     optionsController?: (
         $scope: EffectScope<EffectModel>,
-        ...args: unknown[]
+        ...args: any[]
     ) => void;
     optionsValidator?: (effect: EffectModel) => string[];
     onTriggerEvent: (event: {

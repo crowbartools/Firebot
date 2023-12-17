@@ -13,7 +13,7 @@ const model: EffectType<{
         description: "Resolves the currently active Twitch prediction by selecting an outcome and pays out channel points to the winners",
         icon: "fad fa-trophy-alt",
         categories: [ EffectCategory.COMMON, EffectCategory.TWITCH ],
-        hidden: !accountAccess.getAccounts().streamer.loggedIn,
+        hidden: () => !accountAccess.getAccounts().streamer.loggedIn,
         dependencies: []
     },
     optionsTemplate: `

@@ -11,7 +11,7 @@ const model: EffectType<{}> = {
         description: "Cancels the currently active Twitch prediction and refunds all channel points wagered",
         icon: "fad fa-ban",
         categories: [ EffectCategory.COMMON, EffectCategory.TWITCH ],
-        hidden: !accountAccess.getAccounts().streamer.loggedIn,
+        hidden: () => !accountAccess.getAccounts().streamer.loggedIn,
         dependencies: []
     },
     optionsTemplate: `

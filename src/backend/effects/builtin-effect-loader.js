@@ -5,9 +5,7 @@ const effectManager = require("./effectManager");
 exports.loadEffects = () => {
     [
         'active-user-lists',
-        'ad-break',
         'add-quote',
-        'announcement',
         'api',
         'block-unblock',
         'celebration',
@@ -46,14 +44,11 @@ exports.loadEffects = () => {
         'run-command',
         'run-program',
         'sequential-effect',
-        'set-chat-mode',
         'set-user-metadata',
         'shoutout',
         'show-image', // No migration needed.
         'show-text',
         'stop-effect-execution',
-        'stream-game',
-        'stream-title',
         'take-screenshot',
         'text-to-speech',
         'toggle-command',
@@ -66,11 +61,15 @@ exports.loadEffects = () => {
         'update-role',
         'update-vip-role',
 
-        'twitch/raid',
-        'twitch/shoutout',
-        'twitch/create-stream-marker',
-
+        'twitch/ad-break',
+        'twitch/announcement',
         'twitch/approve-reject-channel-reward-redemption',
+        'twitch/create-stream-marker',
+        'twitch/raid',
+        'twitch/set-chat-mode',
+        'twitch/shoutout',
+        'twitch/stream-title',
+        'twitch/stream-game',
 
         'twitch/create-poll',
         'twitch/end-poll',

@@ -1,15 +1,17 @@
-"use strict";
+import { EffectType } from "../../../../types/effects";
+import { EffectCategory } from '../../../../shared/effect-constants';
+import accountAccess from "../../../common/account-access";
+import twitchApi from "../../../twitch-api/api";
 
-const { EffectCategory } = require('../../../shared/effect-constants');
-const twitchApi = require("../../twitch-api/api");
-const accountAccess = require("../../common/account-access");
-
-const model = {
+const model: EffectType<{
+    title: string
+}> = {
     definition: {
         id: "firebot:streamtitle",
         name: "Set Stream Title",
         description: "Set the title of the stream.",
         icon: "fad fa-comment-dots",
+        hidden: () => !accountAccess.getAccounts().streamer.loggedIn,
         categories: [EffectCategory.COMMON, EffectCategory.MODERATION, EffectCategory.TWITCH],
         dependencies: []
     },

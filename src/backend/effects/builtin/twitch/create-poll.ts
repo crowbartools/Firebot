@@ -17,7 +17,7 @@ const model: EffectType<{
         description: "Creates a Twitch poll",
         icon: "fad fa-poll-h",
         categories: [ EffectCategory.COMMON, EffectCategory.TWITCH ],
-        hidden: !accountAccess.getAccounts().streamer.loggedIn,
+        hidden: () => !accountAccess.getAccounts().streamer.loggedIn,
         dependencies: []
     },
     optionsTemplate: `

@@ -1,14 +1,20 @@
-"use strict";
+import { EffectType } from "../../../../types/effects";
+import { EffectCategory, EffectDependency } from "../../../../shared/effect-constants";
+import { HelixChatAnnouncementColor } from "@twurple/api";
+import accountAccess from "../../../common/account-access";
+import twitchApi from "../../../twitch-api/api";
 
-const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
-const twitchApi = require("../../twitch-api/api");
-
-const effect = {
+const model: EffectType<{
+    color: string,
+    message: string,
+    chatter?: string
+}> = {
     definition: {
         id: "firebot:announcement",
         name: "Announce",
         description: "Send an announcement to your chat",
         icon: "fad fa-bullhorn",
+        hidden: () => !accountAccess.getAccounts().streamer.loggedIn,
         categories: [EffectCategory.COMMON, EffectCategory.CHAT_BASED, EffectCategory.TWITCH],
         dependencies: [EffectDependency.CHAT]
     },
@@ -46,12 +52,12 @@ const effect = {
     },
     onTriggerEvent: async ({ effect }) => {
         const { message, chatter } = effect;
-        const color = effect.color ?? "primary";
+        const color = (effect.color.toLowerCase() ?? "primary") as HelixChatAnnouncementColor;
 
-        await twitchApi.chat.sendAnnouncement(message, color.toLowerCase(), chatter?.toLowerCase() === "bot");
+        await twitchApi.chat.sendAnnouncement(message, color, chatter?.toLowerCase() === "bot");
 
         return true;
     }
 };
 
-module.exports = effect;
+module.exports = model;

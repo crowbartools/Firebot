@@ -1,16 +1,21 @@
-"use strict";
+import { EffectType } from '../../../../types/effects';
+import { EffectCategory } from '../../../../shared/effect-constants';
+import logger from '../../../logwrapper';
+import accountAccess from "../../../common/account-access";
+import twitchApi from "../../../twitch-api/api";
+import eventsManager from "../../../events/EventManager";
 
-const { EffectCategory } = require('../../../shared/effect-constants');
-const logger = require('../../logwrapper');
-const twitchApi = require("../../twitch-api/api");
-const eventsManager = require("../../events/EventManager");
-
-const model = {
+const model: EffectType<{
+    mode: "specific" | "custom",
+    gameId: string,
+    gameName: string
+}> = {
     definition: {
         id: "firebot:streamgame",
         name: "Set Stream Category",
         description: "Set the stream category/game.",
         icon: "fad fa-gamepad",
+        hidden: () => !accountAccess.getAccounts().streamer.loggedIn,
         categories: [EffectCategory.COMMON, EffectCategory.MODERATION, EffectCategory.TWITCH],
         dependencies: []
     },

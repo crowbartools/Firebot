@@ -13,7 +13,7 @@ const model: EffectType<{
         description: "Ends the currently active Twitch poll",
         icon: "fad fa-stop-circle",
         categories: [ EffectCategory.COMMON, EffectCategory.TWITCH ],
-        hidden: !accountAccess.getAccounts().streamer.loggedIn,
+        hidden: () => !accountAccess.getAccounts().streamer.loggedIn,
         dependencies: []
     },
     optionsTemplate: `
