@@ -1,21 +1,21 @@
 import { EffectType } from "../../../../types/effects";
 import { EffectCategory } from "../../../../shared/effect-constants";
-import accountAccess from "../../../common/account-access";
 import twitchApi from "../../../twitch-api/api";
 
 const model: EffectType<{
     rewardId: string;
     redemptionId: string;
     approve: boolean;
-}>  = {
+}> = {
     definition: {
         id: "firebot:approve-reject-channel-reward-redemption",
         name: "Approve/Reject Channel Reward Redemption",
         description: "Approves or rejects a pending Twitch channel reward redemption",
         icon: "fad fa-check-circle",
-        hidden: () => !accountAccess.getAccounts().streamer.loggedIn,
-        categories: [ EffectCategory.COMMON, EffectCategory.TWITCH ],
-        dependencies: []
+        categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
+        dependencies: {
+            twitch: true,
+        },
     },
     optionsTemplate: `
         <eos-container header="Reward Info">
@@ -61,16 +61,14 @@ const model: EffectType<{
 
         return errors;
     },
-    optionsController: () => {
-        
-    },
+    optionsController: () => {},
     onTriggerEvent: async ({ effect }) => {
         return await twitchApi.channelRewards.approveOrRejectChannelRewardRedemption(
             effect.rewardId,
             effect.redemptionId,
             effect.approve
         );
-    }
-}
+    },
+};
 
 module.exports = model;

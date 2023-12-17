@@ -1,7 +1,6 @@
 import { EffectType } from "../../../../types/effects";
 import { EffectCategory } from "../../../../shared/effect-constants";
 import logger from "../../../logwrapper";
-import accountAccess from "../../../common/account-access";
 import twitchApi from "../../../twitch-api/api";
 
 const model: EffectType<{
@@ -10,11 +9,13 @@ const model: EffectType<{
     definition: {
         id: "twitch:resolve-prediction",
         name: "Resolve Twitch Prediction",
-        description: "Resolves the currently active Twitch prediction by selecting an outcome and pays out channel points to the winners",
+        description:
+            "Resolves the currently active Twitch prediction by selecting an outcome and pays out channel points to the winners",
         icon: "fad fa-trophy-alt",
-        categories: [ EffectCategory.COMMON, EffectCategory.TWITCH ],
-        hidden: () => !accountAccess.getAccounts().streamer.loggedIn,
-        dependencies: []
+        categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
+        dependencies: {
+            twitch: true,
+        },
     },
     optionsTemplate: `
         <eos-container header="Prediction Outcome">
@@ -31,7 +32,7 @@ const model: EffectType<{
         const errors: string[] = [];
 
         if (!(effect.outcome >= 1 && effect.outcome <= 10)) {
-            errors.push("Outcome must be between 1 and 10.")
+            errors.push("Outcome must be between 1 and 10.");
         }
 
         return errors;
@@ -40,7 +41,7 @@ const model: EffectType<{
     onTriggerEvent: async ({ effect }) => {
         const latestPrediction = await twitchApi.predictions.getMostRecentPrediction();
 
-        if (latestPrediction?.status !== "ACTIVE" && latestPrediction?.status !== "LOCKED" ) {
+        if (latestPrediction?.status !== "ACTIVE" && latestPrediction?.status !== "LOCKED") {
             logger.warn("There is no active Twitch prediction to resolve");
             return;
         }
@@ -49,7 +50,7 @@ const model: EffectType<{
 
         logger.debug(`Resolving Twitch prediction "${latestPrediction.title}" with outcome "${winningOutcome.title}"`);
         return await twitchApi.predictions.resolvePrediction(latestPrediction.id, winningOutcome.id);
-    }
-}
+    },
+};
 
 module.exports = model;

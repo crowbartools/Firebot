@@ -1,7 +1,6 @@
 import { EffectType } from "../../../../types/effects";
 import { EffectCategory } from "../../../../shared/effect-constants";
 import logger from "../../../logwrapper";
-import accountAccess from "../../../common/account-access";
 import twitchApi from "../../../twitch-api/api";
 
 const model: EffectType<{
@@ -12,9 +11,10 @@ const model: EffectType<{
         name: "End Twitch Poll",
         description: "Ends the currently active Twitch poll",
         icon: "fad fa-stop-circle",
-        categories: [ EffectCategory.COMMON, EffectCategory.TWITCH ],
-        hidden: () => !accountAccess.getAccounts().streamer.loggedIn,
-        dependencies: []
+        categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
+        dependencies: {
+            twitch: true,
+        },
     },
     optionsTemplate: `
         <eos-container header="Archive Poll">
@@ -39,7 +39,7 @@ const model: EffectType<{
 
         logger.debug(`Ending Twitch poll "${latestPoll.title}"${effect.archivePoll ? " as archived" : ""}`);
         return await twitchApi.polls.endPoll(latestPoll.id, effect.archivePoll);
-    }
-}
+    },
+};
 
 module.exports = model;

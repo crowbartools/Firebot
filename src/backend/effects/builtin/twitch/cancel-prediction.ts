@@ -1,7 +1,6 @@
 import { EffectType } from "../../../../types/effects";
 import { EffectCategory } from "../../../../shared/effect-constants";
 import logger from "../../../logwrapper";
-import accountAccess from "../../../common/account-access";
 import twitchApi from "../../../twitch-api/api";
 
 const model: EffectType<{}> = {
@@ -10,9 +9,10 @@ const model: EffectType<{}> = {
         name: "Cancel Twitch Prediction",
         description: "Cancels the currently active Twitch prediction and refunds all channel points wagered",
         icon: "fad fa-ban",
-        categories: [ EffectCategory.COMMON, EffectCategory.TWITCH ],
-        hidden: () => !accountAccess.getAccounts().streamer.loggedIn,
-        dependencies: []
+        categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
+        dependencies: {
+            twitch: true,
+        },
     },
     optionsTemplate: `
         <eos-container>
@@ -33,7 +33,7 @@ const model: EffectType<{}> = {
 
         logger.debug(`Canceling Twitch prediction "${latestPrediction.title}"`);
         return await twitchApi.predictions.cancelPrediction(latestPrediction.id);
-    }
-}
+    },
+};
 
 module.exports = model;

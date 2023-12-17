@@ -1,23 +1,23 @@
-import { EffectType } from '../../../../types/effects';
-import { EffectCategory } from '../../../../shared/effect-constants';
-import logger from '../../../logwrapper';
-import accountAccess from "../../../common/account-access";
+import { EffectType } from "../../../../types/effects";
+import { EffectCategory } from "../../../../shared/effect-constants";
+import logger from "../../../logwrapper";
 import twitchApi from "../../../twitch-api/api";
 import eventsManager from "../../../events/EventManager";
 
 const model: EffectType<{
-    mode: "specific" | "custom",
-    gameId: string,
-    gameName: string
+    mode: "specific" | "custom";
+    gameId: string;
+    gameName: string;
 }> = {
     definition: {
         id: "firebot:streamgame",
         name: "Set Stream Category",
         description: "Set the stream category/game.",
         icon: "fad fa-gamepad",
-        hidden: () => !accountAccess.getAccounts().streamer.loggedIn,
         categories: [EffectCategory.COMMON, EffectCategory.MODERATION, EffectCategory.TWITCH],
-        dependencies: []
+        dependencies: {
+            twitch: true,
+        },
     },
     optionsTemplate: `
         <eos-container header="Mode">
@@ -61,31 +61,29 @@ const model: EffectType<{
             $scope.effect.mode = "specific";
         }
         $scope.games = [];
-        $scope.searchGames = function(gameQuery) {
-            $q.when(backendCommunicator.fireEventAsync("search-twitch-games", gameQuery))
-                .then(games => {
-                    if (games != null) {
-                        $scope.games = games;
-                    }
-                });
+        $scope.searchGames = function (gameQuery) {
+            $q.when(backendCommunicator.fireEventAsync("search-twitch-games", gameQuery)).then((games) => {
+                if (games != null) {
+                    $scope.games = games;
+                }
+            });
         };
 
         if ($scope.effect.mode === "specific" && $scope.effect.gameId != null) {
-            $q.when(backendCommunicator.fireEventAsync("get-twitch-game", $scope.effect.gameId))
-                .then(game => {
-                    if (game != null) {
-                        $scope.selectedGame = game;
-                    }
-                });
+            $q.when(backendCommunicator.fireEventAsync("get-twitch-game", $scope.effect.gameId)).then((game) => {
+                if (game != null) {
+                    $scope.selectedGame = game;
+                }
+            });
         }
 
-        $scope.gameSelected = function(game) {
+        $scope.gameSelected = function (game) {
             if (game != null) {
                 $scope.effect.gameId = game.id;
             }
         };
     },
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.mode === "specific" && (effect.gameId == null || effect.gameId === "")) {
             errors.push("Please search for and select a category/game.");
@@ -94,27 +92,35 @@ const model: EffectType<{
         }
         return errors;
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         if (event.effect.mode === "specific") {
-            await twitchApi.channels.updateChannelInformation({gameId: event.effect.gameId });
+            await twitchApi.channels.updateChannelInformation({
+                gameId: event.effect.gameId,
+            });
         } else {
             const categories = await twitchApi.categories.searchCategories(event.effect.gameName.trim());
             if (categories?.length) {
-                const category = categories.find(c => c.name.toLowerCase() === event.effect.gameName.toLowerCase()) ?? categories[0];
+                const category =
+                    categories.find((c) => c.name.toLowerCase() === event.effect.gameName.toLowerCase()) ??
+                    categories[0];
 
                 if (!category) {
                     logger.error("Couldn't find a category/game with this name");
                     return;
                 }
 
-                await twitchApi.channels.updateChannelInformation({ gameId: category.id });
+                await twitchApi.channels.updateChannelInformation({
+                    gameId: category.id,
+                });
             }
         }
 
         const category = (await twitchApi.channels.getChannelInformation()).gameName;
-        eventsManager.triggerEvent("firebot", "category-changed", {category: category});
+        eventsManager.triggerEvent("firebot", "category-changed", {
+            category: category,
+        });
         return true;
-    }
+    },
 };
 
 module.exports = model;

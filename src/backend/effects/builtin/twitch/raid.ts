@@ -1,21 +1,21 @@
 import { EffectType } from "../../../../types/effects";
 import { EffectCategory } from "../../../../shared/effect-constants";
 import logger from "../../../logwrapper";
-import accountAccess from "../../../common/account-access";
 import twitchApi from "../../../twitch-api/api";
 
 const model: EffectType<{
     action: "Raid Channel" | "Cancel Raid";
     username?: string;
-}>  = {
+}> = {
     definition: {
         id: "firebot:raid",
         name: "Raid/Unraid Twitch Channel",
         description: "Start or cancel a raid to another Twitch channel",
         icon: "fad fa-rocket-launch",
-        categories: [ EffectCategory.COMMON, EffectCategory.TWITCH ],
-        hidden: () => !accountAccess.getAccounts().streamer.loggedIn,
-        dependencies: []
+        categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
+        dependencies: {
+            twitch: true,
+        },
     },
     optionsTemplate: `
         <eos-container header="Action">
@@ -33,7 +33,7 @@ const model: EffectType<{
                 </ul>
             </div>
         </eos-container>
-        
+
         <eos-container header="Target" pad-top="true" ng-show="effect.action === 'Raid Channel'">
             <firebot-input model="effect.username" placeholder-text="Enter username" />
         </eos-container>
@@ -50,7 +50,7 @@ const model: EffectType<{
 
         return errors;
     },
-    optionsController: () => { },
+    optionsController: () => {},
     onTriggerEvent: async ({ effect }) => {
         if (effect.action === "Raid Channel") {
             const targetUserId = (await twitchApi.users.getUserByName(effect.username))?.id;
@@ -64,7 +64,7 @@ const model: EffectType<{
         } else {
             await twitchApi.channels.cancelRaid();
         }
-    }
-}
+    },
+};
 
 module.exports = model;

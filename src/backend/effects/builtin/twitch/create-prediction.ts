@@ -1,7 +1,6 @@
 import { EffectType } from "../../../../types/effects";
 import { EffectCategory } from "../../../../shared/effect-constants";
 import logger from "../../../logwrapper";
-import accountAccess from "../../../common/account-access";
 import twitchApi from "../../../twitch-api/api";
 
 const model: EffectType<{
@@ -14,9 +13,10 @@ const model: EffectType<{
         name: "Create Twitch Prediction",
         description: "Creates a Twitch prediction",
         icon: "fad fa-question-circle",
-        categories: [ EffectCategory.COMMON, EffectCategory.TWITCH ],
-        hidden: () => !accountAccess.getAccounts().streamer.loggedIn,
-        dependencies: []
+        categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
+        dependencies: {
+            twitch: true,
+        },
     },
     optionsTemplate: `
         <eos-container header="Prediction Title">
@@ -43,11 +43,11 @@ const model: EffectType<{
         if (!effect.title?.length || !(effect.title.length > 0 && effect.title.length <= 45)) {
             errors.push("You must enter a title no more than 45 characters long");
         }
-        
+
         if (!(effect.duration >= 30 && effect.duration <= 1800)) {
             errors.push("Duration must be between 30 and 1800 seconds");
         }
-        
+
         if (!effect.outcomes?.length || !(effect.outcomes.length >= 2 && effect.outcomes.length <= 10)) {
             errors.push("You must enter between 2 and 10 outcomes");
         }
@@ -57,17 +57,13 @@ const model: EffectType<{
     optionsController: ($scope) => {
         $scope.optionSettings = {
             noDuplicates: true,
-            maxItems: 10
-        }
+            maxItems: 10,
+        };
     },
     onTriggerEvent: async ({ effect }) => {
-        logger.debug(`Creating Twitch prediction "${effect.title}"`)
-        return await twitchApi.predictions.createPrediction(
-            effect.title,
-            effect.outcomes,
-            effect.duration
-        );
-    }
-}
+        logger.debug(`Creating Twitch prediction "${effect.title}"`);
+        return await twitchApi.predictions.createPrediction(effect.title, effect.outcomes, effect.duration);
+    },
+};
 
 module.exports = model;

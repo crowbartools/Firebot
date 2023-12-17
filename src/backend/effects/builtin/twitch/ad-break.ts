@@ -1,19 +1,19 @@
 import { EffectType } from "../../../../types/effects";
-import { EffectCategory, EffectDependency } from '../../../../shared/effect-constants';
-import accountAccess from "../../../common/account-access";
+import { EffectCategory } from "../../../../shared/effect-constants";
 import twitchApi from "../../../twitch-api/api";
 
 const model: EffectType<{
-    adLength: number
+    adLength: number;
 }> = {
     definition: {
         id: "firebot:ad-break",
         name: "Ad Break",
         description: "Trigger an ad break",
-        hidden: () => !accountAccess.getAccounts().streamer.loggedIn,
         icon: "fad fa-ad",
         categories: [EffectCategory.COMMON, EffectCategory.MODERATION, EffectCategory.TWITCH],
-        dependencies: [EffectDependency.CHAT]
+        dependencies: {
+            twitch: true,
+        },
     },
     optionsTemplate: `
         <eos-container header="Ad Duration" pad-top="true">
@@ -53,7 +53,7 @@ const model: EffectType<{
     optionsValidator: () => {
         return [];
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         let adLength = event.effect.adLength;
 
         if (adLength == null) {
@@ -62,7 +62,7 @@ const model: EffectType<{
 
         await twitchApi.channels.triggerAdBreak(adLength);
         return true;
-    }
+    },
 };
 
 module.exports = model;

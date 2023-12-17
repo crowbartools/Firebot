@@ -52,17 +52,35 @@ class EffectManager extends EventEmitter {
             });
     }
 
+    /**
+     *
+     * @param {import("../../types/effects").EffectType<unknown>} e
+     * @returns
+     */
     mapEffectForFrontEnd(e) {
         if (!e) {
             return {};
         }
 
+        let hidden = e.definition.hidden;
+
+        // If hidden is not manually defined, check if dependencies are met
+        if (
+            hidden == null &&
+            e.definition.dependencies &&
+            !e.definition.showWhenDependenciesNotMet
+        ) {
+            // require here to avoid circular dependency issues :(
+            const { checkEffectDependencies } = require("./effect-helpers");
+            hidden = !checkEffectDependencies(e.definition.dependencies, "display");
+        }
+
         // Create a copy of the def with an evaluated hidden prop
         const definition = {
             ...e.definition,
-            hidden: typeof e.definition.hidden === "function"
-                ? e.definition.hidden()
-                : e.definition.hidden
+            hidden: typeof hidden === "function"
+                ? hidden()
+                : hidden
         };
 
         return {

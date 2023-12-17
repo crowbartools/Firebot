@@ -1,19 +1,19 @@
 import { EffectType } from "../../../../types/effects";
 import { EffectCategory } from "../../../../shared/effect-constants";
-import accountAccess from "../../../common/account-access";
 import twitchApi from "../../../twitch-api/api";
 
 const model: EffectType<{
     description: string;
-}>  = {
+}> = {
     definition: {
         id: "firebot:create-stream-marker",
         name: "Create Stream Marker",
         description: "Create a stream marker in your Twitch VOD",
         icon: "fad fa-map-pin",
-        categories: [ EffectCategory.COMMON, EffectCategory.TWITCH ],
-        hidden: () => !accountAccess.getAccounts().streamer.loggedIn,
-        dependencies: []
+        categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
+        dependencies: {
+            twitch: true,
+        },
     },
     optionsTemplate: `
         <eos-container header="Create Stream Marker">
@@ -29,12 +29,10 @@ const model: EffectType<{
     optionsValidator: () => {
         return [] as string[];
     },
-    optionsController: () => {
-        
-    },
+    optionsController: () => {},
     onTriggerEvent: async ({ effect }) => {
         await twitchApi.streams.createStreamMarker(effect.description);
-    }
-}
+    },
+};
 
 module.exports = model;

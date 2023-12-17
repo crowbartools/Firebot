@@ -1,7 +1,6 @@
 import { EffectType } from "../../../../types/effects";
 import { EffectCategory } from "../../../../shared/effect-constants";
 import logger from "../../../logwrapper";
-import accountAccess from "../../../common/account-access";
 import twitchApi from "../../../twitch-api/api";
 
 const model: EffectType<{
@@ -13,8 +12,9 @@ const model: EffectType<{
         description: "Send a Twitch shoutout to another channel",
         icon: "fad fa-bullhorn",
         categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
-        hidden: () => !accountAccess.getAccounts().streamer.loggedIn,
-        dependencies: [],
+        dependencies: {
+            twitch: true,
+        },
     },
     optionsTemplate: `
         <eos-container header="Target">
@@ -34,20 +34,18 @@ const model: EffectType<{
         if (!username?.length) {
             errors.push("You must specify a channel to shoutout");
         }
-      
+
         return errors;
     },
     optionsController: () => {},
     onTriggerEvent: async ({ effect }) => {
         const targetUserId = (await twitchApi.users.getUserByName(effect.username))?.id;
-      
+
         if (targetUserId == null) {
-            logger.error(
-                `Unable to shoutout channel. Twitch user ${effect.username} does not exist.`
-            );
+            logger.error(`Unable to shoutout channel. Twitch user ${effect.username} does not exist.`);
             return false;
         }
-      
+
         return await twitchApi.chat.sendShoutout(targetUserId);
     },
 };

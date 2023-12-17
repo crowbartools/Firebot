@@ -1,22 +1,22 @@
 import { EffectType } from "../../../../types/effects";
-import { EffectCategory, EffectDependency } from "../../../../shared/effect-constants";
+import { EffectCategory } from "../../../../shared/effect-constants";
 import { HelixChatAnnouncementColor } from "@twurple/api";
-import accountAccess from "../../../common/account-access";
 import twitchApi from "../../../twitch-api/api";
 
 const model: EffectType<{
-    color: string,
-    message: string,
-    chatter?: string
+    color: string;
+    message: string;
+    chatter?: string;
 }> = {
     definition: {
         id: "firebot:announcement",
         name: "Announce",
         description: "Send an announcement to your chat",
         icon: "fad fa-bullhorn",
-        hidden: () => !accountAccess.getAccounts().streamer.loggedIn,
         categories: [EffectCategory.COMMON, EffectCategory.CHAT_BASED, EffectCategory.TWITCH],
-        dependencies: [EffectDependency.CHAT]
+        dependencies: {
+            twitch: true,
+        },
     },
     optionsTemplate: `
         <eos-chatter-select effect="effect" title="Announce as"></eos-chatter-select>
@@ -31,13 +31,7 @@ const model: EffectType<{
         </eos-container>
     `,
     optionsController: ($scope) => {
-        $scope.announcementColors = [
-            "Primary",
-            "Blue",
-            "Green",
-            "Orange",
-            "Purple"
-        ];
+        $scope.announcementColors = ["Primary", "Blue", "Green", "Orange", "Purple"];
 
         if ($scope.effect.color == null) {
             $scope.effect.color = "Primary";
@@ -57,7 +51,7 @@ const model: EffectType<{
         await twitchApi.chat.sendAnnouncement(message, color, chatter?.toLowerCase() === "bot");
 
         return true;
-    }
+    },
 };
 
 module.exports = model;

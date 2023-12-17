@@ -1,19 +1,20 @@
 import { EffectType } from "../../../../types/effects";
-import { EffectCategory } from '../../../../shared/effect-constants';
+import { EffectCategory } from "../../../../shared/effect-constants";
 import accountAccess from "../../../common/account-access";
 import twitchApi from "../../../twitch-api/api";
 
 const model: EffectType<{
-    title: string
+    title: string;
 }> = {
     definition: {
         id: "firebot:streamtitle",
         name: "Set Stream Title",
         description: "Set the title of the stream.",
         icon: "fad fa-comment-dots",
-        hidden: () => !accountAccess.getAccounts().streamer.loggedIn,
         categories: [EffectCategory.COMMON, EffectCategory.MODERATION, EffectCategory.TWITCH],
-        dependencies: []
+        dependencies: {
+            twitch: true,
+        },
     },
     optionsTemplate: `
         <eos-container header="New Title" pad-top="true">
@@ -22,19 +23,21 @@ const model: EffectType<{
         </eos-container>
     `,
     optionsController: () => {},
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.title == null) {
             errors.push("Please input the title you'd like to use for the stream.");
         }
         return errors;
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const client = twitchApi.streamerClient;
 
-        await client.channels.updateChannelInfo(accountAccess.getAccounts().streamer.userId, {title: event.effect.title});
+        await client.channels.updateChannelInfo(accountAccess.getAccounts().streamer.userId, {
+            title: event.effect.title,
+        });
         return true;
-    }
+    },
 };
 
 module.exports = model;

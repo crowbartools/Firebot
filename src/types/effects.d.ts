@@ -1,12 +1,14 @@
 import { TriggerType, TriggersObject, Trigger } from "./triggers";
 import ng from "angular";
 
+type Func<T> = (...args: any[]) => T;
+
 interface EffectScope<EffectModel> extends ng.IScope {
     effect: EffectModel;
     [x: string]: unknown;
-};
+}
 
-export type EffectCategory = 
+export type EffectCategory =
     | "common"
     | "twitch"
     | "chat based"
@@ -31,6 +33,11 @@ export type EffectOutput = {
     defaultName: string;
 };
 
+export type EffectDependencies = {
+    twitch?: boolean;
+    integrations?: Record<string, boolean>;
+};
+
 export type EffectType<EffectModel, OverlayData = unknown> = {
     definition: {
         id: string;
@@ -40,22 +47,17 @@ export type EffectType<EffectModel, OverlayData = unknown> = {
         categories: EffectCategory[];
         hidden?: boolean | Func<bool>;
         triggers?: TriggerType[] | TriggersObject;
-        dependencies?: Array<"chat">;
+        dependencies?: EffectDependencies | Array<"chat">;
+        showWhenDependenciesNotMet?: boolean;
         outputs?: EffectOutput[];
     };
     optionsTemplate: string;
-    optionsController?: (
-        $scope: EffectScope<EffectModel>,
-        ...args: any[]
-    ) => void;
+    optionsController?: ($scope: EffectScope<EffectModel>, ...args: any[]) => void;
     optionsValidator?: (effect: EffectModel) => string[];
     onTriggerEvent: (event: {
         effect: EffectModel;
         trigger: Trigger;
-        sendDataToOverlay: (
-            data: OverlayData,
-            overlayInstance?: string
-        ) => void;
+        sendDataToOverlay: (data: OverlayData, overlayInstance?: string) => void;
     }) => Promise<void | boolean | EffectTriggerResponse>;
     overlayExtension?: {
         dependencies?: {
@@ -71,6 +73,6 @@ export type EffectType<EffectModel, OverlayData = unknown> = {
 };
 
 export interface EffectList {
-    id: string,
-    list: any[]
-};
+    id: string;
+    list: any[];
+}
