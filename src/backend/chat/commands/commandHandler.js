@@ -372,7 +372,7 @@ function fireCommand(
 }
 
 /**
- * @arg {import('../chat-helpers').FirebotChatMessage} firebotChatMessage
+ * @arg {import('../../../types/chat').FirebotChatMessage} firebotChatMessage
  */
 async function handleChatMessage(firebotChatMessage) {
 

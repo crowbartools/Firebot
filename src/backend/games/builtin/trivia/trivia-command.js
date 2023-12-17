@@ -31,7 +31,7 @@ function clearCurrentQuestion() {
 }
 
 twitchListeners.events.on("chat-message", async data => {
-    /**@type {import("../../../chat/chat-helpers").FirebotChatMessage} */
+    /**@type {import("../../../../types/chat").FirebotChatMessage} */
     const chatMessage = data;
     if (!currentQuestion) {
         return;

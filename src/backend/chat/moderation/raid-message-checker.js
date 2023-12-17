@@ -14,7 +14,7 @@ const settings = {
 
 /**
  *
- * @param {import("../chat-helpers").FirebotChatMessage} message
+ * @param {import("../../../types/chat").FirebotChatMessage} message
  */
 async function handleRaider(message) {
     const twitchApi = require("../../twitch-api/api");
@@ -30,7 +30,7 @@ async function handleRaider(message) {
 
 /**
  *
- * @param {import("../chat-helpers").FirebotChatMessage} firebotChatMessage
+ * @param {import("../../../types/chat").FirebotChatMessage} firebotChatMessage
  */
 async function sendMessageToCache(firebotChatMessage) {
     if (messageCache.length >= chatCacheLimit) {

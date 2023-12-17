@@ -11,47 +11,6 @@ const frontendCommunicator = require("../common/frontend-communicator");
 const utils = require("../utility");
 const { parseChatMessage } = require("@twurple/chat");
 
-/**
- * @typedef FirebotChatMessage
- * @property {string} id
- * @property {string} username
- * @property {string} useridname
- * @property {string} profilePicUrl
- * @property {string} userId
- * @property {string[]} roles
- * @property {any[]} badges
- * @property {string} customRewardId
- * @property {string} color
- * @property {string} rawText
- * @property {import('@twurple/common').ParsedMessagePart[]} parts
- * @property {boolean} whisper
- * @property {boolean} action
- * @property {boolean} isCheer
- * @property {boolean} isAnnouncement
- * @property {"PRIMARY" | "BLUE" | "GREEN" | "ORANGE" | "PURPLE"} announcementColor
- * @property {boolean} tagged
- * @property {boolean} isFounder
- * @property {boolean} isBroadcaster
- * @property {boolean} isBot
- * @property {boolean} isMod
- * @property {boolean} isSubscriber
- * @property {boolean} isVip
- * @property {boolean} isCheer
- * @property {boolean} isHighlighted
- * @property {boolean} isAutoModHeld
- * @property {string} autoModStatus
- * @property {string} autoModReason
- *
- */
-
-/**
- * @typedef FirebotEmote
- * @property {string} url
- * @property {string} animatedUrl
- * @property {string} origin
- * @property {string} code
- */
-
 /**@type {import('@twurple/api').ChatBadgeSet[]} */
 let badgeCache = null;
 exports.cacheBadges = async () => {
@@ -198,7 +157,7 @@ exports.setUserProfilePicUrl = (userId, url, updateAccountAvatars = true) => {
 const URL_REGEX = utils.getUrlRegex();
 
 /**
- * @param {FirebotChatMessage} firebotChatMessage
+ * @param {import('../../types/chat').FirebotChatMessage} firebotChatMessage
  * @param {import("@twurple/common").ParsedMessagePart[]} parts
  */
 function parseMessageParts(firebotChatMessage, parts) {
@@ -351,7 +310,7 @@ const getMessageParts = (text) => {
 };
 
 exports.buildFirebotChatMessageFromExtensionMessage = async (text = "", extensionName, extensionIconUrl, badges, color, id) => {
-    /**@type {FirebotChatMessage} */
+    /**@type {import('../../types/chat').FirebotChatMessage} */
     const firebotChatMessage = {
         id: id,
         username: extensionName,
@@ -381,7 +340,7 @@ exports.buildFirebotChatMessageFromExtensionMessage = async (text = "", extensio
 
 /**
  * @arg {import("@twurple/pubsub").PubSubAutoModQueueMessage} msg
- * @returns {Promise<FirebotChatMessage>}
+ * @returns {Promise<import('../../types/chat').FirebotChatMessage>}
 */
 exports.buildViewerFirebotChatMessageFromAutoModMessage = async (msg) => {
     const profilePicUrl = await getUserProfilePicUrl(msg.senderId);
@@ -392,7 +351,7 @@ exports.buildViewerFirebotChatMessageFromAutoModMessage = async (msg) => {
         flagged: f.automod != null
     }));
 
-    /**@type {FirebotChatMessage} */
+    /**@type {import('../../types/chat').FirebotChatMessage} */
     const viewerFirebotChatMessage = {
         id: msg.messageId,
         username: msg.senderDisplayName,
@@ -427,7 +386,7 @@ exports.buildStreamerFirebotChatMessageFromText = async (text = "") => {
         text = text.replace("/me", "");
     }
 
-    /**@type {FirebotChatMessage} */
+    /**@type {import('../../types/chat').FirebotChatMessage} */
     const streamerFirebotChatMessage = {
         id: uuid(),
         username: streamer.displayName,
@@ -458,11 +417,11 @@ exports.buildStreamerFirebotChatMessageFromText = async (text = "") => {
 
 /**
  * @arg {import("@twurple/chat").PrivateMessage} msg
- * @returns {Promise<FirebotChatMessage>}
+ * @returns {Promise<import('../../types/chat').FirebotChatMessage>}
 */
 exports.buildFirebotChatMessage = async (msg, msgText, whisper = false, action = false) => {
 
-    /**@type {FirebotChatMessage} */
+    /**@type {import('../../types/chat').FirebotChatMessage} */
     const firebotChatMessage = {
         id: msg.tags.get("id"),
         username: msg.userInfo.displayName,
