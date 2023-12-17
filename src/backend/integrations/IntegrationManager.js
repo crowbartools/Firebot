@@ -306,6 +306,42 @@ class IntegrationManager extends EventEmitter {
         }
         int.integration.disconnect();
     }
+
+    /**
+     * @param {string} integrationId
+     * @returns {boolean}
+     */
+    integrationCanConnect(integrationId) {
+        const int = this.getIntegrationById(integrationId);
+        if (int == null) {
+            return false;
+        }
+        return !!int.integration.connectionToggle;
+    }
+
+    /**
+     * @param {string} integrationId
+     * @returns {boolean}
+     */
+    integrationIsConnected(integrationId) {
+        const int = this.getIntegrationById(integrationId);
+        if (int == null) {
+            return false;
+        }
+        return int.integration.connected;
+    }
+
+    /**
+     * @param {string} integrationId
+     * @returns {boolean}
+     */
+    integrationIsLinked(integrationId) {
+        const int = this.getIntegrationById(integrationId);
+        if (int == null) {
+            return false;
+        }
+        return int.integration.linked;
+    }
 }
 
 const manager = new IntegrationManager();

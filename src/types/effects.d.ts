@@ -1,73 +1,78 @@
 import { TriggerType, TriggersObject, Trigger } from "./triggers";
 import ng from "angular";
 
-interface EffectScope<EffectModel> extends ng.IScope {
-    effect: EffectModel;
-    [x: string]: unknown;
-};
+type Func<T> = (...args: any[]) => T;
 
-export type EffectCategory = 
-    | "common"
-    | "twitch"
-    | "chat based"
-    | "Moderation"
-    | "overlay"
-    | "fun"
-    | "integrations"
-    | "advanced"
-    | "scripting";
+interface EffectScope<EffectModel> extends ng.IScope {
+  effect: EffectModel;
+  [x: string]: unknown;
+}
+
+export type EffectCategory =
+  | "common"
+  | "twitch"
+  | "chat based"
+  | "Moderation"
+  | "overlay"
+  | "fun"
+  | "integrations"
+  | "advanced"
+  | "scripting";
 
 export type EffectTriggerResponse = {
-    success: boolean;
-    execution?: {
-        stop: boolean;
-        bubbleStop: boolean;
-    };
+  success: boolean;
+  execution?: {
+    stop: boolean;
+    bubbleStop: boolean;
+  };
 };
 
 export type EffectOutput = {
-    label: string;
-    description: string;
-    defaultName: string;
+  label: string;
+  description: string;
+  defaultName: string;
+};
+
+export type EffectDependencies = {
+  twitch?: boolean;
+  integrations?: Record<string, boolean>;
 };
 
 export type EffectType<EffectModel, OverlayData = unknown> = {
-    definition: {
-        id: string;
-        name: string;
-        description: string;
-        icon: string;
-        categories: EffectCategory[];
-        hidden?: boolean | Func<bool>;
-        triggers?: TriggerType[] | TriggersObject;
-        dependencies?: Array<"chat">;
-        outputs?: EffectOutput[];
+  definition: {
+    id: string;
+    name: string;
+    description: string;
+    icon: string;
+    categories: EffectCategory[];
+    hidden?: boolean | Func<bool>;
+    triggers?: TriggerType[] | TriggersObject;
+    dependencies?: EffectDependencies | Array<"chat">;
+    showWhenDependenciesNotMet?: boolean;
+    outputs?: EffectOutput[];
+  };
+  optionsTemplate: string;
+  optionsController?: (
+    $scope: EffectScope<EffectModel>,
+    ...args: any[]
+  ) => void;
+  optionsValidator?: (effect: EffectModel) => string[];
+  onTriggerEvent: (event: {
+    effect: EffectModel;
+    trigger: Trigger;
+    sendDataToOverlay: (data: OverlayData, overlayInstance?: string) => void;
+  }) => Promise<void | boolean | EffectTriggerResponse>;
+  overlayExtension?: {
+    dependencies?: {
+      globalStyles?: string;
+      css?: string[];
+      js?: string[];
     };
-    optionsTemplate: string;
-    optionsController?: (
-        $scope: EffectScope<EffectModel>,
-        ...args: any[]
-    ) => void;
-    optionsValidator?: (effect: EffectModel) => string[];
-    onTriggerEvent: (event: {
-        effect: EffectModel;
-        trigger: Trigger;
-        sendDataToOverlay: (
-            data: OverlayData,
-            overlayInstance?: string
-        ) => void;
-    }) => Promise<void | boolean | EffectTriggerResponse>;
-    overlayExtension?: {
-        dependencies?: {
-            globalStyles?: string;
-            css?: string[];
-            js?: string[];
-        };
-        event: {
-            name: string;
-            onOverlayEvent: (data: OverlayData) => void;
-        };
+    event: {
+      name: string;
+      onOverlayEvent: (data: OverlayData) => void;
     };
+  };
 };
 
 export interface EffectList {
