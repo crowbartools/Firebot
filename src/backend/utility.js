@@ -239,4 +239,3 @@ exports.shuffleArray = shuffleArray;
 exports.flattenArray = flattenArray;
 exports.jsonParse = jsonParse;
 exports.wait = wait;
-exports.noop = () => { };
