@@ -14,7 +14,7 @@
 *     - 1.0.0-beta2
 *     - 1.0.0-beta.3
 */
-const semverRegex = /^v?(\d+)(?:[.](\d+))?(?:[.](\d+))?(?:-([a-z]*)[\W]?([\d]*))?$/i;
+const semverRegex = /^v?(\d+)(?:[.](\d+))?(?:[.](\d+))?(?:-([a-zA-Z]+([\d]*)?)(?:[.](\d+))*)?$/i;
 
 const UpdateType = {
     NONE: "none",
