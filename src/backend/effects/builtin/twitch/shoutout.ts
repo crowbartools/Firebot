@@ -4,19 +4,19 @@ import logger from "../../../logwrapper";
 import twitchApi from "../../../twitch-api/api";
 
 const model: EffectType<{
-  username: string;
+    username: string;
 }> = {
-  definition: {
-    id: "firebot:twitch-shoutout",
-    name: "Twitch Shoutout",
-    description: "Send a Twitch shoutout to another channel",
-    icon: "fad fa-bullhorn",
-    categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
-    dependencies: {
-      twitch: true,
+    definition: {
+        id: "firebot:twitch-shoutout",
+        name: "Twitch Shoutout",
+        description: "Send a Twitch shoutout to another channel",
+        icon: "fad fa-bullhorn",
+        categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
+        dependencies: {
+            twitch: true,
+        },
     },
-  },
-  optionsTemplate: `
+    optionsTemplate: `
         <eos-container header="Target">
             <firebot-input model="effect.username" placeholder-text="Enter username" menu-position="below" />
         </eos-container>
@@ -27,30 +27,27 @@ const model: EffectType<{
             </div>
         </eos-container>
     `,
-  optionsValidator: (effect) => {
-    const errors: string[] = [];
-    const username = effect.username?.trim();
+    optionsValidator: (effect) => {
+        const errors: string[] = [];
+        const username = effect.username?.trim();
 
-    if (!username?.length) {
-      errors.push("You must specify a channel to shoutout");
-    }
+        if (!username?.length) {
+            errors.push("You must specify a channel to shoutout");
+        }
 
-    return errors;
-  },
-  optionsController: () => {},
-  onTriggerEvent: async ({ effect }) => {
-    const targetUserId = (await twitchApi.users.getUserByName(effect.username))
-      ?.id;
+        return errors;
+    },
+    optionsController: () => {},
+    onTriggerEvent: async ({ effect }) => {
+        const targetUserId = (await twitchApi.users.getUserByName(effect.username))?.id;
 
-    if (targetUserId == null) {
-      logger.error(
-        `Unable to shoutout channel. Twitch user ${effect.username} does not exist.`
-      );
-      return false;
-    }
+        if (targetUserId == null) {
+            logger.error(`Unable to shoutout channel. Twitch user ${effect.username} does not exist.`);
+            return false;
+        }
 
-    return await twitchApi.chat.sendShoutout(targetUserId);
-  },
+        return await twitchApi.chat.sendShoutout(targetUserId);
+    },
 };
 
 module.exports = model;

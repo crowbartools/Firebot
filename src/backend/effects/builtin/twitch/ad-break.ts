@@ -3,23 +3,19 @@ import { EffectCategory } from "../../../../shared/effect-constants";
 import twitchApi from "../../../twitch-api/api";
 
 const model: EffectType<{
-  adLength: number;
+    adLength: number;
 }> = {
-  definition: {
-    id: "firebot:ad-break",
-    name: "Ad Break",
-    description: "Trigger an ad break",
-    icon: "fad fa-ad",
-    categories: [
-      EffectCategory.COMMON,
-      EffectCategory.MODERATION,
-      EffectCategory.TWITCH,
-    ],
-    dependencies: {
-      twitch: true,
+    definition: {
+        id: "firebot:ad-break",
+        name: "Ad Break",
+        description: "Trigger an ad break",
+        icon: "fad fa-ad",
+        categories: [EffectCategory.COMMON, EffectCategory.MODERATION, EffectCategory.TWITCH],
+        dependencies: {
+            twitch: true,
+        },
     },
-  },
-  optionsTemplate: `
+    optionsTemplate: `
         <eos-container header="Ad Duration" pad-top="true">
             <div class="btn-group">
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -53,20 +49,20 @@ const model: EffectType<{
             </div>
         </eos-container>
     `,
-  optionsController: () => {},
-  optionsValidator: () => {
-    return [];
-  },
-  onTriggerEvent: async (event) => {
-    let adLength = event.effect.adLength;
+    optionsController: () => {},
+    optionsValidator: () => {
+        return [];
+    },
+    onTriggerEvent: async (event) => {
+        let adLength = event.effect.adLength;
 
-    if (adLength == null) {
-      adLength = 30;
-    }
+        if (adLength == null) {
+            adLength = 30;
+        }
 
-    await twitchApi.channels.triggerAdBreak(adLength);
-    return true;
-  },
+        await twitchApi.channels.triggerAdBreak(adLength);
+        return true;
+    },
 };
 
 module.exports = model;

@@ -4,19 +4,19 @@ import logger from "../../../logwrapper";
 import twitchApi from "../../../twitch-api/api";
 
 const model: EffectType<{
-  archivePoll: boolean;
+    archivePoll: boolean;
 }> = {
-  definition: {
-    id: "twitch:end-poll",
-    name: "End Twitch Poll",
-    description: "Ends the currently active Twitch poll",
-    icon: "fad fa-stop-circle",
-    categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
-    dependencies: {
-      twitch: true,
+    definition: {
+        id: "twitch:end-poll",
+        name: "End Twitch Poll",
+        description: "Ends the currently active Twitch poll",
+        icon: "fad fa-stop-circle",
+        categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
+        dependencies: {
+            twitch: true,
+        },
     },
-  },
-  optionsTemplate: `
+    optionsTemplate: `
         <eos-container header="Archive Poll">
             <firebot-checkbox model="effect.archivePoll" label="Archive (hide) poll after closing" />
         </eos-container>
@@ -27,23 +27,19 @@ const model: EffectType<{
             </div>
         </eos-container>
     `,
-  optionsValidator: () => [],
-  optionsController: () => {},
-  onTriggerEvent: async ({ effect }) => {
-    const latestPoll = await twitchApi.polls.getMostRecentPoll();
+    optionsValidator: () => [],
+    optionsController: () => {},
+    onTriggerEvent: async ({ effect }) => {
+        const latestPoll = await twitchApi.polls.getMostRecentPoll();
 
-    if (latestPoll?.status !== "ACTIVE") {
-      logger.warn("There is no active Twitch poll to end");
-      return;
-    }
+        if (latestPoll?.status !== "ACTIVE") {
+            logger.warn("There is no active Twitch poll to end");
+            return;
+        }
 
-    logger.debug(
-      `Ending Twitch poll "${latestPoll.title}"${
-        effect.archivePoll ? " as archived" : ""
-      }`
-    );
-    return await twitchApi.polls.endPoll(latestPoll.id, effect.archivePoll);
-  },
+        logger.debug(`Ending Twitch poll "${latestPoll.title}"${effect.archivePoll ? " as archived" : ""}`);
+        return await twitchApi.polls.endPoll(latestPoll.id, effect.archivePoll);
+    },
 };
 
 module.exports = model;

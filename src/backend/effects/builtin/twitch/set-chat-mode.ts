@@ -4,31 +4,31 @@ import { TwitchCommandHelpers } from "../../../chat/twitch-commands/twitch-comma
 import twitchApi from "../../../twitch-api/api";
 
 const model: EffectType<{
-  setFollowersOnly: boolean;
-  enableFollowersOnly?: boolean;
-  followersOnlyDuration?: string;
+    setFollowersOnly: boolean;
+    enableFollowersOnly?: boolean;
+    followersOnlyDuration?: string;
 
-  setSubscribersOnly: boolean;
-  enableSubscribersOnly?: boolean;
+    setSubscribersOnly: boolean;
+    enableSubscribersOnly?: boolean;
 
-  setEmoteOnly: boolean;
-  enableEmoteOnly?: boolean;
+    setEmoteOnly: boolean;
+    enableEmoteOnly?: boolean;
 
-  setSlowMode: boolean;
-  enableSlowMode?: boolean;
-  slowModeDelay?: number;
+    setSlowMode: boolean;
+    enableSlowMode?: boolean;
+    slowModeDelay?: number;
 }> = {
-  definition: {
-    id: "firebot:set-chat-mode",
-    name: "Set Chat Mode",
-    description: "Sets the chat mode(s) for your Twitch channel",
-    icon: "fad fa-comment-check",
-    categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
-    dependencies: {
-      twitch: true,
+    definition: {
+        id: "firebot:set-chat-mode",
+        name: "Set Chat Mode",
+        description: "Sets the chat mode(s) for your Twitch channel",
+        icon: "fad fa-comment-check",
+        categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
+        dependencies: {
+            twitch: true,
+        },
     },
-  },
-  optionsTemplate: `
+    optionsTemplate: `
         <eos-container header="Chat Modes">
             <firebot-checkbox
                 model="effect.setFollowersOnly"
@@ -57,7 +57,7 @@ const model: EffectType<{
                 input-title="Follow Duration"
                 placeholder-text="Duration (formats: 1m / 1h / 1d / 1w / 1mo)"
             />
-            
+
             <firebot-checkbox
                 model="effect.setSubscribersOnly"
                 label="Set Subscribers-Only Mode"
@@ -77,7 +77,7 @@ const model: EffectType<{
                     </li>
                 </ul>
             </div>
-            
+
             <firebot-checkbox
                 model="effect.setEmoteOnly"
                 label="Set Emote-Only Mode"
@@ -97,7 +97,7 @@ const model: EffectType<{
                     </li>
                 </ul>
             </div>
-            
+
             <firebot-checkbox
                 model="effect.setSlowMode"
                 label="Set Slow Mode"
@@ -126,58 +126,47 @@ const model: EffectType<{
             />
         </eos-container>
     `,
-  optionsValidator: (effect) => {
-    const errors: string[] = [];
+    optionsValidator: (effect) => {
+        const errors: string[] = [];
 
-    if (
-      effect.setFollowersOnly === true &&
-      effect.enableFollowersOnly == null
-    ) {
-      errors.push("You must select a followers-only action");
-    } else if (
-      effect.setSubscribersOnly === true &&
-      effect.enableSubscribersOnly == null
-    ) {
-      errors.push("You must specify a subscribers-only action");
-    } else if (effect.setEmoteOnly === true && effect.enableEmoteOnly == null) {
-      errors.push("You must specify an emote-only action");
-    } else if (effect.setSlowMode === true && effect.enableSlowMode == null) {
-      errors.push("You must specify a slow mode action");
-    }
+        if (effect.setFollowersOnly === true && effect.enableFollowersOnly == null) {
+            errors.push("You must select a followers-only action");
+        } else if (effect.setSubscribersOnly === true && effect.enableSubscribersOnly == null) {
+            errors.push("You must specify a subscribers-only action");
+        } else if (effect.setEmoteOnly === true && effect.enableEmoteOnly == null) {
+            errors.push("You must specify an emote-only action");
+        } else if (effect.setSlowMode === true && effect.enableSlowMode == null) {
+            errors.push("You must specify a slow mode action");
+        }
 
-    return errors;
-  },
-  optionsController: () => {},
-  onTriggerEvent: async ({ effect }) => {
-    if (effect.setFollowersOnly === true) {
-      const parsedDuration = TwitchCommandHelpers.getRawDurationInSeconds(
-        effect.followersOnlyDuration,
-        "minutes"
-      );
+        return errors;
+    },
+    optionsController: () => {},
+    onTriggerEvent: async ({ effect }) => {
+        if (effect.setFollowersOnly === true) {
+            const parsedDuration = TwitchCommandHelpers.getRawDurationInSeconds(
+                effect.followersOnlyDuration,
+                "minutes"
+            );
 
-      await twitchApi.chat.setFollowerOnlyMode(
-        effect.enableFollowersOnly ?? false,
-        Math.floor(parsedDuration / 60)
-      );
-    }
+            await twitchApi.chat.setFollowerOnlyMode(
+                effect.enableFollowersOnly ?? false,
+                Math.floor(parsedDuration / 60)
+            );
+        }
 
-    if (effect.setSubscribersOnly === true) {
-      await twitchApi.chat.setSubscriberOnlyMode(
-        effect.enableSubscribersOnly ?? false
-      );
-    }
+        if (effect.setSubscribersOnly === true) {
+            await twitchApi.chat.setSubscriberOnlyMode(effect.enableSubscribersOnly ?? false);
+        }
 
-    if (effect.setEmoteOnly === true) {
-      await twitchApi.chat.setEmoteOnlyMode(effect.enableEmoteOnly ?? false);
-    }
+        if (effect.setEmoteOnly === true) {
+            await twitchApi.chat.setEmoteOnlyMode(effect.enableEmoteOnly ?? false);
+        }
 
-    if (effect.setSlowMode === true) {
-      await twitchApi.chat.setSlowMode(
-        effect.enableSlowMode ?? false,
-        effect.slowModeDelay
-      );
-    }
-  },
+        if (effect.setSlowMode === true) {
+            await twitchApi.chat.setSlowMode(effect.enableSlowMode ?? false, effect.slowModeDelay);
+        }
+    },
 };
 
 module.exports = model;

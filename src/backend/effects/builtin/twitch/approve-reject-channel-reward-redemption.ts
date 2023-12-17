@@ -3,22 +3,21 @@ import { EffectCategory } from "../../../../shared/effect-constants";
 import twitchApi from "../../../twitch-api/api";
 
 const model: EffectType<{
-  rewardId: string;
-  redemptionId: string;
-  approve: boolean;
+    rewardId: string;
+    redemptionId: string;
+    approve: boolean;
 }> = {
-  definition: {
-    id: "firebot:approve-reject-channel-reward-redemption",
-    name: "Approve/Reject Channel Reward Redemption",
-    description:
-      "Approves or rejects a pending Twitch channel reward redemption",
-    icon: "fad fa-check-circle",
-    categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
-    dependencies: {
-      twitch: true,
+    definition: {
+        id: "firebot:approve-reject-channel-reward-redemption",
+        name: "Approve/Reject Channel Reward Redemption",
+        description: "Approves or rejects a pending Twitch channel reward redemption",
+        icon: "fad fa-check-circle",
+        categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
+        dependencies: {
+            twitch: true,
+        },
     },
-  },
-  optionsTemplate: `
+    optionsTemplate: `
         <eos-container header="Reward Info">
             <firebot-input input-title="Reward ID" model="effect.rewardId" placeholder-text="Enter reward ID" />
         </eos-container>
@@ -49,27 +48,27 @@ const model: EffectType<{
             </div>
         </eos-container>
     `,
-  optionsValidator: (effect) => {
-    const errors: string[] = [];
+    optionsValidator: (effect) => {
+        const errors: string[] = [];
 
-    if (!effect.rewardId?.length) {
-      errors.push("You must enter a reward ID");
-    } else if (!effect.redemptionId?.length) {
-      errors.push("You must enter a redemption ID");
-    } else if (effect.approve == null) {
-      errors.push("You must select an action");
-    }
+        if (!effect.rewardId?.length) {
+            errors.push("You must enter a reward ID");
+        } else if (!effect.redemptionId?.length) {
+            errors.push("You must enter a redemption ID");
+        } else if (effect.approve == null) {
+            errors.push("You must select an action");
+        }
 
-    return errors;
-  },
-  optionsController: () => {},
-  onTriggerEvent: async ({ effect }) => {
-    return await twitchApi.channelRewards.approveOrRejectChannelRewardRedemption(
-      effect.rewardId,
-      effect.redemptionId,
-      effect.approve
-    );
-  },
+        return errors;
+    },
+    optionsController: () => {},
+    onTriggerEvent: async ({ effect }) => {
+        return await twitchApi.channelRewards.approveOrRejectChannelRewardRedemption(
+            effect.rewardId,
+            effect.redemptionId,
+            effect.approve
+        );
+    },
 };
 
 module.exports = model;
