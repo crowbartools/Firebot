@@ -1,5 +1,6 @@
 "use strict";
 
+const { randomInt } = require('node:crypto');
 const moment = require("moment");
 const replaceVariableManager = require("./variables/replace-variable-manager");
 const accountAccess = require("./common/account-access");
@@ -9,7 +10,8 @@ const getRandomInt = (min, max) => {
     min = Math.ceil(min);
     max = Math.floor(max);
 
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    // randomInt is max exclusive, so we add 1 to make inclusive
+    return randomInt(min, max + 1);
 };
 
 const escapeRegExp = (str) => {
