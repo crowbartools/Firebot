@@ -62,7 +62,7 @@ class EffectManager extends EventEmitter {
             return {};
         }
 
-        const hidden = e.definition.hidden;
+        let hidden = e.definition.hidden;
 
         // If hidden is not manually defined, check if dependencies are met
         if (
@@ -72,7 +72,7 @@ class EffectManager extends EventEmitter {
         ) {
             // require here to avoid circular dependency issues :(
             const { checkEffectDependencies } = require("./effect-helpers");
-            e.definition.hidden = !checkEffectDependencies(e.definition.dependencies, "display");
+            hidden = !checkEffectDependencies(e.definition.dependencies, "display");
         }
 
         // Create a copy of the def with an evaluated hidden prop
