@@ -209,7 +209,7 @@
                         }
                     },
                     {
-                        html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> Toggle Enabled</a>`,
+                        html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> ${command.active ? "Disable Command" : "Enable Command"}</a>`,
                         click: ($itemScope) => {
                             const command = $itemScope.command;
                             $scope.toggleCustomCommandActiveState(command);

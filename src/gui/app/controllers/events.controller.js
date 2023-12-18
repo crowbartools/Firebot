@@ -335,7 +335,7 @@
                         }
                     },
                     {
-                        html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> Toggle Enabled</a>`,
+                        html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> ${event.active ? "Disable Event" : "Enable Event"}</a>`,
                         click: () => {
                             $scope.toggleEventActiveStatus(event.id);
                         }

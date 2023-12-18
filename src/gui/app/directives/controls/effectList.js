@@ -130,7 +130,7 @@
                 </div>
                 <div class="{{$ctrl.effectContainerClasses}} mx-6 pb-6">
                     <div ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.effectsData.list">
-                        <div ng-repeat="effect in $ctrl.effectsData.list track by $index" context-menu="$ctrl.effectMenuOptions">
+                        <div ng-repeat="effect in $ctrl.effectsData.list track by $index" context-menu="$ctrl.createEffectMenuOptions(effect)">
                             <div
                                 role="button"
                                 class="effect-bar clickable-dark"
@@ -159,7 +159,7 @@
                                                 uib-tooltip="Open effect menu"
                                                 tooltip-append-to-body="true"
                                                 role="button"
-                                                context-menu="$ctrl.effectMenuOptions"
+                                                context-menu="$ctrl.createEffectMenuOptions(effect)"
                                                 context-menu-on="click"
                                                 context-menu-orientation="top"
                                             >
@@ -250,7 +250,7 @@
                     ];
                 };
 
-                const createEffectMenuOptions = () => {
+                ctrl.createEffectMenuOptions = (effect) => {
                     ctrl.effectMenuOptions = [
                         {
                             html: `<a href ><i class="far fa-tag mr-4"></i> Edit Label</a>`,
@@ -268,7 +268,7 @@
                             }
                         },
                         {
-                            html: `<a href ><i class="fal fa-toggle-off mr-4"></i>  Toggle Enabled</a>`,
+                            html: `<a href ><i class="fal fa-toggle-off mr-4"></i>  ${effect.active ? "Disable Effect" : "Enable Effect"}</a>`,
                             click: function ($itemScope) {
                                 const $index = $itemScope.$index;
                                 ctrl.toggleEffectActiveState($index);
@@ -340,10 +340,11 @@
                             ]
                         }
                     ];
+
+                    return ctrl.effectMenuOptions;
                 };
 
                 const rebuildEffectMenus = () => {
-                    createEffectMenuOptions();
                     createAllEffectsMenuOptions();
                 };
 
@@ -524,7 +525,6 @@
 
                 ctrl.copyEffectAtIndex = function(index) {
                     objectCopyHelper.copyEffects([ctrl.effectsData.list[index]]);
-                    createEffectMenuOptions();
                     rebuildEffectMenus();
                 };
 
