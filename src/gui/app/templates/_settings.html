@@ -95,9 +95,9 @@
             <p class="list-group-item-text muted">{{backup.size + " KB"}} | {{backup.version}} {{backup.isManual ? "| Manual" : ""}}
         </div>
         <div style="font-size:17px">
-          <span uib-tooltip="Prevent Auto-Deletion" tooltip-append-to-body="true" class="mr-6" style="color:#4379f9;" ng-class="{'muted clickable-dark': !backup.neverDelete, 'clickable': backup.neverDelete}" ng-click="togglePreventDeletion(backup)"><i ng-class="{'far fa-unlock': !backup.neverDelete, 'fas fa-lock': backup.neverDelete}"></i></span>
-          <span uib-tooltip="Restore to this backup" tooltip-append-to-body="true" class="clickable mr-6" ng-click="restoreBackup(backup)"><i class="fal fa-undo-alt"></i></span>
-          <span uib-tooltip="Delete backup" tooltip-append-to-body="true" class="clickable" style="color:red;" ng-click="deleteBackup($index,backup)"><i class="fal fa-trash-alt"></i></span>
+          <span aria-label="Prevent Auto-Deletion" uib-tooltip="Prevent Auto-Deletion" tooltip-append-to-body="true" class="mr-6" style="color:#4379f9;" ng-class="{'muted clickable-dark': !backup.neverDelete, 'clickable': backup.neverDelete}" ng-click="togglePreventDeletion(backup)"><i ng-class="{'far fa-unlock': !backup.neverDelete, 'fas fa-lock': backup.neverDelete}"></i></span>
+          <span aria-label="Restore Backup" uib-tooltip="Restore Backup" tooltip-append-to-body="true" class="clickable mr-6" ng-click="restoreBackup(backup)"><i class="fal fa-undo-alt"></i></span>
+          <span aria-label="Delete Backup" uib-tooltip="Delete Backup" tooltip-append-to-body="true" class="clickable" style="color:red;" ng-click="deleteBackup($index,backup)"><i class="fal fa-trash-alt"></i></span>
         </div>
       </div>
     </div>
