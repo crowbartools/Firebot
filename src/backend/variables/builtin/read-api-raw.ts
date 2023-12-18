@@ -1,14 +1,17 @@
-// Migration: done
+import { ReplaceVariable } from "../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../shared/variable-constants";
+import logger from "../../logwrapper";
+import { app } from "electron";
+import axios from "axios";
 
-"use strict";
-
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
-const logger = require("../../logwrapper");
-const axios = require("axios").default;
-
-const callUrl = async (url) => {
+const callUrl = async (url: string) => {
     try {
-        const response = await axios.get(url);
+        const appVersion = app.getVersion();
+        const response = await axios.get(url, {
+            headers: {
+                "User-Agent": `Firebot/${appVersion}`
+            }
+        });
 
         if (response) {
             return response;
@@ -19,14 +22,14 @@ const callUrl = async (url) => {
     }
 };
 
-const model = {
+const model: ReplaceVariable = {
     definition: {
-        handle: "readApi",
-        usage: "readApi[url]",
-        description: 'Calls the given url and inserts the response.',
+        handle: "rawReadApi",
+        usage: "rawReadApi[url]",
+        description: 'Calls the given URL and returns the response as an object.',
         examples: [
             {
-                usage: 'readApi[url, object.path.here]',
+                usage: 'rawReadApi[url, object.path.here]',
                 description: "Traverse a JSON response object."
             }
         ],
@@ -51,7 +54,7 @@ const model = {
                                 break;
                             }
                         }
-                        return currentObject ? currentObject.toString() : "";
+                        return currentObject;
                     } catch (err) {
                         logger.warn("error when parsing api json", err);
                         return "[JSON PARSE ERROR]";
@@ -59,11 +62,11 @@ const model = {
                 }
             }
 
-            return content ? content.toString() : "";
+            return content;
         } catch (err) {
             return "[API ERROR]";
         }
     }
 };
 
-module.exports = model;
+export = model;
