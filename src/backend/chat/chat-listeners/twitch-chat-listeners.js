@@ -74,7 +74,13 @@ exports.setupChatListeners = (streamerChatClient) => {
 
         activeUserHandler.addActiveUser(msg.userInfo, true);
 
-        twitchEventsHandler.viewerArrived.triggerViewerArrived(msg.userInfo.displayName, msg.userInfo.userName, msg.userInfo.userId, messageText);
+        twitchEventsHandler.viewerArrived.triggerViewerArrived(
+            msg.userInfo.displayName,
+            msg.userInfo.userName,
+            msg.userInfo.userId,
+            messageText,
+            firebotChatMessage
+        );
 
         const { streamer, bot } = accountAccess.getAccounts();
         if (user !== streamer.username && user !== bot.username) {
@@ -100,7 +106,13 @@ exports.setupChatListeners = (streamerChatClient) => {
 
         twitchEventsHandler.chatMessage.triggerChatMessage(firebotChatMessage);
 
-        twitchEventsHandler.viewerArrived.triggerViewerArrived(msg.userInfo.displayName, msg.userInfo.userName, msg.userInfo.userId, messageText);
+        twitchEventsHandler.viewerArrived.triggerViewerArrived(
+            msg.userInfo.displayName,
+            msg.userInfo.userName,
+            msg.userInfo.userId,
+            messageText,
+            firebotChatMessage
+        );
     });
 
     streamerChatClient.onMessageRemove((_channel, messageId) => {
