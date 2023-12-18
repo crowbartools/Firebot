@@ -7,7 +7,7 @@ triggers[EffectTrigger.MANUAL] = true;
 
 const model = {
     definition: {
-        handle: "preditionWinningOutcomeName",
+        handle: "predictionWinningOutcomeName",
         description: "The name of the winning Twitch prediction outcome.",
         triggers: triggers,
         categories: [VariableCategory.TRIGGER],
