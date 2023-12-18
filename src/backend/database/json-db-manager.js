@@ -122,11 +122,11 @@ class JsonDbManager {
 
     /**
      * @param {string} itemId
-     * @returns {void}
+     * @returns {boolean}
      */
     deleteItem(itemId) {
         if (itemId == null) {
-            return;
+            return false;
         }
 
         delete this.items[itemId];
@@ -135,9 +135,12 @@ class JsonDbManager {
             this.db.delete("/" + itemId);
 
             logger.debug(`Deleted ${this.type}: ${itemId}`);
+            return true;
         } catch (err) {
             logger.error(`There was an error deleting ${this.type}.`, err);
         }
+
+        return false;
     }
 
     /**

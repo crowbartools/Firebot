@@ -1,59 +1,23 @@
-"use strict";
+import moment from "moment";
+import logger from "../logwrapper";
+import connectionManager from "../common/connection-manager";
+import accountAccess from "../common/account-access";
+import { TriggerType } from "../common/EffectType";
+import effectRunner from "../common/effect-runner";
+import frontendCommunicator from "../common/frontend-communicator";
+import JsonDbManager from "../database/json-db-manager";
+import { Timer, TimerIntervalTracker } from "../../types/timers";
 
-const logger = require("../logwrapper");
-const connectionManager = require("../common/connection-manager");
-const accountAccess = require("../common/account-access");
-const { TriggerType } = require("../common/EffectType");
-const effectRunner = require("../common/effect-runner");
-const moment = require("moment");
-const frontendCommunicator = require("../common/frontend-communicator");
-const JsonDbManager = require("../database/json-db-manager");
+class TimerManager extends JsonDbManager<Timer> {
+    private timerIntervalCache = {};
 
-/**
- * @typedef Timer
- * @prop {string} id - the id of the timer
- * @prop {string} name - the name of the timer
- * @prop {boolean} active - the active status of the timer
- * @prop {number} interval - the interval at which the timer should run
- * @prop {number} requiredChatLines - the minimum number of chat lines since the last interval
- * @prop {boolean} onlyWhenLive - whether the timer should only run when the streamer is live
- * @prop {object} effects - the saved effects in the timer
- * @prop {string} effects.id - the effect list root id
- * @prop {any[]} effects.list - the array of effects objects
- * @prop {string[]} sortTags - the tags for the timer
- */
-
-/**
- * @typedef TimerIntervalTracker
- * @prop {string} timerId
- * @prop {boolean} onlyWhenLive
- * @prop {Timer} timer
- * @prop {number} requiredChatLines
- * @prop {boolean} waitingForChatLines
- * @prop {number} chatLinesSinceLastRunCount
- * @prop {string} intervalId
- * @prop {moment.Moment} startedAt
- * */
-
-/**
- * @extends {JsonDbManager<Timer>}
- * {@link JsonDbManager}
- * @hideconstructor
- */
-class TimerManager extends JsonDbManager {
     constructor() {
         super("Timer", "timers");
 
-        /** @protected */
         this.timerIntervalCache = {};
     }
 
-    /**
-     * @override
-     * @param {Timer} timer
-     * @returns {Timer | null}
-     */
-    saveItem(timer) {
+    saveItem(timer: Timer): Timer | null {
         const savedTimer = super.saveItem(timer);
 
         if (savedTimer != null) {
@@ -64,12 +28,7 @@ class TimerManager extends JsonDbManager {
         return null;
     }
 
-    /**
-     * @override
-     * @param {string} timerId
-     * @returns {void}
-     */
-    deleteItem(timerId) {
+    deleteItem(timerId: string): boolean {
         const itemDeleted = super.deleteItem(timerId);
 
         if (itemDeleted) {
@@ -80,19 +39,11 @@ class TimerManager extends JsonDbManager {
         return false;
     }
 
-    /**
-     * @returns {void}
-     */
-    triggerUiRefresh() {
+    triggerUiRefresh(): void {
         frontendCommunicator.send("all-timers-updated", this.getAllItems());
     }
 
-    /**
-     * @param {string} timerId
-     * @param {boolean} active
-     * @returns {void}
-     */
-    updateTimerActiveStatus(timerId, active = false) {
+    updateTimerActiveStatus(timerId: string, active: boolean = false): void {
         const timer = this.getItem(timerId);
 
         if (timer != null) {
@@ -105,16 +56,15 @@ class TimerManager extends JsonDbManager {
         }
     }
 
-    /**
-     * @param {boolean} onlyClearWhenLiveTimers
-     * @returns {void}
-     */
-    clearIntervals(onlyClearWhenLiveTimers = false) {
-        let intervalsToClear;
+    clearIntervals(onlyClearWhenLiveTimers: boolean = false): void {
+        let intervalsToClear: TimerIntervalTracker[];
         if (onlyClearWhenLiveTimers) {
-            intervalsToClear = Object.values(this.timerIntervalCache).filter(i => i.onlyWhenLive);
+            intervalsToClear = Object.keys(this.timerIntervalCache)
+                .map(x => this.timerIntervalCache[x])
+                .filter(i => i.onlyWhenLive);
         } else {
-            intervalsToClear = Object.values(this.timerIntervalCache);
+            intervalsToClear = Object.keys(this.timerIntervalCache)
+                .map(x => this.timerIntervalCache[x]);
         }
 
         intervalsToClear.forEach(i => {
@@ -123,12 +73,7 @@ class TimerManager extends JsonDbManager {
         });
     }
 
-    /**
-     *
-     * @param {number} timerId
-     * @returns {void}
-     */
-    clearIntervalForTimerId(timerId) {
+    clearIntervalForTimerId(timerId: string) {
         const intervalData = this.timerIntervalCache[timerId];
         if (intervalData == null) {
             return;
@@ -137,12 +82,7 @@ class TimerManager extends JsonDbManager {
         delete this.timerIntervalCache[intervalData.timerId];
     }
 
-    /**
-     * This is the function we run on every interval of a timer
-     * @param {Timer} timer
-     * @returns {void}
-     */
-    runTimer(timer) {
+    runTimer(timer: Timer): void {
         logger.debug(`Running timer ${timer.name}`);
         // if the passed timer is null, stop
         if (timer == null) {
@@ -192,12 +132,7 @@ class TimerManager extends JsonDbManager {
         }
     }
 
-    /**
-     *
-     * @param {Timer} timer
-     * @returns {TimerIntervalTracker}
-     */
-    buildIntervalForTimer(timer) {
+    buildIntervalForTimer(timer: Timer): TimerIntervalTracker {
         /**
          * Create the interval.
          * The first argument "runTimer" is the function defined above.
@@ -209,7 +144,7 @@ class TimerManager extends JsonDbManager {
         const intervalId = setInterval(this.runTimer.bind(this), timer.interval * 1000, timer);
 
         // Create our object that will track the interval and its progress
-        const intervalTracker = {
+        const intervalTracker: TimerIntervalTracker = {
             timerId: timer.id,
             onlyWhenLive: timer.onlyWhenLive,
             timer: timer,
@@ -223,11 +158,7 @@ class TimerManager extends JsonDbManager {
         return intervalTracker;
     }
 
-    /**
-     * @param {Timer} timer
-     * @returns {void}
-     */
-    updateIntervalForTimer(timer) {
+    updateIntervalForTimer(timer: Timer): void {
         if (timer == null) {
             return;
         }
@@ -243,11 +174,7 @@ class TimerManager extends JsonDbManager {
         this.timerIntervalCache[timer.id] = interval;
     }
 
-    /**
-     * @param {Timer[]} timers
-     * @param {boolean} onlyClearWhenLiveTimers
-     */
-    buildIntervalsForTimers(timers, onlyClearWhenLiveTimers = false) {
+    buildIntervalsForTimers(timers: Timer[], onlyClearWhenLiveTimers: boolean = false): void {
         // make sure any previous timers are cleared
         this.clearIntervals(onlyClearWhenLiveTimers);
 
@@ -268,10 +195,10 @@ class TimerManager extends JsonDbManager {
         }
     }
 
-    incrementChatLineCounters() {
+    incrementChatLineCounters(): void {
         logger.debug("Incrementing timer chat line counters...");
 
-        const currentIntervals = Object.values(this.timerIntervalCache);
+        const currentIntervals: TimerIntervalTracker[] = Object.values(this.timerIntervalCache);
         for (const interval of currentIntervals) {
             //increment counter
             interval.chatLinesSinceLastRunCount++;
@@ -283,7 +210,7 @@ class TimerManager extends JsonDbManager {
         }
     }
 
-    startTimers() {
+    startTimers(): void {
         const timers = this.getAllItems();
         if (timers != null) {
             this.buildIntervalsForTimers(timers.filter(t => t.active));
@@ -297,16 +224,16 @@ frontendCommunicator.onAsync("getTimers",
     async () => timerManager.getAllItems());
 
 frontendCommunicator.onAsync("saveTimer",
-    async (/** @type {Timer} */ timer) => timerManager.saveItem(timer));
+    async (timer: Timer) => timerManager.saveItem(timer));
 
 frontendCommunicator.onAsync("saveAllTimers",
-    async (/** @type {Timer[]} */ allTimers) => timerManager.saveAllItems(allTimers));
+    async (allTimers: Timer[]) => timerManager.saveAllItems(allTimers));
 
 frontendCommunicator.on("deleteTimer",
-    (/** @type {string} */ timerId) => timerManager.deleteItem(timerId));
+    (timerId: string) => timerManager.deleteItem(timerId));
 
 // restart timers when the Streamer goes offline/online
-connectionManager.on("streamerOnlineChange", isOnline => {
+connectionManager.on("streamerOnlineChange", (isOnline: boolean) => {
     if (isOnline) {
         logger.debug("Streamer has gone live.");
 
@@ -323,4 +250,4 @@ connectionManager.on("streamerOnlineChange", isOnline => {
     }
 });
 
-module.exports = timerManager;
+export = timerManager;

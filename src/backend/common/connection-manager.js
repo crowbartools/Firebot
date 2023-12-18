@@ -1,5 +1,5 @@
 "use strict";
-const EventEmitter = require("events");
+const { EventEmitter } = require("events");
 const util = require("../utility");
 const logger = require("../logwrapper");
 const frontendCommunicator = require("./frontend-communicator");
@@ -68,7 +68,7 @@ let connectionUpdateInProgress = false;
 let currentlyWaitingService = null;
 
 
-/**@extends NodeJS.EventEmitter */
+/**@extends EventEmitter */
 class ConnectionManager extends EventEmitter {
     constructor() {
         super();
