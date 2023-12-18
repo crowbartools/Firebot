@@ -322,7 +322,7 @@
                                 if (port !== 7472 && !isNaN(port)) {
                                     params["port"] = settingsService.getWebServerPort();
                                 }
-                                overlayPath = 'file://' + overlayPath;
+                                overlayPath = 'file:///' + overlayPath.replace(/^\//g, "");
                             }
 
 
