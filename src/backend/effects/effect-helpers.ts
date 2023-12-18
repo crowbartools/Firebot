@@ -36,6 +36,10 @@ export const checkEffectDependencies = (
                 case "chat":
                     return serviceValidators.twitch(validateFor);
                 default:
+                    // backwards compatibility for overlay dependency
+                    if (dependency === "overlay") {
+                        return true;
+                    }
                     logger.debug(`Unknown effect dependency: ${dependency}`);
                     return false;
             }

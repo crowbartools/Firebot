@@ -45,6 +45,9 @@ const EffectTrigger = Object.freeze({
  */
 const EffectDependency = Object.freeze({
     CHAT: "chat",
+    /**
+     * @deprecated This does nothing
+     */
     OVERLAY: "overlay"
 });
 
