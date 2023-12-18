@@ -105,7 +105,7 @@ const effect = {
         description: "Display a shoutout graphic for a channel in the overlay.",
         icon: "fad fa-megaphone",
         categories: [EffectCategory.COMMON, EffectCategory.FUN, EffectCategory.OVERLAY],
-        dependencies: [EffectDependency.OVERLAY]
+        dependencies: []
     },
     optionsTemplate: `
         <eos-container header="Preview">

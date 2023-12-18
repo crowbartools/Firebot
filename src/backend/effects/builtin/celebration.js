@@ -17,7 +17,7 @@ const celebration = {
         description: "Celebrate with firework overlay effects.",
         icon: "fad fa-birthday-cake",
         categories: [EffectCategory.FUN, EffectCategory.OVERLAY],
-        dependencies: [EffectDependency.OVERLAY]
+        dependencies: []
     },
     /**
    * Global settings that will be available in the Settings tab

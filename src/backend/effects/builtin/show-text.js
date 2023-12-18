@@ -18,7 +18,7 @@ const showText = {
         description: "Shows specified text in the overlay.",
         icon: "fad fa-text",
         categories: [EffectCategory.COMMON, EffectCategory.OVERLAY],
-        dependencies: [EffectDependency.OVERLAY]
+        dependencies: []
     },
     /**
    * Global settings that will be available in the Settings tab

@@ -17,7 +17,7 @@ const html = {
         description: "Show an HTML snippet in the overlay.",
         icon: "fab fa-html5",
         categories: [EffectCategory.ADVANCED, EffectCategory.OVERLAY],
-        dependencies: [EffectDependency.OVERLAY]
+        dependencies: []
     },
     /**
    * Global settings that will be available in the Settings tab

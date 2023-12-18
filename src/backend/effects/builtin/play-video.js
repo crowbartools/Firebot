@@ -28,7 +28,7 @@ const playVideo = {
         description: "Plays a local, Youtube, or Twitch video in the overlay.",
         icon: "fad fa-video",
         categories: [EffectCategory.COMMON, EffectCategory.OVERLAY, EffectCategory.TWITCH],
-        dependencies: [EffectDependency.OVERLAY]
+        dependencies: []
     },
     /**
      * Global settings that will be available in the Settings tab
