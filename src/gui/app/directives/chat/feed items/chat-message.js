@@ -29,6 +29,7 @@
                         class="automod-bar"
                         ng-class="$ctrl.message.autoModStatus"
                     >
+                    </div>
                     <div
                         ng-if="$ctrl.message.isFirstChat || $ctrl.message.isReturningChatter || $ctrl.message.isRaider || $ctrl.message.isSuspiciousUser"
                         class="chat-highlight-bar"
