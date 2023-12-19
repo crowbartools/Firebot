@@ -210,7 +210,7 @@ async function moderateMessage(chatMessage) {
         const regex = utils.getUrlRegex();
 
         if (regex.test(message)) {
-            logger.debug("Url moderation: Found url in message...");
+            logger.debug("URL moderation: Found URL in message");
 
             const settings = chatModerationSettings.urlModeration;
             let outputMessage = settings.outputMessage || "";
@@ -249,7 +249,7 @@ async function moderateMessage(chatMessage) {
                     if (viewerViewTime <= minimumViewTime) {
                         outputMessage = outputMessage.replace("{viewTime}", minimumViewTime.toString());
 
-                        logger.debug("Url moderation: Not enough view time.");
+                        logger.debug("URL moderation: Not enough view time.");
                         shouldDeleteMessage = true;
                     }
                 } else {
