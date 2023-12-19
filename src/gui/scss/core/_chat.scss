@@ -101,6 +101,26 @@
         margin-left: 10px;
         margin-bottom: 4px;
     }
+
+    .chat-highlight-bar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 3px;
+        &.first-chat {
+            background: #ff75e6;
+        }
+        &.returning {
+            background: #00a3a3;
+        }
+        &.raider {
+            background: #f5f500;
+        }
+        &.suspicious {
+            background: #ff8280;
+        }
+    }
 }
 
 .chat-message {

@@ -29,9 +29,26 @@
                         class="automod-bar"
                         ng-class="$ctrl.message.autoModStatus"
                     >
+                    <div
+                        ng-if="$ctrl.message.isFirstChat || $ctrl.message.isReturningChatter || $ctrl.message.isRaider || $ctrl.message.isSuspiciousUser"
+                        class="chat-highlight-bar"
+                        ng-class="{'first-chat': $ctrl.message.isFirstChat, returning: $ctrl.message.isReturningChatter, raider: $ctrl.message.isRaider, suspicious: $ctrl.message.isSuspiciousUser}"
+                    >
                     </div>
                     <div ng-if="$ctrl.message.isAnnouncement" style="background: #00000014;padding: 5px 10px;margin-top:5px">
                         <i class="fad fa-bullhorn"></i> Announcement
+                    </div>
+                    <div ng-if="$ctrl.message.isFirstChat" style="background: #00000014;padding: 5px 10px;margin-top:5px">
+                        <i class="fad fa-sparkles"></i> First Time Chat
+                    </div>
+                    <div ng-if="$ctrl.message.isReturningChatter" style="background: #00000014;padding: 5px 10px;margin-top:5px">
+                        <i class="fad fa-repeat"></i> Returning Chatter
+                    </div>
+                    <div ng-if="$ctrl.message.isRaider" style="background: #00000014;padding: 5px 10px;margin-top:5px">
+                        <i class="fad fa-siren-on"></i> Raider from {{$ctrl.message.raidingFrom}}
+                    </div>
+                    <div ng-if="$ctrl.message.isSuspiciousUser" style="background: #00000014;padding: 5px 10px;margin-top:5px">
+                        <i class="fad fa-exclamation-triangle"></i> Suspicious User
                     </div>
                     <div class="chat-message"
                         ng-class="{
@@ -178,7 +195,7 @@
                             <span>Expired</span>
                         </div>
                     </div>
-                    <div ng-if="$ctrl.message.isAnnouncement" style="margin-bottom:5px">
+                    <div ng-if="$ctrl.message.isAnnouncement || $ctrl.message.isFirstChat || $ctrl.message.isReturningChatter || $ctrl.message.isRaider || $ctrl.message.isSuspiciousUser" style="margin-bottom:5px">
                 </div>
             `,
             controller: function(chatMessagesService, utilityService, connectionService, pronounsService, backendCommunicator) {

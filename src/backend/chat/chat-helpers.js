@@ -416,7 +416,7 @@ exports.buildStreamerFirebotChatMessageFromText = async (text = "") => {
 };
 
 /**
- * @arg {import("@twurple/chat").PrivateMessage} msg
+ * @arg {import("@twurple/chat").ChatMessage} msg
  * @returns {Promise<import('../../types/chat').FirebotChatMessage>}
 */
 exports.buildFirebotChatMessage = async (msg, msgText, whisper = false, action = false) => {
@@ -430,6 +430,13 @@ exports.buildFirebotChatMessage = async (msg, msgText, whisper = false, action =
         customRewardId: msg.tags.get("custom-reward-id") || undefined,
         isHighlighted: msg.tags.get("msg-id") === "highlighted-message",
         isAnnouncement: false,
+        isFirstChat: msg.isFirst ?? false,
+        isReturningChatter: msg.isReturningChatter ?? false,
+
+        //TODO: Waiting for EventSub to supply these 3 fields
+        isRaider: false,
+        raidingFrom: "",
+        isSuspiciousUser: false,
 
         rawText: msgText,
         whisper: whisper,

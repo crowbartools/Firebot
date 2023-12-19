@@ -29,6 +29,11 @@ export type FirebotChatMessage = {
     isAutoModHeld: boolean;
     autoModStatus: string;
     autoModReason: string;
+    isFirstChat: boolean;
+    isReturningChatter: boolean;
+    isRaider: boolean;
+    raidingFrom: string;
+    isSuspiciousUser: boolean;
 };
 
 export type FirebotEmote = {
