@@ -225,7 +225,10 @@ class IntegrationManager extends EventEmitter {
         int.definition.linked = true;
 
         renderWindow.webContents.send("integrationsUpdated");
-        frontEndCommunicator.send("integrationLinked", int.definition.id);
+        frontEndCommunicator.send("integrationLinked", {
+            id: int.definition.id,
+            connectionToggle: int.definition.connectionToggle
+        });
     }
 
     unlinkIntegration(integrationId) {

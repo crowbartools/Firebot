@@ -186,9 +186,12 @@
                 }
             );
 
-            backendCommunicator.on("integrationLinked", (intId) => {
+            backendCommunicator.on("integrationLinked", (integration) => {
+                if (integration == null || !integration.connectionToggle) {
+                    return;
+                }
                 const sidebarControlledServices = settingsService.getSidebarControlledServices();
-                const service = "integration." + intId;
+                const service = "integration." + integration.id;
                 if (!sidebarControlledServices.includes(service)) {
                     sidebarControlledServices.push(service);
                 }
