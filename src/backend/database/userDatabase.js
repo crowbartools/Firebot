@@ -502,18 +502,16 @@ function getPurgeUsers(options) {
     });
 }
 
-function purgeUsers(options) {
-    return new Promise(resolve => {
-        const backupManager = require("../backupManager");
-        backupManager.startBackup(false, () => {
-            db.remove({ $where: getPurgeWherePredicate(options)}, {multi: true},
-                (err, numRemoved) => {
-                    if (err) {
-                        return resolve(0);
-                    }
-                    resolve(numRemoved);
-                });
-        });
+async function purgeUsers(options) {
+    const backupManager = require("../backup-manager");
+    await backupManager.startBackup(false, () => {
+        db.remove({ $where: getPurgeWherePredicate(options)}, {multi: true},
+            (err, numRemoved) => {
+                if (err) {
+                    return 0;
+                }
+                return numRemoved;
+            });
     });
 }
 
