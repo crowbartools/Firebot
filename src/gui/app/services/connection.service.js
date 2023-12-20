@@ -365,8 +365,11 @@
                 });
             });
 
-            backendCommunicator.on("integrationLinked", (intId) => {
-                const serviceId = `integration.${intId}`;
+            backendCommunicator.on("integrationLinked", (integration) => {
+                if (integration == null || !integration.connectionToggle) {
+                    return;
+                }
+                const serviceId = `integration.${integration.id}`;
                 service.connections[serviceId] = ConnectionState.Disconnected;
             });
 
