@@ -96,7 +96,7 @@ async function executeScript(scriptData, trigger, isStartupScript = false) {
 
     if (!response.success) {
         logger.error("Script failed with message:", response.errorMessage);
-        renderWindow.webContents.send("error", "Custom script failed with the message: " + response.errorMessage);
+        renderWindow.webContents.send("error", `Custom script failed with the message: ${response.errorMessage}`);
         return;
     }
 
@@ -162,7 +162,7 @@ async function executeScript(scriptData, trigger, isStartupScript = false) {
  */
 async function runStartUpScript(startUpScriptConfig) {
     const { scriptName } = startUpScriptConfig;
-    logger.debug("running startup script: " + scriptName);
+    logger.debug(`running startup script: ${scriptName}`);
 
     if (!settings.isCustomScriptsEnabled()) {
         logger.warn("Attempted to run startup script but custom scripts are disabled.");
@@ -221,7 +221,7 @@ async function startUpScriptDeleted(startUpScriptConfig) {
 function runScript(effect, trigger) {
     const { scriptName } = effect;
 
-    logger.debug("running script: " + scriptName);
+    logger.debug(`running script: ${scriptName}`);
 
     if (!settings.isCustomScriptsEnabled()) {
         renderWindow.webContents.send(

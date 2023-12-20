@@ -98,7 +98,7 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
         }
     }
 
-    private stopTask(taskRunner: ScheduledTaskRunner, removeCrontab: boolean = false): void {
+    private stopTask(taskRunner: ScheduledTaskRunner, removeCrontab = false): void {
         logger.debug(`Stopping scheduled task timer for ${taskRunner.taskDefinition.name}...`);
         
         if (taskRunner.cronjob == null) {

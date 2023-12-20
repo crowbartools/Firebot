@@ -9,12 +9,12 @@ const communitySubCache = new NodeCache({ stdTTL: 10, checkperiod: 2 });
 interface CommunityGiftSubRecipient {
     gifteeUsername: string,
     giftSubMonths: number
-};
+}
 
 interface CommunityGiftSubCache {
     subCount: number,
     giftReceivers: CommunityGiftSubRecipient[]
-};
+}
 
 export function triggerCommunitySubGift(
     gifterDisplayName: string,
@@ -23,7 +23,7 @@ export function triggerCommunitySubGift(
 ): void {
     logger.debug(`Received ${subCount} community gift subs from ${gifterDisplayName} at ${DateTime.now().toFormat("HH:mm:ss:SSS")}`);
     communitySubCache.set<CommunityGiftSubCache>(`${gifterDisplayName}:${subPlan}`, {subCount, giftReceivers: []});
-};
+}
 
 export function triggerSubGift(
     gifterDisplayName: string,
@@ -90,7 +90,7 @@ export function triggerSubGift(
         giftDuration
     });
     logger.debug(`Gift Sub event triggered`);
-};
+}
 
 export function triggerSubGiftUpgrade(
     gifteeUserName: string,
@@ -107,4 +107,4 @@ export function triggerSubGiftUpgrade(
         gifteeUsername: gifteeDisplayName,
         subPlan
     });
-};
+}

@@ -154,7 +154,7 @@
                             $scope.isLoadingParameters = false;
                         }
                     } catch (err) {
-                        utilityService.showErrorModal("Error loading the script '" + scriptName + "'\n\n" + err);
+                        utilityService.showErrorModal(`Error loading the script '${scriptName}'\n\n${err}`);
                         logger.error(err);
                     }
                 }

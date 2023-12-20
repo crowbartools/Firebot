@@ -729,7 +729,7 @@
             };
 
             service.deleteFromViewerColumnPreferences = function(columnName) {
-                deleteDataAtPath("/settings/viewerColumnPreferences/" + columnName);
+                deleteDataAtPath(`/settings/viewerColumnPreferences/${columnName}`);
             };
 
             service.getDefaultTtsVoiceId = function() {

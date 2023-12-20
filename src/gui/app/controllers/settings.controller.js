@@ -370,7 +370,7 @@
                     ) => {
                         $scope.backups = [];
 
-                        const backupFolderPath = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups") + path.sep;
+                        const backupFolderPath = path.resolve(`${dataAccess.getUserDataPath() + path.sep}backups`) + path.sep;
 
                         $scope.loadingBackups = true;
                         $q
@@ -424,14 +424,14 @@
 
                         $scope.togglePreventDeletion = function(backup) {
                             backup.neverDelete = !backup.neverDelete;
-                            const oldName = backup.name + ".zip";
+                            const oldName = `${backup.name}.zip`;
                             backup.name = backup.neverDelete
                                 ? (backup.name += "_NODELETE")
                                 : backup.name.replace("_NODELETE", "");
 
                             fs.renameSync(
                                 backupFolderPath + oldName,
-                                backupFolderPath + backup.name + ".zip"
+                                `${backupFolderPath + backup.name}.zip`
                             );
                         };
 
@@ -445,7 +445,7 @@
                                 .then(confirmed => {
                                     if (confirmed) {
                                         $scope.backups.splice(index, 1);
-                                        fs.unlink(backupFolderPath + backup.name + ".zip");
+                                        fs.unlink(`${backupFolderPath + backup.name}.zip`);
                                     }
                                 });
                         };

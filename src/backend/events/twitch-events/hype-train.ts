@@ -21,7 +21,7 @@ export function triggerHypeTrainStart(
         lastContribution,
         topContributors
     });
-};
+}
 
 export function triggerHypeTrainProgress(
     total: number,
@@ -43,7 +43,7 @@ export function triggerHypeTrainProgress(
         lastContribution,
         topContributors
     });
-};
+}
 
 export function triggerHypeTrainEnd(
     total: number,
@@ -61,4 +61,4 @@ export function triggerHypeTrainEnd(
         cooldownEndDate,
         topContributors
     });
-};
+}

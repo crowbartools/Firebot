@@ -48,7 +48,7 @@ const model = {
                 return resolve();
             }
 
-            return reject("You must be following: " + restrictionData.value);
+            return reject(`You must be following: ${restrictionData.value}`);
         });
     }
 };

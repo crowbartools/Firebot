@@ -10,7 +10,7 @@ export function triggerStreamOnline(
         userLogin,
         userDisplayName
     });
-};
+}
 
 export function triggerStreamOffline(
     userId: string,
@@ -22,4 +22,4 @@ export function triggerStreamOffline(
         userLogin,
         userDisplayName
     });
-};
+}

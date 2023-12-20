@@ -24,7 +24,7 @@ export class TwitchWhispersApi {
      async sendWhisper(
         recipientUserId: UserIdResolvable,
         message: string,
-        sendAsBot: boolean = false
+        sendAsBot = false
     ): Promise<boolean> {
         const willSendAsBot: boolean = sendAsBot === true
             && accountAccess.getAccounts().bot?.userId != null
@@ -47,4 +47,4 @@ export class TwitchWhispersApi {
         
         return false;
     }
-};
+}

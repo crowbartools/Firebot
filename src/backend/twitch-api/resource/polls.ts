@@ -40,7 +40,7 @@ export class TwitchPollsApi {
      * @param pollId The poll ID.
      * @param showResult Whether to show the result, or archive and hide the result.
      */
-    async endPoll(pollId: string, showResult: boolean = true): Promise<void> {
+    async endPoll(pollId: string, showResult = true): Promise<void> {
         try {
             const streamerId = accountAccess.getAccounts().streamer.userId;
 
@@ -68,4 +68,4 @@ export class TwitchPollsApi {
             return null;
         }
     }
-};
+}

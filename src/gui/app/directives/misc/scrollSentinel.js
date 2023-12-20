@@ -11,7 +11,7 @@
             `,
             controller: function($timeout) {
                 const $ctrl = this;
-                $ctrl.id = "a" + Math.random().toString(36).substr(2, 9);
+                $ctrl.id = `a${Math.random().toString(36).substr(2, 9)}`;
                 $ctrl.$onInit = function() {
                     $timeout(() => {
                         const observer = new IntersectionObserver(entries => {

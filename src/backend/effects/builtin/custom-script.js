@@ -50,7 +50,7 @@ const fileWriter = {
                     resolve(result != null ? result : true);
                 })
                 .catch(err => {
-                    renderWindow.webContents.send('error', "Oops! There was an error processing the custom script. Error: " + err.message);
+                    renderWindow.webContents.send('error', `Oops! There was an error processing the custom script. Error: ${err.message}`);
                     logger.error(err);
                     resolve(false);
                 });

@@ -167,4 +167,4 @@ export class TwitchModerationApi {
     
         return false;
     }
-};
+}

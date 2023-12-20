@@ -100,4 +100,4 @@ export class TwitchUsersApi {
     
         return true;
     }
-};
+}

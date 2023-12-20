@@ -18,7 +18,7 @@ const splitArgumentsText = (argsString) => {
             if ((re.test(arg) || re2.test(arg)) && !argPart) {
                 arr.push(arg);
             } else {
-                argPart = argPart ? argPart + " " + arg : arg;
+                argPart = argPart ? `${argPart} ${arg}` : arg;
                 // If part is complete (ends with a double quote), we can add it to the array
                 if (/"$/.test(argPart)) {
                     arr.push(argPart.replace(/^"/, '').replace(/"$/, ''));

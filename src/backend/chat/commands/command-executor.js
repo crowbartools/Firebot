@@ -36,6 +36,6 @@ exports.execute = function(command, userCommand, firebotChatMessage, manual = fa
     }
 
     return effectRunner.processEffects(processEffectsRequest).catch(reason => {
-        console.log("error when running effects: " + reason);
+        console.log(`error when running effects: ${reason}`);
     });
 };

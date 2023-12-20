@@ -116,4 +116,4 @@ class TwitchApi {
     }
 }
 
-export = new TwitchApi();;
+export = new TwitchApi();

@@ -147,7 +147,7 @@
                     default:
                         if (s.startsWith("integration.")) {
                             const intId = s.replace("integration.", "");
-                            logger.info("Connecting to " + intId);
+                            logger.info(`Connecting to ${intId}`);
                             if (integrationService.integrationIsLinked(intId)) {
                                 if (shouldConnect) {
                                     const didConnect = await integrationService.setConnectionForIntegration(intId, true);

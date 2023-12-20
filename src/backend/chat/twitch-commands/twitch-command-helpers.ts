@@ -85,4 +85,4 @@ export class TwitchCommandHelpers {
 
         return rawUsername;
     }
-};
+}

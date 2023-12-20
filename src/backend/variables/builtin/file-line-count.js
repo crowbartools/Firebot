@@ -18,7 +18,7 @@ const model = {
     },
     evaluator: (_, filePath) => {
         if (filePath === null || !filePath.endsWith(".txt")) {
-            logger.error("Couldn't read file (" + filePath + ") to count the lines in it.");
+            logger.error(`Couldn't read file (${filePath}) to count the lines in it.`);
             return 0;
         }
 

@@ -92,9 +92,9 @@ export function validateChatCommand(message: string): TwitchSlashCommandValidati
     }
 
     return matchedHandler.validateArgs(args);
-};
+}
 
-export async function processChatCommand(message: string, sendAsBot: boolean = false): Promise<boolean> {
+export async function processChatCommand(message: string, sendAsBot = false): Promise<boolean> {
     const validationResult = await validateChatCommand(message);
 
     if (validationResult.success === false) return false;
@@ -104,4 +104,4 @@ export async function processChatCommand(message: string, sendAsBot: boolean = f
   
     const matchedHandler = handlers.find(h => h.commands.includes(command?.toLowerCase()));
     return await matchedHandler.handle(validationResult.args, sendAsBot);
-};
+}

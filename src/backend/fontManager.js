@@ -75,7 +75,7 @@ function generateAppFontCssFile() {
 
     const fonts = getInstalledFonts();
     fonts.forEach(font => {
-        const fontPath = "file:///" + font.path;
+        const fontPath = `file:///${font.path}`;
 
         cssFileRaw +=
             `@font-face {

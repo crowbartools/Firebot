@@ -8,7 +8,7 @@ const POLL_INTERVAL: number = 5 * 60 * 1000;
 
 class TwitchChatterPoll {
     private _chatterPollIntervalId: NodeJS.Timeout;
-    private _pollIsRunning: boolean = false;
+    private _pollIsRunning = false;
 
     private clearPollInterval(): void {
         if (this._chatterPollIntervalId != null) {

@@ -6,7 +6,7 @@ export interface ImageSet {
     url1x: string;
     url2x: string;
     url4x: string;
-};
+}
 
 export interface CustomReward {
     broadcasterId: string;
@@ -38,7 +38,7 @@ export interface CustomReward {
     shouldRedemptionsSkipRequestQueue: boolean;
     redemptionsRedeemedCurrentStream?: number;
     cooldownExpiresAt?: Date;
-};
+}
 
 export class TwitchChannelRewardsApi {
     private _streamerClient: ApiClient;
@@ -151,7 +151,7 @@ export class TwitchChannelRewardsApi {
      * Get an array of custom channel rewards
      * @param {boolean} onlyManageable - Only get rewards manageable by Firebot
      */
-    async getCustomChannelRewards(onlyManageable: boolean = false): Promise<CustomReward[]> {
+    async getCustomChannelRewards(onlyManageable = false): Promise<CustomReward[]> {
         let rewards = [];
         try {
             const response = await this._streamerClient.channelPoints.getCustomRewards(
@@ -189,7 +189,7 @@ export class TwitchChannelRewardsApi {
         }
     
         return this.mapCustomRewardResponse(reward);
-    };
+    }
 
     async getManageableCustomChannelRewards(): Promise<CustomReward[]> {
         return await this.getCustomChannelRewards(true);
@@ -250,7 +250,7 @@ export class TwitchChannelRewardsApi {
         }
     }
     
-    async approveOrRejectChannelRewardRedemption(rewardId: string, redemptionId: string, approve: boolean = true): Promise<boolean> {
+    async approveOrRejectChannelRewardRedemption(rewardId: string, redemptionId: string, approve = true): Promise<boolean> {
         try {
             const response = await this._streamerClient.channelPoints.updateRedemptionStatusByIds(
                 accountAccess.getAccounts().streamer.userId,
@@ -267,4 +267,4 @@ export class TwitchChannelRewardsApi {
             return false;
         }
     }
-};
+}

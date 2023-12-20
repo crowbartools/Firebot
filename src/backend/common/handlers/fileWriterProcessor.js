@@ -16,46 +16,46 @@ const doesFileExist = (filepath) => {
 function removeLines(filepath, lines = []) {
     const contents = fs.readFileSync(filepath, "utf8");
 
-    return contents
+    return `${contents
         .split('\n')
         .filter(l => l != null && l.trim() !== "")
         .filter((_, index) => !lines.includes(index))
-        .join('\n') + "\n";
+        .join('\n')}\n`;
 }
 
 function removeLinesWithText(filepath, text) {
     const contents = fs.readFileSync(filepath, "utf8");
-    return contents
+    return `${contents
         .split('\n')
         .map(l => {
             return l.replace('\r', "");
         })
         .filter(l => l != null && l.trim() !== "")
         .filter(l => l !== text)
-        .join('\n') + "\n";
+        .join('\n')}\n`;
 }
 
 function replaceLines(filepath, lineNumbers = [], replacement) {
     const contents = fs.readFileSync(filepath, "utf8");
 
-    return contents
+    return `${contents
         .split('\n')
         .filter(l => l != null && l.trim() !== "")
         .map((l, index) => {
             return lineNumbers.includes(index) ? replacement : l;
         })
-        .join('\n') + "\n";
+        .join('\n')}\n`;
 }
 
 function replaceLinesWithText(filepath, text, replacement) {
     const contents = fs.readFileSync(filepath, "utf8");
-    return contents
+    return `${contents
         .split('\n')
         .filter(l => l != null && l.trim() !== "")
         .map(l => {
             return l === text ? replacement : l;
         })
-        .join('\n') + "\n";
+        .join('\n')}\n`;
 }
 
 exports.run = async effect => {
@@ -73,11 +73,11 @@ exports.run = async effect => {
         } else if (effect.writeMode === "append") {
             if (doesFileExist(effect.filepath) && effect.dontRepeat) {
                 if (!doesTextExistInFile(effect.filepath, text)) {
-                    fs.appendFileSync(effect.filepath, text + "\n", "utf8");
+                    fs.appendFileSync(effect.filepath, `${text}\n`, "utf8");
                 }
             } else {
                 fs.ensureDirSync(path.dirname(effect.filepath));
-                fs.appendFileSync(effect.filepath, text + "\n", "utf8");
+                fs.appendFileSync(effect.filepath, `${text}\n`, "utf8");
             }
         } else if (effect.writeMode === "delete") {
 

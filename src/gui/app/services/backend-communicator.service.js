@@ -70,7 +70,7 @@
                 }
                 return new Promise(resolve => {
                     ipcRenderer.send(type, data);
-                    ipcRenderer.once(type + ":reply", (_, eventData) => {
+                    ipcRenderer.once(`${type}:reply`, (_, eventData) => {
                         resolve(eventData);
                     });
                 });

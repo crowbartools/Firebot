@@ -11,7 +11,7 @@ exports.getAuth = (req, res) => {
         return res.status(400).json('Invalid providerId query param');
     }
 
-    logger.info("Redirecting to provider auth uri: " + provider.authorizationUri);
+    logger.info(`Redirecting to provider auth uri: ${provider.authorizationUri}`);
 
     res.redirect(provider.authorizationUri);
 };

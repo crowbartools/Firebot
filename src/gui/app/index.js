@@ -147,7 +147,7 @@ function printLogToBrowserConsole(transport, level, msg, meta) {
         if (msg != null && msg.trim() !== "(Renderer)") {
             // Only print if the msg isnt 'empty' aka has more than just the prefix
             console.log(
-                "%c" + level.toUpperCase() + "%c " + msg,
+                `%c${level.toUpperCase()}%c ${msg}`,
                 `color:${getLogLevelColor(level)}`,
                 "color:gray"
             );

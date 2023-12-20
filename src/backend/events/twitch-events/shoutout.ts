@@ -10,7 +10,7 @@ export function triggerShoutoutSent(
         moderator: moderatorDisplayName,
         viewerCount
     });
-};
+}
 
 export function triggerShoutoutReceived(
     userDisplayName: string,
@@ -20,4 +20,4 @@ export function triggerShoutoutReceived(
         username: userDisplayName,
         viewerCount
     });
-};
+}

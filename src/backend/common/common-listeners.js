@@ -117,7 +117,7 @@ exports.setupCommonListeners = () => {
     // This listens for an event from the render media.js file to open a dialog to get a filepath.
     ipcMain.on("getBackupZipPath", (event, uniqueid) => {
         const backupsFolderPath = path.resolve(
-            dataAccess.getUserDataPath() + path.sep + "backups" + path.sep
+            `${dataAccess.getUserDataPath() + path.sep}backups${path.sep}`
         );
 
         const fs = require("fs-extra");
@@ -141,7 +141,7 @@ exports.setupCommonListeners = () => {
     ipcMain.on("openBackupFolder", () => {
         // We include "fakefile.txt" as a workaround to make it open into the 'root' folder instead
         // of opening to the poarent folder with 'Firebot'folder selected.
-        const backupFolder = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups" + path.sep);
+        const backupFolder = path.resolve(`${dataAccess.getUserDataPath() + path.sep}backups${path.sep}`);
         shell.openPath(backupFolder);
     });
 

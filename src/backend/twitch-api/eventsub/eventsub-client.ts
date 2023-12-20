@@ -411,7 +411,7 @@ class TwitchEventSubClient {
         } catch (error) {
             logger.debug("Error disconnecting EventSub", error);
         }
-    };
+    }
 }
 
 export = new TwitchEventSubClient();

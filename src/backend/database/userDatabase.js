@@ -355,10 +355,10 @@ function calcUserOnlineMinutes(user) {
     return new Promise(resolve => {
         db.update({ _id: user._id }, { $set: { minutesInChannel: newTotalMinutes } }, {}, (err, numReplaced) => {
             if (err) {
-                logger.debug('ViewerDB: Couldnt update users online minutes because of an error. UserId: ' + user._id);
+                logger.debug(`ViewerDB: Couldnt update users online minutes because of an error. UserId: ${user._id}`);
                 logger.debug(err);
             } else if (numReplaced === 0) {
-                logger.debug('ViewerDB: Couldnt update users online minutes. UserId: ' + user._id);
+                logger.debug(`ViewerDB: Couldnt update users online minutes. UserId: ${user._id}`);
             } else {
                 userViewTimeUpdate(user, previousTotalMinutes, newTotalMinutes);
             }
@@ -618,7 +618,7 @@ function setChatUserOffline(id) {
                 if (err) {
                     logger.error("ViewerDB: Error setting user to offline.", err);
                 } else {
-                    logger.debug("ViewerDB: Set " + user[0].username + "(" + user[0]._id + ") to offline.");
+                    logger.debug(`ViewerDB: Set ${user[0].username}(${user[0]._id}) to offline.`);
                 }
                 return resolve();
             });
@@ -637,7 +637,7 @@ function setAllUsersOffline() {
 
         db.update({online: true}, {$set: { online: false }}, { multi: true }, function(err, numReplaced) {
             if (numReplaced > 0) {
-                logger.debug('ViewerDB: Set ' + numReplaced + ' users to offline.');
+                logger.debug(`ViewerDB: Set ${numReplaced} users to offline.`);
             } else {
                 logger.debug('ViewerDB: No users were set to offline.');
             }
@@ -673,7 +673,7 @@ function connectUserDatabase() {
     // Setup our automatic compaction interval to shrink filesize.
     db.persistence.setAutocompactionInterval(dbCompactionInterval);
     setInterval(function() {
-        logger.debug('ViewerDB: Compaction should be happening now. Compaction Interval: ' + dbCompactionInterval);
+        logger.debug(`ViewerDB: Compaction should be happening now. Compaction Interval: ${dbCompactionInterval}`);
     }, dbCompactionInterval);
 
     logger.info("ViewerDB: User Database Loaded: ", path);

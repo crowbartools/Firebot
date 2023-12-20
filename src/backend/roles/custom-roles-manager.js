@@ -17,7 +17,7 @@ let customRoles = {};
 
 const ROLES_FOLDER = "/roles/";
 function getCustomRolesDb() {
-    return profileManager.getJsonDbInProfile(ROLES_FOLDER + "customroles");
+    return profileManager.getJsonDbInProfile(`${ROLES_FOLDER}customroles`);
 }
 
 function loadCustomRoles() {
@@ -48,7 +48,7 @@ function saveCustomRole(role) {
     try {
         const rolesDb = getCustomRolesDb();
 
-        rolesDb.push("/" + role.id, role);
+        rolesDb.push(`/${role.id}`, role);
 
         logger.debug(`Saved role ${role.id} to file.`);
 
@@ -67,7 +67,7 @@ function deleteCustomRole(roleId) {
     try {
         const rolesDb = getCustomRolesDb();
 
-        rolesDb.delete("/" + roleId);
+        rolesDb.delete(`/${roleId}`);
 
         logger.debug(`Deleted role: ${roleId}`);
 

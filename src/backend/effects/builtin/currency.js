@@ -239,7 +239,7 @@ const currency = {
             if (isNaN(amount)) {
                 return resolve({
                     success: false,
-                    reason: "Amount not a number: " + amount
+                    reason: `Amount not a number: ${amount}`
                 });
             }
 

@@ -55,7 +55,7 @@
             function setBubbleClasses() {
                 const connectionStatus = ctrl.connectionStatus;
 
-                ctrl.bubbleClass = connectionStatus + " animated bounceIn";
+                ctrl.bubbleClass = `${connectionStatus} animated bounceIn`;
 
                 $timeout(() => {
                     ctrl.bubbleClass = ctrl.bubbleClass.replace(" animated bounceIn", "");

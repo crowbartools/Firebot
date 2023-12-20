@@ -200,7 +200,7 @@ class TwitchChat extends EventEmitter {
      * @param {string} message The message to send
      * @param {string} accountType The type of account to whisper with ('streamer' or 'bot')
      */
-    async _whisper(message: string, username: string = "", accountType: string): Promise<void> {
+    async _whisper(message: string, username = "", accountType: string): Promise<void> {
         try {
             logger.debug(`Sending whisper as ${accountType} to ${username}.`);
 

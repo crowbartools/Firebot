@@ -12,7 +12,7 @@ export class TwitchBitsApi {
     }
 
     async getChannelBitsLeaderboard(
-        count: number = 10,
+        count = 10,
         period: HelixBitsLeaderboardPeriod = "all",
         startDate: Date = new Date(),
         userId?: string
@@ -36,7 +36,7 @@ export class TwitchBitsApi {
     }
     
     async getChannelBitsTopCheerers(
-        count: number = 1,
+        count = 1,
         period: HelixBitsLeaderboardPeriod = "all",
         startDate: Date = new Date()
     ): Promise<String[]> {
@@ -46,4 +46,4 @@ export class TwitchBitsApi {
             return l.userName
         })
     }
-};
+}

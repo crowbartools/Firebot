@@ -67,14 +67,14 @@ function adjustCurrency(user, currencyId, value, adjustType = "adjust") {
 
         switch (adjustType) {
         case "set":
-            logger.debug("Currency: Setting " + user.username + " currency " + currencyId + " to: " + value + ".");
+            logger.debug(`Currency: Setting ${user.username} currency ${currencyId} to: ${value}.`);
             newUserValue = value;
             break;
         default:
             if (parseInt(value) === 0) {
                 return resolve();
             }
-            logger.debug("Currency: Adjusting " + value + " currency to " + user.username + ". " + currencyId);
+            logger.debug(`Currency: Adjusting ${value} currency to ${user.username}. ${currencyId}`);
             newUserValue = (user.currency[currencyId] + parseInt(value));
         }
 
@@ -199,7 +199,7 @@ function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value, igno
             .map(u => u._id);
 
         // Log it.
-        logger.debug('Paying out ' + value + ' currency (' + currencyId + ') for online users:');
+        logger.debug(`Paying out ${value} currency (${currencyId}) for online users:`);
         logger.debug("role ids", roleIds);
         logger.debug("user ids", userIdsInRoles);
 
@@ -497,7 +497,7 @@ function deleteCurrencyById(currencyId) {
     // Send to viewersService.js to delete from ui.
     renderWindow.webContents.send(
         "delete-currency-def",
-        "currency." + currencyId
+        `currency.${currencyId}`
     );
 }
 
@@ -571,7 +571,7 @@ ipcMain.on("createCurrency", (event, currencyId) => {
     if (!isViewerDBOn()) {
         return;
     }
-    logger.info("Creating a new currency with id " + currencyId);
+    logger.info(`Creating a new currency with id ${currencyId}`);
     addCurrencyToAllUsers(currencyId, 0);
 });
 
@@ -581,7 +581,7 @@ ipcMain.on("purgeCurrency", (event, currencyId) => {
     if (!isViewerDBOn()) {
         return;
     }
-    logger.info("Purging currency with id " + currencyId);
+    logger.info(`Purging currency with id ${currencyId}`);
     purgeCurrencyById(currencyId);
 });
 
@@ -591,7 +591,7 @@ ipcMain.on("deleteCurrency", (event, currencyId) => {
     if (!isViewerDBOn()) {
         return;
     }
-    logger.info("Deleting currency with id " + currencyId);
+    logger.info(`Deleting currency with id ${currencyId}`);
     deleteCurrencyById(currencyId);
 });
 

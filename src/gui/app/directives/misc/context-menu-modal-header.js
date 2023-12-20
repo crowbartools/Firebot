@@ -41,7 +41,7 @@
                 const $ctrl = this;
 
                 $ctrl.$onInit = () => {
-                    $ctrl.sortTagContext = $ctrl.triggerType + "s";
+                    $ctrl.sortTagContext = `${$ctrl.triggerType}s`;
                     $ctrl.allSortTags = sortTagsService.getSortTags($ctrl.sortTagContext);
                 };
 

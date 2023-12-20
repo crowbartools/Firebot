@@ -41,7 +41,7 @@
                 modalInstance: "<"
             },
             controller: function($http, $scope, utilityService, backendCommunicator, focus) {
-                let $ctrl = this;
+                const $ctrl = this;
 
                 $ctrl.model = null;
 
@@ -95,10 +95,10 @@
                         $ctrl.validationText = $ctrl.resolve.validationText;
                     }
 
-                    let modalId = $ctrl.resolve.modalId;
+                    const modalId = $ctrl.resolve.modalId;
                     utilityService.addSlidingModal(
                         $ctrl.modalInstance.rendered.then(() => {
-                            let modalElement = $("." + modalId).children();
+                            const modalElement = $(`.${modalId}`).children();
                             return {
                                 element: modalElement,
                                 name: "Viewer Search",
@@ -114,8 +114,10 @@
                 };
 
                 $ctrl.save = function() {
-                    if ($ctrl.model == null || $ctrl.model === "") return;
-                    let validate = $ctrl.validationFn($ctrl.model);
+                    if ($ctrl.model == null || $ctrl.model === "") {
+                        return;
+                    }
+                    const validate = $ctrl.validationFn($ctrl.model);
 
                     Promise.resolve(validate).then((valid) => {
 

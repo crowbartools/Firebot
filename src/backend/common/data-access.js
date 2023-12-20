@@ -26,8 +26,8 @@ const getWorkingDirectoryPath = function() {
 // This stays the same after every update.
 const appDataPath = app.getPath("appData");
 
-const rootUserDataPath = appDataPath + path.sep + "Firebot";
-const userDataPath = rootUserDataPath + path.sep + "v5";
+const rootUserDataPath = `${appDataPath + path.sep}Firebot`;
+const userDataPath = `${rootUserDataPath + path.sep}v5`;
 
 const tmpDirectoryPath = path.join(rootUserDataPath, "tmp");
 
@@ -54,7 +54,7 @@ const deletePathInUserData = function(filePath) {
 const deleteFolderRecursive = function(path) {
     if (fs.existsSync(path)) {
         fs.readdirSync(path).forEach(function(file) {
-            const curPath = path + "/" + file;
+            const curPath = `${path}/${file}`;
             if (fs.statSync(curPath).isDirectory()) {
                 // recurse
                 deleteFolderRecursive(curPath);
@@ -120,7 +120,7 @@ const makeDirInUserDataSync = function(filePath) {
         return true;
     } catch (err) {
         const logger = require("../logwrapper");
-        logger.error(`Error creating ${filePath}: ` + err);
+        logger.error(`Error creating ${filePath}: ${err}`);
         return false;
     }
 };
@@ -140,10 +140,10 @@ const copyDefaultConfigToUserData = function(
     userDataDestination
 ) {
     const source = getPathInWorkingDir(
-        "/resources/default-configs/" + configFileName
+        `/resources/default-configs/${configFileName}`
     );
     const destination = getPathInUserData(
-        userDataDestination + "/" + configFileName
+        `${userDataDestination}/${configFileName}`
     );
     fs.writeFileSync(destination, fs.readFileSync(source));
 };

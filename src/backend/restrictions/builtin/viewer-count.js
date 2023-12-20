@@ -60,7 +60,7 @@ const model = {
             comparison = "equal to";
         }
 
-        return "Viewers " + comparison + " " + amount;
+        return `Viewers ${comparison} ${amount}`;
     },
     /*
       function that resolves/rejects a promise based on if the restriction critera is met

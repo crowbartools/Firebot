@@ -57,11 +57,11 @@ class HttpServerManager extends EventEmitter {
         app.use("/api/v1", v1Router);
 
         app.get("/api/v1/auth/callback", function(_, res) {
-            res.sendFile(path.join(__dirname + '/authcallback.html'));
+            res.sendFile(path.join(`${__dirname}/authcallback.html`));
         });
 
         app.get('/loginsuccess', function(_, res) {
-            res.sendFile(path.join(__dirname + '/loginsuccess.html'));
+            res.sendFile(path.join(`${__dirname}/loginsuccess.html`));
         });
 
 
@@ -109,7 +109,7 @@ class HttpServerManager extends EventEmitter {
 
             res
                 .status(404)
-                .send({ status: "error", message: req.originalUrl + " not found" });
+                .send({ status: "error", message: `${req.originalUrl} not found` });
         });
 
         // List custom routes
@@ -144,7 +144,7 @@ class HttpServerManager extends EventEmitter {
             if (customRouteEntry == null) {
                 res
                     .status(404)
-                    .send({ status: "error", message: req.originalUrl + " not found" });
+                    .send({ status: "error", message: `${req.originalUrl} not found` });
             } else {
                 customRouteEntry.callback(req, res);
             }
@@ -154,7 +154,7 @@ class HttpServerManager extends EventEmitter {
         app.use(function(req, res) {
             res
                 .status(404)
-                .send({ status: "error", message: req.originalUrl + " not found" });
+                .send({ status: "error", message: `${req.originalUrl} not found` });
         });
 
         return app;

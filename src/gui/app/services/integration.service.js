@@ -191,7 +191,7 @@
                     return;
                 }
                 const sidebarControlledServices = settingsService.getSidebarControlledServices();
-                const service = "integration." + integration.id;
+                const service = `integration.${integration.id}`;
                 if (!sidebarControlledServices.includes(service)) {
                     sidebarControlledServices.push(service);
                 }
@@ -200,7 +200,7 @@
 
             backendCommunicator.on("integrationUnlinked", (intId) => {
                 let sidebarControlledServices = settingsService.getSidebarControlledServices();
-                const service = "integration." + intId;
+                const service = `integration.${intId}`;
                 if (sidebarControlledServices.includes(service)) {
                     sidebarControlledServices = sidebarControlledServices.filter(s => s !== service);
                 }

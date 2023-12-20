@@ -16,7 +16,7 @@ export function triggerCheer(
         totalBits,
         cheerMessage
     });
-};
+}
 
 export function triggerBitsBadgeUnlock(
     userName: string,
@@ -28,4 +28,4 @@ export function triggerBitsBadgeUnlock(
         message,
         badgeTier
     });
-};
+}

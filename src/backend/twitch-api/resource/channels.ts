@@ -91,7 +91,7 @@ export class TwitchChannelsApi {
      *
      * @param adLength How long the ad should run.
      */
-    async triggerAdBreak(adLength: number = 30): Promise<boolean> {
+    async triggerAdBreak(adLength = 30): Promise<boolean> {
         try {
             const streamer = accountAccess.getAccounts().streamer;
 
@@ -166,4 +166,4 @@ export class TwitchChannelsApi {
 
         return vips;
     }
-};
+}

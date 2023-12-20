@@ -22,7 +22,7 @@ async function randomAdvice() {
     return await axios.get(url)
         .then(function(response) {
             const advice = response.data.slip["advice"];
-            logger.info("Advice: " + advice);
+            logger.info(`Advice: ${advice}`);
             return advice;
         })
         .catch(function(err) {
@@ -42,7 +42,7 @@ async function randomCatFact() {
     return await axios.get(url)
         .then(function(response) {
             const fact = response.data.fact;
-            logger.info("Cat Fact: " + fact);
+            logger.info(`Cat Fact: ${fact}`);
             return fact;
         })
         .catch(function(err) {
@@ -62,7 +62,7 @@ async function randomDogFact() {
     return await axios.get(url)
         .then(function(response) {
             const fact = response.data.facts[0];
-            logger.info("Dog Fact: " + fact);
+            logger.info(`Dog Fact: ${fact}`);
             return fact;
         })
         .catch(function(err) {
@@ -78,21 +78,21 @@ async function randomDogFact() {
 async function randomPokemon() {
     //http://pokeapi.co/api/v2/pokemon/NUMBER (811 max)
     const random = Math.floor(Math.random() * 721) + 1,
-        url = "http://pokeapi.co/api/v2/pokemon/" + random + "/";
+        url = `http://pokeapi.co/api/v2/pokemon/${random}/`;
 
     return await axios.get(url)
         .then(function(response) {
             const name = response.data.name;
             const nameCap = toTitleCase(name);
-            const info = "http://pokemondb.net/pokedex/" + name;
+            const info = `http://pokemondb.net/pokedex/${name}`;
 
             const moveset = response.data.moves;
             const movedata = moveset[Math.floor(Math.random() * moveset.length)];
             const move = movedata["move"];
             const movename = move.name;
-            const text = "I choose you " + nameCap + "! " + nameCap + " used " + movename + "! " + info;
+            const text = `I choose you ${nameCap}! ${nameCap} used ${movename}! ${info}`;
 
-            logger.info("Pokemon: " + text);
+            logger.info(`Pokemon: ${text}`);
             return text;
         })
         .catch(function(err) {
@@ -111,7 +111,7 @@ async function numberTrivia() {
 
     return await axios.get(url)
         .then(function(response) {
-            logger.info("Random Number Trivia:" + response.data);
+            logger.info(`Random Number Trivia:${response.data}`);
             return response.data;
         })
         .catch(function(err) {
@@ -136,7 +136,7 @@ async function dadJoke() {
     return await axios.get(options.url, options)
         .then(function(response) {
             const joke = response.data.joke;
-            logger.info("Dad Joke: " + joke);
+            logger.info(`Dad Joke: ${joke}`);
             return joke;
         })
         .catch(function(err) {

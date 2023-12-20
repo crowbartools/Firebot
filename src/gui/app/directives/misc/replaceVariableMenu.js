@@ -110,7 +110,7 @@
 
                             const display = variable.usage ? variable.usage : variable.handle;
 
-                            const updatedModel = insertAt(currentModel, "$" + display, insertIndex);
+                            const updatedModel = insertAt(currentModel, `$${display}`, insertIndex);
 
                             $scope.modelValue = updatedModel;
                         }

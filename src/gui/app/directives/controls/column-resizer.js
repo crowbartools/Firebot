@@ -180,7 +180,7 @@
                         leftWidth = leftSide.minWidth;
                     }
 
-                    return getRelativeWidth(leftWidth) + "%";
+                    return `${getRelativeWidth(leftWidth)}%`;
                 };
 
                 const getRightSideWidth = (difference) => {
@@ -193,7 +193,7 @@
                         rightWidth = rightSide.minWidth;
                     }
 
-                    return getRelativeWidth(rightWidth) + "%";
+                    return `${getRelativeWidth(rightWidth)}%`;
                 };
 
                 $parent.bind('mouseup', (e) => {

@@ -237,7 +237,7 @@ const quotesManagement = {
                     await twitchChat.sendChatMessage(formattedQuote);
                     sendToTTS(formattedQuote);
 
-                    logger.debug('We pulled a quote by id: ' + formattedQuote);
+                    logger.debug(`We pulled a quote by id: ${formattedQuote}`);
                 } else {
                     await twitchChat.sendChatMessage(`Could not find a random quote!`);
                 }
@@ -253,7 +253,7 @@ const quotesManagement = {
                     const formattedQuote = getFormattedQuoteString(quote);
                     await twitchChat.sendChatMessage(formattedQuote);
                     sendToTTS(formattedQuote);
-                    logger.debug('We pulled a quote using an id: ' + formattedQuote);
+                    logger.debug(`We pulled a quote using an id: ${formattedQuote}`);
                 } else {
                     // If we get here, it's likely the command was used wrong. Tell the sender they done fucked up
                     await twitchChat.sendChatMessage(`Sorry! We couldn't find a quote with that id.`);
@@ -294,7 +294,7 @@ const quotesManagement = {
                 if (!isNaN(quoteId)) {
                     await quotesManager.removeQuote(quoteId);
                     await twitchChat.sendChatMessage(`Quote ${quoteId} was removed.`);
-                    logger.debug('A quote was removed: ' + quoteId);
+                    logger.debug(`A quote was removed: ${quoteId}`);
                     return resolve();
                 }
 
@@ -340,7 +340,7 @@ const quotesManagement = {
                     sendToTTS(formattedQuote);
 
                     // log (Maybe move this to the manager?)
-                    logger.debug('We pulled a quote using an id: ' + formattedQuote);
+                    logger.debug(`We pulled a quote using an id: ${formattedQuote}`);
 
                 // no matching quote found
                 } else {
@@ -577,7 +577,7 @@ const quotesManagement = {
                     await twitchChat.sendChatMessage(formattedQuote);
                     sendToTTS(formattedQuote);
 
-                    logger.debug('We pulled a quote by id: ' + formattedQuote);
+                    logger.debug(`We pulled a quote by id: ${formattedQuote}`);
                 } else {
                     await twitchChat.sendChatMessage(`Could not find a random quote!`);
                 }

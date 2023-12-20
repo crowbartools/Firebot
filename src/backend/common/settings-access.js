@@ -81,7 +81,7 @@ function getDataFromFile(path, forceCacheUpdate = false) {
 settings.getAutoFlagBots = function() {
     const autoFlagBots = getDataFromFile("/settings/autoFlagBots");
     return autoFlagBots != null ? autoFlagBots : true;
-}
+};
 
 settings.getEventSettings = function() {
     return getDataFromFile("/settings/eventSettings");

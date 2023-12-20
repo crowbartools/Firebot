@@ -10,7 +10,7 @@ export function triggerChatMessage(firebotChatMessage: FirebotChatMessage): void
         messageText: firebotChatMessage.rawText,
         chatMessage: firebotChatMessage
     });
-};
+}
 
 export function triggerFirstTimeChat(firebotChatMessage: FirebotChatMessage): void {
     eventManager.triggerEvent("twitch", "first-time-chat", {
@@ -21,4 +21,4 @@ export function triggerFirstTimeChat(firebotChatMessage: FirebotChatMessage): vo
         messageText: firebotChatMessage.rawText,
         chatMessage: firebotChatMessage
     });
-};
+}

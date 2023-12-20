@@ -374,7 +374,7 @@ const playVideo = {
                 try {
                     clip = await client.clips.getClipById(clipId);
                 } catch (error) {
-                    logger.error("Unable to find clip by id: " + clipId, error);
+                    logger.error(`Unable to find clip by id: ${clipId}`, error);
                     return true;
                 }
             } else if (effect.videoType === "Random Twitch Clip") {
@@ -399,12 +399,12 @@ const playVideo = {
 
                     clipId = clip.id;
                 } catch (error) {
-                    logger.error("Unable to find clip random clip for: " + username, error);
+                    logger.error(`Unable to find clip random clip for: ${username}`, error);
                     return true;
                 }
             }
 
-            const clipVideoUrl = clip.thumbnailUrl.split("-preview-")[0] + ".mp4";
+            const clipVideoUrl = `${clip.thumbnailUrl.split("-preview-")[0]}.mp4`;
             const clipDuration = clip.duration;
             const volume = parseInt(effect.volume) / 10;
 
@@ -540,7 +540,7 @@ const playVideo = {
                         $(idString).find(".inner-position").css("animation-iteration-count", "");
                         $(idString)
                             .find(".inner-position")
-                            .removeClass("animated " + inbetweenAnimation);
+                            .removeClass(`animated ${inbetweenAnimation}`);
                     }
 
                     $(idString)
@@ -552,13 +552,12 @@ const playVideo = {
                 function millisecondsFromString(time) {
                     if (time === undefined) { // Default delay seems to be a second
                         return 1000;
-                    }
-                    else if (time.includes('ms')) {
+                    } else if (time.includes('ms')) {
                         return parseFloat(time.match(/[\d.]+/));
                     }
-                    else { // Time is in seconds
-                        return parseFloat(time.match(/[\d.]+/)) * 1000;
-                    }
+                    // Time is in seconds
+                    return parseFloat(time.match(/[\d.]+/)) * 1000;
+
                 }
 
                 // Load youtube iframe api onto page.
@@ -575,13 +574,13 @@ const playVideo = {
                 if (fileExt === "ogv") {
                     fileExt = "ogg";
                 }
-                let youtubeId = data.youtubeId;
+                const youtubeId = data.youtubeId;
                 const videoDuration =
                     data.videoDuration != null && data.videoDuration !== ""
                         ? parseFloat(data.videoDuration) * 1000
                         : null;
                 let videoVolume = data.videoVolume;
-                let videoStarttime = data.videoStarttime || 0;
+                const videoStarttime = data.videoStarttime || 0;
                 const loop = data.loop;
 
                 const token = encodeURIComponent(data.resourceToken);

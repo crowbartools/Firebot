@@ -89,7 +89,7 @@ class JsonDbManager {
         this.items[item.id] = item;
 
         try {
-            this.db.push("/" + item.id, item);
+            this.db.push(`/${item.id}`, item);
 
             logger.debug(`Saved ${this.type} with id ${item.id} to file.`);
             return item;
@@ -132,7 +132,7 @@ class JsonDbManager {
         delete this.items[itemId];
 
         try {
-            this.db.delete("/" + itemId);
+            this.db.delete(`/${itemId}`);
 
             logger.debug(`Deleted ${this.type}: ${itemId}`);
             return true;
