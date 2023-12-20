@@ -83,7 +83,10 @@ module.exports = {
         "no-var": "warn", // Use let/const instead of var
 
         // Other deviations
-        "no-warning-comments": ["warn", {"terms": ["todo", "to do", "fix", "fixme", "fix me", "need"], "location": "start"}], // warn about todo comments
-        "no-unused-vars": ["warn"]
+        "no-unused-vars": ["warn"],
+        "prefer-template": "warn", // Use template strings instead of + concat
+        "template-curly-spacing": ["warn", "never"],
+        "no-useless-concat": "error", // no concat'ing literal strings
+        "no-warning-comments": ["warn", {"terms": ["todo", "to do", "fix", "fixme", "fix me", "need"], "location": "start"}] // warn about todo comments
     }
 };
