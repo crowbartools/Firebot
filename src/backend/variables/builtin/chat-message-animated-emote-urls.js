@@ -9,6 +9,7 @@ triggers[EffectTrigger.MANUAL] = true;
 triggers[EffectTrigger.COMMAND] = true;
 triggers[EffectTrigger.EVENT] = [
     "twitch:chat-message",
+    "twitch:first-time-chat",
     "firebot:highlight-message",
     "twitch:viewer-arrived"
 ];

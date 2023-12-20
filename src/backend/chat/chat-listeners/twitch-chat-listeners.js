@@ -89,6 +89,9 @@ exports.setupChatListeners = (streamerChatClient) => {
         }
 
         twitchEventsHandler.chatMessage.triggerChatMessage(firebotChatMessage);
+        if (firebotChatMessage.isFirstChat) {
+            twitchEventsHandler.chatMessage.triggerFirstTimeChat(firebotChatMessage);
+        }
         await raidMessageChecker.sendMessageToCache(firebotChatMessage);
     });
 
@@ -105,6 +108,9 @@ exports.setupChatListeners = (streamerChatClient) => {
         frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
 
         twitchEventsHandler.chatMessage.triggerChatMessage(firebotChatMessage);
+        if (firebotChatMessage.isFirstChat) {
+            twitchEventsHandler.chatMessage.triggerFirstTimeChat(firebotChatMessage);
+        }
 
         twitchEventsHandler.viewerArrived.triggerViewerArrived(
             msg.userInfo.displayName,

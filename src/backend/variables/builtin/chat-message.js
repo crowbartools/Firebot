@@ -7,7 +7,13 @@ const { OutputDataType, VariableCategory } = require("../../../shared/variable-c
 const triggers = {};
 triggers[EffectTrigger.MANUAL] = true;
 triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.EVENT] = ["twitch:chat-message", "firebot:highlight-message", "twitch:announcement", "twitch:viewer-arrived"];
+triggers[EffectTrigger.EVENT] = [
+    "twitch:chat-message",
+    "twitch:first-time-chat",
+    "firebot:highlight-message",
+    "twitch:announcement",
+    "twitch:viewer-arrived"
+];
 
 const model = {
     definition: {

@@ -280,6 +280,23 @@ module.exports = {
             }
         },
         {
+            id: "first-time-chat",
+            name: "First Time Chat",
+            description: "When someone chats in your channel for the very first time",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                username: "Firebot",
+                messageText: "Test message"
+            },
+            activityFeed: {
+                icon: "fad fa-sparkles",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** has chatted in your channel for the very first time`;
+                }
+            }
+        },
+        {
             id: "announcement",
             name: "Announcement",
             description: "When you or a mod sends an announcement in your channel",
