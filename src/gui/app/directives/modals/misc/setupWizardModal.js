@@ -236,7 +236,7 @@
                             <b>Thank you for using Firebot.</b>
                         </p>
                         <div style="animation-delay: 2.3s" class="animated fadeIn">
-                            <a style="margin-top: 5px;" class="btn btn-primary shake-slow" ng-click="$ctrl.handleNext()">I'm so ready!</a>
+                            <a style="margin-top: 5px;" class="btn btn-primary" ng-click="$ctrl.handleNext()">I'm so ready!</a>
                         </div>
                     </div>
                 </div>
