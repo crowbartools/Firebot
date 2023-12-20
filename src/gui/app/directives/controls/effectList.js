@@ -118,7 +118,7 @@
                                 href role="button"
                                 aria-label="Open effects menu"
                                 class="effects-actions-btn"
-                                context-menu="$ctrl.allEffectsMenuOptions"
+                                context-menu="$ctrl.createAllEffectsMenuOptions()"
                                 context-menu-on="click"
                                 uib-tooltip="Open effects menu"
                                 tooltip-append-to-body="true"
@@ -210,8 +210,8 @@
                     ctrl.effectsUpdate();
                 }
 
-                const createAllEffectsMenuOptions = () => {
-                    ctrl.allEffectsMenuOptions = [
+                ctrl.createAllEffectsMenuOptions = () => {
+                    const allEffectsMenuOptions = [
                         {
                             html: `<a href role="menuitem"><i class="far fa-copy mr-4"></i> Copy all effects</a>`,
                             click: () => {
@@ -248,10 +248,12 @@
                             }
                         }
                     ];
+
+                    return allEffectsMenuOptions;
                 };
 
                 ctrl.createEffectMenuOptions = (effect) => {
-                    ctrl.effectMenuOptions = [
+                    const effectMenuOptions = [
                         {
                             html: `<a href ><i class="far fa-tag mr-4"></i> Edit Label</a>`,
                             click: function ($itemScope) {
@@ -341,11 +343,7 @@
                         }
                     ];
 
-                    return ctrl.effectMenuOptions;
-                };
-
-                const rebuildEffectMenus = () => {
-                    createAllEffectsMenuOptions();
+                    return effectMenuOptions;
                 };
 
                 ctrl.shareEffects = async () => {
@@ -426,12 +424,10 @@
 
                 ctrl.$onChanges = function() {
                     createEffectsData();
-                    rebuildEffectMenus();
                 };
 
                 ctrl.effectsUpdate = function() {
                     ctrl.update({ effects: ctrl.effectsData });
-                    rebuildEffectMenus();
                 };
 
                 ctrl.effectTypeChanged = function(effectType, index) {
@@ -525,12 +521,10 @@
 
                 ctrl.copyEffectAtIndex = function(index) {
                     objectCopyHelper.copyEffects([ctrl.effectsData.list[index]]);
-                    rebuildEffectMenus();
                 };
 
                 ctrl.copyEffects = function() {
                     objectCopyHelper.copyEffects(ctrl.effectsData.list);
-                    rebuildEffectMenus();
                 };
 
                 ctrl.openNewEffectModal = index => {
