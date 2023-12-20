@@ -12,7 +12,7 @@ exports.setupCommonListeners = () => {
     const dataAccess = require("./data-access");
     const profileManager = require("./profile-manager");
     const { settings } = require("./settings-access");
-    const backupManager = require("../backupManager");
+    const backupManager = require("../backup-manager");
     const webServer = require("../../server/http-server-manager");
 
     frontendCommunicator.on("show-twitch-preview", () => {
@@ -201,12 +201,12 @@ exports.setupCommonListeners = () => {
         currentVersion: app.getVersion()
     };
 
-    ipcMain.on("downloadUpdate", () => {
+    ipcMain.on("downloadUpdate", async () => {
         const GhReleases = require("electron-gh-releases");
 
         //back up first
         if (settings.backupBeforeUpdates()) {
-            backupManager.startBackup();
+            await backupManager.startBackup();
         }
 
         // Download Update

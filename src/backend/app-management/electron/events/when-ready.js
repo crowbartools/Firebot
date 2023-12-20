@@ -180,8 +180,8 @@ exports.whenReady = async () => {
     const profileManager = require("../../../common/profile-manager");
     global.SCRIPTS_DIR = profileManager.getPathInProfile("/scripts/");
 
-    const backupManager = require("../../../backupManager");
-    backupManager.onceADayBackUpCheck();
+    const backupManager = require("../../../backup-manager");
+    await backupManager.onceADayBackUpCheck();
 
     // start the REST api server
     const httpServerManager = require("../../../../server/http-server-manager");

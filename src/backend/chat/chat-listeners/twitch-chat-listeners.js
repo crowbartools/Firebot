@@ -45,6 +45,7 @@ exports.setupChatListeners = (streamerChatClient) => {
     });
 
     streamerChatClient.onMessage(async (_channel, user, messageText, msg) => {
+        logger.debug(`ZNDR MSG from ${msg.userInfo.displayName}: ${messageText}; TAGS: ${JSON.stringify(Object.fromEntries(msg.tags))}`);
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText);
 
         await chatModerationManager.moderateMessage(firebotChatMessage);
