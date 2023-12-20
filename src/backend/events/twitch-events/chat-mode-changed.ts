@@ -12,4 +12,4 @@ export function triggerChatModeChanged(
         moderator,
         duration
     });
-};
+}

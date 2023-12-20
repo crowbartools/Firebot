@@ -13,7 +13,7 @@ export async function getCustomRoles(req: Request, res: Response): Promise<Respo
         });
 
     return res.json(customRoles);
-};
+}
 
 export async function getCustomRoleById(req: Request, res: Response): Promise<Response> {
     const customRoleId: string = req.params.customRoleId;
@@ -41,7 +41,7 @@ export async function getCustomRoleById(req: Request, res: Response): Promise<Re
     };
 
     return res.json(formattedCustomRole);
-};
+}
 
 export async function addUserToCustomRole(req: Request, res: Response): Promise<Response> {
     const { userId, customRoleId } = req.params;
@@ -87,7 +87,7 @@ export async function addUserToCustomRole(req: Request, res: Response): Promise<
     customRolesManager.addViewerToRole(customRole.id, metadata.username);
 
     return res.status(201).send();
-};
+}
 
 export async function removeUserFromCustomRole(req: Request, res: Response): Promise<Response> {
     const { userId, customRoleId } = req.params;
@@ -133,4 +133,4 @@ export async function removeUserFromCustomRole(req: Request, res: Response): Pro
     customRolesManager.removeViewerFromRole(customRole.id, metadata.username);
 
     return res.status(204).send();
-};
+}

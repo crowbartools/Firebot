@@ -47,7 +47,7 @@ export class TwitchChatApi {
     async sendAnnouncement(
         message: string,
         color: HelixChatAnnouncementColor = "primary",
-        sendAsBot: boolean = false
+        sendAsBot = false
     ): Promise<boolean> {
         const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
         const willSendAsBot: boolean = sendAsBot === true
@@ -153,7 +153,7 @@ export class TwitchChatApi {
      * @param enable `true` will enable emote-only mode. `false` will disable emote-only mode. Defaults to `true`.
      * @returns `true` if the update succeeded or `false` if it failed
      */
-    async setEmoteOnlyMode(enable: boolean = true) {
+    async setEmoteOnlyMode(enable = true) {
         const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
     
         try {
@@ -178,7 +178,7 @@ export class TwitchChatApi {
      * @param duration Duration in minutes that a user must be following the channel before they're allowed to chat. Default is `0`.
      * @returns `true` if the update succeeded or `false` if it failed
      */
-    async setFollowerOnlyMode(enable: boolean = true, duration: number = 0) {
+    async setFollowerOnlyMode(enable = true, duration = 0) {
         const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
     
         try {
@@ -203,7 +203,7 @@ export class TwitchChatApi {
      * @param enable `true` will enable subscriber-only mode. `false` will disable subscriber-only mode. Defaults to `true`.
      * @returns `true` if the update succeeded or `false` if it failed
      */
-    async setSubscriberOnlyMode(enable: boolean = true) {
+    async setSubscriberOnlyMode(enable = true) {
         const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
     
         try {
@@ -228,7 +228,7 @@ export class TwitchChatApi {
      * @param duration Duration in seconds that a user must wait between sending messages. Default is `5`.
      * @returns `true` if the update succeeded or `false` if it failed
      */
-    async setSlowMode(enable: boolean = true, duration: number = 5) {
+    async setSlowMode(enable = true, duration = 5) {
         const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
     
         try {
@@ -253,7 +253,7 @@ export class TwitchChatApi {
      * @param enable `true` will enable unique mode. `false` will disable unique mode. Defaults to `true`.
      * @returns `true` if the update succeeded or `false` if it failed
      */
-    async setUniqueMode(enable: boolean = true) {
+    async setUniqueMode(enable = true) {
         const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
     
         try {
@@ -270,4 +270,4 @@ export class TwitchChatApi {
     
         return false;
     }
-};
+}

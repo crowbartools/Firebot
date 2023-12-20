@@ -13,7 +13,7 @@ export interface TwitchCategory {
 
     /** The box art or cover image URL of the category */
     boxArtUrl: string
-};
+}
 
 export class TwitchCategoriesApi {
     private _streamerClient: ApiClient;
@@ -59,4 +59,4 @@ export class TwitchCategoriesApi {
 
         return categories.map(c => this.mapTwitchCategory(c));
     }
-};
+}

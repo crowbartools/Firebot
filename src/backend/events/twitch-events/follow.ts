@@ -10,4 +10,4 @@ export function triggerFollow(
         userIdName: userName,
         username: userDisplayName
     });
-};
+}

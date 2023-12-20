@@ -37,4 +37,4 @@ export class TwitchAuthApi {
             return false;
         }
     }
-};
+}

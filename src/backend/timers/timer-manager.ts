@@ -43,7 +43,7 @@ class TimerManager extends JsonDbManager<Timer> {
         frontendCommunicator.send("all-timers-updated", this.getAllItems());
     }
 
-    updateTimerActiveStatus(timerId: string, active: boolean = false): void {
+    updateTimerActiveStatus(timerId: string, active = false): void {
         const timer = this.getItem(timerId);
 
         if (timer != null) {
@@ -56,7 +56,7 @@ class TimerManager extends JsonDbManager<Timer> {
         }
     }
 
-    clearIntervals(onlyClearWhenLiveTimers: boolean = false): void {
+    clearIntervals(onlyClearWhenLiveTimers = false): void {
         let intervalsToClear: TimerIntervalTracker[];
         if (onlyClearWhenLiveTimers) {
             intervalsToClear = Object.keys(this.timerIntervalCache)
@@ -174,7 +174,7 @@ class TimerManager extends JsonDbManager<Timer> {
         this.timerIntervalCache[timer.id] = interval;
     }
 
-    buildIntervalsForTimers(timers: Timer[], onlyClearWhenLiveTimers: boolean = false): void {
+    buildIntervalsForTimers(timers: Timer[], onlyClearWhenLiveTimers = false): void {
         // make sure any previous timers are cleared
         this.clearIntervals(onlyClearWhenLiveTimers);
 

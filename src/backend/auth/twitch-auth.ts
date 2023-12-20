@@ -121,7 +121,7 @@ class TwitchAuthProviders {
     registerTwitchAuthProviders() {
         authManager.registerAuthProvider(this.streamerAccountProvider);
         authManager.registerAuthProvider(this.botAccountProvider);
-    };
+    }
 }
 
 const twitchAuthProviders = new TwitchAuthProviders();

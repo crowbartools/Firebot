@@ -21,7 +21,7 @@ const model = {
         ],
         possibleDataOutput: [OutputDataType.ALL]
     },
-    evaluator: (meta, key, value) => {
+    evaluator: function (meta, key, value) {
         if (
             arguments.length < 2 ||
             typeof key !== 'string' ||

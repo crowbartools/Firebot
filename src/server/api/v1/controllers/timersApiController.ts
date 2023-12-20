@@ -12,7 +12,7 @@ export async function getTimers(req: Request, res: Response): Promise<Response> 
         });
     
     return res.json(timers);
-};
+}
 
 export async function getTimerById(req: Request, res: Response): Promise<Response> {
     const timerId: string = req.params.timerId;
@@ -34,4 +34,4 @@ export async function getTimerById(req: Request, res: Response): Promise<Respons
     }
 
     return res.json(timer);
-};
+}

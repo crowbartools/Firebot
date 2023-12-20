@@ -17,7 +17,7 @@ export function triggerChannelPredictionBegin(
         startDate,
         lockDate
     });
-};
+}
 
 export function triggerChannelPredictionProgress(
     title: string,
@@ -31,7 +31,7 @@ export function triggerChannelPredictionProgress(
         startDate,
         lockDate
     });
-};
+}
 
 export function triggerChannelPredictionLock(
     title: string,
@@ -45,7 +45,7 @@ export function triggerChannelPredictionLock(
         startDate,
         lockDate
     });
-};
+}
 
 export function triggerChannelPredictionEnd(
     title: string,
@@ -63,4 +63,4 @@ export function triggerChannelPredictionEnd(
         endDate,
         status
     });
-};
+}

@@ -87,7 +87,7 @@ export const ToggleSourceVisibilityEffectType: Firebot.EffectType<EffectProperti
       return $scope.sourceData ? Object.keys($scope.sourceData) : [];
     };
 
-    $scope.filterScenes = (filter: string = "") => {
+    $scope.filterScenes = (filter = "") => {
       $scope.sceneNames = [];
       if ($scope.sourceData == null) {
         return;

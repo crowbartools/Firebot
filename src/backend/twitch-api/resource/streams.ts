@@ -20,4 +20,4 @@ export class TwitchStreamsApi {
             logger.error(`Failed to create stream marker`, error.message);
         }
     }
-};
+}

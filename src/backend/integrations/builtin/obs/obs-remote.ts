@@ -516,7 +516,7 @@ export async function stopVirtualCam(): Promise<void> {
 }
 
 export async function isStreaming(): Promise<boolean> {
-  let isRunning: boolean = false;
+  let isRunning = false;
   if (!connected) return isRunning;
   try {
     const response = await obs.call("GetStreamStatus");
@@ -529,7 +529,7 @@ export async function isStreaming(): Promise<boolean> {
 }
 
 export async function isRecording(): Promise<boolean> {
-  let isRunning: boolean = false;
+  let isRunning = false;
   if (!connected) return isRunning;
   try {
     const response = await obs.call("GetRecordStatus");
@@ -550,7 +550,7 @@ export async function saveReplayBuffer(): Promise<boolean> {
   }
   
   return true;
-};
+}
 
 export type ObsRawResponse = { success: boolean; response?: string; }
 

@@ -20,7 +20,7 @@ export function triggerCharityCampaignStart(
         targetTotalAmount,
         targetTotalCurrency
     });
-};
+}
 
 export function triggerCharityDonation(
     username: string,
@@ -40,7 +40,7 @@ export function triggerCharityDonation(
         donationAmount,
         donationCurrency
     });
-};
+}
 
 export function triggerCharityCampaignProgress(
     charityName: string,
@@ -62,7 +62,7 @@ export function triggerCharityCampaignProgress(
         targetTotalAmount,
         targetTotalCurrency
     });
-};
+}
 
 export function triggerCharityCampaignEnd(
     charityName: string,
@@ -85,4 +85,4 @@ export function triggerCharityCampaignEnd(
         targetTotalCurrency,
         goalReached: currentTotalAmount >= targetTotalAmount
     });
-};
+}

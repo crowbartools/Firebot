@@ -96,4 +96,4 @@ export class TwitchPredictionsApi {
             return null;
         }
     }
-};
+}

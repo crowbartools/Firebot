@@ -15,7 +15,7 @@ export function triggerChannelGoalBegin(
         currentAmount,
         targetAmount
     });
-};
+}
 
 export function triggerChannelGoalProgress(
     description: string,
@@ -31,7 +31,7 @@ export function triggerChannelGoalProgress(
         currentAmount,
         targetAmount
     });
-};
+}
 
 export function triggerChannelGoalEnd(
     description: string,
@@ -51,4 +51,4 @@ export function triggerChannelGoalEnd(
         targetAmount,
         isAchieved
     });
-};
+}

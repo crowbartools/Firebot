@@ -22,7 +22,7 @@ export function triggerSub(
         isPrime,
         isResub
     });
-};
+}
 
 export function triggerPrimeUpgrade(
     username: string,
@@ -36,4 +36,4 @@ export function triggerPrimeUpgrade(
         userId,
         subPlan
     });
-};
+}
