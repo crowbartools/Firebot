@@ -92,7 +92,7 @@ module.exports = {
         "no-var": "warn", // Use let/const instead of var
 
         // Other deviations
-        "no-unused-vars": ["warn"],
+        "no-unused-vars": "off",
         "prefer-template": "warn", // Use template strings instead of + concat
         "template-curly-spacing": ["warn", "never"],
         "no-useless-concat": "error", // no concat'ing literal strings
@@ -101,6 +101,7 @@ module.exports = {
         "no-warning-comments": ["warn", {"terms": ["todo", "to do", "fix", "fixme", "fix me", "need"], "location": "start"}], // warn about todo comments
 
         // typescript
+        "@typescript-eslint/no-unused-vars": "warn",
         "@typescript-eslint/no-var-requires": "off",
         "@typescript-eslint/no-empty-function": "off",
         "@typescript-eslint/no-this-alias": "off",
