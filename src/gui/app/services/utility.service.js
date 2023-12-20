@@ -150,7 +150,7 @@
                 let dismissCallback = showModalContext.dismissCallback;
                 const windowClass = showModalContext.windowClass ? showModalContext.windowClass : "";
 
-                const modalId = "modal" + _.uniqueId().toString();
+                const modalId = `modal${_.uniqueId().toString()}`;
                 resolveObj.modalId = () => {
                     return modalId;
                 };
@@ -162,7 +162,7 @@
                     size: showModalContext.size,
                     keyboard: showModalContext.keyboard ? showModalContext.keyboard : true,
                     backdrop: showModalContext.backdrop ? showModalContext.backdrop : 'static',
-                    windowClass: windowClass + " " + modalId + " animated fadeIn fastest fb-transition draggablemodal",
+                    windowClass: `${windowClass} ${modalId} animated fadeIn fastest fb-transition draggablemodal`,
                     animation: true
                 };
 
@@ -185,7 +185,7 @@
                 }
 
                 modalInstance.rendered.then(() => {
-                    $("." + modalId).removeClass("animated fadeIn fastest");
+                    $(`.${modalId}`).removeClass("animated fadeIn fastest");
                 });
 
                 // Handle when the modal is exited
@@ -322,7 +322,7 @@
                                 if (port !== 7472 && !isNaN(port)) {
                                     params["port"] = settingsService.getWebServerPort();
                                 }
-                                overlayPath = 'file:///' + overlayPath.replace(/^\//g, "");
+                                overlayPath = `file:///${overlayPath.replace(/^\//g, "")}`;
                             }
 
 
@@ -758,7 +758,7 @@
 
                         utilityService.addSlidingModal(
                             $uibModalInstance.rendered.then(() => {
-                                const modalElement = $("." + modalId).children();
+                                const modalElement = $(`.${modalId}`).children();
                                 return {
                                     element: modalElement,
                                     name:
@@ -861,7 +861,7 @@
                                     if (firstError.varname) {
                                         errorDetails.push({
                                             title: "Variable",
-                                            message: "$" + firstError.varname
+                                            message: `$${firstError.varname}`
                                         });
                                     }
 
@@ -882,7 +882,7 @@
                                     if (firstError.character) {
                                         errorDetails.push({
                                             title: "Character",
-                                            message: "\"" + firstError.character + "\""
+                                            message: `"${firstError.character}"`
                                         });
                                     }
 
@@ -896,7 +896,7 @@
                                     if (firstError.rawText) {
                                         errorDetails.push({
                                             title: "Raw Text",
-                                            message: "\"" + firstError.rawText + "\""
+                                            message: `"${firstError.rawText}"`
                                         });
                                     }
 

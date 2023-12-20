@@ -233,7 +233,7 @@
             try {
                 const successful = document.execCommand("copy");
                 const msg = successful ? "successful" : "unsuccessful";
-                logger.info("Copying text command was " + msg);
+                logger.info(`Copying text command was ${msg}`);
             } catch (err) {
                 logger.error("Oops, unable to copy text to clipboard.");
             }

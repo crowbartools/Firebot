@@ -188,7 +188,7 @@ const showText = {
             $scope.editor.summernote("focus");
             $timeout(() => {
                 const display = variable.usage ? variable.usage : variable.handle;
-                $scope.editor.summernote("insertText", "$" + display);
+                $scope.editor.summernote("insertText", `$${display}`);
             }, 100);
 
         };

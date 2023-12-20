@@ -15,7 +15,7 @@ const model = {
         }
         if (typeof jsonText === 'string' || jsonText instanceof String) {
             try {
-                return JSON.parse('' + jsonText);
+                return JSON.parse(`${jsonText}`);
 
             } catch (err) {
                 return "[PARSE ERROR]";

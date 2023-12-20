@@ -43,12 +43,12 @@ const secondsForHumans = (seconds) => {
             continue;
         }
         returntext +=
-      " " +
-      levels[i][0] +
-      " " +
-      (levels[i][0] === 1
-          ? levels[i][1].substr(0, levels[i][1].length - 1)
-          : levels[i][1]);
+      ` ${
+          levels[i][0]
+      } ${
+          levels[i][0] === 1
+              ? levels[i][1].substr(0, levels[i][1].length - 1)
+              : levels[i][1]}`;
     }
     return returntext.trim();
 };
@@ -76,27 +76,27 @@ const formattedSeconds = (secs, simpleOutput = false) => {
     let uptimeStr = "";
 
     if (hasHours) {
-        uptimeStr = hours + " hour";
+        uptimeStr = `${hours} hour`;
         if (hours > 0) {
-            uptimeStr = uptimeStr + "s";
+            uptimeStr = `${uptimeStr}s`;
         }
     }
     if (hasMins) {
         if (hasHours) {
-            uptimeStr = uptimeStr + ",";
+            uptimeStr = `${uptimeStr},`;
         }
-        uptimeStr = uptimeStr + " " + minutes + " minute";
+        uptimeStr = `${uptimeStr} ${minutes} minute`;
         if (minutes > 0) {
-            uptimeStr = uptimeStr + "s";
+            uptimeStr = `${uptimeStr}s`;
         }
     }
     if (hasSecs) {
         if (hasHours || hasMins) {
-            uptimeStr = uptimeStr + ",";
+            uptimeStr = `${uptimeStr},`;
         }
-        uptimeStr = uptimeStr + " " + seconds + " second";
+        uptimeStr = `${uptimeStr} ${seconds} second`;
         if (seconds > 0) {
-            uptimeStr = uptimeStr + "s";
+            uptimeStr = `${uptimeStr}s`;
         }
     }
 
@@ -160,11 +160,11 @@ const getDateDiffString = (date1, date2) => {
         if (diff === 1) {
             interval = interval.slice(0, -1);
         }
-        out.push(diff + " " + interval);
+        out.push(`${diff} ${interval}`);
     }
     if (out.length > 1) {
         const last = out[out.length - 1];
-        out[out.length - 1] = "and " + last;
+        out[out.length - 1] = `and ${last}`;
     }
     return out.length === 2 ? out.join(" ") : out.join(", ");
 };

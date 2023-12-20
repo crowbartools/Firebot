@@ -168,7 +168,7 @@
 
             $ctrl.compiledUsage = "";
             $ctrl.onUsageChange = () => {
-                $ctrl.subcommand.usage = $ctrl.subcommand.arg + " " + $ctrl.compiledUsage;
+                $ctrl.subcommand.usage = `${$ctrl.subcommand.arg} ${$ctrl.compiledUsage}`;
             };
 
             $ctrl.adjustedMinArgs = 0;
@@ -181,7 +181,7 @@
             $ctrl.$onInit = function() {
                 if ($ctrl.subcommand) {
                     if ((!$ctrl.subcommand.regex && !$ctrl.subcommand.fallback) && $ctrl.subcommand.usage) {
-                        $ctrl.compiledUsage = $ctrl.subcommand.usage.replace($ctrl.subcommand.arg + " ", "");
+                        $ctrl.compiledUsage = $ctrl.subcommand.usage.replace(`${$ctrl.subcommand.arg} `, "");
                     }
                     if ($ctrl.subcommand.minArgs > 0) {
                         $ctrl.adjustedMinArgs = $ctrl.subcommand.minArgs - 1;

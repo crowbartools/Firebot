@@ -65,7 +65,7 @@ module.exports = {
                 icon: "fas fa-star",
                 getMessage: (eventData) => {
                     return `**${eventData.username}** ${eventData.isResub ? 'resubscribed' : 'subscribed'} for **${eventData.totalMonths} month(s)** ${eventData.subPlan === 'Prime' ?
-                        "with **Twitch Prime**" : "at **Tier " + eventData.subPlan.replace("000", "") + "**"}`;
+                        "with **Twitch Prime**" : `at **Tier ${eventData.subPlan.replace("000", "")}**`}`;
                 }
             }
         },

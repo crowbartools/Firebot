@@ -38,7 +38,7 @@
                 }
 
                 if (cmdData.customCommands) {
-                    logger.debug("loading custom commands: " + cmdData.customCommands);
+                    logger.debug(`loading custom commands: ${cmdData.customCommands}`);
                     service.commandsCache.customCommands = Object.values(cmdData.customCommands);
                 }
 
@@ -59,7 +59,7 @@
             service.getCustomCommands = () => service.commandsCache.customCommands;
 
             service.saveCustomCommand = function(command, user = null) {
-                logger.debug("saving command: " + command.trigger);
+                logger.debug(`saving command: ${command.trigger}`);
                 if (command.id == null || command.id === "") {
                     // generate id for new command
                     const uuidv1 = require("uuid/v1");
@@ -89,7 +89,7 @@
                 const cleanedCommand = JSON.parse(angular.toJson(command));
 
                 try {
-                    commandDb.push("/customCommands/" + command.id, cleanedCommand);
+                    commandDb.push(`/customCommands/${command.id}`, cleanedCommand);
                 } catch (err) {} //eslint-disable-line no-empty
             };
 
@@ -148,7 +148,7 @@
                 }
 
                 try {
-                    commandDb.delete("/customCommands/" + command.id);
+                    commandDb.delete(`/customCommands/${command.id}`);
                 } catch (err) {
                     logger.warn("error when deleting command", err);
                 } //eslint-disable-line no-empty

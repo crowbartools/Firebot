@@ -33,7 +33,7 @@
             ctrl.$onInit = function() {
                 ctrl.href = ctrl.isIndex
                     ? "#"
-                    : "#!" + ctrl.page.toLowerCase().replace(/\W/g, "-");
+                    : `#!${ctrl.page.toLowerCase().replace(/\W/g, "-")}`;
             };
 
             ctrl.hasBadge = function () {

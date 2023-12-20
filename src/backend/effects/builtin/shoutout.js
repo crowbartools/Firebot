@@ -361,7 +361,7 @@ const effect = {
 
                 // eslint-disable-next-line no-undef
                 showTimedAnimatedElement(
-                    "#" + uniqueId,
+                    `#${uniqueId}`,
                     "flipInY",
                     2000,
                     null,

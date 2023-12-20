@@ -162,17 +162,17 @@ function emulateKeyPress(keyRaw, modifiers, pressDurationRaw) {
         switch (key) {
         case "LEFTMOUSE":
             mouse.leftClick().catch((error) => {
-                logger.error("nut-js: Error doing left click", error.message)
+                logger.error("nut-js: Error doing left click", error.message);
             });
             break;
         case "RIGHTMOUSE":
             mouse.rightClick().catch((error) => {
-                logger.error("nut-js: Error doing right click", error.message)
+                logger.error("nut-js: Error doing right click", error.message);
             });
             break;
         case "MIDDLEMOUSE":
             mouse.click(Button.MIDDLE).catch((error) => {
-                logger.error("nut-js: Error doing middle click", error.message)
+                logger.error("nut-js: Error doing middle click", error.message);
             });
             break;
         }

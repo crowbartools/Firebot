@@ -22,7 +22,7 @@ const model = {
     evaluator: (_, rawArray, index = 0) => {
         if (typeof rawArray === 'string' || rawArray instanceof String) {
             try {
-                rawArray = JSON.parse('' + rawArray);
+                rawArray = JSON.parse(`${rawArray}`);
 
             //eslint-disable-next-line no-empty
             } catch (ignore) {}

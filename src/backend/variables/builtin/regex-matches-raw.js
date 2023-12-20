@@ -18,7 +18,7 @@ const model = {
     },
     evaluator: (_, stringToEvaluate, expression, flags) => {
         if (typeof flags === 'string' || flags instanceof String) {
-            flags = '' + flags;
+            flags = `${flags}`;
             if (!flags.includes('g')) {
                 flags += 'g';
             }

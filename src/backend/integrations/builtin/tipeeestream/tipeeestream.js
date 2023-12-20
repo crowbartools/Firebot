@@ -56,7 +56,7 @@ const getSocketUrl = async () => {
         if (response && response.datas) {
             const data = response.datas;
 
-            return data.host + ":" + data.port;
+            return `${data.host}:${data.port}`;
         }
     } catch (error) {
         logger.error("Failed to get TipeeeStream socket url", error.message);

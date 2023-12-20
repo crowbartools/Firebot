@@ -119,7 +119,7 @@ class ElgatoIntegration extends EventEmitter {
                     try {
                         hsvColor = colorConvert.keyword.hsv(colorValue.toLowerCase());
                     } catch {
-                        logger.debug('Unable to convert "' + colorValue + '" to HSV color');
+                        logger.debug(`Unable to convert "${colorValue}" to HSV color`);
                         return;
                     }
                 }

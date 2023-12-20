@@ -52,7 +52,7 @@ function applyCurrency() {
         const chatConnected = twitchChat.chatIsConnected;
         if (intervalMod === 0 && currency.active && chatConnected) {
             // do payout
-            logger.info("Currency: Paying out " + basePayout + " " + currency.name + ".");
+            logger.info(`Currency: Paying out ${basePayout} ${currency.name}.`);
 
             processCurrencyTimer(currency, basePayout);
         } else if (!chatConnected) {
@@ -109,11 +109,11 @@ function createCurrencyCommandDefinition(currency) {
     // Define our command.
     const commandManagement = {
         definition: {
-            id: "firebot:currency:" + currencyId,
-            name: currencyName + " Management",
+            id: `firebot:currency:${currencyId}`,
+            name: `${currencyName} Management`,
             active: true,
-            trigger: "!" + cleanName,
-            description: "Allows management of the \"" + currencyName + "\" currency",
+            trigger: `!${cleanName}`,
+            description: `Allows management of the "${currencyName}" currency`,
             autoDeleteTrigger: false,
             scanWholeMessage: false,
             currency: {
@@ -300,7 +300,7 @@ function createCurrencyCommandDefinition(currency) {
                 } else {
                     // Error removing currency.
                     await twitchChat.sendChatMessage(`Error: Could not add currency to user.`);
-                    logger.error('Error adding currency for user (' + username + ') via chat command. Currency: ' + currencyId + '. Value: ' + currencyAdjust);
+                    logger.error(`Error adding currency for user (${username}) via chat command. Currency: ${currencyId}. Value: ${currencyAdjust}`);
                 }
 
                 break;
@@ -321,7 +321,7 @@ function createCurrencyCommandDefinition(currency) {
                 } else {
                     // Error removing currency.
                     await twitchChat.sendChatMessage(`Error: Could not remove currency from user.`);
-                    logger.error('Error removing currency for user (' + username + ') via chat command. Currency: ' + currencyId + '. Value: ' + currencyAdjust);
+                    logger.error(`Error removing currency for user (${username}) via chat command. Currency: ${currencyId}. Value: ${currencyAdjust}`);
                 }
 
                 break;
@@ -336,7 +336,7 @@ function createCurrencyCommandDefinition(currency) {
                 const currencyCheck = currencyDatabase.getCurrencies();
                 if (currencyCheck[currencyId].transfer === "Disallow") {
                     await twitchChat.sendChatMessage('Transfers are not allowed for this currency.');
-                    logger.debug(event.userCommand.commandSender + ' tried to give currency, but transfers are turned off for it. ' + currencyId);
+                    logger.debug(`${event.userCommand.commandSender} tried to give currency, but transfers are turned off for it. ${currencyId}`);
                     return false;
                 }
 
@@ -344,7 +344,7 @@ function createCurrencyCommandDefinition(currency) {
                 if (event.userCommand.commandSender.toLowerCase() === username.toLowerCase()) {
                     await twitchChat.sendChatMessage(
                         `${event.userCommand.commandSender}, you can't give yourself currency.`);
-                    logger.debug(username + ' tried to give themselves currency.');
+                    logger.debug(`${username} tried to give themselves currency.`);
                     return false;
                 }
 
@@ -360,7 +360,7 @@ function createCurrencyCommandDefinition(currency) {
 
                 // Check to make sure we have enough currency to give.
                 if (userAmount < currencyAdjust) {
-                    await twitchChat.sendChatMessage('You do not have enough ' + currencyName + ' to do this action.');
+                    await twitchChat.sendChatMessage(`You do not have enough ${currencyName} to do this action.`);
                     return false;
                 }
 
@@ -372,18 +372,18 @@ function createCurrencyCommandDefinition(currency) {
                     const status = currencyDatabase.adjustCurrencyForUser(event.userCommand.commandSender, currencyId, currencyAdjustNeg);
 
                     if (status) {
-                        await twitchChat.sendChatMessage('Gave ' + util.commafy(currencyAdjust) + ' ' + currencyName + ' to ' + username + '.', null);
+                        await twitchChat.sendChatMessage(`Gave ${util.commafy(currencyAdjust)} ${currencyName} to ${username}.`, null);
                     } else {
                         // Error removing currency.
                         await twitchChat.sendChatMessage(
                             `Error: Could not remove currency to user during give transaction.`);
-                        logger.error('Error removing currency during give transaction for user (' + username + ') via chat command. Currency: ' + currencyId + '. Value: ' + currencyAdjust);
+                        logger.error(`Error removing currency during give transaction for user (${username}) via chat command. Currency: ${currencyId}. Value: ${currencyAdjust}`);
                         return false;
                     }
                 } else {
                     // Error removing currency.
                     await twitchChat.sendChatMessage(`Error: Could not add currency to user. Was there a typo in the username?`);
-                    logger.error('Error adding currency during give transaction for user (' + username + ') via chat command. Currency: ' + currencyId + '. Value: ' + currencyAdjust);
+                    logger.error(`Error adding currency during give transaction for user (${username}) via chat command. Currency: ${currencyId}. Value: ${currencyAdjust}`);
                     return false;
                 }
 
@@ -453,19 +453,19 @@ function refreshCurrencyCommands(action = false, currency = false) {
     }
 
     // Log our action for logger.
-    logger.debug('Currency "' + currency.name + '" action "' + action + '" triggered. Updating currency system commands.');
+    logger.debug(`Currency "${currency.name}" action "${action}" triggered. Updating currency system commands.`);
 
     // Decide what we want to do based on the action that was passed to us.
     switch (action) {
     case "update":
-        CommandManager.unregisterSystemCommand("firebot:currency:" + currency.id);
+        CommandManager.unregisterSystemCommand(`firebot:currency:${currency.id}`);
         CommandManager.registerSystemCommand(
             createCurrencyCommandDefinition(currency)
         );
         break;
     case "delete":
         // Delete the system command for this currency.
-        CommandManager.unregisterSystemCommand("firebot:currency:" + currency.id);
+        CommandManager.unregisterSystemCommand(`firebot:currency:${currency.id}`);
         break;
     case "create":
         // Build a new system command def and register it.

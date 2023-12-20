@@ -28,7 +28,7 @@ const model = {
             return "";
         }
 
-        return name + " is " + value;
+        return `${name} is ${value}`;
     },
     /*
       function that resolves/rejects a promise based on if the restriction critera is met

@@ -18,7 +18,7 @@ const model = {
     optionsValueDisplay: (restriction) => {
         const messages = restriction.messages || 0;
 
-        return messages + "+";
+        return `${messages}+`;
     },
     /*
       function that resolves/rejects a promise based on if the restriction critera is met

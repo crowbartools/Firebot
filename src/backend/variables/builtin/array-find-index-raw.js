@@ -43,7 +43,7 @@ const model = {
     evaluator: (_, rawArray, matcher, propertyPath = null) => {
         if (typeof rawArray === 'string' || rawArray instanceof String) {
             try {
-                rawArray = JSON.parse('' + rawArray);
+                rawArray = JSON.parse(`${rawArray}`);
 
             //eslint-disable-next-line no-empty
             } catch (ignore) {}
@@ -54,7 +54,7 @@ const model = {
         }
 
         if (typeof matcher === 'string' || matcher instanceof String) {
-            matcher = utils.jsonParse("" + matcher);
+            matcher = utils.jsonParse(`${matcher}`);
         }
 
         if (propertyPath === 'null' || propertyPath === "") {

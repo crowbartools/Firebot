@@ -210,7 +210,7 @@ const playSound = {
                 audio.oncanplay = () => audio.play();
 
                 audio.onended = () => {
-                    $("#" + uuid).remove();
+                    $(`#${uuid}`).remove();
                 };
             }
         }

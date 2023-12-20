@@ -152,7 +152,7 @@
                     logger.info("Chat cleared");
                     service.clearChatQueue();
 
-                    service.chatAlertMessage('Chat has been cleared by ' + data.clearer.user_name + '.');
+                    service.chatAlertMessage(`Chat has been cleared by ${data.clearer.user_name}.`);
                     break;
                 case "PurgeMessage":
                     logger.info("Chat message purged");

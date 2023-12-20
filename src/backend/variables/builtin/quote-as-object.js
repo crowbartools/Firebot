@@ -36,7 +36,7 @@ const model = {
         quoteId = parseInt(quoteId);
 
         if (quoteId != null && !isNaN(quoteId)) {
-            logger.debug("Getting quote " + quoteId + "...");
+            logger.debug(`Getting quote ${quoteId}...`);
             quote = await quoteManager.getQuote(quoteId);
         } else {
             logger.debug("Getting random quote...");

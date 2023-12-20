@@ -36,24 +36,24 @@ if (!fs.existsSync(LOG_FOLDER)) {
     }
 });*/
 
-const pad = (subject, length, padText) => (subject + '').padStart(length, padText + '');
+const pad = (subject, length, padText) => (`${subject}`).padStart(length, `${padText}`);
 
 const rotateFileTransport = new (require("winston-daily-rotate-file"))({
     level: rotateFileLogLevel,
-    filename: LOG_FOLDER + "/log",
+    filename: `${LOG_FOLDER}/log`,
     datePattern: "yyyy-MM-dd.",
     prepend: true,
     json: false,
     maxDays: 7,
     humanReadableUnhandledException: true,
-    label: "v" + app.getVersion(),
+    label: `v${app.getVersion()}`,
     prettyPrint: true,
 
     // YYYY-MM-DD hh:nn:ss
     timestamp: function() {
         const currentDate = new Date();
 
-        const year = currentDate.getUTCFullYear() + '';
+        const year = `${currentDate.getUTCFullYear()}`;
         const month = pad(currentDate.getUTCMonth() + 1, 2, 0);
         const day = pad(currentDate.getUTCDate(), 2, 0);
 
@@ -108,11 +108,11 @@ function serialize(obj, key) { //eslint-disable-line no-unused-vars
     }
 
     if (typeof obj !== "object") {
-        return key ? key + "=" + obj : obj;
+        return key ? `${key}=${obj}` : obj;
     }
 
     if (obj instanceof Buffer) {
-        return key ? key + "=" + obj.toString("base64") : obj.toString("base64");
+        return key ? `${key}=${obj.toString("base64")}` : obj.toString("base64");
     }
 
     let msg = "",
@@ -121,7 +121,7 @@ function serialize(obj, key) { //eslint-disable-line no-unused-vars
 
     for (let i = 0; i < length; i++) {
         if (Array.isArray(obj[keys[i]])) {
-            msg += keys[i] + "=[";
+            msg += `${keys[i]}=[`;
 
             for (let j = 0, l = obj[keys[i]].length; j < l; j++) {
                 msg += serialize(obj[keys[i]][j]);
@@ -132,7 +132,7 @@ function serialize(obj, key) { //eslint-disable-line no-unused-vars
 
             msg += "]";
         } else if (obj[keys[i]] instanceof Date) {
-            msg += keys[i] + "=" + obj[keys[i]];
+            msg += `${keys[i]}=${obj[keys[i]]}`;
         } else {
             msg += serialize(obj[keys[i]], keys[i]);
         }

@@ -336,7 +336,7 @@ function fireCommand(
         commandSender = accountAccess.getAccounts().streamer.username;
     }
 
-    logger.info("Checking command type... " + command.type);
+    logger.info(`Checking command type... ${command.type}`);
 
     if (command.type === "system") {
         logger.info("Executing system command");
@@ -553,7 +553,7 @@ function triggerCustomCommand(id, isManual = true) {
 }
 
 function runCommandFromEffect(command, trigger, args) {
-    const message = command.trigger + " " + args;
+    const message = `${command.trigger} ${args}`;
 
     if (command) {
         const userCmd = buildUserCommand(command, message, trigger.metadata.username);

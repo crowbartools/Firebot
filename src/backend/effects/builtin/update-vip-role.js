@@ -57,9 +57,9 @@ const model = {
 
                 if (result === true) {
                     chatRolesManager.addVipToVipList(user.displayName);
-                    logger.debug(event.effect.username + " was assigned VIP via the VIP effect.");
+                    logger.debug(`${event.effect.username} was assigned VIP via the VIP effect.`);
                 } else {
-                    logger.error(event.effect.username + " was unable to be assigned VIP via the VIP effect.");
+                    logger.error(`${event.effect.username} was unable to be assigned VIP via the VIP effect.`);
                 }
             } else {
                 logger.warn(`User ${event.effect.username} does not exist and could not be assigned VIP via the VIP effect`);
@@ -72,9 +72,9 @@ const model = {
 
                 if (result === true) {
                     chatRolesManager.removeVipFromVipList(user.displayName);
-                    logger.debug(event.effect.username + " was unassigned VIP via the VIP effect.");
+                    logger.debug(`${event.effect.username} was unassigned VIP via the VIP effect.`);
                 } else {
-                    logger.error(event.effect.username + " was unable to be unassigned VIP via the VIP effect.");
+                    logger.error(`${event.effect.username} was unable to be unassigned VIP via the VIP effect.`);
                 }
             } else {
                 logger.warn(`User ${event.effect.username} does not exist and could not be unassigned VIP via the VIP effect`);

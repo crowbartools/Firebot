@@ -511,7 +511,7 @@ const playSound = {
         });
 
         if (effect.isSsml) {
-            effect.text = "<speak>"+effect.text+"</speak>";
+            effect.text = `<speak>${effect.text}</speak>`;
             effect.text = effect.text.replace("&", "&amp;");
         }
 

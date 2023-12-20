@@ -10,7 +10,7 @@ function parseYoutubeId(id) {
     let startTime;
 
     if (!id.startsWith("http")) {
-        id = "http://" + id;
+        id = `http://${id}`;
     }
 
     try {

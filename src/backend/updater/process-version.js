@@ -61,7 +61,7 @@ const compareVersionSegments = (
  * @returns {ProcessedVersion}
  */
 const processVersion = (version) => {
-    version = '' + version;
+    version = `${version}`;
 
     let workingVersion = version;
 
@@ -120,11 +120,11 @@ const processVersion = (version) => {
 const compareVersions = (v1, v2) => {
     if (typeof v1 === 'string' || v1 instanceof String) {
         /** @type {ProcessedVersion} */
-        v1 = processVersion('' + v1);
+        v1 = processVersion(`${v1}`);
     }
     if (typeof v2 === 'string' || v2 instanceof String) {
         /** @type {ProcessedVersion} */
-        v2 = processVersion('' + v2);
+        v2 = processVersion(`${v2}`);
     }
 
     // compare main major.minor.patch

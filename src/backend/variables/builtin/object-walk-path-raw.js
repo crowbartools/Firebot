@@ -18,7 +18,7 @@ const model = {
 
         if (typeof subject === 'string' || subject instanceof String) {
             try {
-                subject = JSON.parse('' + subject);
+                subject = JSON.parse(`${subject}`);
             } catch (ignore) {
                 logger.error("Invalid JSON object specified");
                 return null;

@@ -22,7 +22,7 @@ function wait(ms) {
 async function checkForV4Data() {
     const v4SettingsPath = path.join(v4DataPath, "settings.json");
     const v4DataDetected = await importHelpers.pathExists(v4SettingsPath);
-    logger.debug("V4 Data Detected: " + v4DataDetected);
+    logger.debug(`V4 Data Detected: ${v4DataDetected}`);
     return v4DataDetected;
 }
 

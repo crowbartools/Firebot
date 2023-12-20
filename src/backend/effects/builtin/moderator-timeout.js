@@ -51,7 +51,7 @@ const model = {
                 return false;
             }
         } else {
-            logger.warn(`User ${event.effect.username} does not exist and messages could not be purged via the Purge effect.`)
+            logger.warn(`User ${event.effect.username} does not exist and messages could not be purged via the Purge effect.`);
             return false;
         }
 

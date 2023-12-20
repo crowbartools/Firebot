@@ -132,7 +132,7 @@
                 const modalId = $ctrl.resolve.modalId;
                 utilityService.addSlidingModal(
                     $ctrl.modalInstance.rendered.then(() => {
-                        const modalElement = $("." + modalId).children();
+                        const modalElement = $(`.${modalId}`).children();
                         return {
                             element: modalElement,
                             name: "Add/Edit Custom Role",

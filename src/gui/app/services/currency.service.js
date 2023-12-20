@@ -19,7 +19,7 @@
             // If we have an optional param return settings for that currency.
             if (currencyId != null) {
                 try {
-                    return currencyDb.getData("/" + currencyId);
+                    return currencyDb.getData(`/${currencyId}`);
                 } catch (err) {
                     logger.error(err);
                     return [];
@@ -68,16 +68,16 @@
                     utilityService.showErrorModal(
                         "You cannot create a currency with the same name as another currency!"
                     );
-                    logger.error('User tried to create currency with the same name as another currency: ' + currency.name + '.');
+                    logger.error(`User tried to create currency with the same name as another currency: ${currency.name}.`);
                     return;
                 }
             }
 
             // Push Currency to DB.
-            currencyDb.push("/" + currencyId, currency);
+            currencyDb.push(`/${currencyId}`, currency);
 
             // Log currency name.
-            logger.debug('Currency created with name: ' + currency.name);
+            logger.debug(`Currency created with name: ${currency.name}`);
 
             // Send success message.
             ipcRenderer.send("createCurrency", currencyId);
@@ -88,7 +88,7 @@
         // Updated a pre-existing currency through the modal.
         service.updateCurrency = function(currency) {
             const currencyId = currency.id;
-            currencyDb.push("/" + currencyId, currency);
+            currencyDb.push(`/${currencyId}`, currency);
             ipcRenderer.send("refreshCurrencyCache");
             ipcRenderer.send("refreshCurrencyCommands", {"action": "update", "currency": currency});
         };
@@ -101,7 +101,7 @@
         // Deleted a currency through the modal.
         service.deleteCurrency = function(currency) {
             const currencyId = currency.id;
-            currencyDb.delete("/" + currencyId);
+            currencyDb.delete(`/${currencyId}`);
             ipcRenderer.send("deleteCurrency", currencyId);
             ipcRenderer.send("refreshCurrencyCache");
             ipcRenderer.send("refreshCurrencyCommands", {"action": "delete", "currency": currency});
