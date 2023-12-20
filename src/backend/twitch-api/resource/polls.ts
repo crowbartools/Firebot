@@ -13,7 +13,7 @@ export class TwitchPollsApi {
 
     /**
      * Creates a Twitch poll
-     * 
+     *
      * @param title Title of the poll
      * @param choices List of choices for the poll. Minimum of 2, maximum of 5.
      * @param duration Duration in seconds to show poll. Minimum of 15, maximum of 1800 (30 minutes).
@@ -28,7 +28,7 @@ export class TwitchPollsApi {
                 choices: choices,
                 duration: duration,
                 channelPointsPerVote: channelPointsPerVote
-            })
+            });
         } catch (error) {
             logger.error("Failed to create Twitch poll", error.message);
         }
@@ -36,7 +36,7 @@ export class TwitchPollsApi {
 
     /**
      * End a Twitch poll.
-     * 
+     *
      * @param pollId The poll ID.
      * @param showResult Whether to show the result, or archive and hide the result.
      */
@@ -52,7 +52,7 @@ export class TwitchPollsApi {
 
     /**
      * Retrieve the most recent Twitch poll
-     * 
+     *
      * @returns A HelixPoll object with the most recent Twitch poll data
      */
     async getMostRecentPoll(): Promise<HelixPoll> {
@@ -62,7 +62,7 @@ export class TwitchPollsApi {
             const polls = await this._streamerClient.polls.getPolls(streamerId);
 
             return polls.data[0];
-            
+
         } catch (error) {
             logger.error("Failed to get most recent Twitch poll", error.message);
             return null;

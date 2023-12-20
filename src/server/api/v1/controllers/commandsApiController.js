@@ -3,6 +3,34 @@
 const commandManager = require("../../../../backend/chat/commands/CommandManager");
 const commandHandler = require("../../../../backend/chat/commands/commandHandler");
 
+function getCommandTriggerAndArgs(req) {
+    const body = req.body || {};
+    const query = req.query || {};
+    let args, username, metadata;
+
+    // GET
+    if (req.method === "GET") {
+        args = query.args;
+        username = query.username;
+
+    // POST
+    } else if (req.method === "POST") {
+        args = body.args;
+        username = body.username;
+        metadata = body.metadata;
+    }
+
+    username = username ?? "API User";
+
+    const trigger = {
+        metadata: metadata || { }
+    };
+
+    trigger.metadata.username = trigger.metadata.username ?? username;
+
+    return { trigger, args };
+}
+
 exports.getSystemCommands = async function(req, res) {
     const sysCommands = commandManager.getAllSystemCommandDefinitions();
 
@@ -160,31 +188,3 @@ exports.runCustomCommand = async function(req, res) {
         message: `Custom command '${customCommandId}' executed successfully`
     });
 };
-
-function getCommandTriggerAndArgs(req) {
-    const body = req.body || {};
-    const query = req.query || {};
-    let args, username, metadata;
-
-    // GET
-    if (req.method === "GET") {
-        args = query.args;
-        username = query.username;
-
-    // POST
-    } else if (req.method === "POST") {
-        args = body.args;
-        username = body.username;
-        metadata = body.metadata;
-    }
-
-    username = username ?? "API User";
-
-    const trigger = {
-        metadata: metadata || { }
-    };
-
-    trigger.metadata.username = trigger.metadata.username ?? username;
-
-    return { trigger, args };
-}

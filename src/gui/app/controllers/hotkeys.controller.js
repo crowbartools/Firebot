@@ -28,26 +28,26 @@
                             hotkey = resp.hotkey;
 
                         switch (action) {
-                        case "add":
-                            hotkeyService.saveHotkey(hotkey);
-                            break;
-                        case "update":
-                            hotkeyService.updateHotkey(hotkey);
-                            break;
-                        case "delete":
-                            utilityService
-                                .showConfirmationModal({
-                                    title: "Delete Hotkey",
-                                    question: `Are you sure you want to delete the Hotkey "${hotkey.name}"?`,
-                                    confirmLabel: "Delete",
-                                    confirmBtnType: "btn-danger"
-                                })
-                                .then(confirmed => {
-                                    if (confirmed) {
-                                        hotkeyService.deleteHotkey(hotkey);
-                                    }
-                                });
-                            break;
+                            case "add":
+                                hotkeyService.saveHotkey(hotkey);
+                                break;
+                            case "update":
+                                hotkeyService.updateHotkey(hotkey);
+                                break;
+                            case "delete":
+                                utilityService
+                                    .showConfirmationModal({
+                                        title: "Delete Hotkey",
+                                        question: `Are you sure you want to delete the Hotkey "${hotkey.name}"?`,
+                                        confirmLabel: "Delete",
+                                        confirmBtnType: "btn-danger"
+                                    })
+                                    .then(confirmed => {
+                                        if (confirmed) {
+                                            hotkeyService.deleteHotkey(hotkey);
+                                        }
+                                    });
+                                break;
                         }
                     }
                 });

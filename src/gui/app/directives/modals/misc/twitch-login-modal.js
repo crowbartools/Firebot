@@ -48,18 +48,18 @@
 
                 backendCommunicator.on("accountUpdate", accounts => {
                     switch ($ctrl.accountType) {
-                    case "streamer":
-                        if (accounts.streamer.loggedIn) {
-                            $ctrl.dismiss();
-                        }
-                        break;
-                    case "bot":
-                        if (accounts.bot.loggedIn) {
-                            $ctrl.dismiss();
-                        }
-                        break;
-                    default:
-                        break;
+                        case "streamer":
+                            if (accounts.streamer.loggedIn) {
+                                $ctrl.dismiss();
+                            }
+                            break;
+                        case "bot":
+                            if (accounts.bot.loggedIn) {
+                                $ctrl.dismiss();
+                            }
+                            break;
+                        default:
+                            break;
                     }
                 });
 

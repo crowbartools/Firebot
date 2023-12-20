@@ -361,70 +361,70 @@
 
                 $ctrl.messageActionSelected = (action, userName, userId, msgId, rawText) => {
                     switch (action.toLowerCase()) {
-                    case "delete this message":
-                        chatMessagesService.deleteMessage(msgId);
-                        break;
-                    case "timeout":
-                        updateChatField(`/timeout @${userName} 300`);
-                        break;
-                    case "ban":
-                        utilityService
-                            .showConfirmationModal({
-                                title: "Ban User",
-                                question: `Are you sure you want to ban ${userName}?`,
-                                confirmLabel: "Ban",
-                                confirmBtnType: "btn-danger"
-                            })
-                            .then(confirmed => {
-                                if (confirmed) {
-                                    backendCommunicator.fireEvent("update-user-banned-status", { username: userName, shouldBeBanned: true });
-                                }
-                            });
-                        break;
-                    case "mod":
-                        chatMessagesService.changeModStatus(userName, true);
-                        break;
-                    case "unmod":
-                        utilityService
-                            .showConfirmationModal({
-                                title: "Mod User",
-                                question: `Are you sure you want to unmod ${userName}?`,
-                                confirmLabel: "Unmod",
-                                confirmBtnType: "btn-danger"
-                            })
-                            .then(confirmed => {
-                                if (confirmed) {
-                                    chatMessagesService.changeModStatus(userName, false);
-                                }
-                            });
-                        break;
-                    case "add as vip":
-                        backendCommunicator.fireEvent("update-user-vip-status", { username: userName, shouldBeVip: true });
-                        break;
-                    case "remove vip":
-                        backendCommunicator.fireEvent("update-user-vip-status", { username: userName, shouldBeVip: false });
-                        break;
-                    case "whisper":
-                        updateChatField(`/w @${userName} `);
-                        break;
-                    case "mention":
-                        updateChatField(`@${userName} `);
-                        break;
-                    case "quote this message":
-                        updateChatField(`!quote add @${userName} ${rawText}`);
-                        break;
-                    case "highlight this message":
-                        chatMessagesService.highlightMessage(userName, rawText);
-                        break;
-                    case "shoutout":
-                        updateChatField(`!so @${userName}`);
-                        break;
-                    case "details": {
-                        $ctrl.showUserDetailsModal(userId);
-                        break;
-                    }
-                    default:
-                        return;
+                        case "delete this message":
+                            chatMessagesService.deleteMessage(msgId);
+                            break;
+                        case "timeout":
+                            updateChatField(`/timeout @${userName} 300`);
+                            break;
+                        case "ban":
+                            utilityService
+                                .showConfirmationModal({
+                                    title: "Ban User",
+                                    question: `Are you sure you want to ban ${userName}?`,
+                                    confirmLabel: "Ban",
+                                    confirmBtnType: "btn-danger"
+                                })
+                                .then(confirmed => {
+                                    if (confirmed) {
+                                        backendCommunicator.fireEvent("update-user-banned-status", { username: userName, shouldBeBanned: true });
+                                    }
+                                });
+                            break;
+                        case "mod":
+                            chatMessagesService.changeModStatus(userName, true);
+                            break;
+                        case "unmod":
+                            utilityService
+                                .showConfirmationModal({
+                                    title: "Mod User",
+                                    question: `Are you sure you want to unmod ${userName}?`,
+                                    confirmLabel: "Unmod",
+                                    confirmBtnType: "btn-danger"
+                                })
+                                .then(confirmed => {
+                                    if (confirmed) {
+                                        chatMessagesService.changeModStatus(userName, false);
+                                    }
+                                });
+                            break;
+                        case "add as vip":
+                            backendCommunicator.fireEvent("update-user-vip-status", { username: userName, shouldBeVip: true });
+                            break;
+                        case "remove vip":
+                            backendCommunicator.fireEvent("update-user-vip-status", { username: userName, shouldBeVip: false });
+                            break;
+                        case "whisper":
+                            updateChatField(`/w @${userName} `);
+                            break;
+                        case "mention":
+                            updateChatField(`@${userName} `);
+                            break;
+                        case "quote this message":
+                            updateChatField(`!quote add @${userName} ${rawText}`);
+                            break;
+                        case "highlight this message":
+                            chatMessagesService.highlightMessage(userName, rawText);
+                            break;
+                        case "shoutout":
+                            updateChatField(`!so @${userName}`);
+                            break;
+                        case "details": {
+                            $ctrl.showUserDetailsModal(userId);
+                            break;
+                        }
+                        default:
+                            return;
                     }
                 };
 

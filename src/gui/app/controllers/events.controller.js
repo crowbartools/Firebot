@@ -174,22 +174,22 @@
                         const { action, event, groupId } = resp;
 
                         switch (action) {
-                        case "add":
-                            if (groupId === "mainevents") {
-                                eventsService.getMainEvents().push(event);
-                                eventsService.saveMainEvents();
-                            } else {
-                                const group = eventsService.getEventGroup(groupId);
-                                group.events.push(event);
-                                eventsService.saveGroup(group);
-                            }
-                            break;
-                        case "update":
-                            updateEvent(groupId, event);
-                            break;
-                        case "delete":
-                            deleteEvent(groupId, event.id);
-                            break;
+                            case "add":
+                                if (groupId === "mainevents") {
+                                    eventsService.getMainEvents().push(event);
+                                    eventsService.saveMainEvents();
+                                } else {
+                                    const group = eventsService.getEventGroup(groupId);
+                                    group.events.push(event);
+                                    eventsService.saveGroup(group);
+                                }
+                                break;
+                            case "update":
+                                updateEvent(groupId, event);
+                                break;
+                            case "delete":
+                                deleteEvent(groupId, event.id);
+                                break;
                         }
                     }
                 });

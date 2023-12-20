@@ -51,19 +51,19 @@ export class TwitchChannelRewardsApi {
 
     private mapCustomRewardToCreateRewardPayload(reward: CustomReward): HelixCreateCustomRewardData {
         let maxRedemptionsPerStream = null, maxRedemptionsPerUserPerStream = null, globalCooldown = null;
-    
+
         if (reward.maxPerStreamSetting?.isEnabled === true && reward.maxPerStreamSetting?.maxPerStream > 0) {
             maxRedemptionsPerStream = reward.maxPerStreamSetting.maxPerStream;
         }
-    
+
         if (reward.maxPerUserPerStreamSetting?.isEnabled === true && reward.maxPerUserPerStreamSetting?.maxPerUserPerStream > 0) {
             maxRedemptionsPerUserPerStream = reward.maxPerUserPerStreamSetting.maxPerUserPerStream;
         }
-    
+
         if (reward.globalCooldownSetting?.isEnabled === true && reward.globalCooldownSetting?.globalCooldownSeconds > 0) {
             globalCooldown = reward.globalCooldownSetting.globalCooldownSeconds;
         }
-    
+
         return {
             title: reward.title,
             prompt: reward.prompt,
@@ -80,19 +80,19 @@ export class TwitchChannelRewardsApi {
 
     private mapCustomRewardToUpdateRewardPayload(reward: CustomReward): HelixUpdateCustomRewardData {
         let maxRedemptionsPerStream = null, maxRedemptionsPerUserPerStream = null, globalCooldown = null;
-    
+
         if (reward.maxPerStreamSetting?.isEnabled === true && reward.maxPerStreamSetting?.maxPerStream > 0) {
             maxRedemptionsPerStream = reward.maxPerStreamSetting.maxPerStream;
         }
-    
+
         if (reward.maxPerUserPerStreamSetting?.isEnabled === true && reward.maxPerUserPerStreamSetting?.maxPerUserPerStream > 0) {
             maxRedemptionsPerUserPerStream = reward.maxPerUserPerStreamSetting.maxPerUserPerStream;
         }
-    
+
         if (reward.globalCooldownSetting?.isEnabled === true && reward.globalCooldownSetting?.globalCooldownSeconds > 0) {
             globalCooldown = reward.globalCooldownSetting.globalCooldownSeconds;
         }
-    
+
         return {
             title: reward.title,
             prompt: reward.prompt,
@@ -114,7 +114,7 @@ export class TwitchChannelRewardsApi {
             url2x: reward.getImageUrl(2),
             url4x: reward.getImageUrl(4)
         };
-    
+
         return {
             broadcasterId: reward.broadcasterId,
             broadcasterLogin: reward.broadcasterName,
@@ -187,7 +187,7 @@ export class TwitchChannelRewardsApi {
             logger.error("Failed to get Twitch custom channel reward", err.message);
             return null;
         }
-    
+
         return this.mapCustomRewardResponse(reward);
     }
 
@@ -212,13 +212,13 @@ export class TwitchChannelRewardsApi {
 
     async createCustomChannelReward(reward: CustomReward): Promise<CustomReward> {
         const data = this.mapCustomRewardToCreateRewardPayload(reward);
-    
+
         try {
             const response = await this._streamerClient.channelPoints.createCustomReward(
                 accountAccess.getAccounts().streamer.userId,
                 data
             );
-    
+
             return this.mapCustomRewardResponse(response);
         } catch (err) {
             logger.error("Failed to create twitch custom channel reward", err.message);
@@ -249,7 +249,7 @@ export class TwitchChannelRewardsApi {
             return false;
         }
     }
-    
+
     async approveOrRejectChannelRewardRedemption(rewardId: string, redemptionId: string, approve = true): Promise<boolean> {
         try {
             const response = await this._streamerClient.channelPoints.updateRedemptionStatusByIds(
@@ -258,9 +258,9 @@ export class TwitchChannelRewardsApi {
                 [redemptionId],
                 approve ? "FULFILLED" : "CANCELED"
             );
-    
+
             logger.debug(`Redemption ${redemptionId} for channel reward ${rewardId} was ${response[0].isFulfilled ? "approved" : "rejected"}`);
-    
+
             return true;
         } catch (error) {
             logger.error(`Failed to ${approve ? "approve" : "reject"} channel reward redemption`, error.message);

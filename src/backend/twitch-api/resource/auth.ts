@@ -20,7 +20,7 @@ export class TwitchAuthApi {
                     userId = accountAccess.getAccounts().streamer.userId;
                     apiClient = this._streamerClient;
                     break;
-            
+
                 case "bot":
                     userId = accountAccess.getAccounts().bot.userId;
                     apiClient = this._botClient;
@@ -28,7 +28,9 @@ export class TwitchAuthApi {
             }
 
             // This shouldn only happen if an account is not logged in
-            if (!userId || !apiClient) return false;
+            if (!userId || !apiClient) {
+                return false;
+            }
 
             const token = await apiClient.getTokenInfo();
             return token?.userId === userId;

@@ -20,13 +20,13 @@ export type EventFilter = {
     }>;
     comparisonTypes: string[];
     valueType: "text" | "preset";
-    presetValues(...args: any[]): Promise<any[]>;
+    presetValues(...args: unknown[]): Promise<unknown[]>;
     predicate(
-        filterSettings: { comparisonType: string; value: any },
+        filterSettings: { comparisonType: string; value: unknown },
         eventData: {
             eventSourceId: string;
             eventId: string;
-            eventMeta: Record<string, any>;
+            eventMeta: Record<string, unknown>;
         }
     ): Promise<boolean>;
 };

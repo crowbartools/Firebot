@@ -13,10 +13,10 @@ const shell = require("electron").shell;
  * TODO: Refactor to import these modules in the files that actually use them instead
  * of making them available globally here
  */
-const fs = require("fs");
-const request = require("request");
-const List = require("list.js");
-const path = require("path");
+const fs = require("fs"); // eslint-disable-line @typescript-eslint/no-unused-vars
+const request = require("request"); // eslint-disable-line @typescript-eslint/no-unused-vars
+const List = require("list.js"); // eslint-disable-line @typescript-eslint/no-unused-vars
+const path = require("path"); // eslint-disable-line @typescript-eslint/no-unused-vars
 
 require("angular");
 require("angular-aria");
@@ -123,20 +123,20 @@ console.log(""); // eslint-disable-line no-console
 
 function getLogLevelColor(level) {
     switch (level) {
-    case "error":
-        return "#CC3128";
-    case "warn":
-        return "#E3D919";
-    case "info":
-        return "#0DAD4A";
-    case "verbose":
-        return "#11A7AB";
-    case "debug":
-        return "#2171C7";
-    case "silly":
-        return "#973EBB";
-    default:
-        return "gray";
+        case "error":
+            return "#CC3128";
+        case "warn":
+            return "#E3D919";
+        case "info":
+            return "#0DAD4A";
+        case "verbose":
+            return "#11A7AB";
+        case "debug":
+            return "#2171C7";
+        case "silly":
+            return "#973EBB";
+        default:
+            return "gray";
     }
 }
 
@@ -172,6 +172,3 @@ ipcRenderer.on("logging", (event, data) => {
 logger.on("logging", (transport, level, msg, meta) => {
     printLogToBrowserConsole(transport, level, msg, meta);
 });
-
-
-

@@ -148,53 +148,53 @@
             // This will only work when chat feed is turned on in the settings area.
             service.chatUpdateHandler = function(data) {
                 switch (data.fbEvent) {
-                case "ClearMessages":
-                    logger.info("Chat cleared");
-                    service.clearChatQueue();
+                    case "ClearMessages":
+                        logger.info("Chat cleared");
+                        service.clearChatQueue();
 
-                    service.chatAlertMessage(`Chat has been cleared by ${data.clearer.user_name}.`);
-                    break;
-                case "PurgeMessage":
-                    logger.info("Chat message purged");
-                    service.purgeChatMessages(data);
-                    break;
-                case "UserJoin":
-                    logger.debug("Chat User Joined");
+                        service.chatAlertMessage(`Chat has been cleared by ${data.clearer.user_name}.`);
+                        break;
+                    case "PurgeMessage":
+                        logger.info("Chat message purged");
+                        service.purgeChatMessages(data);
+                        break;
+                    case "UserJoin":
+                        logger.debug("Chat User Joined");
 
-                    // Standardize user roles naming.
+                        // Standardize user roles naming.
                     data.user_roles = data.roles; // eslint-disable-line
 
-                    service.chatUserJoined(data);
-                    break;
-                case "UserLeave":
-                    logger.debug("Chat User Left");
+                        service.chatUserJoined(data);
+                        break;
+                    case "UserLeave":
+                        logger.debug("Chat User Left");
 
-                    // Standardize user roles naming.
+                        // Standardize user roles naming.
                     data.user_roles = data.roles; // eslint-disable-line
 
-                    service.chatUserLeft(data);
-                    break;
-                case "UserUpdate":
-                    logger.debug("User updated");
-                    service.chatUserUpdated(data);
-                    break;
-                case "Disconnected":
+                        service.chatUserLeft(data);
+                        break;
+                    case "UserUpdate":
+                        logger.debug("User updated");
+                        service.chatUserUpdated(data);
+                        break;
+                    case "Disconnected":
                     // We disconnected. Clear messages, post alert, and then let the reconnect handle repopulation.
-                    logger.info("Chat Disconnected!");
-                    service.clearChatQueue();
-                    service.chatAlertMessage("Chat has been disconnected.");
-                    break;
-                case "UsersRefresh":
-                    logger.info("Chat userlist refreshed.");
-                    service.chatUserRefresh(data);
-                    break;
-                case "ChatAlert":
-                    logger.debug("Chat alert from backend.");
-                    service.chatAlertMessage(data.message);
-                    break;
-                default:
+                        logger.info("Chat Disconnected!");
+                        service.clearChatQueue();
+                        service.chatAlertMessage("Chat has been disconnected.");
+                        break;
+                    case "UsersRefresh":
+                        logger.info("Chat userlist refreshed.");
+                        service.chatUserRefresh(data);
+                        break;
+                    case "ChatAlert":
+                        logger.debug("Chat alert from backend.");
+                        service.chatAlertMessage(data.message);
+                        break;
+                    default:
                     // Nothing
-                    logger.warn("Unknown chat event sent", data);
+                        logger.warn("Unknown chat event sent", data);
                 }
             };
 

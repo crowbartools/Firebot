@@ -1,4 +1,4 @@
-export type TriggerType = 
+export type TriggerType =
     | "command"
     | "custom_script"
     | "startup_script"
@@ -15,10 +15,10 @@ export type Trigger = {
     type: TriggerType;
     metadata: {
         username: string;
-        hotkey?: any;
-        command?: any;
+        hotkey?: unknown;
+        command?: unknown;
         userCommand?: { trigger: string; args: string[] };
-        chatMessage?: any;
+        chatMessage?: unknown;
         event?: { id: string; name: string };
         eventSource?: { id: string; name: string };
         eventData?: Record<string, unknown>;

@@ -48,16 +48,16 @@
 
                 // check each update type
                 switch (updateType) {
-                case UpdateType.OFFICIAL:
-                case UpdateType.PATCH:
-                case UpdateType.MINOR:
-                    return autoUpdateLevel >= 1;
-                case UpdateType.PRERELEASE:
-                case UpdateType.NONE:
-                case UpdateType.MAJOR:
-                case UpdateType.MAJOR_PRERELEASE:
-                default:
-                    return false;
+                    case UpdateType.OFFICIAL:
+                    case UpdateType.PATCH:
+                    case UpdateType.MINOR:
+                        return autoUpdateLevel >= 1;
+                    case UpdateType.PRERELEASE:
+                    case UpdateType.NONE:
+                    case UpdateType.MAJOR:
+                    case UpdateType.MAJOR_PRERELEASE:
+                    default:
+                        return false;
                 }
             }
 

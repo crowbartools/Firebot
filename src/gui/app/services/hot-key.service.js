@@ -21,55 +21,55 @@ const uuidv1 = require("uuid/v1");
             // this maps keys to codes accepted in Electron's Accelerator strings, used for global shortcuts
             function mapKeyToAcceleratorCode(key) {
                 switch (key) {
-                case "ArrowUp":
-                case "ArrowDown":
-                case "ArrowLeft":
-                case "ArrowRight":
-                    return key.replace("Arrow", "");
-                case "AudioVolumeMute":
-                case "AudioVolumeDown":
-                case "AudioVolumeUp":
-                    return key.replace("Audio", "");
-                case "+":
-                    return "Plus";
-                case " ":
-                    return "Space";
-                case "MediaTrackPrevious":
-                    return "MediaPreviousTrack";
-                case "MediaTrackNext":
-                    return "MediaNextTrack";
-                case "Meta":
-                    return "Super";
-                case "Control":
-                    return "CmdOrCtrl";
-                default:
-                    if (key.length === 1) {
-                        return key.toUpperCase();
-                    }
-                    return key;
+                    case "ArrowUp":
+                    case "ArrowDown":
+                    case "ArrowLeft":
+                    case "ArrowRight":
+                        return key.replace("Arrow", "");
+                    case "AudioVolumeMute":
+                    case "AudioVolumeDown":
+                    case "AudioVolumeUp":
+                        return key.replace("Audio", "");
+                    case "+":
+                        return "Plus";
+                    case " ":
+                        return "Space";
+                    case "MediaTrackPrevious":
+                        return "MediaPreviousTrack";
+                    case "MediaTrackNext":
+                        return "MediaNextTrack";
+                    case "Meta":
+                        return "Super";
+                    case "Control":
+                        return "CmdOrCtrl";
+                    default:
+                        if (key.length === 1) {
+                            return key.toUpperCase();
+                        }
+                        return key;
                 }
             }
 
             function getDisplayNameFromKeyCode(keyCode) {
                 switch (keyCode) {
-                case "CmdOrCtrl":
-                    return "Ctrl";
-                case "Super":
-                    return "Windows";
-                default:
-                    return keyCode;
+                    case "CmdOrCtrl":
+                        return "Ctrl";
+                    case "Super":
+                        return "Windows";
+                    default:
+                        return keyCode;
                 }
             }
 
             function keyCodeIsModifier(keyCode) {
                 switch (keyCode) {
-                case "CmdOrCtrl":
-                case "Super":
-                case "Alt":
-                case "Shift":
-                    return true;
-                default:
-                    return false;
+                    case "CmdOrCtrl":
+                    case "Super":
+                    case "Alt":
+                    case "Shift":
+                        return true;
+                    default:
+                        return false;
                 }
             }
 

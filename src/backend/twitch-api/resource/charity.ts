@@ -1,10 +1,10 @@
 import accountAccess from "../../common/account-access";
 import logger from '../../logwrapper';
-import { ApiClient, CommercialLength, HelixChannel, HelixChannelUpdate, HelixUser } from "@twurple/api";
+import { ApiClient } from "@twurple/api";
 
 export class TwitchCharityApi {
     private _streamerClient: ApiClient;
-    private _botClient: ApiClient;    
+    private _botClient: ApiClient;
 
     constructor(streamerClient: ApiClient, botClient: ApiClient) {
         this._streamerClient = streamerClient;

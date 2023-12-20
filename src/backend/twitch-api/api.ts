@@ -32,11 +32,11 @@ class TwitchApi {
         if (accountAccess.getAccounts().streamer.loggedIn) {
             this._streamerClient = new ApiClient({ authProvider: streamerProvider });
         }
-        
+
         if (accountAccess.getAccounts().bot.loggedIn) {
             this._botClient = new ApiClient({ authProvider: botProvider });
         }
-    
+
         logger.info("Finished setting up Twitch API client");
     }
 

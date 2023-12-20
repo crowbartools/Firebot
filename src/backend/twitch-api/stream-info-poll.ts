@@ -14,7 +14,7 @@ const POLL_INTERVAL = 15 * 1000;
 
 class TwitchStreamInfoPoll {
     private _streamInfoPollIntervalId: NodeJS.Timeout;
-    
+
     streamInfo: TwitchStreamInfo = {
         isLive: false,
         viewers: 0,
@@ -66,7 +66,7 @@ class TwitchStreamInfoPoll {
         this.handleStreamInfo();
         this._streamInfoPollIntervalId = setInterval(() => this.handleStreamInfo(), POLL_INTERVAL);
     }
-    
+
     stopStreamInfoPoll(): void {
         this.clearPollInterval();
     }

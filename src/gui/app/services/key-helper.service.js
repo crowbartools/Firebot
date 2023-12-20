@@ -8,7 +8,7 @@
             const service = {};
 
             // names of known key codes (0-255)
-            const keyboardNameMap = [ //eslint-disable-line no-unused-vars
+            const keyboardNameMap = [ //eslint-disable-line @typescript-eslint/no-unused-vars
                 "", // [0]
                 "", // [1]
                 "", // [2]

@@ -3,6 +3,55 @@
 const quotesManager = require("../../../../backend/quotes/quotes-manager");
 const moment = require("moment");
 
+function validateQuoteId(quoteId, res) {
+    if (quoteId == null) {
+        res.status(400).send({
+            status: "error",
+            message: "No quoteId provided"
+        });
+        return false;
+    }
+
+    quoteId = parseInt(quoteId);
+    if (isNaN(quoteId)) {
+        res.status(400).send({
+            status: "error",
+            message: "Invalid quoteId provided"
+        });
+        return false;
+    }
+
+    return quoteId;
+}
+
+// Formats a quote for API output
+function formatQuote(quote) {
+    return {
+        id: quote._id,
+        text: quote.text,
+        originator: quote.originator,
+        creator: quote.creator,
+        game: quote.game,
+        createdAt: quote.createdAt
+    };
+}
+
+// Validates that all required quote fields are present and valid
+function validateQuote(quote) {
+    quote = quote ?? {};
+    const validationErrors = [];
+
+    if (!(quote.text?.length > 0)) {
+        validationErrors.push("Missing quote text");
+    }
+
+    if (!(quote.creator?.length > 0)) {
+        validationErrors.push("Missing quote creator");
+    }
+
+    return validationErrors;
+}
+
 exports.getQuotes = async function(req, res) {
     const quotes = await quotesManager.getAllQuotes();
 
@@ -208,52 +257,3 @@ exports.deleteQuote = async function(req, res) {
 
     return res.status(204).send();
 };
-
-function validateQuoteId(quoteId, res) {
-    if (quoteId == null) {
-        res.status(400).send({
-            status: "error",
-            message: "No quoteId provided"
-        });
-        return false;
-    }
-
-    quoteId = parseInt(quoteId);
-    if (isNaN(quoteId)) {
-        res.status(400).send({
-            status: "error",
-            message: "Invalid quoteId provided"
-        });
-        return false;
-    }
-
-    return quoteId;
-}
-
-// Formats a quote for API output
-function formatQuote(quote) {
-    return {
-        id: quote._id,
-        text: quote.text,
-        originator: quote.originator,
-        creator: quote.creator,
-        game: quote.game,
-        createdAt: quote.createdAt
-    };
-}
-
-// Validates that all required quote fields are present and valid
-function validateQuote(quote) {
-    quote = quote ?? {};
-    const validationErrors = [];
-
-    if (!(quote.text?.length > 0)) {
-        validationErrors.push("Missing quote text");
-    }
-
-    if (!(quote.creator?.length > 0)) {
-        validationErrors.push("Missing quote creator");
-    }
-
-    return validationErrors;
-}

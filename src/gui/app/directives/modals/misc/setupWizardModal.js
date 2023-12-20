@@ -314,18 +314,18 @@
 
             $ctrl.getNextLabel = function() {
                 switch ($ctrl.step) {
-                default:
-                    return "Next";
+                    default:
+                        return "Next";
                 }
             };
 
             $ctrl.handlePrevious = function() {
                 switch ($ctrl.step) {
-                case 2:
-                    $ctrl.step = 0;
-                    break;
-                default:
-                    $ctrl.step -= $ctrl.isFirstStep() ? 0 : 1;
+                    case 2:
+                        $ctrl.step = 0;
+                        break;
+                    default:
+                        $ctrl.step -= $ctrl.isFirstStep() ? 0 : 1;
                 }
             };
 
@@ -348,12 +348,12 @@
 
             $ctrl.canGoToNext = function() {
                 switch ($ctrl.step) {
-                case 2:
-                    return connectionService.accounts.streamer.loggedIn;
-                case 3: {
-                    const overlayStatus = connectionManager.getOverlayStatus();
-                    return !overlayStatus.serverStarted || overlayStatus.clientsConnected;
-                }
+                    case 2:
+                        return connectionService.accounts.streamer.loggedIn;
+                    case 3: {
+                        const overlayStatus = connectionManager.getOverlayStatus();
+                        return !overlayStatus.serverStarted || overlayStatus.clientsConnected;
+                    }
                 }
                 return true;
             };
@@ -409,25 +409,25 @@
                     $ctrl.close();
                 } else {
                     switch ($ctrl.step) {
-                    case 0:
-                        if ($ctrl.v4DataDetected) {
-                            $ctrl.step = 1;
-                        } else {
-                            $ctrl.step = 2;
-                        }
-                        return;
-                    case 1:
-                        $ctrl.step = 2;
-                        $ctrl.importCompleted = false;
-                        return;
-                    case 2:
-                    case 3: {
-                        if (!$ctrl.canGoToNext() && !forceNext) {
+                        case 0:
+                            if ($ctrl.v4DataDetected) {
+                                $ctrl.step = 1;
+                            } else {
+                                $ctrl.step = 2;
+                            }
                             return;
-                        }
+                        case 1:
+                            $ctrl.step = 2;
+                            $ctrl.importCompleted = false;
+                            return;
+                        case 2:
+                        case 3: {
+                            if (!$ctrl.canGoToNext() && !forceNext) {
+                                return;
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
                     }
                     $ctrl.step += 1;
                 }
@@ -435,10 +435,10 @@
 
             $ctrl.getTooltipText = function() {
                 switch ($ctrl.step) {
-                case 2:
-                    return "Please sign into your Streamer account.";
-                case 3:
-                    return "Please add the overlay url to your broadcasting software.";
+                    case 2:
+                        return "Please sign into your Streamer account.";
+                    case 3:
+                        return "Please add the overlay url to your broadcasting software.";
                 }
                 return "";
             };

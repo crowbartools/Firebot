@@ -2,7 +2,7 @@ import { EffectTrigger } from "../../../shared/effect-constants";
 import { OutputDataType, VariableCategory } from "../../../shared/variable-constants";
 
 const triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:hype-train-start","twitch:hype-train-progress","twitch:hype-train-end"];
+triggers[EffectTrigger.EVENT] = ["twitch:hype-train-start", "twitch:hype-train-progress", "twitch:hype-train-end"];
 triggers[EffectTrigger.MANUAL] = true;
 
 const model = {

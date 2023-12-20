@@ -19,7 +19,7 @@ export class TwitchBitsApi {
     ): Promise<HelixBitsLeaderboardEntry[]> {
         const streamerId: string = accountAccess.getAccounts().streamer.userId;
         const leaderboard: HelixBitsLeaderboardEntry[] = [];
-    
+
         try {
             const params: HelixBitsLeaderboardQuery = {
                 count: count,
@@ -31,19 +31,19 @@ export class TwitchBitsApi {
         } catch (error) {
             logger.error("Failed to get channel bits leaderboard", error.message);
         }
-    
+
         return leaderboard;
     }
-    
+
     async getChannelBitsTopCheerers(
         count = 1,
         period: HelixBitsLeaderboardPeriod = "all",
         startDate: Date = new Date()
-    ): Promise<String[]> {
+    ): Promise<string[]> {
         const leaderboard = await this.getChannelBitsLeaderboard(count, period, startDate);
-    
+
         return leaderboard.map(l => {
-            return l.userName
-        })
+            return l.userName;
+        });
     }
 }

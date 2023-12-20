@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 
 export async function getCustomRoles(req: Request, res: Response): Promise<Response> {
     const customRoles = customRolesManager.getCustomRoles()
-        .map((cr: any) => {
+        .map((cr) => {
             return {
                 id: cr.id,
                 name: cr.name,
@@ -25,7 +25,7 @@ export async function getCustomRoleById(req: Request, res: Response): Promise<Re
         });
     }
 
-    const customRole = customRolesManager.getCustomRoles().find((role) => role.id.toLowerCase() == customRoleId.toLowerCase());
+    const customRole = customRolesManager.getCustomRoles().find((role) => role.id.toLowerCase() === customRoleId.toLowerCase());
 
     if (customRole == null) {
         return res.status(404).send({
@@ -75,7 +75,7 @@ export async function addUserToCustomRole(req: Request, res: Response): Promise<
         });
     }
 
-    const customRole = customRolesManager.getCustomRoles().find((cr: any) => cr.id.toLowerCase() === customRoleId.toLowerCase());
+    const customRole = customRolesManager.getCustomRoles().find((cr) => cr.id.toLowerCase() === customRoleId.toLowerCase());
 
     if (customRole == null) {
         return res.status(404).send({
@@ -121,7 +121,7 @@ export async function removeUserFromCustomRole(req: Request, res: Response): Pro
         });
     }
 
-    const customRole = customRolesManager.getCustomRoles().find((cr: any) => cr.id.toLowerCase() === customRoleId.toLowerCase());
+    const customRole = customRolesManager.getCustomRoles().find((cr) => cr.id.toLowerCase() === customRoleId.toLowerCase());
 
     if (customRole == null) {
         return res.status(404).send({

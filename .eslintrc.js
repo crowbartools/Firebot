@@ -71,7 +71,7 @@ module.exports = {
         "comma-style": "warn", // See: https://eslint.org/docs/rules/comma-style
         "computed-property-spacing": "warn", // No whitespace when using object[thing]
         "curly": "warn", // Must wrap blocks with {}
-        "indent": ["warn", 4], // Four-space indentions
+        "indent": "off", // Superseded by TS
         "key-spacing": ["warn", {mode: "strict" }], // Exactly one space after object key colons
         "keyword-spacing": "warn", // Spaces around keywords
         "linebreak-style": "warn", // Line breaks must be \n

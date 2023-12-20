@@ -82,21 +82,21 @@
                 file.forEach(f => {
                     f.data.shift();
                     switch (f.name) {
-                    case "Quotes": {
-                        const quotes = splitSlcbQuotes(f.data);
-                        const dateFormat = getSlcbQuoteDateFormat(quotes);
+                        case "Quotes": {
+                            const quotes = splitSlcbQuotes(f.data);
+                            const dateFormat = getSlcbQuoteDateFormat(quotes);
 
-                        quotes.forEach(q => q.createdAt = moment(q.createdAt, dateFormat).toISOString());
+                            quotes.forEach(q => q.createdAt = moment(q.createdAt, dateFormat).toISOString());
 
-                        data.quotes = quotes;
+                            data.quotes = quotes;
 
-                        break;
-                    }
-                    case "Points":
-                    case "Currency":
-                        data.viewers = mapSlcbViewers(f.data);
-                        data.ranks = mapSlcbRanks(data.viewers);
-                        break;
+                            break;
+                        }
+                        case "Points":
+                        case "Currency":
+                            data.viewers = mapSlcbViewers(f.data);
+                            data.ranks = mapSlcbRanks(data.viewers);
+                            break;
                     }
 
                 });

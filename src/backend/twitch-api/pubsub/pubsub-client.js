@@ -125,38 +125,38 @@ async function createClient() {
             const frontendCommunicator = require("../../common/frontend-communicator");
 
             switch (message.type) {
-            case "vip_added":
-                chatRolesManager.addVipToVipList(message.targetUserName);
-                break;
-            case "vip_removed":
-                chatRolesManager.removeVipFromVipList(message.targetUserName);
-                break;
-            default:
-                switch (message.action) {
-                case "clear":
-                    frontendCommunicator.send("twitch:chat:clear-feed", message.userName);
+                case "vip_added":
+                    chatRolesManager.addVipToVipList(message.targetUserName);
                     break;
-                case "emoteonly":
-                case "emoteonlyoff":
-                case "subscribers":
-                case "subscribersoff":
-                case "followers":
-                case "followersoff":
-                case "slow":
-                case "slowoff":
-                case "r9kbeta": // Unique Chat
-                case "r9kbetaoff":
-                    twitchEventsHandler.chatModeChanged.triggerChatModeChanged(
-                        message.action,
-                        message.action.includes("off") ? "disabled" : "enabled",
-                        message.userName,
-                        message.args ? parseInt(message.args[0]) : null
-                    );
+                case "vip_removed":
+                    chatRolesManager.removeVipFromVipList(message.targetUserName);
                     break;
                 default:
-                    return;
-                }
-                break;
+                    switch (message.action) {
+                        case "clear":
+                            frontendCommunicator.send("twitch:chat:clear-feed", message.userName);
+                            break;
+                        case "emoteonly":
+                        case "emoteonlyoff":
+                        case "subscribers":
+                        case "subscribersoff":
+                        case "followers":
+                        case "followersoff":
+                        case "slow":
+                        case "slowoff":
+                        case "r9kbeta": // Unique Chat
+                        case "r9kbetaoff":
+                            twitchEventsHandler.chatModeChanged.triggerChatModeChanged(
+                                message.action,
+                                message.action.includes("off") ? "disabled" : "enabled",
+                                message.userName,
+                                message.args ? parseInt(message.args[0]) : null
+                            );
+                            break;
+                        default:
+                            return;
+                    }
+                    break;
             }
         });
         listeners.push(modListener);

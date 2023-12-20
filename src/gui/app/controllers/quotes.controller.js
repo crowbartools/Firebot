@@ -16,17 +16,17 @@
                     closeCallback: (data) => {
                         const {action, quote} = data;
                         switch (action) {
-                        case "add":
-                            quotesService.addQuote(quote);
-                            break;
-                        case "update":
-                            quotesService.updateQuote(quote);
-                            break;
-                        case "delete":
-                            if (quote != null) {
-                                quotesService.deleteQuote(quote._id);
-                            }
-                            break;
+                            case "add":
+                                quotesService.addQuote(quote);
+                                break;
+                            case "update":
+                                quotesService.updateQuote(quote);
+                                break;
+                            case "delete":
+                                if (quote != null) {
+                                    quotesService.deleteQuote(quote._id);
+                                }
+                                break;
                         }
                     }
                 });

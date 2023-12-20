@@ -158,7 +158,7 @@
                                     on-update="setChatFeedMode(option)"
                                 ></dropdown-select>
                             </div>
-                        
+
                             <chat-settings-toggle
                                 setting="settings.chatHideDeletedMessages()"
                                 title="Hide Deleted Messages"
@@ -245,14 +245,14 @@
 
                 $scope.setShowThirdPartyEmotes = (party) => {
                     switch (party) {
-                    case "bttv":
-                        settingsService.setShowBttvEmotes(!settingsService.getShowBttvEmotes());
-                        break;
-                    case "ffz":
-                        settingsService.setShowFfzEmotes(!settingsService.getShowFfzEmotes());
-                        break;
-                    case "7tv":
-                        settingsService.setShowSevenTvEmotes(!settingsService.getShowSevenTvEmotes());
+                        case "bttv":
+                            settingsService.setShowBttvEmotes(!settingsService.getShowBttvEmotes());
+                            break;
+                        case "ffz":
+                            settingsService.setShowFfzEmotes(!settingsService.getShowFfzEmotes());
+                            break;
+                        case "7tv":
+                            settingsService.setShowSevenTvEmotes(!settingsService.getShowSevenTvEmotes());
                     }
 
                     chatMessagesService.refreshEmotes();

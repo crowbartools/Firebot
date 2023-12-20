@@ -6,7 +6,7 @@ import frontendCommunicator from "../../common/frontend-communicator";
 class PermitManager {
     private readonly _permidCommandId: string = "firebot:moderation:url:permit";
     private _tempPermittedUsers: string[] = [];
-    
+
     private readonly _permitCommand: SystemCommand = {
         definition: {
             id: this._permidCommandId,
@@ -87,13 +87,13 @@ class PermitManager {
     hasTemporaryPermission(username: string): boolean {
         return this._tempPermittedUsers.includes(username);
     }
-    
+
     registerPermitCommand(): void {
         if (!commandManager.hasSystemCommand(this._permidCommandId)) {
             commandManager.registerSystemCommand(this._permitCommand);
         }
     }
-    
+
     unregisterPermitCommand(): void {
         commandManager.unregisterSystemCommand(this._permidCommandId);
     }

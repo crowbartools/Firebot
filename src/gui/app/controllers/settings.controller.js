@@ -299,12 +299,12 @@
                     },
                     ticksTooltip: function(index) {
                         switch (index) {
-                        case 0:
-                            return "Updates that fix bugs or add features. (Example: v1.0 to v1.1.1)";
-                        case 1:
-                            return "Updates that are major new versions. Could contain breaking changes. (Example: v1.0 to v2.0)";
-                        default:
-                            return "";
+                            case 0:
+                                return "Updates that fix bugs or add features. (Example: v1.0 to v1.1.1)";
+                            case 1:
+                                return "Updates that are major new versions. Could contain breaking changes. (Example: v1.0 to v2.0)";
+                            default:
+                                return "";
                         }
                     },
                     getSelectionBarColor: function() {
@@ -321,16 +321,16 @@
 
             $scope.getAutoUpdateLevelString = function(level) {
                 switch (level) {
-                case 0:
-                    return "Off";
-                case 2:
-                    return "Default";
-                case 3:
-                    return "Major Versions";
-                case 4:
-                    return "Betas";
-                default:
-                    return "";
+                    case 0:
+                        return "Off";
+                    case 2:
+                        return "Default";
+                    case 3:
+                        return "Major Versions";
+                    case 4:
+                        return "Betas";
+                    default:
+                        return "";
                 }
             };
 

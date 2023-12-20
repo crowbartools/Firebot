@@ -1,7 +1,7 @@
 import { TriggerType, TriggersObject, Trigger } from "./triggers";
 import ng from "angular";
 
-type Func<T> = (...args: any[]) => T;
+type Func<T> = (...args: unknown[]) => T;
 
 interface EffectScope<EffectModel> extends ng.IScope {
     effect: EffectModel;
@@ -38,7 +38,7 @@ export type EffectDependencies = {
     integrations?: Record<string, boolean>;
 };
 
-export type EffectType<EffectModel, OverlayData = unknown> = {
+export type EffectType<EffectModel = unknown, OverlayData = unknown> = {
     definition: {
         id: string;
         name: string;
@@ -52,7 +52,7 @@ export type EffectType<EffectModel, OverlayData = unknown> = {
         outputs?: EffectOutput[];
     };
     optionsTemplate: string;
-    optionsController?: ($scope: EffectScope<EffectModel>, ...args: any[]) => void;
+    optionsController?: ($scope: EffectScope<EffectModel>, ...args: unknown[]) => void;
     optionsValidator?: (effect: EffectModel) => string[];
     onTriggerEvent: (event: {
         effect: EffectModel;
@@ -74,5 +74,5 @@ export type EffectType<EffectModel, OverlayData = unknown> = {
 
 export interface EffectList {
     id: string;
-    list: any[];
+    list: unknown[];
 }

@@ -37,7 +37,7 @@ class ReplaceVariableManager extends EventEmitter {
         // Map register variables Map to array
         const registeredVariables = this._registeredVariableHandlers;
         const variables = [];
-        /* eslint-disable-next-line no-unused-vars */
+        /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
         for (const [key, value] of registeredVariables) {
             variables.push(value);
         }
@@ -153,9 +153,9 @@ frontendCommunicator.on("getReplaceVariableDefinitions", trigger => {
     logger.debug("got 'get all vars' request");
 
     // map registered variables to array of their .definition property
-    let registeredVariables = manager.getVariableHandlers(),
-        variables = [];
-    /* eslint-disable-next-line no-unused-vars */
+    const registeredVariables = manager.getVariableHandlers();
+    let variables = [];
+    /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
     for (const [key, value] of registeredVariables) {
         variables.push(value.definition);
     }

@@ -26,19 +26,19 @@
                             currency = resp.currency;
 
                         switch (action) {
-                        case "add":
-                            currencyService.saveCurrency(currency);
-                            break;
-                        case "update":
-                            currencyService.updateCurrency(currency);
-                            break;
-                        case "delete":
-                            currencyService.deleteCurrency(currency);
-                            break;
-                        case "purge":
-                            currencyService.purgeCurrency(currency);
-                            break;
-                        default:
+                            case "add":
+                                currencyService.saveCurrency(currency);
+                                break;
+                            case "update":
+                                currencyService.updateCurrency(currency);
+                                break;
+                            case "delete":
+                                currencyService.deleteCurrency(currency);
+                                break;
+                            case "purge":
+                                currencyService.purgeCurrency(currency);
+                                break;
+                            default:
                         }
                     }
                 });

@@ -126,13 +126,13 @@
                             command = resp.command;
 
                         switch (action) {
-                        case "add":
-                        case "update":
-                            commandsService.saveCustomCommand(command);
-                            break;
-                        case "delete":
-                            commandsService.deleteCustomCommand(command);
-                            break;
+                            case "add":
+                            case "update":
+                                commandsService.saveCustomCommand(command);
+                                break;
+                            case "delete":
+                                commandsService.deleteCustomCommand(command);
+                                break;
                         }
 
                         // Refresh Commands

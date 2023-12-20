@@ -17,7 +17,7 @@ const callUrl = async (url: string) => {
             return response;
         }
     } catch (error) {
-        logger.warn("error calling readApi url: " + url, error.message);
+        logger.warn(`error calling readApi url: ${url}`, error.message);
         return error.message;
     }
 };
@@ -36,7 +36,7 @@ const model: ReplaceVariable = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
     },
-    evaluator: async (_, url, responseJsonPath) => {
+    evaluator: async (_, url: string, responseJsonPath: string) => {
         try {
             const content = (await callUrl(url)).data;
 

@@ -1,4 +1,5 @@
 import { Moment } from "moment";
+import { EffectList } from "./effects";
 
 export type Timer = {
     id: string;
@@ -7,10 +8,7 @@ export type Timer = {
     interval: number;
     requiredChatLines: number;
     onlyWhenLive: boolean;
-    effects: {
-        id: string;
-        list: any[];
-    };
+    effects: EffectList;
     sortTags: string[];
 };
 

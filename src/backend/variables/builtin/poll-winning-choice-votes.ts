@@ -1,4 +1,3 @@
-import { EventSubChannelPollChoice } from "@twurple/eventsub-base";
 import { EffectTrigger } from "../../../shared/effect-constants";
 import { OutputDataType, VariableCategory } from "../../../shared/variable-constants";
 

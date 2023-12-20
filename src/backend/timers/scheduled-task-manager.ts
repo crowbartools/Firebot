@@ -65,7 +65,7 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
                 }
 
                 logger.info(`Running scheduled task "${task.name}"`);
-                
+
                 const effectsRequest = {
                     trigger: {
                         type: TriggerType.SCHEDULED_TASK,
@@ -80,12 +80,12 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
 
                 this.logNextTaskRun(task);
             }
-        )
+        );
     }
 
     private startTask(taskRunner: ScheduledTaskRunner): void {
         logger.debug(`Starting scheduled task timer for "${taskRunner.taskDefinition.name}"...`);
-        
+
         if (taskRunner.cronjob == null) {
             taskRunner.cronjob = this.createCronJob(taskRunner.taskDefinition);
         }
@@ -100,7 +100,7 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
 
     private stopTask(taskRunner: ScheduledTaskRunner, removeCrontab = false): void {
         logger.debug(`Stopping scheduled task timer for ${taskRunner.taskDefinition.name}...`);
-        
+
         if (taskRunner.cronjob == null) {
             taskRunner.cronjob = this.createCronJob(taskRunner.taskDefinition);
         }

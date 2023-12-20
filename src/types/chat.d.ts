@@ -7,7 +7,7 @@ export type FirebotChatMessage = {
     profilePicUrl: string;
     userId: string;
     roles: string[];
-    badges: any[];
+    badges: unknown[];
     customRewardId: string;
     color: string;
     rawText: string;

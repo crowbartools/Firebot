@@ -13,7 +13,7 @@ export class TwitchPredictionsApi {
 
     /**
      * Creates a Twitch prediction
-     * 
+     *
      * @param title Title of the prediction
      * @param outcomes List of outcomes for the prediction. Minimum of 2, maximum of 10.
      * @param duration Duration in seconds to allow predictions. Minimum of 30, maximum of 1800 (30 minutes).
@@ -26,7 +26,7 @@ export class TwitchPredictionsApi {
                 title: title,
                 outcomes: outcomes,
                 autoLockAfter: duration
-            })
+            });
         } catch (error) {
             logger.error("Failed to create Twitch prediction", error.message);
         }
@@ -34,7 +34,7 @@ export class TwitchPredictionsApi {
 
     /**
      * Locks a Twitch prediction so no more predictions can be made
-     * 
+     *
      * @param predictionId The prediction ID.
      */
     async lockPrediciton(predictionId: string): Promise<void> {
@@ -49,7 +49,7 @@ export class TwitchPredictionsApi {
 
     /**
      * Cancels a Twitch prediction and refunds all wagered channel points
-     * 
+     *
      * @param predictionId The prediction ID.
      */
     async cancelPrediction(predictionId: string): Promise<void> {
@@ -64,7 +64,7 @@ export class TwitchPredictionsApi {
 
     /**
      * Resolve a Twitch prediction.
-     * 
+     *
      * @param predictionId The prediction ID.
      * @param outcomeId The winning outcome ID.
      */
@@ -80,7 +80,7 @@ export class TwitchPredictionsApi {
 
     /**
      * Retrieve the most recent Twitch prediction
-     * 
+     *
      * @returns A HelixPrediction object with the most recent Twitch prediction data
      */
     async getMostRecentPrediction(): Promise<HelixPrediction> {
@@ -90,7 +90,7 @@ export class TwitchPredictionsApi {
             const predictions = await this._streamerClient.predictions.getPredictions(streamerId);
 
             return predictions.data[0];
-            
+
         } catch (error) {
             logger.error("Failed to get most recent Twitch prediction", error.message);
             return null;

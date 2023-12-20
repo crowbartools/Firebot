@@ -1,4 +1,3 @@
-import { EventSubChannelPollChoice } from "@twurple/eventsub-base";
 import { EffectTrigger } from "../../../shared/effect-constants";
 import { OutputDataType, VariableCategory } from "../../../shared/variable-constants";
 
@@ -14,7 +13,7 @@ const model = {
         categories: [VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (trigger) => {    
+    evaluator: (trigger) => {
         return trigger.winningChoice.title;
     }
 };

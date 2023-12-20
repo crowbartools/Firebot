@@ -23,10 +23,10 @@ type RestrictionData = {
      */
     sendFailMessage?: boolean;
     failMessage?: string;
-    restrictions: any[]; // ToDo: change when restriction-manager and companion types are added
+    restrictions: unknown[]; // TODO: change when restriction-manager and companion types are added
 };
 
-export type SubCommand = BasicCommandDefinition & {
+export type SubCommand = {
     arg: string;
     usage: string;
     minArgs?: number;
@@ -76,7 +76,7 @@ export type CommandDefinition = {
     cooldown?: Cooldown | undefined;
     effects?: EffectList;
     restrictionData?: RestrictionData;
-    options?: Record<string, any> | undefined;
+    options?: Record<string, unknown> | undefined;
     subCommands?: SubCommand[] | undefined;
     fallbackSubcommand?: SubCommand | undefined;
 };
@@ -98,19 +98,19 @@ type UserCommand = {
 
 type SystemCommandTriggerEvent = {
     command: CommandDefinition;
-    commandOptions: Record<string, any>;
+    commandOptions: Record<string, unknown>;
     userCommand: UserCommand;
 };
 
 type BasicCommandDefinition = Omit<
-    CommandDefinition,
-    | "type"
-    | "createdBy"
-    | "createdAt"
-    | "lastEditBy"
-    | "lastEditAt"
-    | "count"
-    | "simple"
+CommandDefinition,
+| "type"
+| "createdBy"
+| "createdAt"
+| "lastEditBy"
+| "lastEditAt"
+| "count"
+| "simple"
 >;
 
 export type SystemCommand = {
