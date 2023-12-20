@@ -55,7 +55,7 @@ const rotateFileTransport = new (require("winston-daily-rotate-file"))({
 
         const year = currentDate.getUTCFullYear() + '';
         const month = pad(currentDate.getUTCMonth() + 1, 2, 0);
-        const day = pad(currentDate.getDate(), 2, 0);
+        const day = pad(currentDate.getUTCDate(), 2, 0);
 
         const hour = pad(currentDate.getUTCHours(), 2, 0);
         const minute = pad(currentDate.getUTCMinutes(), 2, 0);
