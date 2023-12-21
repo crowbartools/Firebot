@@ -17,8 +17,8 @@ const model: EffectType<{
         icon: "fad fa-poll-h",
         categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
         dependencies: {
-            twitch: true,
-        },
+            twitch: true
+        }
     },
     optionsTemplate: `
         <eos-container header="Poll Title">
@@ -71,7 +71,7 @@ const model: EffectType<{
     optionsController: ($scope) => {
         $scope.optionSettings = {
             noDuplicates: true,
-            maxItems: 5,
+            maxItems: 5
         };
     },
     onTriggerEvent: async ({ effect }) => {
@@ -82,7 +82,7 @@ const model: EffectType<{
             effect.duration,
             effect.allowChannelPointVoting ? effect.channelPointsPerVote : null
         );
-    },
+    }
 };
 
 module.exports = model;

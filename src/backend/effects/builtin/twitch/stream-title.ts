@@ -13,8 +13,8 @@ const model: EffectType<{
         icon: "fad fa-comment-dots",
         categories: [EffectCategory.COMMON, EffectCategory.MODERATION, EffectCategory.TWITCH],
         dependencies: {
-            twitch: true,
-        },
+            twitch: true
+        }
     },
     optionsTemplate: `
         <eos-container header="New Title" pad-top="true">
@@ -34,10 +34,10 @@ const model: EffectType<{
         const client = twitchApi.streamerClient;
 
         await client.channels.updateChannelInfo(accountAccess.getAccounts().streamer.userId, {
-            title: event.effect.title,
+            title: event.effect.title
         });
         return true;
-    },
+    }
 };
 
 module.exports = model;

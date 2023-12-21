@@ -92,7 +92,7 @@ class TwitchAuthProviders {
             'whispers:read'
         ]
     };
-    
+
     botAccountProvider: AuthProviderDefinition = {
         id: this.botAccountProviderId,
         name: "Bot Account",

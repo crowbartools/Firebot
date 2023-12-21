@@ -1,4 +1,4 @@
-/* eslint no-unused-vars: 0*/
+/* eslint @typescript-eslint/no-unused-vars: 0*/
 "use strict";
 const electron = require("electron");
 const { ipcRenderer } = electron;
@@ -13,10 +13,10 @@ const shell = require("electron").shell;
  * TODO: Refactor to import these modules in the files that actually use them instead
  * of making them available globally here
  */
-const fs = require("fs"); // eslint-disable-line @typescript-eslint/no-unused-vars
-const request = require("request"); // eslint-disable-line @typescript-eslint/no-unused-vars
-const List = require("list.js"); // eslint-disable-line @typescript-eslint/no-unused-vars
-const path = require("path"); // eslint-disable-line @typescript-eslint/no-unused-vars
+const fs = require("fs");
+const request = require("request");
+const List = require("list.js");
+const path = require("path");
 
 require("angular");
 require("angular-aria");

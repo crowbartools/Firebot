@@ -1,3 +1,4 @@
+/* eslint camelcase: 0*/
 /**
  *  This file exists because there's currently no Twurple AuthProvider that supports Device Code Flow.
  *  Once one exists, this can go away. In the meantime, it stays in order to refresh tokens automagically.
@@ -21,7 +22,7 @@ const scopeEquivalencies = new Map([
     ['user_follows_edit', ['user:edit:follows']],
     ['user_read', ['user:read:email']],
     ['user_subscriptions', ['user:read:subscriptions']],
-    ['user:edit:broadcast', ['channel:manage:broadcast', 'channel:manage:extensions']],
+    ['user:edit:broadcast', ['channel:manage:broadcast', 'channel:manage:extensions']]
 ]);
 
 interface AccessTokenData {
@@ -72,7 +73,7 @@ async function getTokenInfo(accessToken: string, clientId?: string): Promise<Tok
 function compareScopes(scopesToCompare: string[], requestedScopes?: string[]): void {
     if (requestedScopes?.length) {
         const scopes = new Set<string>(
-            scopesToCompare.flatMap(scope => [scope, ...(scopeEquivalencies.get(scope) ?? [])]),
+            scopesToCompare.flatMap(scope => [scope, ...(scopeEquivalencies.get(scope) ?? [])])
         );
 
         if (requestedScopes.every(scope => !scopes.has(scope))) {
@@ -81,7 +82,7 @@ function compareScopes(scopesToCompare: string[], requestedScopes?: string[]): v
                 `This token does not have any of the requested scopes (${scopesStr}) and can not be upgraded.
 If you need dynamically upgrading scopes, please implement the AuthProvider interface accordingly:
 
-\thttps://twurple.js.org/reference/auth/interfaces/AuthProvider.html`,
+\thttps://twurple.js.org/reference/auth/interfaces/AuthProvider.html`
             );
         }
     }
@@ -114,7 +115,7 @@ async function loadAndCompareTokenInfo(
     token: string,
     userId?: string,
     loadedScopes?: string[],
-    requestedScopeSets?: Array<string[] | undefined>,
+    requestedScopeSets?: Array<string[] | undefined>
 ): Promise<[string[] | undefined, string]> {
     // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
     if (requestedScopeSets?.length || !userId) {
@@ -127,7 +128,7 @@ async function loadAndCompareTokenInfo(
         if (requestedScopeSets) {
             compareScopeSets(
                 scopesToCompare,
-                requestedScopeSets.filter((val): val is string[] => Boolean(val)),
+                requestedScopeSets.filter((val): val is string[] => Boolean(val))
             );
         }
 
@@ -139,9 +140,9 @@ async function loadAndCompareTokenInfo(
 
 function createRefreshTokenQuery(clientId: string, refreshToken: string) {
     return {
-        grant_type: 'refresh_token',
-        client_id: clientId,
-        refresh_token: refreshToken,
+        grant_type: 'refresh_token', // eslint-disable-line camelcase
+        client_id: clientId, // eslint-disable-line camelcase
+        refresh_token: refreshToken // eslint-disable-line camelcase
     };
 }
 
@@ -151,7 +152,7 @@ function createAccessTokenFromData(data: AccessTokenData): AccessToken {
         refreshToken: data.refresh_token || null,
         scope: data.scope ?? [],
         expiresIn: data.expires_in ?? null,
-        obtainmentTimestamp: Date.now(),
+        obtainmentTimestamp: Date.now()
     };
 }
 
@@ -164,15 +165,15 @@ function createAccessTokenFromData(data: AccessTokenData): AccessToken {
  */
 async function refreshUserToken(
     clientId: string,
-    refreshToken: string,
+    refreshToken: string
 ): Promise<AccessToken> {
     return createAccessTokenFromData(
         await callTwitchApi<AccessTokenData>({
             type: 'auth',
             url: 'token',
             method: 'POST',
-            query: createRefreshTokenQuery(clientId, refreshToken),
-        }),
+            query: createRefreshTokenQuery(clientId, refreshToken)
+        })
     );
 }
 
@@ -189,8 +190,8 @@ interface DeviceAuthProviderConfig {
  * This has the added benefit of refreshing tokens for Device Code Flow.
  */
 export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
-    /** @internal */ @Enumerable(false) private readonly _clientId: string;
-    /** @internal */ @Enumerable(false) private _accessToken: AccessToken;
+    /** @internal */ @Enumerable(false) private readonly _clientId: string; // eslint-disable-line new-cap
+    /** @internal */ @Enumerable(false) private _accessToken: AccessToken; // eslint-disable-line new-cap
     private _userId?: string;
     private _scopes?: string[];
     private readonly _cachedRefreshFailures = new Set<string>();
@@ -235,7 +236,7 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
                     refreshToken: null,
                     scope: deviceAuthConfig.scopes ?? [],
                     expiresIn: null,
-                    obtainmentTimestamp: Date.now(),
+                    obtainmentTimestamp: Date.now()
                 }
                 : deviceAuthConfig.accessToken;
         this._scopes = deviceAuthConfig.scopes;
@@ -319,7 +320,7 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
 
         return {
             ...tokenData,
-            userId,
+            userId
         };
     }
 
@@ -340,7 +341,7 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
             this._accessToken.accessToken,
             this._userId,
             this._scopes,
-            requestedScopeSets,
+            requestedScopeSets
         );
 
         this._scopes = scopes;

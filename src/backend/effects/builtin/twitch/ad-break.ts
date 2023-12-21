@@ -12,8 +12,8 @@ const model: EffectType<{
         icon: "fad fa-ad",
         categories: [EffectCategory.COMMON, EffectCategory.MODERATION, EffectCategory.TWITCH],
         dependencies: {
-            twitch: true,
-        },
+            twitch: true
+        }
     },
     optionsTemplate: `
         <eos-container header="Ad Duration" pad-top="true">
@@ -62,7 +62,7 @@ const model: EffectType<{
 
         await twitchApi.channels.triggerAdBreak(adLength);
         return true;
-    },
+    }
 };
 
 module.exports = model;

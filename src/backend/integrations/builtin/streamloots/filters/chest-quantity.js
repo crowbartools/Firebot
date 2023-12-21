@@ -21,20 +21,20 @@ module.exports = {
         }
 
         switch (comparisonType) {
-        case "is": {
-            return quantity === value;
-        }
-        case "is not": {
-            return quantity !== value;
-        }
-        case "less than": {
-            return quantity < value;
-        }
-        case "greater than": {
-            return quantity > value;
-        }
-        default:
-            return false;
+            case "is": {
+                return quantity === value;
+            }
+            case "is not": {
+                return quantity !== value;
+            }
+            case "less than": {
+                return quantity < value;
+            }
+            case "greater than": {
+                return quantity > value;
+            }
+            default:
+                return false;
         }
     }
 };

@@ -3,9 +3,9 @@ import { TwitchSlashCommandHandler } from "../twitch-slash-command-handler";
 import { TwitchCommandHelpers } from "./twitch-command-helpers";
 
 export const commercialHandler: TwitchSlashCommandHandler<[number]> = {
-    commands: [ "/commercial" ],
+    commands: ["/commercial"],
     validateArgs: ([duration]) => {
-        let parsedDuration = TwitchCommandHelpers.getRawDurationInSeconds(duration);
+        const parsedDuration = TwitchCommandHelpers.getRawDurationInSeconds(duration);
 
         if (parsedDuration == null) {
             return {
@@ -25,7 +25,7 @@ export const commercialHandler: TwitchSlashCommandHandler<[number]> = {
 };
 
 export const raidHandler: TwitchSlashCommandHandler<[string]> = {
-    commands: [ "/raid" ],
+    commands: ["/raid"],
     validateArgs: ([targetUsername]) => {
         if (targetUsername == null || targetUsername.length < 1) {
             return {
@@ -33,9 +33,9 @@ export const raidHandler: TwitchSlashCommandHandler<[string]> = {
                 errorMessage: "Please provide a username"
             };
         }
-  
+
         targetUsername = TwitchCommandHelpers.getNormalizedUsername(targetUsername);
-  
+
         return {
             success: true,
             args: [targetUsername]
@@ -53,7 +53,7 @@ export const raidHandler: TwitchSlashCommandHandler<[string]> = {
 };
 
 export const unraidHandler: TwitchSlashCommandHandler<[]> = {
-    commands: [ "/unraid" ],
+    commands: ["/unraid"],
     validateArgs: () => {
         return {
             success: true,

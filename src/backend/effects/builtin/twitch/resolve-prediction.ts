@@ -14,8 +14,8 @@ const model: EffectType<{
         icon: "fad fa-trophy-alt",
         categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
         dependencies: {
-            twitch: true,
-        },
+            twitch: true
+        }
     },
     optionsTemplate: `
         <eos-container header="Prediction Outcome">
@@ -50,7 +50,7 @@ const model: EffectType<{
 
         logger.debug(`Resolving Twitch prediction "${latestPrediction.title}" with outcome "${winningOutcome.title}"`);
         return await twitchApi.predictions.resolvePrediction(latestPrediction.id, winningOutcome.id);
-    },
+    }
 };
 
 module.exports = model;

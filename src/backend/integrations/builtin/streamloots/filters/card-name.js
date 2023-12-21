@@ -27,18 +27,18 @@ module.exports = {
         const filterCardName = value && value.toLowerCase();
 
         switch (comparisonType) {
-        case ComparisonType.IS:
-            return cardName === filterCardName;
-        case ComparisonType.IS_NOT:
-            return cardName !== filterCardName;
-        case ComparisonType.CONTAINS:
-            return cardName.includes(filterCardName);
-        case ComparisonType.MATCHES_REGEX: {
-            const regex = new RegExp(filterCardName, "gi");
-            return regex.test(cardName);
-        }
-        default:
-            return false;
+            case ComparisonType.IS:
+                return cardName === filterCardName;
+            case ComparisonType.IS_NOT:
+                return cardName !== filterCardName;
+            case ComparisonType.CONTAINS:
+                return cardName.includes(filterCardName);
+            case ComparisonType.MATCHES_REGEX: {
+                const regex = new RegExp(filterCardName, "gi");
+                return regex.test(cardName);
+            }
+            default:
+                return false;
         }
     }
 };

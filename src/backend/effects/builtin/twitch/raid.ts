@@ -14,8 +14,8 @@ const model: EffectType<{
         icon: "fad fa-rocket-launch",
         categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
         dependencies: {
-            twitch: true,
-        },
+            twitch: true
+        }
     },
     optionsTemplate: `
         <eos-container header="Action">
@@ -64,7 +64,7 @@ const model: EffectType<{
         } else {
             await twitchApi.channels.cancelRaid();
         }
-    },
+    }
 };
 
 module.exports = model;

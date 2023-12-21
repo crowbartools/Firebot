@@ -15,8 +15,8 @@ const model: EffectType<{
         icon: "fad fa-bullhorn",
         categories: [EffectCategory.COMMON, EffectCategory.CHAT_BASED, EffectCategory.TWITCH],
         dependencies: {
-            twitch: true,
-        },
+            twitch: true
+        }
     },
     optionsTemplate: `
         <eos-chatter-select effect="effect" title="Announce as"></eos-chatter-select>
@@ -51,7 +51,7 @@ const model: EffectType<{
         await twitchApi.chat.sendAnnouncement(message, color, chatter?.toLowerCase() === "bot");
 
         return true;
-    },
+    }
 };
 
 module.exports = model;

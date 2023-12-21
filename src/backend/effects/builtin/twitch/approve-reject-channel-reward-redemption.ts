@@ -14,8 +14,8 @@ const model: EffectType<{
         icon: "fad fa-check-circle",
         categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
         dependencies: {
-            twitch: true,
-        },
+            twitch: true
+        }
     },
     optionsTemplate: `
         <eos-container header="Reward Info">
@@ -68,7 +68,7 @@ const model: EffectType<{
             effect.redemptionId,
             effect.approve
         );
-    },
+    }
 };
 
 module.exports = model;

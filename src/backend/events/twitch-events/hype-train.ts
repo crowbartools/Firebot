@@ -1,5 +1,5 @@
 import eventManager from "../EventManager";
-import { EventSubChannelHypeTrainContribution } from "@twurple/eventsub-base"
+import { EventSubChannelHypeTrainContribution } from "@twurple/eventsub-base";
 
 export function triggerHypeTrainStart(
     total: number,

@@ -21,18 +21,18 @@ module.exports = {
         const expected = value ? value.toLowerCase() : "";
 
         switch (comparisonType) {
-        case ComparisonType.IS:
-            return actual === expected;
-        case ComparisonType.IS_NOT:
-            return actual !== expected;
-        case ComparisonType.CONTAINS:
-            return actual.includes(expected);
-        case ComparisonType.MATCHES_REGEX: {
-            const regex = new RegExp(expected, "gi");
-            return regex.test(actual);
-        }
-        default:
-            return false;
+            case ComparisonType.IS:
+                return actual === expected;
+            case ComparisonType.IS_NOT:
+                return actual !== expected;
+            case ComparisonType.CONTAINS:
+                return actual.includes(expected);
+            case ComparisonType.MATCHES_REGEX: {
+                const regex = new RegExp(expected, "gi");
+                return regex.test(actual);
+            }
+            default:
+                return false;
         }
     }
 };

@@ -98,7 +98,7 @@ type UserCommand = {
 
 type SystemCommandTriggerEvent = {
     command: CommandDefinition;
-    commandOptions: Record<string, unknown>;
+    commandOptions: Record<string, any>;
     userCommand: UserCommand;
 };
 

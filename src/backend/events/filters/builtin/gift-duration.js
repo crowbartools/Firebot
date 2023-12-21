@@ -26,26 +26,26 @@ module.exports = {
         const giftDuration = eventMeta.giftDuration || 1;
 
         switch (comparisonType) {
-        case ComparisonType.IS: {
-            return giftDuration === value;
-        }
-        case ComparisonType.IS_NOT: {
-            return giftDuration !== value;
-        }
-        case ComparisonType.LESS_THAN: {
-            return giftDuration < value;
-        }
-        case ComparisonType.LESS_THAN_OR_EQUAL_TO: {
-            return giftDuration <= value;
-        }
-        case ComparisonType.GREATER_THAN: {
-            return giftDuration > value;
-        }
-        case ComparisonType.GREATER_THAN_OR_EQUAL_TO: {
-            return giftDuration >= value;
-        }
-        default:
-            return false;
+            case ComparisonType.IS: {
+                return giftDuration === value;
+            }
+            case ComparisonType.IS_NOT: {
+                return giftDuration !== value;
+            }
+            case ComparisonType.LESS_THAN: {
+                return giftDuration < value;
+            }
+            case ComparisonType.LESS_THAN_OR_EQUAL_TO: {
+                return giftDuration <= value;
+            }
+            case ComparisonType.GREATER_THAN: {
+                return giftDuration > value;
+            }
+            case ComparisonType.GREATER_THAN_OR_EQUAL_TO: {
+                return giftDuration >= value;
+            }
+            default:
+                return false;
         }
     }
 };

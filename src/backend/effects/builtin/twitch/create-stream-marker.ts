@@ -12,8 +12,8 @@ const model: EffectType<{
         icon: "fad fa-map-pin",
         categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
         dependencies: {
-            twitch: true,
-        },
+            twitch: true
+        }
     },
     optionsTemplate: `
         <eos-container header="Create Stream Marker">
@@ -32,7 +32,7 @@ const model: EffectType<{
     optionsController: () => {},
     onTriggerEvent: async ({ effect }) => {
         await twitchApi.streams.createStreamMarker(effect.description);
-    },
+    }
 };
 
 module.exports = model;

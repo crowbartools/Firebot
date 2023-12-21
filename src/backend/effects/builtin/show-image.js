@@ -5,7 +5,7 @@ const resourceTokenManager = require("../../resourceTokenManager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/http-server-manager");
 const fs = require('fs-extra');
-const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
+const { EffectCategory } = require('../../../shared/effect-constants');
 const logger = require("../../logwrapper");
 const path = require("path");
 

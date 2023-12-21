@@ -262,327 +262,327 @@ const quotesManagement = {
             }
 
             switch (triggeredArg) {
-            case "add": {
-                if (args.length < 3) {
-                    await twitchChat.sendChatMessage(`Please provide some quote text!`);
+                case "add": {
+                    if (args.length < 3) {
+                        await twitchChat.sendChatMessage(`Please provide some quote text!`);
+                        return resolve();
+                    }
+
+                    const channelData = await TwitchApi.channels.getChannelInformation();
+
+                    const currentGameName = channelData && channelData.gameName ? channelData.gameName : "Unknown game";
+
+                    const newQuote = {
+                        text: args.slice(2, args.length).join(" "),
+                        originator: args[1].replace(/@/g, ""),
+                        creator: event.userCommand.commandSender,
+                        game: currentGameName,
+                        createdAt: moment().toISOString()
+                    };
+                    const newQuoteId = await quotesManager.addQuote(newQuote);
+                    const newQuoteText = await quotesManager.getQuote(newQuoteId);
+                    const formattedQuote = getFormattedQuoteString(newQuoteText);
+                    await twitchChat.sendChatMessage(
+                        `Added ${formattedQuote}`
+                    );
+                    sendToTTS(formattedQuote);
+                    logger.debug(`Quote #${newQuoteId} added!`);
                     return resolve();
                 }
+                case "remove": {
+                    const quoteId = parseInt(args[1]);
+                    if (!isNaN(quoteId)) {
+                        await quotesManager.removeQuote(quoteId);
+                        await twitchChat.sendChatMessage(`Quote ${quoteId} was removed.`);
+                        logger.debug(`A quote was removed: ${quoteId}`);
+                        return resolve();
+                    }
 
-                const channelData = await TwitchApi.channels.getChannelInformation();
-
-                const currentGameName = channelData && channelData.gameName ? channelData.gameName : "Unknown game";
-
-                const newQuote = {
-                    text: args.slice(2, args.length).join(" "),
-                    originator: args[1].replace(/@/g, ""),
-                    creator: event.userCommand.commandSender,
-                    game: currentGameName,
-                    createdAt: moment().toISOString()
-                };
-                const newQuoteId = await quotesManager.addQuote(newQuote);
-                const newQuoteText = await quotesManager.getQuote(newQuoteId);
-                const formattedQuote = getFormattedQuoteString(newQuoteText);
-                await twitchChat.sendChatMessage(
-                    `Added ${formattedQuote}`
-                );
-                sendToTTS(formattedQuote);
-                logger.debug(`Quote #${newQuoteId} added!`);
-                return resolve();
-            }
-            case "remove": {
-                const quoteId = parseInt(args[1]);
-                if (!isNaN(quoteId)) {
-                    await quotesManager.removeQuote(quoteId);
-                    await twitchChat.sendChatMessage(`Quote ${quoteId} was removed.`);
-                    logger.debug(`A quote was removed: ${quoteId}`);
+                    await twitchChat.sendChatMessage(`Sorry! Couldnt find a quote with that id number.`);
+                    logger.error('Quotes: NaN passed to remove quote command.');
                     return resolve();
                 }
+                case "list": {
+                    const cloudSync = require('../../../cloud-sync/profile-sync');
 
-                await twitchChat.sendChatMessage(`Sorry! Couldnt find a quote with that id number.`);
-                logger.error('Quotes: NaN passed to remove quote command.');
-                return resolve();
-            }
-            case "list": {
-                const cloudSync = require('../../../cloud-sync/profile-sync');
+                    const profileJSON = {
+                        username: event.chatMessage.username,
+                        userRoles: event.chatMessage.roles,
+                        profilePage: 'quotes'
+                    };
 
-                const profileJSON = {
-                    username: event.chatMessage.username,
-                    userRoles: event.chatMessage.roles,
-                    profilePage: 'quotes'
-                };
+                    const binId = await cloudSync.syncProfileData(profileJSON);
 
-                const binId = await cloudSync.syncProfileData(profileJSON);
+                    if (binId == null) {
+                        await twitchChat.sendChatMessage("There are no quotes to pull!");
+                    } else {
+                        await twitchChat.sendChatMessage(`Here a list of quotes! https://firebot.app/profile?id=${binId}`);
+                    }
 
-                if (binId == null) {
-                    await twitchChat.sendChatMessage("There are no quotes to pull!");
-                } else {
-                    await twitchChat.sendChatMessage(`Here a list of quotes! https://firebot.app/profile?id=${binId}`);
+                    return resolve();
                 }
+                case "search": {
 
-                return resolve();
-            }
-            case "search": {
+                    // strip first token("search") from input, and join the remaining using space as the delimiter
+                    const searchTerm = args.slice(1).join(" ");
 
-                // strip first token("search") from input, and join the remaining using space as the delimiter
-                const searchTerm = args.slice(1).join(" ");
+                    // attempt to get a random quote containing the text as an exact match
+                    const quote = await quotesManager.getRandomQuoteContainingText(searchTerm);
 
-                // attempt to get a random quote containing the text as an exact match
-                const quote = await quotesManager.getRandomQuoteContainingText(searchTerm);
+                    // quote found
+                    if (quote != null) {
 
-                // quote found
-                if (quote != null) {
+                        // format quote
+                        const formattedQuote = getFormattedQuoteString(quote);
 
-                    // format quote
-                    const formattedQuote = getFormattedQuoteString(quote);
+                        // send to chat
+                        await twitchChat.sendChatMessage(formattedQuote);
+                        sendToTTS(formattedQuote);
 
-                    // send to chat
-                    await twitchChat.sendChatMessage(formattedQuote);
-                    sendToTTS(formattedQuote);
+                        // log (Maybe move this to the manager?)
+                        logger.debug(`We pulled a quote using an id: ${formattedQuote}`);
 
-                    // log (Maybe move this to the manager?)
-                    logger.debug(`We pulled a quote using an id: ${formattedQuote}`);
+                        // no matching quote found
+                    } else {
 
-                // no matching quote found
-                } else {
+                        await twitchChat.sendChatMessage(`Sorry! We couldnt find a quote using those terms.`);
+                    }
 
-                    await twitchChat.sendChatMessage(`Sorry! We couldnt find a quote using those terms.`);
+                    // resolve promise
+                    return resolve();
                 }
+                case "searchuser": {
+                    const username = args[1].replace("@", "");
 
-                // resolve promise
-                return resolve();
-            }
-            case "searchuser": {
-                const username = args[1].replace("@", "");
+                    const quote = await quotesManager.getRandomQuoteByAuthor(username);
 
-                const quote = await quotesManager.getRandomQuoteByAuthor(username);
+                    if (quote != null) {
 
-                if (quote != null) {
-
-                    const formattedQuote = getFormattedQuoteString(quote);
-                    sendToTTS(formattedQuote);
-                    await twitchChat.sendChatMessage(formattedQuote);
-                } else {
-                    await twitchChat.sendChatMessage(`Sorry! We couldn't find a quote by ${username}`);
+                        const formattedQuote = getFormattedQuoteString(quote);
+                        sendToTTS(formattedQuote);
+                        await twitchChat.sendChatMessage(formattedQuote);
+                    } else {
+                        await twitchChat.sendChatMessage(`Sorry! We couldn't find a quote by ${username}`);
+                    }
+                    return resolve();
                 }
-                return resolve();
-            }
-            case "searchgame": {
-                const searchTerm = args.slice(1).join(" ");
-                const quote = await quotesManager.getRandomQuoteByGame(searchTerm);
-                if (quote != null) {
-                    const formattedQuote = getFormattedQuoteString(quote);
-                    await twitchChat.sendChatMessage(formattedQuote);
-                    sendToTTS(formattedQuote);
-                } else {
-                    await twitchChat.sendChatMessage(`Sorry! We couldn't find a quote with game ${searchTerm}`);
+                case "searchgame": {
+                    const searchTerm = args.slice(1).join(" ");
+                    const quote = await quotesManager.getRandomQuoteByGame(searchTerm);
+                    if (quote != null) {
+                        const formattedQuote = getFormattedQuoteString(quote);
+                        await twitchChat.sendChatMessage(formattedQuote);
+                        sendToTTS(formattedQuote);
+                    } else {
+                        await twitchChat.sendChatMessage(`Sorry! We couldn't find a quote with game ${searchTerm}`);
+                    }
+                    return resolve();
                 }
-                return resolve();
-            }
-            case "searchdate": {
-                const day = !isNaN(args[1]) ? parseInt(args[1]) : null;
-                const month = !isNaN(args[2]) ? parseInt(args[2]) : null;
-                const year = !isNaN(args[3]) ? parseInt(args[3]) : null;
+                case "searchdate": {
+                    const day = !isNaN(args[1]) ? parseInt(args[1]) : null;
+                    const month = !isNaN(args[2]) ? parseInt(args[2]) : null;
+                    const year = !isNaN(args[3]) ? parseInt(args[3]) : null;
 
-                if (day == null || month == null || day > 31 || day < 1 ||
+                    if (day == null || month == null || day > 31 || day < 1 ||
                     month > 12 || month < 1) {
-                    await twitchChat.sendChatMessage(`Invalid quote date search!`);
+                        await twitchChat.sendChatMessage(`Invalid quote date search!`);
+                        return resolve();
+                    }
+
+                    const quote = await quotesManager.getRandomQuoteByDate({
+                        day,
+                        month,
+                        year
+                    });
+
+                    if (quote != null) {
+                        const formattedQuote = getFormattedQuoteString(quote);
+                        await twitchChat.sendChatMessage(formattedQuote);
+                        sendToTTS(formattedQuote);
+                    } else {
+                        await twitchChat.sendChatMessage(`Sorry! We couldn't find a quote with date ${day}/${month}/${year || "*"}`);
+                    }
                     return resolve();
                 }
+                case "edittext": {
+                    if (args.length < 3) {
+                        await twitchChat.sendChatMessage(`Invalid usage! ${event.userCommand.trigger} edittext [quoteId] [newText]`);
+                        return resolve();
+                    }
 
-                const quote = await quotesManager.getRandomQuoteByDate({
-                    day,
-                    month,
-                    year
-                });
+                    const quoteId = parseInt(args[1]);
+                    if (isNaN(quoteId)) {
+                        await twitchChat.sendChatMessage(`Invalid Quote Id!`);
+                        return resolve();
+                    }
 
-                if (quote != null) {
+                    const quote = await quotesManager.getQuote(quoteId);
+
+                    if (quote == null) {
+                        await twitchChat.sendChatMessage(`Cannot find quote with id ${quoteId}`);
+                        return resolve();
+                    }
+
+                    const newText = args.slice(2).join(" ");
+                    quote.text = newText;
+
+                    try {
+                        await quotesManager.updateQuote(quote);
+                    } catch (err) {
+                        await twitchChat.sendChatMessage(`Failed to update quote ${quoteId}!`);
+                        return resolve();
+                    }
+
                     const formattedQuote = getFormattedQuoteString(quote);
-                    await twitchChat.sendChatMessage(formattedQuote);
-                    sendToTTS(formattedQuote);
-                } else {
-                    await twitchChat.sendChatMessage(`Sorry! We couldn't find a quote with date ${day}/${month}/${year || "*"}`);
-                }
-                return resolve();
-            }
-            case "edittext": {
-                if (args.length < 3) {
-                    await twitchChat.sendChatMessage(`Invalid usage! ${event.userCommand.trigger} edittext [quoteId] [newText]`);
-                    return resolve();
-                }
 
-                const quoteId = parseInt(args[1]);
-                if (isNaN(quoteId)) {
-                    await twitchChat.sendChatMessage(`Invalid Quote Id!`);
-                    return resolve();
-                }
-
-                const quote = await quotesManager.getQuote(quoteId);
-
-                if (quote == null) {
-                    await twitchChat.sendChatMessage(`Cannot find quote with id ${quoteId}`);
-                    return resolve();
-                }
-
-                const newText = args.slice(2).join(" ");
-                quote.text = newText;
-
-                try {
-                    await quotesManager.updateQuote(quote);
-                } catch (err) {
-                    await twitchChat.sendChatMessage(`Failed to update quote ${quoteId}!`);
-                    return resolve();
-                }
-
-                const formattedQuote = getFormattedQuoteString(quote);
-
-                await twitchChat.sendChatMessage(
-                    `Edited ${formattedQuote}`
-                );
-
-                // resolve promise
-                return resolve();
-            }
-            case "editgame": {
-                if (args.length < 3) {
-                    await twitchChat.sendChatMessage(`Invalid usage! ${event.userCommand.trigger} editgame [quoteId] [newGame]`);
-                    return resolve();
-                }
-
-                const quoteId = parseInt(args[1]);
-                if (isNaN(quoteId)) {
-                    await twitchChat.sendChatMessage(`Invalid Quote Id!`);
-                    return resolve();
-                }
-
-                const quote = await quotesManager.getQuote(quoteId);
-
-                if (quote == null) {
-                    await twitchChat.sendChatMessage(`Cannot find quote with id ${quoteId}`);
-                    return resolve();
-                }
-
-                const newGameName = args.slice(2).join(" ");
-                quote.game = newGameName;
-
-                try {
-                    await quotesManager.updateQuote(quote);
-                } catch (err) {
-                    await twitchChat.sendChatMessage(`Failed to update quote ${quoteId}!`);
-                    return resolve();
-                }
-
-                const formattedQuote = getFormattedQuoteString(quote);
-                await twitchChat.sendChatMessage(
-                    `Edited ${formattedQuote}`
-                );
-
-                // resolve promise
-                return resolve();
-            }
-            case "editdate": {
-
-                const dateFormat = commandOptions.quoteDateFormat;
-
-                if (args.length < 3) {
-                    await twitchChat.sendChatMessage(`Invalid usage! ${event.userCommand.trigger} editdate [quoteId] ${dateFormat}`);
-                    return resolve();
-                }
-
-                const quoteId = parseInt(args[1]);
-                if (isNaN(quoteId)) {
-                    await twitchChat.sendChatMessage(`Invalid Quote Id!`);
-                    return resolve();
-                }
-
-                const quote = await quotesManager.getQuote(quoteId);
-
-                if (quote == null) {
-                    await twitchChat.sendChatMessage(`Cannot find quote with id ${quoteId}`);
-                    return resolve();
-                }
-
-                const newDate = args.slice(2).join(" ");
-
-                const date = moment(newDate, dateFormat);
-                if (!date.isValid()) {
-                    await twitchChat.sendChatMessage(`Invalid date format!`);
-                    return resolve();
-                }
-
-                quote.createdAt = date.toISOString();
-
-                try {
-                    await quotesManager.updateQuote(quote);
-                } catch (err) {
-                    await twitchChat.sendChatMessage(`Failed to update quote ${quoteId}!`);
-                    return resolve();
-                }
-
-                const formattedQuote = getFormattedQuoteString(quote);
-                await twitchChat.sendChatMessage(
-                    `Edited ${formattedQuote}`
-                );
-
-                // resolve promise
-                return resolve();
-            }
-            case "edituser": {
-                if (args.length < 3) {
                     await twitchChat.sendChatMessage(
-                        `Invalid usage! ${event.userCommand.trigger} edituser [quoteId] [newUsername]`);
+                        `Edited ${formattedQuote}`
+                    );
+
+                    // resolve promise
                     return resolve();
                 }
+                case "editgame": {
+                    if (args.length < 3) {
+                        await twitchChat.sendChatMessage(`Invalid usage! ${event.userCommand.trigger} editgame [quoteId] [newGame]`);
+                        return resolve();
+                    }
 
-                const quoteId = parseInt(args[1]);
-                if (isNaN(quoteId)) {
-                    await twitchChat.sendChatMessage(
-                        `Invalid Quote Id!`);
-                    return resolve();
-                }
+                    const quoteId = parseInt(args[1]);
+                    if (isNaN(quoteId)) {
+                        await twitchChat.sendChatMessage(`Invalid Quote Id!`);
+                        return resolve();
+                    }
 
-                const quote = await quotesManager.getQuote(quoteId);
+                    const quote = await quotesManager.getQuote(quoteId);
 
-                if (quote == null) {
-                    await twitchChat.sendChatMessage(
-                        `Cannot find quote with id ${quoteId}`);
-                    return resolve();
-                }
+                    if (quote == null) {
+                        await twitchChat.sendChatMessage(`Cannot find quote with id ${quoteId}`);
+                        return resolve();
+                    }
 
-                const newUser = args[2].replace(/@/g, "");
-                quote.originator = newUser;
+                    const newGameName = args.slice(2).join(" ");
+                    quote.game = newGameName;
 
-                try {
-                    await quotesManager.updateQuote(quote);
-                } catch (err) {
-                    await twitchChat.sendChatMessage(
-                        `Failed to update quote ${quoteId}!`);
-                    return resolve();
-                }
+                    try {
+                        await quotesManager.updateQuote(quote);
+                    } catch (err) {
+                        await twitchChat.sendChatMessage(`Failed to update quote ${quoteId}!`);
+                        return resolve();
+                    }
 
-                const formattedQuote = getFormattedQuoteString(quote);
-                await twitchChat.sendChatMessage(
-                    `Edited ${formattedQuote}`
-                );
-
-                // resolve promise
-                return resolve();
-            }
-            default: {
-
-                // Fallback
-                const quote = await quotesManager.getRandomQuote();
-
-                if (quote) {
                     const formattedQuote = getFormattedQuoteString(quote);
-                    await twitchChat.sendChatMessage(formattedQuote);
-                    sendToTTS(formattedQuote);
+                    await twitchChat.sendChatMessage(
+                        `Edited ${formattedQuote}`
+                    );
 
-                    logger.debug(`We pulled a quote by id: ${formattedQuote}`);
-                } else {
-                    await twitchChat.sendChatMessage(`Could not find a random quote!`);
+                    // resolve promise
+                    return resolve();
                 }
-                return resolve();
-            }
+                case "editdate": {
+
+                    const dateFormat = commandOptions.quoteDateFormat;
+
+                    if (args.length < 3) {
+                        await twitchChat.sendChatMessage(`Invalid usage! ${event.userCommand.trigger} editdate [quoteId] ${dateFormat}`);
+                        return resolve();
+                    }
+
+                    const quoteId = parseInt(args[1]);
+                    if (isNaN(quoteId)) {
+                        await twitchChat.sendChatMessage(`Invalid Quote Id!`);
+                        return resolve();
+                    }
+
+                    const quote = await quotesManager.getQuote(quoteId);
+
+                    if (quote == null) {
+                        await twitchChat.sendChatMessage(`Cannot find quote with id ${quoteId}`);
+                        return resolve();
+                    }
+
+                    const newDate = args.slice(2).join(" ");
+
+                    const date = moment(newDate, dateFormat);
+                    if (!date.isValid()) {
+                        await twitchChat.sendChatMessage(`Invalid date format!`);
+                        return resolve();
+                    }
+
+                    quote.createdAt = date.toISOString();
+
+                    try {
+                        await quotesManager.updateQuote(quote);
+                    } catch (err) {
+                        await twitchChat.sendChatMessage(`Failed to update quote ${quoteId}!`);
+                        return resolve();
+                    }
+
+                    const formattedQuote = getFormattedQuoteString(quote);
+                    await twitchChat.sendChatMessage(
+                        `Edited ${formattedQuote}`
+                    );
+
+                    // resolve promise
+                    return resolve();
+                }
+                case "edituser": {
+                    if (args.length < 3) {
+                        await twitchChat.sendChatMessage(
+                            `Invalid usage! ${event.userCommand.trigger} edituser [quoteId] [newUsername]`);
+                        return resolve();
+                    }
+
+                    const quoteId = parseInt(args[1]);
+                    if (isNaN(quoteId)) {
+                        await twitchChat.sendChatMessage(
+                            `Invalid Quote Id!`);
+                        return resolve();
+                    }
+
+                    const quote = await quotesManager.getQuote(quoteId);
+
+                    if (quote == null) {
+                        await twitchChat.sendChatMessage(
+                            `Cannot find quote with id ${quoteId}`);
+                        return resolve();
+                    }
+
+                    const newUser = args[2].replace(/@/g, "");
+                    quote.originator = newUser;
+
+                    try {
+                        await quotesManager.updateQuote(quote);
+                    } catch (err) {
+                        await twitchChat.sendChatMessage(
+                            `Failed to update quote ${quoteId}!`);
+                        return resolve();
+                    }
+
+                    const formattedQuote = getFormattedQuoteString(quote);
+                    await twitchChat.sendChatMessage(
+                        `Edited ${formattedQuote}`
+                    );
+
+                    // resolve promise
+                    return resolve();
+                }
+                default: {
+
+                    // Fallback
+                    const quote = await quotesManager.getRandomQuote();
+
+                    if (quote) {
+                        const formattedQuote = getFormattedQuoteString(quote);
+                        await twitchChat.sendChatMessage(formattedQuote);
+                        sendToTTS(formattedQuote);
+
+                        logger.debug(`We pulled a quote by id: ${formattedQuote}`);
+                    } else {
+                        await twitchChat.sendChatMessage(`Could not find a random quote!`);
+                    }
+                    return resolve();
+                }
             }
         });
     }

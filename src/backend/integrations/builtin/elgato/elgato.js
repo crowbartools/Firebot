@@ -46,15 +46,15 @@ class ElgatoIntegration extends EventEmitter {
             const settings = {};
 
             switch (keyLight.options.toggleType) {
-            case "toggle":
-                settings.on = light.options.lights[0].on === 1 ? 0 : 1;
-                break;
-            case "enable":
-                settings.on = 1;
-                break;
-            case "disable":
-                settings.on = 0;
-                break;
+                case "toggle":
+                    settings.on = light.options.lights[0].on === 1 ? 0 : 1;
+                    break;
+                case "enable":
+                    settings.on = 1;
+                    break;
+                case "disable":
+                    settings.on = 0;
+                    break;
             }
 
             if (keyLight.options.brightness) {
@@ -86,15 +86,15 @@ class ElgatoIntegration extends EventEmitter {
             const settings = {};
 
             switch (lightStrip.options.toggleType) {
-            case "toggle":
-                settings.on = light.options.lights[0].on === 1 ? 0 : 1;
-                break;
-            case "enable":
-                settings.on = 1;
-                break;
-            case "disable":
-                settings.on = 0;
-                break;
+                case "toggle":
+                    settings.on = light.options.lights[0].on === 1 ? 0 : 1;
+                    break;
+                case "enable":
+                    settings.on = 1;
+                    break;
+                case "disable":
+                    settings.on = 0;
+                    break;
             }
 
             if (lightStrip.options.color) {

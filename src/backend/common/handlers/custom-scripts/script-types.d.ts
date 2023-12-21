@@ -1,65 +1,65 @@
 type ScriptParameters = Record<
-  string,
-  {
+string,
+{
     type: string;
     description: string;
     secondaryDescription: string;
     value: unknown;
     default: unknown;
-  }
+}
 >;
 
 type ScriptReturnObject = {
-  success: boolean;
-  errorMessage?: string;
-  effects: unknown[] | { id: string; list: unknown[] };
-  callback?: VoidFunction;
+    success: boolean;
+    errorMessage?: string;
+    effects: unknown[] | { id: string; list: unknown[] };
+    callback?: VoidFunction;
 };
 
 type Trigger = {
-  type: string;
-  metadata: Record<string, unknown>;
+    type: string;
+    metadata: Record<string, unknown>;
 };
 
 type RunRequest = {
-  parameters: Record<string, unknown>;
-  modules: Record<string, unknown>;
-  firebot: {
-    accounts: {
-      streamer: unknown;
-      bot: unknown;
+    parameters: Record<string, unknown>;
+    modules: Record<string, unknown>;
+    firebot: {
+        accounts: {
+            streamer: unknown;
+            bot: unknown;
+        };
+        settings: {
+            webServerPort: number;
+        };
+        version: string;
     };
-    settings: {
-      webServerPort: number;
-    };
-    version: string;
-  };
-  trigger: Trigger;
+    trigger: Trigger;
 };
 
 type CustomScriptManifest = {
-  name: string;
-  description: string;
-  version: string;
-  author: string;
-  website?: string;
-  startupOnly?: boolean;
-  firebotVersion?: "5";
+    name: string;
+    description: string;
+    version: string;
+    author: string;
+    website?: string;
+    startupOnly?: boolean;
+    firebotVersion?: "5";
 };
 
 export type ScriptData = {
-  id: string;
-  name: string;
-  scriptName: string;
-  parameters: ScriptParameters;
+    id: string;
+    name: string;
+    scriptName: string;
+    parameters: ScriptParameters;
 };
 
 export type CustomScript = {
-  getScriptManifest(): CustomScriptManifest | PromiseLike<CustomScriptManifest>;
-  getDefaultParameters(): ScriptParameters;
-  run(
-    runRequest: RunRequest
-  ): void | PromiseLike<void> | ScriptReturnObject | PromiseLike<ScriptReturnObject>;
-  parametersUpdated?: (parameters: Record<string, unknown>) => void | PromiseLike<void>;
-  stop?: () => void | PromiseLike<void>;
+    getScriptManifest(): CustomScriptManifest | PromiseLike<CustomScriptManifest>;
+    getDefaultParameters(): ScriptParameters;
+    run(
+        runRequest: RunRequest
+    ): void | PromiseLike<void> | ScriptReturnObject | PromiseLike<ScriptReturnObject>;
+    parametersUpdated?: (parameters: Record<string, unknown>) => void | PromiseLike<void>;
+    stop?: () => void | PromiseLike<void>;
 };

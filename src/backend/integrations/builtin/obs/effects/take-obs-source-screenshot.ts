@@ -17,7 +17,7 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
         name: "Take OBS Source Screenshot",
         description: "Takes a screenshot of an OBS Source and saves it.",
         icon: "fad fa-camera-retro",
-        categories: ["common"],
+        categories: ["common"]
     },
     optionsTemplate: `
         <eos-container header="OBS Source">
@@ -28,7 +28,7 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
                     <small ng-bind-html="item.type | highlight: $select.search"></small>
                 </ui-select-choices>
             </ui-select>
-            
+
             <div style="padding-top:20px">
             <label class="control-fb control--checkbox"> Use Active Scene <tooltip text="'Take a screenshot of the active scene.'"></tooltip>
                 <input type="checkbox" ng-model="effect.useActiveScene">
@@ -36,7 +36,7 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
             </label>
         </div>
         </eos-container>
-        
+
         <div class="effect-setting-container setting-padtop">
     <div class="effect-specific-title"><h4>Image Settings</h4></div>
     <div class="effect-setting-content">
@@ -56,7 +56,7 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
             <file-chooser model="effect.file" options="{ filters: [ {name: 'Images', extensions: ['bmp','jpeg','jpg','pbm','pgm','png','ppm','xbm','xpm']} ]}"></file-chooser>
         </div>
     </div>
-        
+
     <div class="effect-setting-container setting-padtop">
     <div class="effect-specific-title"><h4>Optional Image Settings</h4></div>
     <div class="effect-setting-content">
@@ -125,7 +125,7 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
         $scope.getSources();
     },
     optionsValidator: (effect) => {
-        let errors: string[] = [];
+        const errors: string[] = [];
         if (!effect.useActiveScene && effect.source == null) {
             errors.push("You need to select a source!");
         }
@@ -138,15 +138,15 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
         return errors;
     },
     onTriggerEvent: async ({ effect }) => {
-        let screenshotSettings: OBSSourceScreenshotSettings = {
+        const screenshotSettings: OBSSourceScreenshotSettings = {
             sourceName: effect.useActiveScene ? await getCurrentSceneName() : effect.source,
             imageFormat: effect.format,
             imageHeight: effect.height,
             imageWidth: effect.width,
             imageCompressionQuality: effect.quality
-        }
+        };
 
-        let screenshot = await takeSourceScreenshot(screenshotSettings);
+        const screenshot = await takeSourceScreenshot(screenshotSettings);
 
         if (screenshot == null) {
             logger.error("Source screenshot is null, ignoring.");
@@ -155,5 +155,5 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
 
         fs.writeFileSync(effect.file, screenshot.split("base64,")[1], "base64");
         return true;
-    },
+    }
 };

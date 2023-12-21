@@ -30,26 +30,26 @@ module.exports = {
         const donationAmount = eventMeta.donationAmount || 0;
 
         switch (comparisonType) {
-        case ComparisonType.IS: {
-            return donationAmount === value;
-        }
-        case ComparisonType.IS_NOT: {
-            return donationAmount !== value;
-        }
-        case ComparisonType.LESS_THAN: {
-            return donationAmount < value;
-        }
-        case ComparisonType.LESS_THAN_OR_EQUAL_TO: {
-            return donationAmount <= value;
-        }
-        case ComparisonType.GREATER_THAN: {
-            return donationAmount > value;
-        }
-        case ComparisonType.GREATER_THAN_OR_EQUAL_TO: {
-            return donationAmount >= value;
-        }
-        default:
-            return false;
+            case ComparisonType.IS: {
+                return donationAmount === value;
+            }
+            case ComparisonType.IS_NOT: {
+                return donationAmount !== value;
+            }
+            case ComparisonType.LESS_THAN: {
+                return donationAmount < value;
+            }
+            case ComparisonType.LESS_THAN_OR_EQUAL_TO: {
+                return donationAmount <= value;
+            }
+            case ComparisonType.GREATER_THAN: {
+                return donationAmount > value;
+            }
+            case ComparisonType.GREATER_THAN_OR_EQUAL_TO: {
+                return donationAmount >= value;
+            }
+            default:
+                return false;
         }
     }
 };

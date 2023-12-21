@@ -21,14 +21,14 @@ class ChannelRewardManager {
         if (accountAccess.getAccounts().streamer.broadcasterType === "") {
             return;
         }
-    
+
         logger.debug(`Attempting to load channel rewards...`);
-    
+
         try {
             // Load existing reward data
             const channelRewardsData: Record<string, SavedChannelReward> = this.getChannelRewardsDb().getData("/") || {};
             const rewards = Object.values(channelRewardsData);
-    
+
             // Get all manageable rewards from Twitch
             const twitchManageableRewards: CustomReward[] = await twitchApi.channelRewards.getManageableCustomChannelRewards();
             if (twitchManageableRewards == null) {
@@ -36,7 +36,7 @@ class ChannelRewardManager {
                 this.channelRewards = channelRewardsData;
                 return;
             }
-    
+
             // Determine new manageable rewards
             const newManageableChannelRewards = twitchManageableRewards
                 .filter(nr => rewards.every(r => r.id !== nr.id))
@@ -47,7 +47,7 @@ class ChannelRewardManager {
                         twitchData: nr
                     };
                 });
-    
+
             // Get all unmanageable rewards from Twitch
             const twitchUnmanageableRewards = await twitchApi.channelRewards.getUnmanageableCustomChannelRewards();
             if (twitchUnmanageableRewards == null) {
@@ -69,7 +69,7 @@ class ChannelRewardManager {
 
             // Sync current reward Twitch data/manageability status, remove deleted rewards, then add new rewards
             const syncedRewards: Record<string, SavedChannelReward> = rewards.map(r => {
-                let rewardTwitchData = twitchManageableRewards.find(tc => tc.id === r.id);
+                const rewardTwitchData = twitchManageableRewards.find(tc => tc.id === r.id);
 
                 // If we have a match, this is a manageable reward
                 if (rewardTwitchData != null) {
@@ -90,11 +90,11 @@ class ChannelRewardManager {
                     acc[current.id] = current;
                     return acc;
                 }, {});
-    
+
             this.getChannelRewardsDb().push("/", syncedRewards);
-    
+
             this.channelRewards = syncedRewards;
-    
+
             logger.debug(`Loaded channel rewards.`);
         } catch (err) {
             logger.warn(`There was an error reading channel rewards file.`, err);
@@ -105,7 +105,7 @@ class ChannelRewardManager {
         if (channelReward == null) {
             return null;
         }
-    
+
         if (channelReward.id == null) {
             const twitchData = await twitchApi.channelRewards.createCustomChannelReward(channelReward.twitchData);
             if (twitchData == null) {
@@ -116,20 +116,20 @@ class ChannelRewardManager {
         } else if (channelReward.manageable) {
             await twitchApi.channelRewards.updateCustomChannelReward(channelReward.twitchData);
         }
-    
+
         this.channelRewards[channelReward.id] = channelReward;
-    
+
         try {
             const channelRewardsDb = this.getChannelRewardsDb();
-    
-            channelRewardsDb.push("/" + channelReward.id, channelReward);
-    
+
+            channelRewardsDb.push(`/${channelReward.id}`, channelReward);
+
             logger.debug(`Saved channel reward ${channelReward.id} to file.`);
-    
+
             if (emitUpdateEvent) {
                 frontendCommunicator.send("channel-reward-updated", channelReward);
             }
-    
+
             return channelReward;
         } catch (err) {
             logger.warn(`There was an error saving a channel reward.`, err);
@@ -148,16 +148,16 @@ class ChannelRewardManager {
             acc[current.id] = current;
             return acc;
         }, {});
-    
+
         this.channelRewards = rewardsObject;
-    
+
         try {
             const channelRewardsDb = this.getChannelRewardsDb();
-    
+
             channelRewardsDb.push("/", this.channelRewards);
-    
+
             logger.debug(`Saved all channel rewards to file.`);
-    
+
         } catch (err) {
             logger.warn(`There was an error saving all channel rewards.`, err);
             return null;
@@ -168,30 +168,30 @@ class ChannelRewardManager {
         if (channelRewardId == null) {
             return;
         }
-    
+
         delete this.channelRewards[channelRewardId];
-    
+
         try {
             const channelRewardsDb = this.getChannelRewardsDb();
-    
-            channelRewardsDb.delete("/" + this.channelRewards);
-    
+
+            channelRewardsDb.delete(`/${this.channelRewards}`);
+
             await twitchApi.channelRewards.deleteCustomChannelReward(channelRewardId);
-    
+
             logger.debug(`Deleted channel reward: ${this.channelRewards}`);
-    
+
         } catch (err) {
             logger.warn(`There was an error deleting a channel reward.`, err);
         }
     }
-    
+
     getChannelReward(channelRewardId: string): SavedChannelReward {
         if (channelRewardId == null) {
             return null;
         }
         return this.channelRewards[channelRewardId];
     }
-    
+
     getChannelRewardIdByName(channelRewardName: string): string {
         if (channelRewardName == null) {
             return null;
@@ -199,7 +199,7 @@ class ChannelRewardManager {
         const channelReward = Object.values(this.channelRewards)
             .filter(r => r.twitchData != null)
             .find(r => r.twitchData.title === channelRewardName);
-    
+
         return channelReward ? channelReward.id : null;
     }
 
@@ -208,9 +208,9 @@ class ChannelRewardManager {
         if (savedReward == null || savedReward.effects == null || savedReward.effects.list == null) {
             return;
         }
-    
+
         const effectRunner = require("../common/effect-runner");
-    
+
         const processEffectsRequest = {
             trigger: {
                 type: manual ? EffectTrigger.MANUAL : EffectTrigger.CHANNEL_REWARD,
@@ -218,11 +218,11 @@ class ChannelRewardManager {
             },
             effects: savedReward.effects
         };
-    
+
         try {
             return effectRunner.processEffects(processEffectsRequest);
         } catch (reason) {
-            console.log("error when running effects: " + reason);
+            console.log(`error when running effects: ${reason}`);
         }
     }
 }

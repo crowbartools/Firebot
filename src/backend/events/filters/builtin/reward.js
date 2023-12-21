@@ -42,12 +42,12 @@ module.exports = {
         const expected = value;
 
         switch (comparisonType) {
-        case "is":
-            return actual === expected;
-        case "is not":
-            return actual !== expected;
-        default:
-            return false;
+            case "is":
+                return actual === expected;
+            case "is not":
+                return actual !== expected;
+            default:
+                return false;
         }
     }
 };

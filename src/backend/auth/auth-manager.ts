@@ -13,7 +13,7 @@ class AuthManager extends EventEmitter {
         super();
 
         this._authProviders = [];
-        this._httpPort = settings.getWebServerPort()
+        this._httpPort = settings.getWebServerPort();
     }
 
     registerAuthProvider(provider: AuthProviderDefinition): void {
@@ -29,17 +29,17 @@ class AuthManager extends EventEmitter {
         let authorizationUri = "";
 
         switch (provider.auth.type) {
-        case "token":
-            authorizationUri = oauthClient.token.getUri();
-            break;
+            case "token":
+                authorizationUri = oauthClient.token.getUri();
+                break;
 
-        case "code":
-            authorizationUri = oauthClient.code.getUri();
-            break;
+            case "code":
+                authorizationUri = oauthClient.code.getUri();
+                break;
 
-        case "device":
-            authorizationUri = `${provider.auth.tokenHost}${provider.auth.authorizePath}`;
-            break;
+            case "device":
+                authorizationUri = `${provider.auth.tokenHost}${provider.auth.authorizePath}`;
+                break;
         }
 
         const tokenUri = provider.auth.type === "device"
@@ -88,7 +88,7 @@ class AuthManager extends EventEmitter {
         });
     }
 
-    async refreshTokenIfExpired(providerId: string, tokenData: any): Promise<any> {
+    async refreshTokenIfExpired(providerId: string, tokenData: ClientOAuth2.Data): Promise<unknown> {
         const provider = this.getAuthProvider(providerId);
         let accessToken = provider.oauthClient.createToken(tokenData);
 
@@ -115,7 +115,6 @@ class AuthManager extends EventEmitter {
             return;
         }
 
-        const accessToken = provider.oauthClient.createToken(tokenData);
         try {
             // Revokes both tokens, refresh token is only revoked if the access_token is properly revoked
             // TODO
@@ -124,7 +123,7 @@ class AuthManager extends EventEmitter {
         }
     }
 
-    successfulAuth(providerId: string, tokenData: any): void {
+    successfulAuth(providerId: string, tokenData: unknown): void {
         this.emit("auth-success", { providerId: providerId, tokenData: tokenData });
     }
 }

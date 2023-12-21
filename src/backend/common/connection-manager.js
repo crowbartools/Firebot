@@ -126,13 +126,13 @@ class ConnectionManager extends EventEmitter {
 
     updateServiceConnection(serviceId, shouldConnect) {
         switch (serviceId) {
-        case "chat":
-            return this.updateChatConnection(shouldConnect);
-        default:
-            if (serviceId.startsWith("integration.")) {
-                const integrationId = serviceId.replace("integration.", "");
-                return this.updateIntegrationConnection(integrationId, shouldConnect);
-            }
+            case "chat":
+                return this.updateChatConnection(shouldConnect);
+            default:
+                if (serviceId.startsWith("integration.")) {
+                    const integrationId = serviceId.replace("integration.", "");
+                    return this.updateIntegrationConnection(integrationId, shouldConnect);
+                }
         }
         return false;
     }

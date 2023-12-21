@@ -26,26 +26,26 @@ module.exports = {
         const giftCountCount = eventMeta.subCount || 0;
 
         switch (comparisonType) {
-        case ComparisonType.IS: {
-            return giftCountCount === value;
-        }
-        case ComparisonType.IS_NOT: {
-            return giftCountCount !== value;
-        }
-        case ComparisonType.LESS_THAN: {
-            return giftCountCount < value;
-        }
-        case ComparisonType.LESS_THAN_OR_EQUAL_TO: {
-            return giftCountCount <= value;
-        }
-        case ComparisonType.GREATER_THAN: {
-            return giftCountCount > value;
-        }
-        case ComparisonType.GREATER_THAN_OR_EQUAL_TO: {
-            return giftCountCount >= value;
-        }
-        default:
-            return false;
+            case ComparisonType.IS: {
+                return giftCountCount === value;
+            }
+            case ComparisonType.IS_NOT: {
+                return giftCountCount !== value;
+            }
+            case ComparisonType.LESS_THAN: {
+                return giftCountCount < value;
+            }
+            case ComparisonType.LESS_THAN_OR_EQUAL_TO: {
+                return giftCountCount <= value;
+            }
+            case ComparisonType.GREATER_THAN: {
+                return giftCountCount > value;
+            }
+            case ComparisonType.GREATER_THAN_OR_EQUAL_TO: {
+                return giftCountCount >= value;
+            }
+            default:
+                return false;
         }
     }
 };

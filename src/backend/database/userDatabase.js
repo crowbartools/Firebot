@@ -779,15 +779,15 @@ async function sanitizeDbInput(changePacket) {
         return;
     }
     switch (changePacket.field) {
-    case "lastSeen":
-    case "joinDate":
-        changePacket.value = moment(changePacket.value).valueOf();
-        break;
-    case "minutesInChannel":
-    case "chatMessages":
-        changePacket.value = parseInt(changePacket.value);
-        break;
-    default:
+        case "lastSeen":
+        case "joinDate":
+            changePacket.value = moment(changePacket.value).valueOf();
+            break;
+        case "minutesInChannel":
+        case "chatMessages":
+            changePacket.value = parseInt(changePacket.value);
+            break;
+        default:
     }
     return changePacket;
 }
@@ -841,7 +841,7 @@ function updateViewerDataField(userId, field, value) {
     const updateObject = {};
     updateObject[field] = value;
 
-    db.update({ _id: userId }, { $set: updateObject }, { returnUpdatedDocs: true }, function(err, _, updatedDoc) { //eslint-disable-line no-unused-vars
+    db.update({ _id: userId }, { $set: updateObject }, { returnUpdatedDocs: true }, function(err, _, updatedDoc) { //eslint-disable-line @typescript-eslint/no-unused-vars
         if (err) {
             logger.error("Error updating user.", err);
         }

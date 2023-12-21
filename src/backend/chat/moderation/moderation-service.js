@@ -42,33 +42,32 @@ parentPort.on("message", event => {
     }
 
     switch (event.type) {
-    case "exit":
-        parentPort.close();
-        break;
-    case "bannedWordsUpdate":
-        bannedWords = event.words;
-        break;
-    case "bannedRegexUpdate":
-        regularExpressions = event.regularExpressions;
-        break;
-    case "moderateMessage": {
+        case "exit":
+            parentPort.close();
+            break;
+        case "bannedWordsUpdate":
+            bannedWords = event.words;
+            break;
+        case "bannedRegexUpdate":
+            regularExpressions = event.regularExpressions;
+            break;
+        case "moderateMessage": {
         // check for banned word
-        if (event.isExempt || event.message == null || event.messageId == null) {
-            return;
-        }
-        if (event.scanForBannedWords) {
-            const bannedWordFound = hasBannedWord(event.message);
-            if (bannedWordFound) {
-                parentPort.postMessage({ type: "deleteMessage", messageId: event.messageId, username: event.username });
-            } else {
-                const bannedRegexMatched = matchesBannedRegex(event.message);
-                if (bannedRegexMatched) {
+            if (event.isExempt || event.message == null || event.messageId == null) {
+                return;
+            }
+            if (event.scanForBannedWords) {
+                const bannedWordFound = hasBannedWord(event.message);
+                if (bannedWordFound) {
                     parentPort.postMessage({ type: "deleteMessage", messageId: event.messageId, username: event.username });
+                } else {
+                    const bannedRegexMatched = matchesBannedRegex(event.message);
+                    if (bannedRegexMatched) {
+                        parentPort.postMessage({ type: "deleteMessage", messageId: event.messageId, username: event.username });
+                    }
                 }
             }
+            break;
         }
-        break;
-    }
     }
 });
-

@@ -25,16 +25,16 @@ module.exports = {
         const argsCount = args.length;
 
         switch (comparisonType) {
-        case "is":
-            return argsCount === rightSideValue;
-        case "is not":
-            return argsCount !== rightSideValue;
-        case "is less than":
-            return argsCount < rightSideValue;
-        case "is greater than":
-            return argsCount > rightSideValue;
-        default:
-            return false;
+            case "is":
+                return argsCount === rightSideValue;
+            case "is not":
+                return argsCount !== rightSideValue;
+            case "is less than":
+                return argsCount < rightSideValue;
+            case "is greater than":
+                return argsCount > rightSideValue;
+            default:
+                return false;
         }
     }
 };

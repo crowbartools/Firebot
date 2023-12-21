@@ -3,7 +3,7 @@ import { EffectCategory } from "../../../../shared/effect-constants";
 import logger from "../../../logwrapper";
 import twitchApi from "../../../twitch-api/api";
 
-const model: EffectType<{}> = {
+const model: EffectType = {
     definition: {
         id: "twitch:cancel-prediction",
         name: "Cancel Twitch Prediction",
@@ -11,8 +11,8 @@ const model: EffectType<{}> = {
         icon: "fad fa-ban",
         categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
         dependencies: {
-            twitch: true,
-        },
+            twitch: true
+        }
     },
     optionsTemplate: `
         <eos-container>
@@ -33,7 +33,7 @@ const model: EffectType<{}> = {
 
         logger.debug(`Canceling Twitch prediction "${latestPrediction.title}"`);
         return await twitchApi.predictions.cancelPrediction(latestPrediction.id);
-    },
+    }
 };
 
 module.exports = model;

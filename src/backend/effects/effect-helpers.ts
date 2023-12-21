@@ -18,7 +18,7 @@ const serviceValidators = {
             return integrationManager.integrationIsConnected(integrationId);
         }
         return integrationManager.integrationIsLinked(integrationId);
-    },
+    }
 };
 
 export const checkEffectDependencies = (

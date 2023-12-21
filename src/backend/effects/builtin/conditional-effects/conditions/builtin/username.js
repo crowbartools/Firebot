@@ -16,18 +16,18 @@ module.exports = {
         const conditionUsername = rightSideValue ? rightSideValue.toLowerCase() : "";
 
         switch (comparisonType) {
-        case "is":
-            return triggerUsername === conditionUsername;
-        case "is not":
-            return triggerUsername !== conditionUsername;
-        case "contains":
-            return triggerUsername.includes(conditionUsername);
-        case "matches regex": {
-            const regex = new RegExp(conditionUsername, "gi");
-            return regex.test(triggerUsername);
-        }
-        default:
-            return false;
+            case "is":
+                return triggerUsername === conditionUsername;
+            case "is not":
+                return triggerUsername !== conditionUsername;
+            case "contains":
+                return triggerUsername.includes(conditionUsername);
+            case "matches regex": {
+                const regex = new RegExp(conditionUsername, "gi");
+                return regex.test(triggerUsername);
+            }
+            default:
+                return false;
         }
     }
 };

@@ -2,17 +2,17 @@ import { EffectType } from "../../../../../types/effects";
 import { OBSSource, setImageSourceSettings } from "../obs-remote";
 
 export const SetOBSImageSourceFileEffectType: EffectType<{
-  imageSourceName: string;
-  file: string;
+    imageSourceName: string;
+    file: string;
 }> = {
-  definition: {
-    id: "firebot:obs-set-image-source-file",
-    name: "Set OBS Image Source File",
-    description: "Sets the file of an OBS image source",
-    icon: "fad fa-photo-video",
-    categories: ["common"],
-  },
-  optionsTemplate: `
+    definition: {
+        id: "firebot:obs-set-image-source-file",
+        name: "Set OBS Image Source File",
+        description: "Sets the file of an OBS image source",
+        icon: "fad fa-photo-video",
+        categories: ["common"]
+    },
+    optionsTemplate: `
     <eos-container header="OBS Image Source">
         <ui-select ng-model="selected" on-select="selectImageSource($select.selected.name)">
           <ui-select-match placeholder="Select an Image Source...">{{$select.selected.name}}</ui-select-match>
@@ -23,7 +23,7 @@ export const SetOBSImageSourceFileEffectType: EffectType<{
           <b>No image sources found.</b>
           </ui-select-no-choice>
         </ui-select>
-        
+
         <div ng-if="imageSources == null" class="muted">
             No sources found. Is OBS running?
         </div>
@@ -36,38 +36,38 @@ export const SetOBSImageSourceFileEffectType: EffectType<{
       <file-chooser model="effect.file" options="{ filters: [ {name: 'OBS-Supported Image Files', extensions: ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'tga', 'jxr', 'psd', 'webp']}, {name: 'All Files', extensions: ['*']} ]}"></file-chooser>
     </eos-container>
   `,
-  optionsController: ($scope: any, backendCommunicator: any, $q: any) => {
-    $scope.imageSources = [];
+    optionsController: ($scope: any, backendCommunicator: any, $q: any) => {
+        $scope.imageSources = [];
 
-    $scope.selectImageSource = (imageSourceName: string) => {
-      $scope.effect.imageSourceName = imageSourceName;
-    };
+        $scope.selectImageSource = (imageSourceName: string) => {
+            $scope.effect.imageSourceName = imageSourceName;
+        };
 
-    $scope.getImageSources = () => {
-      $q.when(
-        backendCommunicator.fireEventAsync("obs-get-image-sources")
-      ).then((imageSources: OBSSource[]) => {
-        $scope.imageSources = imageSources ?? [];
-        $scope.selected = $scope.imageSources.find(source => source.name === $scope.effect.imageSourceName);
-      });
-    };
-    $scope.getImageSources();
-  },
-  optionsValidator: (effect) => {
-    const errors: string[] = [];
+        $scope.getImageSources = () => {
+            $q.when(
+                backendCommunicator.fireEventAsync("obs-get-image-sources")
+            ).then((imageSources: OBSSource[]) => {
+                $scope.imageSources = imageSources ?? [];
+                $scope.selected = $scope.imageSources.find(source => source.name === $scope.effect.imageSourceName);
+            });
+        };
+        $scope.getImageSources();
+    },
+    optionsValidator: (effect) => {
+        const errors: string[] = [];
 
-    if (effect.imageSourceName == null) {
-      errors.push("Please select an image source");
-    } else if (!(effect.file?.length > 0)) {
-      errors.push("Please select or enter a filename");
+        if (effect.imageSourceName == null) {
+            errors.push("Please select an image source");
+        } else if (!(effect.file?.length > 0)) {
+            errors.push("Please select or enter a filename");
+        }
+
+        return errors;
+    },
+    onTriggerEvent: async ({ effect }) => {
+        await setImageSourceSettings(effect.imageSourceName, {
+            file: effect.file
+        });
+        return true;
     }
-
-    return errors;
-  },
-  onTriggerEvent: async ({ effect }) => {
-    await setImageSourceSettings(effect.imageSourceName, {
-      file: effect.file
-    });
-    return true;
-  },
 };

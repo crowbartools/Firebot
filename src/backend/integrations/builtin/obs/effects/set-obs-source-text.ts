@@ -2,19 +2,19 @@ import { EffectType } from "../../../../../types/effects";
 import { OBSSource, setTextSourceSettings } from "../obs-remote";
 
 export const SetOBSSourceTextEffectType: EffectType<{
-  textSourceName: string;
-  textSource: "static" | "file";
-  text: string;
-  file: string;
+    textSourceName: string;
+    textSource: "static" | "file";
+    text: string;
+    file: string;
 }> = {
-  definition: {
-    id: "firebot:obs-set-source-text",
-    name: "Set OBS Source Text",
-    description: "Sets the text in an OBS text source",
-    icon: "fad fa-font-case",
-    categories: ["common"],
-  },
-  optionsTemplate: `
+    definition: {
+        id: "firebot:obs-set-source-text",
+        name: "Set OBS Source Text",
+        description: "Sets the text in an OBS text source",
+        icon: "fad fa-font-case",
+        categories: ["common"]
+    },
+    optionsTemplate: `
     <eos-container header="OBS Text Source">
         <ui-select ng-model="selected" on-select="selectTextSource($select.selected.name)">
           <ui-select-match placeholder="Select a Text Source...">{{$select.selected.name}}</ui-select-match>
@@ -38,47 +38,47 @@ export const SetOBSSourceTextEffectType: EffectType<{
         <file-chooser ng-if="effect.textSource === 'file'" model="effect.file" options="{ filters: [ {name: 'Text File', extensions: ['txt']}, {name: 'All Files', extensions: ['*']} ]}" on-update="textFileUpdated(filepath)"></file-chooser>
     </eos-container>
   `,
-  optionsController: ($scope: any, backendCommunicator: any, $q: any) => {
-    $scope.textSources = [];
+    optionsController: ($scope: any, backendCommunicator: any, $q: any) => {
+        $scope.textSources = [];
 
-    if ($scope.effect.textSource == null) {
-      $scope.effect.textSource = "static";
+        if ($scope.effect.textSource == null) {
+            $scope.effect.textSource = "static";
+        }
+
+        $scope.selectTextSource = (textSourceName: string) => {
+            $scope.effect.textSourceName = textSourceName;
+        };
+
+        $scope.toggleSource = () => {
+            $scope.effect.textSource = $scope.effect.textSource === "static" ? "file" : "static";
+        };
+
+        $scope.textFileUpdated = (file: string) => {
+            $scope.effect.file = file;
+        };
+
+        $scope.getTextSources = () => {
+            $q.when(
+                backendCommunicator.fireEventAsync("obs-get-text-sources")
+            ).then((textSources: OBSSource[]) => {
+                $scope.textSources = textSources ?? [];
+                $scope.selected = $scope.textSources.find(source => source.name === $scope.effect.textSourceName);
+            });
+        };
+        $scope.getTextSources();
+    },
+    optionsValidator: (effect) => {
+        if (effect.textSourceName == null) {
+            return ["Please select a text source."];
+        }
+        return [];
+    },
+    onTriggerEvent: async ({ effect }) => {
+        await setTextSourceSettings(effect.textSourceName, {
+            text: effect.textSource === "static" ? effect.text : null,
+            readFromFile: effect.textSource === "file",
+            file: effect.textSource === "file" ? effect.file : null
+        });
+        return true;
     }
-
-    $scope.selectTextSource = (textSourceName: string) => {
-      $scope.effect.textSourceName = textSourceName;
-    };
-
-    $scope.toggleSource = () => {
-      $scope.effect.textSource = $scope.effect.textSource === "static" ? "file" : "static";
-    };
-
-    $scope.textFileUpdated = (file: string) => {
-      $scope.effect.file = file;
-    };
-
-    $scope.getTextSources = () => {
-      $q.when(
-        backendCommunicator.fireEventAsync("obs-get-text-sources")
-      ).then((textSources: OBSSource[]) => {
-        $scope.textSources = textSources ?? [];
-        $scope.selected = $scope.textSources.find(source => source.name === $scope.effect.textSourceName);
-      });
-    };
-    $scope.getTextSources();
-  },
-  optionsValidator: (effect) => {
-    if (effect.textSourceName == null) {
-      return ["Please select a text source."];
-    }
-    return [];
-  },
-  onTriggerEvent: async ({ effect }) => {
-    await setTextSourceSettings(effect.textSourceName, {
-      text: effect.textSource === "static" ? effect.text : null,
-      readFromFile: effect.textSource === "file",
-      file: effect.textSource === "file" ? effect.file : null
-    });
-    return true;
-  },
 };

@@ -2,17 +2,17 @@ import { EffectType } from "../../../../../types/effects";
 import { OBSSource, setMediaSourceSettings } from "../obs-remote";
 
 export const SetOBSMediaSourceFileEffectType: EffectType<{
-  mediaSourceName: string;
-  file: string;
+    mediaSourceName: string;
+    file: string;
 }> = {
-  definition: {
-    id: "firebot:obs-set-media-source-file",
-    name: "Set OBS Media Source File",
-    description: "Sets the file of an OBS media source",
-    icon: "fad fa-film",
-    categories: ["common"],
-  },
-  optionsTemplate: `
+    definition: {
+        id: "firebot:obs-set-media-source-file",
+        name: "Set OBS Media Source File",
+        description: "Sets the file of an OBS media source",
+        icon: "fad fa-film",
+        categories: ["common"]
+    },
+    optionsTemplate: `
     <eos-container header="OBS Media Source">
         <ui-select ng-model="selected" on-select="selectMediaSource($select.selected.name)">
           <ui-select-match placeholder="Select a Media Source...">{{$select.selected.name}}</ui-select-match>
@@ -35,39 +35,39 @@ export const SetOBSMediaSourceFileEffectType: EffectType<{
       <file-chooser model="effect.file" options="{ filters: [ {name: 'OBS-Supported Video Files', extensions: ['mp4', 'm4v', 'ts', 'mov', 'mxf', 'flv', 'mkv', 'avi', 'gif', 'webm']}, {name: 'OBS-Supported Audio Files', extensions: ['mp3', 'aac', 'ogg', 'wav']}, {name: 'All Files', extensions: ['*']} ]}"></file-chooser>
     </eos-container>
   `,
-  optionsController: ($scope: any, backendCommunicator: any, $q: any) => {
-    $scope.mediaSources = [];
+    optionsController: ($scope: any, backendCommunicator: any, $q: any) => {
+        $scope.mediaSources = [];
 
-    $scope.selectMediaSource = (mediaSourceName: string) => {
-      $scope.effect.mediaSourceName = mediaSourceName;
-    };
+        $scope.selectMediaSource = (mediaSourceName: string) => {
+            $scope.effect.mediaSourceName = mediaSourceName;
+        };
 
-    $scope.getMediaSources = () => {
-      $q.when(
-        backendCommunicator.fireEventAsync("obs-get-media-sources")
-      ).then((mediaSources: OBSSource[]) => {
-        $scope.mediaSources = mediaSources ?? [];
-        $scope.selected = $scope.mediaSources.find(source => source.name === $scope.effect.mediaSourceName);
-      });
-    };
-    $scope.getMediaSources();
-  },
-  optionsValidator: (effect) => {
-    const errors: string[] = [];
+        $scope.getMediaSources = () => {
+            $q.when(
+                backendCommunicator.fireEventAsync("obs-get-media-sources")
+            ).then((mediaSources: OBSSource[]) => {
+                $scope.mediaSources = mediaSources ?? [];
+                $scope.selected = $scope.mediaSources.find(source => source.name === $scope.effect.mediaSourceName);
+            });
+        };
+        $scope.getMediaSources();
+    },
+    optionsValidator: (effect) => {
+        const errors: string[] = [];
 
-    if (effect.mediaSourceName == null) {
-      errors.push("Please select a media source");
-    } else if (!(effect.file?.length > 0)) {
-      errors.push("Please select or enter a filename");
+        if (effect.mediaSourceName == null) {
+            errors.push("Please select a media source");
+        } else if (!(effect.file?.length > 0)) {
+            errors.push("Please select or enter a filename");
+        }
+
+        return errors;
+    },
+    onTriggerEvent: async ({ effect }) => {
+        await setMediaSourceSettings(effect.mediaSourceName, {
+            isLocalFile: true,
+            localFile: effect.file
+        });
+        return true;
     }
-
-    return errors;
-  },
-  onTriggerEvent: async ({ effect }) => {
-    await setMediaSourceSettings(effect.mediaSourceName, {
-      isLocalFile: true,
-      localFile: effect.file
-    });
-    return true;
-  },
 };

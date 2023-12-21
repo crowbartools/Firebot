@@ -22,11 +22,11 @@ export type EventFilter = {
     valueType: "text" | "preset";
     presetValues(...args: unknown[]): Promise<unknown[]>;
     predicate(
-        filterSettings: { comparisonType: string; value: unknown },
+        filterSettings: { comparisonType: string; value: any },
         eventData: {
             eventSourceId: string;
             eventId: string;
-            eventMeta: Record<string, unknown>;
+            eventMeta: Record<string, any>;
         }
     ): Promise<boolean>;
 };

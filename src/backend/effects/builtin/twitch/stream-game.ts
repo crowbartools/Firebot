@@ -16,8 +16,8 @@ const model: EffectType<{
         icon: "fad fa-gamepad",
         categories: [EffectCategory.COMMON, EffectCategory.MODERATION, EffectCategory.TWITCH],
         dependencies: {
-            twitch: true,
-        },
+            twitch: true
+        }
     },
     optionsTemplate: `
         <eos-container header="Mode">
@@ -95,7 +95,7 @@ const model: EffectType<{
     onTriggerEvent: async (event) => {
         if (event.effect.mode === "specific") {
             await twitchApi.channels.updateChannelInformation({
-                gameId: event.effect.gameId,
+                gameId: event.effect.gameId
             });
         } else {
             const categories = await twitchApi.categories.searchCategories(event.effect.gameName.trim());
@@ -110,17 +110,17 @@ const model: EffectType<{
                 }
 
                 await twitchApi.channels.updateChannelInformation({
-                    gameId: category.id,
+                    gameId: category.id
                 });
             }
         }
 
         const category = (await twitchApi.channels.getChannelInformation()).gameName;
         eventsManager.triggerEvent("firebot", "category-changed", {
-            category: category,
+            category: category
         });
         return true;
-    },
+    }
 };
 
 module.exports = model;

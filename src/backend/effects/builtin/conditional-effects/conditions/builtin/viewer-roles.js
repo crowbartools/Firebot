@@ -45,16 +45,16 @@ module.exports = {
         const hasRole = await viewerHasRoles(username, [rightSideValue]);
 
         switch (comparisonType) {
-        case "include":
-        case "is in role":
-        case "has role":
-            return hasRole;
-        case "doesn't include":
-        case "isn't in role":
-        case "doesn't have role":
-            return !hasRole;
-        default:
-            return false;
+            case "include":
+            case "is in role":
+            case "has role":
+                return hasRole;
+            case "doesn't include":
+            case "isn't in role":
+            case "doesn't have role":
+                return !hasRole;
+            default:
+                return false;
         }
     }
 };

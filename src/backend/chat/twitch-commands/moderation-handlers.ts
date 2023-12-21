@@ -4,7 +4,7 @@ import { TwitchSlashCommandHandler } from "../twitch-slash-command-handler";
 import { TwitchCommandHelpers } from "./twitch-command-helpers";
 
 export const timeoutHandler: TwitchSlashCommandHandler<[string, number, string]> = {
-    commands: [ "/timeout" ],
+    commands: ["/timeout"],
     validateArgs: ([targetUsername, duration, ...reason]) => {
         if (targetUsername == null || targetUsername.length < 1) {
             return {
@@ -20,7 +20,7 @@ export const timeoutHandler: TwitchSlashCommandHandler<[string, number, string]>
                 errorMessage: "Please provide a valid duration"
             };
         }
-  
+
         targetUsername = TwitchCommandHelpers.getNormalizedUsername(targetUsername);
         const formattedReason: string = reason == null ? null : reason.join(" ");
 
@@ -41,7 +41,7 @@ export const timeoutHandler: TwitchSlashCommandHandler<[string, number, string]>
 };
 
 export const banHandler: TwitchSlashCommandHandler<[string, string]> = {
-    commands: [ "/ban" ],
+    commands: ["/ban"],
     validateArgs: ([targetUsername, ...reason]) => {
         if (targetUsername == null || targetUsername.length < 1) {
             return {
@@ -49,7 +49,7 @@ export const banHandler: TwitchSlashCommandHandler<[string, string]> = {
                 errorMessage: "Please provide a username"
             };
         }
-  
+
         targetUsername = TwitchCommandHelpers.getNormalizedUsername(targetUsername);
         const formattedReason: string = reason == null ? null : reason.join(" ");
 
@@ -62,7 +62,7 @@ export const banHandler: TwitchSlashCommandHandler<[string, string]> = {
         const targetUserId = (await twitchApi.users.getUserByName(targetUsername))?.id;
 
         if (targetUserId == null) {
-          return false;
+            return false;
         }
 
         return await twitchApi.moderation.banUser(targetUserId, reason);
@@ -70,7 +70,7 @@ export const banHandler: TwitchSlashCommandHandler<[string, string]> = {
 };
 
 export const unbanHandler: TwitchSlashCommandHandler<[string]> = {
-    commands: [ "/unban", "/untimeout" ],
+    commands: ["/unban", "/untimeout"],
     validateArgs: ([targetUsername]) => {
         if (targetUsername == null || targetUsername.length < 1) {
             return {
@@ -78,7 +78,7 @@ export const unbanHandler: TwitchSlashCommandHandler<[string]> = {
                 errorMessage: "Please provide a username"
             };
         }
-  
+
         targetUsername = TwitchCommandHelpers.getNormalizedUsername(targetUsername);
 
         return {
@@ -98,7 +98,7 @@ export const unbanHandler: TwitchSlashCommandHandler<[string]> = {
 };
 
 export const vipHandler: TwitchSlashCommandHandler<[string]> = {
-    commands: [ "/vip" ],
+    commands: ["/vip"],
     validateArgs: ([targetUsername]) => {
         if (targetUsername == null || targetUsername.length < 1) {
             return {
@@ -106,7 +106,7 @@ export const vipHandler: TwitchSlashCommandHandler<[string]> = {
                 errorMessage: "Please provide a username"
             };
         }
-  
+
         targetUsername = TwitchCommandHelpers.getNormalizedUsername(targetUsername);
 
         return {
@@ -130,7 +130,7 @@ export const vipHandler: TwitchSlashCommandHandler<[string]> = {
 };
 
 export const unvipHandler: TwitchSlashCommandHandler<[string]> = {
-    commands: [ "/unvip" ],
+    commands: ["/unvip"],
     validateArgs: ([targetUsername]) => {
         if (targetUsername == null || targetUsername.length < 1) {
             return {
@@ -138,7 +138,7 @@ export const unvipHandler: TwitchSlashCommandHandler<[string]> = {
                 errorMessage: "Please provide a username"
             };
         }
-  
+
         targetUsername = TwitchCommandHelpers.getNormalizedUsername(targetUsername);
 
         return {
@@ -162,7 +162,7 @@ export const unvipHandler: TwitchSlashCommandHandler<[string]> = {
 };
 
 export const modHandler: TwitchSlashCommandHandler<[string]> = {
-    commands: [ "/mod" ],
+    commands: ["/mod"],
     validateArgs: ([targetUsername]) => {
         if (targetUsername == null || targetUsername.length < 1) {
             return {
@@ -170,7 +170,7 @@ export const modHandler: TwitchSlashCommandHandler<[string]> = {
                 errorMessage: "Please provide a username"
             };
         }
-  
+
         targetUsername = TwitchCommandHelpers.getNormalizedUsername(targetUsername);
 
         return {
@@ -190,7 +190,7 @@ export const modHandler: TwitchSlashCommandHandler<[string]> = {
 };
 
 export const unmodHandler: TwitchSlashCommandHandler<[string]> = {
-    commands: [ "/unmod" ],
+    commands: ["/unmod"],
     validateArgs: ([targetUsername]) => {
         if (targetUsername == null || targetUsername.length < 1) {
             return {
@@ -198,9 +198,9 @@ export const unmodHandler: TwitchSlashCommandHandler<[string]> = {
                 errorMessage: "Please provide a username"
             };
         }
-  
+
         targetUsername = TwitchCommandHelpers.getNormalizedUsername(targetUsername);
-      
+
         return {
             success: true,
             args: [targetUsername]

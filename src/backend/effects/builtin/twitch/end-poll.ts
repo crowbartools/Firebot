@@ -13,8 +13,8 @@ const model: EffectType<{
         icon: "fad fa-stop-circle",
         categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
         dependencies: {
-            twitch: true,
-        },
+            twitch: true
+        }
     },
     optionsTemplate: `
         <eos-container header="Archive Poll">
@@ -39,7 +39,7 @@ const model: EffectType<{
 
         logger.debug(`Ending Twitch poll "${latestPoll.title}"${effect.archivePoll ? " as archived" : ""}`);
         return await twitchApi.polls.endPoll(latestPoll.id, effect.archivePoll);
-    },
+    }
 };
 
 module.exports = model;

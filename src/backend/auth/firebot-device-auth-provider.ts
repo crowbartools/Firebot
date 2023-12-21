@@ -19,11 +19,11 @@ class FirebotDeviceAuthProvider {
         logger.debug(`Persisting ${accountType} access token`);
 
         const auth: AuthDetails = account.auth ?? { } as AuthDetails;
-        auth.access_token = token.accessToken;
-        auth.refresh_token = token.refreshToken;
-        auth.expires_in = token.expiresIn;
-        auth.obtainment_timestamp = token.obtainmentTimestamp;
-        auth.expires_at = getExpiryDateOfAccessToken({
+        auth.access_token = token.accessToken; // eslint-disable-line camelcase
+        auth.refresh_token = token.refreshToken; // eslint-disable-line camelcase
+        auth.expires_in = token.expiresIn; // eslint-disable-line camelcase
+        auth.obtainment_timestamp = token.obtainmentTimestamp; // eslint-disable-line camelcase
+        auth.expires_at = getExpiryDateOfAccessToken({ // eslint-disable-line camelcase
             expiresIn: token.expiresIn,
             obtainmentTimestamp: token.obtainmentTimestamp
         });
@@ -118,16 +118,16 @@ frontendCommunicator.onAsync("validate-twitch-account", async ({ accountType, au
     let definition: AuthProviderDefinition;
 
     switch (accountType) {
-    case "streamer":
-        definition = twitchAuth.streamerAccountProvider;
-        break;
+        case "streamer":
+            definition = twitchAuth.streamerAccountProvider;
+            break;
 
-    case "bot":
-        definition = twitchAuth.botAccountProvider;
-        break;
+        case "bot":
+            definition = twitchAuth.botAccountProvider;
+            break;
 
-    default:
-        break;
+        default:
+            break;
     }
 
     if (definition) {

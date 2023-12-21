@@ -2,16 +2,16 @@ import { EffectType } from "../../../../../types/effects";
 import { setCurrentSceneCollection } from "../obs-remote";
 
 export const ChangeSceneCollectionEffectType: EffectType<{
-  sceneCollectionName: string;
+    sceneCollectionName: string;
 }> = {
-  definition: {
-    id: "ebiggz:obs-change-scene-collection",
-    name: "Change OBS Scene Collection",
-    description: "Change the active OBS Scene Collection",
-    icon: "fad fa-th-list",
-    categories: ["common"],
-  },
-  optionsTemplate: `
+    definition: {
+        id: "ebiggz:obs-change-scene-collection",
+        name: "Change OBS Scene Collection",
+        description: "Change the active OBS Scene Collection",
+        icon: "fad fa-th-list",
+        categories: ["common"]
+    },
+    optionsTemplate: `
     <eos-container header="New Scene Collection">
         <ui-select ng-model="selected" on-select="selectSceneCollection($select.selected)">
           <ui-select-match placeholder="Select a Scene Collection...">{{$select.selected.name}}</ui-select-match>
@@ -20,7 +20,7 @@ export const ChangeSceneCollectionEffectType: EffectType<{
             <div ng-bind-html="collection.name | highlight: $select.search"></div>
           </ui-select-choices>
         </ui-select>
-        
+
         <p ng-hide="effect.custom === true">
             <button class="btn btn-link" ng-click="getSceneCollections()">Refresh Scene Collections</button>
             <span class="muted">(Make sure OBS is running)</span>
@@ -30,48 +30,47 @@ export const ChangeSceneCollectionEffectType: EffectType<{
         </div>
     </eos-container>
   `,
-  optionsController: ($scope: any, backendCommunicator: any, $q: any) => {
-    $scope.sceneCollections = [];
-
-    $scope.customCollection = {name: "Set Custom", custom: true};
-
-    $scope.selectSceneCollection = (sceneCollection: {name: string, custom: boolean}) => {
-      $scope.effect.custom = sceneCollection.custom;
-      if (!sceneCollection.custom) {
-        $scope.effect.sceneCollectionName = sceneCollection.name;
-      }
-    };
-
-    $scope.getSceneCollections = () => {
-      $q.when(
-        backendCommunicator.fireEventAsync("obs-get-scene-collection-list")
-      ).then((sceneCollections: string[]) => {
+    optionsController: ($scope: any, backendCommunicator: any, $q: any) => {
         $scope.sceneCollections = [];
-        if (sceneCollections != null) {
-          sceneCollections.forEach(sceneCollection => {
-            $scope.sceneCollections.push({name: sceneCollection, custom: false});
-          });
+
+        $scope.customCollection = {name: "Set Custom", custom: true};
+
+        $scope.selectSceneCollection = (sceneCollection: {name: string, custom: boolean}) => {
+            $scope.effect.custom = sceneCollection.custom;
+            if (!sceneCollection.custom) {
+                $scope.effect.sceneCollectionName = sceneCollection.name;
+            }
+        };
+
+        $scope.getSceneCollections = () => {
+            $q.when(
+                backendCommunicator.fireEventAsync("obs-get-scene-collection-list")
+            ).then((sceneCollections: string[]) => {
+                $scope.sceneCollections = [];
+                if (sceneCollections != null) {
+                    sceneCollections.forEach(sceneCollection => {
+                        $scope.sceneCollections.push({name: sceneCollection, custom: false});
+                    });
+                }
+                $scope.sceneCollections.push($scope.customCollection);
+                if ($scope.effect.custom) {
+                    $scope.selected = $scope.customCollection;
+                } else {
+                    $scope.selected = $scope.sceneCollections.find(collection =>
+                        collection.name === $scope.effect.sceneCollectionName);
+                }
+            });
+        };
+        $scope.getSceneCollections();
+    },
+    optionsValidator: (effect) => {
+        if (effect.sceneCollectionName == null) {
+            return ["Please select a scene collection."];
         }
-        $scope.sceneCollections.push($scope.customCollection);
-        if ($scope.effect.custom) {
-          $scope.selected = $scope.customCollection;
-        }
-        else {
-          $scope.selected = $scope.sceneCollections.find(collection =>
-              collection.name === $scope.effect.sceneCollectionName);
-        }
-      });
-    };
-    $scope.getSceneCollections();
-  },
-  optionsValidator: (effect) => {
-    if (effect.sceneCollectionName == null) {
-      return ["Please select a scene collection."];
+        return [];
+    },
+    onTriggerEvent: async ({ effect }) => {
+        await setCurrentSceneCollection(effect.sceneCollectionName);
+        return true;
     }
-    return [];
-  },
-  onTriggerEvent: async ({ effect }) => {
-    await setCurrentSceneCollection(effect.sceneCollectionName);
-    return true;
-  },
 };

@@ -15,8 +15,8 @@ const model: EffectType<{
         icon: "fad fa-question-circle",
         categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
         dependencies: {
-            twitch: true,
-        },
+            twitch: true
+        }
     },
     optionsTemplate: `
         <eos-container header="Prediction Title">
@@ -57,13 +57,13 @@ const model: EffectType<{
     optionsController: ($scope) => {
         $scope.optionSettings = {
             noDuplicates: true,
-            maxItems: 10,
+            maxItems: 10
         };
     },
     onTriggerEvent: async ({ effect }) => {
         logger.debug(`Creating Twitch prediction "${effect.title}"`);
         return await twitchApi.predictions.createPrediction(effect.title, effect.outcomes, effect.duration);
-    },
+    }
 };
 
 module.exports = model;

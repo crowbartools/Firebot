@@ -66,16 +66,16 @@ function adjustCurrency(user, currencyId, value, adjustType = "adjust") {
         let newUserValue = value;
 
         switch (adjustType) {
-        case "set":
-            logger.debug(`Currency: Setting ${user.username} currency ${currencyId} to: ${value}.`);
-            newUserValue = value;
-            break;
-        default:
-            if (parseInt(value) === 0) {
-                return resolve();
-            }
-            logger.debug(`Currency: Adjusting ${value} currency to ${user.username}. ${currencyId}`);
-            newUserValue = (user.currency[currencyId] + parseInt(value));
+            case "set":
+                logger.debug(`Currency: Setting ${user.username} currency ${currencyId} to: ${value}.`);
+                newUserValue = value;
+                break;
+            default:
+                if (parseInt(value) === 0) {
+                    return resolve();
+                }
+                logger.debug(`Currency: Adjusting ${value} currency to ${user.username}. ${currencyId}`);
+                newUserValue = (user.currency[currencyId] + parseInt(value));
         }
 
         const db = userDatabase.getUserDb();
@@ -170,7 +170,7 @@ function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value, igno
 
         // Run our checks. Stop if we have a bad value, currency, or roles.
         value = parseInt(value);
-        if (roleIds === [] || currencyId === null || value === null || (value === 0 && adjustType.toLowerCase() !== "set") || isNaN(value)) {
+        if (roleIds.length === 0 || currencyId === null || value === null || (value === 0 && adjustType.toLowerCase() !== "set") || isNaN(value)) {
             return resolve();
         }
 
@@ -530,18 +530,18 @@ frontendCommunicator.onAsync("give-currency", async (/** @type {CurrencyInfo} */
 
     let messageTarget = "";
     switch (targetType) {
-    case "allOnline":
-        await addCurrencyToOnlineUsers(currencyId, amount);
-        messageTarget = `everyone`;
-        break;
-    case "allOnlineInRole":
-        addCurrencyToUserGroupOnlineUsers([role], currencyId, amount);
-        messageTarget = `all users in role ${role}`;
-        break;
-    case "individual":
-        await adjustCurrencyForUser(username, currencyId, amount);
-        messageTarget = `@${username}`;
-        break;
+        case "allOnline":
+            await addCurrencyToOnlineUsers(currencyId, amount);
+            messageTarget = `everyone`;
+            break;
+        case "allOnlineInRole":
+            addCurrencyToUserGroupOnlineUsers([role], currencyId, amount);
+            messageTarget = `all users in role ${role}`;
+            break;
+        case "individual":
+            await adjustCurrencyForUser(username, currencyId, amount);
+            messageTarget = `@${username}`;
+            break;
     }
 
     if (sendChatMessage && messageTarget !== "") {

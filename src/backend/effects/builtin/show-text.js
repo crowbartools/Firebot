@@ -3,7 +3,7 @@
 const { settings } = require("../../common/settings-access");
 const webServer = require("../../../server/http-server-manager");
 const logger = require("../../logwrapper");
-const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
+const { EffectCategory } = require('../../../shared/effect-constants');
 
 /**
  * The Show Text effect

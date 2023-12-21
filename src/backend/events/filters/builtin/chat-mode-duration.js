@@ -30,26 +30,26 @@ module.exports = {
         }
 
         switch (comparisonType) {
-        case ComparisonType.IS: {
-            return duration === value;
-        }
-        case ComparisonType.IS_NOT: {
-            return duration !== value;
-        }
-        case ComparisonType.LESS_THAN: {
-            return duration < value;
-        }
-        case ComparisonType.LESS_THAN_OR_EQUAL_TO: {
-            return duration <= value;
-        }
-        case ComparisonType.GREATER_THAN: {
-            return duration > value;
-        }
-        case ComparisonType.GREATER_THAN_OR_EQUAL_TO: {
-            return duration >= value;
-        }
-        default:
-            return false;
+            case ComparisonType.IS: {
+                return duration === value;
+            }
+            case ComparisonType.IS_NOT: {
+                return duration !== value;
+            }
+            case ComparisonType.LESS_THAN: {
+                return duration < value;
+            }
+            case ComparisonType.LESS_THAN_OR_EQUAL_TO: {
+                return duration <= value;
+            }
+            case ComparisonType.GREATER_THAN: {
+                return duration > value;
+            }
+            case ComparisonType.GREATER_THAN_OR_EQUAL_TO: {
+                return duration >= value;
+            }
+            default:
+                return false;
         }
     }
 };

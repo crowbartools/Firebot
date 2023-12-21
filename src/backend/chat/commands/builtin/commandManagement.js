@@ -45,18 +45,18 @@ const mapSingleRole = async (perm) => {
     }
 
     switch (perm) {
-    case "all":
-    case "everyone":
-        break;
-    case "sub":
-        groups.push("sub");
-    case "vip": //eslint-disable-line no-fallthrough
-        groups.push("vip");
-    case "mod": //eslint-disable-line no-fallthrough
-        groups.push("mod");
-    case "streamer": //eslint-disable-line no-fallthrough
-        groups.push("broadcaster");
-        break;
+        case "all":
+        case "everyone":
+            break;
+        case "sub":
+            groups.push("sub");
+        case "vip": //eslint-disable-line no-fallthrough
+            groups.push("vip");
+        case "mod": //eslint-disable-line no-fallthrough
+            groups.push("mod");
+        case "streamer": //eslint-disable-line no-fallthrough
+            groups.push("broadcaster");
+            break;
     }
 
     return groups;
@@ -80,21 +80,21 @@ const mapMultipleRoles = async (permArray) => {
         }
 
         switch (perm) {
-        case "all":
-        case "everyone":
-            break;
-        case "sub":
-            groups.push("sub");
-            break;
-        case "vip":
-            groups.push("vip");
-            break;
-        case "mod":
-            groups.push("mod");
-            break;
-        case "streamer":
-            groups.push("broadcaster");
-            break;
+            case "all":
+            case "everyone":
+                break;
+            case "sub":
+                groups.push("sub");
+                break;
+            case "vip":
+                groups.push("vip");
+                break;
+            case "mod":
+                groups.push("mod");
+                break;
+            case "streamer":
+                groups.push("broadcaster");
+                break;
         }
     }
 
@@ -250,363 +250,363 @@ const commandManagement = {
             }
 
             switch (triggeredArg) {
-            case "add": {
-                if (args.length < 3 || remainingData == null || remainingData === "") {
-                    await chat.sendChatMessage(
-                        `Invalid command. Usage: ${event.command.trigger} ${usage}`
-                    );
-                    return resolve();
-                }
-
-                if (commandManager.triggerIsTaken(trigger)) {
-                    await chat.sendChatMessage(
-                        `The trigger '${trigger}' is already in use, please try again.`
-                    );
-                    return resolve();
-                }
-
-                const command = {
-                    trigger: trigger,
-                    autoDeleteTrigger: false,
-                    ignoreBot: true,
-                    active: true,
-                    scanWholeMessage: !trigger.startsWith("!"),
-                    cooldown: {
-                        user: 0,
-                        global: 0
-                    },
-                    effects: {
-                        id: uuidv1(),
-                        list: [
-                            {
-                                id: uuidv1(),
-                                type: "firebot:chat",
-                                message: remainingData
-                            }
-                        ]
+                case "add": {
+                    if (args.length < 3 || remainingData == null || remainingData === "") {
+                        await chat.sendChatMessage(
+                            `Invalid command. Usage: ${event.command.trigger} ${usage}`
+                        );
+                        return resolve();
                     }
-                };
 
-                commandManager.saveCustomCommand(command, event.userCommand.commandSender);
+                    if (commandManager.triggerIsTaken(trigger)) {
+                        await chat.sendChatMessage(
+                            `The trigger '${trigger}' is already in use, please try again.`
+                        );
+                        return resolve();
+                    }
 
-                await chat.sendChatMessage(
-                    `Added command '${trigger}'!`
-                );
-
-                break;
-            }
-            case "response": {
-                if (args.length < 3 || remainingData == null || remainingData === "") {
-                    await chat.sendChatMessage(
-                        `Invalid command. Usage: ${event.command.trigger} ${usage}`
-                    );
-                    return resolve();
-                }
-
-                const command = activeCustomCommands.find(c => c.trigger === trigger);
-                if (command == null) {
-                    await chat.sendChatMessage(
-                        `Could not find a command with the trigger '${trigger}', please try again.`
-                    );
-                    return resolve();
-                }
-
-                const chatEffectsCount = command.effects ? command.effects.list.filter(e => e.type === "firebot:chat").length : 0;
-
-                if (chatEffectsCount > 1) {
-                    await chat.sendChatMessage(
-                        `The command '${trigger}' has more than one Chat Effect, preventing the response from being editable via chat.`
-                    );
-                    return resolve();
-                }
-                if (chatEffectsCount === 1) {
-                    const chatEffect = command.effects.list.find(e => e.type === "firebot:chat");
-                    chatEffect.message = remainingData;
-                } else {
-                    const chatEffect = {
-                        id: uuidv1(),
-                        type: "firebot:chat",
-                        message: remainingData
+                    const command = {
+                        trigger: trigger,
+                        autoDeleteTrigger: false,
+                        ignoreBot: true,
+                        active: true,
+                        scanWholeMessage: !trigger.startsWith("!"),
+                        cooldown: {
+                            user: 0,
+                            global: 0
+                        },
+                        effects: {
+                            id: uuidv1(),
+                            list: [
+                                {
+                                    id: uuidv1(),
+                                    type: "firebot:chat",
+                                    message: remainingData
+                                }
+                            ]
+                        }
                     };
-                    command.effects.list.push(chatEffect);
-                }
 
-                commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
+                    commandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
-                await chat.sendChatMessage(
-                    `Updated '${trigger}' with response: ${remainingData}`
-                );
-
-                break;
-            }
-            case "setcount": {
-                const countArg = remainingData.trim();
-                if (countArg === "" || isNaN(countArg)) {
                     await chat.sendChatMessage(
-                        `Invalid command. Usage: ${event.command.trigger} ${usage}`
+                        `Added command '${trigger}'!`
                     );
-                    return resolve();
-                }
 
-                const command = activeCustomCommands.find(c => c.trigger === trigger);
-                if (command == null) {
+                    break;
+                }
+                case "response": {
+                    if (args.length < 3 || remainingData == null || remainingData === "") {
+                        await chat.sendChatMessage(
+                            `Invalid command. Usage: ${event.command.trigger} ${usage}`
+                        );
+                        return resolve();
+                    }
+
+                    const command = activeCustomCommands.find(c => c.trigger === trigger);
+                    if (command == null) {
+                        await chat.sendChatMessage(
+                            `Could not find a command with the trigger '${trigger}', please try again.`
+                        );
+                        return resolve();
+                    }
+
+                    const chatEffectsCount = command.effects ? command.effects.list.filter(e => e.type === "firebot:chat").length : 0;
+
+                    if (chatEffectsCount > 1) {
+                        await chat.sendChatMessage(
+                            `The command '${trigger}' has more than one Chat Effect, preventing the response from being editable via chat.`
+                        );
+                        return resolve();
+                    }
+                    if (chatEffectsCount === 1) {
+                        const chatEffect = command.effects.list.find(e => e.type === "firebot:chat");
+                        chatEffect.message = remainingData;
+                    } else {
+                        const chatEffect = {
+                            id: uuidv1(),
+                            type: "firebot:chat",
+                            message: remainingData
+                        };
+                        command.effects.list.push(chatEffect);
+                    }
+
+                    commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
+
                     await chat.sendChatMessage(
-                        `Could not find a command with the trigger '${trigger}', please try again.`
+                        `Updated '${trigger}' with response: ${remainingData}`
                     );
-                    return resolve();
+
+                    break;
                 }
+                case "setcount": {
+                    const countArg = remainingData.trim();
+                    if (countArg === "" || isNaN(countArg)) {
+                        await chat.sendChatMessage(
+                            `Invalid command. Usage: ${event.command.trigger} ${usage}`
+                        );
+                        return resolve();
+                    }
 
-                let newCount = parseInt(countArg);
-                if (newCount < 0) {
-                    newCount = 0;
-                }
+                    const command = activeCustomCommands.find(c => c.trigger === trigger);
+                    if (command == null) {
+                        await chat.sendChatMessage(
+                            `Could not find a command with the trigger '${trigger}', please try again.`
+                        );
+                        return resolve();
+                    }
 
-                command.count = parseInt(newCount);
+                    let newCount = parseInt(countArg);
+                    if (newCount < 0) {
+                        newCount = 0;
+                    }
 
-                commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
+                    command.count = parseInt(newCount);
 
-                await chat.sendChatMessage(
-                    `Updated usage count for '${trigger}' to: ${newCount}`
-                );
+                    commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
 
-                break;
-            }
-            case "description": {
-
-                const command = activeCustomCommands.find(c => c.trigger === trigger);
-                if (command == null) {
                     await chat.sendChatMessage(
-                        `Could not find a command with the trigger '${trigger}', please try again.`
+                        `Updated usage count for '${trigger}' to: ${newCount}`
                     );
-                    return resolve();
-                }
 
-                if (remainingData == null || remainingData.length < 1) {
+                    break;
+                }
+                case "description": {
+
+                    const command = activeCustomCommands.find(c => c.trigger === trigger);
+                    if (command == null) {
+                        await chat.sendChatMessage(
+                            `Could not find a command with the trigger '${trigger}', please try again.`
+                        );
+                        return resolve();
+                    }
+
+                    if (remainingData == null || remainingData.length < 1) {
+                        await chat.sendChatMessage(
+                            `Please provided a description for '${trigger}'!`
+                        );
+                        return resolve();
+                    }
+
+                    command.description = remainingData;
+
+                    commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
+
                     await chat.sendChatMessage(
-                        `Please provided a description for '${trigger}'!`
+                        `Updated description for '${trigger}' to: ${remainingData}`
                     );
-                    return resolve();
+
+                    break;
                 }
-
-                command.description = remainingData;
-
-                commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
-
-                await chat.sendChatMessage(
-                    `Updated description for '${trigger}' to: ${remainingData}`
-                );
-
-                break;
-            }
-            case "cooldown": {
-                const cooldownArgs = remainingData.trim().split(" ");
-                if (args.length < 3 || remainingData === "" || cooldownArgs.length < 2 || isNaN(cooldownArgs[0])
+                case "cooldown": {
+                    const cooldownArgs = remainingData.trim().split(" ");
+                    if (args.length < 3 || remainingData === "" || cooldownArgs.length < 2 || isNaN(cooldownArgs[0])
                     || isNaN(cooldownArgs[1])) {
+                        await chat.sendChatMessage(
+                            `Invalid command. Usage: ${event.command.trigger} ${usage}`
+                        );
+                        return resolve();
+                    }
+
+                    const command = activeCustomCommands.find(c => c.trigger === trigger);
+                    if (command == null) {
+                        await chat.sendChatMessage(
+                            `Could not find a command with the trigger '${trigger}', please try again.`
+                        );
+                        return resolve();
+                    }
+
+                    let globalCooldown = parseInt(cooldownArgs[0]),
+                        userCooldown = parseInt(cooldownArgs[1]);
+
+                    if (globalCooldown < 0) {
+                        globalCooldown = 0;
+                    }
+
+                    if (userCooldown < 0) {
+                        userCooldown = 0;
+                    }
+
+                    command.cooldown = {
+                        user: userCooldown,
+                        global: globalCooldown
+                    };
+
+                    commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
+
                     await chat.sendChatMessage(
-                        `Invalid command. Usage: ${event.command.trigger} ${usage}`
+                        `Updated '${trigger}' with cooldowns: ${userCooldown}s (user), ${globalCooldown}s (global)`
                     );
-                    return resolve();
-                }
 
-                const command = activeCustomCommands.find(c => c.trigger === trigger);
-                if (command == null) {
+                    break;
+                }
+                case "restrict": {
+                    if (args.length < 3 || remainingData === "") {
+                        await chat.sendChatMessage(
+                            `Invalid command. Usage: ${event.command.trigger} ${usage}`
+                        );
+                        return resolve();
+                    }
+
+                    const command = activeCustomCommands.find(c => c.trigger === trigger);
+                    if (command == null) {
+                        await chat.sendChatMessage(
+                            `Could not find a command with the trigger '${trigger}', please try again.`
+                        );
+                        return resolve();
+                    }
+
+                    const restrictions = [];
+                    const roleIds = await mapPermArgToRoleIds(remainingData);
+
+
+                    if (roleIds === false) {
+                        await chat.sendChatMessage(
+                            `Please provide a valid group name: All, Sub, Mod, Streamer, or a custom group's name`
+                        );
+                        return resolve();
+                    }
+
+                    if (roleIds != null) {
+                        restrictions.push({
+                            id: uuidv1(),
+                            type: "firebot:permissions",
+                            mode: "roles",
+                            roleIds: roleIds
+                        });
+                    }
+
+                    command.restrictionData = { restrictions: restrictions };
+
+                    commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
+
+                    await chat.sendChatMessage(`Updated '${trigger}' restrictions to: ${remainingData}`);
+
+                    break;
+                }
+                case "remove": {
+
+                    const command = activeCustomCommands.find(c => c.trigger === trigger);
+                    if (command == null) {
+                        await chat.sendChatMessage(
+                            `Could not find a command with the trigger '${trigger}', please try again.`
+                        );
+                        return resolve();
+                    }
+
+                    commandManager.removeCustomCommandByTrigger(trigger);
+
+                    await chat.sendChatMessage(`Successfully removed command '${trigger}'.`);
+                    break;
+                }
+                case "disable":
+                case "enable": {
+                    const command = commandManager.getAllCustomCommands().find(c => c.trigger === trigger);
+
+                    if (command == null) {
+                        await chat.sendChatMessage(
+                            `Could not find a command with the trigger '${trigger}', please try again.`
+                        );
+                        return resolve();
+                    }
+
+                    const newActiveStatus = triggeredArg === "enable";
+
+                    if (command.active === newActiveStatus) {
+                        await chat.sendChatMessage(
+                            `${trigger} is already ${triggeredArg}d.`
+                        );
+                        return resolve();
+                    }
+
+                    command.active = newActiveStatus;
+
+                    commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
+
+                    frontendCommunicator.send("custom-commands-updated");
+
                     await chat.sendChatMessage(
-                        `Could not find a command with the trigger '${trigger}', please try again.`
+                        `${util.capitalize(triggeredArg)}d "${trigger}"`
                     );
-                    return resolve();
+                    break;
                 }
+                case "addalias": {
+                    const alias = remainingData.trim();
 
-                let globalCooldown = parseInt(cooldownArgs[0]),
-                    userCooldown = parseInt(cooldownArgs[1]);
+                    if (args.length < 3 || alias === "") {
+                        await chat.sendChatMessage(
+                            `Invalid command. Usage: ${event.command.trigger} ${usage}`
+                        );
+                        return resolve();
+                    }
 
-                if (globalCooldown < 0) {
-                    globalCooldown = 0;
-                }
+                    const command = commandManager.getAllCustomCommands().find(c => c.trigger === trigger);
 
-                if (userCooldown < 0) {
-                    userCooldown = 0;
-                }
+                    if (command == null) {
+                        await chat.sendChatMessage(
+                            `Could not find a command with the trigger '${trigger}', please try again.`
+                        );
+                        return resolve();
+                    }
 
-                command.cooldown = {
-                    user: userCooldown,
-                    global: globalCooldown
-                };
+                    const aliasIndex = command.aliases.findIndex((a) =>
+                        a.toLowerCase() === alias.toLowerCase());
 
-                commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
+                    if (aliasIndex > -1) {
+                        await chat.sendChatMessage(
+                            `Alias '${alias}' already exists for command with the trigger '${trigger}'.`
+                        );
+                        return resolve();
+                    }
 
-                await chat.sendChatMessage(
-                    `Updated '${trigger}' with cooldowns: ${userCooldown}s (user), ${globalCooldown}s (global)`
-                );
+                    command.aliases.push(alias);
+                    commandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
-                break;
-            }
-            case "restrict": {
-                if (args.length < 3 || remainingData === "") {
                     await chat.sendChatMessage(
-                        `Invalid command. Usage: ${event.command.trigger} ${usage}`
+                        `Added alias '${alias}' to custom command '${trigger}'!`
                     );
-                    return resolve();
-                }
 
-                const command = activeCustomCommands.find(c => c.trigger === trigger);
-                if (command == null) {
+                    break;
+                }
+                case "removealias": {
+                    const alias = remainingData.trim();
+
+                    if (args.length < 3 || alias === "") {
+                        await chat.sendChatMessage(
+                            `Invalid command. Usage: ${event.command.trigger} ${usage}`
+                        );
+                        return resolve();
+                    }
+
+                    const command = commandManager.getAllCustomCommands().find(c => c.trigger === trigger);
+
+                    if (command == null) {
+                        await chat.sendChatMessage(
+                            `Could not find a command with the trigger '${trigger}', please try again.`
+                        );
+                        return resolve();
+                    }
+
+                    const aliasIndex = command.aliases.findIndex((a) =>
+                        a.toLowerCase() === alias.toLowerCase());
+
+                    if (aliasIndex === -1) {
+                        await chat.sendChatMessage(
+                            `Alias '${alias}' does not exist for command with the trigger '${trigger}'.`
+                        );
+                        return resolve();
+                    }
+
+                    command.aliases.splice(aliasIndex, 1);
+                    commandManager.saveCustomCommand(command, event.userCommand.commandSender);
+
                     await chat.sendChatMessage(
-                        `Could not find a command with the trigger '${trigger}', please try again.`
+                        `Removed alias '${alias}' from custom command '${trigger}'!`
                     );
-                    return resolve();
+
+                    break;
                 }
-
-                const restrictions = [];
-                const roleIds = await mapPermArgToRoleIds(remainingData);
-
-
-                if (roleIds === false) {
-                    await chat.sendChatMessage(
-                        `Please provide a valid group name: All, Sub, Mod, Streamer, or a custom group's name`
-                    );
-                    return resolve();
-                }
-
-                if (roleIds != null) {
-                    restrictions.push({
-                        id: uuidv1(),
-                        type: "firebot:permissions",
-                        mode: "roles",
-                        roleIds: roleIds
-                    });
-                }
-
-                command.restrictionData = { restrictions: restrictions };
-
-                commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
-
-                await chat.sendChatMessage(`Updated '${trigger}' restrictions to: ${remainingData}`);
-
-                break;
-            }
-            case "remove": {
-
-                const command = activeCustomCommands.find(c => c.trigger === trigger);
-                if (command == null) {
-                    await chat.sendChatMessage(
-                        `Could not find a command with the trigger '${trigger}', please try again.`
-                    );
-                    return resolve();
-                }
-
-                commandManager.removeCustomCommandByTrigger(trigger);
-
-                await chat.sendChatMessage(`Successfully removed command '${trigger}'.`);
-                break;
-            }
-            case "disable":
-            case "enable": {
-                const command = commandManager.getAllCustomCommands().find(c => c.trigger === trigger);
-
-                if (command == null) {
-                    await chat.sendChatMessage(
-                        `Could not find a command with the trigger '${trigger}', please try again.`
-                    );
-                    return resolve();
-                }
-
-                const newActiveStatus = triggeredArg === "enable";
-
-                if (command.active === newActiveStatus) {
-                    await chat.sendChatMessage(
-                        `${trigger} is already ${triggeredArg}d.`
-                    );
-                    return resolve();
-                }
-
-                command.active = newActiveStatus;
-
-                commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
-
-                frontendCommunicator.send("custom-commands-updated");
-
-                await chat.sendChatMessage(
-                    `${util.capitalize(triggeredArg)}d "${trigger}"`
-                );
-                break;
-            }
-            case "addalias": {
-                const alias = remainingData.trim();
-
-                if (args.length < 3 || alias === "") {
-                    await chat.sendChatMessage(
-                        `Invalid command. Usage: ${event.command.trigger} ${usage}`
-                    );
-                    return resolve();
-                }
-
-                const command = commandManager.getAllCustomCommands().find(c => c.trigger === trigger);
-
-                if (command == null) {
-                    await chat.sendChatMessage(
-                        `Could not find a command with the trigger '${trigger}', please try again.`
-                    );
-                    return resolve();
-                }
-
-                const aliasIndex = command.aliases.findIndex((a) =>
-                    a.toLowerCase() === alias.toLowerCase());
-
-                if (aliasIndex > -1) {
-                    await chat.sendChatMessage(
-                        `Alias '${alias}' already exists for command with the trigger '${trigger}'.`
-                    );
-                    return resolve();
-                }
-
-                command.aliases.push(alias);
-                commandManager.saveCustomCommand(command, event.userCommand.commandSender);
-
-                await chat.sendChatMessage(
-                    `Added alias '${alias}' to custom command '${trigger}'!`
-                );
-
-                break;
-            }
-            case "removealias": {
-                const alias = remainingData.trim();
-
-                if (args.length < 3 || alias === "") {
-                    await chat.sendChatMessage(
-                        `Invalid command. Usage: ${event.command.trigger} ${usage}`
-                    );
-                    return resolve();
-                }
-
-                const command = commandManager.getAllCustomCommands().find(c => c.trigger === trigger);
-
-                if (command == null) {
-                    await chat.sendChatMessage(
-                        `Could not find a command with the trigger '${trigger}', please try again.`
-                    );
-                    return resolve();
-                }
-
-                const aliasIndex = command.aliases.findIndex((a) =>
-                    a.toLowerCase() === alias.toLowerCase());
-
-                if (aliasIndex === -1) {
-                    await chat.sendChatMessage(
-                        `Alias '${alias}' does not exist for command with the trigger '${trigger}'.`
-                    );
-                    return resolve();
-                }
-
-                command.aliases.splice(aliasIndex, 1);
-                commandManager.saveCustomCommand(command, event.userCommand.commandSender);
-
-                await chat.sendChatMessage(
-                    `Removed alias '${alias}' from custom command '${trigger}'!`
-                );
-
-                break;
-            }
-            default:
+                default:
             }
 
             resolve();

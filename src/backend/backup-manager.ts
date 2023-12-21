@@ -10,9 +10,9 @@ import logger from "./logwrapper";
 class BackupManager {
     private readonly _backupFolderPath = path.join(dataAccess.getPathInUserData("/"), "backups");
 
-    private async cleanUpOldBackups(callback: Function) {
+    private async cleanUpOldBackups(callback: () => void) {
         const maxBackups = settings.maxBackupCount();
-    
+
         if (maxBackups !== "All") {
             const fileNames = (await fs.readdir(this._backupFolderPath))
                 .map((v) => {
@@ -42,17 +42,17 @@ class BackupManager {
         }
     }
 
-    async startBackup(manualActivation: Boolean = false, callback?: Function) {
+    async startBackup(manualActivation = false, callback?: () => void) {
         logger.info(`Backup manualActivation: ${manualActivation}`);
-    
+
         const version = app.getVersion(),
             milliseconds = Date.now(),
             fileExtension = "zip";
-    
+
         const filename = `backup_${milliseconds}_v${version}${
             manualActivation ? "_manual" : ""
         }.${fileExtension}`;
-    
+
         const output = fs.createWriteStream(path.join(this._backupFolderPath, filename));
 
         // listen for all archive data to be written
@@ -80,14 +80,14 @@ class BackupManager {
                 }
             }
         });
-    
+
         // Add directory to package
         const folderPath = path.resolve(dataAccess.getPathInUserData("/"));
         //archive.directory(folderPath, "profiles");
-    
+
         const varIgnoreInArchive = ['backups/**', 'clips/**', 'logs/**', 'overlay.html'];
         const ignoreResources = settings.backupIgnoreResources();
-    
+
         if (ignoreResources && !manualActivation) {
             logger.info("Ignoring overlay-resources folder");
             varIgnoreInArchive.push('overlay-resources/**');
@@ -103,14 +103,14 @@ class BackupManager {
         };
 
         try {
-            for(const file of fileList) {
+            for (const file of fileList) {
                 const fullPath = path.join(folderPath, file);
 
                 if ((await fs.stat(fullPath)).isFile() === true) {
                     const newFile = new ZipDeflate(file, zipOptions);
-                    
+
                     archive.add(newFile);
-                    
+
                     const fileContents = await fs.readFile(path.join(folderPath, file));
                     newFile.push(new Uint8Array(fileContents), true);
                 }
@@ -119,23 +119,23 @@ class BackupManager {
             logger.error(`Error creating backup file: ${err}`);
             throw err;
         }
-    
+
         // finalize the archive (ie we are done appending files but streams have to finish yet)
         archive.end();
     }
-    
+
     async onceADayBackUpCheck() {
         const shouldBackUp = settings.backupOnceADay(),
             lastBackupDate = settings.lastBackupDate(),
             todayDate = new Date();
-    
+
         if (shouldBackUp) {
             const isSameDay =
           lastBackupDate != null &&
           lastBackupDate.getDate() === todayDate.getDate() &&
           lastBackupDate.getMonth() === todayDate.getMonth() &&
           lastBackupDate.getFullYear() === todayDate.getFullYear();
-    
+
             if (!isSameDay) {
                 logger.info("Doing once a day backup");
                 await this.startBackup();

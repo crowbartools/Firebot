@@ -25,8 +25,8 @@ const model: EffectType<{
         icon: "fad fa-comment-check",
         categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
         dependencies: {
-            twitch: true,
-        },
+            twitch: true
+        }
     },
     optionsTemplate: `
         <eos-container header="Chat Modes">
@@ -166,7 +166,7 @@ const model: EffectType<{
         if (effect.setSlowMode === true) {
             await twitchApi.chat.setSlowMode(effect.enableSlowMode ?? false, effect.slowModeDelay);
         }
-    },
+    }
 };
 
 module.exports = model;

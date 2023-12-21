@@ -96,23 +96,23 @@ function startModerationService() {
             return;
         }
         switch (event.type) {
-        case "deleteMessage": {
-            if (event.messageId) {
-                logger.debug(event.logMessage);
-                await twitchApi.chat.deleteChatMessage(event.messageId);
+            case "deleteMessage": {
+                if (event.messageId) {
+                    logger.debug(event.logMessage);
+                    await twitchApi.chat.deleteChatMessage(event.messageId);
 
-                let outputMessage = chatModerationSettings.bannedWordList.outputMessage || "";
-                if (outputMessage) {
-                    outputMessage = outputMessage.replace("{userName}", event.username);
-                    await chat.sendChatMessage(outputMessage);
+                    let outputMessage = chatModerationSettings.bannedWordList.outputMessage || "";
+                    if (outputMessage) {
+                        outputMessage = outputMessage.replace("{userName}", event.username);
+                        await chat.sendChatMessage(outputMessage);
+                    }
                 }
+                break;
             }
-            break;
-        }
-        case "logWarn": {
-            logger.warn(event.logMessage, event.meta);
-            break;
-        }
+            case "logWarn": {
+                logger.warn(event.logMessage, event.meta);
+                break;
+            }
         }
     });
 

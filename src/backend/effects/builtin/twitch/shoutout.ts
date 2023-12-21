@@ -13,8 +13,8 @@ const model: EffectType<{
         icon: "fad fa-bullhorn",
         categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
         dependencies: {
-            twitch: true,
-        },
+            twitch: true
+        }
     },
     optionsTemplate: `
         <eos-container header="Target">
@@ -47,7 +47,7 @@ const model: EffectType<{
         }
 
         return await twitchApi.chat.sendShoutout(targetUserId);
-    },
+    }
 };
 
 module.exports = model;

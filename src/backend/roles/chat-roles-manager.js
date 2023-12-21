@@ -70,15 +70,15 @@ const getUserSubscriberRole = async (userIdOrName) => {
 
     let role = '';
     switch (subInfo.tier) {
-    case "1000":
-        role = "tier1";
-        break;
-    case "2000":
-        role = "tier2";
-        break;
-    case "3000":
-        role = "tier3";
-        break;
+        case "1000":
+            role = "tier1";
+            break;
+        case "2000":
+            role = "tier2";
+            break;
+        case "3000":
+            role = "tier3";
+            break;
     }
 
     return role;

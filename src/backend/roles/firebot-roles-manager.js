@@ -6,10 +6,10 @@ const activeChatUsers = require("../chat/chat-listeners/active-user-handler");
 
 function userIsInFirebotRole(role, username) {
     switch (role.id) {
-    case "ActiveChatters":
-        return activeChatUsers.userIsActive(username);
-    default:
-        return false;
+        case "ActiveChatters":
+            return activeChatUsers.userIsActive(username);
+        default:
+            return false;
     }
 }
 
@@ -26,12 +26,3 @@ function getAllFirebotRolesForViewer(username) {
 }
 
 exports.getAllFirebotRolesForViewer = getAllFirebotRolesForViewer;
-
-
-
-
-
-
-
-
-

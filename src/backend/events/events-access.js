@@ -213,15 +213,15 @@ ipcMain.on("eventUpdate", (_, data) => {
     //case "setActiveGroup":
     //setActiveGroup(meta);
     //break;
-    case "saveGroup":
-        saveGroup(meta);
-        break;
-    case "deleteGroup":
-        deleteGroup(meta);
-        break;
-    case "saveMainEvents":
-        saveMainEvents(meta);
-        break;
+        case "saveGroup":
+            saveGroup(meta);
+            break;
+        case "deleteGroup":
+            deleteGroup(meta);
+            break;
+        case "saveMainEvents":
+            saveMainEvents(meta);
+            break;
     }
 });
 

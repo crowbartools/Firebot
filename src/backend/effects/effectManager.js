@@ -159,16 +159,16 @@ frontendCommunicator.onAsync("getEffectDefinitions", async (triggerData) => {
                     const effectTriggerData = e.triggers[triggerType];
 
                     switch (triggerType) {
-                    case EffectTrigger.EVENT:
-                        if (effectTriggerData === true) {
+                        case EffectTrigger.EVENT:
+                            if (effectTriggerData === true) {
+                                return true;
+                            }
+                            if (Array.isArray(effectTriggerData)) {
+                                return effectTriggerData.includes(triggerMeta.triggerId);
+                            }
                             return true;
-                        }
-                        if (Array.isArray(effectTriggerData)) {
-                            return effectTriggerData.includes(triggerMeta.triggerId);
-                        }
-                        return true;
-                    default:
-                        return true;
+                        default:
+                            return true;
                     }
                 } else {
                     return true;

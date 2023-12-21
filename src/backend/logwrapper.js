@@ -90,7 +90,7 @@ module.exports = logger;
 // #### @key {string} **Optional** Optional key represented by obj in a larger object
 // Performs simple comma-separated, `key=value` serialization for Loggly when
 // logging to non-JSON inputs.
-function serialize(obj, key) { //eslint-disable-line no-unused-vars
+function serialize(obj, key) { //eslint-disable-line @typescript-eslint/no-unused-vars
     // symbols cannot be directly casted to strings
     if (typeof key === "symbol") {
         key = key.toString();

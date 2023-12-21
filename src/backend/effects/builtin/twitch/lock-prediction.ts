@@ -3,7 +3,7 @@ import { EffectCategory } from "../../../../shared/effect-constants";
 import logger from "../../../logwrapper";
 import twitchApi from "../../../twitch-api/api";
 
-const model: EffectType<{}> = {
+const model: EffectType = {
     definition: {
         id: "twitch:lock-prediction",
         name: "Lock Twitch Prediction",
@@ -11,8 +11,8 @@ const model: EffectType<{}> = {
         icon: "fad fa-lock",
         categories: [EffectCategory.COMMON, EffectCategory.TWITCH],
         dependencies: {
-            twitch: true,
-        },
+            twitch: true
+        }
     },
     optionsTemplate: `
         <eos-container>
@@ -33,7 +33,7 @@ const model: EffectType<{}> = {
 
         logger.debug(`Locking Twitch prediction "${latestPrediction.title}"`);
         return await twitchApi.predictions.lockPrediciton(latestPrediction.id);
-    },
+    }
 };
 
 module.exports = model;

@@ -29,7 +29,7 @@ export function triggerCharityDonation(
     charityLogo: string,
     charityWebsite: string,
     donationAmount: number,
-    donationCurrency: string 
+    donationCurrency: string
 ) {
     eventManager.triggerEvent("twitch", "charity-donation", {
         from: username,

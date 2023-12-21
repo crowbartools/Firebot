@@ -12,7 +12,7 @@ async function getCommandListForSync() {
     commandData.allowedCmds = allCommands
         .filter(c => c.active && !c.hidden)
         .map(c => {
-            // eslint-disable-next-line no-unused-vars
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { effects, ...strippedCommand } = c;
             return {
                 ...strippedCommand,

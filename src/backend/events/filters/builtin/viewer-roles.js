@@ -88,12 +88,12 @@ module.exports = {
         const hasRole = allRoles.some(r => r.id === value);
 
         switch (comparisonType) {
-        case "include":
-            return hasRole;
-        case "doesn't include":
-            return !hasRole;
-        default:
-            return false;
+            case "include":
+                return hasRole;
+            case "doesn't include":
+                return !hasRole;
+            default:
+                return false;
         }
     }
 };
