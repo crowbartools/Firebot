@@ -52,7 +52,7 @@ export type EffectType<EffectModel = unknown, OverlayData = unknown> = {
         outputs?: EffectOutput[];
     };
     optionsTemplate: string;
-    optionsController?: ($scope: EffectScope<EffectModel>, ...args: unknown[]) => void;
+    optionsController?: ($scope: EffectScope<EffectModel>, ...args: any[]) => void;
     optionsValidator?: (effect: EffectModel) => string[];
     onTriggerEvent: (event: {
         effect: EffectModel;

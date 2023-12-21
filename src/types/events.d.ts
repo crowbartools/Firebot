@@ -20,7 +20,7 @@ export type EventFilter = {
     }>;
     comparisonTypes: string[];
     valueType: "text" | "preset";
-    presetValues(...args: unknown[]): Promise<unknown[]>;
+    presetValues(...args: any[]): Promise<unknown[]>;
     predicate(
         filterSettings: { comparisonType: string; value: any },
         eventData: {
