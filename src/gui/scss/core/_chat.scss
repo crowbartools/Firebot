@@ -123,6 +123,17 @@
     }
 }
 
+.chat-message-banner {
+    background: #00000014;
+    padding: 5px 10px;
+    margin-top: 5px;
+}
+
+.mini-banner {
+    padding: 0 10px;
+    font-size: smaller;
+}
+
 .chat-message {
     display: flex;
     flex-direction: row;
