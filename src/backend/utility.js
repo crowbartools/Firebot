@@ -8,7 +8,7 @@ const twitchApi = require("./twitch-api/api");
 
 const getRandomInt = (min, max) => {
     min = Math.ceil(min);
-    max = Math.floor(max);
+    max = Math.max(Math.floor(max), min); // Ensure max is at least equal to min
 
     // randomInt is max exclusive, so we add 1 to make inclusive
     return randomInt(min, max + 1);
