@@ -53,6 +53,7 @@ class BackupManager {
             manualActivation ? "_manual" : ""
         }.${fileExtension}`;
 
+        await fs.ensureDir(this._backupFolderPath);
         const output = fs.createWriteStream(path.join(this._backupFolderPath, filename));
 
         // listen for all archive data to be written
