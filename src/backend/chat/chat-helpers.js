@@ -432,6 +432,11 @@ exports.buildFirebotChatMessage = async (msg, msgText, whisper = false, action =
         isAnnouncement: false,
         isFirstChat: msg.isFirst ?? false,
         isReturningChatter: msg.isReturningChatter ?? false,
+        isReply: msg.tags.has("reply-parent-msg-id"),
+        originalMessageId: msg.tags.get("reply-parent-msg-id") ?? "",
+        originalMessageText: msg.tags.get("reply-parent-msg-body") ?? "",
+        originalMessageSenderUserId: msg.tags.get("reply-parent-user-id") ?? "",
+        originalMessageSenderDisplayName: msg.tags.get("reply-parent-display-name") ?? "",
 
         //TODO: Waiting for EventSub to supply these 3 fields
         isRaider: false,

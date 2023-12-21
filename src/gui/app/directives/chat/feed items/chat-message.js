@@ -51,6 +51,9 @@
                     <div ng-if="$ctrl.message.isSuspiciousUser" style="background: #00000014;padding: 5px 10px;margin-top:5px">
                         <i class="fad fa-exclamation-triangle"></i> Suspicious User
                     </div>
+                    <div ng-if="$ctrl.message.isReply" class="muted" style="font-size: smaller;background: #00000014;padding: 5px 10px;margin-top:5px">
+                        <i class="fad fa-comment-alt-dots"></i> Replying to @{{$ctrl.message.originalMessageSenderDisplayName}}: {{$ctrl.message.originalMessageText}}</span>
+                    </div>
                     <div class="chat-message"
                         ng-class="{
                             isAction: $ctrl.message.action,
