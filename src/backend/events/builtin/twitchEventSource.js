@@ -485,7 +485,7 @@ module.exports = {
             activityFeed: {
                 icon: "fad fa-poll-h",
                 getMessage: (eventData) => {
-                    return `Channel poll **${eventData.title}** has ended. Winning choice: **${eventData.winningChoice.title}**`;
+                    return `Channel poll **${eventData.title}** has ended. Winning choice(s): **${eventData.winningChoiceName}** with **${eventData.winningChoiceVotes}** vote(s)`;
                 }
             }
         },

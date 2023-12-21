@@ -50,14 +50,19 @@ export function triggerChannelPollEnd(
     channelPointsPerVote: number,
     status: EventSubChannelPollEndStatus
 ) {
-    const winningChoice = choices.sort((c1: EventSubChannelPollChoice, c2:EventSubChannelPollChoice) => {
-        return c1.totalVotes < c2.totalVotes ? 1 : -1;
-    })[0];
+    const winningChoiceVotes = Math.max(...choices.map(c => c.totalVotes));
+
+    // Multiple choices in the poll may win, so we return all
+    const winningChoiceName = choices
+        .filter(c => c.totalVotes === winningChoiceVotes)
+        .map(c => c.title)
+        .join(", ");
 
     eventManager.triggerEvent("twitch", "channel-poll-end", {
         title,
         choices,
-        winningChoice,
+        winningChoiceName,
+        winningChoiceVotes,
         startDate,
         endDate,
         isChannelPointsVotingEnabled,

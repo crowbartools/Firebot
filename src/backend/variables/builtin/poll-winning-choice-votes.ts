@@ -14,7 +14,7 @@ const model = {
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {
-        return trigger.winningChoice.totalVotes;
+        return trigger.metadata.eventData.winningChoiceVotes;
     }
 };
 

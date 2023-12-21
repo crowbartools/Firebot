@@ -14,7 +14,7 @@ const model = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
-        return trigger.winningChoice.title;
+        return trigger.metadata.eventData.winningChoiceName;
     }
 };
 
