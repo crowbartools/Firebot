@@ -219,6 +219,10 @@ exports.loadReplaceVariables = () => {
         'whisper-message',
         'word',
 
+        'twitch/channel-goal-current-amount',
+        'twitch/channel-goal-description',
+        'twitch/channel-goal-target-amount',
+        'twitch/channel-goal-type',
         'twitch/sub-count',
         'twitch/sub-points'
     ].forEach(filename => {

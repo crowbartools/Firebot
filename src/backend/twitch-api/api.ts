@@ -11,6 +11,7 @@ import { TwitchChannelRewardsApi } from "./resource/channel-rewards";
 import { TwitchChannelsApi } from "./resource/channels";
 import { TwitchCharityApi } from "./resource/charity";
 import { TwitchChatApi } from "./resource/chat";
+import { TwitchGoalsApi } from "./resource/goals";
 import { TwitchModerationApi } from "./resource/moderation";
 import { TwitchPollsApi } from "./resource/polls";
 import { TwitchPredictionsApi } from "./resource/predictions";
@@ -81,6 +82,10 @@ class TwitchApi {
 
     get chat() {
         return new TwitchChatApi(this._streamerClient, this._botClient);
+    }
+
+    get goals() {
+        return new TwitchGoalsApi(this._streamerClient, this._botClient);
     }
 
     get moderation() {
