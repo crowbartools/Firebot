@@ -25,19 +25,23 @@ function setupRemoteListeners() {
         );
     });
 
-    obs.on("StreamStateChanged", ({ outputActive }) => {
-        if (outputActive) {
-            eventManager?.triggerEvent(
-                OBS_EVENT_SOURCE_ID,
-                OBS_STREAM_STARTED_EVENT_ID,
-                {}
-            );
-        } else {
-            eventManager?.triggerEvent(
-                OBS_EVENT_SOURCE_ID,
-                OBS_STREAM_STOPPED_EVENT_ID,
-                {}
-            );
+    obs.on("StreamStateChanged", ({ outputState }) => {
+        switch (outputState) {
+            case "OBS_WEBSOCKET_OUTPUT_STARTED":
+                eventManager?.triggerEvent(
+                    OBS_EVENT_SOURCE_ID,
+                    OBS_STREAM_STARTED_EVENT_ID,
+                    {}
+                );
+                break;
+
+            case "OBS_WEBSOCKET_OUTPUT_STOPPED":
+                eventManager?.triggerEvent(
+                    OBS_EVENT_SOURCE_ID,
+                    OBS_STREAM_STOPPED_EVENT_ID,
+                    {}
+                );
+                break;
         }
     });
 }

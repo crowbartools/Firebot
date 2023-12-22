@@ -242,15 +242,17 @@ class TwitchEventSubClient {
 
             // Channel poll end
             const pollEndSubscription = this._eventSubListener.onChannelPollEnd(streamer.userId, (event) => {
-                twitchEventsHandler.poll.triggerChannelPollEnd(
-                    event.title,
-                    event.choices,
-                    event.startDate,
-                    event.endDate,
-                    event.isChannelPointsVotingEnabled,
-                    event.channelPointsPerVote,
-                    event.status
-                );
+                if (event.status !== "archived") {
+                    twitchEventsHandler.poll.triggerChannelPollEnd(
+                        event.title,
+                        event.choices,
+                        event.startDate,
+                        event.endDate,
+                        event.isChannelPointsVotingEnabled,
+                        event.channelPointsPerVote,
+                        event.status
+                    );
+                }
             });
             this._subscriptions.push(pollEndSubscription);
 
