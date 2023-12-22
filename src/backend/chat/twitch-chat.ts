@@ -17,6 +17,7 @@ import chatterPoll from "../twitch-api/chatter-poll";
 interface ChatMessageRequest {
     message: string;
     accountType: string;
+    replyToMessageId?: string;
 }
 
 interface UserModRequest {
@@ -51,8 +52,10 @@ class TwitchChat extends EventEmitter {
      * Whether or not the streamer is currently connected
      */
     get chatIsConnected(): boolean {
-        return this._streamerIncomingChatClient?.irc?.isConnected === true
-            && this._streamerOutgoingingChatClient?.irc?.isConnected === true;
+        return (
+            this._streamerIncomingChatClient?.irc?.isConnected === true &&
+            this._streamerOutgoingingChatClient?.irc?.isConnected === true
+        );
     }
 
     /**
@@ -117,7 +120,10 @@ class TwitchChat extends EventEmitter {
 
             this._streamerIncomingChatClient.irc.onPasswordError((event) => {
                 logger.error("Failed to connect to chat", event);
-                frontendCommunicator.send("error", `Unable to connect to chat. Reason: "${event.message}". Try signing out and back into your streamer/bot account(s).`);
+                frontendCommunicator.send(
+                    "error",
+                    `Unable to connect to chat. Reason: "${event.message}". Try signing out and back into your streamer/bot account(s).`
+                );
                 this.disconnect(true);
             });
 
@@ -184,7 +190,7 @@ class TwitchChat extends EventEmitter {
      * @param {string} accountType The type of account to whisper with ('streamer' or 'bot')
      */
     async _say(message: string, accountType: string, replyToId?: string): Promise<void> {
-        const chatClient = accountType === 'bot' ? this._botChatClient : this._streamerOutgoingingChatClient;
+        const chatClient = accountType === "bot" ? this._botChatClient : this._streamerOutgoingingChatClient;
         try {
             logger.debug(`Sending message as ${accountType}.`);
 
@@ -205,7 +211,7 @@ class TwitchChat extends EventEmitter {
             logger.debug(`Sending whisper as ${accountType} to ${username}.`);
 
             const recipient = await twitchApi.users.getUserByName(username);
-            await twitchApi.whispers.sendWhisper(recipient.id, message, accountType === 'bot');
+            await twitchApi.whispers.sendWhisper(recipient.id, message, accountType === "bot");
         } catch (error) {
             logger.error(`Error attempting to send whisper with ${accountType}`, error);
         }
@@ -221,7 +227,12 @@ class TwitchChat extends EventEmitter {
      * @param accountType Which account to chat as. Defaults to bot if available otherwise, the streamer.
      * @param replyToMessageId A message id to reply to
      */
-    async sendChatMessage(message: string, username?: string, accountType?: string, replyToMessageId?: string): Promise<void> {
+    async sendChatMessage(
+        message: string,
+        username?: string,
+        accountType?: string,
+        replyToMessageId?: string
+    ): Promise<void> {
         if (message == null || message?.length < 1) {
             return null;
         }
@@ -233,7 +244,8 @@ class TwitchChat extends EventEmitter {
 
         const shouldWhisper = username != null && username.trim() !== "";
 
-        const botAvailable = accountAccess.getAccounts().bot.loggedIn && this._botChatClient && this._botChatClient.irc.isConnected;
+        const botAvailable =
+            accountAccess.getAccounts().bot.loggedIn && this._botChatClient && this._botChatClient.irc.isConnected;
         if (accountType == null) {
             accountType = botAvailable && !shouldWhisper ? "bot" : "streamer";
         } else if (accountType === "bot" && !botAvailable) {
@@ -244,16 +256,20 @@ class TwitchChat extends EventEmitter {
 
         // If the slash command handler finds, validates, and successfully executes a command, no need to continue.
         if (slashCommandValidationResult != null && slashCommandValidationResult.success === true) {
-            const slashCommandResult = await twitchSlashCommandHandler.processChatCommand(message, accountType === "bot");
+            const slashCommandResult = await twitchSlashCommandHandler.processChatCommand(
+                message,
+                accountType === "bot"
+            );
             if (slashCommandResult === true) {
                 return;
             }
         }
 
         // split message into fragments that don't exceed the max message length
-        const messageFragments = message.match(/[\s\S]{1,500}/g)
-            .map(mf => mf.trim())
-            .filter(mf => mf !== "");
+        const messageFragments = message
+            .match(/[\s\S]{1,500}/g)
+            .map((mf) => mf.trim())
+            .filter((mf) => mf !== "");
 
         // Send all message fragments
         for (const fragment of messageFragments) {
@@ -278,9 +294,9 @@ class TwitchChat extends EventEmitter {
 const twitchChat = new TwitchChat();
 
 frontendCommunicator.onAsync("send-chat-message", async (sendData: ChatMessageRequest) => {
-    const { message, accountType } = sendData;
+    const { message, accountType, replyToMessageId } = sendData;
 
-    await twitchChat.sendChatMessage(message, null, accountType);
+    await twitchChat.sendChatMessage(message, null, accountType, replyToMessageId);
 });
 
 frontendCommunicator.onAsync("delete-message", async (messageId: string) => {

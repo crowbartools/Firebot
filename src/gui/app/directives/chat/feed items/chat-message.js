@@ -13,7 +13,10 @@
                 showFfzEmotes: "<",
                 showSevenTvEmotes: "<",
                 showPronoun: "<",
-                updateChatInput: "&",
+                hideReplyBanner: "<?",
+                disableInteractions: "<?",
+                updateChatInput: "&?",
+                onReplyClicked: "&?",
                 chatSizeStyle: "@?"
             },
             template: `
@@ -51,8 +54,8 @@
                     <div ng-if="$ctrl.message.isSuspiciousUser" class="chat-message-banner">
                         <i class="fad fa-exclamation-triangle"></i> Suspicious User
                     </div>
-                    <div ng-if="$ctrl.message.isReply" class="chat-message-banner mini-banner muted">
-                        <i class="fad fa-comment-alt-dots"></i> Replying to @{{$ctrl.message.originalMessageSenderDisplayName}}: {{$ctrl.message.originalMessageText}}</span>
+                    <div ng-if="$ctrl.message.isReply && !$ctrl.hideReplyBanner" class="chat-message-banner mini-banner muted" ng-click="$ctrl.replyBannerClicked()">
+                        <i class="fad fa-comment-alt-dots"></i> Replying to @{{$ctrl.message.replyParentMessageSenderDisplayName}}: {{$ctrl.message.replyParentMessageText}}</span>
                     </div>
                     <div class="chat-message"
                         ng-class="{
@@ -68,7 +71,7 @@
                         ng-attr-messageId="{{$ctrl.message.id}}"
                         context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
                         context-menu-class="chat-message-context-menu"
-                        context-menu-on="{{$ctrl.message.isExtension ? 'disabled' : 'contextmenu'}}"
+                        context-menu-on="{{$ctrl.message.isExtension || $ctrl.disableInteractions ? 'disabled' : 'contextmenu'}}"
                     >
                         <div
                             ng-if="!$ctrl.compactDisplay"
@@ -76,7 +79,7 @@
                             class="chat-user-avatar-wrapper"
                             context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
                             context-menu-class="chat-message-context-menu"
-                            context-menu-on="{{$ctrl.message.isExtension ? 'disabled' : 'click'}}"
+                            context-menu-on="{{$ctrl.message.isExtension || $ctrl.disableInteractions ? 'disabled' : 'click'}}"
                         >
                             <img class="chat-user-avatar" ng-src="{{$ctrl.message.profilePicUrl}}">
                         </div>
@@ -92,7 +95,7 @@
                                 ng-show="$ctrl.showAvatar"
                                 context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
                                 context-menu-class="chat-message-context-menu"
-                                context-menu-on="{{$ctrl.message.isExtension ? 'disabled' : 'click'}}"
+                                context-menu-on="{{$ctrl.message.isExtension || $ctrl.disableInteractions ? 'disabled' : 'click'}}"
                             >
                                 <img class="chat-user-avatar" ng-src="{{$ctrl.message.profilePicUrl}}">
                             </div>
@@ -101,7 +104,7 @@
                                 class="chat-username"
                                 context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
                                 context-menu-class="chat-message-context-menu"
-                                context-menu-on="{{$ctrl.message.isExtension ? 'disabled' : 'click'}}"
+                                context-menu-on="{{$ctrl.message.isExtension || $ctrl.disableInteractions ? 'disabled' : 'click'}}"
                             >
                                 <div ng-show="$ctrl.message.badges.length > 0" class="user-badges">
                                     <img ng-repeat="badge in $ctrl.message.badges"
@@ -244,10 +247,22 @@
                 };
 
                 function updateChatField(text) {
+                    if (!$ctrl.updateChatInput) {
+                        return;
+                    }
                     $ctrl.updateChatInput({
                         text: text
                     });
                 }
+
+                $ctrl.replyBannerClicked = () => {
+                    if (!$ctrl.onReplyClicked) {
+                        return;
+                    }
+                    $ctrl.onReplyClicked({
+                        threadOrReplyMessageId: $ctrl.message.threadParentMessageId || $ctrl.message.replyParentMessageId
+                    });
+                };
 
                 $ctrl.getMessageContextMenu = (message) => {
                     const actions = [];
@@ -258,7 +273,7 @@
                     });
 
                     actions.push({
-                        name: "Delete This Message",
+                        name: "Delete Message",
                         icon: "fa-trash-alt"
                     });
 
@@ -268,7 +283,12 @@
                     });
 
                     actions.push({
-                        name: "Quote This Message",
+                        name: "Reply To Message",
+                        icon: "fa-reply"
+                    });
+
+                    actions.push({
+                        name: "Quote Message",
                         icon: "fa-quote-right"
                     });
 
@@ -281,7 +301,7 @@
                         });
 
                         actions.push({
-                            name: "Highlight This Message",
+                            name: "Highlight Message",
                             icon: "fa-eye"
                         });
 
@@ -412,6 +432,11 @@
                             break;
                         case "mention":
                             updateChatField(`@${userName} `);
+                            break;
+                        case "reply to message":
+                            $ctrl.onReplyClicked({
+                                threadOrReplyMessageId: $ctrl.message.id
+                            });
                             break;
                         case "quote this message":
                             updateChatField(`!quote add @${userName} ${rawText}`);

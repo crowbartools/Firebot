@@ -386,10 +386,13 @@ exports.buildFirebotChatMessage = async (msg, msgText, whisper = false, action =
         isFirstChat: msg.isFirst ?? false,
         isReturningChatter: msg.isReturningChatter ?? false,
         isReply: msg.tags.has("reply-parent-msg-id"),
-        originalMessageId: msg.tags.get("reply-parent-msg-id") ?? "",
-        originalMessageText: msg.tags.get("reply-parent-msg-body") ?? "",
-        originalMessageSenderUserId: msg.tags.get("reply-parent-user-id") ?? "",
-        originalMessageSenderDisplayName: msg.tags.get("reply-parent-display-name") ?? "",
+        replyParentMessageId: msg.tags.get("reply-parent-msg-id"),
+        replyParentMessageText: msg.tags.get("reply-parent-msg-body"),
+        replyParentMessageSenderUserId: msg.tags.get("reply-parent-user-id"),
+        replyParentMessageSenderDisplayName: msg.tags.get("reply-parent-display-name"),
+        threadParentMessageId: msg.tags.get("reply-thread-parent-msg-id"),
+        threadParentMessageSenderUserId: msg.tags.get("reply-thread-parent-user-id"),
+        threadParentMessageSenderDisplayName: msg.tags.get("reply-thread-parent-display-name"),
 
         //TODO: Waiting for EventSub to supply these 3 fields
         isRaider: false,
@@ -405,6 +408,16 @@ exports.buildFirebotChatMessage = async (msg, msgText, whisper = false, action =
         parts: [],
         roles: []
     };
+
+    if (firebotChatMessage.isReply) {
+        const replyUsername = msg.tags.get("reply-parent-user-login");
+        if (firebotChatMessage.replyParentMessageText.startsWith(`@${replyUsername}`)) {
+            firebotChatMessage.replyParentMessageText = firebotChatMessage.replyParentMessageText.substring(replyUsername.length + 1);
+        }
+        if (msgText.startsWith('@')) {
+            msgText = msgText.split(" ").slice(1).join(" ");
+        }
+    }
 
     const profilePicUrl = await getUserProfilePicUrl(firebotChatMessage.userId);
     firebotChatMessage.profilePicUrl = profilePicUrl;

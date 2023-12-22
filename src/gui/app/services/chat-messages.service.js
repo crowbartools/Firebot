@@ -225,10 +225,11 @@
 
 
             // This submits a chat message to Twitch.
-            service.submitChat = function(sender, message) {
+            service.submitChat = function(sender, message, replyToMessageId) {
                 backendCommunicator.send("send-chat-message", {
                     message: message,
-                    accountType: sender
+                    accountType: sender,
+                    replyToMessageId: replyToMessageId
                 });
             };
 

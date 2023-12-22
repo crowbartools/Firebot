@@ -34,6 +34,14 @@ export type FirebotChatMessage = {
     isRaider: boolean;
     raidingFrom: string;
     isSuspiciousUser: boolean;
+    isReply: boolean;
+    replyParentMessageId?: string;
+    replyParentMessageText?: string;
+    replyParentMessageSenderUserId?: string;
+    replyParentMessageSenderDisplayName?: string;
+    threadParentMessageId?: string;
+    threadParentMessageSenderUserId?: string;
+    threadParentMessageSenderDisplayName?: string;
 };
 
 export type FirebotEmote = {
