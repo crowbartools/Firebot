@@ -54,7 +54,7 @@
                     <div ng-if="$ctrl.message.isSuspiciousUser" class="chat-message-banner">
                         <i class="fad fa-exclamation-triangle"></i> Suspicious User
                     </div>
-                    <div ng-if="$ctrl.message.isReply && !$ctrl.hideReplyBanner" class="chat-message-banner mini-banner muted" ng-click="$ctrl.replyBannerClicked()">
+                    <div ng-if="$ctrl.message.isReply && !$ctrl.hideReplyBanner" class="chat-message-banner mini-banner muted truncate" ng-click="$ctrl.replyBannerClicked()">
                         <i class="fad fa-comment-alt-dots"></i> Replying to @{{$ctrl.message.replyParentMessageSenderDisplayName}}: {{$ctrl.message.replyParentMessageText}}</span>
                     </div>
                     <div class="chat-message"
