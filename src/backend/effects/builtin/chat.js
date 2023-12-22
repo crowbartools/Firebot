@@ -2,6 +2,7 @@
 
 const { EffectCategory, EffectTrigger, EffectDependency } = require('../../../shared/effect-constants');
 const twitchChat = require("../../chat/twitch-chat");
+const uuid = require("uuid/v4");
 
 const effect = {
     definition: {
@@ -49,11 +50,6 @@ const effect = {
         return errors;
     },
     onTriggerEvent: async ({ effect, trigger}) => {
-
-        const chatHelpers = require("../../chat/chat-helpers");
-
-        const commandHandler = require("../../chat/commands/commandHandler");
-
         let messageId = null;
         if (trigger.type === EffectTrigger.COMMAND) {
             messageId = trigger.metadata.chatMessage.id;
@@ -61,11 +57,16 @@ const effect = {
             messageId = trigger.metadata.eventData?.chatMessage?.id;
         }
 
-        await twitchChat.sendChatMessage(effect.message, effect.whisper, effect.chatter, !effect.whisper && effect.sendAsReply ? messageId : undefined);
-
         if (effect.chatter === "Streamer" && (effect.whisper == null || !effect.whisper.length)) {
-            const firebotMessage = await chatHelpers.buildStreamerFirebotChatMessageFromText(effect.message);
-            commandHandler.handleChatMessage(firebotMessage);
+            await twitchChat.sendStreamerChatMessage({
+                message: effect.message,
+                accountType: "streamer",
+                id: uuid(),
+                sendAsReply: effect.sendAsReply,
+                replyingTo: effect.sendAsReply ? messageId : undefined
+            });
+        } else {
+            await twitchChat.sendChatMessage(effect.message, effect.whisper, effect.chatter, !effect.whisper && effect.sendAsReply ? messageId : undefined);
         }
 
         return true;

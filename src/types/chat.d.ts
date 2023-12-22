@@ -34,6 +34,7 @@ export type FirebotChatMessage = {
     isRaider: boolean;
     raidingFrom: string;
     isSuspiciousUser: boolean;
+    autoDelete: boolean;
 };
 
 export type FirebotEmote = {

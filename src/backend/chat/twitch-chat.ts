@@ -15,6 +15,15 @@ import twitchEventsHandler from "../events/twitch-events";
 import chatRolesManager from "../roles/chat-roles-manager";
 import twitchApi from "../twitch-api/api";
 import chatterPoll from "../twitch-api/chatter-poll";
+import { FirebotChatMessage } from "../../types/chat";
+
+interface ChatMessageRequest {
+    message: string;
+    accountType: string;
+    id: string;
+    sendAsReply?: boolean;
+    replyingTo: string;
+}
 
 interface UserModRequest {
     username: string;
@@ -167,6 +176,34 @@ class TwitchChat extends EventEmitter {
         }
     }
 
+    async sendStreamerChatMessage(request: ChatMessageRequest) {
+        const { message } = request;
+
+        const firebotMessage = await chatHelpers.buildStreamerFirebotChatMessageFromText(message);
+        commandHandler.handleChatMessage(firebotMessage);
+
+        twitchEventsHandler.chatMessage.triggerChatMessage(firebotMessage);
+
+        if (firebotMessage.autoDelete === true) {
+            firebotMessage.id = request.id;
+            await this.handleSentStreamerChatMessage(firebotMessage);
+            frontendCommunicator.send("twitch:chat:message:deleted", request.id);
+            return;
+        }
+
+        await this.sendChatMessage(message, null, "streamer");
+    }
+
+    async handleSentStreamerChatMessage(firebotChatMessage: FirebotChatMessage) {
+        await activeUserHandler.addActiveUser({
+            userId: firebotChatMessage.userId,
+            userName: firebotChatMessage.username,
+            displayName: firebotChatMessage.username
+        }, true, false);
+        frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
+        twitchChatListeners.events.emit("chat-message", firebotChatMessage);
+    }
+
     /**
      * Sends a chat message to the streamers chat (INTERNAL USE ONLY)
      * @param {string} message The message to send
@@ -182,13 +219,7 @@ class TwitchChat extends EventEmitter {
 
             if (accountType === 'streamer' && (!message.startsWith("/") || message.startsWith("/me"))) {
                 const firebotChatMessage = await chatHelpers.buildStreamerFirebotChatMessageFromText(message);
-                await activeUserHandler.addActiveUser({
-                    userId: firebotChatMessage.userId,
-                    userName: firebotChatMessage.username,
-                    displayName: firebotChatMessage.username
-                }, true, false);
-                frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
-                twitchChatListeners.events.emit("chat-message", firebotChatMessage);
+                await this.handleSentStreamerChatMessage(firebotChatMessage);
             }
         } catch (error) {
             logger.error(`Error attempting to send message with ${accountType}`, error);
@@ -277,23 +308,15 @@ class TwitchChat extends EventEmitter {
 
 const twitchChat = new TwitchChat();
 
-interface ChatMessageRequest {
-    message: string;
-    accountType: string;
-}
-
 frontendCommunicator.onAsync("send-chat-message", async (sendData: ChatMessageRequest) => {
     const { message, accountType } = sendData;
 
     // Run commands from firebot chat.
     if (accountType === "Streamer") {
-        const firebotMessage = await chatHelpers.buildStreamerFirebotChatMessageFromText(message);
-        commandHandler.handleChatMessage(firebotMessage);
-
-        twitchEventsHandler.chatMessage.triggerChatMessage(firebotMessage);
+        await twitchChat.sendStreamerChatMessage(sendData);
+    } else {
+        await twitchChat.sendChatMessage(message, null, accountType);
     }
-
-    await twitchChat.sendChatMessage(message, null, accountType);
 });
 
 frontendCommunicator.onAsync("delete-message", async (messageId: string) => {
