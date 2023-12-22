@@ -1,6 +1,5 @@
 "use strict";
 
-const uuid = require("uuid/v4");
 const logger = require("../logwrapper");
 const accountAccess = require("../common/account-access");
 const twitchClient = require("../twitch-api/api");
@@ -30,14 +29,6 @@ exports.cacheBadges = async () => {
             logger.error("Failed to get channel chat badges", error);
         }
     }
-};
-
-let streamerData = {
-    color: "white",
-    badges: new Map()
-};
-exports.setStreamerData = function(newStreamerData) {
-    streamerData = newStreamerData;
 };
 
 /** @type {import("@twurple/api").HelixEmote[]} */
@@ -375,44 +366,6 @@ exports.buildViewerFirebotChatMessageFromAutoModMessage = async (msg) => {
     // viewerFirebotChatMessage.parts = parseMessageParts(viewerFirebotChatMessage, viewerFirebotChatMessage.parts);
 
     return viewerFirebotChatMessage;
-};
-
-exports.buildStreamerFirebotChatMessageFromText = async (text = "") => {
-    const streamer = accountAccess.getAccounts().streamer;
-
-    const action = text.startsWith("/me");
-
-    if (action) {
-        text = text.replace("/me", "");
-    }
-
-    /**@type {import('../../types/chat').FirebotChatMessage} */
-    const streamerFirebotChatMessage = {
-        id: uuid(),
-        username: streamer.displayName,
-        useridname: streamer.username,
-        userId: streamer.userId,
-        rawText: text,
-        profilePicUrl: streamer.avatar,
-        whisper: false,
-        action: action,
-        tagged: false,
-        isBroadcaster: true,
-        color: streamerData.color,
-        badges: [],
-        parts: getMessageParts(text),
-        roles: [
-            "broadcaster"
-        ]
-    };
-
-    streamerFirebotChatMessage.parts = parseMessageParts(streamerFirebotChatMessage, streamerFirebotChatMessage.parts);
-
-    if (badgeCache != null) {
-        streamerFirebotChatMessage.badges = getChatBadges(streamerData.badges);
-    }
-
-    return streamerFirebotChatMessage;
 };
 
 /**

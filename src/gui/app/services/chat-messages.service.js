@@ -228,8 +228,7 @@
             service.submitChat = function(sender, message) {
                 backendCommunicator.send("send-chat-message", {
                     message: message,
-                    accountType: sender,
-                    id: uuid()
+                    accountType: sender
                 });
             };
 

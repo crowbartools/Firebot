@@ -440,7 +440,6 @@ async function handleChatMessage(firebotChatMessage) {
 
     if (command.autoDeleteTrigger || (triggeredSubcmd && triggeredSubcmd.autoDeleteTrigger)) {
         logger.debug("Auto delete trigger is on, attempting to delete chat message");
-        firebotChatMessage.autoDelete = true;
         await twitchApi.chat.deleteChatMessage(firebotChatMessage.id);
     }
 

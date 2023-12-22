@@ -2,7 +2,6 @@
 
 const { EffectCategory, EffectTrigger, EffectDependency } = require('../../../shared/effect-constants');
 const twitchChat = require("../../chat/twitch-chat");
-const uuid = require("uuid/v4");
 
 const effect = {
     definition: {
@@ -57,17 +56,7 @@ const effect = {
             messageId = trigger.metadata.eventData?.chatMessage?.id;
         }
 
-        if (effect.chatter === "Streamer" && (effect.whisper == null || !effect.whisper.length)) {
-            await twitchChat.sendStreamerChatMessage({
-                message: effect.message,
-                accountType: "streamer",
-                id: uuid(),
-                sendAsReply: effect.sendAsReply,
-                replyingTo: effect.sendAsReply ? messageId : undefined
-            });
-        } else {
-            await twitchChat.sendChatMessage(effect.message, effect.whisper, effect.chatter, !effect.whisper && effect.sendAsReply ? messageId : undefined);
-        }
+        await twitchChat.sendChatMessage(effect.message, effect.whisper, effect.chatter, !effect.whisper && effect.sendAsReply ? messageId : undefined);
 
         return true;
     }
