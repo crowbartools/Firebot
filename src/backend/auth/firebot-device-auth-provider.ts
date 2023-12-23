@@ -7,6 +7,11 @@ import { AccessToken, getExpiryDateOfAccessToken } from "@twurple/auth";
 import { DeviceAuthProvider } from "./twitch-device-auth-provider";
 import frontendCommunicator from "../common/frontend-communicator";
 
+type ValidationRequest = {
+    accountType: "streamer" | "bot";
+    authDetails: AuthDetails;
+}
+
 class FirebotDeviceAuthProvider {
     streamerProvider: DeviceAuthProvider;
     botProvider: DeviceAuthProvider;
@@ -85,28 +90,70 @@ class FirebotDeviceAuthProvider {
 
         TwitchApi.setupApiClients(this.streamerProvider, this.botProvider);
     }
+
+    isTwitchTokenDataValid(definition: AuthProviderDefinition, authDetails: AuthDetails): boolean {
+        const scopes = Array.isArray(definition.scopes)
+            ? definition.scopes
+            : definition.scopes.split(" ");
+
+        return (
+            // Ensure authDetails exist
+            authDetails &&
+
+            // Make sure we have a refresh token
+            authDetails.refresh_token &&
+
+            // Make sure there's at least some scopes
+            authDetails.scope &&
+            authDetails.scope.length > 0 &&
+
+            // check all required scopes are present
+            scopes.every(scope => authDetails.scope.includes(scope))
+        );
+    }
+
+    async validateTwitchAccount(request: ValidationRequest): Promise<boolean> {
+        let definition: AuthProviderDefinition;
+
+        switch (request.accountType) {
+            case "streamer":
+                definition = twitchAuth.streamerAccountProvider;
+                break;
+
+            case "bot":
+                definition = twitchAuth.botAccountProvider;
+                break;
+
+            default:
+                break;
+        }
+
+        if (definition) {
+            return this.isTwitchTokenDataValid(definition, request.authDetails)
+                && await TwitchApi.auth.isTokenValid(request.accountType);
+        }
+
+        return true;
+    }
+
+    async validateTwitchAccounts() {
+        const invalidAccounts: string[] = [];
+
+        if (accountAccess.getAccounts().streamer.loggedIn === true) {
+            if (!(await this.validateTwitchAccount({ accountType: "streamer", authDetails: accountAccess.getAccounts().streamer.auth }))) {
+                invalidAccounts.push("streamer");
+            }
+        }
+
+        if (accountAccess.getAccounts().bot.loggedIn === true) {
+            if (!(await this.validateTwitchAccount({ accountType: "bot", authDetails: accountAccess.getAccounts().bot.auth }))) {
+                invalidAccounts.push("bot");
+            }
+        }
+
+        frontendCommunicator.send("invalidate-accounts", invalidAccounts);
+    }
 }
-
-const isTwitchTokenDataValid = function(definition: AuthProviderDefinition, authDetails: AuthDetails): boolean {
-    const scopes = Array.isArray(definition.scopes)
-        ? definition.scopes
-        : definition.scopes.split(" ");
-
-    return (
-        // Ensure authDetails exist
-        authDetails &&
-
-        // Make sure we have a refresh token
-        authDetails.refresh_token &&
-
-        // Make sure there's at least some scopes
-        authDetails.scope &&
-        authDetails.scope.length > 0 &&
-
-        // check all required scopes are present
-        scopes.every(scope => authDetails.scope.includes(scope))
-    );
-};
 
 const firebotDeviceAuthProvider = new FirebotDeviceAuthProvider();
 
@@ -114,28 +161,8 @@ accountAccess.events.on("account-update", () => {
     firebotDeviceAuthProvider.setupDeviceAuthProvider();
 });
 
-frontendCommunicator.onAsync("validate-twitch-account", async ({ accountType, authDetails }) => {
-    let definition: AuthProviderDefinition;
-
-    switch (accountType) {
-        case "streamer":
-            definition = twitchAuth.streamerAccountProvider;
-            break;
-
-        case "bot":
-            definition = twitchAuth.botAccountProvider;
-            break;
-
-        default:
-            break;
-    }
-
-    if (definition) {
-        return isTwitchTokenDataValid(definition, authDetails)
-            && await TwitchApi.auth.isTokenValid(accountType);
-    }
-
-    return true;
+frontendCommunicator.onAsync("validate-twitch-accounts", async () => {
+    await firebotDeviceAuthProvider.validateTwitchAccounts();
 });
 
 export = firebotDeviceAuthProvider;

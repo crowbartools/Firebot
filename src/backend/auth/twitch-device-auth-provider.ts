@@ -38,9 +38,7 @@ interface AccessTokenData {
  */
 export class CachedRefreshFailureError extends CustomError {
     constructor(public readonly userId: string) {
-        super(`The user context for the user ${userId} has been disabled.
-This happened because the access token became invalid (e.g. by expiry) and refreshing it failed (e.g. because the account's password was changed).
-The user will need to reauthenticate to continue.`);
+        super(`Failed to refresh the user access token. This happened because the access token became invalid (e.g. by expiry) and refreshing it failed (e.g. because the account's password was changed). The user will need to reauthenticate to continue.`);
     }
 }
 

@@ -75,30 +75,10 @@
                 }
             };
 
-            service.validateAccounts = async () => {
-                const invalidAccounts = [];
-
-                if (service.accounts["streamer"].loggedIn) {
-                    if (!await backendCommunicator.fireEventAsync("validate-twitch-account", {
-                        accountType: "streamer",
-                        authDetails: service.accounts["streamer"].auth
-                    })) {
-                        service.logout("streamer");
-                        invalidAccounts.push("streamer");
-                    }
-                }
-
-                if (service.accounts["bot"].loggedIn) {
-                    if (!await backendCommunicator.fireEventAsync("validate-twitch-account", {
-                        accountType: "bot",
-                        authDetails: service.accounts["bot"].auth
-                    })) {
-                        service.logout("bot");
-                        invalidAccounts.push("bot");
-                    }
-                }
-
+            service.invalidateAccounts = (invalidAccounts) => {
                 if (invalidAccounts.length > 0) {
+                    invalidAccounts.forEach(accountType => service.logout(accountType));
+
                     const showManageLoginsModal = {
                         templateUrl: "manageLoginsModal.html",
                         // This is the controller to be used for the modal.
@@ -126,6 +106,12 @@
                     };
                     utilityService.showModal(showManageLoginsModal);
                 }
+            };
+
+            backendCommunicator.on("invalidate-accounts", service.invalidateAccounts);
+
+            service.validateAccounts = async () => {
+                await backendCommunicator.fireEventAsync("validate-twitch-accounts");
             };
 
             // Create new profile
