@@ -2,7 +2,7 @@
 const logger = require('../../../../backend/logwrapper');
 const authManager = require('../../../../backend/auth/auth-manager');
 
-exports.getAuth = (req, res) => {
+exports.getAuth = async (req, res) => {
     const providerId = req.query.providerId;
 
     const provider = authManager.getAuthProvider(providerId);
@@ -11,9 +11,11 @@ exports.getAuth = (req, res) => {
         return res.status(400).json('Invalid providerId query param');
     }
 
-    logger.info(`Redirecting to provider auth uri: ${provider.authorizationUri}`);
+    const authorizationUri = provider.details.auth.type === "device" ? await authManager.beginDeviceAuth(providerId) : provider.authorizationUri;
 
-    res.redirect(provider.authorizationUri);
+    logger.info(`Redirecting to provider auth uri: ${authorizationUri}`);
+
+    res.redirect(authorizationUri);
 };
 
 exports.getAuthCallback = async (

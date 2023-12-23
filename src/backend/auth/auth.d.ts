@@ -12,6 +12,7 @@ export interface AuthProviderDefinition {
         tokenHost: string;
         authorizePath: string;
         tokenPath?: string;
+        devicePath?: string;
     };
     redirectUriHost?: string;
     scopes?: string[] | string | undefined;
@@ -23,7 +24,15 @@ export interface AuthProvider {
     authorizationUri: string;
     redirectUri: string;
     tokenUri: string;
+    deviceUri?: string;
     details: AuthProviderDefinition;
+}
+
+export interface DeviceAuthData {
+    device_code: string;
+    user_code: string;
+    verification_uri: string;
+    interval: number;
 }
 
 export interface AuthDetails {

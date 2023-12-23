@@ -1,7 +1,7 @@
 import { EventEmitter } from "events";
 import ClientOAuth2 from "client-oauth2";
 import logger from "../logwrapper";
-import { AuthProvider, AuthProviderDefinition } from "./auth";
+import { AuthProvider, AuthProviderDefinition, DeviceAuthData } from "./auth";
 import { settings } from "../common/settings-access";
 import frontendCommunicator from "../common/frontend-communicator";
 
@@ -22,7 +22,10 @@ class AuthManager extends EventEmitter {
         }
 
         const redirectUrlHost = provider.redirectUriHost || "localhost";
-        const redirectUri = `http://${redirectUrlHost}:${this._httpPort}/api/v1/auth/callback`;
+        const redirectUri =
+            provider.auth.type === "device"
+                ? `http://${redirectUrlHost}:${this._httpPort}/loginsuccess?provider=${provider.name}`
+                : `http://${redirectUrlHost}:${this._httpPort}/api/v1/auth/callback`;
 
         const oauthClient = this.buildOAuthClientForProvider(provider, redirectUri);
 
@@ -42,16 +45,19 @@ class AuthManager extends EventEmitter {
                 break;
         }
 
-        const tokenUri = provider.auth.type === "device"
-            ? `${provider.auth.tokenHost}${provider.auth.tokenPath ?? ""}`
-            : null;
+        const tokenUri =
+            provider.auth.type === "device" ? `${provider.auth.tokenHost}${provider.auth.tokenPath ?? ""}` : null;
 
-        const authProvider = {
+        const deviceUri =
+            provider.auth.type === "device" ? `${provider.auth.tokenHost}${provider.auth.devicePath}` : null;
+
+        const authProvider: AuthProvider = {
             id: provider.id,
             oauthClient: oauthClient,
-            authorizationUri: authorizationUri,
-            tokenUri: tokenUri,
-            redirectUri: redirectUri,
+            authorizationUri,
+            tokenUri,
+            redirectUri,
+            deviceUri,
             details: provider
         };
 
@@ -61,15 +67,15 @@ class AuthManager extends EventEmitter {
     }
 
     getAuthProvider(providerId: string): AuthProvider {
-        return this._authProviders.find(p => p.id === providerId);
+        return this._authProviders.find((p) => p.id === providerId);
     }
 
     buildOAuthClientForProvider(provider: AuthProviderDefinition, redirectUri: string): ClientOAuth2 {
         let scopes;
         if (provider.scopes) {
             scopes = Array.isArray(provider.scopes)
-                ? scopes = provider.scopes
-                : scopes = provider.scopes.split(" ");
+                ? (scopes = provider.scopes)
+                : (scopes = provider.scopes.split(" "));
         } else {
             scopes = [];
         }
@@ -102,7 +108,7 @@ class AuthManager extends EventEmitter {
 
                 accessToken = await accessToken.refresh(params);
             } catch (error) {
-                logger.warn('Error refreshing access token: ', error);
+                logger.warn("Error refreshing access token: ", error);
                 return null;
             }
         }
@@ -119,38 +125,15 @@ class AuthManager extends EventEmitter {
             // Revokes both tokens, refresh token is only revoked if the access_token is properly revoked
             // TODO
         } catch (error) {
-            logger.error('Error revoking token: ', error.message);
+            logger.error("Error revoking token: ", error.message);
         }
     }
 
     successfulAuth(providerId: string, tokenData: unknown): void {
         this.emit("auth-success", { providerId: providerId, tokenData: tokenData });
     }
-}
 
-const manager = new AuthManager();
-
-frontendCommunicator.onAsync("begin-device-auth", async (providerId: string): Promise<void> => {
-    const provider = manager.getAuthProvider(providerId);
-    if (provider?.details?.auth?.type !== "device") {
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append("client_id", provider.details.client.id);
-    formData.append("scopes", Array.isArray(provider.details.scopes)
-        ? provider.details.scopes.join(" ")
-        : provider.details.scopes);
-
-    // Get the device auth request
-    const response = await fetch(provider.authorizationUri, {
-        method: "POST",
-        body: formData
-    });
-
-    if (response.ok) {
-        const deviceAuthData = await response.json();
-
+    private startDeviceAuthPoll(provider: AuthProvider, deviceAuthData: DeviceAuthData): void {
         frontendCommunicator.send("device-code-received", {
             loginUrl: deviceAuthData.verification_uri,
             code: deviceAuthData.user_code
@@ -158,9 +141,10 @@ frontendCommunicator.onAsync("begin-device-auth", async (providerId: string): Pr
 
         const tokenRequestData = new FormData();
         tokenRequestData.append("client_id", provider.details.client.id);
-        tokenRequestData.append("scopes", Array.isArray(provider.details.scopes)
-            ? provider.details.scopes.join(" ")
-            : provider.details.scopes);
+        tokenRequestData.append(
+            "scopes",
+            Array.isArray(provider.details.scopes) ? provider.details.scopes.join(" ") : provider.details.scopes
+        );
         tokenRequestData.append("device_code", deviceAuthData.device_code);
         tokenRequestData.append("grant_type", "urn:ietf:params:oauth:grant-type:device_code");
 
@@ -174,7 +158,7 @@ frontendCommunicator.onAsync("begin-device-auth", async (providerId: string): Pr
                 clearInterval(tokenCheckInterval);
                 const tokenData = await tokenResponse.json();
 
-                manager.successfulAuth(providerId, tokenData);
+                this.successfulAuth(provider.id, tokenData);
             }
         }, deviceAuthData.interval * 1000);
 
@@ -184,6 +168,47 @@ frontendCommunicator.onAsync("begin-device-auth", async (providerId: string): Pr
             }
         });
     }
-});
+
+    async beginDeviceAuth(providerId: string): Promise<string> {
+        const provider = this.getAuthProvider(providerId);
+        if (provider?.details?.auth?.type !== "device" || provider?.deviceUri == null) {
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("client_id", provider.details.client.id);
+        formData.append(
+            "scopes",
+            Array.isArray(provider.details.scopes) ? provider.details.scopes.join(" ") : provider.details.scopes
+        );
+
+        // Get the device auth request
+        const response = await fetch(provider.deviceUri, {
+            method: "POST",
+            body: formData
+        });
+
+        if (response.ok) {
+            const deviceAuthData: DeviceAuthData = await response.json();
+
+            const authorizeUrl = provider.oauthClient.token.getUri({
+                query: {
+                    ["device_code"]: deviceAuthData.device_code,
+                    ["response_type"]: "device_grant_trigger",
+                    ["force_verify"]: "true",
+                    ["redirect_uri"]: `http://localhost:${this._httpPort}/api/v1/auth/callback`
+                }
+            });
+
+            this.startDeviceAuthPoll(provider, deviceAuthData);
+
+            return authorizeUrl;
+        }
+    }
+}
+
+const manager = new AuthManager();
+
+frontendCommunicator.onAsync("begin-device-auth", manager.beginDeviceAuth);
 
 export = manager;
