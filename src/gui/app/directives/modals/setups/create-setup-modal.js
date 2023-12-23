@@ -229,7 +229,7 @@
                         options: saveDialogOptions
                     }))
                         .then(saveResponse => {
-                            if (saveResponse.cancelled) {
+                            if (saveResponse.canceled) {
                                 return;
                             }
                             fs.writeFile(saveResponse.filePath, angular.toJson($ctrl.setup), 'utf8');
