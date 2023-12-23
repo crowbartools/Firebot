@@ -26,7 +26,7 @@
                                 <button class="btn btn-primary" type="button" ng-click="$ctrl.copy()">Copy</button>
                             </span>
                         </div>
-                        <div class="muted mt-5">Once you're logged in, this dialog will close automatically.</div>
+                        <div class="muted mt-5">Once you log in to Twitch and authorize Firebot, you can return here and this dialog will close automatically.</div>
                     </div>
                 </div>
                 <div class="modal-footer"></div>
