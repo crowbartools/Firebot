@@ -1,10 +1,13 @@
-"use strict";
+import { EffectType } from "../../../types/effects";
+import { EffectCategory } from '../../../shared/effect-constants';
+import counterManager from "../../counters/counter-manager";
+import logger from "../../logwrapper";
 
-const { EffectCategory } = require('../../../shared/effect-constants');
-const counterManager = require("../../counters/counter-manager");
-const logger = require("../../logwrapper");
-
-const model = {
+const model: EffectType<{
+    counterId: string;
+    mode: string;
+    value: string;
+}> = {
     definition: {
         id: "firebot:update-counter",
         name: "Update Counter",
@@ -13,7 +16,6 @@ const model = {
         categories: [EffectCategory.COMMON, EffectCategory.ADVANCED],
         dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <div ng-hide="hasCounters">
             <p>You need to create a Counter to use this effect! Go to the <b>Counters</b> tab to create one.</p>
@@ -56,7 +58,7 @@ const model = {
         }
 
         if ($scope.effect.value === undefined) {
-            $scope.effect.value = 1;
+            $scope.effect.value = "1";
         }
 
     },
@@ -78,22 +80,24 @@ const model = {
 
         return errors;
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const { effect } = event;
 
-        if (effect.counterId == null || effect.mode == null || effect.value === undefined) {
-            return true;
+        if (effect.counterId == null || effect.mode == null || effect.value == null) {
+            return false;
         }
 
-        if (isNaN(effect.value)) {
+        const value = parseInt(effect.value);
+
+        if (isNaN(value)) {
             logger.warn(`Failed to update Counter ${effect.counterId} because ${effect.value} is not a number.`);
-            return true;
+            return false;
         }
 
-        await counterManager.updateCounterValue(effect.counterId, effect.value, effect.mode === "set");
+        await counterManager.updateCounterValue(effect.counterId, value, effect.mode === "set");
 
         return true;
     }
 };
 
-module.exports = model;
+export = model;

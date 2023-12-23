@@ -5,7 +5,7 @@ type Func<T> = (...args: unknown[]) => T;
 
 interface EffectScope<EffectModel> extends ng.IScope {
     effect: EffectModel;
-    [x: string]: unknown;
+    [x: string]: any;
 }
 
 export type EffectCategory =
@@ -53,7 +53,7 @@ export type EffectType<EffectModel = unknown, OverlayData = unknown> = {
     };
     optionsTemplate: string;
     optionsController?: ($scope: EffectScope<EffectModel>, ...args: any[]) => void;
-    optionsValidator?: (effect: EffectModel) => string[];
+    optionsValidator?: (effect: EffectModel, $scope: EffectScope<EffectModel>) => string[];
     onTriggerEvent: (event: {
         effect: EffectModel;
         trigger: Trigger;
