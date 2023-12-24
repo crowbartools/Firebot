@@ -1,10 +1,10 @@
+import axios from "axios";
 import authManager from "./auth-manager";
 import accountAccess, { FirebotAccount } from "../common/account-access";
 import logger from "../logwrapper";
 import { secrets } from "../secrets-manager";
 import { AuthProviderDefinition } from "./auth";
-
-const axios = require("axios").default;
+import { getExpiryDateOfAccessToken } from "@twurple/auth";
 
 class TwitchAuthProviders {
     private readonly _host = "https://id.twitch.tv";
@@ -53,10 +53,6 @@ class TwitchAuthProviders {
             'channel:read:stream_key',
             'channel:read:subscriptions',
             'channel:read:vips',
-            'channel_commercial',
-            'channel_editor',
-            'channel_read',
-            'channel_subscriptions',
             'chat:edit',
             'chat:read',
             'clips:edit',
@@ -85,9 +81,6 @@ class TwitchAuthProviders {
             'user:read:chat',
             'user:read:follows',
             'user:read:subscriptions',
-            'user_subscriptions',
-            'user_follows_edit',
-            'user_read',
             'whispers:edit',
             'whispers:read'
         ]
@@ -113,8 +106,7 @@ class TwitchAuthProviders {
             'user:manage:whispers',
             'user:read:chat',
             'whispers:edit',
-            'whispers:read',
-            'channel_read'
+            'whispers:read'
         ]
     };
 
@@ -159,6 +151,8 @@ authManager.on("auth-success", async authData => {
             return;
         }
 
+        const obtainmentTimestamp = Date.now();
+
         const accountType = providerId === twitchAuthProviders.streamerAccountProviderId ? "streamer" : "bot";
         const accountObject: FirebotAccount = {
             username: userData.login,
@@ -167,7 +161,14 @@ authManager.on("auth-success", async authData => {
             userId: userData.id,
             avatar: userData.profile_image_url,
             broadcasterType: userData.broadcaster_type,
-            auth: tokenData
+            auth: {
+                ...tokenData,
+                obtainment_timestamp: obtainmentTimestamp, // eslint-disable-line camelcase
+                expires_at: getExpiryDateOfAccessToken({ // eslint-disable-line camelcase
+                    expiresIn: tokenData.expires_in,
+                    obtainmentTimestamp: obtainmentTimestamp
+                })
+            }
         };
 
         accountAccess.updateAccount(accountType, accountObject);

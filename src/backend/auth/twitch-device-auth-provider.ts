@@ -4,26 +4,12 @@
  *  Once one exists, this can go away. In the meantime, it stays in order to refresh tokens automagically.
  */
 
-import { Enumerable } from '@d-fischer/shared-utils';
 import { EventEmitter } from '@d-fischer/typed-event-emitter';
 import { CustomError, extractUserId, type UserIdResolvable } from '@twurple/common';
 import type { AccessToken, AccessTokenMaybeWithUserId, AccessTokenWithUserId, TokenInfoData } from '@twurple/auth';
-import { InvalidTokenError, TokenInfo } from '@twurple/auth';
+import { accessTokenIsExpired, InvalidTokenError, TokenInfo } from '@twurple/auth';
 import type { AuthProvider } from '@twurple/auth';
 import { callTwitchApi, HttpStatusCodeError } from '@twurple/api-call';
-
-const scopeEquivalencies = new Map([
-    ['channel_commercial', ['channel:edit:commercial']],
-    ['channel_editor', ['channel:manage:broadcast']],
-    ['channel_read', ['channel:read:stream_key']],
-    ['channel_subscriptions', ['channel:read:subscriptions']],
-    ['user_blocks_read', ['user:read:blocked_users']],
-    ['user_blocks_edit', ['user:manage:blocked_users']],
-    ['user_follows_edit', ['user:edit:follows']],
-    ['user_read', ['user:read:email']],
-    ['user_subscriptions', ['user:read:subscriptions']],
-    ['user:edit:broadcast', ['channel:manage:broadcast', 'channel:manage:extensions']]
-]);
 
 interface AccessTokenData {
     access_token: string;
@@ -70,9 +56,7 @@ async function getTokenInfo(accessToken: string, clientId?: string): Promise<Tok
  */
 function compareScopes(scopesToCompare: string[], requestedScopes?: string[]): void {
     if (requestedScopes?.length) {
-        const scopes = new Set<string>(
-            scopesToCompare.flatMap(scope => [scope, ...(scopeEquivalencies.get(scope) ?? [])])
-        );
+        const scopes = new Set<string>(scopesToCompare);
 
         if (requestedScopes.every(scope => !scopes.has(scope))) {
             const scopesStr = requestedScopes.join(', ');
@@ -115,7 +99,6 @@ async function loadAndCompareTokenInfo(
     loadedScopes?: string[],
     requestedScopeSets?: Array<string[] | undefined>
 ): Promise<[string[] | undefined, string]> {
-    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
     if (requestedScopeSets?.length || !userId) {
         const userInfo = await getTokenInfo(token, clientId);
         if (!userInfo.userId) {
@@ -136,20 +119,12 @@ async function loadAndCompareTokenInfo(
     return [loadedScopes, userId];
 }
 
-function createRefreshTokenQuery(clientId: string, refreshToken: string) {
-    return {
-        grant_type: 'refresh_token', // eslint-disable-line camelcase
-        client_id: clientId, // eslint-disable-line camelcase
-        refresh_token: refreshToken // eslint-disable-line camelcase
-    };
-}
-
 function createAccessTokenFromData(data: AccessTokenData): AccessToken {
     return {
         accessToken: data.access_token,
-        refreshToken: data.refresh_token || null,
+        refreshToken: data.refresh_token,
         scope: data.scope ?? [],
-        expiresIn: data.expires_in ?? null,
+        expiresIn: data.expires_in,
         obtainmentTimestamp: Date.now()
     };
 }
@@ -170,7 +145,11 @@ async function refreshUserToken(
             type: 'auth',
             url: 'token',
             method: 'POST',
-            query: createRefreshTokenQuery(clientId, refreshToken)
+            query: {
+                grant_type: 'refresh_token',
+                client_id: clientId,
+                refresh_token: refreshToken
+            }
         })
     );
 }
@@ -178,19 +157,17 @@ async function refreshUserToken(
 interface DeviceAuthProviderConfig {
     userId: UserIdResolvable,
     clientId: string,
-    accessToken: string | AccessToken,
-    scopes?: string[]
+    accessToken: AccessToken,
+    scopes: string[]
 }
 
 /**
- * An auth provider that always returns the same initially given credentials.
- *
- * This has the added benefit of refreshing tokens for Device Code Flow.
+ * An auth provider that returns a refreshable token for a given user obtained via Device Code Flow.
  */
 export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
-    /** @internal */ @Enumerable(false) private readonly _clientId: string; // eslint-disable-line new-cap
-    /** @internal */ @Enumerable(false) private _accessToken: AccessToken; // eslint-disable-line new-cap
-    private _userId?: string;
+    private _userId: string;
+    private readonly _clientId: string;
+    private _accessToken: AccessTokenWithUserId;
     private _scopes?: string[];
     private readonly _cachedRefreshFailures = new Set<string>();
 
@@ -210,33 +187,21 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
     readonly onRefreshFailure = this.registerEvent<[userId: string]>();
 
     /**
-     * Creates a new auth provider with static credentials.
+     * Creates a new auth provider with Device Code Flow credentials.
      *
      * @param clientId The client ID of your application.
      * @param accessToken The access token to provide.
-     *
-     * You need to obtain one using one of the [Twitch OAuth flows](https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/).
      * @param scopes The scopes the supplied token has.
-     *
-     * If this argument is given, the scopes need to be correct, or weird things might happen. If it's not (i.e. it's `undefined`), we fetch the correct scopes for you.
-     *
-     * If you can't exactly say which scopes your token has, don't use this parameter/set it to `undefined`.
      */
     constructor(deviceAuthConfig: DeviceAuthProviderConfig) {
         super();
 
         this._userId = extractUserId(deviceAuthConfig.userId);
         this._clientId = deviceAuthConfig.clientId;
-        this._accessToken =
-            typeof deviceAuthConfig.accessToken === 'string'
-                ? {
-                    accessToken: deviceAuthConfig.accessToken,
-                    refreshToken: null,
-                    scope: deviceAuthConfig.scopes ?? [],
-                    expiresIn: null,
-                    obtainmentTimestamp: Date.now()
-                }
-                : deviceAuthConfig.accessToken;
+        this._accessToken = {
+            ...deviceAuthConfig.accessToken,
+            userId: this._userId
+        };
         this._scopes = deviceAuthConfig.scopes;
     }
 
@@ -248,7 +213,7 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
     }
 
     /**
-     * Gets the static access token.
+     * Gets the access token.
      *
      * If the current access token does not have the requested scopes, this method throws.
      * This makes supplying an access token with the correct scopes from the beginning necessary.
@@ -264,7 +229,7 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
     }
 
     /**
-     * Gets the static access token.
+     * Gets the access token.
      *
      * If the current access token does not have the requested scopes, this method throws.
      * This makes supplying an access token with the correct scopes from the beginning necessary.
@@ -280,10 +245,10 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
     }
 
     /**
-     * Gets the static access token.
+     * Gets the access token.
      */
     async getAnyAccessToken(): Promise<AccessTokenMaybeWithUserId> {
-        return await this._getAccessToken();
+        return await this._getAccessToken([]);
     }
 
     /**
@@ -294,66 +259,83 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
     }
 
     /**
-     * Requests that the provider fetches a new token from Twitch for the given user.
+     * Requests that the provider fetches a new token from Twitch.
      *
-     * @param user The user to refresh the token for.
+     * @param user Ignored.
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async refreshAccessTokenForUser(user: UserIdResolvable): Promise<AccessTokenWithUserId> {
-        const userId = extractUserId(user);
-
-        if (this._cachedRefreshFailures.has(userId)) {
-            throw new CachedRefreshFailureError(userId);
+        if (this._cachedRefreshFailures.has(this._userId)) {
+            throw new CachedRefreshFailureError(this._userId);
         }
 
-        const previousTokenData = this._accessToken;
-
-        if (!previousTokenData) {
+        if (!this._accessToken) {
             throw new Error('Trying to refresh non-existent token');
         }
 
-        const tokenData = await this._refreshUserTokenWithCallback(userId, previousTokenData.refreshToken!);
+        const tokenData = await this._refreshUserTokenWithCallback(this._accessToken.refreshToken);
 
-        this._accessToken = tokenData;
-        this.emit(this.onRefresh, userId, tokenData);
-
-        return {
+        this._accessToken = {
             ...tokenData,
-            userId
+            userId: this._userId
         };
+        this.emit(this.onRefresh, this._userId, tokenData);
+
+        return this._accessToken;
     }
 
     /**
-     * Requests that the provider fetches a new token from Twitch for the given intent.
+     * Requests that the provider fetches a new token from Twitch.
      *
-     * @param intent The intent to refresh the token for.
+     * @param intent Ignored.
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async refreshAccessTokenForIntent(intent: string): Promise<AccessTokenWithUserId> {
-        const userId = this._userId!;
-
-        return await this.refreshAccessTokenForUser(userId);
+        return await this.refreshAccessTokenForUser(null);
     }
 
-    private async _getAccessToken(requestedScopeSets?: Array<string[] | undefined>): Promise<AccessTokenWithUserId> {
-        const [scopes, userId] = await loadAndCompareTokenInfo(
-            this._clientId,
-            this._accessToken.accessToken,
-            this._userId,
-            this._scopes,
-            requestedScopeSets
-        );
+    private async _getAccessToken(requestedScopeSets: Array<string[] | undefined>): Promise<AccessTokenWithUserId> {
+        if (!accessTokenIsExpired(this._accessToken)) {
+            try {
+                // don't create new object on every get
+                if (this._accessToken.scope) {
+                    compareScopeSets(this._accessToken.scope, requestedScopeSets);
+                    return this._accessToken as AccessTokenWithUserId;
+                }
 
-        this._scopes = scopes;
-        this._userId = userId;
+                const [scopes, userId] = await loadAndCompareTokenInfo(
+                    this._clientId,
+                    this._accessToken.accessToken,
+                    this._userId,
+                    this._scopes,
+                    requestedScopeSets
+                );
 
-        return { ...this._accessToken, userId };
+                this._scopes = scopes;
+                this._userId = userId;
+
+                return { ...this._accessToken, userId };
+            } catch (e) {
+                // if loading scopes failed, ignore InvalidTokenError and proceed with refreshing
+                if (!(e instanceof InvalidTokenError)) {
+                    throw e;
+                }
+            }
+
+            const refreshedToken = await this.refreshAccessTokenForUser(null);
+            compareScopeSets(refreshedToken.scope, requestedScopeSets);
+            return refreshedToken;
+        }
+
+        return this._accessToken;
     }
 
-    private async _refreshUserTokenWithCallback(userId: string, refreshToken: string): Promise<AccessToken> {
+    private async _refreshUserTokenWithCallback(refreshToken: string): Promise<AccessToken> {
         try {
             return await refreshUserToken(this.clientId, refreshToken);
         } catch (e) {
-            this._cachedRefreshFailures.add(userId);
-            this.emit(this.onRefreshFailure, userId);
+            this._cachedRefreshFailures.add(this._userId);
+            this.emit(this.onRefreshFailure, this._userId);
             throw e;
         }
     }
