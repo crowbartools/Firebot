@@ -75,40 +75,31 @@
                 }
             };
 
+            service.invalidateAccounts = (invalidAccounts) => {
+                if (!invalidAccounts.streamer && !invalidAccounts.bot) {
+                    return;
+                }
+
+                if (invalidAccounts.streamer) {
+                    service.logout("streamer");
+                }
+
+                if (invalidAccounts.bot) {
+                    service.logout("bot");
+                }
+
+                utilityService.showModal({
+                    component: "loginsModal",
+                    resolveObj: {
+                        invalidAccounts: () => invalidAccounts
+                    }
+                });
+            };
+
+            backendCommunicator.on("invalidate-accounts", service.invalidateAccounts);
+
             service.validateAccounts = async () => {
-                const invalidAccounts = {
-                    streamer: false,
-                    bot: false
-                };
-
-                if (service.accounts["streamer"].loggedIn) {
-                    if (!await backendCommunicator.fireEventAsync("validate-twitch-account", {
-                        accountType: "streamer",
-                        authDetails: service.accounts["streamer"].auth
-                    })) {
-                        service.logout("streamer");
-                        invalidAccounts.streamer = true;
-                    }
-                }
-
-                if (service.accounts["bot"].loggedIn) {
-                    if (!await backendCommunicator.fireEventAsync("validate-twitch-account", {
-                        accountType: "bot",
-                        authDetails: service.accounts["bot"].auth
-                    })) {
-                        service.logout("bot");
-                        invalidAccounts.bot = true;
-                    }
-                }
-
-                if (invalidAccounts.streamer || invalidAccounts.bot) {
-                    utilityService.showModal({
-                        component: "loginsModal",
-                        resolveObj: {
-                            invalidAccounts: () => invalidAccounts
-                        }
-                    });
-                }
+                await backendCommunicator.fireEventAsync("validate-twitch-accounts");
             };
 
             // Create new profile

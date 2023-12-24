@@ -27,7 +27,7 @@ export class SevenTVEmoteProvider extends ThirdPartyEmoteProvider<SevenTVEmotesR
 
     private emoteMapper(response: SevenTVEmotesResponse): ThirdPartyEmote[] {
         return response.emotes.map(e => ({
-            url: `https:${e.data.host.url}/${(e.data.animated ?? false) ? '4x.webp' : '4x_static.webp'}`,
+            url: `https:${e.data.host.url}/4x.webp`,
             code: e.name,
             animated: e.data.animated ?? false,
             origin: this.providerName

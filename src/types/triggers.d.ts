@@ -22,6 +22,14 @@ export type Trigger = {
         event?: { id: string; name: string };
         eventSource?: { id: string; name: string };
         eventData?: Record<string, unknown>;
+        counter?: {
+            id: string;
+            name: string;
+            previousValue: number;
+            value: number;
+            minimum?: number;
+            maximum?: number;
+        };
         [x: string]: unknown;
     };
 };
