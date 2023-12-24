@@ -19,7 +19,37 @@ const uuidv1 = require("uuid/v1");
             const prohibitedKeys = ["CapsLock", "NumLock", "ScrollLock", "Pause"];
 
             // this maps keys to codes accepted in Electron's Accelerator strings, used for global shortcuts
-            function mapKeyToAcceleratorCode(key) {
+            function mapKeyToAcceleratorCode(key, location) {
+                if (location === 3) {
+                    switch (key) {
+                        case "0":
+                        case "1":
+                        case "2":
+                        case "3":
+                        case "4":
+                        case "5":
+                        case "6":
+                        case "7":
+                        case "8":
+                        case "9":
+                            return `num${key}`;
+
+                        case ".":
+                            return "numdec";
+
+                        case "+":
+                            return "numadd";
+
+                        case "-":
+                            return "numsub";
+
+                        case "*":
+                            return "nummult";
+
+                        case "/":
+                            return "numdiv";
+                    }
+                }
                 switch (key) {
                     case "ArrowUp":
                     case "ArrowDown":
@@ -51,6 +81,23 @@ const uuidv1 = require("uuid/v1");
             }
 
             function getDisplayNameFromKeyCode(keyCode) {
+                if (keyCode.startsWith("num")) {
+                    switch (keyCode) {
+                        case "numadd":
+                            return "Plus(Numpad)";
+                        case "numsub":
+                            return "-(Numpad)";
+                        case "nummult":
+                            return "*(Numpad)";
+                        case "numdiv":
+                            return "/(Numpad)";
+                        case "numdec":
+                            return ".(Numpad)";
+                        default:
+                            return `${keyCode.substring(3)}(Numpad)`;
+                    }
+                }
+
                 switch (keyCode) {
                     case "CmdOrCtrl":
                         return "Ctrl";
@@ -113,7 +160,7 @@ const uuidv1 = require("uuid/v1");
                 releasedKeyCodes = [];
 
                 if (!alreadyPressed) {
-                    const mappedKey = mapKeyToAcceleratorCode(event.key),
+                    const mappedKey = mapKeyToAcceleratorCode(event.key, event.location),
                         displayName = getDisplayNameFromKeyCode(mappedKey),
                         isModifier = keyCodeIsModifier(mappedKey);
 
