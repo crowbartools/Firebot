@@ -103,9 +103,9 @@ async function createClient() {
 
         const autoModListener = pubSubClient.onAutoModQueue(streamer.userId, streamer.userId, async (message) => {
             if (message.status === "PENDING") {
-                const { buildViewerFirebotChatMessageFromAutoModMessage } = require("../../chat/chat-helpers");
+                const chatHelpers = require("../../chat/chat-helpers");
 
-                const firebotChatMessage = await buildViewerFirebotChatMessageFromAutoModMessage(message);
+                const firebotChatMessage = await chatHelpers.buildViewerFirebotChatMessageFromAutoModMessage(message);
 
                 frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
             }
@@ -167,8 +167,8 @@ async function createClient() {
                 const twitchApi = require("../api").streamerClient;
                 const extension = await twitchApi.extensions.getReleasedExtension(message.data.sender.extension_client_id);
 
-                const { buildFirebotChatMessageFromExtensionMessage } = require("../../chat/chat-helpers");
-                const firebotChatMessage = await buildFirebotChatMessageFromExtensionMessage(
+                const chatHelpers = require("../../chat/chat-helpers");
+                const firebotChatMessage = await chatHelpers.buildFirebotChatMessageFromExtensionMessage(
                     message.data.content.text,
                     message.data.sender.display_name,
                     extension.getIconUrl("100x100"),
