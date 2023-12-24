@@ -443,20 +443,24 @@
             service.allEmotes = [];
             service.filteredEmotes = [];
             service.refreshEmotes = () => {
+                const showBttvEmotes = settingsService.getShowBttvEmotes();
+                const showFfzEmotes = settingsService.getShowFfzEmotes();
+                const showSevenTvEmotes = settingsService.getShowSevenTvEmotes();
+
                 service.filteredEmotes = service.allEmotes.filter(e => {
-                    if (settingsService.getShowBttvEmotes() && e.origin === "BTTV") {
-                        return true;
+                    if (showBttvEmotes !== true && e.origin === "BTTV") {
+                        return false;
                     }
 
-                    if (settingsService.getShowFfzEmotes() && e.origin === "FFZ") {
-                        return true;
+                    if (showFfzEmotes !== true && e.origin === "FFZ") {
+                        return false;
                     }
 
-                    if (settingsService.getShowSevenTvEmotes() && e.origin === "7TV") {
-                        return true;
+                    if (showSevenTvEmotes !== true && e.origin === "7TV") {
+                        return false;
                     }
 
-                    return false;
+                    return true;
                 });
             };
 
