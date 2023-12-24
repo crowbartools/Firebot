@@ -6,7 +6,7 @@
 
 import { EventEmitter } from '@d-fischer/typed-event-emitter';
 import { CustomError, extractUserId, type UserIdResolvable } from '@twurple/common';
-import type { AccessToken, AccessTokenMaybeWithUserId, AccessTokenWithUserId, TokenInfoData } from '@twurple/auth';
+import { AccessToken, AccessTokenMaybeWithUserId, AccessTokenWithUserId, TokenFetcher, TokenInfoData } from '@twurple/auth';
 import { accessTokenIsExpired, InvalidTokenError, TokenInfo } from '@twurple/auth';
 import type { AuthProvider } from '@twurple/auth';
 import { callTwitchApi, HttpStatusCodeError } from '@twurple/api-call';
@@ -157,8 +157,7 @@ async function refreshUserToken(
 interface DeviceAuthProviderConfig {
     userId: UserIdResolvable,
     clientId: string,
-    accessToken: AccessToken,
-    scopes: string[]
+    accessToken: AccessToken
 }
 
 /**
@@ -168,7 +167,7 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
     private _userId: string;
     private readonly _clientId: string;
     private _accessToken: AccessTokenWithUserId;
-    private _scopes?: string[];
+    private _tokenFetcher: TokenFetcher<AccessTokenWithUserId>;
     private readonly _cachedRefreshFailures = new Set<string>();
 
     /**
@@ -202,7 +201,7 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
             ...deviceAuthConfig.accessToken,
             userId: this._userId
         };
-        this._scopes = deviceAuthConfig.scopes;
+        this._tokenFetcher = new TokenFetcher(async scopes => await this._fetchUserToken(scopes));
     }
 
     /**
@@ -225,7 +224,11 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
         user: UserIdResolvable,
         ...scopeSets: Array<string[] | undefined>
     ): Promise<AccessTokenWithUserId> {
-        return await this._getAccessToken(scopeSets);
+        if (this._cachedRefreshFailures.has(this._userId)) {
+            throw new CachedRefreshFailureError(this._userId);
+        }
+
+        return await this._tokenFetcher.fetch(...scopeSets);
     }
 
     /**
@@ -241,21 +244,22 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
         intent: string,
         ...scopeSets: Array<string[] | undefined>
     ): Promise<AccessTokenWithUserId> {
-        return await this._getAccessToken(scopeSets);
+        return await this.getAccessTokenForUser(this._userId, ...scopeSets);
     }
 
     /**
      * Gets the access token.
      */
     async getAnyAccessToken(): Promise<AccessTokenMaybeWithUserId> {
-        return await this._getAccessToken([]);
+        return await this.getAccessTokenForUser(this._userId);
     }
 
     /**
      * The scopes that are currently available using the access token.
      */
-    getCurrentScopesForUser(): string[] {
-        return this._scopes ?? [];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    getCurrentScopesForUser(user: UserIdResolvable): string[] {
+        return this._accessToken.scope ?? [];
     }
 
     /**
@@ -281,7 +285,10 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
         };
         this.emit(this.onRefresh, this._userId, tokenData);
 
-        return this._accessToken;
+        return {
+            ...tokenData,
+            userId: this._userId
+        };
     }
 
     /**
@@ -294,27 +301,30 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
         return await this.refreshAccessTokenForUser(null);
     }
 
-    private async _getAccessToken(requestedScopeSets: Array<string[] | undefined>): Promise<AccessTokenWithUserId> {
+    private async _fetchUserToken(scopeSets: Array<string[] | undefined>): Promise<AccessTokenWithUserId> {
         if (!accessTokenIsExpired(this._accessToken)) {
             try {
                 // don't create new object on every get
                 if (this._accessToken.scope) {
-                    compareScopeSets(this._accessToken.scope, requestedScopeSets);
+                    compareScopeSets(this._accessToken.scope, scopeSets);
                     return this._accessToken as AccessTokenWithUserId;
                 }
 
-                const [scopes, userId] = await loadAndCompareTokenInfo(
+                const [scope = []] = await loadAndCompareTokenInfo(
                     this._clientId,
                     this._accessToken.accessToken,
                     this._userId,
-                    this._scopes,
-                    requestedScopeSets
+                    this._accessToken.scope,
+                    scopeSets
                 );
 
-                this._scopes = scopes;
-                this._userId = userId;
+                const newToken: AccessTokenWithUserId = {
+                    ...(this._accessToken as AccessTokenWithUserId),
+                    scope
+                };
 
-                return { ...this._accessToken, userId };
+                this._accessToken = newToken;
+                return newToken;
             } catch (e) {
                 // if loading scopes failed, ignore InvalidTokenError and proceed with refreshing
                 if (!(e instanceof InvalidTokenError)) {
@@ -323,7 +333,7 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
             }
 
             const refreshedToken = await this.refreshAccessTokenForUser(null);
-            compareScopeSets(refreshedToken.scope, requestedScopeSets);
+            compareScopeSets(refreshedToken.scope, scopeSets);
             return refreshedToken;
         }
 
