@@ -137,17 +137,30 @@ class FirebotDeviceAuthProvider {
     }
 
     async validateTwitchAccounts() {
-        const invalidAccounts: string[] = [];
+        const invalidAccounts = {
+            streamer: false,
+            bot: false
+        };
 
         if (accountAccess.getAccounts().streamer.loggedIn === true) {
-            if (!(await this.validateTwitchAccount({ accountType: "streamer", authDetails: accountAccess.getAccounts().streamer.auth }))) {
-                invalidAccounts.push("streamer");
+            if (
+                !(await this.validateTwitchAccount({
+                    accountType: "streamer",
+                    authDetails: accountAccess.getAccounts().streamer.auth
+                }))
+            ) {
+                invalidAccounts.streamer = true;
             }
         }
 
         if (accountAccess.getAccounts().bot.loggedIn === true) {
-            if (!(await this.validateTwitchAccount({ accountType: "bot", authDetails: accountAccess.getAccounts().bot.auth }))) {
-                invalidAccounts.push("bot");
+            if (
+                !(await this.validateTwitchAccount({
+                    accountType: "bot",
+                    authDetails: accountAccess.getAccounts().bot.auth
+                }))
+            ) {
+                invalidAccounts.bot = true;
             }
         }
 
