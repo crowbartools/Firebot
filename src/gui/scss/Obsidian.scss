@@ -63,6 +63,10 @@ $connection-status-bubble-border: #282a2b;
 $notification-center-header-color: #43454a;
 $notification-preview-wrapper-color: $light-background-color;
 
+// dcf panel
+$dcf-panel-content-background: $dark-background-color;
+$dcf-panel-header-background: adjust-color($light-background-color, $red: 20, $green: 20, $blue: 20);
+
 // Bootstrap overrides
 $default-btn-bg-color: #68696c;
 $default-btn-text-color: $content-text-color;

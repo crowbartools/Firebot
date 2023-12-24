@@ -525,6 +525,14 @@ body {
     border-radius: 50px;
 }
 
+.login-thumbnail-large {
+    background: $dark-background-color;
+    height: 75px;
+    width: 75px;
+    border-radius: 75px;
+    border: solid 2px #494F51;
+}
+
 .login-arrow {
   margin-left: 3px;
   width: 10px;
@@ -1793,4 +1801,50 @@ column-resizer {
 
 .display-1{
   font-size: 1.2em;
+}
+
+.twitch-account {
+    border: 2px #494F51;
+    height: 100px;
+    width: 100%;
+    border-radius: 4px;
+    &.connected {
+        border-style: solid;
+    }
+    &.not-connected {
+      background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='4' ry='4' stroke='%23494F51FF' stroke-width='4' stroke-dasharray='18%2c15' stroke-dashoffset='10' stroke-linecap='round'/%3e%3c/svg%3e");
+    }
+}
+
+.dcf-link-panel {
+    border-radius: 8px;
+    overflow: hidden;
+    background: $dcf-panel-content-background;
+    .dcf-link-container {
+        position: relative;
+        padding: 15px 50px 15px 15px;
+        background: $dcf-panel-header-background;
+        font-family: monospace;
+        text-align: left;
+        .dcf-clone-btn {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            font-size: 17px;
+            cursor: pointer;
+            &:hover {
+                color: #12d0ff;
+            }
+            &.is-cta {
+                color: #12d0ff;
+                &:hover {
+                    color: #11add4;
+                }
+            }
+        }
+    }
 }

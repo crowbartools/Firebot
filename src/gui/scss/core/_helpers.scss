@@ -185,10 +185,22 @@ font-weight: 900;
     align-items: flex-end;
 }
 
+.self-start {
+    align-self: flex-start;
+}
+
 .truncate {
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
     text-overflow: ellipsis;
+}
+
+.capitalize {
+    text-transform: capitalize;
+}
+
+.text-center {
+    text-align: center;
 }

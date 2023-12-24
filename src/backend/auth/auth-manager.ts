@@ -4,6 +4,8 @@ import logger from "../logwrapper";
 import { AuthProvider, AuthProviderDefinition } from "./auth";
 import { settings } from "../common/settings-access";
 import frontendCommunicator from "../common/frontend-communicator";
+import { Notification, app } from "electron";
+import windowManagement from "../app-management/electron/window-management";
 
 class AuthManager extends EventEmitter {
     private readonly _httpPort: string;
@@ -42,9 +44,8 @@ class AuthManager extends EventEmitter {
                 break;
         }
 
-        const tokenUri = provider.auth.type === "device"
-            ? `${provider.auth.tokenHost}${provider.auth.tokenPath ?? ""}`
-            : null;
+        const tokenUri =
+            provider.auth.type === "device" ? `${provider.auth.tokenHost}${provider.auth.tokenPath ?? ""}` : null;
 
         const authProvider = {
             id: provider.id,
@@ -61,15 +62,15 @@ class AuthManager extends EventEmitter {
     }
 
     getAuthProvider(providerId: string): AuthProvider {
-        return this._authProviders.find(p => p.id === providerId);
+        return this._authProviders.find((p) => p.id === providerId);
     }
 
     buildOAuthClientForProvider(provider: AuthProviderDefinition, redirectUri: string): ClientOAuth2 {
         let scopes;
         if (provider.scopes) {
             scopes = Array.isArray(provider.scopes)
-                ? scopes = provider.scopes
-                : scopes = provider.scopes.split(" ");
+                ? (scopes = provider.scopes)
+                : (scopes = provider.scopes.split(" "));
         } else {
             scopes = [];
         }
@@ -102,7 +103,7 @@ class AuthManager extends EventEmitter {
 
                 accessToken = await accessToken.refresh(params);
             } catch (error) {
-                logger.warn('Error refreshing access token: ', error);
+                logger.warn("Error refreshing access token: ", error);
                 return null;
             }
         }
@@ -119,7 +120,7 @@ class AuthManager extends EventEmitter {
             // Revokes both tokens, refresh token is only revoked if the access_token is properly revoked
             // TODO
         } catch (error) {
-            logger.error('Error revoking token: ', error.message);
+            logger.error("Error revoking token: ", error.message);
         }
     }
 
@@ -138,9 +139,10 @@ frontendCommunicator.onAsync("begin-device-auth", async (providerId: string): Pr
 
     const formData = new FormData();
     formData.append("client_id", provider.details.client.id);
-    formData.append("scopes", Array.isArray(provider.details.scopes)
-        ? provider.details.scopes.join(" ")
-        : provider.details.scopes);
+    formData.append(
+        "scopes",
+        Array.isArray(provider.details.scopes) ? provider.details.scopes.join(" ") : provider.details.scopes
+    );
 
     // Get the device auth request
     const response = await fetch(provider.authorizationUri, {
@@ -158,9 +160,10 @@ frontendCommunicator.onAsync("begin-device-auth", async (providerId: string): Pr
 
         const tokenRequestData = new FormData();
         tokenRequestData.append("client_id", provider.details.client.id);
-        tokenRequestData.append("scopes", Array.isArray(provider.details.scopes)
-            ? provider.details.scopes.join(" ")
-            : provider.details.scopes);
+        tokenRequestData.append(
+            "scopes",
+            Array.isArray(provider.details.scopes) ? provider.details.scopes.join(" ") : provider.details.scopes
+        );
         tokenRequestData.append("device_code", deviceAuthData.device_code);
         tokenRequestData.append("grant_type", "urn:ietf:params:oauth:grant-type:device_code");
 
@@ -172,9 +175,26 @@ frontendCommunicator.onAsync("begin-device-auth", async (providerId: string): Pr
 
             if (tokenResponse.ok) {
                 clearInterval(tokenCheckInterval);
-                const tokenData = await tokenResponse.json();
 
-                manager.successfulAuth(providerId, tokenData);
+                if (
+                    Notification.isSupported() &&
+                    windowManagement.mainWindow &&
+                    !windowManagement.mainWindow.isFocused()
+                ) {
+                    const successfulAuthNotification = new Notification({
+                        title: "Successfully authenticated with Twitch!",
+                        body: "You can return to Firebot now."
+                    });
+                    successfulAuthNotification.show();
+                    successfulAuthNotification.on("click", () => {
+                        app.focus({
+                            steal: true
+                        });
+                    });
+
+                    const tokenData = await tokenResponse.json();
+                    manager.successfulAuth(providerId, tokenData);
+                }
             }
         }, deviceAuthData.interval * 1000);
 

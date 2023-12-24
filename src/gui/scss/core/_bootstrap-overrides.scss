@@ -213,6 +213,9 @@ textarea.form-control {
 
 .btn-link {
     color: #12d0ff;
+    &:hover, &:focus {
+        color: #11add4;
+    }
 }
 
 // Misc

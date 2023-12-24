@@ -39,7 +39,7 @@
                         service.logout(type);
                     } else {
                         utilityService.showModal({
-                            component: "twitchLoginModal",
+                            component: "twitchDcfModal",
                             resolveObj: {
                                 accountType: () => type
                             },
@@ -53,7 +53,7 @@
                         service.logout(type);
                     } else {
                         utilityService.showModal({
-                            component: "twitchLoginModal",
+                            component: "twitchDcfModal",
                             resolveObj: {
                                 accountType: () => type
                             },
@@ -76,7 +76,10 @@
             };
 
             service.validateAccounts = async () => {
-                const invalidAccounts = [];
+                const invalidAccounts = {
+                    streamer: false,
+                    bot: false
+                };
 
                 if (service.accounts["streamer"].loggedIn) {
                     if (!await backendCommunicator.fireEventAsync("validate-twitch-account", {
@@ -84,7 +87,7 @@
                         authDetails: service.accounts["streamer"].auth
                     })) {
                         service.logout("streamer");
-                        invalidAccounts.push("streamer");
+                        invalidAccounts.streamer = true;
                     }
                 }
 
@@ -94,37 +97,17 @@
                         authDetails: service.accounts["bot"].auth
                     })) {
                         service.logout("bot");
-                        invalidAccounts.push("bot");
+                        invalidAccounts.bot = true;
                     }
                 }
 
-                if (invalidAccounts.length > 0) {
-                    const showManageLoginsModal = {
-                        templateUrl: "manageLoginsModal.html",
-                        // This is the controller to be used for the modal.
-                        controllerFunc: ($scope, $uibModalInstance, connectionService) => {
-                            $scope.cs = connectionService;
-
-                            // Login Kickoff
-                            $scope.loginOrLogout = function(type) {
-                                connectionService.loginOrLogout(type);
-                            };
-
-                            $scope.getAccountAvatar = connectionService.getAccountAvatar;
-
-                            $scope.invalidAccounts = invalidAccounts;
-
-                            $scope.close = function() {
-                                $uibModalInstance.close();
-                            };
-
-                            // When they hit cancel or click outside the modal, we dont want to do anything
-                            $scope.dismiss = function() {
-                                $uibModalInstance.dismiss("cancel");
-                            };
+                if (invalidAccounts.streamer || invalidAccounts.bot) {
+                    utilityService.showModal({
+                        component: "loginsModal",
+                        resolveObj: {
+                            invalidAccounts: () => invalidAccounts
                         }
-                    };
-                    utilityService.showModal(showManageLoginsModal);
+                    });
                 }
             };
 

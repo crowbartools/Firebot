@@ -249,30 +249,9 @@
         * MANAGE LOGINS MODAL
         */
         $scope.showManageLoginsModal = function() {
-            const showManageLoginsModal = {
-                templateUrl: "manageLoginsModal.html",
-                // This is the controller to be used for the modal.
-                controllerFunc: ($scope, $uibModalInstance, connectionService) => {
-                    $scope.cs = connectionService;
-
-                    // Login Kickoff
-                    $scope.loginOrLogout = function(type) {
-                        connectionService.loginOrLogout(type);
-                    };
-
-                    $scope.getAccountAvatar = connectionService.getAccountAvatar;
-
-                    $scope.close = function() {
-                        $uibModalInstance.close();
-                    };
-
-                    // When they hit cancel or click outside the modal, we dont want to do anything
-                    $scope.dismiss = function() {
-                        $uibModalInstance.dismiss("cancel");
-                    };
-                }
-            };
-            utilityService.showModal(showManageLoginsModal);
+            utilityService.showModal({
+                component: "loginsModal"
+            });
         };
 
         /*
