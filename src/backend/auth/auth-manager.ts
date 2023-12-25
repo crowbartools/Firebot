@@ -176,6 +176,9 @@ frontendCommunicator.onAsync("begin-device-auth", async (providerId: string): Pr
             if (tokenResponse.ok) {
                 clearInterval(tokenCheckInterval);
 
+                const tokenData = await tokenResponse.json();
+                manager.successfulAuth(providerId, tokenData);
+
                 if (
                     Notification.isSupported() &&
                     windowManagement.mainWindow &&
@@ -191,9 +194,6 @@ frontendCommunicator.onAsync("begin-device-auth", async (providerId: string): Pr
                             steal: true
                         });
                     });
-
-                    const tokenData = await tokenResponse.json();
-                    manager.successfulAuth(providerId, tokenData);
                 }
             }
         }, deviceAuthData.interval * 1000);
