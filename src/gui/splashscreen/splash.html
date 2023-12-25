@@ -38,10 +38,6 @@
             min-width: 300px;
         }
     
-        .splash-box.linux {
-            box-shadow: none;
-        }
-    
         .logo-wrapper {
             width: 185px;
             display:flex;
@@ -135,13 +131,6 @@
         </div>
     </div>
     <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const isLinux = urlParams.get('isLinux');
-        if(isLinux === "true") {
-            const box = document.getElementById("box");
-            box.classList.add("linux");
-        }
-
         window.ipcRenderer.on("update-splash-screen-status", (newStatus) => {
             document.getElementById("status-message").innerText = newStatus;
         });
