@@ -356,7 +356,7 @@ function createMainWindow() {
 const createSplashScreen = async () => {
     splashscreenWindow = new BrowserWindow({
         width: 375,
-        height: 400,
+        height: 420,
         icon: path.join(__dirname, "../../../gui/images/logo_transparent_2.png"),
         transparent: true,
         backgroundColor: undefined,
