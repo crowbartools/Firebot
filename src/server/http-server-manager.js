@@ -47,6 +47,14 @@ class HttpServerManager extends EventEmitter {
     createDefaultServerInstance() {
         const app = express();
 
+        // Cache buster
+        app.use(function (_, res, next) {
+            res.setHeader("Expires", "0");
+            res.setHeader("Pragma", "no-cache");
+            res.setHeader("Cache-Control", "no-store, max-age=0, must-revalidate");
+            res.setHeader("Surrogate-Control", "no-store");
+            next();
+        });
         app.use(cors());
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: true }));
