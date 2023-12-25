@@ -355,9 +355,9 @@ function createMainWindow() {
  */
 const createSplashScreen = async () => {
     const isLinux = process.platform !== 'win32' && process.platform !== 'darwin';
-    const splash = new BrowserWindow({
-        width: 240,
-        height: 325,
+    splashscreenWindow = new BrowserWindow({
+        width: 375,
+        height: 400,
         icon: path.join(__dirname, "../../../gui/images/logo_transparent_2.png"),
         transparent: !isLinux,
         backgroundColor: isLinux ? "#34363C" : undefined,
@@ -369,22 +369,22 @@ const createSplashScreen = async () => {
         center: true,
         show: false,
         webPreferences: {
-            nodeIntegration: true
+            preload: path.join(__dirname, "../../../gui/splashscreen/preload.js")
         }
     });
-    splashscreenWindow = splash;
 
-    splash.on("ready-to-show", () => {
+    splashscreenWindow.once("ready-to-show", () => {
         logger.debug("...Showing splash screen");
-        splash.show();
+        splashscreenWindow.show();
     });
 
     logger.debug("...Attempting to load splash screen url");
-    return splash.loadURL(
+    return splashscreenWindow.loadURL(
         url.format({
             pathname: path.join(__dirname, "../../../gui/splashscreen/splash.html"),
             protocol: "file:",
-            slashes: true
+            slashes: true,
+            query: `isLinux=${isLinux}`
         }))
         .then(() => {
             logger.debug("Loaded splash screen");
@@ -392,6 +392,14 @@ const createSplashScreen = async () => {
             logger.error("Failed to load splash screen", reason);
         });
 };
+
+function updateSplashScreenStatus(newStatus) {
+    if (splashscreenWindow == null || splashscreenWindow.isDestroyed()) {
+        return;
+    }
+
+    splashscreenWindow.webContents.send("update-splash-screen-status", newStatus);
+}
 
 /**
  * Firebot's main window
@@ -568,6 +576,7 @@ frontendCommunicator.on("takeScreenshot", (displayId) => {
     return screenHelpers.takeScreenshot(displayId);
 });
 
+exports.updateSplashScreenStatus = updateSplashScreenStatus;
 exports.createVariableInspectorWindow = createVariableInspectorWindow;
 exports.sendVariableCreateToInspector = sendVariableCreateToInspector;
 exports.sendVariableExpireToInspector = sendVariableExpireToInspector;
