@@ -1,5 +1,5 @@
 .connection-tile {
-    width: 125px;
+    width: 135px;
     height: 150px;
     display: flex;
     flex-direction: column;
@@ -7,7 +7,7 @@
     justify-content: space-around;
     background-color: $connection-tile-bg;
     box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.19);
-    border-radius: 4px;
+    border-radius: 8px;
     & .connection-title {
         text-align: center;
         color: $connection-tile-title;
@@ -21,7 +21,7 @@
         font-size: 40px;
         min-height: 56.8px;
         &.connected {
-            color: green;
+            color: #17A34A;
         }
         &.connecting {
             color: $connection-tile-title;
@@ -42,7 +42,7 @@
         color: #ffd602;
         font-size: 50px;
         &.connected {
-            color: green;
+            color: #17A34A;
         }
     }
 }
@@ -61,10 +61,10 @@
         right: -8px;
         width: 16px;
         height: 16px;
-        border-radius: 8px;    
+        border-radius: 8px;
         border: 2px solid $connection-status-bubble-border;
         font-size: 8px;
-        color: $connection-status-bubble-border;        
+        color: $connection-status-bubble-border;
         display: flex;
         justify-content: center;
         align-items: center;

@@ -14,6 +14,9 @@
     display:flex;
     flex-direction: row;
     align-items: center;
+    margin: 0 5px;
+    padding: 0 10px;
+    border-radius: 8px;
 
     .category-bar {
         height: 100%;
@@ -45,7 +48,7 @@
 }
 
 .effect-def-wrapper {
-    border-radius: 5px;
+    border-radius: 8px;
     background: #43454A;
     display: flex;
     flex-direction: row;
@@ -87,12 +90,12 @@
 
 
 .change-effect-button {
-    height: 16px;
-    width: 41px;
+    height: 25px;
+    width: 60px;
     padding: 0;
     display: inline-block;
     margin-bottom: 0;
-    font-size: 8px;
+    font-size: 10px;
     font-weight: 400;
     line-height: 1.42857143;
     text-align: center;
@@ -103,8 +106,7 @@
     user-select: none;
     background-image: none;
     border: 1px solid transparent;
-    border-radius: 5px;
-    background: #16809c;
-    text-transform: uppercase;
+    border-radius: 8px;
+    background: #68696C;
 }
 

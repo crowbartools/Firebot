@@ -42,6 +42,8 @@
 
 .edit-effect-header {
     background: $light-background-color;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
     //border-bottom: 1px solid $effect-option-title;
 }
 
@@ -52,7 +54,7 @@
   right: 0px;
   top: -307px;
   z-index: 3000;
-  border-radius: 4px;
+  border-radius: 8px;
   &.below {
     top: 36px;
   }
@@ -67,13 +69,13 @@
 }
 
 .variables-btn {
-  width: 30px;
-  height: 15px;
+  width: 40px;
+  height: 20px;
   background: #0b8dc6;
   position: absolute;
   bottom:0;
   right:0;
-  border-radius:4px;
+  border-radius: 8px;
   font-size: 10px;
   text-align: center;
   margin: 0 7px 7px 0;
@@ -81,6 +83,9 @@
   user-select: none;
   opacity: 1;
   z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   &:hover {
     animation: delayed-hide 500ms;
     animation-delay: 500ms;
@@ -183,8 +188,7 @@ body {
   flex-shrink: 0;
   z-index: 100;
   span {
-    text-transform: uppercase;
-    font-weight: 100;
+    font-weight: 700;
   }
 }
 .tab-body-wrapper {
@@ -199,7 +203,7 @@ body {
 }
 .content-block {
  background: adjust-color($light-background-color, $red: 20, $green: 20, $blue: 20);
- border-radius: 3px;
+ border-radius: 8px;
  border: 0.01em solid $light-background-border;
  box-shadow: 2px 2px 7px $light-background-box-shadow;
 }
@@ -341,6 +345,8 @@ body {
  text-transform: uppercase;
  text-decoration: none;
  position: relative;
+ margin: 0px 10px;
+ border-radius: 8px;
 }
 .fb-nav-link:hover {
  background: $left-nav-link-text-hover-color;
@@ -351,18 +357,14 @@ body {
  color: white;
  background: $nav-link-bg;
 }
-.nav-link-bar {
- height: 100%;
- width: 6px;
- display: inline-block;
-}
 
 .selected .nav-link-bar {
- background: $highlight-color;
+    background: transparent;
+    display: none;
 }
 
 .selected .nav-link-icon {
- color: $highlight-color;
+ color: #FFCB03;
 }
 
 .nav-link-icon {
@@ -880,7 +882,7 @@ body {
         font-size: 15px;
         width: 165px;
         height: 125px;
-        border-radius: 7px;
+        border-radius: 8px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -902,7 +904,7 @@ body {
   width: 25%;
   height: 100%;
   min-height: 155px;
-  border-radius: 7px;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -922,12 +924,13 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background-color: $scrollbar-background-color
+  background-color: $scrollbar-background-color;
+  border-radius: 8px;
 }
 
 ::-webkit-scrollbar-thumb {
   background-color: $scrollbar-bar-color;
-  border-radius: 4px;
+  border-radius: 8px;
 }
 
 /**
@@ -1529,7 +1532,7 @@ thead th{
   height: 30px;
   font-size: 13px;
   padding: 0 10px;
-  border-radius: 3px;
+  border-radius: 8px;
   margin-right: 4px;
   margin-bottom: 4px;
   justify-content: space-between;
@@ -1555,7 +1558,7 @@ thead th{
   height: 30px;
   font-size: 13px;
   padding: 0 10px;
-  border-radius: 3px;
+  border-radius: 8px;
   margin-right: 4px;
   margin-bottom: 4px;
   justify-content: space-between;
@@ -1573,7 +1576,7 @@ thead th{
   align-items: center;
   color: white;
   font-size: 13px;
-  border-radius: 3px;
+  border-radius: 8px;
   margin-right: 4px;
   margin-bottom: 4px;
   justify-content: space-between;
@@ -1599,9 +1602,9 @@ thead th{
   flex-direction: row;
   align-items: center;
   color: white;
-  height: 38px;
+  height: 40px;
   padding-left: 15px;
-  border-radius: 3px;
+  border-radius: 8px;
   margin-bottom: 5px;
   line-height: 1.1;
   justify-content: space-between;
@@ -1696,7 +1699,7 @@ thead th{
 }
 
 .CodeMirror {
-  border-radius: 4px !important;
+  border-radius: 8px !important;
 }
 
 .cm-s-blackboard {
@@ -1807,7 +1810,7 @@ column-resizer {
     border: 2px #494F51;
     height: 100px;
     width: 100%;
-    border-radius: 4px;
+    border-radius: 8px;
     &.connected {
         border-style: solid;
     }
