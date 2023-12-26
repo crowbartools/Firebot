@@ -154,7 +154,7 @@ textarea.form-control {
     transition-property: transform;
     transition-duration: 0.3s;
     &:hover {
-        transform: scale(1.02) translateZ(0);
+        // transform: scale(1.02) translateZ(0);
     }
 }
 
@@ -654,5 +654,4 @@ a {
 
 .ui-select-container {
     border-radius: 8px;
-    overflow: hidden;
 }
