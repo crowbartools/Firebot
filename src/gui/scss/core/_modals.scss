@@ -11,6 +11,13 @@
   color: $editor-text-color;
 }
 
+.modal-icon {
+    margin-right: 20px;
+    display: flex;
+    align-items: start;
+    font-size: 48px;
+}
+
 .effect-edit-modal,
 .no-padding-modal {
     .modal-body {
