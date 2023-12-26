@@ -120,14 +120,10 @@ class TwitchChat extends EventEmitter {
 
             this._streamerIncomingChatClient.irc.onPasswordError((event) => {
                 logger.error("Failed to connect to chat", event);
-                if (event.message.toLowerCase() === "invalid token supplied") {
-                    firebotDeviceAuthProvider.validateTwitchAccounts();
-                } else {
-                    frontendCommunicator.send(
-                        "error",
-                        `Unable to connect to chat. Reason: "${event.message}". Try signing out and back into your streamer/bot account(s).`
-                    );
-                }
+                frontendCommunicator.send(
+                    "error",
+                    `Unable to connect to chat. Reason: "${event.message}". Try signing out and back into your streamer/bot account(s).`
+                );
                 this.disconnect(true);
             });
 

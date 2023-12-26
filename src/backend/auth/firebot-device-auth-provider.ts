@@ -127,8 +127,7 @@ class FirebotDeviceAuthProvider {
         }
 
         if (definition) {
-            return this.isTwitchTokenDataValid(definition, request.authDetails)
-                && await TwitchApi.auth.isTokenValid(request.accountType);
+            return this.isTwitchTokenDataValid(definition, request.authDetails);
         }
 
         return true;

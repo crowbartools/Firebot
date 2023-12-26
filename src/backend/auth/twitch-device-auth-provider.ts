@@ -168,6 +168,7 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
     private readonly _clientId: string;
     private _accessToken: AccessTokenWithUserId;
     private _tokenFetcher: TokenFetcher<AccessTokenWithUserId>;
+    private _refreshPromise: Promise<AccessToken>;
     private readonly _cachedRefreshFailures = new Set<string>();
 
     /**
@@ -195,71 +196,13 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
     constructor(deviceAuthConfig: DeviceAuthProviderConfig) {
         super();
 
-        this._userId = extractUserId(deviceAuthConfig.userId);
         this._clientId = deviceAuthConfig.clientId;
+        this._userId = extractUserId(deviceAuthConfig.userId);
         this._accessToken = {
             ...deviceAuthConfig.accessToken,
             userId: this._userId
         };
         this._tokenFetcher = new TokenFetcher(async scopes => await this._fetchUserToken(scopes));
-    }
-
-    /**
-     * The client ID.
-     */
-    get clientId(): string {
-        return this._clientId;
-    }
-
-    /**
-     * Gets the access token.
-     *
-     * If the current access token does not have the requested scopes, this method throws.
-     * This makes supplying an access token with the correct scopes from the beginning necessary.
-     *
-     * @param user Ignored.
-     * @param scopeSets The requested scopes.
-     */
-    async getAccessTokenForUser(
-        user: UserIdResolvable,
-        ...scopeSets: Array<string[] | undefined>
-    ): Promise<AccessTokenWithUserId> {
-        if (this._cachedRefreshFailures.has(this._userId)) {
-            throw new CachedRefreshFailureError(this._userId);
-        }
-
-        return await this._tokenFetcher.fetch(...scopeSets);
-    }
-
-    /**
-     * Gets the access token.
-     *
-     * If the current access token does not have the requested scopes, this method throws.
-     * This makes supplying an access token with the correct scopes from the beginning necessary.
-     *
-     * @param intent Ignored.
-     * @param scopeSets The requested scopes.
-     */
-    async getAccessTokenForIntent(
-        intent: string,
-        ...scopeSets: Array<string[] | undefined>
-    ): Promise<AccessTokenWithUserId> {
-        return await this.getAccessTokenForUser(this._userId, ...scopeSets);
-    }
-
-    /**
-     * Gets the access token.
-     */
-    async getAnyAccessToken(): Promise<AccessTokenMaybeWithUserId> {
-        return await this.getAccessTokenForUser(this._userId);
-    }
-
-    /**
-     * The scopes that are currently available using the access token.
-     */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getCurrentScopesForUser(user: UserIdResolvable): string[] {
-        return this._accessToken.scope ?? [];
     }
 
     /**
@@ -273,11 +216,13 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
             throw new CachedRefreshFailureError(this._userId);
         }
 
-        if (!this._accessToken) {
+        const previousTokenData = this._accessToken;
+
+        if (!previousTokenData) {
             throw new Error('Trying to refresh non-existent token');
         }
 
-        const tokenData = await this._refreshUserTokenWithCallback(this._accessToken.refreshToken);
+        const tokenData = await this._refreshUserTokenWithCallback(previousTokenData.refreshToken);
 
         this._accessToken = {
             ...tokenData,
@@ -301,25 +246,99 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
         return await this.refreshAccessTokenForUser(null);
     }
 
+    /**
+     * The client ID.
+     */
+    get clientId(): string {
+        return this._clientId;
+    }
+
+    /**
+     * The scopes that are currently available using the access token.
+     */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    getCurrentScopesForUser(user: UserIdResolvable): string[] {
+        return this._accessToken.scope ?? [];
+    }
+
+    /**
+     * Gets the access token.
+     *
+     * If the current access token does not have the requested scopes, this method throws.
+     * This makes supplying an access token with the correct scopes from the beginning necessary.
+     *
+     * @param user Ignored.
+     * @param scopeSets The requested scopes.
+     */
+    async getAccessTokenForUser(
+        user: UserIdResolvable,
+        ...scopeSets: Array<string[] | undefined>
+    ): Promise<AccessTokenWithUserId> {
+        if (this._cachedRefreshFailures.has(this._userId)) {
+            throw new CachedRefreshFailureError(this._userId);
+        }
+        return await this._tokenFetcher.fetch(...scopeSets);
+    }
+
+    /**
+     * Gets the access token.
+     *
+     * If the current access token does not have the requested scopes, this method throws.
+     * This makes supplying an access token with the correct scopes from the beginning necessary.
+     *
+     * @param intent Ignored.
+     * @param scopeSets The requested scopes.
+     */
+    async getAccessTokenForIntent(
+        intent: string,
+        ...scopeSets: Array<string[] | undefined>
+    ): Promise<AccessTokenWithUserId> {
+        const token = await this.getAccessTokenForUser(this._userId, ...scopeSets);
+
+        return {
+            ...token,
+            userId: this._userId
+        };
+    }
+
+    /**
+     * Gets the access token.
+     */
+    async getAnyAccessToken(): Promise<AccessTokenMaybeWithUserId> {
+        const token = await this.getAccessTokenForUser(this._userId);
+
+        return {
+            ...token,
+            userId: this._userId
+        };
+    }
+
     private async _fetchUserToken(scopeSets: Array<string[] | undefined>): Promise<AccessTokenWithUserId> {
-        if (!accessTokenIsExpired(this._accessToken)) {
+        const previousToken = this._accessToken;
+
+        if (!previousToken) {
+            throw new Error('Trying to fetch non-existent token');
+        }
+
+        if (previousToken.accessToken && !accessTokenIsExpired(previousToken)) {
+
             try {
                 // don't create new object on every get
-                if (this._accessToken.scope) {
-                    compareScopeSets(this._accessToken.scope, scopeSets);
-                    return this._accessToken as AccessTokenWithUserId;
+                if (previousToken.scope) {
+                    compareScopeSets(previousToken.scope, scopeSets);
+                    return previousToken as AccessTokenWithUserId;
                 }
 
                 const [scope = []] = await loadAndCompareTokenInfo(
                     this._clientId,
-                    this._accessToken.accessToken,
+                    previousToken.accessToken,
                     this._userId,
-                    this._accessToken.scope,
+                    previousToken.scope,
                     scopeSets
                 );
 
                 const newToken: AccessTokenWithUserId = {
-                    ...(this._accessToken as AccessTokenWithUserId),
+                    ...(previousToken as AccessTokenWithUserId),
                     scope
                 };
 
@@ -331,22 +350,30 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
                     throw e;
                 }
             }
-
-            const refreshedToken = await this.refreshAccessTokenForUser(null);
-            compareScopeSets(refreshedToken.scope, scopeSets);
-            return refreshedToken;
         }
 
-        return this._accessToken;
+        const refreshedToken = await this.refreshAccessTokenForUser(null);
+        compareScopeSets(refreshedToken.scope, scopeSets);
+        return refreshedToken;
     }
 
     private async _refreshUserTokenWithCallback(refreshToken: string): Promise<AccessToken> {
-        try {
-            return await refreshUserToken(this.clientId, refreshToken);
-        } catch (e) {
-            this._cachedRefreshFailures.add(this._userId);
-            this.emit(this.onRefreshFailure, this._userId);
-            throw e;
+        if (this._refreshPromise != null) {
+            return this._refreshPromise;
         }
+
+        return this._refreshPromise = new Promise(async (resolve, reject) => {
+            try {
+                const token = await refreshUserToken(this.clientId, refreshToken);
+                this._refreshPromise = null;
+                resolve(token);
+
+            } catch (e) {
+                this._cachedRefreshFailures.add(this._userId);
+                this.emit(this.onRefreshFailure, this._userId);
+                this._refreshPromise = null;
+                reject(e);
+            }
+        });
     }
 }
