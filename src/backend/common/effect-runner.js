@@ -10,13 +10,15 @@ const effectQueueRunner = require("../effects/queues/effect-queue-runner");
 const webServer = require("../../server/http-server-manager");
 const util = require("../utility");
 
+const SKIP_VARIABLE_PROPERTIES = ["list", "leftSideValue", "rightSideValue", "effectLabel"];
+
 const findAndReplaceVariables = async (data, trigger, effectOutputs) => {
     const keys = Object.keys(data);
 
     for (const key of keys) {
 
         // skip nested effect lists and conditions so we dont replace variables too early
-        if (key === "list" || key === "leftSideValue" || key === "rightSideValue") {
+        if (SKIP_VARIABLE_PROPERTIES.includes(key)) {
             continue;
         }
 
