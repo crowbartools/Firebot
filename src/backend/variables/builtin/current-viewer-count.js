@@ -23,9 +23,7 @@ const model = {
 
         // retrieve stream data for user id
         const twitchClient = twitchApi.streamerClient;
-        const streamInfo = await twitchClient.asUser(streamerId, async ctx => {
-            return await ctx.streams.getStreamByUserId(streamerId);
-        });
+        const streamInfo = await twitchClient.streams.getStreamByUserId(streamerId);
 
         // extract viewer count
         return streamInfo ? streamInfo.viewers : 0;

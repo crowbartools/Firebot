@@ -31,9 +31,7 @@ async function buildChannelEmbed() {
     /**@type {import('@twurple/api').HelixStream} */
     let currentStream;
     try {
-        currentStream = await twitchApi.streamerClient.asUser(streamer.userId, async ctx => {
-            return await ctx.streams.getStreamByUserId(streamer.userId);
-        });
+        currentStream = await twitchApi.streamerClient.streams.getStreamByUserId(streamer.userId);
     } catch (error) {
         // stream not running
     }

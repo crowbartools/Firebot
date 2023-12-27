@@ -74,9 +74,7 @@ export class TwitchChatApi {
                 };
 
                 if (willSendAsBot === true) {
-                    await this._botClient.asUser(senderUserId, async ctx => {
-                        await ctx.chat.sendAnnouncement(streamerUserId, announcement);
-                    });
+                    await this._botClient.chat.sendAnnouncement(streamerUserId, announcement);
                 } else {
                     await this._streamerClient.chat.sendAnnouncement(streamerUserId, announcement);
                 }

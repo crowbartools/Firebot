@@ -38,9 +38,8 @@ class FirebotChatHelpers {
         if (streamer.loggedIn && client) {
             try {
                 const channelBadges = await client.chat.getChannelBadges(streamer.userId);
-                const globalBadges = await client.asUser(streamer.userId, async ctx => {
-                    return await ctx.chat.getGlobalBadges();
-                });
+                const globalBadges = await client.chat.getGlobalBadges();
+
                 this._badgeCache = [
                     ...channelBadges,
                     ...globalBadges
@@ -61,9 +60,7 @@ class FirebotChatHelpers {
 
         try {
             const channelEmotes = await client.chat.getChannelEmotes(streamer.userId);
-            const globalEmotes = await client.asUser(streamer.userId, async ctx => {
-                return await ctx.chat.getGlobalEmotes();
-            });
+            const globalEmotes = await client.chat.getGlobalEmotes();
 
             if (!channelEmotes && !globalEmotes) {
                 return;

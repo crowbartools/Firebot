@@ -35,9 +35,7 @@ class TwitchStreamInfoPoll {
             return;
         }
 
-        const stream = await client.asUser(streamer.userId, async ctx => {
-            return await ctx.streams.getStreamByUserId(streamer.userId);
-        });
+        const stream = await client.streams.getStreamByUserId(streamer.userId);
 
         let streamInfoChanged = false;
         if (stream == null) {
