@@ -4,6 +4,8 @@ import {
     OBS_EVENT_SOURCE_ID,
     OBS_SCENE_CHANGED_EVENT_ID,
     OBS_SCENE_ITEM_ENABLE_STATE_CHANGED_EVENT_ID,
+    OBS_SCENE_TRANSITION_ENDED_EVENT_ID,
+    OBS_SCENE_TRANSITION_STARTED_EVENT_ID,
     OBS_STREAM_STARTED_EVENT_ID,
     OBS_STREAM_STOPPED_EVENT_ID
 } from "./constants";
@@ -54,6 +56,26 @@ function setupRemoteListeners() {
                 sceneName,
                 sceneItemId,
                 sceneItemEnabled
+            }
+        );
+    });
+
+    obs.on("SceneTransitionStarted", ({ transitionName }) => {
+        eventManager?.triggerEvent(
+            OBS_EVENT_SOURCE_ID,
+            OBS_SCENE_TRANSITION_STARTED_EVENT_ID,
+            {
+                transitionName
+            }
+        );
+    });
+
+    obs.on("SceneTransitionEnded", ({ transitionName }) => {
+        eventManager?.triggerEvent(
+            OBS_EVENT_SOURCE_ID,
+            OBS_SCENE_TRANSITION_ENDED_EVENT_ID,
+            {
+                transitionName
             }
         );
     });

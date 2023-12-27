@@ -36,6 +36,7 @@ import { ColorValueVariable } from "./variables/obs-color-value";
 import { SceneItemIdVariable } from "./variables/scene-item-id";
 import { SceneItemEnabledVariable } from "./variables/scene-item-enabled";
 import { SceneItemNameVariable } from "./variables/scene-item-name";
+import { TransitionNameVariable } from "./variables/transition-name";
 import { setupFrontendListeners } from "./communicator";
 import effectManager from "../../../effects/effectManager";
 import eventFilterManager from "../../../events/filters/filter-manager";
@@ -124,6 +125,7 @@ class ObsIntegration
         replaceVariableManager.registerReplaceVariable(SceneItemIdVariable);
         replaceVariableManager.registerReplaceVariable(SceneItemNameVariable);
         replaceVariableManager.registerReplaceVariable(SceneItemEnabledVariable);
+        replaceVariableManager.registerReplaceVariable(TransitionNameVariable);
 
         this.setupConnection(integrationData.userSettings);
     }

@@ -3,6 +3,8 @@ import {
     OBS_EVENT_SOURCE_ID,
     OBS_SCENE_CHANGED_EVENT_ID,
     OBS_SCENE_ITEM_ENABLE_STATE_CHANGED_EVENT_ID,
+    OBS_SCENE_TRANSITION_ENDED_EVENT_ID,
+    OBS_SCENE_TRANSITION_STARTED_EVENT_ID,
     OBS_STREAM_STARTED_EVENT_ID,
     OBS_STREAM_STOPPED_EVENT_ID
 } from "../constants";
@@ -35,6 +37,18 @@ export const OBSEventSource: EventSource = {
             id: OBS_SCENE_ITEM_ENABLE_STATE_CHANGED_EVENT_ID,
             name: "OBS Scene Item Enable State Changed",
             description: "When an item in a scene is enabled/disabled",
+            manualMetadata: {}
+        },
+        {
+            id: OBS_SCENE_TRANSITION_STARTED_EVENT_ID,
+            name: "OBS Scene Transition Started",
+            description: "When a scene transition in OBS has started",
+            manualMetadata: {}
+        },
+        {
+            id: OBS_SCENE_TRANSITION_ENDED_EVENT_ID,
+            name: "OBS Scene Transition Ended",
+            description: "When a scene transition in OBS has ended",
             manualMetadata: {}
         }
     ]
