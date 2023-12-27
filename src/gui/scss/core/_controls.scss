@@ -53,6 +53,7 @@
     height: 20px;
     width: 20px;
     background: #e6e6e6;
+    border-radius: 6px;
 }
 
 .small-control .control__indicator {
@@ -335,13 +336,13 @@ input:checked + .slider:before {
     align-items: center;
     .hotkey-display {
         border: 2px solid #5cb85c;
-        height: 36px;
+        height: 40px;
         display: flex;
         align-items: center;
         min-width: 200px;
         padding: 0 20px;
-        border-bottom-left-radius: 2px;
-        border-top-left-radius: 2px;
+        border-bottom-left-radius: 8px;
+        border-top-left-radius: 8px;
         border-right: none;
         cursor: pointer;
         user-select: none;
@@ -439,11 +440,11 @@ input:checked + .slider:before {
 .tgl-light {
     + .tgl-btn {
         background: #adacac;
-        border-radius: 1px;
+        border-radius: 15px;
         padding: 4px;
         transition: all 0.4s ease;
         &:after {
-            border-radius: 1px;
+            border-radius: 20px;
             background: #fff;
             transition: all 0.2s ease;
         }
@@ -471,14 +472,14 @@ table.fb-table {
         box-shadow: $fb-table-shadow;
     }
     & tr > :first-child {
-        border-top-left-radius: 5px;
-        border-bottom-left-radius: 5px;
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
         padding-left: 20px;
         padding-right: 20px;
     }
     & tr > :last-child {
-        border-top-right-radius: 5px;
-        border-bottom-right-radius: 5px;
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
         padding-right: 20px;
     }
 }
@@ -551,16 +552,16 @@ table.fb-table-alt {
         text-indent: -99999px;
     }
     & tr:first-child > :first-child {
-        border-top-left-radius: 5px;
+        border-top-left-radius: 8px;
     }
     & tr:first-child > :last-child {
-        border-top-right-radius: 5px;
+        border-top-right-radius: 8px;
     }
     & tr:last-child > :first-child {
-        border-bottom-left-radius: 5px;
+        border-bottom-left-radius: 8%;
     }
     & tr:last-child > :last-child {
-        border-bottom-right-radius: 5px;
+        border-bottom-right-radius: 8px;
     }
     & tr > :last-child {
         padding-right: 15px;
@@ -570,7 +571,7 @@ table.fb-table-alt {
 .fb-table-row {
     height: 45px;
     background: $fb-table-row-bg;
-    border-radius: 5px;
+    border-radius: 8px;
     padding: 0 15px;
     display: flex;
     align-items: center;
@@ -608,7 +609,7 @@ table.fb-table-alt {
 .sys-command-row {
     background: $fb-table-row-bg;
     height: 45px;
-    border-radius: 5px;
+    border-radius: 8px;
     box-shadow: $fb-table-shadow;
     display: flex;
     align-items: center;
@@ -632,21 +633,21 @@ table.fb-table-alt {
     border: 2px solid adjust-color($fb-table-row-bg, $red: -5, $green: -5, $blue: -5);
     border-top: none;
     box-shadow: $sys-cmd-expanded-shadow;
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
 }
 
 .expandable-item {
     background: $fb-table-row-bg;
     height: 45px;
-    border-radius: 5px;
+    border-radius: 8px;
     box-shadow: $fb-table-shadow;
     display: flex;
     align-items: center;
 
     &.smaller-item {
         height: 37px;
-        border-radius: 3px;
+        border-radius: 4px;
     }
 
     &:hover {
@@ -668,18 +669,18 @@ table.fb-table-alt {
     border: 2px solid adjust-color($fb-table-row-bg, $red: -5, $green: -5, $blue: -5);
     border-top: none;
     box-shadow: $sys-cmd-expanded-shadow;
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
     &.smaller-item {
-        border-bottom-left-radius: 3px;
-        border-bottom-right-radius: 3px;
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
     }
 }
 
 .integration-row {
     background: $integration-row-bg;
     height: 60px;
-    border-radius: 5px;
+    border-radius: 8px;
     box-shadow: $fb-table-shadow;
     display: flex;
     align-items: center;
@@ -703,11 +704,11 @@ table.fb-table-alt {
 }
 .effect-list {
     background: $effect-list-bg-color;
-    border-radius: 3px;
+    border-radius: 8px;
     .effect-list-header {
         margin-bottom: 15px;
-        border-top-left-radius: 3px;
-        border-top-right-radius: 3px;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
         padding-left: 15px;
         padding-right: 10px;
         height: 50px;

@@ -251,15 +251,16 @@
                 </div>
 
                 <div>
-                    <a class="btn btn-default" ng-click="$ctrl.handlePrevious()" ng-show="$ctrl.showBackButton()">Back</a>
+                    <a class="btn btn-default hvr-icon-back" ng-click="$ctrl.handlePrevious()" ng-show="$ctrl.showBackButton()"><i class="fas fa-arrow-left hvr-icon"></i> Back</a>
                     <a
-                        class="btn btn-primary"
+                        class="btn btn-primary hvr-icon-forward"
                         uib-tooltip="{{$ctrl.getTooltipText()}}"
                         tooltip-enable="!$ctrl.canGoToNext()"
                         ng-click="$ctrl.handleNext()"
                         ng-show="$ctrl.showNextButton()"
                         ng-disabled="!$ctrl.canGoToNext()">
                             {{$ctrl.getNextLabel()}}
+                            <i class="fas fa-arrow-right hvr-icon"></i>
                     </a>
                 </div>
                 <div>

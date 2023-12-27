@@ -54,8 +54,7 @@ class FirebotDeviceAuthProvider {
                     expiresIn: streamerAcccount.auth.expires_in,
                     obtainmentTimestamp: streamerAcccount.auth.obtainment_timestamp ?? Date.now(),
                     scope: scopes
-                },
-                scopes: scopes
+                }
             });
 
             this.streamerProvider.onRefresh((userId, token) => this.onRefresh("streamer", userId, token));
@@ -79,8 +78,7 @@ class FirebotDeviceAuthProvider {
                     expiresIn: botAcccount.auth.expires_in,
                     obtainmentTimestamp: botAcccount.auth.obtainment_timestamp ?? Date.now(),
                     scope: scopes
-                },
-                scopes: scopes
+                }
             });
 
             this.botProvider.onRefresh((userId, token) => this.onRefresh("bot", userId, token));
@@ -129,8 +127,7 @@ class FirebotDeviceAuthProvider {
         }
 
         if (definition) {
-            return this.isTwitchTokenDataValid(definition, request.authDetails)
-                && await TwitchApi.auth.isTokenValid(request.accountType);
+            return this.isTwitchTokenDataValid(definition, request.authDetails);
         }
 
         return true;

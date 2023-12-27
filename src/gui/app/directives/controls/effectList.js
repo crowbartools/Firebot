@@ -21,7 +21,7 @@
             <div class="effect-list">
                 <div class="flex-row-center jspacebetween effect-list-header">
                     <div class="flex items-center">
-                        <h3 class="{{$ctrl.headerClasses}} m-0" style="display:inline;font-weight: 100;">EFFECTS</h3>
+                        <h3 class="{{$ctrl.headerClasses}} m-0" style="display:inline;font-weight: 600;">Effects</h3>
                         <span class="ml-1" style="font-size: 11px;"><tooltip text="$ctrl.header" ng-if="$ctrl.header"></tooltip></span>
                     </div>
 
@@ -173,7 +173,7 @@
 
                     <div class="add-more-functionality mt-7 ml-5">
                         <a href role="button" class="clickable" ng-click="$ctrl.openNewEffectModal($ctrl.effectsData.list.length)" aria-label="Add new effect">
-                            <i class="far fa-plus-circle"></i>Add New Effect
+                            <i class="far fa-plus-circle mr-2"></i>Add New Effect
                         </a>
                     </div>
                 </div>

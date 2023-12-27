@@ -149,11 +149,9 @@
                                 <div style="width: 125px;display:flex;flex-direction:column;flex-shrink: 0;background: #18191b;">
                                     <div class="effect-category-header">Categories</div>
                                     <div class="effect-category-wrapper dark" ng-class="{'selected': activeCategory == null}" ng-click="setActiveCategory(null);">
-                                        <div class="category-bar"></div>
                                         <div class="category-text">All</div>
                                     </div>
                                     <div class="effect-category-wrapper dark" ng-repeat="category in categories" ng-class="{'selected': activeCategory === category}" ng-click="setActiveCategory(category);">
-                                        <div class="category-bar"></div>
                                         <div class="category-text">{{category}}</div>
                                     </div>
                                 </div>

@@ -38,6 +38,22 @@ if (!fs.existsSync(LOG_FOLDER)) {
 
 const pad = (subject, length, padText) => (`${subject}`).padStart(length, `${padText}`);
 
+const timestamp = function() {
+    const currentDate = new Date();
+
+    const year = `${currentDate.getUTCFullYear()}`;
+    const month = pad(currentDate.getUTCMonth() + 1, 2, 0);
+    const day = pad(currentDate.getUTCDate(), 2, 0);
+
+    const hour = pad(currentDate.getUTCHours(), 2, 0);
+    const minute = pad(currentDate.getUTCMinutes(), 2, 0);
+    const seconds = pad(currentDate.getUTCSeconds(), 2, 0);
+    const milliseconds = pad(currentDate.getUTCMilliseconds(), 4, 0);
+
+    // YYYY-MM-DD hh:nn:ss.mmmm
+    return `[${year}-${month}-${day} ${hour}:${minute}:${seconds}.${milliseconds}]`;
+};
+
 const rotateFileTransport = new (require("winston-daily-rotate-file"))({
     level: rotateFileLogLevel,
     filename: `${LOG_FOLDER}/log`,
@@ -48,28 +64,14 @@ const rotateFileTransport = new (require("winston-daily-rotate-file"))({
     humanReadableUnhandledException: true,
     label: `v${app.getVersion()}`,
     prettyPrint: true,
-
-    // YYYY-MM-DD hh:nn:ss
-    timestamp: function() {
-        const currentDate = new Date();
-
-        const year = `${currentDate.getUTCFullYear()}`;
-        const month = pad(currentDate.getUTCMonth() + 1, 2, 0);
-        const day = pad(currentDate.getUTCDate(), 2, 0);
-
-        const hour = pad(currentDate.getUTCHours(), 2, 0);
-        const minute = pad(currentDate.getUTCMinutes(), 2, 0);
-        const seconds = pad(currentDate.getUTCSeconds(), 2, 0);
-        const milliseconds = pad(currentDate.getUTCMilliseconds(), 4, 0);
-
-        return `${year}-${month}-${day} ${hour}:${minute}:${seconds}.${milliseconds}`;
-    }
+    timestamp: timestamp
 });
 
 const consoleTransport = new winston.transports.Console({
     level: "silly",
     prettyPrint: true,
-    colorize: true
+    colorize: true,
+    timestamp: timestamp
 });
 
 const logger = new winston.Logger({
@@ -115,8 +117,8 @@ function serialize(obj, key) { //eslint-disable-line @typescript-eslint/no-unuse
         return key ? `${key}=${obj.toString("base64")}` : obj.toString("base64");
     }
 
-    let msg = "",
-        keys = Object.keys(obj),
+    let msg = "";
+    const keys = Object.keys(obj),
         length = keys.length;
 
     for (let i = 0; i < length; i++) {
