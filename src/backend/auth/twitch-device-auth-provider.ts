@@ -189,9 +189,7 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
     /**
      * Creates a new auth provider with Device Code Flow credentials.
      *
-     * @param clientId The client ID of your application.
-     * @param accessToken The access token to provide.
-     * @param scopes The scopes the supplied token has.
+     * @param deviceAuthConfig The config values for the Device Code Flow auth provider
      */
     constructor(deviceAuthConfig: DeviceAuthProviderConfig) {
         super();
@@ -216,7 +214,7 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
             return this._refreshPromise;
         }
 
-        return this._refreshPromise = new Promise(async (resolve, reject) => {
+        return this._refreshPromise = new Promise<AccessTokenWithUserId>(async (resolve, reject) => {
             if (this._cachedRefreshFailures.has(this._userId)) {
                 throw new CachedRefreshFailureError(this._userId);
             }
@@ -237,13 +235,14 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
                 this.emit(this.onRefresh, this._userId, tokenData);
 
                 this._refreshPromise = null;
-                resolve({
+                return resolve({
                     ...tokenData,
                     userId: this._userId
                 });
+
             } catch (error) {
                 this._refreshPromise = null;
-                reject(error);
+                return reject(error);
             }
         });
     }
@@ -255,6 +254,11 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async refreshAccessTokenForIntent(intent: string): Promise<AccessTokenWithUserId> {
+        // We're refreshing, so just wait for the updated token
+        if (this._refreshPromise != null) {
+            return this._refreshPromise;
+        }
+
         return await this.refreshAccessTokenForUser(null);
     }
 
@@ -289,6 +293,12 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
         if (this._cachedRefreshFailures.has(this._userId)) {
             throw new CachedRefreshFailureError(this._userId);
         }
+
+        // We're refreshing, so just wait for the updated token
+        if (this._refreshPromise != null) {
+            return this._refreshPromise;
+        }
+
         return await this._tokenFetcher.fetch(...scopeSets);
     }
 
@@ -305,6 +315,11 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
         intent: string,
         ...scopeSets: Array<string[] | undefined>
     ): Promise<AccessTokenWithUserId> {
+        // We're refreshing, so just wait for the updated token
+        if (this._refreshPromise != null) {
+            return this._refreshPromise;
+        }
+
         const token = await this.getAccessTokenForUser(this._userId, ...scopeSets);
 
         return {
@@ -317,6 +332,11 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
      * Gets the access token.
      */
     async getAnyAccessToken(): Promise<AccessTokenMaybeWithUserId> {
+        // We're refreshing, so just wait for the updated token
+        if (this._refreshPromise != null) {
+            return this._refreshPromise;
+        }
+
         const token = await this.getAccessTokenForUser(this._userId);
 
         return {
@@ -326,6 +346,11 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
     }
 
     private async _fetchUserToken(scopeSets: Array<string[] | undefined>): Promise<AccessTokenWithUserId> {
+        // We're refreshing, so just wait for the updated token
+        if (this._refreshPromise != null) {
+            return this._refreshPromise;
+        }
+
         const previousToken = this._accessToken;
 
         if (!previousToken) {
