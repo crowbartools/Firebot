@@ -168,7 +168,7 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
     private readonly _clientId: string;
     private _accessToken: AccessTokenWithUserId;
     private _tokenFetcher: TokenFetcher<AccessTokenWithUserId>;
-    private _refreshPromise: Promise<AccessToken>;
+    private _refreshPromise: Promise<AccessTokenWithUserId>;
     private readonly _cachedRefreshFailures = new Set<string>();
 
     /**
@@ -212,28 +212,40 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async refreshAccessTokenForUser(user: UserIdResolvable): Promise<AccessTokenWithUserId> {
-        if (this._cachedRefreshFailures.has(this._userId)) {
-            throw new CachedRefreshFailureError(this._userId);
+        if (this._refreshPromise != null) {
+            return this._refreshPromise;
         }
 
-        const previousTokenData = this._accessToken;
+        return this._refreshPromise = new Promise(async (resolve, reject) => {
+            if (this._cachedRefreshFailures.has(this._userId)) {
+                throw new CachedRefreshFailureError(this._userId);
+            }
 
-        if (!previousTokenData) {
-            throw new Error('Trying to refresh non-existent token');
-        }
+            try {
+                const previousTokenData = this._accessToken;
 
-        const tokenData = await this._refreshUserTokenWithCallback(previousTokenData.refreshToken);
+                if (!previousTokenData) {
+                    throw new Error('Trying to refresh non-existent token');
+                }
 
-        this._accessToken = {
-            ...tokenData,
-            userId: this._userId
-        };
-        this.emit(this.onRefresh, this._userId, tokenData);
+                const tokenData = await this._refreshUserTokenWithCallback(previousTokenData.refreshToken);
 
-        return {
-            ...tokenData,
-            userId: this._userId
-        };
+                this._accessToken = {
+                    ...tokenData,
+                    userId: this._userId
+                };
+                this.emit(this.onRefresh, this._userId, tokenData);
+
+                this._refreshPromise = null;
+                resolve({
+                    ...tokenData,
+                    userId: this._userId
+                });
+            } catch (error) {
+                this._refreshPromise = null;
+                reject(error);
+            }
+        });
     }
 
     /**
@@ -321,7 +333,6 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
         }
 
         if (previousToken.accessToken && !accessTokenIsExpired(previousToken)) {
-
             try {
                 // don't create new object on every get
                 if (previousToken.scope) {
@@ -358,22 +369,12 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
     }
 
     private async _refreshUserTokenWithCallback(refreshToken: string): Promise<AccessToken> {
-        if (this._refreshPromise != null) {
-            return this._refreshPromise;
+        try {
+            return await refreshUserToken(this.clientId, refreshToken);
+        } catch (e) {
+            this._cachedRefreshFailures.add(this._userId);
+            this.emit(this.onRefreshFailure, this._userId);
+            throw e;
         }
-
-        return this._refreshPromise = new Promise(async (resolve, reject) => {
-            try {
-                const token = await refreshUserToken(this.clientId, refreshToken);
-                this._refreshPromise = null;
-                resolve(token);
-
-            } catch (e) {
-                this._cachedRefreshFailures.add(this._userId);
-                this.emit(this.onRefreshFailure, this._userId);
-                this._refreshPromise = null;
-                reject(e);
-            }
-        });
     }
 }
