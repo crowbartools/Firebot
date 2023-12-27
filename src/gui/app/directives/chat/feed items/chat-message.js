@@ -384,7 +384,7 @@
 
                 $ctrl.messageActionSelected = (action, userName, userId, msgId, rawText) => {
                     switch (action.toLowerCase()) {
-                        case "delete this message":
+                        case "delete message":
                             chatMessagesService.deleteMessage(msgId);
                             break;
                         case "timeout":
