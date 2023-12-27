@@ -2,6 +2,7 @@ import { EventSource } from "../../../../../types/events";
 import {
     OBS_EVENT_SOURCE_ID,
     OBS_SCENE_CHANGED_EVENT_ID,
+    OBS_SCENE_ITEM_ENABLE_STATE_CHANGED_EVENT_ID,
     OBS_STREAM_STARTED_EVENT_ID,
     OBS_STREAM_STOPPED_EVENT_ID
 } from "../constants";
@@ -28,6 +29,12 @@ export const OBSEventSource: EventSource = {
             id: OBS_STREAM_STOPPED_EVENT_ID,
             name: "OBS Stream Stopped",
             description: "When the stream has stopped in OBS",
+            manualMetadata: {}
+        },
+        {
+            id: OBS_SCENE_ITEM_ENABLE_STATE_CHANGED_EVENT_ID,
+            name: "OBS Scene Item Enable State Changed",
+            description: "When an item in a scene is enabled/disabled",
             manualMetadata: {}
         }
     ]

@@ -3,6 +3,7 @@ import OBSWebSocket from "obs-websocket-js";
 import {
     OBS_EVENT_SOURCE_ID,
     OBS_SCENE_CHANGED_EVENT_ID,
+    OBS_SCENE_ITEM_ENABLE_STATE_CHANGED_EVENT_ID,
     OBS_STREAM_STARTED_EVENT_ID,
     OBS_STREAM_STOPPED_EVENT_ID
 } from "./constants";
@@ -43,6 +44,18 @@ function setupRemoteListeners() {
                 );
                 break;
         }
+    });
+
+    obs.on("SceneItemEnableStateChanged", ({ sceneName, sceneItemId, sceneItemEnabled }) => {
+        eventManager?.triggerEvent(
+            OBS_EVENT_SOURCE_ID,
+            OBS_SCENE_ITEM_ENABLE_STATE_CHANGED_EVENT_ID,
+            {
+                sceneName,
+                sceneItemId,
+                sceneItemEnabled
+            }
+        );
     });
 }
 
@@ -310,6 +323,11 @@ export type OBSSource = {
     filters: Array<OBSFilter>;
 };
 
+export type OBSSceneItem = {
+    id: number;
+    name: string;
+};
+
 export type OBSTextSourceSettings = {
     text?: string;
     readFromFile?: boolean;
@@ -382,6 +400,29 @@ export async function getAllSources(): Promise<Array<OBSSource> | null> {
         return sources;
     } catch (error) {
         logger.error("Failed to get all sources", error);
+        return null;
+    }
+}
+
+export async function getAllSceneItemsInScene(sceneName: string): Promise<Array<OBSSceneItem>> {
+    try {
+        const response = await obs.call("GetSceneItemList", { sceneName });
+        return response.sceneItems.map((item) => ({
+            id: item.sceneItemId as number,
+            name: item.sourceName as string
+        }));
+    } catch (error) {
+        logger.error(`Failed to get OBS scene items in scene "${sceneName}"`, error);
+        return null;
+    }
+}
+
+export async function getSceneItem(sceneName: string, sceneItemId: number): Promise<OBSSceneItem> {
+    try {
+        const sceneItems = await getAllSceneItemsInScene(sceneName);
+        return sceneItems.find(item => item.id === sceneItemId);
+    } catch (error) {
+        logger.error(`Failed to get OBS scene item ${sceneItemId} in scene "${sceneName}"`, error);
         return null;
     }
 }
