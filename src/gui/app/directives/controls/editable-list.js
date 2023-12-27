@@ -56,7 +56,9 @@ const deepmerge = require("deepmerge");
                     validationText: "Text cannot be empty",
                     noneAddedText: "None saved",
                     noDuplicates: false,
-                    maxItems: undefined
+                    maxItems: undefined,
+                    trigger: undefined,
+                    triggerMeta: undefined
                 };
 
 
@@ -92,7 +94,9 @@ const deepmerge = require("deepmerge");
                                     }
                                 });
                             },
-                            validationText: $ctrl.settings.validationText
+                            validationText: $ctrl.settings.validationText,
+                            trigger: $ctrl.settings.trigger,
+                            triggerMeta: $ctrl.settings.triggerMeta
                         },
                         cb);
                 }

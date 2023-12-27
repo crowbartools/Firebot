@@ -57,7 +57,9 @@ const model: EffectType<{
     optionsController: ($scope) => {
         $scope.optionSettings = {
             noDuplicates: true,
-            maxItems: 10
+            maxItems: 10,
+            trigger: $scope.trigger,
+            triggerMeta: $scope.triggerMeta
         };
     },
     onTriggerEvent: async ({ effect }) => {
