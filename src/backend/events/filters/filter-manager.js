@@ -51,10 +51,10 @@ class FilterManager extends EventEmitter {
     }
 
     async runFilters(filterData, eventData) {
-        if (filterData != null) {
+        if (filterData?.filters?.length > 0) {
             const filterSettings = filterData.filters;
 
-            let didPass = filterData.mode !== "inclusive" || filterSettings.length === 0;
+            let didPass = filterData.mode !== "inclusive";
             for (const filterSetting of filterSettings) {
                 const filter = this.getFilterById(filterSetting.type);
                 if (filter) {

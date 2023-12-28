@@ -40,7 +40,7 @@ class ConditionManager extends EventEmitter {
     }
 
     async runConditions(conditionData, triggerData) {
-        if (conditionData != null && conditionData.conditions != null) {
+        if (conditionData?.conditions?.length > 0) {
             const conditions = JSON.parse(JSON.stringify(conditionData.conditions));
 
             let didPass = conditionData.mode !== "inclusive";
@@ -48,6 +48,8 @@ class ConditionManager extends EventEmitter {
                 const conditionType = this.getConditionTypeById(condition.type);
                 if (conditionType) {
                     try {
+                        condition.rawLeftSideValue = condition.leftSideValue;
+                        condition.rawRightSideValue = condition.rightSideValue;
 
                         if (conditionType.leftSideValueType === 'text') {
                             try {

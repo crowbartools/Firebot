@@ -35,10 +35,10 @@ module.exports = {
     },
     predicate: async (conditionSettings, trigger) => {
 
-        const { comparisonType, leftSideValue, rightSideValue } = conditionSettings;
+        const { comparisonType, leftSideValue, rightSideValue, rawLeftSideValue } = conditionSettings;
 
         let username = leftSideValue;
-        if (username == null || username === "") {
+        if ((username == null || username === "") && (rawLeftSideValue == null || rawLeftSideValue === "")) {
             username = trigger.metadata.username;
         }
 
