@@ -1,9 +1,10 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, Req } from "@nestjs/common";
 
 @Controller("example")
 export class ExampleController {
   @Get()
-  async getHelloWorld() {
+  async getHelloWorld(@Req() request: any) {
+    console.log(request.cookies);
     return "Hello world";
   }
 }

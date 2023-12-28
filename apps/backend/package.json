@@ -15,20 +15,26 @@
     "neststart:prod": "node dist/"
   },
   "dependencies": {
+    "@fastify/cookie": "^9.2.0",
     "@fastify/static": "^6.9.0",
     "@nestjs/common": "^9.3.8",
     "@nestjs/core": "^9.3.8",
     "@nestjs/platform-fastify": "^9.3.8",
+    "@nestjs/platform-ws": "^9.3.8",
     "@nestjs/serve-static": "^3.0.1",
+    "@nestjs/websockets": "^9.3.8",
+    "firebot-types": "*",
+    "openid-client": "^5.6.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
-    "firebot-types": "*"
+    "ws": "^8.16.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.2.0",
     "@nestjs/schematics": "^9.0.4",
     "@nestjs/testing": "^9.3.8",
     "@types/supertest": "^2.0.11",
+    "@types/ws": "^8.5.10",
     "eslint-config-custom": "*",
     "supertest": "^6.1.3",
     "tsconfig": "*",

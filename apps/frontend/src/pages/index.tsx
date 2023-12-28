@@ -14,7 +14,9 @@ export default function Home() {
     const fetchData = async () => {
       const host = getServerUri();
       try {
-        const response = await fetch(`${host}/api/v1/example`);
+        const response = await fetch(`${host}/api/v1/example`, {
+          credentials: "same-origin"
+        });
         const text = await response.text();
         setHelloWorld(text);
       } catch (error) {

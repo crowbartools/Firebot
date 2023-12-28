@@ -2,13 +2,13 @@ import path from 'path';
 
 import assetpath from 'assets';
 
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, session } from 'electron';
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
 
 // ts/eslint will complain until apps/backend/ has been built
 const { default : backendStart } = require('backend');
 
-let backend : NestFastifyApplication | void;
+let backend : { app: NestFastifyApplication, authToken: string } | void;
 
 let mainWindow : BrowserWindow;
 const createWindow = () => {
@@ -19,7 +19,7 @@ const createWindow = () => {
     mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
-        icon: path.join(assetpath, 'images/favicon.ico')
+        icon: path.join(assetpath, 'images/favicon.ico'),
     });
 
     if (process.env.NODE_ENV === 'development') {
@@ -32,7 +32,7 @@ const createWindow = () => {
 process.on('uncaughtException', async function (err) {
     console.error(err.stack);
     if (backend) {
-        await backend.close();
+        await backend.app.close();
     }
     app.quit();
 });
@@ -50,7 +50,7 @@ process.on('uncaughtException', async function (err) {
     app.on('window-all-closed', async () => {
         if (process.platform !== 'darwin') {
             if (backend) {
-                await backend.close();
+                await backend.app.close();
             }
             app.quit();
         }
@@ -60,6 +60,14 @@ process.on('uncaughtException', async function (err) {
             createWindow();
         }
     });
+
+    session.defaultSession.cookies.set({
+        url: 'http://localhost:3000',
+        name: 'auth',
+        value: backend?.authToken,
+        httpOnly: false,
+        secure: false,
+    })
 
     createWindow();
 })();
