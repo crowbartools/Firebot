@@ -19,7 +19,7 @@ const model: EffectType<{
     },
     optionsTemplate: `
         <eos-container header="Reward Info">
-            <firebot-input input-title="Reward ID" model="effect.rewardId" placeholder-text="Enter reward ID" />
+            <firebot-input input-title="Reward ID" model="effect.rewardId" placeholder-text="Enter reward ID" menu-position="below" />
         </eos-container>
 
         <eos-container header="Redemption Info" pad-top="true">
