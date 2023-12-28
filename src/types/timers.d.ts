@@ -22,3 +22,14 @@ export type TimerIntervalTracker = {
     intervalId: number | NodeJS.Timeout;
     startedAt: Moment;
 };
+
+export type ScheduledTask = {
+    id: string;
+    name: string;
+    enabled: boolean;
+    schedule: string;
+    inputType: string;
+    onlyWhenLive: boolean;
+    effects: EffectList[];
+    sortTags: string[];
+};
