@@ -60,19 +60,32 @@ class ObsIntegration
     extends IntegrationEventEmitter
     implements IntegrationController<ObsSettings> {
     connected = false;
+    private _isConfigured = false;
 
     constructor(private readonly eventManager: EventManager) {
         super();
+
+        frontendCommunicator.on(
+            "obs-is-configured",
+            () => this._isConfigured
+        );
     }
 
     private setupConnection(settings?: ObsSettings) {
         if (!settings) {
+            this._isConfigured = false;
             return;
         }
         const {
             websocketSettings: { ipAddress, password, port },
             misc: { logging }
         } = settings;
+
+        this._isConfigured = (
+            ipAddress != null && ipAddress !== ""
+            && port != null
+            && password != null && password !== ""
+        );
         initRemote(
             {
                 ip: ipAddress,

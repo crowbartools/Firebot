@@ -16,21 +16,24 @@ export const SetOBSSourceTextEffectType: EffectType<{
     },
     optionsTemplate: `
     <eos-container header="OBS Text Source">
-        <ui-select ng-model="selected" on-select="selectTextSource($select.selected.name)">
-          <ui-select-match placeholder="Select a Text Source...">{{$select.selected.name}}</ui-select-match>
-          <ui-select-choices repeat="source in textSources | filter: {name: $select.search}">
-            <div ng-bind-html="source.name | highlight: $select.search"></div>
-          </ui-select-choices>
-          <ui-select-no-choice>
-          <b>No text sources found.</b>
-          </ui-select-no-choice>
-        </ui-select>
-        <p>
+        <div>
             <button class="btn btn-link" ng-click="getTextSources()">Refresh Source Data</button>
-        </p>
+        </div>
+        <ui-select ng-if="textSources != null" ng-model="selected" on-select="selectTextSource($select.selected.name)">
+            <ui-select-match placeholder="Select a Text Source...">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices repeat="source in textSources | filter: {name: $select.search}">
+                <div ng-bind-html="source.name | highlight: $select.search"></div>
+            </ui-select-choices>
+            <ui-select-no-choice>
+                <b>No text sources found.</b>
+            </ui-select-no-choice>
+        </ui-select>
+        <div ng-if="textSources == null" class="muted">
+            No sources found. {{ isObsConfigured ? "Is OBS running?" : "Have you configured the OBS integration?" }}
+        </div>
     </eos-container>
     <eos-container ng-if="textSources != null && effect.textSourceName != null" header="Text" style="margin-top: 10px;">
-        <label  class="control-fb control--checkbox">Use file as text source
+        <label class="control-fb control--checkbox">Use file as text source
             <input type="checkbox" ng-click="toggleSource()" ng-checked="effect.textSource === 'file'"  aria-label="..." >
             <div class="control__indicator"></div>
         </label>
@@ -39,6 +42,8 @@ export const SetOBSSourceTextEffectType: EffectType<{
     </eos-container>
   `,
     optionsController: ($scope: any, backendCommunicator: any, $q: any) => {
+        $scope.isObsConfigured = false;
+
         $scope.textSources = [];
 
         if ($scope.effect.textSource == null) {
@@ -58,11 +63,13 @@ export const SetOBSSourceTextEffectType: EffectType<{
         };
 
         $scope.getTextSources = () => {
+            $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
+
             $q.when(
                 backendCommunicator.fireEventAsync("obs-get-text-sources")
             ).then((textSources: OBSSource[]) => {
-                $scope.textSources = textSources ?? [];
-                $scope.selected = $scope.textSources.find(source => source.name === $scope.effect.textSourceName);
+                $scope.textSources = textSources;
+                $scope.selected = $scope.textSources?.find(source => source.name === $scope.effect.textSourceName);
             });
         };
         $scope.getTextSources();

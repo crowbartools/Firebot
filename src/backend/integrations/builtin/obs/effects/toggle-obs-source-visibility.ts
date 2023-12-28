@@ -39,6 +39,10 @@ export const ToggleSourceVisibilityEffectType: Firebot.EffectType<EffectProperti
     </div>
   </div>
 
+  <div>
+      <button class="btn btn-link" ng-click="getSourceData()">Refresh Source Data</button>
+  </div>
+
   <div class="effect-setting-container setting-padtop">
     <div ng-if="sourceData != null" ng-repeat="sceneName in sceneNames">
       <div style="font-size: 16px;font-weight: 900;color: #b9b9b9;margin-bottom: 5px;">{{sceneName}}</div>
@@ -62,15 +66,14 @@ export const ToggleSourceVisibilityEffectType: Firebot.EffectType<EffectProperti
       </div>
     </div>
     <div ng-if="sourceData == null" class="muted">
-      No sources found. Is OBS running?
+        No sources found. {{ isObsConfigured ? "Is OBS running?" : "Have you configured the OBS integration?" }}
     </div>
-    <p>
-        <button class="btn btn-link" ng-click="getSourceData()">Refresh Source Data</button>
-    </p>
   </div>
 </eos-container>
 `,
     optionsController: ($scope: Scope, backendCommunicator: any, $q: any) => {
+        $scope.isObsConfigured = false;
+
         $scope.sourceData = null;
 
         $scope.sceneNames = [];
@@ -152,6 +155,8 @@ export const ToggleSourceVisibilityEffectType: Firebot.EffectType<EffectProperti
         };
 
         $scope.getSourceData = () => {
+            $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
+
             $q.when(backendCommunicator.fireEventAsync("obs-get-source-data")).then(
                 (sourceData: SourceData) => {
                     $scope.sourceData = sourceData ?? null;

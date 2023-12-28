@@ -13,6 +13,11 @@ export const ChangeSceneEffectType: EffectType<{
     },
     optionsTemplate: `
     <eos-container header="New Scene">
+        <div ng-hide="effect.custom === true">
+            <button class="btn btn-link" ng-click="getScenes()">Refresh Scenes</button>
+            <span class="muted">(Make sure {{ isObsConfigured ? "" : "the OBS integration is configured and " }}OBS is running)</span>
+        </div>
+
         <ui-select ng-model="selected" on-select="selectScene($select.selected)">
           <ui-select-match placeholder="Select a Scene...">{{$select.selected.name}}</ui-select-match>
           <ui-select-choices repeat="scene in scenes | filter: {name: $select.search}">
@@ -21,16 +26,14 @@ export const ChangeSceneEffectType: EffectType<{
           </ui-select-choices>
         </ui-select>
 
-        <p ng-hide="effect.custom === true">
-            <button class="btn btn-link" ng-click="getScenes()">Refresh Scenes</button>
-            <span class="muted">(Make sure OBS is running)</span>
-        </p>
         <div ng-show="effect.custom === true" style="margin-top:10px;">
             <firebot-input input-title="Custom Scene" model="effect.sceneName"></firebot-input>
         </div>
     </eos-container>
   `,
     optionsController: ($scope: any, backendCommunicator: any, $q: any) => {
+        $scope.isObsConfigured = false;
+
         $scope.scenes = [];
 
         $scope.customScene = {name: "Set Custom", custom: true};
@@ -43,6 +46,8 @@ export const ChangeSceneEffectType: EffectType<{
         };
 
         $scope.getScenes = () => {
+            $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
+
             $q.when(backendCommunicator.fireEventAsync("obs-get-scene-list")).then(
                 (scenes: string[]) => {
                     $scope.scenes = [];

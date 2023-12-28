@@ -37,7 +37,9 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
           <input type="text" class="form-control" ng-change="filterSources(searchText)" ng-model="searchText" placeholder="Enter your search term here..." aria-describeby="obs-visibility-search-box">
         </div>
       </div>
-      <br>
+      <div>
+          <button class="btn btn-link" ng-click="getSourceList()">Refresh Filter Data</button>
+      </div>
       <div ng-if="sourceList != null && sourceList.length > 0" ng-repeat="source in sourceListFiltered">
         <div style="font-size: 16px;color: #b9b9b9;margin-bottom: 5px;"><b>{{source.name}}</b> <span style="font-size: 13px;">({{formatSourceType(source.typeId)}})</span></div>
         <div ng-repeat="filter in source.filters | filter: {name: searchText}">
@@ -63,14 +65,13 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
         No sources with filters found.
       </div>
       <div ng-if="sourceList == null" class="muted">
-        No sources found. Is OBS running?
+        No sources found. {{ isObsConfigured ? "Is OBS running?" : "Have you configured the OBS integration?" }}
       </div>
-      <p>
-          <button class="btn btn-link" ng-click="getSourceList()">Refresh Filter Data</button>
-      </p>
     </eos-container>
   `,
       optionsController: ($scope: Scope, backendCommunicator: any, $q: any) => {
+          $scope.isObsConfigured = false;
+
           $scope.sourceList = null;
 
           $scope.searchText = "";
@@ -159,6 +160,8 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
           };
 
           $scope.getSourceList = () => {
+              $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
+
               $q.when(
                   backendCommunicator.fireEventAsync("obs-get-sources-with-filters")
               ).then((sourceList: Array<OBSSource>) => {

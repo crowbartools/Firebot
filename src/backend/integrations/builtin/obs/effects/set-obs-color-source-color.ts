@@ -14,23 +14,24 @@ export const SetOBSColorSourceColorEffectType: EffectType<{
     },
     optionsTemplate: `
     <eos-container header="OBS Color Source">
-        <ui-select ng-model="selected" on-select="selectColorSource($select.selected.name)">
-          <ui-select-match placeholder="Select a Color Source...">{{$select.selected.name}}</ui-select-match>
-          <ui-select-choices repeat="source in colorSources | filter: $select.search">
-            <li ng-show="scene.custom === true" role="separator" class="divider"></li>
-            <div ng-bind-html="source.name | highlight: $select.search"></div>
+        <div>
+            <button class="btn btn-link" ng-click="getColorSources()">Refresh Source Data</button>
+        </div>
+
+        <ui-select ng-if="colorSources != null" ng-model="selected" on-select="selectColorSource($select.selected.name)">
+            <ui-select-match placeholder="Select a Color Source...">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices repeat="source in colorSources | filter: $select.search">
+                <li ng-show="scene.custom === true" role="separator" class="divider"></li>
+                <div ng-bind-html="source.name | highlight: $select.search"></div>
+            </ui-select-choices>
             <ui-select-no-choice>
-          <b>No color sources found.</b>
-          </ui-select-no-choice>
-          </ui-select-choices>
+                <b>No color sources found.</b>
+            </ui-select-no-choice>
         </ui-select>
 
         <div ng-if="colorSources == null" class="muted">
-            No sources found. Is OBS running?
+            No sources found. {{ isObsConfigured ? "Is OBS running?" : "Have you configured the OBS integration?" }}
         </div>
-        <p>
-            <button class="btn btn-link" ng-click="getColorSources()">Refresh Source Data</button>
-        </p>
     </eos-container>
 
     <eos-container ng-if="colorSources != null && effect.colorSourceName != null" header="Color" style="margin-top: 10px;">
@@ -38,6 +39,8 @@ export const SetOBSColorSourceColorEffectType: EffectType<{
     </eos-container>
   `,
     optionsController: ($scope: any, backendCommunicator: any, $q: any) => {
+        $scope.isObsConfigured = false;
+
         $scope.colorSources = [];
 
         $scope.selectColorSource = (colorSourceName: string) => {
@@ -45,11 +48,13 @@ export const SetOBSColorSourceColorEffectType: EffectType<{
         };
 
         $scope.getColorSources = () => {
+            $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
+
             $q.when(
                 backendCommunicator.fireEventAsync("obs-get-color-sources")
             ).then((colorSources: OBSSource[]) => {
-                $scope.colorSources = colorSources ?? [];
-                $scope.selected = $scope.colorSources.find(source => source.name === $scope.effect.colorSourceName);
+                $scope.colorSources = colorSources;
+                $scope.selected = $scope.colorSources?.find(source => source.name === $scope.effect.colorSourceName);
             });
         };
         $scope.getColorSources();

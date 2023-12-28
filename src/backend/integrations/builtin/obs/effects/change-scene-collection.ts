@@ -13,6 +13,11 @@ export const ChangeSceneCollectionEffectType: EffectType<{
     },
     optionsTemplate: `
     <eos-container header="New Scene Collection">
+        <div ng-hide="effect.custom === true">
+            <button class="btn btn-link" ng-click="getSceneCollections()">Refresh Scene Collections</button>
+            <span class="muted">(Make sure {{ isObsConfigured ? "" : "the OBS integration is configured and " }}OBS is running)</span>
+        </div>
+
         <ui-select ng-model="selected" on-select="selectSceneCollection($select.selected)">
           <ui-select-match placeholder="Select a Scene Collection...">{{$select.selected.name}}</ui-select-match>
           <ui-select-choices repeat="collection in sceneCollections | filter: {name: $select.search}">
@@ -21,16 +26,14 @@ export const ChangeSceneCollectionEffectType: EffectType<{
           </ui-select-choices>
         </ui-select>
 
-        <p ng-hide="effect.custom === true">
-            <button class="btn btn-link" ng-click="getSceneCollections()">Refresh Scene Collections</button>
-            <span class="muted">(Make sure OBS is running)</span>
-        </p>
         <div ng-show="effect.custom === true" style="margin-top:10px;">
             <firebot-input input-title="Custom Scene Collection" model="effect.sceneCollectionName"></firebot-input>
         </div>
     </eos-container>
   `,
     optionsController: ($scope: any, backendCommunicator: any, $q: any) => {
+        $scope.isObsConfigured = false;
+
         $scope.sceneCollections = [];
 
         $scope.customCollection = {name: "Set Custom", custom: true};
@@ -43,6 +46,8 @@ export const ChangeSceneCollectionEffectType: EffectType<{
         };
 
         $scope.getSceneCollections = () => {
+            $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
+
             $q.when(
                 backendCommunicator.fireEventAsync("obs-get-scene-collection-list")
             ).then((sceneCollections: string[]) => {

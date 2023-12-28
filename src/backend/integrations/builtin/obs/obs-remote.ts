@@ -542,7 +542,7 @@ export async function setSourceMuted(sourceName: string, muted: boolean) {
 
 export async function getTextSources(): Promise<Array<OBSSource>> {
     const sources = await getAllSources();
-    return sources.filter((s) => s.typeId === "text_gdiplus_v2" || s.typeId === "text_ft2_source_v2");
+    return sources?.filter((s) => s.typeId === "text_gdiplus_v2" || s.typeId === "text_ft2_source_v2");
 }
 
 export async function setTextSourceSettings(sourceName: string, settings: OBSTextSourceSettings) {
@@ -577,7 +577,7 @@ export async function setTextSourceSettings(sourceName: string, settings: OBSTex
 
 export async function getBrowserSources(): Promise<Array<OBSSource>> {
     const sources = await getAllSources();
-    return sources.filter((s) => s.typeId === "browser_source");
+    return sources?.filter((s) => s.typeId === "browser_source");
 }
 
 export async function setBrowserSourceSettings(sourceName: string, settings: OBSBrowserSourceSettings) {
@@ -595,7 +595,7 @@ export async function setBrowserSourceSettings(sourceName: string, settings: OBS
 
 export async function getImageSources(): Promise<Array<OBSSource>> {
     const sources = await getAllSources();
-    return sources.filter((s) => s.typeId === "image_source");
+    return sources?.filter((s) => s.typeId === "image_source");
 }
 
 export async function setImageSourceSettings(sourceName: string, settings: OBSImageSourceSettings) {
@@ -613,7 +613,7 @@ export async function setImageSourceSettings(sourceName: string, settings: OBSIm
 
 export async function getMediaSources(): Promise<Array<OBSSource>> {
     const sources = await getAllSources();
-    return sources.filter((s) => s.typeId === "ffmpeg_source");
+    return sources?.filter((s) => s.typeId === "ffmpeg_source");
 }
 
 export async function setMediaSourceSettings(sourceName: string, settings: OBSMediaSourceSettings) {
@@ -633,7 +633,7 @@ export async function setMediaSourceSettings(sourceName: string, settings: OBSMe
 
 export async function getColorSources(): Promise<Array<OBSSource>> {
     const sources = await getAllSources();
-    return sources.filter((s) => s.typeId === "color_source_v3");
+    return sources?.filter((s) => s.typeId === "color_source_v3");
 }
 
 export async function setColorSourceSettings(sourceName: string, settings: OBSColorSourceSettings) {

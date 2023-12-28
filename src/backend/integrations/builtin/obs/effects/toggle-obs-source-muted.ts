@@ -27,7 +27,9 @@ export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
       optionsTemplate: `
     <eos-container header="Audio Sources">
       <firebot-input model="searchText" input-title="Filter"></firebot-input>
-      <br>
+      <div>
+          <button class="btn btn-link" ng-click="getSourceList()">Refresh Sources</button>
+      </div>
       <div ng-if="sourceList != null && sourceList.length > 0" ng-repeat="source in sourceList | filter: {name: searchText}">
           <label  class="control-fb control--checkbox">{{source.name}}
               <input type="checkbox" ng-click="toggleSourceSelected(source.name)" ng-checked="sourceIsSelected(source.name)"  aria-label="..." >
@@ -50,14 +52,13 @@ export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
         No audio sources found.
       </div>
       <div ng-if="sourceList == null" class="muted">
-        No sources found. Is OBS running?
+        No sources found. {{ isObsConfigured ? "Is OBS running?" : "Have you configured the OBS integration?" }}
       </div>
-      <p>
-          <button class="btn btn-link" ng-click="getSourceList()">Refresh Sources</button>
-      </p>
     </eos-container>
   `,
       optionsController: ($scope: Scope, backendCommunicator: any, $q: any) => {
+          $scope.isObsConfigured = false;
+
           $scope.sourceList = null;
 
           if ($scope.effect.selectedSources == null) {
@@ -125,6 +126,8 @@ export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
           };
 
           $scope.getSourceList = () => {
+              $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
+
               $q.when(
                   backendCommunicator.fireEventAsync("obs-get-audio-sources")
               ).then((sourceList: Array<OBSSource>) => {
