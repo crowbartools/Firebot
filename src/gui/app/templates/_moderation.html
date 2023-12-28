@@ -20,6 +20,7 @@
                 auto-update-value="true"
                 on-toggle="cms.saveChatModerationSettings()"
                 font-size="40"
+                accessibility-label="cms.chatModerationData.settings.bannedWordList.enabled ? 'Disable Banned Word List' : 'Enable Banned Word List'"
               />
             </div>
           </div>
@@ -63,6 +64,7 @@
                 auto-update-value="true"
                 on-toggle="cms.saveChatModerationSettings()"
                 font-size="40"
+                accessibility-label="cms.chatModerationData.settings.emoteLimit.enabled ? 'Disable Emote/Emoji Limit' : 'Enable Emote/Emoji Limit'"
               />
             </div>
           </div>
@@ -113,6 +115,7 @@
                 toggle-model="cms.chatModerationData.settings.urlModeration.enabled"
                 on-toggle="toggleUrlModerationFeature()"
                 font-size="40"
+                accessibility-label="cms.chatModerationData.settings.urlModeration.enabled ? 'Disable URL Moderation' : 'Enable URL Moderation'"
               />
             </div>
           </div>
@@ -139,7 +142,8 @@
                 on-toggle="cms.saveChatModerationSettings()"
                 auto-update-value="true"
                 font-size="32"
-              />
+                accessibility-label="cms.chatModerationData.settings.urlModeration.viewTime.enabled ? 'Disable View Time Exceptions' : 'Enable View Time Exceptions'"
+                />
             </div>
             <div
               style="width: 100%;"

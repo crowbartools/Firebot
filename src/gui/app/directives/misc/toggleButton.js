@@ -7,13 +7,15 @@
                 toggleModel: "=",
                 autoUpdateValue: "<",
                 onToggle: "&",
-                fontSize: "<?"
+                fontSize: "<?",
+                accessibilityLabel: "<"
             },
             template: `
                 <div class="toggle-button"
                     ng-class="{'toggled-on': $ctrl.toggleModel}"
                     ng-click="$ctrl.toggle()"
-                    ng-style="$ctrl.getCustomStyles()">
+                    ng-style="$ctrl.getCustomStyles()"
+                    aria-label="{{ $ctrl.accessibilityLabel }}">
                         <i class="fad" style="display: block;" ng-class="{'fa-toggle-on': $ctrl.toggleModel, 'fa-toggle-off': !$ctrl.toggleModel}"></i>
                 </div>
             `,

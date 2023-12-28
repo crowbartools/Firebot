@@ -15,6 +15,7 @@
                         ng-click="$ctrl.removeExemptRole($index)"
                         uib-tooltip="Remove role"
                         tooltip-append-to-body="true"
+                        aria-label="Remove role"
                     >
                         <i class="far fa-times"></i>
                     </span>
@@ -24,6 +25,7 @@
                     ng-click="$ctrl.openAddExemptRoleModal()"
                     uib-tooltip="Add role"
                     tooltip-append-to-body="true"
+                    aria-label="Add role"
                 >
                     <i class="far fa-plus"></i>
                 </div>
