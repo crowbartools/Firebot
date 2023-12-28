@@ -1,6 +1,7 @@
 import { TriggerType } from "../../../../common/EffectType";
 import { ReplaceVariable } from "../../../../../types/variables";
 import {
+    OBS_CURRENT_SCENE_TRANSITION_CHANGED_EVENT_ID,
     OBS_EVENT_SOURCE_ID,
     OBS_SCENE_TRANSITION_ENDED_EVENT_ID,
     OBS_SCENE_TRANSITION_STARTED_EVENT_ID
@@ -9,7 +10,8 @@ import {
 const triggers = {};
 triggers[TriggerType.EVENT] = [
     `${OBS_EVENT_SOURCE_ID}:${OBS_SCENE_TRANSITION_STARTED_EVENT_ID}`,
-    `${OBS_EVENT_SOURCE_ID}:${OBS_SCENE_TRANSITION_ENDED_EVENT_ID}`
+    `${OBS_EVENT_SOURCE_ID}:${OBS_SCENE_TRANSITION_ENDED_EVENT_ID}`,
+    `${OBS_EVENT_SOURCE_ID}:${OBS_CURRENT_SCENE_TRANSITION_CHANGED_EVENT_ID}`
 ];
 
 export const TransitionNameVariable: ReplaceVariable = {

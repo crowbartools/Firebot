@@ -1,13 +1,20 @@
 import { ScriptModules } from "@crowbartools/firebot-custom-scripts-types";
 import OBSWebSocket from "obs-websocket-js";
 import {
+    OBS_CURRENT_PROFILE_CHANGED_EVENT_ID,
+    OBS_CURRENT_SCENE_TRANSITION_CHANGED_EVENT_ID,
+    OBS_CURRENT_SCENE_TRANSITION_DURATION_CHANGED_EVENT_ID,
     OBS_EVENT_SOURCE_ID,
+    OBS_RECORDING_STARTED_EVENT_ID,
+    OBS_RECORDING_STOPPED_EVENT_ID,
+    OBS_REPLAY_BUFFER_SAVED_EVENT_ID,
     OBS_SCENE_CHANGED_EVENT_ID,
     OBS_SCENE_ITEM_ENABLE_STATE_CHANGED_EVENT_ID,
     OBS_SCENE_TRANSITION_ENDED_EVENT_ID,
     OBS_SCENE_TRANSITION_STARTED_EVENT_ID,
     OBS_STREAM_STARTED_EVENT_ID,
-    OBS_STREAM_STOPPED_EVENT_ID
+    OBS_STREAM_STOPPED_EVENT_ID,
+    OBS_VENDOR_EVENT_EVENT_ID
 } from "./constants";
 import logger from "../../../logwrapper";
 
@@ -48,6 +55,26 @@ function setupRemoteListeners() {
         }
     });
 
+    obs.on("RecordStateChanged", ({ outputState }) => {
+        switch (outputState) {
+            case "OBS_WEBSOCKET_OUTPUT_STARTED":
+                eventManager?.triggerEvent(
+                    OBS_EVENT_SOURCE_ID,
+                    OBS_RECORDING_STARTED_EVENT_ID,
+                    {}
+                );
+                break;
+
+            case "OBS_WEBSOCKET_OUTPUT_STOPPED":
+                eventManager?.triggerEvent(
+                    OBS_EVENT_SOURCE_ID,
+                    OBS_RECORDING_STOPPED_EVENT_ID,
+                    {}
+                );
+                break;
+        }
+    });
+
     obs.on("SceneItemEnableStateChanged", ({ sceneName, sceneItemId, sceneItemEnabled }) => {
         eventManager?.triggerEvent(
             OBS_EVENT_SOURCE_ID,
@@ -76,6 +103,58 @@ function setupRemoteListeners() {
             OBS_SCENE_TRANSITION_ENDED_EVENT_ID,
             {
                 transitionName
+            }
+        );
+    });
+
+    obs.on("CurrentSceneTransitionChanged", ({ transitionName }) => {
+        eventManager?.triggerEvent(
+            OBS_EVENT_SOURCE_ID,
+            OBS_CURRENT_SCENE_TRANSITION_CHANGED_EVENT_ID,
+            {
+                transitionName
+            }
+        );
+    });
+
+    obs.on("CurrentSceneTransitionDurationChanged", ({ transitionDuration }) => {
+        eventManager?.triggerEvent(
+            OBS_EVENT_SOURCE_ID,
+            OBS_CURRENT_SCENE_TRANSITION_DURATION_CHANGED_EVENT_ID,
+            {
+                transitionDuration
+            }
+        );
+    });
+
+    obs.on("ReplayBufferSaved", ({ savedReplayPath }) => {
+        eventManager?.triggerEvent(
+            OBS_EVENT_SOURCE_ID,
+            OBS_REPLAY_BUFFER_SAVED_EVENT_ID,
+            {
+                savedReplayPath
+            }
+        );
+    });
+
+    obs.on("CurrentProfileChanged", ({ profileName }) => {
+        eventManager?.triggerEvent(
+            OBS_EVENT_SOURCE_ID,
+            OBS_CURRENT_PROFILE_CHANGED_EVENT_ID,
+            {
+                profileName
+            }
+        );
+    });
+
+    obs.on("VendorEvent", ({ vendorName, eventType, eventData }) => {
+        eventManager?.triggerEvent(
+            OBS_EVENT_SOURCE_ID,
+            OBS_VENDOR_EVENT_EVENT_ID,
+            {
+                vendorName,
+                eventType,
+                eventData
             }
         );
     });

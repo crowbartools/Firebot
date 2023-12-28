@@ -211,7 +211,7 @@ exports.whenReady = async () => {
     const profileManager = require("../../../common/profile-manager");
     global.SCRIPTS_DIR = profileManager.getPathInProfile("/scripts/");
 
-    windowManagement.updateSplashScreenStatus("Checking for daily backup...");
+    windowManagement.updateSplashScreenStatus("Running daily backup...");
     const backupManager = require("../../../backup-manager");
     await backupManager.onceADayBackUpCheck();
 

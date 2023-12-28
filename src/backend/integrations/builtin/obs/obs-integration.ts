@@ -34,9 +34,15 @@ import { IsStreamingVariable } from "./variables/is-streaming";
 import { IsRecordingVariable } from "./variables/is-recording";
 import { ColorValueVariable } from "./variables/obs-color-value";
 import { SceneItemIdVariable } from "./variables/scene-item-id";
-import { SceneItemEnabledVariable } from "./variables/scene-item-enabled";
 import { SceneItemNameVariable } from "./variables/scene-item-name";
+import { SceneItemEnabledVariable } from "./variables/scene-item-enabled";
 import { TransitionNameVariable } from "./variables/transition-name";
+import { TransitionDurationVariable } from "./variables/transition-duration";
+import { ReplayBufferPathVariable } from "./variables/replay-buffer-path";
+import { ProfileNameVariable } from "./variables/profile-name";
+import { VendorNameVariable } from "./variables/vendor-name";
+import { VendorEventTypeVariable } from "./variables/vendor-event-type";
+import { VendorEventDataVariable } from "./variables/vendor-event-data";
 import { setupFrontendListeners } from "./communicator";
 import effectManager from "../../../effects/effectManager";
 import eventFilterManager from "../../../events/filters/filter-manager";
@@ -139,6 +145,12 @@ class ObsIntegration
         replaceVariableManager.registerReplaceVariable(SceneItemNameVariable);
         replaceVariableManager.registerReplaceVariable(SceneItemEnabledVariable);
         replaceVariableManager.registerReplaceVariable(TransitionNameVariable);
+        replaceVariableManager.registerReplaceVariable(TransitionDurationVariable);
+        replaceVariableManager.registerReplaceVariable(ReplayBufferPathVariable);
+        replaceVariableManager.registerReplaceVariable(ProfileNameVariable);
+        replaceVariableManager.registerReplaceVariable(VendorNameVariable);
+        replaceVariableManager.registerReplaceVariable(VendorEventTypeVariable);
+        replaceVariableManager.registerReplaceVariable(VendorEventDataVariable);
 
         this.setupConnection(integrationData.userSettings);
     }
