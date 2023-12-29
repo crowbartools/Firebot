@@ -1,6 +1,7 @@
 import { app } from "electron";
 import path from "path";
-import fs from "fs-extra";
+import fs from "fs";
+import fsp from "fs/promises";
 import { glob } from "glob";
 import { DeflateOptions, Zip, ZipDeflate } from "fflate";
 import { settings } from "./common/settings-access";
@@ -14,11 +15,11 @@ class BackupManager {
         const maxBackups = settings.maxBackupCount();
 
         if (maxBackups !== "All") {
-            const fileNames = (await fs.readdir(this._backupFolderPath))
+            const fileNames = (await fsp.readdir(this._backupFolderPath))
                 .map((v) => {
                     return {
                         name: v,
-                        time: fs.statSync(path.join(this._backupFolderPath, v)).birthtime.getTime()
+                        time: (fs.statSync(path.join(this._backupFolderPath, v))).birthtime.getTime()
                     };
                 })
                 .sort((a, b) => b.time - a.time)
@@ -29,7 +30,7 @@ class BackupManager {
 
             fileNames.forEach(f => {
                 logger.info(`Deleting old backup: ${f}`);
-                fs.unlink(path.join(this._backupFolderPath, f), () => {});
+                fs.unlinkSync(path.join(this._backupFolderPath, f));
             });
 
             if (callback instanceof Function) {
@@ -53,7 +54,7 @@ class BackupManager {
             manualActivation ? "_manual" : ""
         }.${fileExtension}`;
 
-        await fs.ensureDir(this._backupFolderPath);
+        await fsp.mkdir(this._backupFolderPath, { recursive: true });
         const output = fs.createWriteStream(path.join(this._backupFolderPath, filename));
 
         // listen for all archive data to be written
@@ -107,12 +108,12 @@ class BackupManager {
             for (const file of fileList) {
                 const fullPath = path.join(folderPath, file);
 
-                if ((await fs.stat(fullPath)).isFile() === true) {
+                if ((await fsp.stat(fullPath)).isFile() === true) {
                     const newFile = new ZipDeflate(file, zipOptions);
 
                     archive.add(newFile);
 
-                    const fileContents = await fs.readFile(path.join(folderPath, file));
+                    const fileContents = await fsp.readFile(path.join(folderPath, file));
                     newFile.push(new Uint8Array(fileContents), true);
                 }
             }
