@@ -80,7 +80,9 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div>
+                            <multiselect-list model="$ctrl.streamInfo.contentClassificationLabels" settings="$ctrl.contentClassificationSettings"></multiselect-list>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -100,6 +102,31 @@
 
                 $ctrl.games = [];
 
+                $ctrl.contentClassificationSettings = {
+                    options: [
+                        {
+                            id: "DrugsIntoxication",
+                            name: "Drugs, Intoxication, or Excessive Tobacco Use"
+                        },
+                        {
+                            id: "Gambling",
+                            name: "Gambling"
+                        },
+                        {
+                            id: "SexualThemes",
+                            name: "Sexual Themes"
+                        },
+                        {
+                            id: "ProfanityVulgarity",
+                            name: "Significant Profanity or Vulgarity"
+                        },
+                        {
+                            id: "ViolentGraphic",
+                            name: "Violent and Graphic Depictions"
+                        }
+                    ]
+                };
+
                 $ctrl.originalGame = {
                     id: 0,
                     name: ""
@@ -109,7 +136,8 @@
                     title: "",
                     gameId: 0,
                     gameName: "",
-                    tags: []
+                    tags: [],
+                    contentClassificationLabels: []
                 };
 
                 $ctrl.selectedGame = null;

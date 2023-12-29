@@ -41,16 +41,18 @@ exports.setupListeners = () => {
             return {
                 title: channelInfo.title,
                 gameId: channelInfo.gameId,
-                tags: channelInfo.tags
+                gameName: channelInfo.gameName,
+                tags: channelInfo.tags,
+                contentClassificationLabels: channelInfo.contentClassificationLabels
             };
         } catch (error) {
             return null;
         }
     });
 
-    frontendCommunicator.onAsync("set-channel-info", async ({ title, gameId, tags }) => {
+    frontendCommunicator.onAsync("set-channel-info", async ({ title, gameId, tags, contentClassificationLabels }) => {
         try {
-            await twitchApi.channels.updateChannelInformation({ title, gameId, tags });
+            await twitchApi.channels.updateChannelInformation({ title, gameId, tags, contentClassificationLabels });
             return true;
         } catch (error) {
             return false;
