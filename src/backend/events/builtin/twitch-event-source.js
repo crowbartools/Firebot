@@ -827,6 +827,36 @@ module.exports = {
                     return `**${eventData.username}** shouted out your channel to ${eventData.viewerCount} viewers`;
                 }
             }
+        },
+        {
+            id: "category-changed",
+            name: "Category Changed",
+            description: "When you change your Twitch stream category.",
+            cached: false,
+            manualMetadata: {
+                category: "Just Chatting"
+            },
+            activityFeed: {
+                icon: "fad fa-th-large",
+                getMessage: (eventData) => {
+                    return `Twitch stream category changed to **${eventData.category}**`;
+                }
+            }
+        },
+        {
+            id: "title-changed",
+            name: "Title Changed",
+            description: "When you change your Twitch stream title.",
+            cached: false,
+            manualMetadata: {
+                title: "Stream Title"
+            },
+            activityFeed: {
+                icon: "fad fa-text",
+                getMessage: (eventData) => {
+                    return `Twitch stream title changed to **${eventData.title}**`;
+                }
+            }
         }
     ]
 };

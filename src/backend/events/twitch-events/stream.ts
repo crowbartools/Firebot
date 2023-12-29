@@ -23,3 +23,21 @@ export function triggerStreamOffline(
         userDisplayName
     });
 }
+
+export function triggerCategoryChanged(
+    category: string,
+    categoryId: string
+) {
+    eventManager.triggerEvent("twitch", "category-changed", {
+        category,
+        categoryId
+    });
+}
+
+export function triggerTitleChanged(
+    title: string
+) {
+    eventManager.triggerEvent("twitch", "title-changed", {
+        title
+    });
+}

@@ -79,7 +79,7 @@ exports.whenReady = async () => {
     // load event sources
     logger.debug("Loading event sources...");
     windowManagement.updateSplashScreenStatus("Loading event sources...");
-    const { loadEventSources } = require("../../../events/builtinEventSourceLoader");
+    const { loadEventSources } = require("../../../events/builtin-event-source-loader");
     loadEventSources();
 
     // load event filters
@@ -231,7 +231,7 @@ exports.whenReady = async () => {
     iconManager.loadFontAwesomeIcons();
 
     windowManagement.updateSplashScreenStatus("Starting stream info poll...");
-    const streamInfoPoll = require("../../../twitch-api/stream-info-poll");
+    const streamInfoPoll = require("../../../twitch-api/stream-info-manager");
     streamInfoPoll.startStreamInfoPoll();
 
     logger.debug('...loading main window');

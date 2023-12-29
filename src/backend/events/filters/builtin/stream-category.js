@@ -7,7 +7,8 @@ module.exports = {
     name: "Category",
     description: "The category that is currently selected to stream to.",
     events: [
-        { eventSourceId: "firebot", eventId: "category-changed" }
+        { eventSourceId: "firebot", eventId: "category-changed" },
+        { eventSourceId: "twitch", eventId: "category-changed" }
     ],
     comparisonTypes: [ComparisonType.IS, ComparisonType.IS_NOT, ComparisonType.CONTAINS, ComparisonType.MATCHES_REGEX],
     valueType: "text",

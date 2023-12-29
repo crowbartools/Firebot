@@ -6,6 +6,7 @@ import accountAccess from "../../common/account-access";
 import frontendCommunicator from "../../common/frontend-communicator";
 import twitchEventsHandler from '../../events/twitch-events';
 import TwitchApi from "../api";
+import twitchStreamInfoPoll from "../stream-info-manager";
 
 class TwitchEventSubClient {
     private _eventSubListener: EventSubWsListener;
@@ -391,6 +392,16 @@ class TwitchEventSubClient {
                 );
             });
             this._subscriptions.push(charityCampaignEndSubscription);
+
+            const channelUpdateSubscription = this._eventSubListener.onChannelUpdate(streamer.userId, (event) => {
+                twitchStreamInfoPoll.updateStreamInfo({
+                    categoryId: event.categoryId,
+                    categoryName: event.categoryName,
+                    title: event.streamTitle,
+                    language: event.streamLanguage
+                });
+            });
+            this._subscriptions.push(channelUpdateSubscription);
         } catch (error) {
             logger.error("Failed to connect to Twitch EventSub", error);
             return;

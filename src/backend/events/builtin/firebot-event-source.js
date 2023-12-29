@@ -83,7 +83,7 @@ const firebotEventSource = {
         {
             id: "category-changed",
             name: "Category Changed",
-            description: "When you change the stream category in the dashboard.",
+            description: "When you change the stream category in the Firebot Dashboard.",
             cached: false,
             manualMetadata: {
                 category: "Just Chatting"

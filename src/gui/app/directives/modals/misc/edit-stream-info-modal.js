@@ -100,6 +100,11 @@
 
                 $ctrl.games = [];
 
+                $ctrl.originalGame = {
+                    id: 0,
+                    name: ""
+                };
+
                 $ctrl.streamInfo = {
                     title: "",
                     gameId: 0,
@@ -122,6 +127,10 @@
                             const game = await backendCommunicator.fireEventAsync("get-twitch-game", $ctrl.streamInfo.gameId);
 
                             if (game != null) {
+                                $ctrl.originalGame = {
+                                    id: game.id,
+                                    name: game.name
+                                };
                                 $ctrl.selectedGame = game;
                             }
                         }
@@ -181,7 +190,9 @@
 
                 $ctrl.save = async () => {
                     await backendCommunicator.fireEventAsync("set-channel-info", $ctrl.streamInfo);
-                    backendCommunicator.fireEvent("category-changed", $ctrl.streamInfo.gameName);
+                    if ($ctrl.streamInfo.gameId !== $ctrl.originalGame.id) {
+                        backendCommunicator.fireEvent("category-changed", $ctrl.streamInfo.gameName);
+                    }
                     ngToast.create({
                         className: 'success',
                         content: "Updated stream info!"
