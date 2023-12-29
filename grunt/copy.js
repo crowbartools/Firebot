@@ -5,17 +5,17 @@ grunt copy
 */
 
 'use strict';
-const fs = require('fs-extra');
+const fs = require('fs');
 const path = require('path');
 
 function remFiles(scope) {
     const dir = path.join(__dirname, `../dist/pack/Firebot-${scope}-x64/resources/`);
 
-    fs.removeSync(path.join(dir, './overlay/'));
-    fs.removeSync(path.join(dir, './overlay.html'));
-    fs.removeSync(path.join(dir, './firebot-setup-file-icon.ico'));
-    fs.removeSync(path.join(dir, './kbm-java/'));
-    fs.removeSync(path.join(dir, './ffmpeg/'));
+    fs.rmSync(path.join(dir, './overlay/'), { recursive: true, force: true });
+    fs.rmSync(path.join(dir, './overlay.html'), { recursive: true, force: true });
+    fs.rmSync(path.join(dir, './firebot-setup-file-icon.ico'), { recursive: true, force: true });
+    fs.rmSync(path.join(dir, './kbm-java/'), { recursive: true, force: true });
+    fs.rmSync(path.join(dir, './ffmpeg/'), { recursive: true, force: true });
 }
 
 module.exports = function (grunt) {
