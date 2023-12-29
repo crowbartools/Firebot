@@ -3,7 +3,7 @@ import path from 'path';
 import assetpath from 'assets';
 
 import { app, BrowserWindow, session } from 'electron';
-import { NestFastifyApplication } from '@nestjs/platform-fastify';
+import { type NestFastifyApplication } from '@nestjs/platform-fastify';
 
 // ts/eslint will complain until apps/backend/ has been built
 const { default : backendStart } = require('backend');

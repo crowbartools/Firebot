@@ -15,7 +15,7 @@ export default function Home() {
       const host = getServerUri();
       try {
         const response = await fetch(`${host}/api/v1/example`, {
-          credentials: "same-origin"
+          credentials: "include",
         });
         const text = await response.text();
         setHelloWorld(text);
@@ -37,7 +37,7 @@ export default function Home() {
       </Head>
       <PageWrapper>
         <PageTitle title={helloWorld} />
-        <div>Does fast reloading work?</div>
+        <div>Does fast reloading work? test</div>
       </PageWrapper>
     </>
   );

@@ -4,10 +4,10 @@ import {
     FastifyAdapter,
     NestFastifyApplication,
 } from "@nestjs/platform-fastify";
-import { WsAdapter } from "@nestjs/platform-ws";
 import fastifyCookie from '@fastify/cookie';
 import { AuthService } from "./auth/auth.service";
 import { AppModule } from "./app.module";
+import { CustomWsAdaptor } from "./real-time/custom-ws-adaptor";
 
 async function bootstrap() : Promise<{ app: NestFastifyApplication, authToken: string }> {
     const app = await NestFactory.create<NestFastifyApplication>(
@@ -19,13 +19,18 @@ async function bootstrap() : Promise<{ app: NestFastifyApplication, authToken: s
         secret: 'my-secret'
     });
 
-    app.useWebSocketAdapter(new WsAdapter(app));
+
+    const authToken = app.get(AuthService).authToken;
+
+
+    app.useWebSocketAdapter(new CustomWsAdaptor(authToken, app));
 
     app.setGlobalPrefix("api")
 
     app.enableCors({
-        allowedHeaders: "*",
-        origin: "*",
+      allowedHeaders: "*",
+      origin: "http://localhost:3000",
+      credentials: true,
     });
 
     app.enableVersioning({
@@ -40,4 +45,5 @@ async function bootstrap() : Promise<{ app: NestFastifyApplication, authToken: s
         authToken: app.get(AuthService).authToken
     };
 }
+
 export default bootstrap;

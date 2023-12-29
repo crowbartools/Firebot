@@ -4,7 +4,6 @@
   "sourceRoot": "src",
   "monorepo": false,
   "compilerOptions": {
-    "webpack": false,
     "deleteOutDir": true
   }
 }

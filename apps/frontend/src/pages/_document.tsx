@@ -4,10 +4,7 @@ export default function Document() {
   return (
     <Html id="root" lang="en">
       <Head>
-        <link
-          rel="stylesheet"
-          href="https://rsms.me/inter/inter.css"
-        />
+        <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
       </Head>
       <body className="h-full bg-primary-bg">
         <Main />
