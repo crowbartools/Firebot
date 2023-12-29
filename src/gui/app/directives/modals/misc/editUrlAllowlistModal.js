@@ -2,7 +2,7 @@
 
 (function() {
 
-    const fs = require("fs-extra");
+    const fs = require("fs");
 
     angular.module("firebotApp")
         .component("editUrlAllowlistModal", {
@@ -141,7 +141,7 @@
 
                             let contents;
                             try {
-                                contents = fs.readFileSync(filePath, "utf8");
+                                contents = fs.readFileSync(filePath, { encoding: "utf8" });
                             } catch (err) {
                                 logger.error("error reading file for allowed URLs", err);
                                 return;

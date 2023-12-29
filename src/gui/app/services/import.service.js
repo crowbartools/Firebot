@@ -2,7 +2,7 @@
 
 (function() {
     const xlsx = require("node-xlsx").default;
-    const fs = require("fs-extra");
+    const fs = require("fs");
     const moment = require("moment");
 
     angular
@@ -108,7 +108,7 @@
                 if (dataType === "quotes") {
                     const data = {};
                     //split the file into lines either \r\n or \n
-                    const file = fs.readFileSync(filepath, "utf8").split(/\r?\n/);
+                    const file = fs.readFileSync(filepath, { encoding: "utf8" }).split(/\r?\n/);
                     const header = file.shift();
                     if (header !== "#	Quote	Game	Date/Time") {
                         return data;

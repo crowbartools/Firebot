@@ -5,7 +5,8 @@ const { settings } = require("../../../common/settings-access");
 const resourceTokenManager = require("../../../resourceTokenManager");
 const webServer = require("../../../../server/http-server-manager");
 const uuid = require("uuid/v4");
-const fs = require('fs-extra');
+const fs = require('fs');
+const fsp = require('fs/promises');
 const path = require("path");
 const logger = require("../../../logwrapper");
 const frontendCommunicator = require("../../../common/frontend-communicator");
@@ -566,8 +567,8 @@ const playSound = {
 
         let mp3Path = undefined;
         try {
-            if (!(await fs.pathExists(POLLY_TMP_DIR))) {
-                await fs.mkdirp(POLLY_TMP_DIR);
+            if (!(fs.existsSync(POLLY_TMP_DIR))) {
+                await fsp.mkdir(POLLY_TMP_DIR, { recursive: true });
             }
 
             mp3Path = path.join(POLLY_TMP_DIR, `${uuid()}.mp3`);
@@ -615,7 +616,7 @@ const playSound = {
             });
             const durationInMils = (Math.round(duration) || 0) * 1000;
             const waitPromise = wait(durationInMils).then(async function () {
-                await fs.unlink(data.filepath);
+                await fsp.unlink(data.filepath);
             });
 
             if (effect.waitForSound) {

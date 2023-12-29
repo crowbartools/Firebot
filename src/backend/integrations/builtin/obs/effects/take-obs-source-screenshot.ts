@@ -1,6 +1,6 @@
 import { EffectType } from "../../../../../types/effects";
 import {getCurrentSceneName, OBSSource, OBSSourceScreenshotSettings, takeSourceScreenshot} from "../obs-remote";
-import * as fs from "fs-extra";
+import fs from "fs";
 import logger from "../../../../logwrapper";
 
 export const TakeOBSSourceScreenshotEffectType: EffectType<{
@@ -157,7 +157,7 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
             return true;
         }
 
-        fs.writeFileSync(effect.file, screenshot.split("base64,")[1], "base64");
+        fs.writeFileSync(effect.file, screenshot.split("base64,")[1], { encoding: "base64" });
         return true;
     }
 };

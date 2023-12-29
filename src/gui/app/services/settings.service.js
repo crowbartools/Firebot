@@ -2,7 +2,7 @@
 (function() {
     //This handles settings access for frontend
 
-    const fs = require("fs-extra");
+    const fs = require("fs");
     const { ipcRenderer } = require("electron");
 
     angular
@@ -542,7 +542,7 @@
                 );
 
                 // Overwrite the 'port.js' file in the overlay settings folder with the new port
-                fs.writeFile(path, `window.WEBSERVER_PORT = ${port}`, "utf8", () => {
+                fs.writeFile(path, `window.WEBSERVER_PORT = ${port}`, { encoding: "utf8" }, () => {
                     logger.info(`Set overlay port to: ${port}`);
                 });
             };

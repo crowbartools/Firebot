@@ -2,7 +2,7 @@
 (function() {
     //This handles the Settings tab
 
-    const fs = require("fs-extra");
+    const fs = require("fs");
     const path = require("path");
     const dataAccess = require("../../backend/common/data-access");
     const moment = require("moment");

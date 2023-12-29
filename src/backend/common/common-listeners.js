@@ -120,7 +120,7 @@ exports.setupCommonListeners = () => {
             `${dataAccess.getUserDataPath() + path.sep}backups${path.sep}`
         );
 
-        const fs = require("fs-extra");
+        const fs = require("fs");
         let backupsFolderExists = false;
         try {
             backupsFolderExists = fs.existsSync(backupsFolderPath);

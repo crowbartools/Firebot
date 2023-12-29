@@ -4,7 +4,7 @@ const electron = require("electron");
 const { app } = electron;
 
 const path = require("path");
-const fs = require("fs-extra");
+const fs = require("fs");
 const dataAccess = require("../common/data-access.js");
 
 exports.handleSquirrelEvents = () => {
@@ -60,8 +60,8 @@ exports.handleSquirrelEvents = () => {
             // Undo anything you did in the --squirrel-install and --squirrel-updated handlers
 
                 //attempt to delete the user-settings folder
-                fs.removeSync(dataAccess.getPathInUserData("/profiles"));
-                fs.removeSync(dataAccess.getPathInUserData("global-settings.json"));
+                fs.rmSync(dataAccess.getPathInUserData("/profiles"), { recursive: true });
+                fs.rmSync(dataAccess.getPathInUserData("global-settings.json"), { recursive: true });
 
                 Regedit.uninstallAll().finally(() => {
                 // Remove shortcuts

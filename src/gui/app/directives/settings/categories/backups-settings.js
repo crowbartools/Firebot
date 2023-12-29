@@ -4,7 +4,7 @@
 
     const moment = require("moment");
     const path = require("path");
-    const fs = require("fs-extra");
+    const fs = require("fs");
 
     angular
         .module("firebotApp")
@@ -23,7 +23,7 @@
                             on-update="settings.setMaxBackupCount(option)"
                         ></dropdown-select>
                     </firebot-setting>
-                    
+
                     <firebot-setting
                         name="Automatic Backup Options"
                         description="Choose what Firebot should ignore in automatic backups."
@@ -44,7 +44,7 @@
                         </label>
                         </div>
                     </firebot-setting>
-                    
+
                     <firebot-setting
                         name="Automatic Backups"
                         description="Choose when Firebot should make automatic backups."
@@ -248,7 +248,7 @@
                                     .then(confirmed => {
                                         if (confirmed) {
                                             $scope.backups.splice(index, 1);
-                                            fs.unlink(`${backupFolderPath + backup.name}.zip`);
+                                            fs.unlinkSync(`${backupFolderPath + backup.name}.zip`);
                                         }
                                     });
                             };

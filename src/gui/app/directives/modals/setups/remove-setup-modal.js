@@ -1,7 +1,7 @@
 "use strict";
 
 (function() {
-    const fs = require("fs-extra");
+    const fsp = require("fs/promises");
 
     angular.module("firebotApp")
         .component("removeSetupModal", {
@@ -123,8 +123,9 @@
                 };
 
                 $ctrl.onFileSelected = (filepath) => {
-                    $q.when(fs.readJson(filepath))
+                    $q.when(fsp.readFile(filepath))
                         .then(setup => {
+                            setup = JSON.parse(setup);
                             if (setup == null || setup.components == null) {
                                 $ctrl.resetSelectedFile("Unable to load setup file: file is invalid");
                                 return;

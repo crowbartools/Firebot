@@ -2,7 +2,7 @@
 
 "use strict";
 
-const fs = require("fs-extra");
+const fs = require("fs");
 
 const util = require("../../utility");
 
@@ -39,7 +39,7 @@ const model = {
         }
 
         try {
-            const contents = fs.readFileSync(filePath, "utf8");
+            const contents = fs.readFileSync(filePath, { encoding: "utf8" });
             let lines = [];
 
             let readLine = false;

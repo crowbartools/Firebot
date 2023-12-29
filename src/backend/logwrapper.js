@@ -6,7 +6,7 @@ const dataAccess = require("./common/data-access.js");
 const app = electron.app || firebotAppDetails;
 //const config = winston.config;
 //const Sentry = require("winston-raven-sentry");
-const fs = require("fs-extra");
+const fs = require("fs");
 
 const LOG_FOLDER = dataAccess.getPathInUserData("/logs");
 

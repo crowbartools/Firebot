@@ -1,7 +1,7 @@
 "use strict";
 
 (function() {
-    const fs = require("fs-extra");
+    const fs = require("fs");
 
     angular
         .module('firebotApp')

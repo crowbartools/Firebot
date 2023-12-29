@@ -3,7 +3,7 @@
 const profileManager = require("./profile-manager");
 const logger = require("../logwrapper");
 const frontendCommunicator = require("./frontend-communicator");
-const fs = require("fs-extra");
+const fs = require("fs");
 
 // This file centralizes access to the settings db
 // We will need to refactor other files to use this.
@@ -50,11 +50,11 @@ function handleCorruptSettingsFile() {
     logger.warn("settings.json file appears to be corrupt. Resetting file...");
 
     const settingsPath = profileManager.getPathInProfile("settings.json");
-    fs.writeJSONSync(settingsPath, {
+    fs.writeFileSync(settingsPath, JSON.stringify({
         settings: {
             firstTimeUse: false
         }
-    });
+    }));
 }
 
 function getDataFromFile(path, forceCacheUpdate = false) {

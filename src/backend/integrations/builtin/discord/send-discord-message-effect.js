@@ -6,7 +6,7 @@ const discordEmbedBuilder = require('./discord-embed-builder');
 const discord = require("./discord-message-sender");
 const frontEndCommunicator = require("../../../common/frontend-communicator");
 const logger = require("../../../logwrapper");
-const fs = require("fs-extra");
+const fs = require("fs");
 
 frontEndCommunicator.onAsync("getDiscordChannels", async () => {
     const channels = [];

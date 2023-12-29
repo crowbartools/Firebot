@@ -1,4 +1,5 @@
-import fs from "fs-extra";
+import fs from "fs";
+import fsp from "fs/promises";
 import path from "path";
 import sanitizeFileName from "sanitize-filename";
 import logger from "../logwrapper";
@@ -102,7 +103,7 @@ class CounterManager extends JsonDbManager<Counter> {
 
         try {
             const txtFilePath = this.getCounterTxtFilePath(counterName);
-            return await fs.writeFile(txtFilePath, counterValue.toString(), 'utf8');
+            return await fsp.writeFile(txtFilePath, counterValue.toString(), { encoding: "utf8" });
         } catch (err) {
             logger.error("There was an error updating the counter text file", err);
             return;
@@ -118,7 +119,7 @@ class CounterManager extends JsonDbManager<Counter> {
             const oldTxtFilePath = this.getCounterTxtFilePath(oldName);
             const newTxtFilePath = this.getCounterTxtFilePath(newName);
 
-            return await fs.rename(oldTxtFilePath, newTxtFilePath);
+            return await fsp.rename(oldTxtFilePath, newTxtFilePath);
         } catch (err) {
             logger.error("There was an error renaming the counter text file", err);
             return;
@@ -132,10 +133,10 @@ class CounterManager extends JsonDbManager<Counter> {
 
         try {
             const txtFilePath = this.getCounterTxtFilePath(counterName);
-            const fileExists = await fs.pathExists(txtFilePath);
+            const fileExists = fs.existsSync(txtFilePath);
 
             if (fileExists) {
-                return fs.unlink(txtFilePath);
+                return fsp.unlink(txtFilePath);
             }
 
             logger.warn(`Failed to delete counter "${counterName}" text file: the file doesn't exist.`);
