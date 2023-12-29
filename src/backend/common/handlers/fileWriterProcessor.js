@@ -1,11 +1,11 @@
 "use strict";
 
-const fs = require("fs-extra");
+const fs = require("fs");
 const path = require("path");
 const logger = require("../../logwrapper");
 
 function doesTextExistInFile(filepath, text) {
-    const contents = fs.readFileSync(filepath, "utf8");
+    const contents = fs.readFileSync(filepath, { encoding: "utf8" });
     return contents.includes(text);
 }
 
@@ -14,7 +14,7 @@ const doesFileExist = (filepath) => {
 };
 
 function removeLines(filepath, lines = []) {
-    const contents = fs.readFileSync(filepath, "utf8");
+    const contents = fs.readFileSync(filepath, { encoding: "utf8" });
 
     return `${contents
         .split('\n')
@@ -24,7 +24,7 @@ function removeLines(filepath, lines = []) {
 }
 
 function removeLinesWithText(filepath, text) {
-    const contents = fs.readFileSync(filepath, "utf8");
+    const contents = fs.readFileSync(filepath, { encoding: "utf8" });
     return `${contents
         .split('\n')
         .map(l => {
@@ -36,7 +36,7 @@ function removeLinesWithText(filepath, text) {
 }
 
 function replaceLines(filepath, lineNumbers = [], replacement) {
-    const contents = fs.readFileSync(filepath, "utf8");
+    const contents = fs.readFileSync(filepath, { encoding: "utf8" });
 
     return `${contents
         .split('\n')
@@ -48,7 +48,7 @@ function replaceLines(filepath, lineNumbers = [], replacement) {
 }
 
 function replaceLinesWithText(filepath, text, replacement) {
-    const contents = fs.readFileSync(filepath, "utf8");
+    const contents = fs.readFileSync(filepath, { encoding: "utf8" });
     return `${contents
         .split('\n')
         .filter(l => l != null && l.trim() !== "")
@@ -68,16 +68,16 @@ exports.run = async effect => {
 
     try {
         if (effect.writeMode === "suffix") {
-            fs.appendFileSync(effect.filepath, text, "utf8");
+            fs.appendFileSync(effect.filepath, text, { encoding: "utf8" });
 
         } else if (effect.writeMode === "append") {
             if (doesFileExist(effect.filepath) && effect.dontRepeat) {
                 if (!doesTextExistInFile(effect.filepath, text)) {
-                    fs.appendFileSync(effect.filepath, `${text}\n`, "utf8");
+                    fs.appendFileSync(effect.filepath, `${text}\n`, { encoding: "utf8" });
                 }
             } else {
-                fs.ensureDirSync(path.dirname(effect.filepath));
-                fs.appendFileSync(effect.filepath, `${text}\n`, "utf8");
+                fs.mkdirSync(path.dirname(effect.filepath), { recursive: true });
+                fs.appendFileSync(effect.filepath, `${text}\n`, { encoding: "utf8" });
             }
         } else if (effect.writeMode === "delete") {
 
@@ -89,10 +89,10 @@ exports.run = async effect => {
                     .filter(l => !isNaN(l))
                     .map(l => parseInt(l, 10) - 1);
 
-                fs.writeFileSync(effect.filepath, removeLines(effect.filepath, lines), 'utf8');
+                fs.writeFileSync(effect.filepath, removeLines(effect.filepath, lines), { encoding: "utf8" });
 
             } else if (effect.deleteLineMode === 'text') {
-                fs.writeFileSync(effect.filepath, removeLinesWithText(effect.filepath, effect.text, effect.replacementText), 'utf8');
+                fs.writeFileSync(effect.filepath, removeLinesWithText(effect.filepath, effect.text, effect.replacementText), { encoding: "utf8" });
             }
 
         } else if (effect.writeMode === "replace-line") {
@@ -105,16 +105,16 @@ exports.run = async effect => {
                     .filter(l => !isNaN(l))
                     .map(l => parseInt(l, 10) - 1);
 
-                fs.writeFileSync(effect.filepath, replaceLines(effect.filepath, lines, effect.replacementText), 'utf8');
+                fs.writeFileSync(effect.filepath, replaceLines(effect.filepath, lines, effect.replacementText), { encoding: "utf8" });
 
             } else if (effect.replaceLineMode === 'text') {
-                fs.writeFileSync(effect.filepath, replaceLinesWithText(effect.filepath, effect.text, effect.replacementText), 'utf8');
+                fs.writeFileSync(effect.filepath, replaceLinesWithText(effect.filepath, effect.text, effect.replacementText), { encoding: "utf8" });
             }
 
         } else if (effect.writeMode === "delete-all") {
-            fs.writeFileSync(effect.filepath, "", "utf8");
+            fs.writeFileSync(effect.filepath, "", { encoding: "utf8" });
         } else {
-            fs.writeFileSync(effect.filepath, text.toString(), "utf8");
+            fs.writeFileSync(effect.filepath, text.toString(), { encoding: "utf8" });
         }
     } catch (err) {
         logger.warn("Failed to write to file", err);

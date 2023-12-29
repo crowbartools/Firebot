@@ -2,7 +2,7 @@
 
 const electron = require("electron");
 const path = require("path");
-const fs = require("fs-extra");
+const fs = require("fs");
 const { JsonDB } = require("node-json-db");
 
 let app = electron.app;
@@ -44,17 +44,17 @@ const getPathInTmpDir = function(filePath) {
 };
 
 const deletePathInTmpDir = function(filePath) {
-    fs.unlink(path.join(tmpDirectoryPath, filePath));
+    fs.unlinkSync(path.join(tmpDirectoryPath, filePath));
 };
 
 const deletePathInUserData = function(filePath) {
-    fs.unlink(path.join(userDataPath, filePath));
+    fs.unlinkSync(path.join(userDataPath, filePath));
 };
 
-const deleteFolderRecursive = function(path) {
-    if (fs.existsSync(path)) {
-        fs.readdirSync(path).forEach(function(file) {
-            const curPath = `${path}/${file}`;
+const deleteFolderRecursive = function(pathname) {
+    if (fs.existsSync(pathname)) {
+        fs.readdirSync(pathname).forEach(function(file) {
+            const curPath = path.join(pathname, file);
             if (fs.statSync(curPath).isDirectory()) {
                 // recurse
                 deleteFolderRecursive(curPath);
@@ -63,7 +63,7 @@ const deleteFolderRecursive = function(path) {
                 fs.unlinkSync(curPath);
             }
         });
-        fs.rmdirSync(path);
+        fs.rmdirSync(pathname);
     }
 };
 
@@ -127,12 +127,12 @@ const makeDirInUserDataSync = function(filePath) {
 
 const writeFileInWorkingDir = function(filePath, data, callback) {
     const joinedPath = path.join(workingDirectoryPath, filePath);
-    fs.writeFile(joinedPath, data, "utf8", callback);
+    fs.writeFile(joinedPath, data, { encoding: "utf8" }, callback);
 };
 
 const writeFileInUserData = function(filePath, data, callback) {
     const joinedPath = path.join(userDataPath, filePath);
-    fs.writeFile(joinedPath, data, "utf8", callback);
+    fs.writeFile(joinedPath, data, { encoding: "utf8" }, callback);
 };
 
 const copyDefaultConfigToUserData = function(

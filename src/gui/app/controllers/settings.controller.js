@@ -445,7 +445,7 @@
                                 .then(confirmed => {
                                     if (confirmed) {
                                         $scope.backups.splice(index, 1);
-                                        fs.unlink(`${backupFolderPath + backup.name}.zip`);
+                                        fs.unlinkSync(`${backupFolderPath + backup.name}.zip`);
                                     }
                                 });
                         };
