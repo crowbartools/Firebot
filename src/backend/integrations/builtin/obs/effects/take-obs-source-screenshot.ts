@@ -1,6 +1,6 @@
 import { EffectType } from "../../../../../types/effects";
 import {getCurrentSceneName, OBSSource, OBSSourceScreenshotSettings, takeSourceScreenshot} from "../obs-remote";
-import * as fs from "fs";
+import * as fs from "fs-extra";
 import logger from "../../../../logwrapper";
 
 export const TakeOBSSourceScreenshotEffectType: EffectType<{

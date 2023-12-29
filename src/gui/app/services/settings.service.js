@@ -2,7 +2,7 @@
 (function() {
     //This handles settings access for frontend
 
-    const fs = require("fs");
+    const fs = require("fs-extra");
     const { ipcRenderer } = require("electron");
 
     angular

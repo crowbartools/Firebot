@@ -2,7 +2,7 @@
 
 (function() {
     const { basename, dirname, sep, resolve } = require('path');
-    const { mkdirSync, readFileSync, writeFileSync } = require('fs');
+    const { mkdirSync, readFileSync, writeFileSync } = require("fs-extra");
     const fs = require("fs-extra");
     const empty = require("empty-folder");
     const { unzipSync } = require('fflate');

@@ -9,7 +9,7 @@ const discordEmbedBuilder = require("../../integrations/builtin/discord/discord-
 const discord = require("../../integrations/builtin/discord/discord-message-sender");
 
 const sanitizeFileName = require("sanitize-filename");
-const fs = require("fs").promises;
+const fs = require("fs-extra");
 const logger = require('../../logwrapper');
 
 const clip = {

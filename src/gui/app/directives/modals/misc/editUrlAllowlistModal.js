@@ -2,7 +2,7 @@
 
 (function() {
 
-    const fs = require("fs");
+    const fs = require("fs-extra");
 
     angular.module("firebotApp")
         .component("editUrlAllowlistModal", {
