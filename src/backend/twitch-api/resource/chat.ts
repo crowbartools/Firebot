@@ -135,7 +135,7 @@ export class TwitchChatApi {
         const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
 
         try {
-            await this._streamerClient.moderation.deleteChatMessages(streamerUserId, streamerUserId);
+            await this._streamerClient.moderation.deleteChatMessages(streamerUserId);
 
             return true;
         } catch (error) {
