@@ -392,16 +392,25 @@ module.exports = {
         {
             id: "whisper",
             name: "Whisper",
-            description: "When someone sends you a whisper.",
+            description: "When someone sends you or your bot account a whisper.",
             cached: true,
+            cacheMetaKey: "sentTo",
             manualMetadata: {
                 username: "Firebot",
-                message: "Test whisper"
+                message: "Test whisper",
+                sentTo: {
+                    type: "enum",
+                    options: {
+                        streamer: "Streamer",
+                        bot: "Bot"
+                    },
+                    value: "streamer"
+                }
             },
             activityFeed: {
                 icon: "fad fa-comment-alt",
                 getMessage: (eventData) => {
-                    return `**${eventData.username}** sent you the following whisper: ${eventData.message}`;
+                    return `**${eventData.username}** sent your **${eventData.sentTo}** account the following whisper: ${eventData.message}`;
                 }
             }
         },

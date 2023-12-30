@@ -24,8 +24,11 @@ exports.setupBotChatListeners = (botChatClient) => {
 
 const HIGHLIGHT_MESSAGE_REWARD_ID = "highlight-message";
 
-/** @arg {import('@twurple/chat').ChatClient} streamerChatClient */
-exports.setupChatListeners = (streamerChatClient) => {
+/**
+ * @arg {import('@twurple/chat').ChatClient} streamerChatClient
+ * @arg {import('@twurple/chat').ChatClient} botChatClient
+ */
+exports.setupChatListeners = (streamerChatClient, botChatClient) => {
 
     streamerChatClient.onAnnouncement(async (_channel, _user, announcementInfo, msg) => {
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, msg.text);
@@ -95,13 +98,22 @@ exports.setupChatListeners = (streamerChatClient) => {
         await raidMessageChecker.sendMessageToCache(firebotChatMessage);
     });
 
-    streamerChatClient.onWhisper(async (_user, messageText, msg) => {
+    const whisperHandler = async (_user, messageText, msg, accountType) => {
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText, true);
 
         commandHandler.handleChatMessage(firebotChatMessage);
 
         frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
-    });
+
+        twitchEventsHandler.whisper.triggerWhisper(
+            msg.userInfo.userName,
+            messageText,
+            accountType
+        );
+    };
+
+    streamerChatClient.onWhisper(async (_user, messageText, msg) => whisperHandler(_user, messageText, msg, "streamer"));
+    botChatClient?.onWhisper(async (_user, messageText, msg) => whisperHandler(_user, messageText, msg, "bot"));
 
     streamerChatClient.onAction(async (_channel, _user, messageText, msg) => {
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText, false, true);

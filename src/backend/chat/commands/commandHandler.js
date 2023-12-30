@@ -438,7 +438,8 @@ async function handleChatMessage(firebotChatMessage) {
         return false;
     }
 
-    if (command.autoDeleteTrigger || (triggeredSubcmd && triggeredSubcmd.autoDeleteTrigger)) {
+    // Can't auto delete whispers, so we ignore auto delete trigger for those
+    if (firebotChatMessage.whisper !== true && command.autoDeleteTrigger || (triggeredSubcmd && triggeredSubcmd.autoDeleteTrigger)) {
         logger.debug("Auto delete trigger is on, attempting to delete chat message");
         await twitchApi.chat.deleteChatMessage(firebotChatMessage.id);
     }

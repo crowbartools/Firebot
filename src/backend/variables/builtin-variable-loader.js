@@ -223,6 +223,7 @@ exports.loadReplaceVariables = () => {
         'view-time',
         'viewer-count',
         'whisper-message',
+        'whisper-recipient',
         'word',
 
         'twitch/channel-goal-current-amount',

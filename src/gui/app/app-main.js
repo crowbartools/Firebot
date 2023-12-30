@@ -505,6 +505,22 @@
         };
     });
 
+    app.filter("hideWhispers", function(settingsService) {
+        return function(elements) {
+            const shouldHide = settingsService.getChatHideWhispers();
+            if (!shouldHide) {
+                return elements;
+            }
+            return elements.filter(e => {
+                if (e.type !== 'message') {
+                    return true;
+                }
+                return e.data.whisper !== true;
+            }
+            );
+        };
+    });
+
     app.filter("chatUserRole", function() {
         return function(users, role) {
             if (users == null || role == null) {

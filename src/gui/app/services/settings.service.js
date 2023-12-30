@@ -410,6 +410,15 @@
                 pushDataToFile('/settings/chatHideBotAccountMessages', shouldHide === true);
             };
 
+            service.getChatHideWhispers = function() {
+                const shouldHide = getDataFromFile('/settings/chatHideWhispers', false, false);
+                return shouldHide === true;
+            };
+
+            service.setChatHideWhispers = function(shouldHide) {
+                pushDataToFile('/settings/chatHideWhispers', shouldHide === true);
+            };
+
             service.getShowUptimeStat = function() {
                 const value = getDataFromFile("/settings/showUptimeStat", false, true);
                 return value != null ? value : true;

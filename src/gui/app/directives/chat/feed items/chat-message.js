@@ -177,7 +177,7 @@
                                     <span ng-if="part.origin === '7TV' && !$ctrl.showSevenTvEmotes" style="{{$ctrl.chatSizeStyle}}">{{part.name}}</span>
                                 </span>
                             </div>
-                            <div ng-show="$ctrl.message.whisper" class="muted">(Whispered to you)</div>
+                            <div ng-show="$ctrl.message.whisper" class="muted">(Whispered to {{ $ctrl.message.whisperTarget }})</div>
                         </div>
                     </div>
                     <div class="automod-tag" ng-show="$ctrl.message.isAutoModHeld">
