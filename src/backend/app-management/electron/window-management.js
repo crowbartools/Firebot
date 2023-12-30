@@ -178,7 +178,8 @@ function createMainWindow() {
                         frontendCommunicator.send("open-modal", {
                             component: "importSetupModal"
                         });
-                    }
+                    },
+                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/import.png")
                 },
                 {
                     type: 'separator'
@@ -191,7 +192,8 @@ function createMainWindow() {
                             profileManager.getPathInProfile("/")
                         );
                         shell.openPath(rootFolder);
-                    }
+                    },
+                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/folder-account-outline.png")
                 },
                 {
                     label: 'Open Logs Folder',
@@ -201,7 +203,8 @@ function createMainWindow() {
                             dataAccess.getPathInUserData("/logs/")
                         );
                         shell.openPath(rootFolder);
-                    }
+                    },
+                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/folder-text-outline.png")
                 },
                 {
                     label: 'Open Backups Folder',
@@ -211,13 +214,15 @@ function createMainWindow() {
                             dataAccess.getPathInUserData("/backups/")
                         );
                         shell.openPath(backupFolder);
-                    }
+                    },
+                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/folder-refresh-outline.png")
                 },
                 {
                     type: 'separator'
                 },
                 {
-                    role: 'quit'
+                    role: 'quit',
+                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/exit-run.png")
                 }
             ]
         },
@@ -225,22 +230,28 @@ function createMainWindow() {
             label: 'Edit',
             submenu: [
                 {
-                    role: 'cut'
+                    role: 'cut',
+                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/content-cut.png")
                 },
                 {
-                    role: 'copy'
+                    role: 'copy',
+                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/content-copy.png")
                 },
                 {
-                    role: 'paste'
+                    role: 'paste',
+                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/content-paste.png")
                 },
                 {
-                    role: "undo"
+                    role: "undo",
+                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/undo.png")
                 },
                 {
-                    role: "redo"
+                    role: "redo",
+                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/redo.png")
                 },
                 {
-                    role: "selectAll"
+                    role: "selectAll",
+                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/select-all.png")
                 }
             ]
         },
@@ -248,10 +259,12 @@ function createMainWindow() {
             label: 'Window',
             submenu: [
                 {
-                    role: 'minimize'
+                    role: 'minimize',
+                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/window-minimize.png")
                 },
                 {
-                    role: 'close'
+                    role: 'close',
+                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/window-close.png")
                 }
             ]
         },
@@ -265,14 +278,16 @@ function createMainWindow() {
                         frontendCommunicator.send("open-modal", {
                             component: "setupWizardModal"
                         });
-                    }
+                    },
+                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/auto-fix.png")
                 },
                 {
                     label: 'Restore from backup...',
                     toolTip: "Restores Firebot from a backup",
                     click: async () => {
                         frontendCommunicator.send("restore-backup");
-                    }
+                    },
+                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/backup-restore.png")
                 },
                 {
                     label: 'Custom Variable Inspector',
@@ -280,13 +295,15 @@ function createMainWindow() {
                     click: () => {
                         // eslint-disable-next-line no-use-before-define
                         createVariableInspectorWindow();
-                    }
+                    },
+                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/text-search.png")
                 },
                 {
                     type: 'separator'
                 },
                 {
-                    role: 'toggledevtools'
+                    role: 'toggledevtools',
+                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/tools.png")
                 }
             ]
         },
@@ -297,13 +314,15 @@ function createMainWindow() {
                     label: 'Join our Discord',
                     click: () => {
                         shell.openExternal("https://discord.gg/tTmMbrG");
-                    }
+                    },
+                    icon: path.resolve(__dirname, "../../../resources/images/icons/discord.png")
                 },
                 {
                     label: 'Follow @FirebotApp on Twitter',
                     click: () => {
                         shell.openExternal("https://twitter.com/FirebotApp");
-                    }
+                    },
+                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/twitter.png")
                 },
                 {
                     type: 'separator'
@@ -312,19 +331,22 @@ function createMainWindow() {
                     label: 'View Source on GitHub',
                     click: () => {
                         shell.openExternal("https://github.com/crowbartools/Firebot");
-                    }
+                    },
+                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/source-branch.png")
                 },
                 {
                     label: 'Report a Bug',
                     click: () => {
                         shell.openExternal("https://github.com/crowbartools/Firebot/issues/new?assignees=&labels=Bug&template=bug_report.yml&title=%5BBug%5D+");
-                    }
+                    },
+                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/bug-outline.png")
                 },
                 {
                     label: 'Request a Feature',
                     click: () => {
                         shell.openExternal("https://github.com/crowbartools/Firebot/issues/new?assignees=&labels=Enhancement&template=feature_request.md&title=%5BFeature+Request%5D+");
-                    }
+                    },
+                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/star-circle-outline.png")
                 },
                 {
                     type: 'separator'
@@ -333,19 +355,22 @@ function createMainWindow() {
                     label: 'Merch Store',
                     click: () => {
                         shell.openExternal("https://crowbar-tools.myspreadshop.com");
-                    }
+                    },
+                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/shopping-outline.png")
                 },
                 {
                     label: 'Donate',
                     click: () => {
                         shell.openExternal("https://opencollective.com/crowbartools");
-                    }
+                    },
+                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/hand-heart-outline.png")
                 },
                 {
                     label: 'Submit a Testimonial',
                     click: () => {
                         shell.openExternal("https://firebot.app/testimonial-submission");
-                    }
+                    },
+                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/account-heart-outline.png")
                 },
                 {
                     type: 'separator'
@@ -354,7 +379,8 @@ function createMainWindow() {
                     label: 'About Firebot...',
                     click: () => {
                         frontendCommunicator.send("open-about-modal");
-                    }
+                    },
+                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/information-outline.png")
                 }
             ]
         }
