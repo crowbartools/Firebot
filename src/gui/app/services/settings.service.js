@@ -462,6 +462,15 @@
                 pushDataToFile("/settings/sounds", enabled);
             };
 
+            service.getOpenStreamPreviewOnLaunch = () => {
+                const openStreamPreviewOnLaunch = getDataFromFile("/settings/openStreamPreviewOnLaunch", false, false);
+                return openStreamPreviewOnLaunch === true;
+            };
+
+            service.setOpenStreamPreviewOnLaunch = (enabled) => {
+                pushDataToFile("/settings/openStreamPreviewOnLaunch", enabled === true);
+            };
+
             service.getActiveChatUserListTimeout = function() {
                 const inactiveTimer = getDataFromFile("/settings/activeChatUsers/inactiveTimer", false, 5);
                 return inactiveTimer != null ? parseInt(inactiveTimer) : 5;

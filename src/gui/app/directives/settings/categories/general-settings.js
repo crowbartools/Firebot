@@ -129,6 +129,18 @@
                         />
                         <span> minutes</span>
                     </firebot-setting>
+
+                    <firebot-setting
+                        name="Open Stream Preview on Launch"
+                        description="Automatically open the Stream Preview window when Firebot launches."
+                    >
+                        <toggle-button
+                            toggle-model="settings.getOpenStreamPreviewOnLaunch()"
+                            on-toggle="settings.setOpenStreamPreviewOnLaunch(!settings.getOpenStreamPreviewOnLaunch())"
+                            font-size="40"
+                            accessibility-label="(settings.getOpenStreamPreviewOnLaunch() ? 'Disable' : 'Enable') + ' Stream Preview on Launch'"
+                        />
+                    </firebot-setting>
                 </div>
           `,
             controller: function($scope, settingsService, $q) {

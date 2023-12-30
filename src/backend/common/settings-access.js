@@ -285,4 +285,12 @@ settings.setMinimizeToTray = function (minimizeToTray) {
     pushDataToFile('/settings/minimizeToTray', minimizeToTray === true);
 };
 
+settings.getOpenStreamPreviewOnLaunch = () => {
+    const openStreamPreviewOnLaunch = getDataFromFile("/settings/openStreamPreviewOnLaunch", false, false);
+    return openStreamPreviewOnLaunch === true;
+};
+settings.setOpenStreamPreviewOnLaunch = (enabled) => {
+    pushDataToFile("/settings/openStreamPreviewOnLaunch", enabled === true);
+};
+
 exports.settings = settings;

@@ -11,8 +11,83 @@ const logger = require("../../logwrapper");
 const { setupTitlebar, attachTitlebarToWindow } = require("custom-electron-titlebar/main");
 const screenHelpers = require("./screen-helpers");
 const frontendCommunicator = require("../../common/frontend-communicator");
+const { settings } = require("../../common/settings-access");
 
 setupTitlebar();
+
+/**
+ * The stream preview popout window.
+ * Keeps a global reference of the window object, if you don't, the window will
+ * be closed automatically when the JavaScript object is garbage collected.
+ *@type {Electron.BrowserWindow}
+ */
+let streamPreview = null;
+
+function createStreamPreviewWindow() {
+
+    if (streamPreview != null && !streamPreview.isDestroyed()) {
+        if (streamPreview.isMinimized()) {
+            streamPreview.restore();
+        }
+        streamPreview.focus();
+        return;
+    }
+
+    const accountAccess = require("../../common/account-access");
+    const streamer = accountAccess.getAccounts().streamer;
+
+    if (!streamer.loggedIn) {
+        return;
+    }
+
+    const streamPreviewWindowState = windowStateKeeper({
+        defaultWidth: 815,
+        defaultHeight: 480,
+        file: "stream-preview-window-state.json"
+    });
+
+    streamPreview = new BrowserWindow({
+        frame: true,
+        alwaysOnTop: true,
+        backgroundColor: "#1E2023",
+        title: "Stream Preview",
+        parent: exports.mainWindow,
+        width: streamPreviewWindowState.width,
+        height: streamPreviewWindowState.height,
+        x: streamPreviewWindowState.x,
+        y: streamPreviewWindowState.y,
+        javascript: false,
+        webPreferences: {},
+        icon: path.join(__dirname, "../../../gui/images/logo_transparent_2.png")
+    });
+    streamPreview.setMenu(null);
+
+    const view = new BrowserView();
+    streamPreview.setBrowserView(view);
+    view.setBounds({
+        x: 0,
+        y: 0,
+        width: streamPreview.getContentSize()[0],
+        height: streamPreview.getContentSize()[1]
+    });
+    view.setAutoResize({
+        width: true,
+        height: true
+    });
+    view.webContents.on('new-window', (vEvent) => {
+        vEvent.preventDefault();
+    });
+
+    view.webContents.loadURL(`https://player.twitch.tv/?channel=${streamer.username}&parent=firebot&muted=true`);
+
+    streamPreviewWindowState.manage(streamPreview);
+
+    streamPreview.on("close", () => {
+        if (!view.isDestroyed()) {
+            view.destroy();
+        }
+    });
+}
 
 /**
  * Firebot's main window
@@ -326,13 +401,16 @@ function createMainWindow() {
             username: "Firebot"
         });
 
+        if (settings.getOpenStreamPreviewOnLaunch() === true) {
+            createStreamPreviewWindow();
+        }
+
         fileOpenHelpers.setWindowReady(true);
     });
 
 
     mainWindow.on("close", (event) => {
         const connectionManager = require("../../common/connection-manager");
-        const { settings } = require("../../common/settings-access");
         if (!settings.hasJustUpdated() && connectionManager.chatIsConnected() && connectionManager.streamerIsOnline()) {
             event.preventDefault();
             dialog.showMessageBox(mainWindow, {
@@ -397,80 +475,6 @@ function updateSplashScreenStatus(newStatus) {
     }
 
     splashscreenWindow.webContents.send("update-splash-screen-status", newStatus);
-}
-
-/**
- * Firebot's main window
- * Keeps a global reference of the window object, if you don't, the window will
- * be closed automatically when the JavaScript object is garbage collected.
- *@type {Electron.BrowserWindow}
- */
-let streamPreview = null;
-
-function createStreamPreviewWindow() {
-
-    if (streamPreview != null && !streamPreview.isDestroyed()) {
-        if (streamPreview.isMinimized()) {
-            streamPreview.restore();
-        }
-        streamPreview.focus();
-        return;
-    }
-
-    const accountAccess = require("../../common/account-access");
-    const streamer = accountAccess.getAccounts().streamer;
-
-    if (!streamer.loggedIn) {
-        return;
-    }
-
-    const streamPreviewWindowState = windowStateKeeper({
-        defaultWidth: 815,
-        defaultHeight: 480,
-        file: "stream-preview-window-state.json"
-    });
-
-    streamPreview = new BrowserWindow({
-        frame: true,
-        alwaysOnTop: true,
-        backgroundColor: "#1E2023",
-        title: "Stream Preview",
-        parent: exports.mainWindow,
-        width: streamPreviewWindowState.width,
-        height: streamPreviewWindowState.height,
-        x: streamPreviewWindowState.x,
-        y: streamPreviewWindowState.y,
-        javascript: false,
-        webPreferences: {},
-        icon: path.join(__dirname, "../../../gui/images/logo_transparent_2.png")
-    });
-    streamPreview.setMenu(null);
-
-    const view = new BrowserView();
-    streamPreview.setBrowserView(view);
-    view.setBounds({
-        x: 0,
-        y: 0,
-        width: streamPreview.getContentSize()[0],
-        height: streamPreview.getContentSize()[1]
-    });
-    view.setAutoResize({
-        width: true,
-        height: true
-    });
-    view.webContents.on('new-window', (vEvent) => {
-        vEvent.preventDefault();
-    });
-
-    view.webContents.loadURL(`https://player.twitch.tv/?channel=${streamer.username}&parent=firebot&muted=true`);
-
-    streamPreviewWindowState.manage(streamPreview);
-
-    streamPreview.on("close", () => {
-        if (!view.isDestroyed()) {
-            view.destroy();
-        }
-    });
 }
 
 /**
