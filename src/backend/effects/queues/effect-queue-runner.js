@@ -1,6 +1,7 @@
 "use strict";
 const logger = require("../../logwrapper");
 const effectRunner = require("../../common/effect-runner");
+const eventManager = require("../../events/EventManager");
 const frontendCommunicator = require("../../common/frontend-communicator");
 
 /**
@@ -119,6 +120,11 @@ class EffectQueue {
                 this.runQueue().then(() => {
                     logger.debug(`Queue ${this.id} is ${this._paused && this._queue.length > 0 ? "paused" : "cleared"}... going idle.`);
                     this._running = false;
+                    if (this._queue.length === 0) {
+                        eventManager.triggerEvent("firebot", "effect-queue-cleared", {
+                            effectQueueId: this.id
+                        });
+                    }
                 });
             }
         }

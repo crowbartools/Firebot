@@ -93,6 +93,8 @@ exports.loadReplaceVariables = () => {
         'donation-from',
         'donation-message',
         'effect-output',
+        'effect-queue-id',
+        'effect-queue-name',
         'ensure-number',
         'eval-vars',
         'file-exists',

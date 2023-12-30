@@ -88,6 +88,15 @@ const firebotEventSource = {
             manualMetadata: {
                 category: "Just Chatting"
             }
+        },
+        {
+            id: "effect-queue-cleared",
+            name: "Effect Queue Cleared",
+            description: "When an effect queue finishes running and is cleared.",
+            cached: false,
+            manualMetadata: {
+                queueName: "Just Chatting"
+            }
         }
     ]
 };
