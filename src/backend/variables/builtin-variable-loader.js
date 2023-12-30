@@ -112,8 +112,6 @@ exports.loadReplaceVariables = () => {
         'gift-sub-type',
         'has-role',
         'has-roles',
-        'hype-train-level',
-        'hype-train-percent',
         'loop-count',
         'loop-item',
         'math',
@@ -231,6 +229,8 @@ exports.loadReplaceVariables = () => {
         'twitch/channel-goal-description',
         'twitch/channel-goal-target-amount',
         'twitch/channel-goal-type',
+        'twitch/hype-train-level',
+        'twitch/hype-train-percent',
         'twitch/sub-count',
         'twitch/sub-points'
     ].forEach(filename => {
