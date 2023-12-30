@@ -1,4 +1,5 @@
 <firebot-item-table
+  ng-if="canUseChannelRewards()"
   items="channelRewardsService.channelRewards"
   on-items-update="onRewardsUpdated(items)"
   headers="headers"
@@ -54,3 +55,10 @@
     </div>
   </fb-item-table-footer>
 </firebot-item-table>
+
+<div
+  ng-if="!canUseChannelRewards()"
+  style="height:100%;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 80px;"
+>
+  <div>In order to use Channel Rewards, please login with either an affiliate or partner account.</div>
+</div>

@@ -10,7 +10,7 @@ import { RewardRedemptionMetadata, SavedChannelReward } from "../../types/channe
 
 
 class ChannelRewardManager {
-    channelRewards: Record<string, SavedChannelReward>;
+    channelRewards: Record<string, SavedChannelReward> = {};
 
     getChannelRewardsDb(): JsonDB {
         return profileManager
