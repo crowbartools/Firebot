@@ -232,7 +232,8 @@ exports.loadReplaceVariables = () => {
         'twitch/hype-train-level',
         'twitch/hype-train-percent',
         'twitch/sub-count',
-        'twitch/sub-points'
+        'twitch/sub-points',
+        'twitch/twitch-channel-url'
     ].forEach(filename => {
         const definition = require(`./builtin/${filename}`);
         replaceVariableManager.registerReplaceVariable(definition);
