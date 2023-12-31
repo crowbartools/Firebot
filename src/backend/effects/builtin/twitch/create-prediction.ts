@@ -40,8 +40,8 @@ const model: EffectType<{
     optionsValidator: (effect) => {
         const errors: string[] = [];
 
-        if (!effect.title?.length || !(effect.title.length > 0 && effect.title.length <= 45)) {
-            errors.push("You must enter a title no more than 45 characters long");
+        if (!effect.title?.length || effect.title.length === 0) {
+            errors.push("You must enter a title");
         }
 
         if (!(effect.duration >= 30 && effect.duration <= 1800)) {
@@ -63,6 +63,18 @@ const model: EffectType<{
         };
     },
     onTriggerEvent: async ({ effect }) => {
+        if (!effect.title.length || effect.title.length < 1 || effect.title.length > 45) {
+            logger.error(`Unable to create prediction. Prediction title "${effect.title}" must be between 1 and 45 characters.`);
+            return false;
+        }
+
+        effect.outcomes.forEach(o => {
+            if (!o.length || o.length < 1 || o.length > 25) {
+                logger.error(`Unable to create prediction. Prediction outcome "${o}" must be between 1 and 25 characters.`);
+                return false;
+            }
+        });
+
         logger.debug(`Creating Twitch prediction "${effect.title}"`);
         return await twitchApi.predictions.createPrediction(effect.title, effect.outcomes, effect.duration);
     }

@@ -47,8 +47,8 @@ const model: EffectType<{
     optionsValidator: (effect) => {
         const errors: string[] = [];
 
-        if (!effect.title?.length || !(effect.title.length > 0 && effect.title.length <= 25)) {
-            errors.push("You must enter a title no more than 25 characters long");
+        if (!effect.title?.length || effect.title.length === 0) {
+            errors.push("You must enter a title");
         }
 
         if (!(effect.duration >= 15 && effect.duration <= 1800)) {
@@ -77,6 +77,18 @@ const model: EffectType<{
         };
     },
     onTriggerEvent: async ({ effect }) => {
+        if (!effect.title.length || effect.title.length < 1 || effect.title.length > 60) {
+            logger.error(`Unable to create poll. Poll title "${effect.title}" must be between 1 and 60 characters.`);
+            return false;
+        }
+
+        effect.choices.forEach(c => {
+            if (!c.length || c.length < 1 || c.length > 25) {
+                logger.error(`Unable to create poll. Poll choice "${c}" must be between 1 and 25 characters.`);
+                return false;
+            }
+        });
+
         logger.debug(`Creating Twitch poll "${effect.title}"`);
         return await twitchApi.polls.createPoll(
             effect.title,
