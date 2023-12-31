@@ -179,7 +179,7 @@ function createMainWindow() {
                             component: "importSetupModal"
                         });
                     },
-                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/import.png")
+                    icon: path.resolve(__dirname, "../../../gui/images/icons/mdi/import.png")
                 },
                 {
                     type: 'separator'
@@ -193,7 +193,7 @@ function createMainWindow() {
                         );
                         shell.openPath(rootFolder);
                     },
-                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/folder-account-outline.png")
+                    icon: path.resolve(__dirname, "../../../gui/images/icons/mdi/folder-account-outline.png")
                 },
                 {
                     label: 'Open Logs Folder',
@@ -204,7 +204,7 @@ function createMainWindow() {
                         );
                         shell.openPath(rootFolder);
                     },
-                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/folder-text-outline.png")
+                    icon: path.resolve(__dirname, "../../../gui/images/icons/mdi/folder-text-outline.png")
                 },
                 {
                     label: 'Open Backups Folder',
@@ -215,14 +215,14 @@ function createMainWindow() {
                         );
                         shell.openPath(backupFolder);
                     },
-                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/folder-refresh-outline.png")
+                    icon: path.resolve(__dirname, "../../../gui/images/icons/mdi/folder-refresh-outline.png")
                 },
                 {
                     type: 'separator'
                 },
                 {
                     role: 'quit',
-                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/exit-run.png")
+                    icon: path.resolve(__dirname, "../../../gui/images/icons/mdi/exit-run.png")
                 }
             ]
         },
@@ -231,27 +231,27 @@ function createMainWindow() {
             submenu: [
                 {
                     role: 'cut',
-                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/content-cut.png")
+                    icon: path.resolve(__dirname, "../../../gui/images/icons/mdi/content-cut.png")
                 },
                 {
                     role: 'copy',
-                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/content-copy.png")
+                    icon: path.resolve(__dirname, "../../../gui/images/icons/mdi/content-copy.png")
                 },
                 {
                     role: 'paste',
-                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/content-paste.png")
+                    icon: path.resolve(__dirname, "../../../gui/images/icons/mdi/content-paste.png")
                 },
                 {
                     role: "undo",
-                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/undo.png")
+                    icon: path.resolve(__dirname, "../../../gui/images/icons/mdi/undo.png")
                 },
                 {
                     role: "redo",
-                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/redo.png")
+                    icon: path.resolve(__dirname, "../../../gui/images/icons/mdi/redo.png")
                 },
                 {
                     role: "selectAll",
-                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/select-all.png")
+                    icon: path.resolve(__dirname, "../../../gui/images/icons/mdi/select-all.png")
                 }
             ]
         },
@@ -260,11 +260,11 @@ function createMainWindow() {
             submenu: [
                 {
                     role: 'minimize',
-                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/window-minimize.png")
+                    icon: path.resolve(__dirname, "../../../gui/images/icons/mdi/window-minimize.png")
                 },
                 {
                     role: 'close',
-                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/window-close.png")
+                    icon: path.resolve(__dirname, "../../../gui/images/icons/mdi/window-close.png")
                 }
             ]
         },
@@ -279,7 +279,7 @@ function createMainWindow() {
                             component: "setupWizardModal"
                         });
                     },
-                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/auto-fix.png")
+                    icon: path.resolve(__dirname, "../../../gui/images/icons/mdi/auto-fix.png")
                 },
                 {
                     label: 'Restore from backup...',
@@ -287,7 +287,7 @@ function createMainWindow() {
                     click: async () => {
                         frontendCommunicator.send("restore-backup");
                     },
-                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/backup-restore.png")
+                    icon: path.resolve(__dirname, "../../../gui/images/icons/mdi/backup-restore.png")
                 },
                 {
                     label: 'Custom Variable Inspector',
@@ -296,14 +296,14 @@ function createMainWindow() {
                         // eslint-disable-next-line no-use-before-define
                         createVariableInspectorWindow();
                     },
-                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/text-search.png")
+                    icon: path.resolve(__dirname, "../../../gui/images/icons/mdi/text-search.png")
                 },
                 {
                     type: 'separator'
                 },
                 {
                     role: 'toggledevtools',
-                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/tools.png")
+                    icon: path.resolve(__dirname, "../../../gui/images/icons/mdi/tools.png")
                 }
             ]
         },
@@ -315,14 +315,14 @@ function createMainWindow() {
                     click: () => {
                         shell.openExternal("https://discord.gg/tTmMbrG");
                     },
-                    icon: path.resolve(__dirname, "../../../resources/images/icons/discord.png")
+                    icon: path.resolve(__dirname, "../../../gui/images/icons/discord.png")
                 },
                 {
                     label: 'Follow @FirebotApp on Twitter',
                     click: () => {
                         shell.openExternal("https://twitter.com/FirebotApp");
                     },
-                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/twitter.png")
+                    icon: path.resolve(__dirname, "../../../gui/images/icons/mdi/twitter.png")
                 },
                 {
                     type: 'separator'
@@ -332,21 +332,21 @@ function createMainWindow() {
                     click: () => {
                         shell.openExternal("https://github.com/crowbartools/Firebot");
                     },
-                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/source-branch.png")
+                    icon: path.resolve(__dirname, "../../../gui/images/icons/mdi/source-branch.png")
                 },
                 {
                     label: 'Report a Bug',
                     click: () => {
                         shell.openExternal("https://github.com/crowbartools/Firebot/issues/new?assignees=&labels=Bug&template=bug_report.yml&title=%5BBug%5D+");
                     },
-                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/bug-outline.png")
+                    icon: path.resolve(__dirname, "../../../gui/images/icons/mdi/bug-outline.png")
                 },
                 {
                     label: 'Request a Feature',
                     click: () => {
                         shell.openExternal("https://github.com/crowbartools/Firebot/issues/new?assignees=&labels=Enhancement&template=feature_request.md&title=%5BFeature+Request%5D+");
                     },
-                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/star-circle-outline.png")
+                    icon: path.resolve(__dirname, "../../../gui/images/icons/mdi/star-circle-outline.png")
                 },
                 {
                     type: 'separator'
@@ -356,21 +356,21 @@ function createMainWindow() {
                     click: () => {
                         shell.openExternal("https://crowbar-tools.myspreadshop.com");
                     },
-                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/shopping-outline.png")
+                    icon: path.resolve(__dirname, "../../../gui/images/icons/mdi/shopping-outline.png")
                 },
                 {
                     label: 'Donate',
                     click: () => {
                         shell.openExternal("https://opencollective.com/crowbartools");
                     },
-                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/hand-heart-outline.png")
+                    icon: path.resolve(__dirname, "../../../gui/images/icons/mdi/hand-heart-outline.png")
                 },
                 {
                     label: 'Submit a Testimonial',
                     click: () => {
                         shell.openExternal("https://firebot.app/testimonial-submission");
                     },
-                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/account-heart-outline.png")
+                    icon: path.resolve(__dirname, "../../../gui/images/icons/mdi/account-heart-outline.png")
                 },
                 {
                     type: 'separator'
@@ -380,7 +380,7 @@ function createMainWindow() {
                     click: () => {
                         frontendCommunicator.send("open-about-modal");
                     },
-                    icon: path.resolve(__dirname, "../../../resources/images/icons/mdi/information-outline.png")
+                    icon: path.resolve(__dirname, "../../../gui/images/icons/mdi/information-outline.png")
                 }
             ]
         }
