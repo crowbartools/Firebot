@@ -408,15 +408,21 @@ async function handleChatMessage(firebotChatMessage) {
 
     const { streamer, bot } = accountAccess.getAccounts();
 
+    // check if chat came from the streamer and if we should ignore it.
+    if (command.ignoreStreamer && firebotChatMessage.username === streamer.displayName) {
+        logger.debug("Message came from streamer and this command is set to ignore it");
+        return false;
+    }
+
     // check if chat came from the bot and if we should ignore it.
     if (command.ignoreBot && firebotChatMessage.username === bot.displayName) {
         logger.debug("Message came from bot and this command is set to ignore it");
         return false;
     }
 
-    // check if chat came from the streamer and if we should ignore it.
-    if (command.ignoreStreamer && firebotChatMessage.username === streamer.displayName) {
-        logger.debug("Message came from streamer and this command is set to ignore it");
+    // check if chat came via whisper and if we should ignore it.
+    if (command.ignoreWhispers && firebotChatMessage.whisper) {
+        logger.debug("Message came from whisper and this command is set to ignore it");
         return false;
     }
 

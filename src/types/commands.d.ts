@@ -64,8 +64,9 @@ export type CommandDefinition = {
      * If the command should be hidden from the `!commands` list.
      */
     hidden?: boolean | undefined;
-    ignoreBot?: boolean | undefined;
     ignoreStreamer?: boolean | undefined;
+    ignoreBot?: boolean | undefined;
+    ignoreWhisper?: boolean | undefined;
     /**
      * If a chat message should be sent when the command is tried to be used but
      * the cooldown is not yet over.
