@@ -341,7 +341,7 @@
                         }
                     },
                     {
-                        html: `<a href ><i class="far fa-copy" style="margin-right: 10px;"></i> Copy</a>`,
+                        html: `<a href ><span class="iconify" data-icon="mdi:content-copy" style="margin-right: 10px;"></span> Copy</a>`,
                         click: () => {
                             $scope.copyEvent(event.id);
                         }
@@ -403,14 +403,14 @@
                         }
                     },
                     {
-                        html: `<a href ><i class="far fa-copy mr-4"></i> Copy events</a>`,
+                        html: `<a href ><span class="iconify mr-4" data-icon="mdi:content-copy"></span> Copy events</a>`,
                         click: () => {
                             $scope.copyEvents(group.id);
                         },
                         hasTopDivider: true
                     },
                     {
-                        html: `<a href><i class="far fa-paste mr-4" ng-class="{'disabled': !hasCopiedEvents()}"></i> Paste event(s)</a>`,
+                        html: `<a href><span class="iconify mr-4" data-icon="mdi:content-paste" ng-class="{'disabled': !hasCopiedEvents()}"></span> Paste event(s)</a>`,
                         click: () => {
                             $scope.pasteEvents(group.id);
                         },

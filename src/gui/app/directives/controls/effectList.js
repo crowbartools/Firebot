@@ -213,14 +213,14 @@
                 ctrl.createAllEffectsMenuOptions = () => {
                     const allEffectsMenuOptions = [
                         {
-                            html: `<a href role="menuitem"><i class="far fa-copy mr-4"></i> Copy all effects</a>`,
+                            html: `<a href role="menuitem"><span class="iconify mr-4" data-icon="mdi:content-copy"></span> Copy all effects</a>`,
                             click: () => {
                                 ctrl.copyEffects();
                             },
                             enabled: ctrl.effectsData.list.length > 0
                         },
                         {
-                            html: `<a href role="menuitem"><i class="far fa-paste mr-4"></i> Paste effects</a>`,
+                            html: `<a href role="menuitem"><span class="iconify mr-4" data-icon="mdi:content-paste"></span> Paste effects</a>`,
                             click: function () {
                                 ctrl.pasteEffects(true);
                             },
@@ -284,7 +284,7 @@
                             }
                         },
                         {
-                            html: `<a href ><i class="far fa-copy mr-4"></i> Copy</a>`,
+                            html: `<a href ><span class="iconify mr-4" data-icon="mdi:content-copy"></span> Copy</a>`,
                             click: function ($itemScope) {
                                 const $index = $itemScope.$index;
                                 ctrl.copyEffectAtIndex($index);
@@ -303,7 +303,7 @@
                             enabled: ctrl.hasCopiedEffects(),
                             children: [
                                 {
-                                    html: `<a href><i class="far fa-paste mr-4"></i> Before</a>`,
+                                    html: `<a href><span class="iconify mr-4" data-icon="mdi:content-paste"></span> Before</a>`,
                                     click: function ($itemScope) {
                                         const $index = $itemScope.$index;
                                         if (ctrl.hasCopiedEffects()) {
@@ -312,7 +312,7 @@
                                     }
                                 },
                                 {
-                                    html: `<a href><i class="far fa-paste mr-4"></i> After</a>`,
+                                    html: `<a href><span class="iconify mr-4" data-icon="mdi:content-paste"></span> After</a>`,
                                     click: function ($itemScope) {
                                         const $index = $itemScope.$index;
                                         if (ctrl.hasCopiedEffects()) {
