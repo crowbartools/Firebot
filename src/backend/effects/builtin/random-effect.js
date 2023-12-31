@@ -78,6 +78,7 @@ const randomEffect = {
 
             const effect = event.effect;
             const effectList = effect.effectList;
+            const outputs = effect.outputs;
 
             if (!effectList || !effectList.list) {
                 return resolve(true);
@@ -162,7 +163,8 @@ const randomEffect = {
                     id: effectList.id,
                     list: [chosenEffect],
                     queue: effectList.queue
-                }
+                },
+                outputs: outputs
             };
 
             effectRunner.processEffects(processEffectsRequest)

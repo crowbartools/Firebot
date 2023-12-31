@@ -118,7 +118,7 @@ const model = {
     onTriggerEvent: event => {
         return new Promise(async (resolve) => {
             // What should this do when triggered.
-            const { effect, trigger } = event;
+            const { effect, trigger, outputs } = event;
 
             let effectsToRun = null;
             if (effect.ifs != null) {
@@ -142,7 +142,8 @@ const model = {
             if (effectsToRun != null) {
                 const processEffectsRequest = {
                     trigger: event.trigger,
-                    effects: effectsToRun
+                    effects: effectsToRun,
+                    outputs: outputs
                 };
 
                 effectRunner.processEffects(processEffectsRequest)
