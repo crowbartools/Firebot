@@ -108,7 +108,7 @@
                     createdAt: moment().valueOf()
                 };
 
-                service.chatModerationData.bannedRegularExpressions = service.chatModerationData.bannedRegularExpressions.push(mapped);
+                service.chatModerationData.bannedRegularExpressions.push(mapped);
 
                 backendCommunicator.fireEvent("addBannedRegularExpression", mapped);
             };
