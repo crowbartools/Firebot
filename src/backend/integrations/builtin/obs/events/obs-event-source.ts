@@ -1,6 +1,7 @@
 import { EventSource } from "../../../../../types/events";
 import {
     OBS_CURRENT_PROFILE_CHANGED_EVENT_ID,
+    OBS_CURRENT_PROGRAM_SCENE_CHANGED_EVENT_ID,
     OBS_CURRENT_SCENE_TRANSITION_CHANGED_EVENT_ID,
     OBS_CURRENT_SCENE_TRANSITION_DURATION_CHANGED_EVENT_ID,
     OBS_EVENT_SOURCE_ID,
@@ -72,6 +73,14 @@ export const OBSEventSource: EventSource = {
             description: "When a scene transition in OBS has ended",
             manualMetadata: {
                 transitionName: "Test Transition"
+            }
+        },
+        {
+            id: OBS_CURRENT_PROGRAM_SCENE_CHANGED_EVENT_ID,
+            name: "OBS Current Program Scene Changed",
+            description: "When the current program scene has changed in OBS",
+            manualMetadata: {
+                sceneName: "New Scene"
             }
         },
         {

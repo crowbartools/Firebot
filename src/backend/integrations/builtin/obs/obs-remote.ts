@@ -2,6 +2,7 @@ import { ScriptModules } from "@crowbartools/firebot-custom-scripts-types";
 import OBSWebSocket from "obs-websocket-js";
 import {
     OBS_CURRENT_PROFILE_CHANGED_EVENT_ID,
+    OBS_CURRENT_PROGRAM_SCENE_CHANGED_EVENT_ID,
     OBS_CURRENT_SCENE_TRANSITION_CHANGED_EVENT_ID,
     OBS_CURRENT_SCENE_TRANSITION_DURATION_CHANGED_EVENT_ID,
     OBS_EVENT_SOURCE_ID,
@@ -103,6 +104,16 @@ function setupRemoteListeners() {
             OBS_SCENE_TRANSITION_ENDED_EVENT_ID,
             {
                 transitionName
+            }
+        );
+    });
+
+    obs.on("CurrentProgramSceneChanged", ({ sceneName }) => {
+        eventManager?.triggerEvent(
+            OBS_EVENT_SOURCE_ID,
+            OBS_CURRENT_PROGRAM_SCENE_CHANGED_EVENT_ID,
+            {
+                sceneName
             }
         );
     });
