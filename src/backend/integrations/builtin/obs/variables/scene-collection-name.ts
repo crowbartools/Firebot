@@ -5,11 +5,11 @@ export const SceneCollectionNameVariable: ReplaceVariable = {
     definition: {
         handle: "obsSceneCollectionName",
         description:
-      "The name of the current OBS Scene Collection. If OBS isn't running, it returns 'Unknown'.",
+      "The name of the OBS scene collection that triggered the event, or the name of the current OBS scene collection if there is no event. If OBS isn't running, it returns 'Unknown'.",
         possibleDataOutput: ["text"]
     },
     evaluator: async () => {
-        const currentSceneCollectionName = await getCurrentSceneCollectionName();
+        const currentSceneCollectionName = trigger.metadata?.eventData?.sceneCollectionName ?? await getCurrentSceneCollectionName();
         return currentSceneCollectionName ?? "Unknown";
     }
 };

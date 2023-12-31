@@ -2,6 +2,7 @@ import { EventSource } from "../../../../../types/events";
 import {
     OBS_CURRENT_PROFILE_CHANGED_EVENT_ID,
     OBS_CURRENT_PROGRAM_SCENE_CHANGED_EVENT_ID,
+    OBS_CURRENT_SCENE_COLLECTION_CHANGED_EVENT_ID,
     OBS_CURRENT_SCENE_TRANSITION_CHANGED_EVENT_ID,
     OBS_CURRENT_SCENE_TRANSITION_DURATION_CHANGED_EVENT_ID,
     OBS_EVENT_SOURCE_ID,
@@ -104,6 +105,14 @@ export const OBSEventSource: EventSource = {
             name: "OBS Replay Buffer Saved",
             description: "When OBS saves the replay buffer",
             manualMetadata: {}
+        },
+        {
+            id: OBS_CURRENT_SCENE_COLLECTION_CHANGED_EVENT_ID,
+            name: "OBS Current Scene Collection Changed",
+            description: "When the current scene collection is changed in OBS",
+            manualMetadata: {
+                sceneCollectionName: "New Scene Collection"
+            }
         },
         {
             id: OBS_CURRENT_PROFILE_CHANGED_EVENT_ID,

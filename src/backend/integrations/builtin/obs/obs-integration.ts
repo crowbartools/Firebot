@@ -29,7 +29,7 @@ import { TakeOBSSourceScreenshotEffectType } from "./effects/take-obs-source-scr
 import { OBSEventSource } from "./events/obs-event-source";
 import { SceneNameEventFilter } from "./filters/scene-name-filter";
 import { SceneNameVariable } from "./variables/scene-name-variable";
-import { SceneCollectionNameVariable } from "./variables/scene-collection-name-variable";
+import { SceneCollectionNameVariable } from "./variables/scene-collection-name";
 import { IsStreamingVariable } from "./variables/is-streaming";
 import { IsRecordingVariable } from "./variables/is-recording";
 import { ColorValueVariable } from "./variables/obs-color-value";

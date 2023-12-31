@@ -11,5 +11,6 @@ export const OBS_CURRENT_PROGRAM_SCENE_CHANGED_EVENT_ID = "current-program-scene
 export const OBS_CURRENT_SCENE_TRANSITION_CHANGED_EVENT_ID = "current-scene-transition-changed";
 export const OBS_CURRENT_SCENE_TRANSITION_DURATION_CHANGED_EVENT_ID = "current-scene-transition-duration-changed";
 export const OBS_REPLAY_BUFFER_SAVED_EVENT_ID = "replay-buffer-saved";
+export const OBS_CURRENT_SCENE_COLLECTION_CHANGED_EVENT_ID = "current-scene-collection-changed";
 export const OBS_CURRENT_PROFILE_CHANGED_EVENT_ID = "current-profile-changed";
 export const OBS_VENDOR_EVENT_EVENT_ID = "vendor-event";
