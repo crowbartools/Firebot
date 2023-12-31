@@ -129,6 +129,7 @@ exports.loadReplaceVariables = () => {
         'object-walk-path-raw',
         'object-walk-path',
         'ordinal-indicator',
+        'overlay-instance',
         'poll-winning-choice-name',
         'prediction-winning-outcome-name',
         'preset-list-arg',

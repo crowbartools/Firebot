@@ -11,6 +11,7 @@ const path = require('path');
 const logger = require("../backend/logwrapper");
 const { settings } = require("../backend/common/settings-access");
 const effectManager = require("../backend/effects/effectManager");
+const eventManager = require("../backend/events/EventManager");
 const resourceTokenManager = require("../backend/resourceTokenManager");
 
 const electron = require('electron');
@@ -180,7 +181,14 @@ class HttpServerManager extends EventEmitter {
             ws.on('message', (message) => {
                 try {
                     const event = JSON.parse(message);
-                    this.emit("overlay-event", event);
+
+                    if (event.name === "overlay-connected") {
+                        eventManager.triggerEvent("firebot", "overlay-connected", {
+                            instanceName: event.data.instanceName
+                        });
+                    } else {
+                        this.emit("overlay-event", event);
+                    }
                 } catch (error) {
                     logger.error("Error parsing overlay event", error);
                 }
