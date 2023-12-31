@@ -22,7 +22,7 @@ const model: EffectType<{
     },
     optionsTemplate: `
         <eos-container header="Poll Title">
-            <firebot-input input-title="Title" model="effect.title" placeholder-text="Enter poll title" />
+            <firebot-input input-title="Title" model="effect.title" placeholder-text="Enter poll title" menu-position="under" />
         </eos-container>
 
         <eos-container header="Poll Duration" pad-top="true">
