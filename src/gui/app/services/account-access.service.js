@@ -10,7 +10,8 @@
             service.accounts = {
                 streamer: {
                     username: "Streamer",
-                    loggedIn: false
+                    loggedIn: false,
+                    broadcasterType: ""
                 },
                 bot: {
                     username: "Bot",

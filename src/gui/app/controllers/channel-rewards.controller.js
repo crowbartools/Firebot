@@ -5,9 +5,14 @@
         .controller("channelRewardsController", function(
             $scope,
             channelRewardsService,
-            utilityService
+            utilityService,
+            accountAccess
         ) {
             $scope.channelRewardsService = channelRewardsService;
+
+            $scope.canUseChannelRewards = () => accountAccess.accounts["streamer"].loggedIn
+                && (accountAccess.accounts["streamer"].broadcasterType === "affiliate"
+                    || accountAccess.accounts["streamer"].broadcasterType === "partner");
 
             // triggering twitch sync
             channelRewardsService.syncChannelRewards();
