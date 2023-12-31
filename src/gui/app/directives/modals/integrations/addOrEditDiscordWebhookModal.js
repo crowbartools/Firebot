@@ -88,9 +88,12 @@
                 }
 
                 function validateWebhookUrl() {
-                    const webhookRegex = /^https:\/\/discord(?:app)?\.com\/api\/webhooks\/[^/\s]+\/[^/\s]+$/i;
+                    // const webhookRegex = /^https:\/\/discord(?:app)?\.com\/api\/webhooks\/[^/\s]+\/[^/\s]+$/i; // Old Discord Regex
+                    const discordWebhookRegex = /^https:\/\/(?:ptb\.|canary\.)?discord(?:app)?\.com\/api\/webhooks\/[^/\s]+\/[^/\s]+$/i;
+                    const guildedWebhookRegex = /^https:\/\/media\.guilded?\.gg\/webhooks\/[^/\s]+\/[^/\s]+$/i;
                     const webhookUrl = $ctrl.channel.webhookUrl;
-                    return webhookUrl != null && webhookUrl.length > 0 && webhookRegex.test(webhookUrl);
+                    // return webhookUrl != null && webhookUrl.length > 0 && webhookRegex.test(webhookUrl); // Old Return
+                    return webhookUrl != null && webhookUrl.length > 0 && (discordWebhookRegex.test(webhookUrl) || guildedWebhookRegex.test(webhookUrl));
                 }
 
                 $ctrl.save = function() {
