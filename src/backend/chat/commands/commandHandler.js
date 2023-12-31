@@ -408,15 +408,21 @@ async function handleChatMessage(firebotChatMessage) {
 
     const { streamer, bot } = accountAccess.getAccounts();
 
+    // check if chat came from the streamer and if we should ignore it.
+    if (command.ignoreStreamer && firebotChatMessage.username === streamer.displayName) {
+        logger.debug("Message came from streamer and this command is set to ignore it");
+        return false;
+    }
+
     // check if chat came from the bot and if we should ignore it.
     if (command.ignoreBot && firebotChatMessage.username === bot.displayName) {
         logger.debug("Message came from bot and this command is set to ignore it");
         return false;
     }
 
-    // check if chat came from the streamer and if we should ignore it.
-    if (command.ignoreStreamer && firebotChatMessage.username === streamer.displayName) {
-        logger.debug("Message came from streamer and this command is set to ignore it");
+    // check if chat came via whisper and if we should ignore it.
+    if (command.ignoreWhispers && firebotChatMessage.whisper) {
+        logger.debug("Message came from whisper and this command is set to ignore it");
         return false;
     }
 
@@ -438,7 +444,8 @@ async function handleChatMessage(firebotChatMessage) {
         return false;
     }
 
-    if (command.autoDeleteTrigger || (triggeredSubcmd && triggeredSubcmd.autoDeleteTrigger)) {
+    // Can't auto delete whispers, so we ignore auto delete trigger for those
+    if (firebotChatMessage.whisper !== true && command.autoDeleteTrigger || (triggeredSubcmd && triggeredSubcmd.autoDeleteTrigger)) {
         logger.debug("Auto delete trigger is on, attempting to delete chat message");
         await twitchApi.chat.deleteChatMessage(firebotChatMessage.id);
     }

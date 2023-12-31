@@ -150,8 +150,6 @@ class TwitchChat extends EventEmitter {
 
             await chatHelpers.handleChatConnect();
 
-            twitchChatListeners.setupChatListeners(this._streamerIncomingChatClient);
-
             chatterPoll.startChatterPoll();
 
             const vips = await twitchApi.channels.getVips();
@@ -165,22 +163,29 @@ class TwitchChat extends EventEmitter {
 
         try {
             const bot = accountAccess.getAccounts().bot;
-            if (!bot.loggedIn) {
-                return;
+
+            if (bot.loggedIn) {
+                this._botChatClient = new ChatClient({
+                    authProvider: botAuthProvider,
+                    requestMembershipEvents: true
+                });
+
+                this._botChatClient.irc.onRegister(() => this._botChatClient.join(streamer.username));
+
+                twitchChatListeners.setupBotChatListeners(this._botChatClient);
+
+                this._botChatClient.connect();
+            } else {
+                this._botChatClient = null;
             }
-
-            this._botChatClient = new ChatClient({
-                authProvider: botAuthProvider,
-                requestMembershipEvents: true
-            });
-
-            this._botChatClient.irc.onRegister(() => this._botChatClient.join(streamer.username));
-
-            twitchChatListeners.setupBotChatListeners(this._botChatClient);
-
-            this._botChatClient.connect();
         } catch (error) {
             logger.error("Error joining streamers chat channel with Bot account", error);
+        }
+
+        try {
+            twitchChatListeners.setupChatListeners(this._streamerIncomingChatClient, this._botChatClient);
+        } catch (error) {
+            logger.error("Error setting up chat listeners", error);
         }
     }
 

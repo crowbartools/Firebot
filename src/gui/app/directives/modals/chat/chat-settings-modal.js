@@ -173,6 +173,13 @@
                                 input-id="hideBotMessages"
                                 on-update="settings.setChatHideBotAccountMessages(setting)"
                             ></chat-settings-toggle>
+
+                            <chat-settings-toggle
+                                setting="settings.getChatHideWhispers()"
+                                title="Hide whispers in chat feed"
+                                input-id="chatHideWhispers"
+                                on-update="settings.setChatHideWhispers(setting)"
+                            ></chat-settings-toggle>
                         </div>
 
                     </div>
