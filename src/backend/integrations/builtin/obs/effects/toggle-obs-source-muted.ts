@@ -26,7 +26,7 @@ export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
       },
       optionsTemplate: `
     <eos-container header="Audio Sources">
-      <firebot-input model="searchText" input-title="Filter"></firebot-input>
+      <firebot-input model="searchText" input-title="Filter" disable-variables="true"></firebot-input>
       <div>
           <button class="btn btn-link" ng-click="getSourceList()">Refresh Sources</button>
       </div>

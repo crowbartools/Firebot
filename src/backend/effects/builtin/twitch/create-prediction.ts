@@ -20,7 +20,7 @@ const model: EffectType<{
     },
     optionsTemplate: `
         <eos-container header="Prediction Title">
-            <firebot-input input-title="Title" model="effect.title" placeholder-text="Enter prediction title" />
+            <firebot-input input-title="Title" model="effect.title" placeholder-text="Enter prediction title" menu-position="under" />
         </eos-container>
 
         <eos-container header="Prediction Duration" pad-top="true">
