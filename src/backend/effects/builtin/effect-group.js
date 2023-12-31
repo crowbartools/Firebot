@@ -133,7 +133,7 @@ const effectGroup = {
     onTriggerEvent: event => {
         return new Promise(resolve => {
 
-            const { effect, trigger } = event;
+            const { effect, trigger, outputs } = event;
 
             let processEffectsRequest = {};
 
@@ -153,7 +153,8 @@ const effectGroup = {
 
                 processEffectsRequest = {
                     trigger: newTrigger,
-                    effects: presetList.effects
+                    effects: presetList.effects,
+                    outputs: outputs
                 };
             } else {
                 const effectList = effect.effectList;
@@ -164,7 +165,8 @@ const effectGroup = {
 
                 processEffectsRequest = {
                     trigger: trigger,
-                    effects: effectList
+                    effects: effectList,
+                    outputs: outputs
                 };
             }
 

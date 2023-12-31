@@ -74,7 +74,7 @@ function validateEffectCanRun(effectId, triggerType) {
 
 }
 
-async function triggerEffect(effect, trigger) {
+async function triggerEffect(effect, trigger, outputs) {
     // For each effect, send it off to the appropriate handler.
     logger.debug(`Running ${effect.type}(${effect.id}) effect...`);
 
@@ -87,7 +87,7 @@ async function triggerEffect(effect, trigger) {
         }
     };
 
-    return effectDef.onTriggerEvent({ effect, trigger, sendDataToOverlay });
+    return effectDef.onTriggerEvent({ effect, trigger, sendDataToOverlay, outputs });
 }
 
 async function runEffects(runEffectsContext) {
@@ -115,7 +115,7 @@ async function runEffects(runEffectsContext) {
         }));
 
         try {
-            const response = await triggerEffect(effect, trigger);
+            const response = await triggerEffect(effect, trigger, runEffectsContext.outputs);
             if (!response) {
                 continue;
             }

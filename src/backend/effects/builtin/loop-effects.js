@@ -97,8 +97,10 @@ const model = {
     onTriggerEvent: event => {
         return new Promise(async resolve => {
 
-            const { effect, trigger } = event;
+            const { effect, trigger, outputs } = event;
             const effectList = effect.effectList;
+
+            let lastOutputs = outputs ?? {};
 
             if (!effectList || !effectList.list) {
                 return resolve(true);
@@ -108,7 +110,7 @@ const model = {
                 return resolve(true);
             }
 
-            const runEffects = async (loopCount = 0, loopItem = null) => {
+            const runEffects = async (loopCount = 0, loopItem = null, outputs = null) => {
                 const trigger = event.trigger;
                 trigger.metadata.loopCount = loopCount;
                 trigger.metadata.loopItem = loopItem;
@@ -118,7 +120,8 @@ const model = {
                         id: effectList.id,
                         list: effectList.list,
                         queue: effectList.queue
-                    }
+                    },
+                    outputs: outputs
                 };
 
                 try {
@@ -140,7 +143,11 @@ const model = {
                 }
 
                 for (let i = 0; i < loopCount; i++) {
-                    const result = await runEffects(i);
+                    const result = await runEffects(i, null, lastOutputs);
+                    lastOutputs = {
+                        ...lastOutputs,
+                        ...result.outputs
+                    };
                     if (result != null && result.success === true) {
                         if (result.stopEffectExecution) {
                             return resolve({
@@ -178,7 +185,11 @@ const model = {
                     const conditionsPass = await conditionManager.runConditions(effect.conditionData, trigger);
 
                     if (conditionsPass) {
-                        const result = await runEffects(currentLoopCount);
+                        const result = await runEffects(currentLoopCount, null, lastOutputs);
+                        lastOutputs = {
+                            ...lastOutputs,
+                            ...result.outputs
+                        };
                         if (result != null && result.success === true) {
                             if (result.stopEffectExecution) {
                                 return resolve({
@@ -214,7 +225,11 @@ const model = {
 
                 let currentLoopCount = 0;
                 for (const item of arrayToIterate) {
-                    const result = await runEffects(currentLoopCount, item);
+                    const result = await runEffects(currentLoopCount, item, lastOutputs);
+                    lastOutputs = {
+                        ...lastOutputs,
+                        ...result.outputs
+                    };
                     if (result != null && result.success === true) {
                         if (result.stopEffectExecution) {
                             return resolve({
