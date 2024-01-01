@@ -8,6 +8,8 @@ export type FirebotParsedMessagePart = {
     length?: number;
     url?: string;
     animatedUrl?: string;
+    amount?: number;
+    color?: string;
 };
 
 export type FirebotChatMessage = {
@@ -60,4 +62,12 @@ export type FirebotEmote = {
     animatedUrl: string;
     origin: string;
     code: string;
+};
+
+export type FirebotCheermoteInstance = {
+    name: string;
+    amount: number;
+    url: string;
+    animatedUrl: string;
+    color: string;
 };

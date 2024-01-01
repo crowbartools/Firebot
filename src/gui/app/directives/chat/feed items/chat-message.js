@@ -136,6 +136,17 @@
                                     <a ng-if="part.type === 'link'" style="{{$ctrl.chatSizeStyle}}" ng-href="{{part.url}}" target="_blank">{{part.text}}</a>
 
                                     <span
+                                        ng-if="part.type === 'cheer'"
+                                        class="chatEmoticon"
+                                        uib-tooltip="{{part.name}}"
+                                        tooltip-append-to-body="true"
+                                    >
+                                        <img ng-if="part.animatedUrl != '' && part.animatedUrl != null" ng-src="{{part.animatedUrl}}" style="height: 100%;">
+                                        <img ng-if="part.animatedUrl == '' || part.animatedUrl == null" ng-src="{{part.url}}" style="height: 100%;">
+                                    </span>
+                                    <span ng-if="part.type === 'cheer'" style="{{$ctrl.chatSizeStyle}}; font-weight: bold;" ng-style="{ color: part.color }" >{{part.amount}}</span>
+
+                                    <span
                                         ng-if="part.type === 'emote'"
                                         class="chatEmoticon"
                                         uib-tooltip="{{part.origin}}: {{part.name}}"

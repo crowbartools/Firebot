@@ -1,3 +1,5 @@
+import { FirebotChatMessage } from "./chat";
+
 export type TriggerType =
     | "command"
     | "custom_script"
@@ -18,10 +20,13 @@ export type Trigger = {
         hotkey?: unknown;
         command?: unknown;
         userCommand?: { trigger: string; args: string[] };
-        chatMessage?: unknown;
+        chatMessage?: FirebotChatMessage;
         event?: { id: string; name: string };
         eventSource?: { id: string; name: string };
-        eventData?: Record<string, unknown>;
+        eventData?: {
+            chatMessage?: FirebotChatMessage;
+            [x: string]: unknown
+        };
         counter?: {
             id: string;
             name: string;

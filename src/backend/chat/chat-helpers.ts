@@ -1,14 +1,14 @@
-import { HelixChatBadgeSet, HelixEmote } from "@twurple/api";
-import { ChatMessage, ParsedMessagePart, parseChatMessage } from "@twurple/chat";
+import { HelixChatBadgeSet, HelixCheermoteList, HelixEmote } from "@twurple/api";
+import { ChatMessage, ParsedMessageCheerPart, ParsedMessagePart, findCheermotePositions, parseChatMessage } from "@twurple/chat";
 import { PubSubAutoModQueueMessage } from "@twurple/pubsub";
 import { ThirdPartyEmote, ThirdPartyEmoteProvider } from "./third-party/third-party-emote-provider";
 import { BTTVEmoteProvider } from "./third-party/bttv";
 import { FFZEmoteProvider } from "./third-party/ffz";
 import { SevenTVEmoteProvider } from "./third-party/7tv";
-import { FirebotChatMessage, FirebotParsedMessagePart } from "../../types/chat";
+import { FirebotChatMessage, FirebotCheermoteInstance, FirebotParsedMessagePart } from "../../types/chat";
 import logger from "../logwrapper";
 import accountAccess, { FirebotAccount } from "../common/account-access";
-import twitchClient from "../twitch-api/api";
+import twitchApi from "../twitch-api/api";
 import frontendCommunicator from "../common/frontend-communicator";
 import utils from "../utility";
 
@@ -28,13 +28,15 @@ class FirebotChatHelpers {
         new SevenTVEmoteProvider()
     ];
 
+    private _twitchCheermotes: HelixCheermoteList;
+
     private _profilePicUrlCache: Record<string, string> = {};
 
     private readonly URL_REGEX = utils.getUrlRegex();
 
     async cacheBadges(): Promise<void> {
         const streamer = accountAccess.getAccounts().streamer;
-        const client = twitchClient.streamerClient;
+        const client = twitchApi.streamerClient;
         if (streamer.loggedIn && client) {
             try {
                 const channelBadges = await client.chat.getChannelBadges(streamer.userId);
@@ -51,7 +53,7 @@ class FirebotChatHelpers {
     }
 
     async cacheTwitchEmotes(): Promise<void> {
-        const client = twitchClient.streamerClient;
+        const client = twitchApi.streamerClient;
         const streamer = accountAccess.getAccounts().streamer;
 
         if (client == null || !streamer.loggedIn) {
@@ -83,10 +85,48 @@ class FirebotChatHelpers {
         }
     }
 
+    async cacheCheermotes() {
+        this._twitchCheermotes = await twitchApi.bits.getChannelCheermotes();
+    }
+
+    parseCheermote(part: ParsedMessageCheerPart | FirebotParsedMessagePart): FirebotCheermoteInstance {
+        const displayInfo = this._twitchCheermotes.getCheermoteDisplayInfo(part.name, part.amount, {
+            background: "light",
+            state: "animated",
+            scale: "4"
+        });
+
+        const staticDisplayInfo = this._twitchCheermotes.getCheermoteDisplayInfo(part.name, part.amount, {
+            background: "light",
+            state: "static",
+            scale: "4"
+        });
+
+        return {
+            name: part.name,
+            amount: part.amount,
+            url: staticDisplayInfo.url,
+            animatedUrl: displayInfo.url,
+            color: displayInfo.color
+        };
+    }
+
+    async getCheermoteData(message: string): Promise<FirebotCheermoteInstance[]> {
+        const cheermotes: FirebotCheermoteInstance[] = [];
+        if (!(message?.length > 0)) {
+            return cheermotes;
+        }
+
+        const parsedCheermotes = findCheermotePositions(message, this._twitchCheermotes.getPossibleNames());
+
+        return parsedCheermotes.map(this.parseCheermote);
+    }
+
     async handleChatConnect(): Promise<void> {
         await this.cacheBadges();
         await this.cacheTwitchEmotes();
         await this.cacheThirdPartyEmotes();
+        await this.cacheCheermotes();
 
         frontendCommunicator.send("all-emotes", [
             ...Object.values(this._twitchEmotes || {})
@@ -116,9 +156,9 @@ class FirebotChatHelpers {
         }
 
         const streamer = accountAccess.getAccounts().streamer;
-        const client = twitchClient.streamerClient;
+        const client = twitchApi.streamerClient;
         if (streamer.loggedIn && client) {
-            const user = await twitchClient.users.getUserById(userId);
+            const user = await twitchApi.users.getUserById(userId);
             if (user) {
                 this._profilePicUrlCache[userId] = user.profilePictureUrl;
                 return user.profilePictureUrl;
@@ -211,6 +251,14 @@ class FirebotChatHelpers {
                 const emote = this._twitchEmotes.find(e => e.name === part.name);
                 part.url = emote ? emote.getImageUrl(1) : `https://static-cdn.jtvnw.net/emoticons/v2/${part.id}/default/dark/1.0`;
                 part.animatedUrl = emote ? emote.getAnimatedImageUrl("1.0") : null;
+            }
+
+            if (part.type === "cheer") {
+                const parsedCheermote = this.parseCheermote(part);
+
+                part.animatedUrl = parsedCheermote.animatedUrl;
+                part.url = parsedCheermote.url;
+                part.color = parsedCheermote.color;
             }
 
             return part;
@@ -349,7 +397,7 @@ class FirebotChatHelpers {
         }
 
         const messageParts = this._parseMessageParts(firebotChatMessage,
-            parseChatMessage(msgText, msg.emoteOffsets));
+            parseChatMessage(msgText, msg.emoteOffsets, this._twitchCheermotes?.getPossibleNames()));
 
         firebotChatMessage.parts = messageParts;
 

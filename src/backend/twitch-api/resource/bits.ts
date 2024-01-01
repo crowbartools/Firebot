@@ -1,6 +1,6 @@
 import logger from "../../logwrapper";
 import accountAccess from "../../common/account-access";
-import { ApiClient, HelixBitsLeaderboardEntry, HelixBitsLeaderboardPeriod, HelixBitsLeaderboardQuery } from "@twurple/api";
+import { ApiClient, HelixBitsLeaderboardEntry, HelixBitsLeaderboardPeriod, HelixBitsLeaderboardQuery, HelixCheermoteList } from "@twurple/api";
 
 export class TwitchBitsApi {
     private _streamerClient: ApiClient;
@@ -45,5 +45,15 @@ export class TwitchBitsApi {
         return leaderboard.map(l => {
             return l.userName;
         });
+    }
+
+    async getChannelCheermotes(): Promise<HelixCheermoteList> {
+        try {
+            const streamerId: string = accountAccess.getAccounts().streamer.userId;
+            return await this._streamerClient.bits.getCheermotes(streamerId);
+        } catch (error) {
+            logger.error(`Error getting channel cheermotes: ${error.message}`);
+            return null;
+        }
     }
 }
