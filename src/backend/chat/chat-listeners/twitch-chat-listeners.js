@@ -6,6 +6,7 @@ const chatHelpers = require("../chat-helpers");
 const activeUserHandler = require("./active-user-handler");
 const accountAccess = require("../../common/account-access");
 const chatModerationManager = require("../moderation/chat-moderation-manager");
+const chatRolesManager = require("../../roles/chat-roles-manager");
 const twitchEventsHandler = require("../../events/twitch-events");
 const raidMessageChecker = require(".././moderation/raid-message-checker");
 const logger = require("../../logwrapper");
@@ -51,6 +52,12 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText);
 
         await chatModerationManager.moderateMessage(firebotChatMessage);
+
+        if (firebotChatMessage.isVip === true) {
+            chatRolesManager.addVipToVipList(firebotChatMessage.username);
+        } else {
+            chatRolesManager.removeVipFromVipList(firebotChatMessage.username);
+        }
 
         // send to the frontend
         if (firebotChatMessage.isHighlighted) {
@@ -117,6 +124,13 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
 
     streamerChatClient.onAction(async (_channel, _user, messageText, msg) => {
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText, false, true);
+
+        if (firebotChatMessage.isVip === true) {
+            chatRolesManager.addVipToVipList(firebotChatMessage.username);
+        } else {
+            chatRolesManager.removeVipFromVipList(firebotChatMessage.username);
+        }
+
         frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
 
         twitchEventsHandler.chatMessage.triggerChatMessage(firebotChatMessage);
