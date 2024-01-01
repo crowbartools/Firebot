@@ -5,7 +5,7 @@
         .component("quickActions", {
             template: `
                 <div class="quick-actions flex flex-col items-center text-2xl pb-4">
-                    <div ng-repeat="action in quickActionsService.quickActions track by $index" class="mt-4 draggableAction" ng-show="$ctrl.settings[action.id].enabled">
+                    <div ng-repeat="action in quickActionsService.quickActions | orderBy: $ctrl.sortQuickActions track by $index" class="mt-4 draggableAction" ng-show="$ctrl.settings[action.id].enabled">
                         <button
                             ng-if="action.type === 'system'"
                             class="quick-action-btn p-0"
@@ -88,6 +88,10 @@
 
                         settingsService.setQuickActionSettings($ctrl.settings);
                     }
+                };
+
+                $ctrl.sortQuickActions = (qa) => {
+                    return $ctrl.settings[qa.id].position;
                 };
 
                 $ctrl.customQuickActionsContextMenu = (customQuickAction) => {

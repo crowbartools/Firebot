@@ -6,6 +6,7 @@ const effectRunner = require("../common/effect-runner");
 const presetEffectListManager = require("../effects/preset-lists/preset-effect-list-manager");
 const { EffectTrigger } = require("../../shared/effect-constants");
 const accountAccess = require("../common/account-access");
+const { settings } = require("../common/settings-access");
 
 /** @typedef {import("../../shared/types").QuickActionDefinition} QuickActionDefinition */
 
@@ -46,6 +47,14 @@ class QuickActionManager extends JsonDbManager {
             ...this.getSystemQuickActionDefinitions(),
             ...Object.values(this.items)
         ];
+    }
+
+    deleteQuickAction(customQuickActionId) {
+        if (super.deleteItem(customQuickActionId)) {
+            const quickActionSettings = settings.getQuickActionSettings();
+            delete quickActionSettings[customQuickActionId];
+            settings.setQuickActionSettings(quickActionSettings);
+        }
     }
 
     /**
@@ -116,7 +125,7 @@ frontendCommunicator.onAsync("saveAllCustomQuickActions",
     async (/** @type {QuickActionDefinition[]} */ allCustomQuickActions) => await quickActionManager.saveAllItems(allCustomQuickActions));
 
 frontendCommunicator.on("deleteCustomQuickAction",
-    (/** @type {string} */ customQuickActionId) => quickActionManager.deleteItem(customQuickActionId));
+    (/** @type {string} */ customQuickActionId) => quickActionManager.deleteQuickAction(customQuickActionId));
 
 frontendCommunicator.on("triggerQuickAction", quickActionId => {
     quickActionManager.triggerQuickAction(quickActionId);

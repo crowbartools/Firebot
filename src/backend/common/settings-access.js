@@ -293,4 +293,12 @@ settings.setOpenStreamPreviewOnLaunch = (enabled) => {
     pushDataToFile("/settings/openStreamPreviewOnLaunch", enabled === true);
 };
 
+settings.getQuickActionSettings = () => {
+    return getDataFromFile("/settings/quickActions");
+};
+
+settings.setQuickActionSettings = (quickActions) => {
+    pushDataToFile("/settings/quickActions", quickActions);
+};
+
 exports.settings = settings;

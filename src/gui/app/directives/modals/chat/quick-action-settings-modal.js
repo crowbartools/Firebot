@@ -9,7 +9,7 @@
                 <h4 class="modal-title">Quick Action Settings</h4>
             </div>
             <div class="modal-body py-8 px-14" ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.quickActions">
-                <div ng-repeat="action in $ctrl.quickActions track by $index">
+                <div ng-repeat="action in $ctrl.quickActions | orderBy: $ctrl.sortQuickActions track by $index">
                     <div class="mb-2 flex justify-between items-center">
                         <span style="font-weight: 900;">{{action.name}}</span>
                         <span class="mr-10" style="margin-left: auto">
@@ -47,6 +47,10 @@
                 $ctrl.$onInit = () => {
                     $ctrl.quickActions = $ctrl.resolve.quickActions;
                     $ctrl.settings = $ctrl.resolve.settings;
+                };
+
+                $ctrl.sortQuickActions = (qa) => {
+                    return $ctrl.settings[qa.id].position;
                 };
 
                 $ctrl.sortableOptions = {
