@@ -331,16 +331,6 @@ class FirebotChatHelpers {
             roles: []
         };
 
-        if (firebotChatMessage.isReply) {
-            const replyUsername = msg.tags.get("reply-parent-user-login");
-            if (firebotChatMessage.replyParentMessageText.startsWith(`@${replyUsername}`)) {
-                firebotChatMessage.replyParentMessageText = firebotChatMessage.replyParentMessageText.substring(replyUsername.length + 1);
-            }
-            if (msgText.startsWith('@')) {
-                msgText = msgText.split(" ").slice(1).join(" ");
-            }
-        }
-
         const profilePicUrl = await this.getUserProfilePicUrl(firebotChatMessage.userId);
         firebotChatMessage.profilePicUrl = profilePicUrl;
 
@@ -362,6 +352,22 @@ class FirebotChatHelpers {
             parseChatMessage(msgText, msg.emoteOffsets));
 
         firebotChatMessage.parts = messageParts;
+
+        if (firebotChatMessage.isReply) {
+            const replyUsername = msg.tags.get("reply-parent-user-login");
+            if (firebotChatMessage.replyParentMessageText.startsWith(`@${replyUsername}`)) {
+                firebotChatMessage.replyParentMessageText = firebotChatMessage.replyParentMessageText.substring(replyUsername.length + 1);
+            }
+
+            const firstPart = firebotChatMessage.parts[0] ?? {} as Partial<FirebotParsedMessagePart>;
+            if (firstPart.type === "text" && firstPart.text.startsWith('@')) {
+                firstPart.text = firstPart.text.split(" ").slice(1).join(" ");
+
+                if (firstPart.text.trim() === "") {
+                    firebotChatMessage.parts.splice(0, 1);
+                }
+            }
+        }
 
         if (this._badgeCache != null) {
             firebotChatMessage.badges = this._getChatBadges(msg.userInfo.badges);
