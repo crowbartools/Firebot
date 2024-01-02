@@ -312,8 +312,8 @@
                         });
 
                         actions.push({
-                            name: "Highlight Message",
-                            icon: "fa-eye"
+                            name: "Spotlight Message",
+                            icon: "fa-lightbulb-on"
                         });
 
                         actions.push({
@@ -449,10 +449,10 @@
                                 threadOrReplyMessageId: $ctrl.message.id
                             });
                             break;
-                        case "quote this message":
+                        case "quote message":
                             updateChatField(`!quote add @${userName} ${rawText}`);
                             break;
-                        case "highlight this message":
+                        case "spotlight message":
                             chatMessagesService.highlightMessage(userName, rawText);
                             break;
                         case "shoutout":
