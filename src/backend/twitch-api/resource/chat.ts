@@ -53,9 +53,6 @@ export class TwitchChatApi {
         const willSendAsBot: boolean = sendAsBot === true
             && accountAccess.getAccounts().bot?.userId != null
             && this._botClient != null;
-        const senderUserId: string = willSendAsBot === true ?
-            accountAccess.getAccounts().bot.userId :
-            streamerUserId;
 
         if (message?.length < 1) {
             return;

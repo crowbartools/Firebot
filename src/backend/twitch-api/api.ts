@@ -4,6 +4,8 @@ import { AuthProvider } from "@twurple/auth";
 import logger from "../logwrapper";
 import accountAccess from "../common/account-access";
 
+import { UserContextApiClient } from "./user-context-api-client";
+
 import { TwitchAuthApi } from "./resource/auth";
 import { TwitchBitsApi } from "./resource/bits";
 import { TwitchCategoriesApi } from "./resource/categories";
@@ -23,7 +25,7 @@ import { TwitchWhispersApi } from "./resource/whispers";
 
 class TwitchApi {
     private _streamerClient: ApiClient;
-    private _botClient: ApiClient;
+    private _botClient: UserContextApiClient;
 
     setupApiClients(streamerProvider: AuthProvider, botProvider: AuthProvider): void {
         if (!streamerProvider && !botProvider) {
@@ -35,7 +37,10 @@ class TwitchApi {
         }
 
         if (accountAccess.getAccounts().bot.loggedIn) {
-            this._botClient = new ApiClient({ authProvider: botProvider });
+            this._botClient = new UserContextApiClient(
+                { authProvider: botProvider },
+                accountAccess.getAccounts().bot.userId
+            );
         }
 
         logger.info("Finished setting up Twitch API client");
