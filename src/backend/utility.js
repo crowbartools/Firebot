@@ -22,6 +22,10 @@ const getUrlRegex = () => {
     return /\b(?:https?:(?:\/\/)?)?(?:[a-z\d](?:[a-z\d-]{0,253}[a-z\d])?\.)+[a-z][a-z\d-]{0,60}[a-z\d](?:$|[\\/]|\w?)+/gi;
 };
 
+const getNonGlobalUrlRegex = () => {
+    return /\b(?:https?:(?:\/\/)?)?(?:[a-z\d](?:[a-z\d-]{0,253}[a-z\d])?\.)+[a-z][a-z\d-]{0,60}[a-z\d](?:$|[\\/]|\w?)+/i;
+};
+
 /**
  * Translates seconds into human readable format of seconds, minutes, hours, days, and years
  *
@@ -227,6 +231,7 @@ const wait = (ms) => {
 exports.getRandomInt = getRandomInt;
 exports.escapeRegExp = escapeRegExp;
 exports.getUrlRegex = getUrlRegex;
+exports.getNonGlobalUrlRegex = getNonGlobalUrlRegex;
 exports.secondsForHumans = secondsForHumans;
 exports.formattedSeconds = formattedSeconds;
 exports.getTriggerIdFromTriggerData = getTriggerIdFromTriggerData;

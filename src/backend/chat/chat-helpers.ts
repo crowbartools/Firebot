@@ -32,7 +32,7 @@ class FirebotChatHelpers {
 
     private _profilePicUrlCache: Record<string, string> = {};
 
-    private readonly URL_REGEX = utils.getUrlRegex();
+    private readonly URL_REGEX = utils.getNonGlobalUrlRegex();
 
     async cacheBadges(): Promise<void> {
         const streamer = accountAccess.getAccounts().streamer;
