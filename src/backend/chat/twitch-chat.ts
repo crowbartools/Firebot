@@ -305,7 +305,7 @@ frontendCommunicator.onAsync("send-chat-message", async (sendData: ChatMessageRe
 });
 
 frontendCommunicator.onAsync("delete-message", async (messageId: string) => {
-    await twitchApi.chat.deleteChatMessage(messageId);
+    return await twitchApi.chat.deleteChatMessage(messageId);
 });
 
 frontendCommunicator.onAsync("update-user-mod-status", async (data: UserModRequest) => {

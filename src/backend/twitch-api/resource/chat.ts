@@ -117,7 +117,7 @@ export class TwitchChatApi {
 
             return true;
         } catch (error) {
-            logger.error("Error clearing chat", error.message);
+            logger.error("Error deleting chat message", error.message);
         }
 
         return false;

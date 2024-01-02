@@ -7,7 +7,7 @@
     angular
         .module('firebotApp')
         .factory('chatMessagesService', function (logger, listenerService, settingsService,
-            soundService, backendCommunicator, pronounsService, accountAccess) {
+            soundService, backendCommunicator, pronounsService, accountAccess, ngToast) {
             const service = {};
 
             // Chat Message Queue
@@ -255,9 +255,13 @@
                 }
             }
 
-            service.deleteMessage = messageId => {
-                markMessageAsDeleted(messageId);
-                backendCommunicator.send("delete-message", messageId);
+            service.deleteMessage = async (messageId) => {
+                const result = await backendCommunicator.fireEventAsync("delete-message", messageId);
+                if (result === true) {
+                    markMessageAsDeleted(messageId);
+                } else {
+                    ngToast.create("Unable to delete chat message. Check log for more details.");
+                }
             };
 
             backendCommunicator.on("twitch:chat:message:deleted", markMessageAsDeleted);
