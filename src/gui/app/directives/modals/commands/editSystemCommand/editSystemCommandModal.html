@@ -52,6 +52,27 @@
         <div class="control__indicator"></div>
       </label>
     </div>
+
+    <firebot-input
+      ng-if="$ctrl.command.baseCommandDescription == null"
+      input-title="Description"  
+      title-tooltip="Displayed on the command list webpage"
+      placeholder-text="Enter description"
+      model="$ctrl.command.description"
+      disable-variables="true"
+      class="pt-6"
+    >
+    </firebot-input>
+    <firebot-input
+      ng-if="$ctrl.command.baseCommandDescription != null"
+      input-title="Description"  
+      title-tooltip="Displayed on the command list webpage"
+      placeholder-text="Enter description"
+      model="$ctrl.command.baseCommandDescription"
+      disable-variables="true"
+      class="pt-6"
+    >
+    </firebot-input>
   </setting-container>
 
   <setting-container

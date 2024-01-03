@@ -1,7 +1,5 @@
 "use strict";
 
-// Basic template for a modal component, copy this and rename to build a modal.
-
 (function() {
     angular.module("firebotApp").component("editSystemCommandModal", {
         templateUrl: "./directives/modals/commands/editSystemCommand/editSystemCommandModal.html",

@@ -90,20 +90,15 @@
           </div>
         </eos-collapsable-panel>
 
-        <div class="input-group pt-4">
-          <span class="input-group-addon" id="basic-addon3"
-            >Description
-            <tooltip text="'Displayed on the command list webpage'"></tooltip
-          ></span>
-          <input
-            type="text"
-            class="form-control"
-            aria-describedby="basic-addon3"
-            ng-model="$ctrl.command.description"
-            placeholder="Enter description"
-          />
-        </div>
-      </div>
+        <firebot-input 
+          input-title="Description"  
+          title-tooltip="Displayed on the command list webpage"
+          placeholder-text="Enter description"
+          model="$ctrl.command.description"
+          disable-variables="true"
+          class="pt-4"
+        >
+        </firebot-input>
 
       <div class="mt-10" ng-hide="$ctrl.command.triggerIsRegex">
         <div class="settings-title">

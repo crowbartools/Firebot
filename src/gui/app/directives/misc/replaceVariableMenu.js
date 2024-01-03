@@ -119,6 +119,10 @@
                 },
                 link: function(scope, element) {
 
+                    if (scope.disableVariableMenu) {
+                        return;
+                    }
+
                     const wrapper = angular.element(`
                         <div style="position: relative;"></div>`
                     );
