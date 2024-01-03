@@ -33,11 +33,35 @@ const model = {
                     ]
                 }
             ]
+        },
+        options: {
+            successTemplate: {
+                type: "string",
+                title: "Output Template",
+                description: "The chat message to send when the marker is created.",
+                tip: "Variables: {timestamp}",
+                default: `Marker created at {timestamp}.`,
+                useTextArea: true
+            },
+            unableTemplate: {
+                type: "string",
+                title: "Unable Output Template",
+                description: "The chat message to send a marker is unable to be created.",
+                default: "Unable to create a stream marker.",
+                useTextArea: true
+            },
+            errorTemplate: {
+                type: "string",
+                title: "Error Output Template",
+                description: "The chat message to send when there was an error creating a marker.",
+                default: "Failed to create a stream marker.",
+                useTextArea: true
+            }
         }
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async ({ userCommand, commandOptions }) => {
 
-        const { args } = event.userCommand;
+        const { args } = userCommand;
 
         const streamer = accountAccess.getAccounts().streamer;
 
@@ -46,13 +70,16 @@ const model = {
                 .createStreamMarker(streamer.userId, args.join(" "));
 
             if (marker == null) {
-                await chat.sendChatMessage(`Unable to create a stream marker.`);
+                await chat.sendChatMessage(commandOptions.unableTemplate);
                 return;
             }
-            await chat.sendChatMessage(`Marker created at ${utils.formattedSeconds(marker.positionInSeconds, true)}`);
+            await chat.sendChatMessage(
+                commandOptions.successTemplate
+                    .replace("{timestamp}", utils.formattedSeconds(marker.positionInSeconds, true))
+            );
         } catch (error) {
             logger.error(error);
-            await chat.sendChatMessage(`Failed to create a stream marker.`);
+            await chat.sendChatMessage(commandOptions.errorTemplate);
         }
     }
 };
