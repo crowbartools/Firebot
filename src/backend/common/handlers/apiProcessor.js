@@ -29,7 +29,7 @@ async function randomAdvice() {
             logger.debug(err.message);
             renderWindow.webContents.send(
                 "error",
-                "Couldnt connect to the advice API. It may be down."
+                "Couldn't connect to the advice API. It may be down."
             );
             return "[Error getting API response]";
         });
@@ -69,7 +69,7 @@ async function randomDogFact() {
             logger.debug(err.message);
             renderWindow.webContents.send(
                 "error",
-                "Couldnt connect to the dog fact api. It may be down."
+                "Couldn't connect to the dog fact API. It may be down."
             );
             return "[Error getting API response]";
         });
@@ -99,7 +99,7 @@ async function randomPokemon() {
             logger.debug(err.message);
             renderWindow.webContents.send(
                 "error",
-                "Couldnt connect to the pokemon api. It may be down."
+                "Couldn't connect to the Pokemon API. It may be down."
             );
             return "[Error getting API response]";
         });
@@ -118,7 +118,7 @@ async function numberTrivia() {
             logger.debug(err.message);
             renderWindow.webContents.send(
                 "error",
-                "Couldnt connect to the number trivia api. It may be down."
+                "Couldn't connect to the number trivia API. It may be down."
             );
             return "[Error getting API response]";
         });
@@ -143,7 +143,7 @@ async function dadJoke() {
             logger.debug(err.message);
             renderWindow.webContents.send(
                 "error",
-                "Couldnt connect to the dad joke API. It may be down."
+                "Couldn't connect to the dad joke API. It may be down."
             );
             return "[Error getting API response]";
         });
