@@ -131,6 +131,7 @@ exports.loadReplaceVariables = () => {
         'ordinal-indicator',
         'overlay-instance',
         'poll-winning-choice-name',
+        'poll-winning-choice-votes',
         'prediction-winning-outcome-name',
         'preset-list-arg',
         'previous-currency-amount',
