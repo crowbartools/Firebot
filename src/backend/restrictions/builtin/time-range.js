@@ -138,7 +138,7 @@ const model = {
 
     },
     /*
-      function that resolves/rejects a promise based on if the restriction critera is met
+      function that resolves/rejects a promise based on if the restriction criteria is met
     */
     predicate: async (trigger, restrictionData) => {
         return new Promise(async (resolve, reject) => {

@@ -6,7 +6,7 @@ const logger = require('../../logwrapper');
 const model = {
     definition: {
         handle: "objectWalkPath",
-        description: "Returns the json value from an JSON object at the given dot-noated path",
+        description: "Returns the json value from an JSON object at the given dot-notated path",
         usage: "objectWalkPath[jsonText, path.to.value]",
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]

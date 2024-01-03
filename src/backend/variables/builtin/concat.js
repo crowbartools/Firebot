@@ -10,7 +10,7 @@ const model = {
         description: "Appends text together",
         usage: "concat[text, text, ...]",
         categories: [VariableCategory.TEXT],
-        possibleDataOuput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, ...args) => args.join('')
 };

@@ -36,7 +36,7 @@
                         const restrictionController = def.optionsController;
 
                         if (restrictionController != null) {
-                            // Invoke the controller and inject any dependancies
+                            // Invoke the controller and inject any dependencies
                             $injector.invoke(restrictionController, {}, { $scope: $scope });
                         }
                     }

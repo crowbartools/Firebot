@@ -12,7 +12,7 @@
 
             $scope.us = updatesService;
 
-            // Get update information if we havent alreday
+            // Get update information if we havent already
             if (!updatesService.hasCheckedForUpdates) {
                 updatesService.checkForUpdate();
             }

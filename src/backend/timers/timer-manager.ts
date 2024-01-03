@@ -137,7 +137,7 @@ class TimerManager extends JsonDbManager<Timer> {
          * Create the interval.
          * The first argument "runTimer" is the function defined above.
          * The second argument is how often the user defined this timer to run (mins converted to milliseconds)
-         * The third argument "timer" is the timer object getting passed as an argument to the "runTimer" fuction
+         * The third argument "timer" is the timer object getting passed as an argument to the "runTimer" function
          *
          * the setInterval function returns an id that we use to clear the interval when needed
          */

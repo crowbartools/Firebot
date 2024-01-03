@@ -22,7 +22,7 @@
                     cellTemplate: `{{data.value}}`
                 },
                 {
-                    name: "MIMINUM",
+                    name: "MINIMUM",
                     icon: "fa-arrow-to-bottom",
                     cellTemplate: `{{data.minimum ? data.minimum : 'n/a'}}`
                 },
