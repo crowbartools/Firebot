@@ -30,7 +30,7 @@ exports.run = async () => {
         try {
             await fse.copy(v4ScriptsPath, v5ScriptsPath);
         } catch (err) {
-            incompatibilityWarnings.push("Unable to import V4 Scripts as an error occured.");
+            incompatibilityWarnings.push("Unable to import V4 Scripts as an error occurred.");
             logger.warn("Unable to copy v4 scripts.", err);
         }
 

@@ -75,7 +75,7 @@
                     } catch (error) {
                         logger.error("Unknown error while attempting to restore backup", error);
                         $ctrl.restoreHasError = true;
-                        $ctrl.errorMessage = "An unknown error occured while attempting to restore the backup. Please reach out on Discord or Twitter. We are happy to help!";
+                        $ctrl.errorMessage = "An unknown error occurred while attempting to restore the backup. Please reach out on Discord or Twitter. We are happy to help!";
                     }
                     resolve();
                 });

@@ -54,7 +54,7 @@
                             const effectController = eval(effectDef.optionsControllerRaw); // eslint-disable-line no-eval
 
                             if (effectController != null) {
-                                // Invoke the controller and inject any dependancies
+                                // Invoke the controller and inject any dependencies
                                 $injector.invoke(effectController, {}, { $scope: $scope });
                             }
                         }

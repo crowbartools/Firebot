@@ -236,7 +236,7 @@ const playSound = {
 
     <div ng-hide="fetchError === false || fetchError === 'NotConfigured' || fetchError.$metadata.httpStatusCode === 403">
         <eos-container>
-            <span class="muted">An error as occured while trying to read the available voices from AWS. The error was: <b>{{ fetchError }}</b>. Please try again later.</span>
+            <span class="muted">An error as occurred while trying to read the available voices from AWS. The error was: <b>{{ fetchError }}</b>. Please try again later.</span>
         </eos-container>
     </div>
 

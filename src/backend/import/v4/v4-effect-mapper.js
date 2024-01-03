@@ -45,7 +45,7 @@ const v4IncompatibilityReasonMap = {
     "Cooldown": "V5 handles control cooldowns fundamentally different",
     "Run Command": "Impossible to import effect",
     "Show Event": "Effect is no longer supported",
-    "Clear Effects": "Effect is fundementally different in V5",
+    "Clear Effects": "Effect is fundamentally different in V5",
     "Group List": "V5 handles groups/scenes fundamentally different",
     "Scene List": "V5 handles groups/scenes fundamentally different",
     "Command List": "Effect doesn't exist in V5 as this functionality now exists as a System Command",

@@ -33,7 +33,7 @@
                                     <p>We have detected Firebot v4 data on your computer.<br><strong>Would you like to import anything?</strong></p>
 
                                     <div class="muted" style="font-size:12px;padding: 0 65px;margin-top: 0px;">
-                                        <strong>Please note:</strong><br>Due to some changes and fundemental differences in v5, we may not be able to import 100% of your v4 data. Some additional setup may be required.
+                                        <strong>Please note:</strong><br>Due to some changes and fundamental differences in v5, we may not be able to import 100% of your v4 data. Some additional setup may be required.
                                     </div>
                                 </div>
                                 <div style="margin-top: 10px;">
@@ -487,7 +487,7 @@
             };
 
             $ctrl.$onInit = function() {
-                // When the compontent is initialized
+                // When the component is initialized
                 // This is where you can start to access bindings, such as variables stored in 'resolve'
                 // IE $ctrl.resolve.shouldDelete or whatever
             };

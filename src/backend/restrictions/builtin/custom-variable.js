@@ -31,7 +31,7 @@ const model = {
         return `${name} is ${value}`;
     },
     /*
-      function that resolves/rejects a promise based on if the restriction critera is met
+      function that resolves/rejects a promise based on if the restriction criteria is met
     */
     predicate: (_, restrictionData) => {
         return new Promise(async (resolve, reject) => {

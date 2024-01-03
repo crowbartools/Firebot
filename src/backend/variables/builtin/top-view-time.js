@@ -10,7 +10,7 @@ const util = require("../../utility");
 const model = {
     definition: {
         handle: "topViewTime",
-        description: "Comma seperated list of users with the most view time (in hours). Defaults to top 10, you can provide a custom number as a second argument.",
+        description: "Comma separated list of users with the most view time (in hours). Defaults to top 10, you can provide a custom number as a second argument.",
         usage: "topViewTime[count]",
         possibleDataOutput: [OutputDataType.TEXT]
     },

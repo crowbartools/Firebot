@@ -69,7 +69,7 @@ async function randomDogFact() {
             logger.debug(err.message);
             renderWindow.webContents.send(
                 "error",
-                "Couldnt conenct to the dog fact api. It may be down."
+                "Couldnt connect to the dog fact api. It may be down."
             );
             return "[Error getting API response]";
         });

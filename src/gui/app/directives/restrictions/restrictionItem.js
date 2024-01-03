@@ -56,7 +56,7 @@
 
                     const displayValueFunc = $ctrl.restrictionDefinition.optionsValueDisplay;
                     if (displayValueFunc != null && $ctrl.restriction != null) {
-                        // Invoke the func and inject any dependancies
+                        // Invoke the func and inject any dependencies
                         $q.when($injector.invoke(displayValueFunc, {}, { restriction: $ctrl.restriction }))
                             .then(displayText => {
                                 $ctrl.displayText = displayText;

@@ -105,7 +105,7 @@
                 };
 
                 $ctrl.$onInit = function () {
-                    // When the compontent is initialized
+                    // When the component is initialized
                     // This is where you can start to access bindings, such as variables stored in 'resolve'
                     // IE $ctrl.resolve.shouldDelete or whatever
                 };

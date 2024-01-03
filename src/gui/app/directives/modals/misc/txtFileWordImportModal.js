@@ -21,7 +21,7 @@
 
                 <div style="margin-top: 15px;">
                     <div class="modal-subheader" style="padding: 0 0 4px 0">
-                        Seperator <tooltip text="'Tell Firebot how the items in the txt file are seperated'"></tooltip>
+                        Separator <tooltip text="'Tell Firebot how the items in the txt file are separated'"></tooltip>
                     </div>
                     <div class="dropdown">
                         <button class="btn btn-default dropdown-toggle" type="button" id="options-sounds" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -69,7 +69,7 @@
                 };
 
                 $ctrl.$onInit = function() {
-                    // When the compontent is initialized
+                    // When the component is initialized
                     // This is where you can start to access bindings, such as variables stored in 'resolve'
                     // IE $ctrl.resolve.shouldDelete or whatever
                 };

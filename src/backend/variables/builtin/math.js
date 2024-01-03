@@ -20,21 +20,21 @@ const model = {
         // TODO(ebiggz, v5.3.2): remove this after a few versions to give users time to not needing to quote arguments to get validation to work
         exp = await utils.populateStringWithTriggerData(exp, trigger);
 
-        let evalulation;
+        let evaluation;
         try {
-            evalulation = mathjs.evaluate(exp);
+            evaluation = mathjs.evaluate(exp);
         } catch (err) {
             logger.warn("error parsing math expression", err);
-            evalulation = -1;
+            evaluation = -1;
         }
-        if (evalulation != null && typeof evalulation === "object") {
-            if (evalulation.entries.length > 0) {
-                evalulation = evalulation.entries[0];
+        if (evaluation != null && typeof evaluation === "object") {
+            if (evaluation.entries.length > 0) {
+                evaluation = evaluation.entries[0];
             } else {
-                evalulation = -1;
+                evaluation = -1;
             }
         }
-        return evalulation != null ? evalulation : -1;
+        return evaluation != null ? evaluation : -1;
     },
     argsCheck: (exp) => {
 
