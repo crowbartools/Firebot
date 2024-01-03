@@ -27,7 +27,7 @@ export class TwitchAuthApi {
                     break;
             }
 
-            // This shouldnt only happen if an account is not logged in
+            // This should only happen if an account is not logged in
             if (!userId || !apiClient) {
                 return false;
             }
