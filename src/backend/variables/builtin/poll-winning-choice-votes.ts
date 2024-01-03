@@ -2,7 +2,10 @@ import { EffectTrigger } from "../../../shared/effect-constants";
 import { OutputDataType, VariableCategory } from "../../../shared/variable-constants";
 
 const triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:channel-poll-end"];
+triggers[EffectTrigger.EVENT] = [
+    "twitch:channel-poll-progress",
+    "twitch:channel-poll-end"
+];
 triggers[EffectTrigger.MANUAL] = true;
 
 const model = {

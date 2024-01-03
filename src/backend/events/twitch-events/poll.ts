@@ -5,6 +5,26 @@ import {
     EventSubChannelPollEndStatus
 } from "@twurple/eventsub-base";
 
+interface TwitchPollWinningChoice {
+    winningChoiceName: string;
+    winningChoiceVotes: number;
+}
+
+function getWinningChoices(choices: EventSubChannelPollChoice[]): TwitchPollWinningChoice {
+    const winningChoiceVotes = Math.max(...choices.map(c => c.totalVotes));
+
+    // Multiple choices in the poll may be winning, so we return all
+    const winningChoiceName = choices
+        .filter(c => c.totalVotes === winningChoiceVotes)
+        .map(c => c.title)
+        .join(", ");
+
+    return {
+        winningChoiceName,
+        winningChoiceVotes
+    };
+}
+
 export function triggerChannelPollBegin(
     title: string,
     choices: EventSubChannelPollBeginChoice[],
@@ -31,9 +51,13 @@ export function triggerChannelPollProgress(
     isChannelPointsVotingEnabled: boolean,
     channelPointsPerVote: number
 ) {
+    const { winningChoiceName, winningChoiceVotes } = getWinningChoices(choices);
+
     eventManager.triggerEvent("twitch", "channel-poll-progress", {
         title,
         choices,
+        winningChoiceName,
+        winningChoiceVotes,
         startDate,
         endDate,
         isChannelPointsVotingEnabled,
@@ -50,13 +74,7 @@ export function triggerChannelPollEnd(
     channelPointsPerVote: number,
     status: EventSubChannelPollEndStatus
 ) {
-    const winningChoiceVotes = Math.max(...choices.map(c => c.totalVotes));
-
-    // Multiple choices in the poll may win, so we return all
-    const winningChoiceName = choices
-        .filter(c => c.totalVotes === winningChoiceVotes)
-        .map(c => c.title)
-        .join(", ");
+    const { winningChoiceName, winningChoiceVotes } = getWinningChoices(choices);
 
     eventManager.triggerEvent("twitch", "channel-poll-end", {
         title,
