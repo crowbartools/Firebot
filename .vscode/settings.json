@@ -23,5 +23,8 @@
       "ui",
       "overlay",
       "scripts"
-    ]
+    ],
+    "[typescript]": {
+      "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    }
 }
