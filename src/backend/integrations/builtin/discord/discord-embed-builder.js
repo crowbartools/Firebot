@@ -12,10 +12,12 @@ function parseColor(color = "#29b9ed") {
     return colorInt;
 }
 
+function buildCustomEmbed(customEmbedData, color) {
     const customEmbed = {
         title: customEmbedData.title,
         url: customEmbedData.url,
-        description: customEmbedData.description
+        description: customEmbedData.description,
+        color
     };
 
     if (customEmbedData.authorName) {
@@ -32,7 +34,7 @@ function parseColor(color = "#29b9ed") {
     return customEmbed;
 }
 
-async function buildChannelEmbed() {
+async function buildChannelEmbed(color) {
     const streamer = accountAccess.getAccounts().streamer;
 
     /**@type {import('@twurple/api').HelixStream} */
@@ -61,7 +63,7 @@ async function buildChannelEmbed() {
     const channelEmbed = {
         title: currentStream.title,
         url: `https://twitch.tv/${user.name}`,
-        color: 2210285,
+        color: color,
         author: {
             name: user.displayName,
             icon_url: user.profilePictureUrl //eslint-disable-line camelcase
@@ -110,12 +112,12 @@ async function buildClipEmbed(clip, color) {
     };
 }
 
-async function buildScreenshotEmbed(imageUrl) {
+async function buildScreenshotEmbed(imageUrl, color) {
     const streamer = accountAccess.getAccounts().streamer;
     const channelInfo = await twitchApi.channels.getChannelInformation();
     return {
         title: channelInfo.title,
-        color: 2210285,
+        color: parseColor(color),
         footer: {
             text: streamer.username,
             icon_url: streamer.avatar //eslint-disable-line camelcase
@@ -134,10 +136,10 @@ async function buildScreenshotEmbed(imageUrl) {
     };
 }
 
-async function buildEmbed(embedType, customEmbedData) {
+async function buildEmbed(embedType, customEmbedData, color) {
     switch (embedType) {
         case "channel": {
-            const channelEmbed = await buildChannelEmbed();
+            const channelEmbed = await buildChannelEmbed(parseColor(color));
             if (channelEmbed) {
                 channelEmbed.allowed_mentions = { //eslint-disable-line camelcase
                     parse: ["users", "roles", "everyone"]
@@ -147,7 +149,7 @@ async function buildEmbed(embedType, customEmbedData) {
             return null;
         }
         case "custom": {
-            return buildCustomEmbed(customEmbedData);
+            return buildCustomEmbed(customEmbedData, parseColor(color));
         }
         default:
             return null;
