@@ -4,11 +4,20 @@ const twitchApi = require("../../../twitch-api/api");
 
 const accountAccess = require("../../../common/account-access");
 
-function buildCustomEmbed(customEmbedData) {
+function parseColor(color = "#29b9ed") {
+    let colorInt = parseInt(color.substring(1), 16);
+    if (isNaN(colorInt)) {
+        colorInt = parseInt('29b9ed', 16);
+    }
+    return colorInt;
+}
+
+function buildCustomEmbed(customEmbedData, color) {
     const customEmbed = {
         title: customEmbedData.title,
         url: customEmbedData.url,
-        description: customEmbedData.description
+        description: customEmbedData.description,
+        color
     };
 
     if (customEmbedData.authorName) {
@@ -25,7 +34,7 @@ function buildCustomEmbed(customEmbedData) {
     return customEmbed;
 }
 
-async function buildChannelEmbed() {
+async function buildChannelEmbed(color) {
     const streamer = accountAccess.getAccounts().streamer;
 
     /**@type {import('@twurple/api').HelixStream} */
@@ -54,7 +63,7 @@ async function buildChannelEmbed() {
     const channelEmbed = {
         title: currentStream.title,
         url: `https://twitch.tv/${user.name}`,
-        color: 2210285,
+        color: color,
         author: {
             name: user.displayName,
             icon_url: user.profilePictureUrl //eslint-disable-line camelcase
@@ -76,14 +85,15 @@ async function buildChannelEmbed() {
 
 /**
  * @param {import('@twurple/api').HelixClip} clip
+ * @param color
  */
-async function buildClipEmbed(clip) {
+async function buildClipEmbed(clip, color) {
     const streamer = accountAccess.getAccounts().streamer;
     const game = await clip.getGame();
     return {
         title: clip.title,
         url: clip.url,
-        color: 2210285,
+        color: parseColor(color),
         footer: {
             text: streamer.username,
             icon_url: streamer.avatar //eslint-disable-line camelcase
@@ -102,12 +112,12 @@ async function buildClipEmbed(clip) {
     };
 }
 
-async function buildScreenshotEmbed(imageUrl) {
+async function buildScreenshotEmbed(imageUrl, color) {
     const streamer = accountAccess.getAccounts().streamer;
     const channelInfo = await twitchApi.channels.getChannelInformation();
     return {
         title: channelInfo.title,
-        color: 2210285,
+        color: parseColor(color),
         footer: {
             text: streamer.username,
             icon_url: streamer.avatar //eslint-disable-line camelcase
@@ -126,10 +136,10 @@ async function buildScreenshotEmbed(imageUrl) {
     };
 }
 
-async function buildEmbed(embedType, customEmbedData) {
+async function buildEmbed(embedType, customEmbedData, color) {
     switch (embedType) {
         case "channel": {
-            const channelEmbed = await buildChannelEmbed();
+            const channelEmbed = await buildChannelEmbed(parseColor(color));
             if (channelEmbed) {
                 channelEmbed.allowed_mentions = { //eslint-disable-line camelcase
                     parse: ["users", "roles", "everyone"]
@@ -139,7 +149,7 @@ async function buildEmbed(embedType, customEmbedData) {
             return null;
         }
         case "custom": {
-            return buildCustomEmbed(customEmbedData);
+            return buildCustomEmbed(customEmbedData, parseColor(color));
         }
         default:
             return null;

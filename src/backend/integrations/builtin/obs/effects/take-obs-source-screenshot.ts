@@ -1,4 +1,5 @@
 import { EffectType } from "../../../../../types/effects";
+import {CustomEmbed, EmbedType} from "../../../../../types/discord";
 import {getCurrentSceneName, OBSSource, OBSSourceScreenshotSettings, takeSourceScreenshot} from "../obs-remote";
 import logger from "../../../../logwrapper";
 import * as screenshotHelpers from "../../../../common/screenshot-helpers";
@@ -17,17 +18,29 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
     showInOverlay?: boolean;
     postInDiscord?: boolean;
     discordChannelId?: string;
+    message?: string;
     height: number;
     width: number;
     quality: number;
     useActiveScene: boolean;
+    includeEmbed?: boolean;
+    embedType?: EmbedType;
+    embedColor?: string;
+    customEmbed: CustomEmbed;
 } & screenshotHelpers.ScreenshotEffectData> = {
     definition: {
         id: "firebot:obs-source-screenshot",
         name: "Take OBS Source Screenshot",
         description: "Takes a screenshot of an OBS Source and saves it.",
         icon: "fad fa-camera-retro",
-        categories: ["common"]
+        categories: ["common"],
+        outputs: [
+            {
+                label: "Screenshot Data URL",
+                description: "The base64 data URL for the screenshot.",
+                defaultName: "screenshotDataUrl"
+            }
+        ]
     },
     optionsTemplate: `
     <div>
@@ -115,6 +128,7 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
     },
     optionsValidator: (effect) => {
         const errors: string[] = [];
+        const rgbRegexp = /^#?[0-9a-f]{6}$/ig;
         if (!effect.useActiveScene && effect.source == null) {
             errors.push("You need to select a source!");
         }
@@ -129,6 +143,9 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
         }
         if (effect.postInDiscord && !effect.discordChannelId) {
             errors.push("You need to select a discord channel!");
+        }
+        if (effect.postInDiscord && effect.embedType && !rgbRegexp.test(effect.embedColor)) {
+            errors.push("Discord Embed Color must be in RGB format (#0066FF)");
         }
         return errors;
     },
@@ -151,7 +168,12 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
 
         if (screenshotDataUrl == null) {
             logger.error("Source screenshot is null, ignoring.");
-            return true;
+            return {
+                success: false,
+                outputs: {
+                    screenshotDataUrl: ""
+                }
+            };
         }
 
         const base64ImageData = screenshotDataUrl.split("base64,")[1];
@@ -164,13 +186,27 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
         }
 
         if (effect.postInDiscord) {
-            await screenshotHelpers.sendScreenshotToDiscord(base64ImageData, effect.discordChannelId);
+            switch (effect.embedType) {
+                case "channel":
+                case "custom":
+                    await screenshotHelpers.sendEmbedToDiscord(base64ImageData, effect.embedType, effect.message, effect.customEmbed, effect.discordChannelId, effect.embedColor);
+                    break;
+                case "stream":
+                case undefined:
+                    await screenshotHelpers.sendScreenshotToDiscord(base64ImageData, effect.message, effect.discordChannelId, effect.embedColor);
+                    break;
+            }
         }
 
         if (effect.showInOverlay) {
             screenshotHelpers.sendScreenshotToOverlay(screenshotDataUrl, effect);
         }
 
-        return true;
+        return {
+            success: true,
+            outputs: {
+                screenshotDataUrl
+            }
+        };
     }
 };

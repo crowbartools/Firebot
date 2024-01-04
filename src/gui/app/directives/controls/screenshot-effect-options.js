@@ -50,6 +50,8 @@
                         </div>
                     </eos-container>
 
+                    <discord-webhook-message effect="effect" is-screenshot="true" ng-if="effect.postInDiscord"></discord-webhook-message>
+
                     <div ng-if="effect.showInOverlay">
                         <eos-container header="Overlay Duration" pad-top="true">
                             <firebot-input model="effect.duration" input-type="number" disable-variables="true" input-title="Secs" />

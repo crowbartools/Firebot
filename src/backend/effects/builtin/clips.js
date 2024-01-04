@@ -44,6 +44,9 @@ const clip = {
             <div ng-show="effect.postInDiscord" style="margin-left: 30px;">
                 <div>Discord Channel:</div>
                 <dropdown-select options="channelOptions" selected="effect.discordChannelId"></dropdown-select>
+                <div style="margin-top:10px;">
+                    <color-picker-input model="effect.embedColor" label="Embed Color"></color-picker-input>
+                </div>
             </div>
 
             <div style="padding-top:15px">
@@ -123,6 +126,9 @@ const clip = {
 
         if ($scope.effect.options == null) {
             $scope.effect.options = { };
+        }
+        if ($scope.effect.embedColor == null) {
+            $scope.effect.embedColor = "#21b9ed";
         }
 
         // Calculate 16:9
