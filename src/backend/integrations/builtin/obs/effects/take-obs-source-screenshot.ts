@@ -5,7 +5,10 @@ import * as screenshotHelpers from "../../../../common/screenshot-helpers";
 
 export const TakeOBSSourceScreenshotEffectType: EffectType<{
     source: string;
-    format: string;
+    /**
+     * @deprecated No longer used as of 5.60
+     */
+    format?: string;
     file: string;
     overwriteExisting?: boolean;
     saveLocally?: boolean;
@@ -129,13 +132,14 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
     },
     onTriggerEvent: async ({ effect }) => {
         // Compatibility for effects made before 5.60
-        if (!(effect.saveLocally || effect.overwriteExisting || effect.postInDiscord || effect.showInOverlay) && effect.file) {
+        const isLegacyEffect = !(effect.saveLocally || effect.overwriteExisting || effect.postInDiscord || effect.showInOverlay) && effect.file;
+        if (isLegacyEffect) {
             effect.overwriteExisting = true;
         }
 
         const screenshotSettings: OBSSourceScreenshotSettings = {
             sourceName: effect.useActiveScene ? await getCurrentSceneName() : effect.source,
-            imageFormat: "png",
+            imageFormat: isLegacyEffect && effect.format ? effect.format : "png",
             imageHeight: effect.height,
             imageWidth: effect.width,
             imageCompressionQuality: effect.quality
