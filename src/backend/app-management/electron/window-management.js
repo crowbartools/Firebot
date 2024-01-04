@@ -97,7 +97,7 @@ async function createIconImage(relativeIconPath) {
             height: 14
         });
     }
-    return nativeImage.createFrom(iconPath);
+    return iconPath;
 }
 
 /**
