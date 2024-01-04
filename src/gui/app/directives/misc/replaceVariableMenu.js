@@ -123,11 +123,16 @@
                         return;
                     }
 
-                    const wrapper = angular.element(`
-                        <div style="position: relative;"></div>`
-                    );
-                    const compiled = $compile(wrapper)(scope);
-                    element.wrap(compiled);
+                    const parent = element.parent();
+
+                    let wrapper = parent;
+                    if (!parent.hasClass("input-group")) {
+                        wrapper = angular.element(`
+                            <div style="position: relative;"></div>`
+                        );
+                        const compiled = $compile(wrapper)(scope);
+                        element.wrap(compiled);
+                    }
 
                     const button = angular.element(`<span class="variables-btn ${scope.buttonPosition ? scope.buttonPosition : ''}" ng-click="toggleMenu()">$vars</span>`);
                     $compile(button)(scope);

@@ -8,12 +8,15 @@ import discord from "../integrations/builtin/discord/discord-message-sender";
 import { settings } from "../common/settings-access";
 import mediaProcessor from "../common/handlers/mediaProcessor";
 import webServer from "../../server/http-server-manager";
+import moment from "moment";
 
-export async function saveScreenshotToFolder(base64ImageData: string, folderPath: string) {
+export async function saveScreenshotToFolder(base64ImageData: string, folderPath: string, fileName?: string) {
     try {
-        const { title, gameName } = await twitchApi.channels.getChannelInformation();
-        const fileName = sanitizeFileName(`${title}-${gameName}-${new Date().getTime()}`);
-        const folder = path.join(folderPath, `${fileName}.png`);
+        if (!fileName) {
+            const { title } = await twitchApi.channels.getChannelInformation();
+            fileName = `${title} ${moment().format("YYYY-MM-DD HH.mm.ss.SSS A")}`;
+        }
+        const folder = path.join(folderPath, `${sanitizeFileName(fileName)}.png`);
         await fs.writeFile(folder, base64ImageData, { encoding: "base64" });
     } catch (error) {
         logger.error("Failed to save screenshot locally", error);

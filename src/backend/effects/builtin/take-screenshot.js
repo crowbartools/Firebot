@@ -59,7 +59,7 @@ const clip = {
 
             const base64ImageData = screenshotDataUrl.split(';base64,').pop();
             if (effect.saveLocally) {
-                await screenshotHelpers.saveScreenshotToFolder(base64ImageData, effect.folderPath);
+                await screenshotHelpers.saveScreenshotToFolder(base64ImageData, effect.folderPath, effect.fileNamePattern);
             }
 
             if (effect.overwriteExisting) {

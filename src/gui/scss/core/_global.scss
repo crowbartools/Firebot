@@ -56,14 +56,14 @@
   z-index: 3000;
   border-radius: 8px;
   &.below {
-    top: 36px;
+    top: 41px;
   }
   &.bottom {
-    bottom: 36px;
+    bottom: 41px;
     top: unset;
   }
   &.under {
-    bottom: -307px;
+    bottom: unset;
     top: unset;
   }
 }

@@ -12,6 +12,7 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
     file: string;
     overwriteExisting?: boolean;
     saveLocally?: boolean;
+    fileNamePattern?: string;
     folderPath?: string;
     showInOverlay?: boolean;
     postInDiscord?: boolean;
@@ -96,6 +97,7 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
         <screenshot-effect-options effect="effect"></screenshot-effect-options>
     <div>
   `,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     optionsController: ($scope: any, backendCommunicator: any, $q: any) => {
         $scope.isObsConfigured = false;
 
@@ -154,7 +156,7 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
 
         const base64ImageData = screenshotDataUrl.split("base64,")[1];
         if (effect.saveLocally) {
-            await screenshotHelpers.saveScreenshotToFolder(base64ImageData, effect.folderPath);
+            await screenshotHelpers.saveScreenshotToFolder(base64ImageData, effect.folderPath, effect.fileNamePattern);
         }
 
         if (effect.overwriteExisting) {

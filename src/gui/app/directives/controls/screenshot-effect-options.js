@@ -17,6 +17,7 @@
                             </label>
                             <div ng-if="effect.saveLocally" style="margin-left: 30px;">
                                 <file-chooser model="effect.folderPath" options="{ directoryOnly: true, filters: [], title: 'Select Screenshot Folder'}"></file-chooser>
+                                <firebot-input class="pt-3" model="effect.fileNamePattern" input-title="File Name Pattern" input-type="text" menu-position="bottom" />
                             </div>
                         </div>
 
@@ -92,6 +93,9 @@
                     }
                     if ($scope.effect.file != null) {
                         $scope.effect.overwriteExisting = true;
+                    }
+                    if ($scope.effect.fileNamePattern == null) {
+                        $scope.effect.fileNamePattern = "$streamTitle $date[YYYY-MM-DD hh.mm.ss.SSS A]";
                     }
                 };
 
