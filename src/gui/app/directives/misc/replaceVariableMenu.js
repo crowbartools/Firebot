@@ -18,7 +18,7 @@
                     menuPosition: "@",
                     buttonPosition: "@"
                 },
-                controller: function($scope, $element, backendCommunicator, $timeout, $sce) {
+                controller: function($scope, $element, replaceVariableService, $timeout, $sce) {
 
                     const insertAt = (str, sub, pos) => `${str.slice(0, pos)}${sub}${str.slice(pos)}`;
 
@@ -59,7 +59,7 @@
                         const { trigger, triggerMeta } = findTriggerDataScope();
 
                         if (!$scope.disableVariableMenu) {
-                            $scope.variables = backendCommunicator.fireEventSync("getReplaceVariableDefinitions", {
+                            $scope.variables = replaceVariableService.getVariablesForTrigger({
                                 type: trigger,
                                 id: triggerMeta && triggerMeta.triggerId,
                                 dataOutput: $scope.replaceVariables
