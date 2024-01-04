@@ -112,6 +112,7 @@ exports.loadReplaceVariables = () => {
         'gift-sub-type',
         'has-role',
         'has-roles',
+        'is-whisper',
         'loop-count',
         'loop-item',
         'math',
