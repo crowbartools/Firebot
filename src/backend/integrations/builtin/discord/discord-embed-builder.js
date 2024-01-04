@@ -4,7 +4,14 @@ const twitchApi = require("../../../twitch-api/api");
 
 const accountAccess = require("../../../common/account-access");
 
-function buildCustomEmbed(customEmbedData) {
+function parseColor(color = "#29b9ed") {
+    let colorInt = parseInt(color.substring(1), 16);
+    if (isNaN(colorInt)) {
+        colorInt = parseInt('29b9ed', 16);
+    }
+    return colorInt;
+}
+
     const customEmbed = {
         title: customEmbedData.title,
         url: customEmbedData.url,
@@ -76,14 +83,15 @@ async function buildChannelEmbed() {
 
 /**
  * @param {import('@twurple/api').HelixClip} clip
+ * @param color
  */
-async function buildClipEmbed(clip) {
+async function buildClipEmbed(clip, color) {
     const streamer = accountAccess.getAccounts().streamer;
     const game = await clip.getGame();
     return {
         title: clip.title,
         url: clip.url,
-        color: 2210285,
+        color: parseColor(color),
         footer: {
             text: streamer.username,
             icon_url: streamer.avatar //eslint-disable-line camelcase
