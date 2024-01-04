@@ -116,6 +116,10 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
         return errors;
     },
     onTriggerEvent: async ({ effect }) => {
+        // Compatibility for effects made before 5.60
+        if (!(effect.saveLocally || effect.overwriteExisting || effect.postInDiscord || effect.showInOverlay) && effect.file) {
+            effect.overwriteExisting = true;
+        }
 
         const screenshotSettings: OBSSourceScreenshotSettings = {
             sourceName: effect.useActiveScene ? await getCurrentSceneName() : effect.source,
