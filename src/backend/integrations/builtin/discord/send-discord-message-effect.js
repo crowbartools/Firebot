@@ -94,11 +94,15 @@ module.exports = {
     },
     optionsValidator: (effect) => {
         const errors = [];
+        const rgbRegexp = /^#?[0-9a-f]{6}$/ig;
         if (!effect.includeEmbed && !(Array.isArray(effect.files) && effect.files.length !== 0) && (effect.message == null || effect.message.trim().length < 1)) {
             errors.push("Please provide a message, embed or file.");
         }
         if (effect.includeEmbed && (effect.embedType == null || effect.embedType === "")) {
             errors.push("Please select a rich embed type");
+        }
+        if (effect.includeEmbed && !rgbRegexp.test(effect.embedColor)) {
+            errors.push("Discord Embed Color must be in RGB format (#0066FF)");
         }
         return errors;
     },
