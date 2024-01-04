@@ -236,7 +236,7 @@ exports.whenReady = async () => {
 
     logger.debug('...loading main window');
     windowManagement.updateSplashScreenStatus("Here we go!");
-    windowManagement.createMainWindow();
+    await windowManagement.createMainWindow();
 
     // forward backend logs to front end
     logger.on("logging", (transport, level, msg, meta) => {
