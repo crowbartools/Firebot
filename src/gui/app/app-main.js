@@ -122,7 +122,8 @@
         channelRewardsService,
         sortTagsService,
         iconsService,
-        videoService
+        videoService,
+        replaceVariableService
     ) {
         // 'chatMessagesService' and 'videoService' are included so they're instantiated on app start
 
