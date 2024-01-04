@@ -169,7 +169,7 @@ function updateAccount(accountType, account, emitUpdate = true) {
         botTokenIssue = false;
     }
 
-    // dont let streamer and bot be the same
+    // don't let streamer and bot be the same
     const otherAccount = accountType === "streamer" ? cache.bot : cache.streamer;
     if (otherAccount != null && otherAccount.loggedIn) {
         if (otherAccount.userId === account.userId) {

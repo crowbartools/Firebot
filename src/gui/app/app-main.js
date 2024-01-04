@@ -274,7 +274,7 @@
                         connectionService.createNewProfile($scope.profileName);
                     };
 
-                    // When they hit cancel or click outside the modal, we dont want to do anything
+                    // When they hit cancel or click outside the modal, we don't want to do anything
                     $scope.dismiss = function() {
                         $uibModalInstance.dismiss("cancel");
                     };
@@ -308,7 +308,7 @@
                         connectionService.renameProfile($scope.profileName);
                     };
 
-                    // When they hit cancel or click outside the modal, we dont want to do anything
+                    // When they hit cancel or click outside the modal, we don't want to do anything
                     $scope.dismiss = function() {
                         $uibModalInstance.dismiss("cancel");
                     };
@@ -334,7 +334,7 @@
                         connectionService.deleteProfile();
                     };
 
-                    // When they hit cancel or click outside the modal, we dont want to do anything
+                    // When they hit cancel or click outside the modal, we don't want to do anything
                     $scope.dismiss = function() {
                         $uibModalInstance.dismiss("cancel");
                     };

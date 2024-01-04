@@ -114,7 +114,7 @@ async function onEventTriggered(event, source, meta, isManual = false, isRetrigg
 
         effects = eventSetting.effects;
 
-        // If we still dont have effects, cancel sending the packet because nothing will run anyway.
+        // If we still don't have effects, cancel sending the packet because nothing will run anyway.
         if (effects === null) {
             continue;
         }

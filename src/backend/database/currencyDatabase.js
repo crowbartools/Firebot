@@ -56,7 +56,7 @@ function adjustCurrency(user, currencyId, value, adjustType = "adjust") {
             return resolve();
         }
 
-        // Dont do anything if value is not a number or is 0.
+        // Don't do anything if value is not a number or is 0.
         if (isNaN(value)) {
             return resolve();
         }

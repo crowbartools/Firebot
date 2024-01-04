@@ -105,7 +105,7 @@ const randomEffect = {
                 // try to find queue in cache
                 let cacheEntry = randomQueuesCache[effect.id];
                 if (!cacheEntry) {
-                    // we dont have a preexisting queue in the cache, create a new one
+                    // we don't have a preexisting queue in the cache, create a new one
                     cacheEntry = {
                         queue: util.shuffleArray(newEffectIds),
                         currentEffectIds: newEffectIds
@@ -143,7 +143,7 @@ const randomEffect = {
                 chosenEffect = effectList.list.find(e => e.id === chosenEffectId);
 
             } else {
-                // we dont care about repeats, just get an effect via random index
+                // we don't care about repeats, just get an effect via random index
                 const randomIndex = util.getRandomInt(0, enabledEffectList.length - 1);
                 chosenEffect = enabledEffectList[randomIndex];
 

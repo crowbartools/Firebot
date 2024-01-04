@@ -510,7 +510,7 @@
                             $uibModalInstance.close(newPort);
                         };
 
-                        // When they hit cancel, click the little x, or click outside the modal, we dont want to do anything.
+                        // When they hit cancel, click the little x, or click outside the modal, we don't want to do anything.
                         $scope.dismiss = function() {
                             $uibModalInstance.dismiss("cancel");
                         };

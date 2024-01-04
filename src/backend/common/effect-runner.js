@@ -17,7 +17,7 @@ const findAndReplaceVariables = async (data, trigger, effectOutputs) => {
 
     for (const key of keys) {
 
-        // skip nested effect lists and conditions so we dont replace variables too early
+        // skip nested effect lists and conditions so we don't replace variables too early
         if (SKIP_VARIABLE_PROPERTIES.includes(key)) {
             continue;
         }

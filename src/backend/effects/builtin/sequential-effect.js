@@ -84,7 +84,7 @@ const model = {
             // try to find queue in cache
             let cacheEntry = sequentialQueuesCache[effect.id];
             if (!cacheEntry) {
-                // we dont have a preexisting queue in the cache, create a new one
+                // we don't have a preexisting queue in the cache, create a new one
                 cacheEntry = {
                     queue: newEffectIds,
                     currentEffectIds: newEffectIds

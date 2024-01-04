@@ -87,7 +87,7 @@ function getLoggedInProfile() {
             return loggedInUser;
         }
     } catch (err) {
-        // We dont have a value in our global settings. So, lets try some other things.
+        // We don't have a value in our global settings. So, lets try some other things.
         try {
             const globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings"),
                 activeProfiles = globalSettingsDb.getData("./activeProfiles");

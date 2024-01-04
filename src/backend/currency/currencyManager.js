@@ -340,7 +340,7 @@ function createCurrencyCommandDefinition(currency) {
                         return false;
                     }
 
-                    // Dont allow person to give themselves currency.
+                    // Don't allow person to give themselves currency.
                     if (event.userCommand.commandSender.toLowerCase() === username.toLowerCase()) {
                         await twitchChat.sendChatMessage(
                             `${event.userCommand.commandSender}, you can't give yourself currency.`);

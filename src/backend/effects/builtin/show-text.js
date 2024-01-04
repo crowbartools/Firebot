@@ -70,7 +70,7 @@ const showText = {
                 ng-model="effect.height">
         </div>
 
-        <label class="control-fb control--checkbox"> Dont Wrap Text
+        <label class="control-fb control--checkbox"> Don't Wrap Text
             <input type="checkbox" ng-model="effect.dontWrap" />
             <div class="control__indicator"></div>
         </label>

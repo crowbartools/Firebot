@@ -9,7 +9,7 @@ const logger = require("../../backend/logwrapper");
 const shell = require("electron").shell;
 
 /**
- * Dont remove the below imports for now, they are available globally to all frontend files
+ * Don't remove the below imports for now, they are available globally to all frontend files
  * TODO: Refactor to import these modules in the files that actually use them instead
  * of making them available globally here
  */
