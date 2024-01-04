@@ -1,1 +1,9 @@
-[]
+[
+
+    {
+        "id": "5.60-update-login-changes",
+        "title": "Important v5.60.0 Update Info",
+        "message": "<div>v5.60.0 will be released this week with many long-awaited features and improvements. However, there are important and mandatory changes coming to how we login to Twitch. Please read <a href=\"https://github.com/crowbartools/Firebot/wiki/Firebot-v5.60.0-Twitch-Login-Changes-FAQ\">this wiki article</a> to learn how this will affect you.</div>",
+        "icon": "alert"
+    }
+]
