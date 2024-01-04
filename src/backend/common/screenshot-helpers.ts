@@ -9,6 +9,7 @@ import { settings } from "../common/settings-access";
 import mediaProcessor from "../common/handlers/mediaProcessor";
 import webServer from "../../server/http-server-manager";
 import moment from "moment";
+import {CustomEmbed, EmbedType} from "../../types/discord";
 
 export async function saveScreenshotToFolder(base64ImageData: string, folderPath: string, fileName?: string) {
     try {
@@ -31,7 +32,7 @@ export async function saveScreenshotToFile(base64ImageData: string, filePath: st
     }
 }
 
-export async function sendScreenshotToDiscord(base64ImageData: string, discordChannelId: string) {
+export async function sendScreenshotToDiscord(base64ImageData: string, message: string, discordChannelId: string, color: string) {
     const filename = "screenshot.png";
     const files = [
         {
@@ -40,8 +41,23 @@ export async function sendScreenshotToDiscord(base64ImageData: string, discordCh
             description: "Screenshot by Firebot"
         }
     ];
-    const screenshotEmbed = await discordEmbedBuilder.buildScreenshotEmbed(`attachment://${filename}`);
-    await discord.sendDiscordMessage(discordChannelId, "A new screenshot was taken!", screenshotEmbed, files);
+    const screenshotEmbed = await discordEmbedBuilder.buildScreenshotEmbed(`attachment://${filename}`, color);
+    await discord.sendDiscordMessage(discordChannelId, message, screenshotEmbed, files);
+}
+
+export async function sendEmbedToDiscord(base64ImageData: string, embedType: EmbedType, message: string, embed: CustomEmbed, discordChannelId: string, color: string) {
+    const filename = "screenshot.png";
+    const files = [
+        {
+            file: Buffer.from(base64ImageData, "base64"),
+            name: filename,
+            description: "Screenshot by Firebot"
+        }
+    ];
+
+    embed.imageUrl = `attachment://${filename}`;
+    const builtEmbed = await discordEmbedBuilder.buildEmbed(embedType, embed, color);
+    await discord.sendDiscordMessage(discordChannelId, message, builtEmbed, files);
 }
 
 export type ScreenshotEffectData = {

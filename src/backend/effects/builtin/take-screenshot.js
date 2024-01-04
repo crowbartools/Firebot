@@ -1,6 +1,8 @@
 "use strict";
 
 const { EffectCategory } = require('../../../shared/effect-constants');
+const {sendEmbedToDiscord} = require("../../common/screenshot-helpers");
+const screenshotHelpers = require("../../common/screenshot-helpers");
 
 const clip = {
     definition: {
@@ -49,8 +51,21 @@ const clip = {
     },
     optionsValidator: effect => {
         const errors = [];
-        if (effect.postInDiscord && effect.discordChannelId == null) {
-            errors.push("Please select Discord channel.");
+        const rgbRegexp = /^#?[0-9a-f]{6}$/ig;
+        if (!(effect.saveLocally || effect.overwriteExisting || effect.postInDiscord || effect.showInOverlay)) {
+            errors.push("You need to select an output option!");
+        }
+        if (effect.saveLocally && !effect.folderPath) {
+            errors.push("You need to select a folder path!");
+        }
+        if (effect.overwriteExisting && !effect.file) {
+            errors.push("You need to select a file!");
+        }
+        if (effect.postInDiscord && !effect.discordChannelId) {
+            errors.push("You need to select a discord channel!");
+        }
+        if (effect.postInDiscord && effect.embedType && !rgbRegexp.test(effect.embedColor)) {
+            errors.push("Discord Embed Color must be in RGB format (#0066FF)");
         }
         return errors;
     },
@@ -74,7 +89,16 @@ const clip = {
             }
 
             if (effect.postInDiscord) {
-                await screenshotHelpers.sendScreenshotToDiscord(base64ImageData, effect.discordChannelId);
+                switch (effect.embedType) {
+                    case "channel":
+                    case "custom":
+                        await sendEmbedToDiscord(base64ImageData, effect.embedType, effect.message, effect.customEmbed, effect.discordChannelId, effect.embedColor);
+                        break;
+                    case "stream":
+                    case undefined:
+                        await screenshotHelpers.sendScreenshotToDiscord(base64ImageData, effect.message, effect.discordChannelId, effect.embedColor);
+                        break;
+                }
             }
 
             if (effect.showInOverlay) {
