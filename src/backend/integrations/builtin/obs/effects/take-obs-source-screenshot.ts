@@ -27,7 +27,14 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
         name: "Take OBS Source Screenshot",
         description: "Takes a screenshot of an OBS Source and saves it.",
         icon: "fad fa-camera-retro",
-        categories: ["common"]
+        categories: ["common"],
+        outputs: [
+            {
+                label: "Screenshot Data URL",
+                description: "The base64 data URL for the screenshot.",
+                defaultName: "screenshotDataUrl"
+            }
+        ]
     },
     optionsTemplate: `
     <div>
@@ -171,6 +178,11 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
             screenshotHelpers.sendScreenshotToOverlay(screenshotDataUrl, effect);
         }
 
-        return true;
+        return {
+            success: true,
+            outputs: {
+                screenshotDataUrl
+            }
+        };
     }
 };

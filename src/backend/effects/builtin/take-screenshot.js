@@ -9,7 +9,14 @@ const clip = {
         description: "Takes a screenshot of the selected screen.",
         icon: "fad fa-camera",
         categories: [EffectCategory.FUN],
-        dependencies: []
+        dependencies: [],
+        outputs: [
+            {
+                label: "Screenshot Data URL",
+                description: "The base64 data URL for the screenshot.",
+                defaultName: "screenshotDataUrl"
+            }
+        ]
     },
     globalSettings: {},
     optionsTemplate: `
@@ -75,7 +82,12 @@ const clip = {
             }
         }
 
-        return screenshotDataUrl != null;
+        return {
+            success: screenshotDataUrl != null,
+            outputs: {
+                screenshotDataUrl: screenshotDataUrl != null ? screenshotDataUrl : ""
+            }
+        };
     },
     overlayExtension: {
         dependencies: {
