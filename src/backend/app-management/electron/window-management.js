@@ -198,6 +198,7 @@ async function createMainWindow() {
                 {
                     label: 'Open Data Folder',
                     toolTip: "Open the folder where Firebot data is stored",
+                    sublabel: "Open the folder where Firebot data is stored",
                     click: () => {
                         const rootFolder = path.resolve(
                             profileManager.getPathInProfile("/")
@@ -209,6 +210,7 @@ async function createMainWindow() {
                 {
                     label: 'Open Logs Folder',
                     toolTip: "Open the folder where logs are stored",
+                    sublabel: "Open the folder where logs are stored",
                     click: () => {
                         const rootFolder = path.resolve(
                             dataAccess.getPathInUserData("/logs/")
@@ -220,6 +222,7 @@ async function createMainWindow() {
                 {
                     label: 'Open Backups Folder',
                     toolTip: "Open the folder where backups are stored",
+                    sublabel: "Open the folder where backups are stored",
                     click: () => {
                         const backupFolder = path.resolve(
                             dataAccess.getPathInUserData("/backups/")
@@ -285,6 +288,7 @@ async function createMainWindow() {
                 {
                     label: 'Setup Wizard',
                     toolTip: "Run the setup wizard again",
+                    sublabel: "Run the setup wizard again",
                     click: () => {
                         frontendCommunicator.send("open-modal", {
                             component: "setupWizardModal"
@@ -295,6 +299,7 @@ async function createMainWindow() {
                 {
                     label: 'Restore from backup...',
                     toolTip: "Restores Firebot from a backup",
+                    sublabel: "Restores Firebot from a backup",
                     click: async () => {
                         frontendCommunicator.send("restore-backup");
                     },
@@ -303,6 +308,7 @@ async function createMainWindow() {
                 {
                     label: 'Custom Variable Inspector',
                     toolTip: "Open the custom variable inspector",
+                    sublabel: "Open the custom variable inspector",
                     click: () => {
                         // eslint-disable-next-line no-use-before-define
                         createVariableInspectorWindow();
