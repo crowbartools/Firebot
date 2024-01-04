@@ -113,6 +113,18 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
         if (!effect.useActiveScene && effect.source == null) {
             errors.push("You need to select a source!");
         }
+        if (!(effect.saveLocally || effect.overwriteExisting || effect.postInDiscord || effect.showInOverlay)) {
+            errors.push("You need to select an output option!");
+        }
+        if (effect.saveLocally && !effect.folderPath) {
+            errors.push("You need to select a folder path!");
+        }
+        if (effect.overwriteExisting && !effect.file) {
+            errors.push("You need to select a file!");
+        }
+        if (effect.postInDiscord && !effect.discordChannelId) {
+            errors.push("You need to select a discord channel!");
+        }
         return errors;
     },
     onTriggerEvent: async ({ effect }) => {
