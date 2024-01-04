@@ -26,6 +26,7 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
         categories: ["common"]
     },
     optionsTemplate: `
+    <div>
         <eos-container header="OBS Source">
             <div>
                 <button class="btn btn-link" ng-click="getSources()">Refresh Source Data</button>
@@ -89,8 +90,8 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
                 </div>
             </div>
         </div>
-
         <screenshot-effect-options effect="effect"></screenshot-effect-options>
+    <div>
   `,
     optionsController: ($scope: any, backendCommunicator: any, $q: any) => {
         $scope.isObsConfigured = false;
