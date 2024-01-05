@@ -4,8 +4,36 @@ const logger = require("../logwrapper");
 const EventEmitter = require("events");
 
 const expressionish = require('expressionish');
+const ExpressionVariableError = expressionish.ExpressionVariableError;
 const frontendCommunicator = require("../common/frontend-communicator");
 const util = require("../utility");
+
+function preeval(options, variable) {
+    if (!variable.triggers) {
+        return;
+    }
+
+    const varTrigger = variable.triggers[options.trigger.type];
+    const display = options.trigger.type ? options.trigger.type.toLowerCase() : "unknown trigger";
+
+    if (varTrigger == null || varTrigger === false) {
+        throw new ExpressionVariableError(
+            `$${variable.value} does not support being triggered by: ${display}`,
+            variable.position,
+            variable.value
+        );
+    }
+
+    if (Array.isArray(varTrigger)) {
+        if (!varTrigger.some(id => id === options.trigger.id)) {
+            throw new ExpressionVariableError(
+                `$${variable.value} does not support this specific trigger type: ${display}`,
+                variable.position,
+                variable.value
+            );
+        }
+    }
+}
 
 class ReplaceVariableManager extends EventEmitter {
     constructor() {
@@ -54,7 +82,8 @@ class ReplaceVariableManager extends EventEmitter {
             handlers: this._registeredVariableHandlers,
             expression: input,
             metadata,
-            trigger
+            trigger,
+            preeval
         });
     }
 
@@ -74,6 +103,7 @@ class ReplaceVariableManager extends EventEmitter {
                             handlers: this._registeredVariableHandlers,
                             expression: value,
                             metadata: trigger,
+                            preeval,
                             trigger: {
                                 type: trigger.type,
                                 id: triggerId
@@ -109,6 +139,7 @@ class ReplaceVariableManager extends EventEmitter {
                         await expressionish({
                             handlers: this._registeredVariableHandlers,
                             expression: value,
+                            preeval,
                             trigger: {
                                 type: trigger && trigger.type,
                                 id: trigger && trigger.id
