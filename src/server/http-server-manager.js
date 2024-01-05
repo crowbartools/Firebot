@@ -11,6 +11,7 @@ const path = require('path');
 const logger = require("../backend/logwrapper");
 const { settings } = require("../backend/common/settings-access");
 const effectManager = require("../backend/effects/effectManager");
+const eventManager = require("../backend/events/EventManager");
 const resourceTokenManager = require("../backend/resourceTokenManager");
 
 const electron = require('electron');
@@ -47,6 +48,14 @@ class HttpServerManager extends EventEmitter {
     createDefaultServerInstance() {
         const app = express();
 
+        // Cache buster
+        app.use(function (_, res, next) {
+            res.setHeader("Expires", "0");
+            res.setHeader("Pragma", "no-cache");
+            res.setHeader("Cache-Control", "no-store, max-age=0, must-revalidate");
+            res.setHeader("Surrogate-Control", "no-store");
+            next();
+        });
         app.use(cors());
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: true }));
@@ -57,11 +66,11 @@ class HttpServerManager extends EventEmitter {
         app.use("/api/v1", v1Router);
 
         app.get("/api/v1/auth/callback", function(_, res) {
-            res.sendFile(path.join(__dirname + '/authcallback.html'));
+            res.sendFile(path.join(`${__dirname}/authcallback.html`));
         });
 
         app.get('/loginsuccess', function(_, res) {
-            res.sendFile(path.join(__dirname + '/loginsuccess.html'));
+            res.sendFile(path.join(`${__dirname}/loginsuccess.html`));
         });
 
 
@@ -109,7 +118,7 @@ class HttpServerManager extends EventEmitter {
 
             res
                 .status(404)
-                .send({ status: "error", message: req.originalUrl + " not found" });
+                .send({ status: "error", message: `${req.originalUrl} not found` });
         });
 
         // List custom routes
@@ -144,7 +153,7 @@ class HttpServerManager extends EventEmitter {
             if (customRouteEntry == null) {
                 res
                     .status(404)
-                    .send({ status: "error", message: req.originalUrl + " not found" });
+                    .send({ status: "error", message: `${req.originalUrl} not found` });
             } else {
                 customRouteEntry.callback(req, res);
             }
@@ -154,7 +163,7 @@ class HttpServerManager extends EventEmitter {
         app.use(function(req, res) {
             res
                 .status(404)
-                .send({ status: "error", message: req.originalUrl + " not found" });
+                .send({ status: "error", message: `${req.originalUrl} not found` });
         });
 
         return app;
@@ -172,7 +181,14 @@ class HttpServerManager extends EventEmitter {
             ws.on('message', (message) => {
                 try {
                     const event = JSON.parse(message);
-                    this.emit("overlay-event", event);
+
+                    if (event.name === "overlay-connected") {
+                        eventManager.triggerEvent("firebot", "overlay-connected", {
+                            instanceName: event.data.instanceName
+                        });
+                    } else {
+                        this.emit("overlay-event", event);
+                    }
                 } catch (error) {
                     logger.error("Error parsing overlay event", error);
                 }

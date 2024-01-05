@@ -15,10 +15,10 @@ const addQuoteEffect = {
         dependencies: []
     },
     globalSettings: {},
-    optionsTemplate: `    
+    optionsTemplate: `
         <eos-container header="Quote Creator">
             <p class="muted">This is the name of the person who is creating the quote entry.</p>
-            <input ng-model="effect.creator" type="text" class="form-control" id="chat-text-setting" placeholder="Enter quote creator" replace-variables/>
+            <input ng-model="effect.creator" type="text" class="form-control" id="chat-text-setting" placeholder="Enter quote creator" menu-position="under" replace-variables/>
         </eos-container>
 
         <eos-container header="Quote Originator" pad-top="true">

@@ -2,7 +2,7 @@
 
 "use strict";
 
-const fs = require("fs-extra");
+const fs = require("fs");
 
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
@@ -18,12 +18,12 @@ const model = {
     },
     evaluator: (_, filePath) => {
         if (filePath === null || !filePath.endsWith(".txt")) {
-            logger.error("Couldn't read file (" + filePath + ") to count the lines in it.");
+            logger.error(`Couldn't read file (${filePath}) to count the lines in it.`);
             return 0;
         }
 
         try {
-            const contents = fs.readFileSync(filePath, "utf8");
+            const contents = fs.readFileSync(filePath, { encoding: "utf8" });
             const lines = contents
                 .split('\n')
                 .filter(l => l != null && l.trim() !== "");

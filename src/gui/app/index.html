@@ -23,11 +23,6 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="http://csshake.surge.sh/csshake.min.css"
-    />
 
     <!-- Custom styles for this template -->
     <link
@@ -86,6 +81,9 @@
       type="text/javascript"
       src="../../../node_modules/countup.js/dist/countUp.min.js"
     ></script>
+
+    <!-- Iconify ref for MDI icons -->
+    <script src="https://code.iconify.design/1/1.0.6/iconify.min.js"></script>
 
     <script src="./app-main.js"></script>
 
@@ -278,7 +276,6 @@
     <script type="text/javascript" src="./directives/modals/misc/add-or-edit-gift-receiver-modal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/add-or-edit-header-modal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/add-or-edit-metadata-modal.js"></script>
-    <script type="text/javascript" src="./directives/modals/misc/botLoginModal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/connectionPanelModal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/copyShareCodeModal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/create-overlay-instances.modal.js"></script>
@@ -296,6 +293,7 @@
     <script type="text/javascript" src="./directives/modals/misc/selectModal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/setupWizardModal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/stream-preview-modal.js"></script>
+    <script type="text/javascript" src="./directives/modals/misc/twitch-login-modal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/txtFileWordImportModal.js"></script>
     <script type="text/javascript" src="./directives/modals/quotes/addOrEditQuoteModal.js"></script>
     <script type="text/javascript" src="./directives/modals/quotes/import-quotes-modal.js"></script>
@@ -474,7 +472,7 @@
             <div ng-if="invalidAccounts && invalidAccounts.length > 0" class="row mb-8" style="text-align: center;">
               The following account(s) have been logged out because they are out of date:
               <br />
-              <strong>{{ invalidAccounts.join(", ") }}</strong>
+              <strong style="text-transform: capitalize">{{ invalidAccounts.join(", ") }}</strong>
               <br /><br />
               Please log back in to continue.
             </div>
@@ -566,7 +564,10 @@
         <h4 class="modal-title" id="errorLabel">Error</h4>
       </div>
       <div class="modal-body">
-        <p>{{message}}</p>
+        <div style="display: flex;">
+          <div class="modal-icon"><i class="fad fa-times-circle" aria-hidden="true"></i></div>
+          <div>{{message}}</div>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" ng-click="close()">Close</button>
@@ -580,7 +581,10 @@
         <h4 class="modal-title" id="errorLabel">Info</h4>
       </div>
       <div class="modal-body">
-        <p>{{message}}</p>
+        <div style="display: flex;">
+          <div class="modal-icon"><i class="fad fa-info-circle" aria-hidden="true"></i></div>
+          <div>{{message}}</div>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" ng-click="close()">Close</button>

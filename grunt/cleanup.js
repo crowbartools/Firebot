@@ -20,36 +20,36 @@ grunt cleanup:install
 
 'use strict';
 const path = require('path');
-const fs = require('fs-extra');
+const fs = require('fs');
 module.exports = function (grunt) {
     grunt.registerTask('cleanup', function (area) {
 
         // Removes /dist/ directory
         // Removes /build/ directory
         if (area == null || area === '') {
-            fs.removeSync(path.join(__dirname, '../dist'));
-            fs.removeSync(path.join(__dirname, '../build'));
+            fs.rmSync(path.join(__dirname, '../dist'), { recursive: true, force: true });
+            fs.rmSync(path.join(__dirname, '../build'), { recursive: true, force: true });
 
         // Removes compiled css directories
         } else if (area === 'css') {
-            fs.removeSync(path.join(__dirname, '../build/gui/css'));
-            fs.removeSync(path.join(__dirname, '../build/resources/overlay/css'));
+            fs.rmSync(path.join(__dirname, '../build/gui/css'), { recursive: true, force: true });
+            fs.rmSync(path.join(__dirname, '../build/resources/overlay/css'), { recursive: true, force: true });
 
         // Removes /dist/
         } else if (area === 'dist') {
-            fs.removeSync(path.join(__dirname, '../dist'));
+            fs.rmSync(path.join(__dirname, '../dist'), { recursive: true, force: true });
 
         // Removes /dist/pack/
         } else if (area === 'pack') {
-            fs.removeSync(path.join(__dirname, '../dist/pack'));
+            fs.rmSync(path.join(__dirname, '../dist/pack'), { recursive: true, force: true });
 
         // Removes /dist/install/
         } else if (area === 'install') {
-            fs.removeSync(path.join(__dirname, '../dist/install'));
+            fs.rmSync(path.join(__dirname, '../dist/install'), { recursive: true, force: true });
 
         // Remove /build
         } else if (area === 'build') {
-            fs.removeSync(path.join(__dirname, '../build'));
+            fs.rmSync(path.join(__dirname, '../build'), { recursive: true, force: true });
 
         } else {
             grunt.fail.fatal(new Error('unknown cleanup property'), 1);

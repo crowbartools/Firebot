@@ -18,6 +18,7 @@ const model = {
                 input-title="Dice"
                 model="effect.dice"
                 placeholder-text="2d20 or 2d10+1d12 or 1d10+3"
+                menu-position="under"
             />
         </eos-container>
 

@@ -6,6 +6,7 @@ const chatHelpers = require("../chat-helpers");
 const activeUserHandler = require("./active-user-handler");
 const accountAccess = require("../../common/account-access");
 const chatModerationManager = require("../moderation/chat-moderation-manager");
+const chatRolesManager = require("../../roles/chat-roles-manager");
 const twitchEventsHandler = require("../../events/twitch-events");
 const raidMessageChecker = require(".././moderation/raid-message-checker");
 const logger = require("../../logwrapper");
@@ -24,11 +25,14 @@ exports.setupBotChatListeners = (botChatClient) => {
 
 const HIGHLIGHT_MESSAGE_REWARD_ID = "highlight-message";
 
-/** @arg {import('@twurple/chat').ChatClient} streamerChatClient */
-exports.setupChatListeners = (streamerChatClient) => {
+/**
+ * @arg {import('@twurple/chat').ChatClient} streamerChatClient
+ * @arg {import('@twurple/chat').ChatClient} botChatClient
+ */
+exports.setupChatListeners = (streamerChatClient, botChatClient) => {
 
     streamerChatClient.onAnnouncement(async (_channel, _user, announcementInfo, msg) => {
-        const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, msg.message.value);
+        const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, msg.text);
 
         firebotChatMessage.isAnnouncement = true;
         firebotChatMessage.announcementColor = announcementInfo.color ?? "PRIMARY";
@@ -36,7 +40,7 @@ exports.setupChatListeners = (streamerChatClient) => {
         frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
 
         twitchEventsHandler.announcement.triggerAnnouncement(
-            firebotChatMessage.useridname,
+            firebotChatMessage.userIdName,
             firebotChatMessage.userId,
             firebotChatMessage.username,
             firebotChatMessage.roles,
@@ -48,6 +52,12 @@ exports.setupChatListeners = (streamerChatClient) => {
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText);
 
         await chatModerationManager.moderateMessage(firebotChatMessage);
+
+        if (firebotChatMessage.isVip === true) {
+            chatRolesManager.addVipToVipList(firebotChatMessage.username);
+        } else {
+            chatRolesManager.removeVipFromVipList(firebotChatMessage.username);
+        }
 
         // send to the frontend
         if (firebotChatMessage.isHighlighted) {
@@ -72,9 +82,15 @@ exports.setupChatListeners = (streamerChatClient) => {
 
         commandHandler.handleChatMessage(firebotChatMessage);
 
-        activeUserHandler.addActiveUser(msg.userInfo, true);
+        await activeUserHandler.addActiveUser(msg.userInfo, true);
 
-        twitchEventsHandler.viewerArrived.triggerViewerArrived(msg.userInfo.displayName, msg.userInfo.userName, msg.userInfo.userId, messageText);
+        twitchEventsHandler.viewerArrived.triggerViewerArrived(
+            msg.userInfo.displayName,
+            msg.userInfo.userName,
+            msg.userInfo.userId,
+            messageText,
+            firebotChatMessage
+        );
 
         const { streamer, bot } = accountAccess.getAccounts();
         if (user !== streamer.username && user !== bot.username) {
@@ -83,24 +99,54 @@ exports.setupChatListeners = (streamerChatClient) => {
         }
 
         twitchEventsHandler.chatMessage.triggerChatMessage(firebotChatMessage);
+        if (firebotChatMessage.isFirstChat) {
+            twitchEventsHandler.chatMessage.triggerFirstTimeChat(firebotChatMessage);
+        }
         await raidMessageChecker.sendMessageToCache(firebotChatMessage);
     });
 
-    streamerChatClient.onWhisper(async (_user, messageText, msg) => {
+    const whisperHandler = async (_user, messageText, msg, accountType) => {
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText, true);
 
         commandHandler.handleChatMessage(firebotChatMessage);
 
         frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
-    });
+
+        twitchEventsHandler.whisper.triggerWhisper(
+            msg.userInfo.userName,
+            messageText,
+            accountType
+        );
+    };
+
+    streamerChatClient.onWhisper(async (_user, messageText, msg) => whisperHandler(_user, messageText, msg, "streamer"));
+    botChatClient?.onWhisper(async (_user, messageText, msg) => whisperHandler(_user, messageText, msg, "bot"));
 
     streamerChatClient.onAction(async (_channel, _user, messageText, msg) => {
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText, false, true);
+
+        if (firebotChatMessage.isVip === true) {
+            chatRolesManager.addVipToVipList(firebotChatMessage.username);
+        } else {
+            chatRolesManager.removeVipFromVipList(firebotChatMessage.username);
+        }
+
         frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
 
-        twitchEventsHandler.chatMessage.triggerChatMessage(firebotChatMessage);
+        await activeUserHandler.addActiveUser(msg.userInfo, true);
 
-        twitchEventsHandler.viewerArrived.triggerViewerArrived(msg.userInfo.displayName, msg.userInfo.userName, msg.userInfo.userId, messageText);
+        twitchEventsHandler.chatMessage.triggerChatMessage(firebotChatMessage);
+        if (firebotChatMessage.isFirstChat) {
+            twitchEventsHandler.chatMessage.triggerFirstTimeChat(firebotChatMessage);
+        }
+
+        twitchEventsHandler.viewerArrived.triggerViewerArrived(
+            msg.userInfo.displayName,
+            msg.userInfo.userName,
+            msg.userInfo.userId,
+            messageText,
+            firebotChatMessage
+        );
     });
 
     streamerChatClient.onMessageRemove((_channel, messageId) => {
@@ -177,15 +223,6 @@ exports.setupChatListeners = (streamerChatClient) => {
             subInfo.displayName,
             subInfo.userId,
             subInfo.plan
-        );
-    });
-
-    streamerChatClient.onRaid((_channel, _username, raidInfo, msg) => {
-        twitchEventsHandler.raid.triggerRaid(
-            msg.userInfo.userName,
-            msg.userInfo.userId,
-            raidInfo.displayName,
-            raidInfo.viewerCount
         );
     });
 };

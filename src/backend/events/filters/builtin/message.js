@@ -36,40 +36,40 @@ module.exports = {
         const chatMessage = eventMeta.messageText || "";
 
         switch (comparisonType) {
-        case ComparisonType.IS:
-            return chatMessage === value;
-        case ComparisonType.IS_NOT:
-            return chatMessage !== value;
-        case ComparisonType.CONTAINS:
-            return chatMessage.includes(value);
-        case ComparisonType.DOESNT_CONTAIN:
-            return !chatMessage.includes(value);
-        case ComparisonType.STARTS_WITH:
-            return chatMessage.startsWith(value);
-        case ComparisonType.DOESNT_STARTS_WITH:
-            return !chatMessage.startsWith(value);
-        case ComparisonType.ENDS_WITH:
-            return chatMessage.endsWith(value);
-        case ComparisonType.DOESNT_END_WITH:
-            return !chatMessage.endsWith(value);
-        case ComparisonType.MATCHES_REGEX: {
-            const regex = new RegExp(value, "gi");
-            return regex.test(chatMessage);
-        }
-        case ComparisonType.DOESNT_MATCH_REGEX: {
-            const regex = new RegExp(value, "gi");
-            return !regex.test(chatMessage);
-        }
-        case ComparisonType.MATCHES_REGEX_CS: {
-            const regex = new RegExp(value, "g");
-            return regex.test(chatMessage);
-        }
-        case ComparisonType.DOESNT_MATCH_REGEX_CS: {
-            const regex = new RegExp(value, "g");
-            return !regex.test(chatMessage);
-        }
-        default:
-            return false;
+            case ComparisonType.IS:
+                return chatMessage === value;
+            case ComparisonType.IS_NOT:
+                return chatMessage !== value;
+            case ComparisonType.CONTAINS:
+                return chatMessage.includes(value);
+            case ComparisonType.DOESNT_CONTAIN:
+                return !chatMessage.includes(value);
+            case ComparisonType.STARTS_WITH:
+                return chatMessage.startsWith(value);
+            case ComparisonType.DOESNT_STARTS_WITH:
+                return !chatMessage.startsWith(value);
+            case ComparisonType.ENDS_WITH:
+                return chatMessage.endsWith(value);
+            case ComparisonType.DOESNT_END_WITH:
+                return !chatMessage.endsWith(value);
+            case ComparisonType.MATCHES_REGEX: {
+                const regex = new RegExp(value, "gi");
+                return regex.test(chatMessage);
+            }
+            case ComparisonType.DOESNT_MATCH_REGEX: {
+                const regex = new RegExp(value, "gi");
+                return !regex.test(chatMessage);
+            }
+            case ComparisonType.MATCHES_REGEX_CS: {
+                const regex = new RegExp(value, "g");
+                return regex.test(chatMessage);
+            }
+            case ComparisonType.DOESNT_MATCH_REGEX_CS: {
+                const regex = new RegExp(value, "g");
+                return !regex.test(chatMessage);
+            }
+            default:
+                return false;
         }
     }
 };

@@ -55,9 +55,9 @@ const model = {
                 const result = await twitchApi.moderation.banUser(user.id, "Banned by Firebot");
 
                 if (result === true) {
-                    logger.debug(event.effect.username + " was banned via the Ban effect.");
+                    logger.debug(`${event.effect.username} was banned via the Ban effect.`);
                 } else {
-                    logger.error(event.effect.username + " was unable to be banned via the Ban effect.");
+                    logger.error(`${event.effect.username} was unable to be banned via the Ban effect.`);
                     return false;
                 }
             } else {
@@ -72,9 +72,9 @@ const model = {
                 const result = await twitchApi.moderation.unban(user.id);
 
                 if (result === true) {
-                    logger.debug(event.effect.username + " was unbanned via the Ban effect.");
+                    logger.debug(`${event.effect.username} was unbanned via the Ban effect.`);
                 } else {
-                    logger.error(event.effect.username + " was unable to be unbanned via the Ban effect.");
+                    logger.error(`${event.effect.username} was unable to be unbanned via the Ban effect.`);
                     return false;
                 }
             } else {

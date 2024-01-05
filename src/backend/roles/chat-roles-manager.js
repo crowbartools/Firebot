@@ -56,6 +56,10 @@ const removeVipFromVipList = (username) => {
  * @returns {Promise<string>}
  */
 const getUserSubscriberRole = async (userIdOrName) => {
+    if (userIdOrName == null || userIdOrName === "") {
+        return "";
+    }
+
     const isName = isNaN(userIdOrName);
 
     const client = twitchApi.streamerClient;
@@ -70,15 +74,15 @@ const getUserSubscriberRole = async (userIdOrName) => {
 
     let role = '';
     switch (subInfo.tier) {
-    case "1000":
-        role = "tier1";
-        break;
-    case "2000":
-        role = "tier2";
-        break;
-    case "3000":
-        role = "tier3";
-        break;
+        case "1000":
+            role = "tier1";
+            break;
+        case "2000":
+            role = "tier2";
+            break;
+        case "3000":
+            role = "tier3";
+            break;
     }
 
     return role;
@@ -89,6 +93,9 @@ const getUserSubscriberRole = async (userIdOrName) => {
  * @returns {Promise<string[]>}
  */
 const getUsersChatRoles = async (userIdOrName = "") => {
+    if (userIdOrName == null || userIdOrName === "") {
+        return [];
+    }
     userIdOrName = userIdOrName.toLowerCase();
     const isName = isNaN(userIdOrName);
 

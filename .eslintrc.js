@@ -1,14 +1,23 @@
-"use strict";
+
 module.exports = {
+    "root": true,
+
     // Extend from recommened eslint rules
     // Indicated by a wrench @ https://eslint.org/docs/rules/
-    "extends": "eslint:recommended",
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended"
+    ],
+
+    "parser": "@typescript-eslint/parser",
 
     // "parser": "babel-parser",
     "parserOptions": {
         // "parser": "babel-parser",
-        "ecmaVersion": "2020"
+        "ecmaVersion": "2022"
     },
+
+    "plugins": ["@typescript-eslint"],
 
     "env": {
         "node": true,
@@ -45,7 +54,7 @@ module.exports = {
         "no-prototype-builtins": "off",
 
         // Deviation from < https://eslint.org/docs/rules/#strict-mode >
-        "strict": "warn", // require strict mode
+        "strict": "off", // disabled b/c typescript
 
         // Deviation from < https://eslint.org/docs/rules/#variables >
         "no-use-before-define": "warn", // require vars to be defined before use
@@ -62,7 +71,7 @@ module.exports = {
         "comma-style": "warn", // See: https://eslint.org/docs/rules/comma-style
         "computed-property-spacing": "warn", // No whitespace when using object[thing]
         "curly": "warn", // Must wrap blocks with {}
-        "indent": ["warn", 4], // Four-space indentions
+        "indent": "off", // Superseded by TS
         "key-spacing": ["warn", {mode: "strict" }], // Exactly one space after object key colons
         "keyword-spacing": "warn", // Spaces around keywords
         "linebreak-style": "warn", // Line breaks must be \n
@@ -83,7 +92,21 @@ module.exports = {
         "no-var": "warn", // Use let/const instead of var
 
         // Other deviations
+        "no-unused-vars": "off",
+        "prefer-template": "warn", // Use template strings instead of + concat
+        "template-curly-spacing": ["warn", "never"],
+        "no-useless-concat": "error", // no concat'ing literal strings
+        "no-empty": ["error", {"allowEmptyCatch": true }],
+        "no-debugger": "warn",
         "no-warning-comments": ["warn", {"terms": ["todo", "to do", "fix", "fixme", "fix me", "need"], "location": "start"}], // warn about todo comments
-        "no-unused-vars": ["warn"]
+
+        // typescript
+        "@typescript-eslint/no-unused-vars": "warn",
+        "@typescript-eslint/no-var-requires": "off",
+        "@typescript-eslint/no-empty-function": "off",
+        "@typescript-eslint/no-this-alias": "off",
+        "@typescript-eslint/ban-ts-comment": "off",
+        "@typescript-eslint/indent": ["warn", 4],
+        "@typescript-eslint/ban-types": "warn"
     }
 };

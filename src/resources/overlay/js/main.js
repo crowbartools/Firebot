@@ -18,6 +18,12 @@ function overlaySocketConnect(){
 		ws.onopen = function(){
 			notification('close');
 			console.log(`Connection is opened on port ${overlayPort}...`);
+
+			const olInstance = params.get("instance");
+
+            sendWebsocketEvent("overlay-connected", {
+                instanceName: olInstance == null || olInstance === "" ? "Default" : olInstance
+            });
 		};
 
 		// When we get a message from the Firebot GUI...

@@ -40,7 +40,7 @@ class ConditionManager extends EventEmitter {
     }
 
     async runConditions(conditionData, triggerData) {
-        if (conditionData != null && conditionData.conditions != null) {
+        if (conditionData?.conditions?.length > 0) {
             const conditions = JSON.parse(JSON.stringify(conditionData.conditions));
 
             let didPass = conditionData.mode !== "inclusive";
@@ -48,12 +48,14 @@ class ConditionManager extends EventEmitter {
                 const conditionType = this.getConditionTypeById(condition.type);
                 if (conditionType) {
                     try {
+                        condition.rawLeftSideValue = condition.leftSideValue;
+                        condition.rawRightSideValue = condition.rightSideValue;
 
                         if (conditionType.leftSideValueType === 'text') {
                             try {
                                 condition.leftSideValue = await util.populateStringWithTriggerData(condition.leftSideValue, triggerData);
                             } catch (err) {
-                                logger.warn("Unable to process leftSideValue replace varaibles for condition", err);
+                                logger.warn("Unable to process leftSideValue replace variables for condition", err);
                             }
                         }
 
@@ -61,7 +63,7 @@ class ConditionManager extends EventEmitter {
                             try {
                                 condition.rightSideValue = await util.populateStringWithTriggerData(condition.rightSideValue, triggerData);
                             } catch (err) {
-                                logger.warn("Unable to process rightSideValue replace varaibles for condition", err);
+                                logger.warn("Unable to process rightSideValue replace variables for condition", err);
                             }
                         }
 

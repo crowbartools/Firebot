@@ -17,7 +17,7 @@ const html = {
         description: "Show an HTML snippet in the overlay.",
         icon: "fab fa-html5",
         categories: [EffectCategory.ADVANCED, EffectCategory.OVERLAY],
-        dependencies: [EffectDependency.OVERLAY]
+        dependencies: []
     },
     /**
    * Global settings that will be available in the Settings tab
@@ -178,12 +178,12 @@ const html = {
                             data.htmlElement.css("animation-duration", "");
                             data.htmlElement.css("animation-delay", "");
                             data.htmlElement.css("animation-iteration-count", "");
-                            data.htmlElement.removeClass('animated ' + data.inbetweenAnimation);
+                            data.htmlElement.removeClass(`animated ${data.inbetweenAnimation}`);
                         }
 
                         // If CSS class is provided, remove element(s) with provided CSS class.
                         if (data.removal && data.removal.length > 0) {
-                            let elementToRemove = $("#wrapper").find("." + data.removal);
+                            let elementToRemove = $("#wrapper").find(`.${data.removal}`);
 
                             //If no elements found, remove original element.
                             if (elementToRemove.length < 1) {

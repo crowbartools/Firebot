@@ -8,6 +8,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
 		<link href="css/main.css" rel='stylesheet' type='text/css'>
 
         <% for(let cssDep of dependancies.css) { %>
@@ -44,6 +45,13 @@
     <% } %>
 
     <script>
+        const queryParams = new URLSearchParams(window.location.search);
+        if (queryParams.has("instance") && queryParams.get("instance") !== "") {
+            document.title = `Firebot Overlay (${queryParams.get("instance")})`;
+        } else {
+            document.title = "Firebot Overlay (Default)";
+        }
+
         <% for(let event of events) {%>
             firebotOverlay.on('<%-event.name%>', <%-event.onOverlayEvent%>);
         <% } %>

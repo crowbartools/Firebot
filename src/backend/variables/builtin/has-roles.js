@@ -44,7 +44,7 @@ module.exports = {
             return false;
         }
 
-        respective = (respective + '').toLowerCase();
+        respective = (`${respective}`).toLowerCase();
         if (respective !== 'any' && respective !== 'all') {
             return false;
         }

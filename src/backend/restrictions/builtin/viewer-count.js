@@ -60,10 +60,10 @@ const model = {
             comparison = "equal to";
         }
 
-        return "Viewers " + comparison + " " + amount;
+        return `Viewers ${comparison} ${amount}`;
     },
     /*
-      function that resolves/rejects a promise based on if the restriction critera is met
+      function that resolves/rejects a promise based on if the restriction criteria is met
     */
     predicate: (triggerData, restrictionData) => {
         return new Promise(async (resolve, reject) => {
@@ -72,9 +72,7 @@ const model = {
 
             let currentViewers = null;
             try {
-                const stream = await client.asUser(streamer.userId, async ctx => {
-                    return await ctx.streams.getStreamByUserId(streamer.userId);
-                });
+                const stream = await client.streams.getStreamByUserId(streamer.userId);
                 currentViewers = stream.viewers;
             } catch (error) {
                 logger.warn("unable to get stream viewer count", error);

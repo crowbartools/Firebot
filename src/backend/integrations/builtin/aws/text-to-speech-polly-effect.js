@@ -5,11 +5,12 @@ const { settings } = require("../../../common/settings-access");
 const resourceTokenManager = require("../../../resourceTokenManager");
 const webServer = require("../../../../server/http-server-manager");
 const uuid = require("uuid/v4");
-const fs = require('fs-extra');
+const fs = require('fs');
+const fsp = require('fs/promises');
 const path = require("path");
 const logger = require("../../../logwrapper");
 const frontendCommunicator = require("../../../common/frontend-communicator");
-const integrationManager = require("../../IntegrationManager");
+const integrationManager = require("../../integration-manager");
 const { EffectCategory } = require('../../../../shared/effect-constants');
 const { wait } = require("../../../utility");
 const { PollyClient, DescribeVoicesCommand, SynthesizeSpeechCommand, ListLexiconsCommand } = require('@aws-sdk/client-polly');
@@ -235,7 +236,7 @@ const playSound = {
 
     <div ng-hide="fetchError === false || fetchError === 'NotConfigured' || fetchError.$metadata.httpStatusCode === 403">
         <eos-container>
-            <span class="muted">An error as occured while trying to read the available voices from AWS. The error was: <b>{{ fetchError }}</b>. Please try again later.</span>
+            <span class="muted">An error as occurred while trying to read the available voices from AWS. The error was: <b>{{ fetchError }}</b>. Please try again later.</span>
         </eos-container>
     </div>
 
@@ -511,7 +512,7 @@ const playSound = {
         });
 
         if (effect.isSsml) {
-            effect.text = "<speak>"+effect.text+"</speak>";
+            effect.text = `<speak>${effect.text}</speak>`;
             effect.text = effect.text.replace("&", "&amp;");
         }
 
@@ -566,8 +567,8 @@ const playSound = {
 
         let mp3Path = undefined;
         try {
-            if (!(await fs.pathExists(POLLY_TMP_DIR))) {
-                await fs.mkdirp(POLLY_TMP_DIR);
+            if (!(fs.existsSync(POLLY_TMP_DIR))) {
+                await fsp.mkdir(POLLY_TMP_DIR, { recursive: true });
             }
 
             mp3Path = path.join(POLLY_TMP_DIR, `${uuid()}.mp3`);
@@ -615,7 +616,7 @@ const playSound = {
             });
             const durationInMils = (Math.round(duration) || 0) * 1000;
             const waitPromise = wait(durationInMils).then(async function () {
-                await fs.unlink(data.filepath);
+                await fsp.unlink(data.filepath);
             });
 
             if (effect.waitForSound) {

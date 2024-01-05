@@ -3,7 +3,7 @@
 const { settings } = require("../../common/settings-access");
 const resourceTokenManager = require("../../resourceTokenManager");
 const webServer = require("../../../server/http-server-manager");
-const fs = require('fs-extra');
+const fs = require('fs/promises');
 const logger = require("../../logwrapper");
 const path = require("path");
 const frontendCommunicator = require("../../common/frontend-communicator");
@@ -22,11 +22,11 @@ const playSound = {
     globalSettings: {},
     optionsTemplate: `
     <eos-container header="Type">
-        <firebot-radios 
+        <firebot-radios
             options="{ local: 'Local file', folderRandom: 'Random from folder', url: 'Url' }"
             model="effect.soundType"
             inline="true"
-            style="padding-bottom: 5px;" 
+            style="padding-bottom: 5px;"
         />
     </eos-container>
 
@@ -210,7 +210,7 @@ const playSound = {
                 audio.oncanplay = () => audio.play();
 
                 audio.onended = () => {
-                    $("#" + uuid).remove();
+                    $(`#${uuid}`).remove();
                 };
             }
         }

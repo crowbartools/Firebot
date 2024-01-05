@@ -2,7 +2,7 @@
 const logger = require("../../logwrapper");
 const accountAccess = require("../../common/account-access");
 const frontendCommunicator = require("../../common/frontend-communicator");
-const firebotStaticAuthProvider = require("../../auth/firebot-static-auth-provider");
+const firebotDeviceAuthProvider = require("../../auth/firebot-device-auth-provider");
 const chatRolesManager = require("../../roles/chat-roles-manager");
 const { PubSubClient } = require("@twurple/pubsub");
 
@@ -58,7 +58,7 @@ async function createClient() {
 
     logger.info("Connecting to Twitch PubSub...");
 
-    const authProvider = firebotStaticAuthProvider.streamerProvider;
+    const authProvider = firebotDeviceAuthProvider.streamerProvider;
 
     pubSubClient = new PubSubClient({ authProvider });
 
@@ -66,60 +66,6 @@ async function createClient() {
 
     try {
         const twitchEventsHandler = require('../../events/twitch-events');
-
-        const redemptionListener = pubSubClient.onRedemption(streamer.userId,
-            (message) => {
-                logger.debug("Got reward redemption event!");
-
-                let imageUrl = "";
-                if (message && message.rewardImage) {
-                    const images = message.rewardImage;
-                    if (images.url_4x) {
-                        imageUrl = images.url_4x;
-                    } else if (images.url_2x) {
-                        imageUrl = images.url_2x;
-                    } else if (images.url_1x) {
-                        imageUrl = images.url_1x;
-                    }
-                }
-
-                twitchEventsHandler.rewardRedemption.handleRewardRedemption(
-                    message.id,
-                    message.status,
-                    message.rewardIsQueued,
-                    message.message ?? "",
-                    message.userId,
-                    message.userName,
-                    message.userDisplayName,
-                    message.rewardId,
-                    message.rewardTitle,
-                    message.rewardPrompt ?? "",
-                    message.rewardCost,
-                    imageUrl
-                );
-            });
-
-        listeners.push(redemptionListener);
-
-        const whisperListener = pubSubClient.onWhisper(streamer.userId, (message) => {
-            twitchEventsHandler.whisper.triggerWhisper(
-                message.senderName,
-                message.text
-            );
-        });
-        listeners.push(whisperListener);
-
-        const bitsListener = pubSubClient.onBits(streamer.userId, (message) => {
-            twitchEventsHandler.cheer.triggerCheer(
-                message.userName ?? "An Anonymous Cheerer",
-                message.userId,
-                message.isAnonymous,
-                message.bits,
-                message.totalBits,
-                message.message ?? ""
-            );
-        });
-        listeners.push(bitsListener);
 
         const bitsBadgeUnlockListener = pubSubClient.onBitsBadgeUnlock(streamer.userId, (message) => {
             twitchEventsHandler.cheer.triggerBitsBadgeUnlock(
@@ -149,9 +95,9 @@ async function createClient() {
 
         const autoModListener = pubSubClient.onAutoModQueue(streamer.userId, streamer.userId, async (message) => {
             if (message.status === "PENDING") {
-                const { buildViewerFirebotChatMessageFromAutoModMessage } = require("../../chat/chat-helpers");
+                const chatHelpers = require("../../chat/chat-helpers");
 
-                const firebotChatMessage = await buildViewerFirebotChatMessageFromAutoModMessage(message);
+                const firebotChatMessage = await chatHelpers.buildViewerFirebotChatMessageFromAutoModMessage(message);
 
                 frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
             }
@@ -171,61 +117,38 @@ async function createClient() {
             const frontendCommunicator = require("../../common/frontend-communicator");
 
             switch (message.type) {
-            case "vip_added":
-                chatRolesManager.addVipToVipList(message.targetUserName);
-                break;
-            case "vip_removed":
-                chatRolesManager.removeVipFromVipList(message.targetUserName);
-                break;
-            default:
-                switch (message.action) {
-                case "clear":
-                    frontendCommunicator.send("twitch:chat:clear-feed", message.userName);
+                case "vip_added":
+                    chatRolesManager.addVipToVipList(message.targetUserName);
                     break;
-                case "ban":
-                    twitchEventsHandler.viewerBanned.triggerBanned(
-                        message.args[0],
-                        message.userName,
-                        message.args[1] ?? ""
-                    );
-                    frontendCommunicator.send("twitch:chat:user:delete-messages", message.args[0]);
-                    break;
-                case "timeout":
-                    twitchEventsHandler.viewerTimeout.triggerTimeout(
-                        message.args[0],
-                        message.args[1],
-                        message.userName,
-                        message.args[2] ?? ""
-                    );
-                    frontendCommunicator.send("twitch:chat:user:delete-messages", message.args[0]);
-                    break;
-                case "unban":
-                    twitchEventsHandler.viewerBanned.triggerUnbanned(
-                        message.args[0],
-                        message.userName
-                    );
-                    break;
-                case "emoteonly":
-                case "emoteonlyoff":
-                case "subscribers":
-                case "subscribersoff":
-                case "followers":
-                case "followersoff":
-                case "slow":
-                case "slowoff":
-                case "r9kbeta": // Unique Chat
-                case "r9kbetaoff":
-                    twitchEventsHandler.chatModeChanged.triggerChatModeChanged(
-                        message.action,
-                        message.action.includes("off") ? "disabled" : "enabled",
-                        message.userName,
-                        message.args ? parseInt(message.args[0]) : null
-                    );
+                case "vip_removed":
+                    chatRolesManager.removeVipFromVipList(message.targetUserName);
                     break;
                 default:
-                    return;
-                }
-                break;
+                    switch (message.action) {
+                        case "clear":
+                            frontendCommunicator.send("twitch:chat:clear-feed", message.userName);
+                            break;
+                        case "emoteonly":
+                        case "emoteonlyoff":
+                        case "subscribers":
+                        case "subscribersoff":
+                        case "followers":
+                        case "followersoff":
+                        case "slow":
+                        case "slowoff":
+                        case "r9kbeta": // Unique Chat
+                        case "r9kbetaoff":
+                            twitchEventsHandler.chatModeChanged.triggerChatModeChanged(
+                                message.action,
+                                message.action.includes("off") ? "disabled" : "enabled",
+                                message.userName,
+                                message.args ? parseInt(message.args[0]) : null
+                            );
+                            break;
+                        default:
+                            return;
+                    }
+                    break;
             }
         });
         listeners.push(modListener);
@@ -236,8 +159,8 @@ async function createClient() {
                 const twitchApi = require("../api").streamerClient;
                 const extension = await twitchApi.extensions.getReleasedExtension(message.data.sender.extension_client_id);
 
-                const { buildFirebotChatMessageFromExtensionMessage } = require("../../chat/chat-helpers");
-                const firebotChatMessage = await buildFirebotChatMessageFromExtensionMessage(
+                const chatHelpers = require("../../chat/chat-helpers");
+                const firebotChatMessage = await chatHelpers.buildFirebotChatMessageFromExtensionMessage(
                     message.data.content.text,
                     message.data.sender.display_name,
                     extension.getIconUrl("100x100"),

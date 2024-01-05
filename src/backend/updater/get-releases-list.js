@@ -11,7 +11,7 @@ const {
 
 module.exports = async (version) => {
     if (typeof version === 'string' || version instanceof String) {
-        version = '' + version;
+        version = `${version}`;
 
         if (version[0] !== 'v') {
             version = `v${version}`;

@@ -33,7 +33,7 @@ function registerEventWithElectron(eventName) {
 function fireEventAsync(type, data) {
     return new Promise(resolve => {
         if (global.renderWindow != null) {
-            ipcMain.once(type + ":reply", (_, eventData) => {
+            ipcMain.once(`${type}:reply`, (_, eventData) => {
                 resolve(eventData);
             });
             renderWindow.webContents.send(type, data);

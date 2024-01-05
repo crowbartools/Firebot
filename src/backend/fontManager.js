@@ -1,7 +1,7 @@
 "use strict";
 
 const profileManager = require("./common/profile-manager");
-const fs = require("fs-extra");
+const fs = require("fs");
 const path = require("path");
 const logger = require("./logwrapper");
 
@@ -75,7 +75,7 @@ function generateAppFontCssFile() {
 
     const fonts = getInstalledFonts();
     fonts.forEach(font => {
-        const fontPath = "file:///" + font.path;
+        const fontPath = `file:///${font.path}`;
 
         cssFileRaw +=
             `@font-face {
@@ -86,7 +86,7 @@ function generateAppFontCssFile() {
     });
 
     const fontCssPath = path.join(fontFolder, path.sep, "fonts.css");
-    fs.writeFileSync(fontCssPath, cssFileRaw, 'utf8');
+    fs.writeFileSync(fontCssPath, cssFileRaw, { encoding: "utf8" });
 }
 
 exports.generateAppFontCssFile = generateAppFontCssFile;

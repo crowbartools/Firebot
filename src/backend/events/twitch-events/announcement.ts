@@ -14,4 +14,4 @@ export function triggerAnnouncement(
         twitchUserRoles,
         messageText
     });
-};
+}

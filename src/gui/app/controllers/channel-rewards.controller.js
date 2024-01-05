@@ -5,9 +5,14 @@
         .controller("channelRewardsController", function(
             $scope,
             channelRewardsService,
-            utilityService
+            utilityService,
+            accountAccess
         ) {
             $scope.channelRewardsService = channelRewardsService;
+
+            $scope.canUseChannelRewards = () => accountAccess.accounts["streamer"].loggedIn
+                && (accountAccess.accounts["streamer"].broadcasterType === "affiliate"
+                    || accountAccess.accounts["streamer"].broadcasterType === "partner");
 
             // triggering twitch sync
             channelRewardsService.syncChannelRewards();
@@ -59,7 +64,7 @@
                         }
                     },
                     {
-                        html: `<a href uib-tooltip="This reward was created outside of Firebot, its enabled status cannot be edited." tooltip-enable="${!item.manageable}"><i class="far fa-toggle-off" style="margin-right: 10px;"></i> Toggle Enabled</a>`,
+                        html: `<a href uib-tooltip="This reward was created outside of Firebot, its enabled status cannot be edited." tooltip-enable="${!item.manageable}"><i class="far fa-toggle-off" style="margin-right: 10px;"></i> ${item.twitchData.isEnabled ? "Disable Channel Reward" : "Enable Channel Reward"}</a>`,
                         click: function () {
                             item.twitchData.isEnabled = !item.twitchData.isEnabled;
                             channelRewardsService.saveChannelReward(item);
@@ -68,7 +73,7 @@
                         enabled: item.manageable
                     },
                     {
-                        html: `<a href uib-tooltip="This reward was created outside of Firebot, its paused status cannot be edited." tooltip-enable="${!item.manageable}"><i class="far fa-toggle-off" style="margin-right: 10px;"></i> Toggle Paused</a>`,
+                        html: `<a href uib-tooltip="This reward was created outside of Firebot, its paused status cannot be edited." tooltip-enable="${!item.manageable}"><i class="far fa-toggle-off" style="margin-right: 10px;"></i> ${item.twitchData.isPaused ? "Unpause Channel Reward" : "Pause Channel Reward"}</a>`,
                         click: function () {
                             item.twitchData.isPaused = !item.twitchData.isPaused;
                             channelRewardsService.saveChannelReward(item);

@@ -44,36 +44,36 @@
 
             $ctrl.getPermissionText = () => {
                 switch ($ctrl.selectedPermissionType) {
-                case "everyone":
-                    return "All viewers can trigger this command.";
-                case "subs":
-                    return "Only your subscribers (and mods) can trigger this command.";
-                case "mods":
-                    return "Only your moderators and yourself can trigger this command.";
+                    case "everyone":
+                        return "All viewers can trigger this command.";
+                    case "subs":
+                        return "Only your subscribers (and mods) can trigger this command.";
+                    case "mods":
+                        return "Only your moderators and yourself can trigger this command.";
                 }
             };
 
             $ctrl.permissionTypeChanged = () => {
                 switch ($ctrl.selectedPermissionType) {
-                case "everyone":
-                    $ctrl.command.restrictionData.restrictions = [];
-                    break;
-                case "subs":
-                    $ctrl.command.restrictionData.restrictions = [{
-                        id: uuid(),
-                        type: "firebot:permissions",
-                        mode: "roles",
-                        roleIds: ["sub", "mod", "broadcaster"]
-                    }];
-                    break;
-                case "mods":
-                    $ctrl.command.restrictionData.restrictions = [{
-                        id: uuid(),
-                        type: "firebot:permissions",
-                        mode: "roles",
-                        roleIds: ["mod", "broadcaster"]
-                    }];
-                    break;
+                    case "everyone":
+                        $ctrl.command.restrictionData.restrictions = [];
+                        break;
+                    case "subs":
+                        $ctrl.command.restrictionData.restrictions = [{
+                            id: uuid(),
+                            type: "firebot:permissions",
+                            mode: "roles",
+                            roleIds: ["sub", "mod", "broadcaster"]
+                        }];
+                        break;
+                    case "mods":
+                        $ctrl.command.restrictionData.restrictions = [{
+                            id: uuid(),
+                            type: "firebot:permissions",
+                            mode: "roles",
+                            roleIds: ["mod", "broadcaster"]
+                        }];
+                        break;
                 }
             };
 

@@ -53,7 +53,6 @@
                                 <h4 class="font-semibold">Description <tooltip class="text-2xl ml-1" text="'Displayed on the command list webpage'"></tooltip></h4>
                             </div>
                             <input
-                                ng-show="$ctrl.fullyEditable"
                                 class="form-control"
                                 type="text"
                                 placeholder="Enter description"
@@ -168,7 +167,7 @@
 
             $ctrl.compiledUsage = "";
             $ctrl.onUsageChange = () => {
-                $ctrl.subcommand.usage = $ctrl.subcommand.arg + " " + $ctrl.compiledUsage;
+                $ctrl.subcommand.usage = `${$ctrl.subcommand.arg} ${$ctrl.compiledUsage}`;
             };
 
             $ctrl.adjustedMinArgs = 0;
@@ -181,7 +180,7 @@
             $ctrl.$onInit = function() {
                 if ($ctrl.subcommand) {
                     if ((!$ctrl.subcommand.regex && !$ctrl.subcommand.fallback) && $ctrl.subcommand.usage) {
-                        $ctrl.compiledUsage = $ctrl.subcommand.usage.replace($ctrl.subcommand.arg + " ", "");
+                        $ctrl.compiledUsage = $ctrl.subcommand.usage.replace(`${$ctrl.subcommand.arg} `, "");
                     }
                     if ($ctrl.subcommand.minArgs > 0) {
                         $ctrl.adjustedMinArgs = $ctrl.subcommand.minArgs - 1;

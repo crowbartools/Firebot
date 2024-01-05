@@ -57,7 +57,7 @@
                     id: "auto",
                     display: "Sequential",
                     description: "Runs effect list in the queue sequentially. Priority items will be added before non-priority. Optional delay defaults to 0s.",
-                    iconClass: "fa-arrow-down-1-9"
+                    iconClass: "fa-sort-numeric-down"
                 },
                 {
                     id: "interval",

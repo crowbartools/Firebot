@@ -2,7 +2,7 @@
 (function() {
     //This handles the Settings tab
 
-    const fs = require("fs-extra");
+    const fs = require("fs");
     const path = require("path");
     const dataAccess = require("../../backend/common/data-access");
     const moment = require("moment");
@@ -299,12 +299,12 @@
                     },
                     ticksTooltip: function(index) {
                         switch (index) {
-                        case 0:
-                            return "Updates that fix bugs or add features. (Example: v1.0 to v1.1.1)";
-                        case 1:
-                            return "Updates that are major new versions. Could contain breaking changes. (Example: v1.0 to v2.0)";
-                        default:
-                            return "";
+                            case 0:
+                                return "Updates that fix bugs or add features. (Example: v1.0 to v1.1.1)";
+                            case 1:
+                                return "Updates that are major new versions. Could contain breaking changes. (Example: v1.0 to v2.0)";
+                            default:
+                                return "";
                         }
                     },
                     getSelectionBarColor: function() {
@@ -321,16 +321,16 @@
 
             $scope.getAutoUpdateLevelString = function(level) {
                 switch (level) {
-                case 0:
-                    return "Off";
-                case 2:
-                    return "Default";
-                case 3:
-                    return "Major Versions";
-                case 4:
-                    return "Betas";
-                default:
-                    return "";
+                    case 0:
+                        return "Off";
+                    case 2:
+                        return "Default";
+                    case 3:
+                        return "Major Versions";
+                    case 4:
+                        return "Betas";
+                    default:
+                        return "";
                 }
             };
 
@@ -370,7 +370,7 @@
                     ) => {
                         $scope.backups = [];
 
-                        const backupFolderPath = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups") + path.sep;
+                        const backupFolderPath = path.resolve(`${dataAccess.getUserDataPath() + path.sep}backups`) + path.sep;
 
                         $scope.loadingBackups = true;
                         $q
@@ -424,14 +424,14 @@
 
                         $scope.togglePreventDeletion = function(backup) {
                             backup.neverDelete = !backup.neverDelete;
-                            const oldName = backup.name + ".zip";
+                            const oldName = `${backup.name}.zip`;
                             backup.name = backup.neverDelete
                                 ? (backup.name += "_NODELETE")
                                 : backup.name.replace("_NODELETE", "");
 
                             fs.renameSync(
                                 backupFolderPath + oldName,
-                                backupFolderPath + backup.name + ".zip"
+                                `${backupFolderPath + backup.name}.zip`
                             );
                         };
 
@@ -445,7 +445,7 @@
                                 .then(confirmed => {
                                     if (confirmed) {
                                         $scope.backups.splice(index, 1);
-                                        fs.unlink(backupFolderPath + backup.name + ".zip");
+                                        fs.unlinkSync(`${backupFolderPath + backup.name}.zip`);
                                     }
                                 });
                         };
@@ -510,7 +510,7 @@
                             $uibModalInstance.close(newPort);
                         };
 
-                        // When they hit cancel, click the little x, or click outside the modal, we dont want to do anything.
+                        // When they hit cancel, click the little x, or click outside the modal, we don't want to do anything.
                         $scope.dismiss = function() {
                             $uibModalInstance.dismiss("cancel");
                         };

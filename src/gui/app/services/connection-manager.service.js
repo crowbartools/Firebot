@@ -73,18 +73,18 @@
 
                 services.forEach(s => {
                     switch (s) {
-                    case "chat":
-                        if (connectionService.connectedToChat) {
-                            count++;
-                        }
-                        break;
-                    default:
-                        if (s.startsWith("integration.")) {
-                            const intId = s.replace("integration.", "");
-                            if (integrationService.integrationIsConnected(intId)) {
+                        case "chat":
+                            if (connectionService.connectedToChat) {
                                 count++;
                             }
-                        }
+                            break;
+                        default:
+                            if (s.startsWith("integration.")) {
+                                const intId = s.replace("integration.", "");
+                                if (integrationService.integrationIsConnected(intId)) {
+                                    count++;
+                                }
+                            }
                     }
                 });
 
@@ -133,32 +133,32 @@
                 for (let i = 0; i < services.length; i++) {
                     const s = services[i];
                     switch (s) {
-                    case "chat":
-                        if (shouldConnect) {
-                            const didConnect = await service.setConnectionToChat(true);
-                            if (didConnect) {
-                                soundService.popSound();
-                                await delay(100);
+                        case "chat":
+                            if (shouldConnect) {
+                                const didConnect = await service.setConnectionToChat(true);
+                                if (didConnect) {
+                                    soundService.popSound();
+                                    await delay(100);
+                                }
+                            } else if (connectionService.connectedToChat) {
+                                await service.setConnectionToChat(false);
                             }
-                        } else if (connectionService.connectedToChat) {
-                            await service.setConnectionToChat(false);
-                        }
-                        break;
-                    default:
-                        if (s.startsWith("integration.")) {
-                            const intId = s.replace("integration.", "");
-                            logger.info("Connecting to " + intId);
-                            if (integrationService.integrationIsLinked(intId)) {
-                                if (shouldConnect) {
-                                    const didConnect = await integrationService.setConnectionForIntegration(intId, true);
-                                    if (didConnect) {
-                                        soundService.popSound();
+                            break;
+                        default:
+                            if (s.startsWith("integration.")) {
+                                const intId = s.replace("integration.", "");
+                                logger.info(`Connecting to ${intId}`);
+                                if (integrationService.integrationIsLinked(intId)) {
+                                    if (shouldConnect) {
+                                        const didConnect = await integrationService.setConnectionForIntegration(intId, true);
+                                        if (didConnect) {
+                                            soundService.popSound();
+                                        }
+                                    } else if (integrationService.integrationIsConnected(intId)) {
+                                        await integrationService.setConnectionForIntegration(intId, false);
                                     }
-                                } else if (integrationService.integrationIsConnected(intId)) {
-                                    await integrationService.setConnectionForIntegration(intId, false);
                                 }
                             }
-                        }
                     }
                 }
                 connectionService.isConnectingAll = false;
@@ -170,50 +170,50 @@
             service.getConnectionStatusForService = function(service) {
                 let connectionStatus = null;
                 switch (service) {
-                case "chat":
-                    if (connectionService.connectedToChat) {
-                        connectionStatus = "connected";
-                    } else {
-                        connectionStatus = "disconnected";
-                    }
-                    break;
-                case "overlay": {
-                    if (!overlayStatus.serverStarted) {
-                        connectionStatus = "disconnected";
-                    } else if (overlayStatus.clientsConnected) {
-                        connectionStatus = "connected";
-                    } else {
-                        connectionStatus = "warning";
-                    }
-
-                    break;
-                }
-                case "integrations": {
-                    const sidebarControlledIntegrations = settingsService
-                        .getSidebarControlledServices()
-                        .filter(s => s.startsWith("integration."))
-                        .map(s => s.replace("integration.", ""));
-
-                    let connectedCount = 0;
-                    sidebarControlledIntegrations.forEach(i => {
-                        if (integrationService.integrationIsConnected(i)) {
-                            connectedCount++;
+                    case "chat":
+                        if (connectionService.connectedToChat) {
+                            connectionStatus = "connected";
+                        } else {
+                            connectionStatus = "disconnected";
                         }
-                    });
+                        break;
+                    case "overlay": {
+                        if (!overlayStatus.serverStarted) {
+                            connectionStatus = "disconnected";
+                        } else if (overlayStatus.clientsConnected) {
+                            connectionStatus = "connected";
+                        } else {
+                            connectionStatus = "warning";
+                        }
 
-                    if (connectedCount === 0) {
-                        connectionStatus = "disconnected";
-                    } else if (
-                        connectedCount === sidebarControlledIntegrations.length
-                    ) {
-                        connectionStatus = "connected";
-                    } else {
-                        connectionStatus = "warning";
+                        break;
                     }
-                    break;
-                }
-                default:
-                    connectionStatus = "disconnected";
+                    case "integrations": {
+                        const sidebarControlledIntegrations = settingsService
+                            .getSidebarControlledServices()
+                            .filter(s => s.startsWith("integration."))
+                            .map(s => s.replace("integration.", ""));
+
+                        let connectedCount = 0;
+                        sidebarControlledIntegrations.forEach(i => {
+                            if (integrationService.integrationIsConnected(i)) {
+                                connectedCount++;
+                            }
+                        });
+
+                        if (connectedCount === 0) {
+                            connectionStatus = "disconnected";
+                        } else if (
+                            connectedCount === sidebarControlledIntegrations.length
+                        ) {
+                            connectionStatus = "connected";
+                        } else {
+                            connectionStatus = "warning";
+                        }
+                        break;
+                    }
+                    default:
+                        connectionStatus = "disconnected";
                 }
                 return connectionStatus;
             };

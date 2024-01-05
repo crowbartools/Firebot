@@ -173,15 +173,15 @@
                             const action = resp.action;
 
                             switch (action) {
-                            case "add":
-                                $ctrl.filterData.filters.push(resp.filter);
-                                break;
-                            case "update":
-                                $ctrl.filterData.filters[resp.index] = resp.filter;
-                                break;
-                            case "delete":
-                                $ctrl.removeFilterAtIndex(resp.index);
-                                break;
+                                case "add":
+                                    $ctrl.filterData.filters.push(resp.filter);
+                                    break;
+                                case "update":
+                                    $ctrl.filterData.filters[resp.index] = resp.filter;
+                                    break;
+                                case "delete":
+                                    $ctrl.removeFilterAtIndex(resp.index);
+                                    break;
                             }
                         }
                     });

@@ -2,7 +2,7 @@
 const {ipcMain} = require('electron');
 const logger = require('../logwrapper');
 const effectManager = require("../effects/effectManager");
-const { EffectDependency, EffectTrigger } = require("../../shared/effect-constants");
+const { EffectTrigger } = require("../../shared/effect-constants");
 const accountAccess = require('./account-access');
 const replaceVariableManager = require("./../variables/replace-variable-manager");
 const effectQueueManager = require("../effects/queues/effect-queue-manager");
@@ -10,13 +10,15 @@ const effectQueueRunner = require("../effects/queues/effect-queue-runner");
 const webServer = require("../../server/http-server-manager");
 const util = require("../utility");
 
+const SKIP_VARIABLE_PROPERTIES = ["list", "leftSideValue", "rightSideValue", "effectLabel"];
+
 const findAndReplaceVariables = async (data, trigger, effectOutputs) => {
     const keys = Object.keys(data);
 
     for (const key of keys) {
 
-        // skip nested effect lists and conditions so we dont replace variables too early
-        if (key === "list" || key === "leftSideValue" || key === "rightSideValue") {
+        // skip nested effect lists and conditions so we don't replace variables too early
+        if (SKIP_VARIABLE_PROPERTIES.includes(key)) {
             continue;
         }
 
@@ -46,9 +48,6 @@ const findAndReplaceVariables = async (data, trigger, effectOutputs) => {
     }
 };
 
-// Connection Dependency Checker
-// This returns true if all dependency checks pass.
-// NOTE: I don't know of a way to check for overlay status right now so this skips that check.
 function validateEffectCanRun(effectId, triggerType) {
     const effectDefinition = effectManager.getEffectById(effectId).definition;
 
@@ -62,29 +61,20 @@ function validateEffectCanRun(effectId, triggerType) {
         }
     }
 
-
     if (effectDefinition.dependencies) {
-        const twitchChat = require("../chat/twitch-chat");
-        const validDeps = effectDefinition.dependencies.every(d => {
-            if (d === EffectDependency.CHAT) {
-                return twitchChat.chatIsConnected;
-            }
-
-            if (d === EffectDependency.OVERLAY) {
-                return true;
-            }
-
-            logger.info(`Unknown effect dependency: ${d}`);
+        // require here to avoid circular dependency issues :(
+        const { checkEffectDependencies } = require("../effects/effect-helpers");
+        const depsMet = checkEffectDependencies(effectDefinition.dependencies, "execution", true);
+        if (!depsMet) {
             return false;
-        });
-        return validDeps;
+        }
     }
 
     return true;
 
 }
 
-async function triggerEffect(effect, trigger) {
+async function triggerEffect(effect, trigger, outputs) {
     // For each effect, send it off to the appropriate handler.
     logger.debug(`Running ${effect.type}(${effect.id}) effect...`);
 
@@ -97,7 +87,7 @@ async function triggerEffect(effect, trigger) {
         }
     };
 
-    return effectDef.onTriggerEvent({ effect, trigger, sendDataToOverlay });
+    return effectDef.onTriggerEvent({ effect, trigger, sendDataToOverlay, outputs });
 }
 
 async function runEffects(runEffectsContext) {
@@ -109,12 +99,11 @@ async function runEffects(runEffectsContext) {
             logger.info(`${effect.type}(${effect.id}) is disabled, skipping...`);
             continue;
         }
-        // Check this effect for dependencies before running.
-        // If all dependencies are not fulfilled, we will skip this effect.
 
+        // Check this effect for dependencies before running.
+        // If any dependencies are not available, we will skip this effect.
         if (!validateEffectCanRun(effect.type, trigger.type)) {
             logger.info(`Skipping ${effect.type}(${effect.id}). Dependencies not met or trigger not supported.`);
-
             continue;
         }
 
@@ -126,7 +115,7 @@ async function runEffects(runEffectsContext) {
         }));
 
         try {
-            const response = await triggerEffect(effect, trigger);
+            const response = await triggerEffect(effect, trigger, runEffectsContext.outputs);
             if (!response) {
                 continue;
             }

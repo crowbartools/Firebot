@@ -54,7 +54,7 @@ function saveStartupScriptData(startupScriptData) {
     try {
         const startupScriptsConfig = getStartupScriptsConfig();
 
-        startupScriptsConfig.push("/" + startupScriptData.id, startupScriptData);
+        startupScriptsConfig.push(`/${startupScriptData.id}`, startupScriptData);
 
         logger.debug(`Saved preset effect list ${startupScriptData.id} to file.`);
     } catch (err) {
@@ -82,7 +82,7 @@ function deleteStartupScriptData(startupScriptDataId) {
     try {
         const startupScriptsConfig = getStartupScriptsConfig();
 
-        startupScriptsConfig.delete("/" + startupScriptDataId);
+        startupScriptsConfig.delete(`/${startupScriptDataId}`);
 
         logger.debug(`Deleted startup script data: ${startupScriptDataId}`);
 

@@ -11,7 +11,7 @@ exports.getAuth = (req, res) => {
         return res.status(400).json('Invalid providerId query param');
     }
 
-    logger.info("Redirecting to provider auth uri: " + provider.authorizationUri);
+    logger.info(`Redirecting to provider auth uri: ${provider.authorizationUri}`);
 
     res.redirect(provider.authorizationUri);
 };
@@ -38,20 +38,20 @@ exports.getAuthCallback = async (
         const tokenOptions = { body: {} };
 
         switch (authType) {
-        case "token":
-            token = await provider.oauthClient.token.getToken(fullUrl, tokenOptions);
-            break;
+            case "token":
+                token = await provider.oauthClient.token.getToken(fullUrl, tokenOptions);
+                break;
 
-        case "code":
+            case "code":
             // Force these because the library adds them as an auth header, not in the body
-            tokenOptions.body["client_id"] = provider.details.client.id;
-            tokenOptions.body["client_secret"] = provider.details.client.secret;
+                tokenOptions.body["client_id"] = provider.details.client.id;
+                tokenOptions.body["client_secret"] = provider.details.client.secret;
 
-            token = await provider.oauthClient.code.getToken(fullUrl, tokenOptions);
-            break;
+                token = await provider.oauthClient.code.getToken(fullUrl, tokenOptions);
+                break;
 
-        default:
-            break;
+            default:
+                break;
         }
 
         logger.info(`Received token from provider id '${provider.id}'`);

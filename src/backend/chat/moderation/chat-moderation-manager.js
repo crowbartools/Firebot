@@ -96,23 +96,23 @@ function startModerationService() {
             return;
         }
         switch (event.type) {
-        case "deleteMessage": {
-            if (event.messageId) {
-                logger.debug(event.logMessage);
-                await twitchApi.chat.deleteChatMessage(event.messageId);
+            case "deleteMessage": {
+                if (event.messageId) {
+                    logger.debug(event.logMessage);
+                    await twitchApi.chat.deleteChatMessage(event.messageId);
 
-                let outputMessage = chatModerationSettings.bannedWordList.outputMessage || "";
-                if (outputMessage) {
-                    outputMessage = outputMessage.replace("{userName}", event.username);
-                    await chat.sendChatMessage(outputMessage);
+                    let outputMessage = chatModerationSettings.bannedWordList.outputMessage || "";
+                    if (outputMessage) {
+                        outputMessage = outputMessage.replace("{userName}", event.username);
+                        await chat.sendChatMessage(outputMessage);
+                    }
                 }
+                break;
             }
-            break;
-        }
-        case "logWarn": {
-            logger.warn(event.logMessage, event.meta);
-            break;
-        }
+            case "logWarn": {
+                logger.warn(event.logMessage, event.meta);
+                break;
+            }
         }
     });
 
@@ -159,7 +159,7 @@ const countEmojis = (str) => {
 
 /**
  *
- * @param {import("../chat-helpers").FirebotChatMessage} chatMessage
+ * @param {import("../../../types/chat").FirebotChatMessage} chatMessage
  */
 async function moderateMessage(chatMessage) {
     if (chatMessage == null) {
@@ -210,7 +210,7 @@ async function moderateMessage(chatMessage) {
         const regex = utils.getUrlRegex();
 
         if (regex.test(message)) {
-            logger.debug("Url moderation: Found url in message...");
+            logger.debug("URL moderation: Found URL in message");
 
             const settings = chatModerationSettings.urlModeration;
             let outputMessage = settings.outputMessage || "";
@@ -249,7 +249,7 @@ async function moderateMessage(chatMessage) {
                     if (viewerViewTime <= minimumViewTime) {
                         outputMessage = outputMessage.replace("{viewTime}", minimumViewTime.toString());
 
-                        logger.debug("Url moderation: Not enough view time.");
+                        logger.debug("URL moderation: Not enough view time.");
                         shouldDeleteMessage = true;
                     }
                 } else {

@@ -225,7 +225,7 @@
                     if (durationValue == null || durationValue < 1) {
                         durationValue = 1;
                     }
-                    ctrl.effect.enterDuration = ctrl.selected.enterDurationValue + "" + ctrl.selected.enterDurationType;
+                    ctrl.effect.enterDuration = `${ctrl.selected.enterDurationValue}${ctrl.selected.enterDurationType}`;
                 };
 
                 ctrl.exitDurationUpdated = function() {
@@ -233,7 +233,7 @@
                     if (durationValue == null || durationValue < 1) {
                         durationValue = 1;
                     }
-                    ctrl.effect.exitDuration = durationValue + "" + ctrl.selected.exitDurationType;
+                    ctrl.effect.exitDuration = `${durationValue}${ctrl.selected.exitDurationType}`;
                 };
 
                 ctrl.inbetweenDurationUpdated = function() {
@@ -241,7 +241,7 @@
                     if (durationValue == null || durationValue < 1) {
                         durationValue = 1;
                     }
-                    ctrl.effect.inbetweenDuration = durationValue + "" + ctrl.selected.inbetweenDurationType;
+                    ctrl.effect.inbetweenDuration = `${durationValue}${ctrl.selected.inbetweenDurationType}`;
                 };
 
                 ctrl.inbetweenDelayUpdated = function() {
@@ -249,7 +249,7 @@
                     if (delayValue == null || delayValue < 0) {
                         delayValue = 0;
                     }
-                    ctrl.effect.inbetweenDelay = delayValue + "" + ctrl.selected.inbetweenDelayType;
+                    ctrl.effect.inbetweenDelay = `${delayValue}${ctrl.selected.inbetweenDelayType}`;
                 };
 
                 ctrl.inbetweenRepeatUpdated = function() {

@@ -6,7 +6,7 @@ const dataAccess = require("./common/data-access.js");
 const app = electron.app || firebotAppDetails;
 //const config = winston.config;
 //const Sentry = require("winston-raven-sentry");
-const fs = require("fs-extra");
+const fs = require("fs");
 
 const LOG_FOLDER = dataAccess.getPathInUserData("/logs");
 
@@ -36,40 +36,42 @@ if (!fs.existsSync(LOG_FOLDER)) {
     }
 });*/
 
-const pad = (subject, length, padText) => (subject + '').padStart(length, padText + '');
+const pad = (subject, length, padText) => (`${subject}`).padStart(length, `${padText}`);
+
+const timestamp = function() {
+    const currentDate = new Date();
+
+    const year = `${currentDate.getUTCFullYear()}`;
+    const month = pad(currentDate.getUTCMonth() + 1, 2, 0);
+    const day = pad(currentDate.getUTCDate(), 2, 0);
+
+    const hour = pad(currentDate.getUTCHours(), 2, 0);
+    const minute = pad(currentDate.getUTCMinutes(), 2, 0);
+    const seconds = pad(currentDate.getUTCSeconds(), 2, 0);
+    const milliseconds = pad(currentDate.getUTCMilliseconds(), 4, 0);
+
+    // YYYY-MM-DD hh:nn:ss.mmmm
+    return `[${year}-${month}-${day} ${hour}:${minute}:${seconds}.${milliseconds}]`;
+};
 
 const rotateFileTransport = new (require("winston-daily-rotate-file"))({
     level: rotateFileLogLevel,
-    filename: LOG_FOLDER + "/log",
+    filename: `${LOG_FOLDER}/log`,
     datePattern: "yyyy-MM-dd.",
     prepend: true,
     json: false,
     maxDays: 7,
     humanReadableUnhandledException: true,
-    label: "v" + app.getVersion(),
+    label: `v${app.getVersion()}`,
     prettyPrint: true,
-
-    // YYYY-MM-DD hh:nn:ss
-    timestamp: function() {
-        const currentDate = new Date();
-
-        const year = currentDate.getUTCFullYear() + '';
-        const month = pad(currentDate.getUTCMonth() + 1, 2, 0);
-        const day = pad(currentDate.getDate(), 2, 0);
-
-        const hour = pad(currentDate.getUTCHours(), 2, 0);
-        const minute = pad(currentDate.getUTCMinutes(), 2, 0);
-        const seconds = pad(currentDate.getUTCSeconds(), 2, 0);
-        const milliseconds = pad(currentDate.getUTCMilliseconds(), 4, 0);
-
-        return `${year}-${month}-${day} ${hour}:${minute}:${seconds}.${milliseconds}`;
-    }
+    timestamp: timestamp
 });
 
 const consoleTransport = new winston.transports.Console({
     level: "silly",
     prettyPrint: true,
-    colorize: true
+    colorize: true,
+    timestamp: timestamp
 });
 
 const logger = new winston.Logger({
@@ -90,7 +92,7 @@ module.exports = logger;
 // #### @key {string} **Optional** Optional key represented by obj in a larger object
 // Performs simple comma-separated, `key=value` serialization for Loggly when
 // logging to non-JSON inputs.
-function serialize(obj, key) { //eslint-disable-line no-unused-vars
+function serialize(obj, key) { //eslint-disable-line @typescript-eslint/no-unused-vars
     // symbols cannot be directly casted to strings
     if (typeof key === "symbol") {
         key = key.toString();
@@ -108,20 +110,20 @@ function serialize(obj, key) { //eslint-disable-line no-unused-vars
     }
 
     if (typeof obj !== "object") {
-        return key ? key + "=" + obj : obj;
+        return key ? `${key}=${obj}` : obj;
     }
 
     if (obj instanceof Buffer) {
-        return key ? key + "=" + obj.toString("base64") : obj.toString("base64");
+        return key ? `${key}=${obj.toString("base64")}` : obj.toString("base64");
     }
 
-    let msg = "",
-        keys = Object.keys(obj),
+    let msg = "";
+    const keys = Object.keys(obj),
         length = keys.length;
 
     for (let i = 0; i < length; i++) {
         if (Array.isArray(obj[keys[i]])) {
-            msg += keys[i] + "=[";
+            msg += `${keys[i]}=[`;
 
             for (let j = 0, l = obj[keys[i]].length; j < l; j++) {
                 msg += serialize(obj[keys[i]][j]);
@@ -132,7 +134,7 @@ function serialize(obj, key) { //eslint-disable-line no-unused-vars
 
             msg += "]";
         } else if (obj[keys[i]] instanceof Date) {
-            msg += keys[i] + "=" + obj[keys[i]];
+            msg += `${keys[i]}=${obj[keys[i]]}`;
         } else {
             msg += serialize(obj[keys[i]], keys[i]);
         }

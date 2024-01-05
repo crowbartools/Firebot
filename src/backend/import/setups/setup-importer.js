@@ -185,40 +185,40 @@ function removeSetupComponents(components) {
         .forEach(([componentType, componentList]) => {
             componentList.forEach(({id, name}) => {
                 switch (componentType) {
-                case "commands":
-                    commandAccess.deleteCustomCommand(id);
-                    break;
-                case "counters":
-                    countersManager.deleteItem(id);
-                    break;
-                case "currencies":
-                    frontendCommunicator.send("remove-currency", { id, name });
-                    break;
-                case "effectQueues":
-                    effectQueueManager.deleteItem(id);
-                    break;
-                case "events":
-                    eventsAccess.removeEventFromMainEvents(id);
-                    break;
-                case "eventGroups":
-                    eventsAccess.deleteGroup(id);
-                    break;
-                case "hotkeys":
-                    frontendCommunicator.send("remove-hotkey", id);
-                    break;
-                case "presetEffectLists":
-                    presetEffectListManager.deleteItem(id);
-                    break;
-                case "timers":
-                    timerManager.deleteItem(id);
-                    break;
-                case "viewerRoles":
-                    customRolesManager.deleteCustomRole(id);
-                    break;
-                case "quickActions":
-                    quickActionManager.deleteItem(id);
-                    break;
-                default:
+                    case "commands":
+                        commandAccess.deleteCustomCommand(id);
+                        break;
+                    case "counters":
+                        countersManager.deleteItem(id);
+                        break;
+                    case "currencies":
+                        frontendCommunicator.send("remove-currency", { id, name });
+                        break;
+                    case "effectQueues":
+                        effectQueueManager.deleteItem(id);
+                        break;
+                    case "events":
+                        eventsAccess.removeEventFromMainEvents(id);
+                        break;
+                    case "eventGroups":
+                        eventsAccess.deleteGroup(id);
+                        break;
+                    case "hotkeys":
+                        frontendCommunicator.send("remove-hotkey", id);
+                        break;
+                    case "presetEffectLists":
+                        presetEffectListManager.deleteItem(id);
+                        break;
+                    case "timers":
+                        timerManager.deleteItem(id);
+                        break;
+                    case "viewerRoles":
+                        customRolesManager.deleteCustomRole(id);
+                        break;
+                    case "quickActions":
+                        quickActionManager.deleteItem(id);
+                        break;
+                    default:
                     // do nothing
                 }
             });

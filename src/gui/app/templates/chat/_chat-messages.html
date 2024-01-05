@@ -42,19 +42,9 @@
         >
       </div>
       <button
-        ng-hide="scrollGlued"
+        ng-hide="scrollGlued || threadDetails != null"
         ng-click="scrollGlued = true"
-        class="btn-sm clickable mb-4"
-        style="
-          position: absolute;
-          bottom: 0px;
-          left: 50%;
-          transform: translateX(-50%);
-          background: rgba(104, 105, 108, 0.6);
-          border: none;
-          color: white;
-          z-index: 100;
-        "
+        class="chat-scroll-paused-btn btn-sm clickable mb-4"
       >
         Chat Paused Due to Scroll
       </button>
@@ -65,7 +55,7 @@
         style="{{customFontSizeStyle}}"
       >
         <div
-          ng-repeat="chatItem in cms.chatQueue | hideBotMessages | limitTo:messageDisplayLimit track by chatItem.id"
+          ng-repeat="chatItem in cms.chatQueue | hideBotMessages | hideWhispers | limitTo:messageDisplayLimit track by chatItem.id"
           class="chat-item"
           ng-class="{ alternate: alternateBackgrounds}"
           scroll-glue-anchor
@@ -83,6 +73,7 @@
             show-seven-tv-emotes="showSevenTvEmotes"
             show-pronoun="showPronouns"
             update-chat-input="updateChatInput(text)"
+            on-reply-clicked="onReplyClicked(threadOrReplyMessageId)"
             chat-size-style="{{customFontSizeStyle}}"
           />
           <reward-redemption
@@ -97,6 +88,34 @@
       </div>
       <div class="chat-autodisconnected" ng-show="cms.autodisconnected">
         Disconnected from chat, trying to reconnect...
+      </div>
+      <div ng-if="threadDetails != null" class="thread-wrapper" ng-class="{ 'mt-5': alternateBackgrounds}">
+        <div class="thread-header">
+          <h4><i class="fas" ng-class="currentThreadMessages().length < 2 ? 'fa-reply' : 'fa-comment-alt-lines'" style="margin-right: 10px;"></i>{{currentThreadMessages().length < 2 ? "Reply to" : "Thread"}}</h4>
+          <button type="button" class="thread-close-btn clickable" aria-label="Close" ng-click="closeThreadPanel()"><i class="far fa-times"></i></button>
+        </div>
+        <div style="overflow-y: auto;">
+          <chat-message
+              ng-repeat="message in currentThreadMessages() track by message.id"
+              message="message"
+              compact-display="true"
+              alternate-backgrounds="false"
+              hide-deleted-messages="hideDeletedMessages"
+              show-avatar="false"
+              show-timestamp="showTimestamps"
+              show-bttv-emotes="showBttvEmotes"
+              show-ffz-emotes="showFfzEmotes"
+              show-seven-tv-emotes="showSevenTvEmotes"
+              show-pronoun="showPronouns"
+              hide-reply-banner="true"
+              disable-interactions="true"
+              chat-size-style="{{customFontSizeStyle}}"
+            />
+        </div>
+        <div class="thread-replying-to" ng-if="threadDetails.replyToMessageId != threadDetails.threadParentMessageId">
+          <span>Replying to <span style="font-weight: 800">@{{threadDetails.replyToUserDisplayName}}</span></span>
+          <button class="btn btn-link" ng-click="threadDetails.replyToMessageId = threadDetails.threadParentMessageId">Cancel</button>
+        </div>
       </div>
     </div>
     <div class="text-input-wrapper">

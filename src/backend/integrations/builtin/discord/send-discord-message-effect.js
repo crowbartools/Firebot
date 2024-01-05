@@ -1,7 +1,7 @@
 "use strict";
 
 const { EffectCategory } = require("../../../../shared/effect-constants");
-const integrationManager = require("../../IntegrationManager");
+const integrationManager = require("../../integration-manager");
 const discordEmbedBuilder = require('./discord-embed-builder');
 const discord = require("./discord-message-sender");
 const frontEndCommunicator = require("../../../common/frontend-communicator");
@@ -50,56 +50,11 @@ module.exports = {
                     <dropdown-select options="channelOptions" selected="effect.channelId"></dropdown-select>
                 </eos-container>
 
-                <eos-container header="Message" pad-top="true">
-                    <textarea ng-model="effect.message" class="form-control" name="text" placeholder="Enter message" rows="4" cols="40" replace-variables></textarea>
-                </eos-container>
-
                 <eos-container header="Files ({{effect.files.length}}/10)" pad-top="true">
                     <discord-file-upload-list model="effect.files"></discord-file-upload-list>
                 </eos-container>
 
-                <eos-container header="Rich Embed" pad-top="true">
-                    <label class="control-fb control--checkbox" style="margin-top:15px"> Include rich embed
-                        <input type="checkbox" ng-model="effect.includeEmbed">
-                        <div class="control__indicator"></div>
-                    </label>
-
-                    <div ng-show="effect.includeEmbed">
-                        <dropdown-select options="embedOptions" selected="effect.embedType"></dropdown-select>
-
-                        <div ng-show="effect.embedType === 'custom'">
-
-                            <div style="margin-top:10px;">
-                                <firebot-input input-title="Title" model="effect.customEmbed.title"></firebot-input>
-                            </div>
-
-                            <div style="margin-top:10px;">
-                                <firebot-input input-title="URL" model="effect.customEmbed.url"></firebot-input>
-                            </div>
-
-                            <div style="margin-top:10px;">
-                                <firebot-input input-title="Content" use-text-area="true" model="effect.customEmbed.description"></firebot-input>
-                            </div>
-
-                            <div style="margin-top:10px;">
-                                <firebot-input input-title="Author Name" model="effect.customEmbed.authorName"></firebot-input>
-                            </div>
-
-                            <div style="margin-top:10px;">
-                                <firebot-input input-title="Author Icon URL" model="effect.customEmbed.authorIconUrl"></firebot-input>
-                            </div>
-
-                            <div style="margin-top:10px;">
-                                <firebot-input input-title="Image URL" model="effect.customEmbed.imageUrl"></firebot-input>
-                            </div>
-
-                        </div>
-
-                        <div ng-show="effect.embedType === 'channel'">
-                            <br /><b>*</b> Must be live for this to post.
-                        </div>
-                    </div>
-                </eos-container>
+                <discord-webhook-message effect="effect"></discord-webhook-message>
 
             </div>
             <div ng-hide="hasChannels">
@@ -133,22 +88,21 @@ module.exports = {
                 }
             });
 
-        $scope.embedOptions = {
-            channel: "Channel Details",
-            custom: "Custom Embed"
-        };
-
         if ($scope.effect.customEmbed == null) {
             $scope.effect.customEmbed = {};
         }
     },
     optionsValidator: (effect) => {
         const errors = [];
+        const rgbRegexp = /^#?[0-9a-f]{6}$/ig;
         if (!effect.includeEmbed && !(Array.isArray(effect.files) && effect.files.length !== 0) && (effect.message == null || effect.message.trim().length < 1)) {
             errors.push("Please provide a message, embed or file.");
         }
         if (effect.includeEmbed && (effect.embedType == null || effect.embedType === "")) {
             errors.push("Please select a rich embed type");
+        }
+        if (effect.includeEmbed && !rgbRegexp.test(effect.embedColor)) {
+            errors.push("Discord Embed Color must be in RGB format (#0066FF)");
         }
         return errors;
     },
@@ -160,7 +114,7 @@ module.exports = {
         let files;
 
         if (effect.includeEmbed) {
-            embed = await discordEmbedBuilder.buildEmbed(effect.embedType, effect.customEmbed);
+            embed = await discordEmbedBuilder.buildEmbed(effect.embedType, effect.customEmbed, effect.embedColor);
         }
 
         if (effect.files != null && effect.files.length !== 0) {

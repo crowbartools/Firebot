@@ -1,5 +1,5 @@
 "use strict";
-const EventEmitter = require("events");
+const { EventEmitter } = require("events");
 const util = require("../utility");
 const logger = require("../logwrapper");
 const frontendCommunicator = require("./frontend-communicator");
@@ -7,7 +7,8 @@ const { settings } = require("./settings-access");
 const twitchApi = require("../twitch-api/api");
 const twitchChat = require("../chat/twitch-chat");
 const twitchPubSubClient = require("../twitch-api/pubsub/pubsub-client");
-const integrationManager = require("../integrations/IntegrationManager");
+const TwitchEventSubClient = require("../twitch-api/eventsub/eventsub-client");
+const integrationManager = require("../integrations/integration-manager");
 const accountAccess = require("../common/account-access");
 
 const { ConnectionState } = require("../../shared/connection-constants");
@@ -67,7 +68,7 @@ let connectionUpdateInProgress = false;
 let currentlyWaitingService = null;
 
 
-/**@extends NodeJS.EventEmitter */
+/**@extends EventEmitter */
 class ConnectionManager extends EventEmitter {
     constructor() {
         super();
@@ -101,9 +102,11 @@ class ConnectionManager extends EventEmitter {
         if (shouldConnect) {
             twitchChat.connect();
             twitchPubSubClient.createClient();
+            TwitchEventSubClient.createClient();
         } else {
             twitchChat.disconnect();
             twitchPubSubClient.disconnectPubSub();
+            TwitchEventSubClient.disconnectEventSub();
         }
         return true;
     }
@@ -123,13 +126,13 @@ class ConnectionManager extends EventEmitter {
 
     updateServiceConnection(serviceId, shouldConnect) {
         switch (serviceId) {
-        case "chat":
-            return this.updateChatConnection(shouldConnect);
-        default:
-            if (serviceId.startsWith("integration.")) {
-                const integrationId = serviceId.replace("integration.", "");
-                return this.updateIntegrationConnection(integrationId, shouldConnect);
-            }
+            case "chat":
+                return this.updateChatConnection(shouldConnect);
+            default:
+                if (serviceId.startsWith("integration.")) {
+                    const integrationId = serviceId.replace("integration.", "");
+                    return this.updateIntegrationConnection(integrationId, shouldConnect);
+                }
         }
         return false;
     }

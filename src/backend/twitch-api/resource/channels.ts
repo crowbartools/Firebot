@@ -1,14 +1,14 @@
-import accountAccess from "../../common/account-access";
 import logger from '../../logwrapper';
+import accountAccess from "../../common/account-access";
 import { ApiClient, CommercialLength, HelixChannel, HelixChannelUpdate, HelixUser } from "@twurple/api";
 
 export class TwitchChannelsApi {
-    streamerClient: ApiClient;
-    botClient: ApiClient;
+    private _streamerClient: ApiClient;
+    private _botClient: ApiClient;
 
     constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        this.streamerClient = streamerClient;
-        this.botClient = botClient;
+        this._streamerClient = streamerClient;
+        this._botClient = botClient;
     }
 
     /**
@@ -23,7 +23,7 @@ export class TwitchChannelsApi {
         }
 
         try {
-            const response = await this.streamerClient.channels.getChannelInfoById(broadcasterId);
+            const response = await this._streamerClient.channels.getChannelInfoById(broadcasterId);
             return response;
         } catch (error) {
             logger.error("Failed to get twitch channel info", error.message);
@@ -37,12 +37,12 @@ export class TwitchChannelsApi {
      * @param userId
      */
     async getOnlineStatus(userId: string): Promise<boolean> {
-        if (this.streamerClient == null) {
+        if (this._streamerClient == null) {
             return false;
         }
 
         try {
-            const stream = await this.streamerClient.streams.getStreamByUserId(userId);
+            const stream = await this._streamerClient.streams.getStreamByUserId(userId);
             if (stream != null) {
                 return true;
             }
@@ -59,7 +59,7 @@ export class TwitchChannelsApi {
      * @param data
      */
     async updateChannelInformation(data: HelixChannelUpdate): Promise<void> {
-        await this.streamerClient.channels.updateChannelInfo(accountAccess.getAccounts().streamer.userId, data);
+        await this._streamerClient.channels.updateChannelInfo(accountAccess.getAccounts().streamer.userId, data);
     }
 
     /**
@@ -74,7 +74,7 @@ export class TwitchChannelsApi {
 
         let user: HelixUser;
         try {
-            user = await this.streamerClient.users.getUserByName(username);
+            user = await this._streamerClient.users.getUserByName(username);
         } catch (error) {
             logger.error(`Error getting user with username ${username}`, error.message);
         }
@@ -91,13 +91,13 @@ export class TwitchChannelsApi {
      *
      * @param adLength How long the ad should run.
      */
-    async triggerAdBreak(adLength: number = 30): Promise<boolean> {
+    async triggerAdBreak(adLength = 30): Promise<boolean> {
         try {
             const streamer = accountAccess.getAccounts().streamer;
 
             const isOnline = await this.getOnlineStatus(streamer.userId);
             if (isOnline && streamer.broadcasterType !== "") {
-                await this.streamerClient.channels.startChannelCommercial(streamer.userId, adLength as CommercialLength);
+                await this._streamerClient.channels.startChannelCommercial(streamer.userId, adLength as CommercialLength);
             }
 
             logger.debug(`A commercial was run. Length: ${adLength}. Twitch does not send confirmation, so we can't be sure it ran.`);
@@ -118,7 +118,7 @@ export class TwitchChannelsApi {
         try {
             const streamerId = accountAccess.getAccounts().streamer.userId;
 
-            await this.streamerClient.raids.startRaid(streamerId, targetUserId);
+            await this._streamerClient.raids.startRaid(streamerId, targetUserId);
 
             return true;
         } catch (error) {
@@ -135,7 +135,7 @@ export class TwitchChannelsApi {
         try {
             const streamerId = accountAccess.getAccounts().streamer.userId;
 
-            await this.streamerClient.raids.cancelRaid(streamerId);
+            await this._streamerClient.raids.cancelRaid(streamerId);
 
             return true;
         } catch (error) {
@@ -153,11 +153,11 @@ export class TwitchChannelsApi {
         const streamerId = accountAccess.getAccounts().streamer.userId;
 
         try {
-            let result = await this.streamerClient.channels.getVips(streamerId);
+            let result = await this._streamerClient.channels.getVips(streamerId);
             vips.push(...result.data.map(c => c.displayName));
 
             while (result.cursor) {
-                result = await this.streamerClient.channels.getVips(streamerId, { after: result.cursor });
+                result = await this._streamerClient.channels.getVips(streamerId, { after: result.cursor });
                 vips.push(...result.data.map(c => c.displayName));
             }
         } catch (error) {
@@ -166,4 +166,4 @@ export class TwitchChannelsApi {
 
         return vips;
     }
-};
+}

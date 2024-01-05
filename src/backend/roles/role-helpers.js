@@ -36,7 +36,7 @@ async function getAllRolesForViewerNameSpaced(username) {
         firebotRoles: firebotRolesManager.getAllFirebotRolesForViewer(username),
         customRoles: customRolesManager.getAllCustomRolesForViewer(username),
         teamRoles: await teamRolesManager.getAllTeamRolesForViewer(username)
-    }
+    };
 }
 
 /**

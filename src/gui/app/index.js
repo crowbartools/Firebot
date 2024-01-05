@@ -1,4 +1,4 @@
-/* eslint no-unused-vars: 0*/
+/* eslint @typescript-eslint/no-unused-vars: 0*/
 "use strict";
 const electron = require("electron");
 const { ipcRenderer } = electron;
@@ -9,7 +9,7 @@ const logger = require("../../backend/logwrapper");
 const shell = require("electron").shell;
 
 /**
- * Dont remove the below imports for now, they are available globally to all frontend files
+ * Don't remove the below imports for now, they are available globally to all frontend files
  * TODO: Refactor to import these modules in the files that actually use them instead
  * of making them available globally here
  */
@@ -123,20 +123,20 @@ console.log(""); // eslint-disable-line no-console
 
 function getLogLevelColor(level) {
     switch (level) {
-    case "error":
-        return "#CC3128";
-    case "warn":
-        return "#E3D919";
-    case "info":
-        return "#0DAD4A";
-    case "verbose":
-        return "#11A7AB";
-    case "debug":
-        return "#2171C7";
-    case "silly":
-        return "#973EBB";
-    default:
-        return "gray";
+        case "error":
+            return "#CC3128";
+        case "warn":
+            return "#E3D919";
+        case "info":
+            return "#0DAD4A";
+        case "verbose":
+            return "#11A7AB";
+        case "debug":
+            return "#2171C7";
+        case "silly":
+            return "#973EBB";
+        default:
+            return "gray";
     }
 }
 
@@ -147,7 +147,7 @@ function printLogToBrowserConsole(transport, level, msg, meta) {
         if (msg != null && msg.trim() !== "(Renderer)") {
             // Only print if the msg isnt 'empty' aka has more than just the prefix
             console.log(
-                "%c" + level.toUpperCase() + "%c " + msg,
+                `%c${level.toUpperCase()}%c ${msg}`,
                 `color:${getLogLevelColor(level)}`,
                 "color:gray"
             );
@@ -172,6 +172,3 @@ ipcRenderer.on("logging", (event, data) => {
 logger.on("logging", (transport, level, msg, meta) => {
     printLogToBrowserConsole(transport, level, msg, meta);
 });
-
-
-

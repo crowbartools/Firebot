@@ -17,7 +17,7 @@ const celebration = {
         description: "Celebrate with firework overlay effects.",
         icon: "fad fa-birthday-cake",
         categories: [EffectCategory.FUN, EffectCategory.OVERLAY],
-        dependencies: [EffectDependency.OVERLAY]
+        dependencies: []
     },
     /**
    * Global settings that will be available in the Settings tab
@@ -134,11 +134,11 @@ const celebration = {
                 const divClass = uuidv4();
 
                 if (type === "Fireworks") {
-                    const canvas = '<canvas id="fireworks" class="' + divClass + '-fireworks celebration ' + type + '" style="display:none; z-index: 99;"></canvas>';
+                    const canvas = `<canvas id="fireworks" class="${divClass}-fireworks celebration ${type}" style="display:none; z-index: 99;"></canvas>`;
 
                     // Throw div on page and start up.
                     $('.wrapper').append(canvas);
-                    $('.' + divClass + '-fireworks').fadeIn('fast');
+                    $(`.${divClass}-fireworks`).fadeIn('fast');
 
                     const stage = fireworks(); // eslint-disable-line no-undef
 
@@ -149,20 +149,20 @@ const celebration = {
                         stage.canvas = null;
                         stage._eventListeners = null;
 
-                        $('.' + divClass + '-fireworks').fadeOut('fast', function() {
-                            $('.' + divClass + '-fireworks').remove();
+                        $(`.${divClass}-fireworks`).fadeOut('fast', function() {
+                            $(`.${divClass}-fireworks`).remove();
                         });
                     }, duration, stage);
                 }
 
                 if (type === "Confetti") {
-                    const canvas = '<canvas id="confetti" class="' + divClass + '-confetti celebration ' + type + '" style="display:none; z-index: 99;"></canvas>';
+                    const canvas = `<canvas id="confetti" class="${divClass}-confetti celebration ${type}" style="display:none; z-index: 99;"></canvas>`;
 
                     // Throw div on page and start up.
                     $('.wrapper').append(canvas);
-                    $('.' + divClass + '-confetti').fadeIn('fast');
+                    $(`.${divClass}-confetti`).fadeIn('fast');
 
-                    const confettiStage = confetti.create(document.getElementsByClassName(divClass + '-confetti')[0], { // eslint-disable-line no-undef
+                    const confettiStage = confetti.create(document.getElementsByClassName(`${divClass}-confetti`)[0], { // eslint-disable-line no-undef
                         resize: true,
                         useWorker: true
                     });
@@ -191,8 +191,8 @@ const celebration = {
                     }, 250);
 
                     setTimeout(function(confettiStage) {
-                        $('.' + divClass + '-confetti').fadeOut('slow', function() {
-                            $('.' + divClass + '-confetti').remove();
+                        $(`.${divClass}-confetti`).fadeOut('slow', function() {
+                            $(`.${divClass}-confetti`).remove();
                             confettiStage.reset();
                             clearInterval(confettiParty);
                         });

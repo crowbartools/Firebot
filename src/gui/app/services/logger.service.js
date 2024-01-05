@@ -10,7 +10,7 @@
             let msg = "(Renderer)";
             if (args != null && args.length > 0) {
                 if (typeof args[0] === "string" || args[0] instanceof String) {
-                    msg += " " + args.shift();
+                    msg += ` ${args.shift()}`;
                 }
             }
             args.unshift(msg);

@@ -62,6 +62,7 @@ const model = {
 
             const effect = event.effect;
             const effectList = effect.effectList;
+            const outputs = effect.outputs;
 
             if (!effectList || !effectList.list) {
                 return resolve(true);
@@ -83,7 +84,7 @@ const model = {
             // try to find queue in cache
             let cacheEntry = sequentialQueuesCache[effect.id];
             if (!cacheEntry) {
-                // we dont have a preexisting queue in the cache, create a new one
+                // we don't have a preexisting queue in the cache, create a new one
                 cacheEntry = {
                     queue: newEffectIds,
                     currentEffectIds: newEffectIds
@@ -122,7 +123,8 @@ const model = {
                     id: effectList.id,
                     list: [chosenEffect],
                     queue: effectList.queue
-                }
+                },
+                outputs: outputs
             };
 
             effectRunner.processEffects(processEffectsRequest)

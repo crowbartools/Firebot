@@ -10,7 +10,7 @@ export function triggerBanned(
         moderator,
         modReason
     });
-};
+}
 
 export function triggerUnbanned(
     userDisplayName: string,
@@ -20,4 +20,4 @@ export function triggerUnbanned(
         username: userDisplayName,
         moderator
     });
-};
+}

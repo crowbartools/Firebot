@@ -2,7 +2,7 @@
 
 (function() {
     const xlsx = require("node-xlsx").default;
-    const fs = require("fs-extra");
+    const fs = require("fs");
     const moment = require("moment");
 
     angular
@@ -82,21 +82,21 @@
                 file.forEach(f => {
                     f.data.shift();
                     switch (f.name) {
-                    case "Quotes": {
-                        const quotes = splitSlcbQuotes(f.data);
-                        const dateFormat = getSlcbQuoteDateFormat(quotes);
+                        case "Quotes": {
+                            const quotes = splitSlcbQuotes(f.data);
+                            const dateFormat = getSlcbQuoteDateFormat(quotes);
 
-                        quotes.forEach(q => q.createdAt = moment(q.createdAt, dateFormat).toISOString());
+                            quotes.forEach(q => q.createdAt = moment(q.createdAt, dateFormat).toISOString());
 
-                        data.quotes = quotes;
+                            data.quotes = quotes;
 
-                        break;
-                    }
-                    case "Points":
-                    case "Currency":
-                        data.viewers = mapSlcbViewers(f.data);
-                        data.ranks = mapSlcbRanks(data.viewers);
-                        break;
+                            break;
+                        }
+                        case "Points":
+                        case "Currency":
+                            data.viewers = mapSlcbViewers(f.data);
+                            data.ranks = mapSlcbRanks(data.viewers);
+                            break;
                     }
 
                 });
@@ -108,7 +108,7 @@
                 if (dataType === "quotes") {
                     const data = {};
                     //split the file into lines either \r\n or \n
-                    const file = fs.readFileSync(filepath, "utf8").split(/\r?\n/);
+                    const file = fs.readFileSync(filepath, { encoding: "utf8" }).split(/\r?\n/);
                     const header = file.shift();
                     if (header !== "#	Quote	Game	Date/Time") {
                         return data;

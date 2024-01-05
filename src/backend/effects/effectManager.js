@@ -52,12 +52,39 @@ class EffectManager extends EventEmitter {
             });
     }
 
+    /**
+     *
+     * @param {import("../../types/effects").EffectType<unknown>} e
+     * @returns
+     */
     mapEffectForFrontEnd(e) {
         if (!e) {
             return {};
         }
+
+        let hidden = e.definition.hidden;
+
+        // If hidden is not manually defined, check if dependencies are met
+        if (
+            hidden == null &&
+            e.definition.dependencies &&
+            !e.definition.showWhenDependenciesNotMet
+        ) {
+            // require here to avoid circular dependency issues :(
+            const { checkEffectDependencies } = require("./effect-helpers");
+            hidden = !checkEffectDependencies(e.definition.dependencies, "display");
+        }
+
+        // Create a copy of the def with an evaluated hidden prop
+        const definition = {
+            ...e.definition,
+            hidden: typeof hidden === "function"
+                ? hidden()
+                : hidden
+        };
+
         return {
-            definition: e.definition,
+            definition: definition,
             optionsTemplate: e.optionsTemplate,
             optionsTemplateUrl: e.optionsTemplateUrl,
             optionsControllerRaw: e.optionsController
@@ -116,6 +143,7 @@ frontendCommunicator.onAsync("getEffectDefinitions", async (triggerData) => {
         triggerMeta = triggerData.triggerMeta;
 
     const filteredEffectDefs = effects
+        .map(manager.mapEffectForFrontEnd)
         .map(e => e.definition)
         .filter(e => {
             if (triggerType != null) {
@@ -131,16 +159,16 @@ frontendCommunicator.onAsync("getEffectDefinitions", async (triggerData) => {
                     const effectTriggerData = e.triggers[triggerType];
 
                     switch (triggerType) {
-                    case EffectTrigger.EVENT:
-                        if (effectTriggerData === true) {
+                        case EffectTrigger.EVENT:
+                            if (effectTriggerData === true) {
+                                return true;
+                            }
+                            if (Array.isArray(effectTriggerData)) {
+                                return effectTriggerData.includes(triggerMeta.triggerId);
+                            }
                             return true;
-                        }
-                        if (Array.isArray(effectTriggerData)) {
-                            return effectTriggerData.includes(triggerMeta.triggerId);
-                        }
-                        return true;
-                    default:
-                        return true;
+                        default:
+                            return true;
                     }
                 } else {
                     return true;

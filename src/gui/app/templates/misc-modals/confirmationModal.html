@@ -5,8 +5,13 @@
   <h4 class="modal-title">{{title}}</h4>
 </div>
 <div class="modal-body">
-  <p>{{question}}</p>
-  <p ng-if="tip" class="muted">{{tip}}</p>
+  <div style="display: flex;">
+    <div class="modal-icon"><i class="fad fa-question-circle" aria-hidden="true"></i></div>
+    <div>
+      <p>{{question}}</p>
+      <p ng-if="tip" class="muted">{{tip}}</p>
+    </div>
+  </div>
 </div>
 <div class="modal-footer">
   <button

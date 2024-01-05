@@ -13,7 +13,7 @@ const model: EffectType<{
         name: "Pause/Resume Effect Queue",
         description: "Pauses or resumes an effect queue. Effects sent to a paused queue will run once the queue is resumed.",
         icon: "fad fa-pause-circle",
-        categories: [ EffectCategory.SCRIPTING ]
+        categories: [EffectCategory.SCRIPTING]
     },
     optionsTemplate: `
         <eos-container header="Effect Queue">
@@ -31,7 +31,7 @@ const model: EffectType<{
                 You have no effect queues saved.
             </div>
         </eos-container>
-        
+
         <eos-container header="Action" ng-if="effect.effectQueue != null" pad-top="true">
             <div class="btn-group">
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -86,15 +86,15 @@ const model: EffectType<{
         if (queue == null) {
             logger.debug(`Effect queue ${effect.effectQueue} not found`);
             return false;
-        } else {
-            if (effect.action === "Pause") {
-                effectQueueManager.pauseQueue(effect.effectQueue);
-            } else if (effect.action === "Resume") {
-                effectQueueManager.resumeQueue(effect.effectQueue);
-            } else {
-                effectQueueManager.toggleQueue(effect.effectQueue);
-            }
         }
+        if (effect.action === "Pause") {
+            effectQueueManager.pauseQueue(effect.effectQueue);
+        } else if (effect.action === "Resume") {
+            effectQueueManager.resumeQueue(effect.effectQueue);
+        } else {
+            effectQueueManager.toggleQueue(effect.effectQueue);
+        }
+
 
         return true;
     }

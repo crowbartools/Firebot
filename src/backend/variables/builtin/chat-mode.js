@@ -17,23 +17,23 @@ const model = {
     },
     evaluator: (trigger) => {
         switch (trigger.metadata.eventData.chatMode) {
-        case "emoteonly":
-        case "emoteonlyoff":
-            return "Emote Only";
-        case "followers":
-        case "followersoff":
-            return "Followers";
-        case "subscribers":
-        case "subscribersoff":
-            return "Subscribers Only";
-        case "slow":
-        case "slowoff":
-            return "Slow";
-        case "r9kbeta":
-        case "r9kbetaoff":
-            return "Unique Chat";
-        default:
-            return "";
+            case "emoteonly":
+            case "emoteonlyoff":
+                return "Emote Only";
+            case "followers":
+            case "followersoff":
+                return "Followers";
+            case "subscribers":
+            case "subscribersoff":
+                return "Subscribers Only";
+            case "slow":
+            case "slowoff":
+                return "Slow";
+            case "r9kbeta":
+            case "r9kbetaoff":
+                return "Unique Chat";
+            default:
+                return "";
         }
     }
 };

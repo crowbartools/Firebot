@@ -1,42 +1,46 @@
 import { Firebot } from "@crowbartools/firebot-custom-scripts-types";
 import {
-  getSourceVisibility,
-  setSourceVisibility,
-  SourceData,
+    getSourceVisibility,
+    setSourceVisibility,
+    SourceData
 } from "../obs-remote";
 
 type SourceAction = boolean | "toggle";
 
 type EffectProperties = {
-  selectedSources: Array<{
-    sceneName: string;
-    sourceId: number;
-    groupName?: string;
-    action: SourceAction;
-  }>;
+    selectedSources: Array<{
+        sceneName: string;
+        sourceId: number;
+        groupName?: string;
+        action: SourceAction;
+    }>;
 };
 
 type Scope = {
-  effect: EffectProperties;
-  [x: string]: any;
+    effect: EffectProperties;
+    [x: string]: any;
 };
 
 export const ToggleSourceVisibilityEffectType: Firebot.EffectType<EffectProperties> =
 {
-  definition: {
-    id: "ebiggz:obs-toggle-source-visibility",
-    name: "Toggle OBS Source Visibility",
-    description: "Toggle an OBS source's visibility",
-    icon: "fad fa-clone",
-    categories: ["common"],
-  },
-  optionsTemplate: `
+    definition: {
+        id: "ebiggz:obs-toggle-source-visibility",
+        name: "Toggle OBS Source Visibility",
+        description: "Toggle an OBS source's visibility",
+        icon: "fad fa-clone",
+        categories: ["common"]
+    },
+    optionsTemplate: `
 <eos-container header="Sources">
   <div class="effect-setting-container">
     <div class="input-group">
       <span class="input-group-addon">Filter</span>
       <input type="text" class="form-control" ng-change="filterScenes(searchText)" ng-model="searchText" placeholder="Enter your search term here..." aria-describeby="obs-visibility-search-box">
     </div>
+  </div>
+
+  <div>
+      <button class="btn btn-link" ng-click="getSourceData()">Refresh Source Data</button>
   </div>
 
   <div class="effect-setting-container setting-padtop">
@@ -62,125 +66,132 @@ export const ToggleSourceVisibilityEffectType: Firebot.EffectType<EffectProperti
       </div>
     </div>
     <div ng-if="sourceData == null" class="muted">
-      No sources found. Is OBS running?
+        No sources found. {{ isObsConfigured ? "Is OBS running?" : "Have you configured the OBS integration?" }}
     </div>
-    <p>
-        <button class="btn btn-link" ng-click="getSourceData()">Refresh Source Data</button>
-    </p>
   </div>
 </eos-container>
 `,
-  optionsController: ($scope: Scope, backendCommunicator: any, $q: any) => {
-    $scope.sourceData = null;
+    optionsController: ($scope: Scope, backendCommunicator: any, $q: any) => {
+        $scope.isObsConfigured = false;
 
-    $scope.sceneNames = [];
+        $scope.sourceData = null;
 
-    if ($scope.effect.selectedSources == null) {
-      $scope.effect.selectedSources = [];
-    }
+        $scope.sceneNames = [];
 
-    $scope.getSources = (sceneName: string) => {
-      return $scope.sourceData ? $scope.sourceData[sceneName] : [];
-    };
-
-    $scope.getSceneNames = () => {
-      return $scope.sourceData ? Object.keys($scope.sourceData) : [];
-    };
-
-    $scope.filterScenes = (filter: string = "") => {
-      $scope.sceneNames = [];
-      if ($scope.sourceData == null) {
-        return;
-      }
-
-      for (const sceneName of $scope.getSceneNames()) {
-        if ($scope.getSources(sceneName).filter(source => source.name.toLowerCase().includes(filter.toLowerCase())).length > 0) {
-          $scope.sceneNames.push(sceneName);
+        if ($scope.effect.selectedSources == null) {
+            $scope.effect.selectedSources = [];
         }
-      }
-    };
 
-    $scope.sourceIsSelected = (sceneName: string, sourceId: number) => {
-      return $scope.effect.selectedSources.some(
-          (s) => s.sceneName === sceneName && s.sourceId === sourceId
-      );
-    };
+        $scope.getSources = (sceneName: string) => {
+            return $scope.sourceData ? $scope.sourceData[sceneName] : [];
+        };
 
-    $scope.toggleSourceSelected = (sceneName: string, sourceId: number, groupName: string) => {
-      if ($scope.sourceIsSelected(sceneName, sourceId)) {
-        $scope.effect.selectedSources = $scope.effect.selectedSources.filter(
-            (s) => !(s.sceneName === sceneName && s.sourceId === sourceId)
-        );
-      } else {
-        $scope.effect.selectedSources.push({
-          sceneName,
-          sourceId,
-          groupName,
-          action: true,
-        });
-      }
-    };
+        $scope.getSceneNames = () => {
+            return $scope.sourceData ? Object.keys($scope.sourceData) : [];
+        };
 
-    $scope.setSourceAction = (
-        sceneName: string,
-        sourceId: number,
-        action: "toggle" | boolean
-    ) => {
-      const selectedSource = $scope.effect.selectedSources.find(
-          (s) => s.sceneName === sceneName && s.sourceId === sourceId
-      );
-      if (selectedSource != null) {
-        selectedSource.action = action;
-      }
-    };
+        $scope.filterScenes = (filter = "") => {
+            $scope.sceneNames = [];
+            if ($scope.sourceData == null) {
+                return;
+            }
 
-    $scope.getSourceActionDisplay = (sceneName: string, sourceId: number) => {
-      const selectedSource = $scope.effect.selectedSources.find(
-          (s) => s.sceneName === sceneName && s.sourceId === sourceId
-      );
-      if (selectedSource == null) return "";
+            for (const sceneName of $scope.getSceneNames()) {
+                if ($scope.getSources(sceneName).filter(source => source.name.toLowerCase().includes(filter.toLowerCase())).length > 0) {
+                    $scope.sceneNames.push(sceneName);
+                }
+            }
+        };
 
-      if (selectedSource.action === "toggle") {
-        return "Toggle";
-      }
-      if (selectedSource.action === true) {
-        return "Show";
-      }
-      return "Hide";
-    };
+        $scope.sourceIsSelected = (sceneName: string, sourceId: number) => {
+            return $scope.effect.selectedSources.some(
+                (s) => s.sceneName === sceneName && s.sourceId === sourceId
+            );
+        };
 
-    $scope.getSourceData = () => {
-      $q.when(backendCommunicator.fireEventAsync("obs-get-source-data")).then(
-          (sourceData: SourceData) => {
-            $scope.sourceData = sourceData ?? null;
-            $scope.filterScenes();
-          }
-      );
-    };
-    $scope.getSourceData();
-  },
-  optionsValidator: () => {
-    return [];
-  },
-  onTriggerEvent: async ({ effect }) => {
-    if (effect.selectedSources == null) return true;
+        $scope.toggleSourceSelected = (sceneName: string, sourceId: number, groupName: string) => {
+            if ($scope.sourceIsSelected(sceneName, sourceId)) {
+                $scope.effect.selectedSources = $scope.effect.selectedSources.filter(
+                    (s) => !(s.sceneName === sceneName && s.sourceId === sourceId)
+                );
+            } else {
+                $scope.effect.selectedSources.push({
+                    sceneName,
+                    sourceId,
+                    groupName,
+                    action: true
+                });
+            }
+        };
 
-    for (const { sceneName, sourceId, action, groupName } of effect.selectedSources) {
-      let newVisibility;
-      if (action === "toggle") {
-        const currentVisibility = await getSourceVisibility(
-            groupName ?? sceneName,
-            sourceId
-        );
-        if (currentVisibility == null) continue;
-        newVisibility = !currentVisibility;
-      } else {
-        newVisibility = action === true;
-      }
+        $scope.setSourceAction = (
+            sceneName: string,
+            sourceId: number,
+            action: "toggle" | boolean
+        ) => {
+            const selectedSource = $scope.effect.selectedSources.find(
+                (s) => s.sceneName === sceneName && s.sourceId === sourceId
+            );
+            if (selectedSource != null) {
+                selectedSource.action = action;
+            }
+        };
 
-      await setSourceVisibility(groupName ?? sceneName, sourceId, newVisibility);
+        $scope.getSourceActionDisplay = (sceneName: string, sourceId: number) => {
+            const selectedSource = $scope.effect.selectedSources.find(
+                (s) => s.sceneName === sceneName && s.sourceId === sourceId
+            );
+            if (selectedSource == null) {
+                return "";
+            }
+
+            if (selectedSource.action === "toggle") {
+                return "Toggle";
+            }
+            if (selectedSource.action === true) {
+                return "Show";
+            }
+            return "Hide";
+        };
+
+        $scope.getSourceData = () => {
+            $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
+
+            $q.when(backendCommunicator.fireEventAsync("obs-get-source-data")).then(
+                (sourceData: SourceData) => {
+                    $scope.sourceData = sourceData ?? null;
+                    $scope.filterScenes();
+                }
+            );
+        };
+        $scope.getSourceData();
+    },
+    optionsValidator: () => {
+        return [];
+    },
+    onTriggerEvent: async ({ effect }) => {
+        if (effect.selectedSources == null) {
+            return true;
+        }
+
+        for (const { sceneName, sourceId, action, groupName } of effect.selectedSources) {
+            let newVisibility;
+            if (action === "toggle") {
+                const currentVisibility = await getSourceVisibility(
+                    groupName ?? sceneName,
+                    sourceId
+                );
+                if (currentVisibility == null) {
+                    continue;
+                }
+                newVisibility = !currentVisibility;
+            } else {
+                newVisibility = action === true;
+            }
+
+            await setSourceVisibility(groupName ?? sceneName, sourceId, newVisibility);
+        }
+
+        return true;
     }
-
-    return true;
-  },
 };

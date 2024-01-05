@@ -26,26 +26,26 @@ module.exports = {
         const badgeTier = eventMeta.badgeTier || 0;
 
         switch (comparisonType) {
-        case ComparisonType.IS: {
-            return badgeTier === value;
-        }
-        case ComparisonType.IS_NOT: {
-            return badgeTier !== value;
-        }
-        case ComparisonType.LESS_THAN: {
-            return badgeTier < value;
-        }
-        case ComparisonType.LESS_THAN_OR_EQUAL_TO: {
-            return badgeTier <= value;
-        }
-        case ComparisonType.GREATER_THAN: {
-            return badgeTier > value;
-        }
-        case ComparisonType.GREATER_THAN_OR_EQUAL_TO: {
-            return badgeTier >= value;
-        }
-        default:
-            return false;
+            case ComparisonType.IS: {
+                return badgeTier === value;
+            }
+            case ComparisonType.IS_NOT: {
+                return badgeTier !== value;
+            }
+            case ComparisonType.LESS_THAN: {
+                return badgeTier < value;
+            }
+            case ComparisonType.LESS_THAN_OR_EQUAL_TO: {
+                return badgeTier <= value;
+            }
+            case ComparisonType.GREATER_THAN: {
+                return badgeTier > value;
+            }
+            case ComparisonType.GREATER_THAN_OR_EQUAL_TO: {
+                return badgeTier >= value;
+            }
+            default:
+                return false;
         }
     }
 };

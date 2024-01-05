@@ -16,9 +16,9 @@ const addFirebotLogMessage = {
     optionsTemplate: `
         <eos-container header="Message Text">
             <p class="muted">Enter the message you would like to write to the Firebot log file.</p>
-            <input ng-model="effect.logMessage" id="log-message-text" type="text" class="form-control" placeholder="Enter log message text" replace-variables>
+            <input ng-model="effect.logMessage" id="log-message-text" type="text" class="form-control" placeholder="Enter log message text" menu-position="under" replace-variables>
         </eos-container>
-        
+
         <eos-container header="Log Level" pad-top="true">
             <p class="muted">Choose the log level you would like the message written as. Note that <strong>Debug</strong> level messages will ONLY be written when Debug Mode is enabled.</p>
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -48,22 +48,22 @@ const addFirebotLogMessage = {
     },
     onTriggerEvent: async ({ effect }) => {
         switch (effect.logLevel) {
-        case "Error":
-            logger.error(effect.logMessage);
-            break;
+            case "Error":
+                logger.error(effect.logMessage);
+                break;
 
-        case "Warning":
-            logger.warn(effect.logMessage);
-            break;
+            case "Warning":
+                logger.warn(effect.logMessage);
+                break;
 
-        case "Debug":
-            logger.debug(effect.logMessage);
-            break;
+            case "Debug":
+                logger.debug(effect.logMessage);
+                break;
 
             // Use Info as default
-        default:
-            logger.info(effect.logMessage);
-            break;
+            default:
+                logger.info(effect.logMessage);
+                break;
         }
     }
 };

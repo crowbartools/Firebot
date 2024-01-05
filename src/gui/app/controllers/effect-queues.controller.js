@@ -59,7 +59,7 @@
                         }
                     },
                     {
-                        html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> Toggle Enabled</a>`,
+                        html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> ${item.active ? "Disable Effect Queue" : "Enable Effect Queue"}</a>`,
                         click: function () {
                             effectQueuesService.toggleEffectQueue(item);
                         }

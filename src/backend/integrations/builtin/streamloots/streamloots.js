@@ -43,7 +43,7 @@ class StreamLootsIntegration extends EventEmitter {
             this.connected = false;
             return;
         }
-        
+
         accountId = accountId.replace("https://widgets.streamloots.com/alerts/", "").replace("/media-stream", "");
 
         this._eventSource = new EventSource(`https://widgets.streamloots.com/alerts/${accountId}/media-stream`, {

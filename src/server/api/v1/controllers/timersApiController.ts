@@ -3,16 +3,16 @@ import { Request, Response } from "express";
 
 export async function getTimers(req: Request, res: Response): Promise<Response> {
     const timers = timersManager.getAllItems()
-        .map((c: any) => {
+        .map((c) => {
             return {
                 id: c.id,
                 name: c.name,
                 active: c.active
             };
         });
-    
+
     return res.json(timers);
-};
+}
 
 export async function getTimerById(req: Request, res: Response): Promise<Response> {
     const timerId: string = req.params.timerId;
@@ -34,4 +34,4 @@ export async function getTimerById(req: Request, res: Response): Promise<Respons
     }
 
     return res.json(timer);
-};
+}

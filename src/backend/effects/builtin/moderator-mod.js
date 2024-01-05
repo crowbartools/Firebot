@@ -55,9 +55,9 @@ const model = {
                 const result = await twitchApi.moderation.addChannelModerator(user.id);
 
                 if (result === true) {
-                    logger.debug(event.effect.username + " was modded via the Mod effect.");
+                    logger.debug(`${event.effect.username} was modded via the Mod effect.`);
                 } else {
-                    logger.error(event.effect.username + " was unable to be modded via the Mod effect.");
+                    logger.error(`${event.effect.username} was unable to be modded via the Mod effect.`);
                 }
             } else {
                 logger.warn(`User ${event.effect.username} does not exist and could not be modded via the Mod effect`);
@@ -69,9 +69,9 @@ const model = {
                 const result = await twitchApi.moderation.removeChannelModerator(user.id);
 
                 if (result === true) {
-                    logger.debug(event.effect.username + " was unmodded via the Mod effect.");
+                    logger.debug(`${event.effect.username} was unmodded via the Mod effect.`);
                 } else {
-                    logger.error(event.effect.username + " was unable to be unmodded via the Mod effect.");
+                    logger.error(`${event.effect.username} was unable to be unmodded via the Mod effect.`);
                 }
             } else {
                 logger.warn(`User ${event.effect.username} does not exist and could not be unmodded via the Mod effect`);

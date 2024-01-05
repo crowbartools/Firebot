@@ -30,7 +30,7 @@
                     </div>
                 </div>
                 <div id="user-list" style="padding-bottom: 20px;">
-                    <div style="min-height: 45px;background-color:#282a2e;border-radius:2px;">
+                    <div style="min-height: 45px;background-color:#282a2e;border-radius:8px;">
 
                         <div ng-show="$ctrl.role.viewers.length == 0" style="display:flex;height: 45px; align-items: center; justify-content: space-between;padding: 0 15px;">
                             <span class="muted">No users with this role.</span>
@@ -132,7 +132,7 @@
                 const modalId = $ctrl.resolve.modalId;
                 utilityService.addSlidingModal(
                     $ctrl.modalInstance.rendered.then(() => {
-                        const modalElement = $("." + modalId).children();
+                        const modalElement = $(`.${modalId}`).children();
                         return {
                             element: modalElement,
                             name: "Add/Edit Custom Role",

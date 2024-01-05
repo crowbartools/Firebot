@@ -121,7 +121,7 @@
                 $scope.headers.push({
                     name: currency.name.toUpperCase(),
                     icon: "fa-money-bill",
-                    dataField: "currency." + currency.id,
+                    dataField: `currency.${currency.id}`,
                     sortable: true,
                     cellTemplate: `{{data.currency['${currency.id}']}}`,
                     cellController: () => {}

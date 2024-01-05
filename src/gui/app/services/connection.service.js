@@ -38,15 +38,28 @@
                     if (service.accounts.streamer.loggedIn) {
                         service.logout(type);
                     } else {
-                        shell.openExternal(`http://localhost:${settingsService.getWebServerPort()}/api/v1/auth?providerId=${encodeURIComponent("twitch:streamer-account")}`);
+                        utilityService.showModal({
+                            component: "twitchDcfModal",
+                            resolveObj: {
+                                accountType: () => type
+                            },
+                            closeCallback: () => {
+                                backendCommunicator.send("cancel-device-token-check");
+                            }
+                        });
                     }
                 } else if (type === "bot") {
                     if (service.accounts.bot.loggedIn) {
                         service.logout(type);
                     } else {
                         utilityService.showModal({
-                            component: "botLoginModal",
-                            size: 'sm'
+                            component: "twitchDcfModal",
+                            resolveObj: {
+                                accountType: () => type
+                            },
+                            closeCallback: () => {
+                                backendCommunicator.send("cancel-device-token-check");
+                            }
                         });
                     }
                 }
@@ -62,57 +75,31 @@
                 }
             };
 
-            service.validateAccounts = () => {
-                const invalidAccounts = [];
+            service.invalidateAccounts = (invalidAccounts) => {
+                if (!invalidAccounts.streamer && !invalidAccounts.bot) {
+                    return;
+                }
 
-                if (service.accounts["streamer"].loggedIn) {
-                    if (!backendCommunicator.fireEventSync("validate-twitch-account", {
-                        accountType: "streamer",
-                        authDetails: service.accounts["streamer"].auth
-                    })) {
-                        service.logout("streamer");
-                        invalidAccounts.push("streamer");
+                if (invalidAccounts.streamer) {
+                    service.logout("streamer");
+                }
+
+                if (invalidAccounts.bot) {
+                    service.logout("bot");
+                }
+
+                utilityService.showModal({
+                    component: "loginsModal",
+                    resolveObj: {
+                        invalidAccounts: () => invalidAccounts
                     }
-                }
+                });
+            };
 
-                if (service.accounts["bot"].loggedIn) {
-                    if (!backendCommunicator.fireEventSync("validate-twitch-account", {
-                        accountType: "bot",
-                        authDetails: service.accounts["bot"].auth
-                    })) {
-                        service.logout("bot");
-                        invalidAccounts.push("bot");
-                    }
-                }
+            backendCommunicator.on("invalidate-accounts", service.invalidateAccounts);
 
-                if (invalidAccounts.length > 0) {
-                    const showManageLoginsModal = {
-                        templateUrl: "manageLoginsModal.html",
-                        // This is the controller to be used for the modal.
-                        controllerFunc: ($scope, $uibModalInstance, connectionService) => {
-                            $scope.cs = connectionService;
-
-                            // Login Kickoff
-                            $scope.loginOrLogout = function(type) {
-                                connectionService.loginOrLogout(type);
-                            };
-
-                            $scope.getAccountAvatar = connectionService.getAccountAvatar;
-
-                            $scope.invalidAccounts = invalidAccounts;
-
-                            $scope.close = function() {
-                                $uibModalInstance.close();
-                            };
-
-                            // When they hit cancel or click outside the modal, we dont want to do anything
-                            $scope.dismiss = function() {
-                                $uibModalInstance.dismiss("cancel");
-                            };
-                        }
-                    };
-                    utilityService.showModal(showManageLoginsModal);
-                }
+            service.validateAccounts = async () => {
+                await backendCommunicator.fireEventAsync("validate-twitch-accounts");
             };
 
             // Create new profile
@@ -164,10 +151,10 @@
                     // If it exists, overwrite defaults.
                     let streamer;
                     try {
-                        const profileDb = dataAccess.getJsonDbInUserData("./profiles/" + profileId + "/auth-twitch");
+                        const profileDb = dataAccess.getJsonDbInUserData(`./profiles/${profileId}/auth-twitch`);
                         streamer = profileDb.getData("/streamer");
                     } catch (err) {
-                        logger.info("Couldnt get streamer data for profile " + profileId + " while updating the UI. Its possible this account hasnt logged in yet.");
+                        logger.info(`Couldnt get streamer data for profile ${profileId} while updating the UI. Its possible this account hasnt logged in yet.`);
                     }
 
                     if (streamer) {
@@ -352,8 +339,11 @@
                 });
             });
 
-            backendCommunicator.on("integrationLinked", (intId) => {
-                const serviceId = `integration.${intId}`;
+            backendCommunicator.on("integrationLinked", (integration) => {
+                if (integration == null || !integration.connectionToggle) {
+                    return;
+                }
+                const serviceId = `integration.${integration.id}`;
                 service.connections[serviceId] = ConnectionState.Disconnected;
             });
 

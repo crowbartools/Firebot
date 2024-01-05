@@ -237,7 +237,7 @@
 
                             let contents;
                             try {
-                                contents = fs.readFileSync(filePath, "utf8");
+                                contents = fs.readFileSync(filePath, { encoding: "utf8" });
                             } catch (err) {
                                 logger.error("error reading file for banned words", err);
                                 return;

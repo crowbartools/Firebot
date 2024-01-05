@@ -54,7 +54,7 @@ const handlers: TwitchSlashCommandHandler[] = [
     unvipHandler,
     modHandler,
     unmodHandler,
-    
+
     whisperHandler,
     announceHandler,
     announceblueHandler,
@@ -73,7 +73,7 @@ const handlers: TwitchSlashCommandHandler[] = [
     slowoffHandler,
     uniquechatHandler,
     uniquechatoffHandler,
-    
+
     commercialHandler,
     raidHandler,
     unraidHandler
@@ -81,7 +81,7 @@ const handlers: TwitchSlashCommandHandler[] = [
 
 export function validateChatCommand(message: string): TwitchSlashCommandValidationResult<unknown[]> {
     const [command, ...args] = message.split(" ");
-  
+
     const matchedHandler = handlers.find(h => h.commands.includes(command?.toLowerCase()));
     if (!matchedHandler) {
         return {
@@ -92,16 +92,18 @@ export function validateChatCommand(message: string): TwitchSlashCommandValidati
     }
 
     return matchedHandler.validateArgs(args);
-};
+}
 
-export async function processChatCommand(message: string, sendAsBot: boolean = false): Promise<boolean> {
+export async function processChatCommand(message: string, sendAsBot = false): Promise<boolean> {
     const validationResult = await validateChatCommand(message);
 
-    if (validationResult.success === false) return false;
-  
+    if (validationResult.success === false) {
+        return false;
+    }
+
     const [command] = message.split(" ");
     logger.debug(`Found slash command handler for ${command}`);
-  
+
     const matchedHandler = handlers.find(h => h.commands.includes(command?.toLowerCase()));
     return await matchedHandler.handle(validationResult.args, sendAsBot);
-};
+}

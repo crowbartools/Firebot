@@ -54,20 +54,20 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-compress');
     let compileCommand;
     switch (grunt.config.get('platform')) {
-    case 'win64':
-        compileCommand = 'create-windows-installer:win64';
-        break;
+        case 'win64':
+            compileCommand = 'create-windows-installer:win64';
+            break;
 
-    case 'linux':
-        compileCommand = 'compress:linux';
-        break;
+        case 'linux':
+            compileCommand = 'compress:linux';
+            break;
 
-    case 'darwin':
-        compileCommand = 'shell:compile-darwin';
-        break;
+        case 'darwin':
+            compileCommand = 'shell:compile-darwin';
+            break;
 
-    default:
-        throw new Error('unknonw platform');
+        default:
+            throw new Error('unknonw platform');
     }
     grunt.registerTask('compile', ['cleanup:install', compileCommand]);
 };

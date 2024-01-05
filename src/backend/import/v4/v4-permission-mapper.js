@@ -9,20 +9,20 @@ function mapV4RolesToMixerRoles(permissions) {
     return permissions
         .map((p) => {
             switch (p) {
-            case "Staff":
-                return "Staff";
-            case "Pro":
-                return "Pro";
-            case "Moderators":
-                return "Mod";
-            case "Subscribers":
-                return "Subscriber";
-            case "Channel Editors":
-                return "ChannelEditor";
-            case "Streamer":
-                return "Owner";
-            default:
-                return null;
+                case "Staff":
+                    return "Staff";
+                case "Pro":
+                    return "Pro";
+                case "Moderators":
+                    return "Mod";
+                case "Subscribers":
+                    return "Subscriber";
+                case "Channel Editors":
+                    return "ChannelEditor";
+                case "Streamer":
+                    return "Owner";
+                default:
+                    return null;
             }
         })
         .filter(r => r != null);

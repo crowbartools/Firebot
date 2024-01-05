@@ -26,7 +26,15 @@ const deepmerge = require("deepmerge");
                         <p class="muted" ng-show="$ctrl.model.length < 1">{{$ctrl.settings.noneAddedText}}</p>
                     </div>
                     <div style="margin: 5px 0 10px 0px;">
-                        <button class="filter-bar" ng-click="$ctrl.addItem()" uib-tooltip="{{$ctrl.settings.addLabel}}" tooltip-append-to-body="true" aria-label="{{$ctrl.settings.addLabel}}">
+                        <button
+                            ng-click="$ctrl.addItem()"
+                            ng-disabled="$ctrl.maxItemsReached()"
+                            class="filter-bar"
+                            ng-class="{ muted: $ctrl.maxItemsReached() }"
+                            uib-tooltip="{{!$ctrl.maxItemsReached() ? $ctrl.settings.addLabel : 'Maximum reached' }}"
+                            tooltip-append-to-body="true"
+                            aria-label="{{$ctrl.settings.addLabel}}"
+                        >
                             <i class="far fa-plus"></i>
                         </button>
                     </div>
@@ -47,7 +55,10 @@ const deepmerge = require("deepmerge");
                     editLabel: "Edit",
                     validationText: "Text cannot be empty",
                     noneAddedText: "None saved",
-                    noDuplicates: false
+                    noDuplicates: false,
+                    maxItems: undefined,
+                    trigger: undefined,
+                    triggerMeta: undefined
                 };
 
 
@@ -61,6 +72,10 @@ const deepmerge = require("deepmerge");
                     if ($ctrl.model == null) {
                         $ctrl.model = [];
                     }
+                };
+
+                $ctrl.maxItemsReached = () => {
+                    return $ctrl.settings.maxItems != null && $ctrl.model.length >= $ctrl.settings.maxItems;
                 };
 
                 function openGetInputModal(model, isNew = true, cb) {
@@ -79,7 +94,9 @@ const deepmerge = require("deepmerge");
                                     }
                                 });
                             },
-                            validationText: $ctrl.settings.validationText
+                            validationText: $ctrl.settings.validationText,
+                            trigger: $ctrl.settings.trigger,
+                            triggerMeta: $ctrl.settings.triggerMeta
                         },
                         cb);
                 }

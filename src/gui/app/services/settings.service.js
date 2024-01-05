@@ -410,6 +410,15 @@
                 pushDataToFile('/settings/chatHideBotAccountMessages', shouldHide === true);
             };
 
+            service.getChatHideWhispers = function() {
+                const shouldHide = getDataFromFile('/settings/chatHideWhispers', false, false);
+                return shouldHide === true;
+            };
+
+            service.setChatHideWhispers = function(shouldHide) {
+                pushDataToFile('/settings/chatHideWhispers', shouldHide === true);
+            };
+
             service.getShowUptimeStat = function() {
                 const value = getDataFromFile("/settings/showUptimeStat", false, true);
                 return value != null ? value : true;
@@ -460,6 +469,15 @@
 
             service.setSoundsEnabled = function(enabled) {
                 pushDataToFile("/settings/sounds", enabled);
+            };
+
+            service.getOpenStreamPreviewOnLaunch = () => {
+                const openStreamPreviewOnLaunch = getDataFromFile("/settings/openStreamPreviewOnLaunch", false, false);
+                return openStreamPreviewOnLaunch === true;
+            };
+
+            service.setOpenStreamPreviewOnLaunch = (enabled) => {
+                pushDataToFile("/settings/openStreamPreviewOnLaunch", enabled === true);
             };
 
             service.getActiveChatUserListTimeout = function() {
@@ -542,7 +560,7 @@
                 );
 
                 // Overwrite the 'port.js' file in the overlay settings folder with the new port
-                fs.writeFile(path, `window.WEBSERVER_PORT = ${port}`, "utf8", () => {
+                fs.writeFile(path, `window.WEBSERVER_PORT = ${port}`, { encoding: "utf8" }, () => {
                     logger.info(`Set overlay port to: ${port}`);
                 });
             };
@@ -729,7 +747,7 @@
             };
 
             service.deleteFromViewerColumnPreferences = function(columnName) {
-                deleteDataAtPath("/settings/viewerColumnPreferences/" + columnName);
+                deleteDataAtPath(`/settings/viewerColumnPreferences/${columnName}`);
             };
 
             service.getDefaultTtsVoiceId = function() {

@@ -2,7 +2,8 @@
 
 (function() {
     const sanitizeFileName = require("sanitize-filename");
-    const fs = require("fs-extra");
+    const fs = require("fs");
+    const fsp = require("fs/promises");
     angular.module("firebotApp")
         .component("createSetupModal", {
             template: `
@@ -229,10 +230,10 @@
                         options: saveDialogOptions
                     }))
                         .then(saveResponse => {
-                            if (saveResponse.cancelled) {
+                            if (saveResponse.canceled) {
                                 return;
                             }
-                            fs.writeFile(saveResponse.filePath, angular.toJson($ctrl.setup), 'utf8');
+                            fs.writeFileSync(saveResponse.filePath, angular.toJson($ctrl.setup), { encoding: "utf8" });
                             ngToast.create({
                                 className: 'success',
                                 content: 'Saved Firebot Setup.'
@@ -244,8 +245,9 @@
                 $ctrl.$onInit = () => {};
 
                 $ctrl.onFileSelected = (filepath) => {
-                    $q.when(fs.readJson(filepath))
+                    $q.when(fsp.readFile(filepath))
                         .then(setup => {
+                            setup = JSON.parse(setup);
                             if (setup == null || setup.components == null) {
                                 ngToast.create("Unable to load previous Setup!");
                                 return;

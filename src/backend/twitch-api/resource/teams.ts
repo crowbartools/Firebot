@@ -3,17 +3,17 @@ import accountAccess from "../../common/account-access";
 import { ApiClient, HelixTeam } from "@twurple/api";
 
 export class TwitchTeamsApi {
-    streamerClient: ApiClient;
-    botClient: ApiClient;
+    private _streamerClient: ApiClient;
+    private _botClient: ApiClient;
 
     constructor(streamerClient: ApiClient, botClient: ApiClient) {
-        this.streamerClient = streamerClient;
-        this.botClient = botClient;
+        this._streamerClient = streamerClient;
+        this._botClient = botClient;
     }
 
     async getTeams(broadcasterId: string): Promise<HelixTeam[]> {
         try {
-            const teams = await this.streamerClient.teams.getTeamsForBroadcaster(broadcasterId);
+            const teams = await this._streamerClient.teams.getTeamsForBroadcaster(broadcasterId);
 
             if (teams != null) {
                 return teams;
@@ -45,7 +45,7 @@ export class TwitchTeamsApi {
 
     async getMatchingTeamsByName(username: string): Promise<HelixTeam[]> {
         try {
-            const user = await this.streamerClient.users.getUserByName(username);
+            const user = await this._streamerClient.users.getUserByName(username);
 
             if (user == null) {
                 return null;
@@ -83,4 +83,4 @@ export class TwitchTeamsApi {
 
         return [];
     }
-};
+}

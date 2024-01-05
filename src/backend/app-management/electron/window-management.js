@@ -1,7 +1,7 @@
 "use strict";
 
 const electron = require("electron");
-const { ipcMain, BrowserWindow, BrowserView, Menu, shell, dialog } = electron;
+const { ipcMain, BrowserWindow, BrowserView, Menu, shell, dialog, nativeImage } = electron;
 const path = require("path");
 const url = require("url");
 const windowStateKeeper = require("electron-window-state");
@@ -11,8 +11,94 @@ const logger = require("../../logwrapper");
 const { setupTitlebar, attachTitlebarToWindow } = require("custom-electron-titlebar/main");
 const screenHelpers = require("./screen-helpers");
 const frontendCommunicator = require("../../common/frontend-communicator");
+const { settings } = require("../../common/settings-access");
 
 setupTitlebar();
+
+/**
+ * The stream preview popout window.
+ * Keeps a global reference of the window object, if you don't, the window will
+ * be closed automatically when the JavaScript object is garbage collected.
+ *@type {Electron.BrowserWindow}
+ */
+let streamPreview = null;
+
+function createStreamPreviewWindow() {
+
+    if (streamPreview != null && !streamPreview.isDestroyed()) {
+        if (streamPreview.isMinimized()) {
+            streamPreview.restore();
+        }
+        streamPreview.focus();
+        return;
+    }
+
+    const accountAccess = require("../../common/account-access");
+    const streamer = accountAccess.getAccounts().streamer;
+
+    if (!streamer.loggedIn) {
+        return;
+    }
+
+    const streamPreviewWindowState = windowStateKeeper({
+        defaultWidth: 815,
+        defaultHeight: 480,
+        file: "stream-preview-window-state.json"
+    });
+
+    streamPreview = new BrowserWindow({
+        frame: true,
+        alwaysOnTop: true,
+        backgroundColor: "#1E2023",
+        title: "Stream Preview",
+        parent: exports.mainWindow,
+        width: streamPreviewWindowState.width,
+        height: streamPreviewWindowState.height,
+        x: streamPreviewWindowState.x,
+        y: streamPreviewWindowState.y,
+        javascript: false,
+        webPreferences: {},
+        icon: path.join(__dirname, "../../../gui/images/logo_transparent_2.png")
+    });
+    streamPreview.setMenu(null);
+
+    const view = new BrowserView();
+    streamPreview.setBrowserView(view);
+    view.setBounds({
+        x: 0,
+        y: 0,
+        width: streamPreview.getContentSize()[0],
+        height: streamPreview.getContentSize()[1]
+    });
+    view.setAutoResize({
+        width: true,
+        height: true
+    });
+    view.webContents.on('new-window', (vEvent) => {
+        vEvent.preventDefault();
+    });
+
+    view.webContents.loadURL(`https://player.twitch.tv/?channel=${streamer.username}&parent=firebot&muted=true`);
+
+    streamPreviewWindowState.manage(streamPreview);
+
+    streamPreview.on("close", () => {
+        if (!view.isDestroyed()) {
+            view.destroy();
+        }
+    });
+}
+
+async function createIconImage(relativeIconPath) {
+    const iconPath = path.resolve(__dirname, relativeIconPath);
+    if (process.platform === "darwin") {
+        return nativeImage.createThumbnailFromPath(iconPath, {
+            width: 14,
+            height: 14
+        });
+    }
+    return iconPath;
+}
 
 /**
  * Firebot's main window
@@ -28,7 +114,7 @@ exports.mainWindow = null;
  */
 let splashscreenWindow;
 
-function createMainWindow() {
+async function createMainWindow() {
     const mainWindowState = windowStateKeeper({
         defaultWidth: 1280,
         defaultHeight: 720
@@ -103,7 +189,8 @@ function createMainWindow() {
                         frontendCommunicator.send("open-modal", {
                             component: "importSetupModal"
                         });
-                    }
+                    },
+                    icon: await createIconImage("../../../gui/images/icons/mdi/import.png")
                 },
                 {
                     type: 'separator'
@@ -111,38 +198,45 @@ function createMainWindow() {
                 {
                     label: 'Open Data Folder',
                     toolTip: "Open the folder where Firebot data is stored",
+                    sublabel: "Open the folder where Firebot data is stored",
                     click: () => {
                         const rootFolder = path.resolve(
                             profileManager.getPathInProfile("/")
                         );
                         shell.openPath(rootFolder);
-                    }
+                    },
+                    icon: await createIconImage("../../../gui/images/icons/mdi/folder-account-outline.png")
                 },
                 {
                     label: 'Open Logs Folder',
                     toolTip: "Open the folder where logs are stored",
+                    sublabel: "Open the folder where logs are stored",
                     click: () => {
                         const rootFolder = path.resolve(
                             dataAccess.getPathInUserData("/logs/")
                         );
                         shell.openPath(rootFolder);
-                    }
+                    },
+                    icon: await createIconImage("../../../gui/images/icons/mdi/folder-text-outline.png")
                 },
                 {
                     label: 'Open Backups Folder',
                     toolTip: "Open the folder where backups are stored",
+                    sublabel: "Open the folder where backups are stored",
                     click: () => {
                         const backupFolder = path.resolve(
                             dataAccess.getPathInUserData("/backups/")
                         );
                         shell.openPath(backupFolder);
-                    }
+                    },
+                    icon: await createIconImage("../../../gui/images/icons/mdi/folder-refresh-outline.png")
                 },
                 {
                     type: 'separator'
                 },
                 {
-                    role: 'quit'
+                    role: 'quit',
+                    icon: await createIconImage("../../../gui/images/icons/mdi/exit-run.png")
                 }
             ]
         },
@@ -150,22 +244,28 @@ function createMainWindow() {
             label: 'Edit',
             submenu: [
                 {
-                    role: 'cut'
+                    role: 'cut',
+                    icon: await createIconImage("../../../gui/images/icons/mdi/content-cut.png")
                 },
                 {
-                    role: 'copy'
+                    role: 'copy',
+                    icon: await createIconImage("../../../gui/images/icons/mdi/content-copy.png")
                 },
                 {
-                    role: 'paste'
+                    role: 'paste',
+                    icon: await createIconImage("../../../gui/images/icons/mdi/content-paste.png")
                 },
                 {
-                    role: "undo"
+                    role: "undo",
+                    icon: await createIconImage("../../../gui/images/icons/mdi/undo.png")
                 },
                 {
-                    role: "redo"
+                    role: "redo",
+                    icon: await createIconImage("../../../gui/images/icons/mdi/redo.png")
                 },
                 {
-                    role: "selectAll"
+                    role: "selectAll",
+                    icon: await createIconImage("../../../gui/images/icons/mdi/select-all.png")
                 }
             ]
         },
@@ -173,10 +273,12 @@ function createMainWindow() {
             label: 'Window',
             submenu: [
                 {
-                    role: 'minimize'
+                    role: 'minimize',
+                    icon: await createIconImage("../../../gui/images/icons/mdi/window-minimize.png")
                 },
                 {
-                    role: 'close'
+                    role: 'close',
+                    icon: await createIconImage("../../../gui/images/icons/mdi/window-close.png")
                 }
             ]
         },
@@ -186,32 +288,39 @@ function createMainWindow() {
                 {
                     label: 'Setup Wizard',
                     toolTip: "Run the setup wizard again",
+                    sublabel: "Run the setup wizard again",
                     click: () => {
                         frontendCommunicator.send("open-modal", {
                             component: "setupWizardModal"
                         });
-                    }
+                    },
+                    icon: await createIconImage("../../../gui/images/icons/mdi/auto-fix.png")
                 },
                 {
                     label: 'Restore from backup...',
                     toolTip: "Restores Firebot from a backup",
+                    sublabel: "Restores Firebot from a backup",
                     click: async () => {
                         frontendCommunicator.send("restore-backup");
-                    }
+                    },
+                    icon: await createIconImage("../../../gui/images/icons/mdi/backup-restore.png")
                 },
                 {
                     label: 'Custom Variable Inspector',
                     toolTip: "Open the custom variable inspector",
+                    sublabel: "Open the custom variable inspector",
                     click: () => {
                         // eslint-disable-next-line no-use-before-define
                         createVariableInspectorWindow();
-                    }
+                    },
+                    icon: await createIconImage("../../../gui/images/icons/mdi/text-search.png")
                 },
                 {
                     type: 'separator'
                 },
                 {
-                    role: 'toggledevtools'
+                    role: 'toggledevtools',
+                    icon: await createIconImage("../../../gui/images/icons/mdi/tools.png")
                 }
             ]
         },
@@ -222,13 +331,15 @@ function createMainWindow() {
                     label: 'Join our Discord',
                     click: () => {
                         shell.openExternal("https://discord.gg/tTmMbrG");
-                    }
+                    },
+                    icon: await createIconImage("../../../gui/images/icons/discord.png")
                 },
                 {
                     label: 'Follow @FirebotApp on Twitter',
                     click: () => {
                         shell.openExternal("https://twitter.com/FirebotApp");
-                    }
+                    },
+                    icon: await createIconImage("../../../gui/images/icons/mdi/twitter.png")
                 },
                 {
                     type: 'separator'
@@ -237,19 +348,22 @@ function createMainWindow() {
                     label: 'View Source on GitHub',
                     click: () => {
                         shell.openExternal("https://github.com/crowbartools/Firebot");
-                    }
+                    },
+                    icon: await createIconImage("../../../gui/images/icons/mdi/source-branch.png")
                 },
                 {
                     label: 'Report a Bug',
                     click: () => {
                         shell.openExternal("https://github.com/crowbartools/Firebot/issues/new?assignees=&labels=Bug&template=bug_report.yml&title=%5BBug%5D+");
-                    }
+                    },
+                    icon: await createIconImage("../../../gui/images/icons/mdi/bug-outline.png")
                 },
                 {
                     label: 'Request a Feature',
                     click: () => {
                         shell.openExternal("https://github.com/crowbartools/Firebot/issues/new?assignees=&labels=Enhancement&template=feature_request.md&title=%5BFeature+Request%5D+");
-                    }
+                    },
+                    icon: await createIconImage("../../../gui/images/icons/mdi/star-circle-outline.png")
                 },
                 {
                     type: 'separator'
@@ -258,19 +372,22 @@ function createMainWindow() {
                     label: 'Merch Store',
                     click: () => {
                         shell.openExternal("https://crowbar-tools.myspreadshop.com");
-                    }
+                    },
+                    icon: await createIconImage("../../../gui/images/icons/mdi/shopping-outline.png")
                 },
                 {
                     label: 'Donate',
                     click: () => {
                         shell.openExternal("https://opencollective.com/crowbartools");
-                    }
+                    },
+                    icon: await createIconImage("../../../gui/images/icons/mdi/hand-heart-outline.png")
                 },
                 {
                     label: 'Submit a Testimonial',
                     click: () => {
                         shell.openExternal("https://firebot.app/testimonial-submission");
-                    }
+                    },
+                    icon: await createIconImage("../../../gui/images/icons/mdi/account-heart-outline.png")
                 },
                 {
                     type: 'separator'
@@ -279,7 +396,8 @@ function createMainWindow() {
                     label: 'About Firebot...',
                     click: () => {
                         frontendCommunicator.send("open-about-modal");
-                    }
+                    },
+                    icon: await createIconImage("../../../gui/images/icons/mdi/information-outline.png")
                 }
             ]
         }
@@ -326,13 +444,16 @@ function createMainWindow() {
             username: "Firebot"
         });
 
+        if (settings.getOpenStreamPreviewOnLaunch() === true) {
+            createStreamPreviewWindow();
+        }
+
         fileOpenHelpers.setWindowReady(true);
     });
 
 
     mainWindow.on("close", (event) => {
         const connectionManager = require("../../common/connection-manager");
-        const { settings } = require("../../common/settings-access");
         if (!settings.hasJustUpdated() && connectionManager.chatIsConnected() && connectionManager.streamerIsOnline()) {
             event.preventDefault();
             dialog.showMessageBox(mainWindow, {
@@ -354,13 +475,12 @@ function createMainWindow() {
  * Creates the splash screen
  */
 const createSplashScreen = async () => {
-    const isLinux = process.platform !== 'win32' && process.platform !== 'darwin';
-    const splash = new BrowserWindow({
-        width: 240,
-        height: 325,
+    splashscreenWindow = new BrowserWindow({
+        width: 375,
+        height: 420,
         icon: path.join(__dirname, "../../../gui/images/logo_transparent_2.png"),
-        transparent: !isLinux,
-        backgroundColor: isLinux ? "#34363C" : undefined,
+        transparent: true,
+        backgroundColor: undefined,
         frame: false,
         closable: false,
         fullscreenable: false,
@@ -369,18 +489,17 @@ const createSplashScreen = async () => {
         center: true,
         show: false,
         webPreferences: {
-            nodeIntegration: true
+            preload: path.join(__dirname, "../../../gui/splashscreen/preload.js")
         }
     });
-    splashscreenWindow = splash;
 
-    splash.on("ready-to-show", () => {
+    splashscreenWindow.once("ready-to-show", () => {
         logger.debug("...Showing splash screen");
-        splash.show();
+        splashscreenWindow.show();
     });
 
     logger.debug("...Attempting to load splash screen url");
-    return splash.loadURL(
+    return splashscreenWindow.loadURL(
         url.format({
             pathname: path.join(__dirname, "../../../gui/splashscreen/splash.html"),
             protocol: "file:",
@@ -393,78 +512,12 @@ const createSplashScreen = async () => {
         });
 };
 
-/**
- * Firebot's main window
- * Keeps a global reference of the window object, if you don't, the window will
- * be closed automatically when the JavaScript object is garbage collected.
- *@type {Electron.BrowserWindow}
- */
-let streamPreview = null;
-
-function createStreamPreviewWindow() {
-
-    if (streamPreview != null && !streamPreview.isDestroyed()) {
-        if (streamPreview.isMinimized()) {
-            streamPreview.restore();
-        }
-        streamPreview.focus();
+function updateSplashScreenStatus(newStatus) {
+    if (splashscreenWindow == null || splashscreenWindow.isDestroyed()) {
         return;
     }
 
-    const accountAccess = require("../../common/account-access");
-    const streamer = accountAccess.getAccounts().streamer;
-
-    if (!streamer.loggedIn) {
-        return;
-    }
-
-    const streamPreviewWindowState = windowStateKeeper({
-        defaultWidth: 815,
-        defaultHeight: 480,
-        file: "stream-preview-window-state.json"
-    });
-
-    streamPreview = new BrowserWindow({
-        frame: true,
-        alwaysOnTop: true,
-        backgroundColor: "#1E2023",
-        title: "Stream Preview",
-        parent: exports.mainWindow,
-        width: streamPreviewWindowState.width,
-        height: streamPreviewWindowState.height,
-        x: streamPreviewWindowState.x,
-        y: streamPreviewWindowState.y,
-        javascript: false,
-        webPreferences: {},
-        icon: path.join(__dirname, "../../../gui/images/logo_transparent_2.png")
-    });
-    streamPreview.setMenu(null);
-
-    const view = new BrowserView();
-    streamPreview.setBrowserView(view);
-    view.setBounds({
-        x: 0,
-        y: 0,
-        width: streamPreview.getContentSize()[0],
-        height: streamPreview.getContentSize()[1]
-    });
-    view.setAutoResize({
-        width: true,
-        height: true
-    });
-    view.webContents.on('new-window', (vEvent) => {
-        vEvent.preventDefault();
-    });
-
-    view.webContents.loadURL(`https://player.twitch.tv/?channel=${streamer.username}&parent=firebot&muted=true`);
-
-    streamPreviewWindowState.manage(streamPreview);
-
-    streamPreview.on("close", () => {
-        if (!view.isDestroyed()) {
-            view.destroy();
-        }
-    });
+    splashscreenWindow.webContents.send("update-splash-screen-status", newStatus);
 }
 
 /**
@@ -568,6 +621,7 @@ frontendCommunicator.on("takeScreenshot", (displayId) => {
     return screenHelpers.takeScreenshot(displayId);
 });
 
+exports.updateSplashScreenStatus = updateSplashScreenStatus;
 exports.createVariableInspectorWindow = createVariableInspectorWindow;
 exports.sendVariableCreateToInspector = sendVariableCreateToInspector;
 exports.sendVariableExpireToInspector = sendVariableExpireToInspector;

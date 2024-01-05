@@ -26,26 +26,26 @@ module.exports = {
         const bitsAmount = eventMeta.bits || 0;
 
         switch (comparisonType) {
-        case ComparisonType.IS: {
-            return bitsAmount === value;
-        }
-        case ComparisonType.IS_NOT: {
-            return bitsAmount !== value;
-        }
-        case ComparisonType.LESS_THAN: {
-            return bitsAmount < value;
-        }
-        case ComparisonType.LESS_THAN_OR_EQUAL_TO: {
-            return bitsAmount <= value;
-        }
-        case ComparisonType.GREATER_THAN: {
-            return bitsAmount > value;
-        }
-        case ComparisonType.GREATER_THAN_OR_EQUAL_TO: {
-            return bitsAmount >= value;
-        }
-        default:
-            return false;
+            case ComparisonType.IS: {
+                return bitsAmount === value;
+            }
+            case ComparisonType.IS_NOT: {
+                return bitsAmount !== value;
+            }
+            case ComparisonType.LESS_THAN: {
+                return bitsAmount < value;
+            }
+            case ComparisonType.LESS_THAN_OR_EQUAL_TO: {
+                return bitsAmount <= value;
+            }
+            case ComparisonType.GREATER_THAN: {
+                return bitsAmount > value;
+            }
+            case ComparisonType.GREATER_THAN_OR_EQUAL_TO: {
+                return bitsAmount >= value;
+            }
+            default:
+                return false;
         }
     }
 };

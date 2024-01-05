@@ -20,6 +20,7 @@
                 auto-update-value="true"
                 on-toggle="cms.saveChatModerationSettings()"
                 font-size="40"
+                accessibility-label="cms.chatModerationData.settings.bannedWordList.enabled ? 'Disable Banned Word List' : 'Enable Banned Word List'"
               />
             </div>
           </div>
@@ -63,6 +64,7 @@
                 auto-update-value="true"
                 on-toggle="cms.saveChatModerationSettings()"
                 font-size="40"
+                accessibility-label="cms.chatModerationData.settings.emoteLimit.enabled ? 'Disable Emote/Emoji Limit' : 'Enable Emote/Emoji Limit'"
               />
             </div>
           </div>
@@ -113,6 +115,7 @@
                 toggle-model="cms.chatModerationData.settings.urlModeration.enabled"
                 on-toggle="toggleUrlModerationFeature()"
                 font-size="40"
+                accessibility-label="cms.chatModerationData.settings.urlModeration.enabled ? 'Disable URL Moderation' : 'Enable URL Moderation'"
               />
             </div>
           </div>
@@ -122,7 +125,7 @@
           <div style="display: block;width: 100%;" class="my-8" ng-show="cms.chatModerationData.settings.urlModeration.enabled">
             <div class="my-8">
               <div class="mb-4 text-2xl font-semibold">
-                Exempt Roles <tooltip text="'These roles are exempt from the url moderation.'" />
+                Exempt Roles <tooltip text="'These roles are exempt from URL moderation.'" />
               </div>
               <exempt-roles model="cms.chatModerationData.settings.urlModeration.exemptRoles" on-update="cms.saveChatModerationSettings()"></exempt-roles>
             </div>
@@ -139,14 +142,15 @@
                 on-toggle="cms.saveChatModerationSettings()"
                 auto-update-value="true"
                 font-size="32"
-              />
+                accessibility-label="cms.chatModerationData.settings.urlModeration.viewTime.enabled ? 'Disable View Time Exceptions' : 'Enable View Time Exceptions'"
+                />
             </div>
             <div
               style="width: 100%;"
               class="mt-6"
               ng-show="cms.chatModerationData.settings.urlModeration.enabled && cms.chatModerationData.settings.urlModeration.viewTime.enabled"
             >
-              <div class="muted mb-4 ml-6">All viewers with a higher view time will be exempt from url moderation.</div>
+              <div class="muted mb-4 ml-6">All viewers with a higher view time will be exempt from URL moderation.</div>
               <firebot-input
                 input-title="View time in hours"
                 placeholder-text="Enter amount of hours"
@@ -162,7 +166,7 @@
               class="mt-8"
               ng-show="cms.chatModerationData.settings.urlModeration.enabled"
             >
-            <div class="muted">The chat message shown when a message containing a url is moderated (leave empty for no message).</div>
+            <div class="muted">The chat message shown when a message containing a URL is moderated (leave empty for no message).</div>
               <div class="muted mb-4 font-extrabold">
                 Variables: {userName}<span ng-show="cms.chatModerationData.settings.urlModeration.viewTime.enabled">, {viewTime}</span>
               </div>

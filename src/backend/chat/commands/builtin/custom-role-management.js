@@ -61,52 +61,52 @@ const model = {
         }
 
         switch (triggeredArg) {
-        case "add": {
-            const roleName = args.slice(2);
-            const role = customRoleManager.getRoleByName(roleName);
-            if (role == null) {
-                await chat.sendChatMessage("Can't find a role by that name.");
-            } else {
-                const username = args[1].replace("@", "");
-                customRoleManager.addViewerToRole(role.id, username);
-                await chat.sendChatMessage(`Added role ${role.name} to ${username}`);
-            }
-            break;
-        }
-        case "remove": {
-            const roleName = args.slice(2);
-            const role = customRoleManager.getRoleByName(roleName);
-            if (role == null) {
-                await chat.sendChatMessage("Can't find a role by that name.");
-            } else {
-                const username = args[1].replace("@", "");
-                customRoleManager.removeViewerFromRole(role.id, username);
-                await chat.sendChatMessage(`Removed role ${role.name} from ${username}`);
-            }
-            break;
-        }
-        case "list": {
-            if (args.length > 1) {
-                const username = args[1].replace("@", "");
-                const roleNames = customRoleManager.getAllCustomRolesForViewer(username).map(r => r.name);
-                if (roleNames.length < 1) {
-                    await chat.sendChatMessage(`${username} has no custom roles assigned.`);
+            case "add": {
+                const roleName = args.slice(2);
+                const role = customRoleManager.getRoleByName(roleName);
+                if (role == null) {
+                    await chat.sendChatMessage("Can't find a role by that name.");
                 } else {
-                    await chat.sendChatMessage(`${username}'s custom roles: ${roleNames.join(", ")}`);
+                    const username = args[1].replace("@", "");
+                    customRoleManager.addViewerToRole(role.id, username);
+                    await chat.sendChatMessage(`Added role ${role.name} to ${username}`);
                 }
+                break;
+            }
+            case "remove": {
+                const roleName = args.slice(2);
+                const role = customRoleManager.getRoleByName(roleName);
+                if (role == null) {
+                    await chat.sendChatMessage("Can't find a role by that name.");
+                } else {
+                    const username = args[1].replace("@", "");
+                    customRoleManager.removeViewerFromRole(role.id, username);
+                    await chat.sendChatMessage(`Removed role ${role.name} from ${username}`);
+                }
+                break;
+            }
+            case "list": {
+                if (args.length > 1) {
+                    const username = args[1].replace("@", "");
+                    const roleNames = customRoleManager.getAllCustomRolesForViewer(username).map(r => r.name);
+                    if (roleNames.length < 1) {
+                        await chat.sendChatMessage(`${username} has no custom roles assigned.`);
+                    } else {
+                        await chat.sendChatMessage(`${username}'s custom roles: ${roleNames.join(", ")}`);
+                    }
 
-            } else {
-                const roleNames = customRoleManager.getCustomRoles().map(r => r.name);
-                if (roleNames.length < 1) {
-                    await chat.sendChatMessage(`There are no custom roles available.`);
                 } else {
-                    await chat.sendChatMessage(`Available custom roles: ${roleNames.join(", ")}`);
+                    const roleNames = customRoleManager.getCustomRoles().map(r => r.name);
+                    if (roleNames.length < 1) {
+                        await chat.sendChatMessage(`There are no custom roles available.`);
+                    } else {
+                        await chat.sendChatMessage(`Available custom roles: ${roleNames.join(", ")}`);
+                    }
                 }
+                break;
             }
-            break;
-        }
-        default:
-            await chat.sendChatMessage("Incorrect command usage!");
+            default:
+                await chat.sendChatMessage("Incorrect command usage!");
         }
     }
 };

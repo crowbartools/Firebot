@@ -22,7 +22,7 @@ export class FFZEmoteProvider extends ThirdPartyEmoteProvider<FFZEmotesResponse>
             code: e.code,
             animated: e.imageType?.toLowerCase() === "gif",
             origin: this.providerName
-    }));
+        }));
 
     globalEmotesMapper = this.emoteMapper;
     channelEmotesMapper = this.emoteMapper;

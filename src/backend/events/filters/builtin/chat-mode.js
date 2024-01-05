@@ -37,18 +37,18 @@ module.exports = {
     },
     getSelectedValueDisplay: (filterSettings) => {
         switch (filterSettings.value) {
-        case "emoteonly":
-            return "Emote Only";
-        case "followers":
-            return "Followers";
-        case "subscribers":
-            return "Subscribers Only";
-        case "slow":
-            return "Slow";
-        case "r9kbeta":
-            return "Unique Chat";
-        default:
-            return "[Not set]";
+            case "emoteonly":
+                return "Emote Only";
+            case "followers":
+                return "Followers";
+            case "subscribers":
+                return "Subscribers Only";
+            case "slow":
+                return "Slow";
+            case "r9kbeta":
+                return "Unique Chat";
+            default:
+                return "[Not set]";
         }
     },
     predicate: async (filterSettings, eventData) => {
@@ -57,12 +57,12 @@ module.exports = {
         const { eventMeta } = eventData;
 
         switch (comparisonType) {
-        case "is":
-            return eventMeta.chatMode.includes(value);
-        case "is not":
-            return !eventMeta.chatMode.includes(value);
-        default:
-            return false;
+            case "is":
+                return eventMeta.chatMode.includes(value);
+            case "is not":
+                return !eventMeta.chatMode.includes(value);
+            default:
+                return false;
         }
     }
 };

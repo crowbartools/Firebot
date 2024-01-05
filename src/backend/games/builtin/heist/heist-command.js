@@ -119,7 +119,7 @@ const heistCommand = {
                 if (heistSettings.settings.entryMessages.wagerAmountTooLow) {
                     const wagerAmountTooLowMsg = heistSettings.settings.entryMessages.wagerAmountTooLow
                         .replace("{user}", username)
-                        .replace("minWager}", minWager);
+                        .replace("{minWager}", minWager);
 
                     await twitchChat.sendChatMessage(wagerAmountTooLowMsg, null, chatter);
                 }
@@ -208,7 +208,7 @@ const heistCommand = {
                 .replace("{user}", username)
                 .replace("{command}", userCommand.trigger)
                 .replace("{maxWager}", maxWager)
-                .replace("{minMager}", minWager)
+                .replace("{minWager}", minWager)
                 .replace("{requiredUsers}", heistSettings.settings.generalSettings.minimumUsers);
 
             if (teamCreationMessage) {

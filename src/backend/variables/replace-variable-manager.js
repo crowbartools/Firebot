@@ -31,13 +31,15 @@ class ReplaceVariableManager extends EventEmitter {
         logger.debug(`Registered replace variable ${variable.definition.handle}`);
 
         this.emit("replaceVariableRegistered", variable);
+
+        frontendCommunicator.send("replace-variable-registered", variable.definition);
     }
 
     getReplaceVariables () {
         // Map register variables Map to array
         const registeredVariables = this._registeredVariableHandlers;
         const variables = [];
-        /* eslint-disable-next-line no-unused-vars */
+        /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
         for (const [key, value] of registeredVariables) {
             variables.push(value);
         }
@@ -149,46 +151,9 @@ class ReplaceVariableManager extends EventEmitter {
 
 const manager = new ReplaceVariableManager();
 
-frontendCommunicator.on("getReplaceVariableDefinitions", trigger => {
+frontendCommunicator.on("getReplaceVariableDefinitions", () => {
     logger.debug("got 'get all vars' request");
-
-    // map registered variables to array of their .definition property
-    let registeredVariables = manager.getVariableHandlers(),
-        variables = [];
-    /* eslint-disable-next-line no-unused-vars */
-    for (const [key, value] of registeredVariables) {
-        variables.push(value.definition);
-    }
-    if (trigger != null) {
-        variables = variables
-            .filter(v => {
-
-                if (trigger.dataOutput === "number") {
-                    if (v.possibleDataOutput == null || !v.possibleDataOutput.includes("number")) {
-                        return false;
-                    }
-                }
-
-                if (v.triggers == null) {
-                    return true;
-                }
-
-                const variableTrigger = v.triggers[trigger.type];
-                if (variableTrigger === true) {
-                    return true;
-                }
-
-                if (Array.isArray(variableTrigger)) {
-                    if (variableTrigger.some(id => id === trigger.id)) {
-                        return true;
-                    }
-                }
-
-                return false;
-            });
-        return variables;
-    }
-    return variables;
+    return Array.from(manager.getVariableHandlers().values()).map(v => v.definition);
 });
 
 frontendCommunicator.onAsync("validateVariables", async eventData => {

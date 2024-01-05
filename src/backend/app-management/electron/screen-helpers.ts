@@ -3,11 +3,11 @@ import logger from "../../logwrapper";
 
 export function getAllDisplays(): Electron.Display[] {
     return screen.getAllDisplays();
-};
+}
 
 export function getPrimaryDisplay(): Electron.Display {
     return screen.getPrimaryDisplay();
-};
+}
 
 export async function takeScreenshot(displayId: number): Promise<string> {
     const screens = screen.getAllDisplays();
@@ -42,4 +42,4 @@ export async function takeScreenshot(displayId: number): Promise<string> {
             logger.error('Failed to take screenshot', err.message);
             return null;
         });
-};
+}

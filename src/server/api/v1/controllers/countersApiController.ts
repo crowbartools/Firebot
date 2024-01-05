@@ -3,16 +3,16 @@ import { Request, Response } from "express";
 
 export async function getCounters(req: Request, res: Response): Promise<Response> {
     const counters = counterManager.getAllItems()
-        .map((c: any) => {
+        .map((c) => {
             return {
                 id: c.id,
                 name: c.name,
                 value: c.value
             };
         });
-    
+
     return res.json(counters);
-};
+}
 
 export async function getCounterById(req: Request, res: Response): Promise<Response> {
     const counterId: string = req.params.counterId;
@@ -34,7 +34,7 @@ export async function getCounterById(req: Request, res: Response): Promise<Respo
     }
 
     return res.json(counter);
-};
+}
 
 export async function updateCounter(req: Request, res: Response): Promise<Response> {
     const counterId: string = req.params.counterId;
@@ -78,7 +78,7 @@ export async function updateCounter(req: Request, res: Response): Promise<Respon
         });
     }
 
-    let response = {
+    const response = {
         oldValue: counter.value,
         newValue: 0
     };
@@ -87,4 +87,4 @@ export async function updateCounter(req: Request, res: Response): Promise<Respon
     await counterManager.updateCounterValue(counter.id, value, override);
     response.newValue = counterManager.getItem(counterId).value;
     return res.json(response);
-};
+}

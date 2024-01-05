@@ -6,7 +6,7 @@ const logger = require("./logwrapper");
 const tokens = {};
 
 function deleteToken(token) {
-    logger.debug("Deleting token: " + token);
+    logger.debug(`Deleting token: ${token}`);
     if (tokens[token] !== undefined) {
         delete tokens[token];
     }

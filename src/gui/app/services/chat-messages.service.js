@@ -7,7 +7,7 @@
     angular
         .module('firebotApp')
         .factory('chatMessagesService', function (logger, listenerService, settingsService,
-            soundService, backendCommunicator, pronounsService, accountAccess) {
+            soundService, backendCommunicator, pronounsService, accountAccess, ngToast) {
             const service = {};
 
             // Chat Message Queue
@@ -148,53 +148,53 @@
             // This will only work when chat feed is turned on in the settings area.
             service.chatUpdateHandler = function(data) {
                 switch (data.fbEvent) {
-                case "ClearMessages":
-                    logger.info("Chat cleared");
-                    service.clearChatQueue();
+                    case "ClearMessages":
+                        logger.info("Chat cleared");
+                        service.clearChatQueue();
 
-                    service.chatAlertMessage('Chat has been cleared by ' + data.clearer.user_name + '.');
-                    break;
-                case "PurgeMessage":
-                    logger.info("Chat message purged");
-                    service.purgeChatMessages(data);
-                    break;
-                case "UserJoin":
-                    logger.debug("Chat User Joined");
+                        service.chatAlertMessage(`Chat has been cleared by ${data.clearer.user_name}.`);
+                        break;
+                    case "PurgeMessage":
+                        logger.info("Chat message purged");
+                        service.purgeChatMessages(data);
+                        break;
+                    case "UserJoin":
+                        logger.debug("Chat User Joined");
 
-                    // Standardize user roles naming.
+                        // Standardize user roles naming.
                     data.user_roles = data.roles; // eslint-disable-line
 
-                    service.chatUserJoined(data);
-                    break;
-                case "UserLeave":
-                    logger.debug("Chat User Left");
+                        service.chatUserJoined(data);
+                        break;
+                    case "UserLeave":
+                        logger.debug("Chat User Left");
 
-                    // Standardize user roles naming.
+                        // Standardize user roles naming.
                     data.user_roles = data.roles; // eslint-disable-line
 
-                    service.chatUserLeft(data);
-                    break;
-                case "UserUpdate":
-                    logger.debug("User updated");
-                    service.chatUserUpdated(data);
-                    break;
-                case "Disconnected":
+                        service.chatUserLeft(data);
+                        break;
+                    case "UserUpdate":
+                        logger.debug("User updated");
+                        service.chatUserUpdated(data);
+                        break;
+                    case "Disconnected":
                     // We disconnected. Clear messages, post alert, and then let the reconnect handle repopulation.
-                    logger.info("Chat Disconnected!");
-                    service.clearChatQueue();
-                    service.chatAlertMessage("Chat has been disconnected.");
-                    break;
-                case "UsersRefresh":
-                    logger.info("Chat userlist refreshed.");
-                    service.chatUserRefresh(data);
-                    break;
-                case "ChatAlert":
-                    logger.debug("Chat alert from backend.");
-                    service.chatAlertMessage(data.message);
-                    break;
-                default:
+                        logger.info("Chat Disconnected!");
+                        service.clearChatQueue();
+                        service.chatAlertMessage("Chat has been disconnected.");
+                        break;
+                    case "UsersRefresh":
+                        logger.info("Chat userlist refreshed.");
+                        service.chatUserRefresh(data);
+                        break;
+                    case "ChatAlert":
+                        logger.debug("Chat alert from backend.");
+                        service.chatAlertMessage(data.message);
+                        break;
+                    default:
                     // Nothing
-                    logger.warn("Unknown chat event sent", data);
+                        logger.warn("Unknown chat event sent", data);
                 }
             };
 
@@ -225,10 +225,11 @@
 
 
             // This submits a chat message to Twitch.
-            service.submitChat = function(sender, message) {
+            service.submitChat = function(sender, message, replyToMessageId) {
                 backendCommunicator.send("send-chat-message", {
                     message: message,
-                    accountType: sender
+                    accountType: sender,
+                    replyToMessageId: replyToMessageId
                 });
             };
 
@@ -254,9 +255,13 @@
                 }
             }
 
-            service.deleteMessage = messageId => {
-                markMessageAsDeleted(messageId);
-                backendCommunicator.send("delete-message", messageId);
+            service.deleteMessage = async (messageId) => {
+                const result = await backendCommunicator.fireEventAsync("delete-message", messageId);
+                if (result === true) {
+                    markMessageAsDeleted(messageId);
+                } else {
+                    ngToast.create("Unable to delete chat message. Check log for more details.");
+                }
             };
 
             backendCommunicator.on("twitch:chat:message:deleted", markMessageAsDeleted);
@@ -442,20 +447,24 @@
             service.allEmotes = [];
             service.filteredEmotes = [];
             service.refreshEmotes = () => {
+                const showBttvEmotes = settingsService.getShowBttvEmotes();
+                const showFfzEmotes = settingsService.getShowFfzEmotes();
+                const showSevenTvEmotes = settingsService.getShowSevenTvEmotes();
+
                 service.filteredEmotes = service.allEmotes.filter(e => {
-                    if (settingsService.getShowBttvEmotes() && e.origin === "BTTV") {
-                        return true;
+                    if (showBttvEmotes !== true && e.origin === "BTTV") {
+                        return false;
                     }
 
-                    if (settingsService.getShowFfzEmotes() && e.origin === "FFZ") {
-                        return true;
+                    if (showFfzEmotes !== true && e.origin === "FFZ") {
+                        return false;
                     }
 
-                    if (settingsService.getShowSevenTvEmotes() && e.origin === "7TV") {
-                        return true;
+                    if (showSevenTvEmotes !== true && e.origin === "7TV") {
+                        return false;
                     }
 
-                    return false;
+                    return true;
                 });
             };
 

@@ -13,7 +13,10 @@
                 showFfzEmotes: "<",
                 showSevenTvEmotes: "<",
                 showPronoun: "<",
-                updateChatInput: "&",
+                hideReplyBanner: "<?",
+                disableInteractions: "<?",
+                updateChatInput: "&?",
+                onReplyClicked: "&?",
                 chatSizeStyle: "@?"
             },
             template: `
@@ -30,8 +33,29 @@
                         ng-class="$ctrl.message.autoModStatus"
                     >
                     </div>
-                    <div ng-if="$ctrl.message.isAnnouncement" style="background: #00000014;padding: 5px 10px;margin-top:5px">
+                    <div
+                        ng-if="$ctrl.message.isFirstChat || $ctrl.message.isReturningChatter || $ctrl.message.isRaider || $ctrl.message.isSuspiciousUser"
+                        class="chat-highlight-bar"
+                        ng-class="{'first-chat': $ctrl.message.isFirstChat, returning: $ctrl.message.isReturningChatter, raider: $ctrl.message.isRaider, suspicious: $ctrl.message.isSuspiciousUser}"
+                    >
+                    </div>
+                    <div ng-if="$ctrl.message.isAnnouncement" class="chat-message-banner">
                         <i class="fad fa-bullhorn"></i> Announcement
+                    </div>
+                    <div ng-if="$ctrl.message.isFirstChat" class="chat-message-banner">
+                        <i class="fad fa-sparkles"></i> First Time Chat
+                    </div>
+                    <div ng-if="$ctrl.message.isReturningChatter" class="chat-message-banner">
+                        <i class="fad fa-repeat"></i> Returning Chatter
+                    </div>
+                    <div ng-if="$ctrl.message.isRaider" class="chat-message-banner">
+                        <i class="fad fa-siren-on"></i> Raider from {{$ctrl.message.raidingFrom}}
+                    </div>
+                    <div ng-if="$ctrl.message.isSuspiciousUser" class="chat-message-banner">
+                        <i class="fad fa-exclamation-triangle"></i> Suspicious User
+                    </div>
+                    <div ng-if="$ctrl.message.isReply && !$ctrl.hideReplyBanner" class="chat-message-banner mini-banner muted truncate" ng-click="$ctrl.replyBannerClicked()">
+                        <i class="fad fa-comment-alt-dots"></i> Replying to @{{$ctrl.message.replyParentMessageSenderDisplayName}}: {{$ctrl.message.replyParentMessageText}}</span>
                     </div>
                     <div class="chat-message"
                         ng-class="{
@@ -47,7 +71,7 @@
                         ng-attr-messageId="{{$ctrl.message.id}}"
                         context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
                         context-menu-class="chat-message-context-menu"
-                        context-menu-on="{{$ctrl.message.isExtension ? 'disabled' : 'contextmenu'}}"
+                        context-menu-on="{{$ctrl.message.isExtension || $ctrl.disableInteractions ? 'disabled' : 'contextmenu'}}"
                     >
                         <div
                             ng-if="!$ctrl.compactDisplay"
@@ -55,7 +79,7 @@
                             class="chat-user-avatar-wrapper"
                             context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
                             context-menu-class="chat-message-context-menu"
-                            context-menu-on="{{$ctrl.message.isExtension ? 'disabled' : 'click'}}"
+                            context-menu-on="{{$ctrl.message.isExtension || $ctrl.disableInteractions ? 'disabled' : 'click'}}"
                         >
                             <img class="chat-user-avatar" ng-src="{{$ctrl.message.profilePicUrl}}">
                         </div>
@@ -71,7 +95,7 @@
                                 ng-show="$ctrl.showAvatar"
                                 context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
                                 context-menu-class="chat-message-context-menu"
-                                context-menu-on="{{$ctrl.message.isExtension ? 'disabled' : 'click'}}"
+                                context-menu-on="{{$ctrl.message.isExtension || $ctrl.disableInteractions ? 'disabled' : 'click'}}"
                             >
                                 <img class="chat-user-avatar" ng-src="{{$ctrl.message.profilePicUrl}}">
                             </div>
@@ -80,7 +104,7 @@
                                 class="chat-username"
                                 context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
                                 context-menu-class="chat-message-context-menu"
-                                context-menu-on="{{$ctrl.message.isExtension ? 'disabled' : 'click'}}"
+                                context-menu-on="{{$ctrl.message.isExtension || $ctrl.disableInteractions ? 'disabled' : 'click'}}"
                             >
                                 <div ng-show="$ctrl.message.badges.length > 0" class="user-badges">
                                     <img ng-repeat="badge in $ctrl.message.badges"
@@ -110,6 +134,17 @@
                                     <span ng-if="part.type === 'text'" style="{{$ctrl.chatSizeStyle}}" ng-class="{ highlightText: part.flagged }">{{part.text}}</span>
 
                                     <a ng-if="part.type === 'link'" style="{{$ctrl.chatSizeStyle}}" ng-href="{{part.url}}" target="_blank">{{part.text}}</a>
+
+                                    <span
+                                        ng-if="part.type === 'cheer'"
+                                        class="chatEmoticon"
+                                        uib-tooltip="{{part.name}}"
+                                        tooltip-append-to-body="true"
+                                    >
+                                        <img ng-if="part.animatedUrl != '' && part.animatedUrl != null" ng-src="{{part.animatedUrl}}" style="height: 100%;">
+                                        <img ng-if="part.animatedUrl == '' || part.animatedUrl == null" ng-src="{{part.url}}" style="height: 100%;">
+                                    </span>
+                                    <span ng-if="part.type === 'cheer'" style="{{$ctrl.chatSizeStyle}}; font-weight: bold;" ng-style="{ color: part.color }" >{{part.amount}}</span>
 
                                     <span
                                         ng-if="part.type === 'emote'"
@@ -153,7 +188,7 @@
                                     <span ng-if="part.origin === '7TV' && !$ctrl.showSevenTvEmotes" style="{{$ctrl.chatSizeStyle}}">{{part.name}}</span>
                                 </span>
                             </div>
-                            <div ng-show="$ctrl.message.whisper" class="muted">(Whispered to you)</div>
+                            <div ng-show="$ctrl.message.whisper" class="muted">(Whispered to {{ $ctrl.message.whisperTarget }})</div>
                         </div>
                     </div>
                     <div class="automod-tag" ng-show="$ctrl.message.isAutoModHeld">
@@ -178,7 +213,7 @@
                             <span>Expired</span>
                         </div>
                     </div>
-                    <div ng-if="$ctrl.message.isAnnouncement" style="margin-bottom:5px">
+                    <div ng-if="$ctrl.message.isAnnouncement || $ctrl.message.isFirstChat || $ctrl.message.isReturningChatter || $ctrl.message.isRaider || $ctrl.message.isSuspiciousUser" style="margin-bottom:5px">
                 </div>
             `,
             controller: function(chatMessagesService, utilityService, connectionService, pronounsService, backendCommunicator) {
@@ -223,10 +258,22 @@
                 };
 
                 function updateChatField(text) {
+                    if (!$ctrl.updateChatInput) {
+                        return;
+                    }
                     $ctrl.updateChatInput({
                         text: text
                     });
                 }
+
+                $ctrl.replyBannerClicked = () => {
+                    if (!$ctrl.onReplyClicked) {
+                        return;
+                    }
+                    $ctrl.onReplyClicked({
+                        threadOrReplyMessageId: $ctrl.message.threadParentMessageId || $ctrl.message.replyParentMessageId
+                    });
+                };
 
                 $ctrl.getMessageContextMenu = (message) => {
                     const actions = [];
@@ -237,7 +284,7 @@
                     });
 
                     actions.push({
-                        name: "Delete This Message",
+                        name: "Delete Message",
                         icon: "fa-trash-alt"
                     });
 
@@ -247,7 +294,12 @@
                     });
 
                     actions.push({
-                        name: "Quote This Message",
+                        name: "Reply To Message",
+                        icon: "fa-reply"
+                    });
+
+                    actions.push({
+                        name: "Quote Message",
                         icon: "fa-quote-right"
                     });
 
@@ -260,8 +312,8 @@
                         });
 
                         actions.push({
-                            name: "Highlight This Message",
-                            icon: "fa-eye"
+                            name: "Spotlight Message",
+                            icon: "fa-lightbulb-on"
                         });
 
                         actions.push({
@@ -343,70 +395,75 @@
 
                 $ctrl.messageActionSelected = (action, userName, userId, msgId, rawText) => {
                     switch (action.toLowerCase()) {
-                    case "delete this message":
-                        chatMessagesService.deleteMessage(msgId);
-                        break;
-                    case "timeout":
-                        updateChatField(`/timeout @${userName} 300`);
-                        break;
-                    case "ban":
-                        utilityService
-                            .showConfirmationModal({
-                                title: "Ban User",
-                                question: `Are you sure you want to ban ${userName}?`,
-                                confirmLabel: "Ban",
-                                confirmBtnType: "btn-danger"
-                            })
-                            .then(confirmed => {
-                                if (confirmed) {
-                                    backendCommunicator.fireEvent("update-user-banned-status", { username: userName, shouldBeBanned: true });
-                                }
+                        case "delete message":
+                            chatMessagesService.deleteMessage(msgId);
+                            break;
+                        case "timeout":
+                            updateChatField(`/timeout @${userName} 300`);
+                            break;
+                        case "ban":
+                            utilityService
+                                .showConfirmationModal({
+                                    title: "Ban User",
+                                    question: `Are you sure you want to ban ${userName}?`,
+                                    confirmLabel: "Ban",
+                                    confirmBtnType: "btn-danger"
+                                })
+                                .then(confirmed => {
+                                    if (confirmed) {
+                                        backendCommunicator.fireEvent("update-user-banned-status", { username: userName, shouldBeBanned: true });
+                                    }
+                                });
+                            break;
+                        case "mod":
+                            chatMessagesService.changeModStatus(userName, true);
+                            break;
+                        case "unmod":
+                            utilityService
+                                .showConfirmationModal({
+                                    title: "Mod User",
+                                    question: `Are you sure you want to unmod ${userName}?`,
+                                    confirmLabel: "Unmod",
+                                    confirmBtnType: "btn-danger"
+                                })
+                                .then(confirmed => {
+                                    if (confirmed) {
+                                        chatMessagesService.changeModStatus(userName, false);
+                                    }
+                                });
+                            break;
+                        case "add as vip":
+                            backendCommunicator.fireEvent("update-user-vip-status", { username: userName, shouldBeVip: true });
+                            break;
+                        case "remove vip":
+                            backendCommunicator.fireEvent("update-user-vip-status", { username: userName, shouldBeVip: false });
+                            break;
+                        case "whisper":
+                            updateChatField(`/w @${userName} `);
+                            break;
+                        case "mention":
+                            updateChatField(`@${userName} `);
+                            break;
+                        case "reply to message":
+                            $ctrl.onReplyClicked({
+                                threadOrReplyMessageId: $ctrl.message.id
                             });
-                        break;
-                    case "mod":
-                        chatMessagesService.changeModStatus(userName, true);
-                        break;
-                    case "unmod":
-                        utilityService
-                            .showConfirmationModal({
-                                title: "Mod User",
-                                question: `Are you sure you want to unmod ${userName}?`,
-                                confirmLabel: "Unmod",
-                                confirmBtnType: "btn-danger"
-                            })
-                            .then(confirmed => {
-                                if (confirmed) {
-                                    chatMessagesService.changeModStatus(userName, false);
-                                }
-                            });
-                        break;
-                    case "add as vip":
-                        backendCommunicator.fireEvent("update-user-vip-status", { username: userName, shouldBeVip: true });
-                        break;
-                    case "remove vip":
-                        backendCommunicator.fireEvent("update-user-vip-status", { username: userName, shouldBeVip: false });
-                        break;
-                    case "whisper":
-                        updateChatField(`/w @${userName} `);
-                        break;
-                    case "mention":
-                        updateChatField(`@${userName} `);
-                        break;
-                    case "quote this message":
-                        updateChatField(`!quote add @${userName} ${rawText}`);
-                        break;
-                    case "highlight this message":
-                        chatMessagesService.highlightMessage(userName, rawText);
-                        break;
-                    case "shoutout":
-                        updateChatField(`!so @${userName}`);
-                        break;
-                    case "details": {
-                        $ctrl.showUserDetailsModal(userId);
-                        break;
-                    }
-                    default:
-                        return;
+                            break;
+                        case "quote message":
+                            updateChatField(`!quote add @${userName} ${rawText}`);
+                            break;
+                        case "spotlight message":
+                            chatMessagesService.highlightMessage(userName, rawText);
+                            break;
+                        case "shoutout":
+                            updateChatField(`!so @${userName}`);
+                            break;
+                        case "details": {
+                            $ctrl.showUserDetailsModal(userId);
+                            break;
+                        }
+                        default:
+                            return;
                     }
                 };
 

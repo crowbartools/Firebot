@@ -3,7 +3,7 @@ export class TwitchCommandHelpers {
         if (rawDuration == null) {
             return 0;
         }
-    
+
         rawDuration = rawDuration.trim();
 
         if (rawDuration.length === 0) {
@@ -25,7 +25,7 @@ export class TwitchCommandHelpers {
 
                 case "weeks":
                     return parsedDuration * 60 * 60 * 24 * 7;
-                    
+
                 case "days":
                     return parsedDuration * 60 * 60 * 24;
 
@@ -34,19 +34,19 @@ export class TwitchCommandHelpers {
 
                 case "minutes":
                     return parsedDuration * 60;
-    
+
                 case "seconds":
                     return parsedDuration;
             }
-        
+
 
         }
-    
+
         // Or is it a Twitch shorthand value?
         const shorthandMatchRegEx = /^(\d+)(\w+)$/;
-    
-        const [ , count, unit] = rawDuration.trim().match(shorthandMatchRegEx);
-        let parsedCount = parseInt(count);
+
+        const [, count, unit] = rawDuration.trim().match(shorthandMatchRegEx);
+        const parsedCount = parseInt(count);
 
         if (count == null || unit == null || Number.isNaN(parsedCount)) {
             return null;
@@ -55,22 +55,22 @@ export class TwitchCommandHelpers {
         switch (unit.toLowerCase()) {
             case "mo":
                 return parsedCount * 60 * 60 * 24 * 30;
-    
+
             case "w":
                 return parsedCount * 60 * 60 * 24 * 7;
-                
+
             case "d":
                 return parsedCount * 60 * 60 * 24;
-                
+
             case "h":
                 return parsedCount * 60 * 60;
-                
+
             case "m":
                 return parsedCount * 60;
-                            
+
             case "s":
                 return parsedCount;
-    
+
             default:
                 return null;
         }
@@ -85,4 +85,4 @@ export class TwitchCommandHelpers {
 
         return rawUsername;
     }
-};
+}

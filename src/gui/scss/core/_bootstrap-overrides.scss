@@ -20,8 +20,8 @@
         position: sticky;
         top: 22px;
         background-color: $light-background-color;
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
         z-index: 999;
         &.is-stuck {
             border-bottom: 1px solid #24262A;
@@ -39,8 +39,8 @@
         bottom: 0;
         z-index: 999;
         background-color: $light-background-color;
-        border-bottom-left-radius: 4px;
-        border-bottom-right-radius: 4px;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
         &.is-stuck {
             border-top: 1px solid #24262A;
             margin-top: 10px;
@@ -54,9 +54,10 @@
 }
 
 .modal-content {
-    border-radius: 3px;
+    border-radius: 8px;
     background-color: $light-background-color;
     position: relative;
+    border: 1px solid transparent;
 }
 .modal-title {
     font-weight: 100;
@@ -79,6 +80,7 @@
 
 .modal-body {
     padding-top: 0;
+    overflow-wrap: break-word;
 }
 
 .sub-command,
@@ -143,8 +145,28 @@ textarea.form-control {
 
 .btn {
     &.btn-lg {
-        height: 42px;
-        font-size: 15px;
+        height: 40px;
+        font-size: 14px;
+    }
+    border-radius: 8px;
+    padding: 9px 12px;
+    transform: scale(1.0) translateZ(0);
+    transition-property: transform;
+    transition-duration: 0.3s;
+    &:hover {
+        // transform: scale(1.02) translateZ(0);
+    }
+}
+
+.btn.dropdown-toggle, .btn.form-control {
+    &:hover {
+        transform: none;
+    }
+}
+
+.btn-link {
+    &:hover {
+        transform: none;
     }
 }
 
@@ -165,12 +187,12 @@ textarea.form-control {
 }
 
 .btn-default {
-    border: 2px solid $default-btn-border;
+    border: 1px solid transparent;
     background-color: $default-btn-bg-color;
     color: $default-btn-text-color;
     &:hover {
         background-color: $default-btn-hover-bg;
-        border-color: $default-btn-hover-border;
+        // border-color: $default-btn-hover-border;
         color: $default-btn-text-color;
     }
 }
@@ -178,7 +200,7 @@ textarea.form-control {
 .btn-default.active.focus, .btn-default.active:focus, .btn-default.active:hover, .btn-default:active.focus, .btn-default:active:focus, .btn-default:active:hover, .open>.dropdown-toggle.btn-default.focus, .open>.dropdown-toggle.btn-default:focus, .open>.dropdown-toggle.btn-default:hover {
     color: $default-btn-text-color;
     background-color: $default-btn-hover-bg;
-    border-color: $default-btn-hover-border;
+    // border-color: $default-btn-hover-border;
 }
 
 .btn.active.focus, .btn.active:focus, .btn.focus, .btn:active.focus, .btn:active:focus, .btn:focus {
@@ -191,7 +213,7 @@ textarea.form-control {
 }
 
 .btn-danger, .btn-primary, .btn-success, .btn-secondary {
-    padding: 7px 12px;
+    padding: 9px 12px;
 }
 
 .btn-default.active, .btn-default:active, .open>.dropdown-toggle.btn-default {
@@ -212,6 +234,9 @@ textarea.form-control {
 
 .btn-link {
     color: #12d0ff;
+    &:hover, &:focus {
+        color: #11add4;
+    }
 }
 
 // Misc
@@ -226,7 +251,7 @@ textarea.form-control {
 .popover {
     border: 2px solid $dropdown-menu-border;
     background-color: $dropdown-menu-bg;
-    border-radius: 2px;
+    border-radius: 8px;
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.35);
 }
 
@@ -263,12 +288,36 @@ textarea.form-control {
     word-wrap: break-word;
 }
 
+.tooltip {
+    font-size: 14px;
+}
+
 .tooltip-inner {
     word-wrap: break-word;
+    padding: 5px 10px !important;
+    border-radius: 8px !important;
+    background-color: #181a1d !important;
+}
+.tooltip.left .tooltip-arrow {
+    border-left-color: #181a1d !important;
+}
+.tooltip.top .tooltip-arrow {
+    border-top-color: #181a1d !important;
+}
+.tooltip.right .tooltip-arrow {
+    border-right-color: #181a1d !important;
+}
+.tooltip.bottom .tooltip-arrow {
+    border-bottom-color: #181a1d !important;
+}
+
+.tooltip.in {
+    filter: alpha(opacity=100) !important;
+    opacity: 1 !important;
 }
 
 .dropdown-menu {
-    border-radius: 2px;
+    border-radius: 8px;
     border: 2px solid $dropdown-menu-border;
     background-color: $dropdown-menu-bg;
     z-index: 999999999;
@@ -320,14 +369,16 @@ textarea.form-control {
     box-shadow: none;
     background-color: $add-on-group-bg;
     color: $add-on-group-text;
+    border-radius: 8px;
 }
 
 .form-control {
     border: 2px solid $form-control-border;
-    height: 36px;
+    height: 40px;
     box-shadow: none;
     background-color: $form-control-bg;
     color: $form-control-text;
+    border-radius: 8px;
     &:focus {
         box-shadow: none;
         background-color: adjust-color($form-control-bg, $red: -10, $green: -10, $blue: -10);
@@ -389,7 +440,7 @@ label {
 // Alerts
 
 .alert {
-    border-radius: 2px;
+    border-radius: 8px;
 }
 
 .alert-info {
@@ -599,4 +650,8 @@ a {
 .list-group-item {
     background-color: $fb-table-row-bg;
     border: 1px solid $light-background-color;
+}
+
+.ui-select-container {
+    border-radius: 8px;
 }

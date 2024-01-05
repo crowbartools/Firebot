@@ -5,7 +5,7 @@ const { EffectCategory } = require("../../shared/effect-constants");
 (function() {
     angular.module("firebotApp").component("addNewEffectModal", {
         template: `
-            <div class="modal-header" style="background: #43454A;border-bottom: 2px solid #373C3E;">
+            <div class="modal-header" style="background: #43454A;border-bottom: 2px solid #373C3E;border-top-right-radius: 8px;border-top-left-radius: 8px;">
                 <button type="button" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
                 <h4 class="modal-title">Select New Effect</h4>
             </div>
@@ -17,11 +17,9 @@ const { EffectCategory } = require("../../shared/effect-constants");
                     <div style="width: 150px;display:flex;flex-direction:column;height: 100%; flex-shrink: 0;background: #27292c;">
                         <div class="effect-category-header">Categories</div>
                         <div class="effect-category-wrapper" ng-class="{'selected': $ctrl.activeCategory == null}" ng-click="$ctrl.activeCategory = null;">
-                            <div class="category-bar"></div>
                             <div class="category-text">All</div>
                         </div>
                         <div class="effect-category-wrapper" ng-repeat="category in $ctrl.categories" ng-class="{'selected': $ctrl.activeCategory === category}" ng-click="$ctrl.activeCategory = category;">
-                            <div class="category-bar"></div>
                             <div class="category-text">
                                 {{category}}
                                 <tooltip
@@ -48,7 +46,7 @@ const { EffectCategory } = require("../../shared/effect-constants");
                     </div>
                 </div>
             </div>
-            <div style="background:#43454A;display:flex;align-items: center;justify-content: space-between;padding: 20px;border-top: solid 2px #373C3E;">
+            <div style="background:#43454A;display:flex;align-items: center;justify-content: space-between;padding: 20px;border-top: solid 2px #373C3E;border-bottom-right-radius: 8px;border-bottom-left-radius: 8px;">
                 <div>
                     <div style="font-size: 12px;font-weight: 600;" class="muted">SELECTED EFFECT:</div>
                     <div style="font-size: 20px;font-weight: 100;">{{$ctrl.selectedEffectDef ? $ctrl.selectedEffectDef.name : "None"}}</div>
@@ -96,7 +94,7 @@ const { EffectCategory } = require("../../shared/effect-constants");
                     const modalId = $ctrl.resolve.modalId;
                     utilityService.addSlidingModal(
                         $ctrl.modalInstance.rendered.then(() => {
-                            const modalElement = $("." + modalId).children();
+                            const modalElement = $(`.${modalId}`).children();
                             return {
                                 element: modalElement,
                                 name: "Select New Effect",

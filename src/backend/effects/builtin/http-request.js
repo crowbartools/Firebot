@@ -223,7 +223,7 @@ const effect = {
         const customVariableManager = require("../../common/custom-variable-manager");
         const effectRunner = require("../../common/effect-runner");
 
-        const { effect, trigger } = event;
+        const { effect, trigger, outputs } = event;
 
         let headers = effect.headers.reduce((acc, next) => {
             acc[next.key] = next.value;
@@ -235,7 +235,7 @@ const effect = {
             headers = {
                 ...headers,
                 'Authorization': `Bearer ${accessToken}`,
-                'Client-ID': twitchAuth.TWITCH_CLIENT_ID
+                'Client-ID': twitchAuth.twitchClientId
             };
         }
 
@@ -281,7 +281,8 @@ const effect = {
             if (effect.options.runEffectsOnError) {
                 const processEffectsRequest = {
                     trigger,
-                    effects: effect.errorEffects
+                    effects: effect.errorEffects,
+                    outputs: outputs
                 };
 
                 const effectResult = await effectRunner.processEffects(processEffectsRequest);

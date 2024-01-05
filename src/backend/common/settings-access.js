@@ -3,7 +3,7 @@
 const profileManager = require("./profile-manager");
 const logger = require("../logwrapper");
 const frontendCommunicator = require("./frontend-communicator");
-const fs = require("fs-extra");
+const fs = require("fs");
 
 // This file centralizes access to the settings db
 // We will need to refactor other files to use this.
@@ -50,11 +50,11 @@ function handleCorruptSettingsFile() {
     logger.warn("settings.json file appears to be corrupt. Resetting file...");
 
     const settingsPath = profileManager.getPathInProfile("settings.json");
-    fs.writeJSONSync(settingsPath, {
+    fs.writeFileSync(settingsPath, JSON.stringify({
         settings: {
             firstTimeUse: false
         }
-    });
+    }));
 }
 
 function getDataFromFile(path, forceCacheUpdate = false) {
@@ -81,7 +81,7 @@ function getDataFromFile(path, forceCacheUpdate = false) {
 settings.getAutoFlagBots = function() {
     const autoFlagBots = getDataFromFile("/settings/autoFlagBots");
     return autoFlagBots != null ? autoFlagBots : true;
-}
+};
 
 settings.getEventSettings = function() {
     return getDataFromFile("/settings/eventSettings");
@@ -283,6 +283,22 @@ settings.getMinimizeToTray = function () {
 };
 settings.setMinimizeToTray = function (minimizeToTray) {
     pushDataToFile('/settings/minimizeToTray', minimizeToTray === true);
+};
+
+settings.getOpenStreamPreviewOnLaunch = () => {
+    const openStreamPreviewOnLaunch = getDataFromFile("/settings/openStreamPreviewOnLaunch", false, false);
+    return openStreamPreviewOnLaunch === true;
+};
+settings.setOpenStreamPreviewOnLaunch = (enabled) => {
+    pushDataToFile("/settings/openStreamPreviewOnLaunch", enabled === true);
+};
+
+settings.getQuickActionSettings = () => {
+    return getDataFromFile("/settings/quickActions");
+};
+
+settings.setQuickActionSettings = (quickActions) => {
+    pushDataToFile("/settings/quickActions", quickActions);
 };
 
 exports.settings = settings;

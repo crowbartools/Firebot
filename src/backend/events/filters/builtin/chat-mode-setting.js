@@ -25,12 +25,12 @@ module.exports = {
     },
     getSelectedValueDisplay: (filterSettings) => {
         switch (filterSettings.value) {
-        case "enabled":
-            return "Enabled";
-        case "disabled":
-            return "Disabled";
-        default:
-            return "[Not set]";
+            case "enabled":
+                return "Enabled";
+            case "disabled":
+                return "Disabled";
+            default:
+                return "[Not set]";
         }
     },
     predicate: async (filterSettings, eventData) => {
@@ -41,14 +41,14 @@ module.exports = {
         const chatModeStateEnabled = eventMeta.chatModeState === "enabled";
 
         switch (value) {
-        case "enabled": {
-            return chatModeStateEnabled;
-        }
-        case "disabled": {
-            return !chatModeStateEnabled;
-        }
-        default:
-            return !chatModeStateEnabled;
+            case "enabled": {
+                return chatModeStateEnabled;
+            }
+            case "disabled": {
+                return !chatModeStateEnabled;
+            }
+            default:
+                return !chatModeStateEnabled;
         }
     }
 };

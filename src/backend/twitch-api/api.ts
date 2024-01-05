@@ -1,25 +1,33 @@
 import { ApiClient } from "@twurple/api";
-import { StaticAuthProvider } from "@twurple/auth";
+import { AuthProvider } from "@twurple/auth";
 
 import logger from "../logwrapper";
 import accountAccess from "../common/account-access";
 
+import { UserContextApiClient } from "./user-context-api-client";
+
+import { TwitchAuthApi } from "./resource/auth";
 import { TwitchBitsApi } from "./resource/bits";
 import { TwitchCategoriesApi } from "./resource/categories";
 import { TwitchChannelRewardsApi } from "./resource/channel-rewards";
 import { TwitchChannelsApi } from "./resource/channels";
+import { TwitchCharityApi } from "./resource/charity";
 import { TwitchChatApi } from "./resource/chat";
+import { TwitchGoalsApi } from "./resource/goals";
 import { TwitchModerationApi } from "./resource/moderation";
+import { TwitchPollsApi } from "./resource/polls";
+import { TwitchPredictionsApi } from "./resource/predictions";
 import { TwitchStreamsApi } from "./resource/streams";
+import { TwitchSubscriptionsApi } from "./resource/subscriptions";
 import { TwitchTeamsApi } from "./resource/teams";
 import { TwitchUsersApi } from "./resource/users";
 import { TwitchWhispersApi } from "./resource/whispers";
 
 class TwitchApi {
     private _streamerClient: ApiClient;
-    private _botClient: ApiClient;
+    private _botClient: UserContextApiClient;
 
-    setupApiClients(streamerProvider: StaticAuthProvider, botProvider: StaticAuthProvider): void {
+    setupApiClients(streamerProvider: AuthProvider, botProvider: AuthProvider): void {
         if (!streamerProvider && !botProvider) {
             return;
         }
@@ -27,11 +35,14 @@ class TwitchApi {
         if (accountAccess.getAccounts().streamer.loggedIn) {
             this._streamerClient = new ApiClient({ authProvider: streamerProvider });
         }
-        
+
         if (accountAccess.getAccounts().bot.loggedIn) {
-            this._botClient = new ApiClient({ authProvider: botProvider });
+            this._botClient = new UserContextApiClient(
+                { authProvider: botProvider },
+                accountAccess.getAccounts().bot.userId
+            );
         }
-    
+
         logger.info("Finished setting up Twitch API client");
     }
 
@@ -50,6 +61,10 @@ class TwitchApi {
         return this._botClient;
     }
 
+    get auth() {
+        return new TwitchAuthApi(this._streamerClient, this._botClient);
+    }
+
     get bits() {
         return new TwitchBitsApi(this._streamerClient, this._botClient);
     }
@@ -66,16 +81,36 @@ class TwitchApi {
         return new TwitchChannelsApi(this._streamerClient, this._botClient);
     }
 
+    get charity() {
+        return new TwitchCharityApi(this._streamerClient, this._botClient);
+    }
+
     get chat() {
         return new TwitchChatApi(this._streamerClient, this._botClient);
+    }
+
+    get goals() {
+        return new TwitchGoalsApi(this._streamerClient, this._botClient);
     }
 
     get moderation() {
         return new TwitchModerationApi(this._streamerClient, this._botClient);
     }
 
+    get polls() {
+        return new TwitchPollsApi(this._streamerClient, this._botClient);
+    }
+
+    get predictions() {
+        return new TwitchPredictionsApi(this._streamerClient, this._botClient);
+    }
+
     get streams() {
         return new TwitchStreamsApi(this._streamerClient, this._botClient);
+    }
+
+    get subscriptions() {
+        return new TwitchSubscriptionsApi(this._streamerClient, this._botClient);
     }
 
     get teams() {
@@ -91,4 +126,4 @@ class TwitchApi {
     }
 }
 
-export = new TwitchApi();;
+export = new TwitchApi();

@@ -84,15 +84,15 @@
                 $scope.getIconTypeText = function(iconType) {
                     const NotificationIconType = notificationService.NotificationIconType;
                     switch (iconType) {
-                    case NotificationIconType.UPDATE:
-                        return "UPDATE";
-                    case NotificationIconType.ALERT:
-                        return "ALERT";
-                    case NotificationIconType.TIP:
-                        return "TIP";
-                    case NotificationIconType.INFO:
-                    default:
-                        return "INFO";
+                        case NotificationIconType.UPDATE:
+                            return "UPDATE";
+                        case NotificationIconType.ALERT:
+                            return "ALERT";
+                        case NotificationIconType.TIP:
+                            return "TIP";
+                        case NotificationIconType.INFO:
+                        default:
+                            return "INFO";
                     }
                 };
 
@@ -100,18 +100,18 @@
                     const NotificationIconType = notificationService.NotificationIconType;
                     let iconClass = "";
                     switch (iconType) {
-                    case NotificationIconType.UPDATE:
-                        iconClass = "download";
-                        break;
-                    case NotificationIconType.ALERT:
-                        iconClass = "exclamation-circle";
-                        break;
-                    case NotificationIconType.TIP:
-                        iconClass = "question-circle";
-                        break;
-                    case NotificationIconType.INFO:
-                    default:
-                        iconClass = "info-circle";
+                        case NotificationIconType.UPDATE:
+                            iconClass = "download";
+                            break;
+                        case NotificationIconType.ALERT:
+                            iconClass = "exclamation-circle";
+                            break;
+                        case NotificationIconType.TIP:
+                            iconClass = "question-circle";
+                            break;
+                        case NotificationIconType.INFO:
+                        default:
+                            iconClass = "info-circle";
                     }
                     return `fa-${iconClass}`;
                 };

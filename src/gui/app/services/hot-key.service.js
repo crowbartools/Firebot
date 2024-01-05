@@ -19,57 +19,104 @@ const uuidv1 = require("uuid/v1");
             const prohibitedKeys = ["CapsLock", "NumLock", "ScrollLock", "Pause"];
 
             // this maps keys to codes accepted in Electron's Accelerator strings, used for global shortcuts
-            function mapKeyToAcceleratorCode(key) {
-                switch (key) {
-                case "ArrowUp":
-                case "ArrowDown":
-                case "ArrowLeft":
-                case "ArrowRight":
-                    return key.replace("Arrow", "");
-                case "AudioVolumeMute":
-                case "AudioVolumeDown":
-                case "AudioVolumeUp":
-                    return key.replace("Audio", "");
-                case "+":
-                    return "Plus";
-                case " ":
-                    return "Space";
-                case "MediaTrackPrevious":
-                    return "MediaPreviousTrack";
-                case "MediaTrackNext":
-                    return "MediaNextTrack";
-                case "Meta":
-                    return "Super";
-                case "Control":
-                    return "CmdOrCtrl";
-                default:
-                    if (key.length === 1) {
-                        return key.toUpperCase();
+            function mapKeyToAcceleratorCode(key, location) {
+                if (location === 3) {
+                    switch (key) {
+                        case "0":
+                        case "1":
+                        case "2":
+                        case "3":
+                        case "4":
+                        case "5":
+                        case "6":
+                        case "7":
+                        case "8":
+                        case "9":
+                            return `num${key}`;
+
+                        case ".":
+                            return "numdec";
+
+                        case "+":
+                            return "numadd";
+
+                        case "-":
+                            return "numsub";
+
+                        case "*":
+                            return "nummult";
+
+                        case "/":
+                            return "numdiv";
                     }
-                    return key;
+                }
+                switch (key) {
+                    case "ArrowUp":
+                    case "ArrowDown":
+                    case "ArrowLeft":
+                    case "ArrowRight":
+                        return key.replace("Arrow", "");
+                    case "AudioVolumeMute":
+                    case "AudioVolumeDown":
+                    case "AudioVolumeUp":
+                        return key.replace("Audio", "");
+                    case "+":
+                        return "Plus";
+                    case " ":
+                        return "Space";
+                    case "MediaTrackPrevious":
+                        return "MediaPreviousTrack";
+                    case "MediaTrackNext":
+                        return "MediaNextTrack";
+                    case "Meta":
+                        return "Super";
+                    case "Control":
+                        return "CmdOrCtrl";
+                    default:
+                        if (key.length === 1) {
+                            return key.toUpperCase();
+                        }
+                        return key;
                 }
             }
 
             function getDisplayNameFromKeyCode(keyCode) {
+                if (keyCode.startsWith("num")) {
+                    switch (keyCode) {
+                        case "numadd":
+                            return "Plus(Numpad)";
+                        case "numsub":
+                            return "-(Numpad)";
+                        case "nummult":
+                            return "*(Numpad)";
+                        case "numdiv":
+                            return "/(Numpad)";
+                        case "numdec":
+                            return ".(Numpad)";
+                        default:
+                            return `${keyCode.substring(3)}(Numpad)`;
+                    }
+                }
+
                 switch (keyCode) {
-                case "CmdOrCtrl":
-                    return "Ctrl";
-                case "Super":
-                    return "Windows";
-                default:
-                    return keyCode;
+                    case "CmdOrCtrl":
+                        return "Ctrl";
+                    case "Super":
+                        return "Windows";
+                    default:
+                        return keyCode;
                 }
             }
 
             function keyCodeIsModifier(keyCode) {
                 switch (keyCode) {
-                case "CmdOrCtrl":
-                case "Super":
-                case "Alt":
-                case "Shift":
-                    return true;
-                default:
-                    return false;
+                    case "CmdOrCtrl":
+                    case "Super":
+                    case "Alt":
+                    case "Shift":
+                        return true;
+                    default:
+                        return false;
                 }
             }
 
@@ -113,7 +160,7 @@ const uuidv1 = require("uuid/v1");
                 releasedKeyCodes = [];
 
                 if (!alreadyPressed) {
-                    const mappedKey = mapKeyToAcceleratorCode(event.key),
+                    const mappedKey = mapKeyToAcceleratorCode(event.key, event.location),
                         displayName = getDisplayNameFromKeyCode(mappedKey),
                         isModifier = keyCodeIsModifier(mappedKey);
 

@@ -2,7 +2,6 @@
 
 const express = require("express");
 const router = express.Router(); //eslint-disable-line new-cap
-const path = require('path');
 const logger = require("../../../backend/logwrapper");
 
 router.use(function log(req, res, next) {

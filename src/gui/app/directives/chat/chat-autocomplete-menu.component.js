@@ -284,9 +284,9 @@
                     let currentWord = {};
 
                     $scope.selectItem = (index) => {
-                        $scope.modelValue = $scope.modelValue.substring(0, currentWord.index)
+                        $scope.modelValue = `${$scope.modelValue.substring(0, currentWord.index)
                                 + $scope.menuItems[index].text
-                                + $scope.modelValue.substring(currentWord.endIndex, $scope.modelValue.length) + " ";
+                                + $scope.modelValue.substring(currentWord.endIndex, $scope.modelValue.length)} `;
                         $scope.$apply();
                     };
 

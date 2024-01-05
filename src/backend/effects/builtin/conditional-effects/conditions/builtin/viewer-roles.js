@@ -35,26 +35,26 @@ module.exports = {
     },
     predicate: async (conditionSettings, trigger) => {
 
-        const { comparisonType, leftSideValue, rightSideValue } = conditionSettings;
+        const { comparisonType, leftSideValue, rightSideValue, rawLeftSideValue } = conditionSettings;
 
         let username = leftSideValue;
-        if (username == null || username === "") {
+        if ((username == null || username === "") && (rawLeftSideValue == null || rawLeftSideValue === "")) {
             username = trigger.metadata.username;
         }
 
         const hasRole = await viewerHasRoles(username, [rightSideValue]);
 
         switch (comparisonType) {
-        case "include":
-        case "is in role":
-        case "has role":
-            return hasRole;
-        case "doesn't include":
-        case "isn't in role":
-        case "doesn't have role":
-            return !hasRole;
-        default:
-            return false;
+            case "include":
+            case "is in role":
+            case "has role":
+                return hasRole;
+            case "doesn't include":
+            case "isn't in role":
+            case "doesn't have role":
+                return !hasRole;
+            default:
+                return false;
         }
     }
 };

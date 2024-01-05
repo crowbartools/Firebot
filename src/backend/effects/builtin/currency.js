@@ -239,7 +239,7 @@ const currency = {
             if (isNaN(amount)) {
                 return resolve({
                     success: false,
-                    reason: "Amount not a number: " + amount
+                    reason: `Amount not a number: ${amount}`
                 });
             }
 
@@ -249,45 +249,45 @@ const currency = {
             // PEOPLE GONNA GET PAID
             try {
                 switch (event.effect.target) {
-                case "individual":
+                    case "individual":
                     // Give currency to one person.
-                    await currencyDatabase.adjustCurrencyForUser(
-                        userTarget,
-                        event.effect.currency,
-                        currency,
-                        adjustType
-                    );
-                    break;
-                case "allOnline":
+                        await currencyDatabase.adjustCurrencyForUser(
+                            userTarget,
+                            event.effect.currency,
+                            currency,
+                            adjustType
+                        );
+                        break;
+                    case "allOnline":
                     // Give currency to all online.
-                    await currencyDatabase.addCurrencyToOnlineUsers(
-                        event.effect.currency,
-                        currency,
-                        true,
-                        adjustType
-                    );
-                    break;
-                case "allViewers":
+                        await currencyDatabase.addCurrencyToOnlineUsers(
+                            event.effect.currency,
+                            currency,
+                            true,
+                            adjustType
+                        );
+                        break;
+                    case "allViewers":
                     // Give currency to all viewers.
-                    await currencyDatabase.adjustCurrencyForAllUsers(
-                        event.effect.currency,
-                        currency,
-                        true,
-                        adjustType
-                    );
-                    break;
-                case "group":
+                        await currencyDatabase.adjustCurrencyForAllUsers(
+                            event.effect.currency,
+                            currency,
+                            true,
+                            adjustType
+                        );
+                        break;
+                    case "group":
                     // Give currency to group.
-                    await currencyDatabase.addCurrencyToUserGroupOnlineUsers(
-                        event.effect.roleIds,
-                        event.effect.currency,
-                        currency,
-                        true,
-                        adjustType
-                    );
-                    break;
-                default:
-                    logger.error("Invalid target passed to currency effect. currency.js");
+                        await currencyDatabase.addCurrencyToUserGroupOnlineUsers(
+                            event.effect.roleIds,
+                            event.effect.currency,
+                            currency,
+                            true,
+                            adjustType
+                        );
+                        break;
+                    default:
+                        logger.error("Invalid target passed to currency effect. currency.js");
                 }
 
                 // Send chat if we have it.

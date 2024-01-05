@@ -10,10 +10,6 @@
           ng-click="es.setSelectedTab('mainevents')"
         >
           <div class="flex-row-center" style="height: 100%">
-            <div
-              class="selected-scene-icon"
-              ng-class="{'transparent': !es.tabIsSelected('mainevents')}"
-            ></div>
             <div>
               General Events
               <tooltip
@@ -48,14 +44,14 @@
               ></span>
               <ul class="dropdown-menu" uib-dropdown-menu>
                 <li ng-click="copyEvents('mainevents')">
-                  <a href><i class="far fa-copy mr-4"></i> Copy events</a>
+                  <a href><span class="iconify mr-4" data-icon="mdi:content-copy"></span> Copy events</a>
                 </li>
                 <li
                   ng-class="{'disabled': !hasCopiedEvents()}"
                   ng-click="pasteEvents('mainevents')"
                   ng-disabled="!hasCopiedEvents()"
                 >
-                  <a href><i class="far fa-paste mr-4"></i> Paste event(s)</a>
+                  <a href><span class="iconify mr-4" data-icon="mdi:content-paste"></span> Paste event(s)</a>
                 </li>
               </ul>
             </div>
@@ -98,10 +94,6 @@
             ng-click="es.setSelectedTab(group.id)"
           >
             <div class="flex-row-center" style="height: 100%">
-              <div
-                class="selected-scene-icon"
-                ng-class="{'transparent': !es.tabIsSelected(group.id)}"
-              ></div>
               <div class="row-text" style="max-width: 145px">
                 {{group.name}}
               </div>
@@ -113,8 +105,8 @@
                 uib-tooltip="This event set is active"
                 tooltip-append-to-body="true"
               ></span>
-              <button aria-label=" Event Set Options"
-                class="noselect clickable text-3xl mx-5"
+              <button aria-label="Event Set Options"
+                class="noselect clickable text-3xl mx-3"
                 style="background: transparent; border: none"
                 context-menu="eventSetMenuOptions(group)"
                 context-menu-class="angular-context-menu"

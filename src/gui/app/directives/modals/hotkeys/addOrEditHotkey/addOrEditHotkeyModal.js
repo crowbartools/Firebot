@@ -26,7 +26,7 @@
                 const button = $ctrl.virtualBtn;
                 if ($ctrl.hotkey.code != null && $ctrl.hotkey.code.length !== 0) {
                     if (!$ctrl.hotkey.code.includes(button)) {
-                        $ctrl.hotkey.code += "+" + button;
+                        $ctrl.hotkey.code += `+${button}`;
                     }
                 } else {
                     $ctrl.hotkey.code = button;
@@ -41,7 +41,7 @@
                 const modalId = $ctrl.resolve.modalId;
                 utilityService.addSlidingModal(
                     $ctrl.modalInstance.rendered.then(() => {
-                        const modalElement = $("." + modalId).children();
+                        const modalElement = $(`.${modalId}`).children();
                         return {
                             element: modalElement,
                             name: "Edit Hotkey",

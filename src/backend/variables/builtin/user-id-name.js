@@ -21,6 +21,11 @@ module.exports = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
-        return trigger.metadata.userIdName ?? trigger.metadata.useridname;
+        // We have a few places where this might be set, so we check them all
+        // Start with any event data, then we check the regular metadata
+        return trigger.metadata?.eventData?.userIdName ??
+            trigger.metadata?.eventData?.chatMessage?.userIdName ??
+            trigger.metadata?.userIdName ??
+            trigger.metadata?.chatMessage?.userIdName;
     }
 };

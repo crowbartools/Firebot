@@ -104,7 +104,7 @@ function buildModules(scriptManifest) {
         eventManager: require("../../../events/EventManager"),
         eventFilterManager: require("../../../events/filters/filter-manager"),
         replaceVariableManager: require("../../../variables/replace-variable-manager"),
-        integrationManager: require("../../../integrations/IntegrationManager"),
+        integrationManager: require("../../../integrations/integration-manager"),
         customVariableManager: require("../../../common/custom-variable-manager"),
         customRolesManager: require("../../../roles/custom-roles-manager"),
         firebotRolesManager: require("../../../roles/firebot-roles-manager"),

@@ -15,7 +15,7 @@ const sync = async (jsonData) => {
             });
 
         if (response) {
-            logger.debug('Bytebin key: ' + response.data.key);
+            logger.debug(`Bytebin key: ${response.data.key}`);
             return response.data.key;
         }
 

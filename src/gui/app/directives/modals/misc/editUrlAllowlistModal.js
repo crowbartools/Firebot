@@ -61,7 +61,7 @@
                 $ctrl.cms = chatModerationService;
 
                 $ctrl.$onInit = function() {
-                // When the compontent is initialized
+                // When the component is initialized
                 // This is where you can start to access bindings, such as variables stored in 'resolve'
                 // IE $ctrl.resolve.shouldDelete or whatever
                 };
@@ -141,7 +141,7 @@
 
                             let contents;
                             try {
-                                contents = fs.readFileSync(filePath, "utf8");
+                                contents = fs.readFileSync(filePath, { encoding: "utf8" });
                             } catch (err) {
                                 logger.error("error reading file for allowed URLs", err);
                                 return;

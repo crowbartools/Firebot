@@ -157,15 +157,15 @@
                             const action = resp.action;
 
                             switch (action) {
-                            case "add":
-                                $ctrl.conditionData.conditions.push(resp.condition);
-                                break;
-                            case "update":
-                                $ctrl.conditionData.conditions[resp.index] = resp.condition;
-                                break;
-                            case "delete":
-                                $ctrl.removeConditionAtIndex(resp.index);
-                                break;
+                                case "add":
+                                    $ctrl.conditionData.conditions.push(resp.condition);
+                                    break;
+                                case "update":
+                                    $ctrl.conditionData.conditions[resp.index] = resp.condition;
+                                    break;
+                                case "delete":
+                                    $ctrl.removeConditionAtIndex(resp.index);
+                                    break;
                             }
                         }
                     });

@@ -26,7 +26,7 @@ function postPicker(posts) {
 
 async function getSubredditData(subName) {
     const normalizedSubName = subName.replace("/r/", '').replace("r/", '');
-    const url = "https://www.reddit.com/r/" + normalizedSubName + "/hot.json?count=15&raw_json=1";
+    const url = `https://www.reddit.com/r/${normalizedSubName}/hot.json?count=15&raw_json=1`;
 
     return await axios.get(url)
         .then(function(response) {

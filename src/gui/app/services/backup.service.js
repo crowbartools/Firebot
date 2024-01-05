@@ -2,7 +2,7 @@
 
 (function() {
     const { basename, dirname, sep, resolve } = require('path');
-    const { mkdirSync, readFileSync, writeFileSync } = require('fs');
+    const { mkdirSync, readFileSync, writeFileSync } = require("fs-extra");
     const fs = require("fs-extra");
     const empty = require("empty-folder");
     const { unzipSync } = require('fflate');
@@ -16,7 +16,7 @@
             const RESTORE_FOLDER_PATH = dataAccess.getPathInTmpDir("/restore");
             const USER_DATA_FOLDER_PATH = dataAccess.getPathInUserData("/");
             const PROFILES_FOLDER_PATH = dataAccess.getPathInUserData("/profiles");
-            const BACKUPS_FOLDER_PATH = resolve(dataAccess.getUserDataPath() + sep + "backups") + sep;
+            const BACKUPS_FOLDER_PATH = resolve(`${dataAccess.getUserDataPath() + sep}backups`) + sep;
 
             service.BACKUPS_FOLDER_PATH = BACKUPS_FOLDER_PATH;
 

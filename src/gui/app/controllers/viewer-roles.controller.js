@@ -20,12 +20,12 @@
                         const { action, role } = resp;
 
                         switch (action) {
-                        case "save":
-                            viewerRolesService.saveCustomRole(role);
-                            break;
-                        case "delete":
-                            viewerRolesService.deleteCustomRole(role.id);
-                            break;
+                            case "save":
+                                viewerRolesService.saveCustomRole(role);
+                                break;
+                            case "delete":
+                                viewerRolesService.deleteCustomRole(role.id);
+                                break;
                         }
                     }
                 });

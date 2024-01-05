@@ -1,6 +1,6 @@
 'use strict';
 const path = require('path');
-const fs = require('fs');
+const fs = require("fs");
 const gpgBase = `gpg --cipher-algo AES256 --passphrase ${process.env.PASSKEY_FOR_FIREBOT_SECRETS} --pinentry-mode loopback`;
 
 module.exports = function (grunt) {
@@ -26,7 +26,7 @@ module.exports = function (grunt) {
             }
 
             if (fs.existsSync(path.join(__dirname, '../secrets.gpg'))) {
-                fs.unlink('../secrets.gpg');
+                fs.unlinkSync('../secrets.gpg');
             }
 
             grunt.task.run('shell:encryptsecrets');
@@ -37,7 +37,7 @@ module.exports = function (grunt) {
             }
 
             if (fs.existsSync(path.join(__dirname, '../src/secrets.json'))) {
-                fs.unlink('../src/secrets.json');
+                fs.unlinkSync('../src/secrets.json');
             }
 
             grunt.task.run('shell:decryptsecrets');

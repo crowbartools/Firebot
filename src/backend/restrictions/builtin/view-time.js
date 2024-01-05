@@ -18,10 +18,10 @@ const model = {
     optionsValueDisplay: (restriction) => {
         const time = restriction.time || 0;
 
-        return time + "+ min(s)";
+        return `${time}+ min(s)`;
     },
     /*
-      function that resolves/rejects a promise based on if the restriction critera is met
+      function that resolves/rejects a promise based on if the restriction criteria is met
     */
     predicate: (triggerData, restrictionData) => {
         return new Promise(async (resolve, reject) => {

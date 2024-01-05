@@ -64,7 +64,7 @@ module.exports = {
         if (roleType == null || roleType === "") {
             roleType = 'all';
         } else {
-            roleType = (roleType + '').toLowerCase();
+            roleType = (`${roleType}`).toLowerCase();
         }
 
         const userRoles = await getAllRolesForViewerNameSpaced(username);

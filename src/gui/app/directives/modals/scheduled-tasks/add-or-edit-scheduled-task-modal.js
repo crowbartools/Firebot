@@ -106,7 +106,7 @@
                 $ctrl.modalId = modalId;
                 utilityService.addSlidingModal(
                     $ctrl.modalInstance.rendered.then(() => {
-                        const modalElement = $("." + modalId).children();
+                        const modalElement = $(`.${modalId}`).children();
                         return {
                             element: modalElement,
                             name: "Edit Scheduled Effect List",

@@ -6,7 +6,7 @@ const logger = require('../../logwrapper');
 const model = {
     definition: {
         handle: "objectWalkPath",
-        description: "Returns the json value from an JSON object at the given dot-noated path",
+        description: "Returns the json value from an JSON object at the given dot-notated path",
         usage: "objectWalkPath[jsonText, path.to.value]",
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
@@ -18,13 +18,13 @@ const model = {
                 typeof subject !== 'string' &&
                 !(subject instanceof String)
             ) ||
-            (subject + '') === ''
+            (`${subject}`) === ''
         ) {
             return "null";
         }
 
         try {
-            subject = JSON.parse('' + subject);
+            subject = JSON.parse(`${subject}`);
         } catch (ignore) {
             logger.error("Invalid JSON object specified");
             return "null";

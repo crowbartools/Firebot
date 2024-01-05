@@ -55,9 +55,9 @@ const model = {
                 const result = await twitchApi.users.blockUser(user.id);
 
                 if (result === true) {
-                    logger.debug(event.effect.username + " was blocked via the Block User effect.");
+                    logger.debug(`${event.effect.username} was blocked via the Block User effect.`);
                 } else {
-                    logger.error(event.effect.username + " was unable to be blocked via the Block User effect.");
+                    logger.error(`${event.effect.username} was unable to be blocked via the Block User effect.`);
                     return false;
                 }
             } else {
@@ -72,9 +72,9 @@ const model = {
                 const result = await twitchApi.users.unblockUser(user.id);
 
                 if (result === true) {
-                    logger.debug(event.effect.username + " was unblocked via the Block User effect.");
+                    logger.debug(`${event.effect.username} was unblocked via the Block User effect.`);
                 } else {
-                    logger.error(event.effect.username + " was unable to be unblocked via the Block User effect.");
+                    logger.error(`${event.effect.username} was unable to be unblocked via the Block User effect.`);
                     return false;
                 }
             } else {

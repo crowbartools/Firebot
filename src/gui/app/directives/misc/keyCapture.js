@@ -48,7 +48,7 @@
 
                     const keyName = keyHelper.getKeyboardKeyName(event.keyCode);
 
-                    //if key name is empty we dont support this keycode
+                    //if key name is empty we don't support this keycode
                     if (keyName != null && keyName.length > 0) {
                         $ctrl.keyDisplay = keyName;
                         $ctrl.keyCode = event.keyCode;

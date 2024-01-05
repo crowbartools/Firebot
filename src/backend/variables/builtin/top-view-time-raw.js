@@ -5,7 +5,7 @@ const model = {
     definition: {
         handle: "rawTopViewTime",
         description: "Returns a raw array containing users with the most view time(in hours). Items contain 'username', 'place' and 'minutes' properties",
-        usage: "topViewTime[count]",
+        usage: "rawTopViewTime[count]",
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async (_, count = 10) => {

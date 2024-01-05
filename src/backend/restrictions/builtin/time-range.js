@@ -93,7 +93,7 @@ const model = {
             const ampm = hours >= 12 ? 'pm' : 'am';
             hours = hours % 12;
             hours = hours ? hours : 12; // the hour '0' should be '12'
-            minutes = minutes < 10 ? '0' + minutes : minutes;
+            minutes = minutes < 10 ? `0${minutes}` : minutes;
 
             if (isNaN(hours)) {
                 hours = 12;
@@ -103,7 +103,7 @@ const model = {
                 minutes = "00";
             }
 
-            return hours + ':' + minutes + ' ' + ampm;
+            return `${hours}:${minutes} ${ampm}`;
         }
 
         function daySorter(a, b) {
@@ -131,14 +131,14 @@ const model = {
             const startTime = formatAMPM(restriction.startTime);
             const endTime = formatAMPM(restriction.endTime);
 
-            return "Between " + startTime + " - " + endTime;
+            return `Between ${startTime} - ${endTime}`;
         }
 
         return "";
 
     },
     /*
-      function that resolves/rejects a promise based on if the restriction critera is met
+      function that resolves/rejects a promise based on if the restriction criteria is met
     */
     predicate: async (trigger, restrictionData) => {
         return new Promise(async (resolve, reject) => {
@@ -149,7 +149,7 @@ const model = {
                 if (restrictionDays.includes(currentDayOfWeek)) {
                     resolve();
                 } else {
-                    reject('Day must be ' + restrictionDays.join(", ") + '.');
+                    reject(`Day must be ${restrictionDays.join(", ")}.`);
                 }
 
             } else if (restrictionData.mode === "time") {
@@ -164,7 +164,7 @@ const model = {
                 if (time.isBetween(startTime, endTime)) {
                     resolve();
                 } else {
-                    reject('Time must be between ' + moment(restrictionData.startTime).format('hh:mm A') + ' and ' + moment(restrictionData.endTime).format('hh:mm A') + '.');
+                    reject(`Time must be between ${moment(restrictionData.startTime).format('hh:mm A')} and ${moment(restrictionData.endTime).format('hh:mm A')}.`);
                 }
             }
         });

@@ -16,7 +16,7 @@ const model = {
         <eos-container header="Duration">
             <div class="input-group">
                 <span class="input-group-addon" id="delay-length-effect-type">Seconds</span>
-                <input ng-model="effect.delay" type="text" class="form-control" aria-describedby="delay-length-effect-type" type="text" replace-variables="number">
+                <input ng-model="effect.delay" type="text" class="form-control" aria-describedby="delay-length-effect-type" type="text" menu-position="under" replace-variables="number">
             </div>
         </eos-container>
     `,

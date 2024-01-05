@@ -68,7 +68,7 @@ const fileWriter = {
 
         <eos-container header="Delete Line(s) Options" pad-top="true" ng-if="effect.writeMode === 'delete'">
             <div class="controls-fb" style="padding-bottom: 5px;">
-                <label class="control-fb control--radio">Delete by line numbers(s) <tooltip text="'Deletes line(s) at the specificed number(s)'"></tooltip>
+                <label class="control-fb control--radio">Delete by line numbers(s) <tooltip text="'Deletes line(s) at the specified number(s)'"></tooltip>
                     <input type="radio" ng-model="effect.deleteLineMode" value="lines"/>
                     <div class="control__indicator"></div>
                 </label>
@@ -81,7 +81,7 @@ const fileWriter = {
 
         <eos-container header="Replace Line(s) Options" pad-top="true" ng-if="effect.writeMode === 'replace-line'">
             <div class="controls-fb" style="padding-bottom: 5px;">
-                <label class="control-fb control--radio">Replace by line number(s) <tooltip text="'Replace line(s) at the specificed number(s)'"></tooltip>
+                <label class="control-fb control--radio">Replace by line number(s) <tooltip text="'Replace line(s) at the specified number(s)'"></tooltip>
                     <input type="radio" ng-model="effect.replaceLineMode" value="lineNumbers"/>
                     <div class="control__indicator"></div>
                 </label>

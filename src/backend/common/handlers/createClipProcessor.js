@@ -68,8 +68,8 @@ exports.createClip = async function(effect) {
         }
 
         if (effect.postInDiscord) {
-            const clipEmbed = await discordEmbedBuilder.buildClipEmbed(clip);
-            discord.sendDiscordMessage(effect.discordChannelId, "A new clip was created!", clipEmbed);
+            const clipEmbed = await discordEmbedBuilder.buildClipEmbed(clip, effect.embedColor);
+            await discord.sendDiscordMessage(effect.discordChannelId, "A new clip was created!", clipEmbed);
         }
 
         logger.info("Successfully created a clip!");

@@ -5,7 +5,7 @@ const axiosDefault = require("axios").default;
 
 const axios = axiosDefault.create();
 
-const integrationManager = require("../../IntegrationManager");
+const integrationManager = require("../../integration-manager");
 
 const logger = require("../../../logwrapper");
 
@@ -96,7 +96,7 @@ async function sendDiscordMessage(discordChannelId, content, embed, files = null
         });
     }
 
-    const response = await axios.post(channel.webhookUrl + "?wait=true", payload);
+    const response = await axios.post(`${channel.webhookUrl}?wait=true`, payload);
     return JSON.stringify(response.data);
 }
 

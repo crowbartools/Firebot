@@ -10,28 +10,22 @@ on:
 
 jobs:
   test:
-    name: Lint and Test Scss
+    name: Lint
     runs-on: 'ubuntu-latest'
     steps:
       - name: Setup Nodejs
-        uses: 'actions/setup-node@v1'
+        uses: 'actions/setup-node@v3'
         with:
-          node-version: "14.x"
+          node-version: "18.17.1"
 
       - name: Install Correct NPM Version
-        run: npm install -g npm@8.16.0
+        run: npm install -g npm@10.2.4
 
       - name: Checkout branch
-        uses: 'actions/checkout@v2'
+        uses: 'actions/checkout@v3'
 
-      - name: Run Test Dependencies
-        run: npm install --global --production eslint@^8.3.0 node-sass@^4.14.1
+      - name: Install Dependencies
+        run: npm install
 
-      - name: Run Linter
-        run: eslint . --quiet
-
-      - name: Compile GUI CSS
-        run: node-sass --quiet --source-map=false ./src/gui/scss/ --output=./src/gui/css
-
-      - name: Compile Overlay CSS
-        run: node-sass --quiet --source-map=false ./src/resources/overlay/scss/ --output=./src/resources/overlay/css/
+      - name: Lint
+        run: npx --no-install eslint . --quiet

@@ -2,7 +2,7 @@
 const logger = require("../logwrapper");
 const dataAccess = require("../common/data-access");
 const profileManager = require("../common/profile-manager");
-const fs = require("fs-extra");
+const fs = require("fs");
 
 function handleProfileRename() {
     if (!profileManager.hasProfileRename()) {
@@ -18,10 +18,10 @@ function handleProfileRename() {
         // Stop here if we have no deleted profile info.
         if (currentProfileId != null && newProfileId != null && newProfileId !== "") {
             // Delete the profile.
-            logger.warn("Profile " + currentProfileId + " is marked for renaming. Renaming it now.");
+            logger.warn(`Profile ${currentProfileId} is marked for renaming. Renaming it now.`);
 
-            const currentProfilePath = dataAccess.getPathInUserData("/profiles/" + currentProfileId);
-            const renamedProfilePath = dataAccess.getPathInUserData("/profiles/" + newProfileId);
+            const currentProfilePath = dataAccess.getPathInUserData(`/profiles/${currentProfileId}`);
+            const renamedProfilePath = dataAccess.getPathInUserData(`/profiles/${newProfileId}`);
             logger.warn(currentProfilePath);
 
             try {
@@ -69,7 +69,7 @@ function handleProfileDeletion() {
     try {
 
         // Delete the profile.
-        logger.warn("Profile " + deletedProfile + " is marked for deletion. Removing it now.");
+        logger.warn(`Profile ${deletedProfile} is marked for deletion. Removing it now.`);
 
         const profilePath = dataAccess.getPathInUserData(`/profiles/${deletedProfile}`);
 
@@ -96,7 +96,7 @@ function handleProfileDeletion() {
         globalSettingsDb.delete("./profiles/deleteProfile");
 
         // Let our logger know we successfully deleted a profile.
-        logger.warn("Successfully deleted profile: " + deletedProfile);
+        logger.warn(`Successfully deleted profile: ${deletedProfile}`);
 
     } catch (err) {
         logger.error("error while deleting profile: ", err);

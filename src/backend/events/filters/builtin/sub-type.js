@@ -37,16 +37,16 @@ module.exports = {
     },
     getSelectedValueDisplay: (filterSettings) => {
         switch (filterSettings.value) {
-        case "Prime":
-            return "Prime";
-        case "1000":
-            return "Tier 1";
-        case "2000":
-            return "Tier 2";
-        case "3000":
-            return "Tier 3";
-        default:
-            return "[Not set]";
+            case "Prime":
+                return "Prime";
+            case "1000":
+                return "Tier 1";
+            case "2000":
+                return "Tier 2";
+            case "3000":
+                return "Tier 3";
+            default:
+                return "[Not set]";
         }
     },
     predicate: (filterSettings, eventData) => {

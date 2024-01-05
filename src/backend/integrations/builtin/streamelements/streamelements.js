@@ -109,7 +109,7 @@ class StreamElementsIntegration extends EventEmitter {
 
     reconnect() {
         if (this.reconnectAttempts === 3) {
-            logger.warn("Attemped to reconnect to StreamElements 3 times, setting integration to disconnected...");
+            logger.warn("Attempted to reconnect to StreamElements 3 times, setting integration to disconnected...");
             this.disconnect();
             return;
         }

@@ -22,13 +22,13 @@
                                     $effectOutput[{{$ctrl.effect.outputNames[output.defaultName]}}]
                                 </div>
                                 <div style="margin-left: 5px">
-                                    <i
-                                        class="fas fa-copy clickable-icon-on-dark"
+                                    <a href
                                         style="margin-right: 5px"
                                         uib-tooltip="Copy variable"
                                         append-tooltip-to-body="true"
-                                        ng-click="$ctrl.copyOutputVariable(output)"
-                                    ></i>
+                                        ng-click="$ctrl.copyOutputVariable(output)">
+                                        <span class="iconify clickable-icon-on-dark" data-icon="mdi:content-copy"></span>
+                                    </a>
                                     <i
                                         class="fas fa-edit clickable-icon-on-dark"
                                         uib-tooltip="Edit name"

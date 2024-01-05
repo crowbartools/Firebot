@@ -15,7 +15,7 @@ const v4EffectTypeMap = {
     "Chat": "firebot:chat",
     "Cooldown": null, // vastly different than v5 equivalent, extremely difficult to import correctly
     "Custom Script": "firebot:customscript",
-    "Run Command": null, // was only available to custom scripts in v4, dont think it will even show up
+    "Run Command": null, // was only available to custom scripts in v4, don't think it will even show up
     "Delay": "firebot:delay",
     "Dice": "firebot:dice",
     "Game Control": "firebot:controlemulation",
@@ -45,7 +45,7 @@ const v4IncompatibilityReasonMap = {
     "Cooldown": "V5 handles control cooldowns fundamentally different",
     "Run Command": "Impossible to import effect",
     "Show Event": "Effect is no longer supported",
-    "Clear Effects": "Effect is fundementally different in V5",
+    "Clear Effects": "Effect is fundamentally different in V5",
     "Group List": "V5 handles groups/scenes fundamentally different",
     "Scene List": "V5 handles groups/scenes fundamentally different",
     "Command List": "Effect doesn't exist in V5 as this functionality now exists as a System Command",
@@ -80,7 +80,7 @@ function mapV4Effect (v4Effect, triggerData, incompatibilityWarnings) {
     }
     const v5EffectTypeId = v4EffectTypeMap[v4Effect.type];
 
-    // Null signifies we dont support this v4 effect
+    // Null signifies we don't support this v4 effect
     if (v5EffectTypeId == null) {
         const reason = v4IncompatibilityReasonMap[v4Effect.type] || "Unknown effect";
         throw new IncompatibilityError(reason);

@@ -33,9 +33,9 @@
                 let sound = null;
 
                 function pad(num) {
-                    let s = num + "";
+                    let s = `${num}`;
                     while (s.length < 2) {
-                        s = "0" + s;
+                        s = `0${s}`;
                     }
 
                     return s;

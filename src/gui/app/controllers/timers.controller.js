@@ -70,7 +70,7 @@
                         }
                     },
                     {
-                        html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> Toggle Enabled</a>`,
+                        html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> ${item.active ? "Disable Timer" : "Enable Timer"}</a>`,
                         click: function () {
                             timerService.toggleTimerActiveState(item);
                         }
@@ -147,7 +147,7 @@
                         }
                     },
                     {
-                        html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> Toggle Enabled</a>`,
+                        html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> ${item.enabled ? "Disable Scheduled Effect List" : "Enable Scheduled Effect List"}</a>`,
                         click: function () {
                             scheduledTaskService.toggleScheduledTaskEnabledState(item);
                         }

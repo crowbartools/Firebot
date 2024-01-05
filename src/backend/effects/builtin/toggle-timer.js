@@ -19,7 +19,7 @@ const chat = {
         </eos-container>
 
         <eos-container ng-hide="hasTimers" pad-top="true">
-            <span class="muted">No Timers created yet! You can create them in the <b>Timers</b> tab.</span>
+            <span class="muted">No Timers created yet! You can create them in the <b>Time-Based</b> tab.</span>
         </eos-container>
 
         <eos-container ng-show="hasTimers" header="Timer" pad-top="true">

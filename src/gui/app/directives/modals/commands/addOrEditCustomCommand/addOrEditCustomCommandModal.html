@@ -90,20 +90,15 @@
           </div>
         </eos-collapsable-panel>
 
-        <div class="input-group pt-4">
-          <span class="input-group-addon" id="basic-addon3"
-            >Description
-            <tooltip text="'Displayed on the command list webpage'"></tooltip
-          ></span>
-          <input
-            type="text"
-            class="form-control"
-            aria-describedby="basic-addon3"
-            ng-model="$ctrl.command.description"
-            placeholder="Enter description"
-          />
-        </div>
-      </div>
+        <firebot-input 
+          input-title="Description"  
+          title-tooltip="Displayed on the command list webpage"
+          placeholder-text="Enter description"
+          model="$ctrl.command.description"
+          disable-variables="true"
+          class="pt-4"
+        >
+        </firebot-input>
 
       <div class="mt-10" ng-hide="$ctrl.command.triggerIsRegex">
         <div class="settings-title">
@@ -176,30 +171,6 @@
               <div class="control__indicator"></div>
             </label>
             <label class="control-fb control--checkbox"
-              >Ignore Bot Account
-              <tooltip
-                text="'Whether or not the bot account should be able to trigger this command.'"
-              ></tooltip>
-              <input
-                type="checkbox"
-                ng-model="$ctrl.command.ignoreBot"
-                aria-label="..."
-              />
-              <div class="control__indicator"></div>
-            </label>
-            <label class="control-fb control--checkbox"
-              >Ignore Streamer Account
-              <tooltip
-                text="'Whether or not the streamer account should be able to trigger this command.'"
-              ></tooltip>
-              <input
-                type="checkbox"
-                ng-model="$ctrl.command.ignoreStreamer"
-                aria-label="..."
-              />
-              <div class="control__indicator"></div>
-            </label>
-            <label class="control-fb control--checkbox"
               >Treat quoted text as single argument
               <tooltip
                 text="'When this option is enabled, text inside of double quotes will be treated as a single argument without the quotes. Example: !command &quot;This is an argument&quot; will have a single argument with the value: This is an argument'"
@@ -212,7 +183,47 @@
               <div class="control__indicator"></div>
             </label>
           </div>
-          <div class="controls-fb-inline mt-4"></div>
+          <div class="controls-fb-inline mt-4">
+            <div class="settings-title">
+              <h3>Ignore</h3>
+            </div>
+            <label class="control-fb control--checkbox"
+              >Streamer Account
+              <tooltip
+                text="'Whether or not the streamer account should be able to trigger this command.'"
+              ></tooltip>
+              <input
+                type="checkbox"
+                ng-model="$ctrl.command.ignoreStreamer"
+                aria-label="..."
+              />
+              <div class="control__indicator"></div>
+            </label>
+            <label class="control-fb control--checkbox"
+              >Bot Account
+              <tooltip
+                text="'Whether or not the bot account should be able to trigger this command.'"
+              ></tooltip>
+              <input
+                type="checkbox"
+                ng-model="$ctrl.command.ignoreBot"
+                aria-label="..."
+              />
+              <div class="control__indicator"></div>
+            </label>
+            <label class="control-fb control--checkbox"
+              >Whispers
+              <tooltip
+                text="'Whether or not whispers should be able to trigger this command.'"
+              ></tooltip>
+              <input
+                type="checkbox"
+                ng-model="$ctrl.command.ignoreWhispers"
+                aria-label="..."
+              />
+              <div class="control__indicator"></div>
+            </label>
+          </div>
         </div>
       </div>
       <div class="mt-10">

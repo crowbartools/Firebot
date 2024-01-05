@@ -25,12 +25,12 @@ module.exports = {
     },
     getSelectedValueDisplay: (filterSettings) => {
         switch (filterSettings.value) {
-        case "first":
-            return "First Sub";
-        case "resub":
-            return "Resub";
-        default:
-            return "[Not set]";
+            case "first":
+                return "First Sub";
+            case "resub":
+                return "Resub";
+            default:
+                return "[Not set]";
         }
     },
     predicate: (filterSettings, eventData) => {

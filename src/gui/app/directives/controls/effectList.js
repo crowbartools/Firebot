@@ -21,7 +21,7 @@
             <div class="effect-list">
                 <div class="flex-row-center jspacebetween effect-list-header">
                     <div class="flex items-center">
-                        <h3 class="{{$ctrl.headerClasses}} m-0" style="display:inline;font-weight: 100;">EFFECTS</h3>
+                        <h3 class="{{$ctrl.headerClasses}} m-0" style="display:inline;font-weight: 600;">Effects</h3>
                         <span class="ml-1" style="font-size: 11px;"><tooltip text="$ctrl.header" ng-if="$ctrl.header"></tooltip></span>
                     </div>
 
@@ -118,7 +118,7 @@
                                 href role="button"
                                 aria-label="Open effects menu"
                                 class="effects-actions-btn"
-                                context-menu="$ctrl.allEffectsMenuOptions"
+                                context-menu="$ctrl.createAllEffectsMenuOptions()"
                                 context-menu-on="click"
                                 uib-tooltip="Open effects menu"
                                 tooltip-append-to-body="true"
@@ -130,7 +130,7 @@
                 </div>
                 <div class="{{$ctrl.effectContainerClasses}} mx-6 pb-6">
                     <div ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.effectsData.list">
-                        <div ng-repeat="effect in $ctrl.effectsData.list track by $index" context-menu="$ctrl.effectMenuOptions">
+                        <div ng-repeat="effect in $ctrl.effectsData.list track by $index" context-menu="$ctrl.createEffectMenuOptions(effect)">
                             <div
                                 role="button"
                                 class="effect-bar clickable-dark"
@@ -159,7 +159,7 @@
                                                 uib-tooltip="Open effect menu"
                                                 tooltip-append-to-body="true"
                                                 role="button"
-                                                context-menu="$ctrl.effectMenuOptions"
+                                                context-menu="$ctrl.createEffectMenuOptions(effect)"
                                                 context-menu-on="click"
                                                 context-menu-orientation="top"
                                             >
@@ -173,7 +173,7 @@
 
                     <div class="add-more-functionality mt-7 ml-5">
                         <a href role="button" class="clickable" ng-click="$ctrl.openNewEffectModal($ctrl.effectsData.list.length)" aria-label="Add new effect">
-                            <i class="far fa-plus-circle"></i>Add New Effect
+                            <i class="far fa-plus-circle mr-2"></i>Add New Effect
                         </a>
                     </div>
                 </div>
@@ -210,17 +210,17 @@
                     ctrl.effectsUpdate();
                 }
 
-                const createAllEffectsMenuOptions = () => {
-                    ctrl.allEffectsMenuOptions = [
+                ctrl.createAllEffectsMenuOptions = () => {
+                    const allEffectsMenuOptions = [
                         {
-                            html: `<a href role="menuitem"><i class="far fa-copy mr-4"></i> Copy all effects</a>`,
+                            html: `<a href role="menuitem"><span class="iconify mr-4" data-icon="mdi:content-copy"></span> Copy all effects</a>`,
                             click: () => {
                                 ctrl.copyEffects();
                             },
                             enabled: ctrl.effectsData.list.length > 0
                         },
                         {
-                            html: `<a href role="menuitem"><i class="far fa-paste mr-4"></i> Paste effects</a>`,
+                            html: `<a href role="menuitem"><span class="iconify mr-4" data-icon="mdi:content-paste"></span> Paste effects</a>`,
                             click: function () {
                                 ctrl.pasteEffects(true);
                             },
@@ -248,10 +248,12 @@
                             }
                         }
                     ];
+
+                    return allEffectsMenuOptions;
                 };
 
-                const createEffectMenuOptions = () => {
-                    ctrl.effectMenuOptions = [
+                ctrl.createEffectMenuOptions = (effect) => {
+                    const effectMenuOptions = [
                         {
                             html: `<a href ><i class="far fa-tag mr-4"></i> Edit Label</a>`,
                             click: function ($itemScope) {
@@ -268,7 +270,7 @@
                             }
                         },
                         {
-                            html: `<a href ><i class="fal fa-toggle-off mr-4"></i>  Toggle Enabled</a>`,
+                            html: `<a href ><i class="fal fa-toggle-off mr-4"></i>  ${effect.active ? "Disable Effect" : "Enable Effect"}</a>`,
                             click: function ($itemScope) {
                                 const $index = $itemScope.$index;
                                 ctrl.toggleEffectActiveState($index);
@@ -282,7 +284,7 @@
                             }
                         },
                         {
-                            html: `<a href ><i class="far fa-copy mr-4"></i> Copy</a>`,
+                            html: `<a href ><span class="iconify mr-4" data-icon="mdi:content-copy"></span> Copy</a>`,
                             click: function ($itemScope) {
                                 const $index = $itemScope.$index;
                                 ctrl.copyEffectAtIndex($index);
@@ -301,7 +303,7 @@
                             enabled: ctrl.hasCopiedEffects(),
                             children: [
                                 {
-                                    html: `<a href><i class="far fa-paste mr-4"></i> Before</a>`,
+                                    html: `<a href><span class="iconify mr-4" data-icon="mdi:content-paste"></span> Before</a>`,
                                     click: function ($itemScope) {
                                         const $index = $itemScope.$index;
                                         if (ctrl.hasCopiedEffects()) {
@@ -310,7 +312,7 @@
                                     }
                                 },
                                 {
-                                    html: `<a href><i class="far fa-paste mr-4"></i> After</a>`,
+                                    html: `<a href><span class="iconify mr-4" data-icon="mdi:content-paste"></span> After</a>`,
                                     click: function ($itemScope) {
                                         const $index = $itemScope.$index;
                                         if (ctrl.hasCopiedEffects()) {
@@ -340,11 +342,8 @@
                             ]
                         }
                     ];
-                };
 
-                const rebuildEffectMenus = () => {
-                    createEffectMenuOptions();
-                    createAllEffectsMenuOptions();
+                    return effectMenuOptions;
                 };
 
                 ctrl.shareEffects = async () => {
@@ -425,12 +424,10 @@
 
                 ctrl.$onChanges = function() {
                     createEffectsData();
-                    rebuildEffectMenus();
                 };
 
                 ctrl.effectsUpdate = function() {
                     ctrl.update({ effects: ctrl.effectsData });
-                    rebuildEffectMenus();
                 };
 
                 ctrl.effectTypeChanged = function(effectType, index) {
@@ -524,13 +521,10 @@
 
                 ctrl.copyEffectAtIndex = function(index) {
                     objectCopyHelper.copyEffects([ctrl.effectsData.list[index]]);
-                    createEffectMenuOptions();
-                    rebuildEffectMenus();
                 };
 
                 ctrl.copyEffects = function() {
                     objectCopyHelper.copyEffects(ctrl.effectsData.list);
-                    rebuildEffectMenus();
                 };
 
                 ctrl.openNewEffectModal = index => {

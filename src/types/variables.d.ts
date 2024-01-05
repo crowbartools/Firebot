@@ -1,6 +1,6 @@
 import { Trigger, TriggersObject } from "./triggers";
 
-export type VariableCategory = 
+export type VariableCategory =
     | "common"
     | "trigger based"
     | "user based"
@@ -21,5 +21,5 @@ export type ReplaceVariable = {
         triggers?: TriggersObject;
         possibleDataOutput: Array<"text" | "number">;
     };
-    evaluator(trigger: Trigger, ...args: any[]): PromiseLike<any> | any;
+    evaluator(trigger: Trigger, ...args: unknown[]): PromiseLike<unknown> | unknown;
 };

@@ -25,7 +25,7 @@ function restartApp() {
 
 // This app will active a new profile. It will set the loggedInProfile setting in globalsettings and then restart the app.
 function logInProfile(profileId) {
-    logger.info("Logging in to profile #" + profileId + ". Restarting now.");
+    logger.info(`Logging in to profile #${profileId}. Restarting now.`);
     const globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings");
     globalSettingsDb.push("./profiles/loggedInProfile", profileId);
 
@@ -64,7 +64,7 @@ function createNewProfile(profileId) {
     // Push our new profile to settings.
     globalSettingsDb.push("/profiles/activeProfiles", activeProfiles);
     globalSettingsDb.push("/profiles/loggedInProfile", profileId);
-    logger.info("New profile created: " + profileId + ". Restarting.");
+    logger.info(`New profile created: ${profileId}. Restarting.`);
 
     // Log the new profile in and restart app.
     logInProfile(profileId);
@@ -87,7 +87,7 @@ function getLoggedInProfile() {
             return loggedInUser;
         }
     } catch (err) {
-        // We dont have a value in our global settings. So, lets try some other things.
+        // We don't have a value in our global settings. So, lets try some other things.
         try {
             const globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings"),
                 activeProfiles = globalSettingsDb.getData("./activeProfiles");
@@ -103,11 +103,11 @@ function getLoggedInProfile() {
 
 function renameProfile(newProfileId) {
     const profileId = getLoggedInProfile();
-    logger.warn("User wants to rename profile: " + profileId + ". Restarting the app.");
+    logger.warn(`User wants to rename profile: ${profileId}. Restarting the app.`);
 
     let sanitizedNewProfileId = sanitizeFileName(newProfileId);
     if (sanitizedNewProfileId == null || sanitizedNewProfileId === "") {
-        logger.error("Attempted to rename profile to an invalid name: " + newProfileId);
+        logger.error(`Attempted to rename profile to an invalid name: ${newProfileId}`);
         return;
     }
 
@@ -137,7 +137,7 @@ function renameProfile(newProfileId) {
 // We can't delete a profile while the app is running (and using the files), so we'll delete it while launching next time.
 function deleteProfile() {
     const profileId = getLoggedInProfile();
-    logger.warn("User wants to delete profile: " + profileId + ". Restarting the app.");
+    logger.warn(`User wants to delete profile: ${profileId}. Restarting the app.`);
 
     // Lets set this profile to be deleted on restart. (When no files are in use).
     const globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings");
@@ -149,7 +149,7 @@ function deleteProfile() {
 
 const getPathInProfile = function(filepath) {
     const profilePath =
-    dataAccess.getUserDataPath() + "/profiles/" + getLoggedInProfile();
+    `${dataAccess.getUserDataPath()}/profiles/${getLoggedInProfile()}`;
     return path.join(profilePath, filepath);
 };
 
@@ -158,13 +158,13 @@ const getPathInProfile = function(filepath) {
  */
 const getJsonDbInProfile = function(filepath, humanReadable = true) {
     const profilePath =
-      dataAccess.getUserDataPath() + "/profiles/" + getLoggedInProfile(),
+      `${dataAccess.getUserDataPath()}/profiles/${getLoggedInProfile()}`,
         jsonDbPath = path.join(profilePath, filepath);
     return new JsonDB(jsonDbPath, true, humanReadable);
 };
 
 const profileDataPathExistsSync = function(filePath) {
-    const profilePath = "/profiles/" + getLoggedInProfile(),
+    const profilePath = `/profiles/${getLoggedInProfile()}`,
         joinedPath = path.join(profilePath, filePath);
     return dataAccess.userDataPathExistsSync(joinedPath);
 };

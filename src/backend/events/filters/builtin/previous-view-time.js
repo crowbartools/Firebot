@@ -26,26 +26,26 @@ module.exports = {
         const previousViewTime = eventMeta.previousViewTime || 0;
 
         switch (comparisonType) {
-        case ComparisonType.IS: {
-            return previousViewTime === value;
-        }
-        case ComparisonType.IS_NOT: {
-            return previousViewTime !== value;
-        }
-        case ComparisonType.LESS_THAN: {
-            return previousViewTime < value;
-        }
-        case ComparisonType.LESS_THAN_OR_EQUAL_TO: {
-            return previousViewTime <= value;
-        }
-        case ComparisonType.GREATER_THAN: {
-            return previousViewTime > value;
-        }
-        case ComparisonType.GREATER_THAN_OR_EQUAL_TO: {
-            return previousViewTime >= value;
-        }
-        default:
-            return false;
+            case ComparisonType.IS: {
+                return previousViewTime === value;
+            }
+            case ComparisonType.IS_NOT: {
+                return previousViewTime !== value;
+            }
+            case ComparisonType.LESS_THAN: {
+                return previousViewTime < value;
+            }
+            case ComparisonType.LESS_THAN_OR_EQUAL_TO: {
+                return previousViewTime <= value;
+            }
+            case ComparisonType.GREATER_THAN: {
+                return previousViewTime > value;
+            }
+            case ComparisonType.GREATER_THAN_OR_EQUAL_TO: {
+                return previousViewTime >= value;
+            }
+            default:
+                return false;
         }
     }
 };

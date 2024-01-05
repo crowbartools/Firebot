@@ -20,7 +20,13 @@
                             />
                         </div>
                         
-                        <p class="help-block" style="text-align: center;">This reward was created outside of Firebot so it's settings cannot be changed here. You can however still create effects for it. If you want to update settings for this Reward, you can do so on Twitch.</p>
+                        <p class="help-block" style="text-align: center;">
+                            This reward was either created outside of Firebot, or by an older version of Firebot, so its settings cannot be changed here. You can however still create effects for it. If you want to update settings for this reward, you can do so on Twitch.
+                        </p>
+                        <collapsable-panel header="How to enable editing/Update Channel Reward">
+                            <p>If you would like to be able to edit this channel reward in Firebot or use the <strong>Update Channel Reward</strong> effect, you can <strong>Duplicate</strong> it from the <strong>Channel Rewards</strong> screen. This will preserve any effects and settings (except the image) you already have setup.</p>
+                            <p>You can then delete the old reward from your Twitch dashboard. You will also need to update any existing <strong>Update Channel Reward</strong> effects to reference the newly created reward.</p>
+                        </collapsable-panel>
                     </div>
                     <form ng-show="$ctrl.reward.manageable" name="rewardSettings">
                         <div class="form-group" ng-class="{'has-error': $ctrl.formFieldHasError('name')}">
@@ -236,7 +242,7 @@
 
 
                 /**
-                 * @type {import('../../../../../backend/channel-rewards/channel-reward-manager').SavedChannelReward}
+                 * @type {import('../../../../../types/channel-rewards').SavedChannelReward}
                  */
                 $ctrl.reward = {
                     id: null,

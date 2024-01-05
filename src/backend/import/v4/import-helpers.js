@@ -1,7 +1,7 @@
 "use strict";
 const electron = require("electron");
 const path = require("path");
-const fs = require("fs-extra");
+const fs = require("fs");
 const { JsonDB } = require("node-json-db");
 
 const appDataPath = electron.app.getPath("appData");

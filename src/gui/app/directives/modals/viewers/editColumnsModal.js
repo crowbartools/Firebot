@@ -36,7 +36,7 @@
         controller: function(viewersService) {
             const $ctrl = this;
 
-            //turns the object into an array so we can ng-repeat it. we dont need the keys since they are also in the object
+            //turns the object into an array so we can ng-repeat it. we don't need the keys since they are also in the object
             $ctrl.columns = Object.values(viewersService.fieldDefs);
 
             $ctrl.flipColumnPreference = function(column) {

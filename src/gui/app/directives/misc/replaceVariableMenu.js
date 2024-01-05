@@ -18,7 +18,7 @@
                     menuPosition: "@",
                     buttonPosition: "@"
                 },
-                controller: function($scope, $element, backendCommunicator, $timeout, $sce) {
+                controller: function($scope, $element, replaceVariableService, $timeout, $sce) {
 
                     const insertAt = (str, sub, pos) => `${str.slice(0, pos)}${sub}${str.slice(pos)}`;
 
@@ -59,7 +59,7 @@
                         const { trigger, triggerMeta } = findTriggerDataScope();
 
                         if (!$scope.disableVariableMenu) {
-                            $scope.variables = backendCommunicator.fireEventSync("getReplaceVariableDefinitions", {
+                            $scope.variables = replaceVariableService.getVariablesForTrigger({
                                 type: trigger,
                                 id: triggerMeta && triggerMeta.triggerId,
                                 dataOutput: $scope.replaceVariables
@@ -110,7 +110,7 @@
 
                             const display = variable.usage ? variable.usage : variable.handle;
 
-                            const updatedModel = insertAt(currentModel, "$" + display, insertIndex);
+                            const updatedModel = insertAt(currentModel, `$${display}`, insertIndex);
 
                             $scope.modelValue = updatedModel;
                         }
@@ -119,11 +119,20 @@
                 },
                 link: function(scope, element) {
 
-                    const wrapper = angular.element(`
-                        <div style="position: relative;"></div>`
-                    );
-                    const compiled = $compile(wrapper)(scope);
-                    element.wrap(compiled);
+                    if (scope.disableVariableMenu) {
+                        return;
+                    }
+
+                    const parent = element.parent();
+
+                    let wrapper = parent;
+                    if (!parent.hasClass("input-group")) {
+                        wrapper = angular.element(`
+                            <div style="position: relative;"></div>`
+                        );
+                        const compiled = $compile(wrapper)(scope);
+                        element.wrap(compiled);
+                    }
 
                     const button = angular.element(`<span class="variables-btn ${scope.buttonPosition ? scope.buttonPosition : ''}" ng-click="toggleMenu()">$vars</span>`);
                     $compile(button)(scope);
@@ -149,11 +158,9 @@
                                 <div style="width: 125px;display:flex;flex-direction:column;flex-shrink: 0;background: #18191b;">
                                     <div class="effect-category-header">Categories</div>
                                     <div class="effect-category-wrapper dark" ng-class="{'selected': activeCategory == null}" ng-click="setActiveCategory(null);">
-                                        <div class="category-bar"></div>
                                         <div class="category-text">All</div>
                                     </div>
                                     <div class="effect-category-wrapper dark" ng-repeat="category in categories" ng-class="{'selected': activeCategory === category}" ng-click="setActiveCategory(category);">
-                                        <div class="category-bar"></div>
                                         <div class="category-text">{{category}}</div>
                                     </div>
                                 </div>

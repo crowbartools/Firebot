@@ -33,7 +33,7 @@
                                     <p>We have detected Firebot v4 data on your computer.<br><strong>Would you like to import anything?</strong></p>
 
                                     <div class="muted" style="font-size:12px;padding: 0 65px;margin-top: 0px;">
-                                        <strong>Please note:</strong><br>Due to some changes and fundemental differences in v5, we may not be able to import 100% of your v4 data. Some additional setup may be required.
+                                        <strong>Please note:</strong><br>Due to some changes and fundamental differences in v5, we may not be able to import 100% of your v4 data. Some additional setup may be required.
                                     </div>
                                 </div>
                                 <div style="margin-top: 10px;">
@@ -236,7 +236,7 @@
                             <b>Thank you for using Firebot.</b>
                         </p>
                         <div style="animation-delay: 2.3s" class="animated fadeIn">
-                            <a style="margin-top: 5px;" class="btn btn-primary shake-slow" ng-click="$ctrl.handleNext()">I'm so ready!</a>
+                            <a style="margin-top: 5px;" class="btn btn-primary" ng-click="$ctrl.handleNext()">I'm so ready!</a>
                         </div>
                     </div>
                 </div>
@@ -251,15 +251,16 @@
                 </div>
 
                 <div>
-                    <a class="btn btn-default" ng-click="$ctrl.handlePrevious()" ng-show="$ctrl.showBackButton()">Back</a>
+                    <a class="btn btn-default hvr-icon-back" ng-click="$ctrl.handlePrevious()" ng-show="$ctrl.showBackButton()"><i class="fas fa-arrow-left hvr-icon"></i> Back</a>
                     <a
-                        class="btn btn-primary"
+                        class="btn btn-primary hvr-icon-forward"
                         uib-tooltip="{{$ctrl.getTooltipText()}}"
                         tooltip-enable="!$ctrl.canGoToNext()"
                         ng-click="$ctrl.handleNext()"
                         ng-show="$ctrl.showNextButton()"
                         ng-disabled="!$ctrl.canGoToNext()">
                             {{$ctrl.getNextLabel()}}
+                            <i class="fas fa-arrow-right hvr-icon"></i>
                     </a>
                 </div>
                 <div>
@@ -314,18 +315,18 @@
 
             $ctrl.getNextLabel = function() {
                 switch ($ctrl.step) {
-                default:
-                    return "Next";
+                    default:
+                        return "Next";
                 }
             };
 
             $ctrl.handlePrevious = function() {
                 switch ($ctrl.step) {
-                case 2:
-                    $ctrl.step = 0;
-                    break;
-                default:
-                    $ctrl.step -= $ctrl.isFirstStep() ? 0 : 1;
+                    case 2:
+                        $ctrl.step = 0;
+                        break;
+                    default:
+                        $ctrl.step -= $ctrl.isFirstStep() ? 0 : 1;
                 }
             };
 
@@ -348,12 +349,12 @@
 
             $ctrl.canGoToNext = function() {
                 switch ($ctrl.step) {
-                case 2:
-                    return connectionService.accounts.streamer.loggedIn;
-                case 3: {
-                    const overlayStatus = connectionManager.getOverlayStatus();
-                    return !overlayStatus.serverStarted || overlayStatus.clientsConnected;
-                }
+                    case 2:
+                        return connectionService.accounts.streamer.loggedIn;
+                    case 3: {
+                        const overlayStatus = connectionManager.getOverlayStatus();
+                        return !overlayStatus.serverStarted || overlayStatus.clientsConnected;
+                    }
                 }
                 return true;
             };
@@ -409,25 +410,25 @@
                     $ctrl.close();
                 } else {
                     switch ($ctrl.step) {
-                    case 0:
-                        if ($ctrl.v4DataDetected) {
-                            $ctrl.step = 1;
-                        } else {
-                            $ctrl.step = 2;
-                        }
-                        return;
-                    case 1:
-                        $ctrl.step = 2;
-                        $ctrl.importCompleted = false;
-                        return;
-                    case 2:
-                    case 3: {
-                        if (!$ctrl.canGoToNext() && !forceNext) {
+                        case 0:
+                            if ($ctrl.v4DataDetected) {
+                                $ctrl.step = 1;
+                            } else {
+                                $ctrl.step = 2;
+                            }
                             return;
-                        }
+                        case 1:
+                            $ctrl.step = 2;
+                            $ctrl.importCompleted = false;
+                            return;
+                        case 2:
+                        case 3: {
+                            if (!$ctrl.canGoToNext() && !forceNext) {
+                                return;
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
                     }
                     $ctrl.step += 1;
                 }
@@ -435,10 +436,10 @@
 
             $ctrl.getTooltipText = function() {
                 switch ($ctrl.step) {
-                case 2:
-                    return "Please sign into your Streamer account.";
-                case 3:
-                    return "Please add the overlay url to your broadcasting software.";
+                    case 2:
+                        return "Please sign into your Streamer account.";
+                    case 3:
+                        return "Please add the overlay url to your broadcasting software.";
                 }
                 return "";
             };
@@ -486,7 +487,7 @@
             };
 
             $ctrl.$onInit = function() {
-                // When the compontent is initialized
+                // When the component is initialized
                 // This is where you can start to access bindings, such as variables stored in 'resolve'
                 // IE $ctrl.resolve.shouldDelete or whatever
             };

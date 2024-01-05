@@ -1,4 +1,3 @@
-import { EffectList } from "../../types/effects";
 import { CronJob } from "cron";
 import { DateTime } from "luxon";
 import { TriggerType } from "../common/EffectType";
@@ -8,17 +7,7 @@ import accountAccess from "../common/account-access";
 import connectionManager from "../common/connection-manager";
 import effectRunner from "../common/effect-runner";
 import frontendCommunicator from "../common/frontend-communicator";
-
-export interface ScheduledTask {
-    id: string,
-    name: string,
-    enabled: boolean,
-    schedule: string,
-    inputType: string,
-    onlyWhenLive: boolean,
-    effects: EffectList[],
-    sortTags: string[]
-}
+import { ScheduledTask } from "../../types/timers";
 
 interface ScheduledTaskRunner {
     taskDefinition: ScheduledTask,
@@ -65,7 +54,7 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
                 }
 
                 logger.info(`Running scheduled task "${task.name}"`);
-                
+
                 const effectsRequest = {
                     trigger: {
                         type: TriggerType.SCHEDULED_TASK,
@@ -80,12 +69,12 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
 
                 this.logNextTaskRun(task);
             }
-        )
+        );
     }
 
     private startTask(taskRunner: ScheduledTaskRunner): void {
         logger.debug(`Starting scheduled task timer for "${taskRunner.taskDefinition.name}"...`);
-        
+
         if (taskRunner.cronjob == null) {
             taskRunner.cronjob = this.createCronJob(taskRunner.taskDefinition);
         }
@@ -98,9 +87,9 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
         }
     }
 
-    private stopTask(taskRunner: ScheduledTaskRunner, removeCrontab: boolean = false): void {
+    private stopTask(taskRunner: ScheduledTaskRunner, removeCrontab = false): void {
         logger.debug(`Stopping scheduled task timer for ${taskRunner.taskDefinition.name}...`);
-        
+
         if (taskRunner.cronjob == null) {
             taskRunner.cronjob = this.createCronJob(taskRunner.taskDefinition);
         }
@@ -150,6 +139,8 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
                 this.startTask(this.taskCache.get(savedTask.id));
             }
 
+            frontendCommunicator.send("scheduledTaskUpdate", savedTask);
+
             return savedTask;
         }
 
@@ -197,4 +188,4 @@ frontendCommunicator.on("deleteScheduledTask", (id: string) => {
     scheduledTaskManager.deleteScheduledTask(id);
 });
 
-module.exports = scheduledTaskManager;
+export = scheduledTaskManager;

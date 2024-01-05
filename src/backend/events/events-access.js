@@ -13,7 +13,7 @@ let groups = {};
 let sortTags = [];
 
 function getEventsDb() {
-    return profileManager.getJsonDbInProfile(EVENTS_FOLDER + "events");
+    return profileManager.getJsonDbInProfile(`${EVENTS_FOLDER}events`);
 }
 
 function saveGroup(group) {
@@ -23,7 +23,7 @@ function saveGroup(group) {
     const eventsDb = getEventsDb();
     try {
         groups[group.id] = group;
-        eventsDb.push("/groups/" + group.id, group);
+        eventsDb.push(`/groups/${group.id}`, group);
         logger.debug(`Saved event group '${group.id}'.`);
     } catch (err) {
         logger.warn(`Unable to save event group '${group.id}'.`, err);
@@ -109,7 +109,7 @@ function deleteGroup(groupId) {
     }
     const eventsDb = getEventsDb();
     try {
-        eventsDb.delete("/groups/" + groupId);
+        eventsDb.delete(`/groups/${groupId}`);
         delete groups[groupId];
         logger.debug(`Deleted event group '${groupId}'.`);
     } catch (err) {
@@ -213,15 +213,15 @@ ipcMain.on("eventUpdate", (_, data) => {
     //case "setActiveGroup":
     //setActiveGroup(meta);
     //break;
-    case "saveGroup":
-        saveGroup(meta);
-        break;
-    case "deleteGroup":
-        deleteGroup(meta);
-        break;
-    case "saveMainEvents":
-        saveMainEvents(meta);
-        break;
+        case "saveGroup":
+            saveGroup(meta);
+            break;
+        case "deleteGroup":
+            deleteGroup(meta);
+            break;
+        case "saveMainEvents":
+            saveMainEvents(meta);
+            break;
     }
 });
 

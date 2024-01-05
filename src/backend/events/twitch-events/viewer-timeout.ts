@@ -12,4 +12,4 @@ export function triggerTimeout(
         moderator,
         modReason
     });
-};
+}

@@ -4,7 +4,7 @@
 
     const moment = require("moment");
     const path = require("path");
-    const fs = require("fs-extra");
+    const fs = require("fs");
 
     angular
         .module("firebotApp")
@@ -23,7 +23,7 @@
                             on-update="settings.setMaxBackupCount(option)"
                         ></dropdown-select>
                     </firebot-setting>
-                    
+
                     <firebot-setting
                         name="Automatic Backup Options"
                         description="Choose what Firebot should ignore in automatic backups."
@@ -44,7 +44,7 @@
                         </label>
                         </div>
                     </firebot-setting>
-                    
+
                     <firebot-setting
                         name="Automatic Backups"
                         description="Choose when Firebot should make automatic backups."
@@ -173,7 +173,7 @@
                         ) => {
                             $scope.backups = [];
 
-                            const backupFolderPath = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups") + path.sep;
+                            const backupFolderPath = path.resolve(`${dataAccess.getUserDataPath() + path.sep}backups`) + path.sep;
 
                             $scope.loadingBackups = true;
                             $q
@@ -227,14 +227,14 @@
 
                             $scope.togglePreventDeletion = function(backup) {
                                 backup.neverDelete = !backup.neverDelete;
-                                const oldName = backup.name + ".zip";
+                                const oldName = `${backup.name}.zip`;
                                 backup.name = backup.neverDelete
                                     ? (backup.name += "_NODELETE")
                                     : backup.name.replace("_NODELETE", "");
 
                                 fs.renameSync(
                                     backupFolderPath + oldName,
-                                    backupFolderPath + backup.name + ".zip"
+                                    `${backupFolderPath + backup.name}.zip`
                                 );
                             };
 
@@ -248,7 +248,7 @@
                                     .then(confirmed => {
                                         if (confirmed) {
                                             $scope.backups.splice(index, 1);
-                                            fs.unlink(backupFolderPath + backup.name + ".zip");
+                                            fs.unlinkSync(`${backupFolderPath + backup.name}.zip`);
                                         }
                                     });
                             };

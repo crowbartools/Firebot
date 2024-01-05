@@ -4,8 +4,8 @@ const { settings } = require("../../common/settings-access");
 const resourceTokenManager = require("../../resourceTokenManager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/http-server-manager");
-const fs = require('fs-extra');
-const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
+const fs = require('fs/promises');
+const { EffectCategory } = require('../../../shared/effect-constants');
 const logger = require("../../logwrapper");
 const path = require("path");
 
@@ -22,7 +22,7 @@ const showImage = {
         description: "Shows an image in the overlay.",
         icon: "fad fa-image",
         categories: [EffectCategory.COMMON, EffectCategory.FUN, EffectCategory.OVERLAY],
-        dependencies: [EffectDependency.OVERLAY]
+        dependencies: []
     },
     /**
    * Global settings that will be available in the Settings tab
@@ -187,8 +187,8 @@ const showImage = {
             folder: effect.folder,
             imageType: effect.imageType,
             imagePosition: position,
-            imageHeight: effect.height ? effect.height + "px" : "auto",
-            imageWidth: effect.width ? effect.width + "px" : "auto",
+            imageHeight: effect.height ? `${effect.height}px` : "auto",
+            imageWidth: effect.width ? `${effect.width}px` : "auto",
             imageDuration: effect.length,
             inbetweenAnimation: effect.inbetweenAnimation,
             inbetweenDelay: effect.inbetweenDelay,

@@ -10,7 +10,7 @@ export const ColorValueVariable: ReplaceVariable = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: ["number"]
     },
-    evaluator: (_, ...args) => {
+    evaluator: (_, ...args: string[]) => {
         let rawValue = args[0];
         let isHexColor = false;
 
@@ -25,7 +25,7 @@ export const ColorValueVariable: ReplaceVariable = {
 
         const color = isHexColor === true ? colorConvert.hex.rgb(rawValue) : colorConvert.keyword.rgb(rawValue);
 
-        const obsHexValue = "FF" + color[2].toString(16).padStart(2, "0") + color[1].toString(16).padStart(2, "0") + color[0].toString(16).padStart(2, "0");
+        const obsHexValue = `FF${color[2].toString(16).padStart(2, "0")}${color[1].toString(16).padStart(2, "0")}${color[0].toString(16).padStart(2, "0")}`;
 
         return parseInt(obsHexValue, 16);
     }

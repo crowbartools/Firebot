@@ -18,7 +18,7 @@ const accountEvents = new EventEmitter();
  * @property {string} avatar - The avatar url for the account
  * @property {string} broadcasterType - "partner", "affiliate" or ""
  * @property {import("../auth/auth").AuthDetails} auth - Auth token details for the account
- * @property {boolean} loggedIn - If the account is linked/logged in
+ * @property {boolean=} loggedIn - If the account is linked/logged in
  */
 
 
@@ -169,11 +169,11 @@ function updateAccount(accountType, account, emitUpdate = true) {
         botTokenIssue = false;
     }
 
-    // dont let streamer and bot be the same
+    // don't let streamer and bot be the same
     const otherAccount = accountType === "streamer" ? cache.bot : cache.streamer;
     if (otherAccount != null && otherAccount.loggedIn) {
         if (otherAccount.userId === account.userId) {
-            renderWindow.webContents.send("error", "You cannot sign into the same user for both Streamer and Bot accounts. The bot account should be a seperate Twitch user. If you don't have a seperate user, simply don't use the Bot account feature as it's not required.");
+            renderWindow.webContents.send("error", "You cannot sign into the same user for both Streamer and Bot accounts. The bot account should be a separate Twitch user. If you don't have a separate user, simply don't use the Bot account feature as it's not required.");
             return;
         }
     }

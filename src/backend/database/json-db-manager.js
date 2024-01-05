@@ -89,7 +89,7 @@ class JsonDbManager {
         this.items[item.id] = item;
 
         try {
-            this.db.push("/" + item.id, item);
+            this.db.push(`/${item.id}`, item);
 
             logger.debug(`Saved ${this.type} with id ${item.id} to file.`);
             return item;
@@ -122,22 +122,25 @@ class JsonDbManager {
 
     /**
      * @param {string} itemId
-     * @returns {void}
+     * @returns {boolean}
      */
     deleteItem(itemId) {
         if (itemId == null) {
-            return;
+            return false;
         }
 
         delete this.items[itemId];
 
         try {
-            this.db.delete("/" + itemId);
+            this.db.delete(`/${itemId}`);
 
             logger.debug(`Deleted ${this.type}: ${itemId}`);
+            return true;
         } catch (err) {
             logger.error(`There was an error deleting ${this.type}.`, err);
         }
+
+        return false;
     }
 
     /**

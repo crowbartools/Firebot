@@ -106,7 +106,6 @@ async function getUserDetails(userId) {
 
     const userFollowsStreamerResponse = await client.channels.getChannelFollowers(
         streamerData.userId,
-        streamerData.userId,
         userId
     );
 
