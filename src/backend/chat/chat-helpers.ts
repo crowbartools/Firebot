@@ -347,7 +347,7 @@ class FirebotChatHelpers {
         const firebotChatMessage: FirebotChatMessage = {
             id: msg.tags.get("id"),
             username: msg.userInfo.displayName,
-            useridname: msg.userInfo.userName,
+            userIdName: msg.userInfo.userName,
             userId: msg.userInfo.userId,
             customRewardId: msg.tags.get("custom-reward-id") || undefined,
             isHighlighted: msg.tags.get("msg-id") === "highlighted-message",
@@ -462,7 +462,7 @@ class FirebotChatHelpers {
         const firebotChatMessage: FirebotChatMessage = {
             id: id,
             username: extensionName,
-            useridname: extensionName,
+            userIdName: extensionName,
             userId: extensionName,
             rawText: text,
             profilePicUrl: extensionIconUrl,
@@ -498,7 +498,7 @@ class FirebotChatHelpers {
         const viewerFirebotChatMessage: FirebotChatMessage = {
             id: msg.messageId,
             username: msg.senderDisplayName,
-            useridname: msg.senderName,
+            userIdName: msg.senderName,
             userId: msg.senderId,
             rawText: msg.messageContent,
             profilePicUrl: profilePicUrl,
