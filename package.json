@@ -27,7 +27,7 @@
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "copyfiles": "^2.4.1",
-    "electron": "^27.1.2",
+    "electron": "^28.1.1",
     "electron-packager": "^17.1.1",
     "electron-rebuild": "^1.8.6",
     "eslint": "^8.56.0",
@@ -133,7 +133,7 @@
     "electron-installer-dmg": "github:SReject/electron-installer-dmg#9bdb5217b078c724918271549f34d362aecbf6bb"
   },
   "volta": {
-    "node": "18.17.1",
+    "node": "18.18.2",
     "npm": "10.2.4"
   }
 }
