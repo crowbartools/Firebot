@@ -90,7 +90,7 @@ function createStreamPreviewWindow() {
 }
 
 async function createIconImage(relativeIconPath) {
-    const iconPath = path.join(__dirname, relativeIconPath);
+    const iconPath = path.resolve(__dirname, relativeIconPath);
     if (process.platform === "darwin") {
         try {
             return await nativeImage.createThumbnailFromPath(iconPath, {
