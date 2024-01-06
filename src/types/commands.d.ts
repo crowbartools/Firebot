@@ -86,6 +86,7 @@ type SystemCommandOptionBase = {
     type: "string" | "number" | "boolean" | "enum";
     title: string;
     description: string;
+    default: unknown;
 }
 
 type SystemCommandStringOption = SystemCommandOptionBase & {
@@ -113,11 +114,6 @@ type SystemCommandEnumOption = SystemCommandOptionBase & {
 
 type SystemCommandOption = SystemCommandStringOption | SystemCommandNumberOption | SystemCommandBooleanOption | SystemCommandEnumOption;
 
-type SystemCommandDefinition = CommandDefinition & {
-    options?: Record<string, SystemCommandOption> | undefined;
-    hideCooldowns?: boolean;
-};
-
 type UserCommand = {
     trigger: string;
     args: string[];
@@ -127,13 +123,6 @@ type UserCommand = {
     subcommandId?: string;
     commandSender: string;
     senderRoles: string[];
-};
-
-type SystemCommandTriggerEvent = {
-    command: CommandDefinition;
-    commandOptions: Record<string, any>;
-    userCommand: UserCommand;
-    chatMessage: FirebotChatMessage;
 };
 
 type BasicCommandDefinition = Omit<
@@ -147,9 +136,19 @@ CommandDefinition,
 | "simple"
 >;
 
-export type SystemCommand = {
-    definition: SystemCommandDefinition;
+export type SystemCommand<OptionsModel = unknown> = {
+    definition: CommandDefinition & {
+        options?: Record<keyof OptionsModel, SystemCommandOption>;
+        hideCooldowns?: boolean;
+    };
     onTriggerEvent: (
-        event: SystemCommandTriggerEvent
+        event: {
+            command: SystemCommand<OptionsModel>['definition'];
+            userCommand: UserCommand;
+            chatMessage: FirebotChatMessage;
+            commandOptions?: {
+                [x in keyof OptionsModel]: OptionsModel[x]
+            };
+        }
     ) => PromiseLike<void> | void;
 };

@@ -1,6 +1,9 @@
 import { SystemCommand } from "../../../../types/commands";
 
-export const CommandListSystemCommand: SystemCommand = {
+export const CommandListSystemCommand: SystemCommand<{
+    successTemplate: string;
+    noCommandsTemplate: string;
+}> = {
     definition: {
         id: "firebot:commandlist",
         name: "Command List",
