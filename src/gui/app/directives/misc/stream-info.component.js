@@ -18,12 +18,15 @@
                         <i class="fas fa-user" style="margin-right: 5px; font-size: 12px;" />
                         <span>{{sis.streamInfo.viewers}}</span>
                     </div>
+
+                    <hype-train-indicator ng-if="settings.getShowHypeTrainIndicator() && hts.hypeTrainActive"></hype-train-indicator>
                 </div>
             `,
-            controller: function($scope, streamInfoService, settingsService, $interval) {
+            controller: function($scope, streamInfoService, settingsService, hypeTrainService, $interval) {
                 const $ctrl = this;
 
                 $scope.sis = streamInfoService;
+                $scope.hts = hypeTrainService;
 
                 $scope.settings = settingsService;
 

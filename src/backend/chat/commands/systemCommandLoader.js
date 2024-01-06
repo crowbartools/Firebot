@@ -4,7 +4,7 @@ const commandManager = require("./CommandManager");
 
 exports.loadCommands = () => {
     // get command definitions
-    const commandList = require("./builtin/commandList");
+    const { CommandListSystemCommand } = require("./builtin/command-list");
     const commandManagement = require("./builtin/commandManagement");
     const uptime = require("./builtin/uptime");
     const followage = require("./builtin/followage");
@@ -16,7 +16,7 @@ exports.loadCommands = () => {
     const spamRaidProtection = require('./builtin/spam-raid-protection');
 
     // register them
-    commandManager.registerSystemCommand(commandList);
+    commandManager.registerSystemCommand(CommandListSystemCommand);
     commandManager.registerSystemCommand(commandManagement);
     commandManager.registerSystemCommand(uptime);
     commandManager.registerSystemCommand(followage);

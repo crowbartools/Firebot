@@ -113,6 +113,16 @@
                                 />
                                 <div class="control__indicator"></div>
                             </label>
+                            <label class="control-fb control--checkbox"
+                                >Hype Trains
+                                <input
+                                    type="checkbox"
+                                    ng-click="settings.setShowHypeTrainIndicator(!settings.getShowHypeTrainIndicator())"
+                                    ng-checked="settings.getShowHypeTrainIndicator()"
+                                    aria-label="..."
+                                />
+                                <div class="control__indicator"></div>
+                            </label>
                         </div>
                     </firebot-setting>
 

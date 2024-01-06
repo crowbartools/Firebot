@@ -1,3 +1,4 @@
+import { FirebotChatMessage } from "./chat";
 import { EffectList } from "./effects";
 
 type CommandType = "system" | "custom";
@@ -77,12 +78,43 @@ export type CommandDefinition = {
     cooldown?: Cooldown | undefined;
     effects?: EffectList;
     restrictionData?: RestrictionData;
-    options?: Record<string, unknown> | undefined;
     subCommands?: SubCommand[] | undefined;
     fallbackSubcommand?: SubCommand | undefined;
 };
 
+type SystemCommandOptionBase = {
+    type: "string" | "number" | "boolean" | "enum";
+    title: string;
+    description: string;
+}
+
+type SystemCommandStringOption = SystemCommandOptionBase & {
+    type: "string";
+    default: string;
+    tip?: string;
+    useTextArea?: boolean;
+};
+
+type SystemCommandNumberOption = SystemCommandOptionBase & {
+    type: "number";
+    default: number;
+};
+
+type SystemCommandBooleanOption = SystemCommandOptionBase & {
+    type: "boolean";
+    default: boolean;
+};
+
+type SystemCommandEnumOption = SystemCommandOptionBase & {
+    type: "enum";
+    options: string[];
+    default: string;
+};
+
+type SystemCommandOption = SystemCommandStringOption | SystemCommandNumberOption | SystemCommandBooleanOption | SystemCommandEnumOption;
+
 type SystemCommandDefinition = CommandDefinition & {
+    options?: Record<string, SystemCommandOption> | undefined;
     hideCooldowns?: boolean;
 };
 
@@ -101,6 +133,7 @@ type SystemCommandTriggerEvent = {
     command: CommandDefinition;
     commandOptions: Record<string, any>;
     userCommand: UserCommand;
+    chatMessage: FirebotChatMessage;
 };
 
 type BasicCommandDefinition = Omit<
