@@ -1,7 +1,7 @@
 "use strict";
 
 const { randomInt } = require('node:crypto');
-const moment = require("moment");
+const { DateTime, Duration } = require("luxon");
 const replaceVariableManager = require("./variables/replace-variable-manager");
 const accountAccess = require("./common/account-access");
 const twitchApi = require("./twitch-api/api");
@@ -58,53 +58,25 @@ const secondsForHumans = (seconds) => {
 };
 
 const formattedSeconds = (secs, simpleOutput = false) => {
-    let allSecs = secs;
+    const duration = Duration.fromDurationLike({ seconds: Math.round(secs)}).rescale();
 
-    allSecs = Math.round(allSecs);
-    const hours = Math.floor(allSecs / (60 * 60));
-
-    const divisorForMinutes = allSecs % (60 * 60);
-    const minutes = Math.floor(divisorForMinutes / 60);
-
-    const divisorForSeconds = divisorForMinutes % 60;
-    const seconds = Math.ceil(divisorForSeconds);
-
-    const hasHours = hours > 0,
-        hasMins = minutes > 0,
-        hasSecs = seconds > 0;
-
-    if (simpleOutput) {
-        return `${hours}:${minutes.toString().padStart(2, "0")}`;
-    }
-
-    let uptimeStr = "";
-
-    if (hasHours) {
-        uptimeStr = `${hours} hour`;
-        if (hours > 0) {
-            uptimeStr = `${uptimeStr}s`;
-        }
-    }
-    if (hasMins) {
-        if (hasHours) {
-            uptimeStr = `${uptimeStr},`;
-        }
-        uptimeStr = `${uptimeStr} ${minutes} minute`;
-        if (minutes > 0) {
-            uptimeStr = `${uptimeStr}s`;
-        }
-    }
-    if (hasSecs) {
-        if (hasHours || hasMins) {
-            uptimeStr = `${uptimeStr},`;
-        }
-        uptimeStr = `${uptimeStr} ${seconds} second`;
-        if (seconds > 0) {
-            uptimeStr = `${uptimeStr}s`;
+    if (simpleOutput === true) {
+        if (simpleOutput) {
+            return duration.shiftTo("hours", "minutes").toFormat("h:mm");
         }
     }
 
-    return uptimeStr;
+    const shiftedDuration = duration.shiftToAll();
+    const units = ["years", "months", "days", "hours", "minutes", "seconds"];
+    const nonZeroUnits = [];
+
+    for (const unit of units) {
+        if (shiftedDuration.get(unit) > 0) {
+            nonZeroUnits.push(unit);
+        }
+    }
+
+    return duration.shiftTo(...nonZeroUnits).toHuman({ listStyle: "narrow" });
 };
 
 const getTriggerIdFromTriggerData = (trigger) => {
@@ -139,32 +111,34 @@ const getUptime = async () => {
     }
 
     const startedDate = channelData.startDate;
-    const durationSecs = moment
-        .duration(moment().diff(moment(startedDate)))
-        .asSeconds();
-
-    return exports.formattedSeconds(durationSecs);
+    return exports.getDateDiffString(startedDate, new Date(), true);
 };
 
-const getDateDiffString = (date1, date2) => {
-    const b = moment(date1),
-        a = moment(date2),
+const getDateDiffString = (date1, date2, includeSeconds = false) => {
+    let b = DateTime.fromJSDate(date1);
+    const a = DateTime.fromJSDate(date2),
         intervals = ["years", "months", "days", "hours", "minutes"],
         out = [];
 
+    if (includeSeconds === true) {
+        intervals.push("seconds");
+    }
+
     for (let i = 0; i < intervals.length; i++) {
         const diff = a.diff(b, intervals[i]);
-        b.add(diff, intervals[i]);
+        const numericDiff = Math.trunc(diff.get(intervals[i]));
 
-        if (diff === 0) {
+        if (numericDiff === 0) {
             continue;
         }
 
+        b = b.plus(Duration.fromDurationLike({ [intervals[i]]: numericDiff }));
+
         let interval = intervals[i];
-        if (diff === 1) {
+        if (numericDiff === 1) {
             interval = interval.slice(0, -1);
         }
-        out.push(`${diff} ${interval}`);
+        out.push(`${numericDiff} ${interval}`);
     }
     if (out.length > 1) {
         const last = out[out.length - 1];
@@ -173,8 +147,8 @@ const getDateDiffString = (date1, date2) => {
     return out.length === 2 ? out.join(" ") : out.join(", ");
 };
 
-const capitalize = ([first, ...rest]) => {
-    return first.toUpperCase() + rest.join("").toLowerCase();
+const capitalize = (word) => {
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
 };
 
 const commafy = (number) => {

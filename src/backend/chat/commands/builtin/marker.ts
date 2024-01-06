@@ -1,12 +1,18 @@
-"use strict";
+import { SystemCommand } from "../../../../types/commands";
+import logger from "../../../logwrapper";
+import utils from "../../../utility";
+import accountAccess from "../../../common/account-access";
+import twitchApi from "../../../twitch-api/api";
+import chat from "../../twitch-chat";
 
-const twitchApi = require("../../../twitch-api/api");
-const accountAccess = require("../../../common/account-access");
-const chat = require("../../twitch-chat");
-const logger = require("../../../logwrapper");
-const utils = require("../../../utility");
-
-const model = {
+/**
+ * The `!marker` command
+ */
+export const MarkerSystemCommand: SystemCommand<{
+    successTemplate: string;
+    unableTemplate: string;
+    errorTemplate: string;
+}> = {
     definition: {
         id: "firebot:create-marker",
         name: "Create Stream Marker",
@@ -83,5 +89,3 @@ const model = {
         }
     }
 };
-
-module.exports = model;

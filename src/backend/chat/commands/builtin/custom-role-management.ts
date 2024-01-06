@@ -1,9 +1,11 @@
-"use strict";
+import { SystemCommand } from "../../../../types/commands";
+import customRoleManager from "../../../roles/custom-roles-manager";
+import chat from "../../twitch-chat";
 
-const customRoleManager = require("../../../roles/custom-roles-manager");
-const chat = require("../../twitch-chat");
-
-const model = {
+/**
+ * The `!role` command
+ */
+export const CustomRoleManagementSystemCommand: SystemCommand = {
     definition: {
         id: "firebot:role-management",
         name: "Custom Role Management",
@@ -48,10 +50,7 @@ const model = {
             }
         ]
     },
-    /**
-     * When the command is triggered
-     */
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
 
         const { args, triggeredArg } = event.userCommand;
 
@@ -88,7 +87,7 @@ const model = {
             case "list": {
                 if (args.length > 1) {
                     const username = args[1].replace("@", "");
-                    const roleNames = customRoleManager.getAllCustomRolesForViewer(username).map(r => r.name);
+                    const roleNames = customRoleManager.getAllCustomRolesForViewer(username).map((r) => r.name);
                     if (roleNames.length < 1) {
                         await chat.sendChatMessage(`${username} has no custom roles assigned.`);
                     } else {
@@ -96,7 +95,7 @@ const model = {
                     }
 
                 } else {
-                    const roleNames = customRoleManager.getCustomRoles().map(r => r.name);
+                    const roleNames = customRoleManager.getCustomRoles().map((r) => r.name);
                     if (roleNames.length < 1) {
                         await chat.sendChatMessage(`There are no custom roles available.`);
                     } else {
@@ -110,5 +109,3 @@ const model = {
         }
     }
 };
-
-module.exports = model;
