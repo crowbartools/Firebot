@@ -1,11 +1,18 @@
-"use strict";
+import { app } from "electron";
+import moment from "moment";
 
-const app = require('electron').app;
+import { SystemCommand } from "../../../../types/commands";
 
-const moment = require("moment");
 moment.locale(app.getLocale());
 
-const quotesManagement = {
+/**
+ * The `!quote` command
+ */
+export const QuotesManagementSystemCommand: SystemCommand<{
+    quoteDisplayTemplate: string;
+    quoteDateFormat: string;
+    useTTS: boolean;
+}> = {
     definition: {
         id: "firebot:quotesmanagement",
         name: "Quotes Management",
@@ -197,7 +204,7 @@ const quotesManagement = {
     /**
      * When the command is triggered
      */
-    onTriggerEvent: event => {
+    onTriggerEvent: (event) => {
         return new Promise(async (resolve) => {
             const quotesManager = require("../../../quotes/quotes-manager");
             const logger = require("../../../logwrapper");
@@ -379,9 +386,13 @@ const quotesManagement = {
                     return resolve();
                 }
                 case "searchdate": {
-                    const day = !isNaN(args[1]) ? parseInt(args[1]) : null;
-                    const month = !isNaN(args[2]) ? parseInt(args[2]) : null;
-                    const year = !isNaN(args[3]) ? parseInt(args[3]) : null;
+                    const rawDay = parseInt(args[1]);
+                    const rawMonth = parseInt(args[1]);
+                    const rawYear = parseInt(args[1]);
+
+                    const day = !isNaN(rawDay) ? rawDay : null;
+                    const month = !isNaN(rawMonth) ? rawMonth : null;
+                    const year = !isNaN(rawYear) ? rawYear : null;
 
                     if (day == null || month == null || day > 31 || day < 1 ||
                     month > 12 || month < 1) {
@@ -587,5 +598,3 @@ const quotesManagement = {
         });
     }
 };
-
-module.exports = quotesManagement;
