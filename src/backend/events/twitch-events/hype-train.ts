@@ -1,5 +1,20 @@
 import eventManager from "../EventManager";
 import { EventSubChannelHypeTrainContribution } from "@twurple/eventsub-base";
+import frontendCommunicator from "../../common/frontend-communicator";
+
+function sendStartProgressEventToFrontend(
+    eventType: "start" | "progress",
+    level: number,
+    goal: number,
+    progress: number,
+    endsAt: Date
+) {
+    frontendCommunicator.send(`hype-train:${eventType}`, {
+        level,
+        progressPercentage: Math.floor(progress / goal * 100),
+        endsAt
+    });
+}
 
 export function triggerHypeTrainStart(
     total: number,
@@ -21,6 +36,8 @@ export function triggerHypeTrainStart(
         lastContribution,
         topContributors
     });
+
+    sendStartProgressEventToFrontend("start", level, goal, progress, expiryDate);
 }
 
 export function triggerHypeTrainProgress(
@@ -43,6 +60,8 @@ export function triggerHypeTrainProgress(
         lastContribution,
         topContributors
     });
+
+    sendStartProgressEventToFrontend("progress", level, goal, progress, expiryDate);
 }
 
 export function triggerHypeTrainEnd(
@@ -61,4 +80,6 @@ export function triggerHypeTrainEnd(
         cooldownEndDate,
         topContributors
     });
+
+    frontendCommunicator.send("hype-train:end");
 }

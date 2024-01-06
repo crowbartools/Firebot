@@ -22,6 +22,7 @@ import { TwitchSubscriptionsApi } from "./resource/subscriptions";
 import { TwitchTeamsApi } from "./resource/teams";
 import { TwitchUsersApi } from "./resource/users";
 import { TwitchWhispersApi } from "./resource/whispers";
+import { TwitchHypeTrainApi } from "./resource/hypetrain";
 
 class TwitchApi {
     private _streamerClient: ApiClient;
@@ -103,6 +104,10 @@ class TwitchApi {
 
     get predictions() {
         return new TwitchPredictionsApi(this._streamerClient, this._botClient);
+    }
+
+    get hypeTrain() {
+        return new TwitchHypeTrainApi(this._streamerClient, this._botClient);
     }
 
     get streams() {

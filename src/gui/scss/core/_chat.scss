@@ -363,13 +363,31 @@
         display: flex;
         align-items: center;
         background: rgba(0, 0, 0, 0.25);
-        border-radius: 6px;
+        border-radius: 8px;
         padding: 7px;
         font-size: 17px;
     }
 }
 
-@media only screen and (max-width: 645px) {
+.hype-train-indicator {
+    .level-pill {
+        background: rgba(0, 0, 0, 0.25);
+        border-radius: 8px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2px 6px;
+        font-weight: bolder;
+        text-wrap: nowrap;
+    }
+    .time-left {
+        opacity: 0.5;
+        font-size: 12px;
+    }
+}
+
+@media only screen and (max-width: 700px) {
     .stream-info-stats-wrapper {
         display: none;
     }
