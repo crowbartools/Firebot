@@ -18,7 +18,7 @@ const callUrl = async (url: string) => {
         }
     } catch (error) {
         logger.warn(`error calling readApi url: ${url}`, error.message);
-        return error.message;
+        return null;
     }
 };
 
