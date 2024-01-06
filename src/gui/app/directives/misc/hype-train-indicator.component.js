@@ -30,10 +30,15 @@
 
                 function updateTimeLeftDisplay() {
 
-                    const startedAt = moment(hypeTrainService.endsAt);
+                    const endsAt = moment(hypeTrainService.endsAt);
                     const now = moment();
 
-                    const secondsLeft = now.diff(startedAt, "seconds");
+                    if (now.isAfter(endsAt)) {
+                        $scope.timeLeftDisplay = "0:00";
+                        return;
+                    }
+
+                    const secondsLeft = Math.abs(now.diff(endsAt, "seconds"));
 
                     const allSecs = Math.round(secondsLeft);
 
