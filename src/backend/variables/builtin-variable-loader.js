@@ -97,6 +97,7 @@ exports.loadReplaceVariables = () => {
         'effect-queue-name',
         'ensure-number',
         'eval-vars',
+        'extralife-donations',
         'extralife-info',
         'file-exists',
         'file-line-count',
