@@ -28,10 +28,11 @@ const model: EffectType<{
             </label>
         </eos-container>
 
-        <eos-container ng-hide="hasTimers || !effect.useTag" pad-top="true">
+        <eos-container ng-hide="hasTimers || effect.useTag" pad-top="true">
             <span class="muted">No Timers created yet! You can create them in the <b>Time-Based</b> tab.</span>
         </eos-container>
-        <eos-container ng-hide="hasTags || effect.useTag" pad-top="true">
+
+        <eos-container ng-hide="hasTags || !effect.useTag" pad-top="true">
             <span class="muted">No Timer Tags created yet! You can create them in the <b>Time-Based</b> tab.</span>
         </eos-container>
 
