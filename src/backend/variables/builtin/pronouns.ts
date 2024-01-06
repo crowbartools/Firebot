@@ -51,8 +51,6 @@ const PronounVariable: ReplaceVariable = {
             if (pronouns != null && userPronounData != null) {
                 try {
                     const pronoun = pronouns.find(p => p.name === userPronounData.pronoun_id);
-                    console.log(pronoun);
-
                     if (pronoun != null) {
                         if (pronounNumber === 0) {
                             return pronoun.display;
@@ -67,12 +65,10 @@ const PronounVariable: ReplaceVariable = {
                         if (pronounArray.length >= pronounNumber) {
                             return pronounArray[pronounNumber - 1];
                         }
-
                         return fallback;
                     }
 
                     return fallback;
-
                 } catch (err) {
                     logger.warn("error when parsing pronoun api", err);
                     return fallback;
