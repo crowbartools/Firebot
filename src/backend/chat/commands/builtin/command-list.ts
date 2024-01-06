@@ -1,6 +1,12 @@
 import { SystemCommand } from "../../../../types/commands";
 
-export const CommandListSystemCommand: SystemCommand = {
+/**
+ * The `!commands` command
+ */
+export const CommandListSystemCommand: SystemCommand<{
+    successTemplate: string;
+    noCommandsTemplate: string;
+}> = {
     definition: {
         id: "firebot:commandlist",
         name: "Command List",
@@ -32,7 +38,7 @@ export const CommandListSystemCommand: SystemCommand = {
             }
         }
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const cloudSync = require('../../../cloud-sync/profile-sync.js');
         const twitchChat = require("../../twitch-chat.js");
 

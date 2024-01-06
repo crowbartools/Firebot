@@ -1,10 +1,24 @@
-"use strict";
+import { SystemCommand } from "../../../../types/commands";
+import twitchApi from "../../../twitch-api/api";
+import chat from "../../twitch-chat";
+import raidMessageChecker from "../../moderation/raid-message-checker";
+import { TwitchCommandHelpers } from "../../twitch-commands/twitch-command-helpers";
 
-const twitchApi = require("../../../twitch-api/api");
-const chat = require("../../twitch-chat");
-const raidMessageChecker = require("../../moderation/raid-message-checker");
-
-const spamRaidProtection = {
+/**
+ * The `!spamraidprotection` command
+ */
+export const SpamRaidProtectionSystemCommand: SystemCommand<{
+    displayTemplate: string;
+    enableFollowerOnly: boolean;
+    enableFollowerOnlyDuration: string;
+    enableEmoteOnly: boolean;
+    enableSubscriberOnly: boolean;
+    enableSlowMode: boolean;
+    enableSlowModeDelay: number;
+    clearChat: boolean;
+    blockRaiders: boolean;
+    banRaiders: boolean;
+}> = {
     definition: {
         id: "firebot:spamRaidProtection",
         name: "Spam Raid Protection",
@@ -115,16 +129,14 @@ const spamRaidProtection = {
             }
         ]
     },
-    /**
-     * When the command is triggered
-     */
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const { commandOptions } = event;
         const args = event.userCommand.args;
 
         if (args.length === 0) {
             if (commandOptions.enableFollowerOnly) {
-                await twitchApi.chat.setFollowerOnlyMode(true, commandOptions.enableFollowerOnlyDuration);
+                const duration = TwitchCommandHelpers.getRawDurationInSeconds(commandOptions.enableFollowerOnlyDuration);
+                await twitchApi.chat.setFollowerOnlyMode(true, duration);
             }
 
             if (commandOptions.enableSubscriberOnly) {
@@ -162,5 +174,3 @@ const spamRaidProtection = {
         }
     }
 };
-
-module.exports = spamRaidProtection;

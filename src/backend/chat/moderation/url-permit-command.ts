@@ -7,82 +7,85 @@ class PermitManager {
     private readonly _permidCommandId: string = "firebot:moderation:url:permit";
     private _tempPermittedUsers: string[] = [];
 
-    private readonly _permitCommand: SystemCommand = {
-        definition: {
-            id: this._permidCommandId,
-            name: "Permit",
-            active: true,
-            trigger: "!permit",
-            usage: "[target]",
-            description: "Permits a viewer to post a URL for a set duration (see Moderation -> URL Moderation).",
-            autoDeleteTrigger: false,
-            scanWholeMessage: false,
-            hideCooldowns: true,
-            restrictionData: {
-                restrictions: [
-                    {
-                        id: "sys-cmd-mods-only-perms",
-                        type: "firebot:permissions",
-                        mode: "roles",
-                        roleIds: [
-                            "broadcaster",
-                            "mod"
-                        ]
-                    }
-                ]
-            },
-            options: {
-                permitDuration: {
-                    type: "number",
-                    title: "Duration in seconds",
-                    default: 30,
-                    description: "The amount of time the viewer has to post a URL after the !permit command is used."
+    private readonly _permitCommand: SystemCommand<{
+        permitDisplayTemplate: string;
+        permitDuration: number;
+    }> = {
+            definition: {
+                id: this._permidCommandId,
+                name: "Permit",
+                active: true,
+                trigger: "!permit",
+                usage: "[target]",
+                description: "Permits a viewer to post a URL for a set duration (see Moderation -> URL Moderation).",
+                autoDeleteTrigger: false,
+                scanWholeMessage: false,
+                hideCooldowns: true,
+                restrictionData: {
+                    restrictions: [
+                        {
+                            id: "sys-cmd-mods-only-perms",
+                            type: "firebot:permissions",
+                            mode: "roles",
+                            roleIds: [
+                                "broadcaster",
+                                "mod"
+                            ]
+                        }
+                    ]
                 },
-                permitDisplayTemplate: {
-                    type: "string",
-                    title: "Output Template",
-                    description: "The chat message shown when the permit command is used (leave empty for no message).",
-                    tip: "Variables: {target}, {duration}",
-                    default: `{target}, you have {duration} seconds to post your link in the chat.`,
-                    useTextArea: true
+                options: {
+                    permitDuration: {
+                        type: "number",
+                        title: "Duration in seconds",
+                        default: 30,
+                        description: "The amount of time the viewer has to post a URL after the !permit command is used."
+                    },
+                    permitDisplayTemplate: {
+                        type: "string",
+                        title: "Output Template",
+                        description: "The chat message shown when the permit command is used (leave empty for no message).",
+                        tip: "Variables: {target}, {duration}",
+                        default: `{target}, you have {duration} seconds to post your link in the chat.`,
+                        useTextArea: true
+                    }
                 }
+            },
+            onTriggerEvent: async (event) => {
+                const twitchChat = require("../twitch-chat");
+                const { command, commandOptions, userCommand } = event;
+                let { args } = userCommand;
+
+                if (command.scanWholeMessage) {
+                    args = args.filter(a => a !== command.trigger);
+                }
+
+                if (args.length !== 1) {
+                    await twitchChat.sendChatMessage("Incorrect command usage!");
+                    return;
+                }
+
+                const target = args[0].replace("@", "");
+                if (!target) {
+                    await twitchChat.sendChatMessage("Please specify a user to permit.");
+                    return;
+                }
+
+                this._tempPermittedUsers.push(target);
+                logger.debug(`URL moderation: ${target} has been temporary permitted to post a URL.`);
+
+                const message = commandOptions.permitDisplayTemplate.replace("{target}", target).replace("{duration}", commandOptions.permitDuration.toString());
+
+                if (message) {
+                    await twitchChat.sendChatMessage(message);
+                }
+
+                setTimeout(() => {
+                    this._tempPermittedUsers = this._tempPermittedUsers.filter(user => user !== target);
+                    logger.debug(`URL moderation: Temporary URL permission for ${target} expired.`);
+                }, commandOptions.permitDuration * 1000);
             }
-        },
-        onTriggerEvent: async (event) => {
-            const twitchChat = require("../twitch-chat");
-            const { command, commandOptions, userCommand } = event;
-            let { args } = userCommand;
-
-            if (command.scanWholeMessage) {
-                args = args.filter(a => a !== command.trigger);
-            }
-
-            if (args.length !== 1) {
-                await twitchChat.sendChatMessage("Incorrect command usage!");
-                return;
-            }
-
-            const target = args[0].replace("@", "");
-            if (!target) {
-                await twitchChat.sendChatMessage("Please specify a user to permit.");
-                return;
-            }
-
-            this._tempPermittedUsers.push(target);
-            logger.debug(`URL moderation: ${target} has been temporary permitted to post a URL.`);
-
-            const message = commandOptions.permitDisplayTemplate.replace("{target}", target).replace("{duration}", commandOptions.permitDuration);
-
-            if (message) {
-                await twitchChat.sendChatMessage(message);
-            }
-
-            setTimeout(() => {
-                this._tempPermittedUsers = this._tempPermittedUsers.filter(user => user !== target);
-                logger.debug(`URL moderation: Temporary URL permission for ${target} expired.`);
-            }, commandOptions.permitDuration * 1000);
-        }
-    };
+        };
 
     hasTemporaryPermission(username: string): boolean {
         return this._tempPermittedUsers.includes(username);

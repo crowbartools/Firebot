@@ -1,10 +1,14 @@
-"use strict";
+import { SystemCommand } from "../../../../../types/commands";
+import Steam from "./steam-access";
+import twitchChat from "../../../twitch-chat";
+import TwitchApi from "../../../../twitch-api/api";
 
-const Steam = require("./steam-access");
-const twitchChat = require("../../../twitch-chat");
-const TwitchApi = require("../../../../twitch-api/api");
-
-const steam = {
+/**
+ * The `!steam` command
+ */
+export const SteamSystemCommand: SystemCommand<{
+    outputTemplate: string;
+}> = {
     definition: {
         id: "firebot:steam",
         name: "Steam Search",
@@ -28,7 +32,7 @@ const steam = {
             }
         }
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const { commandOptions } = event;
         let gameName = event.userCommand.args.join(" ").trim();
         let message = "Couldn't find a Steam game using that name";
@@ -57,5 +61,3 @@ const steam = {
         await twitchChat.sendChatMessage(message);
     }
 };
-
-module.exports = steam;
