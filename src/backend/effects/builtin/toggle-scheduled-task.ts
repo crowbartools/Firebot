@@ -16,7 +16,6 @@ const model: EffectType<{
         categories: [EffectCategory.COMMON],
         dependencies: []
     },
-    //language=HTML
     optionsTemplate: `
         <eos-container>
             <p>This effect lets you automatically toggle the enabled status of Scheduled Effect Lists.</p>
