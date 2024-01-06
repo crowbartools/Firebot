@@ -137,6 +137,7 @@ exports.loadReplaceVariables = () => {
         'preset-list-arg',
         'previous-currency-amount',
         'profile-page-bytebin-token',
+        'pronouns',
         'quick-store',
         'quote',
         'quote-as-object',
