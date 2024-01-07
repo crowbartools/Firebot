@@ -8,6 +8,7 @@ import TwitchApi from "../../../../twitch-api/api";
  */
 export const SteamSystemCommand: SystemCommand<{
     outputTemplate: string;
+    defaultCurrency: string;
 }> = {
     definition: {
         id: "firebot:steam",
@@ -15,7 +16,7 @@ export const SteamSystemCommand: SystemCommand<{
         active: true,
         trigger: "!steam",
         usage: "[game name]",
-        description: "Displays information about a game on steam.",
+        description: "Displays information about a game on Steam.",
         autoDeleteTrigger: false,
         scanWholeMessage: false,
         cooldown: {
@@ -29,6 +30,12 @@ export const SteamSystemCommand: SystemCommand<{
                 tip: "Variables: {gameName}, {price}, {releaseDate}, {metaCriticScore}, {steamUrl}, {steamShortDescription}",
                 default: `{gameName} (Price: {price} - Released: {releaseDate} - Metacritic: {metaCriticScore}) {steamUrl}`,
                 useTextArea: true
+            },
+            defaultCurrency: {
+                type: "string",
+                title: "Default Currency (Optional)",
+                tip: "Examples: USD, EUR, CAD, GBP",
+                default: ""
             }
         }
     },
@@ -45,14 +52,14 @@ export const SteamSystemCommand: SystemCommand<{
         }
 
         if (gameName != null && gameName !== "") {
-            const gameDetails = await Steam.getSteamGameDetails(gameName);
+            const gameDetails = await Steam.getSteamGameDetails(gameName, commandOptions.defaultCurrency);
 
             if (gameDetails !== null) {
                 message = commandOptions.outputTemplate
                     .replace("{gameName}", gameDetails.name)
                     .replace("{price}", gameDetails.price || "Unknown")
                     .replace("{releaseDate}", gameDetails.releaseDate || "Unknown")
-                    .replace("{metaCriticScore}", gameDetails.score || "Unknown")
+                    .replace("{metaCriticScore}", gameDetails.score?.toString() || "Unknown")
                     .replace("{steamUrl}", gameDetails.url)
                     .replace("{steamShortDescription}", gameDetails.shortDescription || "Unknown");
             }

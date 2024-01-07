@@ -94,7 +94,7 @@
     "fflate": "^0.8.1",
     "form-data": "^4.0.0",
     "fs-extra": "^11.2.0",
-    "fuse.js": "^3.4.6",
+    "fuse.js": "^7.0.0",
     "glob": "^10.3.10",
     "he": "^1.2.0",
     "howler": "https://github.com/ebiggz/howler.js/tarball/master",
