@@ -10,10 +10,10 @@ async function cleanup() {
     handleProfileRename();
     handleProfileDeletion();
 
-    const eventManager = require("../../events/EventManager");
+    const eventManager = require("../../../events/EventManager");
     await eventManager.triggerEvent("firebot", "before-firebot-closed", {
-            username: "Firebot"
-        });
+        username: "Firebot"
+    });
 }
 
 export function willQuit(event: Event) {
