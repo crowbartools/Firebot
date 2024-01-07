@@ -393,8 +393,7 @@ module.exports = {
             id: "whisper",
             name: "Whisper",
             description: "When someone sends you or your bot account a whisper.",
-            cached: true,
-            cacheMetaKey: "sentTo",
+            cached: false,
             manualMetadata: {
                 username: "Firebot",
                 message: "Test whisper",
