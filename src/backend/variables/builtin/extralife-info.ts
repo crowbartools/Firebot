@@ -1,5 +1,4 @@
 import { ReplaceVariable } from "../../../types/variables";
-import { EffectTrigger } from "../../../shared/effect-constants";
 import { OutputDataType, VariableCategory } from "../../../shared/variable-constants";
 const { getParticipant } = require('extra-life-ts');
 

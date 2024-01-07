@@ -29,7 +29,7 @@ const ExtraLifeDonations: ReplaceVariable = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, participantID: number, numResults: number, sortName: string, returnJson: boolean) => {
-        return getParticipantDonations(participantID, { limit: numResults, orderBy: `${sortName} ASC` }).then((result) => {
+        return getParticipantDonations(participantID, { limit: numResults, orderBy: `${sortName} DESC` }).then((result) => {
             result = result.data;
 
             if (returnJson) {

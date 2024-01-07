@@ -23,39 +23,35 @@ const ExtraLifeIncentives: ReplaceVariable = {
         categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (_, participantID: number, numResults: number, rewardDesc: string, returnJson: boolean) => {
-        const filter = {
-            limit: numResults,
-            where: {
-                fieldName: 'isActive',
-                operator: '=',
-                term: true
-            }
-        };
-
-        if (rewardDesc != null) {
-            filter.where = {
-                fieldName: 'description',
-                operator: '=',
-                // @ts-ignore: term can be string or bool according to docs. Type error here.
-                term: rewardDesc
-            };
+    evaluator: async (_, participantID: number, numResults: number, rewardDesc: string, returnJson: boolean) => {
+        if (numResults == null) {
+            numResults = 1;
         }
 
-        return getParticipantIncentives(participantID, filter).then((result) => {
+        let extraLifeCall = await getParticipantIncentives(participantID, {orderBy: 'amount ASC'}).then((result) => {
             result = result.data;
 
-            if (returnJson) {
-                return JSON.stringify(result);
+            if (rewardDesc != null) {
+                result = result.filter(function (incentive) {
+                    return incentive.description === rewardDesc.trim();
+                });
             }
 
-            let incentiveString = "";
-            result.forEach(incentive => {
-                incentiveString += `$${incentive.amount} - ${incentive.description} (${incentive.quantity - incentive.quantityClaimed} / ${incentive.quantity}). `;
-            });
-
-            return incentiveString.trim();
+            return result;
         });
+
+        extraLifeCall = extraLifeCall.slice(0, numResults);
+
+        if (returnJson) {
+            return JSON.stringify(extraLifeCall);
+        }
+
+        let incentiveString = "";
+        extraLifeCall.forEach(incentive => {
+            incentiveString += `$${incentive.amount} - ${incentive.description} (${incentive.quantity - incentive.quantityClaimed} / ${incentive.quantity}). `;
+        });
+
+        return incentiveString.trim();
     }
 };
 
