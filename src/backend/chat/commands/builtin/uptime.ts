@@ -1,12 +1,13 @@
-"use strict";
-
-const util = require("../../../utility");
-const chat = require("../../twitch-chat");
+import { SystemCommand } from "../../../../types/commands";
+import util from "../../../utility";
+import chat from "../../twitch-chat";
 
 /**
- * The Uptime command
+ * The `!uptime` command
  */
-const model = {
+export const UptimeSystemCommand: SystemCommand<{
+    uptimeDisplayTemplate: string;
+}> = {
     definition: {
         id: "firebot:uptime",
         name: "Uptime",
@@ -30,15 +31,10 @@ const model = {
             }
         }
     },
-    /**
-     * When the command is triggered
-     */
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const uptimeString = await util.getUptime();
         const { commandOptions } = event;
         await chat.sendChatMessage(commandOptions.uptimeDisplayTemplate
             .replace("{uptime}", uptimeString));
     }
 };
-
-module.exports = model;

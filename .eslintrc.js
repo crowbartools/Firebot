@@ -62,6 +62,7 @@ module.exports = {
         "prefer-const": "warn",
 
         // Deviation from < https://eslint.org/docs/rules/#stylistic-issues >
+        "arrow-parens": ["warn", "always"], // Parentheses around arrow function parameters
         "array-bracket-spacing": "warn", // Spaces around array []'s
         "block-spacing": "warn", // {}'s must have whitespace around them
         "brace-style": "warn", // See: https://eslint.org/docs/rules/brace-style#require-brace-style-brace-style

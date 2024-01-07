@@ -1,14 +1,16 @@
-"use strict";
+import { DateTime } from "luxon";
 
-const twitchApi = require("../../../twitch-api/api");
-const moment = require("moment");
-const chat = require("../../twitch-chat");
-const util = require("../../../utility");
+import { SystemCommand } from "../../../../types/commands";
+import twitchApi from "../../../twitch-api/api";
+import chat from "../../twitch-chat";
+import util from "../../../utility";
 
 /**
- * The Uptime command
+ * The `!followage` command
  */
-const followage = {
+export const FollowAgeSystemCommand: SystemCommand<{
+    displayTemplate: string;
+}> = {
     definition: {
         id: "firebot:followage",
         name: "Follow Age",
@@ -32,33 +34,28 @@ const followage = {
             }
         }
     },
-    /**
-   * When the command is triggered
-   */
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const commandSender = event.userCommand.commandSender;
         const commandOptions = event.commandOptions;
 
-        const followDate = await twitchApi.users.getFollowDateForUser(commandSender);
+        const rawFollowDate = await twitchApi.users.getFollowDateForUser(commandSender);
 
-        if (followDate === null) {
+        if (rawFollowDate === null) {
             await chat.sendChatMessage(`${commandSender} is not following the channel.`);
         } else {
-            const followDateMoment = moment(followDate),
-                nowMoment = moment();
+            const followDate = DateTime.fromJSDate(rawFollowDate),
+                now = DateTime.utc();
 
             const followAgeString = util.getDateDiffString(
-                followDateMoment,
-                nowMoment
+                followDate.toJSDate(),
+                now.toJSDate()
             );
 
             await chat.sendChatMessage(commandOptions.displayTemplate
                 .replace("{user}", commandSender)
                 .replace("{followage}", followAgeString)
-                .replace("{followdate}", followDateMoment.format("DD MMMM YYYY HH:mm"))
+                .replace("{followdate}", followDate.toFormat("dd MMMM yyyy HH:mm"))
             );
         }
     }
 };
-
-module.exports = followage;
