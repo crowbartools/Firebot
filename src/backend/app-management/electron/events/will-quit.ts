@@ -9,6 +9,11 @@ async function cleanup() {
     } = require("../../../app-management/profile-tasks");
     handleProfileRename();
     handleProfileDeletion();
+
+    const eventManager = require("../../events/EventManager");
+    await eventManager.triggerEvent("firebot", "before-firebot-closed", {
+            username: "Firebot"
+        });
 }
 
 export function willQuit(event: Event) {
