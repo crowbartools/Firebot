@@ -103,6 +103,14 @@ class IntegrationManager extends EventEmitter {
         });
     }
 
+    getIntegrationUserSettings(integrationId) {
+        const int = this.getIntegrationById(integrationId);
+        if (int == null) {
+            return null;
+        }
+        return int.definition.userSettings;
+    }
+
     saveIntegrationUserSettings(id, settings, notifyInt = true) {
         try {
             const integrationDb = profileManager.getJsonDbInProfile("/integrations");
@@ -176,6 +184,11 @@ class IntegrationManager extends EventEmitter {
             logger.warn(error);
             return;
         }
+    }
+
+    getIntegrationAccountId(integrationId) {
+        const int = this.getIntegrationById(integrationId);
+        return int?.definition?.accountId;
     }
 
     saveIntegrationAccountId(integration, accountId) {
