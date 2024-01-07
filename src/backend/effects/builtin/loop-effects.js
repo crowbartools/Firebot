@@ -6,7 +6,7 @@ const logger = require("../../logwrapper");
 const { settings } = require("../../common/settings-access");
 const conditionManager = require("./conditional-effects/conditions/condition-manager");
 
-const wait = (ms) => new Promise(r => setTimeout(r, ms));
+const wait = ms => new Promise(r => setTimeout(r, ms));
 
 const model = {
     definition: {
@@ -94,8 +94,8 @@ const model = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: event => {
-        return new Promise(async resolve => {
+    onTriggerEvent: (event) => {
+        return new Promise(async (resolve) => {
 
             const { effect, trigger, outputs } = event;
             const effectList = effect.effectList;
@@ -146,7 +146,7 @@ const model = {
                     const result = await runEffects(i, null, lastOutputs);
                     lastOutputs = {
                         ...lastOutputs,
-                        ...result.outputs
+                        ...result?.outputs
                     };
                     if (result != null && result.success === true) {
                         if (result.stopEffectExecution) {
@@ -188,7 +188,7 @@ const model = {
                         const result = await runEffects(currentLoopCount, null, lastOutputs);
                         lastOutputs = {
                             ...lastOutputs,
-                            ...result.outputs
+                            ...result?.outputs
                         };
                         if (result != null && result.success === true) {
                             if (result.stopEffectExecution) {
@@ -228,7 +228,7 @@ const model = {
                     const result = await runEffects(currentLoopCount, item, lastOutputs);
                     lastOutputs = {
                         ...lastOutputs,
-                        ...result.outputs
+                        ...result?.outputs
                     };
                     if (result != null && result.success === true) {
                         if (result.stopEffectExecution) {
