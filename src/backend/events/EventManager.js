@@ -63,7 +63,7 @@ class EventManager extends EventEmitter {
         return events;
     }
 
-    triggerEvent(sourceId, eventId, meta, isManual = false, isRetrigger = false, isSimulation = false) {
+    async triggerEvent(sourceId, eventId, meta, isManual = false, isRetrigger = false, isSimulation = false) {
         const source = this.getEventSourceById(sourceId);
         const event = this.getEventById(sourceId, eventId);
         if (event == null) {
@@ -82,7 +82,7 @@ class EventManager extends EventEmitter {
             meta.username = accountAccess.getAccounts().streamer.username;
         }
 
-        eventsRouter.onEventTriggered(event, source, meta, isManual, isRetrigger, isSimulation);
+        const eventTriggeredPromise = eventsRouter.onEventTriggered(event, source, meta, isManual, isRetrigger, isSimulation);
 
         if (!isManual && !isRetrigger) {
             if (!eventsRouter.cacheActivityFeedEvent(source, event, meta)) {
@@ -96,6 +96,7 @@ class EventManager extends EventEmitter {
             }
         }
 
+        return eventTriggeredPromise;
     }
 }
 
