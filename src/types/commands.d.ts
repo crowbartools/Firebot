@@ -30,9 +30,12 @@ type RestrictionData = {
 export type SubCommand = {
     arg: string;
     usage: string;
+    id?: string;
+    description?: string;
     minArgs?: number;
     regex?: boolean;
     fallback?: boolean;
+    restrictionData?: RestrictionData;
 };
 
 export type CommandDefinition = {
@@ -85,8 +88,8 @@ export type CommandDefinition = {
 type SystemCommandOptionBase = {
     type: "string" | "number" | "boolean" | "enum";
     title: string;
-    description: string;
     default: unknown;
+    description?: string;
 }
 
 type SystemCommandStringOption = SystemCommandOptionBase & {
@@ -138,6 +141,7 @@ CommandDefinition,
 
 export type SystemCommand<OptionsModel = unknown> = {
     definition: CommandDefinition & {
+        minArgs?: number;
         options?: Record<keyof OptionsModel, SystemCommandOption>;
         hideCooldowns?: boolean;
     };

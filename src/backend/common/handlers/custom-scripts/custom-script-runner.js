@@ -25,7 +25,7 @@ const activeCustomScripts = {};
  * @param {Trigger} trigger
  */
 async function executeScript(scriptData, trigger, isStartupScript = false) {
-    const { scriptName, parameters } = scriptData;
+    const { scriptName, parameters, id} = scriptData;
 
     const scriptFilePath = getScriptPath(scriptName);
 
@@ -88,6 +88,10 @@ async function executeScript(scriptData, trigger, isStartupScript = false) {
     } catch (error) {
         logger.error(`Error while running script '${scriptName}'`, error);
         return;
+    }
+
+    if (isStartupScript) {
+        activeCustomScripts[id] = customScript;
     }
 
     if (response == null || typeof response !== "object") {
@@ -211,6 +215,8 @@ async function startUpScriptDeleted(startUpScriptConfig) {
     } catch (error) {
         logger.error(`Error when attempting to remove script from memory`, error);
     }
+
+    delete activeCustomScripts[startUpScriptConfig.id];
 }
 
 /**

@@ -4,8 +4,6 @@ const electron = require("electron");
 const winston = require("winston");
 const dataAccess = require("./common/data-access.js");
 const app = electron.app || firebotAppDetails;
-//const config = winston.config;
-//const Sentry = require("winston-raven-sentry");
 const fs = require("fs");
 
 const LOG_FOLDER = dataAccess.getPathInUserData("/logs");
@@ -25,16 +23,6 @@ if (debugMode === true) {
 if (!fs.existsSync(LOG_FOLDER)) {
     fs.mkdirSync(LOG_FOLDER);
 }
-
-/*let sentryTransport = new Sentry({
-    dsn:
-    "https://c4ba7c4b47814f8e88886ca08414aad4:a960630da816494fbe756e61116812e8@sentry.io/285894",
-    level: "error",
-    install: false,
-    tags: {
-        version: app.getVersion()
-    }
-});*/
 
 const pad = (subject, length, padText) => (`${subject}`).padStart(length, `${padText}`);
 
