@@ -74,5 +74,5 @@ export type EffectType<EffectModel = unknown, OverlayData = unknown> = {
 
 export interface EffectList {
     id: string;
-    list: unknown[];
+    list: any[];
 }

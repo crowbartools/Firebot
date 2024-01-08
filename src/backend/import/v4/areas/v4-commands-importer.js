@@ -3,7 +3,7 @@ const path = require("path");
 const logger = require("../../../logwrapper");
 const importHelpers = require("../import-helpers");
 
-const commandAccess = require("../../../chat/commands/command-access");
+const commandManager = require("../../../chat/commands/command-manager");
 
 const effectsMapper = require("../v4-effect-mapper");
 const permissionMapper = require("../v4-permission-mapper");
@@ -37,7 +37,7 @@ function mapCommands(v4Commands, activeStatus = true, incompatibilityWarnings) {
         const restrictionData = permissionMapper.mapV4Permissions(v4Command.permissionType, v4Command.permissions);
         v5Command.restrictionData = restrictionData;
 
-        commandAccess.saveImportedCustomCommand(v5Command);
+        commandManager.saveImportedCustomCommand(v5Command);
     }
 
 }
@@ -69,7 +69,7 @@ exports.run = async () => {
                 mapCommands(inactiveCommands, false, incompatibilityWarnings);
             }
 
-            commandAccess.triggerUiRefresh();
+            commandManager.triggerUiRefresh();
         }
     }
 

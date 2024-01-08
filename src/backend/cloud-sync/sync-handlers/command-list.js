@@ -1,6 +1,6 @@
 "use strict";
 
-const commandManager = require("../../chat/commands/CommandManager");
+const commandManager = require("../../chat/commands/command-manager");
 
 async function getCommandListForSync() {
     const allCommands = commandManager.getAllActiveCommands();

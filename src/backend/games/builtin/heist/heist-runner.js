@@ -2,7 +2,7 @@
 const moment = require("moment");
 const gameManager = require("../../game-manager");
 const twitchChat = require("../../../chat/twitch-chat");
-const commandManager = require("../../../chat/commands/CommandManager");
+const commandManager = require("../../../chat/commands/command-manager");
 const currencyDatabase = require("../../../database/currencyDatabase");
 const util = require("../../../utility");
 

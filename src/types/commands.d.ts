@@ -1,7 +1,7 @@
 import { FirebotChatMessage } from "./chat";
 import { EffectList } from "./effects";
 
-type CommandType = "system" | "custom";
+export type CommandType = "system" | "custom";
 
 type Cooldown = {
     /**
@@ -30,6 +30,7 @@ type RestrictionData = {
 export type SubCommand = {
     arg: string;
     usage: string;
+    active?: boolean;
     id?: string;
     description?: string;
     minArgs?: number;
@@ -39,14 +40,14 @@ export type SubCommand = {
 };
 
 export type CommandDefinition = {
-    id: string;
-    name: string;
-    description: string;
+    id?: string;
+    name?: string;
+    description?: string;
     type?: CommandType;
     createdBy?: string;
-    createdAt?: Date;
+    createdAt?: Date | string;
     lastEditBy?: string | undefined;
-    lastEditAt?: Date | undefined;
+    lastEditAt?: Date | string | undefined;
     /**
      * Describes how many times the command has been used in chat.
      */
@@ -55,6 +56,7 @@ export type CommandDefinition = {
     trigger: string;
     triggerIsRegex?: boolean | undefined;
     scanWholeMessage?: boolean | undefined;
+    aliases?: string[];
     usage?: string;
     /**
      * If the chat message that triggered the command should be deleted automatically.
@@ -139,12 +141,14 @@ CommandDefinition,
 | "simple"
 >;
 
+export type SystemCommandDefinition = CommandDefinition & {
+    minArgs?: number;
+    options?: Record<keyof OptionsModel, SystemCommandOption>;
+    hideCooldowns?: boolean;
+};
+
 export type SystemCommand<OptionsModel = unknown> = {
-    definition: CommandDefinition & {
-        minArgs?: number;
-        options?: Record<keyof OptionsModel, SystemCommandOption>;
-        hideCooldowns?: boolean;
-    };
+    definition: SystemCommandDefinition;
     onTriggerEvent: (
         event: {
             command: SystemCommand<OptionsModel>['definition'];

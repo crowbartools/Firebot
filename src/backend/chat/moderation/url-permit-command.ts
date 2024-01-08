@@ -1,6 +1,6 @@
 import { SystemCommand } from "../../../types/commands";
 import logger from "../../logwrapper";
-import commandManager from "../commands/CommandManager";
+import commandManager from "../commands/command-manager";
 import frontendCommunicator from "../../common/frontend-communicator";
 
 class PermitManager {

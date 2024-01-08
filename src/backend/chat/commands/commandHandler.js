@@ -13,7 +13,7 @@ const DEFAULT_COOLDOWN_MESSAGE = "This command is still on cooldown for: {timeLe
 const DEFAULT_RESTRICTION_MESSAGE = "Sorry, you cannot use this command because: {reason}";
 
 // commandaccess
-const commandManager = require("./CommandManager");
+const commandManager = require("./command-manager");
 
 // custom command executor
 const commandExecutor = require("./command-executor");
@@ -104,7 +104,7 @@ function updateCommandCount(command) {
         command.count = 0;
     }
     command.count++;
-    renderWindow.webContents.send("commandCountUpdate", {
+    renderWindow.webContents.send("command-count-update", {
         commandId: command.id,
         count: command.count
     });
@@ -584,7 +584,7 @@ ipcMain.on("commandManualTrigger", function(event, id) {
 });
 
 // Refresh command cooldown cache when changes happened on the front end
-ipcMain.on("refreshCommandCache", function() {
+ipcMain.on("refresh-command-cache", function() {
     flushCooldownCache();
 });
 

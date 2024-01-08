@@ -1,7 +1,6 @@
 "use strict";
 
-const frontendCommunicator = require("../../common/frontend-communicator");
-const commandManager = require("../../chat/commands/CommandManager");
+const commandManager = require("../../chat/commands/command-manager");
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 const chat = {
@@ -59,14 +58,14 @@ const chat = {
             $scope.effect.toggleType = "disable";
         }
     },
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.commandId == null) {
             errors.push("Please select a command.");
         }
         return errors;
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const { commandId, commandType, toggleType } = event.effect;
 
         if (commandType === "system") {
@@ -81,8 +80,6 @@ const chat = {
             systemCommand.active = toggleType === "toggle" ? !systemCommand.active : toggleType === "enable";
 
             commandManager.saveSystemCommandOverride(systemCommand);
-
-            frontendCommunicator.send("systemCommandsUpdated");
         } else if (commandType === "custom") {
             const customCommand = commandManager.getCustomCommandById(commandId);
 
@@ -94,8 +91,6 @@ const chat = {
             customCommand.active = toggleType === "toggle" ? !customCommand.active : toggleType === "enable";
 
             commandManager.saveCustomCommand(customCommand, "System", false);
-
-            frontendCommunicator.send("custom-commands-updated");
         }
     }
 };
