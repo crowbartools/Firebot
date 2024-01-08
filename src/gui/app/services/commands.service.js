@@ -62,9 +62,7 @@
                 service.commandsCache.customCommands = commands;
                 const cleanedCommands = JSON.parse(angular.toJson(commands));
 
-                backendCommunicator.send("save-all-custom-commands", {
-                    commands: cleanedCommands
-                });
+                backendCommunicator.send("save-all-custom-commands", cleanedCommands);
             };
 
             service.saveSystemCommandOverride = function(command) {

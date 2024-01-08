@@ -28,7 +28,7 @@
 
             $scope.filteredCommands = filterCommands();
 
-            $scope.getPermissionType = command => {
+            $scope.getPermissionType = (command) => {
 
                 const permissions = command.restrictionData && command.restrictionData.restrictions &&
                     command.restrictionData.restrictions.find(r => r.type === "firebot:permissions");
@@ -44,7 +44,7 @@
                 }
             };
 
-            $scope.getPermissionTooltip = command => {
+            $scope.getPermissionTooltip = (command) => {
 
                 const permissions = command.restrictionData && command.restrictionData.restrictions &&
                     command.restrictionData.restrictions.find(r => r.type === "firebot:permissions");
@@ -68,38 +68,36 @@
                 }
             };
 
-            $scope.manuallyTriggerCommand = id => {
+            $scope.manuallyTriggerCommand = (id) => {
                 listenerService.fireEvent(
                     listenerService.EventType.COMMAND_MANUAL_TRIGGER,
                     id
                 );
             };
 
-            $scope.toggleCustomCommandActiveState = command => {
+            $scope.toggleCustomCommandActiveState = (command) => {
                 if (command == null) {
                     return;
                 }
 
                 command.active = !command.active;
                 commandsService.saveCustomCommand(command);
-                commandsService.refreshCommands();
             };
 
-            $scope.deleteCustomCommand = command => {
+            $scope.deleteCustomCommand = (command) => {
                 utilityService.showConfirmationModal({
                     title: "Delete Command",
                     question: `Are you sure you want to delete the command '${command.trigger}'?`,
                     confirmLabel: "Delete",
                     confirmBtnType: "btn-danger"
-                }).then(confirmed => {
+                }).then((confirmed) => {
                     if (confirmed) {
                         commandsService.deleteCustomCommand(command);
-                        commandsService.refreshCommands();
                     }
                 });
             };
 
-            $scope.duplicateCustomCommand = command => {
+            $scope.duplicateCustomCommand = (command) => {
                 const copiedCommand = objectCopyHelper.copyObject("command", command);
 
                 // Make sure fallback ID is correct
@@ -112,7 +110,6 @@
                 }
 
                 commandsService.saveCustomCommand(copiedCommand);
-                commandsService.refreshCommands();
             };
 
             $scope.openAddOrEditCustomCommandModal = function(command) {
@@ -121,7 +118,7 @@
                     resolveObj: {
                         command: () => command
                     },
-                    closeCallback: resp => {
+                    closeCallback: (resp) => {
                         const action = resp.action,
                             command = resp.command;
 
@@ -134,9 +131,6 @@
                                 commandsService.deleteCustomCommand(command);
                                 break;
                         }
-
-                        // Refresh Commands
-                        commandsService.refreshCommands();
                     }
                 });
             };
@@ -166,7 +160,6 @@
                 }
 
                 commandsService.saveCustomCommand(command);
-                commandsService.refreshCommands();
             };
 
             $scope.clearEffectQueue = (command) => {
@@ -176,7 +169,7 @@
             $scope.getEffectQueueMenuOptions = (command) => {
                 const queues = effectQueuesService.getEffectQueues();
                 if (command.effects != null && queues != null && queues.length > 0) {
-                    const children = queues.map(q => {
+                    const children = queues.map((q) => {
                         const isSelected = command.effects.queue && command.effects.queue === q.id;
                         return {
                             html: `<a href><i class="${isSelected ? 'fas fa-check' : ''}" style="margin-right: ${isSelected ? '10' : '27'}px;"></i> ${q.name}</a>`,

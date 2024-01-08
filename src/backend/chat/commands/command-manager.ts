@@ -329,8 +329,12 @@ class CommandManager extends EventEmitter {
             commandDb.push(`/customCommands/${command.id}`, command);
         } catch (err) {}
 
-        this._commandCache.customCommands = this._commandCache.customCommands.filter(c => c.id !== command.id);
-        this._commandCache.customCommands.push(command);
+        const existingCommandIndex = this._commandCache.customCommands.findIndex(c => c.id === command.id);
+        if (existingCommandIndex === -1) {
+            this._commandCache.customCommands.push(command);
+        } else {
+            this._commandCache.customCommands[existingCommandIndex] = command;
+        }
 
         frontendCommunicator.send("custom-command-saved", command);
     }
