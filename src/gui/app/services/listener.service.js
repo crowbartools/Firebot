@@ -190,7 +190,7 @@
             RESTART_APP: "restartApp",
             DELETE_CHAT_MESSAGE: "deleteChatMessage",
             CHANGE_USER_MOD_STATUS: "changeUserModStatus",
-            COMMAND_MANUAL_TRIGGER: "commandManualTrigger"
+            COMMAND_MANUAL_TRIGGER: "command-manual-trigger"
         };
         service.EventType = EventType;
 

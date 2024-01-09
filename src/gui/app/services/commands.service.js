@@ -4,7 +4,8 @@
         .module("firebotApp")
         .factory("commandsService", function(
             logger,
-            backendCommunicator
+            backendCommunicator,
+            ngToast
         ) {
             const service = {};
 
@@ -115,6 +116,36 @@
                     command.count = data.count;
                     service.saveCustomCommand(command);
                 }
+            });
+
+            service.resetActiveCooldowns = () => {
+                backendCommunicator.send("reset-active-cooldowns");
+            };
+
+            backendCommunicator.on("active-cooldowns-reset", () => {
+                ngToast.create({
+                    className: "success",
+                    content: "All command cooldowns cleared successfully"
+                });
+            });
+
+            service.resetCooldownsForCommand = (id) => {
+                backendCommunicator.send("reset-cooldowns-for-single-command", id);
+            };
+
+            backendCommunicator.on("cooldowns-cleared-for-command", (id) => {
+                const command = service.commandsCache.customCommands.some(c => c.id === id)
+                    ? service.commandsCache.customCommands.find(c => c.id === id)
+                    : service.commandsCache.systemCommands.find(c => c.id === id);
+
+                const toastMessage = command != null
+                    ? `Cooldowns cleared for <strong>${command.trigger}</strong>`
+                    : `Cooldowns cleared`;
+
+                ngToast.create({
+                    className: "success",
+                    content: toastMessage
+                });
             });
 
             return service;

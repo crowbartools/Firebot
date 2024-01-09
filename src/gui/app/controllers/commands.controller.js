@@ -135,6 +135,14 @@
                 });
             };
 
+            $scope.resetActiveCooldowns = () => {
+                commandsService.resetActiveCooldowns();
+            };
+
+            $scope.resetCooldownsForCommand = (command) => {
+                commandsService.resetCooldownsForCommand(command.id);
+            };
+
             $scope.sortableOptions = {
                 handle: ".dragHandle",
                 'ui-preserve-size': true,
@@ -199,6 +207,13 @@
                         click: ($itemScope) => {
                             const command = $itemScope.command;
                             $scope.openAddOrEditCustomCommandModal(command);
+                        }
+                    },
+                    {
+                        html: `<a href ><i class="iconify" data-icon="mdi:clock-fast" style="margin-right: 10px;"></i> Clear Cooldowns</a>`,
+                        click: ($itemScope) => {
+                            const command = $itemScope.command;
+                            $scope.resetCooldownsForCommand(command);
                         }
                     },
                     {

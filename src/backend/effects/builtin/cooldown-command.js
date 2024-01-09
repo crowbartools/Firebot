@@ -202,7 +202,7 @@ const model = {
             commands.forEach(c => commandIds.push(c.id));
         }
 
-        const commandHandler = require("../../chat/commands/commandHandler");
+        const commandHandler = require("../../chat/commands/command-handler");
         commandIds.forEach(id => {
             if (effect.action === "Add") {
                 commandHandler.manuallyCooldownCommand({

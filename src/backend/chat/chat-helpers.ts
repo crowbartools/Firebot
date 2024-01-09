@@ -190,7 +190,7 @@ class FirebotChatHelpers {
             return [];
         }
         const { streamer, bot } = accountAccess.getAccounts();
-        return parts.flatMap(p => {
+        return parts.flatMap((p) => {
             if (p.type === "text" && p.text != null) {
 
                 if (firebotChatMessage.username !== streamer.displayName &&
@@ -307,7 +307,7 @@ class FirebotChatHelpers {
         }
 
         const words = text.split(" ");
-        return words.map(word => {
+        return words.map((word) => {
             let emoteId = null;
             let url = "";
             let animatedUrl = "";
@@ -341,6 +341,22 @@ class FirebotChatHelpers {
             }
             return part;
         });
+    }
+
+    buildBasicFirebotChatMessage(msgText: string, username: string): FirebotChatMessage {
+        return {
+            id: null,
+            userIdName: null,
+            userId: null,
+            username: username,
+            rawText: msgText,
+            whisper: false,
+            action: false,
+            tagged: false,
+            badges: [],
+            parts: [],
+            roles: []
+        };
     }
 
     async buildFirebotChatMessage(msg: ChatMessage, msgText: string, whisper = false, action = false) {
@@ -473,7 +489,7 @@ class FirebotChatHelpers {
             isBroadcaster: false,
             color: color,
             badges: badges ? this._getChatBadges(new Map(
-                badges.map(badge => {
+                badges.map((badge) => {
                     return [badge.id, badge.version];
                 })
             )) : [],

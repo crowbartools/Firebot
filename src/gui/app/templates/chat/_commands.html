@@ -56,13 +56,23 @@
           justify-content: space-between;
         "
       >
-        <button
-          ng-click="openAddOrEditCustomCommandModal()"
-          class="btn btn-primary hvr-icon-grow"
-        >
-          <i class="fas fa-plus-circle hvr-icon mr-2"></i>
-          New Custom Command
-        </button>
+        <div class="flex-row">
+          <button
+            ng-click="openAddOrEditCustomCommandModal()"
+            class="btn btn-primary hvr-icon-grow mr-4"
+          >
+            <i class="fas fa-plus-circle hvr-icon mr-2"></i>
+            New Custom Command
+          </button>
+  
+          <button
+            ng-click="resetActiveCooldowns()"
+            class="btn btn-default hvr-icon-grow"
+          >
+            <i class="iconify hvr-icon mr-2" data-icon="mdi:clock-fast"></i>
+            Clear All Cooldowns
+          </button>
+        </div>
 
         <div style="display: flex; flex-direction: row; align-items: center">
           <sort-tag-dropdown context="commands" class="mr-4" />

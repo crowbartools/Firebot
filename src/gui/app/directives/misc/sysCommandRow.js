@@ -170,6 +170,10 @@
                 });
             };
 
+            $ctrl.resetCooldownsForCommand = () => {
+                commandsService.resetCooldownsForCommand($ctrl.command.id);
+            };
+
             $ctrl.toggleCommandActiveState = function() {
                 $ctrl.command.active = !$ctrl.command.active;
                 commandsService.saveSystemCommandOverride($ctrl.command);
@@ -181,6 +185,12 @@
                         html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
                         click: function () {
                             $ctrl.openEditSystemCommandModal();
+                        }
+                    },
+                    {
+                        html: `<a href ><i class="iconify" data-icon="mdi:clock-fast" style="margin-right: 10px;"></i> Clear Cooldowns</a>`,
+                        click: () => {
+                            $ctrl.resetCooldownsForCommand();
                         }
                     },
                     {

@@ -7,7 +7,6 @@ import logger from "../../logwrapper";
 import profileManager from "../../common/profile-manager";
 import frontendCommunicator from "../../common/frontend-communicator";
 import accountAccess from "../../common/account-access";
-import commandHandler from "./commandHandler";
 
 interface SystemCommandOverrides {
     [overrideId: string]: SystemCommandDefinition
@@ -514,16 +513,10 @@ frontendCommunicator.on("delete-custom-command", (id: string) => {
 });
 
 frontendCommunicator.on("get-all-commands", () => {
-    commandHandler.flushCooldownCache();
     return {
         customCommands: manager.getAllCustomCommands(),
         systemCommands: manager.getAllSystemCommandDefinitions()
     };
-});
-
-frontendCommunicator.on("refresh-command-cache", () => {
-    manager.refreshCommandCache();
-    manager.triggerUiRefresh();
 });
 
 export = manager;

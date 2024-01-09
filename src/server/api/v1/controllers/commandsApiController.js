@@ -1,7 +1,7 @@
 "use strict";
 
 const commandManager = require("../../../../backend/chat/commands/command-manager");
-const commandHandler = require("../../../../backend/chat/commands/commandHandler");
+const commandHandler = require("../../../../backend/chat/commands/command-handler");
 
 function getCommandTriggerAndArgs(req) {
     const body = req.body || {};
