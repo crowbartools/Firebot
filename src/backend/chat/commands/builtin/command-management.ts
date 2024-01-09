@@ -2,6 +2,7 @@ import uuidv1 from "uuid/v1";
 
 import { SystemCommand } from "../../../../types/commands";
 import util from "../../../utility";
+import commandManager from "../command-manager";
 import frontendCommunicator from "../../../common/frontend-communicator";
 import customRolesManager from "../../../roles/custom-roles-manager";
 import teamRolesManager from "../../../roles/team-roles-manager";
@@ -213,7 +214,6 @@ export const CommandManagementSystemCommand: SystemCommand = {
         ]
     },
     onTriggerEvent: async (event) => {
-        const commandManager = require("../CommandManager");
         const chat = require("../../twitch-chat");
 
         const activeCustomCommands = commandManager
@@ -259,7 +259,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
                     return;
                 }
 
-                if (commandManager.triggerIsTaken(trigger)) {
+                if (commandManager.triggerIsTaken(trigger) === true) {
                     await chat.sendChatMessage(
                         `The trigger '${trigger}' is already in use, please try again.`
                     );
@@ -333,7 +333,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
                     command.effects.list.push(chatEffect);
                 }
 
-                commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
+                commandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
                 await chat.sendChatMessage(
                     `Updated '${trigger}' with response: ${remainingData}`
@@ -367,7 +367,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
 
                 command.count = newCount;
 
-                commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
+                commandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
                 await chat.sendChatMessage(
                     `Updated usage count for '${trigger}' to: ${newCount}`
@@ -394,7 +394,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
 
                 command.description = remainingData;
 
-                commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
+                commandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
                 await chat.sendChatMessage(
                     `Updated description for '${trigger}' to: ${remainingData}`
@@ -436,7 +436,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
                     global: globalCooldown
                 };
 
-                commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
+                commandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
                 await chat.sendChatMessage(
                     `Updated '${trigger}' with cooldowns: ${userCooldown}s (user), ${globalCooldown}s (global)`
@@ -481,7 +481,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
 
                 command.restrictionData = { restrictions: restrictions };
 
-                commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
+                commandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
                 await chat.sendChatMessage(`Updated '${trigger}' restrictions to: ${remainingData}`);
 
@@ -525,7 +525,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
 
                 command.active = newActiveStatus;
 
-                commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
+                commandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
                 frontendCommunicator.send("custom-commands-updated");
 
@@ -558,7 +558,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
                     command.aliases = [];
                 }
 
-                const aliasIndex = command.aliases.findIndex((a) =>
+                const aliasIndex = command.aliases.findIndex(a =>
                     a.toLowerCase() === alias.toLowerCase());
 
                 if (aliasIndex > -1) {
@@ -601,7 +601,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
                     command.aliases = [];
                 }
 
-                const aliasIndex = command.aliases.findIndex((a) =>
+                const aliasIndex = command.aliases.findIndex(a =>
                     a.toLowerCase() === alias.toLowerCase());
 
                 if (aliasIndex === -1) {

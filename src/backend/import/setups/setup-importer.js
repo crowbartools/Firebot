@@ -4,7 +4,7 @@ const logger = require("../../logwrapper");
 const profileManager = require("../../common/profile-manager");
 const frontendCommunicator = require("../../common/frontend-communicator");
 
-const commandAccess = require("../../chat/commands/command-access");
+const commandManager = require("../../chat/commands/command-manager");
 const countersManager = require("../../counters/counter-manager");
 const effectQueueManager = require("../../effects/queues/effect-queue-manager");
 const eventsAccess = require("../../events/events-access");
@@ -88,9 +88,9 @@ async function importSetup(setup, selectedCurrency) {
     // commands
     const commands = setup.components.commands || [];
     for (const command of commands) {
-        commandAccess.saveImportedCustomCommand(command);
+        commandManager.saveImportedCustomCommand(command);
     }
-    commandAccess.triggerUiRefresh();
+    commandManager.triggerUiRefresh();
 
     // counters
     const counters = setup.components.counters || [];
@@ -186,7 +186,7 @@ function removeSetupComponents(components) {
             componentList.forEach(({id, name}) => {
                 switch (componentType) {
                     case "commands":
-                        commandAccess.deleteCustomCommand(id);
+                        commandManager.deleteCustomCommand(id);
                         break;
                     case "counters":
                         countersManager.deleteItem(id);
@@ -223,7 +223,7 @@ function removeSetupComponents(components) {
                 }
             });
             if (componentType === "commands") {
-                commandAccess.triggerUiRefresh();
+                commandManager.triggerUiRefresh();
             } else if (componentType === "counters") {
                 countersManager.triggerUiRefresh();
             } else if (componentType === "effectQueues") {

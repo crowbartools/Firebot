@@ -197,12 +197,12 @@ const model = {
         }
 
         if (effect.sortTagId != null && effect.selectionType === "sortTag") {
-            const commandManager = require("../../chat/commands/CommandManager");
+            const commandManager = require("../../chat/commands/command-manager");
             const commands = commandManager.getAllCustomCommands().filter(c => c.sortTags.includes(effect.sortTagId));
             commands.forEach(c => commandIds.push(c.id));
         }
 
-        const commandHandler = require("../../chat/commands/commandHandler");
+        const commandHandler = require("../../chat/commands/command-handler");
         commandIds.forEach(id => {
             if (effect.action === "Add") {
                 commandHandler.manuallyCooldownCommand({

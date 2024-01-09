@@ -1,7 +1,7 @@
 "use strict";
 
 const { EffectCategory } = require('../../../shared/effect-constants');
-const commandHandler = require("../../chat/commands/commandHandler");
+const commandHandler = require("../../chat/commands/command-handler");
 
 /**
  * The Delay effect

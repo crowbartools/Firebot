@@ -1,7 +1,7 @@
 "use strict";
 
-const commandManager = require("../../../../backend/chat/commands/CommandManager");
-const commandHandler = require("../../../../backend/chat/commands/commandHandler");
+const commandManager = require("../../../../backend/chat/commands/command-manager");
+const commandHandler = require("../../../../backend/chat/commands/command-handler");
 
 function getCommandTriggerAndArgs(req) {
     const body = req.body || {};
@@ -41,7 +41,7 @@ exports.getSystemCommands = async function(req, res) {
         });
     }
 
-    const formattedSysCommands = sysCommands.map(command => {
+    const formattedSysCommands = sysCommands.map((command) => {
         return {
             id: command.id,
             trigger: command.trigger,
@@ -120,7 +120,7 @@ exports.getCustomCommands = async function(req, res) {
         });
     }
 
-    const formattedCustomCommands = customCommands.map(command => {
+    const formattedCustomCommands = customCommands.map((command) => {
         return {
             id: command.id,
             trigger: command.trigger,

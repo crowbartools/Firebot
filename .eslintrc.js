@@ -99,6 +99,7 @@ module.exports = {
         "no-useless-concat": "error", // no concat'ing literal strings
         "no-empty": ["error", {"allowEmptyCatch": true }],
         "no-debugger": "warn",
+        "no-extra-boolean-cast": "off",
         "no-warning-comments": ["warn", {"terms": ["todo", "to do", "fix", "fixme", "fix me", "need"], "location": "start"}], // warn about todo comments
 
         // typescript
