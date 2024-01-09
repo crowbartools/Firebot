@@ -184,7 +184,7 @@ const manager = new ReplaceVariableManager();
 
 frontendCommunicator.on("getReplaceVariableDefinitions", () => {
     logger.debug("got 'get all vars' request");
-    return Array.from(manager.getVariableHandlers().values()).map(v => v.definition);
+    return Array.from(manager.getVariableHandlers().values()).map(v => v.definition).filter(v => !v.hidden);
 });
 
 frontendCommunicator.onAsync("validateVariables", async eventData => {
