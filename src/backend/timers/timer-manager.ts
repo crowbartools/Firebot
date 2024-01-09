@@ -1,12 +1,13 @@
-import moment from "moment";
+import { DateTime } from "luxon";
+
+import { Timer, TimerIntervalTracker } from "../../types/timers";
+import { TriggerType } from "../common/EffectType";
+import JsonDbManager from "../database/json-db-manager";
 import logger from "../logwrapper";
 import connectionManager from "../common/connection-manager";
 import accountAccess from "../common/account-access";
-import { TriggerType } from "../common/EffectType";
 import effectRunner from "../common/effect-runner";
 import frontendCommunicator from "../common/frontend-communicator";
-import JsonDbManager from "../database/json-db-manager";
-import { Timer, TimerIntervalTracker } from "../../types/timers";
 
 class TimerManager extends JsonDbManager<Timer> {
     private timerIntervalCache = {};
@@ -67,7 +68,7 @@ class TimerManager extends JsonDbManager<Timer> {
                 .map(x => this.timerIntervalCache[x]);
         }
 
-        intervalsToClear.forEach(i => {
+        intervalsToClear.forEach((i) => {
             clearInterval(i.intervalId);
             delete this.timerIntervalCache[i.timerId];
         });
@@ -152,7 +153,7 @@ class TimerManager extends JsonDbManager<Timer> {
             waitingForChatLines: false,
             chatLinesSinceLastRunCount: 0,
             intervalId: intervalId,
-            startedAt: moment()
+            startedAt: DateTime.utc()
         };
 
         return intervalTracker;
