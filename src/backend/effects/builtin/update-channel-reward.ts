@@ -301,7 +301,7 @@ const model: EffectType<EffectMeta> = {
 
         const promises: Promise<SavedChannelReward>[] = [];
 
-        rewards.forEach(channelReward => {
+        rewards.forEach((channelReward) => {
             updateRewardEnabledOrPaused(effect, channelReward);
             promises.push(channelRewardsManager.saveChannelReward(channelReward, true));
         });

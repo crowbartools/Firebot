@@ -82,7 +82,7 @@ const model: EffectType<{
             $scope.effect.toggleType = "disable";
         }
     },
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (!effect.useTag && effect.scheduledTaskId == null) {
             errors.push("Please select a scheduled effect list.");
@@ -92,7 +92,7 @@ const model: EffectType<{
         }
         return errors;
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const { effect } = event;
         if (!effect.useTag) {
             const scheduledTask = scheduledTaskManager.getItem(effect.scheduledTaskId);
@@ -105,7 +105,7 @@ const model: EffectType<{
 
         const tasks = scheduledTaskManager.getAllItems().filter(task => task.sortTags.includes(effect.sortTagId));
 
-        tasks.forEach(scheduledTask => {
+        tasks.forEach((scheduledTask) => {
             scheduledTask.enabled = effect.toggleType === "toggle" ? !scheduledTask.enabled : effect.toggleType === "enable";
             scheduledTaskManager.saveScheduledTask(scheduledTask);
         });

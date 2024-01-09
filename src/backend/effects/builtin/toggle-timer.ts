@@ -82,7 +82,7 @@ const model: EffectType<{
             $scope.effect.toggleType = "disable";
         }
     },
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (!effect.useTag && effect.selectedTimerId == null) {
             errors.push("Please select a timer.");
@@ -92,7 +92,7 @@ const model: EffectType<{
         }
         return errors;
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const { effect } = event;
         if (!effect.useTag) {
             const timer = timerManager.getItem(effect.selectedTimerId);
@@ -103,7 +103,7 @@ const model: EffectType<{
             return true;
         }
         const timers = timerManager.getAllItems().filter(timer => timer.sortTags.includes(effect.sortTagId));
-        timers.forEach(timer => {
+        timers.forEach((timer) => {
             const isActive = effect.toggleType === "toggle" ? !timer.active : effect.toggleType === "enable";
             timerManager.updateTimerActiveStatus(timer.id, isActive);
         });
