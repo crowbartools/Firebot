@@ -1,6 +1,7 @@
 "use strict";
 const EventEmitter = require("events");
 const { extraLifePollService } = require("./extralife-poll");
+const extraLifeVariableLoader = require("./variables/extralife-variable-loader");
 
 const integrationDefinition = {
     id: "extralife",
@@ -51,6 +52,8 @@ class ExtraLifeIntegration extends EventEmitter {
                 }
             ]
         });
+
+        extraLifeVariableLoader.registerVariables();
 
         extraLifePollService.on("connected", () => {
             this.connected = true;
