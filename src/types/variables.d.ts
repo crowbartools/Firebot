@@ -20,6 +20,7 @@ export type ReplaceVariable = {
         categories?: VariableCategory[];
         triggers?: TriggersObject;
         possibleDataOutput: Array<"text" | "number">;
+        noUI?: boolean
     };
     evaluator(trigger: Trigger, ...args: unknown[]): PromiseLike<unknown> | unknown;
 };
