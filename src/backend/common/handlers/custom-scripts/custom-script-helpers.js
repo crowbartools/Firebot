@@ -100,7 +100,7 @@ function buildModules(scriptManifest) {
         effectRunner: require("../../effect-runner"),
         conditionManager: require("../../../effects/builtin/conditional-effects/conditions/condition-manager"),
         restrictionManager: require("../../../restrictions/restriction-manager"),
-        commandManager: require("../../../chat/commands/CommandManager"),
+        commandManager: require("../../../chat/commands/command-manager"),
         eventManager: require("../../../events/EventManager"),
         eventFilterManager: require("../../../events/filters/filter-manager"),
         replaceVariableManager: require("../../../variables/replace-variable-manager"),

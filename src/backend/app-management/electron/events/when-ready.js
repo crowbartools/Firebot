@@ -73,8 +73,8 @@ exports.whenReady = async () => {
     // load commands
     logger.debug("Loading sys commands...");
     windowManagement.updateSplashScreenStatus("Loading system commands...");
-    const { loadCommands } = require("../../../chat/commands/systemCommandLoader");
-    loadCommands();
+    const { loadSystemCommands } = require("../../../chat/commands/system-command-loader");
+    loadSystemCommands();
 
     // load event sources
     logger.debug("Loading event sources...");

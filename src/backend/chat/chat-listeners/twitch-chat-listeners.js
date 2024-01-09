@@ -1,7 +1,7 @@
 "use strict";
 
 const frontendCommunicator = require("../../common/frontend-communicator");
-const commandHandler = require("../commands/commandHandler");
+const commandHandler = require("../commands/command-handler");
 const chatHelpers = require("../chat-helpers");
 const activeUserHandler = require("./active-user-handler");
 const accountAccess = require("../../common/account-access");

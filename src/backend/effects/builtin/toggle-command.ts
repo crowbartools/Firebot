@@ -1,5 +1,4 @@
-import frontendCommunicator from "../../common/frontend-communicator";
-import commandManager from "../../chat/commands/CommandManager";
+import commandManager from "../../chat/commands/command-manager";
 import {EffectCategory} from "../../../shared/effect-constants";
 import {EffectType} from "../../../types/effects";
 
@@ -83,7 +82,7 @@ const effect: EffectType<{
             $scope.effect.toggleType = "disable";
         }
     },
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.commandType !== "tag" && effect.commandId == null) {
             errors.push("Please select a command.");
@@ -93,7 +92,7 @@ const effect: EffectType<{
         }
         return errors;
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const { commandId, commandType, toggleType, sortTagId } = event.effect;
 
         if (commandType === "system") {
@@ -108,8 +107,6 @@ const effect: EffectType<{
             systemCommand.active = toggleType === "toggle" ? !systemCommand.active : toggleType === "enable";
 
             commandManager.saveSystemCommandOverride(systemCommand);
-
-            frontendCommunicator.send("systemCommandsUpdated");
         } else if (commandType === "custom") {
             const customCommand = commandManager.getCustomCommandById(commandId);
 
@@ -120,9 +117,7 @@ const effect: EffectType<{
 
             customCommand.active = toggleType === "toggle" ? !customCommand.active : toggleType === "enable";
 
-            commandManager.saveCustomCommand(customCommand, "System", false);
-
-            frontendCommunicator.send("custom-commands-updated");
+            commandManager.saveCustomCommand(customCommand, "System");
         } else if (commandType === "tag") {
             let commands = commandManager.getAllCustomCommands();
             commands = commands.filter(c => c.sortTags.includes(sortTagId));
@@ -130,9 +125,8 @@ const effect: EffectType<{
             commands.forEach((customCommand) => {
                 customCommand.active = toggleType === "toggle" ? !customCommand.active : toggleType === "enable";
 
-                commandManager.saveCustomCommand(customCommand, "System", false);
+                commandManager.saveCustomCommand(customCommand, "System");
             });
-            frontendCommunicator.send("custom-commands-updated");
         }
     }
 };

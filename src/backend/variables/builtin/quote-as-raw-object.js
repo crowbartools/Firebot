@@ -2,7 +2,7 @@
 
 "use strict";
 const quoteManager = require("../../quotes/quotes-manager");
-const commandsManager = require("../../chat/commands/CommandManager");
+const commandManager = require("../../chat/commands/command-manager");
 const moment = require("moment");
 const logger = require("../../logwrapper");
 
@@ -30,7 +30,7 @@ const model = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async (_, quoteId, property) => {
-        const quoteCommand = commandsManager.getSystemCommandById("firebot:quotesmanagement");
+        const quoteCommand = commandManager.getSystemCommandById("firebot:quotesmanagement");
         const quoteDateFormat = quoteCommand.definition.options.quoteDateFormat.value;
         let quote;
         quoteId = parseInt(quoteId);

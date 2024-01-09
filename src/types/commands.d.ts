@@ -1,7 +1,7 @@
 import { FirebotChatMessage } from "./chat";
 import { EffectList } from "./effects";
 
-type CommandType = "system" | "custom";
+export type CommandType = "system" | "custom";
 
 type Cooldown = {
     /**
@@ -23,6 +23,7 @@ type RestrictionData = {
      * If a chat message should be sent when the restrictions are not met.
      */
     sendFailMessage?: boolean;
+    useCustomFailMessage?: boolean;
     failMessage?: string;
     restrictions: unknown[]; // TODO: change when restriction-manager and companion types are added
 };
@@ -30,23 +31,63 @@ type RestrictionData = {
 export type SubCommand = {
     arg: string;
     usage: string;
+    active?: boolean;
+    autoDeleteTrigger?: boolean | undefined;
     id?: string;
     description?: string;
     minArgs?: number;
     regex?: boolean;
     fallback?: boolean;
     restrictionData?: RestrictionData;
+    cooldown?: Cooldown | undefined;
 };
 
+type CommandOptionBase = {
+    type: "string" | "number" | "boolean" | "enum";
+    title: string;
+    default: unknown;
+    description?: string;
+    value?: unknown;
+}
+
+type CommandStringOption = CommandOptionBase & {
+    type: "string";
+    default: string;
+    tip?: string;
+    useTextArea?: boolean;
+    value?: string;
+};
+
+type CommandNumberOption = CommandOptionBase & {
+    type: "number";
+    default: number;
+    value?: number;
+};
+
+type CommandBooleanOption = CommandOptionBase & {
+    type: "boolean";
+    default: boolean;
+    value?: boolean;
+};
+
+type CommandEnumOption = CommandOptionBase & {
+    type: "enum";
+    options: string[];
+    default: string;
+    value?: string;
+};
+
+type CommandOption = CommandStringOption | CommandNumberOption | CommandBooleanOption | CommandEnumOption;
+
 export type CommandDefinition = {
-    id: string;
-    name: string;
-    description: string;
+    id?: string;
+    name?: string;
+    description?: string;
     type?: CommandType;
     createdBy?: string;
-    createdAt?: Date;
+    createdAt?: Date | string;
     lastEditBy?: string | undefined;
-    lastEditAt?: Date | undefined;
+    lastEditAt?: Date | string | undefined;
     /**
      * Describes how many times the command has been used in chat.
      */
@@ -55,6 +96,7 @@ export type CommandDefinition = {
     trigger: string;
     triggerIsRegex?: boolean | undefined;
     scanWholeMessage?: boolean | undefined;
+    aliases?: string[];
     usage?: string;
     /**
      * If the chat message that triggered the command should be deleted automatically.
@@ -70,12 +112,14 @@ export type CommandDefinition = {
     hidden?: boolean | undefined;
     ignoreStreamer?: boolean | undefined;
     ignoreBot?: boolean | undefined;
-    ignoreWhisper?: boolean | undefined;
+    ignoreWhispers?: boolean | undefined;
     /**
      * If a chat message should be sent when the command is tried to be used but
      * the cooldown is not yet over.
      */
     sendCooldownMessage?: boolean;
+    useCustomCooldownMessage?: boolean;
+    cooldownMessage?: string;
     baseCommandDescription?: string | undefined;
     sortTags?: string[];
     cooldown?: Cooldown | undefined;
@@ -83,45 +127,16 @@ export type CommandDefinition = {
     restrictionData?: RestrictionData;
     subCommands?: SubCommand[] | undefined;
     fallbackSubcommand?: SubCommand | undefined;
+    treatQuotedTextAsSingleArg?: boolean | undefined;
+    minArgs?: number;
+    options?: Record<keyof OptionsModel, CommandOption>;
 };
-
-type SystemCommandOptionBase = {
-    type: "string" | "number" | "boolean" | "enum";
-    title: string;
-    default: unknown;
-    description?: string;
-}
-
-type SystemCommandStringOption = SystemCommandOptionBase & {
-    type: "string";
-    default: string;
-    tip?: string;
-    useTextArea?: boolean;
-};
-
-type SystemCommandNumberOption = SystemCommandOptionBase & {
-    type: "number";
-    default: number;
-};
-
-type SystemCommandBooleanOption = SystemCommandOptionBase & {
-    type: "boolean";
-    default: boolean;
-};
-
-type SystemCommandEnumOption = SystemCommandOptionBase & {
-    type: "enum";
-    options: string[];
-    default: string;
-};
-
-type SystemCommandOption = SystemCommandStringOption | SystemCommandNumberOption | SystemCommandBooleanOption | SystemCommandEnumOption;
 
 type UserCommand = {
     trigger: string;
     args: string[];
-    triggeredSubcmd?: CommandDefinition;
-    isInvalidSubcommandTrigger: boolean;
+    triggeredSubcmd?: SubCommand;
+    isInvalidSubcommandTrigger?: boolean;
     triggeredArg?: string;
     subcommandId?: string;
     commandSender: string;
@@ -139,12 +154,12 @@ CommandDefinition,
 | "simple"
 >;
 
+export type SystemCommandDefinition = CommandDefinition & {
+    hideCooldowns?: boolean;
+};
+
 export type SystemCommand<OptionsModel = unknown> = {
-    definition: CommandDefinition & {
-        minArgs?: number;
-        options?: Record<keyof OptionsModel, SystemCommandOption>;
-        hideCooldowns?: boolean;
-    };
+    definition: SystemCommandDefinition;
     onTriggerEvent: (
         event: {
             command: SystemCommand<OptionsModel>['definition'];

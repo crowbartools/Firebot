@@ -3,7 +3,7 @@
 const { ipcMain } = require("electron");
 const logger = require("../logwrapper");
 const currencyDatabase = require("../database/currencyDatabase");
-const CommandManager = require("../chat/commands/CommandManager");
+const CommandManager = require("../chat/commands/command-manager");
 const twitchChat = require('../chat/twitch-chat');
 const moment = require("moment");
 const connectionManager = require("../common/connection-manager");
