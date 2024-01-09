@@ -301,7 +301,7 @@ class CommandManager extends EventEmitter {
      * @param command The `CommandDefinition` for the custom command
      * @param user The user who is creating/editing the custom command
      */
-    saveCustomCommand(command: CommandDefinition, user: string): void {
+    saveCustomCommand(command: CommandDefinition, user?: string): void {
         if (command.id == null || command.id === "") {
             // generate id for new command
             const uuidv1 = require("uuid/v1");

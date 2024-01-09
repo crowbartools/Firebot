@@ -1,7 +1,7 @@
 "use strict";
 
 const commandManager = require("../../../../backend/chat/commands/command-manager");
-const commandHandler = require("../../../../backend/chat/commands/command-handler");
+const commandRunner = require("../../../../backend/chat/commands/command-runner");
 
 function getCommandTriggerAndArgs(req) {
     const body = req.body || {};
@@ -96,7 +96,7 @@ exports.runSystemCommand = async function(req, res) {
     const { trigger, args } = getCommandTriggerAndArgs(req);
 
     try {
-        commandHandler.runSystemCommandFromEffect(sysCommandId, trigger, args);
+        commandRunner.runSystemCommandFromEffect(sysCommandId, trigger, args);
     } catch (e) {
         return res.status(500).send({
             status: "error",
@@ -175,7 +175,7 @@ exports.runCustomCommand = async function(req, res) {
     const { trigger, args } = getCommandTriggerAndArgs(req);
 
     try {
-        commandHandler.runCustomCommandFromEffect(customCommandId, trigger, args);
+        commandRunner.runCustomCommandFromEffect(customCommandId, trigger, args);
     } catch (e) {
         return res.status(500).send({
             status: "error",

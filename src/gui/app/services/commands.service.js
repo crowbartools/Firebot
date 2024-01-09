@@ -108,13 +108,11 @@
                 service.commandsCache.customCommands = service.commandsCache.customCommands.filter(c => c.id !== id);
             });
 
-            ipcRenderer.on("command-count-update", function(event, data) {
-                const command = service
-                    .getCustomCommands()
-                    .find(c => c.id === data.commandId);
+            backendCommunicator.on("command-count-update", ({commandId, count}) => {
+                const command = service.getCustomCommands().find(c => c.id === commandId);
+
                 if (command != null) {
-                    command.count = data.count;
-                    service.saveCustomCommand(command);
+                    command.count = count;
                 }
             });
 
