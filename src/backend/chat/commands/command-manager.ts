@@ -412,49 +412,28 @@ class CommandManager extends EventEmitter {
 
     /**
      * Refreshes the command cache
-     *
-     * @param retry The retry count. Default is `1`.
      */
-    refreshCommandCache(retry = 1): void {
-        /**
-         * FB: I've set a weird retry thing here because I ran into a rare issue where upon saving settings the app tried to
-         * save and get the same file at the same time which threw errors and caused the cache to get out
-         * of sync.
-         */
-
+    refreshCommandCache(): void {
         // Get commands file
         const commandsDb = this.getCommandsDb();
 
         if (commandsDb != null) {
-            if (retry <= 3) {
-                let cmdData: CommandCache;
-                try {
-                    cmdData = commandsDb.getData("/");
-                } catch (err) {
-                    logger.info(`Command cache update failed. Retrying. (Try ${retry}/3)`);
-                    retry += 1;
-                    this.refreshCommandCache(retry);
-                    return;
-                }
+            const cmdData: CommandCache = commandsDb.getData("/");
 
-                if (cmdData.systemCommandOverrides) {
-                    this._commandCache.systemCommandOverrides = cmdData.systemCommandOverrides;
-                }
-
-                if (cmdData.customCommands) {
-                    this._commandCache.customCommands = Object.values(
-                        cmdData.customCommands
-                    ).map((c) => {
-                        c.type = "custom";
-                        return c;
-                    });
-                }
-
-                logger.info("Updated Command cache.");
-
-            } else {
-                logger.error("Could not sync up command cache. Reconnect to try resyncing.");
+            if (cmdData.systemCommandOverrides) {
+                this._commandCache.systemCommandOverrides = cmdData.systemCommandOverrides;
             }
+
+            if (cmdData.customCommands) {
+                this._commandCache.customCommands = Object.values(
+                    cmdData.customCommands
+                ).map((c) => {
+                    c.type = "custom";
+                    return c;
+                });
+            }
+
+            logger.info("Updated Command cache.");
         }
     }
 

@@ -60,11 +60,11 @@ class CommandHandler {
     private buildCooldownCacheKey(commandId: string, subCommandId: string = null, username: string = null): string {
         const tokens = [commandId];
 
-        if (subCommandId != null && subCommandId !== "") {
+        if (!!subCommandId?.length) {
             tokens.push(subCommandId);
         }
 
-        if (username != null && username !== "") {
+        if (!!username?.length) {
             tokens.push(username);
         }
 
@@ -291,9 +291,11 @@ class CommandHandler {
     }
 
     private parseCommandTriggerAndArgs(trigger: string, rawMessage: string, scanWholeMessage = false, treatQuotedTextAsSingleArg = false): TriggerWithArgs {
-        let args = [], rawArgs = [];
+        let args = [];
 
         if (rawMessage != null) {
+            let rawArgs = [];
+
             if (treatQuotedTextAsSingleArg) {
                 // Get args
                 const quotedArgRegExp = /"([^"]+)"|(\S+)/g;
@@ -396,11 +398,7 @@ class CommandHandler {
                 for (const optionName of Object.keys(command.options)) {
                     const option = command.options[optionName];
                     if (option) {
-                        let value = option.value;
-                        if (value == null) {
-                            value = option.default;
-                        }
-                        commandOptions[optionName] = value;
+                        commandOptions[optionName] = option.value ?? option.default;
                     }
                 }
             }
