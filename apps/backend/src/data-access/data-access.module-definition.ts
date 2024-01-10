@@ -1,8 +1,6 @@
 import { ConfigurableModuleBuilder } from "@nestjs/common";
 
-export type DataAccessModuleOptions = FlatFileDataAccessOptions;
-export type FlatFileDataAccessOptions = {
-  type: "flatfile";
+export type DataAccessModuleOptions = {
   workingDirectoryPath: string;
   userDataPath: string;
   firebotDataPath: string;
@@ -22,10 +20,3 @@ export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN, ASYNC_OPTIONS_TYPE
       })
     )
     .build();
-
-
-export function isFlatFileOptions(
-  options: DataAccessModuleOptions
-): options is FlatFileDataAccessOptions {
-  return options.type === "flatfile";
-}

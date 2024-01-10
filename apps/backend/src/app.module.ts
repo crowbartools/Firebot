@@ -6,7 +6,6 @@ import { StreamingPlatformModule } from "./streaming-platform/streaming-platform
 import { RealTimeModule } from "./real-time/real-time.module";
 import { AuthModule } from "./auth/auth.module";
 import { ConfigModule, ConfigType } from "@nestjs/config";
-import { appConfigSchema } from "config/app-config.schema";
 import { AppConfig } from "config/app.config";
 import { DataAccessModule } from "data-access/data-access.module";
 
@@ -18,17 +17,20 @@ import { DataAccessModule } from "data-access/data-access.module";
     // }),
     ConfigModule.forRoot({
       isGlobal: true,
-      validationSchema: appConfigSchema,
-      load: [AppConfig]
+      ignoreEnvFile: true,
+      validationOptions: {
+        debug: true,
+      },
+      load: [AppConfig],
     }),
     DataAccessModule.forRootAsync({
       useFactory: (appConfig: ConfigType<typeof AppConfig>) => ({
-        type: "flatfile",
         workingDirectoryPath: appConfig.workingDirectoryPath,
         userDataPath: appConfig.userDataPath,
         firebotDataPath: appConfig.firebotDataPath,
         tempDataPath: appConfig.tempDataPath,
-      })
+      }),
+      inject: [AppConfig.KEY],
     }),
     AuthModule,
     RealTimeModule,

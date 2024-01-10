@@ -39,7 +39,9 @@ process.on('uncaughtException', async function (err) {
 
 (async () => {
 
-    backend = await backendStart();
+    backend = await backendStart({
+      USER_DATA_PATH: app.getPath("userData")
+    });
     if (backend == null) {
         console.error('failed to start backend');
         app.quit();
