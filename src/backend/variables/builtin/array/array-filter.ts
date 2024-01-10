@@ -17,14 +17,21 @@ const getPropertyAtPath = (subject: unknown, path: string) => {
 
 const fuzzyMatch = (value: unknown, match: unknown) : boolean => {
     if (value == null || value === '') {
-        return match == null || value === '';
+        return match == null || match === '';
     }
-    if (value === true || value === "true" || value === false || value === "false") {
+
+    const strValue = `${value}`.toLowerCase();
+    if (value === true || strValue === "true" || value === false || strValue === "false") {
         return match === true || match === "true" || match === false || match === "false";
     }
+
     if (Number.isInteger(Number(value))) {
-        return Number.isInteger(Number(match));
+        if (!Number.isInteger(Number(match))) {
+            return false;
+        }
+        return Number(value) === Number(match);
     }
+
     return value === match;
 };
 
@@ -62,7 +69,13 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (_, subject: string | unknown[], matcher, propertyPath: string = null, removeMatches: null | boolean | string = false) => {
+    evaluator: (
+        _: unknown,
+        subject: string | unknown[],
+        matcher: string,
+        propertyPath: string = null,
+        removeMatches: null | boolean | string = false
+    ) => {
         if (typeof subject === 'string' || subject instanceof String) {
             try {
                 subject = JSON.parse(`${subject}`);
@@ -80,6 +93,7 @@ const model : ReplaceVariable = {
         }
 
         removeMatches = removeMatches === true || removeMatches === 'true';
+
         if (propertyPath == null || propertyPath === 'null' || propertyPath === "") {
             return subject.filter(removeMatches
                 ? value => !fuzzyMatch(value, matcher)
