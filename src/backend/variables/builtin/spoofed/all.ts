@@ -1,14 +1,11 @@
-"use strict";
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-// Dummy variable - $ALL logic gets handled by the evaluator
-
-const { OutputDataType, VariableCategory } = require("../../../../shared/variable-constants");
-
-module.exports = {
+const model : ReplaceVariable = {
     definition: {
         handle: "ALL",
-        usage: "ALL[condition, condition, ...]",
         description: 'Returns true if all of the conditions are true. Only works within $if[]',
+        usage: "ALL[condition, condition, ...]",
         examples: [
             {
                 usage: 'ALL[a === a, b === b]',
@@ -16,6 +13,9 @@ module.exports = {
             }
         ],
         categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.ALL]
+        possibleDataOutput: [OutputDataType.BOOLEAN],
+        spoof: true
     }
 };
+
+export default model;

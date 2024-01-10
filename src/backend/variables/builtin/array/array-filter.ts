@@ -62,7 +62,7 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (_, subject: string | unknown[], matcher, propertyPath: string = null, removeMatches = false) => {
+    evaluator: (_, subject: string | unknown[], matcher, propertyPath: string = null, removeMatches: null | boolean | string = false) => {
         if (typeof subject === 'string' || subject instanceof String) {
             try {
                 subject = JSON.parse(`${subject}`);

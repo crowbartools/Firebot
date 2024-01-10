@@ -1,10 +1,7 @@
-"use strict";
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-// Dummy variable - $NALL logic gets handled by the evaluator
-
-const { OutputDataType, VariableCategory } = require("../../../../shared/variable-constants");
-
-module.exports = {
+const model : ReplaceVariable = {
     definition: {
         handle: "NALL",
         usage: "NALL[condition, condition, ...]",
@@ -16,6 +13,9 @@ module.exports = {
             }
         ],
         categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.ALL]
+        possibleDataOutput: [OutputDataType.BOOLEAN],
+        spoof: true
     }
 };
+
+export default model;

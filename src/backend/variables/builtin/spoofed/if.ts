@@ -1,10 +1,7 @@
-"use strict";
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-// Dummy variable - $if logic gets handled by the evaluator
-
-const { OutputDataType, VariableCategory } = require("../../../../shared/variable-constants");
-
-module.exports = {
+const model : ReplaceVariable = {
     definition: {
         handle: "if",
         usage: "if[condition, when_true, when_false]",
@@ -20,6 +17,9 @@ module.exports = {
             }
         ],
         categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.ALL],
+        spoof: true
     }
 };
+
+export default model;
