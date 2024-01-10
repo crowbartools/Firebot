@@ -6,7 +6,7 @@ const model : ReplaceVariable = {
     definition: {
         handle: "trimEnd",
         description: "Removes any whitespace from the end of input text.",
-        usage: "trim[text]",
+        usage: "trimEnd[text]",
         categories: [VariableCategory.TEXT],
         possibleDataOutput: [OutputDataType.TEXT]
     },

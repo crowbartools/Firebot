@@ -6,7 +6,7 @@ const model : ReplaceVariable = {
     definition: {
         handle: "trimStart",
         description: "Removes any whitespace from the beginning of input text.",
-        usage: "trim[text]",
+        usage: "trimStart[text]",
         categories: [VariableCategory.TEXT],
         possibleDataOutput: [OutputDataType.TEXT]
     },
