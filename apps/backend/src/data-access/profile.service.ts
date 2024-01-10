@@ -1,102 +1,107 @@
-// import { Injectable } from "@nestjs/common";
-// import { TypedEmitter } from "tiny-typed-emitter";
-// import { UserProfile } from "firebot-types"
+import { Inject, Injectable } from "@nestjs/common";
+import { TypedEmitter } from "tiny-typed-emitter";
+import { UserProfile } from "firebot-types"
+import { GlobalSettingsStore } from "data-access/global-settings-store";
+import sanitizeFilename from "sanitize-filename";
+import { v4 as uuid } from "uuid"
+import fs from "fs/promises";
+import { AppConfig } from "config/app.config";
+import { ConfigType } from "@nestjs/config";
+import path from "path";
 
-// @Injectable()
-// export class ProfileService extends TypedEmitter<{
-//   activeProfileChanged: (profile: UserProfile) => void;
-// }> {
-//   private profiles: UserProfile[];
+@Injectable()
+export class ProfileService extends TypedEmitter<{
+  activeProfileChanged: (profile: UserProfile) => void;
+}> {
+  constructor(
+    private readonly globalSettingsStore: GlobalSettingsStore, 
+    @Inject(AppConfig.KEY)
+    private readonly appConfig: ConfigType<typeof AppConfig>
+  ) {
+    super();
+  }
 
-//   constructor() {
-//     super();
-//     this.profiles = globalSettingsConfig.get("profiles");
+  get activeProfile() {
+    return this.globalSettingsStore.get("profiles").find(
+      (p) => p.id === this.globalSettingsStore.get("activeProfileId")
+    );
+  }
 
-//     if (!this.profiles.length) {
-//       this.addUserProfile("Default Profile");
-//     }
+  private setActiveProfile(profile: UserProfile) {
+    this.globalSettingsStore.set("activeProfileId", profile.id);
+    this.emit("activeProfileChanged", profile);
+  }
 
-//     communicator.register(
-//       "getActiveUserProfileId",
-//       async () => globalSettingsConfig.get("activeProfile") ?? ""
-//     );
-//   }
+  getUserProfiles() {
+    return this.globalSettingsStore.get("profiles");
+  }
 
-//   get activeProfile() {
-//     return this.profiles.find(
-//       (p) => p.id === globalSettingsConfig.get("activeProfile")
-//     );
-//   }
+  addUserProfile(name: string) {
+    name = sanitizeFilename(name);
+    const newProfile: UserProfile = {
+      id: uuid(),
+      name,
+    };
 
-//   @emitIpcEvent("activeProfileChanged")
-//   private setActiveProfile(profile: UserProfile) {
-//     globalSettingsConfig.set("activeProfile", profile.id);
-//     this.emit("activeProfileChanged", profile);
-//   }
+    const profiles = this.getUserProfiles();
+    if (!profiles.length) {
+      this.setActiveProfile(newProfile);
+    }
+    profiles.push(newProfile);
+    this.globalSettingsStore.set("profiles", profiles);
 
-//   getUserProfiles() {
-//     return this.profiles;
-//   }
+    return newProfile;
+  }
 
-//   addUserProfile(name: string) {
-//     name = sanitizeFilename(name);
-//     const newProfile: UserProfile = {
-//       id: uuid(),
-//       name,
-//     };
+  async renameProfile(id: string, newName: string) {
+    const profile = this.getUserProfiles().find((p) => p.id === id);
+    if (!profile) {
+      return new Error(`Profile ${id} doesn't exist`);
+    }
 
-//     ensureFirebotDataDirExistsSync(path.join(PROFILES_DIR, name));
+    newName = sanitizeFilename(newName);
+    const oldName = profile.name;
 
-//     if (!this.profiles.length) {
-//       this.setActiveProfile(newProfile);
-//     }
-//     this.profiles.push(newProfile);
-//     globalSettingsConfig.set("profiles", this.profiles);
-//     return newProfile;
-//   }
+    profile.name = newName;
 
-//   async renameProfile(id: string, newName: string) {
-//     const profile = this.profiles.find((p) => p.id === id);
-//     if (!profile) {
-//       return new Error(`Profile ${id} doesn't exist`);
-//     }
+    this.globalSettingsStore.set("profiles", this.getUserProfiles());
 
-//     newName = sanitizeFilename(newName);
-//     const oldName = profile.name;
+    const oldProfilePath = path.join(this.appConfig.firebotDataPath, "profiles", oldName);
+    const newProfilePath = path.join(
+      this.appConfig.firebotDataPath,
+      "profiles",
+      profile.name
+    );
 
-//     profile.name = newName;
+    await fs.rename(oldProfilePath, newProfilePath);
 
-//     globalSettingsConfig.set("profiles", this.profiles);
+    return newName;
+  }
 
-//     const oldProfilePath = getPathInFirebotData(
-//       path.join(PROFILES_DIR, oldName)
-//     );
-//     const newProfilePath = getPathInFirebotData(
-//       path.join(PROFILES_DIR, profile.name)
-//     );
+  async removeUserProfile(id: string) {
+    const profiles = this.getUserProfiles();
+    const index = profiles.findIndex((p) => p.id === id);
+    if (index > -1 && profiles.length > 1) {
+      const profile = profiles[index];
+      profiles.splice(index, 1);
+      this.globalSettingsStore.set("profiles", profiles);
+      const profilePath = path.join(
+        this.appConfig.firebotDataPath,
+        "profiles",
+        profile.name
+      );
+      await fs.rm(profilePath, {
+        recursive: true,
+        force: true,
+      });
+    }
+  }
 
-//     await fs.rename(oldProfilePath, newProfilePath);
-
-//     return newName;
-//   }
-
-//   async removeUserProfile(id: string) {
-//     const index = this.profiles.findIndex((p) => p.id === id);
-//     if (index > -1 && this.profiles.length > 1) {
-//       const profile = this.profiles[index];
-//       this.profiles.splice(index, 1);
-//       globalSettingsConfig.set("profiles", this.profiles);
-//       await fs.remove(
-//         getPathInFirebotData(path.join(PROFILES_DIR, profile.name))
-//       );
-//     }
-//   }
-
-//   switchToProfile(id: string) {
-//     const currentActiveProfileId = globalSettingsConfig.get("activeProfile");
-//     const profile = this.profiles.find((p) => p.id === id);
-//     if (currentActiveProfileId != id && !!profile) {
-//       this.setActiveProfile(profile);
-//     }
-//   }
-// }
+  switchToProfile(id: string) {
+    const currentActiveProfileId = this.globalSettingsStore.get("activeProfileId");
+    const profile = this.getUserProfiles().find((p) => p.id === id);
+    if (currentActiveProfileId != id && !!profile) {
+      this.setActiveProfile(profile);
+    }
+  }
+}

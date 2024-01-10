@@ -31,7 +31,9 @@
     "openid-client": "^5.6.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
+    "sanitize-filename": "^1.6.3",
     "tiny-typed-emitter": "^2.1.0",
+    "uuid": "^9.0.1",
     "ws": "^8.16.0"
   },
   "devDependencies": {
@@ -39,6 +41,7 @@
     "@nestjs/schematics": "^10.0.3",
     "@nestjs/testing": "^10.3.0",
     "@types/supertest": "^2.0.11",
+    "@types/uuid": "^9.0.7",
     "@types/ws": "^8.5.10",
     "eslint-config-custom": "*",
     "supertest": "^6.1.3",
