@@ -37,7 +37,6 @@ exports.loadReplaceVariables = () => {
         'cheer-bits',
         'cheer-message',
         'cheer-total-bits',
-        'commafy',
         'command-trigger',
         'convert-from-json',
         'convert-to-json',
@@ -190,7 +189,7 @@ exports.loadReplaceVariables = () => {
         'twitch/sub-count',
         'twitch/sub-points',
         'twitch/twitch-channel-url'
-    ].forEach(filename => {
+    ].forEach((filename) => {
         const definition = require(`./builtin/${filename}`);
         replaceVariableManager.registerReplaceVariable(definition);
     });
