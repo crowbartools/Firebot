@@ -1,10 +1,8 @@
-// Migration: done
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import { convertToString } from '../../../utility';
 
-'use strict';
-
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
-
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "scrambleText",
         usage: "scrambleText[text]",
@@ -12,8 +10,8 @@ const model = {
         categories: [VariableCategory.TEXT],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (_, text) => {
-        text = text.split('');
+    evaluator: (_: unknown, subject: unknown) : string => {
+        const text = convertToString(subject).split('');
 
         let result = '';
         while (text.length) {
@@ -26,4 +24,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export default model;

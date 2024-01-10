@@ -1,8 +1,8 @@
-"use strict";
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import { convertToString } from '../../../utility';
 
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
-
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "word",
         description: "Get a word at the specified position in a given sentence",
@@ -16,20 +16,24 @@ const model = {
         categories: [VariableCategory.TEXT],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (_, text, position) => {
-        if (text == null) {
+    evaluator: (_: unknown, subject: unknown, position: unknown) : string => {
+        if (subject == null) {
             return "[No text provided]";
         }
+        const text = convertToString(subject);
 
-        const index = parseInt(position);
-        if (isNaN(index)) {
+        let index : number;
+        if (position == null) {
+            position = 0;
+        } else if (!Number.isFinite(Number(position))) {
             return "[Position not number]";
+        } else {
+            index = Number(position);
         }
 
         const word = text.split(" ")[index - 1];
-
         return word || "[No word at position]";
     }
 };
 
-module.exports = model;
+export default model;

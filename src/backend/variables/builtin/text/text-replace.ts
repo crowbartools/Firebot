@@ -1,12 +1,8 @@
-// Migration: done
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import { convertToString, escapeRegExp } from '../../../utility';
 
-"use strict";
-
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
-
-const utils = require("../../utility");
-
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "replace",
         description: "Replaces a search value with a replacement value",
@@ -24,18 +20,28 @@ const model = {
         categories: [VariableCategory.TEXT],
         possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
     },
-    evaluator: (_, input, search, replacement = "", searchIsRegex = false, flags = "g") => {
-
+    evaluator: (
+        _: unknown,
+        input: unknown,
+        search: unknown,
+        replacement: unknown = "",
+        searchIsRegex: unknown = false,
+        flags: unknown = "g"
+    ) : string => {
         if (input == null) {
             return "[Missing input]";
         }
 
-        if (search == null) {
-            return input;
-        }
 
-        return input.replace(new RegExp(searchIsRegex ? search : utils.escapeRegExp(search), flags), replacement);
+        if (search == null) {
+            return <string>input;
+        }
+        return convertToString(input)
+            .replace(
+                new RegExp(searchIsRegex ? search : escapeRegExp(search), convertToString(flags)),
+                convertToString(replacement)
+            );
     }
 };
 
-module.exports = model;
+export default model;

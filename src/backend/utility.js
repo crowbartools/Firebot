@@ -27,6 +27,21 @@ const getNonGlobalUrlRegex = () => {
 };
 
 /**
+ * @param {*} subject
+ * @returns {string}
+ */
+const convertToString = (subject) => {
+    if (subject == null) {
+        return '';
+    }
+    if (typeof subject === 'string' || subject instanceof String) {
+        return `${subject}`;
+    }
+
+    return JSON.stringify(subject);
+};
+
+/**
  * Translates seconds into human readable format of seconds, minutes, hours, days, and years
  *
  * @param  {number} seconds The number of seconds to be processed
@@ -218,3 +233,4 @@ exports.shuffleArray = shuffleArray;
 exports.flattenArray = flattenArray;
 exports.jsonParse = jsonParse;
 exports.wait = wait;
+exports.convertToString = convertToString;
