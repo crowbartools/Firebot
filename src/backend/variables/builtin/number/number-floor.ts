@@ -11,7 +11,7 @@ const model : ReplaceVariable = {
     },
     evaluator: (_: unknown, subject: number | string) : number => {
         subject = Number(subject);
-        if (Number.isFinite(subject)) {
+        if (!Number.isFinite(subject)) {
             return 0;
         }
 
