@@ -17,7 +17,7 @@ const model : ReplaceVariable = {
                 return text.toUpperCase();
             }
             if (text.length > 1) {
-                return `${text[0].toUpperCase()}${text.slice(0).toLowerCase()}`;
+                return `${text[0].toUpperCase()}${text.slice(1).toLowerCase()}`;
             }
         }
         return '';
