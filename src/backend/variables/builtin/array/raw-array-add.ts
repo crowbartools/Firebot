@@ -16,7 +16,7 @@ const model : ReplaceVariable = {
             },
             {
                 usage: 'rawArrayAdd[array, 4, true]',
-                description: 'Retruns a new array with 4 added to the start of the raw array'
+                description: 'Returns a new array with 4 added to the start of the raw array'
             }
         ],
         categories: [VariableCategory.ADVANCED],
