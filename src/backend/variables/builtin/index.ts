@@ -1,7 +1,9 @@
 import arrayVariables from './array';
-import spoofed from './spoofed';
+import numberVariables from './number';
+import spoofedVariables from './spoofed';
 
 export default [
     ...arrayVariables,
-    ...spoofed
+    ...numberVariables,
+    ...spoofedVariables
 ];

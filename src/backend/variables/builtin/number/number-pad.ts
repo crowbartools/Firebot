@@ -1,17 +1,15 @@
-"use strict";
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
-
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "padNumber",
         description: "Pads the given number up to the specified number of decimal places.",
         usage: "padNumber[value, places]",
         categories: [VariableCategory.NUMBERS],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, value, places) => {
-        // because !value|!places would result in this condition being true for an input of 0
         const numValue = Number(value);
         const numPlaces = Number(places);
         if (
@@ -27,4 +25,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export default model;

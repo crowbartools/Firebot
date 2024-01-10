@@ -1,13 +1,10 @@
-// Migration: done
-
-"use strict";
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const mathjs = require('mathjs');
-const logger = require("../../logwrapper");
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
-const utils = require("../../utility");
+const logger = require("../../../logwrapper");
 
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "math",
         usage: "math[expression]",
@@ -15,14 +12,11 @@ const model = {
         categories: [VariableCategory.COMMON, VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
-    evaluator: async (trigger, exp) => {
-
-        // TODO(ebiggz, v5.3.2): remove this after a few versions to give users time to not needing to quote arguments to get validation to work
-        exp = await utils.populateStringWithTriggerData(exp, trigger);
+    evaluator: async (_: unknown, subject: string) => {
 
         let evaluation;
         try {
-            evaluation = mathjs.evaluate(exp);
+            evaluation = mathjs.evaluate(subject);
         } catch (err) {
             logger.warn("error parsing math expression", err);
             evaluation = -1;
@@ -36,8 +30,7 @@ const model = {
         }
         return evaluation != null ? evaluation : -1;
     },
-    argsCheck: (exp) => {
-
+    argsCheck: (exp: string) => {
         if (exp == null || exp.length < 1) {
             throw new SyntaxError("A math expression must be included!");
         }
@@ -46,4 +39,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export default model;
