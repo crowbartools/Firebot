@@ -28,7 +28,7 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
 
-    evaluator: (_: unknown, subject: string | Array<unknown>, item: unknown, prepend = false) : Array<unknown> => {
+    evaluator: (_: unknown, subject: string | Array<unknown>, item: unknown, prepend: boolean | string = false) : Array<unknown> => {
         if (typeof subject === 'string' || subject instanceof String) {
             try {
                 subject = JSON.parse(`${subject}`);
@@ -40,7 +40,7 @@ const model : ReplaceVariable = {
             return [item];
         }
 
-        if (prepend === true) {
+        if (prepend === true || prepend === "true") {
             return [item, ...subject];
         }
 
