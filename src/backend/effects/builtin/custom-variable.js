@@ -26,7 +26,9 @@ const fileWriter = {
         </eos-container>
 
         <eos-container header="Property Path (Optional)" pad-top="true">
-            <p class="muted">If the variable already has data saved in the form of an object or array, you can define a path (using dot notation) to a specific property or index to update with the above data. If nothing is provided, the entire variable is replaced. If there is no existing data and a property path is provided, nothing happens.</p>
+            <p class="muted">If the variable already has data saved in the form of an object or array, you can define a path (using dot notation) to a specific property or index to update with the above data.</p>
+            <p class="muted">If a property path is provided and there is no existing data in the variable, nothing happens.</p>
+            <p class="muted">If no property path is provided and the existing variable does NOT contain an array, the entire variable is replaced. If the existing variable contains an array and the new value is NOT an array, the new value will be appended to the array.</p>
             <eos-collapsable-panel show-label="Show examples" hide-label="Hide examples" hide-info-box="true">
                 <span>Examples:</span>
                 <ul>
@@ -58,14 +60,14 @@ const fileWriter = {
             backendCommunicator.fireEvent("show-variable-inspector");
         };
     },
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.name == null || effect.name === "") {
             errors.push("Please provide a variable name.");
         }
         return errors;
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const { effect } = event;
 
         customVariableManager.addCustomVariable(effect.name, effect.variableData, effect.ttl, effect.propertyPath);
