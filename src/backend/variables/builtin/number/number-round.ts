@@ -15,7 +15,7 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
-    evaluator: (_, subject: number | string, places) => {
+    evaluator: (_: unknown, subject: number | string, places: null | number | string) : number => {
         subject = Number(subject);
         if (Number.isNaN(subject)) {
             return 0;
@@ -26,7 +26,7 @@ const model : ReplaceVariable = {
             return Math.round(subject);
         }
 
-        return subject.toFixed(places);
+        return Number(subject.toFixed(places));
     }
 };
 

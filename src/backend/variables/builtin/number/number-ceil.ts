@@ -9,7 +9,7 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
-    evaluator: (_, subject: number | string) => {
+    evaluator: (_: unknown, subject: number | string) : number => {
         subject = Number(subject);
         if (Number.isFinite(subject)) {
             return 0;

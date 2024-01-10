@@ -9,14 +9,14 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (_, value, places) => {
+    evaluator: (_: unknown, value: string | number, places: string | number) : string => {
         const numValue = Number(value);
         const numPlaces = Number(places);
         if (
             value == null || value === "" || !Number.isFinite(numValue) ||
             places == null || places === "" || !Number.isFinite(numPlaces)
         ) {
-            return value;
+            return `${value}`;
         }
 
         const [integer, fraction] = `${numValue}.0`.split(/\./g);

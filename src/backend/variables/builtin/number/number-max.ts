@@ -9,7 +9,7 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
-    evaluator: (_, ...args: Array<string | number>) => {
+    evaluator: (_: unknown, ...args: Array<string | number>) : number => {
         const numArgs : number[] = args.map((value) => {
             value = Number(value);
             if (Number.isInteger(value)) {

@@ -12,13 +12,12 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.COMMON, VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
-    evaluator: async (_: unknown, subject: string) => {
-
+    evaluator: (_: unknown, subject: string) : number => {
         let evaluation;
         try {
             evaluation = mathjs.evaluate(subject);
         } catch (err) {
-            logger.warn("error parsing math expression", err);
+            logger.warn("error parsing math expression", err.message);
             evaluation = -1;
         }
         if (evaluation != null && typeof evaluation === "object") {
@@ -30,6 +29,7 @@ const model : ReplaceVariable = {
         }
         return evaluation != null ? evaluation : -1;
     },
+
     argsCheck: (exp: string) => {
         if (exp == null || exp.length < 1) {
             throw new SyntaxError("A math expression must be included!");

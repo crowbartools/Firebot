@@ -11,7 +11,7 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.COMMON, VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
-    evaluator: (_, min, max) => {
+    evaluator: (_: unknown, min: string | number, max: string | number) : number => {
         min = Number(min);
         max = Number(max);
         if (!Number.isFinite(min) || !Number.isFinite(max)) {
