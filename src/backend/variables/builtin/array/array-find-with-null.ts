@@ -6,9 +6,9 @@ import arrayFindIndex from "./array-find-index";
 
 const model : ReplaceVariable = {
     definition: {
-        handle: "arrayFind",
-        usage: "arrayFind[array, matcher, propertyPath]",
-        description: "Finds a matching element in the array or returns the text 'null'",
+        handle: "arrayFindWithNull",
+        usage: "arrayFindWithNull[array, matcher, propertyPath]",
+        description: "Finds a matching element in the array or returns a literal null",
         examples: [
             {
                 usage: 'arrayFind["[1,2,3]", 1]',
@@ -28,8 +28,7 @@ const model : ReplaceVariable = {
             }
         ],
         categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER],
-        hidden: true
+        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
     },
 
     evaluator: (_: Trigger, subject: string | unknown[], matcher, propertyPath : string = null) => {
