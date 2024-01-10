@@ -43,7 +43,7 @@ class ReplaceVariableManager extends EventEmitter {
 
     registerReplaceVariable(variable) {
         if (this._registeredVariableHandlers.has(variable.definition.handle)) {
-            throw new TypeError("A variable with this handle already exists.");
+            throw new TypeError(`A variable with the handle ${variable.definition.handle} already exists.`);
         }
         this._registeredVariableHandlers.set(
             variable.definition.handle,
