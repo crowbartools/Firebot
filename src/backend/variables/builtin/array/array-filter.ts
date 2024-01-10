@@ -25,8 +25,8 @@ const fuzzyMatch = (value: unknown, match: unknown) : boolean => {
         return match === true || match === "true" || match === false || match === "false";
     }
 
-    if (Number.isInteger(Number(value))) {
-        if (!Number.isInteger(Number(match))) {
+    if (Number.isFinite(Number(value))) {
+        if (!Number.isFinite(Number(match))) {
             return false;
         }
         return Number(value) === Number(match);
