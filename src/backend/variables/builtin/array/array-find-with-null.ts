@@ -11,19 +11,19 @@ const model : ReplaceVariable = {
         description: "Finds a matching element in the array or returns a literal null",
         examples: [
             {
-                usage: 'arrayFind["[1,2,3]", 1]',
+                usage: 'arrayFindWithNull["[1,2,3]", 1]',
                 description: "Finds 1 in the array"
             },
             {
-                usage: 'arrayFind["[{\\"username\\": \\"ebiggz\\"},{\\"username\\": \\"MageEnclave\\"}]", ebiggz, username]',
+                usage: 'arrayFindWithNull["[{\\"username\\": \\"ebiggz\\"},{\\"username\\": \\"MageEnclave\\"}]", ebiggz, username]',
                 description: 'Finds object with username of "ebiggz"'
             },
             {
-                usage: 'arrayFind[rawArray, value]',
+                usage: 'arrayFindWithNull[rawArray, value]',
                 description: 'Searches each item in the array for "value" and returns the first matched item'
             },
             {
-                usage: 'arrayFind[rawArray, value, key]',
+                usage: 'arrayFindWithNull[rawArray, value, key]',
                 description: 'Searches each item in the array for an item that has a "key" property that equals "value"'
             }
         ],
@@ -36,16 +36,16 @@ const model : ReplaceVariable = {
             try {
                 subject = JSON.parse(`${subject}`);
             } catch (ignore) {
-                return "null";
+                return null;
             }
         }
         if (!Array.isArray(subject)) {
-            return "null";
+            return null;
         }
 
         const index = <number>arrayFindIndex.evaluator(_, subject, matcher, propertyPath);
         if (index == null) {
-            return "null";
+            return null;
         }
         return subject[index];
     }
