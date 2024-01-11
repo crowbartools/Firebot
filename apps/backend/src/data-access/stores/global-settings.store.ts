@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { ConfigType } from "@nestjs/config";
 import { AppConfig } from "config/app.config";
-import { FlatFileDataStore } from "data-access/flatfile-store";
+import { BaseDataStore } from "data-access/stores/base-store";
 import { UserProfile } from "firebot-types";
 import path from "path";
 
@@ -11,7 +11,7 @@ type GlobalSettings = {
 }
 
 @Injectable()
-export class GlobalSettingsStore extends FlatFileDataStore<GlobalSettings> {
+export class GlobalSettingsStore extends BaseDataStore<GlobalSettings> {
   constructor(
     @Inject(AppConfig.KEY)
     private appConfig: ConfigType<typeof AppConfig>

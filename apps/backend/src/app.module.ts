@@ -18,9 +18,6 @@ import { DataAccessModule } from "data-access/data-access.module";
     ConfigModule.forRoot({
       isGlobal: true,
       ignoreEnvFile: true,
-      validationOptions: {
-        debug: true,
-      },
       load: [AppConfig],
     }),
     DataAccessModule.forRootAsync({

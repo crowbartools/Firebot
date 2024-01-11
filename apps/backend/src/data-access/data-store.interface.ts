@@ -3,5 +3,5 @@ export interface DataStore<T> {
 
   set<K extends keyof T, V extends T[K]>(key: K, value: V): void;
 
-  load(): void;
+  load(filePath: string): void;
 }

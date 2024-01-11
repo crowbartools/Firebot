@@ -1,6 +1,6 @@
 import { DataAccessModuleOptions } from "data-access/data-access.module-definition";
 import { ensureFirebotDataDirExists } from "data-access/file-system-helpers";
-import { GlobalSettingsStore } from "data-access/global-settings-store";
+import { GlobalSettingsStore } from "data-access/stores/global-settings.store";
 import path from "path";
 
  export async function ensureFirebotDirectoriesExist(

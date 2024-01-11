@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { TypedEmitter } from "tiny-typed-emitter";
 import { UserProfile } from "firebot-types"
-import { GlobalSettingsStore } from "data-access/global-settings-store";
+import { GlobalSettingsStore } from "data-access/stores/global-settings.store";
 import sanitizeFilename from "sanitize-filename";
 import { v4 as uuid } from "uuid"
 import fs from "fs/promises";
@@ -21,7 +21,7 @@ export class ProfileService extends TypedEmitter<{
     super();
   }
 
-  get activeProfile() {
+  getActiveProfile() {
     return this.globalSettingsStore.get("profiles").find(
       (p) => p.id === this.globalSettingsStore.get("activeProfileId")
     );
