@@ -1,4 +1,5 @@
-import { Moment } from "moment";
+import { DateTime } from "luxon";
+
 import { EffectList } from "./effects";
 
 export type Timer = {
@@ -20,7 +21,7 @@ export type TimerIntervalTracker = {
     waitingForChatLines: boolean;
     chatLinesSinceLastRunCount: number;
     intervalId: number | NodeJS.Timeout;
-    startedAt: Moment;
+    startedAt: DateTime;
 };
 
 export type ScheduledTask = {

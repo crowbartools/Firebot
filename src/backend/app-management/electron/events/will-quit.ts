@@ -1,7 +1,5 @@
 import { Event, app } from "electron";
 
-let hasCleanedUp = false;
-
 async function cleanup() {
     const {
         handleProfileDeletion,
@@ -16,19 +14,18 @@ async function cleanup() {
     });
 }
 
-export function willQuit(event: Event) {
+export async function willQuit(event: Event) {
     const logger = require("../../../logwrapper");
 
-    if (!hasCleanedUp) {
-        event.preventDefault();
-        logger.debug("Will quit triggered, doing clean up...");
-        cleanup().then(() => {
-            hasCleanedUp = true;
-            logger.debug("...clean up complete");
-            app.quit();
-        });
-        return;
-    }
+    logger.debug("Will quit event triggered");
 
-    logger.debug("App quitting");
+    event.preventDefault();
+
+    logger.debug("Doing clean up...");
+
+    await cleanup();
+
+    logger.debug("...clean up complete. Exiting app");
+
+    app.exit();
 }
