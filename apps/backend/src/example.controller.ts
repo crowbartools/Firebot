@@ -1,6 +1,9 @@
-import { Controller, Get, Req } from "@nestjs/common";
+import { Get, Req } from "@nestjs/common";
+import { FirebotController } from "misc/firebot-controller.decorator";
 
-@Controller("example")
+@FirebotController({
+  path: "example",
+})
 export class ExampleController {
   @Get()
   async getHelloWorld(@Req() request: any) {

@@ -21,6 +21,7 @@ import { DataAccessModule } from "data-access/data-access.module";
       load: [AppConfig],
     }),
     DataAccessModule.forRootAsync({
+      isGlobal: true,
       useFactory: (appConfig: ConfigType<typeof AppConfig>) => ({
         workingDirectoryPath: appConfig.workingDirectoryPath,
         userDataPath: appConfig.userDataPath,

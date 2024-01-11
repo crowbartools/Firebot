@@ -1,10 +1,10 @@
-import { Module } from "@nestjs/common";
+import { Global, Module } from "@nestjs/common";
 import { AuthService } from "./auth.service";
-import { DataAccessModule } from "data-access/data-access.module";
 import { AuthController } from "auth/auth.controller";
 
+@Global()
 @Module({
-  imports: [DataAccessModule],
+  imports: [],
   controllers: [AuthController],
   providers: [AuthService],
   exports: [AuthService],

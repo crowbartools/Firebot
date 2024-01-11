@@ -10,7 +10,7 @@ export class FirebotAuthGuard implements CanActivate {
     context: ExecutionContext
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest<FastifyRequest>();
-    const authToken = request.headers["auth"];
+    const authToken = request.cookies["auth"];
     return this.authService.authToken === authToken;
   }
 }
