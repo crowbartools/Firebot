@@ -4,9 +4,11 @@ import { ensureFirebotDirectoriesExist } from "data-access/ensure-directories";
 import { ProfileService } from "data-access/profile.service";
 import { GlobalSettingsStore } from "data-access/stores/global-settings.store";
 import { ProfileSettingsStore } from "data-access/stores/profile-settings.store";
+import { StreamingPlatformAuthStore } from "data-access/stores/streaming-platform-auth.store";
 
 const profileStores = [
-  ProfileSettingsStore
+  ProfileSettingsStore,
+  StreamingPlatformAuthStore,
 ];
 
 @Global()
@@ -26,7 +28,7 @@ const profileStores = [
     ProfileService,
     ...profileStores,
   ],
-  exports: [],
+  exports: [...profileStores],
   imports: [],
 })
 export class DataAccessModule extends ConfigurableModuleClass {}

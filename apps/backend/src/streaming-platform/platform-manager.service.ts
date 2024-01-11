@@ -19,4 +19,8 @@ export class PlatformManagerService {
     getPlatform(id: string): StreamingPlatform | void {
         return this.platforms.find((p) => p.id === id);
     }
+
+    getPlatforms(): StreamingPlatform[] {
+        return this.platforms;
+    }
 }
