@@ -9,6 +9,10 @@ const VIEWLIST_BOTS_URL = "https://api.twitchinsights.net/v1/bots/all";
 let viewerlistBotMap = {};
 
 const cacheViewerListBots = async () => {
+    if (viewerlistBotMap != null && Object.keys(viewerlistBotMap).length > 0) {
+        return;
+    }
+
     try {
         const responseData = (await axios.get(VIEWLIST_BOTS_URL)).data;
         if (responseData.bots) {

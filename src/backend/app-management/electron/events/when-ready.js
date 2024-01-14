@@ -123,7 +123,7 @@ exports.whenReady = async () => {
 
     windowManagement.updateSplashScreenStatus("Loading known bot list...");
     const chatRolesManager = require("../../../roles/chat-roles-manager");
-    chatRolesManager.cacheViewerListBots();
+    await chatRolesManager.cacheViewerListBots();
 
     windowManagement.updateSplashScreenStatus("Loading effect queues...");
     const effectQueueManager = require("../../../effects/queues/effect-queue-manager");

@@ -150,6 +150,9 @@ class TwitchChat extends EventEmitter {
 
             await chatHelpers.handleChatConnect();
 
+            // Attempt to reload the known bot list in case it failed on start
+            await chatRolesManager.cacheViewerListBots();
+
             chatterPoll.startChatterPoll();
 
             const vips = await twitchApi.channels.getVips();
@@ -273,8 +276,8 @@ class TwitchChat extends EventEmitter {
         // split message into fragments that don't exceed the max message length
         const messageFragments = message
             .match(/[\s\S]{1,500}/g)
-            .map((mf) => mf.trim())
-            .filter((mf) => mf !== "");
+            .map(mf => mf.trim())
+            .filter(mf => mf !== "");
 
         // Send all message fragments
         for (const fragment of messageFragments) {
