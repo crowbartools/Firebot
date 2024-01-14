@@ -43,9 +43,9 @@ const model = {
             {
                 label: "Program Response",
                 description: "The raw response from the program",
-                defaultName: "programResponse",
-            },
-        ],
+                defaultName: "programResponse"
+            }
+        ]
     },
     globalSettings: {},
     optionsTemplate: `
@@ -111,7 +111,7 @@ const model = {
             const options = {
                 cwd: path.dirname(programPath),
                 windowsHide: hideWindow,
-                shell: useShell,
+                shell: useShell
             };
 
             if (!waitForFinish) {
@@ -148,11 +148,11 @@ const model = {
                 return resolve();
             }
 
-            let stdout_data = "";
+            let stdoutData = "";
             if (child.stdout) {
                 child.stdout.on("data", (data) => {
                     logger.debug(`stdout: ${data}`);
-                    stdout_data += data;
+                    stdoutData += data;
                 });
 
                 child.stderr.on("data", (data) => {
@@ -171,12 +171,12 @@ const model = {
                 resolve({
                     success: true,
                     outputs: {
-                        programResponse: stdout_data,
-                    },
+                        programResponse: stdoutData
+                    }
                 });
             });
         });
-    },
+    }
 };
 
 module.exports = model;
