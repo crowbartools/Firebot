@@ -1,3 +1,4 @@
+import { EventEmitter } from "events";
 import Datastore from "@seald-io/nedb";
 import { DateTime } from "luxon";
 
@@ -116,12 +117,12 @@ class ViewerDatabase extends EventEmitter {
 
         const path = profileManager.getPathInProfile("db/users.db");
         this._db = new Datastore({ filename: path });
-        this._db.loadDatabase((err) => {
-            if (err) {
-                logger.info("ViewerDB: Error Loading Database: ", err.message);
-                logger.info("ViewerDB: Failed Database Path: ", path);
-            }
-        });
+        try {
+            await this._db.loadDatabaseAsync();
+        } catch (error) {
+            logger.info("ViewerDB: Error Loading Database: ", error.message);
+            logger.info("ViewerDB: Failed Database Path: ", path);
+        }
 
         // Setup our automatic compaction interval to shrink filesize.
         this._db.setAutocompactionInterval(this._dbCompactionInterval);

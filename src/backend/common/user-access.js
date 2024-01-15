@@ -52,7 +52,7 @@ async function getUserDetails(userId) {
     /** @type {import("@twurple/api").HelixUser} */
     let twitchUser;
     try {
-        twitchUser = await twitchApi.users.getUserById(userId)(userId);
+        twitchUser = await twitchApi.users.getUserById(userId);
     } catch (error) {
         // fail silently for now
     }

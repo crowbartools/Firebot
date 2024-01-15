@@ -26,7 +26,7 @@ type CurrencyCache = {
 };
 
 class CurrencyAccess {
-    private _currencyCache: CurrencyCache;
+    private _currencyCache: CurrencyCache = {};
 
     constructor() {
         // Refresh Currency Cache
