@@ -1,5 +1,5 @@
 import commandManager from "./command-manager";
-import currencyManager from '../../currency/currencyManager';
+import currencyManager from '../../currency/currency-command-manager';
 
 import { CommandListSystemCommand } from "./builtin/command-list";
 import { CommandManagementSystemCommand } from "./builtin/command-management";

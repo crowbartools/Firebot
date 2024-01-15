@@ -110,9 +110,22 @@ function buildModules(scriptManifest) {
         firebotRolesManager: require("../../../roles/firebot-roles-manager"),
         timerManager: require("../../../timers/timer-manager"),
         gameManager: require("../../../games/game-manager"),
-        currencyManager: require("../../../currency/currencyManager"),
+
+        /** @deprecated Use `currencyAccess`, `currencyManagerNew`, and `currencyCommandManager` instead */
         currencyDb: require("../../../database/currencyDatabase"),
+        /** @deprecated Use `currencyAccess`, `currencyManagerNew`, and `currencyCommandManager` instead */
+        currencyManager: require("../../../currency/currencyManager"),
+
+        currencyAccess: require("../../../currency/currency-access"),
+        currencyManagerNew: require("../../../currency/currency-manager"),
+        currencyCommandManager: require("../../../currency/currency-command-manager"),
+
+        /** @deprecated Use `viewerDatabase`, `viewerMetadataManager`, and `viewerOnlineStatusManager` instead */
         userDb: require("../../../database/userDatabase"),
+        viewerDatabase: require("../../../viewers/viewer-database"),
+        viewerMetadataManager: require("../../../viewers/viewer-metadata-manager"),
+        viewerOnlineStatusManager: require("../../../viewers/viewer-online-status-manager"),
+
         quotesManager: require("../../../quotes/quotes-manager"),
         frontendCommunicator: require("../../frontend-communicator"),
         counterManager: require("../../../counters/counter-manager"),
@@ -148,7 +161,7 @@ function mapParameters(parameterData) {
     //simplify parameters
     const simpleParams = {};
     if (parameterData != null) {
-        Object.keys(parameterData).forEach(k => {
+        Object.keys(parameterData).forEach((k) => {
             const param = parameterData[k];
             if (param != null) {
                 simpleParams[k] = param.value == null && param.value !== ""

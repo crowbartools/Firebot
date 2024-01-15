@@ -30,12 +30,12 @@ class TwitchChatterPoll {
 
             logger.debug(`There are ${chatters.length} online chat users.`);
 
-            if (chatters.length < 1) {
+            if (!chatters.length) {
                 return;
             }
 
-            for (const username of chatters) {
-                await activeChatUserHandler.addOnlineUser(username);
+            for (const chatter of chatters) {
+                await activeChatUserHandler.addOnlineUser(chatter);
             }
         } catch (error) {
             logger.error("There was an error getting connected chat users", error.messge);

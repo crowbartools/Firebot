@@ -80,8 +80,8 @@
             logger.debug(`Currency created with name: ${currency.name}`);
 
             // Send success message.
-            ipcRenderer.send("createCurrency", currencyId);
-            ipcRenderer.send("refreshCurrencyCache");
+            ipcRenderer.send("create-currency", currencyId);
+            ipcRenderer.send("refresh-currency-cache");
             ipcRenderer.send("refreshCurrencyCommands", {"action": "create", "currency": currency});
         };
 
@@ -89,21 +89,21 @@
         service.updateCurrency = function(currency) {
             const currencyId = currency.id;
             currencyDb.push(`/${currencyId}`, currency);
-            ipcRenderer.send("refreshCurrencyCache");
+            ipcRenderer.send("refresh-currency-cache");
             ipcRenderer.send("refreshCurrencyCommands", {"action": "update", "currency": currency});
         };
 
         // Purged a currency through the modal.
         service.purgeCurrency = function(currencyId) {
-            ipcRenderer.send("purgeCurrency", currencyId);
+            ipcRenderer.send("purge-currency", currencyId);
         };
 
         // Deleted a currency through the modal.
         service.deleteCurrency = function(currency) {
             const currencyId = currency.id;
             currencyDb.delete(`/${currencyId}`);
-            ipcRenderer.send("deleteCurrency", currencyId);
-            ipcRenderer.send("refreshCurrencyCache");
+            ipcRenderer.send("delete-currency", currencyId);
+            ipcRenderer.send("refresh-currency-cache");
             ipcRenderer.send("refreshCurrencyCommands", {"action": "delete", "currency": currency});
         };
 

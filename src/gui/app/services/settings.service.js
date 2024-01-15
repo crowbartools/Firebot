@@ -169,9 +169,9 @@
                 pushDataToFile("/settings/viewerDB", status);
 
                 if (status === true) {
-                    ipcRenderer.send("viewerDbConnect");
+                    ipcRenderer.send("connect-viewer-db");
                 } else {
-                    ipcRenderer.send("viewerDbDisconnect");
+                    ipcRenderer.send("disconnect-viewer-db");
                 }
             };
 

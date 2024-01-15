@@ -85,7 +85,7 @@ exports.getRandomActiveUser = (ignoreUser = "") => {
   * @returns {User[]}
   */
 exports.getAllActiveUsers = () => {
-    return activeUsers.keys().filter(v => !isNaN(v)).map(id => {
+    return activeUsers.keys().filter(v => !isNaN(v)).map((id) => {
         return {
             id: parseInt(id),
             username: activeUsers.get(id)
@@ -120,10 +120,11 @@ exports.getRandomOnlineUser = (ignoreUser = "") => {
   * @returns {User[]}
   */
 exports.getAllOnlineUsers = () => {
-    return onlineUsers.keys().filter(v => !isNaN(v)).map(id => {
+    return onlineUsers.keys().filter(v => !isNaN(v)).map((id) => {
         return {
             id: parseInt(id),
             username: onlineUsers.get(id).username,
+            displayName: onlineUsers.get(id).displayName,
             twitchRoles: onlineUsers.get(id).twitchRoles
         };
     });
@@ -146,6 +147,7 @@ async function updateUserOnlineStatus(userDetails, updateDb = false) {
         logger.debug(`Marking user ${userDetails.displayName} as online with ttl of ${ONLINE_TIMEOUT} secs`);
         onlineUsers.set(userDetails.id, {
             username: userDetails.username,
+            displayName: userDetails.displayName,
             online: true,
             twitchRoles: userDetails.twitchRoles
         }, ONLINE_TIMEOUT);
@@ -155,6 +157,7 @@ async function updateUserOnlineStatus(userDetails, updateDb = false) {
         frontendCommunicator.send("twitch:chat:user-joined", {
             id: userDetails.id,
             username: userDetails.displayName,
+            displayName: userDetails.displayName,
             roles: roles,
             profilePicUrl: userDetails.profilePicUrl,
             active: exports.userIsActive(userDetails.id),
@@ -167,19 +170,20 @@ async function updateUserOnlineStatus(userDetails, updateDb = false) {
     }
 }
 
-exports.addOnlineUser = async (username) => {
+/** @param {import("@twurple/api").HelixChatChatter} viewer */
+exports.addOnlineUser = async (viewer) => {
     const logger = require("../../logwrapper");
-    const userDatabase = require("../../database/userDatabase");
+    const viewerDatabase = require("../../viewers/viewer-database");
 
     try {
-        const firebotUser = await userDatabase.getTwitchUserByUsername(username);
+        const firebotUser = await viewerDatabase.getViewerById(viewer.userId);
 
         if (firebotUser == null) {
             const twitchApi = require("../../twitch-api/api");
-            const twitchUser = await twitchApi.users.getUserByName(username);
+            const twitchUser = await twitchApi.users.getUserById(viewer.userId);
 
             if (twitchUser == null) {
-                logger.warn(`Could not find twitch user with username '${username}'`);
+                logger.warn(`Could not find Twitch user with ID '${viewer.userId}'`);
                 return;
             }
 
@@ -194,15 +198,14 @@ exports.addOnlineUser = async (username) => {
 
             chatHelpers.setUserProfilePicUrl(twitchUser.id, twitchUser.profilePictureUrl);
 
-            await userDatabase.addNewUserFromChat(userDetails, true);
+            await viewerDatabase.addNewViewerFromChat(userDetails, true);
 
             await updateUserOnlineStatus(userDetails, false);
-
         } else {
             const userDetails = {
                 id: firebotUser._id,
-                username: firebotUser.username,
-                displayName: firebotUser.displayName,
+                username: viewer.userName,
+                displayName: viewer.userDisplayName,
                 twitchRoles: firebotUser.twitchRoles,
                 profilePicUrl: firebotUser.profilePicUrl,
                 disableViewerList: !!firebotUser.disableViewerList
@@ -210,7 +213,7 @@ exports.addOnlineUser = async (username) => {
             await updateUserOnlineStatus(userDetails, true);
         }
     } catch (error) {
-        logger.error(`Failed to set ${username} as online`, error);
+        logger.error(`Failed to set ${viewer.userDisplayName} as online`, error);
     }
 };
 
@@ -290,7 +293,7 @@ exports.removeActiveUser = async (usernameOrId) => {
     frontendCommunicator.send("twitch:chat:user-inactive", isUsername ? other : usernameOrId);
 };
 
-activeUsers.on("expired", usernameOrId => {
+activeUsers.on("expired", (usernameOrId) => {
     if (!isNaN(usernameOrId)) {
         frontendCommunicator.send("twitch:chat:user-inactive", usernameOrId);
     }
@@ -302,7 +305,7 @@ exports.clearAllActiveUsers = () => {
     frontendCommunicator.send("twitch:chat:clear-user-list");
 };
 
-onlineUsers.on("expired", userId => {
+onlineUsers.on("expired", (userId) => {
     const userDatabase = require("../../database/userDatabase");
     userDatabase.setChatUserOffline(userId);
     frontendCommunicator.send("twitch:chat:user-left", userId);

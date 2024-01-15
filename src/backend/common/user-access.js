@@ -39,10 +39,6 @@ async function userFollowsChannels(username, channelNames) {
     return userfollowsAllChannels;
 }
 
-function getUser(userId) {
-    return twitchApi.users.getUserById(userId);
-}
-
 async function getUserDetails(userId) {
 
     const firebotUserData = await userDb.getUserById(userId);
@@ -53,9 +49,10 @@ async function getUserDetails(userId) {
         };
     }
 
+    /** @type {import("@twurple/api").HelixUser} */
     let twitchUser;
     try {
-        twitchUser = await getUser(userId);
+        twitchUser = await twitchApi.users.getUserById(userId)(userId);
     } catch (error) {
         // fail silently for now
     }
@@ -70,7 +67,7 @@ async function getUserDetails(userId) {
         id: twitchUser.id,
         username: twitchUser.name,
         displayName: twitchUser.displayName,
-        iconUrl: twitchUser.profilePictureUrl,
+        profilePicUrl: twitchUser.profilePictureUrl,
         creationDate: twitchUser.creationDate
     };
 
@@ -137,6 +134,5 @@ async function getUserDetails(userId) {
     return userDetails;
 }
 
-exports.getUser = getUser;
 exports.getUserDetails = getUserDetails;
 exports.userFollowsChannels = userFollowsChannels;

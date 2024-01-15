@@ -1,8 +1,9 @@
 import { EventEmitter } from "events";
 import { ChatClient } from "@twurple/chat";
 
+import { BasicViewer } from "../../types/viewers";
 import chatHelpers from "./chat-helpers";
-import activeUserHandler, { User } from "./chat-listeners/active-user-handler";
+import activeUserHandler from "./chat-listeners/active-user-handler";
 import twitchChatListeners from "./chat-listeners/twitch-chat-listeners";
 import * as twitchSlashCommandHandler from "./twitch-slash-command-handler";
 
@@ -293,7 +294,7 @@ class TwitchChat extends EventEmitter {
         await chatterPoll.runChatterPoll();
     }
 
-    async getViewerList(): Promise<User[]> {
+    async getViewerList(): Promise<BasicViewer[]> {
         const users = activeUserHandler.getAllOnlineUsers();
         return users;
     }

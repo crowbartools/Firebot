@@ -131,6 +131,10 @@ export type CommandDefinition = {
     treatQuotedTextAsSingleArg?: boolean | undefined;
     minArgs?: number;
     options?: Record<keyof OptionsModel, CommandOption>;
+    currency?: {
+        name: string;
+        id: string;
+    };
 };
 
 type UserCommand = {
@@ -170,5 +174,5 @@ export type SystemCommand<OptionsModel = unknown> = {
                 [x in keyof OptionsModel]: OptionsModel[x]
             };
         }
-    ) => PromiseLike<void> | void;
+    ) => PromiseLike<boolean> | boolean | PromiseLike<void> | void;
 };
