@@ -2,7 +2,7 @@
 
 const viewerDatabase = require("../../../../backend/viewers/viewer-database");
 const customRolesManager = require("../../../../backend/roles/custom-roles-manager");
-const currencyDb = require("../../../../backend/database/currencyDatabase");
+const currencyManager = require("../../../../backend/currency/currency-manager");
 const customRolesApiController = require("./customRolesApiController");
 
 exports.getAllUsers = async function(req, res) {
@@ -52,7 +52,7 @@ exports.getUserCurrency = async function(req, res) {
         });
     }
 
-    const currencies = (await currencyDb.getUserCurrencies(userId, username === "true")) || {};
+    const currencies = (await currencyManager.getViewerCurrencies(userId, username === "true")) || {};
 
     if (currencyId) {
         return res.json(currencies[currencyId]);
@@ -74,9 +74,9 @@ exports.setUserCurrency = async function(req, res) {
     }
 
     if (username === "true") {
-        await currencyDb.adjustCurrencyForUser(userId, currencyId, parseInt(options.amount), options.setAmount ? "set" : "adjust");
+        await currencyManager.adjustCurrencyForViewer(userId, currencyId, parseInt(options.amount), options.setAmount ? "set" : "adjust");
     } else {
-        await currencyDb.adjustCurrencyForUserById(userId, currencyId, parseInt(options.amount), options.setAmount === true);
+        await currencyManager.adjustCurrencyForViewerById(userId, currencyId, parseInt(options.amount), options.setAmount === true);
     }
 
     res.status(204).send();

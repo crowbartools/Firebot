@@ -49,7 +49,7 @@ class CurrencyManager {
         }: GiveCurrencyRequest) => {
             const currency = currencyAccess.getCurrencyById(currencyId);
             if (currency == null) {
-                logger.error("Couldn't find currency to give or remove", {location: "currencyDatabase.js:480"});
+                logger.error("Couldn't find currency to give or remove");
                 return;
             }
 
@@ -101,7 +101,7 @@ class CurrencyManager {
 
 
         // Start up our currency timers.
-        // Also fired in currencyDatabase.js.
+        // Also fired in currency-access.
         frontendCommunicator.on("refresh-currency-cache", () => {
             this.startTimer();
         });

@@ -6,7 +6,8 @@ const twitchChat = require("../../../chat/twitch-chat");
 const twitchApi = require("../../../twitch-api/api");
 const commandManager = require("../../../chat/commands/command-manager");
 const gameManager = require("../../game-manager");
-const currencyDatabase = require("../../../database/currencyDatabase");
+const currencyAccess = require("../../../currency/currency-access").default;
+const currencyManager = require("../../../currency/currency-manager");
 const customRolesManager = require("../../../roles/custom-roles-manager");
 const teamRolesManager = require("../../../roles/team-roles-manager");
 const twitchRolesManager = require("../../../../shared/twitch-roles");
@@ -38,7 +39,7 @@ const heistCommand = {
             }
         ]
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
 
         const { chatEvent, userCommand } = event;
 
@@ -48,7 +49,7 @@ const heistCommand = {
         const chatter = heistSettings.settings.chatSettings.chatter;
 
         const currencyId = heistSettings.settings.currencySettings.currencyId;
-        const currency = currencyDatabase.getCurrencyById(currencyId);
+        const currency = currencyAccess.getCurrencyById(currencyId);
 
         // make sure the currency still exists
         if (currency == null) {
@@ -143,7 +144,7 @@ const heistCommand = {
         }
 
         // check users balance
-        const userBalance = await currencyDatabase.getUserCurrencyAmount(username, currencyId);
+        const userBalance = await currencyManager.getViewerCurrencyAmount(username, currencyId);
         if (userBalance < wagerAmount) {
             if (heistSettings.settings.entryMessages.notEnoughToWager) {
                 const notEnoughToWagerMsg = heistSettings.settings.entryMessages.notEnoughToWager
@@ -156,7 +157,7 @@ const heistCommand = {
         }
 
         // deduct wager from user balance
-        await currencyDatabase.adjustCurrencyForUser(username, currencyId, -Math.abs(wagerAmount));
+        await currencyManager.adjustCurrencyForViewer(username, currencyId, -Math.abs(wagerAmount));
 
         // get all user roles
         const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];

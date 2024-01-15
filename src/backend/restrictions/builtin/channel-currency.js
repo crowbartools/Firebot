@@ -93,10 +93,11 @@ const model = {
     },
     predicate: async ({ metadata }, { selectedCurrency, comparison, amount: currencyAmount }) => {
         // we require this here to workaround circle dep issues :(
-        const currencyDatabase = require("../../database/currencyDatabase");
+        const currencyAccess = require("../../currency/currency-access").default;
+        const currencyManager = require("../../currency/currency-manager");
 
         const username = metadata.username;
-        const userCurrency = await currencyDatabase.getUserCurrencyAmount(username, selectedCurrency);
+        const userCurrency = await currencyManager.getViewerCurrencyAmount(username, selectedCurrency);
 
         let passed = false;
         if (comparison === "less" && userCurrency < currencyAmount) {
@@ -112,7 +113,7 @@ const model = {
         }
 
         if (!passed) {
-            const currency = currencyDatabase.getCurrencyById(selectedCurrency);
+            const currency = currencyAccess.getCurrencyById(selectedCurrency);
             const currencyName = currency ? currency.name.toLowerCase() : "Unknown currency";
             const amountText = comparison !== "equal" ? `${comparison} than ${currencyAmount}` : `${currencyAmount}`;
             throw new Error(`you need ${amountText} ${currencyName}`);
@@ -130,11 +131,11 @@ const model = {
         }
 
         // we require this here to workaround circle dep issues :(
-        const currencyDatabase = require("../../database/currencyDatabase");
+        const currencyManager = require("../../currency/currency-manager");
 
         const username = metadata.username;
 
-        await currencyDatabase.adjustCurrencyForUser(
+        await currencyManager.adjustCurrencyForViewer(
             username,
             currencyId,
             -Math.abs(currencyAmount) // force value negative to make it deduct the amount from user

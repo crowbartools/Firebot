@@ -182,7 +182,7 @@ exports.whenReady = async () => {
     hotkeyManager.refreshHotkeyCache();
 
     windowManagement.updateSplashScreenStatus("Loading currencies...");
-    const currencyManager = require("../../../currency/currencyManager");
+    const currencyManager = require("../../../currency/currency-manager");
     currencyManager.startTimer();
 
     // Connect to DBs.
