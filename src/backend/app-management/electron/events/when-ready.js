@@ -188,10 +188,12 @@ exports.whenReady = async () => {
     // Connect to DBs.
     windowManagement.updateSplashScreenStatus("Loading viewers...");
     logger.info("Creating or connecting user database");
-    const userdb = require("../../../database/userDatabase");
-    userdb.connectUserDatabase();
+    const viewerDatabase = require("../../../viewers/viewer-database");
+    await viewerDatabase.connectViewerDatabase();
+
     // Set users in user db to offline if for some reason they are still set to online. (app crash or something)
-    userdb.setAllUsersOffline();
+    const viewerOnlineStatusManager = require("../../../viewers/viewer-online-status-manager");
+    await viewerOnlineStatusManager.setAllViewersOffline();
 
     windowManagement.updateSplashScreenStatus("Loading stats...");
     logger.info("Creating or connecting stats database");

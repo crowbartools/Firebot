@@ -137,7 +137,7 @@ exports.getAllOnlineUsers = () => {
  */
 async function updateUserOnlineStatus(userDetails, updateDb = false) {
     const logger = require("../../logwrapper");
-    const userDatabase = require("../../database/userDatabase");
+    const viewerOnlineStatusManager = require("../../viewers/viewer-online-status-manager");
 
     const userOnline = onlineUsers.get(userDetails.id);
     if (userOnline && userOnline.online === true) {
@@ -165,7 +165,7 @@ async function updateUserOnlineStatus(userDetails, updateDb = false) {
         });
 
         if (updateDb) {
-            await userDatabase.setChatUserOnline(userDetails);
+            await viewerOnlineStatusManager.setChatViewerOnline(userDetails);
         }
     }
 }
@@ -231,11 +231,11 @@ exports.addActiveUser = async (chatUser, includeInOnline = false, forceActive = 
 
     const logger = require("../../logwrapper");
 
-    const userDatabase = require("../../database/userDatabase");
+    const viewerDatabase = require("../../viewers/viewer-database");
 
     const ttl = settings.getActiveChatUserListTimeout() * 60;
 
-    let user = await userDatabase.getUserById(chatUser.userId);
+    let user = await viewerDatabase.getViewerById(chatUser.userId);
 
     const userDetails = {
         id: chatUser.userId,
@@ -252,14 +252,14 @@ exports.addActiveUser = async (chatUser, includeInOnline = false, forceActive = 
     };
 
     if (user == null) {
-        user = await userDatabase.addNewUserFromChat(userDetails, includeInOnline);
+        user = await viewerDatabase.addNewViewerFromChat(userDetails, includeInOnline);
     }
 
     if (includeInOnline) {
         await updateUserOnlineStatus(userDetails, true);
     }
 
-    await userDatabase.incrementDbField(userDetails.id, "chatMessages");
+    await viewerDatabase.incrementDbField(userDetails.id, "chatMessages");
 
     if (!forceActive && user?.disableActiveUserList) {
         return;
@@ -305,8 +305,8 @@ exports.clearAllActiveUsers = () => {
     frontendCommunicator.send("twitch:chat:clear-user-list");
 };
 
-onlineUsers.on("expired", (userId) => {
-    const userDatabase = require("../../database/userDatabase");
-    userDatabase.setChatUserOffline(userId);
+onlineUsers.on("expired", async (userId) => {
+    const viewerOnlineStatusManager = require("../../viewers/viewer-online-status-manager");
+    await viewerOnlineStatusManager.setChatViewerOffline(userId);
     frontendCommunicator.send("twitch:chat:user-left", userId);
 });

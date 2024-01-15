@@ -1,6 +1,6 @@
 "use strict";
 
-const userDb = require("../database/userDatabase");
+const viewerDatabase = require("../viewers/viewer-database");
 const accountAccess = require("../common/account-access");
 const NodeCache = require('node-cache');
 const twitchApi = require("../twitch-api/api");
@@ -41,7 +41,7 @@ async function userFollowsChannels(username, channelNames) {
 
 async function getUserDetails(userId) {
 
-    const firebotUserData = await userDb.getUserById(userId);
+    const firebotUserData = await viewerDatabase.getViewerById(userId);
 
     if (firebotUserData != null && !firebotUserData.twitch) {
         return {
@@ -77,7 +77,7 @@ async function getUserDetails(userId) {
         chatHelpers.setUserProfilePicUrl(twitchUser.id, twitchUser.profilePictureUrl);
 
         firebotUserData.profilePicUrl = twitchUser.profilePictureUrl;
-        userDb.updateUser(firebotUserData);
+        await viewerDatabase.updateViewer(firebotUserData);
 
         frontendCommunicator.send("twitch:chat:user-updated", {
             id: firebotUserData._id,

@@ -4,7 +4,7 @@ const twitchApi = require("../../twitch-api/api");
 const chatRolesManager = require("../../roles/chat-roles-manager");
 const frontendCommunicator = require("../../common/frontend-communicator");
 const logger = require("../../logwrapper");
-const userDb = require("../../database/userDatabase");
+const viewerDatabase = require("../../viewers/viewer-database");
 
 const addViewersFromTwitch = async (viewers) => {
     let twitchViewers = [];
@@ -48,7 +48,7 @@ const addViewersFromTwitch = async (viewers) => {
     for (const viewer of twitchViewers) {
         const roles = chatRolesManager.getUsersChatRoles(viewer.id);
 
-        const newViewer = await userDb.createNewUser(
+        const newViewer = await viewerDatabase.createNewViewer(
             viewer.id,
             viewer.name,
             viewer.displayName,
@@ -75,7 +75,7 @@ const importViewers = async (data) => {
     let viewersToUpdate = [];
 
     for (const v of viewers) {
-        const viewer = await userDb.getUserByUsername(v.name);
+        const viewer = await viewerDatabase.getViewerByUsername(v.name);
 
         if (viewer == null) {
             newViewers.push(v);
@@ -102,7 +102,7 @@ const importViewers = async (data) => {
             viewerToUpdate.minutesInChannel += importedViewer.viewHours * 60;
         }
 
-        await userDb.updateUser(viewerToUpdate);
+        await viewerDatabase.updateViewer(viewerToUpdate);
     }
 
     logger.debug(`Finished importing viewers`);

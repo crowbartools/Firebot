@@ -1,12 +1,12 @@
 "use strict";
 
-const userDb = require("../../../../backend/database/userDatabase");
+const viewerDatabase = require("../../../../backend/viewers/viewer-database");
 const customRolesManager = require("../../../../backend/roles/custom-roles-manager");
 const currencyDb = require("../../../../backend/database/currencyDatabase");
 const customRolesApiController = require("./customRolesApiController");
 
 exports.getAllUsers = async function(req, res) {
-    return res.json(await userDb.getAllUsernamesWithIds());
+    return res.json(await viewerDatabase.getAllUsernamesWithIds());
 };
 
 exports.getUserMetadata = async function(req, res) {
@@ -22,9 +22,9 @@ exports.getUserMetadata = async function(req, res) {
 
     let metadata;
     if (username === "true") {
-        metadata = await userDb.getUserByUsername(userId);
+        metadata = await viewerDatabase.getViewerByUsername(userId);
     } else {
-        metadata = await userDb.getUserById(userId);
+        metadata = await viewerDatabase.getViewerById(userId);
     }
 
     if (metadata === null) {
@@ -95,9 +95,9 @@ exports.getUserCustomRoles = async function(req, res) {
 
     let metadata;
     if (username === "true") {
-        metadata = await userDb.getUserByUsername(userId);
+        metadata = await viewerDatabase.getViewerByUsername(userId);
     } else {
-        metadata = await userDb.getUserById(userId);
+        metadata = await viewerDatabase.getViewerById(userId);
     }
 
     if (metadata === null) {
