@@ -116,7 +116,7 @@ function buildModules(scriptManifest) {
         /** @deprecated Use `currencyAccess`, `currencyManagerNew`, and `currencyCommandManager` instead */
         currencyManager: require("../../../currency/currencyManager"),
 
-        currencyAccess: require("../../../currency/currency-access"),
+        currencyAccess: require("../../../currency/currency-access").default,
         currencyManagerNew: require("../../../currency/currency-manager"),
         currencyCommandManager: require("../../../currency/currency-command-manager"),
 
