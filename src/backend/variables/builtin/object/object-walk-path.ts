@@ -17,11 +17,11 @@ const model : ReplaceVariable = {
             try {
                 subject = JSON.parse(`${subject}`);
             } catch (err) {
-                return;
+                return null;
             }
         }
         if (subject == null) {
-            return;
+            return null;
         }
 
         let nodes : Array<string | number>;
@@ -37,7 +37,7 @@ const model : ReplaceVariable = {
 
         } else if (propertyPath == null || !Array.isArray(propertyPath) || propertyPath.length < 1) {
             logger.error("$objectWalkPath: property path must be specified");
-            return;
+            return null;
 
         } else {
             nodes = propertyPath;
@@ -47,7 +47,7 @@ const model : ReplaceVariable = {
         while (nodes.length) {
             cursor = subject[nodes.shift()];
             if (cursor == null) {
-                return;
+                return null;
             }
         }
         return cursor;

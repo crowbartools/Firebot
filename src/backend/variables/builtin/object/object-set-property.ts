@@ -18,13 +18,13 @@ const model : ReplaceVariable = {
                 subject = JSON.parse(`${subject}`);
             } catch (err) {
                 logger.error("Invalid object specified", subject);
-                return;
+                return null;
             }
         }
 
         if (subject == null || typeof subject !== 'object') {
             logger.error(`$getObjectProperty[]: subject must be an object or array`);
-            return;
+            return null;
         }
 
         let nodes : Array<string | number>;
@@ -40,7 +40,7 @@ const model : ReplaceVariable = {
 
         } else if (propertyPath == null || !Array.isArray(propertyPath) || propertyPath.length < 1) {
             logger.error("Property path must be specified");
-            return;
+            return null;
 
         } else {
             nodes = propertyPath;
@@ -52,7 +52,7 @@ const model : ReplaceVariable = {
         do {
             if (currentSubject == null || typeof currentSubject !== 'object') {
                 logger.error(`$getObjectProperty[]: walked path leads to invalid`);
-                return;
+                return null;
             }
             if (nodes.length > 0) {
                 currentSubject = currentSubject[key];
