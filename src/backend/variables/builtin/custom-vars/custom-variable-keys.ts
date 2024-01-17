@@ -21,8 +21,8 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (_, name: string, propertyPath: string) : string => {
-        const keys = customVariableKeysRaw.evaluator(name, propertyPath);
+    evaluator: (meta, name: string, propertyPath: string) : string => {
+        const keys = customVariableKeysRaw.evaluator(meta, name, propertyPath);
         return JSON.stringify(keys);
     }
 };
