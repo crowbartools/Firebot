@@ -1,7 +1,7 @@
-'use strict';
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "convertToJSON",
         description: "Converts a raw value into JSON text",
@@ -9,7 +9,7 @@ const model = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (_, jsonText) => {
+    evaluator: (_: unknown, jsonText: unknown) : string => {
         if (jsonText == null) {
             return "null";
         }
@@ -21,4 +21,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export default model;

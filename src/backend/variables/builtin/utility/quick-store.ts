@@ -1,10 +1,7 @@
-// Migration: done
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-"use strict";
-
-const { OutputDataType } = require("../../../shared/variable-constants");
-
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "quickStore",
         usage: "quickStore[key]",
@@ -19,9 +16,10 @@ const model = {
 
             }
         ],
+        categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.ALL]
     },
-    evaluator: function (meta, key, value) {
+    evaluator: function (meta: Record<string, unknown>, key: string, value: unknown) {
         if (
             arguments.length < 2 ||
             typeof key !== 'string' ||
@@ -55,4 +53,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export default model;
