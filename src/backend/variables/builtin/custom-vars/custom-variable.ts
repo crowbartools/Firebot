@@ -26,7 +26,7 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
     },
     evaluator: (_, ...args: unknown[]) => {
-        const data = customVariableRaw(...args);
+        const data = customVariableRaw.evaluator(...args);
         return JSON.stringify(data);
     }
 };
