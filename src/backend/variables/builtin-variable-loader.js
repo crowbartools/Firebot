@@ -110,7 +110,6 @@ exports.loadReplaceVariables = () => {
         'random-viewer',
         'read-api-raw',
         'read-api',
-        'read-file',
         'regex-exec',
         'regex-matches-raw',
         'regex-matches',
