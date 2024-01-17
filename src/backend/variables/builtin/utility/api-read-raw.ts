@@ -15,7 +15,8 @@ const model: ReplaceVariable = {
             }
         ],
         categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
+        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER],
+        hidden: true
     },
     evaluator: (...args: unknown[]) : unknown => {
         return readApi(...args);

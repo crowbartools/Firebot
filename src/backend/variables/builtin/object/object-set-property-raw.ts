@@ -10,7 +10,8 @@ const model : ReplaceVariable = {
         description: "(Deprecated: use $setObjectProperty) Adds or updates a property's value in the raw object. For nested properties, you can use dot notation (e.g. some.property). Set value to null to remove property.",
         usage: "rawSetObjectProperty[object, propertyPath, value]",
         categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.TEXT],
+        hidden: true
     }
 };
 export default model;

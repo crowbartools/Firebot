@@ -10,7 +10,8 @@ const model : ReplaceVariable = {
         description: "(Deprecated: use $objectWalkPath) Returns the value from a raw object at the given dot-notated path",
         usage: "rawObjectWalkPath[rawobject, path.to.value]",
         categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.TEXT],
+        hidden: true
     }
 };
 
