@@ -1,9 +1,9 @@
-"use strict";
-const customVariableManager = require("../../common/custom-variable-manager");
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
+const customVariableManager = require("../../../common/custom-variable-manager");
 
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "rawCustomVariable",
         usage: "rawCustomVariable[name]",
@@ -23,9 +23,9 @@ const model = {
         ],
         description: "Get the data saved in the custom variable.",
         categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.ALL]
     },
-    evaluator: (_, name, propertyPath, defaultData) => {
+    evaluator: (_, name: string, propertyPath: string, defaultData: unknown) : unknown => {
         const data = customVariableManager.getCustomVariable(name, propertyPath, defaultData);
         if (data == null) {
             return null;
@@ -35,4 +35,4 @@ const model = {
 };
 
 
-module.exports = model;
+export default model;

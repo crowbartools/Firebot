@@ -1,14 +1,13 @@
-"use strict";
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-const customVariableManager = require("../../common/custom-variable-manager");
+const customVariableManager = require("../../../common/custom-variable-manager");
 
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
-
-function isObject(data) {
+function isObject(data: unknown) {
     return typeof data === 'object' && !(data instanceof String);
 }
 
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "rawCustomVariableKeys",
         usage: "rawCustomVariableKeys[name]",
@@ -22,10 +21,10 @@ const model = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (_, name, propertyPath) => {
+    evaluator: (_, name: string, propertyPath: string) : Array<unknown> => {
         const data = customVariableManager.getCustomVariable(name, propertyPath);
         if (data == null || !isObject(data)) {
-            return '[]';
+            return [];
         }
 
         return Object.keys(data);
@@ -33,4 +32,4 @@ const model = {
 };
 
 
-module.exports = model;
+export default model;

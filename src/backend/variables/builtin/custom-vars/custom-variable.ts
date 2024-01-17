@@ -1,16 +1,9 @@
-// Migration: done
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-"use strict";
+import customVariableRaw from './custom-variable-raw';
 
-const customVariableManager = require("../../common/custom-variable-manager");
-
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
-
-function isObjectOrArray(data) {
-    return Array.isArray(data) || (typeof data === 'object' && !(data instanceof String));
-}
-
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "customVariable",
         usage: "customVariable[name]",
@@ -32,19 +25,11 @@ const model = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
     },
-    evaluator: (_, name, propertyPath, defaultData) => {
-        const data = customVariableManager.getCustomVariable(name, propertyPath, defaultData);
-        if (data == null) {
-            return null;
-        }
-
-        if (isObjectOrArray(data)) {
-            return JSON.stringify(data);
-        }
-
-        return data;
+    evaluator: (_, ...args: unknown[]) => {
+        const data = customVariableRaw(...args);
+        return JSON.stringify(data);
     }
 };
 
 
-module.exports = model;
+export default model;

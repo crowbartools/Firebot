@@ -1,15 +1,12 @@
-// Migration: done
-
-"use strict";
-
-const { EffectTrigger } = require("../../../shared/effect-constants");
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
+import { ReplaceVariable } from "../../../../types/variables";
+import { EffectTrigger } from "../../../../shared/effect-constants";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const triggers = {};
 triggers[EffectTrigger.EVENT] = ["firebot:custom-variable-expired"];
 triggers[EffectTrigger.MANUAL] = true;
 
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "expiredCustomVariableData",
         description: "Data from the expired custom variable.",
@@ -24,4 +21,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export default model;
