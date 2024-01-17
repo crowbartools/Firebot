@@ -108,8 +108,6 @@ exports.loadReplaceVariables = () => {
         'random-dad-joke',
         'random-reddit-image',
         'random-viewer',
-        'read-api-raw',
-        'read-api',
         'regex-exec',
         'regex-matches-raw',
         'regex-matches',

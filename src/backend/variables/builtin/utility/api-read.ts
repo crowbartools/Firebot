@@ -1,6 +1,7 @@
-import { ReplaceVariable } from "../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../shared/variable-constants";
-import logger from "../../logwrapper";
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+
+import logger from "../../../logwrapper";
 import { app } from "electron";
 import axios from "axios";
 
@@ -24,12 +25,12 @@ const callUrl = async (url: string) => {
 
 const model: ReplaceVariable = {
     definition: {
-        handle: "rawReadApi",
-        usage: "rawReadApi[url]",
-        description: 'Calls the given URL and returns the response as an object.',
+        handle: "readApi",
+        usage: "readApi[url]",
+        description: 'Calls the given URL and returns the response as a string.',
         examples: [
             {
-                usage: 'rawReadApi[url, object.path.here]',
+                usage: 'readApi[url, object.path.here]',
                 description: "Traverse a JSON response object."
             }
         ],
@@ -39,7 +40,6 @@ const model: ReplaceVariable = {
     evaluator: async (_, url: string, responseJsonPath: string) => {
         try {
             const content = (await callUrl(url)).data;
-
             if (responseJsonPath != null) {
                 if (content != null) {
                     const jsonPathNodes = responseJsonPath.split(".");
@@ -69,4 +69,4 @@ const model: ReplaceVariable = {
     }
 };
 
-export = model;
+export default model;
