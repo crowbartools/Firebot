@@ -1,3 +1,8 @@
+import regexExec from './regex-exec';
+import regexMatches from './regex-matches';
+import regexMatchesRaw from './regex-matches-raw';
+import regexTest from './regex-test';
+
 import textCapitalize from './text-capitalize';
 import textConcat from './text-concat';
 import textContains from './text-contains';
@@ -10,6 +15,7 @@ import textLowercase from './text-lowercase';
 import textReplace from './text-replace';
 import textScramble from './text-scramble';
 import textSplit from './text-split';
+import textSplitRaw from './text-split-raw';
 import textSubstring from './text-substring';
 import textTrim from './text-trim';
 import textTrimEnd from './text-trim-end';
@@ -17,9 +23,12 @@ import textTrimStart from './text-trim-start';
 import textUppercase from './text-uppercase';
 import textWord from './text-word';
 
-import rawTextSplit from './raw-text-split';
 
 export default [
+    regexExec,
+    regexMatches,
+    regexMatchesRaw,
+    regexTest,
     textCapitalize,
     textConcat,
     textContains,
@@ -32,11 +41,11 @@ export default [
     textReplace,
     textScramble,
     textSplit,
+    textSplitRaw,
     textSubstring,
     textTrim,
     textTrimEnd,
     textTrimStart,
     textUppercase,
-    textWord,
-    rawTextSplit
+    textWord
 ];
