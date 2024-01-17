@@ -27,6 +27,9 @@ const model : ReplaceVariable = {
     },
     evaluator: (...args: unknown[]) => {
         const data = customVariableRaw.evaluator(...args);
+        if (data == null) {
+            return null;
+        }
         return JSON.stringify(data);
     }
 };
