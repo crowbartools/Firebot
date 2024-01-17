@@ -30,6 +30,9 @@ const model : ReplaceVariable = {
         if (data == null) {
             return null;
         }
+        if (typeof data === 'string' || data instanceof String) {
+            return `${data}`;
+        }
         return JSON.stringify(data);
     }
 };
