@@ -25,7 +25,7 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
     },
-    evaluator: (_, ...args: unknown[]) => {
+    evaluator: (...args: unknown[]) => {
         const data = customVariableRaw.evaluator(...args);
         return JSON.stringify(data);
     }
