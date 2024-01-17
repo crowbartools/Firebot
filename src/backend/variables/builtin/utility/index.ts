@@ -1,5 +1,5 @@
 import apiRead from './api-read';
-import apiReadRaw from './api-read';
+import apiReadRaw from './api-read-raw';
 import convertFromJSON from './convert-from-json';
 import convertToJSON from './convert-to-json';
 import fileExists from './file-exists';
