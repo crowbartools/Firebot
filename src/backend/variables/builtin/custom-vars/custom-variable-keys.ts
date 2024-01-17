@@ -22,7 +22,7 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, name: string, propertyPath: string) : string => {
-        const keys = customVariableKeysRaw(name, propertyPath);
+        const keys = customVariableKeysRaw.evaluator(name, propertyPath);
         return JSON.stringify(keys);
     }
 };
