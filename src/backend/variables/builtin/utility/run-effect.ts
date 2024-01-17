@@ -1,12 +1,12 @@
-"use strict";
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const uuid = require("uuid/v4");
 
-const logger = require("../../logwrapper");
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
-const effectRunner = require("../../common/effect-runner");
+const logger = require("../../../logwrapper");
+const effectRunner = require("../../../common/effect-runner");
 
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "runEffect",
         usage: "runEffect[effectJson]",
@@ -18,21 +18,26 @@ const model = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: async (trigger, ...effectJsonModels) => {
+    evaluator: async (trigger: unknown, ...effectJsonModels: unknown[]) => {
 
         try {
             await effectRunner.processEffects({
                 trigger,
                 effects: {
                     id: uuid(),
-                    list: effectJsonModels.map(json => {
-                        try {
-                            return JSON.parse(json);
-                        } catch (error) {
-                            logger.warn("Failed to parse effect json in $runEffect", json, error);
-                            return null;
-                        }
-                    }).filter(e => e?.type != null && typeof e?.type === "string")
+                    list: effectJsonModels
+                        .map((json) => {
+                            if (typeof json !== 'string' && !(json instanceof String)) {
+                                return json;
+                            }
+
+                            try {
+                                return JSON.parse(`${json}`);
+                            } catch (error) {
+                                logger.warn("Failed to parse effect json in $runEffect", json, error);
+                                return null;
+                            }
+                        }).filter(e => e?.type != null && typeof e?.type === "string")
                 }
             });
         } catch (error) {
@@ -43,4 +48,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export default model;

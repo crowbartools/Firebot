@@ -1,27 +1,25 @@
-"use strict";
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const fs = require("fs");
+const logger = require("../../../logwrapper");
 
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
-
-const logger = require("../../logwrapper");
-
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "fileExists",
         usage: 'fileExists[path\\to\\file.txt]',
-        description: "Returns 'true' if a file exists, otherwise returns 'false'.",
+        description: "Returns true if a file exists, otherwise returns false.",
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, filePath) => {
 
         if (filePath === null) {
-            return "false";
+            return false;
         }
 
         try {
-            return fs.existsSync(filePath) ? "true" : "false";
+            return fs.existsSync(filePath) ? true : false;
         } catch (err) {
             logger.error(`Error checking if file "${filePath}" exists`, err);
             return "false";
@@ -29,4 +27,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export default model;

@@ -1,14 +1,10 @@
-// Migration: done
-
-"use strict";
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const fs = require("fs");
+const logger = require("../../../logwrapper");
 
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
-
-const logger = require("../../logwrapper");
-
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "fileLineCount",
         usage: "fileLineCount[\"path/to/file.txt\"]",
@@ -16,8 +12,8 @@ const model = {
         categories: [VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
-    evaluator: (_, filePath) => {
-        if (filePath === null || !filePath.endsWith(".txt")) {
+    evaluator: (_: unknown, filePath: string) : number => {
+        if (filePath === null || typeof filePath !== 'string' || !filePath.endsWith(".txt")) {
             logger.error(`Couldn't read file (${filePath}) to count the lines in it.`);
             return 0;
         }
@@ -26,7 +22,7 @@ const model = {
             const contents = fs.readFileSync(filePath, { encoding: "utf8" });
             const lines = contents
                 .split('\n')
-                .filter(l => l != null && l.trim() !== "");
+                .filter((l : string) => l != null && l.trim() !== "");
 
             return lines.length;
         } catch (err) {
@@ -36,4 +32,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export default model;
