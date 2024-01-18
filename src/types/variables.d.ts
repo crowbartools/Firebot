@@ -25,6 +25,7 @@ interface VariableDefinition {
 type Variable = {
     definition: VariableDefinition;
     evaluator(trigger: Trigger, ...args: unknown[]): PromiseLike<unknown> | unknown;
+    argsCheck?: (...args: unknown[]) => void;
 }
 
 type SpoofedVariable = {
