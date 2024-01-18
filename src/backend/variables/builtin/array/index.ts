@@ -3,6 +3,7 @@ import arrayElemenet from './array-element';
 import arrayFilter from './array-filter';
 import arrayFindIndex from './array-find-index';
 import arrayFind from './array-find';
+import arrayFindWithNull from './array-find-with-null';
 import arrayFrom from './array-from';
 import arrayJoin from './array-join';
 import arrayLength from './array-length';
@@ -29,6 +30,7 @@ export default [
     arrayFilter,
     arrayFindIndex,
     arrayFind,
+    arrayFindWithNull,
     arrayFrom,
     arrayJoin,
     arrayLength,
