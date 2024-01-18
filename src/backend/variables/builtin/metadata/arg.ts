@@ -1,13 +1,11 @@
-// Migration: info needed
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-"use strict";
-
-const { EffectTrigger } = require("../../../shared/effect-constants");
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
+const { EffectTrigger } = require("../../../../shared/effect-constants");
 
 const expressionish = require('expressionish');
 
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "arg",
         usage: "arg[#]",
@@ -33,9 +31,13 @@ const model = {
         categories: [VariableCategory.COMMON],
         possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
     },
-    evaluator: (trigger, index, upperIndex) => {
+    evaluator: (
+        trigger: Trigger,
+        index: number,
+        upperIndex: number
+    ) => {
         let args = trigger.metadata.userCommand.args;
-        if (args == null || args === '') {
+        if (args == null || <unknown>args === '') {
             args = [];
         }
 
@@ -44,7 +46,7 @@ const model = {
         }
 
         if (index != null) {
-            index = parseInt(index);
+            index = parseInt(<string><unknown>index);
         }
 
         if (index != null && index > 0) {
@@ -57,29 +59,29 @@ const model = {
             return args[index] || "";
         }
 
-        if (upperIndex === "last") {
+        if (<string><unknown>upperIndex === "last") {
             upperIndex = args.length;
         }
 
         if (upperIndex != null) {
-            upperIndex = parseInt(upperIndex);
+            upperIndex = parseInt(<string><unknown>upperIndex);
         }
 
         return args.slice(index, upperIndex).join(" ");
     },
-    argsCheck: (index, upperIndex) => {
+    argsCheck: (index: unknown, upperIndex: unknown) => {
         // both args can be null
         if (index == null && upperIndex == null) {
             return true;
         }
 
         // index needs to either be "all" or a number
-        if (String(index).toLowerCase() !== "all" && isNaN(index)) {
+        if (String(index).toLowerCase() !== "all" && isNaN(<number>index)) {
             throw new expressionish.ExpressionArgumentsError("First argument needs to be either 'all' or a number.", 0);
         }
 
         // upperIndex needs to either be null, "last", or a number
-        if (upperIndex != null && String(upperIndex).toLowerCase() !== "last" && isNaN(upperIndex)) {
+        if (upperIndex != null && String(upperIndex).toLowerCase() !== "last" && isNaN(<number>upperIndex)) {
             throw new expressionish.ExpressionArgumentsError("Second argument needs to be either 'last' or a number.", 1);
         }
 
@@ -87,4 +89,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export default model;

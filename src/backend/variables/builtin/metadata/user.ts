@@ -1,9 +1,7 @@
-// Migration: info - Needs implementation details
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-"use strict";
-
-const { EffectTrigger } = require("../../../shared/effect-constants");
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
+const { EffectTrigger } = require("../../../../shared/effect-constants");
 
 const triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
@@ -13,7 +11,7 @@ triggers[EffectTrigger.CUSTOM_SCRIPT] = true;
 triggers[EffectTrigger.PRESET_LIST] = true;
 triggers[EffectTrigger.CHANNEL_REWARD] = true;
 
-module.exports = {
+const model : ReplaceVariable = {
     definition: {
         handle: "user",
         description: "The associated user (if there is one) for the given trigger",
@@ -21,8 +19,9 @@ module.exports = {
         categories: [VariableCategory.COMMON, VariableCategory.USER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (trigger) => {
+    evaluator: (trigger: Trigger) => {
         return trigger.metadata.username;
     }
 };
 
+export default model;
