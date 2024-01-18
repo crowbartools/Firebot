@@ -1,11 +1,12 @@
-import { EffectTrigger } from "../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../shared/variable-constants";
+import { ReplaceVariable } from "../../../../../../types/variables";
+import { EffectTrigger } from "../../../../../../shared/effect-constants";
+import { OutputDataType, VariableCategory } from "../../../../../../shared/variable-constants";
 
 const triggers = {};
 triggers[EffectTrigger.EVENT] = ["twitch:chat-mode-changed"];
 triggers[EffectTrigger.MANUAL] = true;
 
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "chatModeState",
         description: "The state of the chat mode, either 'enabled' or 'disabled'.",
@@ -18,4 +19,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export default model;

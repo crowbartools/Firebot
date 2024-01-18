@@ -1,5 +1,6 @@
-import { EffectTrigger } from "../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../shared/variable-constants";
+import { ReplaceVariable } from "../../../../../types/variables";
+import { EffectTrigger } from "../../../../../shared/effect-constants";
+import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 
 const triggers = {};
 triggers[EffectTrigger.EVENT] = [
@@ -10,7 +11,7 @@ triggers[EffectTrigger.EVENT] = [
 ];
 triggers[EffectTrigger.MANUAL] = true;
 
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "charityLogo",
         description: "A URL to a PNG image of the charity's logo",
@@ -25,4 +26,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export default model;

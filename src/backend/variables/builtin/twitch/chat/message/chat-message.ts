@@ -1,8 +1,6 @@
-// Migration: info needed
-"use strict";
-
-const { EffectTrigger } = require("../../../shared/effect-constants");
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
+import { ReplaceVariable } from "../../../../../../types/variables";
+import { EffectTrigger } from "../../../../../../shared/effect-constants";
+import { OutputDataType, VariableCategory } from "../../../../../../shared/variable-constants";
 
 const triggers = {};
 triggers[EffectTrigger.MANUAL] = true;
@@ -15,7 +13,7 @@ triggers[EffectTrigger.EVENT] = [
     "twitch:viewer-arrived"
 ];
 
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "chatMessage",
         description: "Outputs the chat message from the associated command or event.",
@@ -42,4 +40,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export default model;

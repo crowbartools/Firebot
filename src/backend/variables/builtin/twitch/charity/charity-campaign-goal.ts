@@ -1,6 +1,7 @@
-import { EffectTrigger } from "../../../shared/effect-constants";
-import { OutputDataType, VariableCategory } from "../../../shared/variable-constants";
-import twitchApi from "../../twitch-api/api";
+import { ReplaceVariable } from "../../../../../types/variables";
+import { EffectTrigger } from "../../../../../shared/effect-constants";
+import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import twitchApi from "../../../../twitch-api/api";
 
 const triggers = {};
 triggers[EffectTrigger.EVENT] = [
@@ -12,7 +13,7 @@ triggers[EffectTrigger.COMMAND] = true;
 triggers[EffectTrigger.PRESET_LIST] = true;
 triggers[EffectTrigger.MANUAL] = true;
 
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "charityCampaignGoal",
         description: "The goal amount for the current charity campaign",
@@ -34,4 +35,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export default model;

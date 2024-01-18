@@ -1,4 +1,5 @@
 import channelGoalVariables from './channel-goal';
+import charityVariables from './charity';
 import cheerVariables from './cheer';
 import cheermoteVariables from './cheermote';
 import hypetrainVariables from './hype-train';
@@ -7,6 +8,7 @@ import subVariables from './subs';
 
 export default [
     ...channelGoalVariables,
+    ...charityVariables,
     ...cheerVariables,
     ...cheermoteVariables,
     ...hypetrainVariables,

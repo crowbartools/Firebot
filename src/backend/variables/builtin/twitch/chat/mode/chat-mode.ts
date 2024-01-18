@@ -1,19 +1,18 @@
-"use strict";
-
-const { EffectTrigger } = require("../../../shared/effect-constants");
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
+import { ReplaceVariable } from "../../../../../../types/variables";
+import { EffectTrigger } from "../../../../../../shared/effect-constants";
+import { OutputDataType, VariableCategory } from "../../../../../../shared/variable-constants";
 
 const triggers = {};
 triggers[EffectTrigger.EVENT] = ["twitch:chat-mode-changed"];
 triggers[EffectTrigger.MANUAL] = true;
 
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "chatMode",
         description: "The mode to which the chat has been updated.",
         triggers: triggers,
         categories: [VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.text]
+        possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
         switch (trigger.metadata.eventData.chatMode) {
@@ -38,4 +37,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export default model;
