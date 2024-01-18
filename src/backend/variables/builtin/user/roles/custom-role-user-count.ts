@@ -7,7 +7,7 @@ const model : ReplaceVariable = {
     definition: {
         handle: "customRoleUserCount",
         description: "Get the number of people in a custom role.",
-        usage: "customRoleUserCount[roleName]",
+        usage: "customRoleUserCount[role]",
         categories: [VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
