@@ -67,19 +67,19 @@ const PronounVariable: ReplaceVariable = {
                         if (pronounArray.length >= pronounNumber) {
                             return pronounArray[pronounNumber - 1];
                         }
-                        return fallback;
+                        return fallback || "them/they";
                     }
 
                     return fallback;
                 } catch (err) {
                     logger.warn("error when parsing pronoun api", err);
-                    return fallback;
+                    return fallback || "they/them";
                 }
             }
 
         } catch (err) {
             logger.warn("error when parsing pronoun api", err);
-            return fallback;
+            return fallback || "they/them";
         }
     }
 };
