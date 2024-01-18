@@ -15,7 +15,7 @@ triggers[EffectTrigger.CHANNEL_REWARD] = true;
 const model : ReplaceVariable = {
     definition: {
         handle: "userRoles",
-        usage: "userRoles[username, all|firebot|custom|twitch|team]",
+        usage: "userRoles[username, all|twitch|team|firebot|custom]",
         description: "Returns an array containing all roles of the user",
         examples: [
             {
@@ -28,7 +28,7 @@ const model : ReplaceVariable = {
             },
             {
                 usage: 'userRoles[$user, all]',
-                description: "Returns all roles of the specified user"
+                description: "Returns all roles of the specified user as nested arrays in the order of: twitch, team, firebot and custom"
             },
             {
                 usage: 'userRoles[$user, firebot]',
@@ -76,27 +76,24 @@ const model : ReplaceVariable = {
             });
 
         if (roleType === 'all') {
-            let flattened = [];
-            Object
-                .keys(userRoles)
-                .forEach((key : string) => {
-                    flattened = [...flattened, userRoles[key]];
-                });
-
-            return flattened;
-        }
-
-        if (roleType === 'firebot') {
-            return userRoles.firebotRoles;
-        }
-        if (roleType === 'custom') {
-            return userRoles.customRoles;
+            return [
+                ...userRoles.twitchRoles,
+                ...userRoles.teamRoles,
+                ...userRoles.firebotRoles,
+                ...userRoles.customRoles
+            ];
         }
         if (roleType === 'twitch') {
             return userRoles.twitchRoles;
         }
         if (roleType === 'team') {
             return userRoles.teamRoles;
+        }
+        if (roleType === 'firebot') {
+            return userRoles.firebotRoles;
+        }
+        if (roleType === 'custom') {
+            return userRoles.customRoles;
         }
         return [];
     }

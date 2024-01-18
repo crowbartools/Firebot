@@ -16,7 +16,7 @@ const model : ReplaceVariable = {
     definition: {
         handle: "rawUserRoles",
         description: "(Deprecated: use $userRoles) Returns all roles of the user as a raw array",
-        usage: "rawUserRoles[username, all|firebot|custom|twitch|team]",
+        usage: "rawUserRoles[username, all|twitch|team|firebot|custom]",
         examples: [
             {
                 usage: 'rawUserRoles',
@@ -28,7 +28,7 @@ const model : ReplaceVariable = {
             },
             {
                 usage: 'rawUserRoles[$user, all]',
-                description: "Returns all roles of the specified user"
+                description: "Returns all roles of the specified user as nested arrays in the order of: twitch, team, firebot and custom roles"
             },
             {
                 usage: 'rawUserRoles[$user, firebot]',
