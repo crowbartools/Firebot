@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 import readApi from './api-read';
@@ -18,8 +18,8 @@ const model: ReplaceVariable = {
         possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER],
         hidden: true
     },
-    evaluator: (...args: unknown[]) : unknown => {
-        return readApi(...args);
+    evaluator: (trigger: Trigger, ...args: unknown[]) : unknown => {
+        return readApi.evaluator(trigger, ...args);
     }
 };
 
