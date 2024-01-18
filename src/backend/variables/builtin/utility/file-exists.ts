@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const fs = require("fs");
@@ -12,7 +12,10 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (_, filePath) => {
+    evaluator: (
+        trigger: Trigger,
+        filePath: unknown
+    ) : boolean => {
 
         if (filePath === null) {
             return false;
@@ -22,7 +25,7 @@ const model : ReplaceVariable = {
             return fs.existsSync(filePath) ? true : false;
         } catch (err) {
             logger.error(`Error checking if file "${filePath}" exists`, err);
-            return "false";
+            return false;
         }
     }
 };
