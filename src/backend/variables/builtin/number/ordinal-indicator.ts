@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const nth = (n: number) : string => ["st", "nd", "rd"][(((n < 0 ? -n : n) + 90) % 100 - 10) % 10 - 1] || "th";
@@ -11,7 +11,10 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (_: unknown, subject: unknown) : unknown => {
+    evaluator: (
+        trigger: Trigger,
+        subject: unknown
+    ) : unknown => {
         const number = Number(subject);
         if (subject == null || !Number.isFinite(number)) {
             return subject;

@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const model : ReplaceVariable = {
@@ -9,7 +9,10 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NULL, OutputDataType.NUMBER]
     },
-    evaluator: (_: unknown, ...args: Array<string | number>) : number => {
+    evaluator: (
+        trigger: Trigger,
+        ...args: Array<string | number>
+    ) : number => {
         const numArgs : number[] = args.map((value) => {
             value = Number(value);
             if (Number.isInteger(value)) {

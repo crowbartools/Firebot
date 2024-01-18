@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const fs = require("fs");
@@ -12,7 +12,10 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
-    evaluator: (_: unknown, filePath: string) : number => {
+    evaluator: (
+        trigger: Trigger,
+        filePath: string
+    ) : number => {
         if (filePath === null || typeof filePath !== 'string' || !filePath.endsWith(".txt")) {
             logger.error(`Couldn't read file (${filePath}) to count the lines in it.`);
             return 0;

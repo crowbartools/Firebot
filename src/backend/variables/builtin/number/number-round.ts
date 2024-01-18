@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const model : ReplaceVariable = {
@@ -15,7 +15,11 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
-    evaluator: (_: unknown, subject: number | string, places: null | number | string) : number => {
+    evaluator: (
+        trigger: Trigger,
+        subject: number | string,
+        places: null | number | string
+    ) : number => {
         subject = Number(subject);
         if (Number.isNaN(subject)) {
             return 0;

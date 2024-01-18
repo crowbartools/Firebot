@@ -1,6 +1,6 @@
 import { randomInt } from 'node:crypto';
 
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const model : ReplaceVariable = {
@@ -11,7 +11,11 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.COMMON, VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
-    evaluator: (_: unknown, min: string | number, max: string | number) : number => {
+    evaluator: (
+        trigger: Trigger,
+        min: string | number,
+        max: string | number
+    ) : number => {
         min = Number(min);
         max = Number(max);
         if (!Number.isFinite(min) || !Number.isFinite(max)) {

@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const customVariableManager = require("../../../common/custom-variable-manager");
@@ -21,7 +21,11 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (_, name: string, propertyPath: string) : Array<unknown> => {
+    evaluator: (
+        trigger: Trigger,
+        name: string,
+        propertyPath: string
+    ) : Array<unknown> => {
         const data = customVariableManager.getCustomVariable(name, propertyPath);
         if (data == null || !isObject(data)) {
             return [];

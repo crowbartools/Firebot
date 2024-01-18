@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const fs = require("fs");
@@ -31,7 +31,11 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (_: unknown, filePath: string, lineOrRandom: null | number | "first" | "last" | "random") => {
+    evaluator: (
+        trigger: Trigger,
+        filePath: string,
+        lineOrRandom: null | number | "first" | "last" | "random"
+    ) : string => {
 
         if (filePath === null) {
             return "[File Path Error]";

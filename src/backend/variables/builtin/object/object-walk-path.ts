@@ -1,6 +1,5 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-
 
 const logger = require('../../../logwrapper');
 
@@ -12,7 +11,11 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (_: unknown, subject: unknown, propertyPath: string | Array<string | number>) : unknown => {
+    evaluator: (
+        trigger: Trigger,
+        subject: unknown,
+        propertyPath: string | Array<string | number>
+    ) : unknown => {
         if (typeof subject == 'string' || subject instanceof String) {
             try {
                 subject = JSON.parse(`${subject}`);

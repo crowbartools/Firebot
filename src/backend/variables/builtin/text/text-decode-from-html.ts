@@ -1,6 +1,6 @@
 import { decode } from 'he';
 
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import { convertToString } from '../../../utility';
 
@@ -12,7 +12,10 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.TEXT],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (_: unknown, text: unknown) => {
+    evaluator: (
+        trigger: Trigger,
+        text: unknown
+    ) => {
         return decode(convertToString(text));
     }
 };

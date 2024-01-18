@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const mathjs = require('mathjs');
@@ -12,8 +12,14 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.COMMON, VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
-    evaluator: (_: unknown, subject: string) : number => {
-        let evaluation;
+    evaluator: (
+        trigger: Trigger,
+        subject: string
+    ) : number => {
+
+        // mathjs doesn't have types
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let evaluation : any;
         try {
             evaluation = mathjs.evaluate(subject);
         } catch (err) {

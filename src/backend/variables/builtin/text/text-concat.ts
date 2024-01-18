@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import { convertToString } from '../../../utility';
 
@@ -10,7 +10,10 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.TEXT],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (_: unknown, ...args: unknown[]) : string => {
+    evaluator: (
+        trigger: Trigger,
+        ...args: unknown[]
+    ) : string => {
         return args.map(convertToString).join('');
     }
 };

@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import { convertToString, escapeRegExp } from '../../../utility';
 
@@ -21,7 +21,7 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
     },
     evaluator: (
-        _: unknown,
+        trigger: Trigger,
         input: unknown,
         search: unknown,
         replacement: unknown = "",

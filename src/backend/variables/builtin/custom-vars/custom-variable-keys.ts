@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 import customVariableKeysRaw from './custom-variable-keys-raw';
@@ -21,8 +21,12 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (meta, name: string, propertyPath: string) : string => {
-        const keys = customVariableKeysRaw.evaluator(meta, name, propertyPath);
+    evaluator: (
+        trigger: Trigger,
+        name: string,
+        propertyPath: string
+    ) : string => {
+        const keys = customVariableKeysRaw.evaluator(trigger, name, propertyPath);
         return JSON.stringify(keys);
     }
 };

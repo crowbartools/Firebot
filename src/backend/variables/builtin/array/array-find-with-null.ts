@@ -1,5 +1,4 @@
-import { Trigger } from '../../../../types/triggers';
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 import arrayFindIndex from "./array-find-index";
@@ -31,7 +30,12 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
     },
 
-    evaluator: (_: Trigger, subject: string | unknown[], matcher, propertyPath : string = null) => {
+    evaluator: (
+        trigger: Trigger,
+        subject: string | unknown[],
+        matcher: unknown,
+        propertyPath : string = null
+    ) : unknown => {
         if (typeof subject === 'string' || subject instanceof String) {
             try {
                 subject = JSON.parse(`${subject}`);
@@ -43,7 +47,7 @@ const model : ReplaceVariable = {
             return null;
         }
 
-        const index = <number>arrayFindIndex.evaluator(_, subject, matcher, propertyPath);
+        const index = <number>arrayFindIndex.evaluator(trigger, subject, matcher, propertyPath);
         if (index == null) {
             return null;
         }

@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const shuffle = (subject: unknown[]) : unknown[] => {
@@ -21,7 +21,10 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
 
-    evaluator: (_: unknown, subject: string | unknown[]) : unknown[] => {
+    evaluator: (
+        trigger: Trigger,
+        subject: string | unknown[]
+    ) : unknown[] => {
         if (typeof subject === 'string' || subject instanceof String) {
             try {
                 subject = JSON.parse(`${subject}`);

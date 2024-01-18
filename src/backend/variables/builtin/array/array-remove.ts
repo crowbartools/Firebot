@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const model : ReplaceVariable = {
@@ -27,7 +27,11 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (_: unknown, subject: string | unknown[], index: number | string = 0) : unknown[] => {
+    evaluator: (
+        trigger: Trigger,
+        subject: string | unknown[],
+        index: number | string = 0
+    ) : unknown[] => {
         if (typeof subject === 'string' || subject instanceof String) {
             try {
                 subject = JSON.parse(`${subject}`);

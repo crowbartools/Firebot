@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 import logger from "../../../logwrapper";
@@ -37,7 +37,11 @@ const model: ReplaceVariable = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
     },
-    evaluator: async (_, url: string, responseJsonPath: string) => {
+    evaluator: async (
+        trigger: Trigger,
+        url: string,
+        responseJsonPath: string
+    ) => {
         try {
             const content = (await callUrl(url)).data;
             if (responseJsonPath != null) {

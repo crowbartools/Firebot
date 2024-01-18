@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 import { convertToString } from '../../../utility';
 
@@ -16,7 +16,11 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.TEXT],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (_: unknown, subject: unknown, position: unknown) : string => {
+    evaluator: (
+        trigger: Trigger,
+        subject: unknown,
+        position: unknown
+    ) : string => {
         if (subject == null) {
             return "[No text provided]";
         }

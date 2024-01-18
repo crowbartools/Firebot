@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { EffectTrigger } from "../../../../shared/effect-constants";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
@@ -14,7 +14,7 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.COMMON],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (trigger) => {
+    evaluator: (trigger: Trigger) : unknown => {
         const expiredCustomVariableName = trigger.metadata.eventData.expiredCustomVariableName;
         return expiredCustomVariableName;
     }

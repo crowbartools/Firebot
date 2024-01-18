@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const getPropertyAtPath = (subject: unknown, path: string) => {
@@ -38,7 +38,7 @@ const fuzzyMatch = (value: unknown, match: unknown) : boolean => {
 const model : ReplaceVariable = {
     definition: {
         handle: "arrayFilter",
-        description: "Returns a new filtered raw array.",
+        description: "Returns a new filtered array.",
         usage: "arrayFilter[array, matcher, propertyPath, removeMatches]",
         examples: [
             {
@@ -70,12 +70,12 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (
-        _: unknown,
+        trigger: Trigger,
         subject: string | unknown[],
         matcher: string,
         propertyPath: string = null,
         removeMatches: null | boolean | string = false
-    ) => {
+    ) : Array<unknown> => {
         if (typeof subject === 'string' || subject instanceof String) {
             try {
                 subject = JSON.parse(`${subject}`);

@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const model : ReplaceVariable = {
@@ -9,7 +9,10 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (_: unknown, jsonText: unknown) : unknown => {
+    evaluator: (
+        trigger: Trigger,
+        jsonText: unknown
+    ) : unknown => {
         if (jsonText == null) {
             return null;
         }

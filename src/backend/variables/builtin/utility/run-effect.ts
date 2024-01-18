@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const uuid = require("uuid/v4");
@@ -18,7 +18,10 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: async (trigger: unknown, ...effectJsonModels: unknown[]) => {
+    evaluator: async (
+        trigger: Trigger,
+        ...effectJsonModels: unknown[]
+    ) => {
 
         try {
             await effectRunner.processEffects({

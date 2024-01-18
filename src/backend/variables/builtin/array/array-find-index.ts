@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const getPropertyAtPath = (subject: unknown, path: string) => {
@@ -54,7 +54,12 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
     },
-    evaluator: (_: unknown, subject: string | unknown[], matcher, propertyPath : string = null) => {
+    evaluator: (
+        trigger: Trigger,
+        subject: string | unknown[],
+        matcher: unknown,
+        propertyPath : string = null
+    ) : null | number => {
         if (typeof subject === 'string' || subject instanceof String) {
             try {
                 subject = JSON.parse(`${subject}`);

@@ -18,7 +18,10 @@ const model: ReplaceVariable = {
         possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER],
         hidden: true
     },
-    evaluator: (trigger: Trigger, ...args: unknown[]) : unknown => {
+    evaluator: (
+        trigger: Trigger,
+        ...args: unknown[]
+    ) : unknown => {
         return readApi.evaluator(trigger, ...args);
     }
 };

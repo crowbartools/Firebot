@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const model : ReplaceVariable = {
@@ -10,8 +10,12 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
 
-    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
-    evaluator: (_: unknown, subject: string | unknown[], separator : string = ",") : string => {
+    evaluator: (
+        trigger: Trigger,
+        subject: string | unknown[],
+        // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+        separator : string = ","
+    ) : string => {
         if (typeof subject === 'string' || subject instanceof String) {
             try {
                 subject = JSON.parse(`${subject}`);
