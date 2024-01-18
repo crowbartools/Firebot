@@ -15,7 +15,7 @@ import userMetadataRaw from './user-metadata-raw';
 import usernameArray from './username-array';
 import usernameArrayRaw from './username-array-raw';
 
-import roles from './roles';
+import roleVariables from './roles';
 
 export default [
     accountCreationDate,
@@ -34,5 +34,5 @@ export default [
     userMetadataRaw,
     usernameArray,
     usernameArrayRaw,
-    ...roles
+    ...roleVariables
 ];
