@@ -6,6 +6,7 @@ import objectVariables from './object';
 import operandVariables from './operand';
 import spoofedVariables from './spoofed';
 import textVariables from './text';
+import twitchVariables from './twitch';
 import utilityVariables from './utility';
 
 export default [
@@ -17,5 +18,6 @@ export default [
     ...operandVariables,
     ...spoofedVariables,
     ...textVariables,
+    ...twitchVariables,
     ...utilityVariables
 ];

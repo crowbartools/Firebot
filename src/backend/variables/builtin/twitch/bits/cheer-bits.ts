@@ -1,13 +1,13 @@
-"use strict";
+import { ReplaceVariable, Trigger } from "../../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 
-const { EffectTrigger } = require("../../../shared/effect-constants");
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
+const { EffectTrigger } = require("../../../../../shared/effect-constants");
 
 const triggers = {};
 triggers[EffectTrigger.EVENT] = ["twitch:cheer"];
 triggers[EffectTrigger.MANUAL] = true;
 
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "cheerBitsAmount",
         description: "The amount of bits in the cheer.",
@@ -15,10 +15,10 @@ const model = {
         categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
-    evaluator: (trigger) => {
+    evaluator: (trigger: Trigger) => {
         const bits = trigger.metadata.eventData.bits || 0;
         return bits;
     }
 };
 
-module.exports = model;
+export default model;

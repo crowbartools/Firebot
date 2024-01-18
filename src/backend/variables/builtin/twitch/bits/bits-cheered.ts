@@ -1,12 +1,12 @@
-"use strict";
+import { ReplaceVariable, Trigger } from "../../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 const expressionish = require('expressionish');
 const moment = require("moment");
-const logger = require("../../logwrapper");
-const twitchApi = require("../../twitch-api/api");
+const logger = require("../../../../logwrapper");
+const twitchApi = require("../../../../twitch-api/api");
 
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "bitsCheered",
         usage: "bitsCheered[username]",
@@ -24,7 +24,12 @@ const model = {
         categories: [VariableCategory.COMMON, VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    argsCheck: (username, period = "all", startDate = null) => {
+    argsCheck: (
+        username: string,
+        // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+        period: string = "all",
+        startDate: null | string = null
+    ) => {
         period = period ?? "all";
 
         if (username == null || username.length < 1) {
@@ -44,7 +49,12 @@ const model = {
 
         return true;
     },
-    evaluator: async (trigger, username = null, period = "all", startDate = null) => {
+    evaluator: async (
+        trigger: Trigger,
+        username = null,
+        period = "all",
+        startDate = null
+    ) => {
         username = username ?? trigger.metadata.username;
         period = period ?? "all";
         startDate = startDate == null ? moment() : moment(startDate);
@@ -59,7 +69,8 @@ const model = {
                 return 0;
             }
 
-            const users = await twitchApi.bits.getChannelBitsLeaderboard(1, period, startDate.toDate(), user.id);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const users = await twitchApi.bits.getChannelBitsLeaderboard(1, period, (<any>startDate).toDate(), user.id);
 
             if (users.length === 0) {
                 return 0;
@@ -74,4 +85,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export default model;

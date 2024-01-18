@@ -24,13 +24,15 @@ interface VariableDefinition {
 
 type Variable = {
     definition: VariableDefinition;
-    evaluator(trigger: Trigger, ...args: unknown[]): PromiseLike<unknown> | unknown;
     argsCheck?: (...args: unknown[]) => void;
+    evaluator(trigger: Trigger, ...args: unknown[]): PromiseLike<unknown> | unknown;
 }
 
 type SpoofedVariable = {
     definition: VariableDefinition & { spoof: true };
+    argsCheck?: never;
     evaluator?: never;
+
 }
 
 export type ReplaceVariable = Variable | SpoofedVariable;
