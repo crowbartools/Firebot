@@ -22,16 +22,14 @@ interface VariableDefinition {
     hidden?: boolean;
 }
 
-interface Variable {
+type Variable = {
     definition: VariableDefinition;
     evaluator(trigger: Trigger, ...args: unknown[]): PromiseLike<unknown> | unknown;
 }
 
-interface SpoofedVariableDefinition extends VariableDefinition {
-    spoof: true
-}
-interface SpoofedCariable extends Omit<Variable, "evaluator"> {
-    definition: SpoofedVariableDefinition;
+type SpoofedVariable = {
+    definition: VariableDefinition & { spoof: true };
+    evaluator?: never;
 }
 
 export type ReplaceVariable = Variable | SpoofedVariable;
