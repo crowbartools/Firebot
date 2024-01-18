@@ -77,10 +77,10 @@ const model : ReplaceVariable = {
 
         if (roleType === 'all') {
             return [
-                ...userRoles.twitchRoles,
-                ...userRoles.teamRoles,
-                ...userRoles.firebotRoles,
-                ...userRoles.customRoles
+                userRoles.twitchRoles || [],
+                userRoles.teamRoles || [],
+                userRoles.firebotRoles || [],
+                userRoles.customRoles || []
             ];
         }
         if (roleType === 'twitch') {
