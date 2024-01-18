@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const model : ReplaceVariable = {
@@ -19,7 +19,11 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.ALL]
     },
-    evaluator: function (meta: Record<string, unknown>, key: string, value: unknown) {
+    evaluator: function (
+        trigger: Trigger,
+        key: string,
+        value: unknown
+    ) {
         if (
             arguments.length < 2 ||
             typeof key !== 'string' ||
@@ -27,6 +31,8 @@ const model : ReplaceVariable = {
         ) {
             return '';
         }
+
+        const meta = trigger.metadata;
 
         if (meta.quickstore == null) {
             meta.quickstore = Object.create(null);
