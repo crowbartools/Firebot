@@ -209,13 +209,14 @@ const model = {
                 }
             } else if (effect.loopMode === 'array') {
 
-
-                let arrayToIterate;
-                try {
-                    arrayToIterate = JSON.parse(effect.arrayToIterate);
-                } catch (error) {
-                    logger.error("Failed to parse array to iterate for loop effects", error);
-                    return resolve(true);
+                let arrayToIterate = effect.arrayToIterate;
+                if (typeof arrayToIterate === 'string' || arrayToIterate instanceof String) {
+                    try {
+                        arrayToIterate = JSON.parse(`${arrayToIterate}`);
+                    } catch (error) {
+                        logger.error("Failed to parse array to iterate for loop effects", error);
+                        return resolve(true);
+                    }
                 }
 
                 if (!Array.isArray(arrayToIterate)) {
