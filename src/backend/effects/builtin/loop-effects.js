@@ -33,7 +33,7 @@ const model = {
                     <input type="radio" ng-model="effect.loopMode" value="conditional" ng-change="loopModeChanged()"/>
                     <div class="control__indicator"></div>
                 </label>
-                <label class="control-fb control--radio" >Iterate Array <span class="muted"><br />Loop through a JSON array. Access the current item with $loopItem</span>
+                <label class="control-fb control--radio" >Iterate Array <span class="muted"><br />Loop through an array. Access the current item with $loopItem</span>
                     <input type="radio" ng-model="effect.loopMode" value="array" ng-change="loopModeChanged()"/>
                     <div class="control__indicator"></div>
                 </label>
