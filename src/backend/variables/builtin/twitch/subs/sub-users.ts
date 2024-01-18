@@ -35,7 +35,7 @@ const model : ReplaceVariable = {
             logger.error("Error while fetching streamer subscriptions", err);
         }
 
-        return JSON.stringify(viewers);
+        return viewers;
     }
 };
 
