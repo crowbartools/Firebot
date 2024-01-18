@@ -1,10 +1,7 @@
-// Migration: info needed
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-"use strict";
-
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
-
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "userExists",
         usage: "userExists[username]",
@@ -12,11 +9,11 @@ const model = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: async (_, username) => {
+    evaluator: async (trigger, username) => {
         const userDb = require("../../database/userDatabase");
         const user = await userDb.getTwitchUserByUsername(username);
         return user != null;
     }
 };
 
-module.exports = model;
+export default model;

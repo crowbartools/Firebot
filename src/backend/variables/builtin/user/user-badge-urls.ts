@@ -1,8 +1,6 @@
-// Migration: info needed
-"use strict";
-
-const { EffectTrigger } = require("../../../shared/effect-constants");
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import { EffectTrigger } from "../../../../shared/effect-constants";
 
 const triggers = {};
 triggers[EffectTrigger.MANUAL] = true;
@@ -14,7 +12,7 @@ triggers[EffectTrigger.EVENT] = [
     "twitch:viewer-arrived"
 ];
 
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "userBadgeUrls",
         examples: [
@@ -28,7 +26,7 @@ const model = {
         categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (trigger, target = null) => {
+    evaluator: (trigger, target: null | string = null) => {
         let messageParts = [];
         if (trigger.type === EffectTrigger.COMMAND) {
             messageParts = trigger.metadata.chatMessage.badges;
@@ -45,4 +43,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export default model;

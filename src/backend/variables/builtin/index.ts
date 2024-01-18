@@ -1,3 +1,4 @@
+import accountVariables from './accounts';
 import arrayVariables from './array';
 import customVariables from './custom-vars';
 import metadataVariables from './metadata';
@@ -7,9 +8,11 @@ import operandVariables from './operand';
 import spoofedVariables from './spoofed';
 import textVariables from './text';
 import twitchVariables from './twitch';
+import userVariables from './user';
 import utilityVariables from './utility';
 
 export default [
+    ...accountVariables,
     ...arrayVariables,
     ...customVariables,
     ...metadataVariables,
@@ -19,5 +22,6 @@ export default [
     ...spoofedVariables,
     ...textVariables,
     ...twitchVariables,
+    ...userVariables,
     ...utilityVariables
 ];

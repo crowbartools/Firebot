@@ -1,10 +1,10 @@
-"use strict";
-const logger = require("../../logwrapper");
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
-const activeUserHandler = require('../../chat/chat-listeners/active-user-handler');
+const logger = require("../../../logwrapper");
+const activeUserHandler = require('../../../chat/chat-listeners/active-user-handler');
 
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "randomViewer",
         description: "Get a random viewer in chat.",
@@ -29,4 +29,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export default model;

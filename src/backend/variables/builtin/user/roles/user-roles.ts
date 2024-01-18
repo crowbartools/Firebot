@@ -1,8 +1,8 @@
-"use strict";
+import { ReplaceVariable } from "../../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import { EffectTrigger } from '../../../../../shared/effect-constants';
 
-const { EffectTrigger } = require("../../../shared/effect-constants");
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
-const { getAllRolesForViewerNameSpaced } = require('../../roles/role-helpers');
+import { getAllRolesForViewerNameSpaced } from '../../../../roles/role-helpers';
 
 const triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
@@ -12,11 +12,11 @@ triggers[EffectTrigger.CUSTOM_SCRIPT] = true;
 triggers[EffectTrigger.PRESET_LIST] = true;
 triggers[EffectTrigger.CHANNEL_REWARD] = true;
 
-module.exports = {
+const model : ReplaceVariable = {
     definition: {
         handle: "userRoles",
         usage: "userRoles[username, all|firebot|custom|twitch|team]",
-        description: "Returns all roles of the user",
+        description: "Returns an array containing all roles of the user",
         examples: [
             {
                 usage: 'userRoles',
@@ -51,14 +51,14 @@ module.exports = {
         categories: [VariableCategory.COMMON, VariableCategory.USER],
         possibleDataOutput: [OutputDataType.ALL]
     },
-    evaluator: async (trigger, username, roleType) => {
+    evaluator: async (trigger, username: null | string, roleType) : Promise<unknown[]> => {
         if (username == null && roleType == null) {
             username = trigger.metadata.username;
             roleType = 'all';
         }
 
         if (username == null || username === '') {
-            return '[]';
+            return [];
         }
 
         if (roleType == null || roleType === "") {
@@ -69,31 +69,37 @@ module.exports = {
 
         const userRoles = await getAllRolesForViewerNameSpaced(username);
 
-        Object.keys(userRoles).forEach(key => {
-            userRoles[key] = userRoles[key].map(r => r.name);
-        });
+        Object
+            .keys(userRoles)
+            .forEach((key: string) => {
+                userRoles[key] = userRoles[key].map(r => r.name);
+            });
 
         if (roleType === 'all') {
             let flattened = [];
-            Object.keys(userRoles).forEach(key => {
-                flattened = [...flattened, userRoles[key]];
-            });
+            Object
+                .keys(userRoles)
+                .forEach((key : string) => {
+                    flattened = [...flattened, userRoles[key]];
+                });
 
-            return JSON.stringify(flattened);
+            return flattened;
         }
 
         if (roleType === 'firebot') {
-            return JSON.stringify(userRoles.firebotRoles);
+            return userRoles.firebotRoles;
         }
         if (roleType === 'custom') {
-            return JSON.stringify(userRoles.customRoles);
+            return userRoles.customRoles;
         }
         if (roleType === 'twitch') {
-            return JSON.stringify(userRoles.twitchRoles);
+            return userRoles.twitchRoles;
         }
         if (roleType === 'team') {
-            return JSON.stringify(userRoles.teamRoles);
+            return userRoles.teamRoles;
         }
-        return '[]';
+        return [];
     }
 };
+
+export default model;

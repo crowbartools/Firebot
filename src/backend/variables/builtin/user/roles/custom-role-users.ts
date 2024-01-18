@@ -1,9 +1,9 @@
-"use strict";
+import { ReplaceVariable } from "../../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
-const customRolesManager = require("../../roles/custom-roles-manager");
+const customRolesManager = require("../../../../roles/custom-roles-manager");
 
-module.exports = {
+const model : ReplaceVariable = {
     definition: {
         handle: "customRoleUsers",
         usage: "customRoleUsers[role]",
@@ -13,11 +13,13 @@ module.exports = {
     },
     evaluator: async (_, role) => {
         if (role == null || role === '') {
-            return JSON.stringify([]);
+            return [];
         }
 
         const customRole = customRolesManager.getRoleByName(role);
 
-        return JSON.stringify(customRole?.viewers || []);
+        return customRole?.viewers || [];
     }
 };
+
+export default model;

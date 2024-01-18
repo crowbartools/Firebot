@@ -1,14 +1,13 @@
-// Migration: todo - Need implementation details
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-"use strict";
-const util = require("../../utility");
-const logger = require("../../logwrapper");
-const activeUserHandler = require('../../chat/chat-listeners/active-user-handler');
-const customRoleManager = require('../../roles/custom-roles-manager');
+import { getRandomInt } from '../../../utility';
 
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
+const logger = require("../../../logwrapper");
+const activeUserHandler = require('../../../chat/chat-listeners/active-user-handler');
+const customRoleManager = require('../../../roles/custom-roles-manager');
 
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "randomActiveViewer",
         usage: "randomActiveViewer",
@@ -26,7 +25,7 @@ const model = {
         categories: [VariableCategory.USER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: async (_, roleName, ignoreUser) => {
+    evaluator: async (trigger, roleName, ignoreUser) => {
         logger.debug("Getting random active viewer...");
 
         const activeViewerCount = activeUserHandler.getActiveUserCount();
@@ -55,7 +54,7 @@ const model = {
             if (usersWithRole.length === 0) {
                 return "[Unable to get random active users]";
             }
-            const randIndex = util.getRandomInt(0, usersWithRole.length - 1);
+            const randIndex = getRandomInt(0, usersWithRole.length - 1);
             return usersWithRole[randIndex].username;
         }
 
@@ -68,4 +67,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export default model;

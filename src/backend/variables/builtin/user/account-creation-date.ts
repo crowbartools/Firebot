@@ -1,12 +1,13 @@
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-"use strict";
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
-const twitchApi = require("../../twitch-api/api");
-const accountAccess = require("../../common/account-access");
 const moment = require("moment");
-const logger = require("../../logwrapper");
 
-const model = {
+const twitchApi = require("../../../twitch-api/api");
+const accountAccess = require("../../../common/account-access");
+const logger = require("../../../logwrapper");
+
+const model : ReplaceVariable = {
     definition: {
         handle: "accountCreationDate",
         description: "The creation date of your Twitch account.",
@@ -27,7 +28,7 @@ const model = {
         categories: [VariableCategory.USER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: async (_, username) => {
+    evaluator: async (trigger, username) => {
         if (username == null) {
             username = accountAccess.getAccounts().streamer.username;
         }
@@ -47,4 +48,4 @@ const model = {
         }
     }
 };
-module.exports = model;
+export default model;

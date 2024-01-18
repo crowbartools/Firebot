@@ -1,8 +1,10 @@
-import { ReplaceVariable } from "../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../shared/variable-constants";
 import { app } from "electron";
-import logger from "../../logwrapper";
 import axios from "axios";
+
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+
+import logger from "../../../logwrapper";
 
 const callUrl = async (url: string) => {
     try {
@@ -43,7 +45,7 @@ const PronounVariable: ReplaceVariable = {
         categories: [VariableCategory.COMMON],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: async (_, username: string, pronounNumber: number, fallback: string) => {
+    evaluator: async (trigger, username: string, pronounNumber: number, fallback: string) => {
         try {
             const pronouns = (await callUrl('https://pronouns.alejo.io/api/pronouns')).data;
             const userPronounData = (await callUrl(`https://pronouns.alejo.io/api/users/${username}`)).data[0];
@@ -82,4 +84,4 @@ const PronounVariable: ReplaceVariable = {
     }
 };
 
-export = PronounVariable;
+export default PronounVariable;

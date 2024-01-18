@@ -1,15 +1,11 @@
-// Migration: info needed
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-"use strict";
+const logger = require("../../../logwrapper");
+const viewerDB = require('../../../database/userDatabase');
+const twitchApi = require("../../../twitch-api/api");
 
-const logger = require("../../logwrapper");
-
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
-
-const viewerDB = require('../../database/userDatabase');
-const twitchApi = require("../../twitch-api/api");
-
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "userId",
         usage: "userId[username]",
@@ -46,4 +42,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export default model;

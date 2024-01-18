@@ -1,9 +1,9 @@
-"use strict";
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-const twitchApi = require("../../twitch-api/api");
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
+const twitchApi = require("../../../twitch-api/api");
 
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "userAvatarUrl",
         usage: "userAvatarUrl",
@@ -35,4 +35,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export default model;

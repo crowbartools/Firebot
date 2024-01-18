@@ -1,11 +1,9 @@
-// Migration: info needed
+import { ReplaceVariable } from "../../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 
-"use strict";
+const customRolesManager = require("../../../../roles/custom-roles-manager");
 
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
-const customRolesManager = require("../../roles/custom-roles-manager");
-
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "customRoleUserCount",
         description: "Get the number of people in a custom role.",
@@ -13,7 +11,7 @@ const model = {
         categories: [VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
-    evaluator: async (_, roleName) => {
+    evaluator: async (trigger, roleName) => {
         if (roleName == null || roleName == null) {
             return 0;
         }
@@ -28,4 +26,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export default model;

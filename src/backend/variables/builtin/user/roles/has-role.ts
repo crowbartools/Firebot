@@ -1,9 +1,8 @@
-"use strict";
+import { ReplaceVariable } from "../../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import { EffectTrigger } from '../../../../../shared/effect-constants';
 
-const { EffectTrigger } = require("../../../shared/effect-constants");
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
-
-const { viewerHasRoleByName } = require('../../roles/role-helpers');
+const { viewerHasRoleByName } = require('../../../../roles/role-helpers');
 
 const triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
@@ -13,7 +12,7 @@ triggers[EffectTrigger.CUSTOM_SCRIPT] = true;
 triggers[EffectTrigger.PRESET_LIST] = true;
 triggers[EffectTrigger.CHANNEL_REWARD] = true;
 
-module.exports = {
+const model : ReplaceVariable = {
     definition: {
         handle: "hasRole",
         usage: "hasRole[user, role]",
@@ -34,3 +33,4 @@ module.exports = {
         return viewerHasRoleByName(username, role);
     }
 };
+export default model;

@@ -1,11 +1,9 @@
-// Migration: done
+import { ReplaceVariable} from "../../../../types/variables";
+import { OutputDataType } from "../../../../shared/variable-constants";
 
-"use strict";
+const accountAccess = require("../../../common/account-access");
 
-const accountAccess = require("../../common/account-access");
-const { OutputDataType } = require("../../../shared/variable-constants");
-
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "bot",
         description: "Outputs the Bot account username.",
@@ -19,4 +17,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export default model;

@@ -1,6 +1,6 @@
-import { ReplaceVariable } from "../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../shared/variable-constants";
-import twitchApi from "../../twitch-api/api";
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import twitchApi from "../../../twitch-api/api";
 
 const UserIsBannedVariable: ReplaceVariable = {
     definition: {
@@ -24,4 +24,4 @@ const UserIsBannedVariable: ReplaceVariable = {
     }
 };
 
-export = UserIsBannedVariable;
+export default UserIsBannedVariable;

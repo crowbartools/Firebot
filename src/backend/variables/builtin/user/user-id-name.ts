@@ -1,7 +1,6 @@
-"use strict";
-
-const { EffectTrigger } = require("../../../shared/effect-constants");
-const { OutputDataType } = require("../../../shared/variable-constants");
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType } from "../../../../shared/variable-constants";
+import { EffectTrigger } from "../../../../shared/effect-constants";
 
 const triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
@@ -12,8 +11,7 @@ triggers[EffectTrigger.PRESET_LIST] = true;
 triggers[EffectTrigger.CHANNEL_REWARD] = true;
 triggers[EffectTrigger.QUICK_ACTION] = true;
 
-
-module.exports = {
+const model : ReplaceVariable = {
     definition: {
         handle: "useridname",
         description: "The associated underlying user identifying name for the given trigger.",
@@ -29,3 +27,5 @@ module.exports = {
             trigger.metadata?.chatMessage?.userIdName;
     }
 };
+
+export default model;

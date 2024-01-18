@@ -1,12 +1,9 @@
-// Migration: info needed
+import { ReplaceVariable } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-"use strict";
+const viewerDB = require('../../../database/userDatabase');
 
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
-
-const viewerDB = require('../../database/userDatabase');
-
-const model = {
+const model : ReplaceVariable = {
     definition: {
         handle: "chatMessages",
         usage: "chatMessages[username]",
@@ -26,4 +23,4 @@ const model = {
     }
 };
 
-module.exports = model;
+export default model;
