@@ -1,6 +1,8 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
+const userDb = require("../../../database/userDatabase");
+
 const model : ReplaceVariable = {
     definition: {
         handle: "userExists",
@@ -10,7 +12,6 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async (trigger, username) => {
-        const userDb = require("../../database/userDatabase");
         const user = await userDb.getTwitchUserByUsername(username);
         return user != null;
     }
