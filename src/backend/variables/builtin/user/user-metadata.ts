@@ -1,6 +1,8 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
+const userDb = require("../../../database/userDatabase");
+
 const model : ReplaceVariable = {
     definition: {
         handle: "userMetadata",
@@ -20,7 +22,6 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
     },
     evaluator: async (trigger, username, key, defaultValue = null, propertyPath = null) => {
-        const userDb = require("../../database/userDatabase");
         const data = await userDb.getUserMetadata(username, key, propertyPath);
 
         if (data == null) {
