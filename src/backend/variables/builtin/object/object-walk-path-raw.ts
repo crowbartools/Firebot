@@ -4,7 +4,6 @@ import { OutputDataType, VariableCategory } from "../../../../shared/variable-co
 import objectWalkPath from './object-walk-path';
 
 const model : ReplaceVariable = {
-    ...objectWalkPath,
     definition: {
         handle: "rawObjectWalkPath",
         description: "(Deprecated: use $objectWalkPath) Returns the value from a raw object at the given dot-notated path",
@@ -12,7 +11,8 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT],
         hidden: true
-    }
+    },
+    evaluator: objectWalkPath.evaluator
 };
 
 export default model;

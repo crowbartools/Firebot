@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 import customVariableRaw from './custom-variable-raw';
@@ -25,8 +25,8 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
     },
-    evaluator: (...args: unknown[]) => {
-        const data = customVariableRaw.evaluator(...args);
+    evaluator: (trigger: Trigger, ...args: unknown[]) => {
+        const data = customVariableRaw.evaluator(trigger, ...args);
         if (data == null) {
             return null;
         }
