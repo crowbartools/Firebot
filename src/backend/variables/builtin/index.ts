@@ -1,6 +1,8 @@
 import accountVariables from './accounts';
 import arrayVariables from './array';
+import counterVariables from './counter';
 import customVariables from './custom-vars';
+import donationVariables from './donation';
 import metadataVariables from './metadata';
 import numberVariables from './number';
 import objectVariables from './object';
@@ -14,7 +16,9 @@ import utilityVariables from './utility';
 export default [
     ...accountVariables,
     ...arrayVariables,
+    ...counterVariables,
     ...customVariables,
+    ...donationVariables,
     ...metadataVariables,
     ...numberVariables,
     ...objectVariables,
