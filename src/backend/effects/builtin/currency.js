@@ -1,6 +1,7 @@
 "use strict";
 
-const currencyDatabase = require("../../database/currencyDatabase");
+const currencyAccess = require("../../currency/currency-access").default;
+const currencyManager = require("../../currency/currency-manager");
 const twitchChat = require("../../chat/twitch-chat");
 const logger = require("../../logwrapper");
 const { EffectCategory } = require('../../../shared/effect-constants');
@@ -214,7 +215,7 @@ const currency = {
    * When the effect is triggered by something
    * Used to validate fields in the option template.
    */
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.currency == null) {
             errors.push("Please select a currency to use.");
@@ -224,10 +225,10 @@ const currency = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: event => {
-        return new Promise(async resolve => {
+    onTriggerEvent: (event) => {
+        return new Promise(async (resolve) => {
             // Make sure viewer DB is on before continuing.
-            if (!currencyDatabase.isViewerDBOn()) {
+            if (currencyAccess.isViewerDBOn() !== true) {
                 return resolve(true);
             }
 
@@ -251,7 +252,7 @@ const currency = {
                 switch (event.effect.target) {
                     case "individual":
                     // Give currency to one person.
-                        await currencyDatabase.adjustCurrencyForUser(
+                        await currencyManager.adjustCurrencyForViewer(
                             userTarget,
                             event.effect.currency,
                             currency,
@@ -260,7 +261,7 @@ const currency = {
                         break;
                     case "allOnline":
                     // Give currency to all online.
-                        await currencyDatabase.addCurrencyToOnlineUsers(
+                        await currencyManager.addCurrencyToOnlineViewers(
                             event.effect.currency,
                             currency,
                             true,
@@ -269,7 +270,7 @@ const currency = {
                         break;
                     case "allViewers":
                     // Give currency to all viewers.
-                        await currencyDatabase.adjustCurrencyForAllUsers(
+                        await currencyManager.adjustCurrencyForAllViewers(
                             event.effect.currency,
                             currency,
                             true,
@@ -278,7 +279,7 @@ const currency = {
                         break;
                     case "group":
                     // Give currency to group.
-                        await currencyDatabase.addCurrencyToUserGroupOnlineUsers(
+                        await currencyManager.addCurrencyToViewerGroupOnlineViewers(
                             event.effect.roleIds,
                             event.effect.currency,
                             currency,

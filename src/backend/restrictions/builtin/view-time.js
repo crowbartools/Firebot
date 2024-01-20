@@ -26,8 +26,8 @@ const model = {
     predicate: (triggerData, restrictionData) => {
         return new Promise(async (resolve, reject) => {
             let passed = false;
-            const viewerDB = require('../../database/userDatabase');
-            const viewer = await viewerDB.getUserByUsername(triggerData.metadata.username);
+            const viewerDatabase = require('../../viewers/viewer-database');
+            const viewer = await viewerDatabase.getViewerByUsername(triggerData.metadata.username);
             const viewtime = viewer.minutesInChannel;
 
             if (viewtime >= restrictionData.time) {

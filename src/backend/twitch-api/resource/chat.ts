@@ -1,6 +1,6 @@
 import logger from '../../logwrapper';
 import accountAccess from "../../common/account-access";
-import { ApiClient, HelixChatAnnouncementColor, HelixSendChatAnnouncementParams, HelixUpdateChatSettingsParams } from "@twurple/api";
+import { ApiClient, HelixChatAnnouncementColor, HelixChatChatter, HelixSendChatAnnouncementParams, HelixUpdateChatSettingsParams } from "@twurple/api";
 
 export class TwitchChatApi {
     private _streamerClient: ApiClient;
@@ -14,18 +14,18 @@ export class TwitchChatApi {
     /**
      * Gets the list of all chatters in the channel.
      */
-    async getAllChatters(): Promise<string[]> {
-        const chatters: string[] = [];
+    async getAllChatters(): Promise<HelixChatChatter[]> {
+        const chatters: HelixChatChatter[] = [];
 
         try {
             const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
 
             let result = await this._streamerClient.chat.getChatters(streamerUserId);
-            chatters.push(...result.data.map(c => c.userDisplayName));
+            chatters.push(...result.data);
 
             while (result.cursor) {
                 result = await this._streamerClient.chat.getChatters(streamerUserId, { after: result.cursor });
-                chatters.push(...result.data.map(c => c.userDisplayName));
+                chatters.push(...result.data);
             }
         } catch (error) {
             logger.error("Error getting chatter list", error.message);

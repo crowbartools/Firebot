@@ -81,8 +81,8 @@
 
                 $ctrl.getPurgePreview = () => {
                     $rootScope.showSpinner = true;
-                    $q.when(backendCommunicator.fireEventAsync("getPurgePreview", $ctrl.options))
-                        .then(users => {
+                    $q.when(backendCommunicator.fireEventAsync("get-purge-preview", $ctrl.options))
+                        .then((users) => {
                             $rootScope.showSpinner = false;
                             utilityService.showModal({
                                 component: "previewPurgeModal",
@@ -102,11 +102,11 @@
                             confirmLabel: "Purge",
                             confirmBtnType: "btn-danger"
                         })
-                        .then(confirmed => {
+                        .then((confirmed) => {
                             if (confirmed) {
                                 $rootScope.showSpinner = true;
-                                $q.when(backendCommunicator.fireEventAsync("purgeUsers", $ctrl.options))
-                                    .then(purgedCount => {
+                                $q.when(backendCommunicator.fireEventAsync("purge-viewers", $ctrl.options))
+                                    .then((purgedCount) => {
                                         $rootScope.showSpinner = false;
                                         ngToast.create({
                                             className: 'success',

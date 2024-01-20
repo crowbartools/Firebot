@@ -1,13 +1,14 @@
 'use strict';
 
-const currencyDatabase = require("../../../../backend/database/currencyDatabase");
+const currencyAccess = require("../../../../backend/currency/currency-access").default;
+const currencyManager = require("../../../../backend/currency/currency-manager");
 
 exports.getCurrencies = function(req, res) {
     const currencyName = req.params.currencyName;
     if (currencyName) {
-        res.json(currencyDatabase.getCurrencyByName(currencyName));
+        res.json(currencyAccess.getCurrencyByName(currencyName));
     } else {
-        res.json(currencyDatabase.getCurrencies());
+        res.json(currencyAccess.getCurrencies());
     }
 };
 
@@ -17,9 +18,9 @@ exports.getTopCurrencyHolders = async (req, res) => {
 
     let users = [];
     if (count) {
-        users = await currencyDatabase.getTopCurrencyHolders(currencyName, count, true);
+        users = await currencyManager.getTopCurrencyHolders(currencyName, count, true);
     } else {
-        users = await currencyDatabase.getTopCurrencyHolders(currencyName, 10, true);
+        users = await currencyManager.getTopCurrencyHolders(currencyName, 10, true);
     }
 
     res.json(users);

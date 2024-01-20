@@ -19,7 +19,7 @@
                     </div>
                 </div>
                 <div ng-if="!$ctrl.loading">
-                    <img ng-src="{{ $ctrl.isTwitchOrNewUser() && $ctrl.viewerDetails.twitchData ? $ctrl.viewerDetails.twitchData.iconUrl : '../images/placeholders/default-profile-pic.png'}}"
+                    <img ng-src="{{ $ctrl.isTwitchOrNewUser() && $ctrl.viewerDetails.twitchData ? $ctrl.viewerDetails.twitchData.profilePicUrl : '../images/placeholders/default-profile-pic.png'}}"
                         style="width: 200px;height: 200px;border-radius: 200px;position: absolute;left: -50px;top: -50px;"/>
                     <div style="padding-left: 150px;min-height: 125px;">
                         <div style="display:flex;align-items: center;">
@@ -186,7 +186,7 @@
                                 value = JSON.parse(value);
                             } catch (error) { /* silently fail */ }
 
-                            backendCommunicator.fireEvent("update-user-metadata", {
+                            backendCommunicator.fireEvent("update-viewer-metadata", {
                                 username: $ctrl.viewerDetails.twitchData.username,
                                 key,
                                 value
@@ -204,9 +204,9 @@
                         question: `Are you sure you want to delete the metadata "${key}"?`,
                         confirmLabel: "Delete",
                         confirmBtnType: "btn-danger"
-                    }).then(confirmed => {
+                    }).then((confirmed) => {
                         if (confirmed) {
-                            backendCommunicator.fireEvent("delete-user-metadata", {
+                            backendCommunicator.fireEvent("delete-viewer-metadata", {
                                 username: $ctrl.viewerDetails.twitchData.username,
                                 key
                             });
@@ -343,7 +343,7 @@
                                 confirmLabel: this.name,
                                 confirmBtnType: this._confirmBtnType
                             })
-                            .then(confirmed => {
+                            .then((confirmed) => {
                                 if (confirmed) {
                                     this.toggleValue = this._actionFunc(this.toggleValue);
                                     this.updateNameAndIcon();
@@ -369,13 +369,13 @@
                         actions.push(new ViewerAction(
                             "mod",
                             isMod,
-                            mod => {
+                            (mod) => {
                                 return mod ? "Unmod" : "Mod";
                             },
-                            mod => {
+                            (mod) => {
                                 return mod ? "fas fa-user-minus" : "fal fa-user-plus";
                             },
-                            mod => {
+                            (mod) => {
                                 const newMod = !mod;
                                 viewersService.updateModStatus($ctrl.viewerDetails.twitchData.username, newMod);
                                 if (newMod) {
@@ -393,13 +393,13 @@
                         actions.push(new ViewerAction(
                             "ban",
                             isBanned,
-                            banned => {
+                            (banned) => {
                                 return banned ? "Unban" : "Ban";
                             },
-                            banned => {
+                            (banned) => {
                                 return banned ? "fas fa-ban" : "fal fa-ban";
                             },
-                            banned => {
+                            (banned) => {
                                 const newBanned = !banned;
                                 viewersService.updateBannedStatus($ctrl.viewerDetails.twitchData.username, newBanned);
                                 if (newBanned) {
@@ -418,7 +418,7 @@
                 }
 
                 $ctrl.disableAutoStatAccuralChange = () => {
-                    backendCommunicator.fireEvent("updateViewerDataField", {
+                    backendCommunicator.fireEvent("update-firebot-viewer-data-field", {
                         userId: $ctrl.resolve.userId,
                         field: "disableAutoStatAccrual",
                         value: $ctrl.viewerDetails.firebotData.disableAutoStatAccrual
@@ -426,7 +426,7 @@
                 };
 
                 $ctrl.disableActiveUserListChange = () => {
-                    backendCommunicator.fireEvent("updateViewerDataField", {
+                    backendCommunicator.fireEvent("update-firebot-viewer-data-field", {
                         userId: $ctrl.resolve.userId,
                         field: "disableActiveUserList",
                         value: $ctrl.viewerDetails.firebotData.disableActiveUserList
@@ -434,7 +434,7 @@
                 };
 
                 $ctrl.disableViewerListChange = () => {
-                    backendCommunicator.fireEvent("updateViewerDataField", {
+                    backendCommunicator.fireEvent("update-firebot-viewer-data-field", {
                         userId: $ctrl.resolve.userId,
                         field: "disableViewerList",
                         value: $ctrl.viewerDetails.firebotData.disableViewerList
@@ -465,7 +465,7 @@
                                     saveText: "Save",
                                     inputPlaceholder: `Enter ${this.name.toLowerCase()}`,
                                     validationFn: (value) => {
-                                        return new Promise(resolve => {
+                                        return new Promise((resolve) => {
                                             if (typeof value === 'string') {
                                                 if (value == null || value.trim().length < 1) {
                                                     return resolve(false);
@@ -501,7 +501,7 @@
                     }
 
                     saveValue() {
-                        backendCommunicator.fireEvent("updateViewerDataField", {
+                        backendCommunicator.fireEvent("update-firebot-viewer-data-field", {
                             userId: $ctrl.resolve.userId,
                             field: this._fieldName,
                             value: this.value
@@ -525,15 +525,15 @@
                         "Join Date",
                         "fa-sign-in",
                         joinDate,
-                        value => {
+                        (value) => {
                             return value ? moment(value).format("L") : "Not saved";
                         },
                         "joinDate",
                         "date",
-                        value => {
+                        (value) => {
                             return value ? moment(value).toDate() : new Date();
                         },
-                        value => {
+                        (value) => {
                             return moment(value).valueOf();
                         }
                     ));
@@ -543,15 +543,15 @@
                         "Last Seen",
                         "fa-eye",
                         lastSeen,
-                        value => {
+                        (value) => {
                             return value ? moment(value).format("L") : "Not saved";
                         },
                         "lastSeen",
                         "date",
-                        value => {
+                        (value) => {
                             return value ? moment(value).toDate() : new Date();
                         },
-                        value => {
+                        (value) => {
                             return moment(value).valueOf();
                         }
                     ));
@@ -561,15 +561,15 @@
                         "View Time",
                         "fa-tv",
                         minsInChannel,
-                        value => {
+                        (value) => {
                             return value < 60 ? 'Less than an hour' : `${parseInt(value / 60)} hr(s)`;
                         },
                         "minutesInChannel",
                         "number",
-                        value => {
+                        (value) => {
                             return value ? parseInt(value / 60) : 0;
                         },
-                        value => {
+                        (value) => {
                             const mins = parseInt(value) * 60;
 
                             return mins;
@@ -584,10 +584,10 @@
                         value => value,
                         "chatMessages",
                         "number",
-                        value => {
+                        (value) => {
                             return value ? parseInt(value) : 0;
                         },
-                        value => {
+                        (value) => {
                             return value ? parseInt(value) : 0;
                         }
                     ));
@@ -602,10 +602,10 @@
                             value => value,
                             `currency.${currency.id}`,
                             "number",
-                            value => {
+                            (value) => {
                                 return value ? parseInt(value) : 0;
                             },
-                            value => {
+                            (value) => {
                                 return value ? parseInt(value) : 0;
                             }
                         ));
@@ -630,7 +630,7 @@
                     const username = $ctrl.viewerDetails.twitchData.displayName;
                     const options = viewerRolesService.getCustomRoles()
                         .filter(r => !r.viewers.some(v => v.toLowerCase() === username.toLowerCase()))
-                        .map(r => {
+                        .map((r) => {
                             return {
                                 id: r.id,
                                 name: r.name
@@ -663,7 +663,7 @@
                         question: `Are you sure you want to remove the role ${roleName}?`,
                         confirmLabel: "Remove",
                         confirmBtnType: "btn-danger"
-                    }).then(confirmed => {
+                    }).then((confirmed) => {
                         if (confirmed) {
                             viewerRolesService.removeUserFromRole(roleId, username);
                             loadCustomRoles();
@@ -704,14 +704,14 @@
                             confirmLabel: "Remove",
                             confirmBtnType: "btn-danger"
                         })
-                        .then(confirmed => {
+                        .then((confirmed) => {
                             if (confirmed) {
 
                                 $ctrl.hasFirebotData = false;
                                 $ctrl.viewerDetails.firebotData = {};
                                 $ctrl.dataPoints = [];
 
-                                backendCommunicator.fireEvent("removeViewerFromDb", $ctrl.resolve.userId);
+                                backendCommunicator.fireEvent("remove-viewer-from-db", $ctrl.resolve.userId);
                             }
                         });
                 };
@@ -726,16 +726,18 @@
 
                     const createViewerRequest = {
                         id: $ctrl.resolve.userId,
-                        username: $ctrl.viewerDetails.twitchData.displayName,
-                        roles: channelRoles
+                        username: $ctrl.viewerDetails.twitchData.username,
+                        displayName: $ctrl.viewerDetails.twitchData.displayName,
+                        profilePicUrl: $ctrl.viewerDetails.twitchData.profilePicUrl,
+                        twitchRoles: channelRoles
                     };
 
-                    $q(resolve => {
-                        backendCommunicator.fireEventAsync("createViewerFirebotData", createViewerRequest)
-                            .then(viewerFirebotData => {
+                    $q((resolve) => {
+                        backendCommunicator.fireEventAsync("create-firebot-viewer-data", createViewerRequest)
+                            .then((viewerFirebotData) => {
                                 resolve(viewerFirebotData);
                             });
-                    }).then(viewerFirebotData => {
+                    }).then((viewerFirebotData) => {
                         $ctrl.viewerDetails.firebotData = viewerFirebotData || {};
                         $ctrl.hasFirebotData = Object.keys($ctrl.viewerDetails.firebotData).length > 0;
                         buildDataPoints();
@@ -745,12 +747,12 @@
                 $ctrl.$onInit = function() {
                     const userId = $ctrl.resolve.userId;
 
-                    $q(resolve => {
-                        backendCommunicator.fireEventAsync("getViewerDetails", userId)
-                            .then(viewerDetails => {
+                    $q((resolve) => {
+                        backendCommunicator.fireEventAsync("get-viewer-details", userId)
+                            .then((viewerDetails) => {
                                 resolve(viewerDetails);
                             });
-                    }).then(viewerDetails => {
+                    }).then((viewerDetails) => {
                         console.log(viewerDetails);
                         $ctrl.viewerDetails = viewerDetails;
                         init();

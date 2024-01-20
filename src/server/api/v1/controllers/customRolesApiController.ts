@@ -1,6 +1,7 @@
 import customRolesManager from "../../../../backend/roles/custom-roles-manager";
-import userDb, { FirebotUser } from "../../../../backend/database/userDatabase";
+import viewerDatabase from "../../../../backend/viewers/viewer-database";
 import { Request, Response } from "express";
+import { FirebotViewer } from "../../../../types/viewers";
 
 export async function getCustomRoles(req: Request, res: Response): Promise<Response> {
     const customRoles = customRolesManager.getCustomRoles()
@@ -25,7 +26,7 @@ export async function getCustomRoleById(req: Request, res: Response): Promise<Re
         });
     }
 
-    const customRole = customRolesManager.getCustomRoles().find((role) => role.id.toLowerCase() === customRoleId.toLowerCase());
+    const customRole = customRolesManager.getCustomRoles().find(role => role.id.toLowerCase() === customRoleId.toLowerCase());
 
     if (customRole == null) {
         return res.status(404).send({
@@ -61,11 +62,11 @@ export async function addUserToCustomRole(req: Request, res: Response): Promise<
         });
     }
 
-    let metadata: FirebotUser;
+    let metadata: FirebotViewer;
     if (username === "true") {
-        metadata = await userDb.getUserByUsername(userId);
+        metadata = await viewerDatabase.getViewerByUsername(userId);
     } else {
-        metadata = await userDb.getUserById(userId);
+        metadata = await viewerDatabase.getViewerById(userId);
     }
 
     if (metadata === null) {
@@ -75,7 +76,7 @@ export async function addUserToCustomRole(req: Request, res: Response): Promise<
         });
     }
 
-    const customRole = customRolesManager.getCustomRoles().find((cr) => cr.id.toLowerCase() === customRoleId.toLowerCase());
+    const customRole = customRolesManager.getCustomRoles().find(cr => cr.id.toLowerCase() === customRoleId.toLowerCase());
 
     if (customRole == null) {
         return res.status(404).send({
@@ -107,11 +108,11 @@ export async function removeUserFromCustomRole(req: Request, res: Response): Pro
         });
     }
 
-    let metadata: FirebotUser;
+    let metadata: FirebotViewer;
     if (username === "true") {
-        metadata = await userDb.getUserByUsername(userId);
+        metadata = await viewerDatabase.getViewerByUsername(userId);
     } else {
-        metadata = await userDb.getUserById(userId);
+        metadata = await viewerDatabase.getViewerById(userId);
     }
 
     if (metadata === null) {
@@ -121,7 +122,7 @@ export async function removeUserFromCustomRole(req: Request, res: Response): Pro
         });
     }
 
-    const customRole = customRolesManager.getCustomRoles().find((cr) => cr.id.toLowerCase() === customRoleId.toLowerCase());
+    const customRole = customRolesManager.getCustomRoles().find(cr => cr.id.toLowerCase() === customRoleId.toLowerCase());
 
     if (customRole == null) {
         return res.status(404).send({
