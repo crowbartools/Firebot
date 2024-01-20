@@ -144,7 +144,7 @@
                     backupService.startBackup();
                 };
 
-                backendCommunicator.on("backupComplete", (manualActivation) => {
+                backendCommunicator.on("backup-complete", (manualActivation) => {
                     $scope.isBackingUp = false;
 
                     if (manualActivation) {
@@ -167,7 +167,6 @@
                             $scope,
                             $uibModalInstance,
                             $q,
-                            listenerService,
                             utilityService,
                             dataAccess
                         ) => {
@@ -178,7 +177,7 @@
                             $scope.loadingBackups = true;
                             $q
                                 .when(
-                                    new Promise(resolve => {
+                                    new Promise((resolve) => {
                                         fs.readdir(backupFolderPath, (err, files) => {
                                             const backups = files
                                                 .filter(f => f.endsWith(".zip"))
@@ -220,7 +219,7 @@
                                         });
                                     })
                                 )
-                                .then(backups => {
+                                .then((backups) => {
                                     $scope.loadingBackups = false;
                                     $scope.backups = backups;
                                 });
@@ -245,7 +244,7 @@
                                         question: "Are you sure you'd like to delete this backup?",
                                         confirmLabel: "Delete"
                                     })
-                                    .then(confirmed => {
+                                    .then((confirmed) => {
                                         if (confirmed) {
                                             $scope.backups.splice(index, 1);
                                             fs.unlinkSync(`${backupFolderPath + backup.name}.zip`);
@@ -260,7 +259,7 @@
                                         question: "Are you sure you'd like to restore from this backup?",
                                         confirmLabel: "Restore"
                                     })
-                                    .then(confirmed => {
+                                    .then((confirmed) => {
                                         if (confirmed) {
                                             $uibModalInstance.dismiss("cancel");
 
@@ -273,7 +272,7 @@
                             };
 
                             $scope.openBackupFolder = function() {
-                                listenerService.fireEvent(listenerService.EventType.OPEN_BACKUP);
+                                backendCommunicator.fireEvent("open-backup-folder");
                             };
 
                             $scope.dismiss = function() {

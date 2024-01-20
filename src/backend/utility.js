@@ -2,6 +2,7 @@
 
 const { randomInt } = require('node:crypto');
 const { DateTime, Duration } = require("luxon");
+const fs = require("fs/promises");
 const replaceVariableManager = require("./variables/replace-variable-manager");
 const accountAccess = require("./common/account-access");
 const twitchApi = require("./twitch-api/api");
@@ -261,6 +262,14 @@ const deepFreeze = (subject) => {
     return subject;
 };
 
+const emptyFolder = async (folderPath) => {
+    const entries = await fs.readdir(folderPath);
+
+    for (const entry of entries) {
+        await fs.rm(entry, { recursive: true, force: true });
+    }
+};
+
 exports.getRandomInt = getRandomInt;
 exports.escapeRegExp = escapeRegExp;
 exports.getUrlRegex = getUrlRegex;
@@ -279,3 +288,4 @@ exports.jsonParse = jsonParse;
 exports.wait = wait;
 exports.deepClone = deepClone;
 exports.deepFreeze = deepFreeze;
+exports.emptyFolder = emptyFolder;

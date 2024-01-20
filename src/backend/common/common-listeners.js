@@ -25,7 +25,7 @@ exports.setupCommonListeners = () => {
         windowManagement.createVariableInspectorWindow();
     });
 
-    frontendCommunicator.onAsync("show-save-dialog", async data => {
+    frontendCommunicator.onAsync("show-save-dialog", async (data) => {
         /**@type {Electron.SaveDialogOptions} */
         const options = data.options || {};
 
@@ -39,7 +39,7 @@ exports.setupCommonListeners = () => {
         return dialogResult;
     });
 
-    frontendCommunicator.onAsync("open-file-browser", async data => {
+    frontendCommunicator.onAsync("open-file-browser", async (data) => {
         const uuid = data.uuid,
             options = data.options || {};
 
@@ -64,12 +64,12 @@ exports.setupCommonListeners = () => {
         return { path: path, id: uuid };
     });
 
-    frontendCommunicator.on("highlight-message", data => {
+    frontendCommunicator.on("highlight-message", (data) => {
         const eventsManager = require("../events/EventManager");
         eventsManager.triggerEvent("firebot", "highlight-message", data);
     });
 
-    frontendCommunicator.on("category-changed", category => {
+    frontendCommunicator.on("category-changed", (category) => {
         const eventsManager = require("../events/EventManager");
         eventsManager.triggerEvent("firebot", "category-changed", {category: category});
     });
@@ -138,18 +138,11 @@ exports.setupCommonListeners = () => {
     });
 
     // Opens the firebot backup folder
-    ipcMain.on("openBackupFolder", () => {
+    ipcMain.on("open-backup-folder", () => {
         // We include "fakefile.txt" as a workaround to make it open into the 'root' folder instead
         // of opening to the poarent folder with 'Firebot'folder selected.
         const backupFolder = path.resolve(`${dataAccess.getUserDataPath() + path.sep}backups${path.sep}`);
         shell.openPath(backupFolder);
-    });
-
-    ipcMain.on("startBackup", (event, manualActivation = false) => {
-        backupManager.startBackup(manualActivation, () => {
-            logger.info("backup complete");
-            renderWindow.webContents.send("backupComplete", manualActivation);
-        });
     });
 
     // When we get an event from the renderer to create a new profile.
@@ -212,7 +205,7 @@ exports.setupCommonListeners = () => {
         // Download Update
         const updater = new GhReleases(updaterOptions);
 
-        updater.check(err => {
+        updater.check((err) => {
             // Download the update
             updater.download();
 

@@ -24,7 +24,7 @@
                 </p>
                 <p ng-if="$ctrl.restoreHasError" class="muted" style="font-size:12px;">Note: Alternatively, you can manually restore your<br>backup by following <a href="https://github.com/crowbartools/Firebot/wiki/Firebot-V5-Manual-Restore" style="color:#7bddfa;text-decoration:underline;">these steps</a>.</p>
                 <p ng-if="$ctrl.restoreComplete">
-                    The restore has completed successfully! Please click <b>Restart</b> below to restart Firebot, this ensures the restored data is properly loaded.
+                    The restore has completed successfully! Please click <b>Restart Firebot</b> below to restart Firebot. This ensures the restored data is properly loaded.
                 </p>
             </div>
             <div class="modal-footer" style="text-align:center;">
