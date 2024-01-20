@@ -23,12 +23,12 @@ class BackupManager {
                     };
                 })
                 .sort((a, b) => b.time - a.time)
-                .map((v) => v.name)
+                .map(v => v.name)
                 .filter(n => !n.includes("NODELETE") && n.endsWith(".zip"));
 
             fileNames.splice(0, maxBackups);
 
-            fileNames.forEach(f => {
+            fileNames.forEach((f) => {
                 logger.info(`Deleting old backup: ${f}`);
                 fs.unlinkSync(path.join(this._backupFolderPath, f));
             });
@@ -97,7 +97,8 @@ class BackupManager {
 
         const fileList = await glob("**/*", {
             ignore: varIgnoreInArchive,
-            cwd: folderPath
+            cwd: folderPath,
+            posix: true
         });
 
         const zipOptions: DeflateOptions = {
