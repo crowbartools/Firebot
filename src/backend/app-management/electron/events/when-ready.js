@@ -123,7 +123,7 @@ exports.whenReady = async () => {
 
     windowManagement.updateSplashScreenStatus("Loading known bot list...");
     const chatRolesManager = require("../../../roles/chat-roles-manager");
-    chatRolesManager.cacheViewerListBots();
+    await chatRolesManager.cacheViewerListBots();
 
     windowManagement.updateSplashScreenStatus("Loading effect queues...");
     const effectQueueManager = require("../../../effects/queues/effect-queue-manager");
@@ -182,16 +182,18 @@ exports.whenReady = async () => {
     hotkeyManager.refreshHotkeyCache();
 
     windowManagement.updateSplashScreenStatus("Loading currencies...");
-    const currencyManager = require("../../../currency/currencyManager");
+    const currencyManager = require("../../../currency/currency-manager");
     currencyManager.startTimer();
 
     // Connect to DBs.
     windowManagement.updateSplashScreenStatus("Loading viewers...");
     logger.info("Creating or connecting user database");
-    const userdb = require("../../../database/userDatabase");
-    userdb.connectUserDatabase();
+    const viewerDatabase = require("../../../viewers/viewer-database");
+    await viewerDatabase.connectViewerDatabase();
+
     // Set users in user db to offline if for some reason they are still set to online. (app crash or something)
-    userdb.setAllUsersOffline();
+    const viewerOnlineStatusManager = require("../../../viewers/viewer-online-status-manager");
+    await viewerOnlineStatusManager.setAllViewersOffline();
 
     windowManagement.updateSplashScreenStatus("Loading stats...");
     logger.info("Creating or connecting stats database");

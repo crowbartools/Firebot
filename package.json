@@ -44,6 +44,7 @@
     "@aws-sdk/client-polly": "^3.26.0",
     "@crowbartools/firebot-custom-scripts-types": "^5.53.2-6",
     "@nut-tree/nut-js": "^3.1.1",
+    "@seald-io/nedb": "^4.0.4",
     "@twurple/api": "^7.0.6",
     "@twurple/auth": "^7.0.6",
     "@twurple/chat": "^7.0.6",

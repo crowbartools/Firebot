@@ -23,7 +23,7 @@ const effect = {
         </eos-container>
     `,
     optionsController: () => {},
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.username == null || effect.username === "") {
             errors.push("Please provide a username.");
@@ -33,13 +33,13 @@ const effect = {
         }
         return errors;
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const { effect } = event;
         const { username, key } = effect;
 
-        const userDb = require("../../database/userDatabase");
+        const viewerMetadataManager = require("../../viewers/viewer-metadata-manager");
 
-        await userDb.removeUserMetadata(username, key);
+        await viewerMetadataManager.removeViewerMetadata(username, key);
 
         return true;
     }

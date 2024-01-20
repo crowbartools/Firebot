@@ -5,7 +5,8 @@ const twitchChat = require("../../../chat/twitch-chat");
 const twitchListeners = require("../../../chat/chat-listeners/twitch-chat-listeners");
 const commandManager = require("../../../chat/commands/command-manager");
 const gameManager = require("../../game-manager");
-const currencyDatabase = require("../../../database/currencyDatabase");
+const currencyAccess = require("../../../currency/currency-access").default;
+const currencyManager = require("../../../currency/currency-manager");
 const customRolesManager = require("../../../roles/custom-roles-manager");
 const teamRolesManager = require("../../../roles/team-roles-manager");
 const twitchRolesManager = require("../../../../shared/twitch-roles");
@@ -30,7 +31,7 @@ function clearCurrentQuestion() {
     }
 }
 
-twitchListeners.events.on("chat-message", async data => {
+twitchListeners.events.on("chat-message", async (data) => {
     /**@type {import("../../../../types/chat").FirebotChatMessage} */
     const chatMessage = data;
     if (!currentQuestion) {
@@ -61,9 +62,9 @@ twitchListeners.events.on("chat-message", async data => {
     if (isCorrect) {
         const winnings = Math.floor(wager * winningsMultiplier);
 
-        await currencyDatabase.adjustCurrencyForUser(username, currencyId, winnings);
+        await currencyManager.adjustCurrencyForViewer(username, currencyId, winnings);
 
-        const currency = currencyDatabase.getCurrencyById(currencyId);
+        const currency = currencyAccess.getCurrencyById(currencyId);
 
         await twitchChat.sendChatMessage(`${username}, that is correct! You have won ${util.commafy(winnings)} ${currency.name}`, null, chatter);
     } else {
@@ -97,7 +98,7 @@ const triviaCommand = {
             }
         ]
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
 
         const { userCommand } = event;
 
@@ -150,7 +151,7 @@ const triviaCommand = {
             const currencyId = triviaSettings.settings.currencySettings.currencyId;
             let userBalance;
             try {
-                userBalance = await currencyDatabase.getUserCurrencyAmount(username, currencyId);
+                userBalance = await currencyManager.getViewerCurrencyAmount(username, currencyId);
             } catch (error) {
                 logger.error(error.message);
                 userBalance = 0;
@@ -179,7 +180,7 @@ const triviaCommand = {
             }
 
             try {
-                await currencyDatabase.adjustCurrencyForUser(username, currencyId, -Math.abs(wagerAmount));
+                await currencyManager.adjustCurrencyForViewer(username, currencyId, -Math.abs(wagerAmount));
             } catch (error) {
                 logger.error(error.message);
                 await twitchChat.sendChatMessage(`Sorry ${username}, there was an error deducting currency from your balance so trivia has been canceled.`, null, chatter);

@@ -1,8 +1,9 @@
 import { EventEmitter } from "events";
 import { ChatClient } from "@twurple/chat";
 
+import { BasicViewer } from "../../types/viewers";
 import chatHelpers from "./chat-helpers";
-import activeUserHandler, { User } from "./chat-listeners/active-user-handler";
+import activeUserHandler from "./chat-listeners/active-user-handler";
 import twitchChatListeners from "./chat-listeners/twitch-chat-listeners";
 import * as twitchSlashCommandHandler from "./twitch-slash-command-handler";
 
@@ -150,6 +151,9 @@ class TwitchChat extends EventEmitter {
 
             await chatHelpers.handleChatConnect();
 
+            // Attempt to reload the known bot list in case it failed on start
+            await chatRolesManager.cacheViewerListBots();
+
             chatterPoll.startChatterPoll();
 
             const vips = await twitchApi.channels.getVips();
@@ -273,8 +277,8 @@ class TwitchChat extends EventEmitter {
         // split message into fragments that don't exceed the max message length
         const messageFragments = message
             .match(/[\s\S]{1,500}/g)
-            .map((mf) => mf.trim())
-            .filter((mf) => mf !== "");
+            .map(mf => mf.trim())
+            .filter(mf => mf !== "");
 
         // Send all message fragments
         for (const fragment of messageFragments) {
@@ -290,7 +294,7 @@ class TwitchChat extends EventEmitter {
         await chatterPoll.runChatterPoll();
     }
 
-    async getViewerList(): Promise<User[]> {
+    async getViewerList(): Promise<BasicViewer[]> {
         const users = activeUserHandler.getAllOnlineUsers();
         return users;
     }
