@@ -24,7 +24,7 @@ export class ProfileService extends TypedEmitter<{
   getActiveProfile() {
     return this.globalSettingsStore.get("profiles").find(
       (p) => p.id === this.globalSettingsStore.get("activeProfileId")
-    );
+    )!;
   }
 
   private setActiveProfile(profile: UserProfile) {

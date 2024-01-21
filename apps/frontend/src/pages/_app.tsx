@@ -3,24 +3,35 @@ import { initialStore, Provider as StoreProvider } from "../stores";
 import "@/styles/globals.css";
 import { SideNav } from "@/components/side-nav/SideNav";
 import NoSSRWrapper from "@/components/NoSSRWrapper";
+import { AppHeader } from "@/components/AppHeader";
+import { FbApiProvider } from "@/api/FbApiContext";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 export default function App({ Component, pageProps }: AppProps) {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: 2 } },
+  });
+
   return (
     <NoSSRWrapper>
-      <StoreProvider value={initialStore}>
-        <div className="bp3-dark w-full h-full bg-primary-bg text-white">
-          <SideNav />
-          <div
-            style={{
-              paddingLeft: "85px",
-              paddingTop: "64px",
-            }}
-            className="h-full w-full"
-          >
-            <Component {...pageProps} />
-          </div>
-        </div>
-      </StoreProvider>
+      <FbApiProvider>
+        <QueryClientProvider client={queryClient}>
+          <StoreProvider value={initialStore}>
+            <div className="bp3-dark w-full h-full bg-primary-bg text-white">
+              <SideNav />
+              <AppHeader />
+              <div
+                style={{
+                  paddingLeft: "85px",
+                }}
+                className="h-full w-full"
+              >
+                <Component {...pageProps} />
+              </div>
+            </div>
+          </StoreProvider>
+        </QueryClientProvider>
+      </FbApiProvider>
     </NoSSRWrapper>
   );
 }

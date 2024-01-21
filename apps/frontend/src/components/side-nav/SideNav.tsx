@@ -216,16 +216,23 @@ const headerVariants: Variants = {
 };
 
 const SidebarHeader = (isOpen: boolean) => (
-    <div className={clsx("flex items-center h-16 relative flex-shrink-0")}>
-        <div className="w-24 flex justify-center items-center">
-            {<Image src={firebotLogo} alt="Firebot sLogo" className="w-8" />}
-        </div>
-        <motion.div
-            variants={headerVariants}
-            animate={isOpen ? variantType.visible : variantType.hidden}
-            className={clsx("absolute inset-0 ml-20 w-64 flex items-center")}
-        >
-            <span className="text-firebot-sunglow text-2xl font-thin">Firebot</span>
-        </motion.div>
+  <div className={clsx("flex items-center h-16 relative flex-shrink-0")}>
+    <div className="w-24 flex justify-center items-center">
+      {<Image src={firebotLogo} alt="Firebot sLogo" className="w-8" />}
     </div>
+    <motion.div
+      variants={headerVariants}
+      animate={isOpen ? variantType.visible : variantType.hidden}
+      className={clsx("absolute inset-0 ml-20 w-64 flex items-center")}
+    >
+      <span
+        className="bg-firebot-sunglow bg-gradient-to-br from-firebot-sunglow to-amber-400 text-2xl font-bold bg-clip-text"
+        style={{
+          WebkitTextFillColor: "transparent",
+        }}
+      >
+        Firebot
+      </span>
+    </motion.div>
+  </div>
 );

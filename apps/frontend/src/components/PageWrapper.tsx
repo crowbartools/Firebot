@@ -6,11 +6,16 @@ type Props = {
 }
 
 export const PageWrapper: React.FC<Props> = ({ children, innerClassName }) => {
-    return <div className="w-full h-full pb-3 pr-3">
+    return (
+      <div className="w-full h-full pb-3 pr-3 overflow-y-scroll">
         <div
-            className={clsx("bg-secondary-bg h-full rounded-xl p-4", innerClassName)}
+          className={clsx(
+            "bg-secondary-bg h-full rounded-xl p-4",
+            innerClassName
+          )}
         >
-            {children}
+          {children}
         </div>
-    </div>;
+      </div>
+    );
 };

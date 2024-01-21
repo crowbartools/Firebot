@@ -3,7 +3,7 @@ import { ModuleRef } from "@nestjs/core";
 import { ProfileService } from "data-access/profile.service";
 import { BaseProfileStore } from "data-access/stores/base-profile-store";
 
-interface StreamingPlatformStore {
+interface StreamingPlatformAuthSettings {
   [platformId: string]: {
     activeAccountConfigIndex: number;
     accountConfigs: Array<{
@@ -14,13 +14,8 @@ interface StreamingPlatformStore {
 }
 
 @Injectable()
-export class StreamingPlatformAuthStore extends BaseProfileStore<StreamingPlatformStore> {
+export class StreamingPlatformAuthStore extends BaseProfileStore<StreamingPlatformAuthSettings> {
   constructor(profileService: ProfileService, moduleRef: ModuleRef) {
-    super(
-      "auth",
-      {},
-      profileService,
-      moduleRef
-    );
+    super("auth", {}, profileService, moduleRef);
   }
 }
