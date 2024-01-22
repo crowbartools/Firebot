@@ -1,9 +1,11 @@
 import accountVariables from './accounts';
 import arrayVariables from './array';
 import counterVariables from './counter';
+import currencyVariables from './currency';
 import customVariables from './custom-vars';
 import donationVariables from './donation';
 import metadataVariables from './metadata';
+import miscVariables from './misc';
 import numberVariables from './number';
 import objectVariables from './object';
 import operandVariables from './operand';
@@ -13,15 +15,15 @@ import twitchVariables from './twitch';
 import userVariables from './user';
 import utilityVariables from './utility';
 
-import unsortedVariables from './unsorted';
-
 export default [
     ...accountVariables,
     ...arrayVariables,
     ...counterVariables,
+    ...currencyVariables,
     ...customVariables,
     ...donationVariables,
     ...metadataVariables,
+    ...miscVariables,
     ...numberVariables,
     ...objectVariables,
     ...operandVariables,
@@ -29,7 +31,5 @@ export default [
     ...textVariables,
     ...twitchVariables,
     ...userVariables,
-    ...utilityVariables,
-
-    ...unsortedVariables
+    ...utilityVariables
 ];
