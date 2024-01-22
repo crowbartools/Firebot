@@ -13,6 +13,8 @@ import twitchVariables from './twitch';
 import userVariables from './user';
 import utilityVariables from './utility';
 
+import unsortedVariables from './unsorted';
+
 export default [
     ...accountVariables,
     ...arrayVariables,
@@ -27,5 +29,7 @@ export default [
     ...textVariables,
     ...twitchVariables,
     ...userVariables,
-    ...utilityVariables
+    ...utilityVariables,
+
+    ...unsortedVariables
 ];
