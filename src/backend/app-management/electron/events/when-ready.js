@@ -236,6 +236,11 @@ exports.whenReady = async () => {
     const streamInfoPoll = require("../../../twitch-api/stream-info-manager");
     streamInfoPoll.startStreamInfoPoll();
 
+    windowManagement.updateSplashScreenStatus("Starting notification manager...");
+    const notificationManager = require("../../../notifications/notification-manager").default;
+    await notificationManager.loadAllNotifications();
+    notificationManager.startExternalNotificationCheck();
+
     logger.debug('...loading main window');
     windowManagement.updateSplashScreenStatus("Here we go!");
     await windowManagement.createMainWindow();
