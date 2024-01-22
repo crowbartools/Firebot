@@ -7,5 +7,6 @@ export const useStreamingPlatforms = () => {
         queryKey: ["streaming-platforms"],
         queryFn: () => api.streamingPlatform.getStreamingPlatforms(),
         placeholderData: [],
+        initialData: [],
     });
 }

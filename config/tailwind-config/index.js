@@ -53,6 +53,7 @@ module.exports = {
                     colors: {
                         "primary-bg": "#0A0A0C",
                         "secondary-bg": "#18181B",
+                        "tertiary-bg": "#313137",
                         "primary-text": "#D4D4D8",
                         "muted-text": "#bdbdbf",
                     },

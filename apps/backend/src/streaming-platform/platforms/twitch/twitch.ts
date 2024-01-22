@@ -6,27 +6,32 @@ import twitchApi from "./twitch-api";
 import { TwitchChat } from "./twitch-chat";
 
 class Twitch extends PlatformEventEmitter implements StreamingPlatform {
-    constructor() {
-        super();
-    }
+  constructor() {
+    super();
+  }
 
-    id = "twitch";
-    name = "Twitch";
-    api = twitchApi;
+  id = "twitch";
+  name = "Twitch";
+  color = {
+    bg: "#A96FFF",
+    text: "#FFFFFF",
+  };
 
-    chat = new TwitchChat();
+  api = twitchApi;
 
-    init() {
-        console.log("Twitch init");
-    }
+  chat = new TwitchChat();
 
-    disconnect() {
-        this.emit("disconnected");
-    }
+  init() {
+    console.log("Twitch init");
+  }
 
-    connect() {
-        this.emit("connected");
-    }
+  disconnect() {
+    this.emit("disconnected");
+  }
+
+  connect() {
+    this.emit("connected");
+  }
 }
 
 export default Twitch;

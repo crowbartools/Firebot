@@ -1,11 +1,11 @@
 import { useFbApi } from "@/hooks/api/use-fb-api";
 import { useQuery } from "@tanstack/react-query"
 
-export const useUserProfiles = () => {
+export const useProfiles = () => {
     const { api } = useFbApi();
     return useQuery({
-        queryKey: ["user-profiles"],
-        queryFn: () => api.userProfile.getUserProfiles(),
+        queryKey: ["profiles"],
+        queryFn: () => api.profile.getProfiles(),
         placeholderData: [],
     });
 }

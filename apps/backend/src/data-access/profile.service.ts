@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { TypedEmitter } from "tiny-typed-emitter";
-import { UserProfile } from "firebot-types"
+import { Profile } from "firebot-types"
 import { GlobalSettingsStore } from "data-access/stores/global-settings.store";
 import sanitizeFilename from "sanitize-filename";
 import { v4 as uuid } from "uuid"
@@ -11,7 +11,7 @@ import path from "path";
 
 @Injectable()
 export class ProfileService extends TypedEmitter<{
-  activeProfileChanged: (profile: UserProfile) => void;
+  activeProfileChanged: (profile: Profile) => void;
 }> {
   constructor(
     private readonly globalSettingsStore: GlobalSettingsStore, 
@@ -27,23 +27,23 @@ export class ProfileService extends TypedEmitter<{
     )!;
   }
 
-  private setActiveProfile(profile: UserProfile) {
+  private setActiveProfile(profile: Profile) {
     this.globalSettingsStore.set("activeProfileId", profile.id);
     this.emit("activeProfileChanged", profile);
   }
 
-  getUserProfiles() {
+  getProfiles() {
     return this.globalSettingsStore.get("profiles");
   }
 
-  addUserProfile(name: string) {
+  addProfile(name: string) {
     name = sanitizeFilename(name);
-    const newProfile: UserProfile = {
+    const newProfile: Profile = {
       id: uuid(),
       name,
     };
 
-    const profiles = this.getUserProfiles();
+    const profiles = this.getProfiles();
     if (!profiles.length) {
       this.setActiveProfile(newProfile);
     }
@@ -54,7 +54,7 @@ export class ProfileService extends TypedEmitter<{
   }
 
   async renameProfile(id: string, newName: string) {
-    const profile = this.getUserProfiles().find((p) => p.id === id);
+    const profile = this.getProfiles().find((p) => p.id === id);
     if (!profile) {
       return new Error(`Profile ${id} doesn't exist`);
     }
@@ -64,7 +64,7 @@ export class ProfileService extends TypedEmitter<{
 
     profile.name = newName;
 
-    this.globalSettingsStore.set("profiles", this.getUserProfiles());
+    this.globalSettingsStore.set("profiles", this.getProfiles());
 
     const oldProfilePath = path.join(this.appConfig.firebotDataPath, "profiles", oldName);
     const newProfilePath = path.join(
@@ -78,8 +78,8 @@ export class ProfileService extends TypedEmitter<{
     return newName;
   }
 
-  async removeUserProfile(id: string) {
-    const profiles = this.getUserProfiles();
+  async removeProfile(id: string) {
+    const profiles = this.getProfiles();
     const index = profiles.findIndex((p) => p.id === id);
     if (index > -1 && profiles.length > 1) {
       const profile = profiles[index];
@@ -99,7 +99,7 @@ export class ProfileService extends TypedEmitter<{
 
   switchToProfile(id: string) {
     const currentActiveProfileId = this.globalSettingsStore.get("activeProfileId");
-    const profile = this.getUserProfiles().find((p) => p.id === id);
+    const profile = this.getProfiles().find((p) => p.id === id);
     if (currentActiveProfileId != id && !!profile) {
       this.setActiveProfile(profile);
     }

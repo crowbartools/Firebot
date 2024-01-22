@@ -2,12 +2,12 @@ import { Inject, Injectable } from "@nestjs/common";
 import { ConfigType } from "@nestjs/config";
 import { AppConfig } from "config/app.config";
 import { BaseDataStore } from "data-access/stores/base-store";
-import { UserProfile } from "firebot-types";
+import {  Profile } from "firebot-types";
 import path from "path";
 
 type GlobalSettings = {
     activeProfileId: string
-    profiles: UserProfile[],
+    profiles: Profile[],
 }
 
 @Injectable()

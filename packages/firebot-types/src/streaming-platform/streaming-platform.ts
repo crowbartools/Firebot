@@ -12,6 +12,10 @@ export class PlatformEventEmitter extends TypedEmitter<PlatformEvents> {}
 export interface StreamingPlatform extends PlatformEventEmitter {
     id: string;
     name: string;
+    color?: {
+        bg: string;
+        text: string;
+    },
     init: VoidFunction;
     connect: VoidFunction;
     disconnect: VoidFunction;

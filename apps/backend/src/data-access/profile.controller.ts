@@ -1,21 +1,21 @@
 import { Get } from "@nestjs/common";
 import { ProfileService } from "data-access/profile.service";
-import { UserProfile } from "firebot-types";
+import { Profile } from "firebot-types";
 import { FirebotController } from "misc/firebot-controller.decorator";
 
 @FirebotController({
-    path: "user-profile"
+  path: "profile",
 })
 export class ProfileController {
-    constructor(private readonly profileService: ProfileService) {}
+  constructor(private readonly profileService: ProfileService) {}
 
-    @Get()
-    async getProfiles(): Promise<UserProfile[]> {
-        return this.profileService.getUserProfiles();
-    }
+  @Get()
+  async getProfiles(): Promise<Profile[]> {
+    return this.profileService.getProfiles();
+  }
 
-    @Get("active")
-    async getActiveProfile(): Promise<UserProfile> {
-        return this.profileService.getActiveProfile();
-    }
+  @Get("active")
+  async getActiveProfile(): Promise<Profile> {
+    return this.profileService.getActiveProfile();
+  }
 }
