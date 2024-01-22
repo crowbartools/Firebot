@@ -29,7 +29,6 @@
             showText: {},
             celebrate: {},
             info: {},
-            backupComplete: {},
             currentViewersUpdate: {},
             integrationConnectionUpdate: {},
             integrationsUpdated: {},
@@ -69,7 +68,6 @@
             SHOW_HTML: "showHtml",
             CELEBREATE: "celebrate",
             INFO: "info",
-            BACKUP_COMPLETE: "backupComplete",
             INTEGRATION_CONNECTION_UPDATE: "integrationConnectionUpdate",
             INTEGRATIONS_UPDATED: "integrationsUpdated",
             CLEAR_EFFECTS: "clearEffects",
@@ -185,8 +183,6 @@
             GET_VIDEO: "getVideoPath",
             GET_ANYFILE: "getAnyFilePath",
             SPARK_EXEMPT_UPDATED: "sparkExemptUpdated",
-            OPEN_BACKUP: "openBackupFolder",
-            INITIATE_BACKUP: "startBackup",
             RESTART_APP: "restartApp",
             DELETE_CHAT_MESSAGE: "deleteChatMessage",
             CHANGE_USER_MOD_STATUS: "changeUserModStatus",
@@ -392,15 +388,6 @@
      */
         ipcRenderer.on("celebrate", function(event, data) {
             _.forEach(registeredListeners.celebrate, (listener) => {
-                runListener(listener, data);
-            });
-        });
-
-        /**
-     * Update download listener
-     */
-        ipcRenderer.on("backupComplete", function(event, data) {
-            _.forEach(registeredListeners.backupComplete, (listener) => {
                 runListener(listener, data);
             });
         });

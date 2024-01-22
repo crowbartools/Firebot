@@ -4,6 +4,7 @@ import { DateTime } from "luxon";
 
 import { CommandDefinition, SystemCommand, SystemCommandDefinition } from "../../../types/commands";
 import logger from "../../logwrapper";
+import util from "../../utility";
 import profileManager from "../../common/profile-manager";
 import frontendCommunicator from "../../common/frontend-communicator";
 import accountAccess from "../../common/account-access";
@@ -93,7 +94,7 @@ class CommandManager extends EventEmitter {
      * @returns The cached `SystemCommand` object that matches the given ID, or `null` if there is no matching system command
      */
     getSystemCommandById(id: string): SystemCommand {
-        return this._registeredSysCommands.find(c => c.definition.id === id);
+        return util.deepClone(this._registeredSysCommands.find(c => c.definition.id === id));
     }
 
     /**
@@ -124,10 +125,10 @@ class CommandManager extends EventEmitter {
      * @returns An array of all cached `SystemCommand` objects
      */
     getSystemCommands(): SystemCommand[] {
-        return this._registeredSysCommands.map((c) => {
+        return util.deepClone(this._registeredSysCommands.map((c) => {
             c.definition.type = "system";
             return c;
-        });
+        }));
     }
 
     /**
@@ -185,7 +186,7 @@ class CommandManager extends EventEmitter {
             return c.definition;
         });
 
-        return cmdDefs;
+        return util.deepClone(cmdDefs);
     }
 
     /**
@@ -195,7 +196,7 @@ class CommandManager extends EventEmitter {
      * @returns The cached `CommandDefinition` object for the given custom command
      */
     getCustomCommandById(id: string): CommandDefinition {
-        return this._commandCache.customCommands.find(c => c.id === id);
+        return util.deepClone(this._commandCache.customCommands.find(c => c.id === id));
     }
 
     /**
@@ -204,7 +205,8 @@ class CommandManager extends EventEmitter {
      * @returns An array of all cached `CommandDefinition` objects
      */
     getAllCustomCommands(): CommandDefinition[] {
-        return this._commandCache.customCommands;
+        // Deep copy so we don't pollute the cache
+        return util.deepClone(this._commandCache.customCommands);
     }
 
     /**

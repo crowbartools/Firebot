@@ -2,6 +2,7 @@
 
 const { randomInt } = require('node:crypto');
 const { DateTime, Duration } = require("luxon");
+const fs = require("fs/promises");
 const replaceVariableManager = require("./variables/replace-variable-manager");
 const accountAccess = require("./common/account-access");
 const twitchApi = require("./twitch-api/api");
@@ -193,7 +194,7 @@ const shuffleArray = (array) => {
  *
  * @returns {[]} A flattened copy of the passed array
  */
-const flattenArray = arr => {
+const flattenArray = (arr) => {
     return arr.reduce((flat, next) => flat.concat(next), []);
 };
 
@@ -217,6 +218,73 @@ const wait = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
 };
 
+/**
+ * Deeply clones the given subject; supports circular references
+ * @param {*} subject Subject to clone
+ * @param {boolean} [freeze=false] If true the cloned instance will be frozen
+ * @param {Map<*,*>} [cloning] Internal; map of members currently being cloned
+ * @returns {*} Cloned instance of subject
+ */
+const deepClone = (subject, freeze = false, cloning) => {
+    if (subject == null || typeof subject !== 'object') {
+        return subject;
+    }
+
+    if (cloning == null) {
+        cloning = new Map();
+    }
+
+    const result = Array.isArray(subject) ? [] : {};
+    for (const [key, value] of Object.entries(subject)) {
+        if (value == null || typeof value !== 'object') {
+            result[key] = value;
+
+            // value is in the process of being cloned as a result of circular reference
+            // use the cached cloning value
+        } else if (cloning.has(value)) {
+            result[key] = cloning.get(value);
+
+        } else {
+            cloning.set(value, result);
+            result[key] = deepClone(value, freeze, cloning);
+            cloning.delete(value);
+        }
+    }
+    if (freeze) {
+        Object.freeze(result);
+    }
+    return result;
+};
+
+/**
+ * Deeply freezes the given subject; supports circular references
+ * @param {*} subject The subject to deep freeze
+ * @returns {*} the frozen subject
+ */
+const deepFreeze = (subject) => {
+    if (subject == null || typeof subject !== 'object') {
+        return subject;
+    }
+
+    // Freeze subject before walking properties to prevent inf-loop
+    // caused by circular references
+    Object.freeze(subject);
+    for (const value of Object.values(subject)) {
+        if (!Object.isFrozen(value)) {
+            deepFreeze(value);
+        }
+    }
+    return subject;
+};
+
+const emptyFolder = async (folderPath) => {
+    const entries = await fs.readdir(folderPath);
+
+    for (const entry of entries) {
+        await fs.rm(entry, { recursive: true, force: true });
+    }
+};
+
 exports.getRandomInt = getRandomInt;
 exports.escapeRegExp = escapeRegExp;
 exports.getUrlRegex = getUrlRegex;
@@ -234,3 +302,6 @@ exports.flattenArray = flattenArray;
 exports.jsonParse = jsonParse;
 exports.wait = wait;
 exports.convertToString = convertToString;
+exports.deepClone = deepClone;
+exports.deepFreeze = deepFreeze;
+exports.emptyFolder = emptyFolder;

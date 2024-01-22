@@ -23,16 +23,16 @@
             <div ng-repeat="notification in $ctrl.getNotifications() | orderBy: 'created_at':true track by $index" class="notification-card" ng-click="$ctrl.openNotification(notification)" aria-label="Notification: {{notification.title}}">
               <span class="noti-unread-indicator" ng-class="{'read': notification.read}"></span>
               <span class="noti-icon">
-                <i class="fal" ng-class="getIconClass(notification.icon)"></i>
+                <i class="fal" ng-class="getIconClass(notification.type)"></i>
               </span>
               <div class="noti-title-wrapper">
-                <span class="noti-icon-text">{{getIconTypeText(notification.icon)}}</span>
+                <span class="noti-icon-text">{{getIconTypeText(notification.type)}}</span>
                 <span class="noti-text">{{notification.title}}</span>
               </div>
               <div class="noti-action" uib-dropdown uib-dropdown-toggle ng-click="$event.stopPropagation();" dropdown-append-to-body="true">
                 <span class="noselect pointer"><i class="fal fa-ellipsis-v"></i></span>
                 <ul class="dropdown-menu" uib-dropdown-menu>
-                  <li><a href ng-click="deleteNotification(notification)" style="color:red;"><i class="far fa-trash-alt"></i> Delete notification</a></li>
+                  <li><a href ng-click="deleteNotification(notification.id)" style="color:red;"><i class="far fa-trash-alt"></i> Delete notification</a></li>
                 </ul>
               </div>
             </div>
@@ -46,10 +46,13 @@
           <div class="modal-header">
             <h4 class="modal-title" style="text-align: center">{{notification.title}}</h4>
           </div>
-          <div class="modal-body" style="text-align:center; padding-top:15px">
-            <dynamic-element message="notification.message"></dynamic-element>
+          <div class="modal-body">
+            <div style="display: flex;">
+              <div class="modal-icon"><i class="fad" ng-class="iconClass" aria-hidden="true"></i></div>
+              <dynamic-element message="notification.message"></dynamic-element>
+            </div>
           </div>
-          <div class="modal-footer" style="text-align:center;position: relative;">
+          <div class="modal-footer" style="text-align:center;">
             <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
           </div>
         </script>
@@ -81,63 +84,68 @@
                     return unreadCount.toString();
                 };
 
-                $scope.getIconTypeText = function(iconType) {
-                    const NotificationIconType = notificationService.NotificationIconType;
-                    switch (iconType) {
-                        case NotificationIconType.UPDATE:
+                $scope.getIconTypeText = function(type) {
+                    const NotificationType = notificationService.NotificationType;
+                    switch (type) {
+                        case NotificationType.UPDATE:
                             return "UPDATE";
-                        case NotificationIconType.ALERT:
+                        case NotificationType.ALERT:
                             return "ALERT";
-                        case NotificationIconType.TIP:
+                        case NotificationType.TIP:
                             return "TIP";
-                        case NotificationIconType.INFO:
+                        case NotificationType.INFO:
                         default:
                             return "INFO";
                     }
                 };
 
-                $scope.getIconClass = function(iconType) {
-                    const NotificationIconType = notificationService.NotificationIconType;
+                const getIconClass = (type) => {
+                    const NotificationType = notificationService.NotificationType;
                     let iconClass = "";
-                    switch (iconType) {
-                        case NotificationIconType.UPDATE:
+                    switch (type) {
+                        case NotificationType.UPDATE:
                             iconClass = "download";
                             break;
-                        case NotificationIconType.ALERT:
+                        case NotificationType.ALERT:
                             iconClass = "exclamation-circle";
                             break;
-                        case NotificationIconType.TIP:
+                        case NotificationType.TIP:
                             iconClass = "question-circle";
                             break;
-                        case NotificationIconType.INFO:
+                        case NotificationType.INFO:
                         default:
                             iconClass = "info-circle";
                     }
                     return `fa-${iconClass}`;
                 };
 
-                ctrl.openNotification = function(notification, index) {
-                    notificationService.markNotificationAsRead(notification, index);
-                    const justUpdatedModalContext = {
+                $scope.getIconClass = getIconClass;
+
+                ctrl.openNotification = (notification, index) => {
+                    notificationService.markNotificationAsRead(notification.id);
+                    const notificationModal = {
                         templateUrl: "notificationModal.html",
                         size: "sm",
                         resolveObj: {
                             notification: () => notification,
-                            index: () => index
+                            index: () => index,
+                            iconClass: () => getIconClass(notification.type)
                         },
                         controllerFunc: (
                             $scope,
                             $uibModalInstance,
-                            notification
+                            notification,
+                            iconClass
                         ) => {
                             $scope.notification = notification;
+                            $scope.iconClass = iconClass;
 
                             $scope.ok = function() {
                                 $uibModalInstance.dismiss("cancel");
                             };
                         }
                     };
-                    utilityService.showModal(justUpdatedModalContext);
+                    utilityService.showModal(notificationModal);
                 };
             }
         })

@@ -29,8 +29,8 @@ exports.windowsAllClosed = async () => {
     }
 
     // Set all users to offline
-    const userDatabase = require("../../../database/userDatabase");
-    await userDatabase.setAllUsersOffline();
+    const viewerOnlineStatusManager = require("../../../viewers/viewer-online-status-manager");
+    await viewerOnlineStatusManager.setAllViewersOffline();
 
     if (settings.backupOnExit()) {
         // Make a backup

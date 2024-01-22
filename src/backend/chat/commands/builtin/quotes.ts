@@ -205,7 +205,7 @@ export const QuotesManagementSystemCommand: SystemCommand<{
      * When the command is triggered
      */
     onTriggerEvent: (event) => {
-        return new Promise(async (resolve) => {
+        return new Promise<void>(async (resolve) => {
             const quotesManager = require("../../../quotes/quotes-manager");
             const logger = require("../../../logwrapper");
             const twitchChat = require("../../twitch-chat");

@@ -1,5 +1,3 @@
-"use strict";
-
 /*
 * This compares two semvers and determines the type of update between them, if there is one
 *
@@ -10,24 +8,33 @@
 *
 * - Any leading "v"'s are ignored (ie v1.0.0 is valid)
 * - Any variation can also have a prelease tag. They can be written as:
-*     - 1.0.0-beta   (No version number after prerelaseTag is assumed as 1)
+*     - 1.0.0-beta   (No version number after prereleaseTag is assumed as 1)
 *     - 1.0.0-beta2
 *     - 1.0.0-beta.3
 */
-const semverRegex = /^v?(\d+)(?:[.](\d+))?(?:[.](\d+))?(?:-([a-zA-Z]+([\d]*)?)(?:[.](\d+))*)?$/i;
+const semverRegex = /^v?(\d+)(?:[.](\d+))?(?:[.](\d+))?(?:-([a-z]+([\d]*)?)[.]?((?:\d+[.]?)*))?$/i;
 
-const UpdateType = {
-    NONE: "none",
-    PREVIOUS_VERSION: "previousversion", // 1.0.0 -> 1.1.0-beta,
-    PRERELEASE: "prerelease", // 1.0.0 -> 1.1.0-beta
-    OFFICIAL: "official", // 1.0.0-beta -> 1.0.0
-    PATCH: "patch", // 1.0.0 -> 1.0.1
-    MINOR: "minor", // 1.0.0 -> 1.1.0
-    MAJOR: "major", // 1.0.0 -> 2.0.0,
-    MAJOR_PRERELEASE: "majorprerelease" // 1.0.0 -> 2.0.0-beta
-};
+enum UpdateType {
+    NONE = "none",
+    PREVIOUS_VERSION = "previousversion", // 1.0.0 -> 1.1.0-beta,
+    PRERELEASE = "prerelease", // 1.0.0 -> 1.1.0-beta
+    OFFICIAL = "official", // 1.0.0-beta -> 1.0.0
+    PATCH = "patch", // 1.0.0 -> 1.0.1
+    MINOR = "minor", // 1.0.0 -> 1.1.0
+    MAJOR = "major", // 1.0.0 -> 2.0.0,
+    MAJOR_PRERELEASE = "majorprerelease" // 1.0.0 -> 2.0.0-beta
+}
 
-function validate(version) {
+interface VersionInfo {
+    major: number;
+    minor?: number;
+    patch?: number;
+    prereleaseTag?: string;
+    prereleaseVersion?: number;
+    nightlyVersion?: string;
+}
+
+function validate(version: string): void {
     if (typeof version !== "string") {
         throw new TypeError("Invalid argument expected string");
     }
@@ -36,24 +43,25 @@ function validate(version) {
     }
 }
 
-function parseVersion(version) {
+function parseVersion(version: string): VersionInfo {
     const elements = version.match(semverRegex);
     return {
         major: +elements[1],
         minor: elements[2] ? +elements[2] : 0,
         patch: elements[3] ? +elements[3] : 0,
-        prerelaseTag: elements[4] ? elements[4] : "",
-        prerelaseVersion: elements[5] ? +elements[5] : 1
+        prereleaseTag: elements[4] ? elements[4] : "",
+        prereleaseVersion: elements[5] ? +elements[5] : 1,
+        nightlyVersion: elements[6] ? elements[6] : ""
     };
 }
 
-function compareVersions(newVersion, currentVersion) {
+function compareVersions(newVersion: string, currentVersion: string): UpdateType {
     [newVersion, currentVersion].forEach(validate);
 
     let updateType = UpdateType.NONE;
 
-    const pNewVersion = parseVersion(newVersion);
-    const pCurrentVersion = parseVersion(currentVersion);
+    const pNewVersion = parseVersion(newVersion.toLowerCase());
+    const pCurrentVersion = parseVersion(currentVersion.toLowerCase());
 
     const majorsAreEqual = pNewVersion.major === pCurrentVersion.major;
     const minorsAreEqual = pNewVersion.minor === pCurrentVersion.minor;
@@ -83,7 +91,7 @@ function compareVersions(newVersion, currentVersion) {
     }
 
     // See if the new version is also a prelease
-    if (pNewVersion.prerelaseTag !== "") {
+    if (pNewVersion.prereleaseTag !== "") {
         /*We consider a new version to be a prerelease update if one of the follow condiditions is met:
         * a) the new version has a greater major, minor, or patch version. IE: 1.0.0 -> 1.0.1-beta
         * b) the new version has the same major, minor, or patch version, but a greater prerelease version
@@ -93,11 +101,11 @@ function compareVersions(newVersion, currentVersion) {
         // NOTE(ebiggz): Right now we just validate that both the old and new versions have prerelaseTags.
         // But if we ever decide to do alphas as well as betas, we will also want to order the old and new
         // prerelaseTags alphabetically and validate that so 'alpha3' isnt considered an update to 'beta2'.
-        if (updateType !== UpdateType.NONE || (pCurrentVersion.prerelaseTag !== "" &&
+        if (updateType !== UpdateType.NONE || (pCurrentVersion.prereleaseTag !== "" &&
             majorsAreEqual &&
             minorsAreEqual &&
             patchesAreEqual &&
-            pNewVersion.prerelaseVersion > pCurrentVersion.prerelaseVersion)) {
+            pNewVersion.prereleaseVersion > pCurrentVersion.prereleaseVersion)) {
 
             if (majorsAreEqual) {
                 updateType = UpdateType.PRERELEASE;
@@ -108,7 +116,7 @@ function compareVersions(newVersion, currentVersion) {
 
     // If both versions are the same but the current version has a prelease tag and the new one doesn't,
     // we consider the new version an official release of the current.(IE 1.0.0-beta -> 1.0.0)
-    } else if (majorsAreEqual && minorsAreEqual && patchesAreEqual && pCurrentVersion.prerelaseTag !== "") {
+    } else if (majorsAreEqual && minorsAreEqual && patchesAreEqual && pCurrentVersion.prereleaseTag !== "") {
         updateType = UpdateType.OFFICIAL;
     }
 
