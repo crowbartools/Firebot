@@ -97,7 +97,7 @@ exports.whenReady = async () => {
     // load variables
     logger.debug("Loading variables...");
     windowManagement.updateSplashScreenStatus("Loading variables...");
-    const { loadReplaceVariables } = require("../../../variables/builtin-variable-loader");
+    const { loadReplaceVariables } = require("../../../variables/variable-loader");
     loadReplaceVariables();
 
     // load restrictions

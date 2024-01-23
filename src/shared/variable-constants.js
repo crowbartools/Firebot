@@ -6,8 +6,12 @@
  * @enum {string}
  */
 const OutputDataType = Object.freeze({
-    TEXT: "text",
+    NULL: "null",
+    BOOLEAN: "bool",
     NUMBER: "number",
+    TEXT: "text",
+    ARRAY: "array",
+    OBJECT: "object",
     ALL: "ALL"
 });
 
