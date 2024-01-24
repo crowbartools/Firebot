@@ -56,7 +56,7 @@ const PronounVariable: ReplaceVariable = {
         }
 
         if (!Number.isFinite(<number>pronounNumber)) {
-            logger.warn("Pronoun index not a number using they/them");
+            logger.warn(`Pronoun index not a number using ${fallback}`);
             return fallback;
         }
         try {
@@ -68,18 +68,16 @@ const PronounVariable: ReplaceVariable = {
                 userPronounData = { "pronoun_id": `${fallback.replace("/", "")}` };
             }
 
-            const pronoun = pronouns.find(p => p.name === userPronounData.pronoun_id);
+            let pronoun = pronouns.find(p => p.name === userPronounData.pronoun_id);
             if (pronoun != null) {
                 pronounArray = pronoun.display.split('/');
             } else {
+                pronoun = { "display": `${fallback}` };
                 pronounArray = fallback.split('/');
             }
 
             if (pronounNumber === 0) {
-                if (pronoun != null) {
-                    return pronoun.display;
-                }
-                return fallback;
+                return pronoun.display;
             }
 
             if (pronounArray.length === 1) {
