@@ -50,54 +50,51 @@ const PronounVariable: ReplaceVariable = {
         pronounNumber: number | string = 0,
         // eslint-disable-next-line @typescript-eslint/no-inferrable-types
         fallback : string = "they/them") => {
+
+        if (typeof pronounNumber === 'string' || <unknown>pronounNumber instanceof String) {
+            pronounNumber = Number(`${pronounNumber}`);
+        }
+
+        if (!Number.isFinite(<number>pronounNumber)) {
+            logger.warn("Pronoun index not a number using they/them");
+            return fallback;
+        }
         try {
-            if (typeof pronounNumber === 'string' || <unknown>pronounNumber instanceof String) {
-                pronounNumber = Number(`${pronounNumber}`);
-            }
-
-            if (!Number.isFinite(<number>pronounNumber)) {
-                logger.warn("Pronoun index not a number using they/them");
-                return fallback;
-            }
-
             const pronouns = (await callUrl('https://pronouns.alejo.io/api/pronouns')).data;
             let userPronounData = (await callUrl(`https://pronouns.alejo.io/api/users/${username}`)).data[0];
 
-            try {
-                let pronounArray = [];
-                if (userPronounData == null || userPronounData === undefined) {
-                    userPronounData = { "pronoun_id": `${fallback.replace("/", "").toLowerCase()}` };
-                }
+            let pronounArray = [];
+            if (userPronounData == null || userPronounData === undefined) {
+                userPronounData = { "pronoun_id": `${fallback.replace("/", "")}` };
+            }
 
-                const pronoun = pronouns.find(p => p.name === userPronounData.pronoun_id);
+            const pronoun = pronouns.find(p => p.name === userPronounData.pronoun_id);
+            if (pronoun != null) {
+                pronounArray = pronoun.display.split('/');
+            } else {
+                pronounArray = fallback.split('/');
+            }
+
+            if (pronounNumber === 0) {
                 if (pronoun != null) {
-                    pronounArray = pronoun.display.split('/');
-                } else {
-                    pronounArray = fallback.split('/');
-                }
-
-                if (pronounNumber === 0) {
                     return pronoun.display;
                 }
-
-                if (pronounArray.length === 1) {
-                    return pronounArray[0];
-                }
-
-                if (pronounArray.length >= pronounNumber) {
-                    return pronounArray[pronounNumber - 1];
-                }
                 return fallback;
+            }
 
-            } catch (err) {
-                logger.warn("error when parsing pronoun api", err);
-                return fallback;
+            if (pronounArray.length === 1) {
+                return pronounArray[0];
+            }
+
+            if (pronounArray.length >= pronounNumber) {
+                return pronounArray[pronounNumber - 1];
             }
 
         } catch (err) {
             logger.warn("error when parsing pronoun api", err);
             return fallback;
         }
+        return fallback;
     }
 };
 
