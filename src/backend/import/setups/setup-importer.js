@@ -176,7 +176,7 @@ async function importSetup(setup, selectedCurrency) {
     if (quickActions.length > 0) {
         const quickActionSettings = settings.getQuickActionSettings();
         for (const action of quickActions) {
-            if (quickActionManager.saveItem(action)) {
+            if (quickActionManager.saveItem(action) && !Object.keys(quickActionSettings).includes(action.id)) {
                 quickActionSettings[action.id] = { enabled: true, position: quickActionSettings.length + 1 };
             }
         }
