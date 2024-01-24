@@ -30,7 +30,7 @@ async function bootstrap(
   );
 
   await app.register(fastifyCookie, {
-    secret: "my-secret",
+    secret: "firebot",
   });
 
   const authToken = app.get(AuthService).authToken;

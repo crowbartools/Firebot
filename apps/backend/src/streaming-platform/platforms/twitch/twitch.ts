@@ -1,12 +1,19 @@
 import {
     PlatformEventEmitter,
     StreamingPlatform,
+    StreamingPlatformAuthConfig,
 } from "firebot-types";
 import twitchApi from "./twitch-api";
 import { TwitchChat } from "./twitch-chat";
+import { StreamingPlatformConfig } from "../../../config/streaming-platform.config";
+import { ConfigType } from "@nestjs/config";
 
 class Twitch extends PlatformEventEmitter implements StreamingPlatform {
-  constructor() {
+  constructor(
+    private readonly streamingPlatformConfig: ConfigType<
+      typeof StreamingPlatformConfig
+    >
+  ) {
     super();
   }
 
@@ -15,6 +22,15 @@ class Twitch extends PlatformEventEmitter implements StreamingPlatform {
   color = {
     bg: "#A96FFF",
     text: "#FFFFFF",
+  };
+
+  auth: StreamingPlatformAuthConfig = {
+    type: "device",
+    clientId: this.streamingPlatformConfig.twitch.clientId,
+    deviceAuthorizationEndpoint: "",
+    tokenEndpoint: "",
+    streamerScopes: [],
+    botScopes: [],
   };
 
   api = twitchApi;

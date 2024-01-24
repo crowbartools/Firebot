@@ -1,26 +1,52 @@
-import { StreamingPlatform } from "firebot-types";
-import { Injectable } from '@nestjs/common';
+import { AuthProviderConfig, StreamingPlatform } from "firebot-types";
+import { Inject, Injectable } from '@nestjs/common';
 
 import Twitch from "./platforms/twitch/twitch";
+import { AuthProviderManager } from "../auth/auth-provider-manager.service";
+import { StreamingPlatformConfig } from "../config/streaming-platform.config";
+import { ConfigType } from "@nestjs/config";
 
 @Injectable()
 export class PlatformManagerService {
-    private platforms: StreamingPlatform[] = [
-        new Twitch()
-    ];
+  constructor(
+    private readonly authProviderManager: AuthProviderManager,
+    @Inject(StreamingPlatformConfig.KEY)
+    private streamingPlatformConfig: ConfigType<typeof StreamingPlatformConfig>
+  ) {}
 
-    registerStreamingPlatform(platform: StreamingPlatform): void {
-        if (this.platforms.some((p) => p.id === platform.id)) {
-            throw new Error(`Platform ${platform.id} is already registered.`);
-        }
-        this.platforms.push(platform);
-    }
+  private platforms: StreamingPlatform[] = [new Twitch(this.streamingPlatformConfig)];
 
-    getPlatform(id: string): StreamingPlatform | void {
-        return this.platforms.find((p) => p.id === id);
+  registerStreamingPlatform(platform: StreamingPlatform): void {
+    if (this.platforms.some((p) => p.id === platform.id)) {
+      throw new Error(`Platform ${platform.id} is already registered.`);
     }
+    this.platforms.push(platform);
 
-    getPlatforms(): StreamingPlatform[] {
-        return this.platforms;
-    }
+    const { streamerScopes, botScopes, ...authConfig } = platform.auth;
+
+    const streamerAuth: AuthProviderConfig = {
+      id: `${platform.id}-streamer`,
+      name: `${platform.name} Streamer Account`,
+      ...authConfig,
+      scopes: streamerScopes,
+    };
+
+    const botAuth: AuthProviderConfig = {
+      id: `${platform.id}-bot`,
+      name: `${platform.name} Bot Account`,
+      ...authConfig,
+      scopes: botScopes,
+    };
+
+    this.authProviderManager.registerProvider(streamerAuth);
+    this.authProviderManager.registerProvider(botAuth);
+  }
+
+  getPlatform(id: string): StreamingPlatform | void {
+    return this.platforms.find((p) => p.id === id);
+  }
+
+  getPlatforms(): StreamingPlatform[] {
+    return this.platforms;
+  }
 }

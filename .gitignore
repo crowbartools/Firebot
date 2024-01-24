@@ -87,3 +87,5 @@ build
 dist
 out
 secrets.json
+.env
+*.env

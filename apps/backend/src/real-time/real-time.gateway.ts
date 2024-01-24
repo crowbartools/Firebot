@@ -7,4 +7,12 @@ export class RealTimeGateway {
 
   @WebSocketServer()
   server!: Server;
+
+  broadcast(event: string, data: unknown) {
+    this.server.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify({ event, data }));
+      }
+    });
+  }
 }

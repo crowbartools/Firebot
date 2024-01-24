@@ -7,7 +7,6 @@ import { FirebotController } from "misc/firebot-controller.decorator";
 export class ExampleController {
   @Get()
   async getHelloWorld(@Req() request: any) {
-    console.log(request.cookies);
     return "Hello world";
   }
 }
