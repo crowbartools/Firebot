@@ -66,7 +66,7 @@ const PronounVariable: ReplaceVariable = {
             try {
                 let pronounArray = [];
                 if (userPronounData == null || userPronounData === undefined) {
-                    userPronounData = { "pronoun_id": "theythem" };
+                    userPronounData = { "pronoun_id": `${fallback.replace("/", "")}` };
                 }
 
                 const pronoun = pronouns.find(p => p.name === userPronounData.pronoun_id);
