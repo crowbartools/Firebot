@@ -6,6 +6,7 @@ import { useLogins } from "@/hooks/api/use-logins";
 import { useStreamingPlatforms } from "@/hooks/api/use-streaming-platforms";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { PlusCircleIcon } from "@heroicons/react/20/solid";
+import { AnimatePresence, motion } from "framer-motion";
 
 export const ManageProfileSlideOver: React.FC<{
   open: boolean;
@@ -46,43 +47,52 @@ export const ManageProfileSlideOver: React.FC<{
                   )}
                 </div>
                 <div className="p-4 rounded-b-lg bg-secondary-bg/75">
-                  {activeLogin && (
-                    <div key={activeLogin.id} className="grid grid-cols-2">
-                      <div>
-                        <div className="text-lg text-primary-text font-bold">
-                          Streamer
+                  <AnimatePresence mode="popLayout" initial={false}>
+                    {activeLogin && (
+                      <motion.div
+                        key={activeLogin.id}
+                        className="grid grid-cols-2"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1.0, scale: 1.0 }}
+                      >
+                        <div>
+                          <div className="text-lg text-primary-text font-bold">
+                            Streamer
+                          </div>
+                          <div>
+                            <button className="text-primary-text bg-primary-bg/25 py-1 px-2 rounded-lg flex items-center">
+                              <PlusCircleIcon className="w-4 h-4 mr-1" />
+                              Connect account
+                            </button>
+                          </div>
                         </div>
                         <div>
-                          <button className="text-primary-text bg-primary-bg/25 py-1 px-2 rounded-lg flex items-center">
-                            <PlusCircleIcon className="w-4 h-4 mr-1" />
-                            Connect account
-                          </button>
+                          <div className="text-lg text-primary-text font-bold">
+                            Bot
+                          </div>
+                          <div>
+                            <button className="text-primary-text bg-primary-bg/25 py-1 px-2 rounded-lg flex items-center">
+                              <PlusCircleIcon className="w-4 h-4 mr-1" />
+                              Connect account
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                      <div>
-                        <div className="text-lg text-primary-text font-bold">
-                          Bot
-                        </div>
-                        <div>
-                          <button className="text-primary-text bg-primary-bg/25 py-1 px-2 rounded-lg flex items-center">
-                            <PlusCircleIcon className="w-4 h-4 mr-1" />
-                            Connect account
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  {!loginsForPlatform?.loginConfigs?.length && (
-                    <button
-                      className="text-gray-50 flex items-center gap-2 rounded-lg"
-                      onClick={() => {
-                        createLogin({ platformId: platform.id });
-                      }}
-                      disabled={isCreatingLogin}
-                    >
-                      <PlusCircleIcon className="w-5 h-5" /> Create new login
-                    </button>
-                  )}
+                      </motion.div>
+                    )}
+                    {!loginsForPlatform?.loginConfigs?.length && (
+                      <motion.button
+                        className="text-gray-50 flex items-center gap-2 rounded-lg"
+                        onClick={() => {
+                          createLogin({ platformId: platform.id });
+                        }}
+                        disabled={isCreatingLogin}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1.0, scale: 1.0 }}
+                      >
+                        <PlusCircleIcon className="w-5 h-5" /> Create new login
+                      </motion.button>
+                    )}
+                  </AnimatePresence>
                 </div>
               </div>
             );
