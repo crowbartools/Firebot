@@ -33,10 +33,6 @@ class CurrencyAccess {
         // This gets a message from front end when a currency needs to be created.
         // This is also triggered in the currencyManager.
         frontendCommunicator.on("refresh-currency-cache", () => {
-            if (this.isViewerDBOn() !== true) {
-                return;
-            }
-            logger.debug("Refreshing the currency cache.");
             this.refreshCurrencyCache();
         });
     }
@@ -50,6 +46,7 @@ class CurrencyAccess {
             return;
         }
 
+        logger.debug("Refreshing currency cache");
         const db = profileManager.getJsonDbInProfile("/currency/currency");
         this._currencyCache = db.getData("/");
     }

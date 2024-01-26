@@ -70,6 +70,10 @@ exports.whenReady = async () => {
     const { loadEffects } = require("../../../effects/builtin-effect-loader");
     loadEffects();
 
+    windowManagement.updateSplashScreenStatus("Loading currencies...");
+    const currencyAccess = require("../../../currency/currency-access").default;
+    currencyAccess.refreshCurrencyCache();
+
     // load commands
     logger.debug("Loading sys commands...");
     windowManagement.updateSplashScreenStatus("Loading system commands...");
@@ -181,7 +185,7 @@ exports.whenReady = async () => {
     const hotkeyManager = require("../../../hotkeys/hotkey-manager");
     hotkeyManager.refreshHotkeyCache();
 
-    windowManagement.updateSplashScreenStatus("Loading currencies...");
+    windowManagement.updateSplashScreenStatus("Starting currency timer...");
     const currencyManager = require("../../../currency/currency-manager");
     currencyManager.startTimer();
 
