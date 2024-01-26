@@ -1,4 +1,4 @@
-// Depreciated
+// Deprecated
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
@@ -7,7 +7,7 @@ import arrayFindIndex from './array-find-index';
 const model : ReplaceVariable = {
     definition: {
         handle: "rawArrayFindIndex",
-        description: "(Depreciated: use $arrayFindIndex) Finds a matching element in the array and returns it's index, or null if the element is absent",
+        description: "(Deprecated: use $arrayFindIndex) Finds a matching element in the array and returns it's index, or null if the element is absent",
         usage: "rawArrayFindIndex[array, matcher, propertyPath]",
 
         examples: [
