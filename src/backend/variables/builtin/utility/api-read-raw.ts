@@ -7,7 +7,7 @@ const model: ReplaceVariable = {
     definition: {
         handle: "rawReadApi",
         usage: "rawReadApi[url]",
-        description: '(Depreciated: use $readApi) Calls the given URL and returns the response as an object.',
+        description: '(Deprecated: use $readApi) Calls the given URL and returns the response as an object.',
         examples: [
             {
                 usage: 'rawReadApi[url, object.path.here]',

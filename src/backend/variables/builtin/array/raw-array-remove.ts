@@ -1,4 +1,4 @@
-// Depreciated
+// Deprecated
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
@@ -7,7 +7,7 @@ import arrayRemove from "./array-remove";
 const model : ReplaceVariable = {
     definition: {
         handle: "rawArrayRemove",
-        description: "(Depreciated: use $arrayRemove) Returns a new array with the element at the given index removed",
+        description: "(Deprecated: use $arrayRemove) Returns a new array with the element at the given index removed",
         usage: "rawArrayRemove[array, index]",
         examples: [
             {
