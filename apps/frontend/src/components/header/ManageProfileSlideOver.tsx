@@ -74,9 +74,8 @@ export const ManageProfileSlideOver: React.FC<{
                   )}
                   {!loginsForPlatform?.loginConfigs?.length && (
                     <button
-                      className="text-gray-100 flex items-center gap-2 bg-neutral-700 hover:bg-neutral-600 rounded-lg p-3"
+                      className="text-gray-50 flex items-center gap-2 rounded-lg"
                       onClick={() => {
-                        console.log("Creating login");
                         createLogin({ platformId: platform.id });
                       }}
                       disabled={isCreatingLogin}
