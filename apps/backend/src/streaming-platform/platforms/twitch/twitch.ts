@@ -19,10 +19,7 @@ class Twitch extends PlatformEventEmitter implements StreamingPlatform {
 
   id = "twitch";
   name = "Twitch";
-  color = {
-    bg: "#A96FFF",
-    text: "#FFFFFF",
-  };
+  icon = "twitch";
 
   auth: StreamingPlatformAuthConfig = {
     type: "device",

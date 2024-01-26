@@ -6,11 +6,17 @@ import NoSSRWrapper from "@/components/NoSSRWrapper";
 import { AppHeader } from "@/components/AppHeader";
 import { FbApiProvider } from "@/api/FbApiContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { fas } from "@fortawesome/free-solid-svg-icons";
+import { far } from "@fortawesome/free-regular-svg-icons";
+import { fab } from "@fortawesome/free-brands-svg-icons";
 
 export default function App({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: 2 } },
   });
+
+  library.add(fas, far, fab);
 
   return (
     <NoSSRWrapper>

@@ -1,7 +1,7 @@
 import { AxiosInstance } from "axios";
 import { StreamingPlatform} from "firebot-types"
 
-type StreamingPlatformIdName = Pick<StreamingPlatform, "id" | "name" | "color">;
+type StreamingPlatformIdName = Pick<StreamingPlatform, "id" | "name" | "icon" | "auth">;
 
 export class StreamingPlatformApi {
   constructor(private readonly api: AxiosInstance) {}

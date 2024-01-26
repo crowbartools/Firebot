@@ -37,19 +37,17 @@ export const SlideOver: React.FC<{
                   <motion.div
                     initial={{
                       x: "100%",
-                      width: "75%",
                     }}
                     animate={{
                       x: "0%",
-                      width: "100%",
                     }}
                     exit={{
                       x: "100%",
                     }}
                     transition={{
                       type: "spring",
-                      stiffness: 350,
-                      damping: 30,
+                      stiffness: 400,
+                      damping: 32,
                     }}
                     className="flex h-full flex-col overflow-y-scroll bg-tertiary-bg py-6 shadow-xl"
                   >

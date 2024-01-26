@@ -14,7 +14,11 @@ export class BaseDataStore<Settings> implements DataStore<Settings> {
   }
 
   get<K extends keyof Settings>(key: K): Settings[K] {
-    return this.settings[key] ?? this.defaultSettings[key];
+    return JSON.parse(JSON.stringify(this.settings[key] ?? this.defaultSettings[key]));
+  }
+
+  getRoot(): Settings {
+    return JSON.parse(JSON.stringify(this.settings ?? this.defaultSettings));
   }
 
   set<K extends keyof Settings, V extends Settings[K]>(key: K, value: V): void {
