@@ -13,7 +13,7 @@ const model : ReplaceVariable = {
         examples: [
             {
                 usage: "subNames",
-                description: "Returns: [{username:firebottle, displayname: FireBottle, tier:2000, isGift:false}, {username:ebiggz, displayname: EBiggz, tier:1000,isGift:true},{username:sreject, displayname:SReject, tier:3000, isGift:false},{username:perry, displayname:Perry, tier:1000, isGift:false}] To be used with array or custom variables"
+                description: 'Returns: [{username: "firebottle", displayname: "FireBottle", tier: 2000, isGift:false}, {username: "ebiggz", displayname: "EBiggz", tier: 1000, isGift:true}] To be used with array or custom variables'
             }
         ],
         possibleDataOutput: [OutputDataType.TEXT]
@@ -27,7 +27,7 @@ const model : ReplaceVariable = {
             if (response && response.length) {
                 viewers = response.map(sub => ({
                     username: sub.userName,
-                    displayname: sub.userDisplayName,
+                    displayname: sub.userDisplayName || sub.userName,
                     tier: sub.tier,
                     isGift: sub.isGift
                 }));
