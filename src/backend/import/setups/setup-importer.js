@@ -174,13 +174,9 @@ async function importSetup(setup, selectedCurrency) {
     // quick actions
     const quickActions = setup.components.quickActions || [];
     if (quickActions.length > 0) {
-        const quickActionSettings = settings.getQuickActionSettings();
         for (const action of quickActions) {
-            if (quickActionManager.saveItem(action) && !Object.keys(quickActionSettings).includes(action.id)) {
-                quickActionSettings[action.id] = { enabled: true, position: quickActionSettings.length + 1 };
-            }
+            quickActionManager.saveItem(action);
         }
-        settings.setQuickActionSettings(quickActionSettings);
         quickActionManager.triggerUiRefresh();
     }
 
@@ -223,7 +219,7 @@ function removeSetupComponents(components) {
                         customRolesManager.deleteCustomRole(id);
                         break;
                     case "quickActions":
-                        quickActionManager.deleteItem(id);
+                        quickActionManager.deleteQuickAction(id);
                         break;
                     default:
                     // do nothing

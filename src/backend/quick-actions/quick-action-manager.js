@@ -31,7 +31,7 @@ class QuickActionManager extends JsonDbManager {
             "give-currency",
             "stream-info",
             "stream-preview"
-        ].forEach(filename => {
+        ].forEach((filename) => {
             const quickAction = require(`./builtin/${filename}.js`);
             this.systemQuickActions.push(quickAction);
         });
@@ -47,6 +47,18 @@ class QuickActionManager extends JsonDbManager {
             ...this.getSystemQuickActionDefinitions(),
             ...Object.values(this.items)
         ];
+    }
+
+    saveQuickAction(quickAction) {
+        if (!super.saveItem(quickAction)) {
+            return;
+        }
+        const quickActionSettings = settings.getQuickActionSettings();
+        if (Object.keys(quickActionSettings).includes(quickAction.id)) {
+            return;
+        }
+        quickActionSettings[quickAction.id] = { enabled: true, position: quickActionSettings.length + 1 };
+        settings.setQuickActionSettings(quickActionSettings);
     }
 
     deleteQuickAction(customQuickActionId) {
@@ -119,7 +131,7 @@ frontendCommunicator.onAsync("getQuickActions",
     async () => quickActionManager.getAllItems());
 
 frontendCommunicator.onAsync("saveCustomQuickAction",
-    async (/** @type {QuickActionDefinition} */ customQuickAction) => await quickActionManager.saveItem(customQuickAction));
+    async (/** @type {QuickActionDefinition} */ customQuickAction) => await quickActionManager.saveQuickAction(customQuickAction));
 
 frontendCommunicator.onAsync("saveAllCustomQuickActions",
     async (/** @type {QuickActionDefinition[]} */ allCustomQuickActions) => await quickActionManager.saveAllItems(allCustomQuickActions));
@@ -127,7 +139,7 @@ frontendCommunicator.onAsync("saveAllCustomQuickActions",
 frontendCommunicator.on("deleteCustomQuickAction",
     (/** @type {string} */ customQuickActionId) => quickActionManager.deleteQuickAction(customQuickActionId));
 
-frontendCommunicator.on("triggerQuickAction", quickActionId => {
+frontendCommunicator.on("triggerQuickAction", (quickActionId) => {
     quickActionManager.triggerQuickAction(quickActionId);
 });
 
