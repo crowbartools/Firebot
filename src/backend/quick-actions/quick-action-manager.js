@@ -57,7 +57,7 @@ class QuickActionManager extends JsonDbManager {
         if (Object.keys(quickActionSettings).includes(quickAction.id)) {
             return;
         }
-        quickActionSettings[quickAction.id] = { enabled: true, position: Object.keys(quickActionSettings).length + 1 };
+        quickActionSettings[quickAction.id] = { enabled: true, position: Object.keys(quickActionSettings).length };
         settings.setQuickActionSettings(quickActionSettings);
         return true;
     }
