@@ -24,7 +24,7 @@ const callUrl = async (url: string) => {
     }
 };
 
-const PronounVariable: ReplaceVariable = {
+const model : ReplaceVariable = {
     definition: {
         handle: "pronouns",
         description: "Returns the pronouns of the given user. It uses https://pronouns.alejo.io/ to get the pronouns.",
@@ -97,5 +97,4 @@ const PronounVariable: ReplaceVariable = {
         return fallback;
     }
 };
-
-export default PronounVariable;
+export default model;
