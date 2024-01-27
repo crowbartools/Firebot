@@ -6,7 +6,7 @@ import arrayFilter from './array-filter';
 const model : ReplaceVariable = {
     definition: {
         handle: "rawArrayFilter",
-        description: "(Depreciated: use $arrayFilter) Returns a new filtered raw array.",
+        description: "(Deprecated: use $arrayFilter) Returns a new filtered raw array.",
         usage: "rawArrayFilter[rawArray, matcher, propertyPath, removeMatches]",
         examples: [
             {
