@@ -1,4 +1,4 @@
-// Depreciated
+// Deprecated
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
@@ -7,7 +7,7 @@ import arrayLength from './array-length';
 const model : ReplaceVariable = {
     definition: {
         handle: "rawArrayLength",
-        description: "(Depreciated: use $arrayLength) Returns the length of the input array.",
+        description: "(Deprecated: use $arrayLength) Returns the length of the input array.",
         usage: "rawArrayLength[array]",
         categories: [VariableCategory.ADVANCED, VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER],

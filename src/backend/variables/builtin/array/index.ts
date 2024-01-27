@@ -11,7 +11,7 @@ import arrayRemove from './array-remove';
 import arrayReverse from './array-reverse';
 import arrayShuffle from './array-shuffle';
 
-// Depreciated
+// Deprecated
 import rawArrayAdd from './raw-array-add';
 import rawArrayElement from './raw-array-element';
 import rawArrayFilter from './raw-array-filter';
@@ -38,7 +38,7 @@ export default [
     arrayReverse,
     arrayShuffle,
 
-    // Depreciated
+    // Deprecated
     rawArrayAdd,
     rawArrayElement,
     rawArrayFilter,

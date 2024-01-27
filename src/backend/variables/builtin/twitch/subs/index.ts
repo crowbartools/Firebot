@@ -8,7 +8,12 @@ import giftSubMonths from './gift-sub-months';
 import giftSubType from './gift-sub-type';
 
 import subCount from './sub-count';
+import subMessage from './sub-message';
+import subMonths from './sub-months';
 import subPoints from './sub-points';
+import subStreak from './sub-streak';
+import subType from './sub-type';
+import subUsers from './sub-users';
 
 export default [
     giftCount,
@@ -19,6 +24,12 @@ export default [
     giftReceiversRaw,
     giftSubMonths,
     giftSubType,
+
     subCount,
-    subPoints
+    subMessage,
+    subMonths,
+    subPoints,
+    subStreak,
+    subType,
+    subUsers
 ];

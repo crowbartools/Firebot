@@ -1,4 +1,4 @@
-// Depreciated
+// Deprecated
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
@@ -7,7 +7,7 @@ import arrayAdd from './array-add';
 const model : ReplaceVariable = {
     definition: {
         handle: 'rawArrayAdd',
-        description: '(Depreciated: use $arrayAdd) Returns a new array with the added element',
+        description: '(Deprecated: use $arrayAdd) Returns a new array with the added element',
         usage: 'rawArrayAdd[array, new-item, at-start]',
         examples: [
             {
