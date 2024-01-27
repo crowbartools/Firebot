@@ -67,7 +67,7 @@ const model : ReplaceVariable = {
 
             let pronounArray = [];
             if (userPronounData == null || userPronounData === undefined) {
-                userPronounData = { "pronoun_id": `${fallback.replace("/", "")}` };
+                userPronounData = { "pronoun_id": `${fallback}`.replace("/", "") };
             }
 
             let pronoun = pronouns.find(p => p.name === userPronounData.pronoun_id);
