@@ -21,7 +21,7 @@ const model : ReplaceVariable = {
             }
         }
 
-        if (Array.isArray(subject)) {
+        if (Array.isArray(subject) && subject.length) {
             return subject[Math.floor(Math.random() * subject.length)];
         }
         return null;
