@@ -7,6 +7,7 @@ import arrayFindWithNull from './array-find-with-null';
 import arrayFrom from './array-from';
 import arrayJoin from './array-join';
 import arrayLength from './array-length';
+import arrayRandomItem from './array-random-item';
 import arrayRemove from './array-remove';
 import arrayReverse from './array-reverse';
 import arrayShuffle from './array-shuffle';
@@ -34,6 +35,7 @@ export default [
     arrayFrom,
     arrayJoin,
     arrayLength,
+    arrayRandomItem,
     arrayRemove,
     arrayReverse,
     arrayShuffle,
