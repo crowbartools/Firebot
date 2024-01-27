@@ -12,6 +12,8 @@ import textEncodeForHtml from './text-encode-for-html';
 import textEncodeForUrl from './text-encode-for-url';
 import textLength from './text-length';
 import textLowercase from './text-lowercase';
+import textPadEnd from './text-pad-end';
+import textPadStart from './text-pad-start';
 import textReplace from './text-replace';
 import textScramble from './text-scramble';
 import textSplit from './text-split';
@@ -38,6 +40,8 @@ export default [
     textEncodeForUrl,
     textLength,
     textLowercase,
+    textPadEnd,
+    textPadStart,
     textReplace,
     textScramble,
     textSplit,
