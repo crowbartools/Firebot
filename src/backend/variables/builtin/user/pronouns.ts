@@ -45,11 +45,13 @@ const PronounVariable: ReplaceVariable = {
         categories: [VariableCategory.COMMON],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: async (trigger,
+    evaluator: async (
+        trigger,
         username: string,
         pronounNumber: number | string = 0,
         // eslint-disable-next-line @typescript-eslint/no-inferrable-types
-        fallback : string = "they/them") => {
+        fallback : string = "they/them"
+    ) => {
 
         if (typeof pronounNumber === 'string' || <unknown>pronounNumber instanceof String) {
             pronounNumber = Number(`${pronounNumber}`);
