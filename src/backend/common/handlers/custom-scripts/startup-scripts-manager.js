@@ -56,9 +56,9 @@ function saveStartupScriptData(startupScriptData) {
 
         startupScriptsConfig.push(`/${startupScriptData.id}`, startupScriptData);
 
-        logger.debug(`Saved preset effect list ${startupScriptData.id} to file.`);
+        logger.debug(`Saved startup script data ${startupScriptData.id} to file.`);
     } catch (err) {
-        logger.warn(`There was an error saving a preset effect list.`, err);
+        logger.warn(`There was an error saving startup script data.`, err);
     }
 
     startUpScriptSaved(startupScriptData);
