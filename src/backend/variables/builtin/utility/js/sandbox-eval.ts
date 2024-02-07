@@ -25,7 +25,7 @@ const model : ReplaceVariable = {
     definition: {
         handle: "js",
         usage: "js[code, ...parameters]",
-        description: 'evaluates the given js',
+        description: 'Evaluates the given js in a sandboxed browser instance.<br/>Parameters can be accessed via parameters[N] within the js.<br/>You must use return to return a result from the evaluation.',
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.ALL]
     },
