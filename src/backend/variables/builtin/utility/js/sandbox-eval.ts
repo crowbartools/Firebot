@@ -24,8 +24,8 @@ interface Sandbox {
 
 const model : ReplaceVariable = {
     definition: {
-        handle: "js",
-        usage: "js[`` code ``, ...parameters]",
+        handle: "evalJs",
+        usage: "evalJs[`` code ``, ...parameters]",
         description: 'Evaluates the given js in a sandboxed browser instance.<br/><br/>Parameters can be accessed via parameters[N] within the js.<br/><br/>You must use return to return a result from the evaluation.',
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.ALL]
@@ -101,6 +101,7 @@ const model : ReplaceVariable = {
                     cleanup();
                     return;
                 }
+                logger.info('Message From Sandbox', event.data);
 
                 const { id, action, method, parameters, status, result } = event.data;
 
@@ -114,8 +115,9 @@ const model : ReplaceVariable = {
 
                 // Sandbox is leveraging Firebot.* apis
                 } else if (action === 'method') {
+
                     const base = { id, action: "result" };
-                    if (method === 'meta') {
+                    if (method === 'metadata') {
                         sandbox.tunnel.postMessage({ ...base, status: "ok", result: trigger.metadata || {} });
 
                     } else if (handlers.has(method)) {
@@ -228,6 +230,7 @@ const model : ReplaceVariable = {
                     id: 0,
                     action: 'method',
                     method: 'evaluate',
+                    metadata: trigger.metadata,
                     parameters: [code, ...args]
                 });
             });

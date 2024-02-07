@@ -14,7 +14,6 @@ window.onmessage = (event) => {
     // Tracks if evaluation is still pending
     let pending = true;
 
-
     // Tracks pending Firebot.* calls
     const pendingMethod = new Map();
 
@@ -39,12 +38,13 @@ window.onmessage = (event) => {
         }
 
         // extract appropriate data
-        const { id, action, status, result, method, parameters } = event.data;
+        const { id, action, status, result, metadata, method, parameters } = event.data;
 
         // Invalid; ignore message
         if ((typeof id !== 'string' && typeof id !== 'number') || typeof action !== 'string') {
             return;
         }
+        console.log(`Message from Firebot: ${JSON.stringify(event.data)}`);
 
         // Result of calling a Firebot.* api method
         if (
@@ -111,11 +111,13 @@ window.onmessage = (event) => {
 
         try {
 
+            const metadata = await Firebot.metadata();
+
             // Wrap the code to evaluate
-            const evaluate = new Function('Firebot', 'parameters', `return (async ()=>{"use strict";${parameters[0]}})()`);
+            const evaluate = new Function('Firebot', 'metadata', 'parameters', `return (async ()=>{"use strict";${parameters[0]}})()`);
 
             // Attempt to call the evaluator function
-            const result = await evaluate(Firebot, parameters.slice(1));
+            const result = await evaluate(Firebot, metadata, parameters.slice(1));
 
             firebotTunnel.postMessage({
                 id,
