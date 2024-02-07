@@ -145,7 +145,7 @@ class HttpServerManager extends EventEmitter {
             const fullCustomRoute = `${customRoute}${customRoutePredicate}`;
 
             // Find the matching registered custom route
-            const customRouteEntry = this.customRoutes.find((cr) =>
+            const customRouteEntry = this.customRoutes.find(cr =>
                 cr.fullRoute === fullCustomRoute &&
                 cr.method === req.method
             );
@@ -221,7 +221,7 @@ class HttpServerManager extends EventEmitter {
 
         this.defaultWebsocketServerInstance.clients.forEach(function each(client) {
             if (client.readyState === 1) {
-                client.send(dataRaw, err => {
+                client.send(dataRaw, (err) => {
                     if (err) {
                         logger.error(err);
                     }
@@ -314,7 +314,7 @@ class HttpServerManager extends EventEmitter {
             fullRoute
         } = this.buildCustomRouteParameters(prefix, route, method);
 
-        if (this.customRoutes.findIndex((cr) => cr.fullRoute === fullRoute && cr.method === normalizedMethod) > -1) {
+        if (this.customRoutes.findIndex(cr => cr.fullRoute === fullRoute && cr.method === normalizedMethod) > -1) {
             logger.error(`Failed to register custom route: Custom route already registered at "${fullRoute}"`);
             return false;
         }
@@ -351,7 +351,7 @@ class HttpServerManager extends EventEmitter {
             fullRoute
         } = this.buildCustomRouteParameters(prefix, route, method);
 
-        const customRouteIndex = this.customRoutes.findIndex((cr) =>
+        const customRouteIndex = this.customRoutes.findIndex(cr =>
             cr.prefix === normalizedPrefix &&
             cr.route === normalizedRoute &&
             cr.method === normalizedMethod &&
@@ -374,8 +374,8 @@ class HttpServerManager extends EventEmitter {
         const normalizedRoute = route.toLowerCase().replace(/\/$/, '');
         const normalizedMethod = method.toUpperCase();
 
-        const fullRoute = path.join(normalizedPrefix, normalizedRoute)
-            .replace("\\", "/");
+        // Force POSIX paths because URL
+        const fullRoute = path.posix.join(normalizedPrefix, normalizedRoute);
 
         return {
             normalizedPrefix,
@@ -402,7 +402,7 @@ setInterval(() => {
     }
 }, 3000);
 
-ipcMain.on("getOverlayStatus", event => {
+ipcMain.on("getOverlayStatus", (event) => {
     event.returnValue = {
         clientsConnected: manager.overlayHasClients,
         serverStarted: manager.isDefaultServerStarted
