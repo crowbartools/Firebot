@@ -1,10 +1,9 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import api from "../../../twitch-api/api";
+import accountAccess from "../../../common/account-access";
 
-const api = require("../../../twitch-api/api");
-const accountAccess = require("../../../common/account-access");
-
-const model : ReplaceVariable = {
+const model: ReplaceVariable = {
     definition: {
         handle: "followCount",
         description: "The number of follows you currently have.",
@@ -25,7 +24,7 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.NUMBERS, VariableCategory.USER],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
-    evaluator: async (trigger, username) => {
+    evaluator: async (trigger, username: string) => {
         let count = 0;
 
         const streamer = accountAccess.getAccounts().streamer;
@@ -37,13 +36,8 @@ const model : ReplaceVariable = {
         try {
             const user = await api.users.getUserByName(username);
 
-            const response = await api.streamerClient.channels.getChannelFollowers(
-                user.id,
-                streamer.userId
-            );
-            if (response) {
-                count = response.total;
-            }
+            const response = await api.streamerClient.channels.getChannelFollowerCount(user.id);
+            count = response ?? 0;
         } catch {
             // silently fail
         }
