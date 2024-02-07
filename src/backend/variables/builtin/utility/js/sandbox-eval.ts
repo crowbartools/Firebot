@@ -101,8 +101,6 @@ const model : ReplaceVariable = {
                     cleanup();
                     return;
                 }
-                logger.info('Message From Sandbox', event.data);
-
                 const { id, action, method, parameters, status, result } = event.data;
 
                 // Sandbox returned a result for the evaluation
