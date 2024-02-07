@@ -3,6 +3,7 @@
 const logger = require("../../logwrapper");
 const profileManager = require("../../common/profile-manager");
 const frontendCommunicator = require("../../common/frontend-communicator");
+const { settings } = require("../../common/settings-access");
 
 const commandManager = require("../../chat/commands/command-manager");
 const countersManager = require("../../counters/counter-manager");
@@ -172,10 +173,12 @@ async function importSetup(setup, selectedCurrency) {
 
     // quick actions
     const quickActions = setup.components.quickActions || [];
-    for (const action of quickActions) {
-        quickActionManager.saveItem(action);
+    if (quickActions.length > 0) {
+        for (const action of quickActions) {
+            quickActionManager.saveItem(action);
+        }
+        quickActionManager.triggerUiRefresh();
     }
-    quickActionManager.triggerUiRefresh();
 
     return true;
 }
@@ -216,7 +219,7 @@ function removeSetupComponents(components) {
                         customRolesManager.deleteCustomRole(id);
                         break;
                     case "quickActions":
-                        quickActionManager.deleteItem(id);
+                        quickActionManager.deleteQuickAction(id);
                         break;
                     default:
                     // do nothing

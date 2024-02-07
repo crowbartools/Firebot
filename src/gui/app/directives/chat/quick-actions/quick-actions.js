@@ -115,9 +115,6 @@
                                     .then(confirmed => {
                                         if (confirmed) {
                                             quickActionsService.deleteCustomQuickAction(customQuickAction.id);
-
-                                            delete $ctrl.settings[customQuickAction.id];
-                                            settingsService.setQuickActionSettings($ctrl.settings);
                                         }
                                     });
 
