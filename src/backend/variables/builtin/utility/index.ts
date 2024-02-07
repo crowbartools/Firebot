@@ -3,6 +3,7 @@ import apiReadRaw from './api-read-raw';
 import audioDuration from './audio-duration';
 import convertFromJSON from './convert-from-json';
 import convertToJSON from './convert-to-json';
+import evalJS from './js/sandbox-eval';
 import evalVars from './eval-vars';
 import fileExists from './file-exists';
 import fileLineCount from './file-line-count';
@@ -20,6 +21,7 @@ export default [
     audioDuration,
     convertFromJSON,
     convertToJSON,
+    evalJS,
     evalVars,
     fileExists,
     fileLineCount,
