@@ -198,19 +198,19 @@ const model : ReplaceVariable = {
                 }
                 switch (level) {
                     case 1:
-                        logger.info(message);
+                        logger.info(`($evalJS Sandbox) ${message}`);
                         break;
 
                     case 2:
-                        logger.warn(message);
+                        logger.warn(`($evalJS Sandbox) ${message}`);
                         break;
 
                     case 3:
-                        logger.error(message);
+                        logger.error(`($evalJS Sandbox) ${message}`);
                         break;
 
                     default:
-                        logger.verbose(message);
+                        logger.verbose(`($evalJS Sandbox) ${message}`);
                 }
             });
 
