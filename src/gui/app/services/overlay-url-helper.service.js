@@ -35,7 +35,7 @@
                     paramCount++;
                 });
 
-                return overlayPath;
+                return `file:///${overlayPath}`;
             };
 
             return service;

@@ -24,8 +24,10 @@ const model : ReplaceVariable = {
     evaluator: (trigger) => {
 
         let chatMessage = "";
+        if (trigger.metadata.chatMessage) {
+            chatMessage = trigger.metadata.chatMessage.rawText;
 
-        if (trigger.type === EffectTrigger.COMMAND) {
+        } else if (trigger.type === EffectTrigger.COMMAND) {
 
             //if trigger is command, rebuild chat message with trigger and args
             const userCommand = trigger.metadata.userCommand;
@@ -33,7 +35,7 @@ const model : ReplaceVariable = {
 
         } else if (trigger.type === EffectTrigger.EVENT || trigger.type === EffectTrigger.MANUAL) {
             // if trigger is event/manual event, build chat message from chat event data
-            chatMessage = trigger.metadata.chatMessage || trigger.metadata.eventData.messageText;
+            chatMessage = trigger.metadata.eventData.messageText;
         }
 
         return chatMessage.trim();
