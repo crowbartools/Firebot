@@ -44,4 +44,4 @@ const model : ReplaceVariable = {
         return [];
     }
 };
-module.exports = model;
+export default model;

@@ -7,6 +7,7 @@ import evalVars from './eval-vars';
 import fileExists from './file-exists';
 import fileLineCount from './file-line-count';
 import fileRead from './file-read';
+import filesInDirectory from './files-in-directory';
 import loopCount from './loop-count';
 import loopItem from './loop-item';
 import quickstore from './quick-store';
@@ -23,6 +24,7 @@ export default [
     fileExists,
     fileLineCount,
     fileRead,
+    filesInDirectory,
     loopCount,
     loopItem,
     quickstore,
