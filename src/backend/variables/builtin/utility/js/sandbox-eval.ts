@@ -228,7 +228,6 @@ const model : ReplaceVariable = {
                     id: 0,
                     action: 'method',
                     method: 'evaluate',
-                    metadata: trigger.metadata,
                     parameters: [code, ...args]
                 });
             });
