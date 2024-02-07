@@ -4,6 +4,7 @@ import { BrowserWindow, MessageChannelMain, session } from 'electron';
 import { ReplaceVariable, Trigger } from "../../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 
+const logger = require('../../../../logwrapper.js');
 const preloadPath = join(__dirname, 'sandbox-preload.js');
 const htmlPath = join(__dirname, './sandbox.html');
 
@@ -24,8 +25,8 @@ interface Sandbox {
 const model : ReplaceVariable = {
     definition: {
         handle: "js",
-        usage: "js[code, ...parameters]",
-        description: 'Evaluates the given js in a sandboxed browser instance.<br/>Parameters can be accessed via parameters[N] within the js.<br/>You must use return to return a result from the evaluation.',
+        usage: "js[`` code ``, ...parameters]",
+        description: 'Evaluates the given js in a sandboxed browser instance.<br/><br/>Parameters can be accessed via parameters[N] within the js.<br/><br/>You must use return to return a result from the evaluation.',
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.ALL]
     },
@@ -190,6 +191,28 @@ const model : ReplaceVariable = {
 
             // Cleanup the sandbox if the window closes
             sandbox.window.on('closed', () => sandbox.reject('sandbox closed'));
+
+            sandbox.window.webContents.on('console-message', (event, level, message) => {
+                if (level === 2 && /^%cElectron /i.test(message)) {
+                    return;
+                }
+                switch (level) {
+                    case 1:
+                        logger.info(message);
+                        break;
+
+                    case 2:
+                        logger.warn(message);
+                        break;
+
+                    case 3:
+                        logger.error(message);
+                        break;
+
+                    default:
+                        logger.verbose(message);
+                }
+            });
 
             // Wait for the contents of the sandbox window to be ready
             sandbox.window.on('ready-to-show', () => {
