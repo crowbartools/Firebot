@@ -2,6 +2,7 @@
 
 const { app } = require("electron");
 const { JsonDB } = require("node-json-db");
+const fs = require("fs");
 const path = require("path");
 const dataAccess = require("./data-access.js");
 const logger = require("../logwrapper");
@@ -157,10 +158,17 @@ const getPathInProfile = function(filepath) {
  * @returns JsonDB
  */
 const getJsonDbInProfile = function(filepath, humanReadable = true) {
-    const profilePath =
-      `${dataAccess.getUserDataPath()}/profiles/${getLoggedInProfile()}`,
-        jsonDbPath = path.join(profilePath, filepath);
-    return new JsonDB(jsonDbPath, true, humanReadable);
+    const jsonDbPath = getPathInProfile(filepath);
+
+    try {
+        return new JsonDB(jsonDbPath, true, humanReadable);
+    } catch (error) {
+        logger.error(`Error loading JsonDB at ${filepath}. Attempting to recreate.`, error);
+
+        fs.rmSync(jsonDbPath, { force: true });
+
+        return new JsonDB(jsonDbPath, true, humanReadable);
+    }
 };
 
 const profileDataPathExistsSync = function(filePath) {
