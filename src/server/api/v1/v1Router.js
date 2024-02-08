@@ -190,6 +190,11 @@ router
     .route("/timers/:timerId")
     .get(timers.getTimerById);
 
+// Action can be "toggle", "enable", "disable" or "clear"
+router
+    .route("/timers/:timerId/:action")
+    .get(timers.updateTimerById);
+
 const queues = require("./controllers/effectQueuesApiController");
 
 router
