@@ -15,10 +15,13 @@ const deepmerge = require("deepmerge");
                 <div>
                     <div ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.model">
                         <div ng-repeat="item in $ctrl.model track by $index" class="list-item selectable" ng-click="$ctrl.editItem($index)">
-                            <span ng-show="$ctrl.settings.sortable" class="dragHandle" style="height: 38px; width: 15px; align-items: center; justify-content: center; display: flex">
-                                <i class="fal fa-bars" aria-hidden="true"></i>
-                            </span>
-                            <div uib-tooltip="Click to edit"  style="font-weight: 400;" aria-label="{{item + ' (Click to edit)'}}">{{item}}</div>
+                            <div style="display: flex;align-items: center;column-gap: 10px;>
+                                <span ng-show="$ctrl.settings.sortable" class="dragHandle" style="height: 38px; width: 15px; align-items: center; justify-content: center; display: flex">
+                                    <i class="fal fa-bars" aria-hidden="true"></i>
+                                </span>
+                                <span ng-if="$ctrl.settings.showIndex" class="muted">{{ $ctrl.settings.indexTemplate.replace("{index}", $ctrl.settings.indexZeroBased ? $index : $index + 1) }}</span>
+                                <div uib-tooltip="Click to edit"  style="font-weight: 400;" aria-label="{{item + ' (Click to edit)'}}">{{item}}</div>
+                            </div>
                             <span class="clickable" style="color: #fb7373;" ng-click="$ctrl.removeItem($index);$event.stopPropagation();" aria-label="Remove item">
                                 <i class="fad fa-trash-alt" aria-hidden="true"></i>
                             </span>
@@ -51,6 +54,9 @@ const deepmerge = require("deepmerge");
 
                 const defaultSettings = {
                     sortable: false,
+                    showIndex: false,
+                    indexZeroBased: false,
+                    indexTemplate: "{index}.",
                     addLabel: "Add",
                     editLabel: "Edit",
                     validationText: "Text cannot be empty",
