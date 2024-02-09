@@ -215,10 +215,18 @@ frontendCommunicator.on("getAccounts", () => {
     return cache;
 });
 
-frontendCommunicator.on("logoutAccount", accountType => {
+frontendCommunicator.on("logoutAccount", (accountType) => {
     logger.debug("got logout request for", accountType);
     removeAccount(accountType);
 });
+
+function setStreamerTokenIssue() {
+    streamerTokenIssue = true;
+}
+
+function setBotTokenIssue() {
+    botTokenIssue = true;
+}
 
 exports.events = accountEvents;
 exports.updateAccountCache = loadAccountData;
@@ -226,5 +234,7 @@ exports.updateAccount = updateAccount;
 exports.updateStreamerAccountSettings = updateStreamerAccountSettings;
 exports.getAccounts = () => cache;
 exports.streamerTokenIssue = () => streamerTokenIssue;
+exports.setStreamerTokenIssue = setStreamerTokenIssue;
 exports.botTokenIssue = () => botTokenIssue;
+exports.setBotTokenIssue = setBotTokenIssue;
 exports.refreshTwitchData = refreshTwitchData;

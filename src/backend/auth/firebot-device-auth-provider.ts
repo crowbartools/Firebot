@@ -1,5 +1,5 @@
 import logger from "../logwrapper";
-import accountAccess, { FirebotAccount } from "../common/account-access";
+import accountAccess, { FirebotAccount, setBotTokenIssue, setStreamerTokenIssue } from "../common/account-access";
 import twitchAuth from "./twitch-auth";
 import TwitchApi from "../twitch-api/api";
 import { AuthDetails, AuthProviderDefinition } from "./auth";
@@ -58,6 +58,7 @@ class FirebotDeviceAuthProvider {
             });
 
             this.streamerProvider.onRefresh((userId, token) => this.onRefresh("streamer", userId, token));
+            this.streamerProvider.onRefreshFailure(() => setStreamerTokenIssue());
         } else {
             this.streamerProvider = null;
         }
@@ -82,6 +83,7 @@ class FirebotDeviceAuthProvider {
             });
 
             this.botProvider.onRefresh((userId, token) => this.onRefresh("bot", userId, token));
+            this.botProvider.onRefreshFailure(() => setBotTokenIssue());
         } else {
             this.botProvider = null;
         }
