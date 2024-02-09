@@ -1,5 +1,6 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import logger from '../../../logwrapper';
 import { evalSandboxedJs } from '../../../common/handlers/js-sandbox/sandbox-eval';
 
 const model : ReplaceVariable = {
@@ -24,8 +25,16 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.ALL]
     },
-    evaluator: (trigger: Trigger, code: string, ...args: unknown[]) => {
-        return evalSandboxedJs(code, args, trigger.metadata);
+    evaluator: async (trigger: Trigger, code: string, ...args: unknown[]) => {
+        try {
+            return await evalSandboxedJs(code, args, trigger.metadata);
+
+        } catch (err) {
+            err.javascript = code;
+            err.parameters = args;
+            logger.error(err);
+            return '[$evalJs Error]';
+        }
     }
 };
 
