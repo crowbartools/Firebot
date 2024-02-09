@@ -1,6 +1,7 @@
 import { BadRequestException, Post, Query } from "@nestjs/common";
 import { AuthProviderManager } from "auth/auth-provider-manager.service";
 import { FirebotController } from "../misc/firebot-controller.decorator";
+import type { FirebotAccountType } from "firebot-types";
 
 @FirebotController({
   path: "auth-provider",
@@ -11,7 +12,12 @@ export class AuthProviderController {
   ) {}
 
   @Post("/device-flow")
-  async startDeviceFlow(@Query("providerId") providerId: string) {
+  async startDeviceFlow(
+    @Query("streamingPlatformId") streamingPlatformId: string,
+    @Query("accountType") accountType: FirebotAccountType,
+    @Query("loginConfigId") loginConfigId: string
+    ) {
+    const providerId = `${streamingPlatformId}-${accountType}`;
     const provider = this.authProviderManager.getProvider(providerId);
     if (!provider) {
       throw new BadRequestException(
@@ -24,6 +30,10 @@ export class AuthProviderController {
       );
     }
 
-    return this.authProviderManager.startDeviceFlow(providerId);
+    return this.authProviderManager.startDeviceFlow(providerId, {
+      streamingPlatformId,
+      accountType,
+      loginConfigId,
+    });
   }
 }

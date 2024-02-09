@@ -31,6 +31,7 @@ const twitchApi: PlatformApi = {
         }),
     getUser: () => Promise.resolve(testUser),
     getUserByName: () => Promise.resolve(testUser),
+    getUserByAccessToken: () => Promise.resolve(testUser),
     getChatUsers: () => Promise.resolve([testUser]),
     updateChannelInfo: () => Promise.resolve(),
 };

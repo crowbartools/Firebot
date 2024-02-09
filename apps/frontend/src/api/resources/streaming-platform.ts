@@ -1,9 +1,9 @@
 import { AxiosInstance } from "axios";
 import { StreamingPlatform} from "firebot-types"
 
-type StreamingPlatformIdName = Pick<StreamingPlatform, "id" | "name" | "icon" | "auth">;
+export type StreamingPlatformIdName = Pick<StreamingPlatform, "id" | "name" | "icon" | "auth">;
 
-export class StreamingPlatformApi {
+export class StreamingPlatformApi { 
   constructor(private readonly api: AxiosInstance) {}
 
   async getStreamingPlatforms(): Promise<StreamingPlatformIdName[]> {

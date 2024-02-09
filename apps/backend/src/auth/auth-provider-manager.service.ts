@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { TypedEmitter } from "tiny-typed-emitter";
-import { AuthProviderConfig } from "firebot-types";
+import { AuthProviderConfig, type FirebotAccountType } from "firebot-types";
 import { BaseClient, DeviceFlowHandle, Issuer, TokenSet } from "openid-client";
 import { RealTimeGateway } from "../real-time/real-time.gateway";
 
@@ -11,17 +11,25 @@ interface AuthProvider {
   authorizationUrl?: string;
 }
 
+export interface AuthMetadata {
+  streamingPlatformId: string;
+  accountType: FirebotAccountType;
+  loginConfigId: string;
+}
+
 @Injectable()
 export class AuthProviderManager extends TypedEmitter<{
-  "successful-auth": (provider: AuthProvider, tokenSet: TokenSet) => void;
+  "successful-auth": (
+    provider: AuthProvider,
+    tokenSet: TokenSet,
+    metadata: AuthMetadata
+  ) => void;
 }> {
   private readonly providers: AuthProvider[] = [];
 
   private currentDeviceFlowHandle: DeviceFlowHandle<BaseClient> | null = null;
 
-  constructor(
-      private readonly realTimeGateway: RealTimeGateway
-  ) {
+  constructor(private readonly realTimeGateway: RealTimeGateway) {
     super();
   }
 
@@ -86,7 +94,7 @@ export class AuthProviderManager extends TypedEmitter<{
     return this.providers.find((p) => p.config.id === id);
   }
 
-  async startDeviceFlow(providerId: string) {
+  async startDeviceFlow(providerId: string, metadata: AuthMetadata) {
     const provider = this.getProvider(providerId);
     if (!provider || provider.config.type !== "device") {
       return null;
@@ -106,7 +114,7 @@ export class AuthProviderManager extends TypedEmitter<{
     this.currentDeviceFlowHandle
       .poll()
       .then((tokenSet) => {
-        this.emit("successful-auth", provider, tokenSet);
+        this.emit("successful-auth", provider, tokenSet, metadata);
       })
       .catch((error) => {
         console.log(error);
@@ -114,7 +122,7 @@ export class AuthProviderManager extends TypedEmitter<{
       .finally(() => {
         this.currentDeviceFlowHandle = null;
         this.realTimeGateway.broadcast("device-flow-finished", {
-            providerId,
+          providerId,
         });
       });
 

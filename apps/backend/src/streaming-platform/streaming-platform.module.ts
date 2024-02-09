@@ -6,5 +6,6 @@ import { StreamingPlatformController } from "streaming-platform/streaming-platfo
   imports: [],
   controllers: [StreamingPlatformController],
   providers: [PlatformManagerService],
+  exports: [PlatformManagerService],
 })
 export class StreamingPlatformModule {}

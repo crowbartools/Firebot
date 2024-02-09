@@ -1,9 +1,14 @@
+import type { Id } from "../streaming-platform/helpers";
+
 export interface Account {
-    userId: string;
-    username: string;
-    avatarUrl: string;
-    tokenData: unknown;
+  userId: Id;
+  username: string;
+  displayName: string;
+  avatarUrl?: string;
+  tokenData: unknown;
 }
+
+export type FirebotAccountType = "streamer" | "bot";
 
 export interface LoginConfig {
   id: string;
@@ -11,9 +16,11 @@ export interface LoginConfig {
   bot?: Account;
 }
 
+export interface PlatformLoginSetting {
+  activeLoginConfigId: string;
+  loginConfigs: LoginConfig[];
+}
+
 export interface StreamingPlatformLoginSettings {
-  [platformId: string]: {
-    activeLoginConfigId: string;
-    loginConfigs: LoginConfig[];
-  };
+  [platformId: string]: PlatformLoginSetting;
 }

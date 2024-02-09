@@ -3,6 +3,7 @@ import { ProfileApi } from "@/api/resources/profile";
 import { getServerUri } from "@/utils";
 import axios from "axios";
 import { LoginApi } from "@/api/resources/login";
+import { AuthProviderApi } from "@/api/resources/auth-provider";
 
 export class FbApi {
   private readonly api = axios.create({
@@ -13,6 +14,7 @@ export class FbApi {
   public readonly streamingPlatform = new StreamingPlatformApi(this.api);
   public readonly profile = new ProfileApi(this.api);
   public readonly login = new LoginApi(this.api);
+  public readonly authProvider = new AuthProviderApi(this.api);
 
   constructor() {}
 }

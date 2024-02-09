@@ -12,9 +12,11 @@ export class PlatformManagerService {
     private readonly authProviderManager: AuthProviderManager,
     @Inject(StreamingPlatformConfig.KEY)
     private streamingPlatformConfig: ConfigType<typeof StreamingPlatformConfig>
-  ) {}
+  ) {
+    this.registerStreamingPlatform(new Twitch(this.streamingPlatformConfig));
+  }
 
-  private platforms: StreamingPlatform[] = [new Twitch(this.streamingPlatformConfig)];
+  private platforms: StreamingPlatform[] = [];
 
   registerStreamingPlatform(platform: StreamingPlatform): void {
     if (this.platforms.some((p) => p.id === platform.id)) {
@@ -38,8 +40,12 @@ export class PlatformManagerService {
       scopes: botScopes,
     };
 
-    this.authProviderManager.registerProvider(streamerAuth);
-    this.authProviderManager.registerProvider(botAuth);
+    try { 
+      this.authProviderManager.registerProvider(streamerAuth);
+      this.authProviderManager.registerProvider(botAuth);
+    } catch (e) {
+      console.log("Failed to register auth provider", e);
+    }
   }
 
   getPlatform(id: string): StreamingPlatform | void {
