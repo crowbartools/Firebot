@@ -44,7 +44,6 @@ window.onmessage = (event) => {
         if ((typeof id !== 'string' && typeof id !== 'number') || typeof action !== 'string') {
             return;
         }
-        console.log(`Message from Firebot: ${JSON.stringify(event.data)}`);
 
         // Result of calling a Firebot.* api method
         if (
