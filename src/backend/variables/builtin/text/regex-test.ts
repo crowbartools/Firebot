@@ -19,7 +19,7 @@ const model : ReplaceVariable = {
         trigger: Trigger,
         stringToEvaluate: unknown,
         expression: unknown,
-        flags: unknown
+        flags: unknown = "g"
     ) : boolean => {
         try {
             const regex = RegExp(`${expression}`, `${flags}`);
@@ -31,4 +31,3 @@ const model : ReplaceVariable = {
 };
 
 export default model;
-
