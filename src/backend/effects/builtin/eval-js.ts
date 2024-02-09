@@ -3,7 +3,7 @@
 import { EffectType } from "../../../types/effects";
 import { EffectCategory } from "../../../shared/effect-constants";
 import logger from "../../logwrapper";
-import { evalSandboxedJs } from "../../common/handlers/custom-scripts/sandbox-js-eval/sandbox-eval";
+import { evalSandboxedJs } from "../../common/handlers/js-sandbox/sandbox-eval";
 
 const model: EffectType<{
     code: string;
