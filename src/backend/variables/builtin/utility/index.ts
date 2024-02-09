@@ -3,7 +3,7 @@ import apiReadRaw from './api-read-raw';
 import audioDuration from './audio-duration';
 import convertFromJSON from './convert-from-json';
 import convertToJSON from './convert-to-json';
-import evalJS from './js/sandbox-eval';
+import evalJS from './eval-js';
 import evalVars from './eval-vars';
 import fileExists from './file-exists';
 import fileLineCount from './file-line-count';

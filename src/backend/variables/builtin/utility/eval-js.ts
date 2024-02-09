@@ -1,6 +1,6 @@
-import { ReplaceVariable, Trigger } from "../../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
-import { evalSandboxedJs } from '../../../../common/handlers/custom-scripts/sandbox-js-eval/sandbox-eval';
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import { evalSandboxedJs } from '../../../common/handlers/custom-scripts/sandbox-js-eval/sandbox-eval';
 
 const model : ReplaceVariable = {
     definition: {
