@@ -1,9 +1,9 @@
 import { join } from 'node:path';
 import { BrowserWindow, MessageChannelMain, session } from 'electron';
 
-import type { Trigger } from '../../../../../types/triggers';
+import type { Trigger } from '../../../../types/triggers';
 
-const logger = require('../../../../logwrapper');
+const logger = require('../../../logwrapper');
 const preloadPath = join(__dirname, 'sandbox-preload.js');
 const htmlPath = join(__dirname, './sandbox.html');
 
@@ -147,16 +147,17 @@ export const evalSandboxedJs = async (code: string, args: unknown[], metadata: T
                 nodeIntegration: false,
                 contextIsolation: true,
 
-                // Unique session for each sandbox
+                // Use a unique session for each sandbox.
+                // Creates a unique local/SessionStorage instance, cache, etc for the sandbox
                 session: session.fromPartition(sandboxSessionId, { cache: false }),
 
-                // Loosen web restrictions - still under discussion
+                // Loosen web-request restrictions
                 webSecurity: false,
 
-                // Tighten web restrictions
+                // Tighten restrictions
                 //   No autoplay without user interaction and since the window is
-                //   never shown there will never be a user action thus: no autoplay.
-                //   Also, since window is hidden, audio/video will never play.
+                //   never shown to the user there will never be a user gesture thus
+                //   no playing of audio or video.
                 autoplayPolicy: 'user-gesture-required',
 
                 // Disable abusable and/or irrelevent features
@@ -182,6 +183,7 @@ export const evalSandboxedJs = async (code: string, args: unknown[], metadata: T
         // Cleanup the sandbox if the window closes
         sandbox.window.on('closed', () => sandbox.reject('sandbox closed'));
 
+        // Reroute console.* from the sandbox to the logger
         sandbox.window.webContents.on('console-message', (event, level, message) => {
             if (level === 2 && /^%cElectron /i.test(message)) {
                 return;
@@ -207,7 +209,7 @@ export const evalSandboxedJs = async (code: string, args: unknown[], metadata: T
         // Wait for the contents of the sandbox window to be ready
         sandbox.window.on('ready-to-show', () => {
 
-            // Give evaluation 30s to resolve
+            // Give evaluation 15s to resolve
             sandbox.timeout = setTimeout(() => sandbox.reject('eval timed out'), 15000);
 
             // send the message port the sandbox should use to the preload script

@@ -44,7 +44,6 @@ window.onmessage = (event) => {
         if ((typeof id !== 'string' && typeof id !== 'number') || typeof action !== 'string') {
             return;
         }
-        console.log(`Message from Firebot: ${JSON.stringify(event.data)}`);
 
         // Result of calling a Firebot.* api method
         if (
@@ -114,7 +113,8 @@ window.onmessage = (event) => {
             const metadata = await Firebot.metadata();
 
             // Wrap the code to evaluate
-            const evaluate = new Function('Firebot', 'metadata', 'parameters', `return (async ()=>{"use strict";${parameters[0]}})()`);
+            const AsyncFunction = (async function () {}).constructor;
+            const evaluate = new AsyncFunction('Firebot', 'metadata', 'parameters', parameters[0]);
 
             // Attempt to call the evaluator function
             const result = await evaluate(Firebot, metadata, parameters.slice(1));

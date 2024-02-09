@@ -19,14 +19,10 @@ const model : ReplaceVariable = {
         trigger: Trigger,
         stringToEvaluate: unknown,
         expression: unknown,
-        flags: unknown
+        flags: unknown = "g"
     ) : string[] => {
-        if (flags == null) {
-            flags = 'g';
-        } else {
-            if (!`${flags}`.includes('g')) {
-                flags = `${flags}g`;
-            }
+        if (!`${flags}`.includes('g')) {
+            flags = `${flags}g`;
         }
 
         try {
