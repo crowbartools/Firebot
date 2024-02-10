@@ -449,7 +449,11 @@ class TwitchEventSubClient {
 
     async removeSubscriptions(): Promise<void> {
         for (const sub of this._subscriptions) {
-            await TwitchApi.streamerClient.eventSub.deleteSubscription(sub.id);
+            try {
+                await TwitchApi.streamerClient.eventSub.deleteSubscription(sub._twitchId);
+            } catch {
+                // Silently fail, because we don't care
+            }
         }
         this._subscriptions = [];
     }
