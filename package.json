@@ -90,7 +90,7 @@
     "electron-window-state": "^4.1.1",
     "eventsource": "^1.0.7",
     "express": "^4.17.1",
-    "expressionish": "github:SReject/expressionish#6b8893e182dcf94a9704687196e95c5175e6ff1e",
+    "expressionish": "github:SReject/expressionish#51536858317c92765f377fc39224bc39e767e464",
     "extra-life-ts": "^0.4.0",
     "fflate": "^0.8.1",
     "form-data": "^4.0.0",

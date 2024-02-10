@@ -6,6 +6,7 @@ const EventEmitter = require("events");
 const expressionish = require('expressionish');
 const ExpressionVariableError = expressionish.ExpressionVariableError;
 const frontendCommunicator = require("../common/frontend-communicator");
+const { getCustomVariable } = require('../common/custom-variable-manager');
 const util = require("../utility");
 
 function preeval(options, variable) {
@@ -77,14 +78,32 @@ class ReplaceVariableManager extends EventEmitter {
         return this._registeredVariableHandlers;
     }
 
-    evaluateText(input, metadata, trigger) {
-        return expressionish({
-            handlers: this._registeredVariableHandlers,
-            expression: input,
-            metadata,
-            trigger,
-            preeval
-        });
+    evaluateText(input, metadata, trigger, onlyValidate) {
+        if (input.includes('$')) {
+            return expressionish({
+                handlers: this._registeredVariableHandlers,
+                expression: input,
+                metadata,
+                trigger,
+                preeval,
+                lookups: new Map([
+                    ['&', name => ({
+                        evaluator: (options, ...path) => {
+                            let result = getCustomVariable(name);
+                            for (const item of path) {
+                                if (result == null) {
+                                    return null;
+                                }
+                                result = result[item];
+                            }
+                            return result;
+                        }
+                    })]
+                ]),
+                onlyValidate: !!onlyValidate
+            });
+        }
+        return input;
     }
 
     async findAndReplaceVariables(data, trigger) {
@@ -92,23 +111,25 @@ class ReplaceVariableManager extends EventEmitter {
 
         for (const key of keys) {
             const value = data[key];
-
             if (value && typeof value === "string") {
-
                 if (value.includes("$")) {
                     let replacedValue = value;
                     const triggerId = util.getTriggerIdFromTriggerData(trigger);
                     try {
+                        replacedValue = await this.evaluateText(value, trigger, { type: trigger.type, id: triggerId});
+                        /*
                         replacedValue = await expressionish({
                             handlers: this._registeredVariableHandlers,
                             expression: value,
                             metadata: trigger,
                             preeval,
+                            lookups: lookupForCustomVariables,
                             trigger: {
                                 type: trigger.type,
                                 id: triggerId
                             }
                         });
+                        */
 
                     } catch (err) {
                         logger.warn(`Unable to parse variables for value: '${value}'`, err);
@@ -134,18 +155,22 @@ class ReplaceVariableManager extends EventEmitter {
             const value = data[key];
 
             if (value && typeof value === "string") {
-                if (value.includes("$")) {
+                if (value.includes("$") || value.includes('&')) {
                     try {
+                        await this.evaluateText(value, undefined, { type: trigger && trigger.typ, id: trigger & trigger.id}, true);
+                        /*
                         await expressionish({
                             handlers: this._registeredVariableHandlers,
                             expression: value,
                             preeval,
+                            lookup: lookupForCustomVariables,
                             trigger: {
                                 type: trigger && trigger.type,
                                 id: trigger && trigger.id
                             },
                             onlyValidate: true
                         });
+                        */
 
                     } catch (err) {
                         err.dataField = key;
