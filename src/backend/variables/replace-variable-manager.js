@@ -87,8 +87,8 @@ class ReplaceVariableManager extends EventEmitter {
                 trigger,
                 preeval,
                 lookups: new Map([
-                    ['&', name => ({
-                        evaluator: (options, ...path) => {
+                    ['$', name => ({
+                        evaluator: (trigger, ...path) => {
                             let result = getCustomVariable(name);
                             for (const item of path) {
                                 if (result == null) {
@@ -96,7 +96,20 @@ class ReplaceVariableManager extends EventEmitter {
                                 }
                                 result = result[item];
                             }
-                            return result;
+                            return result == null ? null : result;
+                        }
+                    })],
+                    ['&', name => ({
+                        evaluator: (trigger, ...path) => {
+                            let result = trigger.effectOutputs;
+                            result = result[name];
+                            for (const item of path) {
+                                if (result == null) {
+                                    return null;
+                                }
+                                result = result[item];
+                            }
+                            return result == null ? null : result;
                         }
                     })]
                 ]),
