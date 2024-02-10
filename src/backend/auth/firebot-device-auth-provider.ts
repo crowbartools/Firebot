@@ -58,6 +58,7 @@ class FirebotDeviceAuthProvider {
             });
 
             this.streamerProvider.onRefresh((userId, token) => this.onRefresh("streamer", userId, token));
+            this.streamerProvider.onRefreshFailure(() => accountAccess.setAccountTokenIssue("streamer"));
         } else {
             this.streamerProvider = null;
         }
@@ -82,6 +83,7 @@ class FirebotDeviceAuthProvider {
             });
 
             this.botProvider.onRefresh((userId, token) => this.onRefresh("bot", userId, token));
+            this.botProvider.onRefreshFailure(() => accountAccess.setAccountTokenIssue("bot"));
         } else {
             this.botProvider = null;
         }
