@@ -123,7 +123,8 @@
     "uuid": "^3.3.3",
     "winston": "^2.4.4",
     "winston-daily-rotate-file": "^1.7.2",
-    "ws": "^8.2.2"
+    "ws": "^8.2.2",
+    "yargs-parser": "^21.1.1"
   },
   "optionalDependencies": {
     "electron-installer-dmg": "github:SReject/electron-installer-dmg#9bdb5217b078c724918271549f34d362aecbf6bb"
