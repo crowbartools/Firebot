@@ -29,8 +29,8 @@ const getWorkingDirectoryPath = function() {
 const appDataPath = app.getPath("appData");
 
 let userDataPath, tmpDirectoryPath;
-if (Object.hasOwn(argv, 'user-data-directory') && argv['user-data-directory'] != null && argv['user-data-directory'] !== '') {
-    userDataPath = argv['user-data-directory'];
+if (Object.hasOwn(argv, 'fbuser-data-directory') && argv['fbuser-data-directory'] != null && argv['fbuser-data-directory'] !== '') {
+    userDataPath = argv['fbuser-data-directory'];
     tmpDirectoryPath = path.join(userDataPath, './tmp');
 } else {
     const rootUserDataPath = `${appDataPath + path.sep}Firebot`;
