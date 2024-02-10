@@ -5,7 +5,7 @@ const path = require("path");
 const fs = require("fs");
 const { JsonDB } = require("node-json-db");
 
-const argv = require('yargs-parser')(process.argv.slice(2));
+const argv = require('./argv-parser');
 
 let app = electron.app;
 if (app == null && firebotAppDetails != null) {
