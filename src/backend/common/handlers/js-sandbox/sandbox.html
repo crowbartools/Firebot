@@ -38,7 +38,7 @@ window.onmessage = (event) => {
         }
 
         // extract appropriate data
-        const { id, action, status, result, metadata, method, parameters } = event.data;
+        const { id, action, status, result, method, parameters } = event.data;
 
         // Invalid; ignore message
         if ((typeof id !== 'string' && typeof id !== 'number') || typeof action !== 'string') {
@@ -74,9 +74,23 @@ window.onmessage = (event) => {
             return;
         }
 
+        let metadata;
+
         // Create a new proxy to handle evaluating Firebot.* api access
         const Firebot = new Proxy({}, {
             get(target, method) {
+                if (method === 'getEffectOutput') {
+                    return (name) => {
+                        if (name == null || typeof name !== 'string') {
+                            throw new Error('name must be a string');
+                        }
+                        if (metadata == null || metadata.effectOutputs == null) {
+                            return;
+                        }
+                        return metadata.effectOutputs[name];
+                    };
+                }
+
                 return (...args) => new Promise((resolve, reject) => {
                     if (!pending) {
                         reject(new Error('evaluation already finished'));
@@ -110,7 +124,7 @@ window.onmessage = (event) => {
 
         try {
 
-            const metadata = await Firebot.metadata();
+            metadata = await Firebot.metadata();
 
             // Wrap the code to evaluate
             const AsyncFunction = (async function () {}).constructor;

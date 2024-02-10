@@ -7,8 +7,17 @@ const logger = require('../../../logwrapper');
 const preloadPath = join(__dirname, 'sandbox-preload.js');
 const htmlPath = join(__dirname, './sandbox.html');
 
+const { getCustomVariable } = require('../../custom-variable-manager');
+
 const charList = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 const handlers = new Map<string, (...args: unknown[]) => unknown>();
+
+handlers.set('getCustomVariable', (name) => {
+    if (name == null || typeof name !== 'string') {
+        throw new Error('variable name must be a string');
+    }
+    return getCustomVariable(name);
+});
 
 interface Sandbox {
     finished: boolean,
