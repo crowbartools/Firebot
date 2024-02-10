@@ -423,7 +423,7 @@ class TwitchEventSubClient {
     }
 
     async createClient(): Promise<void> {
-        await this.disconnectEventSub();
+        this.disconnectEventSub();
 
         logger.info("Connecting to Twitch EventSub...");
 
@@ -447,10 +447,10 @@ class TwitchEventSubClient {
         }
     }
 
-    async removeSubscriptions(): Promise<void> {
+    removeSubscriptions(): void {
         for (const sub of this._subscriptions) {
             try {
-                await TwitchApi.streamerClient.eventSub.deleteSubscription(sub._twitchId);
+                sub.stop();
             } catch {
                 // Silently fail, because we don't care
             }
@@ -458,9 +458,9 @@ class TwitchEventSubClient {
         this._subscriptions = [];
     }
 
-    async disconnectEventSub(): Promise<void> {
+    disconnectEventSub(): void {
         this.stopSubTimer();
-        await this.removeSubscriptions();
+        this.removeSubscriptions();
         try {
             if (this._eventSubListener) {
                 this._eventSubListener.stop();
