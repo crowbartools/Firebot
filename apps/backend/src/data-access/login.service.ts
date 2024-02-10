@@ -3,8 +3,7 @@ import { v4 as uuid } from "uuid";
 import { StreamingPlatformLoginsStore } from "./stores/streaming-platform-logins.store";
 import { AuthMetadata, AuthProviderManager } from "auth/auth-provider-manager.service";
 import { PlatformManagerService } from "streaming-platform/platform-manager.service";
-import type { Account } from "firebot-types";
-import type { TokenSet } from "openid-client";
+import type { Account, AuthTokenSet, LoginConfig } from "firebot-types";
 
 @Injectable()
 export class LoginService {
@@ -48,14 +47,24 @@ export class LoginService {
 
   setActiveLoginConfig(platformId: string, loginConfigId: string): boolean {
     const platformLogins = this.loginsStore.get(platformId);
-    if (
-      !platformLogins ||
-      !platformLogins.loginConfigs.some((lc) => lc.id === loginConfigId)
-    ) {
+    const loginConfig = platformLogins?.loginConfigs?.find(
+      (lc) => lc.id === loginConfigId
+    );
+
+    if (!loginConfig) {
       return false;
     }
+
     platformLogins.activeLoginConfigId = loginConfigId;
+
     this.loginsStore.set(platformId, platformLogins);
+
+    this.streamingPlatformManager.triggerLoginUpdate(
+      platformId,
+      loginConfig.streamer,
+      loginConfig.bot
+    );
+
     return true;
   }
 
@@ -77,11 +86,35 @@ export class LoginService {
     return true;
   }
 
+  updateLoginForPlatform(platformId: string, loginConfig: LoginConfig) {
+    const platformLogins = this.loginsStore.get(platformId);
+    if (!platformLogins) {
+      return;
+    }
+    const index = platformLogins.loginConfigs.findIndex(
+      (lc) => lc.id === loginConfig.id
+    );
+    if (index === -1) {
+      return;
+    }
+    platformLogins.loginConfigs[index] = loginConfig;
+    this.loginsStore.set(platformId, platformLogins);
+
+    if (platformLogins.activeLoginConfigId === loginConfig.id) {
+      this.streamingPlatformManager.triggerLoginUpdate(
+        platformId,
+        loginConfig.streamer,
+        loginConfig.bot
+      );
+    }
+    return true;
+  }
+
   private async handleSuccessfulAuth(
-    tokenSet: TokenSet,
+    tokenSet: AuthTokenSet,
     metadata: AuthMetadata
   ) {
-    if (!tokenSet || !tokenSet.access_token) {
+    if (!tokenSet || !tokenSet.accessToken) {
       return;
     }
 
@@ -106,7 +139,7 @@ export class LoginService {
       return;
     }
 
-    const user = await platform.api.getUserByAccessToken(tokenSet.access_token);
+    const user = await platform.api.getUserByAccessToken(tokenSet.accessToken);
     if (!user) {
       return;
     }
@@ -124,5 +157,9 @@ export class LoginService {
     } else {
       loginConfig.bot = accountData;
     }
+
+    this.updateLoginForPlatform(metadata.streamingPlatformId, loginConfig);
+
+    this.loginsStore.set(metadata.streamingPlatformId, loginsForPlatform);
   }
 }

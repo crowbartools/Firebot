@@ -1,4 +1,4 @@
-import { AuthProviderConfig, StreamingPlatform } from "firebot-types";
+import { Account, AuthProviderConfig, StreamingPlatform } from "firebot-types";
 import { Inject, Injectable } from '@nestjs/common';
 
 import Twitch from "./platforms/twitch/twitch";
@@ -54,5 +54,14 @@ export class PlatformManagerService {
 
   getPlatforms(): StreamingPlatform[] {
     return this.platforms;
+  }
+
+  triggerLoginUpdate(platformId: string, streamerAccount?: Account, botAccount?: Account) {
+    const platform = this.getPlatform(platformId);
+    if (!platform) {
+      return;
+    }
+    
+    platform.onLoginUpdate(streamerAccount, botAccount);
   }
 }

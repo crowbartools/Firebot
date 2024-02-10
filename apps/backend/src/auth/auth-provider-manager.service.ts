@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { TypedEmitter } from "tiny-typed-emitter";
-import { AuthProviderConfig, type FirebotAccountType } from "firebot-types";
-import { BaseClient, DeviceFlowHandle, Issuer, TokenSet } from "openid-client";
+import { AuthProviderConfig, AuthTokenSet, type FirebotAccountType } from "firebot-types";
+import { BaseClient, DeviceFlowHandle, Issuer } from "openid-client";
 import { RealTimeGateway } from "../real-time/real-time.gateway";
 
 interface AuthProvider {
@@ -21,7 +21,7 @@ export interface AuthMetadata {
 export class AuthProviderManager extends TypedEmitter<{
   "successful-auth": (
     provider: AuthProvider,
-    tokenSet: TokenSet,
+    tokenSet: AuthTokenSet,
     metadata: AuthMetadata
   ) => void;
 }> {
@@ -50,6 +50,7 @@ export class AuthProviderManager extends TypedEmitter<{
       });
       client = new issuer.Client({
         client_id: providerConfig.clientId,
+        token_endpoint_auth_method: "none",
         redirect_uris: [
           `http://${
             providerConfig.redirectUriHost ?? "localhost"
@@ -114,7 +115,15 @@ export class AuthProviderManager extends TypedEmitter<{
     this.currentDeviceFlowHandle
       .poll()
       .then((tokenSet) => {
-        this.emit("successful-auth", provider, tokenSet, metadata);
+        const firebotTokenSet: AuthTokenSet = {
+          accessToken: tokenSet.access_token,
+          tokenType: tokenSet.token_type,
+          refreshToken: tokenSet.refresh_token,
+          scope: tokenSet.scope,
+          expiresAt: tokenSet.expires_at,
+          expiresIn: tokenSet.expires_in,
+        };
+        this.emit("successful-auth", provider, firebotTokenSet, metadata);
       })
       .catch((error) => {
         console.log(error);
@@ -125,6 +134,8 @@ export class AuthProviderManager extends TypedEmitter<{
           providerId,
         });
       });
+
+    console.log("device auth", handle);
 
     return {
       code: handle.device_code,

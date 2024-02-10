@@ -1,11 +1,20 @@
 import type { Id } from "../streaming-platform/helpers";
 
+export interface AuthTokenSet {
+  accessToken?: string;
+  tokenType?: string;
+  refreshToken?: string;
+  scope?: string;
+  expiresAt?: number;
+  expiresIn?: number;
+}
+
 export interface Account {
   userId: Id;
   username: string;
   displayName: string;
   avatarUrl?: string;
-  tokenData: unknown;
+  tokenData: AuthTokenSet;
 }
 
 export type FirebotAccountType = "streamer" | "bot";

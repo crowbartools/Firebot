@@ -2,6 +2,7 @@ import { TypedEmitter } from "tiny-typed-emitter";
 import { PlatformApi } from "./api";
 import { ChatProvider } from "./chat";
 import { StreamingPlatformAuthConfig } from "./auth";
+import { Account } from "../firebot";
 
 interface PlatformEvents {
     connected: VoidFunction;
@@ -15,9 +16,10 @@ export interface StreamingPlatform extends PlatformEventEmitter {
   name: string;
   icon?: string;
   auth: StreamingPlatformAuthConfig;
-  init: VoidFunction;
+  init: (streamerAccount?: Account, botAccount?: Account) => void;
   connect: VoidFunction;
   disconnect: VoidFunction;
+  onLoginUpdate: (streamerAccount?: Account, botAccount?: Account) => void;
   api: PlatformApi;
   chat: ChatProvider;
 }

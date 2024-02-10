@@ -1,10 +1,10 @@
 {
   "[javascript]": {
-    "editor.formatOnSave": false
+    "editor.formatOnSave": true
   },
   "[typescript]": {
-    "editor.formatOnSave": false
+    "editor.formatOnSave": true
   },
   "eslint.workingDirectories": [{ "mode": "auto" }],
-  "javascript.preferences.importModuleSpecifier": "relative"
+  "javascript.preferences.importModuleSpecifier": "shortest"
 }

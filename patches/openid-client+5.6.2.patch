@@ -1,0 +1,15 @@
+diff --git a/node_modules/openid-client/lib/helpers/process_response.js b/node_modules/openid-client/lib/helpers/process_response.js
+index 7dad565..9a6fa09 100644
+--- a/node_modules/openid-client/lib/helpers/process_response.js
++++ b/node_modules/openid-client/lib/helpers/process_response.js
+@@ -22,6 +22,10 @@ const isStandardBodyError = (response) => {
+       jsonbody = response.body;
+     }
+     result = typeof jsonbody.error === 'string' && jsonbody.error.length;
++    if(!result && typeof jsonbody.message === 'string' && jsonbody.message.length) {
++      result = true;
++      jsonbody.error = jsonbody.message;
++    }
+     if (result) Object.defineProperty(response, 'body', { value: jsonbody, configurable: true });
+   } catch (err) {}
+ 
