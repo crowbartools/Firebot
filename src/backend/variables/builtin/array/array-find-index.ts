@@ -15,7 +15,11 @@ const getPropertyAtPath = (subject: unknown, path: string) => {
     return subject;
 };
 
-const fuzzyMatch = (value: unknown, match: unknown) : boolean => {
+const fuzzyMatch = (value: unknown, match: unknown, exact: boolean) : boolean => {
+    if (exact) {
+        return value === match;
+    }
+
     if (value == null || value === '') {
         return match == null || value === '';
     }
@@ -31,7 +35,7 @@ const fuzzyMatch = (value: unknown, match: unknown) : boolean => {
 const model : ReplaceVariable = {
     definition: {
         handle: "arrayFindIndex",
-        usage: "arrayFindIndex[array, matcher, propertyPath]",
+        usage: "arrayFindIndex[array, matcher, propertyPath?, exact?]",
         description: "Finds a matching element in the array and returns it's index, or null if the element is absent",
         examples: [
             {
@@ -41,6 +45,10 @@ const model : ReplaceVariable = {
             {
                 usage: 'arrayFindIndex["[{\\"username\\": \\"alastor\\"},{\\"username\\": \\"ebiggz\\"}]", alastor, username]',
                 description: 'Returns 0, the index of the object where "username"="alastor"'
+            },
+            {
+                usage: 'arrayFindIndex["[0,1,2,"1"]", 1, null, true]',
+                description: "Returns 3, the index of the text '1'"
             },
             {
                 usage: 'arrayFindIndex[rawArray, b]',
@@ -58,7 +66,9 @@ const model : ReplaceVariable = {
         trigger: Trigger,
         subject: string | unknown[],
         matcher: unknown,
-        propertyPath : string = null
+        propertyPath : string = null,
+        //eslint-disable-next-line @typescript-eslint/no-inferrable-types
+        exact : boolean | string = false
     ) : null | number => {
         if (typeof subject === 'string' || subject instanceof String) {
             try {
@@ -72,11 +82,11 @@ const model : ReplaceVariable = {
         }
 
         if (propertyPath == null || propertyPath === 'null' || propertyPath === "") {
-            const index = subject.findIndex(value => fuzzyMatch(value, matcher));
+            const index = subject.findIndex(value => fuzzyMatch(value, matcher, exact === true || exact === 'true'));
             return index === -1 ? null : index;
         }
 
-        const index = subject.findIndex(value => fuzzyMatch(getPropertyAtPath(value, propertyPath), matcher));
+        const index = subject.findIndex(value => fuzzyMatch(getPropertyAtPath(value, propertyPath), matcher, exact === true || exact === 'true'));
         return index === -1 ? null : index;
     }
 };

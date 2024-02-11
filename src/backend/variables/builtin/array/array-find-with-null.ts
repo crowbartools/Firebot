@@ -6,7 +6,7 @@ import arrayFindIndex from "./array-find-index";
 const model : ReplaceVariable = {
     definition: {
         handle: "arrayFindWithNull",
-        usage: "arrayFindWithNull[array, matcher, propertyPath]",
+        usage: "arrayFindWithNull[array, matcher, propertyPath?, exact?]",
         description: "Finds a matching element in the array or returns a literal null",
         examples: [
             {
@@ -16,6 +16,10 @@ const model : ReplaceVariable = {
             {
                 usage: 'arrayFindWithNull["[{\\"username\\": \\"ebiggz\\"},{\\"username\\": \\"MageEnclave\\"}]", ebiggz, username]',
                 description: 'Finds object with username of "ebiggz"'
+            },
+            {
+                usage: 'arrayFindWithNull["[0,1,2,"1"]", 1, null, true]',
+                description: "Returns the text '1'"
             },
             {
                 usage: 'arrayFindWithNull[rawArray, value]',
@@ -34,7 +38,9 @@ const model : ReplaceVariable = {
         trigger: Trigger,
         subject: string | unknown[],
         matcher: unknown,
-        propertyPath : string = null
+        propertyPath : string = null,
+        //eslint-disable-next-line @typescript-eslint/no-inferrable-types
+        exact : boolean | string = false
     ) : unknown => {
         if (typeof subject === 'string' || subject instanceof String) {
             try {
@@ -47,7 +53,7 @@ const model : ReplaceVariable = {
             return null;
         }
 
-        const index = <number>arrayFindIndex.evaluator(trigger, subject, matcher, propertyPath);
+        const index = <number>arrayFindIndex.evaluator(trigger, subject, matcher, propertyPath, exact);
         if (index == null) {
             return null;
         }
