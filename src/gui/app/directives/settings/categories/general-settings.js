@@ -32,18 +32,6 @@
                     </firebot-setting>
 
                     <firebot-setting
-                        name="Beta Notifications"
-                        description="Firebot automatically updates to new stable versions. It does not automatically update to betas or major new
-                        releases however. Enable if you want to be notified of new beta releases."
-                    >
-                        <toggle-button
-                            toggle-model="settings.notifyOnBeta()"
-                            on-toggle="settings.setNotifyOnBeta(!settings.notifyOnBeta())"
-                            font-size="40"
-                        />
-                    </firebot-setting>
-
-                    <firebot-setting
                         name="Connection Sounds"
                         description="Get audible alerts when Firebot connects or disconnects."
                     >
@@ -86,6 +74,29 @@
                                 </li>
                             </ul>
                         </div>
+                    </firebot-setting>
+
+                    <firebot-setting
+                        name="Beta Notifications"
+                        description="Firebot automatically updates to new stable versions. It does not automatically update to betas or major new
+                        releases however. Enable if you want to be notified of new beta releases."
+                    >
+                        <toggle-button
+                            toggle-model="settings.notifyOnBeta()"
+                            on-toggle="settings.setNotifyOnBeta(!settings.notifyOnBeta())"
+                            font-size="40"
+                        />
+                    </firebot-setting>
+
+                    <firebot-setting
+                        name="Feature My Stream on Firebot.app"
+                        description="Enable this setting to have your stream displayed on Firebot's website when you're live"
+                    >
+                        <toggle-button
+                            toggle-model="settings.getWebOnlineCheckin()"
+                            on-toggle="settings.setWebOnlineCheckin(!settings.getWebOnlineCheckin())"
+                            font-size="40"
+                        />
                     </firebot-setting>
 
                     <firebot-setting
@@ -163,7 +174,7 @@
 
                 $q
                     .when(navigator.mediaDevices.enumerateDevices())
-                    .then(deviceList => {
+                    .then((deviceList) => {
                         deviceList = deviceList
                             .filter(
                                 d =>
@@ -171,7 +182,7 @@
                                 d.deviceId !== "communications" &&
                                 d.deviceId !== "default"
                             )
-                            .map(d => {
+                            .map((d) => {
                                 return { label: d.label, deviceId: d.deviceId };
                             });
 
