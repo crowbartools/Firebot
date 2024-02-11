@@ -57,7 +57,7 @@ const clip = {
             </div>
 
             <div style="padding-top:15px">
-                <label class="control-fb control--checkbox"> Store the clip's URL in a $ucstomVariable <tooltip text="'Store the clip's URL in a $customVariable so you can use it later'"></tooltip>
+                <label class="control-fb control--checkbox"> Store the clip's URL in a $customVariable <tooltip text="'Store the clip's URL in a $customVariable so you can use it later'"></tooltip>
                     <input type="checkbox" ng-model="effect.options.putClipUrlInVariable">
                     <div class="control__indicator"></div>
                 </label>
