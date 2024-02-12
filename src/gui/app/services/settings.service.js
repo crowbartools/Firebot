@@ -801,6 +801,15 @@
                 pushDataToFile('/settings/minimizeToTray', minimizeToTray === true);
             };
 
+            service.getWebOnlineCheckin = () => {
+                const webOnlineCheckin = getDataFromFile("/settings/webOnlineCheckin");
+                return webOnlineCheckin === true;
+            };
+
+            service.setWebOnlineCheckin = (value) => {
+                pushDataToFile("/settings/webOnlineCheckin", value);
+            };
+
             return service;
         });
 }());

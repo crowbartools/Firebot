@@ -50,7 +50,7 @@
             };
 
             backendCommunicator.on("custom-command-saved", (command) => {
-                const currentIndex = service.commandsCache.customCommands.findIndex(c => c.trigger === command.trigger);
+                const currentIndex = service.commandsCache.customCommands.findIndex(c => c.id === command.id);
 
                 if (currentIndex === -1) {
                     service.commandsCache.customCommands.push(command);
