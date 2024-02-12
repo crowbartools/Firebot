@@ -54,7 +54,7 @@ const model : ReplaceVariable = {
         }
 
         const lines = contents.split(/[\r\n]+/g);
-        if (Number.isFinite(lineOrRandom)) {
+        if (Number.isFinite(Number(lineOrRandom))) {
             if (Number(lineOrRandom) <= lines.length) {
                 return lines[Number(lineOrRandom) - 1];
             }
