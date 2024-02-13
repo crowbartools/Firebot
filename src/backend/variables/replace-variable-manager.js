@@ -19,18 +19,18 @@ function preeval(options, variable) {
 
     if (varTrigger == null || varTrigger === false) {
         throw new ExpressionVariableError(
-            `$${variable.value} does not support being triggered by: ${display}`,
+            `$${variable.handle} does not support being triggered by: ${display}`,
             variable.position,
-            variable.value
+            variable.handle
         );
     }
 
     if (Array.isArray(varTrigger)) {
         if (!varTrigger.some(id => id === options.trigger.id)) {
             throw new ExpressionVariableError(
-                `$${variable.value} does not support this specific trigger type: ${display}`,
+                `$${variable.handle} does not support this specific trigger type: ${display}`,
                 variable.position,
-                variable.value
+                variable.handle
             );
         }
     }
