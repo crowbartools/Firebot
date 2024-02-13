@@ -53,8 +53,7 @@ class ViewerMetadataManager {
         const sortObj = {};
         sortObj[`metadata.${metadataKey}`] = -1;
 
-        const projectionObj = { username: 1, displayName: 1};
-        projectionObj[`metadata.${metadataKey}`] = 1;
+        const projectionObj = { username: 1, displayName: 1, metadata: 1};
 
         try {
             const metadata = await viewerDatabase.getViewerDb()
@@ -79,8 +78,7 @@ class ViewerMetadataManager {
         const sortObj = {};
         sortObj[`metadata.${metadataKey}`] = -1;
 
-        const projectionObj = { username: 1, displayName: 1};
-        projectionObj[`metadata.${metadataKey}`] = 1;
+        const projectionObj = { username: 1, displayName: 1, metadata: 1};
 
         try {
             const metadata = await viewerDatabase.getViewerDb()

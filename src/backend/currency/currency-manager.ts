@@ -561,8 +561,7 @@ class CurrencyManager {
         const sortObj = {};
         sortObj[`currency.${currencyId}`] = -1;
 
-        const projectionObj = { username: 1, displayName: 1};
-        projectionObj[`currency.${currencyId}`] = 1;
+        const projectionObj = { username: 1, displayName: 1, currency: 1 };
 
         try {
             const viewers = await db.findAsync({ twitch: true })
@@ -588,8 +587,7 @@ class CurrencyManager {
         const sortObj = {};
         sortObj[`currency.${currencyId}`] = -1;
 
-        const projectionObj = { username: 1, displayName: 1};
-        projectionObj[`currency.${currencyId}`] = 1;
+        const projectionObj = { username: 1, displayName: 1, currency: 1 };
 
         try {
             const viewers = await db.findAsync({ twitch: true })
@@ -620,8 +618,7 @@ class CurrencyManager {
         const sortObj = {};
         sortObj[`currency.${currencyId}`] = -1;
 
-        const projectionObj = { username: 1, displayName: 1};
-        projectionObj[`currency.${currencyId}`] = 1;
+        const projectionObj = { username: 1, displayName: 1, currency: 1 };
 
         try {
             const viewers = await db.findAsync({ twitch: true })
