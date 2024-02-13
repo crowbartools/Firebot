@@ -1,7 +1,7 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-const userDatabase = require("../../../database/userDatabase");
+import viewerMetadataManager from "../../../viewers/viewer-metadata-manager";
 
 const model : ReplaceVariable = {
     definition: {
@@ -21,13 +21,14 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.USER, VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
     },
-    evaluator: async (_, metadataKey: string, position = 1, usernameOrPosition = "username") => {
+    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+    evaluator: async (_, metadataKey: string, position: number = 1, usernameOrPosition = "username") => {
 
         if (metadataKey == null) {
             return "[Invalid metadata name]";
         }
 
-        const userAtPosition = await userDatabase.getTopMetadataPosition(metadataKey, position);
+        const userAtPosition = await viewerMetadataManager.getTopMetadataPosition(metadataKey, position);
 
         if (userAtPosition == null) {
             return "[Can't find user at position]";

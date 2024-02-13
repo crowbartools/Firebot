@@ -45,7 +45,7 @@ class ViewerOnlineStatusManager {
         }
     }
 
-    async getViewerOnlineMinutes(username: string) {
+    async getViewerOnlineMinutes(username: string): Promise<number> {
         if (viewerDatabase.isViewerDBOn() !== true) {
             return;
         }
@@ -55,7 +55,7 @@ class ViewerOnlineStatusManager {
             : viewer.minutesInChannel;
     }
 
-    async getTopViewTimeViewers(count: number) {
+    async getTopViewTimeViewers(count: number): Promise<FirebotViewer[]> {
         if (viewerDatabase.isViewerDBOn() !== true) {
             return [];
         }
@@ -74,8 +74,7 @@ class ViewerOnlineStatusManager {
                 .findAsync({})
                 .sort(sortObj)
                 .limit(count)
-                .projection(projectionObj)
-                .execAsync();
+                .projection(projectionObj);
 
             return viewers || [];
         } catch (error) {
@@ -84,7 +83,7 @@ class ViewerOnlineStatusManager {
         }
     }
 
-    async setChatViewerOnline(viewer: BasicViewer) {
+    async setChatViewerOnline(viewer: BasicViewer): Promise<void> {
         if (viewerDatabase.isViewerDBOn() !== true) {
             return;
         }
@@ -112,7 +111,7 @@ class ViewerOnlineStatusManager {
         }
     }
 
-    async setAllChatViewersOnline() {
+    async setAllChatViewersOnline(): Promise<void> {
         await twitchChat.populateChatterList();
         const viewers = await twitchChat.getViewerList();
 
@@ -156,7 +155,7 @@ class ViewerOnlineStatusManager {
         }
     }
 
-    async setAllViewersOffline() {
+    async setAllViewersOffline(): Promise<void> {
         if (viewerDatabase.isViewerDBOn() !== true || viewerDatabase.getViewerDb() == null) {
             return;
         }
@@ -189,7 +188,7 @@ class ViewerOnlineStatusManager {
         }
     }
 
-    async calcViewerOnlineMinutes(viewer: FirebotViewer) {
+    async calcViewerOnlineMinutes(viewer: FirebotViewer): Promise<void> {
         if (viewerDatabase.isViewerDBOn() !== true || !viewer.online || viewer.disableAutoStatAccrual) {
             return;
         }
@@ -227,7 +226,7 @@ class ViewerOnlineStatusManager {
         }
     }
 
-    async calcAllViewersOnlineMinutes() {
+    async calcAllViewersOnlineMinutes(): Promise<void> {
         try {
             if (connectionManager.streamerIsOnline() === true) {
                 const onlineViewers = await viewerDatabase.getViewerDb().findAsync({ online: true });
@@ -240,7 +239,7 @@ class ViewerOnlineStatusManager {
     /**
      * Triggers a View Time Update event if view time hours has increased
      */
-    viewerViewTimeUpdate(viewer: FirebotViewer, previousTotalMinutes: number, newTotalMinutes: number) {
+    viewerViewTimeUpdate(viewer: FirebotViewer, previousTotalMinutes: number, newTotalMinutes: number): void {
         if (viewer == null) {
             return;
         }

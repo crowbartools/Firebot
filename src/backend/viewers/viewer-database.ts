@@ -254,7 +254,8 @@ class ViewerDatabase extends EventEmitter {
         };
 
         try {
-            const viewers = await this._db.findAsync({ twitch: true }).projection(projectionObj).execAsync();
+            const viewers = await this._db.findAsync({ twitch: true })
+                .projection(projectionObj);
 
             return viewers?.map(u => u.displayName) ?? [];
         } catch (error) {
@@ -274,8 +275,7 @@ class ViewerDatabase extends EventEmitter {
 
         try {
             const viewers = await this._db.findAsync({ twitch: true })
-                .projection(projectionObj)
-                .execAsync();
+                .projection(projectionObj);
 
             return viewers?.map(u => ({ id: u._id, username: u.displayName })) ?? [];
         } catch (error) {
@@ -414,7 +414,7 @@ class ViewerDatabase extends EventEmitter {
         }
     }
 
-    async purgeViewers(options: ViewerPurgeOptions) {
+    async purgeViewers(options: ViewerPurgeOptions): Promise<void> {
         await backupManager.startBackup(false, async () => {
             try {
                 const numRemoved = await this._db

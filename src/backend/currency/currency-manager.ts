@@ -567,8 +567,7 @@ class CurrencyManager {
         try {
             const viewers = await db.findAsync({ twitch: true })
                 .sort(sortObj)
-                .projection(projectionObj)
-                .execAsync();
+                .projection(projectionObj);
 
             const rank = viewers.findIndex(v => v.username === viewer.username) + 1;
 
@@ -597,8 +596,7 @@ class CurrencyManager {
                 .sort(sortObj)
                 .skip(position - 1)
                 .limit(1)
-                .projection(projectionObj)
-                .execAsync();
+                .projection(projectionObj);
 
             return !!viewers.length ? viewers[0] : null;
         } catch (error) {
@@ -629,8 +627,7 @@ class CurrencyManager {
             const viewers = await db.findAsync({ twitch: true })
                 .sort(sortObj)
                 .limit(count)
-                .projection(projectionObj)
-                .execAsync();
+                .projection(projectionObj);
 
             return viewers || [];
         } catch (error) {

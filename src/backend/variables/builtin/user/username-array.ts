@@ -1,7 +1,7 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-const userDb = require("../../../database/userDatabase");
+import viewerDatabase from "../../../viewers/viewer-database";
 
 const model : ReplaceVariable = {
     definition: {
@@ -11,7 +11,7 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async () => {
-        const usernames = await userDb.getAllUsernames();
+        const usernames = await viewerDatabase.getAllUsernames();
         return usernames;
     }
 };

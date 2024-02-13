@@ -62,8 +62,7 @@ class ViewerMetadataManager {
                 .sort(sortObj)
                 .skip(position - 1)
                 .limit(1)
-                .projection(projectionObj)
-                .execAsync();
+                .projection(projectionObj);
 
             return metadata[0];
         } catch (error) {
@@ -88,8 +87,7 @@ class ViewerMetadataManager {
                 .findAsync({ twitch: true })
                 .sort(sortObj)
                 .limit(count)
-                .projection(projectionObj)
-                .execAsync();
+                .projection(projectionObj);
 
             return metadata || [];
         } catch (error) {
