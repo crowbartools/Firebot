@@ -156,7 +156,7 @@ class ReplaceVariableManager extends EventEmitter {
             if (value && typeof value === "string") {
                 if (value.includes("$") || value.includes('&')) {
                     try {
-                        await this.evaluateText(value, undefined, { type: trigger && trigger.type, id: trigger & trigger.id}, true);
+                        await this.evaluateText(value, undefined, { type: trigger && trigger.type, id: trigger && trigger.id}, true);
 
                     } catch (err) {
                         err.dataField = key;
@@ -198,7 +198,7 @@ frontendCommunicator.on("getReplaceVariableDefinitions", () => {
     return Array.from(manager.getVariableHandlers().values()).map(v => v.definition).filter(v => !v.hidden);
 });
 
-frontendCommunicator.onAsync("validateVariables", async eventData => {
+frontendCommunicator.onAsync("validateVariables", async (eventData) => {
     logger.debug("got 'validateVariables' request");
     const { data, trigger } = eventData;
 
