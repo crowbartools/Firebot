@@ -10,7 +10,7 @@ exports.whenReady = async () => {
     const setupUpdater = require('../../../updater/updater');
     setupUpdater();
 
-    logger.debug('...Applyig IPC events');
+    logger.debug('...Applying IPC events');
     const setupIpcEvents = require('./ipc-events');
     setupIpcEvents();
 
@@ -210,7 +210,7 @@ exports.whenReady = async () => {
     quotesdb.loadQuoteDatabase();
 
     // These are defined globally for Custom Scripts.
-    // We will probably wnat to handle these differently but we shouldn't
+    // We will probably want to handle these differently but we shouldn't
     // change anything until we are ready as changing this will break most scripts
     const Effect = require("../../../common/EffectType");
     global.EffectType = Effect.EffectTypeV5Map;

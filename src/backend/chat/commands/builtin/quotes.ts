@@ -305,7 +305,7 @@ export const QuotesManagementSystemCommand: SystemCommand<{
                         return resolve();
                     }
 
-                    await twitchChat.sendChatMessage(`Sorry! Couldnt find a quote with that id number.`);
+                    await twitchChat.sendChatMessage(`Sorry! We couldn't find a quote with that id number.`);
                     logger.error('Quotes: NaN passed to remove quote command.');
                     return resolve();
                 }
@@ -352,7 +352,7 @@ export const QuotesManagementSystemCommand: SystemCommand<{
                         // no matching quote found
                     } else {
 
-                        await twitchChat.sendChatMessage(`Sorry! We couldnt find a quote using those terms.`);
+                        await twitchChat.sendChatMessage(`Sorry! We couldn't find a quote using those terms.`);
                     }
 
                     // resolve promise

@@ -147,7 +147,7 @@ class CommandHandler {
         // update trigger with the one we matched
         userCmd.trigger = matchedTrigger;
 
-        // command is disabld
+        // command is disabled
         if (triggeredSubcmd && triggeredSubcmd.active === false) {
             logger.debug("This Command is disabled");
             return false;
