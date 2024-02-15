@@ -42,7 +42,7 @@ const model : ReplaceVariable = {
             return quoteString;
         }
 
-        logger.debug("Couldnt find a quote.");
+        logger.debug(`Couldn't find a quote.`);
         return '[Cant find quote]';
     }
 };

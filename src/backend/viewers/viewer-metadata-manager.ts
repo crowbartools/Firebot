@@ -53,8 +53,7 @@ class ViewerMetadataManager {
         const sortObj = {};
         sortObj[`metadata.${metadataKey}`] = -1;
 
-        const projectionObj = { username: 1, displayName: 1};
-        projectionObj[`metadata.${metadataKey}`] = 1;
+        const projectionObj = { username: 1, displayName: 1, metadata: 1};
 
         try {
             const metadata = await viewerDatabase.getViewerDb()
@@ -62,8 +61,7 @@ class ViewerMetadataManager {
                 .sort(sortObj)
                 .skip(position - 1)
                 .limit(1)
-                .projection(projectionObj)
-                .execAsync();
+                .projection(projectionObj);
 
             return metadata[0];
         } catch (error) {
@@ -80,16 +78,14 @@ class ViewerMetadataManager {
         const sortObj = {};
         sortObj[`metadata.${metadataKey}`] = -1;
 
-        const projectionObj = { username: 1, displayName: 1};
-        projectionObj[`metadata.${metadataKey}`] = 1;
+        const projectionObj = { username: 1, displayName: 1, metadata: 1};
 
         try {
             const metadata = await viewerDatabase.getViewerDb()
                 .findAsync({ twitch: true })
                 .sort(sortObj)
                 .limit(count)
-                .projection(projectionObj)
-                .execAsync();
+                .projection(projectionObj);
 
             return metadata || [];
         } catch (error) {

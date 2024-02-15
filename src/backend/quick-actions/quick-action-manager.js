@@ -49,7 +49,7 @@ class QuickActionManager extends JsonDbManager {
         ];
     }
 
-    saveQuickAction(quickAction) {
+    saveQuickAction(quickAction, notify = true) {
         if (!super.saveItem(quickAction)) {
             return;
         }
@@ -59,6 +59,9 @@ class QuickActionManager extends JsonDbManager {
         }
         quickActionSettings[quickAction.id] = { enabled: true, position: Object.keys(quickActionSettings).length };
         settings.setQuickActionSettings(quickActionSettings);
+        if (notify) {
+            this.triggerUiRefresh();
+        }
         return true;
     }
 

@@ -1,7 +1,7 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-const userDb = require("../../../database/userDatabase");
+import viewerDatabase from "../../../viewers/viewer-database";
 
 const model : ReplaceVariable = {
     definition: {
@@ -11,8 +11,8 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: async (trigger, username) => {
-        const user = await userDb.getTwitchUserByUsername(username);
+    evaluator: async (_, username: string) => {
+        const user = await viewerDatabase.getViewerByUsername(username);
         return user != null;
     }
 };

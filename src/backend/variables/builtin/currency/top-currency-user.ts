@@ -1,7 +1,8 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-const currencyDatabase = require("../../../database/currencyDatabase");
+import currencyAccess from "../../../currency/currency-access";
+import currencyManager from "../../../currency/currency-manager";
 
 const model : ReplaceVariable = {
     definition: {
@@ -21,13 +22,14 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.USER, VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
     },
-    evaluator: async (_, currencyName: string, position = 1, usernameOrPosition = "username") => {
+    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+    evaluator: async (_, currencyName: string, position: number = 1, usernameOrPosition = "username") => {
 
         if (currencyName == null) {
             return "[Invalid currency name]";
         }
 
-        const currencyData = currencyDatabase.getCurrencies();
+        const currencyData = currencyAccess.getCurrencies();
 
         if (currencyData == null) {
             return "[No currencies created]";
@@ -42,7 +44,7 @@ const model : ReplaceVariable = {
             return "[Invalid currency name]";
         }
 
-        const userAtPosition = await currencyDatabase.getTopCurrencyPosition(currency.id, position || 1);
+        const userAtPosition = await currencyManager.getTopCurrencyPosition(currency.id, position || 1);
 
         if (userAtPosition == null) {
             return "[Can't find user at position]";

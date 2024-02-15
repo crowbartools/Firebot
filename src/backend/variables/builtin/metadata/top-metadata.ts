@@ -1,7 +1,7 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType } from "../../../../shared/variable-constants";
 
-const userDatabase = require("../../../database/userDatabase");
+import viewerMetadataManager from "../../../viewers/viewer-metadata-manager";
 const util = require("../../../utility");
 
 const model : ReplaceVariable = {
@@ -29,7 +29,7 @@ const model : ReplaceVariable = {
             count = parseInt(count, 10);
         }
 
-        const topMetadataUsers = await userDatabase.getTopMetadata(metadataKey, count);
+        const topMetadataUsers = await viewerMetadataManager.getTopMetadata(metadataKey, count);
 
         const topUsersDisplay = topMetadataUsers
             // filter out any results not containing key in metadata

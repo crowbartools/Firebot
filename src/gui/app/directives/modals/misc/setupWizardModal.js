@@ -189,8 +189,6 @@
                         </div>
                     </div>
 
-
-
                     <div ng-switch-when="3" class="wave">
 
                         <p>The overlay is what allows Firebot to display images, videos, and more on your stream.</p>
@@ -217,12 +215,23 @@
                                 <div style="text-align: center; font-size: 11px;" class="muted">{{ $ctrl.overlayConnectionMessage()}}</div>
                             </div>
                         </div>
-
                     </div>
 
+                    <div ng-switch-when="4" class="wave">
+                        <p>We love spotlighting the amazing interactive experiences<br />crafted by our community using Firebot.</p>
+                        <p style="font-weight: 700;margin-top: 20px;">Would you like to be <a href="https:firebot.app/watch">featured on our website</a> during your live streams?</p>
+                        <div style="margin-top: 20px;">
+                            <label class="control-fb control--checkbox" style="margin-bottom: 0px; font-size: 16px;opacity:0.9;display:inline-block;"> Yes, feature my stream!
+                                <input type="checkbox" ng-click="$ctrl.settings.setWebOnlineCheckin(!$ctrl.settings.getWebOnlineCheckin())" ng-checked="$ctrl.settings.getWebOnlineCheckin()" >
+                                <div class="control__indicator"></div>
+                            </label>
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <p class="muted" style="font-size: 12px; opacity: 0.8;">(This can be changed at any time in settings)</p>
+                        </div>
+                    </div>
 
-
-                    <div ng-switch-when="4" class="slide-fade">
+                    <div ng-switch-when="5" class="slide-fade">
                         <div style="margin-top: 20px" class="animated fadeIn">
                             <img style="width: 80px; height: 80px" class="jump-infinite" src="../images/logo_transparent.png">
                         </div>
@@ -274,8 +283,10 @@
             dismiss: "&"
         },
         controller: function($rootScope, connectionService, connectionManager,
-            overlayUrlHelper, ngToast, backendCommunicator, backupService) {
+            overlayUrlHelper, ngToast, backendCommunicator, backupService, settingsService) {
             const $ctrl = this;
+
+            $ctrl.settings = settingsService;
 
             $ctrl.step = 0;
 
@@ -284,6 +295,7 @@
                 "Import V4 Data",
                 "Get Signed In",
                 "Lets Setup The Overlay",
+                "Feature Your Stream",
                 ""
             ];
 
@@ -422,7 +434,8 @@
                             $ctrl.importCompleted = false;
                             return;
                         case 2:
-                        case 3: {
+                        case 3:
+                        case 4: {
                             if (!$ctrl.canGoToNext() && !forceNext) {
                                 return;
                             }

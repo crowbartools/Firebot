@@ -1,7 +1,8 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType } from "../../../../shared/variable-constants";
 
-const userDatabase = require("../../../database/userDatabase");
+import viewerOnlineStatusManager from "../../../viewers/viewer-online-status-manager";
+
 const model : ReplaceVariable = {
     definition: {
         handle: "rawTopViewTime",
@@ -18,7 +19,7 @@ const model : ReplaceVariable = {
             count = 1;
         }
 
-        const topViewTimeUsers = await userDatabase.getTopViewTimeUsers(count);
+        const topViewTimeUsers = await viewerOnlineStatusManager.getTopViewTimeViewers(count);
 
         return topViewTimeUsers.map((u, i) => ({
             place: i + 1,

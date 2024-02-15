@@ -131,7 +131,7 @@
                     const globalSettingDb = dataAccess.getJsonDbInUserData("./global-settings");
                     activeProfileIds = globalSettingDb.getData("./profiles/activeProfiles");
                 } catch (err) {
-                    logger.warn("Couldnt load active profiles.");
+                    logger.warn(`Couldn't load active profiles.`);
                     return;
                 }
 
@@ -154,7 +154,7 @@
                         const profileDb = dataAccess.getJsonDbInUserData(`./profiles/${profileId}/auth-twitch`);
                         streamer = profileDb.getData("/streamer");
                     } catch (err) {
-                        logger.info(`Couldnt get streamer data for profile ${profileId} while updating the UI. Its possible this account hasnt logged in yet.`);
+                        logger.info(`Couldn't get streamer data for profile ${profileId} while updating the UI. Its possible this account hasn't logged in yet.`);
                     }
 
                     if (streamer) {

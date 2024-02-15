@@ -79,7 +79,7 @@ export class TwitchChatApi {
 
             return true;
         } catch (error) {
-            logger.error("Error sending announcemnt", error.message);
+            logger.error("Error sending announcement", error.message);
         }
 
         return false;

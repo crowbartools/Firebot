@@ -1,7 +1,8 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType } from "../../../../shared/variable-constants";
 
-const currencyDatabase = require("../../../database/currencyDatabase");
+import currencyAccess from "../../../currency/currency-access";
+import currencyManager from "../../../currency/currency-manager";
 
 const model : ReplaceVariable = {
     definition: {
@@ -26,7 +27,7 @@ const model : ReplaceVariable = {
             count = 1;
         }
 
-        const currencyData = currencyDatabase.getCurrencies();
+        const currencyData = currencyAccess.getCurrencies();
 
         if (currencyData == null) {
             return [];
@@ -41,7 +42,7 @@ const model : ReplaceVariable = {
             return [];
         }
 
-        const topCurrencyHolders = await currencyDatabase.getTopCurrencyHolders(currency.id, count);
+        const topCurrencyHolders = await currencyManager.getTopCurrencyHolders(currency.id, count);
 
         const topHoldersDisplay = topCurrencyHolders.map((u, i) => ({
             place: i + 1,

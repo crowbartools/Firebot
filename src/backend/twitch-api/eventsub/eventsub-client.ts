@@ -11,35 +11,6 @@ import twitchStreamInfoPoll from "../stream-info-manager";
 class TwitchEventSubClient {
     private _eventSubListener: EventSubWsListener;
     private _subscriptions: Array<EventSubSubscription> = [];
-    private _subscriptionCheckTimer: NodeJS.Timeout;
-
-    private startSubTimer(): void {
-        logger.debug("Starting EventSub subscription check timer");
-
-        this._subscriptionCheckTimer = setInterval(async () => {
-            logger.debug("Running EventSub subscription check");
-
-            const activeSubs = (await TwitchApi.streamerClient.eventSub.getSubscriptions()).data;
-
-            for (const sub of this._subscriptions) {
-                const subInfo = activeSubs.find(s => s.id === sub._twitchId);
-
-                if (subInfo?.status !== "enabled") {
-                    logger.warn(`EventSub subscription for ${sub.id} is no longer valid. Attempting to resubscribe...`);
-                    sub.start(subInfo);
-                }
-            }
-
-            logger.debug("EventSub subscription check complete");
-        }, 5 * 60 * 1000); // Every 5 minutes
-    }
-
-    private stopSubTimer(): void {
-        logger.debug("Stopping EventSub subscription check timer");
-
-        clearInterval(this._subscriptionCheckTimer);
-        this._subscriptionCheckTimer = undefined;
-    }
 
     private createSubscriptions(): void {
         const streamer = accountAccess.getAccounts().streamer;
@@ -435,7 +406,6 @@ class TwitchEventSubClient {
             this._eventSubListener.start();
 
             this.createSubscriptions();
-            this.startSubTimer();
 
             logger.info("Connected to the Twitch EventSub!");
 
@@ -459,7 +429,6 @@ class TwitchEventSubClient {
     }
 
     disconnectEventSub(): void {
-        this.stopSubTimer();
         this.removeSubscriptions();
         try {
             if (this._eventSubListener) {

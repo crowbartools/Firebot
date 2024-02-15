@@ -52,7 +52,7 @@ class TwitchStreamInfoManager {
                 this._lastWebCheckin = DateTime.utc();
             }
         } catch (error) {
-            logger.warn("Unable to do online web check-in", error);
+            logger.warn(`Unable to do online web check-in: ${error.message}`);
         }
     }
 

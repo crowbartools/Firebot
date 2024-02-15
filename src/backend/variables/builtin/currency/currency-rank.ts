@@ -1,7 +1,8 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-const currencyDatabase = require("../../../database/currencyDatabase");
+import currencyAccess from "../../../currency/currency-access";
+import currencyManager from "../../../currency/currency-manager";
 
 const model : ReplaceVariable = {
     definition: {
@@ -11,18 +12,18 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.USER, VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
-    evaluator: async (_, currencyName, username) => {
+    evaluator: async (_, currencyName: string, username: string) => {
         if (currencyName == null || username == null) {
             return 0;
         }
 
-        const currency = currencyDatabase.getCurrencyByName(currencyName);
+        const currency = currencyAccess.getCurrencyByName(currencyName);
 
         if (currency == null) {
             return 0;
         }
 
-        return await currencyDatabase.getUserCurrencyRank(currency.id, username, true);
+        return await currencyManager.getViewerCurrencyRank(currency.id, username, true);
     }
 };
 

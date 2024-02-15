@@ -284,7 +284,7 @@ class CurrencyManager {
             } else if (intervalMod !== 0) {
                 logger.debug(`Currency: ${currency.name} is not ready to pay out yet.`);
             } else {
-                logger.error(`Currency: Something weird happened and ${currency.name} couldnt pay out.`);
+                logger.error(`Currency: Something weird happened and ${currency.name} couldn't pay out.`);
             }
         }
     }
@@ -561,14 +561,12 @@ class CurrencyManager {
         const sortObj = {};
         sortObj[`currency.${currencyId}`] = -1;
 
-        const projectionObj = { username: 1, displayName: 1};
-        projectionObj[`currency.${currencyId}`] = 1;
+        const projectionObj = { username: 1, displayName: 1, currency: 1 };
 
         try {
             const viewers = await db.findAsync({ twitch: true })
                 .sort(sortObj)
-                .projection(projectionObj)
-                .execAsync();
+                .projection(projectionObj);
 
             const rank = viewers.findIndex(v => v.username === viewer.username) + 1;
 
@@ -589,16 +587,14 @@ class CurrencyManager {
         const sortObj = {};
         sortObj[`currency.${currencyId}`] = -1;
 
-        const projectionObj = { username: 1, displayName: 1};
-        projectionObj[`currency.${currencyId}`] = 1;
+        const projectionObj = { username: 1, displayName: 1, currency: 1 };
 
         try {
             const viewers = await db.findAsync({ twitch: true })
                 .sort(sortObj)
                 .skip(position - 1)
                 .limit(1)
-                .projection(projectionObj)
-                .execAsync();
+                .projection(projectionObj);
 
             return !!viewers.length ? viewers[0] : null;
         } catch (error) {
@@ -622,15 +618,13 @@ class CurrencyManager {
         const sortObj = {};
         sortObj[`currency.${currencyId}`] = -1;
 
-        const projectionObj = { username: 1, displayName: 1};
-        projectionObj[`currency.${currencyId}`] = 1;
+        const projectionObj = { username: 1, displayName: 1, currency: 1 };
 
         try {
             const viewers = await db.findAsync({ twitch: true })
                 .sort(sortObj)
                 .limit(count)
-                .projection(projectionObj)
-                .execAsync();
+                .projection(projectionObj);
 
             return viewers || [];
         } catch (error) {

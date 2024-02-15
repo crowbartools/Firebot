@@ -1,7 +1,7 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-const userDb = require("../../../database/userDatabase");
+import viewerMetadataManager from "../../../viewers/viewer-metadata-manager";
 
 const model : ReplaceVariable = {
     definition: {
@@ -21,8 +21,9 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
     },
-    evaluator: async (trigger, username, key, defaultValue = null, propertyPath = null) => {
-        const data = await userDb.getUserMetadata(username, key, propertyPath);
+    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+    evaluator: async (_, username: string, key: string, defaultValue = null, propertyPath: string = null) => {
+        const data = await viewerMetadataManager.getViewerMetadata(username, key, propertyPath);
 
         if (data == null) {
             return defaultValue;

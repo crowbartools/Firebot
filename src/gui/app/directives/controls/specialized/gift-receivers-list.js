@@ -11,7 +11,7 @@
             template: `
                 <div>
                     <div ng-repeat="receiver in $ctrl.model track by $index" class="list-item selectable" ng-click="$ctrl.showAddOrEditGiftReceiverModal(receiver)">
-                        <div uib-tooltip="Click to edit" class="ml-8" style="font-weight: 400;width: 100%;" aria-label="{{receiver.gifteeUsername + ' (Click to edit)'}}"><div><b>Giftee Username:</b> {{receiver.gifteeUsername}}</div> <b>Gift Sub Monts:</b> {{receiver.giftSubMonths}}</div>
+                        <div uib-tooltip="Click to edit" class="ml-8" style="font-weight: 400;width: 100%;" aria-label="{{receiver.gifteeUsername + ' (Click to edit)'}}"><div><b>Giftee Username:</b> {{receiver.gifteeUsername}}</div> <b>Gift Sub Months:</b> {{receiver.giftSubMonths}}</div>
                         <span class="clickable" style="color: #fb7373;" ng-click="$ctrl.removeGiftReceiverAtIndex($index);$event.stopPropagation();" aria-label="Remove gift receiver">
                             <i class="fad fa-trash-alt" aria-hidden="true"></i>
                         </span>
