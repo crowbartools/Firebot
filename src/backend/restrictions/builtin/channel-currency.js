@@ -138,7 +138,7 @@ const model = {
         await currencyManager.adjustCurrencyForViewer(
             username,
             currencyId,
-            -Math.abs(currencyAmount) // force value negative to make it deduct the amount from user
+            0 - Math.abs(currencyAmount) // force value negative to make it deduct the amount from user
         );
     }
 };
