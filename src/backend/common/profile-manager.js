@@ -161,11 +161,17 @@ const getJsonDbInProfile = function(filepath, humanReadable = true) {
     const jsonDbPath = getPathInProfile(filepath);
 
     try {
-        return new JsonDB(jsonDbPath, true, humanReadable);
+        const db = new JsonDB(jsonDbPath, true, humanReadable);
+        db.load();
+        return db;
     } catch (error) {
-        logger.error(`Error loading JsonDB at ${filepath}. Attempting to recreate.`, error);
+        logger.error(`Error loading JsonDB at ${jsonDbPath}. Attempting to recreate.`);
 
-        fs.rmSync(jsonDbPath, { force: true });
+        const fullPath = jsonDbPath.toLowerCase().endsWith(".json")
+            ? jsonDbPath
+            : `${jsonDbPath}.json`;
+
+        fs.rmSync(fullPath, { force: true });
 
         return new JsonDB(jsonDbPath, true, humanReadable);
     }
