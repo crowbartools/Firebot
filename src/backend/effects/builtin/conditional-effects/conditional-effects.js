@@ -127,7 +127,10 @@ const model = {
                         continue;
                     }
 
-                    const didPass = await conditionManager.runConditions(ifCondition.conditionData, trigger);
+                    const didPass = await conditionManager.runConditions(ifCondition.conditionData, {
+                        ...trigger,
+                        effectOutputs: outputs
+                    });
                     if (didPass) {
                         effectsToRun = ifCondition.effectData;
                         break;

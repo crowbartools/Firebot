@@ -29,13 +29,9 @@
             showText: {},
             celebrate: {},
             info: {},
-            backupComplete: {},
             currentViewersUpdate: {},
-            systemCommandsUpdated: {},
             integrationConnectionUpdate: {},
             integrationsUpdated: {},
-            saveCustomCommand: {},
-            removeCustomCommand: {},
             clearEffects: {},
             nonChatSkill: {},
             gifUrlForSkill: {},
@@ -72,12 +68,8 @@
             SHOW_HTML: "showHtml",
             CELEBREATE: "celebrate",
             INFO: "info",
-            BACKUP_COMPLETE: "backupComplete",
-            SYS_CMDS_UPDATED: "systemCommandsUpdated",
             INTEGRATION_CONNECTION_UPDATE: "integrationConnectionUpdate",
             INTEGRATIONS_UPDATED: "integrationsUpdated",
-            SAVE_CUSTOM_COMMAND: "saveCustomCommand",
-            REMOVE_CUSTOM_COMMAND: "removeCustomCommand",
             CLEAR_EFFECTS: "clearEffects",
             NON_CHAT_SKILL: "nonChatSkill",
             GIF_FOR_SKILL: "gifUrlForSkill",
@@ -191,12 +183,10 @@
             GET_VIDEO: "getVideoPath",
             GET_ANYFILE: "getAnyFilePath",
             SPARK_EXEMPT_UPDATED: "sparkExemptUpdated",
-            OPEN_BACKUP: "openBackupFolder",
-            INITIATE_BACKUP: "startBackup",
             RESTART_APP: "restartApp",
             DELETE_CHAT_MESSAGE: "deleteChatMessage",
             CHANGE_USER_MOD_STATUS: "changeUserModStatus",
-            COMMAND_MANUAL_TRIGGER: "commandManualTrigger"
+            COMMAND_MANUAL_TRIGGER: "command-manual-trigger"
         };
         service.EventType = EventType;
 
@@ -243,7 +233,7 @@
         // Recieves event from main process that connection has been established or disconnected.
         ipcRenderer.on("chatConnection", function(event, data) {
             const isChatConnected = data ? data.toLowerCase() === "online" : false;
-            _.forEach(registeredListeners.chatConnectionStatus, listener => {
+            _.forEach(registeredListeners.chatConnectionStatus, (listener) => {
                 runListener(listener, isChatConnected);
             });
         });
@@ -251,7 +241,7 @@
         // Overlay Connection Monitor
         // Recieves event from main process that connection has been established or disconnected.
         ipcRenderer.on("overlayStatusUpdate", function(event, data) {
-            _.forEach(registeredListeners.overlayStatusUpdate, listener => {
+            _.forEach(registeredListeners.overlayStatusUpdate, (listener) => {
                 runListener(listener, data);
             });
         });
@@ -259,7 +249,7 @@
         // Toggle Services Request Monitor
         ipcRenderer.on("toggleServicesRequest", function(event, data) {
             const services = data ? data : [];
-            _.forEach(registeredListeners.toggleServicesRequest, listener => {
+            _.forEach(registeredListeners.toggleServicesRequest, (listener) => {
                 runListener(listener, services);
             });
         });
@@ -267,7 +257,7 @@
         // Chat Connect Request
         // Recieves an event from the main process when the global hotkey is hit for connecting.
         ipcRenderer.on("getChatRefreshToken", function() {
-            _.forEach(registeredListeners.chatConnectionChangeRequest, listener => {
+            _.forEach(registeredListeners.chatConnectionChangeRequest, (listener) => {
                 runListener(listener, null);
             });
         });
@@ -275,7 +265,7 @@
         // Chat Message
         // Recieves an event from main process when a chat message is processed.
         ipcRenderer.on("chatMessage", function(event, data) {
-            _.forEach(registeredListeners.chatMessage, listener => {
+            _.forEach(registeredListeners.chatMessage, (listener) => {
                 runListener(listener, data);
             });
         });
@@ -283,7 +273,7 @@
         // Chat Update
         // Recieves an event from main process when a chat event happens.
         ipcRenderer.on("chatUpdate", function(event, data) {
-            _.forEach(registeredListeners.chatUpdate, listener => {
+            _.forEach(registeredListeners.chatUpdate, (listener) => {
                 runListener(listener, data);
             });
         });
@@ -291,7 +281,7 @@
         // current viewers
         // Recieves an event from main process when a current viewer count has changed
         ipcRenderer.on("currentViewersUpdate", function(event, data) {
-            _.forEach(registeredListeners.currentViewersUpdate, listener => {
+            _.forEach(registeredListeners.currentViewersUpdate, (listener) => {
                 runListener(listener, data);
             });
         });
@@ -300,7 +290,7 @@
      * Error event listener
      */
         ipcRenderer.on("error", function(event, errorMessage) {
-            _.forEach(registeredListeners.error, listener => {
+            _.forEach(registeredListeners.error, (listener) => {
                 runListener(listener, errorMessage);
             });
         });
@@ -309,7 +299,7 @@
      * Info event listener
      */
         ipcRenderer.on("info", function(event, infoMessage) {
-            _.forEach(registeredListeners.info, listener => {
+            _.forEach(registeredListeners.info, (listener) => {
                 runListener(listener, infoMessage);
             });
         });
@@ -318,7 +308,7 @@
      * Update error listener
      */
         ipcRenderer.on("updateError", function(event, errorMessage) {
-            _.forEach(registeredListeners.updateError, listener => {
+            _.forEach(registeredListeners.updateError, (listener) => {
                 runListener(listener, errorMessage);
             });
         });
@@ -327,14 +317,14 @@
      * Update download listener
      */
         ipcRenderer.on("updateDownloaded", function() {
-            _.forEach(registeredListeners.updateDownloaded, listener => {
+            _.forEach(registeredListeners.updateDownloaded, (listener) => {
                 runListener(listener);
             });
         });
 
         // Installing update listener
         ipcRenderer.on(ListenerType.INSTALLING_UPDATE, function () {
-            _.forEach(registeredListeners[ListenerType.INSTALLING_UPDATE], listener => {
+            _.forEach(registeredListeners[ListenerType.INSTALLING_UPDATE], (listener) => {
                 runListener(listener);
             });
         });
@@ -343,7 +333,7 @@
      * Show img event listener
      */
         ipcRenderer.on("showimage", function(event, data) {
-            _.forEach(registeredListeners.showImage, listener => {
+            _.forEach(registeredListeners.showImage, (listener) => {
                 runListener(listener, data);
             });
         });
@@ -352,7 +342,7 @@
      * Show video event listener
      */
         ipcRenderer.on("showvideo", function(event, data) {
-            _.forEach(registeredListeners.showVideo, listener => {
+            _.forEach(registeredListeners.showVideo, (listener) => {
                 runListener(listener, data);
             });
         });
@@ -361,7 +351,7 @@
      * Show html event listener
      */
         ipcRenderer.on("showhtml", function(event, data) {
-            _.forEach(registeredListeners.showHtml, listener => {
+            _.forEach(registeredListeners.showHtml, (listener) => {
                 runListener(listener, data);
             });
         });
@@ -370,7 +360,7 @@
      * Show text event listener
      */
         ipcRenderer.on("showtext", function(event, data) {
-            _.forEach(registeredListeners.showText, listener => {
+            _.forEach(registeredListeners.showText, (listener) => {
                 runListener(listener, data);
             });
         });
@@ -379,7 +369,7 @@
      * Show Events listener
      */
         ipcRenderer.on("showEvents", function(event, data) {
-            _.forEach(registeredListeners.showEvents, listener => {
+            _.forEach(registeredListeners.showEvents, (listener) => {
                 runListener(listener, data);
             });
         });
@@ -388,7 +378,7 @@
      * Play sound event listener
      */
         ipcRenderer.on("playsound", function(event, data) {
-            _.forEach(registeredListeners.playSound, listener => {
+            _.forEach(registeredListeners.playSound, (listener) => {
                 runListener(listener, data);
             });
         });
@@ -397,25 +387,7 @@
      *  Show Celebration animation
      */
         ipcRenderer.on("celebrate", function(event, data) {
-            _.forEach(registeredListeners.celebrate, listener => {
-                runListener(listener, data);
-            });
-        });
-
-        /**
-     * Update download listener
-     */
-        ipcRenderer.on("backupComplete", function(event, data) {
-            _.forEach(registeredListeners.backupComplete, listener => {
-                runListener(listener, data);
-            });
-        });
-
-        /**
-     * sys cmd listener
-     */
-        ipcRenderer.on("systemCommandsUpdated", function(event, data) {
-            _.forEach(registeredListeners.systemCommandsUpdated, listener => {
+            _.forEach(registeredListeners.celebrate, (listener) => {
                 runListener(listener, data);
             });
         });
@@ -424,7 +396,7 @@
      * integration conn update listener
      */
         ipcRenderer.on("integrationConnectionUpdate", function(event, data) {
-            _.forEach(registeredListeners.integrationConnectionUpdate, listener => {
+            _.forEach(registeredListeners.integrationConnectionUpdate, (listener) => {
                 runListener(listener, data);
             });
         });
@@ -433,25 +405,7 @@
      * integrations updated listener
      */
         ipcRenderer.on("integrationsUpdated", function(event, data) {
-            _.forEach(registeredListeners.integrationsUpdated, listener => {
-                runListener(listener, data);
-            });
-        });
-
-        /**
-         * save cmd listener
-         */
-        ipcRenderer.on("saveCustomCommand", function(event, data) {
-            _.forEach(registeredListeners.saveCustomCommand, listener => {
-                runListener(listener, data);
-            });
-        });
-
-        /**
-         * remove cmd listener
-         */
-        ipcRenderer.on("removeCustomCommandByTrigger", function(event, data) {
-            _.forEach(registeredListeners.removeCustomCommand, listener => {
+            _.forEach(registeredListeners.integrationsUpdated, (listener) => {
                 runListener(listener, data);
             });
         });

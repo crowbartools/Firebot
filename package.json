@@ -1,6 +1,6 @@
 {
   "name": "firebotv5",
-  "version": "5.60.1",
+  "version": "5.61.0",
   "description": "Powerful all-in-one bot for Twitch streamers.",
   "main": "build/main.js",
   "scripts": {
@@ -20,14 +20,13 @@
   "author": "The Streaming Community",
   "license": "GPL-3.0",
   "devDependencies": {
-    "@types/cron": "^2.0.0",
     "@types/express": "^4.17.1",
     "@types/fs-extra": "^11.0.4",
     "@types/luxon": "^3.1.0",
+    "@types/node": "^18.18.2",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
-    "copyfiles": "^2.4.1",
-    "electron": "^27.1.2",
+    "electron": "^28.2.3",
     "electron-packager": "^17.1.1",
     "electron-rebuild": "^1.8.6",
     "eslint": "^8.56.0",
@@ -39,13 +38,14 @@
     "grunt-include-source": "^1.1.0",
     "grunt-sass": "^3.1.0",
     "grunt-shell": "^3.0.1",
-    "sass": "^1.58.3",
-    "typescript": "^4.7.2"
+    "sass": "^1.69.7",
+    "typescript": "^5.3.3"
   },
   "dependencies": {
     "@aws-sdk/client-polly": "^3.26.0",
     "@crowbartools/firebot-custom-scripts-types": "^5.53.2-6",
     "@nut-tree/nut-js": "^3.1.1",
+    "@seald-io/nedb": "^4.0.4",
     "@twurple/api": "^7.0.6",
     "@twurple/auth": "^7.0.6",
     "@twurple/chat": "^7.0.6",
@@ -76,7 +76,6 @@
     "cm-resize": "^1.0.1",
     "codemirror": "^5.59.1",
     "color-convert": "^2.0.1",
-    "compare-versions": "^3.5.1",
     "cors": "^2.8.5",
     "countup.js-angular1": "^1.0.0",
     "cron": "^3.1.6",
@@ -89,21 +88,19 @@
     "electron-oauth2": "^3.0.0",
     "electron-regedit": "^2.0.0",
     "electron-window-state": "^4.1.1",
-    "empty-folder": "^2.0.2",
     "eventsource": "^1.0.7",
     "express": "^4.17.1",
-    "expressionish": "github:SReject/expressionish#a3fb9f3ca5f61ba9017283a5227f18138a5eb7d0",
+    "expressionish": "github:SReject/expressionish#51536858317c92765f377fc39224bc39e767e464",
+    "extra-life-ts": "^0.4.0",
     "fflate": "^0.8.1",
     "form-data": "^4.0.0",
     "fs-extra": "^11.2.0",
-    "fuse.js": "^3.4.6",
+    "fuse.js": "^7.0.0",
     "glob": "^10.3.10",
     "he": "^1.2.0",
     "howler": "https://github.com/ebiggz/howler.js/tarball/master",
-    "js-convert-case": "^4.1.1",
     "list.js": "^1.5.0",
     "luxon": "^3.1.1",
-    "m3u8stream": "^0.2.2",
     "marked": "^0.7.0",
     "mathjs": "^7.5.1",
     "moment": "^2.24.0",
@@ -125,15 +122,15 @@
     "underscore": "^1.13.1",
     "uuid": "^3.3.3",
     "winston": "^2.4.4",
-    "winston-daily-rotate-file": "^1.4.6",
-    "winston-raven-sentry": "^1.0.1",
-    "ws": "^8.2.2"
+    "winston-daily-rotate-file": "^1.7.2",
+    "ws": "^8.2.2",
+    "yargs-parser": "^21.1.1"
   },
   "optionalDependencies": {
     "electron-installer-dmg": "github:SReject/electron-installer-dmg#9bdb5217b078c724918271549f34d362aecbf6bb"
   },
   "volta": {
-    "node": "18.17.1",
+    "node": "18.18.2",
     "npm": "10.2.4"
   }
 }

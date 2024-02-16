@@ -145,12 +145,12 @@ exports.getCustomVariable = (name, propertyPath, defaultData = null) => {
         return defaultData;
     }
 
-    if (propertyPath == null || propertyPath === "null") {
+    if (propertyPath == null || propertyPath === "null" || propertyPath === '') {
         return data;
     }
 
     try {
-        const pathNodes = propertyPath.split(".");
+        const pathNodes = `${propertyPath}`.split(".");
         for (let i = 0; i < pathNodes.length; i++) {
             if (data == null) {
                 break;

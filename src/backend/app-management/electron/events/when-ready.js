@@ -10,7 +10,7 @@ exports.whenReady = async () => {
     const setupUpdater = require('../../../updater/updater');
     setupUpdater();
 
-    logger.debug('...Applyig IPC events');
+    logger.debug('...Applying IPC events');
     const setupIpcEvents = require('./ipc-events');
     setupIpcEvents();
 
@@ -70,11 +70,15 @@ exports.whenReady = async () => {
     const { loadEffects } = require("../../../effects/builtin-effect-loader");
     loadEffects();
 
+    windowManagement.updateSplashScreenStatus("Loading currencies...");
+    const currencyAccess = require("../../../currency/currency-access").default;
+    currencyAccess.refreshCurrencyCache();
+
     // load commands
     logger.debug("Loading sys commands...");
     windowManagement.updateSplashScreenStatus("Loading system commands...");
-    const { loadCommands } = require("../../../chat/commands/systemCommandLoader");
-    loadCommands();
+    const { loadSystemCommands } = require("../../../chat/commands/system-command-loader");
+    loadSystemCommands();
 
     // load event sources
     logger.debug("Loading event sources...");
@@ -97,7 +101,7 @@ exports.whenReady = async () => {
     // load variables
     logger.debug("Loading variables...");
     windowManagement.updateSplashScreenStatus("Loading variables...");
-    const { loadReplaceVariables } = require("../../../variables/builtin-variable-loader");
+    const { loadReplaceVariables } = require("../../../variables/variable-loader");
     loadReplaceVariables();
 
     // load restrictions
@@ -123,7 +127,7 @@ exports.whenReady = async () => {
 
     windowManagement.updateSplashScreenStatus("Loading known bot list...");
     const chatRolesManager = require("../../../roles/chat-roles-manager");
-    chatRolesManager.cacheViewerListBots();
+    await chatRolesManager.cacheViewerListBots();
 
     windowManagement.updateSplashScreenStatus("Loading effect queues...");
     const effectQueueManager = require("../../../effects/queues/effect-queue-manager");
@@ -181,17 +185,19 @@ exports.whenReady = async () => {
     const hotkeyManager = require("../../../hotkeys/hotkey-manager");
     hotkeyManager.refreshHotkeyCache();
 
-    windowManagement.updateSplashScreenStatus("Loading currencies...");
-    const currencyManager = require("../../../currency/currencyManager");
+    windowManagement.updateSplashScreenStatus("Starting currency timer...");
+    const currencyManager = require("../../../currency/currency-manager");
     currencyManager.startTimer();
 
     // Connect to DBs.
     windowManagement.updateSplashScreenStatus("Loading viewers...");
     logger.info("Creating or connecting user database");
-    const userdb = require("../../../database/userDatabase");
-    userdb.connectUserDatabase();
+    const viewerDatabase = require("../../../viewers/viewer-database");
+    await viewerDatabase.connectViewerDatabase();
+
     // Set users in user db to offline if for some reason they are still set to online. (app crash or something)
-    userdb.setAllUsersOffline();
+    const viewerOnlineStatusManager = require("../../../viewers/viewer-online-status-manager");
+    await viewerOnlineStatusManager.setAllViewersOffline();
 
     windowManagement.updateSplashScreenStatus("Loading stats...");
     logger.info("Creating or connecting stats database");
@@ -204,7 +210,7 @@ exports.whenReady = async () => {
     quotesdb.loadQuoteDatabase();
 
     // These are defined globally for Custom Scripts.
-    // We will probably wnat to handle these differently but we shouldn't
+    // We will probably want to handle these differently but we shouldn't
     // change anything until we are ready as changing this will break most scripts
     const Effect = require("../../../common/EffectType");
     global.EffectType = Effect.EffectTypeV5Map;
@@ -233,6 +239,11 @@ exports.whenReady = async () => {
     windowManagement.updateSplashScreenStatus("Starting stream info poll...");
     const streamInfoPoll = require("../../../twitch-api/stream-info-manager");
     streamInfoPoll.startStreamInfoPoll();
+
+    windowManagement.updateSplashScreenStatus("Starting notification manager...");
+    const notificationManager = require("../../../notifications/notification-manager").default;
+    await notificationManager.loadAllNotifications();
+    notificationManager.startExternalNotificationCheck();
 
     logger.debug('...loading main window');
     windowManagement.updateSplashScreenStatus("Here we go!");

@@ -81,6 +81,7 @@ async function onEventTriggered(event, source, meta, isManual = false, isRetrigg
         es => es.sourceId === source.id && es.eventId === event.id
     );
 
+    const effectPromises = [];
     for (const eventSetting of eventSettings) {
 
         if (eventSetting.filterData && (isSimulation || !isManual)) {
@@ -119,8 +120,12 @@ async function onEventTriggered(event, source, meta, isManual = false, isRetrigg
             continue;
         }
 
-        runEventEffects(effects, event, source, meta, isManual);
+        effectPromises.push(runEventEffects(effects, event, source, meta, isManual));
     }
+
+    try {
+        await Promise.all(effectPromises);
+    } catch (error) {}
 }
 
 // Export Functions

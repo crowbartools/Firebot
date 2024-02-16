@@ -66,6 +66,10 @@
 
                 $ctrl.settings = settingsService.getQuickActionSettings();
 
+                backendCommunicator.on("all-quick-actions", () => {
+                    $ctrl.settings = settingsService.getQuickActionSettings();
+                });
+
                 $ctrl.triggerQuickAction = (quickActionId) => {
                     backendCommunicator.fireEvent("triggerQuickAction", quickActionId);
                 };
@@ -79,7 +83,7 @@
                         $ctrl.settings = {};
 
                         let position = 0;
-                        quickActionsService.quickActions.forEach(qa => {
+                        quickActionsService.quickActions.forEach((qa) => {
                             $ctrl.settings[qa.id] = {
                                 enabled: true,
                                 position: position++
@@ -112,12 +116,9 @@
                                         confirmLabel: "Delete",
                                         confirmBtnType: "btn-danger"
                                     })
-                                    .then(confirmed => {
+                                    .then((confirmed) => {
                                         if (confirmed) {
                                             quickActionsService.deleteCustomQuickAction(customQuickAction.id);
-
-                                            delete $ctrl.settings[customQuickAction.id];
-                                            settingsService.setQuickActionSettings($ctrl.settings);
                                         }
                                     });
 

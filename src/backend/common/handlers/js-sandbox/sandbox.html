@@ -1,0 +1,160 @@
+<!DOCTYPE html><html lang="en"><head><title>Firebot - $JS Eval Sandbox</title></head><body><script>
+
+// Wait for a message from backend
+window.onmessage = (event) => {
+
+    // validate message message
+    if (event.source !== window || event.data !== 'firebot-port' || !Array.isArray(event.ports) || event.ports[0] == null) {
+        return;
+    }
+
+    // remove listener as we have what we need from the Message api
+    window.onmessage = undefined;
+
+    // Tracks if evaluation is still pending
+    let pending = true;
+
+    // Tracks pending Firebot.* calls
+    const pendingMethod = new Map();
+
+    // Message api to communicate with Firebot's backend
+    let firebotTunnel = event.ports[0];
+
+    // index for message id's sent to backend
+    let pendingIndex = 0;
+
+    // Listen for messages for Firebot's backend
+    firebotTunnel.onmessage = async (event, ...args) => {
+
+        // not pending; ignore message
+        if (!pending) {
+            firebotTunnel.onmessage = undefined;
+            return;
+        }
+
+        // invalid; ignore message
+        if (event == null || event.data == null) {
+            return;
+        }
+
+        // extract appropriate data
+        const { id, action, status, result, method, parameters } = event.data;
+
+        // Invalid; ignore message
+        if ((typeof id !== 'string' && typeof id !== 'number') || typeof action !== 'string') {
+            return;
+        }
+
+        // Result of calling a Firebot.* api method
+        if (
+            action === 'result' &&
+            (status === 'ok' || status === 'error') &&
+            id !== null && pendingMethod.has(`${id}`)
+        ) {
+            const { resolve, reject } = pendingMethod.get(`${id}`);
+            pendingMethod.delete(`${id}`);
+            if (status === 'ok') {
+                resolve(result);
+            } else {
+                reject(new Error(result));
+            }
+            return;
+        }
+
+        // Invalid; ignore message
+        if (
+            action !== 'method' ||
+            method !== 'evaluate' ||
+            (id !== 0 && id !== '0') ||
+            !Array.isArray(parameters) ||
+            parameters.length === 0 ||
+            typeof parameters[0] !== 'string' ||
+            parameters[0] === ''
+        ) {
+            return;
+        }
+
+        let metadata;
+
+        // Create a new proxy to handle evaluating Firebot.* api access
+        const Firebot = new Proxy({}, {
+            get(target, method) {
+                if (method === 'getEffectOutput') {
+                    return (name) => {
+                        if (name == null || typeof name !== 'string') {
+                            throw new Error('name must be a string');
+                        }
+                        if (metadata == null || metadata.effectOutputs == null) {
+                            return;
+                        }
+                        return metadata.effectOutputs[name];
+                    };
+                }
+
+                return (...args) => new Promise((resolve, reject) => {
+                    if (!pending) {
+                        reject(new Error('evaluation already finished'));
+                        return;
+                    }
+                    const id = `Firebot-Eval-${pendingIndex++}`;
+                    pendingMethod.set(id, {
+                        resolve: (result) => {
+                            if (pending) {
+                                pendingMethod.delete(id);
+                                resolve(result)
+                            }
+                        },
+                        reject: (reason) => {
+                            if (pending) {
+                                pendingMethod.delete(id);
+                                reject(reason)
+                            }
+                        }
+                    });
+                    firebotTunnel.postMessage({
+                        id,
+                        action: "method",
+                        method,
+                        parameters: args
+                    });
+                })
+            }
+        });
+
+
+        try {
+
+            metadata = await Firebot.metadata();
+
+            // Wrap the code to evaluate
+            const AsyncFunction = (async function () {}).constructor;
+            const evaluate = new AsyncFunction('Firebot', 'metadata', 'parameters', parameters[0]);
+
+            // Attempt to call the evaluator function
+            const result = await evaluate(Firebot, metadata, parameters.slice(1));
+
+            firebotTunnel.postMessage({
+                id,
+                action: "result",
+                status: "ok",
+                result
+            });
+        } catch (err) {
+            firebotTunnel.postMessage({
+                id,
+                action: "result",
+                status: "error",
+                result: err.message
+            });
+        }
+
+        // Evaluation done; cleanup
+        pending = false;
+        firebotTunnel = null;
+        pendingMethod.clear();
+    };
+
+    firebotTunnel.start();
+};
+
+</script></body></html>

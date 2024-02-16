@@ -5,6 +5,8 @@ const path = require("path");
 const fs = require("fs");
 const { JsonDB } = require("node-json-db");
 
+const argv = require('./argv-parser');
+
 let app = electron.app;
 if (app == null && firebotAppDetails != null) {
     app = firebotAppDetails;
@@ -26,10 +28,15 @@ const getWorkingDirectoryPath = function() {
 // This stays the same after every update.
 const appDataPath = app.getPath("appData");
 
-const rootUserDataPath = `${appDataPath + path.sep}Firebot`;
-const userDataPath = `${rootUserDataPath + path.sep}v5`;
-
-const tmpDirectoryPath = path.join(rootUserDataPath, "tmp");
+let userDataPath, tmpDirectoryPath;
+if (Object.hasOwn(argv, 'fbuser-data-directory') && argv['fbuser-data-directory'] != null && argv['fbuser-data-directory'] !== '') {
+    userDataPath = argv['fbuser-data-directory'];
+    tmpDirectoryPath = path.join(userDataPath, './tmp');
+} else {
+    const rootUserDataPath = `${appDataPath + path.sep}Firebot`;
+    userDataPath = `${rootUserDataPath + path.sep}v5`;
+    tmpDirectoryPath = path.join(rootUserDataPath, "tmp");
+}
 
 const getPathInUserData = function(filePath) {
     return path.join(userDataPath, filePath);
@@ -72,8 +79,8 @@ const getUserDataPath = function() {
 };
 
 function pathExists(path) {
-    return new Promise(resolve => {
-        fs.access(path, err => {
+    return new Promise((resolve) => {
+        fs.access(path, (err) => {
             if (err) {
                 //ENOENT means Error NO ENTity found, aka the file/folder doesn't exist.
                 if (err.code === "ENOENT") {
@@ -105,7 +112,7 @@ const getJsonDbInUserData = function(filePath) {
 };
 
 const makeDirInUserData = async function(filePath) {
-    new Promise(resolve => {
+    new Promise((resolve) => {
         const joinedPath = path.join(userDataPath, filePath);
         fs.mkdir(joinedPath, () => {
             resolve();

@@ -1,7 +1,7 @@
 "use strict";
 
-const commandManager = require("../../../../backend/chat/commands/CommandManager");
-const commandHandler = require("../../../../backend/chat/commands/commandHandler");
+const commandManager = require("../../../../backend/chat/commands/command-manager");
+const commandRunner = require("../../../../backend/chat/commands/command-runner");
 
 function getCommandTriggerAndArgs(req) {
     const body = req.body || {};
@@ -41,7 +41,7 @@ exports.getSystemCommands = async function(req, res) {
         });
     }
 
-    const formattedSysCommands = sysCommands.map(command => {
+    const formattedSysCommands = sysCommands.map((command) => {
         return {
             id: command.id,
             trigger: command.trigger,
@@ -96,7 +96,7 @@ exports.runSystemCommand = async function(req, res) {
     const { trigger, args } = getCommandTriggerAndArgs(req);
 
     try {
-        commandHandler.runSystemCommandFromEffect(sysCommandId, trigger, args);
+        commandRunner.runSystemCommandFromEffect(sysCommandId, trigger, args);
     } catch (e) {
         return res.status(500).send({
             status: "error",
@@ -120,7 +120,7 @@ exports.getCustomCommands = async function(req, res) {
         });
     }
 
-    const formattedCustomCommands = customCommands.map(command => {
+    const formattedCustomCommands = customCommands.map((command) => {
         return {
             id: command.id,
             trigger: command.trigger,
@@ -175,7 +175,7 @@ exports.runCustomCommand = async function(req, res) {
     const { trigger, args } = getCommandTriggerAndArgs(req);
 
     try {
-        commandHandler.runCustomCommandFromEffect(customCommandId, trigger, args);
+        commandRunner.runCustomCommandFromEffect(customCommandId, trigger, args);
     } catch (e) {
         return res.status(500).send({
             status: "error",

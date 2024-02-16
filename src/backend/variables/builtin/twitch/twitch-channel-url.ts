@@ -14,4 +14,4 @@ const model: ReplaceVariable = {
     }
 };
 
-export = model;
+export default model;

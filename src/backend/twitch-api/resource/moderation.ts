@@ -1,6 +1,6 @@
 import logger from '../../logwrapper';
 import accountAccess from "../../common/account-access";
-import { ApiClient, HelixBanUserRequest, UserIdResolvable } from "@twurple/api";
+import { ApiClient, HelixBanUserRequest, UserIdResolvable, extractUserId } from "@twurple/api";
 
 export class TwitchModerationApi {
     private _streamerClient: ApiClient;
@@ -9,6 +9,28 @@ export class TwitchModerationApi {
     constructor(streamerClient: ApiClient, botClient: ApiClient) {
         this._streamerClient = streamerClient;
         this._botClient = botClient;
+    }
+
+    /**
+     * Determines if a user is timed out in the streamer's channel
+     *
+     * @param userId The user ID to check if they're timed out
+     * @returns `true` if the user is timed out, or `false` if they're either banned indefinitely or not timed out
+     */
+    async isUserTimedOut(userId: UserIdResolvable): Promise<boolean> {
+        const streamerId = accountAccess.getAccounts().streamer.userId;
+
+        try {
+            userId = extractUserId(userId);
+            const response = await this._streamerClient.moderation.getBannedUsers(streamerId, {
+                userId: [userId]
+            });
+
+            return response.data.some(b => b.userId === userId && b.expiryDate != null);
+        } catch (error) {
+            logger.error(`Error checking if user ${userId} is timed out`, error.message);
+            return null;
+        }
     }
 
     /**
@@ -41,6 +63,28 @@ export class TwitchModerationApi {
         }
 
         return false;
+    }
+
+    /**
+     * Determines if a user is banned (not timed out) in the streamer's channel
+     *
+     * @param userId The user ID to check if they're banned
+     * @returns `true` if the user is banned, or `false` if they're either not banned or only timed out
+     */
+    async isUserBanned(userId: UserIdResolvable): Promise<boolean> {
+        const streamerId = accountAccess.getAccounts().streamer.userId;
+
+        try {
+            userId = extractUserId(userId);
+            const response = await this._streamerClient.moderation.getBannedUsers(streamerId, {
+                userId: [userId]
+            });
+
+            return response.data.some(b => b.userId === userId && b.expiryDate == null);
+        } catch (error) {
+            logger.error(`Error checking if user ${userId} is banned`, error.message);
+            return null;
+        }
     }
 
     /**

@@ -1,7 +1,7 @@
 "use strict";
 
 const frontendCommunicator = require("../../common/frontend-communicator");
-const commandHandler = require("../commands/commandHandler");
+const chatCommandHandler = require("../commands/chat-command-handler");
 const chatHelpers = require("../chat-helpers");
 const activeUserHandler = require("./active-user-handler");
 const accountAccess = require("../../common/account-access");
@@ -19,7 +19,7 @@ exports.events = new events.EventEmitter();
 exports.setupBotChatListeners = (botChatClient) => {
     botChatClient.onWhisper(async (_user, messageText, msg) => {
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText, true);
-        commandHandler.handleChatMessage(firebotChatMessage);
+        chatCommandHandler.handleChatMessage(firebotChatMessage);
     });
 };
 
@@ -80,7 +80,7 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
         frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
         exports.events.emit("chat-message", firebotChatMessage);
 
-        commandHandler.handleChatMessage(firebotChatMessage);
+        chatCommandHandler.handleChatMessage(firebotChatMessage);
 
         await activeUserHandler.addActiveUser(msg.userInfo, true);
 
@@ -108,7 +108,7 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
     const whisperHandler = async (_user, messageText, msg, accountType) => {
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText, true);
 
-        commandHandler.handleChatMessage(firebotChatMessage);
+        chatCommandHandler.handleChatMessage(firebotChatMessage);
 
         frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
 

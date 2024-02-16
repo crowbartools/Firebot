@@ -6,7 +6,7 @@ const logger = require("../../logwrapper");
 const { settings } = require("../../common/settings-access");
 const conditionManager = require("./conditional-effects/conditions/condition-manager");
 
-const wait = (ms) => new Promise(r => setTimeout(r, ms));
+const wait = ms => new Promise(r => setTimeout(r, ms));
 
 const model = {
     definition: {
@@ -33,7 +33,7 @@ const model = {
                     <input type="radio" ng-model="effect.loopMode" value="conditional" ng-change="loopModeChanged()"/>
                     <div class="control__indicator"></div>
                 </label>
-                <label class="control-fb control--radio" >Iterate Array <span class="muted"><br />Loop through a JSON array. Access the current item with $loopItem</span>
+                <label class="control-fb control--radio" >Iterate Array <span class="muted"><br />Loop through an array. Access the current item with $loopItem</span>
                     <input type="radio" ng-model="effect.loopMode" value="array" ng-change="loopModeChanged()"/>
                     <div class="control__indicator"></div>
                 </label>
@@ -94,8 +94,8 @@ const model = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: event => {
-        return new Promise(async resolve => {
+    onTriggerEvent: (event) => {
+        return new Promise(async (resolve) => {
 
             const { effect, trigger, outputs } = event;
             const effectList = effect.effectList;
@@ -146,7 +146,7 @@ const model = {
                     const result = await runEffects(i, null, lastOutputs);
                     lastOutputs = {
                         ...lastOutputs,
-                        ...result.outputs
+                        ...result?.outputs
                     };
                     if (result != null && result.success === true) {
                         if (result.stopEffectExecution) {
@@ -188,7 +188,7 @@ const model = {
                         const result = await runEffects(currentLoopCount, null, lastOutputs);
                         lastOutputs = {
                             ...lastOutputs,
-                            ...result.outputs
+                            ...result?.outputs
                         };
                         if (result != null && result.success === true) {
                             if (result.stopEffectExecution) {
@@ -209,13 +209,14 @@ const model = {
                 }
             } else if (effect.loopMode === 'array') {
 
-
-                let arrayToIterate;
-                try {
-                    arrayToIterate = JSON.parse(effect.arrayToIterate);
-                } catch (error) {
-                    logger.error("Failed to parse array to iterate for loop effects", error);
-                    return resolve(true);
+                let arrayToIterate = effect.arrayToIterate;
+                if (typeof arrayToIterate === 'string' || arrayToIterate instanceof String) {
+                    try {
+                        arrayToIterate = JSON.parse(`${arrayToIterate}`);
+                    } catch (error) {
+                        logger.error("Failed to parse array to iterate for loop effects", error);
+                        return resolve(true);
+                    }
                 }
 
                 if (!Array.isArray(arrayToIterate)) {
@@ -228,7 +229,7 @@ const model = {
                     const result = await runEffects(currentLoopCount, item, lastOutputs);
                     lastOutputs = {
                         ...lastOutputs,
-                        ...result.outputs
+                        ...result?.outputs
                     };
                     if (result != null && result.success === true) {
                         if (result.stopEffectExecution) {

@@ -22,7 +22,7 @@
           <div style="width: 20%">
             <div style="min-width: 75px">
                 <span class="status-dot" ng-class="{'active': $ctrl.command.active, 'notactive': !$ctrl.command.active}"></span> {{$ctrl.command.active ? "Enabled" : "Disabled"}}
-            </div> 
+            </div>
           </div>
           <div style="flex-basis:30px; flex-shrink: 0;">
             <i class="fas" ng-class="{'fa-chevron-right': hidePanel, 'fa-chevron-down': !hidePanel}"></i>
@@ -36,12 +36,12 @@
               <div class="muted" style="font-weight:bold; font-size: 12px;">USAGE</div>
               <p ng-if="!$ctrl.command.subCommands || $ctrl.command.subCommands.length < 1" style="font-size: 15px;font-weight: 600;">{{$ctrl.command.trigger}} {{$ctrl.command.usage ? $ctrl.command.usage : ''}}</p>
             </div>
-            
+
             <div ng-if="$ctrl.command.subCommands && $ctrl.command.subCommands.length > 0">
 
               <div ng-if="$ctrl.command.baseCommandDescription" style="padding-bottom: 15px;">
                 <span style="font-weight: 600;">{{$ctrl.command.trigger}}</span>  —  <span style="font-size: 13px;">{{$ctrl.command.baseCommandDescription}}</span>
-              </div>        
+              </div>
               <div ng-repeat="subCmd in $ctrl.command.subCommands track by $index" style="padding-top: 5px; padding-bottom: 15px;">
                 <span style="font-weight: 600;">{{$ctrl.command.trigger}} {{subCmd.usage}}</span>  —  <span style="font-size: 13px;">{{subCmd.description}}</span>
                 <!--<div style="padding-left:15px;">
@@ -60,18 +60,18 @@
                         <div><span class="muted" style="font-size: 10px;"><i class="fas fa-lock-alt"></i> PERMISSIONS</span></div>
                         <div><span style="text-transform: capitalize;">{{$ctrl.getPermissionType(subCmd, true)}}</span> <tooltip type="info" text="$ctrl.getPermissionTooltip(subCmd, true)"></tooltip></div>
                     </div>
-                </div>-->                
+                </div>-->
               </div>
             </div>
             <div style="padding-top: 10px">
               <button class="btn btn-primary" ng-click="$ctrl.openEditSystemCommandModal()">Edit</button>
               <button class="btn btn-default" ng-click="$ctrl.toggleCommandActiveState()">{{$ctrl.command.active ? "Disable Command" : "Enable Command"}}</button>
-            </div>  
+            </div>
           </div>
         </div>
       </div>
     `,
-        controller: function(utilityService, commandsService, listenerService, viewerRolesService) {
+        controller: function(utilityService, commandsService, backendCommunicator, viewerRolesService) {
             const $ctrl = this;
 
             $ctrl.$onInit = function() {};
@@ -159,15 +159,19 @@
                     resolveObj: {
                         command: () => cmd
                     },
-                    closeCallback: resp => {
+                    closeCallback: (resp) => {
                         const action = resp.action;
                         if (action === "save") {
                             commandsService.saveSystemCommandOverride(resp.command);
                         } else if (action === "reset") {
-                            listenerService.fireEvent("removeSystemCommandOverride", cmd.id);
+                            backendCommunicator.fireEvent("remove-system-command-override", cmd.id);
                         }
                     }
                 });
+            };
+
+            $ctrl.resetCooldownsForCommand = () => {
+                commandsService.resetCooldownsForCommand($ctrl.command.id);
             };
 
             $ctrl.toggleCommandActiveState = function() {
@@ -181,6 +185,12 @@
                         html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
                         click: function () {
                             $ctrl.openEditSystemCommandModal();
+                        }
+                    },
+                    {
+                        html: `<a href ><i class="iconify" data-icon="mdi:clock-fast" style="margin-right: 10px;"></i> Clear Cooldowns</a>`,
+                        click: () => {
+                            $ctrl.resetCooldownsForCommand();
                         }
                     },
                     {

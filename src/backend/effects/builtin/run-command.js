@@ -1,7 +1,7 @@
 "use strict";
 
 const { EffectCategory } = require('../../../shared/effect-constants');
-const commandHandler = require("../../chat/commands/commandHandler");
+const commandRunner = require("../../chat/commands/command-runner");
 
 /**
  * The Delay effect
@@ -77,7 +77,7 @@ const model = {
     /**
    * When the effect is saved
    */
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.commandType === "custom" && (effect.commandId == null || effect.commandId === "")) {
             errors.push("Please select a custom command to run.");
@@ -90,8 +90,8 @@ const model = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: event => {
-        return new Promise(resolve => {
+    onTriggerEvent: (event) => {
+        return new Promise((resolve) => {
             const { effect, trigger } = event;
 
             const clonedTrigger = JSON.parse(JSON.stringify(trigger));
@@ -100,10 +100,10 @@ const model = {
             }
 
             if (effect.commandType === "system") {
-                commandHandler.runSystemCommandFromEffect(effect.systemCommandId, clonedTrigger, effect.args);
+                commandRunner.runSystemCommandFromEffect(effect.systemCommandId, clonedTrigger, effect.args);
             } else {
                 // always fall back to custom command to ensure backwards compat
-                commandHandler.runCustomCommandFromEffect(effect.commandId || effect.customCommandId, clonedTrigger, effect.args);
+                commandRunner.runCustomCommandFromEffect(effect.commandId || effect.customCommandId, clonedTrigger, effect.args);
             }
             resolve(true);
         });

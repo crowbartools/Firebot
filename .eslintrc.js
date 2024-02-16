@@ -62,6 +62,7 @@ module.exports = {
         "prefer-const": "warn",
 
         // Deviation from < https://eslint.org/docs/rules/#stylistic-issues >
+        "arrow-parens": ["warn", "as-needed", { "requireForBlockBody": true }], // Parentheses around arrow function parameters
         "array-bracket-spacing": "warn", // Spaces around array []'s
         "block-spacing": "warn", // {}'s must have whitespace around them
         "brace-style": "warn", // See: https://eslint.org/docs/rules/brace-style#require-brace-style-brace-style
@@ -98,6 +99,7 @@ module.exports = {
         "no-useless-concat": "error", // no concat'ing literal strings
         "no-empty": ["error", {"allowEmptyCatch": true }],
         "no-debugger": "warn",
+        "no-extra-boolean-cast": "off",
         "no-warning-comments": ["warn", {"terms": ["todo", "to do", "fix", "fixme", "fix me", "need"], "location": "start"}], // warn about todo comments
 
         // typescript

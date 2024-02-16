@@ -112,6 +112,12 @@ const firebotEventSource = {
             manualMetadata: {
                 queueName: "Just Chatting"
             }
+        },
+        {
+            id: "before-firebot-closed",
+            name: "Before Firebot Closed",
+            description: "Just before firebot is closed",
+            cached: false
         }
     ]
 };

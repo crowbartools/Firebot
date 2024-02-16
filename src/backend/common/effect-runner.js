@@ -25,22 +25,20 @@ const findAndReplaceVariables = async (data, trigger, effectOutputs) => {
         const value = data[key];
 
         if (value && typeof value === "string") {
-            if (value.includes("$")) {
-                let replacedValue = value;
-                const triggerId = util.getTriggerIdFromTriggerData(trigger);
-                try {
-                    replacedValue = await replaceVariableManager.evaluateText(value, {
-                        ...trigger,
-                        effectOutputs
-                    }, {
-                        type: trigger.type,
-                        id: triggerId
-                    });
-                } catch (err) {
-                    logger.warn(`Unable to parse variables for value: '${value}'`, err);
-                }
-                data[key] = replacedValue;
+            let replacedValue = value;
+            const triggerId = util.getTriggerIdFromTriggerData(trigger);
+            try {
+                replacedValue = await replaceVariableManager.evaluateText(value, {
+                    ...trigger,
+                    effectOutputs
+                }, {
+                    type: trigger.type,
+                    id: triggerId
+                });
+            } catch (err) {
+                logger.warn(`Unable to parse variables for value: '${value}'`, err);
             }
+            data[key] = replacedValue;
         } else if (value && typeof value === "object") {
             // recurse
             await findAndReplaceVariables(value, trigger);

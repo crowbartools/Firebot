@@ -1,10 +1,10 @@
 "use strict";
 
 const logger = require("../../logwrapper");
-const { EffectCategory } = require('../../../shared/effect-constants');
-const process = require('process');
-const spawn = require('child_process').spawn;
-const path = require('path');
+const { EffectCategory } = require("../../../shared/effect-constants");
+const process = require("process");
+const spawn = require("child_process").spawn;
+const path = require("path");
 
 const splitArgumentsText = (argsString) => {
     const re = /^"[^"]*"$/; // Check if argument is surrounded with double-quotes
@@ -14,14 +14,14 @@ const splitArgumentsText = (argsString) => {
     let argPart = null;
 
     if (argsString) {
-        argsString.split(" ").forEach(function(arg) {
+        argsString.split(" ").forEach(function (arg) {
             if ((re.test(arg) || re2.test(arg)) && !argPart) {
                 arr.push(arg);
             } else {
                 argPart = argPart ? `${argPart} ${arg}` : arg;
                 // If part is complete (ends with a double quote), we can add it to the array
                 if (/"$/.test(argPart)) {
-                    arr.push(argPart.replace(/^"/, '').replace(/"$/, ''));
+                    arr.push(argPart.replace(/^"/, "").replace(/"$/, ""));
                     argPart = null;
                 }
             }
@@ -38,7 +38,14 @@ const model = {
         description: "Run a program or executable",
         icon: "fad fa-terminal",
         categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
-        dependencies: []
+        dependencies: [],
+        outputs: [
+            {
+                label: "Program Response",
+                description: "The raw response from the program",
+                defaultName: "programResponse"
+            }
+        ]
     },
     globalSettings: {},
     optionsTemplate: `
@@ -74,7 +81,7 @@ const model = {
             </div>
         </eos-container>
     `,
-    optionsController: $scope => {
+    optionsController: ($scope) => {
         if ($scope.effect.hideWindow == null) {
             $scope.effect.hideWindow = true;
         }
@@ -82,15 +89,15 @@ const model = {
             $scope.effect.runDetached = true;
         }
     },
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.programPath == null) {
             errors.push("Please select a program executable");
         }
         return errors;
     },
-    onTriggerEvent: event => {
-        return new Promise(resolve => {
+    onTriggerEvent: (event) => {
+        return new Promise((resolve) => {
             const { effect } = event;
 
             let { programPath, programArgs, waitForFinish, hideWindow, runDetached } = effect;
@@ -109,7 +116,7 @@ const model = {
 
             if (!waitForFinish) {
                 options.detached = runDetached !== false; // catch null and true as valid for backwards compat
-                options.stdio = 'ignore';
+                options.stdio = "ignore";
             }
 
             let args = [];
@@ -132,7 +139,7 @@ const model = {
                 } catch (ignore) {
                     // ignore
                 }
-                logger.warn('Failed to spawn program:', err, programPath, args, options);
+                logger.warn("Failed to spawn program:", err, programPath, args, options);
                 return resolve();
             }
 
@@ -140,25 +147,33 @@ const model = {
                 child.unref();
                 return resolve();
             }
+
+            let stdoutData = "";
             if (child.stdout) {
-                child.stdout.on('data', (data) => {
+                child.stdout.on("data", (data) => {
                     logger.debug(`stdout: ${data}`);
+                    stdoutData += data;
                 });
 
-                child.stderr.on('data', (data) => {
+                child.stderr.on("data", (data) => {
                     logger.debug(`stderr: ${data}`);
                 });
             }
 
-            child.on('error', function(err) {
+            child.on("error", function (err) {
                 logger.warn(`spawned program error:`, err, programPath, args, options);
                 child.kill();
                 return resolve();
             });
 
-            child.on('close', (code) => {
+            child.on("close", (code) => {
                 logger.debug(`Spawned program exited with code ${code}`);
-                resolve();
+                resolve({
+                    success: true,
+                    outputs: {
+                        programResponse: stdoutData
+                    }
+                });
             });
         });
     }

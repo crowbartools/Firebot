@@ -47,7 +47,7 @@ import { setupFrontendListeners } from "./communicator";
 import effectManager from "../../../effects/effectManager";
 import eventFilterManager from "../../../events/filters/filter-manager";
 import replaceVariableManager from "../../../variables/replace-variable-manager";
-import * as frontendCommunicator from "../../../common/frontend-communicator";
+import frontendCommunicator from "../../../common/frontend-communicator";
 
 type ObsSettings = {
     websocketSettings: {

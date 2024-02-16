@@ -301,4 +301,13 @@ settings.setQuickActionSettings = (quickActions) => {
     pushDataToFile("/settings/quickActions", quickActions);
 };
 
+settings.getWebOnlineCheckin = () => {
+    const webOnlineCheckin = getDataFromFile("/settings/webOnlineCheckin");
+    return webOnlineCheckin === true;
+};
+
+settings.setWebOnlineCheckin = (value) => {
+    pushDataToFile("/settings/webOnlineCheckin", value);
+};
+
 exports.settings = settings;

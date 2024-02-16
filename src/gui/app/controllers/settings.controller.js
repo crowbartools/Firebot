@@ -201,7 +201,7 @@
                         confirmLabel: "Recalculate",
                         confirmBtnType: "btn-danger"
                     })
-                    .then(confirmed => {
+                    .then((confirmed) => {
                         if (confirmed) {
                             backendCommunicator.fireEvent("recalc-quote-ids");
                         }
@@ -221,7 +221,7 @@
                             confirmLabel: "I understand, enable.",
                             confirmBtnType: "btn-primary"
                         })
-                        .then(confirmed => {
+                        .then((confirmed) => {
                             if (confirmed) {
                                 settingsService.setWhileLoopEnabled(true);
                             }
@@ -248,7 +248,7 @@
                 deviceId: "default"
             }];
 
-            $q.when(navigator.mediaDevices.enumerateDevices()).then(deviceList => {
+            $q.when(navigator.mediaDevices.enumerateDevices()).then((deviceList) => {
                 deviceList = deviceList
                     .filter(
                         d =>
@@ -256,7 +256,7 @@
                             d.deviceId !== "communications" &&
                             d.deviceId !== "default"
                     )
-                    .map(d => {
+                    .map((d) => {
                         return { label: d.label, deviceId: d.deviceId };
                     });
 
@@ -265,22 +265,20 @@
                 );
             });
 
-            listenerService.registerListener(
-                { type: listenerService.ListenerType.BACKUP_COMPLETE },
-                function(manualActivation) {
-                    $scope.isBackingUp = false;
+            backendCommunicator.on("backup-complete", (manualActivation) => {
+                $scope.isBackingUp = false;
 
-                    if (manualActivation) {
-                        // we only want to act if the backup was manually triggered
-                        $scope.backupCompleted = true;
-                        // after 5 seconds, hide the completed message
-                        $timeout(() => {
-                            if ($scope.backupCompleted) {
-                                $scope.backupCompleted = false;
-                            }
-                        }, 5000);
-                    }
+                if (manualActivation) {
+                    // we only want to act if the backup was manually triggered
+                    $scope.backupCompleted = true;
+                    // after 5 seconds, hide the completed message
+                    $timeout(() => {
+                        if ($scope.backupCompleted) {
+                            $scope.backupCompleted = false;
+                        }
+                    }, 5000);
                 }
+            }
             );
 
             if (settingsService.getAutoUpdateLevel() > 3) {
@@ -362,10 +360,8 @@
                     size: "sm",
                     controllerFunc: (
                         $scope,
-                        settingsService,
                         $uibModalInstance,
                         $q,
-                        listenerService,
                         utilityService
                     ) => {
                         $scope.backups = [];
@@ -375,7 +371,7 @@
                         $scope.loadingBackups = true;
                         $q
                             .when(
-                                new Promise(resolve => {
+                                new Promise((resolve) => {
                                     fs.readdir(backupFolderPath, (err, files) => {
                                         const backups = files
                                             .filter(f => f.endsWith(".zip"))
@@ -417,7 +413,7 @@
                                     });
                                 })
                             )
-                            .then(backups => {
+                            .then((backups) => {
                                 $scope.loadingBackups = false;
                                 $scope.backups = backups;
                             });
@@ -442,7 +438,7 @@
                                     question: "Are you sure you'd like to delete this backup?",
                                     confirmLabel: "Delete"
                                 })
-                                .then(confirmed => {
+                                .then((confirmed) => {
                                     if (confirmed) {
                                         $scope.backups.splice(index, 1);
                                         fs.unlinkSync(`${backupFolderPath + backup.name}.zip`);
@@ -457,7 +453,7 @@
                                     question: "Are you sure you'd like to restore from this backup?",
                                     confirmLabel: "Restore"
                                 })
-                                .then(confirmed => {
+                                .then((confirmed) => {
                                     if (confirmed) {
                                         $uibModalInstance.dismiss("cancel");
 
@@ -470,7 +466,7 @@
                         };
 
                         $scope.openBackupFolder = function() {
-                            listenerService.fireEvent(listenerService.EventType.OPEN_BACKUP);
+                            backendCommunicator.fireEvent("open-backup-folder");
                         };
 
                         $scope.dismiss = function() {
@@ -515,7 +511,7 @@
                             $uibModalInstance.dismiss("cancel");
                         };
                     },
-                    closeCallback: port => {
+                    closeCallback: (port) => {
                         // Update the local port scope var so setting input updates
                         $scope.currentPort = port;
                     }

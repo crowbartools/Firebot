@@ -20,24 +20,24 @@
                 }
 
                 waitingForUpdate = true;
-                return $q(resolve => {
-                    backendCommunicator.fireEventAsync("getAllViewers")
-                        .then(viewers => {
+                return $q((resolve) => {
+                    backendCommunicator.fireEventAsync("get-all-viewers")
+                        .then((viewers) => {
                             resolve(viewers);
                         });
-                }).then(viewers => {
+                }).then((viewers) => {
                     service.viewers = viewers;
                     waitingForUpdate = false;
                 });
             };
 
             service.updateViewer = function(userId) {
-                return $q(resolve => {
-                    backendCommunicator.fireEventAsync("getViewerFirebotData", userId)
-                        .then(viewer => {
+                return $q((resolve) => {
+                    backendCommunicator.fireEventAsync("get-firebot-viewer-data", userId)
+                        .then((viewer) => {
                             resolve(viewer);
                         });
-                }).then(viewer => {
+                }).then((viewer) => {
                     if (viewer) {
                         const index = service.viewers.findIndex(v => v._id === viewer._id);
                         if (index >= 0) {
