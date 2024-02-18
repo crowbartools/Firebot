@@ -111,6 +111,12 @@ class ReplaceVariableManager extends EventEmitter {
                             }
                             return result == null ? null : result;
                         }
+                    })],
+                    ['#', name => ({
+                        evaluator: (trigger) => {
+                            const arg = (trigger.metadata?.presetListArgs || {})[name];
+                            return arg == null ? null : arg;
+                        }
                     })]
                 ]),
                 onlyValidate: !!onlyValidate
