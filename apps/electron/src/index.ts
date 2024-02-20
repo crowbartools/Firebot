@@ -2,32 +2,52 @@ import path from 'path';
 
 import assetpath from 'assets';
 
-import { app, BrowserWindow, session } from 'electron';
-import { type NestFastifyApplication } from '@nestjs/platform-fastify';
+import { app, BrowserWindow, session, shell } from "electron";
+import { type NestFastifyApplication } from "@nestjs/platform-fastify";
 
 // ts/eslint will complain until apps/backend/ has been built
-const { default : backendStart } = require('backend');
+const { default: backendStart } = require("backend");
 
-let backend : { app: NestFastifyApplication, authToken: string } | void;
+let backend: { app: NestFastifyApplication; authToken: string } | void;
 
-let mainWindow : BrowserWindow;
+let mainWindow: BrowserWindow;
 const createWindow = () => {
-    if (mainWindow) {
-        return;
+  if (mainWindow) {
+    return;
+  }
+
+  mainWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    icon: path.join(assetpath, "images/favicon.ico"),
+  });
+
+  mainWindow.webContents.setWindowOpenHandler(({ frameName, url }) => {
+    if (frameName === "modal") {
+      return {
+        action: "allow",
+        overrideBrowserWindowOptions: {
+          title: "Firebot",
+          frame: true,
+          titleBarStyle: "default",
+          parent: mainWindow,
+          width: 250,
+          height: 400,
+          javascript: false,
+        },
+      };
     }
 
-    mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
-        icon: path.join(assetpath, 'images/favicon.ico'),
-    });
+    shell.openExternal(url);
+    return { action: "deny" };
+  });
 
-    if (process.env.NODE_ENV === 'development') {
-        mainWindow.loadURL('http://localhost:3000');
-    } else {
-        mainWindow.loadURL('http://localhost:3001');
-    }
-}
+  if (process.env.NODE_ENV === "development") {
+    mainWindow.loadURL("http://localhost:3000");
+  } else {
+    mainWindow.loadURL("http://localhost:3001");
+  }
+};
 
 process.on('uncaughtException', async function (err) {
     console.error(err.stack);

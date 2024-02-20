@@ -1,5 +1,5 @@
 import { WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
-import { Server,  } from 'ws';
+import { Server, WebSocket } from "ws";
 
 @WebSocketGateway({ path: "/api/v1/realtime" })
 export class RealTimeGateway {

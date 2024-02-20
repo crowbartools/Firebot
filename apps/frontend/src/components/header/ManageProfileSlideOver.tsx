@@ -1,5 +1,4 @@
 import type { StreamingPlatformIdName } from "@/api/resources/streaming-platform";
-import { SlideOver } from "@/components/controls/SlideOver";
 import { ManageLoginDropdown } from "@/components/header/ManageLoginDropdown";
 import { useActiveProfile } from "@/hooks/api/use-active-profile";
 import { useCreateLogin } from "@/hooks/api/use-create-login";
@@ -14,33 +13,43 @@ import type {
   PlatformLoginSetting,
 } from "firebot-types";
 import { AnimatePresence, motion } from "framer-motion";
+import {
+  FbSlideOverContent,
+  useShowSlideOverBuilder,
+} from "../slideover/FbSlideOverContext";
+import { useDcfInfoSlideOver } from "./DcfInfoSlideOver";
+import { useDeleteAccountForLogin } from "@/hooks/api/use-delete-account-for-login";
 
-export const ManageProfileSlideOver: React.FC<{
-  open: boolean;
-  onClose: () => void;
-}> = ({ open, onClose }) => {
-  const { data: streamingPlatforms } = useStreamingPlatforms();
+export const useManageProfileSlideOver = () => {
   const { data: activeProfile } = useActiveProfile();
+
+  return useShowSlideOverBuilder({
+    content: ManageProfileSlideOverContent,
+    title: activeProfile?.name || "Manage Profile",
+    showDismissButton: true,
+  });
+};
+
+const ManageProfileSlideOverContent: FbSlideOverContent = () => {
+  const { data: streamingPlatforms } = useStreamingPlatforms();
   const { data: loginData } = useLogins();
 
   return (
-    <SlideOver title={activeProfile?.name} open={open} onClose={onClose}>
+    <div>
+      <h3 className="text-lg font-bold text-primary-text">Platforms</h3>
       <div>
-        <h3 className="text-lg font-bold text-primary-text">Platforms</h3>
-        <div>
-          {streamingPlatforms.map((platform) => {
-            const loginsForPlatform = loginData?.[platform.id];
-            return (
-              <StreamingPlatformConfig
-                key={platform.id}
-                platform={platform}
-                loginSettings={loginsForPlatform}
-              />
-            );
-          })}
-        </div>
+        {streamingPlatforms.map((platform) => {
+          const loginsForPlatform = loginData?.[platform.id];
+          return (
+            <StreamingPlatformConfig
+              key={platform.id}
+              platform={platform}
+              loginSettings={loginsForPlatform}
+            />
+          );
+        })}
       </div>
-    </SlideOver>
+    </div>
   );
 };
 
@@ -50,7 +59,12 @@ const StreamingPlatformConfig: React.FC<{
 }> = ({ platform, loginSettings }) => {
   const { mutate: createLogin, isPending: isCreatingLogin } = useCreateLogin();
 
+  const { mutate: deleteAccountForLogin, isPending: isDeletingAccount } =
+    useDeleteAccountForLogin();
+
   const { api } = useFbApi();
+
+  const dcfInfoSlideOver = useDcfInfoSlideOver();
 
   const connectAccount = async (
     streamingPlatform: StreamingPlatformIdName,
@@ -63,7 +77,17 @@ const StreamingPlatformConfig: React.FC<{
         loginConfigId,
         type
       );
-      console.log(response);
+      if (response) {
+        console.log("response", response);
+        dcfInfoSlideOver.show({
+          params: {
+            dcfCodeDetails: response,
+            accountType: type,
+            streamingPlatformName: streamingPlatform.name,
+            providerId: streamingPlatform.id,
+          },
+        });
+      }
     } else {
       // TODO not implemented
     }
@@ -106,13 +130,29 @@ const StreamingPlatformConfig: React.FC<{
                 onConnectClick={() =>
                   connectAccount(platform, activeLogin.id, "streamer")
                 }
-                onDisconnectClick={() => {}}
+                onDisconnectClick={() => {
+                  if (isDeletingAccount) return;
+                  deleteAccountForLogin({
+                    platformId: platform.id,
+                    loginConfigId: activeLogin.id,
+                    accountType: "streamer",
+                  });
+                }}
               />
               <Account
                 type="bot"
                 account={activeLogin.bot}
-                onConnectClick={() => {}}
-                onDisconnectClick={() => {}}
+                onConnectClick={() =>
+                  connectAccount(platform, activeLogin.id, "bot")
+                }
+                onDisconnectClick={() => {
+                  if (isDeletingAccount) return;
+                  deleteAccountForLogin({
+                    platformId: platform.id,
+                    loginConfigId: activeLogin.id,
+                    accountType: "bot",
+                  });
+                }}
               />
             </motion.div>
           )}
@@ -146,7 +186,7 @@ const Account: React.FC<{
       {type === "streamer" ? "Streamer" : "Bot"}
     </div>
     <div>
-      {!account && (
+      {!account ? (
         <button
           className="text-primary-text bg-primary-bg/25 py-1 px-2 rounded-lg flex items-center"
           onClick={onConnectClick}
@@ -154,6 +194,23 @@ const Account: React.FC<{
           <PlusCircleIcon className="w-4 h-4 mr-1" />
           Connect account
         </button>
+      ) : (
+        <div className="flex items-center justify-between text-primary-text pr-5">
+          <div className="flex items-center gap-x-2">
+            {account.avatarUrl && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                className="w-8 h-8 object-cover rounded-full border-2 border-gray-500/50"
+                src={account.avatarUrl}
+                alt="Profile picture"
+              />
+            )}
+            <div>{account.displayName}</div>
+          </div>
+          <button onClick={onDisconnectClick}>
+            <FontAwesomeIcon icon="trash-alt" color="red" />
+          </button>
+        </div>
       )}
     </div>
   </div>

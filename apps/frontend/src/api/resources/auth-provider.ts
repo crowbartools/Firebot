@@ -1,9 +1,9 @@
 import { AxiosInstance } from "axios";
 import { Profile, type FirebotAccountType} from "firebot-types"
 
-interface DeviceCodeResponse {
-    code: string;
-    verificationUri: string;
+export interface DeviceCodeResponse {
+  code: string;
+  verificationUri: string;
 }
 
 export class AuthProviderApi {

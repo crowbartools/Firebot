@@ -135,11 +135,9 @@ export class AuthProviderManager extends TypedEmitter<{
         });
       });
 
-    console.log("device auth", handle);
-
     return {
-      code: handle.device_code,
-      verificationUri: handle.verification_uri_complete,
+      code: handle.user_code,
+      verificationUri: handle.verification_uri,
     };
   }
 }

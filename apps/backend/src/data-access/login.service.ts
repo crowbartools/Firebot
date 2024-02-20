@@ -3,7 +3,13 @@ import { v4 as uuid } from "uuid";
 import { StreamingPlatformLoginsStore } from "./stores/streaming-platform-logins.store";
 import { AuthMetadata, AuthProviderManager } from "auth/auth-provider-manager.service";
 import { PlatformManagerService } from "streaming-platform/platform-manager.service";
-import type { Account, AuthTokenSet, LoginConfig } from "firebot-types";
+import type {
+  Account,
+  AuthTokenSet,
+  FirebotAccountType,
+  LoginConfig,
+} from "firebot-types";
+import { RealTimeGateway } from "real-time/real-time.gateway";
 
 @Injectable()
 export class LoginService {
@@ -11,6 +17,7 @@ export class LoginService {
     private readonly loginsStore: StreamingPlatformLoginsStore,
     private readonly authProviderManager: AuthProviderManager,
     private readonly streamingPlatformManager: PlatformManagerService,
+    private readonly realTimeGateway: RealTimeGateway
   ) {
     authProviderManager.on(
       "successful-auth",
@@ -110,6 +117,26 @@ export class LoginService {
     return true;
   }
 
+  deleteAccountForLoginForPlatform(
+    platformId: string,
+    loginConfigId: string,
+    accountType: FirebotAccountType
+  ) {
+    const platformLogins = this.loginsStore.get(platformId);
+    if (!platformLogins) {
+      return false;
+    }
+    const loginConfig = platformLogins.loginConfigs.find(
+      (lc) => lc.id === loginConfigId
+    );
+    if (!loginConfig) {
+      return false;
+    }
+    loginConfig[accountType] = undefined;
+    this.updateLoginForPlatform(platformId, loginConfig);
+    return true;
+  }
+
   private async handleSuccessfulAuth(
     tokenSet: AuthTokenSet,
     metadata: AuthMetadata
@@ -159,6 +186,12 @@ export class LoginService {
     }
 
     this.updateLoginForPlatform(metadata.streamingPlatformId, loginConfig);
+
+    this.realTimeGateway.broadcast("login-update", {
+      platformId: metadata.streamingPlatformId,
+      loginConfigId: loginConfig.id,
+      loginConfig,
+    });
 
     this.loginsStore.set(metadata.streamingPlatformId, loginsForPlatform);
   }

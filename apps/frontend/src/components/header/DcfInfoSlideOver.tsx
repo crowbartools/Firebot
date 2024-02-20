@@ -1,0 +1,77 @@
+import { DeviceCodeResponse } from "@/api/resources/auth-provider";
+import {
+  FbSlideOverContent,
+  useShowSlideOverBuilder,
+} from "../slideover/FbSlideOverContext";
+import { FirebotAccountType } from "firebot-types";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useRealTimeEvent } from "@/hooks/api/use-realtime-event";
+
+type DcfInfoSlideOverParams = {
+  dcfCodeDetails: DeviceCodeResponse;
+  accountType: FirebotAccountType;
+  providerId: string;
+  streamingPlatformName: string;
+};
+
+export const useDcfInfoSlideOver = () => {
+  return useShowSlideOverBuilder<DcfInfoSlideOverParams>({
+    content: DcfInfoSlideOverContent,
+    title: "Login Info",
+    showDismissButton: true,
+  });
+};
+
+const DcfInfoSlideOverContent: FbSlideOverContent<DcfInfoSlideOverParams> = ({
+  params,
+  onDismiss,
+}) => {
+  useRealTimeEvent<{ providerId: string }>(
+    "device-flow-finished",
+    ({ providerId }) => {
+      console.log(providerId, params.providerId);
+      onDismiss();
+    }
+  );
+
+  return (
+    <div>
+      <h3 className="text-lg font-bold text-primary-text">
+        Let&apos;s log into your {params.streamingPlatformName}{" "}
+        <b>{params.accountType}</b> account!
+      </h3>
+      <p className="text-primary-text mt-2 mb-5">
+        Please copy the below URL into your browser to connect your{" "}
+        {params.streamingPlatformName} {params.accountType} account.
+      </p>
+      <div className="rounded bg-secondary-bg overflow-hidden text-primary-text">
+        <div className="bg-[#54545d] text-sm h-12 flex items-center px-2">
+          <a
+            href={params.dcfCodeDetails.verificationUri}
+            target="_blank"
+            rel="noreferrer"
+            className="text-cyan-500 underline"
+          >
+            {params.dcfCodeDetails.verificationUri}
+          </a>
+        </div>
+        <div className="p-2 text-center gap-y-4 flex flex-col items-center justify-center">
+          <span className="block text-primary-text/50 text-sm">
+            When you open the URL, please verify the code below:
+          </span>
+          <span className="block font-mono text-2xl">
+            {params.dcfCodeDetails.code}
+          </span>
+          <FontAwesomeIcon
+            className="text-5xl"
+            icon={["fas", "circle-notch"]}
+            spin
+          />
+          <span className="block text-primary-text/50 text-sm">
+            Waiting for login confirmation...
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};

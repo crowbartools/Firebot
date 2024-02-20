@@ -1,5 +1,8 @@
 import { AxiosInstance } from "axios";
-import { StreamingPlatformLoginSettings} from "firebot-types"
+import {
+  FirebotAccountType,
+  StreamingPlatformLoginSettings,
+} from "firebot-types";
 
 export class LoginApi {
   constructor(private readonly api: AxiosInstance) {}
@@ -14,11 +17,27 @@ export class LoginApi {
     await this.api.post(`/login/${platformId}`);
   }
 
-  async deleteLoginForPlatform(platformId: string, loginConfigId: string): Promise<void> {
+  async deleteLoginForPlatform(
+    platformId: string,
+    loginConfigId: string
+  ): Promise<void> {
     await this.api.delete(`/login/${platformId}/${loginConfigId}`);
   }
 
-  async setActiveProfile(platformId: string, loginConfigId: string): Promise<boolean> {
+  async deleteAccountForLoginForPlatform(
+    platformId: string,
+    loginConfigId: string,
+    accountType: FirebotAccountType
+  ): Promise<void> {
+    await this.api.delete(
+      `/login/${platformId}/${loginConfigId}/${accountType}`
+    );
+  }
+
+  async setActiveLogin(
+    platformId: string,
+    loginConfigId: string
+  ): Promise<boolean> {
     const response = await this.api.post(
       `/login/${platformId}/active`,
       undefined,

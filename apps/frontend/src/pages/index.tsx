@@ -37,7 +37,7 @@ export default function Home() {
       </Head>
       <PageWrapper>
         <PageTitle title={helloWorld} />
-        <div>Does fast reloading work? test</div>
+        <div>Does fast reloading work?</div>
       </PageWrapper>
     </>
   );

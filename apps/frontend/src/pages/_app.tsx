@@ -10,6 +10,9 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
 import { fab } from "@fortawesome/free-brands-svg-icons";
+import { FbModalProvider } from "@/components/modal/FbModalContext";
+import { FbSlideOverProvider } from "@/components/slideover/FbSlideOverContext";
+import { RealTimeWsProvider } from "@/realtime/realtime-websocket";
 
 export default function App({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient({
@@ -20,24 +23,30 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <NoSSRWrapper>
-      <FbApiProvider>
-        <QueryClientProvider client={queryClient}>
-          <StoreProvider value={initialStore}>
-            <div className="bp3-dark w-full h-full bg-primary-bg text-white">
-              <SideNav />
-              <AppHeader />
-              <div
-                style={{
-                  paddingLeft: "85px",
-                }}
-                className="h-full w-full"
-              >
-                <Component {...pageProps} />
-              </div>
-            </div>
-          </StoreProvider>
-        </QueryClientProvider>
-      </FbApiProvider>
+      <RealTimeWsProvider>
+        <FbApiProvider>
+          <QueryClientProvider client={queryClient}>
+            <StoreProvider value={initialStore}>
+              <FbModalProvider>
+                <FbSlideOverProvider>
+                  <div className="bp3-dark w-full h-full bg-primary-bg text-white">
+                    <SideNav />
+                    <AppHeader />
+                    <div
+                      style={{
+                        paddingLeft: "85px",
+                      }}
+                      className="h-full w-full"
+                    >
+                      <Component {...pageProps} />
+                    </div>
+                  </div>
+                </FbSlideOverProvider>
+              </FbModalProvider>
+            </StoreProvider>
+          </QueryClientProvider>
+        </FbApiProvider>
+      </RealTimeWsProvider>
     </NoSSRWrapper>
   );
 }

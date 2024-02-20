@@ -6,6 +6,7 @@ import { PlusCircleIcon } from "@heroicons/react/16/solid";
 import { useCreateLogin } from "@/hooks/api/use-create-login";
 import { useLogins } from "@/hooks/api/use-logins";
 import { useDeleteLogin } from "@/hooks/api/use-delete-login";
+import { useSetActiveLogin } from "@/hooks/api/use-set-active-login";
 
 export const ManageLoginDropdown: React.FC<{ platformId: string }> = ({
   platformId,
@@ -13,6 +14,8 @@ export const ManageLoginDropdown: React.FC<{ platformId: string }> = ({
   const { data: loginData } = useLogins();
   const { mutate: createLogin, isPending: isCreatingLogin } = useCreateLogin();
   const { mutate: deleteLogin, isPending: isDeletingLogin } = useDeleteLogin();
+  const { mutate: setActiveLogin, isPending: isSettingActiveLogin } =
+    useSetActiveLogin();
 
   const loginForPlatform = loginData?.[platformId];
 
@@ -104,8 +107,13 @@ export const ManageLoginDropdown: React.FC<{ platformId: string }> = ({
                             <MenuItem
                               key={loginConfig.id}
                               label={`${streamerLabel} / ${botLabel}`}
-                              disabled
-                              onClick={() => {}}
+                              disabled={isSettingActiveLogin}
+                              onClick={() => {
+                                setActiveLogin({
+                                  platformId,
+                                  loginConfigId: loginConfig.id,
+                                });
+                              }}
                             />
                           );
                         })}

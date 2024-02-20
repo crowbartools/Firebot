@@ -1,10 +1,9 @@
-import { ManageProfileSlideOver } from "@/components/header/ManageProfileSlideOver";
+import { useManageProfileSlideOver } from "@/components/header/ManageProfileSlideOver";
 import { useActiveProfile } from "@/hooks/api/use-active-profile";
 import { Menu } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
 import {
   PencilIcon,
   ArrowsRightLeftIcon,
@@ -14,7 +13,7 @@ import {
 export const ProfileDropdown: React.FC = () => {
   const { data: activeProfile } = useActiveProfile();
 
-  const [loginsOpen, setLoginsOpen] = useState(false);
+  const manageProfileSlideOver = useManageProfileSlideOver();
 
   return (
     <>
@@ -61,7 +60,11 @@ export const ProfileDropdown: React.FC = () => {
                     <MenuItem
                       label="Edit profile"
                       Icon={PencilIcon}
-                      onClick={() => setLoginsOpen(true)}
+                      onClick={() => {
+                        manageProfileSlideOver.show({
+                          params: {},
+                        });
+                      }}
                     />
                   </div>
                   <div className="p-1">
@@ -84,10 +87,6 @@ export const ProfileDropdown: React.FC = () => {
           </>
         )}
       </Menu>
-      <ManageProfileSlideOver
-        open={loginsOpen}
-        onClose={() => setLoginsOpen(false)}
-      />
     </>
   );
 };

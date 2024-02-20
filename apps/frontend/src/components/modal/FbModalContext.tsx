@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AnimatePresence } from "framer-motion";
 import { createContext, useCallback, useContext, useState } from "react";
+import { Modal } from "./Modal";
 
 type FbModalContent<
   Params extends Record<string, unknown> | undefined = any,
@@ -19,7 +20,9 @@ type FbModalConfig<
   title?: string;
   showDismissButton?: boolean;
   params: Params;
+  disableClickAway?: boolean;
   content: FbModalContent<Params, ReturnData>;
+  willDismiss?: () => PromiseLike<boolean | void> | boolean | void;
   onClose?: (data?: ReturnData) => void;
   onDismiss?: () => void;
 };
@@ -31,7 +34,6 @@ type FbModalContextProps = {
   >(
     config: FbModalConfig<Params, ReturnData>
   ) => void;
-  getModalConfig: (id: string) => FbModalConfig | undefined;
   onModalDismissed: (id: string) => void;
   onModalClosed: (id: string, data: unknown) => void;
 };
@@ -39,14 +41,13 @@ type FbModalContextProps = {
 const FbModalContext = createContext<FbModalContextProps>({
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   showModal: () => {},
-  getModalConfig: () => undefined,
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   onModalDismissed: () => {},
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   onModalClosed: () => {},
 });
 
-type ModalDirection = "forward" | "back";
+// type ModalDirection = "forward" | "back";
 
 export const FbModalProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -55,18 +56,16 @@ export const FbModalProvider: React.FC<{ children: React.ReactNode }> = ({
     Array<{ id: string; config: FbModalConfig }>
   >([]);
 
-  const [direction, setDirection] = useState<ModalDirection>("forward");
+  // const [direction, setDirection] = useState<ModalDirection>("forward");
 
   const showModal = useCallback(
     (config: FbModalConfig) => {
       const id = Math.random().toString();
       setModalConfigs((prev) => [{ id, config }, ...prev]);
-      setDirection("forward");
+      // setDirection("forward");
     },
     [setModalConfigs]
   );
-
-  const currentModal = modalConfigs[0];
 
   const goBack = useCallback(() => {
     setModalConfigs((prev) => {
@@ -74,8 +73,10 @@ export const FbModalProvider: React.FC<{ children: React.ReactNode }> = ({
       const [_, ...rest] = prev;
       return rest;
     });
-    setDirection("back");
+    // setDirection("back");
   }, [setModalConfigs]);
+
+  const currentModal = modalConfigs[0];
 
   const onDismiss = useCallback(
     (id: string) => {
@@ -108,7 +109,33 @@ export const FbModalProvider: React.FC<{ children: React.ReactNode }> = ({
       }}
     >
       {children}
-      <AnimatePresence initial={false} custom={direction}></AnimatePresence>
+      <AnimatePresence
+        initial={false}
+        /*custom={direction}*/
+      >
+        {[...modalConfigs].reverse().map(({ id, config }) => {
+          return (
+            <Modal
+              key={id}
+              open
+              onClose={async () => {
+                if (config.disableClickAway) return;
+                if (config.willDismiss) {
+                  const shouldCancel = await config.willDismiss();
+                  if (shouldCancel) return;
+                }
+                onDismiss(id);
+              }}
+            >
+              <config.content
+                onClose={(data) => onClose(id, data)}
+                params={config.params}
+                onDismiss={() => onDismiss(id)}
+              />
+            </Modal>
+          );
+        })}
+      </AnimatePresence>
     </FbModalContext.Provider>
   );
 };
@@ -131,7 +158,7 @@ export const useShowModalBuilder = <
 >(
   initialConfig: Pick<
     FbModalConfig<Params, ReturnData>,
-    "showBackButton" | "content" | "hideHeader"
+    "showDismissButton" | "content" | "disableClickAway"
   > & { title?: string }
 ) => {
   const { showModal } = useFbModal();
