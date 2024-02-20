@@ -31,12 +31,18 @@ const model : ReplaceVariable = {
             return false;
         }
 
-        const user = await twitchApi.users.getUserByName(username);
-        if (user == null) {
-            return false;
-        }
+        try {
+            const user = await twitchApi.users.getUserByName(username);
+            if (user == null) {
+                return false;
+            }
 
-        return await roleHelpers.viewerHasRoleByName(user.id, role);
+            return await roleHelpers.viewerHasRoleByName(user.id, role);
+        } catch {
+            // Silently fail
+        }
+        
+        return false;
     }
 };
 export default model;

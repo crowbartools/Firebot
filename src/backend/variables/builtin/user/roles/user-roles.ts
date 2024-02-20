@@ -68,39 +68,44 @@ const model : ReplaceVariable = {
             roleType = (`${roleType}`).toLowerCase();
         }
 
-        const user = await twitchApi.users.getUserByName(username);
-        if (user == null) {
-            return [];
+        try {
+            const user = await twitchApi.users.getUserByName(username);
+            if (user == null) {
+                return [];
+            }
+    
+            const userRoles = await roleHelpers.getAllRolesForViewerNameSpaced(user.id);
+    
+            Object
+                .keys(userRoles)
+                .forEach((key: string) => {
+                    userRoles[key] = userRoles[key].map(r => r.name);
+                });
+    
+            if (roleType === "all") {
+                return [
+                    userRoles.twitchRoles || [],
+                    userRoles.teamRoles || [],
+                    userRoles.firebotRoles || [],
+                    userRoles.customRoles || []
+                ];
+            }
+            if (roleType === "twitch") {
+                return userRoles.twitchRoles;
+            }
+            if (roleType === "team") {
+                return userRoles.teamRoles;
+            }
+            if (roleType === "firebot") {
+                return userRoles.firebotRoles;
+            }
+            if (roleType === "custom") {
+                return userRoles.customRoles;
+            }
+        } catch {
+            // Silently fail
         }
 
-        const userRoles = await roleHelpers.getAllRolesForViewerNameSpaced(user.id);
-
-        Object
-            .keys(userRoles)
-            .forEach((key: string) => {
-                userRoles[key] = userRoles[key].map(r => r.name);
-            });
-
-        if (roleType === "all") {
-            return [
-                userRoles.twitchRoles || [],
-                userRoles.teamRoles || [],
-                userRoles.firebotRoles || [],
-                userRoles.customRoles || []
-            ];
-        }
-        if (roleType === "twitch") {
-            return userRoles.twitchRoles;
-        }
-        if (roleType === "team") {
-            return userRoles.teamRoles;
-        }
-        if (roleType === "firebot") {
-            return userRoles.firebotRoles;
-        }
-        if (roleType === "custom") {
-            return userRoles.customRoles;
-        }
         return [];
     }
 };

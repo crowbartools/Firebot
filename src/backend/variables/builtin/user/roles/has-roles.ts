@@ -50,20 +50,26 @@ const model : ReplaceVariable = {
             return false;
         }
 
-        const user = await twitchApi.users.getUserByName(username);
-        if (user == null) {
-            return false;
+        try {
+            const user = await twitchApi.users.getUserByName(username);
+            if (user == null) {
+                return false;
+            }
+    
+            const userRoles = await roleHelpers.getAllRolesForViewer(user.id);
+    
+            // any
+            if (respective === "any") {
+                return userRoles.some(r => roles.includes(r.name));
+            }
+    
+            // all
+            return roles.length === userRoles.filter(r => roles.includes(r.name)).length;
+        } catch {
+            // Silently fail
         }
 
-        const userRoles = await roleHelpers.getAllRolesForViewer(user.id);
-
-        // any
-        if (respective === "any") {
-            return userRoles.some(r => roles.includes(r.name));
-        }
-
-        // all
-        return roles.length === userRoles.filter(r => roles.includes(r.name)).length;
+        return false;
     }
 };
 
