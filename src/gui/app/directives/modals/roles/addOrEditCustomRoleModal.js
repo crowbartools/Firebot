@@ -38,7 +38,7 @@
 
                         <div ng-repeat="viewer in viewerList = ($ctrl.role.viewers | filter:searchText) | startFrom:($ctrl.pagination.currentPage-1)*$ctrl.pagination.pageSize | limitTo:$ctrl.pagination.pageSize track by $index">
                             <div style="display:flex;height: 45px; align-items: center; justify-content: space-between;padding: 0 15px;">
-                                <div style="font-weight: 100;font-size: 16px;">{{viewer.displayName}}</div>
+                                <div style="font-weight: 100;font-size: 16px;">{{viewer.displayName}}<span ng-if="viewer.displayName.toLowerCase() !== viewer.username.toLowerCase()" class="muted"> ({{viewer.username}})</span></div>
                                 <span class="delete-button" ng-click="$ctrl.deleteViewer(viewer.id, viewer.displayName)">
                                     <i class="far fa-trash-alt"></i>
                                 </span>
