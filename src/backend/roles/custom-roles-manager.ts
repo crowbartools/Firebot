@@ -60,13 +60,34 @@ class CustomRolesManager {
                         viewers: []
                     };
 
-                    const users = await twitchApi.users.getUsersByNames(legacyRole.viewers);
-                    for (const user of users) {
-                        newCustomRole.viewers.push({
-                            id: user.id,
-                            username: user.name,
-                            displayName: user.displayName
-                        });
+                    const usernameRegex = new RegExp("^[a-z0-9_]+$", "i");
+                    const viewersToMigrate: string[] = [];
+                    const failedMigration: string[] = [];
+
+                    for (const viewer of legacyRole.viewers) {
+                        if (usernameRegex.test(viewer) === true) {
+                            viewersToMigrate.push(viewer.toLowerCase());
+                        } else {
+                            failedMigration.push(viewer);
+                        }
+                    }
+
+                    const users = await twitchApi.users.getUsersByNames(viewersToMigrate);
+                    for (const viewer of viewersToMigrate) {
+                        const user = users.find(u => u.name === viewer);
+                        if (user != null) {
+                            newCustomRole.viewers.push({
+                                id: user.id,
+                                username: user.name,
+                                displayName: user.displayName
+                            });
+                        } else {
+                            failedMigration.push(viewer);
+                        }
+                    }
+
+                    if (failedMigration.length > 0) {
+                        logger.warn(`Could not migrate the following viewers in custom role ${newCustomRole.name}: ${failedMigration.join(", ")}`);
                     }
 
                     this.saveCustomRole(newCustomRole);
@@ -124,7 +145,7 @@ class CustomRolesManager {
                     id: user.id,
                     username: user.name,
                     displayName: user.displayName
-                }
+                };
             }
 
             this.saveCustomRole(customRole);
