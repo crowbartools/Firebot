@@ -28,7 +28,7 @@ module.exports = {
     ],
     comparisonTypes: ["include", "doesn't include"],
     valueType: "preset",
-    presetValues: viewerRolesService => {
+    presetValues: (viewerRolesService) => {
         return viewerRolesService
             .getCustomRoles()
             .concat(viewerRolesService.getTwitchRoles())
@@ -59,47 +59,53 @@ module.exports = {
 
         return filterSettings.value;
     },
-    predicate: async (filterSettings, eventData) => {
 
+    predicate: async (filterSettings, eventData) => {
         const { comparisonType, value } = filterSettings;
         const { eventMeta } = eventData;
 
-        const username = eventMeta.username;
-        if (username == null || username === "") {
+        const { username, userIdName } = eventMeta;
+        if (!username && !userIdName) {
             return false;
         }
 
-        const user = await twitchApi.users.getUserByName(username);
-        if (user == null) {
-            return false;
-        }
-
-        /** @type {string[]} */
-        let twitchUserRoles = eventMeta.twitchUserRoles;
-        if (twitchUserRoles == null) {
-            twitchUserRoles = await chatRolesManager.getUsersChatRoles(user.id);
-        }
-
-        const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(user.id) || [];
-        const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(user.id) || [];
-        const userTwitchRoles = (twitchUserRoles || [])
-            .map(twitchRolesManager.mapTwitchRole);
-
-        const allRoles = [
-            ...userTwitchRoles,
-            ...userTeamRoles,
-            ...userCustomRoles
-        ].filter(r => r != null);
-
-        const hasRole = allRoles.some(r => r.id === value);
-
-        switch (comparisonType) {
-            case "include":
-                return hasRole;
-            case "doesn't include":
-                return !hasRole;
-            default:
+        try {
+            const user = await twitchApi.users.getUserByName(userIdName ?? username.toLowerCase());
+            if (user == null) {
                 return false;
+            }
+
+            /** @type {string[]} */
+            let twitchUserRoles = eventMeta.twitchUserRoles;
+            if (twitchUserRoles == null) {
+                twitchUserRoles = await chatRolesManager.getUsersChatRoles(user.id);
+            }
+
+            const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(user.id) || [];
+            const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(user.id) || [];
+            const userTwitchRoles = (twitchUserRoles || [])
+                .map(twitchRolesManager.mapTwitchRole);
+
+            const allRoles = [
+                ...userTwitchRoles,
+                ...userTeamRoles,
+                ...userCustomRoles
+            ].filter(r => r != null);
+
+            const hasRole = allRoles.some(r => r.id === value);
+
+            switch (comparisonType) {
+                case "include":
+                    return hasRole;
+                case "doesn't include":
+                    return !hasRole;
+                default:
+                    return false;
+            }
+        } catch {
+            // Silently fail
         }
+
+        return false;
     }
 };
