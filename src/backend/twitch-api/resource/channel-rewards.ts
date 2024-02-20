@@ -1,6 +1,13 @@
 import logger from "../../logwrapper";
 import accountAccess from "../../common/account-access";
-import { ApiClient, HelixCustomReward, HelixCreateCustomRewardData, HelixUpdateCustomRewardData } from "@twurple/api";
+import {
+    ApiClient,
+    HelixCustomReward,
+    HelixCreateCustomRewardData,
+    HelixUpdateCustomRewardData,
+    HelixCustomRewardRedemption,
+    HelixCustomRewardRedemptionFilter
+} from "@twurple/api";
 
 export interface ImageSet {
     url1x: string;
@@ -38,6 +45,22 @@ export interface CustomReward {
     shouldRedemptionsSkipRequestQueue: boolean;
     redemptionsRedeemedCurrentStream?: number;
     cooldownExpiresAt?: Date;
+}
+
+export interface RewardRedemption {
+    id: string;
+    rewardId: string;
+    redemptionDate: Date;
+    userId: string;
+    userName: string;
+    userDisplayName: string;
+    rewardMessage?: string;
+}
+
+export interface RewardRedemptionApprovalRequest {
+    rewardId: string;
+    redemptionId?: string;
+    approve?: boolean;
 }
 
 export class TwitchChannelRewardsApi {
@@ -147,6 +170,18 @@ export class TwitchChannelRewardsApi {
         };
     }
 
+    private mapCustomRewardRedemptionResponse(redemption: HelixCustomRewardRedemption): RewardRedemption {
+        return {
+            id: redemption.id,
+            rewardId: redemption.rewardId,
+            redemptionDate: redemption.redemptionDate,
+            userId: redemption.userId,
+            userName: redemption.userName,
+            userDisplayName: redemption.userDisplayName,
+            rewardMessage: redemption.userInput
+        };
+    }
+
     /**
      * Get an array of custom channel rewards
      * @param {boolean} onlyManageable - Only get rewards manageable by Firebot
@@ -250,20 +285,79 @@ export class TwitchChannelRewardsApi {
         }
     }
 
-    async approveOrRejectChannelRewardRedemption(rewardId: string, redemptionId: string, approve = true): Promise<boolean> {
+    async getOpenChannelRewardRedemptions(): Promise<Record<string, RewardRedemption[]>> {
+        const redemptions: Record<string, RewardRedemption[]> = {};
+
+        try {
+            const rewards = await this.getManageableCustomChannelRewards();
+            const filter: HelixCustomRewardRedemptionFilter = {
+                newestFirst: true
+            };
+
+            for (const reward of rewards) {
+                const response = await this._streamerClient.channelPoints.getRedemptionsForBroadcasterPaginated(
+                    accountAccess.getAccounts().streamer.userId,
+                    reward.id,
+                    "UNFULFILLED",
+                    filter
+                ).getAll();
+
+                redemptions[reward.id] = response.map(r => this.mapCustomRewardRedemptionResponse(r));
+            }
+        } catch (error) {
+            logger.warn(`There was an error retrieving channel reward redemptions.`, error);
+        }
+
+        return redemptions;
+    }
+
+    async approveOrRejectChannelRewardRedemption(request: RewardRedemptionApprovalRequest): Promise<boolean> {
+        const approve = request?.approve ?? true;
         try {
             const response = await this._streamerClient.channelPoints.updateRedemptionStatusByIds(
                 accountAccess.getAccounts().streamer.userId,
-                rewardId,
-                [redemptionId],
+                request.rewardId,
+                [request.redemptionId],
                 approve ? "FULFILLED" : "CANCELED"
             );
 
-            logger.debug(`Redemption ${redemptionId} for channel reward ${rewardId} was ${response[0].isFulfilled ? "approved" : "rejected"}`);
+            logger.debug(`Redemption ${request.redemptionId} for channel reward ${request.rewardId} was ${response[0].isFulfilled ? "approved" : "rejected"}`);
 
             return true;
         } catch (error) {
             logger.error(`Failed to ${approve ? "approve" : "reject"} channel reward redemption`, error.message);
+            return false;
+        }
+    }
+
+    async approveOrRejectAllRedemptionsForChannelReward(request: RewardRedemptionApprovalRequest): Promise<boolean> {
+        const approve = request?.approve ?? true;
+        try {
+            const filter: HelixCustomRewardRedemptionFilter = {
+                newestFirst: true
+            };
+
+            const redemptions = await this._streamerClient.channelPoints.getRedemptionsForBroadcasterPaginated(
+                accountAccess.getAccounts().streamer.userId,
+                request.rewardId,
+                "UNFULFILLED",
+                filter
+            ).getAll();
+
+            for (const redemption of redemptions) {
+                if (await this.approveOrRejectChannelRewardRedemption({
+                    rewardId: redemption.rewardId,
+                    redemptionId: redemption.id,
+                    approve: approve
+                }) !== true) {
+                    logger.warn(`Could not complete ${approve ? "approving" : "rejecting"} all channel reward redemptions for ${request.rewardId}`);
+                    return false;
+                }
+            }
+
+            return true;
+        } catch (error) {
+            logger.error(`Failed to ${approve ? "approve" : "reject"} all channel reward redemptions for ${request.rewardId}`, error.message);
             return false;
         }
     }

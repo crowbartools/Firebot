@@ -1,6 +1,6 @@
 import { EffectType } from "../../../../types/effects";
 import { EffectCategory } from "../../../../shared/effect-constants";
-import twitchApi from "../../../twitch-api/api";
+import channelRewardManager from "../../../channel-rewards/channel-reward-manager";
 
 const model: EffectType<{
     rewardId: string;
@@ -63,11 +63,11 @@ const model: EffectType<{
     },
     optionsController: () => {},
     onTriggerEvent: async ({ effect }) => {
-        return await twitchApi.channelRewards.approveOrRejectChannelRewardRedemption(
-            effect.rewardId,
-            effect.redemptionId,
-            effect.approve
-        );
+        return await channelRewardManager.approveOrRejectChannelRewardRedemption({
+            rewardId: effect.rewardId,
+            redemptionId: effect.redemptionId,
+            approve: effect.approve
+        });
     }
 };
 

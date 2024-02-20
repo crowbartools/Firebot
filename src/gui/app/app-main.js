@@ -157,6 +157,7 @@
         effectQueuesService.loadEffectQueues();
 
         channelRewardsService.loadChannelRewards();
+        channelRewardsService.refreshChannelRewardRedemptions();
 
         sortTagsService.loadSortTags();
 
@@ -613,6 +614,13 @@
     app.filter('prettyDate', function() {
         return function(input) {
             return (input) ? moment(input).format('L') : 'Not saved';
+        };
+    });
+
+    app.filter('timeAgo', function() {
+        return function(input, unit) {
+            const count = moment().diff(moment(input), unit);
+            return `${count} ${count === 1 ? unit.slice(0, -1) : unit} ago`;
         };
     });
 
