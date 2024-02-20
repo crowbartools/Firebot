@@ -15,12 +15,26 @@ export class TwitchUsersApi {
         return await this._streamerClient.users.getUserById(userId);
     }
 
+    async getUsersByIds(userIds: string[]): Promise<HelixUser[]> {
+        const users: HelixUser[] = [];
+        for (let x = 0; x < userIds.length; x += 100) {
+            const userBatch = userIds.slice(x, x + 100);
+            users.push(...await this._streamerClient.users.getUsersByIds(userBatch));
+        }
+        return users;
+    }
+
     async getUserByName(username: string): Promise<HelixUser> {
         return await this._streamerClient.users.getUserByName(username);
     }
 
     async getUsersByNames(usernames: string[]): Promise<HelixUser[]> {
-        return await this._streamerClient.users.getUsersByNames(usernames);
+        const users: HelixUser[] = [];
+        for (let x = 0; x < usernames.length; x += 100) {
+            const userBatch = usernames.slice(x, x + 100);
+            users.push(...await this._streamerClient.users.getUsersByNames(userBatch));
+        }
+        return users;
     }
 
     async getFollowDateForUser(username: string): Promise<Date> {

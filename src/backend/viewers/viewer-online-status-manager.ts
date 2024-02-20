@@ -100,7 +100,7 @@ class ViewerOnlineStatusManager {
                 lastSeen: now
             };
 
-            if (chatRolesManager.userIsKnownBot(viewer.username) && settings.getAutoFlagBots()) {
+            if (await chatRolesManager.userIsKnownBot(viewer.id) === true && settings.getAutoFlagBots()) {
                 dbData.disableAutoStatAccrual = true;
                 dbData.disableActiveUserList = true;
             }

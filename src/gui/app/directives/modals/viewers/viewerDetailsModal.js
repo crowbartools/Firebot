@@ -138,7 +138,7 @@
                         <div style="font-size:13px;font-weight: bold;opacity:0.9;margin-bottom:5px;">CUSTOM ROLES</div>
                         <div class="role-bar" ng-repeat="customRole in $ctrl.customRoles track by customRole.id">
                             <span>{{customRole.name}}</span>
-                            <span class="clickable" style="padding-left: 10px;" ng-click="$ctrl.removeUserFromRole(customRole.id, customRole.name)" uib-tooltip="Remove role" tooltip-append-to-body="true">
+                            <span class="clickable" style="padding-left: 10px;" ng-click="$ctrl.removeViewerFromRole(customRole.id, customRole.name)" uib-tooltip="Remove role" tooltip-append-to-body="true">
                                 <i class="far fa-times"></i>
                             </span>
                         </div>
@@ -617,19 +617,19 @@
                 $ctrl.hasCustomRoles = viewerRolesService.getCustomRoles().length > 0;
                 $ctrl.customRoles = [];
                 function loadCustomRoles() {
-                    const username = $ctrl.viewerDetails.twitchData.displayName;
+                    const userId = $ctrl.viewerDetails.twitchData.id;
 
                     const viewerRoles = viewerRolesService.getCustomRoles();
                     $ctrl.hasCustomRolesAvailable = viewerRoles
-                        .filter(r => !r.viewers.some(v => v.toLowerCase() === username.toLowerCase()))
+                        .filter(r => !r.viewers.some(v => v.id === userId))
                         .length > 0;
-                    $ctrl.customRoles = viewerRoles.filter(vr => vr.viewers.some(v => v.toLowerCase() === username.toLowerCase()));
+                    $ctrl.customRoles = viewerRoles.filter(vr => vr.viewers.some(v => v.id === userId));
                 }
 
                 $ctrl.openAddCustomRoleModal = () => {
-                    const username = $ctrl.viewerDetails.twitchData.displayName;
+                    const userId = $ctrl.viewerDetails.twitchData.id;
                     const options = viewerRolesService.getCustomRoles()
-                        .filter(r => !r.viewers.some(v => v.toLowerCase() === username.toLowerCase()))
+                        .filter(r => !r.viewers.some(v => v.id === userId))
                         .map((r) => {
                             return {
                                 id: r.id,
@@ -649,15 +649,19 @@
                                 return;
                             }
 
-                            const username = $ctrl.viewerDetails.twitchData.displayName;
+                            const user = {
+                                id: $ctrl.viewerDetails.twitchData.id,
+                                username: $ctrl.viewerDetails.twitchData.username,
+                                displayName: $ctrl.viewerDetails.twitchData.displayName
+                            };
 
-                            viewerRolesService.addUserToRole(roleId, username);
+                            viewerRolesService.addViewerToRole(roleId, user);
                             loadCustomRoles();
                         });
                 };
 
-                $ctrl.removeUserFromRole = (roleId, roleName) => {
-                    const username = $ctrl.viewerDetails.twitchData.displayName;
+                $ctrl.removeViewerFromRole = (roleId, roleName) => {
+                    const userId = $ctrl.viewerDetails.twitchData.id;
                     utilityService.showConfirmationModal({
                         title: "Remove Viewer",
                         question: `Are you sure you want to remove the role ${roleName}?`,
@@ -665,7 +669,7 @@
                         confirmBtnType: "btn-danger"
                     }).then((confirmed) => {
                         if (confirmed) {
-                            viewerRolesService.removeUserFromRole(roleId, username);
+                            viewerRolesService.removeViewerFromRole(roleId, userId);
                             loadCustomRoles();
                         }
                     });
@@ -695,7 +699,7 @@
 
                     const displayName = $ctrl.isTwitchOrNewUser() && $ctrl.viewerDetails.twitchData ?
                         $ctrl.viewerDetails.twitchData.displayName :
-                        $ctrl.viewerDetails.firebotData.username;
+                        $ctrl.viewerDetails.firebotData.displayName;
 
                     utilityService
                         .showConfirmationModal({

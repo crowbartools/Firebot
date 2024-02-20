@@ -14,6 +14,7 @@ const logger = require("../../../logwrapper");
 const moment = require("moment");
 const triviaHelper = require("./trivia-helper");
 const NodeCache = require("node-cache");
+const twitchApi = require("../../../twitch-api/api");
 
 let fiveSecTimeoutId;
 let answerTimeoutId;
@@ -111,6 +112,11 @@ const triviaCommand = {
             const wagerAmount = parseInt(triggeredArg);
 
             const username = userCommand.commandSender;
+            const user = await twitchApi.users.getUserByName(username);
+            if (user == null) {
+                logger.warn(`Could not process trivia command for ${username}. User does not exist.`);
+                return;
+            }
 
             if (currentQuestion) {
                 if (currentQuestion.username === username) {
@@ -180,15 +186,15 @@ const triviaCommand = {
             }
 
             try {
-                await currencyManager.adjustCurrencyForViewer(username, currencyId, -Math.abs(wagerAmount));
+                await currencyManager.adjustCurrencyForViewerById(user.id, currencyId, 0 - Math.abs(wagerAmount));
             } catch (error) {
                 logger.error(error.message);
                 await twitchChat.sendChatMessage(`Sorry ${username}, there was an error deducting currency from your balance so trivia has been canceled.`, null, chatter);
                 return;
             }
 
-            const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
-            const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(username) || [];
+            const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(user.id) || [];
+            const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(user.id) || [];
             const userTwitchRoles = (userCommand.senderRoles || [])
                 .map(r => twitchRolesManager.mapTwitchRole(r))
                 .filter(r => !!r);

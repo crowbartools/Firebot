@@ -4,6 +4,7 @@ const customRolesManager = require("../../../roles/custom-roles-manager");
 const teamRolesManager = require("../../../roles/team-roles-manager");
 const twitchRolesManager = require("../../../../shared/twitch-roles");
 const chatRolesManager = require("../../../roles/chat-roles-manager");
+const twitchApi = require("../../../twitch-api/api");
 
 module.exports = {
     id: "firebot:viewerroles",
@@ -68,14 +69,19 @@ module.exports = {
             return false;
         }
 
-        /** @type{string[]} */
-        let twitchUserRoles = eventMeta.twitchUserRoles;
-        if (twitchUserRoles == null) {
-            twitchUserRoles = await chatRolesManager.getUsersChatRoles(username);
+        const user = await twitchApi.users.getUserByName(username);
+        if (user == null) {
+            return false;
         }
 
-        const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
-        const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(username) || [];
+        /** @type {string[]} */
+        let twitchUserRoles = eventMeta.twitchUserRoles;
+        if (twitchUserRoles == null) {
+            twitchUserRoles = await chatRolesManager.getUsersChatRoles(user.id);
+        }
+
+        const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(user.id) || [];
+        const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(user.id) || [];
         const userTwitchRoles = (twitchUserRoles || [])
             .map(twitchRolesManager.mapTwitchRole);
 

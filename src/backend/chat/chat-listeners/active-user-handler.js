@@ -13,13 +13,13 @@ const ONLINE_TIMEOUT = 450; // 7.50 mins
 /**
  * Simple User
  * @typedef {Object} User
- * @property {id} id
+ * @property {string} id
  * @property {string} username
  */
 
 /**
  * @typedef {Object} UserDetails
- * @property {number} id
+ * @property {string} id
  * @property {string} username
  * @property {string} displayName
  * @property {string} profilePicUrl

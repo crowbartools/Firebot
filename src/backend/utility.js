@@ -285,6 +285,16 @@ const emptyFolder = async (folderPath) => {
     }
 };
 
+const findIndexIgnoreCase = (array, element) => {
+    if (Array.isArray(array)) {
+        element = element.toString().toLowerCase();
+        const search = array.findIndex(e => e.toString().toLowerCase() === element);
+        return search;
+    }
+
+    return -1;
+};
+
 exports.getRandomInt = getRandomInt;
 exports.escapeRegExp = escapeRegExp;
 exports.getUrlRegex = getUrlRegex;
@@ -305,3 +315,4 @@ exports.convertToString = convertToString;
 exports.deepClone = deepClone;
 exports.deepFreeze = deepFreeze;
 exports.emptyFolder = emptyFolder;
+exports.findIndexIgnoreCase = findIndexIgnoreCase;

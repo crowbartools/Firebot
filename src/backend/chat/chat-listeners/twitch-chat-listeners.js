@@ -54,9 +54,13 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
         await chatModerationManager.moderateMessage(firebotChatMessage);
 
         if (firebotChatMessage.isVip === true) {
-            chatRolesManager.addVipToVipList(firebotChatMessage.username);
+            chatRolesManager.addVipToVipList({
+                id: msg.userInfo.userId,
+                username: msg.userInfo.userName,
+                displayName: msg.userInfo.displayName
+            });
         } else {
-            chatRolesManager.removeVipFromVipList(firebotChatMessage.username);
+            chatRolesManager.removeVipFromVipList(msg.userInfo.userId);
         }
 
         // send to the frontend
@@ -126,9 +130,13 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText, false, true);
 
         if (firebotChatMessage.isVip === true) {
-            chatRolesManager.addVipToVipList(firebotChatMessage.username);
+            chatRolesManager.addVipToVipList({
+                id: msg.userInfo.userId,
+                username: msg.userInfo.userName,
+                displayName: msg.userInfo.displayName
+            });
         } else {
-            chatRolesManager.removeVipFromVipList(firebotChatMessage.username);
+            chatRolesManager.removeVipFromVipList(msg.userInfo.userId);
         }
 
         frontendCommunicator.send("twitch:chat:message", firebotChatMessage);

@@ -3,6 +3,7 @@
 const customRolesManager = require("../../roles/custom-roles-manager");
 const teamRolesManager = require("../../roles/team-roles-manager");
 const twitchRolesManager = require("../../../shared/twitch-roles");
+const twitchApi = require("../../twitch-api/api");
 
 const model = {
     definition: {
@@ -108,9 +109,13 @@ const model = {
         return new Promise(async (resolve, reject) => {
             if (restrictionData.mode === "roles") {
                 const username = triggerData.metadata.username;
+                const user = await twitchApi.users.getUserByName(username);
+                if (user == null) {
+                    reject("User does not exist");
+                }
 
-                const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
-                const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(username) || [];
+                const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(user.id) || [];
+                const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(user.id) || [];
                 const userTwitchRoles = (triggerData.metadata.userTwitchRoles || [])
                     .map(mr => twitchRolesManager.mapTwitchRole(mr));
 

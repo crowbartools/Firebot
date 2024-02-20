@@ -21,7 +21,7 @@ export interface FirebotViewer {
 export interface BasicViewer {
     id: string;
     username: string;
-    twitchRoles?: string[];
     displayName?: string;
+    twitchRoles?: string[];
     profilePicUrl?: string;
 }
