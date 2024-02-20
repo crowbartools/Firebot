@@ -156,7 +156,7 @@ async function updateUserOnlineStatus(userDetails, updateDb = false) {
 
         frontendCommunicator.send("twitch:chat:user-joined", {
             id: userDetails.id,
-            username: userDetails.displayName,
+            username: userDetails.username,
             displayName: userDetails.displayName,
             roles: roles,
             profilePicUrl: userDetails.profilePicUrl,

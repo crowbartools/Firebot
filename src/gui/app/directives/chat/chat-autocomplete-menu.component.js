@@ -248,7 +248,9 @@
 
                     function buildChatUserItems() {
                         return chatMessagesService.chatUsers.map(user => ({
-                            display: user.username,
+                            display: user.username.toLowerCase() !== user.displayName.toLowerCase()
+                                ? `${user.displayName} (${user.username})`
+                                : user.displayName,
                             text: `@${user.username}`
                         }));
                     }
