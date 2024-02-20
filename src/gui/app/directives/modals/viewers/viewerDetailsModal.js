@@ -35,7 +35,10 @@
                                     <i class="fab fa-twitch" style="transform: translateY(2px);" />
                             </a>
                         </div>
-                        <div ng-show="$ctrl.isTwitchOrNewUser() && $ctrl.viewerDetails.twitchData" style="display:flex;margin-top:7px;">
+                        <div ng-show="$ctrl.isTwitchOrNewUser() && $ctrl.viewerDetails.twitchData && $ctrl.viewerDetails.twitchData.username.toLowerCase() !== $ctrl.viewerDetails.twitchData.displayName.toLowerCase()" style="display:flex;">
+                            <div style="margin-right: 11px; font-size: 20px;" class="muted">{{$ctrl.viewerDetails.twitchData.username}}</div>
+                        </div>
+                        <div ng-show="$ctrl.isTwitchOrNewUser() && $ctrl.viewerDetails.twitchData" style="display:flex;margin-top:10px;">
                             <div style="margin-right: 11px;" uib-tooltip="Twitch Age"><i class="fas fa-user-circle"></i> {{$ctrl.getAccountAge($ctrl.viewerDetails.twitchData.creationDate)}}</div>
                         </div>
                         <div ng-show="$ctrl.isTwitchOrNewUser() && $ctrl.viewerDetails.twitchData" style="display:flex;margin-top:10px;">

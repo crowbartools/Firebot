@@ -121,6 +121,12 @@
                                 >{{$ctrl.pronouns.pronounCache[$ctrl.message.username]}}</span>
                                 <b ng-style="{'color': $ctrl.message.color}">{{$ctrl.message.username}}</b>
                                 <span
+                                    ng-if="$ctrl.message.userIdName && $ctrl.message.username.toLowerCase() !== $ctrl.message.userIdName.toLowerCase()"
+                                    style="font-weight: 100"
+                                    ng-style="{'color': $ctrl.message.color}"
+                                    class="muted"
+                                >&nbsp;({{$ctrl.message.userIdName}})</span>
+                                <span
                                     ng-if="$ctrl.compactDisplay && !$ctrl.message.action"
                                     style="color:white;font-weight:200;"
                                 >:</span>
@@ -364,7 +370,7 @@
                                 </div>`,
                             enabled: false
                         },
-                        ...actions.map(a => {
+                        ...actions.map((a) => {
                             let html = "";
                             if (a.name === "Remove VIP") {
                                 html = `
@@ -409,7 +415,7 @@
                                     confirmLabel: "Ban",
                                     confirmBtnType: "btn-danger"
                                 })
-                                .then(confirmed => {
+                                .then((confirmed) => {
                                     if (confirmed) {
                                         backendCommunicator.fireEvent("update-user-banned-status", { username: userName, shouldBeBanned: true });
                                     }
@@ -426,7 +432,7 @@
                                     confirmLabel: "Unmod",
                                     confirmBtnType: "btn-danger"
                                 })
-                                .then(confirmed => {
+                                .then((confirmed) => {
                                     if (confirmed) {
                                         chatMessagesService.changeModStatus(userName, false);
                                     }
