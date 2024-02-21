@@ -35,10 +35,12 @@ class CustomRolesManager {
 
         frontendCommunicator.on("save-custom-role", (role: CustomRole) => {
             this.saveCustomRole(role);
+            this.triggerUiRefresh();
         });
 
         frontendCommunicator.on("delete-custom-role", (roleId: string) => {
             this.deleteCustomRole(roleId);
+            this.triggerUiRefresh();
         });
     }
 
@@ -52,63 +54,7 @@ class CustomRolesManager {
                 const legacyCustomRoles: Record<string, LegacyCustomRole> = legacyCustomRolesDb.getData("/");
 
                 for (const legacyRole of Object.values(legacyCustomRoles)) {
-                    logger.info(`Migrating custom role ${legacyRole.name}`);
-
-                    const newCustomRole: CustomRole = {
-                        id: legacyRole.id,
-                        name: legacyRole.name,
-                        viewers: []
-                    };
-
-                    const usernameRegex = new RegExp("^[a-z0-9_]+$", "i");
-                    const viewersToMigrate: string[] = [];
-                    const unicodeViewers: string[] = [];
-                    const failedMigration: string[] = [];
-
-                    for (const viewer of legacyRole.viewers) {
-                        if (usernameRegex.test(viewer) === true) {
-                            viewersToMigrate.push(viewer.toLowerCase());
-                        } else {
-                            unicodeViewers.push(viewer);
-                        }
-                    }
-
-                    // Maybe channel search gives us the Unicode users
-                    for (const viewer of unicodeViewers) {
-                        const results = await twitchApi.streamerClient.search.searchChannels(viewer);
-                        const channel = results.data?.find(c => c.displayName.toLowerCase() === viewer.toLowerCase());
-
-                        if (channel && channel.displayName.toLowerCase() === viewer.toLowerCase()) {
-                            newCustomRole.viewers.push({
-                                id: channel.id,
-                                username: channel.name,
-                                displayName: channel.displayName
-                            });
-                        } else {
-                            failedMigration.push(viewer);
-                        }
-                    }
-
-                    const users = await twitchApi.users.getUsersByNames(viewersToMigrate);
-                    for (const viewer of viewersToMigrate) {
-                        const user = users.find(u => u.name === viewer);
-                        if (user != null) {
-                            newCustomRole.viewers.push({
-                                id: user.id,
-                                username: user.name,
-                                displayName: user.displayName
-                            });
-                        } else {
-                            failedMigration.push(viewer);
-                        }
-                    }
-
-                    if (failedMigration.length > 0) {
-                        logger.warn(`Could not migrate the following viewers in custom role ${newCustomRole.name}: ${failedMigration.join(", ")}`);
-                    }
-
-                    this.saveCustomRole(newCustomRole);
-                    logger.info(`Finished migrating custom role ${newCustomRole.name}`);
+                    await this.importLegacyCustomRole(legacyRole);
                 }
 
                 logger.info("Deleting legacy custom roles database");
@@ -116,8 +62,80 @@ class CustomRolesManager {
 
                 logger.info("Legacy custom role migration complete");
             } catch (error) {
-                logger.error("Unexpected error during custom role migration", error);
+                logger.error("Unexpected error during legacy custom role migration", error);
             }
+        }
+    }
+
+    async importLegacyCustomRole(legacyRole: LegacyCustomRole) {
+        logger.info(`Migrating legacy custom role ${legacyRole.name}`);
+
+        const newCustomRole: CustomRole = {
+            id: legacyRole.id,
+            name: legacyRole.name,
+            viewers: []
+        };
+
+        const usernameRegex = new RegExp("^[a-z0-9_]+$", "i");
+        const viewersToMigrate: string[] = [];
+        const unicodeViewers: string[] = [];
+        const failedMigration: string[] = [];
+
+        for (const viewer of legacyRole.viewers) {
+            if (usernameRegex.test(viewer) === true) {
+                viewersToMigrate.push(viewer.toLowerCase());
+            } else {
+                unicodeViewers.push(viewer);
+            }
+        }
+
+        // Maybe channel search gives us the Unicode users
+        for (const viewer of unicodeViewers) {
+            const results = await twitchApi.streamerClient.search.searchChannels(viewer);
+            const channel = results.data?.find(c => c.displayName.toLowerCase() === viewer.toLowerCase());
+
+            if (channel && channel.displayName.toLowerCase() === viewer.toLowerCase()) {
+                newCustomRole.viewers.push({
+                    id: channel.id,
+                    username: channel.name,
+                    displayName: channel.displayName
+                });
+            } else {
+                failedMigration.push(viewer);
+            }
+        }
+
+        const users = await twitchApi.users.getUsersByNames(viewersToMigrate);
+        for (const viewer of viewersToMigrate) {
+            const user = users.find(u => u.name === viewer);
+            if (user != null) {
+                newCustomRole.viewers.push({
+                    id: user.id,
+                    username: user.name,
+                    displayName: user.displayName
+                });
+            } else {
+                failedMigration.push(viewer);
+            }
+        }
+
+        if (failedMigration.length > 0) {
+            logger.warn(`Could not migrate the following viewers in legacy custom role ${newCustomRole.name}: ${failedMigration.join(", ")}`);
+        }
+
+        this.saveCustomRole(newCustomRole);
+        logger.info(`Finished migrating legacy custom role ${newCustomRole.name}`);
+    }
+
+    async importCustomRole(role: LegacyCustomRole | CustomRole) {
+        if (role == null) {
+            return;
+        }
+
+        if (role.viewers?.length && !(role as CustomRole).viewers[0].id) {
+            await this.importLegacyCustomRole(role as LegacyCustomRole);
+        } else {
+            this.saveCustomRole(role as CustomRole);
         }
     }
 
@@ -172,6 +190,11 @@ class CustomRolesManager {
 
     saveCustomRole(role: CustomRole) {
         if (role == null) {
+            return;
+        }
+
+        if (role.viewers?.length && !role.viewers[0].id) {
+            logger.error(`Cannot save custom role ${role} as it is in an older format`);
             return;
         }
 
