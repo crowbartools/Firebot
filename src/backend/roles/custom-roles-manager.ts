@@ -62,11 +62,28 @@ class CustomRolesManager {
 
                     const usernameRegex = new RegExp("^[a-z0-9_]+$", "i");
                     const viewersToMigrate: string[] = [];
+                    const unicodeViewers: string[] = [];
                     const failedMigration: string[] = [];
 
                     for (const viewer of legacyRole.viewers) {
                         if (usernameRegex.test(viewer) === true) {
                             viewersToMigrate.push(viewer.toLowerCase());
+                        } else {
+                            unicodeViewers.push(viewer);
+                        }
+                    }
+
+                    // Maybe channel search gives us the Unicode users
+                    for (const viewer of unicodeViewers) {
+                        const results = await twitchApi.streamerClient.search.searchChannels(viewer);
+                        const channel = results.data?.find(c => c.displayName.toLowerCase() === viewer.toLowerCase());
+
+                        if (channel && channel.displayName.toLowerCase() === viewer.toLowerCase()) {
+                            newCustomRole.viewers.push({
+                                id: channel.id,
+                                username: channel.name,
+                                displayName: channel.displayName
+                            });
                         } else {
                             failedMigration.push(viewer);
                         }
