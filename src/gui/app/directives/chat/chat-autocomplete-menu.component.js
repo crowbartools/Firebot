@@ -248,7 +248,7 @@
 
                     function buildChatUserItems() {
                         return chatMessagesService.chatUsers.map(user => ({
-                            display: user.username.toLowerCase() !== user.displayName.toLowerCase()
+                            display: user.username?.toLowerCase() !== user.displayName?.toLowerCase()
                                 ? `${user.displayName} (${user.username})`
                                 : user.displayName,
                             text: `@${user.username}`
@@ -334,7 +334,7 @@
 
                             const token = currentWord.text[0];
 
-                            categories.forEach(c => {
+                            categories.forEach((c) => {
                                 if (token === c.token && (!c.onlyStart || currentWord.index === 0)) {
                                     const minQueryLength = c.minQueryLength || 0;
                                     if (currentWord.text.length >= minQueryLength) {
