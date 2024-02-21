@@ -54,11 +54,10 @@ class QuickActionManager extends JsonDbManager {
             return;
         }
         const quickActionSettings = settings.getQuickActionSettings();
-        if (Object.keys(quickActionSettings).includes(quickAction.id)) {
-            return;
+        if (!Object.keys(quickActionSettings).includes(quickAction.id)) {
+            quickActionSettings[quickAction.id] = { enabled: true, position: Object.keys(quickActionSettings).length };
+            settings.setQuickActionSettings(quickActionSettings);
         }
-        quickActionSettings[quickAction.id] = { enabled: true, position: Object.keys(quickActionSettings).length };
-        settings.setQuickActionSettings(quickActionSettings);
         if (notify) {
             this.triggerUiRefresh();
         }
