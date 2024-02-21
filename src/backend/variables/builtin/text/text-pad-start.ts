@@ -5,7 +5,7 @@ const model : ReplaceVariable = {
     definition: {
         handle: "textPadStart",
         description: "Pads the start of text",
-        usage: "replace[input, count, countIsLength, padChar]",
+        usage: "textPadStart[input, count, countIsLength, padChar]",
         examples: [
             {
                 usage: "textPadStart[input, count, $false, \" \"]",
