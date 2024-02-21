@@ -135,7 +135,7 @@ class TwitchChat extends EventEmitter {
 
             this._streamerIncomingChatClient.irc.onDisconnect((manual, reason) => {
                 if (!manual) {
-                    logger.error("Incomeing Chat disconnected unexpectedly", reason);
+                    logger.error("Incoming Chat disconnected unexpectedly", reason);
                     frontendCommunicator.send("twitch:chat:autodisconnected", true);
                 }
             });
