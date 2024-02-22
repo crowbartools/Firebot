@@ -117,6 +117,7 @@ class TwitchChat extends EventEmitter {
             });
             this._streamerOutgoingingChatClient.irc.onRegister(() => {
                 this._streamerOutgoingingChatClient.join(streamer.username);
+                frontendCommunicator.send("twitch:chat:autodisconnected", false);
             });
 
             this._streamerIncomingChatClient.irc.onPasswordError((event) => {
@@ -134,14 +135,14 @@ class TwitchChat extends EventEmitter {
 
             this._streamerIncomingChatClient.irc.onDisconnect((manual, reason) => {
                 if (!manual) {
-                    logger.error("Chat disconnected unexpectedly", reason);
+                    logger.error("Incoming Chat disconnected unexpectedly", reason);
                     frontendCommunicator.send("twitch:chat:autodisconnected", true);
                 }
             });
 
             this._streamerOutgoingingChatClient.irc.onDisconnect((manual, reason) => {
                 if (!manual) {
-                    logger.error("Chat disconnected unexpectedly", reason);
+                    logger.error("Outgoing Chat disconnected unexpectedly", reason);
                     frontendCommunicator.send("twitch:chat:autodisconnected", true);
                 }
             });
