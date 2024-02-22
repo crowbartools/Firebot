@@ -83,8 +83,8 @@ function createStreamPreviewWindow() {
     streamPreviewWindowState.manage(streamPreview);
 
     streamPreview.on("close", () => {
-        if (!view.isDestroyed()) {
-            view.destroy();
+        if (!view.webContents.isDestroyed()) {
+            view.webContents.destroy();
         }
     });
 }

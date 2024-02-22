@@ -1,3 +1,6 @@
+import customVariableShorthand from './custom-variable-shorthand';
+import effectOutputShorthand from './effect-output-shorthand';
+
 import varAll from './all';
 import varAnd from './and';
 import varAny from './any';
@@ -10,6 +13,8 @@ import varNot from './not';
 import varOr from './or';
 
 export default [
+    customVariableShorthand,
+    effectOutputShorthand,
     varAll,
     varAnd,
     varAny,

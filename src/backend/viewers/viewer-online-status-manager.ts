@@ -18,10 +18,10 @@ class ViewerOnlineStatusManager {
             await this.setAllViewersOffline();
 
             // update online viewer's lastSeen prop every minute
-            this._updateLastSeenIntervalId = setInterval(this.setLastSeenDateTime, 60000);
+            this._updateLastSeenIntervalId = setInterval(async () => await this.setLastSeenDateTime(), 60000);
 
             // Update online viewer minutes every 15 minutes.
-            this._updateTimeIntervalId = setInterval(this.calcAllViewersOnlineMinutes, 900000);
+            this._updateTimeIntervalId = setInterval(async () => await this.calcAllViewersOnlineMinutes(), 900000);
         });
 
         frontendCommunicator.onAsync("disconnect-viewer-db", async () => {

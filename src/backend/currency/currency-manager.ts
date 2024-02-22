@@ -284,7 +284,7 @@ class CurrencyManager {
             } else if (intervalMod !== 0) {
                 logger.debug(`Currency: ${currency.name} is not ready to pay out yet.`);
             } else {
-                logger.error(`Currency: Something weird happened and ${currency.name} couldnt pay out.`);
+                logger.error(`Currency: Something weird happened and ${currency.name} couldn't pay out.`);
             }
         }
     }
