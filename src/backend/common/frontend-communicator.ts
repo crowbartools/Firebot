@@ -23,7 +23,7 @@ class FrontendCommunicator implements FrontendCommunicatorModule {
     }
 
     send(eventName: string, data?: unknown): void {
-        if (globalThis.renderWindow != null) {
+        if (globalThis.renderWindow?.webContents?.isDestroyed() === false) {
             globalThis.renderWindow.webContents.send(eventName, data);
         }
     }
