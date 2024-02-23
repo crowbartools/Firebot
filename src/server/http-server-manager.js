@@ -394,10 +394,12 @@ setInterval(() => {
         : manager.defaultWebsocketServerInstance.clients.size > 0;
 
     if (clientsConnected !== manager.overlayHasClients) {
-        renderWindow.webContents.send("overlayStatusUpdate", {
-            clientsConnected: clientsConnected,
-            serverStarted: manager.isDefaultServerStarted
-        });
+        if (renderWindow?.webContents?.isDestroyed() === false) {
+            renderWindow.webContents.send("overlayStatusUpdate", {
+                clientsConnected: clientsConnected,
+                serverStarted: manager.isDefaultServerStarted
+            });
+        }
         manager.overlayHasClients = clientsConnected;
     }
 }, 3000);
