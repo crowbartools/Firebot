@@ -37,7 +37,9 @@ const model : ReplaceVariable = {
             // map each entry to #position) name - amount
             .map((user, idx) => ({
                 place: idx + 1,
-                username: user.displayName,
+                username: user.username,
+                userId: user._id,
+                userDisplayName: user.displayName,
                 amount: user.metadata[metadataKey]
             }));
 

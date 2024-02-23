@@ -193,8 +193,8 @@ class FirebotChatHelpers {
         return parts.flatMap((p) => {
             if (p.type === "text" && p.text != null) {
 
-                if (firebotChatMessage.username !== streamer.displayName &&
-                    (!bot.loggedIn || firebotChatMessage.username !== bot.displayName)) {
+                if (firebotChatMessage.username !== streamer.username &&
+                    (!bot.loggedIn || firebotChatMessage.username !== bot.username)) {
                     if (!firebotChatMessage.whisper &&
                     !firebotChatMessage.tagged &&
                     streamer.loggedIn &&
@@ -346,9 +346,8 @@ class FirebotChatHelpers {
     buildBasicFirebotChatMessage(msgText: string, username: string): FirebotChatMessage {
         return {
             id: null,
-            userIdName: null,
-            userId: null,
             username: username,
+            userId: null,
             rawText: msgText,
             whisper: false,
             action: false,
@@ -362,9 +361,9 @@ class FirebotChatHelpers {
     async buildFirebotChatMessage(msg: ChatMessage, msgText: string, whisper = false, action = false) {
         const firebotChatMessage: FirebotChatMessage = {
             id: msg.tags.get("id"),
-            username: msg.userInfo.displayName,
-            userIdName: msg.userInfo.userName,
+            username: msg.userInfo.userName,
             userId: msg.userInfo.userId,
+            userDisplayName: msg.userInfo.displayName,
             customRewardId: msg.tags.get("custom-reward-id") || undefined,
             isHighlighted: msg.tags.get("msg-id") === "highlighted-message",
             isAnnouncement: false,
@@ -442,12 +441,12 @@ class FirebotChatHelpers {
         firebotChatMessage.isSubscriber = msg.userInfo.isSubscriber;
         firebotChatMessage.isVip = msg.userInfo.isVip;
 
-        if (streamer.loggedIn && firebotChatMessage.username === streamer.displayName) {
+        if (streamer.loggedIn && firebotChatMessage.username === streamer.username) {
             firebotChatMessage.isBroadcaster = true;
             firebotChatMessage.roles.push("broadcaster");
         }
 
-        if (bot.loggedIn && firebotChatMessage.username === bot.displayName) {
+        if (bot.loggedIn && firebotChatMessage.username === bot.username) {
             firebotChatMessage.isBot = true;
             firebotChatMessage.roles.push("bot");
         }
@@ -478,8 +477,8 @@ class FirebotChatHelpers {
         const firebotChatMessage: FirebotChatMessage = {
             id: id,
             username: extensionName,
-            userIdName: extensionName,
             userId: extensionName,
+            userDisplayName: extensionName,
             rawText: text,
             profilePicUrl: extensionIconUrl,
             whisper: false,
@@ -513,9 +512,9 @@ class FirebotChatHelpers {
 
         const viewerFirebotChatMessage: FirebotChatMessage = {
             id: msg.messageId,
-            username: msg.senderDisplayName,
-            userIdName: msg.senderName,
+            username: msg.senderName,
             userId: msg.senderId,
+            userDisplayName: msg.senderDisplayName,
             rawText: msg.messageContent,
             profilePicUrl: profilePicUrl,
             whisper: false,

@@ -124,6 +124,8 @@ class TimerManager extends JsonDbManager<Timer> {
                     type: TriggerType.TIMER,
                     metadata: {
                         username: accountAccess.getAccounts().streamer.username,
+                        userId: accountAccess.getAccounts().streamer.userId,
+                        userDisplayName: accountAccess.getAccounts().streamer.displayName,
                         timer: timer
                     }
                 },
