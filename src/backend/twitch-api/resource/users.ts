@@ -19,7 +19,11 @@ export class TwitchUsersApi {
         const users: HelixUser[] = [];
         for (let x = 0; x < userIds.length; x += 100) {
             const userBatch = userIds.slice(x, x + 100);
-            users.push(...await this._streamerClient.users.getUsersByIds(userBatch));
+            try {
+                users.push(...await this._streamerClient.users.getUsersByIds(userBatch));
+            } catch (error) {
+                logger.error(`Error trying to get users by ID from Twitch API`, error);
+            }
         }
         return users;
     }
@@ -32,7 +36,11 @@ export class TwitchUsersApi {
         const users: HelixUser[] = [];
         for (let x = 0; x < usernames.length; x += 100) {
             const userBatch = usernames.slice(x, x + 100);
-            users.push(...await this._streamerClient.users.getUsersByNames(userBatch));
+            try {
+                users.push(...await this._streamerClient.users.getUsersByNames(userBatch));
+            } catch (error) {
+                logger.error(`Error trying to get users by name from Twitch API`, error);
+            }
         }
         return users;
     }
