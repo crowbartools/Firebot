@@ -85,7 +85,11 @@ export async function addUserToCustomRole(req: Request, res: Response): Promise<
         });
     }
 
-    customRolesManager.addViewerToRole(customRole.id, metadata.username);
+    customRolesManager.addViewerToRole(customRole.id, {
+        id: metadata._id,
+        username: metadata.username,
+        displayName: metadata.displayName
+    });
 
     return res.status(201).send();
 }
@@ -131,7 +135,7 @@ export async function removeUserFromCustomRole(req: Request, res: Response): Pro
         });
     }
 
-    customRolesManager.removeViewerFromRole(customRole.id, metadata.username);
+    customRolesManager.removeViewerFromRole(customRole.id, metadata._id);
 
     return res.status(204).send();
 }

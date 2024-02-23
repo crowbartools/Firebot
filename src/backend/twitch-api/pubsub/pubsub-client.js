@@ -118,10 +118,13 @@ async function createClient() {
 
             switch (message.type) {
                 case "vip_added":
-                    chatRolesManager.addVipToVipList(message.targetUserName);
+                    chatRolesManager.addVipToVipList({
+                        id: message.targetUserId,
+                        username: message.targetUserName
+                    });
                     break;
                 case "vip_removed":
-                    chatRolesManager.removeVipFromVipList(message.targetUserName);
+                    chatRolesManager.removeVipFromVipList(message.targetUserId);
                     break;
                 default:
                     switch (message.action) {

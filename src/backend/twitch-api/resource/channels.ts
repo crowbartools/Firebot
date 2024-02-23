@@ -1,6 +1,6 @@
 import logger from '../../logwrapper';
 import accountAccess from "../../common/account-access";
-import { ApiClient, CommercialLength, HelixChannel, HelixChannelUpdate, HelixUser } from "@twurple/api";
+import { ApiClient, CommercialLength, HelixChannel, HelixChannelUpdate, HelixUser, HelixUserRelation } from "@twurple/api";
 
 export class TwitchChannelsApi {
     private _streamerClient: ApiClient;
@@ -148,18 +148,12 @@ export class TwitchChannelsApi {
     /**
      * Gets all the VIPs in the streamer's channel
      */
-    async getVips(): Promise<string[]> {
-        const vips: string[] = [];
+    async getVips(): Promise<HelixUserRelation[]> {
+        const vips: HelixUserRelation[] = [];
         const streamerId = accountAccess.getAccounts().streamer.userId;
 
         try {
-            let result = await this._streamerClient.channels.getVips(streamerId);
-            vips.push(...result.data.map(c => c.displayName));
-
-            while (result.cursor) {
-                result = await this._streamerClient.channels.getVips(streamerId, { after: result.cursor });
-                vips.push(...result.data.map(c => c.displayName));
-            }
+            vips.push(...await this._streamerClient.channels.getVipsPaginated(streamerId).getAll());
         } catch (error) {
             logger.error("Error getting VIPs", error.message);
         }

@@ -38,7 +38,7 @@ exports.run = async () => {
                     viewers: viewerGroup.users
                 };
 
-                customRolesManager.saveCustomRole(customRole);
+                await customRolesManager.importCustomRole(customRole);
             }
 
             customRolesManager.triggerUiRefresh();

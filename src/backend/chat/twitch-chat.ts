@@ -346,10 +346,14 @@ frontendCommunicator.onAsync("update-user-vip-status", async (data: UserVipReque
 
     if (shouldBeVip) {
         await twitchApi.moderation.addChannelVip(user.id);
-        chatRolesManager.addVipToVipList(username);
+        chatRolesManager.addVipToVipList({
+            id: user.id,
+            username: user.name,
+            displayName: user.displayName
+        });
     } else {
         await twitchApi.moderation.removeChannelVip(user.id);
-        chatRolesManager.removeVipFromVipList(username);
+        chatRolesManager.removeVipFromVipList(user.id);
     }
 });
 

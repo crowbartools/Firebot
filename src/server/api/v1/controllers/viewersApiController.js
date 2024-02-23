@@ -34,7 +34,7 @@ exports.getUserMetadata = async function(req, res) {
         });
     }
 
-    const customRoles = customRolesManager.getAllCustomRolesForViewer(metadata.username) ?? [];
+    const customRoles = customRolesManager.getAllCustomRolesForViewer(metadata._id) ?? [];
     metadata.customRoles = customRoles;
 
     return res.json(metadata);
@@ -107,7 +107,7 @@ exports.getUserCustomRoles = async function(req, res) {
         });
     }
 
-    const customRoles = customRolesManager.getAllCustomRolesForViewer(metadata.username) ?? [];
+    const customRoles = customRolesManager.getAllCustomRolesForViewer(metadata._id) ?? [];
 
     return res.json(customRoles);
 };

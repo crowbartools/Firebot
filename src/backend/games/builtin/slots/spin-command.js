@@ -13,6 +13,7 @@ const slotMachine = require("./slot-machine");
 const logger = require("../../../logwrapper");
 const moment = require("moment");
 const NodeCache = require("node-cache");
+const twitchApi = require("../../../twitch-api/api");
 
 const activeSpinners = new NodeCache({checkperiod: 2});
 const cooldownCache = new NodeCache({checkperiod: 5});
@@ -47,6 +48,11 @@ const spinCommand = {
         const slotsSettings = gameManager.getGameSettings("firebot-slots");
         const chatter = slotsSettings.settings.chatSettings.chatter;
         const username = userCommand.commandSender;
+        const user = await twitchApi.users.getUserByName(username);
+        if (user == null) {
+            logger.warn(`Could not process spin command for ${username}. User does not exist.`);
+            return;
+        }
 
         // parse the wager amount
         let wagerAmount;
@@ -168,7 +174,7 @@ const spinCommand = {
         }
 
         try {
-            await currencyManager.adjustCurrencyForViewer(username, currencyId, -Math.abs(wagerAmount));
+            await currencyManager.adjustCurrencyForViewerById(user.id, currencyId, 0 - Math.abs(wagerAmount));
         } catch (error) {
             logger.error(error);
             await twitchChat.sendChatMessage(`Sorry ${username}, there was an error deducting currency from your balance so the spin has been canceled.`, null, chatter);
@@ -183,8 +189,8 @@ const spinCommand = {
             try {
                 successChance = successChancesSettings.basePercent;
 
-                const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
-                const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(username) || [];
+                const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(user.id) || [];
+                const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(user.id) || [];
                 const userTwitchRoles = (userCommand.senderRoles || [])
                     .map(r => twitchRolesManager.mapTwitchRole(r))
                     .filter(r => !!r);
@@ -215,7 +221,7 @@ const spinCommand = {
 
         const winnings = Math.floor(wagerAmount * (successfulRolls * winMultiplier));
 
-        await currencyManager.adjustCurrencyForViewer(username, currencyId, winnings);
+        await currencyManager.adjustCurrencyForViewerById(user.id, currencyId, winnings);
 
         if (slotsSettings.settings.generalMessages.spinSuccessful) {
             const currency = currencyAccess.getCurrencyById(currencyId);

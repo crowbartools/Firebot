@@ -14,6 +14,7 @@ const twitchRolesManager = require("../../../../shared/twitch-roles");
 const moment = require("moment");
 
 const heistRunner = require("./heist-runner");
+const logger = require("../../../logwrapper");
 
 const HEIST_COMMAND_ID = "firebot:heist";
 
@@ -44,6 +45,11 @@ const heistCommand = {
         const { chatEvent, userCommand } = event;
 
         const username = userCommand.commandSender;
+        const user = await twitchApi.users.getUserByName(username);
+        if (user == null) {
+            logger.warn(`Could not process heist command for ${username}. User does not exist.`);
+            return;
+        }
 
         const heistSettings = gameManager.getGameSettings("firebot-heist");
         const chatter = heistSettings.settings.chatSettings.chatter;
@@ -157,11 +163,11 @@ const heistCommand = {
         }
 
         // deduct wager from user balance
-        await currencyManager.adjustCurrencyForViewer(username, currencyId, -Math.abs(wagerAmount));
+        await currencyManager.adjustCurrencyForViewerById(user.id, currencyId, 0 - Math.abs(wagerAmount));
 
         // get all user roles
-        const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
-        const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(username) || [];
+        const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(user.id) || [];
+        const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(user.id) || [];
         const userTwitchRoles = (userCommand.senderRoles || [])
             .map(r => twitchRolesManager.mapTwitchRole(r))
             .filter(r => !!r);

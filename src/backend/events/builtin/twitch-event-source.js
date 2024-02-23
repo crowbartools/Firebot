@@ -18,7 +18,9 @@ module.exports = {
             activityFeed: {
                 icon: "fad fa-siren-on",
                 getMessage: (eventData) => {
-                    return `**${eventData.username}** raided with **${eventData.viewerCount}** viewer(s)`;
+                    const showUserIdName = eventData.userIdName
+                        && eventData.username.toLowerCase() !== eventData.userIdName.toLowerCase();
+                    return `**${eventData.username}${showUserIdName ? ` (${eventData.userIdName})` : ""}** raided with **${eventData.viewerCount}** viewer(s)`;
                 }
             }
         },
@@ -34,7 +36,9 @@ module.exports = {
             activityFeed: {
                 icon: "fas fa-heart",
                 getMessage: (eventData) => {
-                    return `**${eventData.username}** followed`;
+                    const showUserIdName = eventData.userIdName
+                        && eventData.username.toLowerCase() !== eventData.userIdName.toLowerCase();
+                    return `**${eventData.username}${showUserIdName ? ` (${eventData.userIdName})` : ""}** followed`;
                 }
             }
         },
@@ -64,7 +68,9 @@ module.exports = {
             activityFeed: {
                 icon: "fas fa-star",
                 getMessage: (eventData) => {
-                    return `**${eventData.username}** ${eventData.isResub ? 'resubscribed' : 'subscribed'} for **${eventData.totalMonths} month(s)** ${eventData.subPlan === 'Prime' ?
+                    const showUserIdName = eventData.userIdName
+                        && eventData.username.toLowerCase() !== eventData.userIdName.toLowerCase();
+                    return `**${eventData.username}${showUserIdName ? ` (${eventData.userIdName})` : ""}** ${eventData.isResub ? 'resubscribed' : 'subscribed'} for **${eventData.totalMonths} month(s)** ${eventData.subPlan === 'Prime' ?
                         "with **Twitch Prime**" : `at **Tier ${eventData.subPlan.replace("000", "")}**`}`;
                 }
             }
@@ -89,7 +95,9 @@ module.exports = {
             activityFeed: {
                 icon: "fas fa-star",
                 getMessage: (eventData) => {
-                    return `**${eventData.username}** upgraded their Prime sub at **Tier ${eventData.subPlan.replace("000", "")}!**`;
+                    const showUserIdName = eventData.userIdName
+                        && eventData.username.toLowerCase() !== eventData.userIdName.toLowerCase();
+                    return `**${eventData.username}${showUserIdName ? ` (${eventData.userIdName})` : ""}** upgraded their Prime sub at **Tier ${eventData.subPlan.replace("000", "")}!**`;
                 }
             }
         },
@@ -179,7 +187,9 @@ module.exports = {
             activityFeed: {
                 icon: "fas fa-star",
                 getMessage: (eventData) => {
-                    return `**${eventData.username}** upgraded their gift sub at **Tier ${eventData.subPlan.replace("000", "")}!**`;
+                    const showUserIdName = eventData.userIdName
+                        && eventData.username.toLowerCase() !== eventData.userIdName.toLowerCase();
+                    return `**${eventData.username}${showUserIdName ? ` (${eventData.userIdName})` : ""}** upgraded their gift sub at **Tier ${eventData.subPlan.replace("000", "")}!**`;
                 }
             }
         },
@@ -198,7 +208,9 @@ module.exports = {
             activityFeed: {
                 icon: "fad fa-diamond",
                 getMessage: (eventData) => {
-                    return `**${eventData.username}** cheered **${eventData.bits}** bits. A total of **${eventData.totalBits}** were cheered by **${eventData.username}** in the channel.`;
+                    const showUserIdName = eventData.userIdName
+                        && eventData.username.toLowerCase() !== eventData.userIdName.toLowerCase();
+                    return `**${eventData.username}${showUserIdName ? ` (${eventData.userIdName})` : ""}** cheered **${eventData.bits}** bits. They have cheered a total of **${eventData.totalBits}** in the channel.`;
                 }
             }
         },
@@ -248,7 +260,9 @@ module.exports = {
             activityFeed: {
                 icon: "fad fa-diamond",
                 getMessage: (eventData) => {
-                    return `**${eventData.username}** unlocked the **${eventData.badgeTier}** bits badge in your channel!`;
+                    const showUserIdName = eventData.userIdName
+                        && eventData.username.toLowerCase() !== eventData.userIdName.toLowerCase();
+                    return `**${eventData.username}${showUserIdName ? ` (${eventData.userIdName})` : ""}** unlocked the **${eventData.badgeTier}** bits badge in your channel!`;
                 }
             }
         },
@@ -264,7 +278,9 @@ module.exports = {
             activityFeed: {
                 icon: "fad fa-house-return",
                 getMessage: (eventData) => {
-                    return `**${eventData.username}** arrived`;
+                    const showUserIdName = eventData.userIdName
+                        && eventData.username.toLowerCase() !== eventData.userIdName.toLowerCase();
+                    return `**${eventData.username}${showUserIdName ? ` (${eventData.userIdName})` : ""}** arrived`;
                 }
             }
         },
@@ -292,7 +308,9 @@ module.exports = {
             activityFeed: {
                 icon: "fad fa-sparkles",
                 getMessage: (eventData) => {
-                    return `**${eventData.username}** has chatted in your channel for the very first time`;
+                    const showUserIdName = eventData.userIdName
+                        && eventData.username.toLowerCase() !== eventData.userIdName.toLowerCase();
+                    return `**${eventData.username}${showUserIdName ? ` (${eventData.userIdName})` : ""}** has chatted in your channel for the very first time`;
                 }
             }
         },
@@ -322,10 +340,12 @@ module.exports = {
                 icon: "fad fa-gavel",
                 getMessage: (eventData) => {
                     let message;
+                    const showUserIdName = eventData.userIdName
+                        && eventData.username.toLowerCase() !== eventData.userIdName.toLowerCase();
                     if (eventData.modReason) {
-                        message = `**${eventData.username}** was banned by **${eventData.moderator}**. Reason: **${eventData.modReason}**`;
+                        message = `**${eventData.username}${showUserIdName ? ` (${eventData.userIdName})` : ""}** was banned by **${eventData.moderator}**. Reason: **${eventData.modReason}**`;
                     } else {
-                        message = `**${eventData.username}** was banned by **${eventData.moderator}**.`;
+                        message = `**${eventData.username}${showUserIdName ? ` (${eventData.userIdName})` : ""}** was banned by **${eventData.moderator}**.`;
                     }
                     return message;
                 }
@@ -344,7 +364,9 @@ module.exports = {
             activityFeed: {
                 icon: "fad fa-gavel",
                 getMessage: (eventData) => {
-                    return `**${eventData.username}** was unbanned by **${eventData.moderator}**.`;
+                    const showUserIdName = eventData.userIdName
+                        && eventData.username.toLowerCase() !== eventData.userIdName.toLowerCase();
+                    return `**${eventData.username}${showUserIdName ? ` (${eventData.userIdName})` : ""}** was unbanned by **${eventData.moderator}**.`;
                 }
             }
         },
@@ -363,7 +385,15 @@ module.exports = {
             activityFeed: {
                 icon: "fad fa-stopwatch",
                 getMessage: (eventData) => {
-                    return `**${eventData.username}** was timed out for **${eventData.timeoutDuration} sec(s)** by ${eventData.moderator}. Reason: **${eventData.modReason}**`;
+                    let message;
+                    const showUserIdName = eventData.userIdName
+                        && eventData.username.toLowerCase() !== eventData.userIdName.toLowerCase();
+                    if (eventData.modReason) {
+                        message = `**${eventData.username}${showUserIdName ? ` (${eventData.userIdName})` : ""}** was timed out for **${eventData.timeoutDuration} sec(s)** by ${eventData.moderator}. Reason: **${eventData.modReason}**`;
+                    } else {
+                        message = `**${eventData.username}${showUserIdName ? ` (${eventData.userIdName})` : ""}** was timed out for **${eventData.timeoutDuration} sec(s)** by ${eventData.moderator}.`;
+                    }
+                    return message;
                 }
             }
         },
@@ -385,7 +415,9 @@ module.exports = {
             activityFeed: {
                 icon: "fad fa-circle",
                 getMessage: (eventData) => {
-                    return `**${eventData.username}** redeemed **${eventData.rewardName}**${eventData.messageText && !!eventData.messageText.length ? `: *${eventData.messageText}*` : ''}`;
+                    const showUserIdName = eventData.userIdName
+                        && eventData.username.toLowerCase() !== eventData.userIdName.toLowerCase();
+                    return `**${eventData.username}${showUserIdName ? ` (${eventData.userIdName})` : ""}** redeemed **${eventData.rewardName}**${eventData.messageText && !!eventData.messageText.length ? `: *${eventData.messageText}*` : ''}`;
                 }
             }
         },
@@ -409,7 +441,9 @@ module.exports = {
             activityFeed: {
                 icon: "fad fa-comment-alt",
                 getMessage: (eventData) => {
-                    return `**${eventData.username}** sent your **${eventData.sentTo}** account the following whisper: ${eventData.message}`;
+                    const showUserIdName = eventData.userIdName
+                        && eventData.username.toLowerCase() !== eventData.userIdName.toLowerCase();
+                    return `**${eventData.username}${showUserIdName ? ` (${eventData.userIdName})` : ""}** sent your **${eventData.sentTo}** account the following whisper: ${eventData.message}`;
                 }
             }
         },
@@ -815,7 +849,9 @@ module.exports = {
             activityFeed: {
                 icon: "fad fa-bullhorn",
                 getMessage: (eventData) => {
-                    return `**${eventData.moderator}** sent a shoutout to **${eventData.username}**`;
+                    const showUserIdName = eventData.userIdName
+                        && eventData.username.toLowerCase() !== eventData.userIdName.toLowerCase();
+                    return `**${eventData.moderator}** sent a shoutout to **${eventData.username}${showUserIdName ? ` (${eventData.userIdName})` : ""}**`;
                 }
             }
         },
@@ -832,7 +868,9 @@ module.exports = {
             activityFeed: {
                 icon: "fad fa-bullhorn",
                 getMessage: (eventData) => {
-                    return `**${eventData.username}** shouted out your channel to ${eventData.viewerCount} viewers`;
+                    const showUserIdName = eventData.userIdName
+                        && eventData.username.toLowerCase() !== eventData.userIdName.toLowerCase();
+                    return `**${eventData.username}${showUserIdName ? ` (${eventData.userIdName})` : ""}** shouted out your channel to ${eventData.viewerCount} viewers`;
                 }
             }
         },

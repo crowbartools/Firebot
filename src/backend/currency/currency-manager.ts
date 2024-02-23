@@ -380,8 +380,8 @@ class CurrencyManager {
 
         const teamRoles: Record<string, Array<{ id: string; name: string; }>> = {};
         for (const viewer of onlineViewers) {
-            teamRoles[viewer.username] = await teamRolesManager
-                .getAllTeamRolesForViewer(viewer.username);
+            teamRoles[viewer._id] = await teamRolesManager
+                .getAllTeamRolesForViewer(viewer._id);
         }
 
         const userIdsInRoles = onlineViewers
@@ -390,9 +390,9 @@ class CurrencyManager {
 
                 const allRoles = [
                     ...twitchRoles.map(tr => twitchRolesManager.mapTwitchRole(tr)),
-                    ...customRolesManager.getAllCustomRolesForViewer(u.username),
-                    ...teamRoles[u.username],
-                    ...firebotRolesManager.getAllFirebotRolesForViewer(u.username)
+                    ...customRolesManager.getAllCustomRolesForViewer(u._id),
+                    ...teamRoles[u._id],
+                    ...firebotRolesManager.getAllFirebotRolesForViewer(u._id)
                 ];
 
                 return {
