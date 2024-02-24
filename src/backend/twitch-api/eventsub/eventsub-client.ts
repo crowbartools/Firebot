@@ -421,10 +421,7 @@ class TwitchEventSubClient {
 
         try {
             this._eventSubListener = new EventSubWsListener({
-                apiClient: TwitchApi.streamerClient,
-                logger: {
-                    minLevel: "debug"
-                }
+                apiClient: TwitchApi.streamerClient
             });
 
             this._eventSubListener.start();
