@@ -228,6 +228,11 @@ function setAccountTokenIssue(accountType) {
     } else {
         throw new Error("invalid account type");
     }
+
+    frontendCommunicator.send("invalidate-accounts", {
+        streamer: streamerTokenIssue,
+        bot: botTokenIssue
+    });
 }
 
 exports.events = accountEvents;
