@@ -57,7 +57,7 @@ const clip = {
             </div>
 
             <div style="padding-top:15px">
-                <label class="control-fb control--checkbox"> Store the clip's URL in a $customVariable <tooltip text="'Store the clip's URL in a $customVariable so you can use it later'"></tooltip>
+                <label class="control-fb control--checkbox"> Store the clip's URL in a $customVariable <tooltip text="'Store the URL of the clip in a $customVariable so you can use it later'"></tooltip>
                     <input type="checkbox" ng-model="effect.options.putClipUrlInVariable">
                     <div class="control__indicator"></div>
                 </label>
@@ -153,7 +153,7 @@ const clip = {
         $scope.hasChannels = false;
         $scope.channelOptions = {};
         $q.when(backendCommunicator.fireEventAsync("getDiscordChannels"))
-            .then(channels => {
+            .then((channels) => {
                 if (channels && channels.length > 0) {
                     const newChannels = {};
 
@@ -172,7 +172,7 @@ const clip = {
                 }
             });
     },
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.postInDiscord && effect.discordChannelId == null) {
             errors.push("Please select Discord channel.");
@@ -182,7 +182,7 @@ const clip = {
         }
         return errors;
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const { effect } = event;
         const clip = await clipProcessor.createClip(effect);
         if (clip != null) {
@@ -243,7 +243,7 @@ const clip = {
         },
         event: {
             name: "playTwitchClip",
-            onOverlayEvent: event => {
+            onOverlayEvent: (event) => {
                 const {
                     clipVideoUrl,
                     volume,
