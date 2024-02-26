@@ -1,5 +1,6 @@
 "use strict";
 
+const chatRolesManager = require("../../roles/chat-roles-manager");
 const customRolesManager = require("../../roles/custom-roles-manager");
 const teamRolesManager = require("../../roles/team-roles-manager");
 const twitchRolesManager = require("../../../shared/twitch-roles");
@@ -116,7 +117,7 @@ const model = {
 
                 const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(user.id) || [];
                 const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(user.id) || [];
-                const userTwitchRoles = (triggerData.metadata.userTwitchRoles || [])
+                const userTwitchRoles = (await chatRolesManager.getUsersChatRoles(user.id))
                     .map(mr => twitchRolesManager.mapTwitchRole(mr));
 
                 const allRoles = [
