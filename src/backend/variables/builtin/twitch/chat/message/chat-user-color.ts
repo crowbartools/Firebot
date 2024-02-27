@@ -25,7 +25,6 @@ const model : ReplaceVariable = {
     },
     evaluator: async (trigger, username: string) => {
         try {
-            username = username == null ? trigger.metadata.username : username;
             let chatColor = "";
             if (username !== null) {
                 const viewer = await viewerDatabase.getViewerByUsername(username);
