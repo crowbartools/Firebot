@@ -25,11 +25,16 @@ const model : ReplaceVariable = {
     },
     evaluator: async (trigger, username: string) => {
         try {
+            username = username == null ? trigger.metadata.username : username;
             let chatColor = "";
             if (username !== null) {
                 const viewer = await viewerDatabase.getViewerByUsername(username);
                 if (viewer != null) {
-                    return await twitchApi.chat.getColorForUser(viewer._id);
+                    chatColor = await twitchApi.chat.getColorForUser(viewer._id);
+                    if (chatColor == null || chatColor === undefined) {
+                        return "#ffffff";
+                    }
+                    return chatColor;
                 }
             }
             if (trigger.metadata.chatMessage) {
@@ -40,6 +45,10 @@ const model : ReplaceVariable = {
             if (chatColor === "") {
                 const streamer = accountAccess.getAccounts().streamer;
                 chatColor = await twitchApi.chat.getColorForUser(streamer.userId);
+                if (chatColor == null || chatColor === undefined) {
+                    return "#ffffff";
+                }
+                return chatColor;
             }
             return chatColor;
         } catch (error) {
