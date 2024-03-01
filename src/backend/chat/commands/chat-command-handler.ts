@@ -212,6 +212,7 @@ class CommandHandler {
                 metadata: {
                     username: commandSender,
                     userId: firebotChatMessage.userId,
+                    userDisplayName: firebotChatMessage.userDisplayName,
                     userTwitchRoles: firebotChatMessage.roles,
                     command: command,
                     userCommand: userCmd,

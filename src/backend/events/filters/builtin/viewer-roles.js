@@ -64,13 +64,13 @@ module.exports = {
         const { comparisonType, value } = filterSettings;
         const { eventMeta } = eventData;
 
-        const { username, userIdName } = eventMeta;
-        if (!username && !userIdName) {
+        const { username } = eventMeta;
+        if (!username) {
             return false;
         }
 
         try {
-            const user = await twitchApi.users.getUserByName(userIdName ?? username.toLowerCase());
+            const user = await twitchApi.users.getUserByName(username);
             if (user == null) {
                 return false;
             }

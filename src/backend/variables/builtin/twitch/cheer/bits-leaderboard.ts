@@ -1,9 +1,11 @@
+import { HelixBitsLeaderboardPeriod } from "@twurple/api";
+import moment from "moment";
+
 import { ReplaceVariable, Trigger } from "../../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import twitchApi from "../../../../twitch-api/api";
 
 const expressionish = require('expressionish');
-const moment = require("moment");
-const twitchApi = require("../../../../twitch-api/api");
 
 const model : ReplaceVariable = {
     definition: {
@@ -54,21 +56,21 @@ const model : ReplaceVariable = {
     },
     evaluator: async (
         trigger: Trigger,
-        count = 10,
-        // eslint-disable-next-line @typescript-eslint/no-inferrable-types
-        period: string = "all",
+        count: number = 10, // eslint-disable-line @typescript-eslint/no-inferrable-types
+        period: string = "all", // eslint-disable-line @typescript-eslint/no-inferrable-types
         startDate = null
     ) => {
         count = count ?? 1;
         period = (period ?? "all").toLowerCase();
         startDate = startDate == null ? moment() : moment(startDate);
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const leaderboard = await twitchApi.bits.getChannelBitsLeaderboard(count, period, (<any>startDate).toDate());
+        const leaderboard = await twitchApi.bits.getChannelBitsLeaderboard(count, (period as HelixBitsLeaderboardPeriod), (<any>startDate).toDate());
 
-        return leaderboard.map(l => {
+        return leaderboard.map((l) => {
             return {
                 username: l.userName,
+                userId: l.userId,
+                userDisplayName: l.userDisplayName,
                 amount: l.amount
             };
         });

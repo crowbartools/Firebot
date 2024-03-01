@@ -1,23 +1,41 @@
 import eventManager from "../EventManager";
 
 export function triggerBanned(
+    username: string,
+    userId: string,
     userDisplayName: string,
-    moderator: string,
+    moderatorUsername: string,
+    moderatorId: string,
+    moderatorDisplayName: string,
     modReason: string
 ): void {
     eventManager.triggerEvent("twitch", "banned", {
-        username: userDisplayName,
-        moderator,
+        username,
+        userId,
+        userDisplayName,
+        moderatorUsername,
+        moderatorId,
+        moderatorDisplayName,
+        moderator: moderatorDisplayName,
         modReason
     });
 }
 
 export function triggerUnbanned(
+    username: string,
+    userId: string,
     userDisplayName: string,
-    moderator: string
+    moderatorUsername: string,
+    moderatorId: string,
+    moderatorDisplayName: string
 ) {
     eventManager.triggerEvent("twitch", "unbanned", {
-        username: userDisplayName,
-        moderator
+        username,
+        userId,
+        userDisplayName,
+        moderatorUsername,
+        moderatorId,
+        moderatorDisplayName,
+        moderator: moderatorDisplayName
     });
 }

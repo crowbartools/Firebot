@@ -1,25 +1,25 @@
 import eventManager from "../../events/EventManager";
 
 export function triggerStreamOnline(
+    username: string,
     userId: string,
-    userLogin: string,
     userDisplayName: string
 ) {
     eventManager.triggerEvent("twitch", "stream-online", {
+        username,
         userId,
-        userLogin,
         userDisplayName
     });
 }
 
 export function triggerStreamOffline(
+    username: string,
     userId: string,
-    userLogin: string,
     userDisplayName: string
 ) {
     eventManager.triggerEvent("twitch", "stream-offline", {
+        username,
         userId,
-        userLogin,
         userDisplayName
     });
 }

@@ -24,6 +24,8 @@ const model : ReplaceVariable = {
         return topViewTimeUsers.map((u, i) => ({
             place: i + 1,
             username: u.username,
+            userId: u._id,
+            userDisplayName: u.displayName,
             minutes: u.minutesInChannel
         }));
     }

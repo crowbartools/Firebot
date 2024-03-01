@@ -1,16 +1,16 @@
 import eventManager from "../EventManager";
 
 export function triggerAnnouncement(
-    userName: string,
+    username: string,
     userId: string,
     userDisplayName: string,
     twitchUserRoles: string[],
     messageText: string
 ): void {
     eventManager.triggerEvent("twitch", "announcement", {
-        userIdName: userName,
+        username,
         userId,
-        username: userDisplayName,
+        userDisplayName,
         twitchUserRoles,
         messageText
     });

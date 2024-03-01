@@ -60,6 +60,8 @@ class ScheduledTaskManager extends JsonDbManager<ScheduledTask> {
                         type: TriggerType.SCHEDULED_TASK,
                         metadata: {
                             username: accountAccess.getAccounts().streamer.username,
+                            userId: accountAccess.getAccounts().streamer.userId,
+                            userDisplayName: accountAccess.getAccounts().streamer.displayName,
                             task: task
                         }
                     },
