@@ -3,6 +3,7 @@ import path from "path";
 
 import logger from "../logwrapper";
 import util from "../utility";
+import accountAccess from "../common/account-access";
 import profileManager from "../common/profile-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import twitchApi from "../twitch-api/api";
@@ -42,6 +43,10 @@ class CustomRolesManager {
             this.deleteCustomRole(roleId);
             this.triggerUiRefresh();
         });
+
+        frontendCommunicator.on("check-for-legacy-custom-roles", () => {
+            return profileManager.profileDataPathExistsSync(path.join(ROLES_FOLDER, "customroles.json"));
+        });
     }
 
     async migrateLegacyCustomRoles(): Promise<void> {
@@ -53,8 +58,15 @@ class CustomRolesManager {
                 const legacyCustomRolesDb = profileManager.getJsonDbInProfile(path.join(ROLES_FOLDER, "customroles"));
                 const legacyCustomRoles: Record<string, LegacyCustomRole> = legacyCustomRolesDb.getData("/");
 
-                for (const legacyRole of Object.values(legacyCustomRoles)) {
-                    await this.importLegacyCustomRole(legacyRole);
+                if (Object.keys(legacyCustomRoles).length > 0) {
+                    if (accountAccess.getAccounts().streamer?.loggedIn !== true) {
+                        logger.warn("Unable to migrate legacy custom roles. Streamer account is not logged in. Please login and restart Firebot.");
+                        return;
+                    }
+
+                    for (const legacyRole of Object.values(legacyCustomRoles)) {
+                        await this.importLegacyCustomRole(legacyRole);
+                    }
                 }
 
                 logger.info("Deleting legacy custom roles database");
