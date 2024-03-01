@@ -7,7 +7,7 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
 
     angular
         .module("firebotApp")
-        .factory("viewerRolesService", function(backendCommunicator) {
+        .factory("viewerRolesService", function(backendCommunicator, utilityService) {
             const service = {};
 
             let customRoles = {};
@@ -15,6 +15,13 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
             let teamRoles = [];
 
             service.loadCustomRoles = async function() {
+                // Check for legacy custom roles file and alert the user if it still exists (it shouldn't by this point)
+                const hasLegacyCustomRoles = backendCommunicator.fireEventSync("check-for-legacy-custom-roles");
+                if (hasLegacyCustomRoles === true) {
+                    utilityService.showErrorModal("Firebot ran into an issue while migrating your custom roles to the new format. Please make sure your streamer account is logged in, then restart Firebot to try again. If you continue to receive this message, please reach out for support in our Discord.");
+                    return;
+                }
+
                 const roles = await backendCommunicator.fireEventAsync("get-custom-roles");
                 if (roles != null) {
                     customRoles = roles;
