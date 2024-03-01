@@ -470,8 +470,12 @@ async function createMainWindow() {
             }).then(({response}) => {
                 if (response === 0) {
                     mainWindow.destroy();
+                    global.renderWindow = null;
                 }
             }).catch(() => console.log("Error with close app confirmation"));
+        } else {
+            mainWindow.destroy();
+            global.renderWindow = null;
         }
     });
 }

@@ -15,9 +15,9 @@ export type FirebotParsedMessagePart = {
 export type FirebotChatMessage = {
     id: string;
     username: string;
-    userIdName: string;
-    profilePicUrl?: string;
     userId: string;
+    userDisplayName?: string;
+    profilePicUrl?: string;
     isExtension?: boolean;
     roles: string[];
     badges: unknown[];
