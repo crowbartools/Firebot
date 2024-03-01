@@ -8,8 +8,8 @@
             },
             template: `
                 <div class="reward-redemption" ng-class="{ isHighlight: $ctrl.redemption.id === 'highlight-message' }">
-                    <img ng-src="{{$ctrl.rewardImageUrl}}" />    
-                    <b>{{$ctrl.redemption.user.username}}</b> <span>redeemed</span> <b>{{$ctrl.redemption.reward.name}}</b>            
+                    <img ng-src="{{$ctrl.rewardImageUrl}}" />
+                    <b>{{$ctrl.redemption.user.displayName}}{{($ctrl.redemption.user.displayName.toLowerCase() !== $ctrl.redemption.user.username.toLowerCase() ? " (" + $ctrl.redemption.user.username + ")" : "")}}</b> <span>redeemed</span> <b>{{$ctrl.redemption.reward.name}}</b>
                 </div>
             `,
             controller: function() {

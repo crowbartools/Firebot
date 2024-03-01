@@ -7,17 +7,17 @@ import twitchApi from "../../../twitch-api/api";
 
 const model : ReplaceVariable = {
     definition: {
-        handle: "userId",
-        usage: "userId[username]",
-        description: "Gets the user ID for the given username. Searches local viewer DB first, then Twitch API.",
+        handle: "userDisplayName",
+        usage: "userDisplayName[username]",
+        description: "Gets the formatted display name for the given username. Searches local viewer DB first, then Twitch API.",
         categories: [VariableCategory.USER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async (trigger, username: string) => {
         if (username == null) {
-            const userId = trigger.metadata.userid ?? trigger.metadata.userId;
-            if (userId != null) {
-                return userId;
+            const userDisplayName = trigger.metadata.userDisplayName ?? trigger.metadata.userDisplayName;
+            if (userDisplayName != null) {
+                return userDisplayName;
             }
             username = trigger.metadata.username;
             if (username == null) {
@@ -26,13 +26,13 @@ const model : ReplaceVariable = {
         }
         const viewer = await viewerDatabase.getViewerByUsername(username);
         if (viewer != null) {
-            return viewer._id;
+            return viewer.displayName;
         }
 
         try {
             const user = await twitchApi.users.getUserByName(username);
             if (user != null) {
-                return user.id;
+                return user.displayName;
             }
             return "[No user found]";
         } catch (error) {

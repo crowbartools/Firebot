@@ -54,9 +54,9 @@ export function triggerSubGift(
                         communitySubCache.set<CommunityGiftSubCache>(cacheKey, {subCount: newCount, giftReceivers: giftReceivers});
                     } else {
                         eventManager.triggerEvent("twitch", "community-subs-gifted", {
-                            username: gifterDisplayName,
-                            userIdName: gifterUserName,
+                            username: gifterUserName,
                             userId: gifterUserId,
+                            userDisplayName: gifterDisplayName,
                             subCount: giftReceivers.length,
                             subPlan,
                             isAnonymous,
@@ -79,9 +79,9 @@ export function triggerSubGift(
     }
 
     eventManager.triggerEvent("twitch", "subs-gifted", {
-        username: gifterDisplayName,
-        userIdName: gifterUserName,
+        username: gifterUserName,
         userId: gifterUserId,
+        userDisplayName: gifterDisplayName,
         giftSubMonths,
         gifteeUsername: gifteeDisplayName,
         gifterUsername: gifterDisplayName,
@@ -93,16 +93,16 @@ export function triggerSubGift(
 }
 
 export function triggerSubGiftUpgrade(
-    gifteeUserName: string,
-    gifteeDisplayName: string,
+    gifteeUsername: string,
     gifteeUserId: string,
+    gifteeDisplayName: string,
     gifterDisplayName: string,
     subPlan: string
 ): void {
     eventManager.triggerEvent("twitch", "gift-sub-upgraded", {
-        username: gifteeDisplayName,
-        userIdName: gifteeUserName,
+        username: gifteeUsername,
         userId: gifteeUserId,
+        userDisplayName: gifteeDisplayName,
         gifterUsername: gifterDisplayName,
         gifteeUsername: gifteeDisplayName,
         subPlan
