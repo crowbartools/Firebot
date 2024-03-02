@@ -337,11 +337,7 @@ export class TwitchChatApi {
      */
     async getColorForUser(targetUserId: string): Promise<string | null |undefined> {
         try {
-            const color = await this._streamerClient.chat.getColorForUser(targetUserId);
-            if (color === null || color === undefined) {
-                return "#ffffff";
-            }
-            return color;
+            return await this._streamerClient.chat.getColorForUser(targetUserId);
         } catch (error) {
             logger.error("Error Receiving user color", error.message);
             return "#ffffff";
