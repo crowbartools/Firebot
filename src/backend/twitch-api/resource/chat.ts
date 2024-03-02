@@ -340,7 +340,7 @@ export class TwitchChatApi {
             return await this._streamerClient.chat.getColorForUser(targetUserId);
         } catch (error) {
             logger.error("Error Receiving user color", error.message);
-            return "";
+            return null;
         }
     }
 }
