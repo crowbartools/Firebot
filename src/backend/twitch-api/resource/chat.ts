@@ -328,4 +328,19 @@ export class TwitchChatApi {
 
         return false;
     }
+
+    /**
+     * Gets the chat color for a user.
+     *
+     * @param targetUserId numerical ID of the user as sting
+     * @returns the color as hex code, null if the user did not set a color, or undefined if the user is unknown.
+     */
+    async getColorForUser(targetUserId: string): Promise<string | null |undefined> {
+        try {
+            return await this._streamerClient.chat.getColorForUser(targetUserId);
+        } catch (error) {
+            logger.error("Error Receiving user color", error.message);
+            return null;
+        }
+    }
 }
