@@ -16,7 +16,13 @@ const effect = {
     <eos-chatter-select effect="effect" title="Chat as"></eos-chatter-select>
 
     <eos-container header="Message To Send" pad-top="true">
-        <textarea ng-model="effect.message" class="form-control" name="text" placeholder="Enter message" rows="4" cols="40" replace-variables></textarea>
+        <firebot-input 
+            model="effect.message" 
+            use-text-area="true"
+            placeholder-text="Enter message"
+            rows="4"
+            cols="40"
+        />
         <div style="color: #fb7373;" ng-if="effect.message && effect.message.length > 500">Chat messages cannot be longer than 500 characters. This message will get automatically chunked into multiple messages if it's too long after all replace variables have been populated.</div>
         <div style="display: flex; flex-direction: row; width: 100%; height: 36px; margin: 10px 0 10px; align-items: center;">
             <firebot-checkbox 
