@@ -29,47 +29,51 @@ export const SideNav = () => {
     const [isOpen, toggleIsOpen] = useState(false);
 
     return (
-        <>
-            <motion.div
-                className="fixed inset-0 z-20 pointer-events-none bg-black"
-                initial={variantType.hidden}
-                variants={menuBackdropVariants}
-                animate={isOpen ? variantType.visible : variantType.hidden}
-            />
-            <motion.aside
-                className={clsx(
-                    "fixed h-full z-30 rounded-r-xl overflow-hidden flex flex-col",
-                    isOpen ? "bg-primary-bg" : "bg-primary-bg"
-                )}
-                style={{ width: "85px" }}
-                whileHover={{ width: 300 }}
-                transition={{
-                    type: "spring",
-                    duration: 0.4,
-                    bounce: !isOpen ? 0.1 : 0.3,
-                }}
-                onHoverStart={thunk(toggleIsOpen, [true])}
-                onHoverEnd={thunk(toggleIsOpen, [false])}
-            >
-                {SidebarHeader(isOpen)}
-                <ul className={clsx("h-full overflow-x-hidden pb-4 scrollbar-thin scrollbar-thumb-gray-800/10 scrollbar-track-transparent", isOpen ? "overflow-y-auto" : "overflow-y-hidden")}>
-                    {Object.keys(menuItems).map((category) => (
-                        <div key={category}>
-                            {!!category?.length &&
-                                CategoryHeader(category, isOpen)}
-                            {menuItems[category].map((item, index) => (
-                                <MenuItem
-                                    index={index}
-                                    menuItem={item}
-                                    isOpen={isOpen}
-                                    key={item.route}
-                                />
-                            ))}
-                        </div>
-                    ))}
-                </ul>
-            </motion.aside>
-        </>
+      <>
+        <motion.div
+          className="fixed inset-0 z-20 pointer-events-none bg-black"
+          initial={variantType.hidden}
+          variants={menuBackdropVariants}
+          animate={isOpen ? variantType.visible : variantType.hidden}
+        />
+        <motion.aside
+          className={clsx(
+            "fixed top-0 bottom-7 z-30 rounded-r-xl overflow-hidden flex flex-col",
+            isOpen ? "bg-primary-bg" : "bg-primary-bg"
+          )}
+          style={{ width: "85px" }}
+          whileHover={{ width: 300 }}
+          transition={{
+            type: "spring",
+            duration: 0.4,
+            bounce: !isOpen ? 0.1 : 0.3,
+          }}
+          onHoverStart={thunk(toggleIsOpen, [true])}
+          onHoverEnd={thunk(toggleIsOpen, [false])}
+        >
+          {SidebarHeader(isOpen)}
+          <ul
+            className={clsx(
+              "h-full overflow-x-hidden pb-4 scrollbar-thin scrollbar-thumb-gray-800/10 scrollbar-track-transparent",
+              isOpen ? "overflow-y-auto" : "overflow-y-hidden"
+            )}
+          >
+            {Object.keys(menuItems).map((category) => (
+              <div key={category}>
+                {!!category?.length && CategoryHeader(category, isOpen)}
+                {menuItems[category].map((item, index) => (
+                  <MenuItem
+                    index={index}
+                    menuItem={item}
+                    isOpen={isOpen}
+                    key={item.route}
+                  />
+                ))}
+              </div>
+            ))}
+          </ul>
+        </motion.aside>
+      </>
     );
 };
 

@@ -1,8 +1,8 @@
 import {
   Account,
-    PlatformEventEmitter,
-    StreamingPlatform,
-    StreamingPlatformAuthConfig,
+  ConnectionEventEmitter,
+  StreamingPlatform,
+  StreamingPlatformAuthConfig,
 } from "firebot-types";
 import twitchApi from "./twitch-api";
 import { TwitchChat } from "./twitch-chat";
@@ -10,14 +10,16 @@ import { StreamingPlatformConfig } from "../../../config/streaming-platform.conf
 import { ConfigType } from "@nestjs/config";
 import { twitchAccountAuthProvider } from "streaming-platform/platforms/twitch/twitch-auth";
 
-class Twitch extends PlatformEventEmitter implements StreamingPlatform {
+class Twitch extends ConnectionEventEmitter implements StreamingPlatform {
   constructor(
     private readonly streamingPlatformConfig: ConfigType<
       typeof StreamingPlatformConfig
     >
   ) {
     super();
-    twitchAccountAuthProvider.setClientId(this.streamingPlatformConfig.twitch.clientId);
+    twitchAccountAuthProvider.setClientId(
+      this.streamingPlatformConfig.twitch.clientId
+    );
   }
 
   id = "twitch";
@@ -102,7 +104,10 @@ class Twitch extends PlatformEventEmitter implements StreamingPlatform {
   chat = new TwitchChat();
 
   init(streamerAccount?: Account, botAccount?: Account) {
-    twitchAccountAuthProvider.setupAccountProviders(streamerAccount, botAccount);
+    twitchAccountAuthProvider.setupAccountProviders(
+      streamerAccount,
+      botAccount
+    );
     console.log("Twitch init");
   }
 

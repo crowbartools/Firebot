@@ -29,7 +29,7 @@ export default function App({ Component, pageProps }: AppProps) {
             <StoreProvider value={initialStore}>
               <FbModalProvider>
                 <FbSlideOverProvider>
-                  <div className="bp3-dark w-full h-full bg-primary-bg text-white">
+                  <div className="bp3-dark flex flex-col w-full h-full bg-primary-bg text-white">
                     <SideNav />
                     <AppHeader />
                     <div
@@ -40,6 +40,7 @@ export default function App({ Component, pageProps }: AppProps) {
                     >
                       <Component {...pageProps} />
                     </div>
+                    <div className="h-9 bg-secondary-bg z-50"></div>
                   </div>
                 </FbSlideOverProvider>
               </FbModalProvider>
