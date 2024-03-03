@@ -429,9 +429,6 @@ class TwitchEventSubClient {
             this.createSubscriptions();
 
             logger.info("Connected to the Twitch EventSub!");
-
-            // Finally, clear out any subcriptions that are no longer active
-            await TwitchApi.streamerClient.eventSub.deleteBrokenSubscriptions();
         } catch (error) {
             logger.error("Failed to connect to Twitch EventSub", error);
             return;
