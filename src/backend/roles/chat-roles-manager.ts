@@ -1,5 +1,4 @@
 import axios from "axios";
-import { HelixUserRelation } from "@twurple/api";
 
 import { BasicViewer } from "../../types/viewers";
 import logger from "../logwrapper";
@@ -21,6 +20,7 @@ interface KnownBotServiceResponse {
 class ChatRolesManager {
     private _knownBots: KnownBot[] = [];
     private _vips: BasicViewer[] = [];
+    private _moderators: BasicViewer[] = [];
 
     async cacheViewerListBots(): Promise<void> {
         if (this._knownBots?.length) {
@@ -68,14 +68,12 @@ class ChatRolesManager {
         return false;
     }
 
-    loadUsersInVipRole(usersInVipRole: HelixUserRelation[]): void {
-        this._vips = usersInVipRole.map((u) => {
-            return {
-                id: u.id,
-                username: u.name,
-                displayName: u.displayName
-            };
-        });
+    async loadVips(): Promise<void> {
+        this._vips = (await twitchApi.channels.getVips()).map(u => ({
+            id: u.id,
+            username: u.name,
+            displayName: u.displayName
+        }));
     }
 
     addVipToVipList(viewer: BasicViewer): void {
@@ -86,6 +84,25 @@ class ChatRolesManager {
 
     removeVipFromVipList(userId: string): void {
         this._vips = this._vips.filter(v => v.id !== userId);
+    }
+
+    async loadModerators(): Promise<void> {
+        this._moderators = (await twitchApi.moderation.getModerators())
+            .map(m => ({
+                id: m.userId,
+                username: m.userName,
+                displayName: m.userDisplayName
+            }));
+    }
+
+    addModeratorToModeratorsList(viewer: BasicViewer): void {
+        if (!this._moderators.some(v => v.id === viewer.id)) {
+            this._moderators.push(viewer);
+        }
+    }
+
+    removeModeratorFromModeratorsList(userId: string): void {
+        this._moderators = this._moderators.filter(v => v.id !== userId);
     }
 
     private async getUserSubscriberRole(userIdOrName: string): Promise<string> {
@@ -152,8 +169,7 @@ class ChatRolesManager {
                 roles.push("vip");
             }
 
-            const moderators = (await twitchApi.moderation.getModerators());
-            if (moderators.some(m => m.userId === userId)) {
+            if (this._moderators.some(m => m.id === userId)) {
                 roles.push("mod");
             }
 

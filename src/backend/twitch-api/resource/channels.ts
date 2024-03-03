@@ -150,9 +150,14 @@ export class TwitchChannelsApi {
      */
     async getVips(): Promise<HelixUserRelation[]> {
         const vips: HelixUserRelation[] = [];
-        const streamerId = accountAccess.getAccounts().streamer.userId;
+        const streamerId = accountAccess.getAccounts().streamer?.userId;
 
         try {
+            if (streamerId == null) {
+                logger.warn("Unable to get channel VIP list. Streamer is not logged in.");
+                return vips;
+            }
+
             vips.push(...await this._streamerClient.channels.getVipsPaginated(streamerId).getAll());
         } catch (error) {
             logger.error("Error getting VIPs", error.message);

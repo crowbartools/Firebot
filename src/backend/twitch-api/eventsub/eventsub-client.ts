@@ -5,8 +5,9 @@ import logger from "../../logwrapper";
 import accountAccess from "../../common/account-access";
 import frontendCommunicator from "../../common/frontend-communicator";
 import twitchEventsHandler from '../../events/twitch-events';
-import TwitchApi from "../api";
+import twitchApi from "../api";
 import twitchStreamInfoPoll from "../stream-info-manager";
+import chatRolesManager from "../../roles/chat-roles-manager";
 
 class TwitchEventSubClient {
     private _eventSubListener: EventSubWsListener;
@@ -47,7 +48,7 @@ class TwitchEventSubClient {
 
         // Cheers
         const bitsSubscription = this._eventSubListener.onChannelCheer(streamer.userId, async (event) => {
-            const totalBits = (await TwitchApi.bits.getChannelBitsLeaderboard(1, "all", new Date(), event.userId))[0]?.amount ?? 0;
+            const totalBits = (await twitchApi.bits.getChannelBitsLeaderboard(1, "all", new Date(), event.userId))[0]?.amount ?? 0;
 
             twitchEventsHandler.cheer.triggerCheer(
                 event.userName ?? "ananonymouscheerer",
@@ -63,7 +64,7 @@ class TwitchEventSubClient {
 
         // Channel custom reward
         const customRewardRedemptionSubscription = this._eventSubListener.onChannelRedemptionAdd(streamer.userId, async (event) => {
-            const reward = await TwitchApi.channelRewards.getCustomChannelReward(event.rewardId);
+            const reward = await twitchApi.channelRewards.getCustomChannelReward(event.rewardId);
             let imageUrl = "";
 
             if (reward && reward.defaultImage) {
@@ -412,6 +413,22 @@ class TwitchEventSubClient {
             });
         });
         this._subscriptions.push(channelUpdateSubscription);
+
+        // Moderator added
+        const channelModeratorAddSubscription = this._eventSubListener.onChannelModeratorAdd(streamer.userId, (event) => {
+            chatRolesManager.addModeratorToModeratorsList({
+                id: event.userId,
+                username: event.userName,
+                displayName: event.userDisplayName
+            });
+        });
+        this._subscriptions.push(channelModeratorAddSubscription);
+
+        // Moderator removed
+        const channelModeratorRemoveSubscription = this._eventSubListener.onChannelModeratorRemove(streamer.userId, (event) => {
+            chatRolesManager.removeModeratorFromModeratorsList(event.userId);
+        });
+        this._subscriptions.push(channelModeratorRemoveSubscription);
     }
 
     async createClient(): Promise<void> {
@@ -421,7 +438,7 @@ class TwitchEventSubClient {
 
         try {
             this._eventSubListener = new EventSubWsListener({
-                apiClient: TwitchApi.streamerClient
+                apiClient: twitchApi.streamerClient
             });
 
             this._eventSubListener.start();

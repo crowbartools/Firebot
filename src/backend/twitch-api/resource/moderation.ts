@@ -139,9 +139,14 @@ export class TwitchModerationApi {
      */
     async getModerators(): Promise<HelixModerator[]> {
         const moderators: HelixModerator[] = [];
-        const streamerId = accountAccess.getAccounts().streamer.userId;
+        const streamerId = accountAccess.getAccounts().streamer?.userId;
 
         try {
+            if (streamerId == null) {
+                logger.warn("Unable to get channel moderator list. Streamer is not logged in.");
+                return moderators;
+            }
+
             moderators.push(...await this._streamerClient.moderation.getModeratorsPaginated(streamerId).getAll());
         } catch (error) {
             logger.error("Error getting moderators", error.message);

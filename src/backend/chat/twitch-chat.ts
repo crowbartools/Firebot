@@ -134,10 +134,10 @@ class TwitchChat extends EventEmitter {
 
             chatterPoll.startChatterPoll();
 
-            const vips = await twitchApi.channels.getVips();
-            if (vips) {
-                chatRolesManager.loadUsersInVipRole(vips);
-            }
+            // Refresh these once we connect to Twitch
+            // While connected, we can just react to changes via chat messages/EventSub events
+            await chatRolesManager.loadVips();
+            await chatRolesManager.loadModerators();
         } catch (error) {
             logger.error("Chat connect error", error);
             await this.disconnect();
