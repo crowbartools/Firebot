@@ -115,9 +115,22 @@ const model = {
                     reject("User does not exist");
                 }
 
+                /** @type {string[]} */
+                let twitchUserRoles = triggerData.metadata.userTwitchRoles;
+
+                // For sub tier-specific/known bot permission checking, we have to get live data
+                if (twitchUserRoles == null
+                    || restrictionData.roleIds.includes("tier1")
+                    || restrictionData.roleIds.includes("tier2")
+                    || restrictionData.roleIds.includes("tier3")
+                    || restrictionData.roleIds.includes("viewerlistbot")
+                ) {
+                    twitchUserRoles = await chatRolesManager.getUsersChatRoles(user.id);
+                }
+
                 const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(user.id) || [];
                 const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(user.id) || [];
-                const userTwitchRoles = (await chatRolesManager.getUsersChatRoles(user.id))
+                const userTwitchRoles = (twitchUserRoles || [])
                     .map(mr => twitchRolesManager.mapTwitchRole(mr));
 
                 const allRoles = [
