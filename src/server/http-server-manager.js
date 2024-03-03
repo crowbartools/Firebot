@@ -394,7 +394,7 @@ setInterval(() => {
         : manager.defaultWebsocketServerInstance.clients.size > 0;
 
     if (clientsConnected !== manager.overlayHasClients) {
-        if (renderWindow?.webContents?.isDestroyed() === false) {
+        if (global.hasOwnProperty("renderWindow") && renderWindow?.webContents?.isDestroyed() === false) {
             renderWindow.webContents.send("overlayStatusUpdate", {
                 clientsConnected: clientsConnected,
                 serverStarted: manager.isDefaultServerStarted
