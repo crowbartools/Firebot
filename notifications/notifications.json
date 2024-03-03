@@ -1,1 +1,8 @@
-[]
+[
+    {
+        "id": "5.61-featured-streamers-reminder",
+        "title": "Feature YOUR stream on the Firebot website!",
+        "type": "info",
+        "message": "Hey there, Firebot users! Did you know YOUR stream could be featured on the Firebot website? Just go to <strong>Settings</strong>, then <strong>General</strong>, and enable the <strong>Feature My Stream</strong> setting. That's it! After that, whenever you're live on Twitch while running Firebot, your stream will automatically appear <a href="https://firebot.app/watch">on our website</a>."
+    }
+]
