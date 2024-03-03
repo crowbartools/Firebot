@@ -1,6 +1,6 @@
 import logger from '../../logwrapper';
 import accountAccess from "../../common/account-access";
-import { ApiClient, HelixBanUserRequest, UserIdResolvable, extractUserId } from "@twurple/api";
+import { ApiClient, HelixBanUserRequest, HelixModerator, UserIdResolvable, extractUserId } from "@twurple/api";
 
 export class TwitchModerationApi {
     private _streamerClient: ApiClient;
@@ -132,6 +132,22 @@ export class TwitchModerationApi {
         }
 
         return false;
+    }
+
+    /**
+     * Gets all the moderators in the streamer's channel.
+     */
+    async getModerators(): Promise<HelixModerator[]> {
+        const moderators: HelixModerator[] = [];
+        const streamerId = accountAccess.getAccounts().streamer.userId;
+
+        try {
+            moderators.push(...await this._streamerClient.moderation.getModeratorsPaginated(streamerId).getAll());
+        } catch (error) {
+            logger.error("Error getting moderators", error.message);
+        }
+
+        return moderators;
     }
 
     /**

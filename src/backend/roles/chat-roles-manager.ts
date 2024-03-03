@@ -131,8 +131,6 @@ class ChatRolesManager {
         const roles: string[] = [];
 
         try {
-            const client = twitchApi.streamerClient;
-
             if (await this.userIsKnownBot(userId) === true) {
                 roles.push("viewerlistbot");
             }
@@ -154,7 +152,7 @@ class ChatRolesManager {
                 roles.push("vip");
             }
 
-            const moderators = (await client.moderation.getModerators(streamer.userId)).data;
+            const moderators = (await twitchApi.moderation.getModerators());
             if (moderators.some(m => m.userId === userId)) {
                 roles.push("mod");
             }
