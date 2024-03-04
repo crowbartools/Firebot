@@ -291,7 +291,7 @@ class CustomRolesManager {
 
             this.saveCustomRole(role);
 
-            exports.triggerUiRefresh();
+            this.triggerUiRefresh();
         }
     }
 
@@ -302,7 +302,7 @@ class CustomRolesManager {
 
             this.saveCustomRole(role);
 
-            exports.triggerUiRefresh();
+            this.triggerUiRefresh();
         }
     }
 

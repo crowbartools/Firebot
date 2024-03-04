@@ -75,9 +75,23 @@ module.exports = {
                 return false;
             }
 
+            /** @type {string[]} */
+            let twitchUserRoles = eventMeta.twitchUserRoles;
+
+            // For sub tier-specific/known bot permission checking, we have to get live data
+            if (twitchUserRoles == null
+                || value === "tier1"
+                || value === "tier2"
+                || value === "tier3"
+                || value === "viewerlistbot"
+            ) {
+                twitchUserRoles = await chatRolesManager.getUsersChatRoles(user.id);
+            }
+
             const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(user.id) || [];
             const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(user.id) || [];
-            const userTwitchRoles = await chatRolesManager.getUsersChatRoles(user.id);
+            const userTwitchRoles = (twitchUserRoles || [])
+                .map(twitchRolesManager.mapTwitchRole);
 
             const allRoles = [
                 ...userTwitchRoles,
