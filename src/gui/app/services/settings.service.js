@@ -810,6 +810,14 @@
                 pushDataToFile("/settings/webOnlineCheckin", value);
             };
 
+            service.getDefaultEffectLabelsEnabled = () => {
+                return getDataFromFile("/settings/enableDefaultEffectLabels", false, true);
+            };
+
+            service.setDefaultEffectLabelsEnabled = (value) => {
+                pushDataToFile("/settings/enableDefaultEffectLabels", value === true);
+            };
+
             return service;
         });
 }());

@@ -47,6 +47,12 @@
                     template: "<trigger-settings />"
                 },
                 {
+                    name: "Effects",
+                    description: "Various options for effects",
+                    icon: "fa-magic",
+                    template: "<effect-settings />"
+                },
+                {
                     name: "Database",
                     description: "Options and tools for the viewer database.",
                     icon: "fa-database",

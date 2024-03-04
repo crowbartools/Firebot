@@ -141,7 +141,7 @@
                                     <span class="pr-4" style="display: inline-block;text-overflow: ellipsis;overflow: hidden;line-height: 20px;white-space: nowrap;">
                                         <span class="muted" ng-hide="$ctrl.hideNumbers === true">{{$index + 1}}. </span>
                                         {{$ctrl.getEffectNameById(effect.type)}}
-                                        <span ng-if="effect.effectLabel" class="muted"> ({{effect.effectLabel}})</span>
+                                        <span ng-if="$ctrl.getEffectLabel(effect)" class="muted"> ({{$ctrl.getEffectLabel(effect)}})</span>
                                     </span>
                                     <span class="flex-row-center">
                                         <span class="dragHandle flex items-center justify-center" style="height: 38px; width: 15px;" ng-class="{'hiddenHandle': !hovering}" ng-click="$event.stopPropagation()">
@@ -181,7 +181,7 @@
             </div>
             `,
             controller: function(utilityService, effectHelperService, objectCopyHelper, effectQueuesService,
-                backendCommunicator, ngToast, $http) {
+                backendCommunicator, settingsService, ngToast, $http) {
                 const ctrl = this;
 
                 ctrl.effectsData = {
@@ -411,15 +411,31 @@
                 // when the element is initialized
                 ctrl.$onInit = async function() {
                     createEffectsData();
-                    effectDefinitions = await effectHelperService.getAllEffectDefinitions();
+                    effectDefinitions = await effectHelperService.getAllEffectTypes();
                 };
 
-                ctrl.getEffectNameById = id => {
+                ctrl.getEffectNameById = (id) => {
                     if (!effectDefinitions || effectDefinitions.length < 1) {
                         return "";
                     }
 
-                    return effectDefinitions.find(e => e.id === id).name;
+                    return effectDefinitions.find(e => e.definition.id === id).definition.name;
+                };
+
+                ctrl.getEffectLabel = (effect) => {
+                    if (effect.effectLabel?.length) {
+                        return effect.effectLabel;
+                    }
+
+                    if (settingsService.getDefaultEffectLabelsEnabled()) {
+                        const effectDef = effectDefinitions.find(e => e.definition.id === effect.type);
+
+                        if (effectDef?.getDefaultLabel) {
+                            return effectDef.getDefaultLabel(effect);
+                        }
+                    }
+
+                    return;
                 };
 
                 ctrl.$onChanges = function() {
