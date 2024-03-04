@@ -32,7 +32,6 @@ const model : ReplaceVariable = {
                 if (viewer != null) {
                     chatColor = await twitchApi.chat.getColorForUser(viewer._id);
                     return chatColor ?? DEFAULT_COLOR;
-
                 }
             }
             if (trigger.metadata.chatMessage) {
