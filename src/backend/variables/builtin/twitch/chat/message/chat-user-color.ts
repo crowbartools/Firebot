@@ -5,6 +5,7 @@ import accountAccess from "../../../../../common/account-access";
 import viewerDatabase from "../../../../../viewers/viewer-database";
 
 const twitchApi = require("../../../../../twitch-api/api");
+const DEFAULT_COLOR = "#ffffff";
 
 const model : ReplaceVariable = {
     definition: {
@@ -26,14 +27,12 @@ const model : ReplaceVariable = {
     evaluator: async (trigger, username: string) => {
         try {
             let chatColor = "";
-            if (username !== null) {
+            if (username != null) {
                 const viewer = await viewerDatabase.getViewerByUsername(username);
                 if (viewer != null) {
                     chatColor = await twitchApi.chat.getColorForUser(viewer._id);
-                    if (chatColor == null) {
-                        return "#ffffff";
-                    }
-                    return chatColor;
+                    return chatColor ?? DEFAULT_COLOR;
+
                 }
             }
             if (trigger.metadata.chatMessage) {
@@ -44,14 +43,11 @@ const model : ReplaceVariable = {
             if (chatColor === "") {
                 const streamer = accountAccess.getAccounts().streamer;
                 chatColor = await twitchApi.chat.getColorForUser(streamer.userId);
-                if (chatColor == null) {
-                    return "#ffffff";
-                }
-                return chatColor;
+                return chatColor ?? DEFAULT_COLOR;
             }
             return chatColor;
         } catch (error) {
-            return "#ffffff";
+            return DEFAULT_COLOR;
         }
     }
 };
