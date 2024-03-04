@@ -6,7 +6,6 @@ import quote from './quote';
 import quoteAsObject from './quote-as-object';
 import quoteAsObjectRaw from './quote-as-raw-object';
 import randomAdvice from './random-advice';
-import randomCustomRoleUser from './random-custom-role-user';
 import randomDadJoke from './random-dad-joke';
 import randomRedditImage from './random-reddit-image';
 import rollDice from './roll-dice';
@@ -25,7 +24,6 @@ export default [
     quoteAsObject,
     quoteAsObjectRaw,
     randomAdvice,
-    randomCustomRoleUser,
     randomDadJoke,
     randomRedditImage,
     rollDice,
