@@ -57,7 +57,7 @@ const clip = {
             </div>
 
             <div style="padding-top:15px">
-                <label class="control-fb control--checkbox"> Store the clip's URL in a $customVariable <tooltip text="'Store the clip's URL in a $customVariable so you can use it later'"></tooltip>
+                <label class="control-fb control--checkbox"> Store the clip's URL in a $customVariable <tooltip text="'Store the URL of the clip in a $customVariable so you can use it later'"></tooltip>
                     <input type="checkbox" ng-model="effect.options.putClipUrlInVariable">
                     <div class="control__indicator"></div>
                 </label>
@@ -77,7 +77,10 @@ const clip = {
         </eos-container>
 
         <div ng-if="effect.showInOverlay">
-            <eos-overlay-position effect="effect" class="setting-padtop"></eos-overlay-position>
+            <eos-container header="Wait for Video to Finish" class="setting-padtop">
+                <firebot-checkbox label="Wait for video to finish" tooltip="Wait for the video to finish before allowing the next effect to run." model="effect.wait" />
+            </eos-container>
+            <eos-overlay-position effect="effect"></eos-overlay-position>
             <eos-container header="Dimensions">
                 <label class="control-fb control--checkbox"> Force 16:9 Ratio
                     <input type="checkbox" ng-click="forceRatioToggle();" ng-checked="forceRatio">
@@ -130,6 +133,9 @@ const clip = {
         if ($scope.effect.embedColor == null) {
             $scope.effect.embedColor = "#21b9ed";
         }
+        if ($scope.effect.wait == null) {
+            $scope.effect.wait = true;
+        }
 
         // Calculate 16:9
         // This checks to see which field the user is filling out, and then adjust the other field so it's always 16:9.
@@ -153,7 +159,7 @@ const clip = {
         $scope.hasChannels = false;
         $scope.channelOptions = {};
         $q.when(backendCommunicator.fireEventAsync("getDiscordChannels"))
-            .then(channels => {
+            .then((channels) => {
                 if (channels && channels.length > 0) {
                     const newChannels = {};
 
@@ -172,7 +178,7 @@ const clip = {
                 }
             });
     },
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.postInDiscord && effect.discordChannelId == null) {
             errors.push("Please select Discord channel.");
@@ -182,7 +188,7 @@ const clip = {
         }
         return errors;
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const { effect } = event;
         const clip = await clipProcessor.createClip(effect);
         if (clip != null) {
@@ -221,6 +227,10 @@ const clip = {
                     exitDuration: effect.exitDuration,
                     overlayInstance: overlayInstance
                 });
+
+                if (effect.wait ?? true) {
+                    await utils.wait(clipDuration * 1000);
+                }
             }
 
             if (effect.options.putClipUrlInVariable) {
@@ -231,10 +241,14 @@ const clip = {
                     effect.options.variablePropertyPath || null
                 );
             }
-
-            await utils.wait(clipDuration * 1000);
         }
-        return clip != null;
+
+        return {
+            success: clip != null,
+            outputs: {
+                clipUrl: clip?.url ?? ""
+            }
+        };
     },
     overlayExtension: {
         dependencies: {
@@ -243,7 +257,7 @@ const clip = {
         },
         event: {
             name: "playTwitchClip",
-            onOverlayEvent: event => {
+            onOverlayEvent: (event) => {
                 const {
                     clipVideoUrl,
                     volume,

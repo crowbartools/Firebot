@@ -1,16 +1,18 @@
 import eventManager from "../../events/EventManager";
 
 export function triggerCheer(
-    userName: string,
+    username: string,
     userId: string,
+    userDisplayName: string,
     isAnonymous: boolean,
     bits: number,
     totalBits: number,
     cheerMessage: string
 ): void {
     eventManager.triggerEvent("twitch", "cheer", {
-        username: userName,
+        username,
         userId,
+        userDisplayName,
         isAnonymous,
         bits,
         totalBits,
@@ -19,12 +21,16 @@ export function triggerCheer(
 }
 
 export function triggerBitsBadgeUnlock(
-    userName: string,
+    username: string,
+    userId: string,
+    userDisplayName: string,
     message: string,
     badgeTier: number
 ): void {
     eventManager.triggerEvent("twitch", "bits-badge-unlocked", {
-        username: userName,
+        username,
+        userId,
+        userDisplayName,
         message,
         badgeTier
     });

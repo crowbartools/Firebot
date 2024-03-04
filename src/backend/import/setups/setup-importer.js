@@ -166,7 +166,7 @@ async function importSetup(setup, selectedCurrency) {
     // viewer roles
     const roles = setup.components.viewerRoles || [];
     for (const role of roles) {
-        customRolesManager.saveCustomRole(role);
+        await customRolesManager.importCustomRole(role);
     }
     customRolesManager.triggerUiRefresh();
 

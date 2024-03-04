@@ -83,8 +83,8 @@ function createStreamPreviewWindow() {
     streamPreviewWindowState.manage(streamPreview);
 
     streamPreview.on("close", () => {
-        if (!view.isDestroyed()) {
-            view.destroy();
+        if (!view.webContents.isDestroyed()) {
+            view.webContents.destroy();
         }
     });
 }
@@ -470,8 +470,12 @@ async function createMainWindow() {
             }).then(({response}) => {
                 if (response === 0) {
                     mainWindow.destroy();
+                    global.renderWindow = null;
                 }
             }).catch(() => console.log("Error with close app confirmation"));
+        } else {
+            mainWindow.destroy();
+            global.renderWindow = null;
         }
     });
 }

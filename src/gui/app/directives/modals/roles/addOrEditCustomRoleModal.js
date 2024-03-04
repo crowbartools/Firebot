@@ -38,8 +38,8 @@
 
                         <div ng-repeat="viewer in viewerList = ($ctrl.role.viewers | filter:searchText) | startFrom:($ctrl.pagination.currentPage-1)*$ctrl.pagination.pageSize | limitTo:$ctrl.pagination.pageSize track by $index">
                             <div style="display:flex;height: 45px; align-items: center; justify-content: space-between;padding: 0 15px;">
-                                <div style="font-weight: 100;font-size: 16px;">{{viewer}}</div>
-                                <span class="delete-button" ng-click="$ctrl.deleteViewer(viewer)">
+                                <div style="font-weight: 100;font-size: 16px;">{{viewer.displayName}}<span ng-if="viewer.displayName.toLowerCase() !== viewer.username.toLowerCase()" class="muted"> ({{viewer.username}})</span></div>
+                                <span class="delete-button" ng-click="$ctrl.deleteViewer(viewer.id, viewer.displayName)">
                                     <i class="far fa-trash-alt"></i>
                                 </span>
                             </div>
@@ -78,15 +78,6 @@
                 pageSize: 5
             };
 
-            const findIndexIgnoreCase = (array, element) => {
-                if (Array.isArray(array)) {
-                    const search = array.findIndex(e => e.toString().toLowerCase() ===
-                        element.toString().toLowerCase());
-                    return search;
-                }
-                return -1;
-            };
-
             $ctrl.addViewer = function() {
                 utilityService.openViewerSearchModal(
                     {
@@ -97,7 +88,7 @@
                                 if (user == null) {
                                     return resolve(false);
                                 }
-                                if (findIndexIgnoreCase($ctrl.role.viewers, user.username) !== -1) {
+                                if ($ctrl.role.viewers.map(v => v.id).includes(user.id)) {
                                     return resolve(false);
                                 }
                                 resolve(true);
@@ -106,19 +97,23 @@
                         validationText: "Viewer already has this role."
                     },
                     (user) => {
-                        $ctrl.role.viewers.push(user.username);
+                        $ctrl.role.viewers.push({
+                            id: user.id,
+                            username: user.username,
+                            displayName: user.displayName
+                        });
                     });
             };
 
-            $ctrl.deleteViewer = function(viewer) {
+            $ctrl.deleteViewer = function(userId, displayName) {
                 utilityService.showConfirmationModal({
                     title: "Remove Viewer",
-                    question: `Are you sure you want to remove ${viewer} from this role?`,
+                    question: `Are you sure you want to remove ${displayName} from this role?`,
                     confirmLabel: "Remove",
                     confirmBtnType: "btn-danger"
                 }).then(confirmed => {
                     if (confirmed) {
-                        $ctrl.role.viewers = $ctrl.role.viewers.filter(v => v !== viewer);
+                        $ctrl.role.viewers = $ctrl.role.viewers.filter(v => v.id !== userId);
                     }
                 });
             };

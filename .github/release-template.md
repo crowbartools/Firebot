@@ -25,6 +25,9 @@
 
 ## Linux Install
 - Download Firebot-v{0}-linux-x64.tar.gz
-- ?? will need further instructions
+- Unpack Firebot-v{0}-linux-x64.tar.gz
+- Change into the directory where you unpacked the archive
+- Run the `Firebot v5` executable.
+  - This must either be done via a terminal window, or you will need to create a shortcut that includes the correct path for the unpacked archived as the "working directory".
 
 **Note**: Linux does not receive auto-updates

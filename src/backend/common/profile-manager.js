@@ -149,9 +149,14 @@ function deleteProfile() {
 }
 
 const getPathInProfile = function(filepath) {
-    const profilePath =
-    `${dataAccess.getUserDataPath()}/profiles/${getLoggedInProfile()}`;
-    return path.join(profilePath, filepath);
+    return path.join(dataAccess.getUserDataPath(),
+        "profiles",
+        getLoggedInProfile(),
+        filepath);
+};
+
+const getPathInProfileRelativeToUserData = function(filepath) {
+    return path.join("profiles", getLoggedInProfile(), filepath);
 };
 
 /**
@@ -178,9 +183,13 @@ const getJsonDbInProfile = function(filepath, humanReadable = true) {
 };
 
 const profileDataPathExistsSync = function(filePath) {
-    const profilePath = `/profiles/${getLoggedInProfile()}`,
-        joinedPath = path.join(profilePath, filePath);
+    const joinedPath = getPathInProfileRelativeToUserData(filePath);
     return dataAccess.userDataPathExistsSync(joinedPath);
+};
+
+const deletePathInProfile = function(filePath) {
+    const joinedPath = getPathInProfileRelativeToUserData(filePath);
+    return dataAccess.deletePathInUserData(joinedPath);
 };
 
 exports.getLoggedInProfile = getLoggedInProfile;
@@ -193,3 +202,4 @@ exports.logInProfile = logInProfile;
 exports.renameProfile = renameProfile;
 exports.getNewProfileName = () => profileToRename;
 exports.hasProfileRename = () => profileToRename != null;
+exports.deletePathInProfile = deletePathInProfile;

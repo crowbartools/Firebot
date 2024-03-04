@@ -14,7 +14,8 @@ exports.setupListeners = () => {
         const response = await twitchApi.streamerClient.search.searchChannels(query, { limit: 10 });
         return (response?.data ?? []).map(c => ({
             id: c.id,
-            username: c.displayName,
+            username: c.name,
+            displayName: c.displayName,
             avatarUrl: c.thumbnailUrl
         }));
     });

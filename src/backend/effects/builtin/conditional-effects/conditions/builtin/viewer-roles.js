@@ -1,6 +1,7 @@
 "use strict";
 
-const { viewerHasRoles } = require("../../../../../roles/role-helpers");
+const twitchApi = require("../../../../../twitch-api/api");
+const roleHelpers = require("../../../../../roles/role-helpers").default;
 
 module.exports = {
     id: "firebot:viewerroles",
@@ -10,7 +11,7 @@ module.exports = {
     leftSideValueType: "text",
     leftSideTextPlaceholder: "Enter username",
     rightSideValueType: "preset",
-    getRightSidePresetValues: viewerRolesService => {
+    getRightSidePresetValues: (viewerRolesService) => {
         return viewerRolesService.getAllRoles()
             .map(r => ({
                 value: r.id,
@@ -42,7 +43,12 @@ module.exports = {
             username = trigger.metadata.username;
         }
 
-        const hasRole = await viewerHasRoles(username, [rightSideValue]);
+        const user = await twitchApi.users.getUserByName(username);
+        if (user == null) {
+            return false;
+        }
+
+        const hasRole = await roleHelpers.viewerHasRoles(user.id, [rightSideValue]);
 
         switch (comparisonType) {
             case "include":

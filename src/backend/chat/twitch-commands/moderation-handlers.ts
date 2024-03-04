@@ -115,15 +115,19 @@ export const vipHandler: TwitchSlashCommandHandler<[string]> = {
         };
     },
     handle: async ([targetUsername]) => {
-        const targetUserId = (await twitchApi.users.getUserByName(targetUsername))?.id;
+        const targetUser = await twitchApi.users.getUserByName(targetUsername);
 
-        if (targetUserId == null) {
+        if (targetUser == null) {
             return false;
         }
 
-        const result = await twitchApi.moderation.addChannelVip(targetUserId);
+        const result = await twitchApi.moderation.addChannelVip(targetUser.id);
         if (result === true) {
-            chatRolesManager.addVipToVipList(targetUsername);
+            chatRolesManager.addVipToVipList({
+                id: targetUser.id,
+                username: targetUser.name,
+                displayName: targetUser.displayName
+            });
         }
         return result;
     }
@@ -155,7 +159,7 @@ export const unvipHandler: TwitchSlashCommandHandler<[string]> = {
 
         const result = await twitchApi.moderation.removeChannelVip(targetUserId);
         if (result === true) {
-            chatRolesManager.removeVipFromVipList(targetUsername);
+            chatRolesManager.removeVipFromVipList(targetUserId);
         }
         return result;
     }

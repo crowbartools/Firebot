@@ -1,7 +1,6 @@
 import { ReplaceVariable } from "../../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
-
-const customRolesManager = require("../../../../roles/custom-roles-manager");
+import customRolesManager from "../../../../roles/custom-roles-manager";
 
 const model : ReplaceVariable = {
     definition: {
@@ -11,14 +10,14 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.USER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: async (_, role) => {
+    evaluator: async (_, role: string) => {
         if (role == null || role === '') {
             return [];
         }
 
         const customRole = customRolesManager.getRoleByName(role);
 
-        return customRole?.viewers || [];
+        return customRole?.viewers?.map(v => v.displayName) || [];
     }
 };
 

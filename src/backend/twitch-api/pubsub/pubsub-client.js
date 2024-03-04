@@ -69,6 +69,8 @@ async function createClient() {
 
         const bitsBadgeUnlockListener = pubSubClient.onBitsBadgeUnlock(streamer.userId, (message) => {
             twitchEventsHandler.cheer.triggerBitsBadgeUnlock(
+                message.userName ?? "ananonymouscheerer",
+                message.userId,
                 message.userName ?? "An Anonymous Cheerer",
                 message.message ?? "",
                 message.badgeTier
@@ -118,10 +120,10 @@ async function createClient() {
 
             switch (message.type) {
                 case "vip_added":
-                    chatRolesManager.addVipToVipList(message.targetUserName);
-                    break;
-                case "vip_removed":
-                    chatRolesManager.removeVipFromVipList(message.targetUserName);
+                    chatRolesManager.addVipToVipList({
+                        id: message.targetUserId,
+                        username: message.targetUserName
+                    });
                     break;
                 default:
                     switch (message.action) {
