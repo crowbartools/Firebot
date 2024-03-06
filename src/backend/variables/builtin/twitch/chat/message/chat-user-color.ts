@@ -42,9 +42,8 @@ const model : ReplaceVariable = {
             if (chatColor == null) {
                 const userId = trigger?.metadata?.userId ?? accountAccess.getAccounts().streamer.userId;
                 chatColor = await twitchApi.chat.getColorForUser(userId);
-                return chatColor ?? DEFAULT_COLOR;
             }
-            return chatColor;
+            return chatColor ?? DEFAULT_COLOR;;
         } catch (error) {
             return DEFAULT_COLOR;
         }
