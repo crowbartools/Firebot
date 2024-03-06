@@ -26,22 +26,22 @@ const model : ReplaceVariable = {
     },
     evaluator: async (trigger, username: string) => {
         try {
-            let chatColor = "";
+            let chatColor:string | undefined;
             if (username != null) {
                 const viewer = await viewerDatabase.getViewerByUsername(username);
                 if (viewer != null) {
                     chatColor = await twitchApi.chat.getColorForUser(viewer._id);
-                    return chatColor ?? DEFAULT_COLOR;
                 }
+                return chatColor ?? DEFAULT_COLOR;
             }
             if (trigger.metadata.chatMessage) {
-                chatColor = trigger.metadata.chatMessage.color;
+                chatColor = trigger?.metadata?.chatMessage?.color;
             } else if (trigger.type === EffectTrigger.EVENT || trigger.type === EffectTrigger.MANUAL) {
-                chatColor = trigger.metadata.eventData.color;
+                chatColor = trigger?.metadata?.eventData?.chatMessage?.color;
             }
-            if (chatColor === "") {
-                const streamer = accountAccess.getAccounts().streamer;
-                chatColor = await twitchApi.chat.getColorForUser(streamer.userId);
+            if (chatColor == null) {
+                const userId = trigger?.metadata?.userId ?? accountAccess.getAccounts().streamer.userId;
+                chatColor = await twitchApi.chat.getColorForUser(userId);
                 return chatColor ?? DEFAULT_COLOR;
             }
             return chatColor;
