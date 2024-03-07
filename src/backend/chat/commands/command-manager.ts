@@ -324,6 +324,8 @@ class CommandManager extends EventEmitter {
             command.count = 0;
         }
 
+        command.type = "custom";
+
         const commandDb = this.getCommandsDb();
 
         try {
