@@ -75,7 +75,7 @@ export class TwitchUsersApi {
 
         const [user, channel] = await this.getUsersByNames([username, channelName]);
 
-        if (user.id == null || channel.id == null) {
+        if (user?.id == null || channel?.id == null) {
             return false;
         }
 
