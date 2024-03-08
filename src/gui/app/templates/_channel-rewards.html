@@ -22,7 +22,7 @@
         ng-class="{'active' : activeChannelRewardTab === 1}"
         ng-click="activeChannelRewardTab = 1"
       >
-        <a href>PENDING REDEMPTIONS</a>
+        <a href>REQUEST QUEUE</a>
       </li>
     </ul>
   </div>
@@ -85,24 +85,9 @@
         </div>
       </fb-item-table-footer>
     </firebot-item-table>
-    <div
+    <channel-reward-queue-manager 
       ng-if="activeChannelRewardTab === 1"
-    >
-      <div
-        ng-if="channelRewardsService.loadingRedemptions === true"
-        style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; background-color: #00000080; display: flex; align-items: center; justify-content: center;">
-        <div>Loading redemptions...</div>
-      </div>
-      <div
-        ng-repeat="(rewardId, redemptions) in channelRewardsService.redemptions"
-      >
-        <h4>{{rewardId}}</h4>
-        <div ng-repeat="redemption in redemptions" style="margin-bottom: 8px;">
-          <div><span uib-tooltip="{{redemption.redemptionDate | date: 'medium'}}">{{redemption.redemptionDate | timeAgo: "days"}}</span>: {{redemption.userDisplayName}}{{(redemption.userDisplayName.toLowerCase() !== redemption.userName.toLowerCase() ? " (" + redemption.userName + ")" : "")}}</div>
-          <div ng-if="redemption.rewardMessage"><em>{{redemption.rewardMessage}}</em></div>
-        </div>
-      </div>
-    </div>
+    />
   </div>
 </div>
 

@@ -617,10 +617,21 @@
         };
     });
 
-    app.filter('timeAgo', function() {
-        return function(input, unit) {
-            const count = moment().diff(moment(input), unit);
-            return `${count} ${count === 1 ? unit.slice(0, -1) : unit} ago`;
+    app.filter('timeFromNow', function() {
+        return function(input, hideSuffix = false) {
+            return moment(input).fromNow(hideSuffix);
+        };
+    });
+
+    app.filter('hideEmptyRewardQueues', function() {
+        return function(queue) {
+            const newQueueObj = { ...queue };
+            for (const key in newQueueObj) {
+                if (newQueueObj[key].length === 0) {
+                    delete newQueueObj[key];
+                }
+            }
+            return newQueueObj;
         };
     });
 

@@ -8,6 +8,7 @@ import {
     HelixCustomRewardRedemption,
     HelixCustomRewardRedemptionFilter
 } from "@twurple/api";
+import { chunkArray } from "../../utils/chunkArray";
 
 export interface ImageSet {
     url1x: string;
@@ -57,9 +58,9 @@ export interface RewardRedemption {
     rewardMessage?: string;
 }
 
-export interface RewardRedemptionApprovalRequest {
+export interface RewardRedemptionsApprovalRequest {
     rewardId: string;
-    redemptionId?: string;
+    redemptionIds?: string[];
     approve?: boolean;
 }
 
@@ -311,17 +312,21 @@ export class TwitchChannelRewardsApi {
         return redemptions;
     }
 
-    async approveOrRejectChannelRewardRedemption(request: RewardRedemptionApprovalRequest): Promise<boolean> {
+    async approveOrRejectChannelRewardRedemption(request: RewardRedemptionsApprovalRequest): Promise<boolean> {
         const approve = request?.approve ?? true;
         try {
-            const response = await this._streamerClient.channelPoints.updateRedemptionStatusByIds(
-                accountAccess.getAccounts().streamer.userId,
-                request.rewardId,
-                [request.redemptionId],
-                approve ? "FULFILLED" : "CANCELED"
-            );
+            const chunkedRedemptionIds = chunkArray(request.redemptionIds, 50);
 
-            logger.debug(`Redemption ${request.redemptionId} for channel reward ${request.rewardId} was ${response[0].isFulfilled ? "approved" : "rejected"}`);
+            for (const chunk of chunkedRedemptionIds) {
+                const response = await this._streamerClient.channelPoints.updateRedemptionStatusByIds(
+                    accountAccess.getAccounts().streamer.userId,
+                    request.rewardId,
+                    chunk,
+                    approve ? "FULFILLED" : "CANCELED"
+                );
+
+                logger.debug(`Redemptions ${chunk.join(",")} for channel reward ${request.rewardId} was ${response[0].isFulfilled ? "approved" : "rejected"}`);
+            }
 
             return true;
         } catch (error) {
@@ -330,34 +335,33 @@ export class TwitchChannelRewardsApi {
         }
     }
 
-    async approveOrRejectAllRedemptionsForChannelReward(request: RewardRedemptionApprovalRequest): Promise<boolean> {
-        const approve = request?.approve ?? true;
+    async approveOrRejectAllRedemptionsForChannelRewards(rewardIds: string[], approve = true): Promise<boolean> {
         try {
             const filter: HelixCustomRewardRedemptionFilter = {
                 newestFirst: true
             };
 
-            const redemptions = await this._streamerClient.channelPoints.getRedemptionsForBroadcasterPaginated(
-                accountAccess.getAccounts().streamer.userId,
-                request.rewardId,
-                "UNFULFILLED",
-                filter
-            ).getAll();
+            for (const rewardId of rewardIds) {
 
-            for (const redemption of redemptions) {
+                const redemptions = await this._streamerClient.channelPoints.getRedemptionsForBroadcasterPaginated(
+                    accountAccess.getAccounts().streamer.userId,
+                    rewardId,
+                    "UNFULFILLED",
+                    filter
+                ).getAll();
+
                 if (await this.approveOrRejectChannelRewardRedemption({
-                    rewardId: redemption.rewardId,
-                    redemptionId: redemption.id,
-                    approve: approve
+                    rewardId,
+                    redemptionIds: redemptions.map(r => r.id),
+                    approve
                 }) !== true) {
-                    logger.warn(`Could not complete ${approve ? "approving" : "rejecting"} all channel reward redemptions for ${request.rewardId}`);
-                    return false;
+                    logger.warn(`Could not complete ${approve ? "approving" : "rejecting"} all channel reward redemptions for ${rewardId}`);
                 }
             }
 
             return true;
         } catch (error) {
-            logger.error(`Failed to ${approve ? "approve" : "reject"} all channel reward redemptions for ${request.rewardId}`, error.message);
+            logger.error(`Failed to ${approve ? "approve" : "reject"} all channel reward redemptions for rewards ${rewardIds.join(", ")}`, error.message);
             return false;
         }
     }

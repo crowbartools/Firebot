@@ -9,7 +9,7 @@
             const service = {};
 
             service.channelRewards = [];
-            service.redemptions = [];
+            service.redemptions = {};
 
             service.selectedSortTag = null;
 
@@ -127,34 +127,37 @@
 
             service.loadingRedemptions = false;
             service.refreshChannelRewardRedemptions = () => {
-                if (service.loadingRedemptions === true) {
+                if (service.loadingRedemptions) {
                     return;
                 }
 
                 service.loadingRedemptions = true;
 
                 $q.when(backendCommunicator.fireEventAsync("refresh-channel-reward-redemptions"))
-                    .then((redemptions) => {
-                        if (redemptions) {
-                            service.redemptions = redemptions;
-                        }
+                    .then(() => {
                         service.loadingRedemptions = false;
                     });
             };
 
-            service.approveOrRejectChannelRewardRedemption = (rewardId, redemptionId, approve = true) => {
-                backendCommunicator.send("approve-reject-channel-reward-redemption", {
-                    rewardId,
-                    redemptionId,
-                    approve
-                });
+            service.getRewardIdsWithRedemptions = () => {
+                return Object.entries(service.redemptions)
+                    .filter(([, redemptions]) => redemptions.length > 0)
+                    .map(([rewardId]) => rewardId);
             };
 
-            service.approveOrRejectAllRedemptionsForChannelReward = (rewardId, approve = true) => {
-                backendCommunicator.send("approve-reject-channel-reward-all-redemptions", {
+            service.approveOrRejectChannelRewardRedemptions = (rewardId, redemptionIds, approve = true) => {
+                return $q.when(backendCommunicator.fireEventAsync("approve-reject-channel-reward-redemptions", {
                     rewardId,
+                    redemptionIds,
                     approve
-                });
+                }));
+            };
+
+            service.approveOrRejectAllRedemptionsForChannelRewards = (rewardIds, approve = true) => {
+                return $q.when(backendCommunicator.fireEventAsync("approve-reject-channel-all-redemptions-for-rewards", {
+                    rewardIds,
+                    approve
+                }));
             };
 
             backendCommunicator.on("channel-reward-updated", (channelReward) => {
@@ -162,6 +165,7 @@
             });
 
             backendCommunicator.on("channel-reward-redemptions-updated", (redemptions) => {
+                service.loadingRedemptions = false;
                 service.redemptions = redemptions;
             });
 

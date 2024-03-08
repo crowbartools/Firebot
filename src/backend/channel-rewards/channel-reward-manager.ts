@@ -4,7 +4,7 @@ import accountAccess from "../common/account-access";
 import profileManager from "../common/profile-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import twitchApi from "../twitch-api/api";
-import { CustomReward, RewardRedemption, RewardRedemptionApprovalRequest } from "../twitch-api/resource/channel-rewards";
+import { CustomReward, RewardRedemption, RewardRedemptionsApprovalRequest } from "../twitch-api/resource/channel-rewards";
 import { EffectTrigger } from "../../shared/effect-constants";
 import { RewardRedemptionMetadata, SavedChannelReward } from "../../types/channel-rewards";
 
@@ -59,12 +59,12 @@ class ChannelRewardManager {
             await this.refreshChannelRewardRedemptions();
         });
 
-        frontendCommunicator.onAsync("approve-reject-channel-reward-redemption", async (request: RewardRedemptionApprovalRequest) => {
-            await this.approveOrRejectChannelRewardRedemption(request);
+        frontendCommunicator.onAsync("approve-reject-channel-reward-redemptions", async (request: RewardRedemptionsApprovalRequest) => {
+            await this.approveOrRejectChannelRewardRedemptions(request);
         });
 
-        frontendCommunicator.onAsync("approve-reject-channel-reward-all-redemptions", async (request: RewardRedemptionApprovalRequest) => {
-            await this.approveOrRejectAllRedemptionsForChannelReward(request);
+        frontendCommunicator.onAsync("approve-reject-channel-all-redemptions-for-rewards", async (request: { rewardIds: string[], approve?: boolean }) => {
+            await this.approveOrRejectAllRedemptionsForChannelRewards(request.rewardIds, request.approve);
         });
     }
 
@@ -296,18 +296,18 @@ class ChannelRewardManager {
         return this._channelRewardRedemptions ?? {};
     }
 
-    async approveOrRejectChannelRewardRedemption(request: RewardRedemptionApprovalRequest): Promise<void> {
-        const result = await twitchApi.channelRewards.approveOrRejectChannelRewardRedemption(request);
+    async approveOrRejectChannelRewardRedemptions(request: RewardRedemptionsApprovalRequest): Promise<void> {
+        const successful = await twitchApi.channelRewards.approveOrRejectChannelRewardRedemption(request);
 
-        if (result === true) {
+        if (successful) {
             await this.refreshChannelRewardRedemptions();
         }
     }
 
-    async approveOrRejectAllRedemptionsForChannelReward(request: RewardRedemptionApprovalRequest): Promise<void> {
-        const result = await twitchApi.channelRewards.approveOrRejectAllRedemptionsForChannelReward(request);
+    async approveOrRejectAllRedemptionsForChannelRewards(rewardIds: string[], approve = true): Promise<void> {
+        const successful = await twitchApi.channelRewards.approveOrRejectAllRedemptionsForChannelRewards(rewardIds, approve);
 
-        if (result === true) {
+        if (successful) {
             await this.refreshChannelRewardRedemptions();
         }
     }

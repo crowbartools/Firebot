@@ -63,9 +63,9 @@ const model: EffectType<{
     },
     optionsController: () => {},
     onTriggerEvent: async ({ effect }) => {
-        return await channelRewardManager.approveOrRejectChannelRewardRedemption({
+        return await channelRewardManager.approveOrRejectChannelRewardRedemptions({
             rewardId: effect.rewardId,
-            redemptionId: effect.redemptionId,
+            redemptionIds: [effect.redemptionId],
             approve: effect.approve
         });
     }
