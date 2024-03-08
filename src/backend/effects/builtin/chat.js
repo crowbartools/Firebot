@@ -33,13 +33,14 @@ const effect = {
             />
             <firebot-checkbox 
                 label="Whisper"
-                model="effect.whisper"
+                model="showWhisperInput"
                 style="margin: 0px 15px 0px 0px"
+                ng-click="effect.whisper = ''"
             />
-            <div ng-show="effect.whisper">
+            <div ng-show="showWhisperInput">
                 <firebot-input 
                     input-title="To"
-                    model="effect.whisperTarget" 
+                    model="effect.whisper" 
                     placeholder-text="Username"
                 />
             </div>
@@ -56,7 +57,9 @@ const effect = {
     </eos-container>
 
     `,
-    optionsController: () => {},
+    optionsController: ($scope) => {
+        $scope.showWhisperInput = $scope.effect.whisper != null && $scope.effect.whisper !== ''
+    },
     optionsValidator: effect => {
         const errors = [];
         if (effect.message == null || effect.message === "") {
@@ -76,11 +79,7 @@ const effect = {
             effect.message = `/me ${effect.message}`;
         }
 
-        if (!effect.whisper && effect.whisperTarget != null) {
-            effect.whisperTarget = null;
-        }
-
-        await twitchChat.sendChatMessage(effect.message, effect.whisperTarget, effect.chatter, !effect.whisper && effect.sendAsReply ? messageId : undefined);
+        await twitchChat.sendChatMessage(effect.message, effect.whisper, effect.chatter, !effect.whisper && effect.sendAsReply ? messageId : undefined);
 
         return true;
     }
