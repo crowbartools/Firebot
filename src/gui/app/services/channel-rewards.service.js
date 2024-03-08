@@ -60,7 +60,6 @@
             service.showAddOrEditRewardModal = (reward) => {
                 utilityService.showModal({
                     component: "addOrEditChannelReward",
-                    size: "md",
                     resolveObj: {
                         reward: () => reward
                     },

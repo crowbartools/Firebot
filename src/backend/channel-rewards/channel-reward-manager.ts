@@ -7,7 +7,7 @@ import twitchApi from "../twitch-api/api";
 import { CustomReward, RewardRedemption, RewardRedemptionsApprovalRequest } from "../twitch-api/resource/channel-rewards";
 import { EffectTrigger } from "../../shared/effect-constants";
 import { RewardRedemptionMetadata, SavedChannelReward } from "../../types/channel-rewards";
-
+import { TriggerType } from "../common/EffectType";
 
 class ChannelRewardManager {
     channelRewards: Record<string, SavedChannelReward> = {};
@@ -264,6 +264,67 @@ class ChannelRewardManager {
         if (savedReward == null || savedReward.effects == null || savedReward.effects.list == null) {
             return;
         }
+
+        const restrictionData = savedReward.restrictionData;
+        if (restrictionData) {
+            logger.debug("Reward has restrictions...checking them.");
+            const restrictionsManager = require("../restrictions/restriction-manager");
+            const triggerData = {
+                type: TriggerType.CHANNEL_REWARD,
+                metadata
+            };
+
+            const shouldAutoApproveOrReject = savedReward.manageable &&
+                !savedReward.twitchData.shouldRedemptionsSkipRequestQueue &&
+                savedReward.autoApproveRedemptions;
+
+            try {
+                await restrictionsManager.runRestrictionPredicates(triggerData, savedReward.restrictionData);
+                logger.debug("Restrictions passed!");
+                if (shouldAutoApproveOrReject) {
+                    logger.debug("auto accepting redemption");
+                    this.approveOrRejectChannelRewardRedemptions({
+                        rewardId,
+                        redemptionIds: [metadata.redemptionId],
+                        approve: true
+                    });
+                }
+            } catch (restrictionReason) {
+                let reason;
+                if (Array.isArray(restrictionReason)) {
+                    reason = restrictionReason.join(", ");
+                } else {
+                    reason = restrictionReason;
+                }
+
+                logger.debug(`${metadata.username} could not use Reward '${savedReward.twitchData.title}' because: ${reason}`);
+                if (restrictionData.sendFailMessage || restrictionData.sendFailMessage == null) {
+
+                    const restrictionMessage = restrictionData.useCustomFailMessage ?
+                        restrictionData.failMessage :
+                        "Sorry @{user}, you cannot use this channel reward because: {reason}";
+
+                    const twitchChat = require("../chat/twitch-chat");
+                    await twitchChat.sendChatMessage(
+                        restrictionMessage
+                            .replace("{user}", metadata.username)
+                            .replace("{reason}", reason)
+                    );
+                }
+
+                if (shouldAutoApproveOrReject) {
+                    logger.debug("auto rejecting redemption");
+                    this.approveOrRejectChannelRewardRedemptions({
+                        rewardId,
+                        redemptionIds: [metadata.redemptionId],
+                        approve: false
+                    });
+                }
+
+                return false;
+            }
+        }
+
 
         const effectRunner = require("../common/effect-runner");
 
