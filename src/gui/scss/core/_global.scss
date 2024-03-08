@@ -1613,6 +1613,11 @@ thead th{
     background: #6c6c6c;
     color: rgba(255,255,255,0.8);
   }
+
+  &:hover {
+    background: #136e87;
+    cursor: pointer;
+  }
 }
 
 .flex-center {

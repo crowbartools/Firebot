@@ -133,7 +133,7 @@
                         <div ng-repeat="effect in $ctrl.effectsData.list track by $index" context-menu="$ctrl.createEffectMenuOptions(effect)">
                             <div
                                 role="button"
-                                class="effect-bar clickable-dark"
+                                class="effect-bar"
                                 ng-class="{'disabled': !effect.active}"
                                 ng-click="$ctrl.openEditEffectModal(effect, $index, $ctrl.trigger, false)"
                                 ng-mouseenter="hovering = true"
