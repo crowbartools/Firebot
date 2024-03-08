@@ -13,13 +13,13 @@ const ONLINE_TIMEOUT = 450; // 7.50 mins
 /**
  * Simple User
  * @typedef {Object} User
- * @property {id} id
+ * @property {string} id
  * @property {string} username
  */
 
 /**
  * @typedef {Object} UserDetails
- * @property {number} id
+ * @property {string} id
  * @property {string} username
  * @property {string} displayName
  * @property {string} profilePicUrl
@@ -156,7 +156,7 @@ async function updateUserOnlineStatus(userDetails, updateDb = false) {
 
         frontendCommunicator.send("twitch:chat:user-joined", {
             id: userDetails.id,
-            username: userDetails.displayName,
+            username: userDetails.username,
             displayName: userDetails.displayName,
             roles: roles,
             profilePicUrl: userDetails.profilePicUrl,

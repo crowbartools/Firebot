@@ -122,7 +122,7 @@ async function executeScript(scriptData, trigger, isStartupScript = false) {
         effectsObj = {
             id: uuid(),
             list: effects
-                .filter((e) => e.type != null && e.type !== "")
+                .filter(e => e.type != null && e.type !== "")
                 .map((e) => {
                     e = mapV4EffectToV5(e);
                     if (e.id == null) {
@@ -240,6 +240,20 @@ function runScript(effect, trigger) {
     return executeScript(effect, trigger);
 }
 
+async function stopAllScripts() {
+    logger.info("Stopping all custom scripts...");
+    for (const activeScript of Object.values(activeCustomScripts)) {
+        if (activeScript.stop != null) {
+            try {
+                await Promise.resolve(activeScript.stop());
+            } catch (error) {
+                logger.error(`Error when attempting to stop custom script`, error);
+            }
+        }
+    }
+    logger.info("Stopped all custom scripts");
+}
+
 ipcMain.on("openScriptsFolder", function () {
     shell.openPath(profileManager.getPathInProfile("/scripts"));
 });
@@ -248,3 +262,4 @@ exports.runScript = runScript;
 exports.runStartUpScript = runStartUpScript;
 exports.startUpScriptSaved = startUpScriptSaved;
 exports.startUpScriptDeleted = startUpScriptDeleted;
+exports.stopAllScripts = stopAllScripts;

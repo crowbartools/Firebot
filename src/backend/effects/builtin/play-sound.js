@@ -120,7 +120,7 @@ const playSound = {
                 logger.warn("Unable to read sound folder", err);
             }
 
-            const filteredFiles = files.filter(i => (/\.(mp3|ogg|wav)$/i).test(i));
+            const filteredFiles = files.filter(i => (/\.(mp3|ogg|wav|flac)$/i).test(i));
             const chosenFile = filteredFiles[Math.floor(Math.random() * filteredFiles.length)];
 
             if (filteredFiles.length === 0) {
@@ -197,6 +197,8 @@ const playSound = {
                     mediaType = "audio/ogg";
                 } else if (filepath.endsWith("wav")) {
                     mediaType = "audio/wav";
+                } else if (filepath.endsWith("flac")) {
+                    mediaType = "audio/flac";
                 }
 
                 const audioElement = `<audio id="${uuid}" src="${data.isUrl ? data.url : resourcePath}" type="${mediaType}"></audio>`;

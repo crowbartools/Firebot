@@ -35,6 +35,69 @@ export class TwitchChatApi {
     }
 
     /**
+     * Sends a chat message to the streamer's chat.
+     *
+     * @param message Chat message to send.
+     * @param replyToMessageId The ID of the message this should be replying to. Leave as null for non replies.
+     * @param sendAsBot If the chat message should be sent as the bot or not.
+     * If this is set to `false`, the chat message will be sent as the streamer.
+     * @returns `true` if sending the chat message was successful or `false` if it failed
+     */
+    async sendChatMessage(message: string, replyToMessageId = null, sendAsBot = false): Promise<boolean> {
+        if (!message?.length) {
+            return false;
+        }
+
+        try {
+            const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
+            const willSendAsBot: boolean = sendAsBot === true
+                && accountAccess.getAccounts().bot?.userId != null
+                && this._botClient != null;
+            const senderUserId: string = willSendAsBot === true ?
+                accountAccess.getAccounts().bot.userId :
+                accountAccess.getAccounts().streamer.userId;
+
+            // TODO: This next section is a shim until Twurple 7.1.0+ when we get a friendly function call
+            const client: ApiClient = willSendAsBot === true
+                ? this._botClient
+                : this._streamerClient;
+
+            const result = await client.callApi<{
+                data: [{
+                    is_sent: boolean,
+                    drop_reason?: {
+                        message: string
+                    }
+                }]
+            }>({
+                type: 'helix',
+                url: 'chat/messages',
+                method: 'POST',
+                userId: senderUserId,
+                canOverrideScopedUserContext: true,
+                query: {
+                    broadcaster_id: streamerUserId, // eslint-disable-line camelcase
+                    sender_id: senderUserId // eslint-disable-line camelcase
+                },
+                jsonBody: {
+                    message: message,
+                    reply_parent_message_id: replyToMessageId ?? undefined // eslint-disable-line camelcase
+                }
+            });
+
+            if (result.data[0].is_sent !== true) {
+                logger.error(`Twitch dropped chat message. Reason: ${result.data[0].drop_reason.message}`);
+            }
+
+            return result.data[0].is_sent;
+        } catch (error) {
+            logger.error(`Unable to send ${sendAsBot === true ? "bot" : "steamer"} chat message`, error);
+        }
+
+        return false;
+    }
+
+    /**
      * Sends an announcement to the streamer's chat.
      *
      * @param message The announcement to send
@@ -264,5 +327,20 @@ export class TwitchChatApi {
         }
 
         return false;
+    }
+
+    /**
+     * Gets the chat color for a user.
+     *
+     * @param targetUserId numerical ID of the user as sting.
+     * @returns the color as hex code, null if the user did not set a color, or undefined if the user is unknown.
+     */
+    async getColorForUser(targetUserId: string): Promise<string | null |undefined> {
+        try {
+            return await this._streamerClient.chat.getColorForUser(targetUserId);
+        } catch (error) {
+            logger.error("Error Receiving user color", error.message);
+            return null;
+        }
     }
 }

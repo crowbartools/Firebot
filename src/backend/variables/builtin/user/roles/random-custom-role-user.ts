@@ -1,8 +1,7 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-
-const customRolesManager = require("../../../roles/custom-roles-manager");
-const util = require("../../../utility");
+import { ReplaceVariable } from "../../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import customRolesManager from "../../../../roles/custom-roles-manager";
+import util from "../../../../utility";
 
 const model : ReplaceVariable = {
     definition: {
@@ -12,7 +11,7 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.USER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: async (_, role) => {
+    evaluator: async (_, role: string) => {
         if (role == null || role === '') {
             return "[No custom role specified]";
         }
@@ -29,7 +28,7 @@ const model : ReplaceVariable = {
 
         const randIndex = util.getRandomInt(0, customRole.viewers.length - 1);
 
-        return customRole.viewers[randIndex];
+        return customRole.viewers[randIndex].displayName;
     }
 };
 

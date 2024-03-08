@@ -9,7 +9,7 @@
             logger, accountAccess, settingsService, utilityService, integrationService) {
             const service = {};
 
-            backendCommunicator.on("accountUpdate", accounts => {
+            backendCommunicator.on("accountUpdate", (accounts) => {
                 service.accounts = accounts;
                 service.loadProfiles();
             });
@@ -79,6 +79,8 @@
                 if (!invalidAccounts.streamer && !invalidAccounts.bot) {
                     return;
                 }
+
+                service.disconnectFromService("chat");
 
                 if (invalidAccounts.streamer) {
                     service.logout("streamer");
@@ -299,7 +301,7 @@
                 service.isConnectingAll = true;
             });
 
-            const playConnectionStatusSound = utilityService.debounce(connectionState => {
+            const playConnectionStatusSound = utilityService.debounce((connectionState) => {
                 const soundType = connectionState === ConnectionState.Connected ? "Online" : "Offline";
                 soundService.connectSound(soundType);
             }, 250);
@@ -363,7 +365,7 @@
             const ListenerType = listenerService.ListenerType;
             listenerService.registerListener(
                 { type: ListenerType.OVERLAY_CONNECTION_STATUS },
-                overlayStatusData => {
+                (overlayStatusData) => {
                     let status;
                     if (!overlayStatusData.serverStarted) {
                         status = "disconnected";

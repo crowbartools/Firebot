@@ -24,6 +24,8 @@ export function triggerCharityCampaignStart(
 
 export function triggerCharityDonation(
     username: string,
+    userId: string,
+    userDisplayName: string,
     charityName: string,
     charityDescription: string,
     charityLogo: string,
@@ -32,7 +34,10 @@ export function triggerCharityDonation(
     donationCurrency: string
 ) {
     eventManager.triggerEvent("twitch", "charity-donation", {
-        from: username,
+        username,
+        userId,
+        userDisplayName,
+        from: userDisplayName,
         charityName,
         charityDescription,
         charityLogo,

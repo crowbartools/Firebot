@@ -174,6 +174,8 @@
             $ctrl.onMinArgsChange = () => {
                 if ($ctrl.adjustedMinArgs > 0) {
                     $ctrl.subcommand.minArgs = $ctrl.adjustedMinArgs + 1;
+                } else {
+                    $ctrl.subcommand.minArgs = 1;
                 }
             };
 
@@ -207,7 +209,7 @@
                     question: `Are you sure you want to delete this subcommand?`,
                     confirmLabel: "Delete",
                     confirmBtnType: "btn-danger"
-                }).then(confirmed => {
+                }).then((confirmed) => {
                     if (confirmed) {
                         $ctrl.onDelete({ id: $ctrl.subcommand.id });
                     }

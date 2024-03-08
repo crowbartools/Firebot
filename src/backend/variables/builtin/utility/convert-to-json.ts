@@ -5,19 +5,26 @@ const model : ReplaceVariable = {
     definition: {
         handle: "convertToJSON",
         description: "Converts a raw value into JSON text",
-        usage: "convertToJSON[raw value]",
+        usage: "convertToJSON[rawValue]",
+        examples: [
+            {
+                usage: "convertToJSON[rawValue, true]",
+                description: "Converts a raw value into pretty-printed JSON text"
+            }
+        ],
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (
         trigger: Trigger,
-        jsonText: unknown
+        jsonText: unknown,
+        prettyPrint?: string
     ) : string => {
         if (jsonText == null) {
             return "null";
         }
         try {
-            return JSON.stringify(jsonText);
+            return JSON.stringify(jsonText, null, prettyPrint === "true" ? 4 : null);
         } catch (ignore) {
             return "null";
         }

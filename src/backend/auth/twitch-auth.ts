@@ -81,6 +81,7 @@ class TwitchAuthProviders {
             'user:read:chat',
             'user:read:follows',
             'user:read:subscriptions',
+            'user:write:chat',
             'whispers:edit',
             'whispers:read'
         ]
@@ -105,6 +106,7 @@ class TwitchAuthProviders {
             'moderator:manage:announcements',
             'user:manage:whispers',
             'user:read:chat',
+            'user:write:chat',
             'whispers:edit',
             'whispers:read'
         ]
@@ -141,7 +143,7 @@ async function getUserCurrent(accessToken: string) {
     return null;
 }
 
-authManager.on("auth-success", async authData => {
+authManager.on("auth-success", async (authData) => {
     const { providerId, tokenData } = authData;
 
     if (providerId === twitchAuthProviders.streamerAccountProviderId

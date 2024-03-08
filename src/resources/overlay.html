@@ -27,9 +27,9 @@
 							const INSTANCE = params.get("instance") || null;
 							const TEXT_BORDER_COLOR = params.get("borderColor");
 
-							let QUERY_STRING = INSTANCE ? `?instance=${INSTANCE}&` : '?';
+							let QUERY_STRING = INSTANCE ? `?instance=${encodeURIComponent(INSTANCE)}&` : '?';
 							if(TEXT_BORDER_COLOR) {
-								QUERY_STRING += `borderColor=${TEXT_BORDER_COLOR}`;
+								QUERY_STRING += `borderColor=${encodeURIComponent(TEXT_BORDER_COLOR)}`;
 							} 
 
                             location.href = `http://${HOST}:${PORT}/overlay/${QUERY_STRING}`;
