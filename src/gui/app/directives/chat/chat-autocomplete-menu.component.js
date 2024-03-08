@@ -339,7 +339,9 @@
                                     const minQueryLength = c.minQueryLength || 0;
                                     if (currentWord.text.length >= minQueryLength) {
                                         const tokenAndWord = `${c.token}?${currentWord.text.replace(c.token, "")}`;
-                                        const searchRegex = new RegExp(`^${tokenAndWord}`, "i");
+                                        const searchRegex = c.onlyStart === true
+                                            ? new RegExp(`^${tokenAndWord}`, "i")
+                                            : new RegExp(`${currentWord.text.replace(c.token, "")}`, "i");
                                         matchingMenuItems = c.items.filter(i => searchRegex.test(i.text) && i.text !== currentWord.text);
                                     }
                                 }
