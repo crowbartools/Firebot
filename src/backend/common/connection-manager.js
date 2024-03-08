@@ -54,7 +54,11 @@ function emitServiceConnectionUpdateEvents(serviceId, connectionState) {
 }
 
 // Chat listeners
-twitchChat.on("connected", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Connected));
+twitchChat.on("connected", () => {
+    emitServiceConnectionUpdateEvents("chat", ConnectionState.Connected);
+    const rewardsManager = require("../channel-rewards/channel-reward-manager");
+    rewardsManager.refreshChannelRewardRedemptions();
+});
 twitchChat.on("disconnected", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Disconnected));
 twitchChat.on("connecting", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Connecting));
 twitchChat.on("reconnecting", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Reconnecting));
