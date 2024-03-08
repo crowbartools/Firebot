@@ -40,6 +40,7 @@ export function handleRewardRedemption(
             userId,
             userDisplayName,
             messageText,
+            args: (messageText ?? "").split(" "),
             redemptionId,
             rewardId,
             rewardImage: rewardImageUrl,

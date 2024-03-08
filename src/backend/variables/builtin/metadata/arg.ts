@@ -1,7 +1,6 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-
-const { EffectTrigger } = require("../../../../shared/effect-constants");
+import { EffectTrigger } from "../../../../shared/effect-constants";
 
 const expressionish = require('expressionish');
 
@@ -26,6 +25,7 @@ const model : ReplaceVariable = {
         ],
         triggers: {
             [EffectTrigger.COMMAND]: true,
+            [EffectTrigger.CHANNEL_REWARD]: true,
             [EffectTrigger.MANUAL]: true
         },
         categories: [VariableCategory.COMMON],
@@ -36,7 +36,7 @@ const model : ReplaceVariable = {
         index: number,
         upperIndex: number
     ) => {
-        let args = trigger.metadata.userCommand.args;
+        let args = trigger.metadata.userCommand?.args ?? <string[]>trigger.metadata.args;
         if (args == null || <unknown>args === '') {
             args = [];
         }

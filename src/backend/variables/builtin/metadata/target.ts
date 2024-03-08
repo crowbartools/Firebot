@@ -1,9 +1,10 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { EffectTrigger } from "../../../../shared/effect-constants";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 const triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
+triggers[EffectTrigger.CHANNEL_REWARD] = true;
 triggers[EffectTrigger.MANUAL] = true;
 
 /**
@@ -24,9 +25,9 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (trigger, index: number) => {
-        let args = trigger.metadata.userCommand.args;
-        if (args == null || args === '') {
+    evaluator: (trigger: Trigger, index: number) => {
+        let args = trigger.metadata.userCommand?.args ?? <string[]>trigger.metadata.args;
+        if (args == null || <unknown>args === '') {
             args = [];
         }
 
