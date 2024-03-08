@@ -13,6 +13,10 @@ const model = {
                 User follows
             </div>
             <input type="text" class="form-control" placeholder="Enter value" ng-model="restriction.value">
+
+            <div style="margin-top: 15px;" class="alert alert-warning">
+                You must be the streamer or a moderator to check follows for a channel.
+            </div>
         </div>
     `,
     optionsValueDisplay: (restriction) => {
