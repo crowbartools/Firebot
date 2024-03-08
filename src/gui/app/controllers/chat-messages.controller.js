@@ -31,7 +31,7 @@
 
             const updateLabelVisibility = (settings) => {
                 const $parent = $('#dashboardActivityFeed').parent();
-                $scope.hideEventLabel = (parseInt(settings.dashboardActivityFeed.replace("%", "") / 100 * $parent.width())) < 180 ? true : false;
+                $scope.hideEventLabel = () => ((parseInt(settings.dashboardActivityFeed.replace("%", "") / 100 * $parent.width())) < 180 ? true : false);
             };
 
             $scope.threadDetails = null;
