@@ -4,13 +4,69 @@ import accountAccess from "../common/account-access";
 import profileManager from "../common/profile-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import twitchApi from "../twitch-api/api";
-import { CustomReward } from "../twitch-api/resource/channel-rewards";
+import { CustomReward, RewardRedemption, RewardRedemptionsApprovalRequest } from "../twitch-api/resource/channel-rewards";
 import { EffectTrigger } from "../../shared/effect-constants";
 import { RewardRedemptionMetadata, SavedChannelReward } from "../../types/channel-rewards";
 
 
 class ChannelRewardManager {
     channelRewards: Record<string, SavedChannelReward> = {};
+    private _channelRewardRedemptions: Record<string, RewardRedemption[]> = {};
+
+    constructor() {
+        frontendCommunicator.onAsync("get-channel-reward-count",
+            twitchApi.channelRewards.getTotalChannelRewardCount);
+
+        frontendCommunicator.onAsync("get-channel-rewards", async () => Object.values(this.channelRewards));
+
+        frontendCommunicator.onAsync("save-channel-reward",
+            (channelReward: SavedChannelReward) => this.saveChannelReward(channelReward));
+
+        frontendCommunicator.onAsync("save-all-channel-rewards",
+            async (data: { channelRewards: SavedChannelReward[]; updateTwitch: boolean}) =>
+                await this.saveAllChannelRewards(data.channelRewards, data.updateTwitch));
+
+        frontendCommunicator.onAsync("sync-channel-rewards", async (): Promise<SavedChannelReward[]> => {
+            await this.loadChannelRewards();
+            return Object.values(this.channelRewards);
+        });
+
+        frontendCommunicator.onAsync("delete-channel-reward", async (channelRewardId: string) => {
+            await this.deleteChannelReward(channelRewardId);
+        });
+
+        frontendCommunicator.on("manually-trigger-reward", (channelRewardId: string) => {
+            const savedReward = this.channelRewards[channelRewardId];
+
+            if (savedReward == null) {
+                return;
+            }
+
+            const accountAccess = require("../common/account-access");
+
+            this.triggerChannelReward(channelRewardId, {
+                messageText: "Testing reward",
+                redemptionId: "test-redemption-id",
+                rewardId: savedReward.id,
+                rewardCost: savedReward.twitchData.cost,
+                rewardImage: savedReward.twitchData.image ? savedReward.twitchData.image.url4x : savedReward.twitchData.defaultImage.url4x,
+                rewardName: savedReward.twitchData.title,
+                username: accountAccess.getAccounts().streamer.displayName
+            }, true);
+        });
+
+        frontendCommunicator.onAsync("refresh-channel-reward-redemptions", async () => {
+            await this.refreshChannelRewardRedemptions();
+        });
+
+        frontendCommunicator.onAsync("approve-reject-channel-reward-redemptions", async (request: RewardRedemptionsApprovalRequest) => {
+            await this.approveOrRejectChannelRewardRedemptions(request);
+        });
+
+        frontendCommunicator.onAsync("approve-reject-channel-all-redemptions-for-rewards", async (request: { rewardIds: string[], approve?: boolean }) => {
+            await this.approveOrRejectAllRedemptionsForChannelRewards(request.rewardIds, request.approve);
+        });
+    }
 
     getChannelRewardsDb(): JsonDB {
         return profileManager
@@ -40,7 +96,7 @@ class ChannelRewardManager {
             // Determine new manageable rewards
             const newManageableChannelRewards = twitchManageableRewards
                 .filter(nr => rewards.every(r => r.id !== nr.id))
-                .map(nr => {
+                .map((nr) => {
                     return {
                         id: nr.id,
                         manageable: true,
@@ -59,7 +115,7 @@ class ChannelRewardManager {
             // Determine new unmanageable rewards
             const newTwitchUnmanageableRewards: SavedChannelReward[] = twitchUnmanageableRewards
                 .filter(ur => rewards.every(r => r.id !== ur.id))
-                .map(ur => {
+                .map((ur) => {
                     return {
                         id: ur.id,
                         manageable: false,
@@ -68,7 +124,7 @@ class ChannelRewardManager {
                 });
 
             // Sync current reward Twitch data/manageability status, remove deleted rewards, then add new rewards
-            const syncedRewards: Record<string, SavedChannelReward> = rewards.map(r => {
+            const syncedRewards: Record<string, SavedChannelReward> = rewards.map((r) => {
                 const rewardTwitchData = twitchManageableRewards.find(tc => tc.id === r.id);
 
                 // If we have a match, this is a manageable reward
@@ -225,49 +281,38 @@ class ChannelRewardManager {
             console.log(`error when running effects: ${reason}`);
         }
     }
+
+    async refreshChannelRewardRedemptions(): Promise<void> {
+        if (accountAccess.getAccounts().streamer.broadcasterType === "") {
+            return;
+        }
+
+        this._channelRewardRedemptions = await twitchApi.channelRewards.getOpenChannelRewardRedemptions();
+
+        frontendCommunicator.send("channel-reward-redemptions-updated", this.getChannelRewardRedemptions());
+    }
+
+    getChannelRewardRedemptions(): Record<string, RewardRedemption[]> {
+        return this._channelRewardRedemptions ?? {};
+    }
+
+    async approveOrRejectChannelRewardRedemptions(request: RewardRedemptionsApprovalRequest): Promise<void> {
+        const successful = await twitchApi.channelRewards.approveOrRejectChannelRewardRedemption(request);
+
+        if (successful) {
+            await this.refreshChannelRewardRedemptions();
+        }
+    }
+
+    async approveOrRejectAllRedemptionsForChannelRewards(rewardIds: string[], approve = true): Promise<void> {
+        const successful = await twitchApi.channelRewards.approveOrRejectAllRedemptionsForChannelRewards(rewardIds, approve);
+
+        if (successful) {
+            await this.refreshChannelRewardRedemptions();
+        }
+    }
 }
 
 const channelRewardManager = new ChannelRewardManager();
-
-frontendCommunicator.onAsync("getChannelRewardCount",
-    twitchApi.channelRewards.getTotalChannelRewardCount);
-
-frontendCommunicator.onAsync("getChannelRewards", async () => Object.values(channelRewardManager.channelRewards));
-
-frontendCommunicator.onAsync("saveChannelReward",
-    (channelReward: SavedChannelReward) => channelRewardManager.saveChannelReward(channelReward));
-
-frontendCommunicator.onAsync("saveAllChannelRewards",
-    async (data: { channelRewards: SavedChannelReward[]; updateTwitch: boolean}) =>
-        await channelRewardManager.saveAllChannelRewards(data.channelRewards, data.updateTwitch));
-
-frontendCommunicator.onAsync("syncChannelRewards", async (): Promise<SavedChannelReward[]> => {
-    await channelRewardManager.loadChannelRewards();
-    return Object.values(channelRewardManager.channelRewards);
-});
-
-frontendCommunicator.onAsync("deleteChannelReward", async (channelRewardId: string) => {
-    await channelRewardManager.deleteChannelReward(channelRewardId);
-});
-
-frontendCommunicator.on("manuallyTriggerReward", (channelRewardId: string) => {
-    const savedReward = channelRewardManager.channelRewards[channelRewardId];
-
-    if (savedReward == null) {
-        return;
-    }
-
-    const accountAccess = require("../common/account-access");
-
-    channelRewardManager.triggerChannelReward(channelRewardId, {
-        messageText: "Testing reward",
-        redemptionId: "test-redemption-id",
-        rewardId: savedReward.id,
-        rewardCost: savedReward.twitchData.cost,
-        rewardImage: savedReward.twitchData.image ? savedReward.twitchData.image.url4x : savedReward.twitchData.defaultImage.url4x,
-        rewardName: savedReward.twitchData.title,
-        username: accountAccess.getAccounts().streamer.displayName
-    }, true);
-});
 
 export = channelRewardManager;

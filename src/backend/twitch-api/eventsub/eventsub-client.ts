@@ -7,6 +7,7 @@ import frontendCommunicator from "../../common/frontend-communicator";
 import twitchEventsHandler from '../../events/twitch-events';
 import twitchApi from "../api";
 import twitchStreamInfoPoll from "../stream-info-manager";
+import rewardManager from "../../channel-rewards/channel-reward-manager";
 import chatRolesManager from "../../roles/chat-roles-manager";
 
 class TwitchEventSubClient {
@@ -92,8 +93,17 @@ class TwitchEventSubClient {
                 event.rewardCost,
                 imageUrl
             );
+
+            if (!reward.shouldRedemptionsSkipRequestQueue) {
+                rewardManager.refreshChannelRewardRedemptions();
+            }
         });
         this._subscriptions.push(customRewardRedemptionSubscription);
+
+        const customRewardRedemptionUpdateSubscription = this._eventSubListener.onChannelRedemptionUpdate(streamer.userId, async () => {
+            rewardManager.refreshChannelRewardRedemptions();
+        });
+        this._subscriptions.push(customRewardRedemptionUpdateSubscription);
 
         // Raid
         const raidSubscription = this._eventSubListener.onChannelRaidTo(streamer.userId, (event) => {
