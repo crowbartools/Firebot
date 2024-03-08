@@ -119,6 +119,7 @@
                             <div style="width: 50%;">
                                 <time-input
                                     ng-model="$ctrl.reward.twitchData.globalCooldownSetting.globalCooldownSeconds"
+                                    max-time-unit="'Days'"
                                     name="cooldownSeconds"
                                     ui-validate="'!$ctrl.reward.twitchData.globalCooldownSetting.isEnabled || ($value != null && $value > -1 && $value <= 604800)'"
                                     ui-validate-watch="'$ctrl.reward.twitchData.globalCooldownSetting.isEnabled'"
