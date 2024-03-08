@@ -15,6 +15,13 @@ const { settings } = require("../../common/settings-access");
 
 setupTitlebar();
 
+
+/**
+ * The variable inspector window.
+ *@type {Electron.BrowserWindow}
+ */
+let variableInspectorWindow = null;
+
 /**
  * The stream preview popout window.
  * Keeps a global reference of the window object, if you don't, the window will
@@ -478,6 +485,18 @@ async function createMainWindow() {
             global.renderWindow = null;
         }
     });
+
+    mainWindow.on("closed", () => {
+        if (variableInspectorWindow?.isDestroyed() === false) {
+            logger.debug("Closing variable inspector window");
+            variableInspectorWindow.destroy();
+        }
+
+        if (streamPreview?.isDestroyed() === false) {
+            logger.debug("Closing stream preview window");
+            streamPreview.destroy();
+        }
+    });
 }
 
 /**
@@ -528,12 +547,6 @@ function updateSplashScreenStatus(newStatus) {
 
     splashscreenWindow.webContents.send("update-splash-screen-status", newStatus);
 }
-
-/**
- * The variable inspector window.
- *@type {Electron.BrowserWindow}
- */
-let variableInspectorWindow = null;
 
 async function createVariableInspectorWindow() {
 
