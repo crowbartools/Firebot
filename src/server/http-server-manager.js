@@ -196,16 +196,17 @@ class HttpServerManager extends EventEmitter {
         });
 
         try {
-            this.overlayServer = this.defaultHttpServer.listen(port, "0.0.0.0");
-            this.isDefaultServerStarted = true;
+            this.overlayServer = this.defaultHttpServer.listen(port, "0.0.0.0", () => {
+                this.isDefaultServerStarted = true;
 
-            this.serverInstances.push({
-                name: "Default",
-                port: port,
-                server: this.overlayServer
+                this.serverInstances.push({
+                    name: "Default",
+                    port: port,
+                    server: this.overlayServer
+                });
+
+                logger.info(`Default web server started, listening on port ${this.overlayServer.address().port}`);
             });
-
-            logger.info(`Default web server started, listening on port ${this.overlayServer.address().port}`);
         } catch (error) {
             logger.error(`Unable to start default web server on port ${port}: ${error}`);
         }
