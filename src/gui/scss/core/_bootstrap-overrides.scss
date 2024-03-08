@@ -144,18 +144,29 @@ textarea.form-control {
 // Buttons
 
 .btn {
-    &.btn-lg {
-        height: 40px;
-        font-size: 14px;
-    }
     border-radius: 8px;
     padding: 9px 12px;
     transform: scale(1.0) translateZ(0);
     transition-property: transform;
     transition-duration: 0.3s;
+    &.btn-lg {
+        height: 40px;
+        font-size: 14px;
+    }
+    &.btn-sm {
+        padding: 5px 10px !important;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+    &.btn-xs {
+        padding: 3px 6px !important;
+        font-size: 12px !important;
+        line-height: 1.5 !important;
+    }
     &:hover {
         // transform: scale(1.02) translateZ(0);
     }
+
 }
 
 .btn.dropdown-toggle, .btn.form-control {
@@ -190,6 +201,16 @@ textarea.form-control {
     border: 1px solid transparent;
     background-color: $default-btn-bg-color;
     color: $default-btn-text-color;
+    &:disabled {
+        background-color: $default-btn-bg-color;
+        color: $default-btn-text-color;
+        opacity: 0.5;
+        &:hover {
+            background-color: $default-btn-bg-color;
+            color: $default-btn-text-color;
+            opacity: 0.75;
+        };
+    }
     &:hover {
         background-color: $default-btn-hover-bg;
         // border-color: $default-btn-hover-border;

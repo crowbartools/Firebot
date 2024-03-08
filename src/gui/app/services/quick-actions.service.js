@@ -61,6 +61,13 @@
                         size: "md"
                     });
                 });
+
+                backendCommunicator.on("trigger-quickaction:reward-queue", () => {
+                    utilityService.showModal({
+                        component: "rewardQueueModal",
+                        size: "lg"
+                    });
+                });
             };
 
             /**

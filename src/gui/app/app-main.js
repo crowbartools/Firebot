@@ -157,6 +157,7 @@
         effectQueuesService.loadEffectQueues();
 
         channelRewardsService.loadChannelRewards();
+        channelRewardsService.refreshChannelRewardRedemptions();
 
         sortTagsService.loadSortTags();
 
@@ -613,6 +614,24 @@
     app.filter('prettyDate', function() {
         return function(input) {
             return (input) ? moment(input).format('L') : 'Not saved';
+        };
+    });
+
+    app.filter('timeFromNow', function() {
+        return function(input, hideSuffix = false) {
+            return moment(input).fromNow(hideSuffix);
+        };
+    });
+
+    app.filter('hideEmptyRewardQueues', function() {
+        return function(queue) {
+            const newQueueObj = { ...queue };
+            for (const key in newQueueObj) {
+                if (newQueueObj[key].length === 0) {
+                    delete newQueueObj[key];
+                }
+            }
+            return newQueueObj;
         };
     });
 

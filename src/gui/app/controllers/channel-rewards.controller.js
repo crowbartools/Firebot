@@ -10,6 +10,8 @@
         ) {
             $scope.channelRewardsService = channelRewardsService;
 
+            $scope.activeChannelRewardTab = 0;
+
             $scope.canUseChannelRewards = () => accountAccess.accounts["streamer"].loggedIn
                 && (accountAccess.accounts["streamer"].broadcasterType === "affiliate"
                     || accountAccess.accounts["streamer"].broadcasterType === "partner");
@@ -21,7 +23,7 @@
                 channelRewardsService.saveAllRewards(items);
             };
 
-            $scope.headers = [
+            $scope.rewardHeaders = [
                 {
                     headerStyles: {
                         'width': '50px'
@@ -98,7 +100,7 @@
                                     confirmLabel: "Delete",
                                     confirmBtnType: "btn-danger"
                                 })
-                                .then(confirmed => {
+                                .then((confirmed) => {
                                     if (confirmed) {
                                         channelRewardsService.deleteChannelReward(item.id);
                                     }

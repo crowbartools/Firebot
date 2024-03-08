@@ -91,6 +91,16 @@
                         });
 
                         settingsService.setQuickActionSettings($ctrl.settings);
+                    } else {
+                        let highestPosition = Math.max(...Object.values($ctrl.settings).map(s => s.position));
+                        quickActionsService.quickActions.forEach((qa) => {
+                            if ($ctrl.settings[qa.id] == null) {
+                                $ctrl.settings[qa.id] = {
+                                    enabled: true,
+                                    position: ++highestPosition
+                                };
+                            }
+                        });
                     }
                 };
 
