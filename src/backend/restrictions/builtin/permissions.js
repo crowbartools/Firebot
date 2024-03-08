@@ -109,10 +109,17 @@ const model = {
     predicate: (triggerData, restrictionData) => {
         return new Promise(async (resolve, reject) => {
             if (restrictionData.mode === "roles") {
-                const username = triggerData.metadata.username;
-                const user = await twitchApi.users.getUserByName(username);
-                if (user == null) {
-                    reject("User does not exist");
+                let userId = triggerData.metadata.userId;
+
+                if (userId == null) {
+                    const username = triggerData.metadata.username;
+                    const user = await twitchApi.users.getUserByName(username);
+
+                    if (user == null) {
+                        reject("User does not exist");
+                    }
+
+                    userId = user.id;
                 }
 
                 /** @type {string[]} */
@@ -125,11 +132,11 @@ const model = {
                     || restrictionData.roleIds.includes("tier3")
                     || restrictionData.roleIds.includes("viewerlistbot")
                 ) {
-                    twitchUserRoles = await chatRolesManager.getUsersChatRoles(user.id);
+                    twitchUserRoles = await chatRolesManager.getUsersChatRoles(userId);
                 }
 
-                const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(user.id) || [];
-                const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(user.id) || [];
+                const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(userId) || [];
+                const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(userId) || [];
                 const userTwitchRoles = (twitchUserRoles || [])
                     .map(mr => twitchRolesManager.mapTwitchRole(mr));
 
