@@ -1,6 +1,6 @@
 import accountAccess from "../../common/account-access";
 import logger from "../../logwrapper";
-import { ApiClient, HelixUser, UserIdResolvable } from "@twurple/api";
+import {ApiClient, HelixChannelFollower, HelixUser, UserIdResolvable} from "@twurple/api";
 
 export class TwitchUsersApi {
     private _streamerClient: ApiClient;
@@ -59,7 +59,12 @@ export class TwitchUsersApi {
         return followData.data[0].followDate;
     }
 
-    async doesUserFollowChannel(username: string, channelName: string): Promise<boolean> {
+    /**
+     * @param username
+     * @param channelName
+     * @returns {Promise<HelixChannelFollower | boolean>} true when username === channelName, false when not following
+     */
+    async getUserChannelFollow(username: string, channelName: string): Promise<HelixChannelFollower | boolean> {
         if (username == null || channelName == null) {
             return false;
         }
@@ -67,8 +72,6 @@ export class TwitchUsersApi {
         if (username.toLowerCase() === channelName.toLowerCase()) {
             return true;
         }
-
-        const streamerData = accountAccess.getAccounts().streamer;
 
         const [user, channel] = await this.getUsersByNames([username, channelName]);
 
@@ -78,13 +81,15 @@ export class TwitchUsersApi {
 
         try {
             const userFollowResponse = await this._streamerClient.channels.getChannelFollowers(channel.id, user.id);
-            const userFollow = userFollowResponse?.data?.length === 1;
-
-            return userFollow ?? false;
+            return userFollowResponse?.data?.[0];
         } catch (err) {
             logger.error(`Failed to check if ${username} follows ${channelName}`, err.message);
             return false;
         }
+    }
+
+    async doesUserFollowChannel(username: string, channelName: string): Promise<boolean> {
+        return await this.getUserChannelFollow(username, channelName) !== false;
     }
 
     async blockUser(userId: UserIdResolvable, reason?: 'spam' | 'harassment' | 'other'): Promise<boolean> {

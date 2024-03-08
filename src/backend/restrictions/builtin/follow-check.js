@@ -23,6 +23,28 @@ const model = {
                     </div>
                 </div>
             </firebot-radio-container>
+
+            <div style="margin-bottom: 30px;">
+                <div class="form-group flex-row jspacebetween" style="margin-bottom: 0;">
+                    <div>
+                        <label class="control-label" style="margin:0;">Follow Age</label>
+                        <p class="help-block">Time the user must be followed to the channel.</p>
+                    </div>
+                    <div>
+                        <toggle-button toggle-model="restriction.useFollowAge" auto-update-value="true" font-size="32"></toggle-button>
+                    </div>
+                </div>
+                <div>
+                    <time-input
+                        ng-model="restriction.followAgeSeconds"
+                        name="cooldownSeconds"
+                        ui-validate="'!restriction.useFollowAge || ($value != null && $value > 0)'"
+                        ui-validate-watch="'restriction.useFollowAge"
+                        large="true"
+                        disabled="!restriction.useFollowAge"
+                    />
+                </div>
+            </div>
         </div>
     `,
 
@@ -60,7 +82,9 @@ const model = {
                 .filter(f => f != null)
                 .map(f => f.toLowerCase().trim());
 
-            const followCheck = await userAccess.userFollowsChannels(triggerUsername, followCheckList);
+            const seconds = restrictionData.useFollowAge ? restrictionData.followAgeSeconds : 0;
+
+            const followCheck = await userAccess.userFollowsChannels(triggerUsername, followCheckList, seconds);
 
             if (followCheck) {
                 return resolve();
