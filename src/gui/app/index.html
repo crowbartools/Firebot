@@ -777,12 +777,12 @@
           <button class="btn btn-link" ng-click="dismiss()">Cancel</button>
 
           <button ng-if="openModals.length < 2" type="button" class="btn btn-primary" ng-click="save()" ng-disabled="effect.type === 'Nothing'">{{isAddMode ? "Add" : "Save"}}</button>
-          <div ng-if="openModals.length >= 2" class="btn-group" uib-dropdown>
+          <div ng-if="openModals.length >= 2" class="btn-group dropup" uib-dropdown>
             <button id="split-button" type="button" class="btn btn-primary" ng-click="save()" ng-disabled="effect.type === 'Nothing'">{{isAddMode ? "Add" : "Save"}}</button>
             <button type="button" class="btn btn-primary" uib-dropdown-toggle aria-label="Open Menu">
-              <span class="caret"></span>
+              <span class="caret" style="border-top: 4px dashed !important; border-bottom: none !important;"></span>
             </button>
-            <ul class="dropdown-menu" style="min-width: 100%" uib-dropdown-menu role="menu" aria-labelledby="split-button">
+            <ul class="dropdown-menu dropdown-menu-right" style="min-width: 100%" uib-dropdown-menu role="menu" aria-labelledby="split-button">
               <li role="menuitem" ng-click="saveAll()"><a href>Save All <tooltip text="'This will save all windows up until the last one ('+ openModals[0].name +')'"></tooltip></a></li>
             </ul>
           </div>

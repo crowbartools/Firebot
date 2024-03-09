@@ -1,11 +1,14 @@
 import { CustomReward } from "../backend/twitch-api/resource/channel-rewards";
 import { EffectList } from "./effects";
+import { RestrictionData } from "./restrictions";
 
 export type SavedChannelReward = {
     id: string,
     twitchData: CustomReward,
     manageable: boolean,
-    effects?: EffectList
+    effects?: EffectList,
+    restrictionData?: RestrictionData,
+    autoApproveRedemptions?: boolean,
 };
 
 export type RewardRedemptionMetadata = {
