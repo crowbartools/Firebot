@@ -29,6 +29,8 @@
                     headerStyles: {
                         'min-width': '175px'
                     },
+                    dataField: "name",
+                    sortable: true,
                     cellTemplate: `{{data.name}}`,
                     cellController: () => {}
                 },
@@ -38,6 +40,8 @@
                     headerStyles: {
                         'min-width': '100px'
                     },
+                    dataField: "interval",
+                    sortable: true,
                     cellTemplate: `{{data.interval}}`,
                     cellController: () => {}
                 },
@@ -111,6 +115,8 @@
                     headerStyles: {
                         'min-width': '175px'
                     },
+                    dataField: "name",
+                    sortable: true,
                     cellTemplate: `{{data.name}}`,
                     cellController: () => {}
                 },

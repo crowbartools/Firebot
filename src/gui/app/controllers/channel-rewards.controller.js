@@ -41,12 +41,16 @@
                     headerStyles: {
                         'min-width': '125px'
                     },
+                    dataField: "twitchData.title",
+                    sortable: true,
                     cellTemplate: `{{data.twitchData.title}} <i ng-hide="data.manageable" class="fas fa-lock muted" style="font-size: 12px;" uib-tooltip="This reward was created either outside of Firebot or in an older version. Its settings cannot be changed in Firebot." />`,
                     cellController: () => {}
                 },
                 {
                     name: "COST",
                     icon: "fa-coin",
+                    dataField: "twitchData.cost",
+                    sortable: true,
                     cellTemplate: `{{data.twitchData.cost}}`,
                     cellController: () => {}
                 },

@@ -482,6 +482,27 @@ table.fb-table {
         border-bottom-right-radius: 8px;
         padding-right: 20px;
     }
+    th {
+        opacity: 0.5;
+        user-select: none;
+        &:hover {
+            opacity: 0.7;
+            cursor: pointer;
+        }
+        &.selected {
+            opacity: 1;
+            &:hover {
+                opacity: 0.8;
+            }
+        }
+        &.not-clickable {
+            opacity: 0.5;
+            &:hover {
+                opacity: 0.5;
+                cursor: default !important;
+            }
+        }
+    }
 }
 
 table.fb-table-alt {
