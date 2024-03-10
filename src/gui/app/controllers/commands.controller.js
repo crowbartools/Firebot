@@ -100,21 +100,6 @@
                 commandsService.saveAllCustomCommands(commands ?? commandsService.commandsCache.customCommands);
             };
 
-            $scope.sortableOptions = {
-                handle: ".dragHandle",
-                'ui-preserve-size': true,
-                stop: (e, ui) => {
-                    console.log(e, ui);
-                    if (sortTagsService.getSelectedSortTag("commands") != null &&
-                        (commandsService.customCommandSearch == null ||
-                            commandsService.customCommandSearch.length < 1)) {
-                        return;
-                    }
-
-                    $scope.saveAllCommands();
-                }
-            };
-
             $scope.commandMenuOptions = (item) => {
                 const command = item;
                 return [

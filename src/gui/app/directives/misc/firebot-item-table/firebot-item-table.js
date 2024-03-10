@@ -78,7 +78,14 @@
                 $ctrl.sortableOptions = {
                     handle: ".dragHandle",
                     'ui-preserve-size': true,
-                    stop: () => {
+                    stop: (_e, ui) => {
+                        //reset the width of the children that "ui-preserve-size" sets
+                        const item = angular.element(ui.item);
+                        item.children().each(function() {
+                            const $el = angular.element(this);
+                            $el.css("width", "");
+                        });
+
                         if (sortTagsService.getSelectedSortTag($ctrl.sortTagContext) != null &&
                             ($scope.searchQuery == null ||
                                 $scope.searchQuery.length < 1)) {
