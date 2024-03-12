@@ -16,11 +16,11 @@ const model = {
         <eos-container header="Selection Type" ng-init="showSubcommands = effect.subcommandId != null">
             <div ng-if="sortTags && sortTags.length">
                 <label class="control-fb control--radio">Single Command
-                    <input type="radio" ng-model="effect.selectionType" value="command" />
+                    <input type="radio" ng-model="effect.selectionType" value="command" ng-change="typeSelected()" />
                     <div class="control__indicator"></div>
                 </label>
                 <label class="control-fb control--radio">Commands With Tag
-                    <input type="radio" ng-model="effect.selectionType" value="sortTag" />
+                    <input type="radio" ng-model="effect.selectionType" value="sortTag" ng-change="typeSelected()" />
                     <div class="control__indicator"></div>
                 </label>
             </div>
@@ -165,6 +165,18 @@ const model = {
             }
             $scope.createSubcommandOptions();
         };
+
+        $scope.typeSelected = () => {
+            if ($scope.effect.selectionType === "sortTag") {
+                $scope.effect.commandId = null;
+                $scope.showSubcommands = false;
+                $scope.subcommands = [];
+                $scope.effect.subcommandId = null;
+            } else {
+                $scope.effect.sortTagId = null;
+            }
+        };
+
         $scope.commandSelected = (command) => {
             $scope.effect.commandId = command.id;
             $scope.getSubcommands();
