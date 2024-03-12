@@ -50,7 +50,7 @@
 
             // Return User List with people in role filtered out.
             service.getFilteredChatUserList = function() {
-                return service.chatUsers.filter((user) => !user.disableViewerList);
+                return service.chatUsers.filter(user => !user.disableViewerList);
             };
 
             // Clear User List
@@ -61,7 +61,7 @@
             // Full Chat User Refresh
             // This replaces chat users with a fresh list pulled from the backend in the chat processor file.
             service.chatUserRefresh = function(data) {
-                const users = data.chatUsers.map(u => {
+                const users = data.chatUsers.map((u) => {
                     u.id = u.userId;
                     return u;
                 });
@@ -94,7 +94,7 @@
                 const chatQueue = service.chatQueue;
 
                 let cachedUserName = null;
-                chatQueue.forEach(message => {
+                chatQueue.forEach((message) => {
                     // If user id matches, then mark the message as deleted.
                     if (message.user_id === data.user_id) {
                         if (cachedUserName == null) {
@@ -120,9 +120,11 @@
                 }
             };
 
-            service.highlightMessage = (username, rawText) => {
+            service.highlightMessage = (username, userId, displayName, rawText) => {
                 backendCommunicator.fireEvent("highlight-message", {
                     username: username,
+                    userId: userId,
+                    displayName: displayName,
                     messageText: rawText
                 });
             };
@@ -297,7 +299,7 @@
             //     }
             // }, 250);
 
-            backendCommunicator.on("twitch:chat:rewardredemption", redemption => {
+            backendCommunicator.on("twitch:chat:rewardredemption", (redemption) => {
                 if (settingsService.getRealChatFeed()) {
 
                     const redemptionItem = {
@@ -323,15 +325,15 @@
                 }
             });
 
-            backendCommunicator.on("twitch:chat:user-joined", user => {
+            backendCommunicator.on("twitch:chat:user-joined", (user) => {
                 service.chatUserJoined(user);
             });
 
-            backendCommunicator.on("twitch:chat:user-left", id => {
+            backendCommunicator.on("twitch:chat:user-left", (id) => {
                 service.chatUserLeft(({ id }));
             });
 
-            backendCommunicator.on("twitch:chat:user-updated", user => {
+            backendCommunicator.on("twitch:chat:user-updated", (user) => {
                 service.chatUserUpdated(user);
             });
 
@@ -379,25 +381,25 @@
                 service.chatAlertMessage(`${modUsername} cleared the chat.`);
             });
 
-            backendCommunicator.on("twitch:chat:user-active", id => {
+            backendCommunicator.on("twitch:chat:user-active", (id) => {
                 const user = service.chatUsers.find(u => u.id === id);
                 if (user != null) {
                     user.active = true;
                 }
             });
 
-            backendCommunicator.on("twitch:chat:user-inactive", id => {
+            backendCommunicator.on("twitch:chat:user-inactive", (id) => {
                 const user = service.chatUsers.find(u => u.id === id);
                 if (user != null) {
                     user.active = false;
                 }
             });
 
-            backendCommunicator.on("twitch:chat:autodisconnected", autodisconnected => {
+            backendCommunicator.on("twitch:chat:autodisconnected", (autodisconnected) => {
                 service.autodisconnected = autodisconnected;
             });
 
-            backendCommunicator.on("twitch:chat:message", chatMessage => {
+            backendCommunicator.on("twitch:chat:message", (chatMessage) => {
 
                 if (chatMessage.tagged) {
                     soundService.playChatNotification();
@@ -451,7 +453,7 @@
                 const showFfzEmotes = settingsService.getShowFfzEmotes();
                 const showSevenTvEmotes = settingsService.getShowSevenTvEmotes();
 
-                service.filteredEmotes = service.allEmotes.filter(e => {
+                service.filteredEmotes = service.allEmotes.filter((e) => {
                     if (showBttvEmotes !== true && e.origin === "BTTV") {
                         return false;
                     }
@@ -477,7 +479,7 @@
             // This handles clears, deletions, timeouts, etc... Anything that isn't a message.
             listenerService.registerListener(
                 { type: listenerService.ListenerType.CHAT_UPDATE },
-                data => {
+                (data) => {
                     if (settingsService.getRealChatFeed() === true) {
                         service.chatUpdateHandler(data);
                     }
@@ -488,7 +490,7 @@
             // Receives event from main process that connection has been established or disconnected.
             listenerService.registerListener(
                 { type: listenerService.ListenerType.CHAT_CONNECTION_STATUS },
-                isChatConnected => {
+                (isChatConnected) => {
                     if (isChatConnected) {
                         service.chatQueue = [];
                     }

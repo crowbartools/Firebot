@@ -97,7 +97,8 @@ async function getUserDetails(userId) {
 
         frontendCommunicator.send("twitch:chat:user-updated", {
             id: firebotUserData._id,
-            username: firebotUserData.displayName,
+            username: firebotUserData.username,
+            displayName: firebotUserData.displayName,
             roles: userRoles,
             profilePicUrl: firebotUserData.profilePicUrl,
             active: activeUserHandler.userIsActive(firebotUserData._id)
