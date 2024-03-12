@@ -15,8 +15,8 @@
                     <div class="pl-8"" style="flex-basis: 30%;">
                         {{$ctrl.subcommand.regex || $ctrl.subcommand.fallback ? ($ctrl.subcommand.usage || "").split(" ")[0] : $ctrl.subcommand.arg}}
                         <span ng-show="$ctrl.fullyEditable">
-                            <i ng-if="$ctrl.subcommandTypeTitle === 'Number'" class="far fa-hashtag muted text-lg" uib-tooltip="Number subcommand"></i>
-                            <i ng-if="$ctrl.subcommandTypeTitle === 'Username'" class="far fa-at muted text-lg" uib-tooltip="Username subcommand"></i>
+                            <i ng-if="$ctrl.subcommandTypeTitle() === 'Number'" class="far fa-hashtag muted text-lg" uib-tooltip="Number subcommand"></i>
+                            <i ng-if="$ctrl.subcommandTypeTitle() === 'Username'" class="far fa-at muted text-lg" uib-tooltip="Username subcommand"></i>
                         </span>
                     </div>
 
@@ -163,7 +163,21 @@
         controller: function(viewerRolesService) {
             const $ctrl = this;
 
-            $ctrl.subcommandTypeTitle = "";
+            $ctrl.subcommandTypeTitle = () => {
+                if ($ctrl.fullyEditable) {
+                    if (!$ctrl.subcommand.regex) {
+                        return "Custom";
+                    } else if ($ctrl.subcommand.fallback) {
+                        return "Fallback";
+                    } else if ($ctrl.subcommand.arg === '\\d+') {
+                        return "Number";
+                    } else if ($ctrl.subcommand.arg === '@\\w+') {
+                        return "Username";
+                    }
+                }
+
+                return "";
+            };
 
             $ctrl.compiledUsage = "";
             $ctrl.onUsageChange = () => {
@@ -186,19 +200,6 @@
                     }
                     if ($ctrl.subcommand.minArgs > 0) {
                         $ctrl.adjustedMinArgs = $ctrl.subcommand.minArgs - 1;
-                    }
-
-                    if ($ctrl.fullyEditable) {
-                        if (!$ctrl.subcommand.regex) {
-                            $ctrl.subcommandTypeTitle = "Custom";
-                        } else if ($ctrl.subcommand.fallback) {
-                            $ctrl.subcommandTypeTitle = "Fallback";
-                        } else if ($ctrl.subcommand.arg === '\\d+') {
-                            $ctrl.subcommandTypeTitle = "Number";
-                        } else if ($ctrl.subcommand.arg === '@\\w+') {
-                            $ctrl.subcommandTypeTitle = "Username";
-                        }
-                        console.log($ctrl.subcommand.arg);
                     }
                 }
             };
