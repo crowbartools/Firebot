@@ -628,6 +628,15 @@
                 pushDataToFile("/settings/overlayInstances", ois);
             };
 
+            service.getForceOverlayEffectsToContinueOnRefresh = function() {
+                const forceOverlayEffectsToContinueOnRefresh = getDataFromFile("/settings/forceOverlayEffectsToContinueOnRefresh", false, true);
+                return forceOverlayEffectsToContinueOnRefresh === true;
+            };
+
+            service.setForceOverlayEffectsToContinueOnRefresh = function(value) {
+                pushDataToFile("/settings/forceOverlayEffectsToContinueOnRefresh", value);
+            };
+
             service.backupKeepAll = function() {
                 const backupKeepAll = getDataFromFile("/settings/backupKeepAll", false, false);
                 return backupKeepAll != null ? backupKeepAll : false;

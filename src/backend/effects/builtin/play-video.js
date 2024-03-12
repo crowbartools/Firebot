@@ -364,25 +364,26 @@ const playVideo = {
         const overlayInstance = data.overlayInstance ?? "Default";
 
         async function waitFunction(duration) {
-            let currentDuration = 0;
-            let returnNow = false;
+            if (settings.getForceOverlayEffectsToContinueOnRefresh() === true) {
+                let currentDuration = 0;
+                let returnNow = false;
 
-            function overlayConnectedCallback(instance) {
-                if (instance === overlayInstance) {
-                    webServer.off("overlay-connected", overlayConnectedCallback);
-                    returnNow = true;
+                webServer.on("overlay-connected", (instance) => {
+                    if (instance === overlayInstance) {
+                        returnNow = true;
+                    }
+                });
+
+                while (currentDuration < duration) {
+                    if (returnNow) {
+                        return;
+                    }
+
+                    currentDuration += 1;
+                    await wait(1000);
                 }
-            }
-
-            webServer.on("overlay-connected", overlayConnectedCallback);
-
-            while (currentDuration < duration) {
-                if (returnNow) {
-                    return;
-                }
-
-                currentDuration += 1;
-                await wait(1000);
+            } else {
+                await wait(duration * 1000);
             }
         }
 

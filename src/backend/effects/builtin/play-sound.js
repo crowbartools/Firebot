@@ -160,7 +160,8 @@ const playSound = {
                     path: data.isUrl ? data.url : data.filepath
                 });
 
-                if (selectedOutputDevice.deviceId === "overlay") {
+                if (selectedOutputDevice.deviceId === "overlay"
+                    && settings.getForceOverlayEffectsToContinueOnRefresh() === true) {
                     let currentDuration = 0;
                     let returnNow = false;
                     const overlayInstance = effect.overlayInstance ?? "Default";

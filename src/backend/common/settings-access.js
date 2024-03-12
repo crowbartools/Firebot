@@ -57,13 +57,16 @@ function handleCorruptSettingsFile() {
     }));
 }
 
-function getDataFromFile(path, forceCacheUpdate = false) {
+function getDataFromFile(path, forceCacheUpdate = false, defaultValue = undefined) {
     try {
         if (settingsCache[path] == null || forceCacheUpdate) {
             const data = getSettingsFile().getData(path);
-            settingsCache[path] = data;
+            settingsCache[path] = data ?? defaultValue;
         }
     } catch (err) {
+        if (defaultValue !== undefined) {
+            settingsCache[path] = defaultValue;
+        }
         if (err.name !== "DataError") {
             logger.warn(err);
             if (
@@ -159,6 +162,15 @@ settings.getOverlayInstances = function() {
 
 settings.setOverlayInstances = function(ois) {
     pushDataToFile("/settings/overlayInstances", ois);
+};
+
+settings.getForceOverlayEffectsToContinueOnRefresh = function() {
+    const forceOverlayEffectsToContinueOnRefresh = getDataFromFile("/settings/forceOverlayEffectsToContinueOnRefresh", false, true);
+    return forceOverlayEffectsToContinueOnRefresh === true;
+};
+
+settings.setForceOverlayEffectsToContinueOnRefresh = function(value) {
+    pushDataToFile("/settings/forceOverlayEffectsToContinueOnRefresh", value);
 };
 
 settings.backupKeepAll = function() {
