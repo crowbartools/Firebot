@@ -47,6 +47,7 @@
                                 <input type="checkbox" ng-click="$ctrl.toggleSortTag(tag)" ng-checked="$ctrl.item.sortTags.includes(tag.id)">
                                 <div class="control__indicator"></div>
                             </label>
+                            <div ng-if="sts.getSortTags($ctrl.context).length === 0">No tags created yet</div>
                         </div>
                     </script>
                 <div>
