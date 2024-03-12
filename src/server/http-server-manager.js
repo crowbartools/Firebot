@@ -186,6 +186,7 @@ class HttpServerManager extends EventEmitter {
                         eventManager.triggerEvent("firebot", "overlay-connected", {
                             instanceName: event.data.instanceName
                         });
+                        this.emit("overlay-connected", event.data.instanceName);
                     } else {
                         this.emit("overlay-event", event);
                     }
