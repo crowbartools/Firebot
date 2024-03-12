@@ -163,9 +163,29 @@
             };
 
             $ctrl.deleteSubcommand = (id) => {
+                let name = "fallback";
+
+                if (id !== "fallback-subcommand") {
+                    const subCmd = $ctrl.command.subCommands.find(c => c.id === id);
+
+                    switch (subCmd.type) {
+                        case "Username":
+                            name = "username";
+                            break;
+
+                        case "Number":
+                            name = "number";
+                            break;
+
+                        case "Custom":
+                            name = `"${subCmd.arg}"`;
+                            break;
+                    }
+                }
+
                 utilityService.showConfirmationModal({
                     title: "Delete Subcommand",
-                    question: `Are you sure you want to delete this subcommand?`,
+                    question: `Are you sure you want to delete the ${name} subcommand?`,
                     confirmLabel: "Delete",
                     confirmBtnType: "btn-danger"
                 }).then((confirmed) => {

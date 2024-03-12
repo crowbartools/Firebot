@@ -204,16 +204,7 @@
             };
 
             $ctrl.delete = () => {
-                utilityService.showConfirmationModal({
-                    title: "Delete Subcommand",
-                    question: `Are you sure you want to delete this subcommand?`,
-                    confirmLabel: "Delete",
-                    confirmBtnType: "btn-danger"
-                }).then((confirmed) => {
-                    if (confirmed) {
-                        $ctrl.onDelete({ id: $ctrl.subcommand.id });
-                    }
-                });
+                $ctrl.onDelete({ id: $ctrl.subcommand.id });
             };
 
             $ctrl.edit = () => {
