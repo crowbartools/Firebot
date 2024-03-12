@@ -160,7 +160,7 @@
                 </div>
             </div>
         `,
-        controller: function(viewerRolesService, utilityService) {
+        controller: function(viewerRolesService) {
             const $ctrl = this;
 
             $ctrl.subcommandTypeTitle = "";
