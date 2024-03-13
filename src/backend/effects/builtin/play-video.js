@@ -361,6 +361,32 @@ const playVideo = {
             }
         }
 
+        const overlayInstance = data.overlayInstance ?? "Default";
+
+        async function waitFunction(duration) {
+            if (settings.getForceOverlayEffectsToContinueOnRefresh() === true) {
+                let currentDuration = 0;
+                let returnNow = false;
+
+                webServer.on("overlay-connected", (instance) => {
+                    if (instance === overlayInstance) {
+                        returnNow = true;
+                    }
+                });
+
+                while (currentDuration < duration) {
+                    if (returnNow) {
+                        return;
+                    }
+
+                    currentDuration += 1;
+                    await wait(1000);
+                }
+            } else {
+                await wait(duration * 1000);
+            }
+        }
+
         if (effect.videoType === "Twitch Clip" || effect.videoType === "Random Twitch Clip") {
             const twitchApi = require("../../twitch-api/api");
             const client = twitchApi.streamerClient;
@@ -436,7 +462,7 @@ const playVideo = {
             });
 
             if (effect.wait) {
-                await util.wait(effectDuration * 1000);
+                await waitFunction(effectDuration);
             }
 
             return true;
@@ -484,7 +510,7 @@ const playVideo = {
                     function callbackDuration({name, data}) {
                         if (name === `play-video:callback:duration:${resourceToken}`) {
                             webServer.off("overlay-event", callbackDuration);
-                            wait(data.duration).then(resolve);
+                            waitFunction(Math.ceil(data.duration / 1000)).then(resolve);
                         }
                     }
 
@@ -497,7 +523,7 @@ const playVideo = {
                     webServer.on("overlay-event", callbackDuration);
                 });
             } else {
-                waitPromise = wait(data.videoDuration * 1000);
+                waitPromise = waitFunction(data.videoDuration);
             }
         }
 

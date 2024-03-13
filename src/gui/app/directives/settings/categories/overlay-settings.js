@@ -38,6 +38,19 @@
                     </firebot-setting>
 
                     <firebot-setting
+                        name="Force Effects to Continue on Overlay Refresh"
+                        description="When refreshing an overlay or using the Clear Effects effect on it, this will force
+                        any Play Video or Play Sound effects currently playing on that overlay to continue to the next effect,
+                        even if they're set to wait."
+                    >
+                        <toggle-button
+                            toggle-model="settings.getForceOverlayEffectsToContinueOnRefresh()"
+                            on-toggle="settings.setForceOverlayEffectsToContinueOnRefresh(!settings.getForceOverlayEffectsToContinueOnRefresh())"
+                            font-size="40"
+                        />
+                    </firebot-setting>
+
+                    <firebot-setting
                         name="Font Management"
                         description="Manage fonts for use with the Show Text effect in the overlay. Any changes to fonts will require a restart to Firebot and then refreshing the overlay."
                     >

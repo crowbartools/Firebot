@@ -144,7 +144,7 @@ const model = {
             const options = {};
             if ($scope.subcommands) {
                 $scope.subcommands.forEach((sc) => {
-                    options[sc.id] = sc.regex || sc.fallback ? (sc.usage || "").split(" ")[0] : sc.arg;
+                    options[sc.id] = sc.regex || sc.fallback ? (sc.usage || (sc.fallback ? "Fallback" : "")).split(" ")[0] : sc.arg;
                 });
             }
             $scope.subcommandOptions = options;
@@ -163,6 +163,11 @@ const model = {
             if (command.subCommands) {
                 $scope.subcommands = command.subCommands;
             }
+
+            if (command.fallbackSubcommand) {
+                $scope.subcommands.push(command.fallbackSubcommand);
+            }
+
             $scope.createSubcommandOptions();
         };
 
