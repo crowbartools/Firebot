@@ -143,6 +143,7 @@
                                 header="What should this subcommand do?"
                                 effects="$ctrl.subcommand.effects"
                                 trigger="command"
+                                trigger-meta="{ rootEffects: $ctrl.subcommand.effects }"
                                 update="$ctrl.effectListUpdated(effects)"
                                 is-array="true"
                             ></effect-list>

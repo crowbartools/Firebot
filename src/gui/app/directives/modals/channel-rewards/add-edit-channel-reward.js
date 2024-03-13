@@ -224,7 +224,12 @@
                     </div>
 
                     <div style="margin-top:15px;">
-                        <effect-list effects="$ctrl.reward.effects" trigger="channel_reward" update="$ctrl.effectListUpdated(effects)"></effect-list>
+                        <effect-list
+                            effects="$ctrl.reward.effects"
+                            trigger="channel_reward"
+                            trigger-meta="{ rootEffects: $ctrl.reward.effects }"
+                            update="$ctrl.effectListUpdated(effects)"
+                        ></effect-list>
                     </div>
 
                 </div>

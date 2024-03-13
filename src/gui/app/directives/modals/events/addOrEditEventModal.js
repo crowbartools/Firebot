@@ -62,7 +62,15 @@
             </div>
             </div>
             <div ng-if="$ctrl.event.eventId != null" class="effect-setting-container setting-padtop">
-                <effect-list header="What should this event do?" effects="$ctrl.event.effects" trigger="event" trigger-meta="$ctrl.triggerMeta" update="$ctrl.effectListUpdated(effects)" modalId="{{modalId}}" is-array="true"></effect-list>
+                <effect-list
+                    header="What should this event do?"
+                    effects="$ctrl.event.effects"
+                    trigger="event"
+                    trigger-meta="$ctrl.triggerMeta"
+                    update="$ctrl.effectListUpdated(effects)"
+                    modalId="{{modalId}}"
+                    is-array="true"
+                ></effect-list>
             </div>
         </div>
         <div class="modal-footer sticky-footer edit-event-footer">
@@ -95,7 +103,9 @@
                 sortTags: []
             };
 
-            $ctrl.triggerMeta = {};
+            $ctrl.triggerMeta = {
+                rootEffects: $ctrl.event.effects
+            };
 
             function updateTriggerId() {
                 if ($ctrl.event.sourceId && $ctrl.event.eventId) {
@@ -111,6 +121,7 @@
                 } else {
                     $ctrl.isNewEvent = false;
                     $ctrl.event = JSON.parse(angular.toJson($ctrl.resolve.event));
+                    $ctrl.triggerMeta.rootEffects = $ctrl.event.effects;
                 }
 
                 const modalId = $ctrl.resolve.modalId;

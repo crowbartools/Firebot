@@ -87,7 +87,6 @@
 
                 $ctrl.presetEffectLists = presetEffectListsService.getPresetEffectLists();
                 $ctrl.listType = "custom";
-                $ctrl.triggerMeta = {};
 
                 $ctrl.effectListUpdated = (effects) => {
                     $ctrl.quickAction.effectList = effects;
@@ -118,6 +117,10 @@
                     } else {
                         $ctrl.isNewQuickAction = true;
                     }
+
+                    $ctrl.triggerMeta = {
+                        rootEffects: $ctrl.quickAction.effectList
+                    };
 
                     if ($ctrl.isNewQuickAction && $ctrl.quickAction.id == null) {
                         $ctrl.quickAction.id = uuidv1();

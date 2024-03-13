@@ -52,7 +52,7 @@
   background: #060707;
   position: absolute;
   right: 0px;
-  top: -307px;
+  top: -341px;
   z-index: 3000;
   border-radius: 8px;
   &.below {
@@ -65,6 +65,9 @@
   &.under {
     bottom: unset;
     top: unset;
+  }
+  &.has-magic-vars {
+    top: -376px;
   }
 }
 

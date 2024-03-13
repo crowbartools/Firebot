@@ -26,6 +26,14 @@
 
                     $scope.variables = [];
 
+                    $scope.magicVariables = {
+                        customVariables: [],
+                        effectOutputs: [],
+                        presetListArgs: []
+                    };
+
+                    $scope.hasMagicVariables = false;
+
                     $scope.activeCategory = "common";
                     $scope.setActiveCategory = (category) => {
                         $scope.activeCategory = category;
@@ -33,7 +41,9 @@
                     $scope.categories = Object.values(VariableCategory);
 
                     $scope.searchUpdated = () => {
-                        $scope.activeCategory = null;
+                        if ($scope.activeCategory !== "magic") {
+                            $scope.activeCategory = null;
+                        }
                     };
 
                     const parseMarkdown = (text) => {
@@ -57,6 +67,11 @@
 
                     function getVariables() {
                         const { trigger, triggerMeta } = findTriggerDataScope();
+
+                        if (triggerMeta?.magicVariables) {
+                            $scope.magicVariables = triggerMeta.magicVariables;
+                            $scope.hasMagicVariables = Object.values($scope.magicVariables).some(v => v.length > 0);
+                        }
 
                         if (!$scope.disableVariableMenu) {
                             $scope.variables = replaceVariableService.getVariablesForTrigger({
@@ -99,21 +114,24 @@
                         }
                     };
 
-                    $scope.addVariable = (variable) => {
+                    $scope.insertText = (text) => {
                         if ($scope.onVariableInsert != null) {
-                            $scope.onVariableInsert({ variable: variable});
+                            $scope.onVariableInsert(text);
                             $scope.toggleMenu();
                         } else {
                             const currentModel = $scope.modelValue ? $scope.modelValue : "";
 
                             const insertIndex = $element.prop("selectionStart") || currentModel.length;
 
-                            const display = variable.usage ? variable.usage : variable.handle;
-
-                            const updatedModel = insertAt(currentModel, `$${display}`, insertIndex);
+                            const updatedModel = insertAt(currentModel, text, insertIndex);
 
                             $scope.modelValue = updatedModel;
                         }
+                    };
+
+                    $scope.addVariable = (variable) => {
+                        const display = variable.usage ? variable.usage : variable.handle;
+                        $scope.insertText(`$${display}`);
                     };
 
                 },
@@ -146,7 +164,7 @@
                     }
 
                     const menu = angular.element(`
-                        <div class="variable-menu" ng-show="showMenu" ng-class="menuPosition">
+                        <div class="variable-menu" ng-show="showMenu" ng-class="[menuPosition, { 'has-magic-vars': hasMagicVariables }]">
                             <div style="padding:10px;border-bottom: 1px solid #48474a;">
                                 <div style="position: relative;">
                                     <input id="variable-search" type="text" class="form-control" placeholder="Search variables..." ng-model="variableSearchText" ng-change="searchUpdated()" style="padding-left: 27px;">
@@ -157,6 +175,14 @@
                             <div style="display: flex; flex-direction: row;">
                                 <div style="width: 125px;display:flex;flex-direction:column;flex-shrink: 0;background: #18191b;">
                                     <div class="effect-category-header">Categories</div>
+                                    <div
+                                        class="effect-category-wrapper dark"
+                                        ng-class="{'selected': activeCategory === 'magic'}"
+                                        ng-click="setActiveCategory('magic');"
+                                        ng-show="hasMagicVariables"
+                                    >
+                                        <div class="category-text"><i class="far fa-magic"></i> Magic</div>
+                                    </div>
                                     <div class="effect-category-wrapper dark" ng-class="{'selected': activeCategory == null}" ng-click="setActiveCategory(null);">
                                         <div class="category-text">All</div>
                                     </div>
@@ -164,8 +190,8 @@
                                         <div class="category-text">{{category}}</div>
                                     </div>
                                 </div>
-                                <div style="padding: 10px;overflow-y: auto; height: 250px;width: 100%;">
-                                    <div ng-repeat="variable in variables | orderBy:'handle' | variableCategoryFilter:activeCategory | variableSearch:variableSearchText" style="margin-bottom: 8px;">
+                                <div style="padding: 10px;overflow-y: auto;width: 100%;" ng-style="{ height: hasMagicVariables ? '315px': '280px'}">
+                                    <div ng-hide="activeCategory === 'magic'" ng-repeat="variable in variables | orderBy:'handle' | variableCategoryFilter:activeCategory | variableSearch:variableSearchText" style="margin-bottom: 8px;">
                                         <div style="font-weight: 900;">\${{variable.usage ? variable.usage : variable.handle}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="addVariable(variable)"></i></div>
                                         <div class="muted" ng-bind-html="variable.description"></div>
                                         <div ng-show="variable.examples && variable.examples.length > 0" style="font-size: 13px;padding-left: 5px; margin-top:3px;">
@@ -175,6 +201,54 @@
                                                     <div class="muted" ng-bind-html="example.description"></div>
                                                 </div>
                                             </collapsable-section>
+                                        </div>
+                                    </div>
+                                    <div ng-show="activeCategory === 'magic'">
+                                        <div style="display: flex; flex-direction: row; justify-content: end; margin-bottom: 10px;">
+                                            <a
+                                                style="text-decoration: underline;color: white;"
+                                                uib-tooltip="These are custom variables, effect outputs, and preset list arg variables that Firebot thinks might be relevant to this effect. This is not an exhaustive list and the variables that are listed may or may not be available at the time of effect execution. Treat these as a helpful hint rather than a guarantee."
+                                                tooltip-append-to-body="true"
+                                                tooltip-placement="auto top"
+                                            >What are these?</a>
+                                        </div>
+                                        <div ng-if="magicVariables.customVariables.length > 0">
+                                            <div class="effect-category-header" style="padding-top: 0; padding-left: 0;">Custom Variables</div>
+                                            <div ng-repeat="variable in magicVariables.customVariables | variableSearch:variableSearchText track by variable.name" style="margin-bottom: 8px;">
+                                                <div style="font-weight: 900;">{{variable.handle}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="insertText(variable.handle)"></i></div>
+                                                <div ng-show="variable.examples && variable.examples.length > 0" style="font-size: 13px;padding-left: 5px; margin-top:3px;">
+                                                    <collapsable-section show-text="Other examples" hide-text="Other examples" text-color="#0b8dc6">
+                                                        <div ng-repeat="example in variable.examples" style="margin-bottom: 6px;">
+                                                            <div style="font-weight: 900;">{{example.handle}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="insertText(example.handle)"></i></div>
+                                                            <div class="muted" ng-bind-html="example.description"></div>
+                                                        </div>
+                                                    </collapsable-section>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div ng-if="magicVariables.effectOutputs.length > 0">
+                                            <div class="effect-category-header" style="padding-left: 0;">Effect Outputs</div>
+                                            <div ng-repeat="variable in magicVariables.effectOutputs | variableSearch:variableSearchText track by variable.name" style="margin-bottom: 8px;">
+                                                <div style="font-weight: 900;">{{variable.handle}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="insertText(variable.handle)"></i></div>
+                                                <div ng-show="variable.description" class="muted">{{variable.description}}</div>
+                                                <div ng-show="variable.effectLabel" style="font-size: 12px; opacity: 0.75;">Effect: {{variable.effectLabel}}</div>
+                                                <div ng-show="variable.examples && variable.examples.length > 0" style="font-size: 13px;padding-left: 5px; margin-top:3px;">
+                                                    <collapsable-section show-text="Other examples" hide-text="Other examples" text-color="#0b8dc6">
+                                                        <div ng-repeat="example in variable.examples" style="margin-bottom: 6px;">
+                                                            <div style="font-weight: 900;">{{example.handle}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="insertText(example.handle)"></i></div>
+                                                            <div class="muted" ng-bind-html="example.description"></div>
+                                                        </div>
+                                                    </collapsable-section>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div ng-if="magicVariables.presetListArgs.length > 0">
+                                            <div class="effect-category-header" style="padding-left: 0;">Preset List Args</div>
+                                            <div ng-repeat="variable in magicVariables.presetListArgs | variableSearch:variableSearchText track by variable.name" style="margin-bottom: 8px;">
+                                                <div style="font-weight: 900;">{{variable.handle}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="insertText(variable.handle)"></i></div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
