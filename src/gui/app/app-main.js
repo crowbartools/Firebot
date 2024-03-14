@@ -102,6 +102,7 @@
         chatMessagesService,
         activityFeedService,
         viewerRolesService,
+        viewerRanksService,
         connectionService,
         notificationService,
         $timeout,
@@ -129,8 +130,9 @@
 
         connectionService.loadProfiles();
 
-        //load viewer roles
+        //load viewer roles and ranks
         viewerRolesService.loadCustomRoles();
+        viewerRanksService.loadRankTracks();
 
         //load commands
         commandsService.refreshCommands();

@@ -41,6 +41,7 @@
                     "events",
                     "timers",
                     "channel rewards",
+                    "roles and ranks",
                     "moderation",
                     "buttons",
                     "settings",
@@ -61,6 +62,7 @@
                     "events",
                     "timers",
                     "channel rewards",
+                    "roles and ranks",
                     "buttons",
                     "settings"
                 ].includes(service.currentTab.toLowerCase());
@@ -76,9 +78,9 @@
         function($routeProvider) {
             $routeProvider
 
-                .when("/viewer-roles", {
-                    templateUrl: "./templates/_viewerroles.html",
-                    controller: "viewerRolesController"
+                .when("/roles-and-ranks", {
+                    templateUrl: "./templates/_roles-and-ranks.html",
+                    controller: "rolesAndRanksController"
                 })
 
                 .when("/", {

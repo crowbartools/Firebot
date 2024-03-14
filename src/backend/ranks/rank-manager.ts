@@ -11,7 +11,10 @@ export type RankTrack = {
     id: string;
     name: string;
     type: "manual" | "auto";
+    enabled: boolean;
     settings: {
+        trackBy?: "view_time" | "currency",
+        currencyId?: string;
         announcePromotionsInChat?: boolean;
     };
     ranks: Rank[];
@@ -34,7 +37,7 @@ frontendCommunicator.onAsync("saveRankTrack", async (rankTrack: RankTrack) =>
 );
 
 frontendCommunicator.onAsync(
-    "saveAllRankTrack",
+    "saveAllRankTracks",
     async (rankTracks: RankTrack[]) => rankManager.saveAllItems(rankTracks)
 );
 
