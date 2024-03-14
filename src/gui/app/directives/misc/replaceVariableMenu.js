@@ -211,8 +211,8 @@
                                             </collapsable-section>
                                         </div>
                                     </div>
-                                    <div ng-show="activeCategory === 'magic'">
-                                        <div style="display: flex; flex-direction: row; justify-content: end; margin-bottom: 10px;">
+                                    <div ng-show="activeCategory === 'magic'" style="position: relative;">
+                                        <div style="position: absolute; right: 0;">
                                             <a
                                                 style="text-decoration: underline;color: white;"
                                                 uib-tooltip="These are custom variables, effect outputs, and preset list arg variables that Firebot thinks might be relevant to this effect. This is not an exhaustive list and the variables that are listed may or may not be available at the time of effect execution. Treat these as a helpful hint rather than a guarantee."
