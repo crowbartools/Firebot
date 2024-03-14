@@ -73,6 +73,14 @@
                             $scope.hasMagicVariables = Object.values($scope.magicVariables).some(v => v.length > 0);
                         }
 
+                        $timeout(function() {
+                            const offset = $element.offset();
+                            const menuHeight = ($scope.hasMagicVariables ? 385 : 350) + 10; // 10px to account for app title bar
+                            if (offset.top <= menuHeight && ($scope.menuPosition === "above" || $scope.menuPosition == null)) {
+                                $scope.menuPosition = "under";
+                            }
+                        }, 0, false);
+
                         if (!$scope.disableVariableMenu) {
                             $scope.variables = replaceVariableService.getVariablesForTrigger({
                                 type: trigger,
@@ -255,6 +263,7 @@
                             </div>
                         </div>`
                     );
+
                     $compile(menu)(scope);
                     menu.insertAfter(element);
 

@@ -55,19 +55,19 @@
   top: -341px;
   z-index: 3000;
   border-radius: 8px;
+  &.has-magic-vars {
+    top: -376px;
+  }
   &.below {
-    top: 41px;
+    top: 41px !important;
   }
   &.bottom {
     bottom: 41px;
-    top: unset;
+    top: unset !important;
   }
   &.under {
     bottom: unset;
-    top: unset;
-  }
-  &.has-magic-vars {
-    top: -376px;
+    top: unset !important;
   }
 }
 
