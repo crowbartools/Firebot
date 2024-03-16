@@ -42,7 +42,7 @@
              */
             $scope.viewerRanksService = viewerRanksService;
 
-            $scope.rankTrackHeaders = [
+            $scope.rankLadderHeaders = [
                 {
                     name: "NAME",
                     icon: "fa-tag",
@@ -62,29 +62,29 @@
                 }
             ];
 
-            $scope.showAddOrEditRankTrackModal = function(track) {
+            $scope.showAddOrEditRankLadderModal = function(track) {
             };
 
-            $scope.rankTrackMenuOptions = (item) => {
+            $scope.rankLadderMenuOptions = (item) => {
                 const options = [
                     {
                         html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
                         click: function () {
-                            $scope.showAddOrEditRankTrackModal(item);
+                            $scope.showAddOrEditRankLadderModal(item);
                         }
                     },
                     {
-                        html: `<a href><i class="far fa-toggle-off" style="margin-right: 10px;"></i> ${item.enabled ? "Disable Rank Track" : "Enable Rank Track"}</a>`,
+                        html: `<a href><i class="far fa-toggle-off" style="margin-right: 10px;"></i> ${item.enabled ? "Disable Rank Ladder" : "Enable Rank Ladder"}</a>`,
                         click: function () {
                             item.enabled = !item.enabled;
-                            viewerRanksService.saveRankTrack(item);
+                            viewerRanksService.saveRankLadder(item);
                         },
                         compile: true
                     },
                     {
                         html: `<a href ><i class="far fa-clone" style="margin-right: 10px;"></i> Duplicate</a>`,
                         click: function () {
-                            viewerRanksService.duplicateRankTrack(item.id);
+                            viewerRanksService.duplicateRankLadder(item.id);
                         }
                     },
                     {
@@ -92,14 +92,14 @@
                         click: function () {
                             utilityService
                                 .showConfirmationModal({
-                                    title: "Delete Rank Track",
-                                    question: `Are you sure you want to delete the Rank Track "${item.name}"?`,
+                                    title: "Delete Rank Ladder",
+                                    question: `Are you sure you want to delete the Rank Ladder "${item.name}"?`,
                                     confirmLabel: "Delete",
                                     confirmBtnType: "btn-danger"
                                 })
                                 .then((confirmed) => {
                                     if (confirmed) {
-                                        viewerRanksService.deleteRankTrack(item.id);
+                                        viewerRanksService.deleteRankLadder(item.id);
                                     }
                                 });
 

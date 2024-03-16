@@ -7,7 +7,7 @@ export type Rank = {
     value?: number;
 };
 
-export type RankTrack = {
+export type RankLadder = {
     id: string;
     name: string;
     type: "manual" | "auto";
@@ -20,7 +20,7 @@ export type RankTrack = {
     ranks: Rank[];
 };
 
-class RankManager extends JsonDbManager<RankTrack> {
+class RankManager extends JsonDbManager<RankLadder> {
     constructor() {
         super("Ranks", "/ranks");
     }
@@ -28,21 +28,21 @@ class RankManager extends JsonDbManager<RankTrack> {
 
 const rankManager = new RankManager();
 
-frontendCommunicator.onAsync("getRankTracks", async () =>
+frontendCommunicator.onAsync("getRankLadders", async () =>
     rankManager.getAllItems()
 );
 
-frontendCommunicator.onAsync("saveRankTrack", async (rankTrack: RankTrack) =>
-    rankManager.saveItem(rankTrack)
+frontendCommunicator.onAsync("saveRankLadder", async (rankLadder: RankLadder) =>
+    rankManager.saveItem(rankLadder)
 );
 
 frontendCommunicator.onAsync(
-    "saveAllRankTracks",
-    async (rankTracks: RankTrack[]) => rankManager.saveAllItems(rankTracks)
+    "saveAllRankLadders",
+    async (rankLadders: RankLadder[]) => rankManager.saveAllItems(rankLadders)
 );
 
-frontendCommunicator.on("deleteRankTrack", (rankTrackId: string) =>
-    rankManager.deleteItem(rankTrackId)
+frontendCommunicator.on("deleteRankLadder", (rankLadderId: string) =>
+    rankManager.deleteItem(rankLadderId)
 );
 
 module.exports = rankManager;

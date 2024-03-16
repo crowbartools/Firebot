@@ -8,62 +8,77 @@
         .factory("viewerRanksService", function($q, backendCommunicator, objectCopyHelper, ngToast) {
             const service = {};
 
-            service.rankTracks = [];
+            service.rankLadders = [];
 
-            service.loadRankTracks = async function() {
-                $q.when(backendCommunicator.fireEventAsync("getRankTracks")).then((tracks) => {
-                    if (tracks != null && Array.isArray(tracks)) {
-                        service.rankTracks = tracks;
+            service.loadRankLadders = async function() {
+                $q.when(backendCommunicator.fireEventAsync("getRankLadders")).then((ladders) => {
+                    if (ladders != null && Array.isArray(ladders)) {
+                        service.rankLadders = ladders;
                     }
                 });
             };
 
-            service.saveAllRankTracks = function(tracks) {
-                service.rankTracks = tracks;
-                backendCommunicator.fireEventAsync("saveAllRankTracks", JSON.parse(angular.toJson(tracks)));
+            service.saveAllRankLadders = function(ladders) {
+                service.rankLadders = ladders;
+                backendCommunicator.fireEventAsync("saveAllRankLadders", JSON.parse(angular.toJson(ladders)));
             };
 
-            service.saveRankTrack = function(track) {
-                if (track.id == null) {
-                    track.id = uuid();
-                    track.enabled = track.enabled ?? true;
-                    track.ranks = track.ranks ?? [];
+            service.saveRankLadder = function(ladder) {
+                if (ladder.id == null) {
+                    ladder.id = uuid();
+                    ladder.enabled = ladder.enabled ?? true;
+                    ladder.ranks = ladder.ranks ?? [];
                 }
 
-                backendCommunicator.fireEventAsync("saveRankTrack", JSON.parse(angular.toJson(track)));
+                backendCommunicator.fireEventAsync("saveRankLadder", JSON.parse(angular.toJson(ladder)));
 
-                const existingTrackIndex = service.rankTracks.findIndex(t => t.id === track.id);
-                if (existingTrackIndex !== -1) {
-                    service.rankTracks[existingTrackIndex] = track;
+                const existingLadderIndex = service.rankLadders.findIndex(t => t.id === ladder.id);
+                if (existingLadderIndex !== -1) {
+                    service.rankLadders[existingLadderIndex] = ladder;
                 } else {
-                    service.rankTracks.push(track);
+                    service.rankLadders.push(ladder);
                 }
             };
 
-            service.deleteRankTrack = function(trackId) {
-                backendCommunicator.fireEventAsync("deleteRankTrack", trackId);
-                service.rankTracks = service.rankTracks.filter(t => t.id !== trackId);
+            service.deleteRankLadder = function(ladderId) {
+                backendCommunicator.fireEventAsync("deleteRankLadder", ladderId);
+                service.rankLadders = service.rankLadders.filter(t => t.id !== ladderId);
             };
 
-            service.duplicateRankTrack = (trackId) => {
-                const track = service.rankTracks.find(t => t.id === trackId);
-                if (track == null) {
+            service.duplicateRankLadder = (ladderId) => {
+                const ladder = service.rankLadders.find(t => t.id === ladderId);
+                if (ladder == null) {
                     return;
                 }
-                const copiedTrack = objectCopyHelper.copyObject("rank track", track);
-                copiedTrack.id = null;
+                const copiedLadder = objectCopyHelper.copyObject("rank ladder", ladder);
+                copiedLadder.id = null;
 
-                while (service.rankTracks.some(t => t.name === copiedTrack.name)) {
-                    copiedTrack.name += " copy";
+                while (service.rankLadders.some(t => t.name === copiedLadder.name)) {
+                    copiedLadder.name += " copy";
                 }
 
-                service.saveRankTrack(copiedTrack);
+                service.saveRankLadder(copiedLadder);
 
                 ngToast.create({
                     className: 'success',
-                    content: 'Successfully duplicated a rank track!'
+                    content: 'Successfully duplicated a rank ladder!'
                 });
             };
+
+            service.ladderTypes = [
+                {
+                    id: "manual",
+                    display: "Manual",
+                    description: "Viewers must be manually added to ranks (!rank command, Set Rank effect, etc.)",
+                    iconClass: "fa-users-cog"
+                },
+                {
+                    id: "automated",
+                    display: "Automated",
+                    description: "Viewers are automatically added to ranks based on criteria (currency or time watched)",
+                    iconClass: "fa-magic"
+                }
+            ];
 
             return service;
         });

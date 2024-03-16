@@ -132,7 +132,7 @@
 
         //load viewer roles and ranks
         viewerRolesService.loadCustomRoles();
-        viewerRanksService.loadRankTracks();
+        viewerRanksService.loadRankLadders();
 
         //load commands
         commandsService.refreshCommands();
