@@ -39,7 +39,7 @@ const model = {
                         ng-model="restriction.followAgeSeconds"
                         name="cooldownSeconds"
                         ui-validate="'!restriction.useFollowAge || ($value != null && $value > 0)'"
-                        ui-validate-watch="'restriction.useFollowAge"
+                        ui-validate-watch="'restriction.useFollowAge'"
                         large="true"
                         disabled="!restriction.useFollowAge"
                     />
