@@ -72,12 +72,12 @@ const toggleConnection = {
             $scope.effect.services = [];
         }
 
-        $scope.serviceIsSelected = (serviceId) => $scope.effect.services.some(s => s.id === serviceId);
+        $scope.serviceIsSelected = serviceId => $scope.effect.services.some(s => s.id === serviceId);
 
         $scope.toggleServiceSelected = (serviceId) => {
             if ($scope.serviceIsSelected(serviceId)) {
                 $scope.effect.services = $scope.effect.services.filter(
-                    (s) => s.id !== serviceId
+                    s => s.id !== serviceId
                 );
             } else {
                 $scope.effect.services.push({
@@ -92,7 +92,7 @@ const toggleConnection = {
             action
         ) => {
             const service = $scope.effect.services.find(
-                (s) => s.id === serviceId
+                s => s.id === serviceId
             );
             if (service != null) {
                 service.action = action;
@@ -101,7 +101,7 @@ const toggleConnection = {
 
         $scope.getConnectionActionDisplay = (serviceId) => {
             const service = $scope.effect.services.find(
-                (s) => s.id === serviceId
+                s => s.id === serviceId
             );
             if (service == null) {
                 return "";
@@ -153,7 +153,7 @@ const toggleConnection = {
                         .getAllIntegrationDefinitions()
                         .filter(i => integrationManager.integrationIsConnectable(i.id))
                         .map(i => ({
-                            id: i.id,
+                            id: `integration.${i.id}`,
                             action: effect.allAction
                         }))
                 ];
