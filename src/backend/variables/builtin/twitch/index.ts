@@ -1,3 +1,4 @@
+import adVariables from './ads';
 import chatVariables from './chat';
 import channelGoalVariables from './channel-goal';
 import charityVariables from './charity';
@@ -19,6 +20,7 @@ import viewerCount from './viewer-count';
 
 
 export default [
+    ...adVariables,
     ...chatVariables,
     ...channelGoalVariables,
     ...charityVariables,
