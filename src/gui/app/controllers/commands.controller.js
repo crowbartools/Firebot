@@ -131,7 +131,7 @@
                         }
                     },
                     {
-                        html: `<a href ><i class="${item.hidden ? "fas fa-eye" : "fas fa-eye-slash"}" style="margin-right: 10px;></i> ${item.hidden ? "Show Command" : "Hide Command"}</a>`,
+                        html: `<a href ><i class="${item.hidden ? "fas fa-eye" : "fas fa-eye-slash"}" style="margin-right: 10px;"></i> ${item.hidden ? "Show Command" : "Hide Command"}</a>`,
                         click: () => {
                             $scope.toggleCustomCommandVisibilityState(command);
                         }
