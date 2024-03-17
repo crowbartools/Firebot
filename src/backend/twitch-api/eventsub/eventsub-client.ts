@@ -450,6 +450,9 @@ class TwitchEventSubClient {
                 event.isAutomatic
             );
 
+            const adBreakEndTime = new Date(event.startDate.getTime());
+            adBreakEndTime.setSeconds(event.startDate.getSeconds() + event.durationSeconds);
+
             setTimeout(() => {
                 twitchEventsHandler.ad.triggerAdBreakEnd(
                     event.requesterName,
@@ -458,7 +461,7 @@ class TwitchEventSubClient {
                     event.durationSeconds,
                     event.isAutomatic
                 );
-            }, event.durationSeconds * 1000);
+            }, adBreakEndTime.getTime() - (new Date()).getTime());
         });
         this._subscriptions.push(channelAdBreakBeginSubscription);
     }
