@@ -928,13 +928,13 @@ module.exports = {
             description: "When an ad break starts on your channel.",
             cached: false,
             manualMetadata: {
-                duration: 60,
+                adBreakDuration: 60,
                 isAdBreakScheduled: true
             },
             activityFeed: {
                 icon: "fad fa-ad",
                 getMessage: (eventData) => {
-                    return `**${eventData.duration}** second **${eventData.isAdBreakScheduled ? "scheduled" : "manual"}** ad break started`;
+                    return `**${eventData.adBreakDuration}** second **${eventData.isAdBreakScheduled ? "scheduled" : "manual"}** ad break started`;
                 }
             }
         },
@@ -944,13 +944,13 @@ module.exports = {
             description: "When an ad break ends on your channel.",
             cached: false,
             manualMetadata: {
-                duration: 60,
+                adBreakDuration: 60,
                 isAdBreakScheduled: true
             },
             activityFeed: {
                 icon: "fad fa-ad",
                 getMessage: (eventData) => {
-                    return `**${eventData.duration}** second **${eventData.isAdBreakScheduled ? "scheduled" : "manual"}** ad break ended`;
+                    return `**${eventData.adBreakDuration}** second **${eventData.isAdBreakScheduled ? "scheduled" : "manual"}** ad break ended`;
                 }
             }
         }
