@@ -20,13 +20,7 @@ export class TwitchChatApi {
         try {
             const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
 
-            let result = await this._streamerClient.chat.getChatters(streamerUserId);
-            chatters.push(...result.data);
-
-            while (result.cursor) {
-                result = await this._streamerClient.chat.getChatters(streamerUserId, { after: result.cursor });
-                chatters.push(...result.data);
-            }
+            chatters.push(...await this._streamerClient.chat.getChattersPaginated(streamerUserId).getAll());
         } catch (error) {
             logger.error("Error getting chatter list", error.message);
         }
