@@ -1,6 +1,6 @@
 import logger from '../../logwrapper';
 import accountAccess from "../../common/account-access";
-import { ApiClient, HelixChatAnnouncementColor, HelixChatChatter, HelixSendChatAnnouncementParams, HelixUpdateChatSettingsParams } from "@twurple/api";
+import { ApiClient, HelixChatAnnouncementColor, HelixChatChatter, HelixSendChatAnnouncementParams, HelixSentChatMessage, HelixUpdateChatSettingsParams } from "@twurple/api";
 
 export class TwitchChatApi {
     private _streamerClient: ApiClient;
@@ -47,43 +47,20 @@ export class TwitchChatApi {
             const willSendAsBot: boolean = sendAsBot === true
                 && accountAccess.getAccounts().bot?.userId != null
                 && this._botClient != null;
-            const senderUserId: string = willSendAsBot === true ?
-                accountAccess.getAccounts().bot.userId :
-                accountAccess.getAccounts().streamer.userId;
 
-            // TODO: This next section is a shim until Twurple 7.1.0+ when we get a friendly function call
-            const client: ApiClient = willSendAsBot === true
-                ? this._botClient
-                : this._streamerClient;
+            let result: HelixSentChatMessage;
 
-            const result = await client.callApi<{
-                data: [{
-                    is_sent: boolean,
-                    drop_reason?: {
-                        message: string
-                    }
-                }]
-            }>({
-                type: 'helix',
-                url: 'chat/messages',
-                method: 'POST',
-                userId: senderUserId,
-                canOverrideScopedUserContext: true,
-                query: {
-                    broadcaster_id: streamerUserId, // eslint-disable-line camelcase
-                    sender_id: senderUserId // eslint-disable-line camelcase
-                },
-                jsonBody: {
-                    message: message,
-                    reply_parent_message_id: replyToMessageId ?? undefined // eslint-disable-line camelcase
-                }
-            });
-
-            if (result.data[0].is_sent !== true) {
-                logger.error(`Twitch dropped chat message. Reason: ${result.data[0].drop_reason.message}`);
+            if (willSendAsBot === true) {
+                result = await this._botClient.chat.sendChatMessage(streamerUserId, message, { replyParentMessageId: replyToMessageId });
+            } else {
+                result = await this._streamerClient.chat.sendChatMessage(streamerUserId, message, { replyParentMessageId: replyToMessageId });
             }
 
-            return result.data[0].is_sent;
+            if (result.isSent !== true) {
+                logger.error(`Twitch dropped chat message. Reason: ${result.dropReasonMessage}`);
+            }
+
+            return result.isSent;
         } catch (error) {
             logger.error(`Unable to send ${sendAsBot === true ? "bot" : "steamer"} chat message`, error);
         }
