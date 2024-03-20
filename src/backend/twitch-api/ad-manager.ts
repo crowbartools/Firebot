@@ -1,11 +1,16 @@
+import { DateTime } from "luxon";
+
 import logger from "../logwrapper";
 import accountAccess from "../common/account-access";
 import twitchApi from "./api";
 import frontendCommunicator from "../common/frontend-communicator";
+import { settings } from "../common/settings-access";
+import eventManager from "../events/EventManager";
 
 class AdManager {
     private _adCheckIntervalId: NodeJS.Timeout;
     private _isAdCheckRunning = false;
+    private _upcomingEventTriggered = false;
     private _isAdRunning = false;
 
     constructor() {
@@ -40,6 +45,21 @@ class AdManager {
                 nextAdBreak: adSchedule.nextAdDate,
                 duration: adSchedule.duration
             });
+
+            const upcomingTriggerMinutes = Number(settings.getTriggerUpcomingAdBreakMinutes());
+            const minutesUntilNextAdBreak = Math.abs(DateTime.fromJSDate(adSchedule.nextAdDate).diffNow("minutes").minutes);
+
+            if (upcomingTriggerMinutes > 0
+                && this._upcomingEventTriggered !== true
+                && minutesUntilNextAdBreak <= upcomingTriggerMinutes
+            ) {
+                this._upcomingEventTriggered = true;
+
+                eventManager.triggerEvent("twitch", "ad-break-upcoming", {
+                    minutesUntilNextAdBreak: minutesUntilNextAdBreak,
+                    adBreakDuration: adSchedule.duration
+                });
+            }
         }
 
         logger.debug("Ad timer check complete.");
@@ -55,6 +75,7 @@ class AdManager {
     }
 
     triggerAdBreakComplete(): void {
+        this._upcomingEventTriggered = false;
         this._isAdRunning = false;
         this.runAdCheck();
     }

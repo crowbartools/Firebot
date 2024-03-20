@@ -923,6 +923,29 @@ module.exports = {
             }
         },
         {
+            id: "ad-break-upcoming",
+            name: "Scheduled Ad Break Starting Soon",
+            description: "When a scheduled ad break will be starting soon on your channel.",
+            cached: false,
+            manualMetadata: {
+                adBreakDuration: 60,
+                minutesUntilNextAdBreak: 5
+            },
+            activityFeed: {
+                icon: "fad fa-ad",
+                getMessage: (eventData) => {
+                    const mins = Math.floor(eventData.adBreakDuration / 60);
+                    const remainingSecs = eventData.adBreakDuration % 60;
+
+                    const friendlyDuration = mins > 0
+                        ? `${mins}m${remainingSecs > 0 ? ` ${remainingSecs}s` : ""}`
+                        : `${eventData.adBreakDuration}s`;
+
+                    return `**${friendlyDuration}** scheduled ad break starting in **${eventData.minutesUntilNextAdBreak}** minutes`;
+                }
+            }
+        },
+        {
             id: "ad-break-start",
             name: "Ad Break Started",
             description: "When an ad break starts on your channel.",
@@ -934,7 +957,14 @@ module.exports = {
             activityFeed: {
                 icon: "fad fa-ad",
                 getMessage: (eventData) => {
-                    return `**${eventData.adBreakDuration}** second **${eventData.isAdBreakScheduled ? "scheduled" : "manual"}** ad break started`;
+                    const mins = Math.floor(eventData.adBreakDuration / 60);
+                    const remainingSecs = eventData.adBreakDuration % 60;
+
+                    const friendlyDuration = mins > 0
+                        ? `${mins}m${remainingSecs > 0 ? ` ${remainingSecs}s` : ""}`
+                        : `${eventData.adBreakDuration}s`;
+
+                    return `**${friendlyDuration}** **${eventData.isAdBreakScheduled ? "scheduled" : "manual"}** ad break started`;
                 }
             }
         },
@@ -950,7 +980,14 @@ module.exports = {
             activityFeed: {
                 icon: "fad fa-ad",
                 getMessage: (eventData) => {
-                    return `**${eventData.adBreakDuration}** second **${eventData.isAdBreakScheduled ? "scheduled" : "manual"}** ad break ended`;
+                    const mins = Math.floor(eventData.adBreakDuration / 60);
+                    const remainingSecs = eventData.adBreakDuration % 60;
+
+                    const friendlyDuration = mins > 0
+                        ? `${mins}m${remainingSecs > 0 ? ` ${remainingSecs}s` : ""}`
+                        : `${eventData.adBreakDuration}s`;
+
+                    return `**${friendlyDuration}** **${eventData.isAdBreakScheduled ? "scheduled" : "manual"}** ad break ended`;
                 }
             }
         }

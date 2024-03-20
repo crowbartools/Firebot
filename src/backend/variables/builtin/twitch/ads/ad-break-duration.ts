@@ -4,6 +4,7 @@ import { OutputDataType, VariableCategory } from "../../../../../shared/variable
 
 const triggers = {};
 triggers[EffectTrigger.EVENT] = [
+    "twitch:ad-break-upcoming",
     "twitch:ad-break-start",
     "twitch:ad-break-end"
 ];

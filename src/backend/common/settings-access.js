@@ -322,4 +322,13 @@ settings.setWebOnlineCheckin = (value) => {
     pushDataToFile("/settings/webOnlineCheckin", value);
 };
 
+settings.getTriggerUpcomingAdBreakMinutes = function() {
+    const value = getDataFromFile("/settings/triggerUpcomingAdBreakMinutes", false, 0);
+    return value ?? 0;
+};
+
+settings.setTriggerUpcomingAdBreakMinutes = function(value) {
+    pushDataToFile("/settings/triggerUpcomingAdBreakMinutes", value);
+};
+
 exports.settings = settings;
