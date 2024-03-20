@@ -441,6 +441,14 @@
                 pushDataToFile("/settings/showHypeTrainIndicator", value === true);
             };
 
+            service.getShowAdBreakIndicator = function() {
+                const value = getDataFromFile("/settings/showAdBreakIndicator", false, true);
+                return value != null ? value : true;
+            };
+            service.setShowAdBreakIndicator = function(value) {
+                pushDataToFile("/settings/showAdBreakIndicator", value === true);
+            };
+
             service.chatHideDeletedMessages = function() {
                 const hide = getDataFromFile('/settings/chatHideDeletedMessages', false, false);
                 return hide != null ? hide : false;

@@ -1,6 +1,7 @@
 import logger from '../../logwrapper';
 import accountAccess from "../../common/account-access";
 import { ApiClient, CommercialLength, HelixChannel, HelixChannelUpdate, HelixUser, HelixUserRelation } from "@twurple/api";
+import { HelixAdSchedule } from '@twurple/api/lib/endpoints/channel/HelixAdSchedule';
 
 export class TwitchChannelsApi {
     private _streamerClient: ApiClient;
@@ -84,6 +85,28 @@ export class TwitchChannelsApi {
         }
 
         return this.getChannelInformation(user.id);
+    }
+
+    /**
+     * Retrieves the current ad schedule for the streamer's channel.
+     */
+    async getAdSchedule(): Promise<HelixAdSchedule> {
+        try {
+            let adSchedule: HelixAdSchedule = null;
+            const streamer = accountAccess.getAccounts().streamer;
+
+            const isOnline = await this.getOnlineStatus(streamer.userId);
+            if (isOnline && streamer.broadcasterType !== "") {
+                adSchedule = await this._streamerClient.channels.getAdSchedule(streamer.userId);
+            } else {
+                logger.warn(`Unable to get ad schedule. ${isOnline !== true ? "Stream is offline." : "Streamer must be affiliate or partner."}`);
+            }
+
+            return adSchedule;
+        } catch (error) {
+            logger.error("There was an error getting the ad schedule", error.message);
+            return null;
+        }
     }
 
     /**

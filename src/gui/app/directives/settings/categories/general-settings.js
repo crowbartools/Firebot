@@ -134,6 +134,16 @@
                                 />
                                 <div class="control__indicator"></div>
                             </label>
+                            <label class="control-fb control--checkbox"
+                                >Ad Breaks
+                                <input
+                                    type="checkbox"
+                                    ng-click="settings.setShowAdBreakIndicator(!settings.getShowAdBreakIndicator())"
+                                    ng-checked="settings.getShowAdBreakIndicator()"
+                                    aria-label="..."
+                                />
+                                <div class="control__indicator"></div>
+                            </label>
                         </div>
                     </firebot-setting>
 

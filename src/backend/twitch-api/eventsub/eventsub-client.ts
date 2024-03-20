@@ -446,6 +446,7 @@ class TwitchEventSubClient {
                 event.requesterName,
                 event.requesterId,
                 event.requesterDisplayName,
+                event.startDate,
                 event.durationSeconds,
                 event.isAutomatic
             );

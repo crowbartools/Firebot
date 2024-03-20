@@ -1,6 +1,7 @@
 import { EffectType } from "../../../../types/effects";
 import { EffectCategory } from "../../../../shared/effect-constants";
 import twitchApi from "../../../twitch-api/api";
+import adManager from "../../../twitch-api/ad-manager";
 
 const model: EffectType = {
     definition: {
@@ -31,7 +32,13 @@ const model: EffectType = {
         return [];
     },
     onTriggerEvent: async () => {
-        return await twitchApi.channels.snoozeAdBreak();
+        const result = await twitchApi.channels.snoozeAdBreak();
+
+        if (result === true) {
+            await adManager.runAdCheck();
+        }
+
+        return result;
     }
 };
 
