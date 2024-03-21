@@ -112,7 +112,7 @@
     "node-hue-api": "^4.0.11",
     "node-json-db": "^1.4.1",
     "node-xlsx": "^0.20.0",
-    "obs-websocket-js": "^5.0.3",
+    "obs-websocket-js": "^5.0.5",
     "request": "^2.85.0",
     "roll": "^1.2.0",
     "sanitize-filename": "^1.6.3",

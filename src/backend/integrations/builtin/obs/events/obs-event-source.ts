@@ -15,7 +15,19 @@ import {
     OBS_SCENE_TRANSITION_STARTED_EVENT_ID,
     OBS_STREAM_STARTED_EVENT_ID,
     OBS_STREAM_STOPPED_EVENT_ID,
-    OBS_VENDOR_EVENT_EVENT_ID
+    OBS_VENDOR_EVENT_EVENT_ID,
+    OBS_INPUT_CREATED_EVENT_ID,
+    OBS_INPUT_REMOVED_EVENT_ID,
+    OBS_INPUT_NAME_CHANGED_EVENT_ID,
+    OBS_INPUT_SETTINGS_CHANGED_EVENT_ID,
+    OBS_INPUT_ACTIVE_STATE_CHANGED_EVENT_ID,
+    OBS_INPUT_SHOW_STATE_CHANGED_EVENT_ID,
+    OBS_INPUT_MUTE_STATE_CHANGED_EVENT_ID,
+    OBS_INPUT_VOLUME_CHANGED_EVENT_ID,
+    OBS_INPUT_AUDIO_BALANCE_CHANGED_EVENT_ID,
+    OBS_INPUT_AUDIO_SYNC_OFFSET_CHANGED_EVENT_ID,
+    OBS_INPUT_AUDIO_MONITOR_TYPE_CHANGED_EVENT_ID,
+    OBS_INPUT_AUDIO_TRACKS_CHANGED_EVENT_ID
 } from "../constants";
 
 export const OBSEventSource: EventSource = {
@@ -129,6 +141,132 @@ export const OBSEventSource: EventSource = {
             manualMetadata: {
                 vendorName: "Test Vendor",
                 eventType: "Test Event Type"
+            }
+        },
+        {
+            id: OBS_INPUT_CREATED_EVENT_ID,
+            name: "OBS Input Created",
+            description: "When an input has been created in OBS",
+            manualMetadata: {
+                inputName: "Microphone",
+                inputUuid: "",
+                inputKind: ""
+            }
+        },
+        {
+            id: OBS_INPUT_REMOVED_EVENT_ID,
+            name: "OBS Input Removed",
+            description: "When an input has been removed in OBS",
+            manualMetadata: {
+                inputName: "Microphone",
+                inputUuid: ""
+            }
+        },
+        {
+            id: OBS_INPUT_NAME_CHANGED_EVENT_ID,
+            name: "OBS Input Name Changed",
+            description: "When the name of an input has changed in OBS",
+            manualMetadata: {
+                oldInputName: "",
+                inputName: "Microphone",
+                inputUuid: ""
+            }
+        },
+        {
+            id: OBS_INPUT_SETTINGS_CHANGED_EVENT_ID,
+            name: "OBS Input Settings Changed",
+            description: "When an input's settings have changed/updated in OBS",
+            manualMetadata: {
+                inputName: "Microphone",
+                inputUuid: ""
+            }
+        },
+        {
+            id: OBS_INPUT_ACTIVE_STATE_CHANGED_EVENT_ID,
+            name: "OBS Input Active State Changed",
+            description: "When an input's active state has changed in OBS",
+            manualMetadata: {
+                inputName: "Microphone",
+                inputUuid: "",
+                inputActive: true
+            }
+        },
+        {
+            id: OBS_INPUT_SHOW_STATE_CHANGED_EVENT_ID,
+            name: "OBS Input Show State Changed",
+            description: "When an input's show state has changed in OBS",
+            manualMetadata: {
+                inputName: "Microphone",
+                inputUuid: "",
+                inputShowing: true
+            }
+        },
+        {
+            id: OBS_INPUT_MUTE_STATE_CHANGED_EVENT_ID,
+            name: "OBS Input Mute State Changed",
+            description: "When an input's mute state has changed in OBS",
+            manualMetadata: {
+                inputName: "Microphone",
+                inputUuid: "",
+                inputMuted: true
+            }
+        },
+        {
+            id: OBS_INPUT_VOLUME_CHANGED_EVENT_ID,
+            name: "OBS Input Volume Level Changed",
+            description: "When an input's volume level has changed in OBS",
+            manualMetadata: {
+                inputName: "Microphone",
+                inputUuid: "",
+                inputVolumeMultiplier: 0,
+                inputVolumeDb: 0
+            }
+        },
+        {
+            id: OBS_INPUT_AUDIO_BALANCE_CHANGED_EVENT_ID,
+            name: "OBS Input Audio Balance Changed",
+            description: "When an input's audio balance has changed in OBS",
+            manualMetadata: {
+                inputName: "Microphone",
+                inputUuid: "",
+                inputAudioBalance: 0
+            }
+        },
+        {
+            id: OBS_INPUT_AUDIO_SYNC_OFFSET_CHANGED_EVENT_ID,
+            name: "OBS Input Audio Sync Offset Changed",
+            description: "When an input's audio sync offset has changed in OBS",
+            manualMetadata: {
+                inputName: "Microphone",
+                inputUuid: "",
+                inputAudioSyncOffset: 0
+            }
+        },
+        {
+            id: OBS_INPUT_AUDIO_TRACKS_CHANGED_EVENT_ID,
+            name: "OBS Input Audio Tracks Changed",
+            description: "When an input's audio tracks have changed in OBS",
+            manualMetadata: {
+                inputName: "Microphone",
+                inputUuid: ""
+            }
+        },
+        {
+            id: OBS_INPUT_AUDIO_MONITOR_TYPE_CHANGED_EVENT_ID,
+            name: "OBS Input Audio Monitor Type Changed",
+            description: "When an input's audio monitor type has changed in OBS",
+            manualMetadata: {
+                inputName: "Microphone",
+                inputUuid: "",
+                monitorType: {
+                    type: "enum",
+                    options: {
+                        "OBS_MONITORING_TYPE_NONE": "None",
+                        "OBS_MONITORING_TYPE_MONITOR_ONLY": "Monitor Only",
+                        "OBS_MONITORING_TYPE_MONITOR_AND_OUTPUT": "Monitor and Output"
+                    },
+                    value: "OBS_MONITORING_TYPE_NONE"
+                }
             }
         }
     ]
