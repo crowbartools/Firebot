@@ -60,6 +60,8 @@ class AdManager {
                     adBreakDuration: adSchedule.duration
                 });
             }
+        } else {
+            frontendCommunicator.send("ad-manager:hide-ad-break-timer");
         }
 
         logger.debug("Ad timer check complete.");
