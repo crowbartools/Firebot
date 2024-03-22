@@ -9,6 +9,7 @@ import eventManager from "../events/EventManager";
 
 class AdManager {
     private _adCheckIntervalId: NodeJS.Timeout;
+    private _nextAdBreak: DateTime = null;
     private _isAdCheckRunning = false;
     private _upcomingEventTriggered = false;
     private _isAdRunning = false;
@@ -17,6 +18,12 @@ class AdManager {
         frontendCommunicator.on("ad-manager:refresh-ad-schedule", async () => {
             await this.runAdCheck();
         });
+    }
+
+    get secondsUntilNextAdBreak(): number {
+        return this._nextAdBreak != null
+            ? Math.round(Math.abs(this._nextAdBreak.diffNow("seconds").seconds))
+            : 0;
     }
 
     async runAdCheck(): Promise<void> {
@@ -41,13 +48,15 @@ class AdManager {
         const adSchedule = await twitchApi.channels.getAdSchedule();
 
         if (adSchedule?.nextAdDate != null) {
+            this._nextAdBreak = DateTime.fromJSDate(adSchedule.nextAdDate);
+
             frontendCommunicator.send("ad-manager:next-ad", {
                 nextAdBreak: adSchedule.nextAdDate,
                 duration: adSchedule.duration
             });
 
             const upcomingTriggerMinutes = Number(settings.getTriggerUpcomingAdBreakMinutes());
-            let minutesUntilNextAdBreak = Math.abs(DateTime.fromJSDate(adSchedule.nextAdDate).diffNow("minutes").minutes);
+            const minutesUntilNextAdBreak = this.secondsUntilNextAdBreak / 60;
 
             if (upcomingTriggerMinutes > 0
                 && this._upcomingEventTriggered !== true
@@ -62,19 +71,18 @@ class AdManager {
                  */
                 let timeout = 1;
                 if (minutesUntilNextAdBreak > upcomingTriggerMinutes) {
-                    const diff = minutesUntilNextAdBreak - upcomingTriggerMinutes;
-                    timeout = diff * 60 * 1000;
-                    minutesUntilNextAdBreak -= diff;
+                    timeout = this.secondsUntilNextAdBreak * 1000;
                 }
 
                 setTimeout(() => {
                     eventManager.triggerEvent("twitch", "ad-break-upcoming", {
-                        minutesUntilNextAdBreak: minutesUntilNextAdBreak,
+                        secondsUntilNextAdBreak: this.secondsUntilNextAdBreak,
                         adBreakDuration: adSchedule.duration
                     });
                 }, timeout);
             }
         } else {
+            this._nextAdBreak = null;
             frontendCommunicator.send("ad-manager:hide-ad-break-timer");
         }
 

@@ -929,7 +929,7 @@ module.exports = {
             cached: false,
             manualMetadata: {
                 adBreakDuration: 60,
-                minutesUntilNextAdBreak: 5
+                secondsUntilNextAdBreak: 300
             },
             activityFeed: {
                 icon: "fad fa-ad",
@@ -941,7 +941,7 @@ module.exports = {
                         ? `${mins}m${remainingSecs > 0 ? ` ${remainingSecs}s` : ""}`
                         : `${eventData.adBreakDuration}s`;
 
-                    return `**${friendlyDuration}** scheduled ad break starting in **${eventData.minutesUntilNextAdBreak}** minutes`;
+                    return `**${friendlyDuration}** scheduled ad break starting in about **${Math.round(eventData.secondsUntilNextAdBreak / 60)}** minutes`;
                 }
             }
         },
