@@ -41,6 +41,10 @@
                 service.updateDuration();
             });
 
+            backendCommunicator.on("ad-manager:hide-ad-break-timer", () => {
+                service.showAdBreakTimer = false;
+            });
+
             return service;
         });
 }());

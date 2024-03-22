@@ -16,7 +16,19 @@ import {
     OBS_SCENE_TRANSITION_STARTED_EVENT_ID,
     OBS_STREAM_STARTED_EVENT_ID,
     OBS_STREAM_STOPPED_EVENT_ID,
-    OBS_VENDOR_EVENT_EVENT_ID
+    OBS_VENDOR_EVENT_EVENT_ID,
+    OBS_INPUT_CREATED_EVENT_ID,
+    OBS_INPUT_REMOVED_EVENT_ID,
+    OBS_INPUT_NAME_CHANGED_EVENT_ID,
+    OBS_INPUT_SETTINGS_CHANGED_EVENT_ID,
+    OBS_INPUT_ACTIVE_STATE_CHANGED_EVENT_ID,
+    OBS_INPUT_SHOW_STATE_CHANGED_EVENT_ID,
+    OBS_INPUT_MUTE_STATE_CHANGED_EVENT_ID,
+    OBS_INPUT_VOLUME_CHANGED_EVENT_ID,
+    OBS_INPUT_AUDIO_BALANCE_CHANGED_EVENT_ID,
+    OBS_INPUT_AUDIO_SYNC_OFFSET_CHANGED_EVENT_ID,
+    OBS_INPUT_AUDIO_MONITOR_TYPE_CHANGED_EVENT_ID,
+    OBS_INPUT_AUDIO_TRACKS_CHANGED_EVENT_ID
 } from "./constants";
 import logger from "../../../logwrapper";
 
@@ -180,6 +192,151 @@ function setupRemoteListeners() {
             }
         );
     });
+
+    obs.on("InputCreated", ({ inputName, inputUuid, inputKind, inputSettings }) => {
+        eventManager?.triggerEvent(
+            OBS_EVENT_SOURCE_ID,
+            OBS_INPUT_CREATED_EVENT_ID,
+            {
+                inputName,
+                inputUuid,
+                inputKind,
+                inputSettings
+            }
+        );
+    });
+
+    obs.on("InputRemoved", ({ inputName, inputUuid }) => {
+        eventManager?.triggerEvent(
+            OBS_EVENT_SOURCE_ID,
+            OBS_INPUT_REMOVED_EVENT_ID,
+            {
+                inputName,
+                inputUuid
+            }
+        );
+    });
+
+    obs.on("InputNameChanged", ({ oldInputName, inputName, inputUuid }) => {
+        eventManager?.triggerEvent(
+            OBS_EVENT_SOURCE_ID,
+            OBS_INPUT_NAME_CHANGED_EVENT_ID,
+            {
+                oldInputName,
+                inputName,
+                inputUuid
+            }
+        );
+    });
+
+    obs.on("InputSettingsChanged", ({ inputName, inputUuid, inputSettings }) => {
+        eventManager?.triggerEvent(
+            OBS_EVENT_SOURCE_ID,
+            OBS_INPUT_SETTINGS_CHANGED_EVENT_ID,
+            {
+                inputName,
+                inputUuid,
+                inputSettings
+            }
+        );
+    });
+
+    obs.on("InputActiveStateChanged", ({ inputName, inputUuid, videoActive }) => {
+        eventManager?.triggerEvent(
+            OBS_EVENT_SOURCE_ID,
+            OBS_INPUT_ACTIVE_STATE_CHANGED_EVENT_ID,
+            {
+                inputName,
+                inputUuid,
+                inputActive: videoActive
+            }
+        );
+    });
+
+    obs.on("InputShowStateChanged", ({ inputName, inputUuid, videoShowing }) => {
+        eventManager?.triggerEvent(
+            OBS_EVENT_SOURCE_ID,
+            OBS_INPUT_SHOW_STATE_CHANGED_EVENT_ID,
+            {
+                inputName,
+                inputUuid,
+                inputShowing: videoShowing
+            }
+        );
+    });
+
+    obs.on("InputMuteStateChanged", ({ inputName, inputUuid, inputMuted }) => {
+        eventManager?.triggerEvent(
+            OBS_EVENT_SOURCE_ID,
+            OBS_INPUT_MUTE_STATE_CHANGED_EVENT_ID,
+            {
+                inputName,
+                inputUuid,
+                inputMuted
+            }
+        );
+    });
+
+    obs.on("InputVolumeChanged", ({ inputName, inputUuid, inputVolumeMul, inputVolumeDb }) => {
+        eventManager?.triggerEvent(
+            OBS_EVENT_SOURCE_ID,
+            OBS_INPUT_VOLUME_CHANGED_EVENT_ID,
+            {
+                inputName,
+                inputUuid,
+                inputVolumeMultiplier: inputVolumeMul,
+                inputVolumeDb
+            }
+        );
+    });
+
+    obs.on("InputAudioBalanceChanged", ({ inputName, inputUuid, inputAudioBalance }) => {
+        eventManager?.triggerEvent(
+            OBS_EVENT_SOURCE_ID,
+            OBS_INPUT_AUDIO_BALANCE_CHANGED_EVENT_ID,
+            {
+                inputName,
+                inputUuid,
+                inputAudioBalance
+            }
+        );
+    });
+
+    obs.on("InputAudioSyncOffsetChanged", ({ inputName, inputUuid, inputAudioSyncOffset }) => {
+        eventManager?.triggerEvent(
+            OBS_EVENT_SOURCE_ID,
+            OBS_INPUT_AUDIO_SYNC_OFFSET_CHANGED_EVENT_ID,
+            {
+                inputName,
+                inputUuid,
+                inputAudioSyncOffset
+            }
+        );
+    });
+
+    obs.on("InputAudioTracksChanged", ({ inputName, inputUuid, inputAudioTracks }) => {
+        eventManager?.triggerEvent(
+            OBS_EVENT_SOURCE_ID,
+            OBS_INPUT_AUDIO_TRACKS_CHANGED_EVENT_ID,
+            {
+                inputName,
+                inputUuid,
+                inputAudioTracks
+            }
+        );
+    });
+
+    obs.on("InputAudioMonitorTypeChanged", ({ inputName, inputUuid, monitorType }) => {
+        eventManager?.triggerEvent(
+            OBS_EVENT_SOURCE_ID,
+            OBS_INPUT_AUDIO_MONITOR_TYPE_CHANGED_EVENT_ID,
+            {
+                inputName,
+                inputUuid,
+                monitorType
+            }
+        );
+    });
 }
 
 let reconnectTimeout: NodeJS.Timeout | null = null;
@@ -275,7 +432,7 @@ export async function getSceneList(): Promise<string[]> {
     }
     try {
         const sceneData = await obs.call("GetSceneList");
-        return sceneData.scenes.map((s) => s.sceneName as string);
+        return sceneData.scenes.map(s => s.sceneName as string);
     } catch (error) {
         return [];
     }
@@ -372,7 +529,7 @@ export async function getSourceData(): Promise<SourceData> {
                         sceneName: item.sourceName as string
                     });
 
-                    const groupItems = groupItemList.sceneItems.map((gi) => ({
+                    const groupItems = groupItemList.sceneItems.map(gi => ({
                         id: gi.sceneItemId as number,
                         name: gi.sourceName as string,
                         groupName: item.sourceName as string
@@ -492,7 +649,7 @@ export async function getAllSources(): Promise<Array<OBSSource> | null> {
         if (sourceListData?.inputs == null) {
             return null;
         }
-        const sources: OBSSource[] = sourceListData.inputs.map((i) => ({
+        const sources: OBSSource[] = sourceListData.inputs.map(i => ({
             name: i.inputName as string,
             type: i.inputKind as string,
             typeId: i.inputKind as string,
@@ -502,7 +659,7 @@ export async function getAllSources(): Promise<Array<OBSSource> | null> {
         const sceneNameList = await getSceneList();
         sources.push(
             ...sceneNameList.map(
-                (s) =>
+                s =>
                     ({
                         name: s,
                         filters: [],
@@ -518,7 +675,7 @@ export async function getAllSources(): Promise<Array<OBSSource> | null> {
             });
             source.filters = (
                 sourceFiltersData.filters as unknown as Array<OBSFilterData>
-            ).map((f) => ({ name: f.filterName, enabled: f.filterEnabled }));
+            ).map(f => ({ name: f.filterName, enabled: f.filterEnabled }));
         }
         return sources;
     } catch (error) {
@@ -530,7 +687,7 @@ export async function getAllSources(): Promise<Array<OBSSource> | null> {
 export async function getAllSceneItemsInScene(sceneName: string): Promise<Array<OBSSceneItem>> {
     try {
         const response = await obs.call("GetSceneItemList", { sceneName });
-        return response.sceneItems.map((item) => ({
+        return response.sceneItems.map(item => ({
             id: item.sceneItemId as number,
             name: item.sourceName as string
         }));
@@ -552,7 +709,7 @@ export async function getSceneItem(sceneName: string, sceneItemId: number): Prom
 
 export async function getSourcesWithFilters(): Promise<Array<OBSSource>> {
     const sources = await getAllSources();
-    return sources?.filter((s) => s.filters?.length > 0);
+    return sources?.filter(s => s.filters?.length > 0);
 }
 
 export async function getFilterEnabledStatus(
@@ -643,7 +800,7 @@ export async function setSourceMuted(sourceName: string, muted: boolean) {
 
 export async function getTextSources(): Promise<Array<OBSSource>> {
     const sources = await getAllSources();
-    return sources?.filter((s) => s.typeId === "text_gdiplus_v2" || s.typeId === "text_ft2_source_v2");
+    return sources?.filter(s => s.typeId === "text_gdiplus_v2" || s.typeId === "text_ft2_source_v2");
 }
 
 export async function setTextSourceSettings(sourceName: string, settings: OBSTextSourceSettings) {
@@ -678,7 +835,7 @@ export async function setTextSourceSettings(sourceName: string, settings: OBSTex
 
 export async function getBrowserSources(): Promise<Array<OBSSource>> {
     const sources = await getAllSources();
-    return sources?.filter((s) => s.typeId === "browser_source");
+    return sources?.filter(s => s.typeId === "browser_source");
 }
 
 export async function setBrowserSourceSettings(sourceName: string, settings: OBSBrowserSourceSettings) {
@@ -696,7 +853,7 @@ export async function setBrowserSourceSettings(sourceName: string, settings: OBS
 
 export async function getImageSources(): Promise<Array<OBSSource>> {
     const sources = await getAllSources();
-    return sources?.filter((s) => s.typeId === "image_source");
+    return sources?.filter(s => s.typeId === "image_source");
 }
 
 export async function setImageSourceSettings(sourceName: string, settings: OBSImageSourceSettings) {
@@ -714,7 +871,7 @@ export async function setImageSourceSettings(sourceName: string, settings: OBSIm
 
 export async function getMediaSources(): Promise<Array<OBSSource>> {
     const sources = await getAllSources();
-    return sources?.filter((s) => s.typeId === "ffmpeg_source");
+    return sources?.filter(s => s.typeId === "ffmpeg_source");
 }
 
 export async function setMediaSourceSettings(sourceName: string, settings: OBSMediaSourceSettings) {
@@ -734,7 +891,7 @@ export async function setMediaSourceSettings(sourceName: string, settings: OBSMe
 
 export async function getColorSources(): Promise<Array<OBSSource>> {
     const sources = await getAllSources();
-    return sources?.filter((s) => s.typeId === "color_source_v3");
+    return sources?.filter(s => s.typeId === "color_source_v3");
 }
 
 export async function setColorSourceSettings(sourceName: string, settings: OBSColorSourceSettings) {

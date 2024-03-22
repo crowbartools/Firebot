@@ -21,7 +21,7 @@ const model : ReplaceVariable = {
             }
         }
 
-        return minutesUntilNextAdBreak;
+        return Math.round(minutesUntilNextAdBreak);
     }
 };
 
