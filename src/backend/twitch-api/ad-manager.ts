@@ -71,7 +71,7 @@ class AdManager {
                  */
                 let timeout = 1;
                 if (minutesUntilNextAdBreak > upcomingTriggerMinutes) {
-                    timeout = this.secondsUntilNextAdBreak * 1000;
+                    timeout = (this.secondsUntilNextAdBreak - (upcomingTriggerMinutes * 60)) * 1000;
                 }
 
                 setTimeout(() => {
