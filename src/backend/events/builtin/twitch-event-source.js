@@ -941,7 +941,9 @@ module.exports = {
                         ? `${mins}m${remainingSecs > 0 ? ` ${remainingSecs}s` : ""}`
                         : `${eventData.adBreakDuration}s`;
 
-                    return `**${friendlyDuration}** scheduled ad break starting in about **${Math.round(eventData.secondsUntilNextAdBreak / 60)}** minutes`;
+                    const minutesUntilNextAdBreak = Math.round(eventData.secondsUntilNextAdBreak / 60);
+
+                    return `**${friendlyDuration}** scheduled ad break starting in about **${minutesUntilNextAdBreak}** minute${minutesUntilNextAdBreak !== 1 ? "s" : ""}`;
                 }
             }
         },
