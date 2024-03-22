@@ -569,7 +569,7 @@
                 }
 
                 function stringCanBeShorthand(str) {
-                    return /^[a-zA-Z]{3,}$/.test(str);
+                    return /^([a-z][a-z\d._-]+)([\s\S]*)$/i.test(str);
                 }
 
                 function checkEffectListForMagicVariables(effects, ignoreEffectId) {
