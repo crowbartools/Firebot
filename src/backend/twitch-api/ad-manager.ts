@@ -47,18 +47,32 @@ class AdManager {
             });
 
             const upcomingTriggerMinutes = Number(settings.getTriggerUpcomingAdBreakMinutes());
-            const minutesUntilNextAdBreak = Math.abs(DateTime.fromJSDate(adSchedule.nextAdDate).diffNow("minutes").minutes);
+            let minutesUntilNextAdBreak = Math.abs(DateTime.fromJSDate(adSchedule.nextAdDate).diffNow("minutes").minutes);
 
             if (upcomingTriggerMinutes > 0
                 && this._upcomingEventTriggered !== true
-                && minutesUntilNextAdBreak <= upcomingTriggerMinutes
+                && minutesUntilNextAdBreak <= (upcomingTriggerMinutes + 1)
             ) {
                 this._upcomingEventTriggered = true;
 
-                eventManager.triggerEvent("twitch", "ad-break-upcoming", {
-                    minutesUntilNextAdBreak: minutesUntilNextAdBreak,
-                    adBreakDuration: adSchedule.duration
-                });
+                /**
+                 * Adding some precision to the upcoming ad break event
+                 * If we're past the threshold already, trigger immediately
+                 * Otherwise, get as close to the threshold as possible
+                 */
+                let timeout = 1;
+                if (minutesUntilNextAdBreak > upcomingTriggerMinutes) {
+                    const diff = minutesUntilNextAdBreak - upcomingTriggerMinutes;
+                    timeout = diff * 60 * 1000;
+                    minutesUntilNextAdBreak -= diff;
+                }
+
+                setTimeout(() => {
+                    eventManager.triggerEvent("twitch", "ad-break-upcoming", {
+                        minutesUntilNextAdBreak: minutesUntilNextAdBreak,
+                        adBreakDuration: adSchedule.duration
+                    });
+                }, timeout);
             }
         } else {
             frontendCommunicator.send("ad-manager:hide-ad-break-timer");
