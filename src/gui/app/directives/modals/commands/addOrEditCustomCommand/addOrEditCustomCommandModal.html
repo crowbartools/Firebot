@@ -244,6 +244,7 @@
           header="What should this command do?"
           effects="$ctrl.command.effects"
           trigger="command"
+          trigger-meta="{ rootEffects: $ctrl.command.effects }"
           update="$ctrl.effectListUpdated(effects)"
           is-array="true"
         ></effect-list>
@@ -260,9 +261,12 @@
           </p>
         </div>
         <div
-          ng-show="$ctrl.command.subCommands && $ctrl.command.subCommands.length > 0"
+          ng-show="($ctrl.command.subCommands && $ctrl.command.subCommands.length) || $ctrl.command.fallbackSubcommand"
         >
-          <div class="flex text-lg font-bold pb-4">
+          <div
+            ng-if="$ctrl.command.subCommands && $ctrl.command.subCommands.length > 0"
+            class="flex text-lg font-bold pb-4"
+          >
             <div class="muted pl-8" style="flex-basis: 30%;">
               <i class="fas fa-tag"></i> ARG
             </div>
@@ -289,6 +293,27 @@
           <div ng-if="$ctrl.command.fallbackSubcommand != null">
             <hr style="border-top: 1px solid #202021" />
             <h4 class="muted">Fallback subcommand:</h4>
+            <div ng-if="!$ctrl.command.subCommands || $ctrl.command.subCommands.length === 0">
+              <div class="muted pb-4">
+                <strong>NOTE:</strong> Fallback subcommand will not trigger when no other subcommands exist
+              </div>
+              <div class="flex text-lg font-bold pb-4">
+                <div class="muted pl-8" style="flex-basis: 30%;">
+                  <i class="fas fa-tag"></i> ARG
+                </div>
+                <div class="muted" style="width: 25%">
+                  <i class="fas fa-clock"></i> COOLDOWNS
+                </div>
+                <div class="muted" style="width: 25%">
+                  <i class="fas fa-lock-alt"></i> PERMISSIONS
+                </div>
+                <div class="muted" style="width: 25%"></div>
+                <div
+                  class="muted pr-8"
+                  style="flex-basis: 30px; flex-shrink: 0;"
+                ></div>
+              </div>
+            </div>
             <subcommand-row
               subcommand="$ctrl.command.fallbackSubcommand"
               cmd-trigger="{{$ctrl.command.trigger}}"

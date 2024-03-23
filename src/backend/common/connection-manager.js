@@ -54,14 +54,18 @@ function emitServiceConnectionUpdateEvents(serviceId, connectionState) {
 }
 
 // Chat listeners
-twitchChat.on("connected", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Connected));
+twitchChat.on("connected", () => {
+    emitServiceConnectionUpdateEvents("chat", ConnectionState.Connected);
+    const rewardsManager = require("../channel-rewards/channel-reward-manager");
+    rewardsManager.refreshChannelRewardRedemptions();
+});
 twitchChat.on("disconnected", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Disconnected));
 twitchChat.on("connecting", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Connecting));
 twitchChat.on("reconnecting", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Reconnecting));
 
 // Integrations listener
-integrationManager.on("integration-connected", (id) => emitServiceConnectionUpdateEvents(`integration.${id}`, ConnectionState.Connected));
-integrationManager.on("integration-disconnected", (id) => emitServiceConnectionUpdateEvents(`integration.${id}`, ConnectionState.Disconnected));
+integrationManager.on("integration-connected", id => emitServiceConnectionUpdateEvents(`integration.${id}`, ConnectionState.Connected));
+integrationManager.on("integration-disconnected", id => emitServiceConnectionUpdateEvents(`integration.${id}`, ConnectionState.Disconnected));
 
 let connectionUpdateInProgress = false;
 
@@ -153,8 +157,10 @@ class ConnectionManager extends EventEmitter {
         } else if (accountAccess.streamerTokenIssue()) {
             const botTokenIssue = accountAccess.getAccounts().bot.loggedIn && accountAccess.botTokenIssue();
 
-            const message = `There is an issue with the Streamer ${botTokenIssue ? ' and Bot' : ""} Twitch account${botTokenIssue ? 's' : ""}. Please re-sign into the account${botTokenIssue ? 's' : ""} and try again.`;
-            renderWindow.webContents.send("error", message);
+            frontendCommunicator.send("invalidate-accounts", {
+                streamer: true,
+                bot: botTokenIssue
+            });
         } else {
             const waitForServiceConnectDisconnect = (serviceId, action = true) => {
                 const shouldToggle = action === "toggle";
@@ -165,7 +171,7 @@ class ConnectionManager extends EventEmitter {
                     return Promise.resolve();
                 }
 
-                const promise = new Promise(resolve => {
+                const promise = new Promise((resolve) => {
                     currentlyWaitingService = {
                         serviceId: serviceId,
                         callback: () => resolve()

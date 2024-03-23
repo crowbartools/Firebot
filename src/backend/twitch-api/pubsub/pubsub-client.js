@@ -5,6 +5,7 @@ const frontendCommunicator = require("../../common/frontend-communicator");
 const firebotDeviceAuthProvider = require("../../auth/firebot-device-auth-provider");
 const chatRolesManager = require("../../roles/chat-roles-manager");
 const { PubSubClient } = require("@twurple/pubsub");
+const chatCommandHandler = require("../../chat/commands/chat-command-handler");
 
 /**@type {PubSubClient} */
 let pubSubClient;
@@ -69,6 +70,8 @@ async function createClient() {
 
         const bitsBadgeUnlockListener = pubSubClient.onBitsBadgeUnlock(streamer.userId, (message) => {
             twitchEventsHandler.cheer.triggerBitsBadgeUnlock(
+                message.userName ?? "ananonymouscheerer",
+                message.userId,
                 message.userName ?? "An Anonymous Cheerer",
                 message.message ?? "",
                 message.badgeTier
@@ -118,10 +121,10 @@ async function createClient() {
 
             switch (message.type) {
                 case "vip_added":
-                    chatRolesManager.addVipToVipList(message.targetUserName);
-                    break;
-                case "vip_removed":
-                    chatRolesManager.removeVipFromVipList(message.targetUserName);
+                    chatRolesManager.addVipToVipList({
+                        id: message.targetUserId,
+                        username: message.targetUserName
+                    });
                     break;
                 default:
                     switch (message.action) {
@@ -170,6 +173,8 @@ async function createClient() {
                 );
 
                 frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
+                chatCommandHandler.handleChatMessage(firebotChatMessage);
+                twitchEventsHandler.chatMessage.triggerChatMessage(firebotChatMessage);
             }
         });
         listeners.push(chatRoomListener);

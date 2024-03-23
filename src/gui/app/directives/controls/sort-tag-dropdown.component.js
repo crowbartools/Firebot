@@ -26,7 +26,7 @@
                     <span class="caret"></span>
                 </button>
                 <ul
-                    class="dropdown-menu"
+                    class="dropdown-menu dropdown-menu-right"
                     uib-dropdown-menu
                     role="menu"
                     aria-labelledby="single-button"

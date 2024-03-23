@@ -1,6 +1,6 @@
 import logger from '../../logwrapper';
 import accountAccess from "../../common/account-access";
-import { ApiClient, HelixChatAnnouncementColor, HelixChatChatter, HelixSendChatAnnouncementParams, HelixUpdateChatSettingsParams } from "@twurple/api";
+import { ApiClient, HelixChatAnnouncementColor, HelixChatChatter, HelixSendChatAnnouncementParams, HelixSentChatMessage, HelixUpdateChatSettingsParams } from "@twurple/api";
 
 export class TwitchChatApi {
     private _streamerClient: ApiClient;
@@ -20,18 +20,52 @@ export class TwitchChatApi {
         try {
             const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
 
-            let result = await this._streamerClient.chat.getChatters(streamerUserId);
-            chatters.push(...result.data);
-
-            while (result.cursor) {
-                result = await this._streamerClient.chat.getChatters(streamerUserId, { after: result.cursor });
-                chatters.push(...result.data);
-            }
+            chatters.push(...await this._streamerClient.chat.getChattersPaginated(streamerUserId).getAll());
         } catch (error) {
             logger.error("Error getting chatter list", error.message);
         }
 
         return chatters;
+    }
+
+    /**
+     * Sends a chat message to the streamer's chat.
+     *
+     * @param message Chat message to send.
+     * @param replyToMessageId The ID of the message this should be replying to. Leave as null for non replies.
+     * @param sendAsBot If the chat message should be sent as the bot or not.
+     * If this is set to `false`, the chat message will be sent as the streamer.
+     * @returns `true` if sending the chat message was successful or `false` if it failed
+     */
+    async sendChatMessage(message: string, replyToMessageId = null, sendAsBot = false): Promise<boolean> {
+        if (!message?.length) {
+            return false;
+        }
+
+        try {
+            const streamerUserId: string = accountAccess.getAccounts().streamer.userId;
+            const willSendAsBot: boolean = sendAsBot === true
+                && accountAccess.getAccounts().bot?.userId != null
+                && this._botClient != null;
+
+            let result: HelixSentChatMessage;
+
+            if (willSendAsBot === true) {
+                result = await this._botClient.chat.sendChatMessage(streamerUserId, message, { replyParentMessageId: replyToMessageId });
+            } else {
+                result = await this._streamerClient.chat.sendChatMessage(streamerUserId, message, { replyParentMessageId: replyToMessageId });
+            }
+
+            if (result.isSent !== true) {
+                logger.error(`Twitch dropped chat message. Reason: ${result.dropReasonMessage}`);
+            }
+
+            return result.isSent;
+        } catch (error) {
+            logger.error(`Unable to send ${sendAsBot === true ? "bot" : "steamer"} chat message`, error);
+        }
+
+        return false;
     }
 
     /**
@@ -264,5 +298,20 @@ export class TwitchChatApi {
         }
 
         return false;
+    }
+
+    /**
+     * Gets the chat color for a user.
+     *
+     * @param targetUserId numerical ID of the user as sting.
+     * @returns the color as hex code, null if the user did not set a color, or undefined if the user is unknown.
+     */
+    async getColorForUser(targetUserId: string): Promise<string | null |undefined> {
+        try {
+            return await this._streamerClient.chat.getColorForUser(targetUserId);
+        } catch (error) {
+            logger.error("Error Receiving user color", error.message);
+            return null;
+        }
     }
 }

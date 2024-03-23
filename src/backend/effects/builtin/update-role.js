@@ -1,7 +1,9 @@
 "use strict";
 
 const { EffectCategory } = require('../../../shared/effect-constants');
+const twitchApi = require("../../twitch-api/api");
 const customRolesManager = require("../../roles/custom-roles-manager");
+const logger = require('../../logwrapper');
 
 /**
  * The Delay effect
@@ -111,6 +113,11 @@ const delay = {
    */
     onTriggerEvent: async event => {
         const effect = event.effect;
+        
+        if (effect.removeAllRoleId) {
+            customRolesManager.removeAllViewersFromRole(effect.removeAllRoleId);
+            return;
+        }
 
         let username = "";
         if (effect.viewerType === "current") {
@@ -119,16 +126,22 @@ const delay = {
             username = effect.customViewer ? effect.customViewer.trim() : "";
         }
 
+        const user = await twitchApi.users.getUserByName(username);
+        if (user == null) {
+            logger.warn(`Unable to ${effect.addRoleId ? "add" : "remove"} custom role for ${username}. User does not exist.`);
+            return;
+        }
+
         if (effect.addRoleId) {
-            customRolesManager.addViewerToRole(effect.addRoleId, username);
+            customRolesManager.addViewerToRole(effect.addRoleId, {
+                id: user.id,
+                username: user.name,
+                displayName: user.displayName
+            });
         }
 
         if (effect.removeRoleId) {
-            customRolesManager.removeViewerFromRole(effect.removeRoleId, username);
-        }
-
-        if (effect.removeAllRoleId) {
-            customRolesManager.removeAllViewersFromRole(effect.removeAllRoleId);
+            customRolesManager.removeViewerFromRole(effect.removeRoleId, user.id);
         }
 
         return true;

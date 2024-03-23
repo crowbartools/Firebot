@@ -123,11 +123,18 @@ exports.whenReady = async () => {
 
     windowManagement.updateSplashScreenStatus("Loading custom roles...");
     const customRolesManager = require("../../../roles/custom-roles-manager");
-    customRolesManager.loadCustomRoles();
+    await customRolesManager.loadCustomRoles();
+
+    const chatRolesManager = require("../../../roles/chat-roles-manager");
 
     windowManagement.updateSplashScreenStatus("Loading known bot list...");
-    const chatRolesManager = require("../../../roles/chat-roles-manager");
     await chatRolesManager.cacheViewerListBots();
+
+    windowManagement.updateSplashScreenStatus("Loading channel moderators...");
+    await chatRolesManager.loadModerators();
+
+    windowManagement.updateSplashScreenStatus("Loading channel VIPs...");
+    await chatRolesManager.loadVips();
 
     windowManagement.updateSplashScreenStatus("Loading effect queues...");
     const effectQueueManager = require("../../../effects/queues/effect-queue-manager");

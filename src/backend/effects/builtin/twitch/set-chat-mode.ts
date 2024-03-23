@@ -17,6 +17,9 @@ const model: EffectType<{
     setSlowMode: boolean;
     enableSlowMode?: boolean;
     slowModeDelay?: number;
+
+    setUniqueChat: boolean;
+    enableUniqueChat?: boolean;
 }> = {
     definition: {
         id: "firebot:set-chat-mode",
@@ -124,6 +127,26 @@ const model: EffectType<{
                 input-title="Delay (Seconds)"
                 placeholder-text="Optional"
             />
+
+            <firebot-checkbox
+                model="effect.setUniqueChat"
+                label="Set Unique Chat"
+                tooltip="Whether or not you want to change the unique mode of your Twitch channel chat."
+            />
+
+            <div class="btn-group mb-4" ng-if="effect.setUniqueChat === true">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="list-effect-type">{{effect.enableUniqueChat == null ? 'Pick one' : (effect.enableUniqueChat === true ? 'Enable' : 'Disable')}}</span> <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li ng-click="effect.enableUniqueChat = true">
+                        <a href>Enable</a>
+                    </li>
+                    <li ng-click="effect.enableUniqueChat = false">
+                        <a href>Disable</a>
+                    </li>
+                </ul>
+            </div>
         </eos-container>
     `,
     optionsValidator: (effect) => {
@@ -137,6 +160,8 @@ const model: EffectType<{
             errors.push("You must specify an emote-only action");
         } else if (effect.setSlowMode === true && effect.enableSlowMode == null) {
             errors.push("You must specify a slow mode action");
+        } else if (effect.setUniqueChat === true && effect.enableUniqueChat == null) {
+            errors.push("You must specify a unique mode action");
         }
 
         return errors;
@@ -165,6 +190,10 @@ const model: EffectType<{
 
         if (effect.setSlowMode === true) {
             await twitchApi.chat.setSlowMode(effect.enableSlowMode ?? false, effect.slowModeDelay);
+        }
+
+        if (effect.setUniqueChat === true) {
+            await twitchApi.chat.setUniqueMode(effect.enableUniqueChat ?? false);
         }
     }
 };

@@ -144,7 +144,7 @@ const model: EffectType<EffectMeta> = {
                     <div class="control__indicator"></div>
                 </label>
                 <div ng-show="effect.rewardSettings.cost.update" style="margin-bottom: 15px;">
-                    <firebot-input model="effect.rewardSettings.cost.newValue" data-type="number" placeholder-text="Enter number" />
+                    <firebot-input model="effect.rewardSettings.cost.newValue" placeholder-text="Enter new cost" />
                 </div>
             </div>
 
@@ -232,9 +232,7 @@ const model: EffectType<EffectMeta> = {
                 effect.rewardSettings.description.newValue === "")) {
             errors.push("Please provide a new description for the reward.");
         } else if (effect.rewardSettings.cost.update &&
-            (effect.rewardSettings.cost.newValue == null ||
-                isNaN(parseInt(effect.rewardSettings.cost.newValue)) ||
-                parseInt(effect.rewardSettings.cost.newValue) < 1)) {
+            !effect.rewardSettings.cost.newValue?.length) {
             errors.push("Please provide a new cost for the reward.");
         }
 

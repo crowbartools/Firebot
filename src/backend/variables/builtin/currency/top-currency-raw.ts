@@ -46,7 +46,9 @@ const model : ReplaceVariable = {
 
         const topHoldersDisplay = topCurrencyHolders.map((u, i) => ({
             place: i + 1,
-            username: u.displayName,
+            username: u.username,
+            userId: u._id,
+            userDisplayName: u.displayName,
             amount: u.currency[currency.id]
         }));
 

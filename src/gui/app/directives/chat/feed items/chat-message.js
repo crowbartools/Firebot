@@ -119,7 +119,13 @@
                                     ng-click="$root.openLinkExternally('https://pronouns.alejo.io/')"
                                     ng-show="$ctrl.showPronoun && $ctrl.pronouns.pronounCache[$ctrl.message.username] != null"
                                 >{{$ctrl.pronouns.pronounCache[$ctrl.message.username]}}</span>
-                                <b ng-style="{'color': $ctrl.message.color}">{{$ctrl.message.username}}</b>
+                                <b ng-style="{'color': $ctrl.message.color}">{{$ctrl.message.userDisplayName != null ? $ctrl.message.userDisplayName : $ctrl.message.username}}</b>
+                                <span
+                                    ng-if="$ctrl.message.username && $ctrl.message.userDisplayName && $ctrl.message.username.toLowerCase() !== $ctrl.message.userDisplayName.toLowerCase()"
+                                    style="font-weight: 100"
+                                    ng-style="{'color': $ctrl.message.color}"
+                                    class="muted"
+                                >&nbsp;({{$ctrl.message.username}})</span>
                                 <span
                                     ng-if="$ctrl.compactDisplay && !$ctrl.message.action"
                                     style="color:white;font-weight:200;"
@@ -360,11 +366,11 @@
                         {
                             html: `<div class="name-wrapper">
                                     <img class="user-avatar" src="${message.profilePicUrl}">
-                                    <span style="margin-left: 10px" class="user-name">${message.username}</span>
+                                    <span style="margin-left: 10px" class="user-name">${message.userDisplayName}${message.username && message.username.toLowerCase() !== message.userDisplayName.toLowerCase() ? ` (${message.username})` : ""}</span>
                                 </div>`,
                             enabled: false
                         },
-                        ...actions.map(a => {
+                        ...actions.map((a) => {
                             let html = "";
                             if (a.name === "Remove VIP") {
                                 html = `
@@ -387,62 +393,62 @@
                             return {
                                 html: html,
                                 click: () => {
-                                    $ctrl.messageActionSelected(a.name, message.username, message.userId, message.id, message.rawText);
+                                    $ctrl.messageActionSelected(a.name, message.username, message.userId, message.displayName, message.id, message.rawText);
                                 }
                             };
                         })];
                 };
 
-                $ctrl.messageActionSelected = (action, userName, userId, msgId, rawText) => {
+                $ctrl.messageActionSelected = (action, username, userId, displayName, msgId, rawText) => {
                     switch (action.toLowerCase()) {
                         case "delete message":
                             chatMessagesService.deleteMessage(msgId);
                             break;
                         case "timeout":
-                            updateChatField(`/timeout @${userName} 300`);
+                            updateChatField(`/timeout @${username} 300`);
                             break;
                         case "ban":
                             utilityService
                                 .showConfirmationModal({
                                     title: "Ban User",
-                                    question: `Are you sure you want to ban ${userName}?`,
+                                    question: `Are you sure you want to ban ${username}?`,
                                     confirmLabel: "Ban",
                                     confirmBtnType: "btn-danger"
                                 })
-                                .then(confirmed => {
+                                .then((confirmed) => {
                                     if (confirmed) {
-                                        backendCommunicator.fireEvent("update-user-banned-status", { username: userName, shouldBeBanned: true });
+                                        backendCommunicator.fireEvent("update-user-banned-status", { username: username, shouldBeBanned: true });
                                     }
                                 });
                             break;
                         case "mod":
-                            chatMessagesService.changeModStatus(userName, true);
+                            chatMessagesService.changeModStatus(username, true);
                             break;
                         case "unmod":
                             utilityService
                                 .showConfirmationModal({
                                     title: "Mod User",
-                                    question: `Are you sure you want to unmod ${userName}?`,
+                                    question: `Are you sure you want to unmod ${username}?`,
                                     confirmLabel: "Unmod",
                                     confirmBtnType: "btn-danger"
                                 })
-                                .then(confirmed => {
+                                .then((confirmed) => {
                                     if (confirmed) {
-                                        chatMessagesService.changeModStatus(userName, false);
+                                        chatMessagesService.changeModStatus(username, false);
                                     }
                                 });
                             break;
                         case "add as vip":
-                            backendCommunicator.fireEvent("update-user-vip-status", { username: userName, shouldBeVip: true });
+                            backendCommunicator.fireEvent("update-user-vip-status", { username: username, shouldBeVip: true });
                             break;
                         case "remove vip":
-                            backendCommunicator.fireEvent("update-user-vip-status", { username: userName, shouldBeVip: false });
+                            backendCommunicator.fireEvent("update-user-vip-status", { username: username, shouldBeVip: false });
                             break;
                         case "whisper":
-                            updateChatField(`/w @${userName} `);
+                            updateChatField(`/w @${username} `);
                             break;
                         case "mention":
-                            updateChatField(`@${userName} `);
+                            updateChatField(`@${username} `);
                             break;
                         case "reply to message":
                             $ctrl.onReplyClicked({
@@ -450,13 +456,13 @@
                             });
                             break;
                         case "quote message":
-                            updateChatField(`!quote add @${userName} ${rawText}`);
+                            updateChatField(`!quote add @${username} ${rawText}`);
                             break;
                         case "spotlight message":
-                            chatMessagesService.highlightMessage(userName, rawText);
+                            chatMessagesService.highlightMessage(username, userId, displayName, rawText);
                             break;
                         case "shoutout":
-                            updateChatField(`!so @${userName}`);
+                            updateChatField(`!so @${username}`);
                             break;
                         case "details": {
                             $ctrl.showUserDetailsModal(userId);

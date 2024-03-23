@@ -55,20 +55,40 @@
             <th
               ng-repeat="header in $ctrl.headers track by $index"
               ng-style="header.headerStyles"
-              class="muted fit-custom-header"
+              class="fit-custom-header"
+              ng-click="header.sortable && header.dataField && $ctrl.setOrderField(header.dataField)" 
+              ng-class="{'selected': header.dataField && $ctrl.isOrderField(header.dataField), 'not-clickable': !header.sortable || !header.dataField}"
             >
-              <div>
-                <span>
+              <div style="display:flex;">
+                <span style="display:inline-block;">
                   <i ng-show="header.icon" class="fas" ng-class="header.icon"></i>
                 </span>
                 <span ng-show="header.name" class="mx-2 my-0">
                   {{header.name}}
                 </span>
+                <span ng-if="header.sortable && header.dataField" style="display:inline-block; width: 11px;">
+                    <i ng-show="$ctrl.isOrderField(header.dataField)" class="fal" ng-class="{'fa-arrow-to-bottom': !$ctrl.order.reverse,'fa-arrow-to-top': $ctrl.order.reverse}"></i>
+                </span>
               </div>
             </th>
 
-            <th ng-if="$ctrl.sortTagContext != null" class="muted">
-              <i class="fas fa-tag"></i> TAGS
+            <th 
+              ng-if="$ctrl.sortTagContext != null" 
+              class="fit-custom-header"
+              ng-click="$ctrl.setOrderField('%sorttags%')" 
+              ng-class="{'selected': $ctrl.isOrderField('%sorttags%')}"
+            >
+              <div style="display:flex;">
+                <span style="display:inline-block;">
+                  <i class="fas fa-tag"></i>
+                </span>
+                <span class="mx-2 my-0">
+                  TAGS
+                </span>
+                <span style="display:inline-block; width: 11px;">
+                    <i ng-show="$ctrl.isOrderField('%sorttags%')" class="fal" ng-class="{'fa-arrow-to-bottom': !$ctrl.order.reverse,'fa-arrow-to-top': $ctrl.order.reverse}"></i>
+                </span>
+              </div>
             </th>
 
             <th ng-if="$ctrl.showStatusIndicator"></th>
@@ -78,7 +98,7 @@
         </thead>
         <tbody ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.items" class="fit-table-body">
           <tr
-            ng-repeat="item in filteredItems = ($ctrl.items | sortTagSearch:sts.getSelectedSortTag($ctrl.sortTagContext) | filter:searchQuery) as visible track by item.id"
+            ng-repeat="item in filteredItems = ($ctrl.items | sortTagSearch:sts.getSelectedSortTag($ctrl.sortTagContext) | filter:searchQuery | orderBy:$ctrl.dynamicOrder:$ctrl.order.reverse) as visible track by item.id"
             context-menu="$ctrl.getContextMenu(item)"
             context-menu-class="angular-context-menu"
           >
@@ -95,6 +115,7 @@
             <td
               ng-repeat="header in $ctrl.headers track by $index"
               ng-style="header.cellStyles"
+              ng-class="header.cellClass"
             >
               <sortable-table-cell
                 data="item"
@@ -116,13 +137,14 @@
 
             <td class="fit-table-drag-handle">
               <div>
-                <span
-                  class="dragHandle"
-                  ng-click="$event.stopPropagation();"
-                  ng-if="$ctrl.orderable"
-                  ng-show="sts.getSelectedSortTag($ctrl.sortTagContext) == null && (searchQuery == null || searchQuery.length < 1)"
-                >
-                  <i class="fal fa-bars" aria-hidden="true"></i>
+                <span style="width: 12.5px; display: inline-block;">
+                  <span
+                    class="dragHandle"
+                    ng-click="$event.stopPropagation();"
+                    ng-show="$ctrl.orderable && $ctrl.order.field == null && sts.getSelectedSortTag($ctrl.sortTagContext) == null && (searchQuery == null || searchQuery.length < 1)"
+                  >
+                    <i class="fal fa-bars" aria-hidden="true"></i>
+                  </span>
                 </span>
                 <div class="ml-10">
                   <button aria-label="Open Context Menu"  

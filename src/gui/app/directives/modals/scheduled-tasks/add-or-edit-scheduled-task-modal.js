@@ -51,7 +51,14 @@
                 </div>
 
                 <div class="function-button-settings" style="margin-top: 15px;">
-                    <effect-list header="What should this scheduled effect list do?" effects="$ctrl.scheduledTask.effects" trigger="scheduledTask" trigger-meta="$ctrl.triggerMeta" update="$ctrl.effectListUpdated(effects)" modalId="{{$ctrl.modalId}}"></effect-list>
+                    <effect-list
+                        header="What should this scheduled effect list do?"
+                        effects="$ctrl.scheduledTask.effects"
+                        trigger="scheduledTask"
+                        trigger-meta="{ rootEffects: $ctrl.scheduledTask.effects }"
+                        update="$ctrl.effectListUpdated(effects)"
+                        modalId="{{$ctrl.modalId}}"
+                    ></effect-list>
                 </div>
                 <p class="muted" style="font-size:11px;margin-top:6px;">
                     <b>ProTip:</b> If you want to have this scheduled effect list display a single chat message at a time, try the <b>Run Random Effect</b> or <b>Run Sequential Effect</b>

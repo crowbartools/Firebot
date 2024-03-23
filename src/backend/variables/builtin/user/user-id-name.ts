@@ -1,6 +1,8 @@
+// Deprecated
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType } from "../../../../shared/variable-constants";
 import { EffectTrigger } from "../../../../shared/effect-constants";
+import user from "../metadata/user";
 
 const triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
@@ -14,18 +16,11 @@ triggers[EffectTrigger.QUICK_ACTION] = true;
 const model : ReplaceVariable = {
     definition: {
         handle: "useridname",
-        description: "The associated underlying user identifying name for the given trigger.",
+        description: "(Deprecated: Use $user or $username) The associated underlying user identifying name for the given trigger.",
         triggers: triggers,
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (trigger) => {
-        // We have a few places where this might be set, so we check them all
-        // Start with any event data, then we check the regular metadata
-        return trigger.metadata?.eventData?.userIdName ??
-            trigger.metadata?.eventData?.chatMessage?.userIdName ??
-            trigger.metadata?.userIdName ??
-            trigger.metadata?.chatMessage?.userIdName;
-    }
+    evaluator: user.evaluator
 };
 
 export default model;

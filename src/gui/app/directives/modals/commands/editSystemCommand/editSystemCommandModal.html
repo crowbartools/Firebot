@@ -151,6 +151,7 @@
       header="What should this command do?"
       effects="$ctrl.command.effects"
       trigger="command"
+      trigger-meta="{ rootEffects: $ctrl.command.effects }"
       update="$ctrl.effectListUpdated(effects)"
       is-array="true"
     ></effect-list>

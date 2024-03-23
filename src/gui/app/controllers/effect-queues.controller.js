@@ -22,12 +22,16 @@
                 {
                     name: "NAME",
                     icon: "fa-user",
+                    dataField: "name",
+                    sortable: true,
                     cellTemplate: `{{data.name}}`,
                     cellController: () => {}
                 },
                 {
                     name: "MODE",
                     icon: "fa-bring-forward",
+                    dataField: "mode",
+                    sortable: true,
                     cellTemplate: `{{getQueueModeName(data.mode)}}`,
                     cellController: ($scope) => {
                         $scope.getQueueModeName = (modeId) => {
@@ -39,6 +43,8 @@
                 {
                     name: "INTERVAL/DELAY",
                     icon: "fa-clock",
+                    dataField: "interval",
+                    sortable: true,
                     cellTemplate: `{{(data.mode === 'interval' || data.mode === 'auto') ? (data.interval || 0) + 's' : 'n/a'}}`,
                     cellController: () => {}
                 },

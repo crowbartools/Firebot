@@ -133,7 +133,7 @@
                         <div ng-repeat="effect in $ctrl.effectsData.list track by $index" context-menu="$ctrl.createEffectMenuOptions(effect)">
                             <div
                                 role="button"
-                                class="effect-bar clickable-dark"
+                                class="effect-bar"
                                 ng-class="{'disabled': !effect.active}"
                                 ng-click="$ctrl.openEditEffectModal(effect, $index, $ctrl.trigger, false)"
                                 ng-mouseenter="hovering = true"
@@ -201,7 +201,7 @@
                         ctrl.effectsData.id = uuidv1();
                     }
 
-                    ctrl.effectsData.list.forEach(e => {
+                    ctrl.effectsData.list.forEach((e) => {
                         if (e.active == null) {
                             e.active = true;
                         }
@@ -365,7 +365,7 @@
 
                 function getSharedEffects(code) {
                     return $http.get(`https://bytebin.lucko.me/${code}`)
-                        .then(resp => {
+                        .then((resp) => {
                             if (resp.status === 200) {
                                 return JSON.parse(unescape(JSON.stringify(resp.data)));
                             }
@@ -383,7 +383,7 @@
                             saveText: "Add",
                             inputPlaceholder: "Enter code",
                             validationFn: (shareCode) => {
-                                return new Promise(async resolve => {
+                                return new Promise(async (resolve) => {
                                     if (shareCode == null || shareCode.trim().length < 1) {
                                         resolve(false);
                                     }
@@ -414,7 +414,7 @@
                     effectDefinitions = await effectHelperService.getAllEffectDefinitions();
                 };
 
-                ctrl.getEffectNameById = id => {
+                ctrl.getEffectNameById = (id) => {
                     if (!effectDefinitions || effectDefinitions.length < 1) {
                         return "";
                     }
@@ -527,7 +527,7 @@
                     objectCopyHelper.copyEffects(ctrl.effectsData.list);
                 };
 
-                ctrl.openNewEffectModal = index => {
+                ctrl.openNewEffectModal = (index) => {
                     utilityService.showModal({
                         component: "addNewEffectModal",
                         backdrop: true,
@@ -536,7 +536,7 @@
                             trigger: () => ctrl.trigger,
                             triggerMeta: () => ctrl.triggerMeta
                         },
-                        closeCallback: resp => {
+                        closeCallback: (resp) => {
                             if (resp == null) {
                                 return;
                             }
@@ -559,8 +559,141 @@
                     });
                 };
 
+                function mergeArraysWithoutDuplicates(initialArray, arrayToAdd, keyToCheck) {
+                    const nonDupes = arrayToAdd.filter((item) => {
+                        return !initialArray.some((i) => {
+                            return i[keyToCheck] === item[keyToCheck];
+                        });
+                    });
+                    return [...initialArray, ...nonDupes];
+                }
+
+                function stringCanBeShorthand(str) {
+                    return /^([a-z][a-z\d._-]+)([\s\S]*)$/i.test(str);
+                }
+
+                function checkEffectListForMagicVariables(effects, ignoreEffectId) {
+                    const magicVariables = {
+                        customVariables: [],
+                        effectOutputs: []
+                    };
+
+                    if (!effects || !Array.isArray(effects)) {
+                        return;
+                    }
+
+                    for (const effect of effects) {
+                        if (effect == null || typeof (effect) !== "object" || effect.id === ignoreEffectId) {
+                            continue;
+                        }
+
+                        if (effect.type === "firebot:customvariable" || effect.name?.length) {
+                            const canBeShorthand = stringCanBeShorthand(effect.name);
+                            magicVariables.customVariables = mergeArraysWithoutDuplicates(magicVariables.customVariables, [{
+                                name: effect.name,
+                                handle: canBeShorthand ? `$$${effect.name}` : `$customVariable[${effect.name}]`,
+                                effectLabel: effect.effectLabel,
+                                examples: [
+                                    ...(canBeShorthand ? [
+                                        {
+                                            handle: `$$${effect.name}["path", "to", "property"]`,
+                                            description: `Access a property of "${effect.name}"`
+                                        },
+                                        {
+                                            handle: `$customVariable[${effect.name}]`,
+                                            description: `Long hand version of "${effect.name}"`
+                                        }
+                                    ]
+                                        : []),
+                                    {
+                                        handle: `$customVariable[${effect.name}, "path.to.property"]`,
+                                        description: `Access a property of "${effect.name}" using long hand`
+                                    }
+                                ]
+                            }], "name");
+                            continue;
+                        }
+
+                        const effectDefinition = effectDefinitions.find(e => e.id === effect.type);
+                        if (effectDefinition != null && effectDefinition.outputs?.length) {
+                            const customOutputNames = effect.outputNames || {};
+
+                            const outputs = effectDefinition.outputs.map((output) => {
+                                const name = customOutputNames[output.defaultName] ?? output.defaultName;
+                                const canBeShorthand = stringCanBeShorthand(name);
+                                return {
+                                    name,
+                                    handle: canBeShorthand ? `$&${name}` : `$effectOutput[${name}]`,
+                                    label: output.label,
+                                    description: output.description,
+                                    effectLabel: `${effectDefinition.name}${effect.effectLabel ? ` (${effect.effectLabel})` : ""}`,
+                                    examples: [
+                                        ...(canBeShorthand ? [
+                                            {
+                                                handle: `$&${name}["path", "to", "property"]`,
+                                                description: `Access a property of "${name}"`
+                                            },
+                                            {
+                                                handle: `$effectOutput[${name}]`,
+                                                description: `Long hand version of "${name}"`
+                                            }
+                                        ]
+                                            : []),
+                                        {
+                                            handle: `$effectOutput[${name}, "path.to.property"]`,
+                                            description: `Access a property of "${name}" using long hand`
+                                        }
+                                    ]
+                                };
+                            });
+
+                            magicVariables.effectOutputs = mergeArraysWithoutDuplicates(magicVariables.effectOutputs, outputs, "name");
+
+                        }
+
+                        for (const value of Object.values(effect)) {
+                            if (Array.isArray(value)) {
+                                const result = checkEffectListForMagicVariables(value, ignoreEffectId);
+                                magicVariables.customVariables = mergeArraysWithoutDuplicates(magicVariables.customVariables, result.customVariables, "name");
+                                magicVariables.effectOutputs = mergeArraysWithoutDuplicates(magicVariables.effectOutputs, result.effectOutputs, "name");
+                            }
+                        }
+                    }
+
+                    return magicVariables;
+                }
+
+
+                function determineMagicVariables(ignoreEffectId) {
+                    const magicVariables = {
+                        customVariables: [],
+                        effectOutputs: [],
+                        presetListArgs: ctrl.triggerMeta?.presetListArgs?.map((a) => {
+                            const canBeShorthand = stringCanBeShorthand(a.name);
+                            return {
+                                name: a.name,
+                                handle: canBeShorthand ? `$#${a.name}` : `$presetListArg[${a.name}]`,
+                                examples: canBeShorthand ? [
+                                    {
+                                        handle: `$presetListArg[${a.name}]`,
+                                        description: "Long hand version of the preset list argument"
+                                    }
+                                ] : undefined
+                            };
+                        }) || []
+                    };
+
+                    const effectsToCheck = ctrl.triggerMeta?.rootEffects?.list || ctrl.effectsData.list;
+                    const effectsResult = checkEffectListForMagicVariables(effectsToCheck, ignoreEffectId);
+                    magicVariables.customVariables = mergeArraysWithoutDuplicates(magicVariables.customVariables, effectsResult.customVariables, "name");
+                    magicVariables.effectOutputs = mergeArraysWithoutDuplicates(magicVariables.effectOutputs, effectsResult.effectOutputs, "name");
+
+                    return magicVariables;
+                }
+
                 ctrl.openEditEffectModal = (effect, index, trigger, isNew) => {
-                    utilityService.showEditEffectModal(effect, index, trigger, response => {
+                    const magicVariables = determineMagicVariables(effect.id);
+                    utilityService.showEditEffectModal(effect, index, trigger, (response) => {
                         if (response.action === "add") {
                             ctrl.effectsData.list.splice(index + 1, 0, response.effect);
                         } else if (response.action === "update") {
@@ -569,7 +702,7 @@
                             ctrl.removeEffectAtIndex(response.index);
                         }
                         ctrl.effectsUpdate();
-                    }, ctrl.triggerMeta, isNew);
+                    }, { ...(ctrl.triggerMeta ?? {}), magicVariables }, isNew);
                 };
 
                 //effect queue
@@ -627,14 +760,14 @@
 
                 ctrl.showAddEditEffectQueueModal = (queueId) => {
                     effectQueuesService.showAddEditEffectQueueModal(queueId)
-                        .then(id => {
+                        .then((id) => {
                             ctrl.effectsData.queue = id;
                         });
                 };
 
                 ctrl.showDeleteEffectQueueModal = (queueId) => {
                     effectQueuesService.showDeleteEffectQueueModal(queueId)
-                        .then(confirmed => {
+                        .then((confirmed) => {
                             if (confirmed) {
                                 ctrl.effectsData.queue = undefined;
                             }
@@ -649,7 +782,7 @@
                             saveText: "Save",
                             inputPlaceholder: "Enter secs",
                             validationFn: (value) => {
-                                return new Promise(resolve => {
+                                return new Promise((resolve) => {
                                     if (value == null || value < 0) {
                                         return resolve(false);
                                     }

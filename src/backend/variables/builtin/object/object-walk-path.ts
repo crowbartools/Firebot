@@ -48,7 +48,7 @@ const model : ReplaceVariable = {
 
         let cursor = subject;
         while (nodes.length) {
-            cursor = subject[nodes.shift()];
+            cursor = cursor[nodes.shift()];
             if (cursor == null) {
                 return null;
             }

@@ -20,13 +20,16 @@
                     </div>
 
                     <hype-train-indicator ng-if="settings.getShowHypeTrainIndicator() && hts.hypeTrainActive"></hype-train-indicator>
+
+                    <ad-break-indicator ng-if="settings.getShowAdBreakIndicator() && abs.showAdBreakTimer"></ad-break-service>
                 </div>
             `,
-            controller: function($scope, streamInfoService, settingsService, hypeTrainService, $interval) {
+            controller: function($scope, streamInfoService, settingsService, hypeTrainService, adBreakService, $interval) {
                 const $ctrl = this;
 
                 $scope.sis = streamInfoService;
                 $scope.hts = hypeTrainService;
+                $scope.abs = adBreakService;
 
                 $scope.settings = settingsService;
 

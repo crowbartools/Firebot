@@ -1,6 +1,6 @@
 import accountAccess from "../../common/account-access";
 import logger from "../../logwrapper";
-import { ApiClient, HelixUser, UserIdResolvable } from "@twurple/api";
+import {ApiClient, HelixChannelFollower, HelixUser, UserIdResolvable} from "@twurple/api";
 
 export class TwitchUsersApi {
     private _streamerClient: ApiClient;
@@ -15,12 +15,34 @@ export class TwitchUsersApi {
         return await this._streamerClient.users.getUserById(userId);
     }
 
+    async getUsersByIds(userIds: string[]): Promise<HelixUser[]> {
+        const users: HelixUser[] = [];
+        for (let x = 0; x < userIds.length; x += 100) {
+            const userBatch = userIds.slice(x, x + 100);
+            try {
+                users.push(...await this._streamerClient.users.getUsersByIds(userBatch));
+            } catch (error) {
+                logger.error(`Error trying to get users by ID from Twitch API`, error);
+            }
+        }
+        return users;
+    }
+
     async getUserByName(username: string): Promise<HelixUser> {
         return await this._streamerClient.users.getUserByName(username);
     }
 
     async getUsersByNames(usernames: string[]): Promise<HelixUser[]> {
-        return await this._streamerClient.users.getUsersByNames(usernames);
+        const users: HelixUser[] = [];
+        for (let x = 0; x < usernames.length; x += 100) {
+            const userBatch = usernames.slice(x, x + 100);
+            try {
+                users.push(...await this._streamerClient.users.getUsersByNames(userBatch));
+            } catch (error) {
+                logger.error(`Error trying to get users by name from Twitch API`, error);
+            }
+        }
+        return users;
     }
 
     async getFollowDateForUser(username: string): Promise<Date> {
@@ -37,7 +59,12 @@ export class TwitchUsersApi {
         return followData.data[0].followDate;
     }
 
-    async doesUserFollowChannel(username: string, channelName: string): Promise<boolean> {
+    /**
+     * @param username
+     * @param channelName
+     * @returns {Promise<HelixChannelFollower | boolean>} true when username === channelName, false when not following
+     */
+    async getUserChannelFollow(username: string, channelName: string): Promise<HelixChannelFollower | boolean> {
         if (username == null || channelName == null) {
             return false;
         }
@@ -46,23 +73,23 @@ export class TwitchUsersApi {
             return true;
         }
 
-        const streamerData = accountAccess.getAccounts().streamer;
-
         const [user, channel] = await this.getUsersByNames([username, channelName]);
 
-        if (user.id == null || channel.id == null) {
+        if (user?.id == null || channel?.id == null) {
             return false;
         }
 
         try {
             const userFollowResponse = await this._streamerClient.channels.getChannelFollowers(channel.id, user.id);
-            const userFollow = userFollowResponse?.data?.length === 1;
-
-            return userFollow ?? false;
+            return userFollowResponse?.data?.[0];
         } catch (err) {
             logger.error(`Failed to check if ${username} follows ${channelName}`, err.message);
             return false;
         }
+    }
+
+    async doesUserFollowChannel(username: string, channelName: string): Promise<boolean> {
+        return await this.getUserChannelFollow(username, channelName) !== false;
     }
 
     async blockUser(userId: UserIdResolvable, reason?: 'spam' | 'harassment' | 'other'): Promise<boolean> {

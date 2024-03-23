@@ -180,15 +180,14 @@ const showText = {
             $scope.editor = editor;
         };
 
-        $scope.onVariableInsert = (variable) => {
+        $scope.onVariableInsert = (text) => {
             if ($scope.editor == null) {
                 return;
             }
             $scope.editor.summernote('restoreRange');
             $scope.editor.summernote("focus");
             $timeout(() => {
-                const display = variable.usage ? variable.usage : variable.handle;
-                $scope.editor.summernote("insertText", `$${display}`);
+                $scope.editor.summernote("insertText", text);
             }, 100);
 
         };

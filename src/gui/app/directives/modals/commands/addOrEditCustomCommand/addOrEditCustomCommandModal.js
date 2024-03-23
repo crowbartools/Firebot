@@ -69,7 +69,7 @@
                             question: `Switching to Simple Mode will remove: ${willBeRemoved.join(", ")}. Are you sure you want to switch?`,
                             confirmLabel: "Switch",
                             confirmBtnType: "btn-danger"
-                        }).then(confirmed => {
+                        }).then((confirmed) => {
                             if (confirmed) {
                                 $ctrl.command.simple = !$ctrl.command.simple;
                                 $ctrl.command.subCommands = [];
@@ -100,7 +100,7 @@
                             confirmBtnType: "btn-default",
                             cancelLabel: "Not right now",
                             cancelBtnType: "btn-default"
-                        }).then(confirmed => {
+                        }).then((confirmed) => {
                             if (confirmed) {
                                 settingsService.setDefaultToAdvancedCommandMode(true);
                                 ngToast.create({
@@ -163,12 +163,32 @@
             };
 
             $ctrl.deleteSubcommand = (id) => {
+                let name = "fallback";
+
+                if (id !== "fallback-subcommand") {
+                    const subCmd = $ctrl.command.subCommands.find(c => c.id === id);
+
+                    switch (subCmd.type) {
+                        case "Username":
+                            name = "username";
+                            break;
+
+                        case "Number":
+                            name = "number";
+                            break;
+
+                        case "Custom":
+                            name = `"${subCmd.arg}"`;
+                            break;
+                    }
+                }
+
                 utilityService.showConfirmationModal({
                     title: "Delete Subcommand",
-                    question: `Are you sure you want to delete this subcommand?`,
+                    question: `Are you sure you want to delete the ${name} subcommand?`,
                     confirmLabel: "Delete",
                     confirmBtnType: "btn-danger"
-                }).then(confirmed => {
+                }).then((confirmed) => {
                     if (confirmed) {
                         if (id === "fallback-subcommand") {
                             $ctrl.command.fallbackSubcommand = null;
@@ -197,12 +217,13 @@
                     size: "sm",
                     resolveObj: {
                         arg: () => arg,
+                        hasAnyArgs: () => !!$ctrl.command.subCommands?.length,
                         hasNumberArg: () => $ctrl.command.subCommands && $ctrl.command.subCommands.some(sc => sc.arg === "\\d+"),
                         hasUsernameArg: () => $ctrl.command.subCommands && $ctrl.command.subCommands.some(sc => sc.arg === "@\\w+"),
                         hasFallbackArg: () => $ctrl.command.fallbackSubcommand != null,
                         otherArgNames: () => $ctrl.command.subCommands && $ctrl.command.subCommands.filter(c => !c.regex && (arg ? c.arg !== arg.arg : true)).map(c => c.arg.toLowerCase()) || []
                     },
-                    closeCallback: newArg => {
+                    closeCallback: (newArg) => {
                         if (newArg.fallback) {
                             $ctrl.command.fallbackSubcommand = newArg;
                         } else {
@@ -226,7 +247,7 @@
                     question: `Are you sure you want to delete this command?`,
                     confirmLabel: "Delete",
                     confirmBtnType: "btn-danger"
-                }).then(confirmed => {
+                }).then((confirmed) => {
                     if (confirmed) {
                         $ctrl.close({ $value: { command: $ctrl.command, action: "delete" } });
                     }

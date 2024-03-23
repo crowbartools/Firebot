@@ -31,13 +31,13 @@
 
             const updateLabelVisibility = (settings) => {
                 const $parent = $('#dashboardActivityFeed').parent();
-                $scope.hideEventLabel = (parseInt(settings.dashboardActivityFeed.replace("%", "") / 100 * $parent.width())) < 180 ? true : false;
+                $scope.hideEventLabel = () => ((parseInt(settings.dashboardActivityFeed.replace("%", "") / 100 * $parent.width())) < 180 ? true : false);
             };
 
             $scope.threadDetails = null;
 
             function getThreadMessages(threadOrReplyMessageId) {
-                return chatMessagesService.chatQueue.filter(chatItem => {
+                return chatMessagesService.chatQueue.filter((chatItem) => {
                     return chatItem.type === "message" && (chatItem.data.id === threadOrReplyMessageId || chatItem.data.replyParentMessageId === threadOrReplyMessageId || chatItem.data.threadParentMessageId === threadOrReplyMessageId);
                 }).map(ci => ci.data);
             }
@@ -118,7 +118,7 @@
             $scope.showChatSettingsModal = () => {
                 utilityService.showModal({
                     component: "chatSettingsModal",
-                    size: "sm",
+                    size: "md",
                     backdrop: true,
                     dismissCallback: getUpdatedChatSettings,
                     closeCallback: getUpdatedChatSettings
@@ -183,7 +183,7 @@
                 currrentHistoryIndex = -1;
             };
 
-            $scope.onMessageFieldKeypress = $event => {
+            $scope.onMessageFieldKeypress = ($event) => {
                 const keyCode = $event.which || $event.keyCode;
                 if (keyCode === 38) {
                     //up arrow

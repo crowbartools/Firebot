@@ -14,6 +14,10 @@ exports.windowsAllClosed = async () => {
     const scheduledTaskManager = require("../../../timers/scheduled-task-manager");
     scheduledTaskManager.stop();
 
+    // Stop all custom scripts so they can clean up
+    const customScriptRunner = require("../../../common/handlers/custom-scripts/custom-script-runner");
+    await customScriptRunner.stopAllScripts();
+
     // Unregister all shortcuts.
     const hotkeyManager = require("../../../hotkeys/hotkey-manager");
     hotkeyManager.unregisterAllHotkeys();

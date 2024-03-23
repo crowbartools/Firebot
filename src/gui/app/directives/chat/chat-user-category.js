@@ -30,7 +30,7 @@
                         class="chat-user-name clickable"
                         ng-click="showUserDetailsModal(user.id)"
                         >
-                        {{user.username}}
+                        {{user.displayName}}<span ng-if="user.username && user.username.toLowerCase() !== user.displayName.toLowerCase()">&nbsp;({{user.username}})</span>
                     </div>
                 </div>
             </div>

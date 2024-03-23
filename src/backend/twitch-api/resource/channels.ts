@@ -1,6 +1,7 @@
 import logger from '../../logwrapper';
 import accountAccess from "../../common/account-access";
-import { ApiClient, CommercialLength, HelixChannel, HelixChannelUpdate, HelixUser } from "@twurple/api";
+import { ApiClient, CommercialLength, HelixChannel, HelixChannelUpdate, HelixUser, HelixUserRelation } from "@twurple/api";
+import { HelixAdSchedule } from '@twurple/api/lib/endpoints/channel/HelixAdSchedule';
 
 export class TwitchChannelsApi {
     private _streamerClient: ApiClient;
@@ -87,6 +88,28 @@ export class TwitchChannelsApi {
     }
 
     /**
+     * Retrieves the current ad schedule for the streamer's channel.
+     */
+    async getAdSchedule(): Promise<HelixAdSchedule> {
+        try {
+            let adSchedule: HelixAdSchedule = null;
+            const streamer = accountAccess.getAccounts().streamer;
+
+            const isOnline = await this.getOnlineStatus(streamer.userId);
+            if (isOnline && streamer.broadcasterType !== "") {
+                adSchedule = await this._streamerClient.channels.getAdSchedule(streamer.userId);
+            } else {
+                logger.warn(`Unable to get ad schedule. ${isOnline !== true ? "Stream is offline." : "Streamer must be affiliate or partner."}`);
+            }
+
+            return adSchedule;
+        } catch (error) {
+            logger.error("There was an error getting the ad schedule", error.message);
+            return null;
+        }
+    }
+
+    /**
      * Trigger a Twitch ad break. Default length 30 seconds.
      *
      * @param adLength How long the ad should run.
@@ -105,6 +128,28 @@ export class TwitchChannelsApi {
         } catch (error) {
             /** @ts-ignore */
             renderWindow.webContents.send("error", `Failed to trigger ad-break because: ${error.message}`);
+            return false;
+        }
+    }
+
+    /**
+     * Snoozes the next scheduled mid-roll ad break by 5 minutes.
+     */
+    async snoozeAdBreak(): Promise<boolean> {
+        try {
+            const streamer = accountAccess.getAccounts().streamer;
+
+            const isOnline = await this.getOnlineStatus(streamer.userId);
+            if (isOnline && streamer.broadcasterType !== "") {
+                const result = await this._streamerClient.channels.snoozeNextAd(streamer.userId);
+                logger.debug(`Ads were snoozed. ${result.snoozeCount} snooze${result.snoozeCount !== 1 ? "s" : ""} remaining. Next scheduled ad break: ${result.nextAdDate.toLocaleTimeString()}`);
+            } else {
+                logger.warn(`Unable to snooze ads. ${isOnline !== true ? "Stream is offline." : "Streamer must be affiliate or partner."}`);
+            }
+
+            return true;
+        } catch (error) {
+            logger.error("Failed to snooze ads", error.message);
             return false;
         }
     }
@@ -148,18 +193,17 @@ export class TwitchChannelsApi {
     /**
      * Gets all the VIPs in the streamer's channel
      */
-    async getVips(): Promise<string[]> {
-        const vips: string[] = [];
-        const streamerId = accountAccess.getAccounts().streamer.userId;
+    async getVips(): Promise<HelixUserRelation[]> {
+        const vips: HelixUserRelation[] = [];
+        const streamerId = accountAccess.getAccounts().streamer?.userId;
 
         try {
-            let result = await this._streamerClient.channels.getVips(streamerId);
-            vips.push(...result.data.map(c => c.displayName));
-
-            while (result.cursor) {
-                result = await this._streamerClient.channels.getVips(streamerId, { after: result.cursor });
-                vips.push(...result.data.map(c => c.displayName));
+            if (streamerId == null) {
+                logger.warn("Unable to get channel VIP list. Streamer is not logged in.");
+                return vips;
             }
+
+            vips.push(...await this._streamerClient.channels.getVipsPaginated(streamerId).getAll());
         } catch (error) {
             logger.error("Error getting VIPs", error.message);
         }

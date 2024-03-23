@@ -15,6 +15,13 @@ const { settings } = require("../../common/settings-access");
 
 setupTitlebar();
 
+
+/**
+ * The variable inspector window.
+ *@type {Electron.BrowserWindow}
+ */
+let variableInspectorWindow = null;
+
 /**
  * The stream preview popout window.
  * Keeps a global reference of the window object, if you don't, the window will
@@ -83,8 +90,8 @@ function createStreamPreviewWindow() {
     streamPreviewWindowState.manage(streamPreview);
 
     streamPreview.on("close", () => {
-        if (!view.isDestroyed()) {
-            view.destroy();
+        if (!view.webContents.isDestroyed()) {
+            view.webContents.destroy();
         }
     });
 }
@@ -428,7 +435,7 @@ async function createMainWindow() {
     );
 
     // wait for the main window's content to load, then show it
-    mainWindow.webContents.on("did-finish-load", () => {
+    mainWindow.webContents.on("did-finish-load", async () => {
 
 
         createTray(mainWindow);
@@ -442,7 +449,7 @@ async function createMainWindow() {
         }
 
         const startupScriptsManager = require("../../common/handlers/custom-scripts/startup-scripts-manager");
-        startupScriptsManager.runStartupScripts();
+        await startupScriptsManager.runStartupScripts();
 
         const eventManager = require("../../events/EventManager");
         eventManager.triggerEvent("firebot", "firebot-started", {
@@ -470,8 +477,24 @@ async function createMainWindow() {
             }).then(({response}) => {
                 if (response === 0) {
                     mainWindow.destroy();
+                    global.renderWindow = null;
                 }
             }).catch(() => console.log("Error with close app confirmation"));
+        } else {
+            mainWindow.destroy();
+            global.renderWindow = null;
+        }
+    });
+
+    mainWindow.on("closed", () => {
+        if (variableInspectorWindow?.isDestroyed() === false) {
+            logger.debug("Closing variable inspector window");
+            variableInspectorWindow.destroy();
+        }
+
+        if (streamPreview?.isDestroyed() === false) {
+            logger.debug("Closing stream preview window");
+            streamPreview.destroy();
         }
     });
 }
@@ -524,12 +547,6 @@ function updateSplashScreenStatus(newStatus) {
 
     splashscreenWindow.webContents.send("update-splash-screen-status", newStatus);
 }
-
-/**
- * The variable inspector window.
- *@type {Electron.BrowserWindow}
- */
-let variableInspectorWindow = null;
 
 async function createVariableInspectorWindow() {
 

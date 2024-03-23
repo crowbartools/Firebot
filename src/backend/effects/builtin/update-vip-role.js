@@ -38,7 +38,7 @@ const model = {
     </eos-container>
     `,
     optionsController: () => {},
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.action == null) {
             errors.push("Please choose an action.");
@@ -48,7 +48,7 @@ const model = {
         }
         return errors;
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         if (event.effect.action === "Add VIP") {
             const user = await twitchApi.users.getUserByName(event.effect.username);
 
@@ -56,7 +56,11 @@ const model = {
                 const result = await twitchApi.moderation.addChannelVip(user.id);
 
                 if (result === true) {
-                    chatRolesManager.addVipToVipList(user.displayName);
+                    chatRolesManager.addVipToVipList({
+                        id: user.id,
+                        username: user.name,
+                        displayName: user.displayName
+                    });
                     logger.debug(`${event.effect.username} was assigned VIP via the VIP effect.`);
                 } else {
                     logger.error(`${event.effect.username} was unable to be assigned VIP via the VIP effect.`);
@@ -71,7 +75,7 @@ const model = {
                 const result = await twitchApi.moderation.removeChannelVip(user.id);
 
                 if (result === true) {
-                    chatRolesManager.removeVipFromVipList(user.displayName);
+                    chatRolesManager.removeVipFromVipList(user.id);
                     logger.debug(`${event.effect.username} was unassigned VIP via the VIP effect.`);
                 } else {
                     logger.error(`${event.effect.username} was unable to be unassigned VIP via the VIP effect.`);

@@ -4,6 +4,7 @@ const customRolesManager = require("../../../roles/custom-roles-manager");
 const teamRolesManager = require("../../../roles/team-roles-manager");
 const twitchRolesManager = require("../../../../shared/twitch-roles");
 const chatRolesManager = require("../../../roles/chat-roles-manager");
+const twitchApi = require("../../../twitch-api/api");
 
 module.exports = {
     id: "firebot:viewerroles",
@@ -27,7 +28,7 @@ module.exports = {
     ],
     comparisonTypes: ["include", "doesn't include"],
     valueType: "preset",
-    presetValues: viewerRolesService => {
+    presetValues: (viewerRolesService) => {
         return viewerRolesService
             .getCustomRoles()
             .concat(viewerRolesService.getTwitchRoles())
@@ -58,42 +59,67 @@ module.exports = {
 
         return filterSettings.value;
     },
-    predicate: async (filterSettings, eventData) => {
 
+    predicate: async (filterSettings, eventData) => {
         const { comparisonType, value } = filterSettings;
         const { eventMeta } = eventData;
 
-        const username = eventMeta.username;
-        if (username == null || username === "") {
+        const { username } = eventMeta;
+        let { userId } = eventMeta;
+
+        if (!username && !userId) {
             return false;
         }
 
-        /** @type{string[]} */
-        let twitchUserRoles = eventMeta.twitchUserRoles;
-        if (twitchUserRoles == null) {
-            twitchUserRoles = await chatRolesManager.getUsersChatRoles(username);
+        try {
+            if (userId == null) {
+                const user = await twitchApi.users.getUserByName(username);
+
+                if (user == null) {
+                    return false;
+                }
+
+                userId = user.id;
+            }
+
+            /** @type {string[]} */
+            let twitchUserRoles = eventMeta.twitchUserRoles;
+
+            // For sub tier-specific/known bot permission checking, we have to get live data
+            if (twitchUserRoles == null
+                || value === "tier1"
+                || value === "tier2"
+                || value === "tier3"
+                || value === "viewerlistbot"
+            ) {
+                twitchUserRoles = await chatRolesManager.getUsersChatRoles(userId);
+            }
+
+            const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(userId) || [];
+            const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(userId) || [];
+            const userTwitchRoles = (twitchUserRoles || [])
+                .map(twitchRolesManager.mapTwitchRole);
+
+            const allRoles = [
+                ...userTwitchRoles,
+                ...userTeamRoles,
+                ...userCustomRoles
+            ].filter(r => r != null);
+
+            const hasRole = allRoles.some(r => r.id === value);
+
+            switch (comparisonType) {
+                case "include":
+                    return hasRole;
+                case "doesn't include":
+                    return !hasRole;
+                default:
+                    return false;
+            }
+        } catch {
+            // Silently fail
         }
 
-        const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
-        const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(username) || [];
-        const userTwitchRoles = (twitchUserRoles || [])
-            .map(twitchRolesManager.mapTwitchRole);
-
-        const allRoles = [
-            ...userTwitchRoles,
-            ...userTeamRoles,
-            ...userCustomRoles
-        ].filter(r => r != null);
-
-        const hasRole = allRoles.some(r => r.id === value);
-
-        switch (comparisonType) {
-            case "include":
-                return hasRole;
-            case "doesn't include":
-                return !hasRole;
-            default:
-                return false;
-        }
+        return false;
     }
 };

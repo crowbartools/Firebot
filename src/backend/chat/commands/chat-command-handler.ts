@@ -123,13 +123,13 @@ class CommandHandler {
         const { streamer, bot } = accountAccess.getAccounts();
 
         // check if chat came from the streamer and if we should ignore it.
-        if (command.ignoreStreamer && firebotChatMessage.username === streamer.displayName) {
+        if (command.ignoreStreamer && firebotChatMessage.username === streamer.username) {
             logger.debug("Message came from streamer and this command is set to ignore it");
             return false;
         }
 
         // check if chat came from the bot and if we should ignore it.
-        if (command.ignoreBot && firebotChatMessage.username === bot.displayName) {
+        if (command.ignoreBot && firebotChatMessage.username === bot.username) {
             logger.debug("Message came from bot and this command is set to ignore it");
             return false;
         }
@@ -212,6 +212,7 @@ class CommandHandler {
                 metadata: {
                     username: commandSender,
                     userId: firebotChatMessage.userId,
+                    userDisplayName: firebotChatMessage.userDisplayName,
                     userTwitchRoles: firebotChatMessage.roles,
                     command: command,
                     userCommand: userCmd,

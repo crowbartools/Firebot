@@ -9,7 +9,7 @@ const model : ReplaceVariable = {
     definition: {
         handle: "userId",
         usage: "userId[username]",
-        description: "Gets the user id for the given username. Searches local user db first, then twitch api.",
+        description: "Gets the user ID for the given username. Searches local viewer DB first, then Twitch API.",
         categories: [VariableCategory.USER],
         possibleDataOutput: [OutputDataType.TEXT]
     },

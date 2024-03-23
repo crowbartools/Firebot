@@ -647,6 +647,9 @@
         }
         .chat-user-name {
             color: #b381ff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
             &:hover {
                 text-decoration: underline;
                 cursor: pointer;
@@ -892,8 +895,10 @@
     padding: 10px;
 }
 
-.chat-settings-group{
-    border-bottom: 1px solid lightgray;
-    padding-bottom: 1em;
-    margin-bottom: 1em;
+.chat-settings-header {
+    background-color: #00000040;
+    padding: 8px;
+    margin-bottom: 8px;
+    font-size: 18px;
+    font-weight: bold;
 }

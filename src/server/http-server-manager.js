@@ -186,6 +186,7 @@ class HttpServerManager extends EventEmitter {
                         eventManager.triggerEvent("firebot", "overlay-connected", {
                             instanceName: event.data.instanceName
                         });
+                        this.emit("overlay-connected", event.data.instanceName);
                     } else {
                         this.emit("overlay-event", event);
                     }
@@ -196,16 +197,17 @@ class HttpServerManager extends EventEmitter {
         });
 
         try {
-            this.overlayServer = this.defaultHttpServer.listen(port);
-            this.isDefaultServerStarted = true;
+            this.overlayServer = this.defaultHttpServer.listen(port, ["0.0.0.0", "::"], () => {
+                this.isDefaultServerStarted = true;
 
-            this.serverInstances.push({
-                name: "Default",
-                port: port,
-                server: this.overlayServer
+                this.serverInstances.push({
+                    name: "Default",
+                    port: port,
+                    server: this.overlayServer
+                });
+
+                logger.info(`Default web server started, listening on port ${this.overlayServer.address().port}`);
             });
-
-            logger.info(`Default web server started, listening on port ${this.overlayServer.address().port}`);
         } catch (error) {
             logger.error(`Unable to start default web server on port ${port}: ${error}`);
         }
@@ -244,7 +246,7 @@ class HttpServerManager extends EventEmitter {
             }
 
             let newHttpServer = http.createServer(instance);
-            newHttpServer = newHttpServer.listen(port);
+            newHttpServer = newHttpServer.listen(port, ["0.0.0.0", "::"]);
 
             this.serverInstances.push({
                 name: name,
@@ -394,10 +396,12 @@ setInterval(() => {
         : manager.defaultWebsocketServerInstance.clients.size > 0;
 
     if (clientsConnected !== manager.overlayHasClients) {
-        renderWindow.webContents.send("overlayStatusUpdate", {
-            clientsConnected: clientsConnected,
-            serverStarted: manager.isDefaultServerStarted
-        });
+        if (global.hasOwnProperty("renderWindow") && renderWindow?.webContents?.isDestroyed() === false) {
+            renderWindow.webContents.send("overlayStatusUpdate", {
+                clientsConnected: clientsConnected,
+                serverStarted: manager.isDefaultServerStarted
+            });
+        }
         manager.overlayHasClients = clientsConnected;
     }
 }, 3000);

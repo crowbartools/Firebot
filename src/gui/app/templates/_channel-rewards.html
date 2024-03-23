@@ -1,64 +1,99 @@
-<firebot-item-table
+<div
+  style="
+    min-width: 500px;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  "
   ng-if="canUseChannelRewards()"
-  items="channelRewardsService.channelRewards"
-  on-items-update="onRewardsUpdated(items)"
-  headers="headers"
-  sort-tag-context="channel rewards"
-  orderable="true"
-  add-new-button-disabled="channelRewardsService.channelRewards.length >= 50"
-  add-new-button-text="New Channel Reward"
-  on-add-new-clicked="channelRewardsService.showAddOrEditRewardModal()"
-  context-menu-options="rewardMenuOptions(item)"
-  no-data-message="No channel rewards saved. You should make one! :)"
-  none-found-message="No channel rewards found."
-  search-placeholder="Search rewards"
-  test-button="true"
-  on-test-button-clicked="channelRewardsService.manuallyTriggerReward(itemId)"
-  status-field="twitchData.isEnabled"
 >
-  <fb-item-table-toolbar>
-    <button
-      class="btn btn-default"
-      uib-tooltip="Twitch Sync"
-      ng-click="channelRewardsService.syncChannelRewards()"
+  <div class="fb-tab-wrapper">
+    <ul class="nav nav-tabs fb-tabs">
+      <li
+        role="presentation"
+        ng-class="{'active' : activeChannelRewardTab === 0}"
+        ng-click="activeChannelRewardTab = 0"
+      >
+        <a href>CHANNEL REWARDS</a>
+      </li>
+      <li
+        role="presentation"
+        ng-class="{'active' : activeChannelRewardTab === 1}"
+        ng-click="activeChannelRewardTab = 1"
+      >
+        <a href>REQUEST QUEUE</a>
+      </li>
+    </ul>
+  </div>
+  
+  <div style="overflow-y: scroll; height: 100%;">
+    <firebot-item-table
+      ng-if="activeChannelRewardTab === 0"
+      items="channelRewardsService.channelRewards"
+      on-items-update="onRewardsUpdated(items)"
+      headers="rewardHeaders"
+      sort-tag-context="channel rewards"
+      orderable="true"
+      add-new-button-disabled="channelRewardsService.channelRewards.length >= 50"
+      add-new-button-text="New Channel Reward"
+      on-add-new-clicked="channelRewardsService.showAddOrEditRewardModal()"
+      context-menu-options="rewardMenuOptions(item)"
+      no-data-message="No channel rewards saved. You should make one! :)"
+      none-found-message="No channel rewards found."
+      search-placeholder="Search rewards"
+      test-button="true"
+      on-test-button-clicked="channelRewardsService.manuallyTriggerReward(itemId)"
+      status-field="twitchData.isEnabled"
     >
-      <i class="fas fa-sync"></i>
-    </button>
-  </fb-item-table-toolbar>
-  <fb-item-table-footer>
-    <div class="p-6" style="display: flex; align-items: center">
-      <div style="flex-shrink: 0; display: flex; align-items: center">
-        <span
-          >Reward Limit
-          <tooltip text="'Twitch limits channels to 50 total channel rewards.'"
-        /></span>
-        <span class="my-0 mx-4" style="font-size: 20px;">
-          {{channelRewardsService.channelRewards.length}} / 50
-        </span>
-      </div>
-      <div style="width: 100%">
-        <div
-          style="
-            width: 100%;
-            background: #24262a;
-            height: 8px;
-            border-radius: 8px;
-            overflow: hidden;
-          "
+      <fb-item-table-toolbar>
+        <button
+          class="btn btn-default"
+          uib-tooltip="Twitch Sync"
+          ng-click="channelRewardsService.syncChannelRewards()"
         >
-          <div
-            style="height: 100%; background: #2aa2c0"
-            ng-style="{ width: ((channelRewardsService.channelRewards.length / 50) * 100) + '%' }"
-          ></div>
+          <i class="fas fa-sync"></i>
+        </button>
+      </fb-item-table-toolbar>
+      <fb-item-table-footer>
+        <div class="p-6" style="display: flex; align-items: center">
+          <div style="flex-shrink: 0; display: flex; align-items: center">
+            <span
+              >Reward Limit
+              <tooltip text="'Twitch limits channels to 50 total channel rewards.'"
+            /></span>
+            <span class="my-0 mx-4" style="font-size: 20px;">
+              {{channelRewardsService.channelRewards.length}} / 50
+            </span>
+          </div>
+          <div style="width: 100%">
+            <div
+              style="
+                width: 100%;
+                background: #24262a;
+                height: 8px;
+                border-radius: 8px;
+                overflow: hidden;
+              "
+            >
+              <div
+                style="height: 100%; background: #2aa2c0"
+                ng-style="{ width: ((channelRewardsService.channelRewards.length / 50) * 100) + '%' }"
+              ></div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </fb-item-table-footer>
-</firebot-item-table>
+      </fb-item-table-footer>
+    </firebot-item-table>
+    <channel-reward-queue-manager 
+      ng-if="activeChannelRewardTab === 1"
+    />
+  </div>
+</div>
 
 <div
   ng-if="!canUseChannelRewards()"
   style="height:100%;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 80px;"
 >
   <div>In order to use Channel Rewards, please login with either an affiliate or partner account.</div>
-</div>
+</div>  

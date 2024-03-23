@@ -16,10 +16,12 @@
                 noDataMessage: "@",
                 noneFoundMessage: "@",
                 searchPlaceholder: "@",
+                searchField: "@?",
                 testButton: "<?",
                 onTestButtonClicked: "&",
-                filterName: "@?",
-                statusField: "@?"
+                statusField: "@?",
+                startingSortField: "@?",
+                sortInitiallyReversed: "<?"
             },
             transclude: {
                 footer: "?fbItemTableFooter",
@@ -31,14 +33,27 @@
 
                 $scope.sts = sortTagsService;
 
+                $ctrl.order = {
+                    field: null,
+                    reverse: false
+                };
+
+                $ctrl.getSearchQuery = () => {
+                    if ($ctrl.searchField) {
+                        return {
+                            [$ctrl.searchField]: $scope.searchQuery
+                        };
+                    }
+                    return $scope.searchQuery;
+                };
+
                 $ctrl.$onInit = () => {
                     if ($ctrl.items == null) {
                         $ctrl.items = [];
                     }
 
-                    if ($ctrl.filterName == null) {
-                        $ctrl.filterName = "filter";
-                    }
+                    $ctrl.order.field = $ctrl.startingSortField ?? null;
+                    $ctrl.order.reverse = !!$ctrl.sortInitiallyReversed;
 
                     $ctrl.showStatusIndicator = $ctrl.statusField != null;
                     $ctrl.headerClass = `${$ctrl.sortTagContext.split(' ').join('-')}-header`;
@@ -63,7 +78,14 @@
                 $ctrl.sortableOptions = {
                     handle: ".dragHandle",
                     'ui-preserve-size': true,
-                    stop: () => {
+                    stop: (_e, ui) => {
+                        //reset the width of the children that "ui-preserve-size" sets
+                        const item = angular.element(ui.item);
+                        item.children().each(function() {
+                            const $el = angular.element(this);
+                            $el.css("width", "");
+                        });
+
                         if (sortTagsService.getSelectedSortTag($ctrl.sortTagContext) != null &&
                             ($scope.searchQuery == null ||
                                 $scope.searchQuery.length < 1)) {
@@ -91,11 +113,11 @@
                 };
 
                 $ctrl.getContextMenu = (item) => {
-                    const menuItems = $ctrl.contextMenuOptions({ item: item }) || [];
+                    const menuItems = [...($ctrl.contextMenuOptions({ item: item }) || [])];
 
                     const queues = effectQueuesService.getEffectQueues();
                     if (item.effects != null && queues != null && queues.length > 0) {
-                        const children = queues.map(q => {
+                        const children = queues.map((q) => {
                             const isSelected = item.effects.queue && item.effects.queue === q.id;
                             return {
                                 html: `<a href><i class="${isSelected ? 'fas fa-check' : ''}" style="margin-right: ${isSelected ? '10' : '27'}px;"></i> ${q.name}</a>`,
@@ -122,6 +144,48 @@
                     }
 
                     return menuItems;
+                };
+
+                $ctrl.isOrderField = function(field) {
+                    return field === $ctrl.order.field;
+                };
+
+                $ctrl.setOrderField = function(field) {
+                    if ($ctrl.order.field !== field) {
+                        $ctrl.order.reverse = false;
+                        $ctrl.order.field = field;
+                    } else if (!$ctrl.order.reverse) {
+                        $ctrl.order.reverse = true;
+                    } else {
+                        $ctrl.order.field = null;
+                        $ctrl.order.reverse = false;
+                    }
+                };
+
+                $ctrl.dynamicOrder = function(data) {
+                    const field = $ctrl.order.field;
+
+                    if (field == null) {
+                        return null;
+                    }
+
+                    if (field === '%sorttags%') {
+                        return sortTagsService
+                            .getSortTagsForItem($ctrl.sortTagContext, data.sortTags)
+                            .map(st => st.name)
+                            .join(", ");
+                    }
+
+                    if (field.includes(".")) {
+                        const nodes = field.split(".");
+                        let currentData = data;
+                        for (const node of nodes) {
+                            currentData = currentData[node];
+                        }
+                        return currentData;
+                    }
+
+                    return data[$ctrl.order.field];
                 };
             }
         });
