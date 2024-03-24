@@ -40,15 +40,6 @@
                     reverse: false
                 };
 
-                $ctrl.getSearchQuery = () => {
-                    if ($ctrl.searchField) {
-                        return {
-                            [$ctrl.searchField]: $scope.searchQuery
-                        };
-                    }
-                    return $scope.searchQuery;
-                };
-
                 $ctrl.getFilterName = () => {
                     return $ctrl.useFullTextSearch ? null : $ctrl.customFilterName;
                 };
