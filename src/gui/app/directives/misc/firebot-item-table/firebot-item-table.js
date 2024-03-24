@@ -53,6 +53,12 @@
                     return $ctrl.useFullTextSearch ? null : $ctrl.customFilterName;
                 };
 
+                $ctrl.showAdvancedOptionsButton = false;
+
+                $ctrl.hasAdvancedOptionsApplied = () => {
+                    return $ctrl.useFullTextSearch;
+                };
+
                 $ctrl.$onInit = () => {
                     if ($ctrl.items == null) {
                         $ctrl.items = [];
@@ -63,6 +69,8 @@
 
                     $ctrl.showStatusIndicator = $ctrl.statusField != null;
                     $ctrl.headerClass = `${$ctrl.sortTagContext.split(' ').join('-')}-header`;
+
+                    $ctrl.showAdvancedOptionsButton = $ctrl.customFilterName != null;
                 };
 
                 $ctrl.triggerItemsUpdate = () => {
