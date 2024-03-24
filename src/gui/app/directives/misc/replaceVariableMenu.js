@@ -124,7 +124,7 @@
 
                     $scope.insertText = (text) => {
                         if ($scope.onVariableInsert != null) {
-                            $scope.onVariableInsert(text);
+                            $scope.onVariableInsert({ text });
                             $scope.toggleMenu();
                         } else {
                             const currentModel = $scope.modelValue ? $scope.modelValue : "";
