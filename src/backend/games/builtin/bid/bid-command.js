@@ -12,7 +12,8 @@ const NodeCache = require("node-cache");
 let activeBiddingInfo = {
     "active": false,
     "currentBid": 0,
-    "topBidder": ""
+    "topBidder": "",
+    "topBidderDisplayName": ""
 };
 let bidTimer;
 const cooldownCache = new NodeCache({checkperiod: 5});
@@ -150,6 +151,7 @@ const bidCommand = {
             const triggeredArg = userCommand.args[0];
             const bidAmount = parseInt(triggeredArg);
             const username = userCommand.commandSender;
+            const userDisplayName = chatMessage?.userDisplayName ?? username;
 
             if (activeBiddingInfo.active === false) {
                 await twitchChat.sendChatMessage(`There is no active bidding in progress.`, null, chatter, chatMessage.id);
@@ -203,10 +205,10 @@ const bidCommand = {
 
             await currencyManager.adjustCurrencyForViewer(username, currencyId, -Math.abs(bidAmount));
             const newTopBidWithRaise = bidAmount + raiseMinimum;
-            await twitchChat.sendChatMessage(`${username} is the new high bidder at ${bidAmount} ${currencyName}. To bid, type !bid ${newTopBidWithRaise} (or higher).`);
+            await twitchChat.sendChatMessage(`${userDisplayName} is the new high bidder at ${bidAmount} ${currencyName}. To bid, type !bid ${newTopBidWithRaise} (or higher).`);
 
             // eslint-disable-next-line no-use-before-define
-            setNewHighBidder(username, bidAmount);
+            setNewHighBidder(username, userDisplayName, bidAmount);
 
             const cooldownSecs = bidSettings.settings.cooldownSettings.cooldown;
             if (cooldownSecs && cooldownSecs > 0) {
@@ -229,9 +231,10 @@ function unregisterBidCommand() {
     commandManager.unregisterSystemCommand(BID_COMMAND_ID);
 }
 
-function setNewHighBidder(username, amount) {
+function setNewHighBidder(username, userDisplayName, amount) {
     activeBiddingInfo.currentBid = amount;
     activeBiddingInfo.topBidder = username;
+    activeBiddingInfo.topBidderDisplayName = userDisplayName;
 }
 
 exports.purgeCaches = purgeCaches;
