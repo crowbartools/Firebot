@@ -1,5 +1,6 @@
 import accountCreationDate from './account-creation-date';
 import chatMessages from './chat-messages';
+import isUserInChat from './is-user-in-chat';
 import pronouns from './pronouns';
 import randomViewer from './random-viewer';
 import randomActiveViewer from './random-active-viewer';
@@ -21,6 +22,7 @@ import roleVariables from './roles';
 export default [
     accountCreationDate,
     chatMessages,
+    isUserInChat,
     pronouns,
     randomViewer,
     randomActiveViewer,
