@@ -21,7 +21,9 @@
                 onTestButtonClicked: "&",
                 statusField: "@?",
                 startingSortField: "@?",
-                sortInitiallyReversed: "<?"
+                sortInitiallyReversed: "<?",
+                customFilterName: "@?",
+                useFullTextSearch: "<?"
             },
             transclude: {
                 footer: "?fbItemTableFooter",
@@ -45,6 +47,10 @@
                         };
                     }
                     return $scope.searchQuery;
+                };
+
+                $ctrl.getFilterName = () => {
+                    return $ctrl.useFullTextSearch ? null : $ctrl.customFilterName;
                 };
 
                 $ctrl.$onInit = () => {

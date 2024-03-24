@@ -28,6 +28,13 @@
           query="searchQuery"
           class="fit-header-search"
         ></searchbar>
+        <firebot-checkbox
+          ng-if="$ctrl.customFilterName != null"
+          label="Full text search"
+          model="$ctrl.useFullTextSearch"
+          tooltip="Search all fields. Use ! to exclude a term."
+          style="white-space: nowrap; margin: 0 0 0 5px;"
+        />
       </div>
     </div>
     <div class="p-6">
@@ -98,7 +105,7 @@
         </thead>
         <tbody ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.items" class="fit-table-body">
           <tr
-            ng-repeat="item in filteredItems = ($ctrl.items | sortTagSearch:sts.getSelectedSortTag($ctrl.sortTagContext) | filter:searchQuery | orderBy:$ctrl.dynamicOrder:$ctrl.order.reverse) as visible track by item.id"
+            ng-repeat="item in filteredItems = ($ctrl.items | sortTagSearch:sts.getSelectedSortTag($ctrl.sortTagContext) | dynamicFilter:$ctrl.getFilterName():searchQuery | orderBy:$ctrl.dynamicOrder:$ctrl.order.reverse) as visible track by item.id"
             context-menu="$ctrl.getContextMenu(item)"
             context-menu-class="angular-context-menu"
           >
