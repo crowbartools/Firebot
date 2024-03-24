@@ -28,13 +28,35 @@
           query="searchQuery"
           class="fit-header-search"
         ></searchbar>
-        <firebot-checkbox
-          ng-if="$ctrl.customFilterName != null"
-          label="Full text search"
-          model="$ctrl.useFullTextSearch"
-          tooltip="Search all fields. Use ! to exclude a term."
-          style="white-space: nowrap; margin: 0 0 0 5px;"
-        />
+        <button
+            ng-if="$ctrl.showAdvancedOptionsButton"
+            uib-tooltip="Advanced Search Options"
+            tooltip-append-to-body="true"
+            tooltip-placement="top-right"
+            uib-popover-template="'advancedSearchOptionsPopover.html'"
+            popover-placement="bottom-right"
+            popover-append-to-body="true"
+            popover-trigger="'outsideClick'"
+            class="btn-reset fbit-advance-search-btn"
+        >
+          <i 
+            class="fas fa-toolbox"
+          ></i>
+          <div ng-if="$ctrl.hasAdvancedOptionsApplied()" class="options-applied-indicator"></div>
+        </button>
+        <script type="text/ng-template" id="advancedSearchOptionsPopover.html">
+            <div class="p-3">
+              <firebot-checkbox
+                ng-if="$ctrl.customFilterName != null"
+                label="Full text search"
+                model="$ctrl.useFullTextSearch"
+                tooltip="Search all fields. Prefix with ! to preform an exclusive search."
+                tooltip-placement="top-right"
+                style="margin: 0;"
+              />
+            </div>
+        </script>
+        
       </div>
     </div>
     <div class="p-6">

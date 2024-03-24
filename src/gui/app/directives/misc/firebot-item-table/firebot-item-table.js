@@ -40,17 +40,14 @@
                     reverse: false
                 };
 
-                $ctrl.getSearchQuery = () => {
-                    if ($ctrl.searchField) {
-                        return {
-                            [$ctrl.searchField]: $scope.searchQuery
-                        };
-                    }
-                    return $scope.searchQuery;
-                };
-
                 $ctrl.getFilterName = () => {
                     return $ctrl.useFullTextSearch ? null : $ctrl.customFilterName;
+                };
+
+                $ctrl.showAdvancedOptionsButton = false;
+
+                $ctrl.hasAdvancedOptionsApplied = () => {
+                    return $ctrl.useFullTextSearch;
                 };
 
                 $ctrl.$onInit = () => {
@@ -63,6 +60,8 @@
 
                     $ctrl.showStatusIndicator = $ctrl.statusField != null;
                     $ctrl.headerClass = `${$ctrl.sortTagContext.split(' ').join('-')}-header`;
+
+                    $ctrl.showAdvancedOptionsButton = $ctrl.customFilterName != null;
                 };
 
                 $ctrl.triggerItemsUpdate = () => {

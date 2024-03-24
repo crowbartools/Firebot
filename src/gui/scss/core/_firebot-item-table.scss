@@ -74,3 +74,25 @@
         }
     }
 }
+
+.fbit-advance-search-btn {
+    position: relative;
+    margin-left: 10px;
+    margin-right: 5px;
+    padding: 2px;
+    &:hover {
+        cursor: pointer;
+        i {
+            opacity: 0.75;
+        }
+    }
+    .options-applied-indicator {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background-color: #1c9dc1;
+        border-radius: 50%;
+        width: 10px;
+        height: 10px;
+    }
+}
