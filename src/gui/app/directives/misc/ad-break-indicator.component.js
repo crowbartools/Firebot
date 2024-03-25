@@ -46,6 +46,8 @@
 
                     const allSecs = Math.round(secondsLeft);
 
+                    const hours = Math.floor(allSecs / (60 * 60));
+
                     const divisorForMinutes = allSecs % (60 * 60);
                     const minutes = Math.floor(divisorForMinutes / 60);
 
@@ -55,7 +57,7 @@
                     const minDisplay = minutes.toString().padStart(1, "0"),
                         secDisplay = seconds.toString().padStart(2, "0");
 
-                    $scope.timeLeftDisplay = `${minDisplay}:${secDisplay}`;
+                    $scope.timeLeftDisplay = `${hours > 0 ? `${hours}:` : ""}${minDisplay}:${secDisplay}`;
                 }
 
                 $ctrl.$onInit = function() {

@@ -9,6 +9,7 @@ const util = require("../../../utility");
 /**
  * @typedef HeistUser
  * @property {string} username - The user's name
+ * @property {string} userDisplayName - The user's display name
  * @property {number} wager - The amount the user wagered
  * @property {number} successPercentage - The users win percentage
  * @property {number} winnings - The winnings the user will receive should they win
@@ -100,7 +101,7 @@ async function runHeist() {
 
     if (usersInHeist.length === 1) {
         outcomeMessage = outcomeMessage
-            .replace("{user}", usersInHeist[0].username);
+            .replace("{user}", usersInHeist[0].userDisplayName);
     }
 
     const currencyId = heistSettings.settings.currencySettings.currencyId;
@@ -111,7 +112,7 @@ async function runHeist() {
     let winningsString;
     if (percentSurvived > 0) {
         winningsString = survivers
-            .map(s => `${s.username} (${util.commafy(s.winnings)})`)
+            .map(s => `${s.userDisplayName} (${util.commafy(s.winnings)})`)
             .join(", ");
     } else {
         winningsString = "None";
@@ -165,7 +166,7 @@ exports.triggerLobbyStart = (startDelayMins) => {
             let teamTooSmallMessage = heistSettings.settings.generalMessages.teamTooSmall;
             if (usersInHeist.length > 0 && teamTooSmallMessage) {
                 teamTooSmallMessage = teamTooSmallMessage
-                    .replace("{user}", usersInHeist[0].username);
+                    .replace("{user}", usersInHeist[0].userDisplayName);
 
                 await twitchChat.sendChatMessage(teamTooSmallMessage, null, chatter);
             }

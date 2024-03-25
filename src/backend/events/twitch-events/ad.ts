@@ -22,7 +22,7 @@ export function triggerAdBreakStart(
         isAdBreakScheduled
     });
 
-    adManager.triggerAdBreak(adBreakDuration, adBreakEnd);
+    adManager.triggerAdBreakStart(adBreakDuration, adBreakEnd);
 }
 
 export function triggerAdBreakEnd(

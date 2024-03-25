@@ -26,6 +26,10 @@ class AdManager {
             : 0;
     }
 
+    get isAdBreakRunning(): boolean {
+        return this._isAdRunning === true;
+    }
+
     async runAdCheck(): Promise<void> {
         if (this._isAdCheckRunning === true) {
             return;
@@ -90,7 +94,7 @@ class AdManager {
         this._isAdCheckRunning = false;
     }
 
-    triggerAdBreak(duration: number, endsAt: Date) {
+    triggerAdBreakStart(duration: number, endsAt: Date) {
         this._isAdRunning = true;
         frontendCommunicator.send("ad-manager:ad-running", {
             duration,
