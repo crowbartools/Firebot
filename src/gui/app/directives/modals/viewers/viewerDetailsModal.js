@@ -34,6 +34,16 @@
                                 tooltip-append-to-body="true">
                                     <i class="fab fa-twitch" style="transform: translateY(2px);" />
                             </a>
+                            <a
+                                ng-if="$ctrl.isTwitchOrNewUser() && $ctrl.viewerDetails.twitchData && $ctrl.accountAccess.accounts.streamer.loggedIn === true"
+                                ng-click="$ctrl.openLink('https://www.twitch.tv/popout/' + $ctrl.accountAccess.accounts.streamer.username + '/viewercard/' + $ctrl.viewerDetails.twitchData.username + '/?popout=')"
+                                class="clickable"
+                                style="line-height: 1;margin-left: 5px;background: #9147FF;padding: 5px;border-radius: 100%;color: white;font-size: 15px;"
+                                uib-tooltip="Open Twitch Viewer Card"
+                                aria-label="Open Twitch Viewer Card"
+                                tooltip-append-to-body="true">
+                                    <i class="fas fa-address-card" style="transform: translateY(1px);" />
+                            </a>
                         </div>
                         <div ng-show="$ctrl.isTwitchOrNewUser() && $ctrl.viewerDetails.twitchData && $ctrl.viewerDetails.twitchData.username.toLowerCase() !== $ctrl.viewerDetails.twitchData.displayName.toLowerCase()" style="display:flex;">
                             <div style="margin-right: 11px; font-size: 20px;" class="muted">{{$ctrl.viewerDetails.twitchData.username}}</div>
@@ -159,7 +169,7 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function($rootScope, $q, backendCommunicator, viewersService, currencyService, utilityService, viewerRolesService, connectionService, settingsService) {
+            controller: function($rootScope, $q, backendCommunicator, viewersService, currencyService, utilityService, viewerRolesService, connectionService, settingsService, accountAccess) {
                 const $ctrl = this;
 
                 $ctrl.loading = true;
@@ -171,6 +181,8 @@
                 $ctrl.hasFirebotData = false;
 
                 $ctrl.viewerDbEnabled = settingsService.getViewerDB();
+
+                $ctrl.accountAccess = accountAccess;
 
                 $ctrl.getAccountAge = function(date) {
                     return moment(date).fromNow(true);
