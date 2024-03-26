@@ -57,11 +57,12 @@
                 return [
                     "chat feed",
                     "commands",
-                    "preset effect lists",
                     "events",
                     "timers",
                     "channel rewards",
-                    "buttons",
+                    "preset effect lists",
+                    "counters",
+                    "effect queues",
                     "settings"
                 ].includes(service.currentTab.toLowerCase());
             };

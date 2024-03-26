@@ -120,30 +120,28 @@
         </div>
       </div>
 
-      <div style="width: 100%; height: 100%">
-        <firebot-item-table
-          items="getSelectedEvents()"
-          on-items-update="updateEventsForCurrentGroup(items)"
-          headers="tableConfig"
-          sort-tag-context="events"
-          orderable="true"
-          add-new-button-text="New Event"
-          on-add-new-clicked="showAddOrEditEventModal()"
-          context-menu-options="eventMenuOptions(item)"
-          no-data-message="No events saved. You should make one! :)"
-          none-found-message="No events found."
-          search-placeholder="Search events"
-          test-button="true"
-          on-test-button-clicked="fireEventManually(itemId)"
-          status-field="active"
-        >
-          <fb-item-table-toolbar>
-            <button ng-click="simulateEventsByType()" class="btn btn-default">
-              <i class="fas fa-play-circle ml-2"></i> Simulate Event
-            </button>
-          </fb-item-table-toolbar>
-        </firebot-item-table>
-      </div>
+      <firebot-item-table
+        items="getSelectedEvents()"
+        on-items-update="updateEventsForCurrentGroup(items)"
+        headers="tableConfig"
+        sort-tag-context="events"
+        orderable="true"
+        add-new-button-text="New Event"
+        on-add-new-clicked="showAddOrEditEventModal()"
+        context-menu-options="eventMenuOptions(item)"
+        no-data-message="No events saved. You should make one! :)"
+        none-found-message="No events found."
+        search-placeholder="Search events"
+        test-button="true"
+        on-test-button-clicked="fireEventManually(itemId)"
+        status-field="active"
+      >
+        <fb-item-table-toolbar>
+          <button ng-click="simulateEventsByType()" class="btn btn-default">
+            <i class="fas fa-play-circle ml-2"></i> Simulate Event
+          </button>
+        </fb-item-table-toolbar>
+      </firebot-item-table>
     </div>
   </div>
 </div>

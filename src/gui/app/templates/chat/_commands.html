@@ -1,12 +1,4 @@
-<div
-  style="
-    min-width: 500px;
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-  "
->
+<div class="fb-tabbed-page">
   <div class="fb-tab-wrapper">
     <ul class="nav nav-tabs fb-tabs">
       <li
@@ -26,40 +18,39 @@
     </ul>
   </div>
 
-  <div class="pb-12" style="height: 100%">
-    <div ng-if="activeCmdTab === 0" style="height: 100%">
-      <firebot-item-table
-        items="commandsService.getCustomCommands()"
-        on-items-update="saveAllCommands(items)"
-        headers="customCommandHeaders"
-        sort-tag-context="commands"
-        orderable="true"
-        add-new-button-text="New Custom Command"
-        on-add-new-clicked="openAddOrEditCustomCommandModal()"
-        context-menu-options="commandMenuOptions(item)"
-        no-data-message="No custom commands saved. You should make one! :)"
-        none-found-message="No custom commands found."
-        search-placeholder="Search commands"
-        test-button="true"
-        on-test-button-clicked="manuallyTriggerCommand(itemId)"
-        status-field="active"
-        custom-filter-name="triggerSearch"
-      >
-        <fb-item-table-toolbar>
-          <button
-              ng-click="resetActiveCooldowns()"
-              class="btn btn-default hvr-icon-grow"
-            >
-              <i class="iconify hvr-icon mr-2" data-icon="mdi:clock-fast"></i>
-              Clear All Cooldowns
-          </button>
-        </fb-item-table-toolbar>
-      </firebot-item-table>
-    </div>
-    <div ng-if="activeCmdTab === 1" style="overflow-y: scroll; height: 100%">
+  <firebot-item-table
+    ng-if="activeCmdTab === 0"
+    items="commandsService.getCustomCommands()"
+    on-items-update="saveAllCommands(items)"
+    headers="customCommandHeaders"
+    sort-tag-context="commands"
+    orderable="true"
+    add-new-button-text="New Custom Command"
+    on-add-new-clicked="openAddOrEditCustomCommandModal()"
+    context-menu-options="commandMenuOptions(item)"
+    no-data-message="No custom commands saved. You should make one! :)"
+    none-found-message="No custom commands found."
+    search-placeholder="Search commands"
+    test-button="true"
+    on-test-button-clicked="manuallyTriggerCommand(itemId)"
+    status-field="active"
+    custom-filter-name="triggerSearch"
+  >
+    <fb-item-table-toolbar>
+      <button
+          ng-click="resetActiveCooldowns()"
+          class="btn btn-default hvr-icon-grow"
+        >
+          <i class="iconify hvr-icon mr-2" data-icon="mdi:clock-fast"></i>
+          Clear All Cooldowns
+      </button>
+    </fb-item-table-toolbar>
+  </firebot-item-table>
+  <div ng-if="activeCmdTab === 1" style="height: 100%; overflow-y: scroll;">
+    <div>
       <scroll-sentinel element-class="sys-cmd-header"></scroll-sentinel>
       <div
-        class="light-bg sticky-top sys-cmd-header p-6 my-6 mx-0"
+        class="light-bg sticky-top sys-cmd-header p-6 m-0"
         style="
           display: flex;
           flex-direction: row;
