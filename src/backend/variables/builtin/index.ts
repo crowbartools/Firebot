@@ -4,6 +4,7 @@ import counterVariables from './counter';
 import currencyVariables from './currency';
 import customVariables from './custom-vars';
 import donationVariables from './donation';
+import macroVariables from './macro';
 import metadataVariables from './metadata';
 import miscVariables from './misc';
 import numberVariables from './number';
@@ -22,6 +23,7 @@ export default [
     ...currencyVariables,
     ...customVariables,
     ...donationVariables,
+    ...macroVariables,
     ...metadataVariables,
     ...miscVariables,
     ...numberVariables,
