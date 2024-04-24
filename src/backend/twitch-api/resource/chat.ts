@@ -131,6 +131,11 @@ export class TwitchChatApi {
             await this._streamerClient.chat.shoutoutUser(streamerId, targetUserId);
         } catch (error) {
             logger.error("Error sending shoutout", error.message);
+            const body = JSON.parse(error._body);
+            global.renderWindow.webContents.send("chatUpdate", {
+                fbEvent: "ChatAlert",
+                message: body.message
+            });
             return false;
         }
 
