@@ -6,7 +6,7 @@ import effectQueueManager from "../../../effects/queues/effect-queue-manager";
 const model : ReplaceVariable = {
     definition: {
         handle: "effectQueueLength",
-        usage: "effectQueueLength[text]",
+        usage: "effectQueueLength[queueName]",
         description: "Returns the length of an effect queue. Useful for showing queue length in a command response.",
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
