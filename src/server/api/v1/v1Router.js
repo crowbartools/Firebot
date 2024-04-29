@@ -6,8 +6,13 @@ const logger = require("../../../backend/logwrapper");
 
 router.use(function log(req, res, next) {
     // here we could do stuff for every request if we wanted
+    const clientIp = req.socket.remoteAddress;
+    // check for proper ipv4 address (possible for ipv4 address in ipv6 format)
+    const matches = clientIp.match(/(\d+\.\d+\.\d+\.\d+)/);
+    // if we find a match it is ipv4 if not fall back to given client ip which is most likely ipv6
+    const ip = matches ? matches[0] : clientIp;
     logger.info(
-        `API Request from: ${req.headers.host}, for path: ${req.originalUrl}`
+        `API Request from: ${ip}, for path: ${req.originalUrl}`
     );
     next();
 });
