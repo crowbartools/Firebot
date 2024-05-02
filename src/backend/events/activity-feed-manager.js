@@ -73,7 +73,9 @@ frontendCommunicator.on("retrigger-event", (activityId) => {
     }
 
     if (activity.eventId === "channel-reward-redemption") {
-        rewardManager.triggerChannelReward(activity.metadata.rewardId, activity.metadata);
+        // Manually triggered by streamer, must pass in userId and userDisplayName can be falsy
+        const metadata = {userId: "", userDisplayName: "", ...activity.metadata };
+        rewardManager.triggerChannelReward(activity.metadata.rewardId, metadata);
     }
 
     eventManager.triggerEvent(activity.sourceId, activity.eventId,

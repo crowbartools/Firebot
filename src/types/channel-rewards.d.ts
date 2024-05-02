@@ -13,10 +13,12 @@ export type SavedChannelReward = {
 
 export type RewardRedemptionMetadata = {
     username: string,
+    userId: string,
+    userDisplayName: string,
     messageText: string,
     redemptionId: string,
     rewardId: string,
     rewardImage: string,
     rewardName: string,
-    rewardCost: number
+    rewardCost: number,
 };
