@@ -437,6 +437,56 @@ module.exports = {
             }
         },
         {
+            id: "channel-reward-redemption-fulfilled",
+            name: "Channel Reward Redemption Approved",
+            description: "When a CUSTOM channel reward redemption is Completed/Approved",
+            cached: false,
+            cacheMetaKey: "username",
+            cacheTtlInSecs: 1,
+            queued: false,
+            manualMetadata: {
+                username: "firebot",
+                userDisplayName: "Firebot",
+                userId: "",
+                rewardName: "Test Reward",
+                rewardImage: "https://static-cdn.jtvnw.net/automatic-reward-images/highlight-1.png",
+                rewardCost: 200,
+                messageText: "Test message"
+            },
+            activityFeed: {
+                icon: "fad fa-circle",
+                getMessage: (eventData) => {
+                    const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
+                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""}**'s redemption of **${eventData.rewardName}** was approved. ${eventData.messageText && !!eventData.messageText.length ? `*${eventData.messageText}*` : ''}`;
+                }
+            }
+        },
+        {
+            id: "channel-reward-redemption-canceled",
+            name: "Channel Reward Redemption Rejected",
+            description: "When a CUSTOM channel reward redemption is Rejected/Refunded",
+            cached: false,
+            cacheMetaKey: "username",
+            cacheTtlInSecs: 1,
+            queued: false,
+            manualMetadata: {
+                username: "firebot",
+                userDisplayName: "Firebot",
+                userId: "",
+                rewardName: "Test Reward",
+                rewardImage: "https://static-cdn.jtvnw.net/automatic-reward-images/highlight-1.png",
+                rewardCost: 200,
+                messageText: "Test message"
+            },
+            activityFeed: {
+                icon: "fad fa-circle",
+                getMessage: (eventData) => {
+                    const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
+                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""}**'s redemption of **${eventData.rewardName}** was rejected. ${eventData.messageText && !!eventData.messageText.length ? `*${eventData.messageText}*` : ''}`;
+                }
+            }
+        },
+        {
             id: "whisper",
             name: "Whisper",
             description: "When someone sends you or your bot account a whisper.",
