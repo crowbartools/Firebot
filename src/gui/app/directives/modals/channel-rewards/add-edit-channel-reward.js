@@ -95,8 +95,9 @@
 
                         <div class="form-group flex-row jspacebetween">
                             <div>
-                                <label class="control-label" style="margin:0;">Skip Reward Requests Queue</label>
+                                <label class="control-label" style="margin:0;">Skip Twitch Reward Requests Queue</label>
                                 <p class="help-block">If enabled, only future viewer requests will skip the queue for review.</p>
+                                <p class="help-block">Requests will immediately be approved by Twitch and cannot be refunded.</p>
                             </div>
                             <div>
                                 <toggle-button toggle-model="$ctrl.reward.twitchData.shouldRedemptionsSkipRequestQueue" auto-update-value="true" font-size="32"></toggle-button>
