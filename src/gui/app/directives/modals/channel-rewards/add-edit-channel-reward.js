@@ -223,13 +223,33 @@
                         </div>
                     </div>
 
-                    <div style="margin-top:15px;">
+                    <eos-container header="When Redeemed" pad-top="true">
                         <effect-list
                             effects="$ctrl.reward.effects"
                             trigger="channel_reward"
                             trigger-meta="{ rootEffects: $ctrl.reward.effects }"
                             update="$ctrl.effectListUpdated(effects)"
                         ></effect-list>
+                    </eos-container>
+
+                    <div ng-if="!$ctrl.reward.twitchData.shouldRedemptionsSkipRequestQueue">
+                        <eos-container header="When Approved" pad-top="true">
+                            <effect-list
+                                effects="$ctrl.reward.effectsFulfilled"
+                                trigger="channel_reward"
+                                trigger-meta="{ rootEffects: $ctrl.reward.effectsFulfilled }"
+                                update="$ctrl.fulfilledEffectListUpdated(effects)"
+                            ></effect-list>
+                        </eos-container>
+
+                        <eos-container header="When Rejected" pad-top="true">
+                            <effect-list
+                                effects="$ctrl.reward.effectsCanceled"
+                                trigger="channel_reward"
+                                trigger-meta="{ rootEffects: $ctrl.reward.effectsCanceled }"
+                                update="$ctrl.canceledEffectListUpdated(effects)"
+                            ></effect-list>
+                        </eos-container>
                     </div>
 
                 </div>
@@ -307,6 +327,14 @@
 
                 $ctrl.effectListUpdated = function(effects) {
                     $ctrl.reward.effects = effects;
+                };
+
+                $ctrl.fulfilledEffectListUpdated = function(effects) {
+                    $ctrl.reward.effectsFulfilled = effects;
+                };
+
+                $ctrl.canceledEffectListUpdated = function(effects) {
+                    $ctrl.reward.effectsCanceled = effects;
                 };
 
                 $ctrl.$onInit = () => {

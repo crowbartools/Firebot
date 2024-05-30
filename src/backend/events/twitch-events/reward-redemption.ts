@@ -83,8 +83,10 @@ export function handleRewardUpdated(
 
     // Possible values for status are 'fulfilled' and 'canceled' according to Twitch docs
     if (status === 'fulfilled') {
+        rewardManager.triggerChannelRewardFulfilled(rewardId, redemptionMeta);
         eventManager.triggerEvent("twitch", "channel-reward-redemption-fulfilled", redemptionMeta);
     } else {
+        rewardManager.triggerChannelRewardCanceled(rewardId, redemptionMeta);
         eventManager.triggerEvent("twitch", "channel-reward-redemption-canceled", redemptionMeta);
     }
 }
