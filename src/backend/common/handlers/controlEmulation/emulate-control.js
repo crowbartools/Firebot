@@ -1,5 +1,5 @@
 "use strict";
-const { keyboard, Key, mouse, Button } = require("@nut-tree/nut-js");
+const { keyboard, Key, mouse, Button } = require("@nut-tree-fork/nut-js");
 const logger = require("../../../logwrapper");
 
 function mapNutKey(key) {
