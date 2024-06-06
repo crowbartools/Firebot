@@ -225,7 +225,7 @@
                     if (durationValue == null || durationValue < 1) {
                         durationValue = 1;
                     }
-                    ctrl.effect.enterDuration = `${ctrl.selected.enterDurationValue}${ctrl.selected.enterDurationType}`;
+                    ctrl.effect.enterDuration = `${durationValue}${ctrl.selected.enterDurationType}`;
                 };
 
                 ctrl.exitDurationUpdated = function() {
