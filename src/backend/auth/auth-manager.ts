@@ -40,7 +40,7 @@ class AuthManager extends EventEmitter {
                 break;
 
             case "device":
-                authorizationUri = `${provider.auth.tokenHost}${provider.auth.authorizePath}`;
+                authorizationUri = `${provider.auth.authorizeHost ?? provider.auth.tokenHost}${provider.auth.authorizePath}`;
                 break;
         }
 
@@ -62,7 +62,7 @@ class AuthManager extends EventEmitter {
     }
 
     getAuthProvider(providerId: string): AuthProvider {
-        return this._authProviders.find((p) => p.id === providerId);
+        return this._authProviders.find(p => p.id === providerId);
     }
 
     buildOAuthClientForProvider(provider: AuthProviderDefinition, redirectUri: string): ClientOAuth2 {
@@ -75,7 +75,7 @@ class AuthManager extends EventEmitter {
             scopes = [];
         }
 
-        const authUri = `${provider.auth.tokenHost}${provider.auth.authorizePath}`;
+        const authUri = `${provider.auth.authorizeHost ?? provider.auth.tokenHost}${provider.auth.authorizePath}`;
         const tokenUri = `${provider.auth.tokenHost}${provider.auth.tokenPath ?? ""}`;
 
         return new ClientOAuth2({

@@ -9,6 +9,7 @@ export interface AuthProviderDefinition {
     };
     auth: {
         type: "code" | "token" | "device";
+        authorizeHost?: string;
         tokenHost: string;
         authorizePath: string;
         tokenPath?: string;

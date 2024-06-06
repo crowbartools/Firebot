@@ -99,6 +99,8 @@ const model = {
                 clonedTrigger.metadata.username = effect.username;
             }
 
+            // ensure effect.args is not undefined/null if it is change it to string empty
+            effect.args = effect.args ?? "";
             if (effect.commandType === "system") {
                 commandRunner.runSystemCommandFromEffect(effect.systemCommandId, clonedTrigger, effect.args);
             } else {
