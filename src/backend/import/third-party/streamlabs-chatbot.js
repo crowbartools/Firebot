@@ -75,6 +75,7 @@ const importViewers = async (data) => {
     let viewersToUpdate = [];
 
     for (const v of viewers) {
+        v.name = String(v.name);
         const viewer = await viewerDatabase.getViewerByUsername(v.name);
 
         if (viewer == null) {
