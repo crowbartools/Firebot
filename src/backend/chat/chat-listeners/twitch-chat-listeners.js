@@ -147,6 +147,8 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
 
         frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
 
+        chatCommandHandler.handleChatMessage(firebotChatMessage);
+
         await activeUserHandler.addActiveUser(msg.userInfo, true);
 
         twitchEventsHandler.chatMessage.triggerChatMessage(firebotChatMessage);
