@@ -9,6 +9,7 @@ import fileExists from './file-exists';
 import fileLineCount from './file-line-count';
 import fileRead from './file-read';
 import filesInDirectory from './files-in-directory';
+import getEffectQueueLength from "./get-effect-queue-length"
 import loopCount from './loop-count';
 import loopItem from './loop-item';
 import quickstore from './quick-store';
@@ -27,6 +28,7 @@ export default [
     fileLineCount,
     fileRead,
     filesInDirectory,
+    getEffectQueueLength,
     loopCount,
     loopItem,
     quickstore,
