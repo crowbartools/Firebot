@@ -101,7 +101,7 @@ class EffectQueueManager extends JsonDbManager {
         }
 
         item.queue = effectQueueRunner.getQueue(itemId);
-
+        item.length = item.queue.length;
         return item;
     }
 
