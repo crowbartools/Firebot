@@ -8,6 +8,7 @@ import { CustomReward, RewardRedemption, RewardRedemptionsApprovalRequest } from
 import { EffectTrigger } from "../../shared/effect-constants";
 import { RewardRedemptionMetadata, SavedChannelReward } from "../../types/channel-rewards";
 import { TriggerType } from "../common/EffectType";
+import { EffectList } from "../../types/effects";
 
 class ChannelRewardManager {
     channelRewards: Record<string, SavedChannelReward> = {};
@@ -259,7 +260,29 @@ class ChannelRewardManager {
         return channelReward ? channelReward.id : null;
     }
 
-    async triggerChannelReward(rewardId: string, metadata: RewardRedemptionMetadata, manual = false): Promise<any> {
+    private async triggerRewardEffects(metadata: RewardRedemptionMetadata, effectList?: EffectList, manual = false): Promise<void> {
+        if (effectList == null || effectList.list == null) {
+            return;
+        }
+
+        const effectRunner = require("../common/effect-runner");
+
+        const processEffectsRequest = {
+            trigger: {
+                type: manual ? EffectTrigger.MANUAL : EffectTrigger.CHANNEL_REWARD,
+                metadata: metadata
+            },
+            effects: effectList
+        };
+
+        try {
+            return effectRunner.processEffects(processEffectsRequest);
+        } catch (reason) {
+            console.log(`error when running effects: ${reason}`);
+        }
+    }
+
+    async triggerChannelReward(rewardId: string, metadata: RewardRedemptionMetadata, manual = false): Promise<boolean | void> {
         const savedReward = this.channelRewards[rewardId];
         if (savedReward == null || savedReward.effects == null || savedReward.effects.list == null) {
             return;
@@ -325,22 +348,25 @@ class ChannelRewardManager {
             }
         }
 
+        return this.triggerRewardEffects(metadata, savedReward.effects, manual);
+    }
 
-        const effectRunner = require("../common/effect-runner");
-
-        const processEffectsRequest = {
-            trigger: {
-                type: manual ? EffectTrigger.MANUAL : EffectTrigger.CHANNEL_REWARD,
-                metadata: metadata
-            },
-            effects: savedReward.effects
-        };
-
-        try {
-            return effectRunner.processEffects(processEffectsRequest);
-        } catch (reason) {
-            console.log(`error when running effects: ${reason}`);
+    async triggerChannelRewardFulfilled(rewardId: string, metadata: RewardRedemptionMetadata, manual = false): Promise<void> {
+        const savedReward = this.channelRewards[rewardId];
+        if (savedReward == null) {
+            return;
         }
+
+        return this.triggerRewardEffects(metadata, savedReward.effectsFulfilled, manual);
+    }
+
+    async triggerChannelRewardCanceled(rewardId: string, metadata: RewardRedemptionMetadata, manual = false): Promise<void> {
+        const savedReward = this.channelRewards[rewardId];
+        if (savedReward == null) {
+            return;
+        }
+
+        return this.triggerRewardEffects(metadata, savedReward.effectsCanceled, manual);
     }
 
     async refreshChannelRewardRedemptions(): Promise<void> {

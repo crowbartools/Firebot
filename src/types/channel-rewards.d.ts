@@ -7,6 +7,8 @@ export type SavedChannelReward = {
     twitchData: CustomReward,
     manageable: boolean,
     effects?: EffectList,
+    effectsFulfilled?: EffectList,
+    effectsCanceled?: EffectList,
     restrictionData?: RestrictionData,
     autoApproveRedemptions?: boolean,
 };

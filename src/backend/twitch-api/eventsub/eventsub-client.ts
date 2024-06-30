@@ -100,7 +100,35 @@ class TwitchEventSubClient {
         });
         this._subscriptions.push(customRewardRedemptionSubscription);
 
-        const customRewardRedemptionUpdateSubscription = this._eventSubListener.onChannelRedemptionUpdate(streamer.userId, async () => {
+        const customRewardRedemptionUpdateSubscription = this._eventSubListener.onChannelRedemptionUpdate(streamer.userId, async (event) => {
+            const reward = await twitchApi.channelRewards.getCustomChannelReward(event.rewardId);
+            let imageUrl = "";
+
+            if (reward && reward.defaultImage) {
+                const images = reward.defaultImage;
+                if (images.url4x) {
+                    imageUrl = images.url4x;
+                } else if (images.url2x) {
+                    imageUrl = images.url2x;
+                } else if (images.url1x) {
+                    imageUrl = images.url1x;
+                }
+            }
+
+            twitchEventsHandler.rewardRedemption.handleRewardUpdated(
+                event.id,
+                event.status,
+                event.input,
+                event.userId,
+                event.userName,
+                event.userDisplayName,
+                event.rewardId,
+                event.rewardTitle,
+                event.rewardPrompt,
+                event.rewardCost,
+                imageUrl
+            );
+
             rewardManager.refreshChannelRewardRedemptions();
         });
         this._subscriptions.push(customRewardRedemptionUpdateSubscription);
