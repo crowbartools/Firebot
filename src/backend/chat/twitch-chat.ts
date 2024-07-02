@@ -249,6 +249,14 @@ class TwitchChat extends EventEmitter {
                 return;
             }
         }
+        if (slashCommandValidationResult != null &&
+            slashCommandValidationResult.success === false &&
+            slashCommandValidationResult.foundCommand !== false) {
+            global.renderWindow.webContents.send("chatUpdate", {
+                fbEvent: "ChatAlert",
+                message: slashCommandValidationResult.errorMessage
+            });
+        }
 
         // split message into fragments that don't exceed the max message length
         const messageFragments = message

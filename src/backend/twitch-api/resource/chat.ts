@@ -2,6 +2,12 @@ import logger from '../../logwrapper';
 import accountAccess from "../../common/account-access";
 import { ApiClient, HelixChatAnnouncementColor, HelixChatChatter, HelixSendChatAnnouncementParams, HelixSentChatMessage, HelixUpdateChatSettingsParams } from "@twurple/api";
 
+interface ResultWithError<TResult, TError> {
+    success: boolean;
+    result?: TResult;
+    error?: TError;
+}
+
 export class TwitchChatApi {
     private _streamerClient: ApiClient;
     private _botClient: ApiClient;
@@ -123,18 +129,19 @@ export class TwitchChatApi {
      * Sends a Twitch shoutout to another channel
      *
      * @param targetUserId The Twitch user ID whose channel to shoutout
+     * @returns true when successful, error message string when unsuccessful
      */
-    async sendShoutout(targetUserId: string): Promise<boolean> {
+    async sendShoutout(targetUserId: string): Promise<ResultWithError<undefined, string>> {
         const streamerId = accountAccess.getAccounts().streamer.userId;
 
         try {
             await this._streamerClient.chat.shoutoutUser(streamerId, targetUserId);
         } catch (error) {
             logger.error("Error sending shoutout", error.message);
-            return false;
+            const body = JSON.parse(error._body);
+            return { success: false, error: body.message };
         }
-
-        return true;
+        return { success: true };
     }
 
     /**
