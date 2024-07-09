@@ -17,7 +17,7 @@ const model : ReplaceVariable = {
             },
             {
                 usage: "readFile[path\\to\\file.txt, first]",
-                description: "Read the last line from the file."
+                description: "Read the first line from the file."
             },
             {
                 usage: "readFile[path\\to\\file.txt, first, true]",
@@ -70,7 +70,7 @@ const model : ReplaceVariable = {
         if (ignoreWhitespace === true || `${ignoreWhitespace}`.toLowerCase() === 'true') {
             lines = contents
 
-                // remove leading and trailing whtiespace(EOLs, spaces, tabs, etc)
+                // remove leading and trailing whitespace (EOLs, spaces, tabs, etc)
                 .trim()
 
                 // Split based on new lines, consuming all whitespace around the new line character.
