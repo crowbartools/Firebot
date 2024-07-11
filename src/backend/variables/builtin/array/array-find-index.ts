@@ -27,7 +27,13 @@ const fuzzyMatch = (value: unknown, match: unknown, exact: boolean | string) : b
         return Number.isNaN(value) && Number.isNaN(match);
     }
 
+
+    const ciValue = typeof value === 'string' ? value.toLowerCase() : value,
+        ciMatch = typeof match === 'string' ? match.toLowerCase() : match;
+
+
     // Exact match is required
+    exact = typeof exact === 'string' ? exact.toLowerCase() : exact;
     if (exact === true || exact === 'true') {
         return false;
     }
@@ -42,8 +48,8 @@ const fuzzyMatch = (value: unknown, match: unknown, exact: boolean | string) : b
     }
 
     // Treat true and "true" as equiv
-    const matchIsTrue = match === true || match === 'true';
-    if (value === true || value === 'true') {
+    const matchIsTrue = match === true || ciMatch === 'true';
+    if (value === true || ciValue === 'true') {
         return matchIsTrue;
     }
     if (matchIsTrue) {
@@ -51,8 +57,8 @@ const fuzzyMatch = (value: unknown, match: unknown, exact: boolean | string) : b
     }
 
     // Treat false and "false" as equiv
-    const matchIsFalse = match === false || match === 'false';
-    if (value === false || value === 'false') {
+    const matchIsFalse = match === false || ciMatch === 'false';
+    if (value === false || ciValue === 'false') {
         return matchIsFalse;
     }
     if (matchIsFalse) {
