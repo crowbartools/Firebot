@@ -47,9 +47,10 @@ const fuzzyMatch = (value: unknown, match: unknown, exact: boolean | string) : b
     const ciMatch = typeof match === 'string' ? match.toLowerCase() : match;
 
     // falsy check
-    const valueIsFalsy = value == null || value === '' || value === false || ciValue === 'false';
-    const matchIsFalsy = match == null || match === '' || match === false || ciMatch === 'false';
-    if (valueIsFalsy && matchIsFalsy) {
+    if (
+        (value == null || value === '' || value === false || ciValue === 'false') &&
+        (match == null || match === '' || match === false || ciMatch === 'false')
+    ) {
         return true;
     }
 
