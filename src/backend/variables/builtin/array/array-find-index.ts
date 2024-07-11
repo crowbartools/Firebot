@@ -15,27 +15,71 @@ const getPropertyAtPath = (subject: unknown, path: string) => {
     return subject;
 };
 
-const fuzzyMatch = (value: unknown, match: unknown, exact: boolean) : boolean => {
-    if (exact) {
-        return value === match;
+const fuzzyMatch = (value: unknown, match: unknown, exact: boolean | string) : boolean => {
+
+    // Inputs are an exact match
+    if (value === match) {
+        return true;
     }
 
+    // An input is literal NaN
+    if (Number.isNaN(value) || Number.isNaN(match)) {
+        return Number.isNaN(value) && Number.isNaN(match);
+    }
+
+    // Exact match is required
+    if (exact === true || exact === 'true') {
+        return false;
+    }
+
+    // Treat null and empty strings as equiv
+    const matchIsNull = match == null || match === '';
     if (value == null || value === '') {
-        return match == null || value === '';
+        return matchIsNull;
     }
-    if (value === true || value === "true" || value === false || value === "false") {
-        return match === true || match === "true" || match === false || match === "false";
+    if (matchIsNull) {
+        return false;
     }
-    if (Number.isInteger(Number(value))) {
-        return Number.isInteger(Number(match));
+
+    // Treat true and "true" as equiv
+    const matchIsTrue = match === true || match === 'true';
+    if (value === true || value === 'true') {
+        return matchIsTrue;
     }
-    return value === match;
+    if (matchIsTrue) {
+        return false;
+    }
+
+    // Treat false and "false" as equiv
+    const matchIsFalse = match === false || match === 'false';
+    if (value === false || value === 'false') {
+        return matchIsFalse;
+    }
+    if (matchIsFalse) {
+        return false;
+    }
+
+    // After this point, we'll only accept string/numeric values for comparison
+    if (
+        (typeof value !== 'number' && typeof value !== 'string') ||
+        (typeof match !== 'number' && typeof match !== 'string')
+    ) {
+        return false;
+    }
+
+    // Treat numerical strings as numbers
+    const numValue = Number(value);
+    const numMatch = Number(match);
+    if (Number.isNaN(numValue) || Number.isNaN(numMatch)) {
+        return false;
+    }
+    return numValue === numMatch;
 };
 
 const model : ReplaceVariable = {
     definition: {
-        handle: "arrayFindIndex",
-        usage: "arrayFindIndex[array, matcher, propertyPath?, exact?]",
+        handle: 'arrayFindIndex',
+        usage: 'arrayFindIndex[array, matcher, propertyPath?, exact?]',
         description: "Finds a matching element in the array and returns it's index, or null if the element is absent",
         examples: [
             {
@@ -47,8 +91,8 @@ const model : ReplaceVariable = {
                 description: 'Returns 0, the index of the object where "username"="alastor"'
             },
             {
-                usage: 'arrayFindIndex["[0,1,2,"1"]", 1, null, true]',
-                description: "Returns 3, the index of the text '1'"
+                usage: 'arrayFindIndex["[0,1,2,"1"]", "1", null, $true]',
+                description: 'Returns 3, the index of the text "1"'
             },
             {
                 usage: 'arrayFindIndex[rawArray, b]',
@@ -81,7 +125,7 @@ const model : ReplaceVariable = {
             return null;
         }
 
-        if (propertyPath == null || propertyPath === 'null' || propertyPath === "") {
+        if (propertyPath == null || propertyPath === 'null' || propertyPath === '') {
             const index = subject.findIndex(value => fuzzyMatch(value, matcher, exact === true || exact === 'true'));
             return index === -1 ? null : index;
         }
