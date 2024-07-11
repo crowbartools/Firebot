@@ -45,8 +45,14 @@ const model: EffectType<{
             logger.error(`Unable to shoutout channel. Twitch user ${effect.username} does not exist.`);
             return false;
         }
-
-        return await twitchApi.chat.sendShoutout(targetUserId);
+        const result = await twitchApi.chat.sendShoutout(targetUserId);
+        if (!result.success) {
+            global.renderWindow.webContents.send("chatUpdate", {
+                fbEvent: "ChatAlert",
+                message: result.error
+            });
+        }
+        return result.success;
     }
 };
 
