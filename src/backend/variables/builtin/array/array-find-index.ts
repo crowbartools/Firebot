@@ -139,11 +139,11 @@ const model : ReplaceVariable = {
         }
 
         if (propertyPath == null || propertyPath === 'null' || propertyPath === '') {
-            const index = subject.findIndex(value => fuzzyMatch(value, matcher, exact === true || exact === 'true'));
+            const index = subject.findIndex(value => fuzzyMatch(value, matcher, exact));
             return index === -1 ? null : index;
         }
 
-        const index = subject.findIndex(value => fuzzyMatch(getPropertyAtPath(value, propertyPath), matcher, exact === true || exact === 'true'));
+        const index = subject.findIndex(value => fuzzyMatch(getPropertyAtPath(value, propertyPath), matcher, exact));
         return index === -1 ? null : index;
     }
 };
