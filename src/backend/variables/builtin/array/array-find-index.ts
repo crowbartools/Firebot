@@ -22,15 +22,10 @@ const fuzzyMatch = (value: unknown, match: unknown, exact: boolean | string) : b
         return true;
     }
 
-    // An input is literal NaN
+    // An input is literal NaN; This deviates from IEEE as it treats NaNs as equiv
     if (Number.isNaN(value) || Number.isNaN(match)) {
         return Number.isNaN(value) && Number.isNaN(match);
     }
-
-
-    const ciValue = typeof value === 'string' ? value.toLowerCase() : value,
-        ciMatch = typeof match === 'string' ? match.toLowerCase() : match;
-
 
     // Exact match is required
     exact = typeof exact === 'string' ? exact.toLowerCase() : exact;
@@ -45,6 +40,17 @@ const fuzzyMatch = (value: unknown, match: unknown, exact: boolean | string) : b
     }
     if (matchIsNull) {
         return false;
+    }
+
+    // Make inputs case-insensitive for checks
+    const ciValue = typeof value === 'string' ? value.toLowerCase() : value;
+    const ciMatch = typeof match === 'string' ? match.toLowerCase() : match;
+
+    // falsy check
+    const valueIsFalsy = value == null || value === '' || value === false || ciValue === 'false';
+    const matchIsFalsy = match == null || match === '' || match === false || ciMatch === 'false';
+    if (valueIsFalsy && matchIsFalsy) {
+        return true;
     }
 
     // Treat true and "true" as equiv
