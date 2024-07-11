@@ -32,7 +32,7 @@ export const SetOBSBrowserSourceUrlEffectType: EffectType<{
             No sources found. {{ isObsConfigured ? "Is OBS running?" : "Have you configured the OBS integration?" }}
         </div>
     </eos-container>
-    <eos-container ng-if="browserSources != null && effect.browserSourceName != null" header="URL" style="margin-top: 10px;">
+    <eos-container ng-if="browserSources != null && effect.browserSourceName != null" header="URL" style="margin-top: 10px;" pad-top="true">
         <firebot-input model="effect.url"></firebot-input>
     </eos-container>
   `,

@@ -32,7 +32,7 @@ export const SetOBSSourceTextEffectType: EffectType<{
             No sources found. {{ isObsConfigured ? "Is OBS running?" : "Have you configured the OBS integration?" }}
         </div>
     </eos-container>
-    <eos-container ng-if="textSources != null && effect.textSourceName != null" header="Text" style="margin-top: 10px;">
+    <eos-container ng-if="textSources != null && effect.textSourceName != null" header="Text" style="margin-top: 10px;" pad-top="true">
         <label class="control-fb control--checkbox">Use file as text source
             <input type="checkbox" ng-click="toggleSource()" ng-checked="effect.textSource === 'file'"  aria-label="..." >
             <div class="control__indicator"></div>
