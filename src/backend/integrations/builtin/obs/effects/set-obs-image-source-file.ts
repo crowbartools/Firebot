@@ -33,7 +33,7 @@ export const SetOBSImageSourceFileEffectType: EffectType<{
         </div>
     </eos-container>
 
-    <eos-container ng-if="imageSources != null && effect.imageSourceName != null" header="File" style="margin-top: 10px;">
+    <eos-container ng-if="imageSources != null && effect.imageSourceName != null" header="File" style="margin-top: 10px;" pad-top="true">
         <file-chooser model="effect.file" options="{ filters: [ {name: 'OBS-Supported Image Files', extensions: ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'tga', 'jxr', 'psd', 'webp']}, {name: 'All Files', extensions: ['*']} ]}"></file-chooser>
     </eos-container>
   `,
