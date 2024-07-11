@@ -34,7 +34,7 @@ export const SetOBSColorSourceColorEffectType: EffectType<{
         </div>
     </eos-container>
 
-    <eos-container ng-if="colorSources != null && effect.colorSourceName != null" header="Color" style="margin-top: 10px;">
+    <eos-container ng-if="colorSources != null && effect.colorSourceName != null" header="Color" style="margin-top: 10px;" pad-top="true">
         <firebot-input model="effect.color" placeholder-text="Format: #0066FF or #FF336699"></firebot-input>
     </eos-container>
   `,
