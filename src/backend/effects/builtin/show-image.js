@@ -58,7 +58,7 @@ const showImage = {
             <file-chooser model="effect.folder" options="{ directoryOnly: true, filters: [], title: 'Select Image Folder'}"></file-chooser>
         </div>
         <div ng-if="effect.imageType === 'local'" style="display: flex;flex-direction: row;align-items: center;">
-            <file-chooser model="effect.file" options="{ filters: [ {name: 'Image', extensions: [ 'bmp', 'gif', 'jpg', 'jpeg', 'png', 'apng', 'svg', 'webp' ]} ]}"></file-chooser>
+            <file-chooser model="effect.file" options="{ filters: [{ name: 'Image', extensions: [ 'bmp', 'gif', 'jpg', 'jpeg', 'png', 'apng', 'svg', 'webp' ]}, { name: 'All Files', extensions: ['*']} ]}"></file-chooser>
         </div>
         <div ng-if="effect.imageType === 'url'">
             <input type="text" class="form-control" ng-model="effect.url" placeholder="Enter url" replace-variables>
