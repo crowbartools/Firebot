@@ -264,20 +264,21 @@ class ViewerDatabase extends EventEmitter {
         }
     }
 
-    async getAllUsernamesWithIds(): Promise<{ id: string; username: string; }[]> {
+    async getAllUsernamesWithIds(): Promise<{ id: string; username: string; displayName: string; }[]> {
         if (this.isViewerDBOn() !== true) {
             return [];
         }
 
         const projectionObj = {
-            displayName: 1
+            displayName: 1,
+            username: 1
         };
 
         try {
             const viewers = await this._db.findAsync({ twitch: true })
                 .projection(projectionObj);
 
-            return viewers?.map(u => ({ id: u._id, username: u.displayName })) ?? [];
+            return viewers?.map(u => ({ id: u._id, username: u.username, displayName: u.displayName })) ?? [];
         } catch (error) {
             logger.error("Error getting all viewers: ", error);
             return [];
