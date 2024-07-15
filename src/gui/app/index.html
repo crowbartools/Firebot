@@ -725,17 +725,30 @@
                 <h4 class="modal-title" style="display:inline;">{{isAddMode ? "Add New Effect" : "Edit Effect"}}</h4>
 
                 <div class="flex-row acenter jspacebetween">
-                    <div class="test-effects-btn clickable" uib-tooltip="Test Effect" ng-hide="effect == null || effect.type === 'Nothing'" aria-label="Test Effect">
-                        <i class="far fa-play-circle" style="cursor: pointer;" ng-click="runEffect()"></i>
-                    </div>
-                    <div
-                      uib-dropdown
-                      uib-dropdown-toggle
-                      context-menu="getOverflowMenu()"
-                      context-menu-on="click"
-                      context-menu-class="effect-overflow-menu" aria-label="Open Effect Menu"
+                  <div
+                        class="test-effects-btn clickable"
+                        uib-tooltip="Test Effect" 
+                        ng-hide="effect == null || effect.type === 'Nothing'" 
+                        ng-click="runEffect()" 
+                        aria-label="Test Effect" 
+                        role="button"
                     >
-                        <span class="noselect pointer effects-actions-btn" style="font-size: 31px"><i class="fal fa-ellipsis-v"></i></span>
+                        <i class="far fa-play-circle"></i>
+                    </div> 
+                    <div>
+                        <a href role="button"
+                            aria-label="Open effect menu"
+                            class="effects-actions-btn"
+                            uib-tooltip="Open effect menu"
+                            uib-dropdown-menu
+                            context-menu="getOverflowMenu()"
+                            context-menu-on="click"
+                            context-menu-class="effect-overflow-menu"
+                            tooltip-append-to-body="true"
+                            style="font-size: 31px"
+                        >
+                          <i class="fal fa-ellipsis-v"></i>
+                        </a>
                     </div>
                 </div>
             </div>
