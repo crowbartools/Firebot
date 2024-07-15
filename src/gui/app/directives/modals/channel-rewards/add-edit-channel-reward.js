@@ -235,7 +235,6 @@
 
                     <div ng-if="!$ctrl.reward.twitchData.shouldRedemptionsSkipRequestQueue">
                         <setting-container header="When Redeemed" collapsed="false">
-                            <p>These effects are triggered when the reward is redeemed.</p>
                             <div class="mt-10" ng-if="$ctrl.reward.manageable">
                                 <h3 class="mb-2">
                                     Restrictions
@@ -267,8 +266,6 @@
                         </setting-container>
 
                         <setting-container header="When Approved" collapsed="true" pad-top="true">
-                            <p>These effects are triggered when the reward is approved.</p>
-
                             <effect-list
                                 effects="$ctrl.reward.effectsFulfilled"
                                 trigger="channel_reward"
@@ -278,8 +275,6 @@
                         </setting-container>
 
                         <setting-container header="When Rejected" collapsed="true" pad-top="true">
-                            <p>These effects are triggered when the reward is rejected.</p>
-
                             <effect-list
                                 effects="$ctrl.reward.effectsCanceled"
                                 trigger="channel_reward"
