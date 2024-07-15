@@ -968,9 +968,7 @@ export async function stopVirtualCam(): Promise<void> {
     }
 }
 
-export function isConnected(): boolean {
-    return connected;
-}
+export const isConnected = (): boolean => connected;
 
 export async function isStreaming(): Promise<boolean> {
     let isRunning = false;
