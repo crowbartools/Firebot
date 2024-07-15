@@ -57,12 +57,7 @@ const effectDefinitions = [
         id: "RUN_COMMAND",
         v5Id: null,
         name: "Run Command",
-        triggers: [
-            Trigger.CUSTOM_SCRIPT,
-            Trigger.API,
-            Trigger.MANUAL,
-            Trigger.HOTKEY
-        ],
+        triggers: [Trigger.CUSTOM_SCRIPT, Trigger.API, Trigger.MANUAL, Trigger.HOTKEY],
         dependencies: [],
         description: "Run a command via another trigger"
     },
@@ -81,14 +76,6 @@ const effectDefinitions = [
         triggers: ALL_TRIGGERS,
         dependencies: [Dependency.CHAT],
         description: "Roll dice in chat"
-    },
-    {
-        id: "GAME_CONTROL",
-        v5Id: "firebot:controlemulation",
-        name: "Game Control",
-        triggers: ALL_TRIGGERS,
-        dependencies: [],
-        description: "Emulate keyboard and mouse clicks"
     },
     {
         id: "HTML",
@@ -128,8 +115,7 @@ const effectDefinitions = [
         name: "Effect Group",
         triggers: ALL_TRIGGERS,
         dependencies: [],
-        description:
-      "Group multiple effects to be treated as one (good for Random Effect use)"
+        description: "Group multiple effects to be treated as one (good for Random Effect use)"
     },
     {
         id: "SHOW_IMAGE",
@@ -199,7 +185,7 @@ const effectDefinitions = [
 
 function getEffects(triggerType) {
     // filter effects list to given triggerType
-    const filteredEffects = effectDefinitions.filter(e => {
+    const filteredEffects = effectDefinitions.filter((e) => {
         if (triggerType != null) {
             return e.triggers[triggerType] != null && e.triggers[triggerType] !== false;
         }
@@ -211,14 +197,14 @@ function getEffects(triggerType) {
 function generateEffectObjects(triggerType, triggerMeta, useV5Ids = false) {
     const effectsObject = {};
     const filteredEffects = getEffects(triggerType, triggerMeta);
-    filteredEffects.forEach(e => {
+    filteredEffects.forEach((e) => {
         effectsObject[e.id] = useV5Ids ? e.v5Id : e.name;
     });
     return effectsObject;
 }
 
 function getEffectByName(effectName) {
-    const effect = effectDefinitions.filter(e => e.name === effectName);
+    const effect = effectDefinitions.filter((e) => e.name === effectName);
     if (effect.length < 1) {
         return null;
     }
@@ -226,7 +212,7 @@ function getEffectByName(effectName) {
 }
 
 function getEffectById(effectId) {
-    const effect = effectDefinitions.filter(e => e.id === effectId);
+    const effect = effectDefinitions.filter((e) => e.id === effectId);
     if (effect.length < 1) {
         return null;
     }
@@ -265,7 +251,7 @@ exports.getEffectByName = getEffectByName;
 exports.getDependenciesForEffect = getDependenciesForEffect;
 exports.getEffectById = getEffectById;
 
-exports.effectCanBeTriggered = function(effectName, triggerType) {
+exports.effectCanBeTriggered = function (effectName, triggerType) {
     const triggerTypes = getTriggerTypesForEffect(effectName);
     if (triggerTypes == null) {
         return false;
@@ -276,18 +262,16 @@ exports.effectCanBeTriggered = function(effectName, triggerType) {
 
 exports.getEffectDictionary = generateEffectObjects;
 
-exports.getAllEffectTypes = function(triggerType, triggerMeta) {
+exports.getAllEffectTypes = function (triggerType, triggerMeta) {
     // if triggerType is null, all effects are returned
     const effects = getEffects(triggerType, triggerMeta);
 
     //map to just an array of names and return
-    return effects.map(e => e.name);
+    return effects.map((e) => e.name);
 };
 
-exports.getEffect = function(effectIdOrName) {
-    const effects = effectDefinitions.filter(
-        e => e.id === effectIdOrName || e.name === effectIdOrName
-    );
+exports.getEffect = function (effectIdOrName) {
+    const effects = effectDefinitions.filter((e) => e.id === effectIdOrName || e.name === effectIdOrName);
 
     if (effects.length < 1) {
         return null;

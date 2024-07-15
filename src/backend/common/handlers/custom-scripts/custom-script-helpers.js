@@ -2,29 +2,26 @@
 const twitchChat = require("../../../chat/twitch-chat");
 const twitchApi = require("../../../twitch-api/api");
 const profileManager = require("../../profile-manager");
-const settings = require('../../settings-access').settings;
+const settings = require("../../settings-access").settings;
 const path = require("path");
 const logger = require("../../../logwrapper");
-const {
-    app
-} = require('electron');
+const { app } = require("electron");
 
-const accountAccess = require('../../account-access');
+const accountAccess = require("../../account-access");
 
 //v4 effect types are keys, supported v5 types are values
 const v4EffectTypeMap = {
     "API Button": "firebot:api",
-    "Celebration": "firebot:celebration",
+    Celebration: "firebot:celebration",
     "Change Group": null,
     "Change Scene": null,
-    "Chat": "firebot:chat",
-    "Cooldown": null,
+    Chat: "firebot:chat",
+    Cooldown: null,
     "Custom Script": "firebot:customscript",
     "Run Command": null,
-    "Delay": "firebot:delay",
-    "Dice": "firebot:dice",
-    "Game Control": "firebot:controlemulation",
-    "HTML": "firebot:html",
+    Delay: "firebot:delay",
+    Dice: "firebot:dice",
+    HTML: "firebot:html",
     "Show Event": null,
     "Play Sound": "firebot:playsound",
     "Random Effect": "firebot:randomeffect",
@@ -62,26 +59,26 @@ function buildModules(scriptManifest) {
 
     const customRequest = request.defaults({
         headers: {
-            'User-Agent': `Firebot/${appVersion};CustomScript/${scriptManifest.name}/${scriptManifest.version};User/${streamerName}`
+            "User-Agent": `Firebot/${appVersion};CustomScript/${scriptManifest.name}/${scriptManifest.version};User/${streamerName}`
         }
     });
 
     // safe guard: enforce our user-agent
     customRequest.init = function init(options) {
         if (options != null && options.headers != null) {
-            delete options.headers['User-Agent'];
+            delete options.headers["User-Agent"];
         }
         customRequest.prototype.init.call(this, options);
     };
 
     return {
         request: customRequest,
-        spawn: require('child_process').spawn,
-        childProcess: require('child_process'),
-        fs: require('fs-extra'),
-        path: require('path'),
-        JsonDb: require('node-json-db').JsonDB,
-        moment: require('moment'),
+        spawn: require("child_process").spawn,
+        childProcess: require("child_process"),
+        fs: require("fs-extra"),
+        path: require("path"),
+        JsonDb: require("node-json-db").JsonDB,
+        moment: require("moment"),
         howler: require("howler"),
         logger: logger,
         // thin chat shim for basic backwards compatibility
@@ -134,7 +131,6 @@ function buildModules(scriptManifest) {
     };
 }
 
-
 function buildRunRequest(scriptManifest, params, trigger) {
     return {
         modules: buildModules(scriptManifest),
@@ -164,9 +160,7 @@ function mapParameters(parameterData) {
         Object.keys(parameterData).forEach((k) => {
             const param = parameterData[k];
             if (param != null) {
-                simpleParams[k] = param.value == null && param.value !== ""
-                    ? param.default
-                    : param.value;
+                simpleParams[k] = param.value == null && param.value !== "" ? param.default : param.value;
             }
         });
     }

@@ -44,7 +44,6 @@
   "dependencies": {
     "@aws-sdk/client-polly": "^3.26.0",
     "@crowbartools/firebot-custom-scripts-types": "^5.53.2-6",
-    "@nut-tree-fork/nut-js": "^4.2.1",
     "@seald-io/nedb": "^4.0.4",
     "@twurple/api": "^7.1.0",
     "@twurple/auth": "^7.1.0",

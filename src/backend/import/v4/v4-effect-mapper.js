@@ -9,17 +9,16 @@ const uuid = require("uuid/v1");
 //v4 effect types are keys, supported v5 types are values
 const v4EffectTypeMap = {
     "API Button": "firebot:api",
-    "Celebration": "firebot:celebration",
+    Celebration: "firebot:celebration",
     "Change Group": null, // v5 is fundamentally different here, cant import
     "Change Scene": null, // v5 is fundamentally different here, cant import
-    "Chat": "firebot:chat",
-    "Cooldown": null, // vastly different than v5 equivalent, extremely difficult to import correctly
+    Chat: "firebot:chat",
+    Cooldown: null, // vastly different than v5 equivalent, extremely difficult to import correctly
     "Custom Script": "firebot:customscript",
     "Run Command": null, // was only available to custom scripts in v4, don't think it will even show up
-    "Delay": "firebot:delay",
-    "Dice": "firebot:dice",
-    "Game Control": "firebot:controlemulation",
-    "HTML": "firebot:html",
+    Delay: "firebot:delay",
+    Dice: "firebot:dice",
+    HTML: "firebot:html",
     "Show Event": null, // going to deprecate the v5 equivalent so not going to bother importing
     "Play Sound": "firebot:playsound",
     "Random Effect": "firebot:randomeffect",
@@ -42,7 +41,7 @@ const v4EffectTypeMap = {
 const v4IncompatibilityReasonMap = {
     "Change Group": "V5 handles groups/scenes fundamentally different",
     "Change Scene": "V5 handles groups/scenes fundamentally different",
-    "Cooldown": "V5 handles control cooldowns fundamentally different",
+    Cooldown: "V5 handles control cooldowns fundamentally different",
     "Run Command": "Impossible to import effect",
     "Show Event": "Effect is no longer supported",
     "Clear Effects": "Effect is fundamentally different in V5",
@@ -74,7 +73,7 @@ function updateReplaceVariables(effect) {
     return effect;
 }
 
-function mapV4Effect (v4Effect, triggerData, incompatibilityWarnings) {
+function mapV4Effect(v4Effect, triggerData, incompatibilityWarnings) {
     if (v4Effect == null || v4Effect.type == null) {
         throw new IncompatibilityError("v4 effect isn't formatted properly.");
     }
@@ -96,10 +95,9 @@ function mapV4Effect (v4Effect, triggerData, incompatibilityWarnings) {
     }
 
     if (v5Effect.type === "firebot:randomeffect" || v5Effect.type === "firebot:run-effect-list") {
-
         const mapResult = exports.mapV4EffectList(v5Effect.effectList, triggerData);
 
-        mapResult.incompatibilityWarnings.forEach(iw => incompatibilityWarnings.push(iw));
+        mapResult.incompatibilityWarnings.forEach((iw) => incompatibilityWarnings.push(iw));
 
         v5Effect.effectList = mapResult.effects;
     }
@@ -113,7 +111,7 @@ exports.mapV4EffectList = (v4EffectList, triggerData) => {
     const incompatibilityWarnings = [];
 
     if (v4EffectList == null) {
-        return { effects: null, incompatibilityWarnings: incompatibilityWarnings};
+        return { effects: null, incompatibilityWarnings: incompatibilityWarnings };
     }
 
     // v4 effect lists can be objects or arrays
