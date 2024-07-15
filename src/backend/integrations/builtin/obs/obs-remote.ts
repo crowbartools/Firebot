@@ -968,6 +968,10 @@ export async function stopVirtualCam(): Promise<void> {
     }
 }
 
+export function isConnected(): boolean {
+    return connected;
+}
+
 export async function isStreaming(): Promise<boolean> {
     let isRunning = false;
     if (!connected) {
