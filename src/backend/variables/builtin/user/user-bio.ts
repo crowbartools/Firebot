@@ -5,16 +5,16 @@ const twitchApi = require("../../../twitch-api/api");
 
 const model : ReplaceVariable = {
     definition: {
-        handle: "userDescription",
-        usage: "userDescription",
-        description: "Gets the description of the associated user (Ie who triggered command, pressed button, etc).",
+        handle: "userBio",
+        usage: "userBio",
+        description: "Gets the description of the associated user (ie who triggered command, pressed button, etc).",
         examples: [
             {
-                usage: "userDescription[$target]",
+                usage: "userBio[$target]",
                 description: "When in a command, gets the the description of the target user."
             },
             {
-                usage: "userDescription[ebiggz]",
+                usage: "userBio[ebiggz]",
                 description: "Gets the description of a specific user."
             }
         ],
