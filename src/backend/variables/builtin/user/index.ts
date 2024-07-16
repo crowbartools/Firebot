@@ -6,6 +6,7 @@ import randomViewer from './random-viewer';
 import randomActiveViewer from './random-active-viewer';
 import userAvatarUrl from './user-avatar-url';
 import userBadgeUrl from './user-badge-urls';
+import userBio from './user-bio';
 import userDescription from './user-description';
 import userDisplayName from './user-display-name';
 import userExists from './user-exists';
@@ -29,6 +30,7 @@ export default [
     randomActiveViewer,
     userAvatarUrl,
     userBadgeUrl,
+    userBio,
     userDescription,
     userDisplayName,
     userExists,
