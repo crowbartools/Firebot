@@ -165,7 +165,6 @@ authManager.on("auth-success", async (authData) => {
         const accountObject: FirebotAccount = {
             username: userData.login,
             displayName: userData.display_name,
-            description: userData.description,
             channelId: userData.id,
             userId: userData.id,
             avatar: userData.profile_image_url,
