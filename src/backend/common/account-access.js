@@ -34,13 +34,16 @@ function AccountCache(streamer, bot) {
     this.bot = bot;
 }
 
-const cache = new AccountCache({
-    username: "Streamer",
-    loggedIn: false
-}, {
-    username: "Bot",
-    loggedIn: false
-});
+const cache = new AccountCache(
+    {
+        username: "Streamer",
+        loggedIn: false
+    },
+    {
+        username: "Bot",
+        loggedIn: false
+    }
+);
 
 function sendAccountUpdate() {
     frontendCommunicator.send("accountUpdate", cache);
