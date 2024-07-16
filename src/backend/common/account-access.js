@@ -13,6 +13,7 @@ const accountEvents = new EventEmitter();
  * @typedef {Object} FirebotAccount
  * @property {string} username - The account username
  * @property {string} displayName - The users displayName
+ * @property {string} description - The users description
  * @property {string} userId - The user id for the account
  * @property {number} channelId - DEPRECATED: The channel id for the account (same as userId)
  * @property {string} avatar - The avatar url for the account
@@ -33,16 +34,13 @@ function AccountCache(streamer, bot) {
     this.bot = bot;
 }
 
-const cache = new AccountCache(
-    {
-        username: "Streamer",
-        loggedIn: false
-    },
-    {
-        username: "Bot",
-        loggedIn: false
-    }
-);
+const cache = new AccountCache({
+    username: "Streamer",
+    loggedIn: false
+}, {
+    username: "Bot",
+    loggedIn: false
+});
 
 function sendAccountUpdate() {
     frontendCommunicator.send("accountUpdate", cache);
@@ -173,7 +171,9 @@ function updateAccount(accountType, account, emitUpdate = true) {
     const otherAccount = accountType === "streamer" ? cache.bot : cache.streamer;
     if (otherAccount != null && otherAccount.loggedIn) {
         if (otherAccount.userId === account.userId) {
-            renderWindow.webContents.send("error", "You cannot sign into the same user for both Streamer and Bot accounts. The bot account should be a separate Twitch user. If you don't have a separate user, simply don't use the Bot account feature as it's not required.");
+            renderWindow.webContents.send("error",
+                "You cannot sign into the same user for both Streamer and Bot accounts. The bot account should be a separate Twitch user. If you don't have a separate user, simply don't use the Bot account feature as it's not required."
+                );
             return;
         }
     }
