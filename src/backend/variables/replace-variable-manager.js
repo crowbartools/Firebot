@@ -209,7 +209,7 @@ manager.registerLookupHandler("#", (name) => ({
 }));
 
 // Macro shorthand
-manager.registerLookupHandler("=", (name) => ({
+manager.registerLookupHandler("%", (name) => ({
     evaluator: (trigger, ...macroArgs) => {
         const macro = macroManager.getMacroByName(name);
         if (macro != null) {
