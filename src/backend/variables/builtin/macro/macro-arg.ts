@@ -9,7 +9,7 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.ALL]
     },
     evaluator(trigger: Trigger, argIndex: number | string) {
-        let idx = Number(argIndex);
+        const idx = Number(argIndex);
         if (!Number.isInteger(idx) || idx < 0) {
             return;
         }
