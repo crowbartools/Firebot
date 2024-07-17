@@ -60,6 +60,7 @@
             service.showAddOrEditRewardModal = (reward) => {
                 utilityService.showModal({
                     component: "addOrEditChannelReward",
+                    windowClass: "no-padding-modal",
                     resolveObj: {
                         reward: () => reward
                     },
