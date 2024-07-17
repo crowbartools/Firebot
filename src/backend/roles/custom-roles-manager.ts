@@ -94,6 +94,10 @@ class CustomRolesManager {
         const failedMigration: string[] = [];
 
         for (const viewer of legacyRole.viewers) {
+            if (!viewer?.length) {
+                continue;
+            }
+
             if (usernameRegex.test(viewer) === true) {
                 viewersToMigrate.push(viewer.toLowerCase());
             } else {

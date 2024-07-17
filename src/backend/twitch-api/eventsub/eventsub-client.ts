@@ -100,7 +100,35 @@ class TwitchEventSubClient {
         });
         this._subscriptions.push(customRewardRedemptionSubscription);
 
-        const customRewardRedemptionUpdateSubscription = this._eventSubListener.onChannelRedemptionUpdate(streamer.userId, async () => {
+        const customRewardRedemptionUpdateSubscription = this._eventSubListener.onChannelRedemptionUpdate(streamer.userId, async (event) => {
+            const reward = await twitchApi.channelRewards.getCustomChannelReward(event.rewardId);
+            let imageUrl = "";
+
+            if (reward && reward.defaultImage) {
+                const images = reward.defaultImage;
+                if (images.url4x) {
+                    imageUrl = images.url4x;
+                } else if (images.url2x) {
+                    imageUrl = images.url2x;
+                } else if (images.url1x) {
+                    imageUrl = images.url1x;
+                }
+            }
+
+            twitchEventsHandler.rewardRedemption.handleRewardUpdated(
+                event.id,
+                event.status,
+                event.input,
+                event.userId,
+                event.userName,
+                event.userDisplayName,
+                event.rewardId,
+                event.rewardTitle,
+                event.rewardPrompt,
+                event.rewardCost,
+                imageUrl
+            );
+
             rewardManager.refreshChannelRewardRedemptions();
         });
         this._subscriptions.push(customRewardRedemptionUpdateSubscription);
@@ -439,6 +467,32 @@ class TwitchEventSubClient {
             chatRolesManager.removeModeratorFromModeratorsList(event.userId);
         });
         this._subscriptions.push(channelModeratorRemoveSubscription);
+
+        // Ad break start/end
+        const channelAdBreakBeginSubscription = this._eventSubListener.onChannelAdBreakBegin(streamer.userId, (event) => {
+            twitchEventsHandler.ad.triggerAdBreakStart(
+                event.requesterName,
+                event.requesterId,
+                event.requesterDisplayName,
+                event.startDate,
+                event.durationSeconds,
+                event.isAutomatic
+            );
+
+            const adBreakEndTime = new Date(event.startDate.getTime());
+            adBreakEndTime.setSeconds(event.startDate.getSeconds() + event.durationSeconds);
+
+            setTimeout(() => {
+                twitchEventsHandler.ad.triggerAdBreakEnd(
+                    event.requesterName,
+                    event.requesterId,
+                    event.requesterDisplayName,
+                    event.durationSeconds,
+                    event.isAutomatic
+                );
+            }, adBreakEndTime.getTime() - (new Date()).getTime());
+        });
+        this._subscriptions.push(channelAdBreakBeginSubscription);
     }
 
     async createClient(): Promise<void> {

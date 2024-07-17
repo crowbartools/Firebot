@@ -1,10 +1,12 @@
 import accountCreationDate from './account-creation-date';
 import chatMessages from './chat-messages';
+import isUserInChat from './is-user-in-chat';
 import pronouns from './pronouns';
 import randomViewer from './random-viewer';
 import randomActiveViewer from './random-active-viewer';
 import userAvatarUrl from './user-avatar-url';
 import userBadgeUrl from './user-badge-urls';
+import userBio from './user-bio';
 import userDisplayName from './user-display-name';
 import userExists from './user-exists';
 import userId from './user-id';
@@ -21,11 +23,13 @@ import roleVariables from './roles';
 export default [
     accountCreationDate,
     chatMessages,
+    isUserInChat,
     pronouns,
     randomViewer,
     randomActiveViewer,
     userAvatarUrl,
     userBadgeUrl,
+    userBio,
     userDisplayName,
     userExists,
     userId,

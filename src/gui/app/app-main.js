@@ -463,6 +463,12 @@
         };
     });
 
+    app.filter("dynamicFilter", function($filter) {
+        return function(items, filterName, ...args) {
+            return $filter(filterName ?? "filter")(items, ...args);
+        };
+    });
+
     // This adds a filter that we can use for searching command triggers
     app.filter("triggerSearch", function() {
         return function(commands, query) {

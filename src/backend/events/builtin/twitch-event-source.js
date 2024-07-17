@@ -437,6 +437,56 @@ module.exports = {
             }
         },
         {
+            id: "channel-reward-redemption-fulfilled",
+            name: "Channel Reward Redemption Approved",
+            description: "When a CUSTOM channel reward redemption is Completed/Approved",
+            cached: false,
+            cacheMetaKey: "username",
+            cacheTtlInSecs: 1,
+            queued: false,
+            manualMetadata: {
+                username: "firebot",
+                userDisplayName: "Firebot",
+                userId: "",
+                rewardName: "Test Reward",
+                rewardImage: "https://static-cdn.jtvnw.net/automatic-reward-images/highlight-1.png",
+                rewardCost: 200,
+                messageText: "Test message"
+            },
+            activityFeed: {
+                icon: "fad fa-circle",
+                getMessage: (eventData) => {
+                    const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
+                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""}**'s redemption of **${eventData.rewardName}** was approved. ${eventData.messageText && !!eventData.messageText.length ? `*${eventData.messageText}*` : ''}`;
+                }
+            }
+        },
+        {
+            id: "channel-reward-redemption-canceled",
+            name: "Channel Reward Redemption Rejected",
+            description: "When a CUSTOM channel reward redemption is Rejected/Refunded",
+            cached: false,
+            cacheMetaKey: "username",
+            cacheTtlInSecs: 1,
+            queued: false,
+            manualMetadata: {
+                username: "firebot",
+                userDisplayName: "Firebot",
+                userId: "",
+                rewardName: "Test Reward",
+                rewardImage: "https://static-cdn.jtvnw.net/automatic-reward-images/highlight-1.png",
+                rewardCost: 200,
+                messageText: "Test message"
+            },
+            activityFeed: {
+                icon: "fad fa-circle",
+                getMessage: (eventData) => {
+                    const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
+                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""}**'s redemption of **${eventData.rewardName}** was rejected. ${eventData.messageText && !!eventData.messageText.length ? `*${eventData.messageText}*` : ''}`;
+                }
+            }
+        },
+        {
             id: "whisper",
             name: "Whisper",
             description: "When someone sends you or your bot account a whisper.",
@@ -919,6 +969,77 @@ module.exports = {
                 icon: "fad fa-text",
                 getMessage: (eventData) => {
                     return `Twitch stream title changed to **${eventData.title}**`;
+                }
+            }
+        },
+        {
+            id: "ad-break-upcoming",
+            name: "Scheduled Ad Break Starting Soon",
+            description: "When a scheduled ad break will be starting soon on your channel.",
+            cached: false,
+            manualMetadata: {
+                adBreakDuration: 60,
+                secondsUntilNextAdBreak: 300
+            },
+            activityFeed: {
+                icon: "fad fa-ad",
+                getMessage: (eventData) => {
+                    const mins = Math.floor(eventData.adBreakDuration / 60);
+                    const remainingSecs = eventData.adBreakDuration % 60;
+
+                    const friendlyDuration = mins > 0
+                        ? `${mins}m${remainingSecs > 0 ? ` ${remainingSecs}s` : ""}`
+                        : `${eventData.adBreakDuration}s`;
+
+                    const minutesUntilNextAdBreak = Math.round(eventData.secondsUntilNextAdBreak / 60);
+
+                    return `**${friendlyDuration}** scheduled ad break starting in about **${minutesUntilNextAdBreak}** minute${minutesUntilNextAdBreak !== 1 ? "s" : ""}`;
+                }
+            }
+        },
+        {
+            id: "ad-break-start",
+            name: "Ad Break Started",
+            description: "When an ad break starts on your channel.",
+            cached: false,
+            manualMetadata: {
+                adBreakDuration: 60,
+                isAdBreakScheduled: true
+            },
+            activityFeed: {
+                icon: "fad fa-ad",
+                getMessage: (eventData) => {
+                    const mins = Math.floor(eventData.adBreakDuration / 60);
+                    const remainingSecs = eventData.adBreakDuration % 60;
+
+                    const friendlyDuration = mins > 0
+                        ? `${mins}m${remainingSecs > 0 ? ` ${remainingSecs}s` : ""}`
+                        : `${eventData.adBreakDuration}s`;
+
+                    return `**${friendlyDuration}** **${eventData.isAdBreakScheduled ? "scheduled" : "manual"}** ad break started`;
+                }
+            }
+        },
+        {
+            id: "ad-break-end",
+            name: "Ad Break Ended",
+            description: "When an ad break ends on your channel.",
+            cached: false,
+            manualMetadata: {
+                adBreakDuration: 60,
+                isAdBreakScheduled: true
+            },
+            activityFeed: {
+                icon: "fad fa-ad",
+                getMessage: (eventData) => {
+                    const mins = Math.floor(eventData.adBreakDuration / 60);
+                    const remainingSecs = eventData.adBreakDuration % 60;
+
+                    const friendlyDuration = mins > 0
+                        ? `${mins}m${remainingSecs > 0 ? ` ${remainingSecs}s` : ""}`
+                        : `${eventData.adBreakDuration}s`;
+
+                    return `**${friendlyDuration}** **${eventData.isAdBreakScheduled ? "scheduled" : "manual"}** ad break ended`;
                 }
             }
         }

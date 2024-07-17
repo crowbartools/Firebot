@@ -67,6 +67,10 @@ function createStreamPreviewWindow() {
         webPreferences: {},
         icon: path.join(__dirname, "../../../gui/images/logo_transparent_2.png")
     });
+    streamPreview.setBounds({
+        height: streamPreviewWindowState.height || 480,
+        width: streamPreviewWindowState.width || 815
+    }, false);
     streamPreview.setMenu(null);
 
     const view = new BrowserView();
@@ -164,6 +168,10 @@ async function createMainWindow() {
             preload: path.join(__dirname, './preload.js')
         }
     });
+    mainWindow.setBounds({
+        height: mainWindowState.height || 720,
+        width: mainWindowState.width || 1280
+    }, false);
 
     mainWindow.webContents.setWindowOpenHandler(({ frameName, url }) => {
         if (frameName === 'modal') {
@@ -435,7 +443,7 @@ async function createMainWindow() {
     );
 
     // wait for the main window's content to load, then show it
-    mainWindow.webContents.on("did-finish-load", () => {
+    mainWindow.webContents.on("did-finish-load", async () => {
 
 
         createTray(mainWindow);
@@ -449,7 +457,7 @@ async function createMainWindow() {
         }
 
         const startupScriptsManager = require("../../common/handlers/custom-scripts/startup-scripts-manager");
-        startupScriptsManager.runStartupScripts();
+        await startupScriptsManager.runStartupScripts();
 
         const eventManager = require("../../events/EventManager");
         eventManager.triggerEvent("firebot", "firebot-started", {

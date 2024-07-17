@@ -482,6 +482,14 @@ label {
     border-color: transparent;
 }
 
+.fb-tabbed-page {
+    min-width: 500px;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
 // This is for pages that use tabbed navigation. IE: Commands
 .fb-tab-wrapper {
     background: $fb-tab-wrapper-bg;
@@ -680,4 +688,8 @@ a {
 code {
     color: #daf4fc;
     background-color: #334557;
+}
+
+.update-notes img {
+    max-width: 80%;
 }

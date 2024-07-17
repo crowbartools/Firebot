@@ -26,5 +26,6 @@
     ],
     "[typescript]": {
       "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-    }
+    },
+    "prettier.trailingComma": "none"
 }

@@ -197,7 +197,7 @@ class HttpServerManager extends EventEmitter {
         });
 
         try {
-            this.overlayServer = this.defaultHttpServer.listen(port, "0.0.0.0", () => {
+            this.overlayServer = this.defaultHttpServer.listen(port, ["0.0.0.0", "::"], () => {
                 this.isDefaultServerStarted = true;
 
                 this.serverInstances.push({
@@ -246,7 +246,7 @@ class HttpServerManager extends EventEmitter {
             }
 
             let newHttpServer = http.createServer(instance);
-            newHttpServer = newHttpServer.listen(port, "0.0.0.0");
+            newHttpServer = newHttpServer.listen(port, ["0.0.0.0", "::"]);
 
             this.serverInstances.push({
                 name: name,

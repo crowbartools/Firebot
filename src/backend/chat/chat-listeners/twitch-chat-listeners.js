@@ -107,7 +107,10 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
         if (firebotChatMessage.isFirstChat) {
             twitchEventsHandler.chatMessage.triggerFirstTimeChat(firebotChatMessage);
         }
-        await raidMessageChecker.sendMessageToCache(firebotChatMessage);
+        await raidMessageChecker.sendMessageToCache({
+            rawText: firebotChatMessage.rawText,
+            userId: firebotChatMessage.userId
+        });
     });
 
     const whisperHandler = async (_user, messageText, msg, accountType) => {
@@ -143,6 +146,8 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
         }
 
         frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
+
+        chatCommandHandler.handleChatMessage(firebotChatMessage);
 
         await activeUserHandler.addActiveUser(msg.userInfo, true);
 
