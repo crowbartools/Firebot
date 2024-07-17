@@ -90,10 +90,29 @@ class ReplaceVariableManager extends EventEmitter {
         this._registeredLookupHandlers.set(prefix, lookup);
     }
 
+    get _registeredVariableAndAliasHandlers() {
+        return Array.from(
+            this._registeredVariableHandlers
+                .entries()
+        )
+            .reduce((map, [mainHandle, varConfig]) => {
+                map.set(mainHandle, varConfig);
+                if (varConfig.definition.aliases) {
+                    varConfig.definition.aliases.forEach((alias) => {
+                        map.set(alias, {
+                            ...varConfig,
+                            handle: alias
+                        });
+                    });
+                }
+                return map;
+            }, new Map());
+    }
+
     evaluateText(input, metadata, trigger, onlyValidate) {
         if (input.includes('$')) {
             return expressionish({
-                handlers: this._registeredVariableHandlers,
+                handlers: this._registeredVariableAndAliasHandlers,
                 expression: input,
                 metadata,
                 trigger,
