@@ -12,8 +12,8 @@ export const CreateRecordChapter: EffectType<{
         categories: ["common"]
     },
     optionsTemplate: `
-    <eos-container header="Chapter" style="margin-top: 10px;">
-        <firebot-input input-title="Chapter Name" model="effect.chapterName"></firebot-input>
+    <eos-container header="Chapter">
+        <firebot-input input-title="Chapter Name" menu-position="under" model="effect.chapterName"></firebot-input>
     </eos-container>
     `,
     optionsValidator: (effect) => {

@@ -843,12 +843,10 @@ export async function createRecordChapter(chapterName: string) {
     } catch (error) {
         if (error.code === 501) {
             logger.error("Failed to create OBS Chapter Marker: Output Not Running");
+        } else if (error.code === 204) {
+            logger.error("Failed to create OBS Chapter Marker: Outdated OBS version");
         } else {
-            if (error.message != null) {
-                logger.error("Failed to create OBS Chapter Marker", error.message);
-            } else {
-                logger.error("Failed to create OBS Chapter Marker", error);
-            }
+            logger.error("Failed to create OBS Chapter Marker:", error.message ?? error);
         }
     }
 }
