@@ -373,7 +373,6 @@ async function maintainConnection(
             logger.info("Successfully connected to OBS.");
 
             connected = true;
-
             eventManager?.triggerEvent(OBS_EVENT_SOURCE_ID, OBS_CONNECTED_EVENT_ID, {});
 
             setupRemoteListeners();
