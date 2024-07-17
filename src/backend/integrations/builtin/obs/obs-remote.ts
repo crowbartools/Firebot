@@ -28,7 +28,9 @@ import {
     OBS_INPUT_AUDIO_BALANCE_CHANGED_EVENT_ID,
     OBS_INPUT_AUDIO_SYNC_OFFSET_CHANGED_EVENT_ID,
     OBS_INPUT_AUDIO_MONITOR_TYPE_CHANGED_EVENT_ID,
-    OBS_INPUT_AUDIO_TRACKS_CHANGED_EVENT_ID
+    OBS_INPUT_AUDIO_TRACKS_CHANGED_EVENT_ID,
+    OBS_CONNECTED_EVENT_ID,
+    OBS_DISCONNECTED_EVENT_ID
 } from "./constants";
 import logger from "../../../logwrapper";
 
@@ -372,13 +374,18 @@ async function maintainConnection(
 
             connected = true;
 
+            eventManager?.triggerEvent(OBS_EVENT_SOURCE_ID, OBS_CONNECTED_EVENT_ID, {});
+
             setupRemoteListeners();
 
             obs.on("ConnectionClosed", () => {
                 if (!connected) {
                     return;
                 }
+
                 connected = false;
+                eventManager?.triggerEvent(OBS_EVENT_SOURCE_ID, OBS_DISCONNECTED_EVENT_ID, {});
+
                 if (isForceClosing) {
                     return;
                 }
