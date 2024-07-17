@@ -10,7 +10,7 @@
                     <h4 class="modal-title">Edit Channel Reward</h4>
                 </div>
                 <div class="modal-body" style="padding-top: 15px;">
-                    <div ng-if="!$ctrl.reward.manageable" style="display: flex; flex-direction: column;">
+                    <div ng-if="!$ctrl.reward.manageable" style="display: flex; flex-direction: column; padding-left: 15px; padding-right: 15px;">
                         <div style="font-size:30px;margin: 0 auto;">{{$ctrl.reward.twitchData.title}}</div>
 
                         <div style="margin: 10px auto; padding: 12.5px; border-radius: 6px; display: inline-flex; flex-direction: column; align-items: center; justify-content: center;" ng-style="{background: $ctrl.reward.twitchData.backgroundColor}">
@@ -28,7 +28,7 @@
                             <p>You can then delete the old reward from your Twitch dashboard. You will also need to update any existing <strong>Update Channel Reward</strong> effects to reference the newly created reward.</p>
                         </collapsable-panel>
                     </div>
-                    <form ng-show="$ctrl.reward.manageable" name="rewardSettings">
+                    <form ng-show="$ctrl.reward.manageable" name="rewardSettings" style="padding-left: 15px; padding-right: 15px;">
                         <div class="form-group" ng-class="{'has-error': $ctrl.formFieldHasError('name')}">
                             <label for="name" class="control-label">Reward Name</label>
                             <input
@@ -95,8 +95,9 @@
 
                         <div class="form-group flex-row jspacebetween">
                             <div>
-                                <label class="control-label" style="margin:0;">Skip Reward Requests Queue</label>
+                                <label class="control-label" style="margin:0;">Skip Twitch Reward Requests Queue</label>
                                 <p class="help-block">If enabled, only future viewer requests will skip the queue for review.</p>
+                                <p class="help-block">Requests will immediately be approved by Twitch and cannot be refunded.</p>
                             </div>
                             <div>
                                 <toggle-button toggle-model="$ctrl.reward.twitchData.shouldRedemptionsSkipRequestQueue" auto-update-value="true" font-size="32"></toggle-button>
@@ -201,35 +202,86 @@
                         </div>
                     </form>
 
-                    <div class="mt-10" ng-if="$ctrl.reward.manageable">
-                        <h3 class="mb-2">
-                            Restrictions
-                            <span class="muted pl-1 text-xl" style="font-family: 'Quicksand';">(Permissions, currency costs, and more)</span>
-                        </h3>
-                        <restrictions-list
-                            restriction-data="$ctrl.reward.restrictionData"
-                            trigger="channel_reward"
-                            trigger-meta="{}"
-                        >
-                        </restrictions-list>
-                        <div
-                            class="ml-3.5"
-                            ng-if="!$ctrl.reward.twitchData.shouldRedemptionsSkipRequestQueue && $ctrl.reward.restrictionData.restrictions.length > 0"
-                        >
-                            <firebot-checkbox
-                                label="Automatically approve/reject redemptions based on restrictions outcome"
-                                model="$ctrl.reward.autoApproveRedemptions"
-                            />
+                    <div ng-if="$ctrl.reward.twitchData.shouldRedemptionsSkipRequestQueue" style="padding-left: 15px; padding-right: 15px;">
+                        <div class="mt-10" ng-if="$ctrl.reward.manageable">
+                            <h3 class="mb-2">
+                                Restrictions
+                                <span class="muted pl-1 text-xl" style="font-family: 'Quicksand';">(Permissions, currency costs, and more)</span>
+                            </h3>
+                            <restrictions-list
+                                restriction-data="$ctrl.reward.restrictionData"
+                                trigger="channel_reward"
+                                trigger-meta="{}"
+                            >
+                            </restrictions-list>
+                            <div
+                                class="ml-3.5"
+                                ng-if="!$ctrl.reward.twitchData.shouldRedemptionsSkipRequestQueue && $ctrl.reward.restrictionData.restrictions.length > 0"
+                            >
+                                <firebot-checkbox
+                                    label="Automatically approve/reject redemptions based on restrictions outcome"
+                                    model="$ctrl.reward.autoApproveRedemptions"
+                                />
+                            </div>
                         </div>
-                    </div>
 
-                    <div style="margin-top:15px;">
                         <effect-list
                             effects="$ctrl.reward.effects"
                             trigger="channel_reward"
                             trigger-meta="{ rootEffects: $ctrl.reward.effects }"
                             update="$ctrl.effectListUpdated(effects)"
                         ></effect-list>
+                    </div>
+
+                    <div ng-if="!$ctrl.reward.twitchData.shouldRedemptionsSkipRequestQueue">
+                        <setting-container header="When Redeemed" collapsed="false">
+                            <div class="mt-10" ng-if="$ctrl.reward.manageable">
+                                <h3 class="mb-2">
+                                    Restrictions
+                                    <span class="muted pl-1 text-xl" style="font-family: 'Quicksand';">(Permissions, currency costs, and more)</span>
+                                </h3>
+                                <restrictions-list
+                                    restriction-data="$ctrl.reward.restrictionData"
+                                    trigger="channel_reward"
+                                    trigger-meta="{}"
+                                >
+                                </restrictions-list>
+                                <div
+                                    class="ml-3.5"
+                                    ng-if="!$ctrl.reward.twitchData.shouldRedemptionsSkipRequestQueue && $ctrl.reward.restrictionData.restrictions.length > 0"
+                                >
+                                    <firebot-checkbox
+                                        label="Automatically approve/reject redemptions based on restrictions outcome"
+                                        model="$ctrl.reward.autoApproveRedemptions"
+                                    />
+                                </div>
+                            </div>
+
+                            <effect-list
+                                effects="$ctrl.reward.effects"
+                                trigger="channel_reward"
+                                trigger-meta="{ rootEffects: $ctrl.reward.effects }"
+                                update="$ctrl.effectListUpdated(effects)"
+                            ></effect-list>
+                        </setting-container>
+
+                        <setting-container header="When Approved" collapsed="true" pad-top="true">
+                            <effect-list
+                                effects="$ctrl.reward.effectsFulfilled"
+                                trigger="channel_reward"
+                                trigger-meta="{ rootEffects: $ctrl.reward.effectsFulfilled }"
+                                update="$ctrl.fulfilledEffectListUpdated(effects)"
+                            ></effect-list>
+                        </setting-container>
+
+                        <setting-container header="When Rejected" collapsed="true" pad-top="true">
+                            <effect-list
+                                effects="$ctrl.reward.effectsCanceled"
+                                trigger="channel_reward"
+                                trigger-meta="{ rootEffects: $ctrl.reward.effectsCanceled }"
+                                update="$ctrl.canceledEffectListUpdated(effects)"
+                            ></effect-list>
+                        </setting-container>
                     </div>
 
                 </div>
@@ -309,6 +361,14 @@
                     $ctrl.reward.effects = effects;
                 };
 
+                $ctrl.fulfilledEffectListUpdated = function(effects) {
+                    $ctrl.reward.effectsFulfilled = effects;
+                };
+
+                $ctrl.canceledEffectListUpdated = function(effects) {
+                    $ctrl.reward.effectsCanceled = effects;
+                };
+
                 $ctrl.$onInit = () => {
                     if ($ctrl.resolve.reward != null) {
                         $ctrl.reward = JSON.parse(angular.toJson($ctrl.resolve.reward));
@@ -324,7 +384,7 @@
                         }
                     }
 
-                    channelRewardsService.saveChannelReward($ctrl.reward).then(successful => {
+                    channelRewardsService.saveChannelReward($ctrl.reward).then((successful) => {
                         if (successful) {
                             $ctrl.dismiss();
                         } else {
