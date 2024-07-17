@@ -13,6 +13,9 @@ export const CreateRecordChapter: EffectType<{
     },
     optionsTemplate: `
     <eos-container header="Chapter">
+        <p class="help-block">
+            Note: This effect requires OBS 30.2 or later and a supported video format.
+        </p>
         <firebot-input input-title="Chapter Name" menu-position="under" model="effect.chapterName"></firebot-input>
     </eos-container>
     `,
