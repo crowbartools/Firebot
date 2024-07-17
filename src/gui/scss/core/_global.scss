@@ -1859,3 +1859,16 @@ column-resizer {
         }
     }
 }
+
+.macro-line-item {
+    padding: 0 10px;
+    &:hover {
+        background-color: rgb(100 100 100 / 10%);
+    }
+    .edit-macro-btn {
+        background: none;
+        outline: none;
+        border: 1px solid $default-btn-bg-color;
+        border-radius: 8px;
+    }
+}
