@@ -19,6 +19,7 @@ import { setupFrontendListeners } from "./communicator";
 
 import { ChangeSceneEffectType } from "./effects/change-scene-effect-type";
 import { ChangeSceneCollectionEffectType } from "./effects/change-scene-collection";
+import { CreateRecordChapter } from "./effects/create-recording-chapter";
 import { ToggleSourceVisibilityEffectType } from "./effects/toggle-obs-source-visibility";
 import { ToggleSourceFilterEffectType } from "./effects/toggle-obs-source-filter";
 import { ToggleSourceMutedEffectType } from "./effects/toggle-obs-source-muted";
@@ -137,6 +138,7 @@ class ObsIntegration
 
         effectManager.registerEffect(ChangeSceneEffectType);
         effectManager.registerEffect(ChangeSceneCollectionEffectType);
+        effectManager.registerEffect(CreateRecordChapter);
         effectManager.registerEffect(ToggleSourceVisibilityEffectType);
         effectManager.registerEffect(ToggleSourceFilterEffectType);
         effectManager.registerEffect(ToggleSourceMutedEffectType);
