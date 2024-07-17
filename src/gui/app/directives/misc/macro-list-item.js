@@ -15,7 +15,7 @@
                     ng-mouseleave="$ctrl.isHovering = false"
                 >
                     <div style="flex-grow: 1;">
-                        <div style="font-weight: 900;">$={{$ctrl.macro.name}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="$ctrl.onAddToTextClicked()"></i></div>
+                        <div style="font-weight: 900;">$%{{$ctrl.macro.name}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="$ctrl.onAddToTextClicked()"></i></div>
                         <div class="muted">{{$ctrl.macro.description}}</div>
                     </div>
                     <div style="width: 50px;" class="flex justify-end items-center">

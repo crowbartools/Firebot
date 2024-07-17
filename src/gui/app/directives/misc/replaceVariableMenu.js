@@ -235,7 +235,7 @@
                                             ng-repeat="macro in variableMacroService.macros | filter: { name: variableSearchText } track by macro.name"
                                             macro="macro"
                                             on-edit-clicked="showAddOrEditVariableMacroModal(macro)"
-                                            on-add-to-text-clicked="insertText('$=' + macro.name)"
+                                            on-add-to-text-clicked="insertText('$%' + macro.name)"
                                         />
                                     </div>
                                     <div ng-show="activeCategory === 'magic'" style="position: relative;">
