@@ -191,7 +191,6 @@
                 };
 
                 $ctrl.save = () => {
-                    console.log($scope.macroSettings);
                     $scope.macroSettings.$setSubmitted();
                     if ($scope.macroSettings.$invalid) {
                         return;
