@@ -13,7 +13,7 @@
         },
         template: `
         <div class="btn-group" uib-dropdown>
-            <button id="single-button" aria-label="{{($ctrl.ariaLabel || 'Selected') + ':  ' + $ctrl.getSelectedOption()}}" type="button" class="btn btn-default" uib-dropdown-toggle ng-disabled="$ctrl.isDisabled">
+            <button id="single-button" aria-label="{{($ctrl.ariaLabel || 'Selected') + ': ' + $ctrl.getSelectedOption()}}" type="button" class="btn btn-default" uib-dropdown-toggle ng-disabled="$ctrl.isDisabled">
             {{$ctrl.getSelectedOption()}} <span class="caret" aria-hidden="true"></span>
             </button>
             <ul class="dropdown-menu" ng-class="$ctrl.rightJustify ? 'right-justified-dropdown' : ''" uib-dropdown-menu role="menu" aria-labelledby="single-button">
