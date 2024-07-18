@@ -1,13 +1,17 @@
 "use strict";
 
 (function() {
+    /** @typedef {import("../../../types/ranks").RankLadder} RankLadder */
+    /** @typedef {import("../../../types/ranks").Rank} Rank */
+
     const uuid = require("uuid/v4");
 
     angular
         .module("firebotApp")
-        .factory("viewerRanksService", function($q, backendCommunicator, objectCopyHelper, ngToast) {
+        .factory("viewerRanksService", function($q, backendCommunicator, utilityService, objectCopyHelper, ngToast) {
             const service = {};
 
+            /** @type {RankLadder[]} */
             service.rankLadders = [];
 
             service.loadRankLadders = async function() {
@@ -65,20 +69,35 @@
                 });
             };
 
-            service.ladderTypes = [
+            service.getRankLadderByName = (ladderName) => {
+                return service.rankLadders.find(t => t.name === ladderName);
+            };
+
+
+            service.ladderModes = [
                 {
                     id: "manual",
-                    display: "Manual",
-                    description: "Viewers must be manually added to ranks (!rank command, Set Rank effect, etc.)",
+                    name: "Manual",
+                    description: "Viewers must be manually added to ranks (via !rank command, Set Rank effect, etc.)",
                     iconClass: "fa-users-cog"
                 },
                 {
                     id: "automated",
-                    display: "Automated",
+                    name: "Automated",
                     description: "Viewers are automatically added to ranks based on criteria (currency or time watched)",
                     iconClass: "fa-magic"
                 }
             ];
+
+            service.showAddRankLadderModal = (rankLadder) => {
+                utilityService.showModal({
+                    component: "addOrEditRankLadderModal",
+                    size: "md",
+                    resolveObj: {
+                        rankLadder: () => rankLadder
+                    }
+                });
+            };
 
             return service;
         });

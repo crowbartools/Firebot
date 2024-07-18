@@ -1,24 +1,6 @@
 import frontendCommunicator from "../common/frontend-communicator";
 import JsonDbManager from "../database/json-db-manager.js";
-
-export type Rank = {
-    id: string;
-    name: string;
-    value?: number;
-};
-
-export type RankLadder = {
-    id: string;
-    name: string;
-    type: "manual" | "auto";
-    enabled: boolean;
-    autoSettings: {
-        trackBy?: "view_time" | "currency",
-        currencyId?: string;
-        announcePromotionsInChat?: boolean;
-    };
-    ranks: Rank[];
-};
+import { RankLadder, Rank } from "../../types/ranks";
 
 class RankManager extends JsonDbManager<RankLadder> {
     constructor() {

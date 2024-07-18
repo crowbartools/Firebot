@@ -62,7 +62,10 @@
                 }
             ];
 
-            $scope.showAddOrEditRankLadderModal = function(track) {
+            $scope.showAddOrEditRankLadderModal = function(ladder) {
+                if (!ladder) {
+                    viewerRanksService.showAddRankLadderModal();
+                }
             };
 
             $scope.rankLadderMenuOptions = (item) => {
