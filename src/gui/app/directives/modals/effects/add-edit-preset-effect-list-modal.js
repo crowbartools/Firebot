@@ -139,11 +139,11 @@
                     return;
                 }
 
-                presetEffectListsService.savePresetEffectList($ctrl.presetList).then(successful => {
-                    if (successful) {
+                presetEffectListsService.savePresetEffectList($ctrl.presetList).then((savedList) => {
+                    if (savedList != null) {
                         $ctrl.close({
                             $value: {
-                                presetEffectList: $ctrl.presetList
+                                presetEffectList: savedList
                             }
                         });
                     } else {
