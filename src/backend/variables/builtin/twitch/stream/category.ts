@@ -7,6 +7,7 @@ const accountAccess = require("../../../../common/account-access");
 const model : ReplaceVariable = {
     definition: {
         handle: "category",
+        aliases: ["game"],
         description: "Gets the current category/game set for your channel",
         examples: [
             {
