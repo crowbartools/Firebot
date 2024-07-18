@@ -86,22 +86,18 @@ class ReplaceVariableManager extends EventEmitter {
     }
 
     _generateVariableAndAliasHandlers() {
-        return Array.from(
-            this._registeredVariableHandlers
-                .entries()
-        )
-            .reduce((map, [mainHandle, varConfig]) => {
-                map.set(mainHandle, varConfig);
-                if (varConfig.definition.aliases) {
-                    varConfig.definition.aliases.forEach((alias) => {
-                        map.set(alias, {
-                            ...varConfig,
-                            handle: alias
-                        });
+        return Array.from(this._registeredVariableHandlers.entries()).reduce((map, [mainHandle, varConfig]) => {
+            map.set(mainHandle, varConfig);
+            if (varConfig.definition.aliases) {
+                varConfig.definition.aliases.forEach((alias) => {
+                    map.set(alias, {
+                        ...varConfig,
+                        handle: alias
                     });
-                }
-                return map;
-            }, new Map());
+                });
+            }
+            return map;
+        }, new Map());
     }
 
     evaluateText(input, metadata, trigger, onlyValidate) {
@@ -235,14 +231,12 @@ manager.registerLookupHandler("%", (name) => ({
     evaluator: (trigger, ...macroArgs) => {
         const macro = macroManager.getMacroByName(name);
         if (macro != null) {
-            return manager.evaluateText({
-                handlers: this._registeredVariableHandlers,
-                expression: macro,
-                metadata: { macroArgs },
-                trigger: trigger,
-                preeval,
-                lookups: manager._registeredLookupHandlers
-            });
+            return manager.evaluateText(
+                macro.expression,
+                { macroArgs, macroNamedArgs: macro.argNames },
+                trigger,
+                false
+            );
         }
     }
 }));

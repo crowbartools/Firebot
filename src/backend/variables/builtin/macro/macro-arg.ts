@@ -3,7 +3,7 @@ import { OutputDataType } from "../../../../shared/variable-constants";
 
 const model : ReplaceVariable = {
     definition: {
-        handle: 'macroArgs',
+        handle: 'macroArg',
         description: 'gets the nth argument passed into the macro',
         hidden: true,
         possibleDataOutput: [OutputDataType.ALL]
@@ -13,13 +13,12 @@ const model : ReplaceVariable = {
             return;
         }
 
-        const { macroArgs, macroNamedArgs } = trigger.metadata;
+        const { macroArgs, macroNamedArgs } = <{ macroArgs: string[], macroNamedArgs: string[] }><unknown>trigger;
         const idxNum = Number(argIndex);
 
         if (Number.isInteger(idxNum) && idxNum > 0) {
             return macroArgs[idxNum - 1];
         }
-
 
         if (typeof argIndex === 'string' && macroNamedArgs != null) {
             const namedArgIdx = (<string[]>macroNamedArgs).findIndex(item => item === argIndex);
