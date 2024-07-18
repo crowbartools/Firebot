@@ -226,6 +226,24 @@ manager.registerLookupHandler("#", (name) => ({
     }
 }));
 
+// Macro Args shorthand
+manager.registerLookupHandler("^", (name) => ({
+    evaluator: (trigger, ...args) => {
+        const { macroArgs, macroNamedArgs } = trigger;
+        if (
+            (args == null || args.length === 0) &&
+            macroArgs != null &&
+            macroNamedArgs != null &&
+            typeof name === "string"
+        ) {
+            const namedArgIdx = macroNamedArgs.findIndex((item) => item === name);
+            if (namedArgIdx > -1) {
+                return macroArgs[namedArgIdx];
+            }
+        }
+    }
+}));
+
 // Macro shorthand
 manager.registerLookupHandler("%", (name) => ({
     evaluator: (trigger, ...macroArgs) => {
@@ -233,7 +251,7 @@ manager.registerLookupHandler("%", (name) => ({
         if (macro != null) {
             return manager.evaluateText(
                 macro.expression,
-                { macroArgs, macroNamedArgs: macro.argNames },
+                { macro, macroArgs, macroNamedArgs: macro.argNames },
                 trigger,
                 false
             );
