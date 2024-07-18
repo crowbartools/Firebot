@@ -159,6 +159,10 @@
                             $scope.keepMenuOpen = false;
                         });
                     };
+
+                    $scope.getAliases = (variable) => {
+                        return variable.aliases?.map(a => `$${a}`).join(", ");
+                    };
                 },
                 link: function(scope, element) {
 
@@ -225,6 +229,9 @@
                                 <div style="overflow-y: auto;width: 100%;" ng-style="{ height: hasMagicVariables ? '315px': '280px', padding: activeCategory === 'macros' ? '10px 0' : '10px' }">
                                     <div ng-hide="activeCategory === 'magic' || activeCategory === 'macros'" ng-repeat="variable in variables | orderBy:'handle' | variableCategoryFilter:activeCategory | variableSearch:variableSearchText" style="margin-bottom: 8px;">
                                         <div style="font-weight: 900;">\${{variable.usage ? variable.usage : variable.handle}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="addVariable(variable)"></i></div>
+                                        <div ng-if="variable.aliases && variable.aliases.length > 0">
+                                            <div style="font-size: 12px; opacity: 0.75;">Aliases: {{getAliases(variable)}}</div>
+                                        </div>
                                         <div class="muted" ng-bind-html="variable.description"></div>
                                         <div ng-show="variable.examples && variable.examples.length > 0" style="font-size: 13px;padding-left: 5px; margin-top:3px;">
                                             <collapsable-section show-text="Other examples" hide-text="Other examples" text-color="#0b8dc6">

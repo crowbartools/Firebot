@@ -43,6 +43,7 @@ class ReplaceVariableManager extends EventEmitter {
     constructor() {
         super();
         this._registeredVariableHandlers = new Map();
+        this._variableAndAliasHandlers = new Map();
         this._registeredLookupHandlers = new Map();
     }
 
@@ -57,6 +58,8 @@ class ReplaceVariableManager extends EventEmitter {
             evaluator: variable.evaluator,
             triggers: variable.definition.triggers
         });
+
+        this._variableAndAliasHandlers = this._generateVariableAndAliasHandlers();
 
         logger.debug(`Registered replace variable ${variable.definition.handle}`);
 
@@ -82,10 +85,29 @@ class ReplaceVariableManager extends EventEmitter {
         this._registeredLookupHandlers.set(prefix, lookup);
     }
 
+    _generateVariableAndAliasHandlers() {
+        return Array.from(
+            this._registeredVariableHandlers
+                .entries()
+        )
+            .reduce((map, [mainHandle, varConfig]) => {
+                map.set(mainHandle, varConfig);
+                if (varConfig.definition.aliases) {
+                    varConfig.definition.aliases.forEach((alias) => {
+                        map.set(alias, {
+                            ...varConfig,
+                            handle: alias
+                        });
+                    });
+                }
+                return map;
+            }, new Map());
+    }
+
     evaluateText(input, metadata, trigger, onlyValidate) {
         if (input.includes("$")) {
             return expressionish({
-                handlers: this._registeredVariableHandlers,
+                handlers: this._variableAndAliasHandlers,
                 expression: input,
                 metadata,
                 trigger,

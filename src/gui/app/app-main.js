@@ -567,7 +567,7 @@
             const normalizedQuery = query.replace("$", "").toLowerCase();
             return variables
                 .filter(v =>
-                    v.handle.toLowerCase().includes(normalizedQuery)
+                    v.handle.toLowerCase().includes(normalizedQuery) || v.aliases?.some(a => a.toLowerCase().includes(normalizedQuery))
                 );
         };
     });
