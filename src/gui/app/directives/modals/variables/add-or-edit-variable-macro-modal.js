@@ -23,17 +23,31 @@
                     <form name="macroSettings">
                         <div class="form-group" ng-class="{'has-error': $ctrl.formFieldHasError('name')}">
                             <label for="name" class="control-label">Name</label>
-                            <input
-                                type="text"
-                                id="name"
-                                name="name"
-                                ng-minlength="3"
-                                ui-validate="{valid:'$ctrl.macroNameIsValid($value)', taken:'!$ctrl.macroNameIsTaken($value)'}"
-                                required
-                                class="form-control input-lg"
-                                placeholder="Give your macro a name"
-                                ng-model="$ctrl.macro.name"
-                            />
+                            <div style="position: relative;">
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    ng-minlength="3"
+                                    ui-validate="{valid:'$ctrl.macroNameIsValid($value)', taken:'!$ctrl.macroNameIsTaken($value)'}"
+                                    required
+                                    class="form-control input-lg"
+                                    placeholder="Give your macro a name"
+                                    ng-model="$ctrl.macro.name"
+                                    ng-disabled="$ctrl.nameFieldLocked"
+                                    ng-style="{'padding-right': $ctrl.nameFieldLocked ? '77px' : ''}"
+                                />
+                                <div
+                                    style="width: 67px;size: 16px;position: absolute;top: 50%;transform: translateY(-50%);right: 10px;"
+                                    class="flex items-center justify-center"
+                                    ng-if="$ctrl.nameFieldLocked"
+                                >
+                                    <button
+                                        class="btn btn-default btn-xs"
+                                        ng-click="$ctrl.unlockNameField()"
+                                    ><i class="fas fa-lock"></i> Locked</button>
+                                </div>
+                            </div>
                             <div ng-if="$ctrl.formFieldHasError('name')">
                                 <span ng-if="macroSettings.name.$error.required" class="help-block">Name is required.</span>
                                 <span ng-if="macroSettings.name.$error.minlength" class="help-block">Name must be 3 or more characters.</span>
@@ -98,6 +112,8 @@
 
                 $ctrl.isNewMacro = true;
 
+                $ctrl.nameFieldLocked = false;
+
                 $ctrl.validationErrors = {};
 
                 /**
@@ -107,7 +123,7 @@
                     id: null,
                     name: null,
                     expression: null,
-                    argNames: [],
+                    argNames: []
                 };
 
                 $ctrl.argListSettings = {
@@ -137,9 +153,9 @@
                                 };
                             }
                             return true;
-                        },
+                        }
                     ]
-                }
+                };
 
                 $ctrl.formFieldHasError = (fieldName) => {
                     return ($scope.macroSettings.$submitted || $scope.macroSettings[fieldName].$touched)
@@ -166,10 +182,29 @@
                     return variableMacroService.isMacroNameValid(name);
                 };
 
+                $ctrl.unlockNameField = () => {
+                    utilityService
+                        .showConfirmationModal({
+                            title: "Warning",
+                            question: `If you rename this macro, any references to it in your effects will need to be updated manually. Are you sure you want to rename this macro?`,
+                            confirmLabel: "Yes, rename",
+                            confirmBtnType: "btn-default"
+                        })
+                        .then((confirmed) => {
+                            if (confirmed) {
+                                $ctrl.nameFieldLocked = false;
+                                setTimeout(() => {
+                                    angular.element("#name").focus();
+                                }, 100);
+                            }
+                        });
+                };
+
                 $ctrl.$onInit = () => {
                     if ($ctrl.resolve.macro != null) {
                         $ctrl.macro = JSON.parse(angular.toJson($ctrl.resolve.macro));
                         $ctrl.isNewMacro = false;
+                        $ctrl.nameFieldLocked = true;
                     }
 
                     const modalId = $ctrl.resolve.modalId;

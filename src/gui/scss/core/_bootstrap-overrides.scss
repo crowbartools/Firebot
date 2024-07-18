@@ -452,8 +452,8 @@ textarea.form-control {
 }
 
 .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
-    background-color: adjust-color($form-control-bg, $red: 50, $green: 50, $blue: 50);
-    opacity: 1;
+    background-color: $form-control-bg;
+    opacity: 0.75;
 }
 
 label {
