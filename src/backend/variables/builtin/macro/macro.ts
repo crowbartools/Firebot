@@ -14,13 +14,11 @@ const model : ReplaceVariable = {
     },
     evaluator(trigger: Trigger, name: string, ...macroArgs: unknown[]) {
         const macro = macroManager.getMacroByName(name);
-
-        // nothing to do
         if (macro == null) {
             return null;
         }
-
-        return variableManager.evaluateText(macro.expression, { macroArgs }, trigger);
+        const { argNames: macroArgNames } = macro;
+        return variableManager.evaluateText(macro.expression, { macroArgs, macroArgNames }, trigger);
     }
 };
 export default model;
