@@ -364,9 +364,14 @@
                             return;
                         }
 
-                        //const runEffectList = effectManager.getEffectByName("firebot:run-effect-list");
-
-                        console.log(savedPresetEffectsList);
+                        ctrl.effectsData.list = [{
+                            id: uuidv1(),
+                            type: "firebot:run-effect-list",
+                            active: true,
+                            listType: "preset",
+                            presetListId: savedPresetEffectsList.id,
+                            presetListArgs: {}
+                        }];
                     });
                 };
 
