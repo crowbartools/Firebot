@@ -180,7 +180,7 @@
 
             </div>
             `,
-            controller: function(utilityService, effectHelperService, objectCopyHelper, effectQueuesService, presetEffectListsService,
+            controller: function($q, utilityService, effectHelperService, objectCopyHelper, effectQueuesService, presetEffectListsService,
                 backendCommunicator, ngToast, $http) {
                 const ctrl = this;
 
@@ -354,10 +354,19 @@
                 };
 
                 ctrl.convertToPresetEffectList = async () => {
-                    presetEffectListsService.showAddEditPresetEffectListModal({
+                    console.log(ctrl.effectsData.list);
+                    $q.when(presetEffectListsService.showAddEditPresetEffectListModal({
                         effects: {
                             list: ctrl.effectsData.list
                         }
+                    })).then((savedPresetEffectsList) => {
+                        if (!savedPresetEffectsList) {
+                            return;
+                        }
+
+                        //const runEffectList = effectManager.getEffectByName("firebot:run-effect-list");
+
+                        console.log(savedPresetEffectsList);
                     });
                 };
 
