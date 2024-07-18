@@ -63,6 +63,8 @@
                             selected="allowQuoteCsv" 
                             on-update="settings.setAllowQuoteCSVDownloads(option === 'true')"
                             right-justify="true"
+                            aria-label="Choose Whether or not you want the 'Export as .CSV' button available for quotes on the profile page."
+
                         />
                     </firebot-setting>
 
@@ -76,6 +78,7 @@
                             selected="persistVariables" 
                             on-update="settings.setPersistCustomVariables(option === 'true')"
                             right-justify="true"
+                            aria-label="enable or disabel persistent Custom Variables"
                         />
                     </firebot-setting>
 

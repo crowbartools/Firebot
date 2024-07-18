@@ -18,6 +18,7 @@
                             selected="ttsVoice"
                             on-update="settings.setDefaultTtsVoiceId(option)"
                             right-justify="true"
+                            aria-label="Choose your Text to Speech voice"
                         />
                     </firebot-setting>
 
@@ -91,6 +92,7 @@
                         ceil: 1,
                         step: 0.1,
                         precision: 1,
+                        ariaLabel: "Text to speech volume ",
                         translate: function(value) {
                             return Math.floor(value * 10);
                         },
@@ -107,6 +109,7 @@
                         ceil: 10,
                         step: 0.1,
                         precision: 1,
+                        ariaLabel: "Text to speech rate ",
                         onChange: (_, value) => {
                             settingsService.setTtsVoiceRate(value);
                         }
