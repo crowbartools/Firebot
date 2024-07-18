@@ -354,7 +354,6 @@
                 };
 
                 ctrl.convertToPresetEffectList = async () => {
-                    console.log(ctrl.effectsData.list);
                     $q.when(presetEffectListsService.showAddEditPresetEffectListModal({
                         effects: {
                             list: ctrl.effectsData.list
