@@ -6,6 +6,7 @@ const twitchApi = require("../../../twitch-api/api");
 const model : ReplaceVariable = {
     definition: {
         handle: "userAvatarUrl",
+        aliases: ["userProfileImageUrl"],
         usage: "userAvatarUrl",
         description: "Gets the url for the avatar of the associated user (Ie who triggered command, pressed button, etc).",
         examples: [
