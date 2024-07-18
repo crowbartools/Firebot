@@ -9,16 +9,24 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.ALL]
     },
     evaluator(trigger: Trigger, argIndex: number | string) {
-        const idx = Number(argIndex);
-        if (!Number.isInteger(idx) || idx < 0) {
+        if (argIndex == null || argIndex === '') {
             return;
         }
 
-        const macroArgs = trigger.metadata.macroArgs;
-        if (!macroArgs) {
-            return;
+        const { macroArgs, macroNamedArgs } = trigger.metadata;
+        const idxNum = Number(argIndex);
+
+        if (Number.isInteger(idxNum) && idxNum > 0) {
+            return macroArgs[idxNum - 1];
         }
-        return macroArgs[idx];
+
+
+        if (typeof argIndex === 'string' && macroNamedArgs != null) {
+            const namedArgIdx = (<string[]>macroNamedArgs).findIndex(item => item === argIndex);
+            if (namedArgIdx > -1) {
+                return macroArgs[namedArgIdx];
+            }
+        }
     }
 };
 export default model;
