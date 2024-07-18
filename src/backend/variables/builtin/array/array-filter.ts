@@ -16,23 +16,53 @@ const getPropertyAtPath = (subject: unknown, path: string) => {
 };
 
 const fuzzyMatch = (value: unknown, match: unknown) : boolean => {
-    if (value == null || value === '') {
-        return match == null || match === '';
+
+    // Inputs are exact matches
+    if (value === match) {
+        return true;
     }
 
-    const strValue = `${value}`.toLowerCase();
-    if (value === true || strValue === "true" || value === false || strValue === "false") {
-        return match === true || match === "true" || match === false || match === "false";
+    // Treat NaN inputs as equiv
+    if (Number.isNaN(value) || Number.isNaN(match)) {
+        return Number.isNaN(value) && Number.isNaN(value);
     }
 
-    if (Number.isFinite(Number(value))) {
-        if (!Number.isFinite(Number(match))) {
+    const ciValue = typeof value === 'string' ? value.toLowerCase() : value;
+    const ciMatch = typeof match === 'string' ? match.toLowerCase() : match;
+
+    // Treat null, empty strings, false, and 'false' as equiv
+    const matchIsFalsy = match == null || match === '' || match === false || ciMatch === 'false';
+    if (value == null || value === '' || value === false || ciValue === 'false') {
+        return matchIsFalsy;
+    }
+    if (matchIsFalsy) {
+        return false;
+    }
+
+    // Treat true and 'true' as equiv
+    const matchIsTrue = match === true || ciMatch === 'true';
+    if (value === true || value === 'true') {
+        return matchIsTrue;
+    }
+    if (matchIsTrue) {
+        return false;
+    }
+
+    // Only allow numbers and strings beyond this point
+    if (
+        (typeof value === 'number' || typeof value === 'string') &&
+        (typeof match === 'number' || typeof match === 'string')
+    ) {
+        if (
+            (typeof value === 'string' && Number.isNaN(Number(value))) ||
+            (typeof match === 'string' && Number.isNaN(Number(match)))
+        ) {
             return false;
         }
         return Number(value) === Number(match);
     }
 
-    return value === match;
+    return false;
 };
 
 const model : ReplaceVariable = {

@@ -160,8 +160,14 @@ export const shoutoutHandler: TwitchSlashCommandHandler<[string]> = {
         if (targetUserId == null) {
             return false;
         }
-
-        return await twitchApi.chat.sendShoutout(targetUserId);
+        const result = await twitchApi.chat.sendShoutout(targetUserId);
+        if (!result.success) {
+            global.renderWindow.webContents.send("chatUpdate", {
+                fbEvent: "ChatAlert",
+                message: result.error
+            });
+        }
+        return result.success;
     }
 };
 

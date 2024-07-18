@@ -4,11 +4,25 @@ module.exports = {
     id: "firebot:custom",
     name: "Custom",
     description: "Condition based on custom values (useful with $variables)",
-    comparisonTypes: ["is", "is not", "is strictly", "is not strictly", "is less than", "is less than or equal to", "is greater than", "is greater than or equal to", "contains", "does not contain", "matches regex", "does not match regex"],
+    comparisonTypes: [
+        "is",
+        "is not",
+        "is strictly",
+        "is not strictly",
+        "is less than",
+        "is less than or equal to",
+        "is greater than",
+        "is greater than or equal to",
+        "contains",
+        "does not contain",
+        "contains (case-insensitive)",
+        "does not contain (case-insensitive)",
+        "matches regex",
+        "does not match regex"
+    ],
     leftSideValueType: "text",
     rightSideValueType: "text",
     predicate: (conditionSettings) => {
-
         let { comparisonType, leftSideValue, rightSideValue } = conditionSettings;
 
         if (comparisonType !== "is strictly" && comparisonType !== "is not strictly") {
@@ -19,7 +33,6 @@ module.exports = {
                 rightSideValue = Number(rightSideValue);
             }
         }
-
 
         switch (comparisonType) {
             case "is":
@@ -42,6 +55,10 @@ module.exports = {
                 return leftSideValue.toString().includes(rightSideValue);
             case "does not contain":
                 return !leftSideValue.toString().includes(rightSideValue);
+            case "contains (case-insensitive)":
+                return `${leftSideValue}`.toLowerCase().includes(`${rightSideValue}`.toLowerCase());
+            case "does not contain (case-insensitive)":
+                return !`${leftSideValue}`.toLowerCase().includes(`${rightSideValue}`.toLowerCase());
             case "matches regex": {
                 const regex = new RegExp(rightSideValue, "gi");
                 return regex.test(leftSideValue);

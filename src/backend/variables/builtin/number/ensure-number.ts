@@ -14,7 +14,7 @@ const model : ReplaceVariable = {
         input: unknown,
         defaultNumber: unknown
     ) : number => {
-        if (input != null && Number.isFinite(Number(input))) {
+        if (input != null && input !== '' && Number.isFinite(Number(input))) {
             return Number(input);
         }
 
