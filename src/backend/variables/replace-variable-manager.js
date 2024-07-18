@@ -6,9 +6,7 @@ const EventEmitter = require("events");
 const expressionish = require('expressionish');
 const ExpressionVariableError = expressionish.ExpressionVariableError;
 const frontendCommunicator = require("../common/frontend-communicator");
-const {
-    getCustomVariable
-} = require('../common/custom-variable-manager');
+const { getCustomVariable } = require('../common/custom-variable-manager');
 const util = require("../utility");
 
 // TODO: stub until actual macro manager is created
@@ -23,9 +21,7 @@ function preeval(options, variable) {
         return;
     }
 
-    const optionsTrigger = options.trigger || {
-        type: null
-    };
+    const optionsTrigger = options.trigger || { type: null };
     const display = options.trigger.type ? options.trigger.type.toLowerCase() : "unknown trigger";
 
     const varTrigger = variable.triggers[optionsTrigger.type];
@@ -61,7 +57,8 @@ class ReplaceVariableManager extends EventEmitter {
             throw new TypeError(`A variable with the handle ${variable.definition.handle} already exists.`);
         }
         this._registeredVariableHandlers.set(
-            variable.definition.handle, {
+            variable.definition.handle,
+            {
                 definition: variable.definition,
                 handle: variable.definition.handle,
                 argsCheck: variable.argsCheck,
@@ -78,7 +75,7 @@ class ReplaceVariableManager extends EventEmitter {
 
         frontendCommunicator.send("replace-variable-registered", variable.definition);
     }
-    getReplaceVariables() {
+    getReplaceVariables () {
         // Map register variables Map to array
         const registeredVariables = this._registeredVariableHandlers;
         const variables = [];
@@ -98,9 +95,9 @@ class ReplaceVariableManager extends EventEmitter {
 
     _generateVariableAndAliasHandlers() {
         return Array.from(
-                this._registeredVariableHandlers
+            this._registeredVariableHandlers
                 .entries()
-            )
+        )
             .reduce((map, [mainHandle, varConfig]) => {
                 map.set(mainHandle, varConfig);
                 if (varConfig.definition.aliases) {
@@ -140,10 +137,7 @@ class ReplaceVariableManager extends EventEmitter {
                     let replacedValue = value;
                     const triggerId = util.getTriggerIdFromTriggerData(trigger);
                     try {
-                        replacedValue = await this.evaluateText(value, trigger, {
-                            type: trigger.type,
-                            id: triggerId
-                        });
+                        replacedValue = await this.evaluateText(value, trigger, { type: trigger.type, id: triggerId});
                     } catch (err) {
                         logger.warn(`Unable to parse variables for value: '${value}'`, err);
                     }
@@ -170,10 +164,7 @@ class ReplaceVariableManager extends EventEmitter {
             if (value && typeof value === "string") {
                 if (value.includes("$") || value.includes('&')) {
                     try {
-                        await this.evaluateText(value, undefined, {
-                            type: trigger && trigger.type,
-                            id: trigger && trigger.id
-                        }, true);
+                        await this.evaluateText(value, undefined, { type: trigger && trigger.type, id: trigger && trigger.id}, true);
 
                     } catch (err) {
                         err.dataField = key;
@@ -255,9 +246,7 @@ manager.registerLookupHandler('%', name => ({
             return manager.evaluateText({
                 handlers: this._registeredVariableHandlers,
                 expression: macro,
-                metadata: {
-                    macroArgs
-                },
+                metadata: { macroArgs },
                 trigger: trigger,
                 preeval,
                 lookups: manager._registeredLookupHandlers
@@ -273,10 +262,7 @@ frontendCommunicator.on("getReplaceVariableDefinitions", () => {
 
 frontendCommunicator.onAsync("validateVariables", async (eventData) => {
     logger.debug("got 'validateVariables' request");
-    const {
-        data,
-        trigger
-    } = eventData;
+    const { data, trigger } = eventData;
 
     let errors = [];
     try {
