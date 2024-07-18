@@ -1,6 +1,7 @@
 "use strict";
 
 const deepmerge = require("deepmerge");
+const { type } = require("os");
 
 (function() {
     angular
@@ -15,18 +16,22 @@ const deepmerge = require("deepmerge");
                 <div>
                     <div ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.model">
                         <div ng-repeat="item in $ctrl.model track by $index" class="list-item">
-                            <div style="display: flex;align-items: center;column-gap: 10px;>
+                            <div style="display: flex;align-items: center;column-gap: 10px;">
                                 <span ng-show="$ctrl.settings.sortable" class="dragHandle" style="height: 38px; width: 15px; align-items: center; justify-content: center; display: flex">
                                     <i class="fal fa-bars" aria-hidden="true"></i>
                                 </span>
                                 <span ng-if="$ctrl.settings.showIndex" class="muted">{{ $ctrl.settings.indexTemplate.replace("{index}", $ctrl.settings.indexZeroBased ? $index : $index + 1).replace("{name}", item) }}</span>
                                 <div style="font-weight: 400;" aria-label="{{item}}">{{item}}</div>
+                                <span ng-if="$ctrl.settings.hintTemplate != null" class="muted">{{ $ctrl.settings.hintTemplate.replace("{index}", $ctrl.settings.indexZeroBased ? $index : $index + 1).replace("{name}", item) }}</span>
                             </div>
                             <div class="flex items-center justify-center">
-                                <div class="clickable mr-4" style="color: white;" ng-click="$ctrl.editItem($index);" aria-label="Edit item">
+                                <div ng-if="$ctrl.settings.showCopyButton" uib-tooltip="Copy" class="clickable mr-4" style="color: white;" ng-click="$ctrl.copyItem($index);" aria-label="Edit item">
+                                    <i class="fas fa-copy" aria-hidden="true"></i>
+                                </div>
+                                <div uib-tooltip="Edit" class="clickable mr-4" style="color: white;" ng-click="$ctrl.editItem($index);" aria-label="Edit item">
                                     <i class="fas fa-edit" aria-hidden="true"></i>
                                 </div>
-                                <div class="clickable" style="color: #fb7373;" ng-click="$ctrl.removeItem($index);$event.stopPropagation();" aria-label="Remove item">
+                                <div uib-tooltip="Remove" class="clickable" style="color: #fb7373;" ng-click="$ctrl.removeItem($index);$event.stopPropagation();" aria-label="Remove item">
                                     <i class="fad fa-trash-alt" aria-hidden="true"></i>
                                 </div>
                             </div>
@@ -48,7 +53,7 @@ const deepmerge = require("deepmerge");
                     </div>
                 </div>
             `,
-            controller: function(utilityService, ngToast) {
+            controller: function(utilityService, ngToast, $rootScope) {
 
                 const $ctrl = this;
 
@@ -62,9 +67,12 @@ const deepmerge = require("deepmerge");
                     showIndex: false,
                     indexZeroBased: false,
                     indexTemplate: "{index}.",
+                    showCopyButton: false,
+                    hintTemplate: undefined,
+                    copyTemplate: "{name}",
                     addLabel: "Add",
                     editLabel: "Edit",
-                    validationFn: undefined,
+                    customValidators: undefined,
                     validationText: "Text cannot be empty",
                     noneAddedText: "None saved",
                     noDuplicates: false,
@@ -97,11 +105,38 @@ const deepmerge = require("deepmerge");
                             label: isNew ? $ctrl.settings.addLabel : $ctrl.settings.editLabel,
                             useTextArea: $ctrl.settings.useTextArea,
                             saveText: "Save",
-                            validationFn: $ctrl.settings.validationFn ?? ((value) => {
-                                return new Promise((resolve) => {
+                            validationFn: $ctrl.settings.validationFn ?? ((value, initialValue) => {
+                                return new Promise(async (resolve) => {
                                     if (value == null || value.trim().length < 1) {
-                                        resolve(false);
+                                        resolve({
+                                            success: false,
+                                            reason: "Text cannot be empty"
+                                        });
+                                    } else if ($ctrl.settings.noDuplicates && value !== initialValue && $ctrl.model.some(i => i === value)) {
+                                        resolve({
+                                            success: false,
+                                            reason: "Must be unique"
+                                        });
                                     } else {
+                                        if ($ctrl.settings.customValidators) {
+                                            for (const validator of $ctrl.settings.customValidators) {
+                                                try {
+                                                    const result = await validator(value, initialValue);
+                                                    const failed = result != null && (result === false || (typeof result === "object" && result.success == false));
+                                                    if (failed) {
+                                                        resolve(result);
+                                                        return;
+                                                    }
+                                                } catch (e) {
+                                                    console.error(e);
+                                                    resolve({
+                                                        success: false,
+                                                        reason: "An error occurred"
+                                                    });
+                                                    return;
+                                                }
+                                            }
+                                        }
                                         resolve(true);
                                     }
                                 });
@@ -121,6 +156,19 @@ const deepmerge = require("deepmerge");
                         } else {
                             ngToast.create("Cannot edit: Duplicate found");
                         }
+                    });
+                };
+
+                $ctrl.copyItem = (index) => {
+                    const item = $ctrl.model[index];
+                    const copyText = $ctrl.settings.copyTemplate
+                        .replace("{name}", item)
+                        .replace("{index}", index);
+                    $rootScope.copyTextToClipboard(copyText);
+
+                    ngToast.create({
+                        className: 'info',
+                        content: `Copied '${copyText}' to clipboard`
                     });
                 };
 

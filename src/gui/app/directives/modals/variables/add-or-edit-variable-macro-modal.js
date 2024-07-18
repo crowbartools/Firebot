@@ -15,8 +15,8 @@
                         <i class="fal fa-times" aria-hidden="true"></i>
                     </button>
                     <h4 class="modal-title">
-                        <div class="action text-4xl">{{$ctrl.isNewMacro ? 'Add New Macro' : 'Edit Macro'}}<span>:</span></div>
-                        <div class="text-4xl font-semibold">{{$ctrl.macro.name}}</div>
+                        <div class="action text-4xl">{{$ctrl.isNewMacro ? 'Add New Macro' : 'Edit Macro:'}}</div>
+                        <div class="text-4xl font-semibold" ng-show="!$ctrl.isNewMacro">{{$ctrl.macro.name}}</div>
                     </h4>
                 </div>
                 <div class="modal-body">
@@ -42,6 +42,19 @@
                             </div>
                         </div>
 
+                        <div class="form-group">
+                            <label for="expression" class="control-label">Description</label>
+                            <input
+                                type="text"
+                                id="description"
+                                name="description"
+                                class="form-control input-lg"
+                                style="font-size: 16px; padding: 10px 16px;"
+                                ng-model="$ctrl.macro.description"
+                                placeholder="Optional"
+                            />
+                        </div>
+
                         <div class="form-group" ng-class="{'has-error': $ctrl.formFieldHasError('expression')}">
                             <label for="expression" class="control-label">Variable Expression</label>
                             <textarea
@@ -62,15 +75,8 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="expression" class="control-label">Description</label>
-                            <input
-                                type="text"
-                                id="description"
-                                name="description"
-                                class="form-control input-lg"
-                                style="font-size: 16px; padding: 10px 16px;"
-                                ng-model="$ctrl.macro.description"
-                            />
+                            <label for="args" class="control-label">Args</label>
+                            <editable-list settings="$ctrl.argListSettings" model="$ctrl.macro.argNames" />
                         </div>
                     </form>
                 </div>
@@ -84,7 +90,8 @@
             bindings: {
                 resolve: "<",
                 close: "&",
-                dismiss: "&"
+                dismiss: "&",
+                modalInstance: "<"
             },
             controller: function($scope, ngToast, utilityService, variableMacroService) {
                 const $ctrl = this;
@@ -99,8 +106,40 @@
                 $ctrl.macro = {
                     id: null,
                     name: null,
-                    expression: null
+                    expression: null,
+                    argNames: [],
                 };
+
+                $ctrl.argListSettings = {
+                    sortable: true,
+                    showIndex: false,
+                    hintTemplate: "$macroArg[{name}]",
+                    showCopyButton: true,
+                    copyTemplate: "$macroArg[{name}]",
+                    addLabel: "Add Arg",
+                    editLabel: "Edit Arg",
+                    noDuplicates: true,
+                    customValidators: [
+                        (argName) => {
+                            if (/^\d+$/.test(argName)) {
+                                return {
+                                    success: false,
+                                    reason: "Arg name cannot be only numbers."
+                                };
+                            }
+                            return true;
+                        },
+                        (argName) => {
+                            if (!/^[a-zA-Z0-9_]+$/.test(argName)) {
+                                return {
+                                    success: false,
+                                    reason: "Arg name must be alphanumeric with no spaces or special characters."
+                                };
+                            }
+                            return true;
+                        },
+                    ]
+                }
 
                 $ctrl.formFieldHasError = (fieldName) => {
                     return ($scope.macroSettings.$submitted || $scope.macroSettings[fieldName].$touched)
@@ -132,6 +171,23 @@
                         $ctrl.macro = JSON.parse(angular.toJson($ctrl.resolve.macro));
                         $ctrl.isNewMacro = false;
                     }
+
+                    const modalId = $ctrl.resolve.modalId;
+                    utilityService.addSlidingModal(
+                        $ctrl.modalInstance.rendered.then(() => {
+                            const modalElement = $(`.${modalId}`).children();
+                            return {
+                                element: modalElement,
+                                name: "",
+                                id: modalId,
+                                instance: $ctrl.modalInstance
+                            };
+                        })
+                    );
+
+                    $scope.$on("modal.closing", function() {
+                        utilityService.removeSlidingModal();
+                    });
                 };
 
                 $ctrl.save = () => {
