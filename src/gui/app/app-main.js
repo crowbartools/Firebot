@@ -124,7 +124,8 @@
         sortTagsService,
         iconsService,
         videoService,
-        replaceVariableService
+        replaceVariableService,
+        variableMacroService
     ) {
         // 'chatMessagesService' and 'videoService' are included so they're instantiated on app start
 
@@ -164,6 +165,8 @@
         sortTagsService.loadSortTags();
 
         iconsService.loadFontAwesomeIcons();
+
+        variableMacroService.loadMacros();
 
         //start notification check
         $timeout(() => {

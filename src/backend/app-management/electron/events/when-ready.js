@@ -104,6 +104,10 @@ exports.whenReady = async () => {
     const { loadReplaceVariables } = require("../../../variables/variable-loader");
     loadReplaceVariables();
 
+    windowManagement.updateSplashScreenStatus("Loading variable macros...");
+    const macroManager = require("../../../variables/macro-manager");
+    macroManager.loadItems();
+
     // load restrictions
     logger.debug("Loading restrictions...");
     windowManagement.updateSplashScreenStatus("Loading restrictions...");

@@ -12,6 +12,7 @@
                         description="Choose your color theme for Firebot!"
                     >
                         <firebot-select
+                            aria-label="App Theme"
                             options="['Light', 'Midnight', 'Obsidian']"
                             ng-init="selectedTheme = settings.getTheme()"
                             selected="selectedTheme"
