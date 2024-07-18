@@ -251,7 +251,7 @@ manager.registerLookupHandler("%", (name) => ({
         if (macro != null) {
             return manager.evaluateText(
                 macro.expression,
-                { macro, macroArgs, macroNamedArgs: macro.argNames },
+                { ...trigger, macro, macroArgs, macroNamedArgs: macro.argNames },
                 trigger,
                 false
             );
