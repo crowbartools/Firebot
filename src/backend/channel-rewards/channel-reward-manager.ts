@@ -4,10 +4,12 @@ import accountAccess from "../common/account-access";
 import profileManager from "../common/profile-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import twitchApi from "../twitch-api/api";
+import activeUserHandler from "../chat/chat-listeners/active-user-handler"
 import { CustomReward, RewardRedemption, RewardRedemptionsApprovalRequest } from "../twitch-api/resource/channel-rewards";
 import { EffectTrigger } from "../../shared/effect-constants";
 import { RewardRedemptionMetadata, SavedChannelReward } from "../../types/channel-rewards";
 import { TriggerType } from "../common/EffectType";
+import { EffectList } from "../../types/effects";
 
 class ChannelRewardManager {
     channelRewards: Record<string, SavedChannelReward> = {};
@@ -44,6 +46,7 @@ class ChannelRewardManager {
 
             const accountAccess = require("../common/account-access");
 
+            // Manually triggered by streamer, must pass in userId and userDisplayName can be falsy
             this.triggerChannelReward(channelRewardId, {
                 messageText: "Testing reward",
                 redemptionId: "test-redemption-id",
@@ -51,7 +54,9 @@ class ChannelRewardManager {
                 rewardCost: savedReward.twitchData.cost,
                 rewardImage: savedReward.twitchData.image ? savedReward.twitchData.image.url4x : savedReward.twitchData.defaultImage.url4x,
                 rewardName: savedReward.twitchData.title,
-                username: accountAccess.getAccounts().streamer.displayName
+                username: accountAccess.getAccounts().streamer.displayName,
+                userId: "",
+                userDisplayName: ""
             }, true);
         });
 
@@ -259,8 +264,39 @@ class ChannelRewardManager {
         return channelReward ? channelReward.id : null;
     }
 
-    async triggerChannelReward(rewardId: string, metadata: RewardRedemptionMetadata, manual = false): Promise<any> {
+    private async triggerRewardEffects(metadata: RewardRedemptionMetadata, effectList?: EffectList, manual = false): Promise<void> {
+        if (effectList == null || effectList.list == null) {
+            return;
+        }
+
+        const effectRunner = require("../common/effect-runner");
+
+        const processEffectsRequest = {
+            trigger: {
+                type: manual ? EffectTrigger.MANUAL : EffectTrigger.CHANNEL_REWARD,
+                metadata: metadata
+            },
+            effects: effectList
+        };
+
+        try {
+            return effectRunner.processEffects(processEffectsRequest);
+        } catch (reason) {
+            console.log(`error when running effects: ${reason}`);
+        }
+    }
+
+    async triggerChannelReward(rewardId: string, metadata: RewardRedemptionMetadata, manual = false): Promise<boolean | void> {
         const savedReward = this.channelRewards[rewardId];
+        if (metadata.username && metadata.userId && metadata.userDisplayName) {
+            /*
+            If all user data is present mark user as active
+            handles use from src/backend/events/twitch-events/reward-redemption.ts
+            the two other uses of triggerChannel reward do not have this data and are initiated by the streamer
+            retrigger-event and manually-trigger-reward and as such should not set a user as active 
+            */
+            await activeUserHandler.addActiveUser({userName: metadata.username, userId: metadata.userId, displayName: metadata.userDisplayName}, true);
+        }
         if (savedReward == null || savedReward.effects == null || savedReward.effects.list == null) {
             return;
         }
@@ -325,22 +361,25 @@ class ChannelRewardManager {
             }
         }
 
+        return this.triggerRewardEffects(metadata, savedReward.effects, manual);
+    }
 
-        const effectRunner = require("../common/effect-runner");
-
-        const processEffectsRequest = {
-            trigger: {
-                type: manual ? EffectTrigger.MANUAL : EffectTrigger.CHANNEL_REWARD,
-                metadata: metadata
-            },
-            effects: savedReward.effects
-        };
-
-        try {
-            return effectRunner.processEffects(processEffectsRequest);
-        } catch (reason) {
-            console.log(`error when running effects: ${reason}`);
+    async triggerChannelRewardFulfilled(rewardId: string, metadata: RewardRedemptionMetadata, manual = false): Promise<void> {
+        const savedReward = this.channelRewards[rewardId];
+        if (savedReward == null) {
+            return;
         }
+
+        return this.triggerRewardEffects(metadata, savedReward.effectsFulfilled, manual);
+    }
+
+    async triggerChannelRewardCanceled(rewardId: string, metadata: RewardRedemptionMetadata, manual = false): Promise<void> {
+        const savedReward = this.channelRewards[rewardId];
+        if (savedReward == null) {
+            return;
+        }
+
+        return this.triggerRewardEffects(metadata, savedReward.effectsCanceled, manual);
     }
 
     async refreshChannelRewardRedemptions(): Promise<void> {
