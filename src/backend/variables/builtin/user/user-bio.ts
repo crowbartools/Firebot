@@ -6,6 +6,7 @@ const twitchApi = require("../../../twitch-api/api");
 const model : ReplaceVariable = {
     definition: {
         handle: "userBio",
+        aliases: ["userAbout", "userDescription"],
         usage: "userBio",
         description: "Gets the bio/description of the associated user (ie who triggered command, pressed button, etc).",
         examples: [
