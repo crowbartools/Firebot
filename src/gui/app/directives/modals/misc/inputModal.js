@@ -62,6 +62,7 @@
             controller: function($scope, $timeout, utilityService) {
                 const $ctrl = this;
 
+                $ctrl.initialModel = null;
                 $ctrl.model = "";
 
                 $ctrl.label = "Enter Text";
@@ -85,11 +86,13 @@
 
                     if ($ctrl.resolve.model !== undefined && $ctrl.resolve.model !== null) {
                         $ctrl.model = $ctrl.resolve.model;
+                        $ctrl.initialModel = $ctrl.resolve.model;
                     }
 
                     if ($ctrl.resolve.inputType) {
                         $ctrl.inputType = $ctrl.resolve.inputType;
                         $ctrl.model = $ctrl.resolve.model;
+                        $ctrl.initialModel = $ctrl.resolve.model;
                     } else {
                         if (typeof $ctrl.model == 'number') {
                             $ctrl.inputType = "number";
