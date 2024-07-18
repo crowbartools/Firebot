@@ -833,6 +833,24 @@ export async function setTextSourceSettings(sourceName: string, settings: OBSTex
     }
 }
 
+export async function createRecordChapter(chapterName: string) {
+    try {
+        // obs-websockets-js hasn't been updated to include "CreateRecordChapter" yet
+        // @ts-expect-error
+        await obs.call("CreateRecordChapter", {
+            chapterName
+        });
+    } catch (error) {
+        if (error.code === 501) {
+            logger.error("Failed to create OBS Chapter Marker: Output Not Running");
+        } else if (error.code === 204) {
+            logger.error("Failed to create OBS Chapter Marker: Outdated OBS version");
+        } else {
+            logger.error("Failed to create OBS Chapter Marker:", error.message ?? error);
+        }
+    }
+}
+
 export async function getBrowserSources(): Promise<Array<OBSSource>> {
     const sources = await getAllSources();
     return sources?.filter(s => s.typeId === "browser_source");
@@ -967,6 +985,8 @@ export async function stopVirtualCam(): Promise<void> {
         return;
     }
 }
+
+export const isConnected = (): boolean => connected;
 
 export async function isStreaming(): Promise<boolean> {
     let isRunning = false;

@@ -19,6 +19,7 @@ import { setupFrontendListeners } from "./communicator";
 
 import { ChangeSceneEffectType } from "./effects/change-scene-effect-type";
 import { ChangeSceneCollectionEffectType } from "./effects/change-scene-collection";
+import { CreateRecordChapter } from "./effects/create-recording-chapter";
 import { ToggleSourceVisibilityEffectType } from "./effects/toggle-obs-source-visibility";
 import { ToggleSourceFilterEffectType } from "./effects/toggle-obs-source-filter";
 import { ToggleSourceMutedEffectType } from "./effects/toggle-obs-source-muted";
@@ -41,6 +42,7 @@ import { SceneNameEventFilter } from "./filters/scene-name-filter";
 
 import { SceneNameVariable } from "./variables/scene-name-variable";
 import { SceneCollectionNameVariable } from "./variables/scene-collection-name";
+import { IsConnectedVariable } from "./variables/is-connected";
 import { IsStreamingVariable } from "./variables/is-streaming";
 import { IsRecordingVariable } from "./variables/is-recording";
 import { ColorValueVariable } from "./variables/obs-color-value";
@@ -136,6 +138,7 @@ class ObsIntegration
 
         effectManager.registerEffect(ChangeSceneEffectType);
         effectManager.registerEffect(ChangeSceneCollectionEffectType);
+        effectManager.registerEffect(CreateRecordChapter);
         effectManager.registerEffect(ToggleSourceVisibilityEffectType);
         effectManager.registerEffect(ToggleSourceFilterEffectType);
         effectManager.registerEffect(ToggleSourceMutedEffectType);
@@ -158,6 +161,7 @@ class ObsIntegration
 
         replaceVariableManager.registerReplaceVariable(SceneNameVariable);
         replaceVariableManager.registerReplaceVariable(SceneCollectionNameVariable);
+        replaceVariableManager.registerReplaceVariable(IsConnectedVariable);
         replaceVariableManager.registerReplaceVariable(IsStreamingVariable);
         replaceVariableManager.registerReplaceVariable(IsRecordingVariable);
         replaceVariableManager.registerReplaceVariable(ColorValueVariable);
