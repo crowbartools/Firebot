@@ -7,7 +7,7 @@
 
     angular
         .module("firebotApp")
-        .factory("variableMacroService", function(backendCommunicator, utilityService) {
+        .factory("variableMacroService", function(backendCommunicator, utilityService, objectCopyHelper, ngToast) {
             const service = {};
 
             /** @type {VariableMacro[]} */
@@ -31,7 +31,7 @@
              * @returns {Promise.<void>}
              */
             service.loadMacros = async () => {
-                const macros = await backendCommunicator.fireEventAsync("macros:getAll");
+                const macros = await backendCommunicator.fireEventAsync("macros:get-all");
 
                 if (macros) {
                     service.macros = macros;
@@ -71,7 +71,7 @@
              * @returns {Promise.<void>}
              */
             service.saveMacro = async (macro) => {
-                const savedMacro = await backendCommunicator.fireEventAsync("macros:save", macro);
+                const savedMacro = await backendCommunicator.fireEventAsync("macros:save", JSON.parse(angular.toJson(macro)));
 
                 if (savedMacro) {
                     updateMacros(savedMacro);
@@ -88,6 +88,38 @@
             service.deleteMacro = (macroId) => {
                 service.macros = service.macros.filter(m => m.id !== macroId);
                 backendCommunicator.fireEvent("macros:delete", macroId);
+            };
+
+            service.saveAllMacros = (macros) => {
+                service.macros = macros;
+                backendCommunicator.fireEvent(
+                    "macros:save-all",
+                    JSON.parse(angular.toJson(macros))
+                );
+            };
+
+            service.duplicateMacro = (macroId) => {
+                const macro = service.macros.find(pel => pel.id === macroId);
+                if (macro == null) {
+                    return;
+                }
+                const copiedMacro = objectCopyHelper.copyObject("variable_macro", macro);
+                copiedMacro.id = null;
+
+                while (service.getMacroByName(copiedMacro.name) != null) {
+                    copiedMacro.name += "Copy";
+                }
+
+                service.saveMacro(copiedMacro).then((successful) => {
+                    if (successful) {
+                        ngToast.create({
+                            className: 'success',
+                            content: 'Successfully duplicated variable macro!'
+                        });
+                    } else {
+                        ngToast.create("Unable to duplicate variable macro.");
+                    }
+                });
             };
 
             /**
