@@ -30,7 +30,7 @@
                             on-toggle="settings.setMinimizeToTray(!settings.getMinimizeToTray())"
                             font-size="40"
                             aria-label="Minimize to Tray, When minimized, Firebot will minimize to tray instead of task bar"
-                            accessibility-label="(settings.getMinimizeToTray() ? 'Disable' : 'Enable') + ' When minimized, Firebot will minimize to tray instead of task bar'"
+                            accessibility-label="(settings.getMinimizeToTray() ? 'Enabled' : 'Disabled') + ' When minimized, Firebot will minimize to tray instead of task bar'"
                         />
                     </firebot-setting>
 
@@ -43,7 +43,7 @@
                             on-toggle="settings.setSoundsEnabled(settings.soundsEnabled() === 'On' ? 'Off' : 'On')"
                             font-size="40"
                             aria-label="Minimize to Tray, When minimized, Firebot will minimize to tray instead of task bar"
-                            accessibility-label="(settings.soundsEnabled() ? 'Disable' : 'Enable') + ' Get audible alerts when Firebot connects or disconnects.'"
+                            accessibility-label="(settings.soundsEnabled() ? 'Enabled' : 'Disabled') + ' Get audible alerts when Firebot connects or disconnects.'"
                         />
                     </firebot-setting>
 
@@ -93,7 +93,7 @@
                             font-size="40"
                             aria-label="Firebot automatically updates to new stable versions. It does not automatically update to betas or major new
                         releases however. Enable if you want to be notified of new beta releases."
-                            accessibility-label="(settings.notifyOnBeta() ? 'Disable' : 'Enable') + ' Firebot automatically updates to new stable versions. It does not automatically update to betas or major new
+                            accessibility-label="(settings.notifyOnBeta() ? 'Enabled' : 'Disabled') + ' Firebot automatically updates to new stable versions. It does not automatically update to betas or major new
                         releases however. Enable if you want to be notified of new beta releases.'"
                         />
                     </firebot-setting>
@@ -107,7 +107,7 @@
                             on-toggle="settings.setWebOnlineCheckin(!settings.getWebOnlineCheckin())"
                             font-size="40"
                             aria-label="Enable this setting to have your stream displayed on Firebot's website when you're live"
-                            accessibility-label="(settings.getWebOnlineCheckin() ? 'Disable' : 'Enable') + ' Enable this setting to have your stream displayed on Firebot\\'s website when you\\'re live'"
+                            accessibility-label="(settings.getWebOnlineCheckin() ? 'Enabled' : 'Disabled') + ' Enable this setting to have your stream displayed on Firebot\\'s website when you\\'re live'"
                         />
                     </firebot-setting>
 
@@ -182,7 +182,7 @@
                             toggle-model="settings.getOpenStreamPreviewOnLaunch()"
                             on-toggle="settings.setOpenStreamPreviewOnLaunch(!settings.getOpenStreamPreviewOnLaunch())"
                             font-size="40"
-                            accessibility-label="(settings.getOpenStreamPreviewOnLaunch() ? 'Disable' : 'Enable') + ' Stream Preview on Launch'"
+                            accessibility-label="(settings.getOpenStreamPreviewOnLaunch() ? 'Enabled' : 'Disabled') + ' Stream Preview on Launch'"
                         />
                     </firebot-setting>
                 </div>
