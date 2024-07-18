@@ -5,7 +5,7 @@
         .module('firebotApp')
         .component("firebotSearchableSelect", {
             bindings: {
-                model: "=ngModel",
+                modelValue: "=ngModel",
                 placeholder: "@?",
                 name: "@?",
                 id: "@?",

@@ -76,16 +76,16 @@
 
             service.ladderModes = [
                 {
-                    id: "manual",
-                    name: "Manual",
-                    description: "Viewers must be manually added to ranks (via !rank command, Set Rank effect, etc.)",
-                    iconClass: "fa-users-cog"
+                    id: "auto",
+                    name: "Automated",
+                    description: "Viewers are automatically added to ranks based on view time or currency.",
+                    iconClass: "fa-magic"
                 },
                 {
-                    id: "automated",
-                    name: "Automated",
-                    description: "Viewers are automatically added to ranks based on criteria (currency or time watched)",
-                    iconClass: "fa-magic"
+                    id: "manual",
+                    name: "Manual",
+                    description: "Viewers must be manually added to ranks via rank command or Set Rank effect.",
+                    iconClass: "fa-users-cog"
                 }
             ];
 

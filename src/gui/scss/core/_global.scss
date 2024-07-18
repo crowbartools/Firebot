@@ -1475,6 +1475,44 @@ thead th{
   padding-right: 25px;
   margin-bottom: 5px;
 }
+.fb-radio-card-container {
+    display: grid;
+    gap: 10px;
+    grid-template-rows: max-content;
+    grid-template-columns: repeat(2, 1fr);
+    .fb-radio-card {
+        display: flex;
+        padding: 10px;
+        border-radius: 8px;
+        color: $content-text-color;
+        cursor: pointer;
+        transition: 0.2s;
+        border: 2px solid $default-btn-bg-color;
+        &.selected {
+            border-color: #16809c;
+        }
+        .fb-radio-card-text-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .fb-radio-card-title {
+            font-size: 15px;
+            font-weight: 600;
+        }
+        .fb-radio-card-description {
+            font-size: 11px;
+            opacity: 0.75;
+        }
+        .fb-radio-card-icon {
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+            padding-top: 2px;
+        }
+    }
+}
 
 
 .script-name {

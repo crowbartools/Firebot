@@ -8,7 +8,6 @@ export type RankLadder = {
     id: string;
     name: string;
     mode: "manual" | "auto";
-    enabled: boolean;
     settings: {
         trackBy?: "view_time" | "currency",
         currencyId?: string;

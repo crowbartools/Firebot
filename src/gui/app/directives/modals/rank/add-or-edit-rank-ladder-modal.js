@@ -40,14 +40,35 @@
 
                     <div class="form-group" ng-class="{'has-error': $ctrl.formFieldHasError('ladderMode')}">
                         <label for="ladderMode" class="control-label">Mode</label>
-                        <firebot-searchable-select
+                        <firebot-radio-cards
+                            options="$ctrl.ladderModes"
                             ng-model="$ctrl.rankLadder.mode"
-                            items="$ctrl.ladderModes"
                             id="ladderMode"
                             name="ladderMode"
-                            required="true"
-                            placeholder="Select ladder mode"
-                        ></firebot-searchable-select>
+                            required
+                        ></firebot-radio-cards>
+                    </div>
+
+                    <div ng-show="$ctrl.rankLadder.mode == 'auto'">
+                        <div class="form-group" ng-class="{'has-error': $ctrl.formFieldHasError('trackBy')}">
+                            <label for="trackBy" class="control-label">Track By</label>
+                            <firebot-radio-cards
+                                options="$ctrl.trackByOptions"
+                                ng-model="$ctrl.rankLadder.settings.trackBy"
+                                id="trackBy"
+                                name="trackBy"
+                                ng-required="$ctrl.rankLadder.mode == 'auto'"
+                            ></firebot-radio-cards>
+                            <div ng-show="$ctrl.rankLadder.settings.trackBy == 'currency'" class="form-group mb-0 mt-2" ng-class="{'has-error': $ctrl.formFieldHasError('currency')}">
+                                <label for="currency" class="control-label" style="display: none;">Currency</label>
+                                <searchable-currency-select
+                                    ng-model="$ctrl.rankLadder.settings.currencyId"
+                                    id="currency"
+                                    name="currency"
+                                    required="$ctrl.rankLadder.mode == 'auto' && $ctrl.rankLadder.settings.trackBy == 'currency'"
+                                ></searchable-currency-select>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-group flex justify-between">
@@ -58,6 +79,11 @@
                         <div>
                             <toggle-button toggle-model="$ctrl.rankLadder.settings.announcePromotionsInChat" auto-update-value="true" font-size="32"></toggle-button>
                         </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">Ranks</label>
+
                     </div>
                 </form>
             </div>
@@ -99,7 +125,17 @@
                 }
             };
 
-            $ctrl.ladderModes = viewerRanksService.ladderModes;
+            $ctrl.ladderModes = viewerRanksService.ladderModes.map(mode => ({
+                value: mode.id,
+                label: mode.name,
+                description: mode.description,
+                iconClass: mode.iconClass
+            }));
+
+            $ctrl.trackByOptions = [
+                { value: "view_time", label: "View Time", iconClass: "fa-clock" },
+                { value: "currency", label: "Currency", iconClass: "fa-money-bill" }
+            ];
 
             $ctrl.nameIsTaken = (name) => {
                 if (name == null) {
