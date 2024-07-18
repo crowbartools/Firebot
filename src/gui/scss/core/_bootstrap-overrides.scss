@@ -426,6 +426,9 @@ textarea.form-control {
         font-size: 13px;
         color: #9a9a9a;
     }
+    &.has-error .help-block {
+        color: #a94442;
+    }
 }
 
 .has-error .form-control {

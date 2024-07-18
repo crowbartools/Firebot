@@ -3,18 +3,13 @@
 const logger = require("../logwrapper");
 const EventEmitter = require("events");
 
-const expressionish = require('expressionish');
+const expressionish = require("expressionish");
 const ExpressionVariableError = expressionish.ExpressionVariableError;
-const frontendCommunicator = require("../common/frontend-communicator");
-const { getCustomVariable } = require('../common/custom-variable-manager');
-const util = require("../utility");
+const macroManager = require("./macro-manager");
 
-// TODO: stub until actual macro manager is created
-const macroManager = {
-    getMacro(name) {
-        return null;
-    }
-};
+const frontendCommunicator = require("../common/frontend-communicator");
+const { getCustomVariable } = require("../common/custom-variable-manager");
+const util = require("../utility");
 
 function preeval(options, variable) {
     if (!variable.triggers) {
@@ -34,7 +29,7 @@ function preeval(options, variable) {
     }
 
     if (Array.isArray(varTrigger)) {
-        if (!varTrigger.some(id => id === options.trigger.id)) {
+        if (!varTrigger.some((id) => id === options.trigger.id)) {
             throw new ExpressionVariableError(
                 `$${variable.handle} does not support this specific trigger type: ${display}`,
                 variable.position,
@@ -56,16 +51,13 @@ class ReplaceVariableManager extends EventEmitter {
         if (this._registeredVariableHandlers.has(variable.definition.handle)) {
             throw new TypeError(`A variable with the handle ${variable.definition.handle} already exists.`);
         }
-        this._registeredVariableHandlers.set(
-            variable.definition.handle,
-            {
-                definition: variable.definition,
-                handle: variable.definition.handle,
-                argsCheck: variable.argsCheck,
-                evaluator: variable.evaluator,
-                triggers: variable.definition.triggers
-            }
-        );
+        this._registeredVariableHandlers.set(variable.definition.handle, {
+            definition: variable.definition,
+            handle: variable.definition.handle,
+            argsCheck: variable.argsCheck,
+            evaluator: variable.evaluator,
+            triggers: variable.definition.triggers
+        });
 
         this._variableAndAliasHandlers = this._generateVariableAndAliasHandlers();
 
@@ -75,7 +67,7 @@ class ReplaceVariableManager extends EventEmitter {
 
         frontendCommunicator.send("replace-variable-registered", variable.definition);
     }
-    getReplaceVariables () {
+    getReplaceVariables() {
         // Map register variables Map to array
         const registeredVariables = this._registeredVariableHandlers;
         const variables = [];
@@ -113,7 +105,7 @@ class ReplaceVariableManager extends EventEmitter {
     }
 
     evaluateText(input, metadata, trigger, onlyValidate) {
-        if (input.includes('$')) {
+        if (input.includes("$")) {
             return expressionish({
                 handlers: this._variableAndAliasHandlers,
                 expression: input,
@@ -137,7 +129,7 @@ class ReplaceVariableManager extends EventEmitter {
                     let replacedValue = value;
                     const triggerId = util.getTriggerIdFromTriggerData(trigger);
                     try {
-                        replacedValue = await this.evaluateText(value, trigger, { type: trigger.type, id: triggerId});
+                        replacedValue = await this.evaluateText(value, trigger, { type: trigger.type, id: triggerId });
                     } catch (err) {
                         logger.warn(`Unable to parse variables for value: '${value}'`, err);
                     }
@@ -151,28 +143,29 @@ class ReplaceVariableManager extends EventEmitter {
     }
 
     async findAndValidateVariables(data, trigger, errors) {
-
         if (errors == null) {
             errors = [];
         }
 
         const keys = Object.keys(data);
         for (const key of keys) {
-
             const value = data[key];
 
             if (value && typeof value === "string") {
-                if (value.includes("$") || value.includes('&')) {
+                if (value.includes("$") || value.includes("&")) {
                     try {
-                        await this.evaluateText(value, undefined, { type: trigger && trigger.type, id: trigger && trigger.id}, true);
-
+                        await this.evaluateText(
+                            value,
+                            undefined,
+                            { type: trigger && trigger.type, id: trigger && trigger.id },
+                            true
+                        );
                     } catch (err) {
                         err.dataField = key;
                         err.rawText = value;
                         if (err instanceof expressionish.ExpressionArgumentsError) {
                             errors.push(err);
                             logger.debug(`Found variable error when validating`, err);
-
                         } else if (err instanceof expressionish.ExpressionError) {
                             errors.push({
                                 dataField: err.dataField,
@@ -183,7 +176,6 @@ class ReplaceVariableManager extends EventEmitter {
                                 rawText: err.rawText
                             });
                             logger.debug(`Found variable error when validating`, err);
-
                         } else {
                             logger.error(`Unknown error when validating variables for string: '${value}'`, err);
                         }
@@ -202,7 +194,7 @@ class ReplaceVariableManager extends EventEmitter {
 const manager = new ReplaceVariableManager();
 
 // custom variable shorthand
-manager.registerLookupHandler('$', name => ({
+manager.registerLookupHandler("$", (name) => ({
     evaluator: (trigger, ...path) => {
         let result = getCustomVariable(name);
         for (const item of path) {
@@ -216,7 +208,7 @@ manager.registerLookupHandler('$', name => ({
 }));
 
 // Effect Output shorthand
-manager.registerLookupHandler('&', name => ({
+manager.registerLookupHandler("&", (name) => ({
     evaluator: (trigger, ...path) => {
         let result = trigger.effectOutputs;
         result = result[name];
@@ -231,7 +223,7 @@ manager.registerLookupHandler('&', name => ({
 }));
 
 // Preset effect Args shorthand
-manager.registerLookupHandler('#', name => ({
+manager.registerLookupHandler("#", (name) => ({
     evaluator: (trigger) => {
         const arg = (trigger.metadata?.presetListArgs || {})[name];
         return arg == null ? null : arg;
@@ -239,9 +231,9 @@ manager.registerLookupHandler('#', name => ({
 }));
 
 // Macro shorthand
-manager.registerLookupHandler('%', name => ({
+manager.registerLookupHandler("%", (name) => ({
     evaluator: (trigger, ...macroArgs) => {
-        const macro = macroManager.getMacro(name);
+        const macro = macroManager.getMacroByName(name);
         if (macro != null) {
             return manager.evaluateText({
                 handlers: this._registeredVariableHandlers,
@@ -257,7 +249,9 @@ manager.registerLookupHandler('%', name => ({
 
 frontendCommunicator.on("getReplaceVariableDefinitions", () => {
     logger.debug("got 'get all vars' request");
-    return Array.from(manager.getVariableHandlers().values()).map(v => v.definition).filter(v => !v.hidden);
+    return Array.from(manager.getVariableHandlers().values())
+        .map((v) => v.definition)
+        .filter((v) => !v.hidden);
 });
 
 frontendCommunicator.onAsync("validateVariables", async (eventData) => {
