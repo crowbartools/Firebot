@@ -4,6 +4,7 @@ import accountAccess from "../common/account-access";
 import profileManager from "../common/profile-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import twitchApi from "../twitch-api/api";
+import activeUserHandler from "../chat/chat-listeners/active-user-handler"
 import { CustomReward, RewardRedemption, RewardRedemptionsApprovalRequest } from "../twitch-api/resource/channel-rewards";
 import { EffectTrigger } from "../../shared/effect-constants";
 import { RewardRedemptionMetadata, SavedChannelReward } from "../../types/channel-rewards";
@@ -45,6 +46,7 @@ class ChannelRewardManager {
 
             const accountAccess = require("../common/account-access");
 
+            // Manually triggered by streamer, must pass in userId and userDisplayName can be falsy
             this.triggerChannelReward(channelRewardId, {
                 messageText: "Testing reward",
                 redemptionId: "test-redemption-id",
@@ -52,7 +54,9 @@ class ChannelRewardManager {
                 rewardCost: savedReward.twitchData.cost,
                 rewardImage: savedReward.twitchData.image ? savedReward.twitchData.image.url4x : savedReward.twitchData.defaultImage.url4x,
                 rewardName: savedReward.twitchData.title,
-                username: accountAccess.getAccounts().streamer.displayName
+                username: accountAccess.getAccounts().streamer.displayName,
+                userId: "",
+                userDisplayName: ""
             }, true);
         });
 
@@ -284,6 +288,15 @@ class ChannelRewardManager {
 
     async triggerChannelReward(rewardId: string, metadata: RewardRedemptionMetadata, manual = false): Promise<boolean | void> {
         const savedReward = this.channelRewards[rewardId];
+        if (metadata.username && metadata.userId && metadata.userDisplayName) {
+            /*
+            If all user data is present mark user as active
+            handles use from src/backend/events/twitch-events/reward-redemption.ts
+            the two other uses of triggerChannel reward do not have this data and are initiated by the streamer
+            retrigger-event and manually-trigger-reward and as such should not set a user as active 
+            */
+            await activeUserHandler.addActiveUser({userName: metadata.username, userId: metadata.userId, displayName: metadata.userDisplayName}, true);
+        }
         if (savedReward == null || savedReward.effects == null || savedReward.effects.list == null) {
             return;
         }

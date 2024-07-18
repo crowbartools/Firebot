@@ -84,7 +84,7 @@
             controller: function(commandsService, countersService, currencyService,
                 effectQueuesService, eventsService, hotkeyService, presetEffectListsService,
                 timerService, viewerRolesService, quickActionsService, accountAccess, utilityService,
-                ngToast, backendCommunicator, $q) {
+                ngToast, backendCommunicator, sortTagsService, $q) {
 
                 const $ctrl = this;
 
@@ -161,7 +161,8 @@
                     const components = componentConfig.all.map(c => {
                         return {
                             id: c.id,
-                            name: c[componentConfig.nameField]
+                            name: c[componentConfig.nameField],
+                            tags: sortTagsService.getSortTagsForItem(componentConfig.key, c.sortTags).map(st => st.name)
                         };
                     });
                     const selectedIds = $ctrl.setup.components[componentConfig.key].map(c => c.id);
