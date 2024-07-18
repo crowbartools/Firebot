@@ -14,17 +14,22 @@ const deepmerge = require("deepmerge");
             template: `
                 <div>
                     <div ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.model">
-                        <div ng-repeat="item in $ctrl.model track by $index" class="list-item selectable" ng-click="$ctrl.editItem($index)">
+                        <div ng-repeat="item in $ctrl.model track by $index" class="list-item">
                             <div style="display: flex;align-items: center;column-gap: 10px;>
                                 <span ng-show="$ctrl.settings.sortable" class="dragHandle" style="height: 38px; width: 15px; align-items: center; justify-content: center; display: flex">
                                     <i class="fal fa-bars" aria-hidden="true"></i>
                                 </span>
-                                <span ng-if="$ctrl.settings.showIndex" class="muted">{{ $ctrl.settings.indexTemplate.replace("{index}", $ctrl.settings.indexZeroBased ? $index : $index + 1) }}</span>
-                                <div uib-tooltip="Click to edit"  style="font-weight: 400;" aria-label="{{item + ' (Click to edit)'}}">{{item}}</div>
+                                <span ng-if="$ctrl.settings.showIndex" class="muted">{{ $ctrl.settings.indexTemplate.replace("{index}", $ctrl.settings.indexZeroBased ? $index : $index + 1).replace("{name}", item) }}</span>
+                                <div style="font-weight: 400;" aria-label="{{item}}">{{item}}</div>
                             </div>
-                            <span class="clickable" style="color: #fb7373;" ng-click="$ctrl.removeItem($index);$event.stopPropagation();" aria-label="Remove item">
-                                <i class="fad fa-trash-alt" aria-hidden="true"></i>
-                            </span>
+                            <div class="flex items-center justify-center">
+                                <div class="clickable mr-4" style="color: white;" ng-click="$ctrl.editItem($index);" aria-label="Edit item">
+                                    <i class="fas fa-edit" aria-hidden="true"></i>
+                                </div>
+                                <div class="clickable" style="color: #fb7373;" ng-click="$ctrl.removeItem($index);$event.stopPropagation();" aria-label="Remove item">
+                                    <i class="fad fa-trash-alt" aria-hidden="true"></i>
+                                </div>
+                            </div>
                         </div>
                         <p class="muted" ng-show="$ctrl.model.length < 1">{{$ctrl.settings.noneAddedText}}</p>
                     </div>
@@ -59,6 +64,7 @@ const deepmerge = require("deepmerge");
                     indexTemplate: "{index}.",
                     addLabel: "Add",
                     editLabel: "Edit",
+                    validationFn: undefined,
                     validationText: "Text cannot be empty",
                     noneAddedText: "None saved",
                     noDuplicates: false,
@@ -91,15 +97,15 @@ const deepmerge = require("deepmerge");
                             label: isNew ? $ctrl.settings.addLabel : $ctrl.settings.editLabel,
                             useTextArea: $ctrl.settings.useTextArea,
                             saveText: "Save",
-                            validationFn: (value) => {
-                                return new Promise(resolve => {
+                            validationFn: $ctrl.settings.validationFn ?? ((value) => {
+                                return new Promise((resolve) => {
                                     if (value == null || value.trim().length < 1) {
                                         resolve(false);
                                     } else {
                                         resolve(true);
                                     }
                                 });
-                            },
+                            }),
                             validationText: $ctrl.settings.validationText,
                             trigger: $ctrl.settings.trigger,
                             triggerMeta: $ctrl.settings.triggerMeta
