@@ -12,7 +12,7 @@ export type RankLadder = {
     name: string;
     type: "manual" | "auto";
     enabled: boolean;
-    settings: {
+    autoSettings: {
         trackBy?: "view_time" | "currency",
         currencyId?: string;
         announcePromotionsInChat?: boolean;

@@ -4,8 +4,7 @@
 
     angular.module("firebotApp").component("addRankLadderModal", {
         template: `
-            <scroll-sentinel element-class="edit-effect-queue-header"></scroll-sentinel>
-            <div class="modal-header sticky-header">
+            <div class="modal-header">
                 <button
                     type="button"
                     class="close"
@@ -77,7 +76,7 @@
             $ctrl.rankLadder = {
                 name: "",
                 type: undefined,
-                active: true
+                enabled: true
             };
 
             $ctrl.$onInit = () => {};
