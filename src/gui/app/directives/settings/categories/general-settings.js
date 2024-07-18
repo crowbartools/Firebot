@@ -107,7 +107,7 @@
                             on-toggle="settings.setWebOnlineCheckin(!settings.getWebOnlineCheckin())"
                             font-size="40"
                             aria-label="Enable this setting to have your stream displayed on Firebot's website when you're live"
-                            accessibility-label="(settings.getWebOnlineCheckin() ? 'Disable' : 'Enable') + 'Enable this setting to have your stream displayed on Firebot\\'s website when you\\'re live'"
+                            accessibility-label="(settings.getWebOnlineCheckin() ? 'Disable' : 'Enable') + ' Enable this setting to have your stream displayed on Firebot\\'s website when you\\'re live'"
                         />
                     </firebot-setting>
 
