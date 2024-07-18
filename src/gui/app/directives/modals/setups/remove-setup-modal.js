@@ -57,7 +57,7 @@
             },
             controller: function($q, logger, ngToast, commandsService, countersService, currencyService,
                 effectQueuesService, eventsService, hotkeyService, presetEffectListsService,
-                timerService, viewerRolesService, quickActionsService, backendCommunicator) {
+                timerService, viewerRolesService, quickActionsService, variableMacroService, backendCommunicator) {
                 const $ctrl = this;
 
                 $ctrl.setupFilePath = null;
@@ -74,6 +74,7 @@
                     hotkeys: "Hotkey",
                     presetEffectLists: "Preset Effect List",
                     timers: "Timer",
+                    variableMacros: "Variable Macro",
                     viewerRoles: "Viewer Role",
                     quickActions: "Quick Action"
                 };
@@ -88,6 +89,7 @@
                     hotkeys: [],
                     presetEffectLists: [],
                     timers: [],
+                    variableMacros: [],
                     viewerRoles: [],
                     quickActions: []
                 };
@@ -105,6 +107,7 @@
                     ...hotkeyService.getHotkeys().map(i => i.id),
                     ...presetEffectListsService.getPresetEffectLists().map(i => i.id),
                     ...timerService.getTimers().map(i => i.id),
+                    ...variableMacroService.macros.map(i => i.id),
                     ...viewerRolesService.getCustomRoles().map(i => i.id),
                     ...quickActionsService.quickActions.map(i => i.id)
                 ].forEach(id => {

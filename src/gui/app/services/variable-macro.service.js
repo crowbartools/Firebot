@@ -38,6 +38,10 @@
                 }
             };
 
+            backendCommunicator.on("macros:updated", () => {
+                service.loadMacros();
+            });
+
             /**
              * @param {string} macroId
              * @returns {VariableMacro}

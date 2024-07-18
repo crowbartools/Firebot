@@ -14,6 +14,10 @@ class MacroManager extends JsonDbManager<VariableMacro> {
     hasMacro(name: string) {
         return this.getItemByName(name) != null;
     }
+
+    triggerUiRefresh(): void {
+        frontendCommunicator.send("macros:updated");
+    }
 }
 
 const manager = new MacroManager();
