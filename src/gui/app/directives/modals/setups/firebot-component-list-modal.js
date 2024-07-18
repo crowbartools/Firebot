@@ -12,8 +12,11 @@
                     <div id="roles" class="modal-subheader" style="padding: 0 0 4px 0">
                         {{$ctrl.label}}
                     </div>
+                    <div style="height: 55px; display: flex; align-items: center;">
+                        <searchbar search-id="componentSearch" placeholder-text="Search {{$ctrl.label}}..." query="$ctrl.componentSearch" style="width: 100%;"></searchbar>
+                    </div>
                     <div class="viewer-group-list" style="height: inherit; min-height: 100px;max-height: 300px;">
-                        <label ng-repeat="component in $ctrl.allComponents track by component.id" class="control-fb control--checkbox">{{component.name}}
+                        <label ng-repeat="component in $ctrl.allComponents | filter:$ctrl.componentSearch track by component.id" class="control-fb control--checkbox">{{component.name}}
                             <input type="checkbox" ng-click="$ctrl.toggleComponentSelected(component.id)" ng-checked="$ctrl.componentIsSelected(component.id)"  aria-label="..." >
                             <div class="control__indicator"></div>
                         </label>
@@ -29,7 +32,7 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function() {
+            controller: function($timeout) {
                 const $ctrl = this;
 
                 $ctrl.label = "";
@@ -56,6 +59,10 @@
                     if ($ctrl.resolve.selectedIds) {
                         $ctrl.selectedIds = $ctrl.resolve.selectedIds;
                     }
+
+                    $timeout(() => {
+                        angular.element("#componentSearch").trigger("focus");
+                    }, 50);
                 };
 
                 $ctrl.save = () => {
