@@ -75,7 +75,7 @@
             /**
              * @param {string} context
              * @param {string[]} tagIds
-             * @returns {string[]}
+             * @returns {SortTag[]}
              */
             service.getSortTagsForItem = (context, tagIds) => {
                 if (context == null || tagIds == null) {
