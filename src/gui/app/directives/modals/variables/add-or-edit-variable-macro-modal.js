@@ -129,9 +129,9 @@
                 $ctrl.argListSettings = {
                     sortable: true,
                     showIndex: false,
-                    hintTemplate: "$macroArg[{name}]",
+                    hintTemplate: "$^{name}",
                     showCopyButton: true,
-                    copyTemplate: "$macroArg[{name}]",
+                    copyTemplate: "$^{name}",
                     addLabel: "Add Arg",
                     editLabel: "Edit Arg",
                     noDuplicates: true,
