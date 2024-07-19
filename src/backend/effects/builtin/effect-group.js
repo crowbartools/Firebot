@@ -42,7 +42,7 @@ const effectGroup = {
                 <div style="display: flex; align-items: center; justify-content: space-between;">
                     <span><b>{{arg.name}}: </b></span>
                     <div style="width: 100%; padding: 0 10px;">
-                        <input type="text" class="form-control" placeholder="Enter data" ng-model="effect.presetListArgs[arg.name]" replace-variables />
+                    <textarea type="text" class="form-control" placeholder="Enter data" ng-model="effect.presetListArgs[arg.name]" replace-variables rows="1"></textarea>
                     </div>
                 </div>
             </div>
@@ -88,7 +88,7 @@ const effectGroup = {
                 return;
             }
             presetEffectListsService.showAddEditPresetEffectListModal($scope.selectedPresetList)
-                .then(presetList => {
+                .then((presetList) => {
                     if (presetList) {
                         $scope.selectedPresetList = presetList;
                     }
@@ -123,15 +123,15 @@ const effectGroup = {
         }
 
     },
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.listType === 'preset' && effect.presetListId == null) {
             errors.push("Please select a preset list");
         }
         return errors;
     },
-    onTriggerEvent: event => {
-        return new Promise(resolve => {
+    onTriggerEvent: (event) => {
+        return new Promise((resolve) => {
 
             const { effect, trigger, outputs } = event;
 
@@ -175,7 +175,7 @@ const effectGroup = {
             if (effect.dontWait) {
                 resolve(true);
             } else {
-                effectExecutionPromise.then(result => {
+                effectExecutionPromise.then((result) => {
                     if (result != null && result.success === true) {
 
                         if (result.stopEffectExecution) {
