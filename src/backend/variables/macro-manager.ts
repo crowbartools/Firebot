@@ -22,11 +22,14 @@ class MacroManager extends JsonDbManager<VariableMacro> {
 
 const manager = new MacroManager();
 
-frontendCommunicator.onAsync("macros:getAll",
+frontendCommunicator.onAsync("macros:get-all",
     async () => manager.getAllItems());
 
 frontendCommunicator.onAsync("macros:save",
-    async (newMacro: VariableMacro) => manager.saveItem(newMacro));
+    async (macros: VariableMacro) => manager.saveItem(macros));
+
+frontendCommunicator.onAsync("macros:save-all",
+    async (macros: VariableMacro[]) => manager.saveAllItems(macros));
 
 frontendCommunicator.on("macros:delete",
     (macroId: string) => manager.deleteItem(macroId));

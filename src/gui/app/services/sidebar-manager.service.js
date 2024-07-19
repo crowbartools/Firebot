@@ -49,7 +49,8 @@
                     "effect queues",
                     "currency",
                     "quotes",
-                    "viewers"
+                    "viewers",
+                    "variable macros"
                 ].includes(service.currentTab.toLowerCase());
             };
 
@@ -61,6 +62,7 @@
                     "timers",
                     "channel rewards",
                     "preset effect lists",
+                    "variable macros",
                     "counters",
                     "effect queues",
                     "settings"
@@ -165,6 +167,11 @@
                 .when("/games", {
                     templateUrl: "./templates/_games.html",
                     controller: "gamesController"
+                })
+
+                .when("/variable-macros", {
+                    templateUrl: "./templates/_variable-macros.html",
+                    controller: "variableMacrosController"
                 });
         }
     ]);
