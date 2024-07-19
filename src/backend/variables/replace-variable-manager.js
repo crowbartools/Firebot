@@ -207,14 +207,17 @@ manager.registerLookupHandler("$", (name) => ({
 manager.registerLookupHandler("&", (name) => ({
     evaluator: (trigger, ...path) => {
         let result = trigger.effectOutputs;
-        result = result[name];
-        for (const item of path) {
-            if (result == null) {
-                return null;
+        if (result != null) {
+            result = result[name];
+            for (const item of path) {
+                if (result == null) {
+                    return null;
+                }
+                result = result[item];
             }
-            result = result[item];
+            return result == null ? null : result;
         }
-        return result == null ? null : result;
+        return null;
     }
 }));
 

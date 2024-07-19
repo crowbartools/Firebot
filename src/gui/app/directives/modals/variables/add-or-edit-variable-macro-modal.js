@@ -129,9 +129,9 @@
                 $ctrl.argListSettings = {
                     sortable: true,
                     showIndex: false,
-                    hintTemplate: "$macroArg[{name}]",
+                    hintTemplate: "$^{name}",
                     showCopyButton: true,
-                    copyTemplate: "$macroArg[{name}]",
+                    copyTemplate: "$^{name}",
                     addLabel: "Add Arg",
                     editLabel: "Edit Arg",
                     noDuplicates: true,
@@ -146,7 +146,7 @@
                             return true;
                         },
                         (argName) => {
-                            if (!/^[a-zA-Z0-9_]+$/.test(argName)) {
+                            if (!/^[a-z][a-zA-Z0-9]+$/.test(argName)) {
                                 return {
                                     success: false,
                                     reason: "Arg name must be alphanumeric with no spaces or special characters."
