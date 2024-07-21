@@ -4,8 +4,6 @@
     /** @typedef {import("../../../types/ranks").RankLadder} RankLadder */
     /** @typedef {import("../../../types/ranks").Rank} Rank */
 
-    const uuid = require("uuid/v4");
-
     angular
         .module("firebotApp")
         .factory("viewerRanksService", function($q, backendCommunicator, utilityService, objectCopyHelper, ngToast) {
@@ -14,39 +12,66 @@
             /** @type {RankLadder[]} */
             service.rankLadders = [];
 
-            service.loadRankLadders = async function() {
-                $q.when(backendCommunicator.fireEventAsync("getRankLadders")).then((ladders) => {
-                    if (ladders != null && Array.isArray(ladders)) {
-                        service.rankLadders = ladders;
-                    }
-                });
-            };
-
-            service.saveAllRankLadders = function(ladders) {
-                service.rankLadders = ladders;
-                backendCommunicator.fireEventAsync("saveAllRankLadders", JSON.parse(angular.toJson(ladders)));
-            };
-
-            service.saveRankLadder = function(ladder) {
-                if (ladder.id == null) {
-                    ladder.id = uuid();
-                    ladder.enabled = ladder.enabled ?? true;
-                    ladder.ranks = ladder.ranks ?? [];
-                }
-
-                backendCommunicator.fireEventAsync("saveRankLadder", JSON.parse(angular.toJson(ladder)));
-
-                const existingLadderIndex = service.rankLadders.findIndex(t => t.id === ladder.id);
-                if (existingLadderIndex !== -1) {
-                    service.rankLadders[existingLadderIndex] = ladder;
+            /**
+             * @param {RankLadder} ladder
+             * @returns {void}
+             */
+            const updateLadder = (ladder) => {
+                const index = service.rankLadders.findIndex(m => m.id === ladder.id);
+                if (index > -1) {
+                    service.rankLadders[index] = ladder;
                 } else {
                     service.rankLadders.push(ladder);
                 }
             };
 
+            service.loadRankLadders = async () => {
+                const rankLadders = await backendCommunicator.fireEventAsync("rank-ladders:get-all");
+
+                if (rankLadders) {
+                    service.rankLadders = rankLadders;
+                }
+            };
+
+            /**
+             * @param {string} ladderId
+             * @returns {RankLadder}
+             */
+            service.getRankLadder = (ladderId) => {
+                return service.rankLadders.find(l => l.id === ladderId);
+            };
+
+            /**
+             * @param {string} name
+             * @returns {RankLadder}
+             */
+            service.getRankLadderByName = (name) => {
+                return service.rankLadders.find(l => l.name === name);
+            };
+
+            /**
+             * @param {RankLadder} ladder
+             * @returns {Promise.<void>}
+             */
+            service.saveRankLadder = async (ladder) => {
+                const savedLadder = await backendCommunicator.fireEventAsync("rank-ladders:save", JSON.parse(angular.toJson(ladder)));
+
+                if (savedLadder) {
+                    updateLadder(savedLadder);
+                    return true;
+                }
+
+                return false;
+            };
+
+            service.saveAllRankLadders = function(ladders) {
+                service.rankLadders = ladders;
+                backendCommunicator.fireEvent("rank-ladders:save-all", JSON.parse(angular.toJson(ladders)));
+            };
+
             service.deleteRankLadder = function(ladderId) {
-                backendCommunicator.fireEventAsync("deleteRankLadder", ladderId);
                 service.rankLadders = service.rankLadders.filter(t => t.id !== ladderId);
+                backendCommunicator.fireEvent("rank-ladders:delete", ladderId);
             };
 
             service.duplicateRankLadder = (ladderId) => {
@@ -61,18 +86,34 @@
                     copiedLadder.name += " copy";
                 }
 
-                service.saveRankLadder(copiedLadder);
+                service.saveRankLadder(copiedLadder)
+                    .then((successful) => {
+                        if (successful) {
+                            ngToast.create({
+                                className: 'success',
+                                content: 'Successfully duplicated rank ladder!'
+                            });
+                        } else {
+                            ngToast.create("Unable to duplicate rank ladder.");
+                        }
+                    });
+            };
 
-                ngToast.create({
-                    className: 'success',
-                    content: 'Successfully duplicated a rank ladder!'
+            /**
+             * @param {RankLadder} [rankLadder]
+             * @returns {void}
+             */
+            service.showAddOrEditRankLadderModal = (rankLadder, closeCb) => {
+                utilityService.showModal({
+                    component: "addOrEditRankLadderModal",
+                    size: "md",
+                    resolveObj: {
+                        rankLadder: () => rankLadder
+                    },
+                    closeCallback: closeCb,
+                    dismissCallback: closeCb
                 });
             };
-
-            service.getRankLadderByName = (ladderName) => {
-                return service.rankLadders.find(t => t.name === ladderName);
-            };
-
 
             service.ladderModes = [
                 {
@@ -84,20 +125,10 @@
                 {
                     id: "manual",
                     name: "Manual",
-                    description: "Viewers must be manually added to ranks via rank command or Set Rank effect.",
+                    description: "Viewers must be manually added to ranks in the UI or via the Set Rank effect.",
                     iconClass: "fa-users-cog"
                 }
             ];
-
-            service.showAddRankLadderModal = (rankLadder) => {
-                utilityService.showModal({
-                    component: "addOrEditRankLadderModal",
-                    size: "md",
-                    resolveObj: {
-                        rankLadder: () => rankLadder
-                    }
-                });
-            };
 
             return service;
         });

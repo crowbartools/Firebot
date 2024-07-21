@@ -18,6 +18,7 @@
 
                 utilityService.showModal({
                     component: "addOrEditCustomRoleModal",
+                    breadcrumbName: "Add/Edit Custom Role",
                     size: "sm",
                     resolveObj: {
                         role: () => role
@@ -51,9 +52,9 @@
                     cellTemplate: `{{data.name}}`
                 },
                 {
-                    name: "TYPE",
+                    name: "MODE",
                     icon: "fa-bring-forward",
-                    cellTemplate: `{{data.type | capitalize}}`
+                    cellTemplate: `{{data.mode | capitalize}}`
                 },
                 {
                     name: "RANKS",
@@ -62,28 +63,22 @@
                 }
             ];
 
-            $scope.showAddOrEditRankLadderModal = function(ladder) {
-                if (!ladder) {
-                    viewerRanksService.showAddRankLadderModal();
-                }
-            };
-
             $scope.rankLadderMenuOptions = (item) => {
                 const options = [
                     {
                         html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
                         click: function () {
-                            $scope.showAddOrEditRankLadderModal(item);
+                            viewerRanksService.showAddOrEditRankLadderModal(item);
                         }
                     },
-                    {
-                        html: `<a href><i class="far fa-toggle-off" style="margin-right: 10px;"></i> ${item.enabled ? "Disable Rank Ladder" : "Enable Rank Ladder"}</a>`,
-                        click: function () {
-                            item.enabled = !item.enabled;
-                            viewerRanksService.saveRankLadder(item);
-                        },
-                        compile: true
-                    },
+                    // {
+                    //     html: `<a href><i class="far fa-toggle-off" style="margin-right: 10px;"></i> ${item.enabled ? "Disable Rank Ladder" : "Enable Rank Ladder"}</a>`,
+                    //     click: function () {
+                    //         item.enabled = !item.enabled;
+                    //         viewerRanksService.saveRankLadder(item);
+                    //     },
+                    //     compile: true
+                    // },
                     {
                         html: `<a href ><i class="far fa-clone" style="margin-right: 10px;"></i> Duplicate</a>`,
                         click: function () {

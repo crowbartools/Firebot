@@ -96,17 +96,16 @@
         ng-if="activeTab === 1"
         items="viewerRanksService.rankLadders"
         on-items-update="viewerRanksService.saveAllRankLadders(items)"
-        headers="rewardHeaders"
+        headers="rankLadderHeaders"
         sort-tag-context="rank ladders"
         orderable="true"
         add-new-button-text="New Rank Ladder"
-        on-add-new-clicked="showAddOrEditRankLadderModal()"
+        on-add-new-clicked="viewerRanksService.showAddOrEditRankLadderModal()"
         context-menu-options="rankLadderMenuOptions(item)"
         no-data-message="No rank ladders saved. You should make one! :)"
         none-found-message="No rank ladders found."
-        search-placeholder="Search tracks"
+        search-placeholder="Search rank ladders"
         test-button="false"
-        status-field="enabled"
     />
   </div>
 </div>

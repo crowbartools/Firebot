@@ -177,6 +177,7 @@ class CurrencyManager {
                 previousCurrencyAmount: previousValue,
                 newCurrencyAmount: valueToSet
             });
+            await viewerDatabase.calculateAutoRanks(viewer._id, "currency");
         } catch (error) {
             logger.error("Currency: Error setting currency on viewer.", error);
         }

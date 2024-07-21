@@ -1,9 +1,9 @@
 "use strict";
 
-const deepmerge = require("deepmerge");
-const { type } = require("os");
-
 (function() {
+
+    const deepmerge = require("deepmerge");
+
     angular
         .module('firebotApp')
         .component("editableList", {

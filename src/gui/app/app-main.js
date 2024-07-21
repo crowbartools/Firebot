@@ -125,7 +125,7 @@
         iconsService,
         videoService,
         replaceVariableService,
-        variableMacroService
+        variableMacroService,
     ) {
         // 'chatMessagesService' and 'videoService' are included so they're instantiated on app start
 

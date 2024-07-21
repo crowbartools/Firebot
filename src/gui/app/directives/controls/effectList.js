@@ -530,6 +530,7 @@
                 ctrl.openNewEffectModal = (index) => {
                     utilityService.showModal({
                         component: "addNewEffectModal",
+                        autoSlide: false,
                         backdrop: true,
                         windowClass: "no-padding-modal",
                         resolveObj: {

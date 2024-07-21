@@ -7,8 +7,7 @@
             bindings: {
                 modelValue: "=ngModel",
                 name: "@?",
-                id: "@?",
-                required: "<?"
+                id: "@?"
             },
             template: `
                 <firebot-searchable-select
@@ -16,7 +15,6 @@
                     items="$ctrl.currencies"
                     id="{{$ctrl.id || ''}}"
                     name="{{$ctrl.name || ''}}"
-                    required="$ctrl.required"
                     placeholder="Select currency"
                 ></firebot-searchable-select>
             `,

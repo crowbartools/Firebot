@@ -61,6 +61,7 @@ exports.loadEffects = () => {
         'update-channel-reward',
         'update-counter',
         'update-role',
+        'update-viewer-rank',
         'update-vip-role',
 
         'twitch/ad-break',
