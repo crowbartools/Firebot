@@ -20,6 +20,7 @@
                             selected="selectedCmdMode"
                             on-update="settings.setDefaultToAdvancedCommandMode(option === 'true')"
                             right-justify="true"
+                            aria-label="Choose your Default Mode For New Commands"
                         />
                     </firebot-setting>
 
@@ -37,6 +38,7 @@
                             selected="ignoreSubEvents"
                             on-update="settings.setIgnoreSubsequentSubEventsAfterCommunitySub(option === 'true')"
                             right-justify="true"
+                            aria-label="enable or disable Ignore Related Gift Sub Events"
                         />
                     </firebot-setting>
 
@@ -50,6 +52,7 @@
                             selected="triggerUpcomingAdBreakMinutes"
                             on-update="settings.setTriggerUpcomingAdBreakMinutes(option)"
                             right-justify="true"
+                            aria-label="Choose your Upcoming Scheduled Ad Break Trigger"
                         />
                     </firebot-setting>
                 </div>

@@ -180,7 +180,7 @@
 
             </div>
             `,
-            controller: function(utilityService, effectHelperService, objectCopyHelper, effectQueuesService,
+            controller: function($q, utilityService, effectHelperService, objectCopyHelper, effectQueuesService, presetEffectListsService,
                 backendCommunicator, ngToast, $http) {
                 const ctrl = this;
 
@@ -212,6 +212,13 @@
 
                 ctrl.createAllEffectsMenuOptions = () => {
                     const allEffectsMenuOptions = [
+                        {
+                            html: `<a href role="menuitem"><i class="fal fa-magic mr-4"></i> Convert to Preset Effect List</a>`,
+                            click: function () {
+                                ctrl.convertToPresetEffectList();
+                            },
+                            enabled: ctrl.effectsData.list.length > 0
+                        },
                         {
                             html: `<a href role="menuitem"><span class="iconify mr-4" data-icon="mdi:content-copy"></span> Copy all effects</a>`,
                             click: () => {
@@ -344,6 +351,27 @@
                     ];
 
                     return effectMenuOptions;
+                };
+
+                ctrl.convertToPresetEffectList = async () => {
+                    $q.when(presetEffectListsService.showAddEditPresetEffectListModal({
+                        effects: {
+                            list: ctrl.effectsData.list
+                        }
+                    })).then((savedPresetEffectsList) => {
+                        if (!savedPresetEffectsList) {
+                            return;
+                        }
+
+                        ctrl.effectsData.list = [{
+                            id: uuidv1(),
+                            type: "firebot:run-effect-list",
+                            active: true,
+                            listType: "preset",
+                            presetListId: savedPresetEffectsList.id,
+                            presetListArgs: {}
+                        }];
+                    });
                 };
 
                 ctrl.shareEffects = async () => {
