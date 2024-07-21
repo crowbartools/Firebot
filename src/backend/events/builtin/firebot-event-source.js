@@ -120,7 +120,7 @@ const firebotEventSource = {
             cached: false
         },
         {
-            id: "viewer-rank-changed",
+            id: "viewer-rank-updated",
             name: "Viewer Rank Updated",
             description: "When a viewer's rank is updated within a rank ladder.",
             cached: false,
