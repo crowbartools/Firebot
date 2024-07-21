@@ -35,6 +35,11 @@ export class RankLadderHelper {
         return this.rankLadder.ranks.find(rank => rank.id === rankId);
     }
 
+    getRankByName(name: string): Rank | null {
+        const normalize = (str: string) => str.trim().toLowerCase().replace(/\s+/g, "");
+        return this.rankLadder.ranks.find(rank => normalize(rank.name) === normalize(name)) ?? null;
+    }
+
     isRankHigher(rankId: string, comparedToRankId: string): boolean {
         const firstRankIndex = this.rankLadder.ranks.findIndex(rank => rank.id === rankId);
         const secondRankIndex = this.rankLadder.ranks.findIndex(rank => rank.id === comparedToRankId);
@@ -56,10 +61,6 @@ export class RankLadderHelper {
         const rank = ranks.find(rank => viewersValue >= rank.value ?? 0);
 
         return rank?.id;
-    }
-
-    getRankByName(name: string): Rank | null {
-        return this.rankLadder.ranks.find(rank => rank.name === name) ?? null;
     }
 
     getNextRankId(currentRankId?: string): string | null {

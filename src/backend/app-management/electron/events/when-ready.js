@@ -74,6 +74,10 @@ exports.whenReady = async () => {
     const currencyAccess = require("../../../currency/currency-access").default;
     currencyAccess.refreshCurrencyCache();
 
+    windowManagement.updateSplashScreenStatus("Loading ranks...");
+    const viewerRanksManager = require("../../../ranks/rank-manager");
+    viewerRanksManager.loadItems();
+
     // load commands
     logger.debug("Loading sys commands...");
     windowManagement.updateSplashScreenStatus("Loading system commands...");
@@ -139,10 +143,6 @@ exports.whenReady = async () => {
 
     windowManagement.updateSplashScreenStatus("Loading channel VIPs...");
     await chatRolesManager.loadVips();
-
-    windowManagement.updateSplashScreenStatus("Loading ranks...");
-    const viewerRanksManager = require("../../../ranks/rank-manager");
-    await viewerRanksManager.loadItems();
 
     windowManagement.updateSplashScreenStatus("Loading effect queues...");
     const effectQueueManager = require("../../../effects/queues/effect-queue-manager");

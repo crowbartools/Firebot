@@ -101,7 +101,8 @@
             };
 
             $ctrl.isNameTaken = (name) => {
-                return $ctrl.currentRanks.some(r => r.name === name && r.id !== $ctrl.rank.id);
+                const normalize = str => str.trim().toLowerCase().replace(/\s+/g, "");
+                return $ctrl.currentRanks.some(r => normalize(r.name) === normalize(name) && r.id !== $ctrl.rank.id);
             };
 
             $ctrl.save = () => {
@@ -119,4 +120,4 @@
             };
         }
     });
-}());
+})();

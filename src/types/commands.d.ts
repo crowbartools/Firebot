@@ -118,7 +118,17 @@ export type CommandDefinition = {
     treatQuotedTextAsSingleArg?: boolean | undefined;
     minArgs?: number;
     options?: Record<keyof OptionsModel, CommandOption>;
+    /**
+     * Only set for currency system commands.
+     */
     currency?: {
+        name: string;
+        id: string;
+    };
+    /**
+     * Only set for rank system commands.
+     */
+    rankLadder?: {
         name: string;
         id: string;
     };

@@ -25,9 +25,6 @@ class RankManager extends JsonDbManager<RankLadder> {
     }
 }
 
-
-
-
 const rankManager = new RankManager();
 
 frontendCommunicator.onAsync("rank-ladders:get-all", async () =>

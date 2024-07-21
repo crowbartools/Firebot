@@ -14,7 +14,7 @@ import backupManager from "../backup-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import rankManager from "../ranks/rank-manager";
 import util from "../utility";
-import { RankLadder } from "../../types/ranks";
+import { Rank, RankLadder } from "../../types/ranks";
 import twitchChat from "../chat/twitch-chat";
 import { userIsActive } from "../chat/chat-listeners/active-user-handler";
 
@@ -473,7 +473,7 @@ class ViewerDatabase extends EventEmitter {
         if (isPromotion && ladder.announcePromotionsInChat && userIsActive(viewer._id)) {
             const newRank = ladder.getRank(newRankId);
             const rankValueDescription = ladder.getRankValueDescription(newRankId);
-            twitchChat.sendChatMessage(`@${viewer.displayName} has achieved the rank of ${newRank?.name}${ladder.mode === "auto" ? `(${rankValueDescription})` : ''}!`);
+            twitchChat.sendChatMessage(`@${viewer.displayName} has achieved the rank of ${newRank?.name}${ladder.mode === "auto" ? ` (${rankValueDescription})` : ''}!`);
         }
 
         eventManager.triggerEvent("firebot", "viewer-rank-changed", {
@@ -534,6 +534,26 @@ class ViewerDatabase extends EventEmitter {
         const viewer = await this.getViewerById(userId);
 
         return this.viewerHasRank(viewer, ladderId, rankId);
+    }
+
+    getViewerRankForLadder(viewer: FirebotViewer, ladderId: string): Rank | null {
+        if (this.isViewerDBOn() !== true) {
+            return null;
+        }
+
+        if (!viewer) {
+            return null;
+        }
+
+        const ladder = rankManager.getRankLadderHelper(ladderId);
+
+        if (ladder == null) {
+            return null;
+        }
+
+        const viewersCurrentRankId = viewer.ranks?.[ladderId] ?? null;
+
+        return ladder.getRank(viewersCurrentRankId);
     }
 
     async calculateAutoRanks(userId: string, trackByType?: RankLadder["settings"]["trackBy"]): Promise<void> {
