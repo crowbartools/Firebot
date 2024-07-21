@@ -1,4 +1,4 @@
-import { SystemCommand } from "../../types/commands";
+import { CommandOption, SystemCommand } from "../../types/commands";
 import { RankLadder } from "../../types/ranks";
 import commandManager from "../chat/commands/command-manager";
 import rankManager from "./rank-manager";
@@ -34,82 +34,86 @@ class RankCommandManager {
     createRankCommandDefinition(rankLadder: RankLadder): SystemCommand<RankCommandOptions> {
         const cleanRankLadderName = rankLadder.name.replace(/\s+/g, '-').toLowerCase();
 
+        const sharedCommandOptions: Record<string, CommandOption> = {
+            selfRankMessageTemplate: {
+                type: "string",
+                title: "Self Rank Message Template",
+                description: "The message to show the user their rank",
+                tip: "Variables: {rank}, {user}",
+                default: `You currently have the rank of {rank}.`,
+                useTextArea: true
+            },
+            otherRankMessageTemplate: {
+                type: "string",
+                title: "Other Rank Message Template",
+                description: "The message to show the rank of another user",
+                tip: "Variables: {rank}, {user}",
+                default: `{user} currently has the rank of {rank}.`,
+                useTextArea: true
+            },
+            rankListMessageTemplate: {
+                type: "string",
+                title: "Rank List Message Template",
+                description: "The message to show the list of ranks",
+                tip: "Variables: {ranks}",
+                default: `The ranks in this ladder are: {ranks}`,
+                useTextArea: true
+            }
+        };
+
+        const manualCommandOptions: Record<string, CommandOption> = {
+            promoteRankMessageTemplate: {
+                type: "string",
+                title: "Promote Rank Message Template",
+                description: "The message to show when promoting a user",
+                tip: "Variables: {user}, {rank}",
+                default: `@{user} has been promoted to {rank}.`,
+                useTextArea: true
+            },
+            demoteRankMessageTemplate: {
+                type: "string",
+                title: "Demote Rank Message Template",
+                description: "The message to show when demoting a user",
+                tip: "Variables: {user}, {rank}",
+                default: `@{user} has been demoted to {rank}.`,
+                useTextArea: true
+            },
+            setRankMessageTemplate: {
+                type: "string",
+                title: "Set Rank Message Template",
+                description: "The message to show when setting a user's rank",
+                tip: "Variables: {user}, {rank}",
+                default: `@{user}'s rank has been updated to {rank}.`,
+                useTextArea: true
+            },
+            removeRankMessageTemplate: {
+                type: "string",
+                title: "Remove Rank Message Template",
+                description: "The message to show when removing a user from the rank ladder",
+                tip: "Variables: {user}",
+                default: `@{user}'s rank has been removed.`,
+                useTextArea: true
+            }
+        };
+
         const rankManagement: SystemCommand<RankCommandOptions> = {
             definition: {
                 id: `firebot:rank-ladder:${rankLadder.id}`,
-                name: `${rankLadder.name} Management`,
+                name: `${rankLadder.name} Rank Management`,
                 active: true,
                 trigger: `!${cleanRankLadderName}`,
                 description: `Allows management of the "${rankLadder.name}" rank ladder`,
                 autoDeleteTrigger: false,
                 scanWholeMessage: false,
                 treatQuotedTextAsSingleArg: true,
-                rankLadder: {
-                    name: rankLadder.name,
-                    id: rankLadder.id
-                },
                 cooldown: {
                     user: 0,
                     global: 0
                 },
                 baseCommandDescription: "See your current rank",
                 options: {
-                    selfRankMessageTemplate: {
-                        type: "string",
-                        title: "Self Rank Message Template",
-                        description: "The message to show the user their rank",
-                        tip: "Variables: {rank}, {user}",
-                        default: `You currently have the rank of {rank}.`,
-                        useTextArea: true
-                    },
-                    otherRankMessageTemplate: {
-                        type: "string",
-                        title: "Other Rank Message Template",
-                        description: "The message to show the rank of another user",
-                        tip: "Variables: {rank}, {user}",
-                        default: `{user} currently has the rank of {rank}.`,
-                        useTextArea: true
-                    },
-                    rankListMessageTemplate: {
-                        type: "string",
-                        title: "Rank List Message Template",
-                        description: "The message to show the list of ranks",
-                        tip: "Variables: {ranks}",
-                        default: `The ranks in this ladder are: {ranks}`,
-                        useTextArea: true
-                    },
-                    promoteRankMessageTemplate: {
-                        type: "string",
-                        title: "Promote Rank Message Template",
-                        description: "The message to show when promoting a user",
-                        tip: "Variables: {user}, {rank}",
-                        default: `@{user} has been promoted to {rank}.`,
-                        useTextArea: true
-                    },
-                    demoteRankMessageTemplate: {
-                        type: "string",
-                        title: "Demote Rank Message Template",
-                        description: "The message to show when demoting a user",
-                        tip: "Variables: {user}, {rank}",
-                        default: `@{user} has been demoted to {rank}.`,
-                        useTextArea: true
-                    },
-                    setRankMessageTemplate: {
-                        type: "string",
-                        title: "Set Rank Message Template",
-                        description: "The message to show when setting a user's rank",
-                        tip: "Variables: {user}, {rank}",
-                        default: `@{user}'s rank has been updated to {rank}.`,
-                        useTextArea: true
-                    },
-                    removeRankMessageTemplate: {
-                        type: "string",
-                        title: "Remove Rank Message Template",
-                        description: "The message to show when removing a user from the rank ladder",
-                        tip: "Variables: {user}",
-                        default: `@{user}'s rank has been removed.`,
-                        useTextArea: true
-                    }
+                    ...sharedCommandOptions,
+                    ...(rankLadder.mode === "manual" ? manualCommandOptions : {})
                 },
                 subCommands: [
                     {
@@ -230,6 +234,7 @@ class RankCommandManager {
                 // If no arguments are provided, show the user's rank
                 if (args.length === 0) {
                     const commandSenderViewer = await viewerDatabase.getViewerByUsername(event.userCommand.commandSender);
+                    await viewerDatabase.calculateAutoRanks(commandSenderViewer._id);
                     const userRank = viewerDatabase.getViewerRankForLadder(commandSenderViewer, rankLadder.id);
                     if (userRank) {
                         const rankMessage =
@@ -240,8 +245,6 @@ class RankCommandManager {
                         await sendMessage("You are currently not ranked.");
                     }
                 } else {
-                    console.log(triggeredSubcmd, args);
-
                     if (triggeredSubcmd.id === "viewer-rank") {
                         const username = args[0].replace("@", "");
                         const viewer = await viewerDatabase.getViewerByUsername(username);
@@ -249,6 +252,8 @@ class RankCommandManager {
                             await sendMessage(`${username} not found.`);
                             return;
                         }
+
+                        await viewerDatabase.calculateAutoRanks(viewer._id);
 
                         const viewerRank = viewerDatabase.getViewerRankForLadder(viewer, rankLadder.id);
                         if (viewerRank) {
@@ -262,7 +267,13 @@ class RankCommandManager {
                         }
                     } else if (triggeredSubcmd.arg === "list") {
                         const ranks = rankLadder.ranks
-                            .map(rank => `${rank.name} (${rank.name.replace(/\s+/g, '').toLowerCase()})`)
+                            .map((rank) => {
+                                const normalizedName = rank.name.replace(/\s+/g, '').toLowerCase();
+                                if (normalizedName !== rank.name) {
+                                    return `${rank.name} (${normalizedName})`;
+                                }
+                                return rank.name;
+                            })
                             .join(", ");
                         const rankListMessage = commandOptions.rankListMessageTemplate
                             .replace("{ranks}", ranks);

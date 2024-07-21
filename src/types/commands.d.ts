@@ -125,13 +125,6 @@ export type CommandDefinition = {
         name: string;
         id: string;
     };
-    /**
-     * Only set for rank system commands.
-     */
-    rankLadder?: {
-        name: string;
-        id: string;
-    };
 };
 
 type UserCommand = {
