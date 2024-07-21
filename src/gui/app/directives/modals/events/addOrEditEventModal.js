@@ -124,23 +124,6 @@
                     $ctrl.triggerMeta.rootEffects = $ctrl.event.effects;
                 }
 
-                const modalId = $ctrl.resolve.modalId;
-                utilityService.addSlidingModal(
-                    $ctrl.modalInstance.rendered.then(() => {
-                        const modalElement = $(`.${modalId}`).children();
-                        return {
-                            element: modalElement,
-                            name: "Edit Event",
-                            id: modalId,
-                            instance: $ctrl.modalInstance
-                        };
-                    })
-                );
-
-                $scope.$on("modal.closing", function() {
-                    utilityService.removeSlidingModal();
-                });
-
                 updateTriggerId();
             };
 

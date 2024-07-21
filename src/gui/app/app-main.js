@@ -102,6 +102,7 @@
         chatMessagesService,
         activityFeedService,
         viewerRolesService,
+        viewerRanksService,
         connectionService,
         notificationService,
         $timeout,
@@ -124,14 +125,15 @@
         iconsService,
         videoService,
         replaceVariableService,
-        variableMacroService
+        variableMacroService,
     ) {
         // 'chatMessagesService' and 'videoService' are included so they're instantiated on app start
 
         connectionService.loadProfiles();
 
-        //load viewer roles
+        //load viewer roles and ranks
         viewerRolesService.loadCustomRoles();
+        viewerRanksService.loadRankLadders();
 
         //load commands
         commandsService.refreshCommands();

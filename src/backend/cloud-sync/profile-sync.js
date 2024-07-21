@@ -7,6 +7,7 @@ const commandList = require("./sync-handlers/command-list");
 const quoteList = require("./sync-handlers/quotes-list");
 const frontendCommunicator = require("../common/frontend-communicator");
 const { settings } = require("../common/settings-access");
+const rankManager = require("../ranks/rank-manager");
 
 async function syncProfileData(profileSyncData) {
     const streamerUsername = accountAccess.getAccounts().streamer.username;
@@ -22,6 +23,7 @@ async function syncProfileData(profileSyncData) {
         'commands': commands,
         'sortTags': await frontendCommunicator.fireEventAsync("get-sort-tags", "commands"),
         'variables': variableManager.getReplaceVariables().map(v => v.definition),
+        'ranks': rankManager.getAllItems(),
         'quotes': quotes,
         'allowQuoteCSVDownloads': settings.getAllowQuoteCSVDownloads()
     };

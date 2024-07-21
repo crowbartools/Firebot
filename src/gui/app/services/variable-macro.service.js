@@ -81,6 +81,14 @@
                 return false;
             };
 
+            service.saveAllMacros = (macros) => {
+                service.macros = macros;
+                backendCommunicator.fireEvent(
+                    "macros:save-all",
+                    JSON.parse(angular.toJson(macros))
+                );
+            };
+
             /**
              * @param {string} macroId
              * @returns {void}
@@ -88,14 +96,6 @@
             service.deleteMacro = (macroId) => {
                 service.macros = service.macros.filter(m => m.id !== macroId);
                 backendCommunicator.fireEvent("macros:delete", macroId);
-            };
-
-            service.saveAllMacros = (macros) => {
-                service.macros = macros;
-                backendCommunicator.fireEvent(
-                    "macros:save-all",
-                    JSON.parse(angular.toJson(macros))
-                );
             };
 
             service.duplicateMacro = (macroId) => {
