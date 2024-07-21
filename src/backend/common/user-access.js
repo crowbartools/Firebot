@@ -57,6 +57,8 @@ async function userFollowsChannels(username, channelNames, durationInSeconds = 0
 
 async function getUserDetails(userId) {
 
+    await viewerDatabase.calculateAutoRanks(userId);
+
     const firebotUserData = await viewerDatabase.getViewerById(userId);
 
     if (firebotUserData != null && !firebotUserData.twitch) {

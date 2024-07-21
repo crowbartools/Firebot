@@ -68,12 +68,12 @@
                 if (data !== undefined) {
                     data = JSON.parse(JSON.stringify(data));
                 }
-                return new Promise(resolve => {
+                return $q.when(new Promise((resolve) => {
                     ipcRenderer.send(type, data);
                     ipcRenderer.once(`${type}:reply`, (_, eventData) => {
                         resolve(eventData);
                     });
-                });
+                }));
             };
 
             service.fireEventSync = function(type, data) {

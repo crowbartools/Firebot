@@ -85,24 +85,6 @@
                 } else {
                     $ctrl.timer = JSON.parse(JSON.stringify($ctrl.resolve.timer));
                 }
-
-                const modalId = $ctrl.resolve.modalId;
-                $ctrl.modalId = modalId;
-                utilityService.addSlidingModal(
-                    $ctrl.modalInstance.rendered.then(() => {
-                        const modalElement = $(`.${modalId}`).children();
-                        return {
-                            element: modalElement,
-                            name: "Edit Timer",
-                            id: modalId,
-                            instance: $ctrl.modalInstance
-                        };
-                    })
-                );
-
-                $scope.$on("modal.closing", function() {
-                    utilityService.removeSlidingModal();
-                });
             };
 
             $ctrl.effectListUpdated = function(effects) {

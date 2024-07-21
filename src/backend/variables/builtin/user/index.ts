@@ -20,6 +20,8 @@ import usernameArrayRaw from './username-array-raw';
 
 import roleVariables from './roles';
 
+import rankVariables from './ranks';
+
 export default [
     accountCreationDate,
     chatMessages,
@@ -40,5 +42,6 @@ export default [
     userMetadataRaw,
     usernameArray,
     usernameArrayRaw,
-    ...roleVariables
+    ...roleVariables,
+    ...rankVariables
 ];

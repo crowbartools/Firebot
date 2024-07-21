@@ -168,6 +168,7 @@
                 return new Promise(resolve => {
                     utilityService.showModal({
                         component: "addOrEditScheduledTaskModal",
+                        breadcrumbName: "Edit Scheduled Effect List",
                         size: "md",
                         resolveObj: {
                             scheduledTask: () => scheduledTask

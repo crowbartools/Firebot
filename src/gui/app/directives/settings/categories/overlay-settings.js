@@ -34,6 +34,7 @@
                             selected="overlayInstances"
                             on-update="settings.setUseOverlayInstances(option === 'true')"
                             right-justify="true"
+                            aria-label="enable or disable Overlay Instances"
                         />
                     </firebot-setting>
 
@@ -47,6 +48,9 @@
                             toggle-model="settings.getForceOverlayEffectsToContinueOnRefresh()"
                             on-toggle="settings.setForceOverlayEffectsToContinueOnRefresh(!settings.getForceOverlayEffectsToContinueOnRefresh())"
                             font-size="40"
+                            accessibility-label="(settings.getForceOverlayEffectsToContinueOnRefresh() ? 'Enabled' : 'Disabled') + '
+                             When refreshing an overlay or using the Clear Effects effect on it, this will force any Play Video or Play
+                             Sound effects currently playing on that overlay to continue to the next effect, even if they\\'re set to wait.'"
                         />
                     </firebot-setting>
 
