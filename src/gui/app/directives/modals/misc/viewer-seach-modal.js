@@ -60,7 +60,6 @@
                     if (query == null || query.trim() === "") {
                         return;
                     }
-                    console.log("searching");
                     backendCommunicator.fireEventAsync("search-twitch-channels", query)
                         .then(channels => {
                             console.log(channels);
@@ -94,23 +93,6 @@
                     if ($ctrl.resolve.validationText) {
                         $ctrl.validationText = $ctrl.resolve.validationText;
                     }
-
-                    const modalId = $ctrl.resolve.modalId;
-                    utilityService.addSlidingModal(
-                        $ctrl.modalInstance.rendered.then(() => {
-                            const modalElement = $(`.${modalId}`).children();
-                            return {
-                                element: modalElement,
-                                name: "Viewer Search",
-                                id: modalId,
-                                instance: $ctrl.modalInstance
-                            };
-                        })
-                    );
-
-                    $scope.$on("modal.closing", function() {
-                        utilityService.removeSlidingModal();
-                    });
                 };
 
                 $ctrl.save = function() {

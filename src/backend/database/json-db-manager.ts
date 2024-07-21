@@ -1,20 +1,44 @@
 "use strict";
 
-const profileManager = require("../common/profile-manager");
-const logger = require("../logwrapper");
-const uuidv1 = require("uuid/v1");
+import profileManager from "../common/profile-manager";
+import logger from "../logwrapper";
+import uuidv1 from "uuid/v1";
+import { TypedEmitter, type ListenerSignature } from "tiny-typed-emitter";
+import { type JsonDB } from "node-json-db";
+
+interface Item {
+    id?: string;
+    name?: string;
+    [key: string]: unknown;
+}
+
+type DefaultEvents<I extends Item = Item> = {
+    "loaded-items": (items: I[]) => void;
+    "created-item": (item: I) => void;
+    "updated-item": (item: I) => void;
+    "saved-all-items": (items: I[]) => void;
+    "deleted-item": (item: I) => void;
+    "deleted-all-items": () => void;
+};
 
 /**
- * @template T
  * @hideconstructor
 */
-class JsonDbManager {
+class JsonDbManager<T extends Item, E extends ListenerSignature<E> = DefaultEvents<T>>
+    extends TypedEmitter<E & DefaultEvents<T>> {
+
+    protected items: { [key: string]: T };
+
+    protected db: JsonDB;
+
     /**
-     * @param {string} type - The type of data in the json file
-     * @param {string} path - The path to the json file
+     *
+     * @param type - The type of data in the json file
+     * @param path - The path to the json file
      */
-    constructor(type, path) {
-        /** @protected */
+    constructor(protected type: string, protected path: string) {
+        super();
+
         this.type = type;
 
         /** @protected */
@@ -24,10 +48,7 @@ class JsonDbManager {
         this.db = profileManager.getJsonDbInProfile(path);
     }
 
-    /**
-     * @returns {void}
-     */
-    loadItems() {
+    loadItems(): void {
         logger.debug(`Attempting to load ${this.type}s...`);
 
         try {
@@ -37,16 +58,15 @@ class JsonDbManager {
             }
 
             logger.debug(`Loaded ${this.type}s.`);
+
+            //@ts-ignore - typescript is handling the types for .emit poorly
+            this.emit("loaded-items", Object.values(this.items));
         } catch (err) {
             logger.error(`There was an error reading ${this.type} file.`, err);
         }
     }
 
-    /**
-     * @param {string} itemId
-     * @returns {T | null}
-     */
-    getItem(itemId) {
+    getItem(itemId: string): T | null {
         if (itemId == null) {
             return null;
         }
@@ -54,11 +74,7 @@ class JsonDbManager {
         return this.items[itemId] || null;
     }
 
-    /**
-     * @param {string} itemName
-     * @returns {T | null}
-     */
-    getItemByName(itemName) {
+    getItemByName(itemName: string): T | null {
         if (itemName == null) {
             return null;
         }
@@ -66,24 +82,20 @@ class JsonDbManager {
         return Object.values(this.items).find(i => i.name === itemName) || null;
     }
 
-    /**
-     * @returns {T[]}
-     */
-    getAllItems() {
+
+    getAllItems(): T[] {
         return Object.values(this.items) || [];
     }
 
-    /**
-     * @param {T} item
-     * @returns {T | null}
-     */
-    saveItem(item) {
+    saveItem(item: T): T | null {
         if (item == null) {
             return;
         }
 
+        let isCreating = false;
         if (item.id == null) {
             item.id = uuidv1();
+            isCreating = true;
         }
 
         this.items[item.id] = item;
@@ -92,6 +104,9 @@ class JsonDbManager {
             this.db.push(`/${item.id}`, item);
 
             logger.debug(`Saved ${this.type} with id ${item.id} to file.`);
+
+            //@ts-ignore - typescript is handling the types for .emit poorly
+            this.emit(isCreating ? "updated-item" : "updated-item", item);
             return item;
         } catch (err) {
             logger.error(`There was an error saving ${this.type}.`, err);
@@ -99,11 +114,7 @@ class JsonDbManager {
         }
     }
 
-    /**
-     * @param {T[]} allItems
-     * @returns {void}
-     */
-    saveAllItems(allItems) {
+    saveAllItems(allItems: T[]): void {
         const itemsObject = allItems.reduce((acc, current) => {
             acc[current.id] = current;
             return acc;
@@ -115,17 +126,22 @@ class JsonDbManager {
             this.db.push("/", itemsObject);
 
             logger.debug(`Saved all ${this.type} to file.`);
+
+            //@ts-ignore - typescript is handling the types for .emit poorly
+            this.emit("saved-all-items", allItems);
         } catch (err) {
             logger.error(`There was an error saving all ${this.type}s.`, err);
         }
     }
 
-    /**
-     * @param {string} itemId
-     * @returns {boolean}
-     */
-    deleteItem(itemId) {
+    deleteItem(itemId: string): boolean {
         if (itemId == null) {
+            return false;
+        }
+
+        const item = this.items[itemId];
+
+        if (item == null) {
             return false;
         }
 
@@ -135,6 +151,9 @@ class JsonDbManager {
             this.db.delete(`/${itemId}`);
 
             logger.debug(`Deleted ${this.type}: ${itemId}`);
+
+            //@ts-ignore - typescript is handling the types for .emit poorly
+            this.emit("deleted-item", item);
             return true;
         } catch (err) {
             logger.error(`There was an error deleting ${this.type}.`, err);
@@ -143,20 +162,20 @@ class JsonDbManager {
         return false;
     }
 
-    /**
-     * @returns {void}
-     */
-    deleteAllItems() {
+    deleteAllItems(): void {
         this.items = {};
 
         try {
             this.db.resetData("/");
 
             logger.debug(`Deleted all ${this.type}s.`);
+
+            //@ts-ignore - typescript is handling the types for .emit poorly
+            this.emit("deleted-all-items");
         } catch (err) {
             logger.error(`There was an error deleting all ${this.type}s.`, err);
         }
     }
 }
 
-module.exports = JsonDbManager;
+export = JsonDbManager;

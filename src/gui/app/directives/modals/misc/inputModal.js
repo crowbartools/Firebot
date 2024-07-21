@@ -130,23 +130,6 @@
                         $ctrl.useTextArea = $ctrl.resolve.useTextArea === true;
                     }
 
-                    const modalId = $ctrl.resolve.modalId;
-                    utilityService.addSlidingModal(
-                        $ctrl.modalInstance.rendered.then(() => {
-                            const modalElement = $(`.${modalId}`).children();
-                            return {
-                                element: modalElement,
-                                name: "",
-                                id: modalId,
-                                instance: $ctrl.modalInstance
-                            };
-                        })
-                    );
-
-                    $scope.$on("modal.closing", function() {
-                        utilityService.removeSlidingModal();
-                    });
-
                     $timeout(() => {
                         angular.element("#inputField").trigger("focus");
                     }, 50);

@@ -77,6 +77,7 @@
             $scope.openAddOrEditCustomCommandModal = function(command) {
                 utilityService.showModal({
                     component: "addOrEditCustomCommandModal",
+                    breadcrumbName: command ? "Edit Command" : "Add Command",
                     resolveObj: {
                         command: () => command
                     },
@@ -208,7 +209,7 @@
                             text="getPermissionTooltip(data)"
                         ></tooltip>
                     `,
-                    cellController: ($scope, viewerRolesService) => {
+                    cellController: ($scope, viewerRolesService, viewerRanksService) => {
                         $scope.getPermissionType = (command) => {
 
                             const permissions = command.restrictionData && command.restrictionData.restrictions &&
@@ -216,7 +217,7 @@
 
                             if (permissions) {
                                 if (permissions.mode === "roles") {
-                                    return "Roles";
+                                    return "Roles & Ranks";
                                 } else if (permissions.mode === "viewer") {
                                     return "Viewer";
                                 }
@@ -233,14 +234,48 @@
                             if (permissions) {
                                 if (permissions.mode === "roles") {
                                     const roleIds = permissions.roleIds;
-                                    let output = "None selected";
+                                    let rolesOutput = "None selected";
                                     if (roleIds.length > 0) {
-                                        output = roleIds
+                                        rolesOutput = roleIds
                                             .filter(id => viewerRolesService.getRoleById(id) != null)
                                             .map(id => viewerRolesService.getRoleById(id).name)
                                             .join(", ");
                                     }
-                                    return `Roles (${output})`;
+                                    const rolesDisplay = `Roles (${rolesOutput})`;
+
+                                    const ranks = permissions.ranks ?? [];
+                                    let ranksOutput = "None selected";
+                                    if (ranks.length > 0) {
+                                        const groupedByLadder = ranks.reduce((acc, r) => {
+                                            if (!acc.some(l => l.ladderId === r.ladderId)) {
+                                                acc.push({ ladderId: r.ladderId, rankIds: [] });
+                                            }
+                                            const ladder = acc.find(l => l.ladderId === r.ladderId);
+                                            ladder.rankIds.push(r.rankId);
+                                            return acc;
+                                        }, []);
+                                        ranksOutput = groupedByLadder
+                                            .filter(r => viewerRanksService.getRankLadder(r.ladderId) != null)
+                                            .map((r) => {
+                                                const ladder = viewerRanksService.getRankLadder(r.ladderId);
+                                                const rankNames = r.rankIds
+                                                    .map(id => ladder.ranks.find(rank => rank.id === id))
+                                                    .filter(rank => rank != null)
+                                                    .map(rank => rank.name);
+                                                return `${ladder.name}: ${rankNames.join(", ")}`;
+                                            })
+                                            .join(", ");
+                                    }
+                                    const ranksDisplay = `Ranks (${ranksOutput})`;
+
+                                    const itemsToDisplay = [];
+                                    if (rolesOutput !== "None selected") {
+                                        itemsToDisplay.push(rolesDisplay);
+                                    }
+                                    if (ranksOutput !== "None selected") {
+                                        itemsToDisplay.push(ranksDisplay);
+                                    }
+                                    return itemsToDisplay.length > 0 ? itemsToDisplay.join(", ") : "Roles/Ranks (None selected)";
                                 } else if (permissions.mode === "viewer") {
                                     return `Viewer (${permissions.username ? permissions.username : 'No name'})`;
                                 }

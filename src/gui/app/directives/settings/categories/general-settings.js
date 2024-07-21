@@ -1,11 +1,8 @@
 "use strict";
 
-(function() {
-
-    angular
-        .module("firebotApp")
-        .component("generalSettings", {
-            template: `
+(function () {
+    angular.module("firebotApp").component("generalSettings", {
+        template: `
                 <div>
                     <firebot-setting
                         name="Theme"
@@ -100,8 +97,18 @@
 
                     <firebot-setting
                         name="Feature My Stream on Firebot.app"
-                        description="Enable this setting to have your stream displayed on Firebot's website when you're live"
+                        description=""
                     >
+
+                        <setting-description-addon>
+                            <div style="margin-top: 10px;">
+                                Enable this setting to have your stream displayed on <a
+                                    class="clickable"
+                                    ng-click="openLink('https://firebot.app/watch')"
+                                >Firebot's website</a> when you're live.
+                            </div>
+                        </setting-description-addon>
+
                         <toggle-button
                             toggle-model="settings.getWebOnlineCheckin()"
                             on-toggle="settings.setWebOnlineCheckin(!settings.getWebOnlineCheckin())"
@@ -187,40 +194,36 @@
                     </firebot-setting>
                 </div>
           `,
-            controller: function($scope, settingsService, $q) {
-                $scope.settings = settingsService;
+        controller: function ($rootScope, $scope, settingsService, $q) {
+            $scope.openLink = $rootScope.openLinkExternally;
+            $scope.settings = settingsService;
 
-                $scope.audioOutputDevices = [{
+            $scope.audioOutputDevices = [
+                {
                     label: "System Default",
                     deviceId: "default"
-                }];
+                }
+            ];
 
-                $q
-                    .when(navigator.mediaDevices.enumerateDevices())
-                    .then((deviceList) => {
-                        deviceList = deviceList
-                            .filter(
-                                d =>
-                                    d.kind === "audiooutput" &&
-                                d.deviceId !== "communications" &&
-                                d.deviceId !== "default"
-                            )
-                            .map((d) => {
-                                return { label: d.label, deviceId: d.deviceId };
-                            });
-
-                        $scope.audioOutputDevices = $scope.audioOutputDevices.concat(
-                            deviceList
-                        );
+            $q.when(navigator.mediaDevices.enumerateDevices()).then((deviceList) => {
+                deviceList = deviceList
+                    .filter(
+                        (d) => d.kind === "audiooutput" && d.deviceId !== "communications" && d.deviceId !== "default"
+                    )
+                    .map((d) => {
+                        return { label: d.label, deviceId: d.deviceId };
                     });
 
-                $scope.setActiveChatUserTimeout = (value) => {
-                    if (value == null) {
-                        value = "10";
-                    }
-                    settingsService.setActiveChatUserListTimeout(value);
-                    ipcRenderer.send('setActiveChatUserTimeout', value);
-                };
-            }
-        });
-}());
+                $scope.audioOutputDevices = $scope.audioOutputDevices.concat(deviceList);
+            });
+
+            $scope.setActiveChatUserTimeout = (value) => {
+                if (value == null) {
+                    value = "10";
+                }
+                settingsService.setActiveChatUserListTimeout(value);
+                ipcRenderer.send("setActiveChatUserTimeout", value);
+            };
+        }
+    });
+})();
