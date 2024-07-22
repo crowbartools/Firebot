@@ -23,7 +23,7 @@
                     ng-click="$ctrl.modelValue = option.value"
                 >
                     <div class="fb-radio-card-icon">
-                        <i v-if="option.iconClass" class="fal" ng-class="option.iconClass"></i>
+                        <i ng-if="option.iconClass" class="fal" ng-class="option.iconClass"></i>
                     </div>
                     <div class="fb-radio-card-text-container">
                         <div class="fb-radio-card-title">{{option.label}}</div>
@@ -41,4 +41,4 @@
                 };
             }
         });
-}());
+})();

@@ -95,7 +95,7 @@
                     </form>
                 </div>
                 <div class="modal-footer sticky-footer edit-macro-footer">
-                    <button type="button" class="btn btn-danger pull-left" ng-click="$ctrl.delete()" v-if="!$ctrl.isNewMacro">Delete</button>
+                    <button type="button" class="btn btn-danger pull-left" ng-click="$ctrl.delete()" ng-if="!$ctrl.isNewMacro">Delete</button>
                     <button type="button" class="btn btn-default" ng-click="$ctrl.dismiss()">Cancel</button>
                     <button type="button" class="btn btn-primary" ng-click="$ctrl.save()">Save</button>
                 </div>
@@ -244,4 +244,4 @@
                 };
             }
         });
-}());
+})();
