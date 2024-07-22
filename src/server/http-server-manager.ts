@@ -127,7 +127,7 @@ class HttpServerManager extends EventEmitter {
             const overlayTemplate = path.join(cwd, './resources/overlay');
             res.render(overlayTemplate, {
                 events: effectDefs.map(ed => ed.event),
-                dependancies: {
+                dependencies: {
                     css: combinedCssDeps,
                     js: combinedJsDeps,
                     globalStyles: combinedGlobalStyles
