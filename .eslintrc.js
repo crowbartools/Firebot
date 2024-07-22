@@ -44,7 +44,7 @@ module.exports = {
         "no-throw-literal": "warn", // must throw an error instance
         "no-unused-expressions": "warn", // see: https://eslint.org/docs/rules/no-unused-expressions#disallow-unused-expressions-no-unused-expressions
         "no-with": "warn", // no with statements
-        "wrap-iife": ["warn", "inside"], // immediately called functions must be wrapped in ()'s
+        "wrap-iife": ["warn", "any"], // immediately called functions must be wrapped in ()'s
         "no-async-promise-executor": "off",
         "no-prototype-builtins": "off",
 
