@@ -77,7 +77,7 @@
             },
             controller: function($q, logger, ngToast, commandsService, countersService, currencyService,
                 effectQueuesService, eventsService, hotkeyService, presetEffectListsService,
-                timerService, viewerRolesService, quickActionsService, variableMacroService, backendCommunicator, $sce) {
+                timerService, viewerRolesService, quickActionsService, variableMacroService, viewerRanksService, backendCommunicator, $sce) {
                 const $ctrl = this;
 
                 $ctrl.setupFilePath = null;
@@ -100,10 +100,11 @@
                     ...timerService.getTimers().map(i => i.id),
                     ...variableMacroService.macros.map(i => i.id),
                     ...viewerRolesService.getCustomRoles().map(i => i.id),
+                    ...viewerRanksService.rankLadders.map(i => i.id),
                     ...quickActionsService.quickActions
                         .filter(qa => qa.type === "custom")
                         .map(i => i.id)
-                ].forEach(id => {
+                ].forEach((id) => {
                     $ctrl.currentIds[id] = true;
                 });
 
@@ -119,6 +120,7 @@
                     timers: "Timer",
                     variableMacros: "Variable Macro",
                     viewerRoles: "Viewer Role",
+                    viewerRankLadders: "Viewer Rank Ladder",
                     quickActions: "Quick Action"
                 };
 
@@ -147,7 +149,7 @@
 
                 $ctrl.onFileSelected = (filepath) => {
                     $q.when(fsp.readFile(filepath))
-                        .then(setup => {
+                        .then((setup) => {
                             setup = JSON.parse(setup);
                             if (setup == null || setup.components == null) {
                                 $ctrl.resetSelectedFile("Unable to load setup file: file is invalid");
@@ -160,7 +162,7 @@
                             );
                             //set default answers
                             if ($ctrl.setup.importQuestions) {
-                                $ctrl.setup.importQuestions = $ctrl.setup.importQuestions.map(q => {
+                                $ctrl.setup.importQuestions = $ctrl.setup.importQuestions.map((q) => {
                                     if (q.defaultAnswer) {
                                         q.answer = q.defaultAnswer;
                                     }
@@ -195,7 +197,7 @@
                             selectedCurrency: $ctrl.selectedCurrency
                         })
                     )
-                        .then(successful => {
+                        .then((successful) => {
                             if (successful) {
                                 ngToast.create({
                                     className: 'success',
@@ -217,4 +219,4 @@
                 };
             }
         });
-}());
+})();

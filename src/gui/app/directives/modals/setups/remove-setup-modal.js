@@ -57,7 +57,7 @@
             },
             controller: function($q, logger, ngToast, commandsService, countersService, currencyService,
                 effectQueuesService, eventsService, hotkeyService, presetEffectListsService,
-                timerService, viewerRolesService, quickActionsService, variableMacroService, backendCommunicator) {
+                timerService, viewerRolesService, quickActionsService, variableMacroService, viewerRanksService, backendCommunicator) {
                 const $ctrl = this;
 
                 $ctrl.setupFilePath = null;
@@ -76,6 +76,7 @@
                     timers: "Timer",
                     variableMacros: "Variable Macro",
                     viewerRoles: "Viewer Role",
+                    viewerRankLadders: "Viewer Rank Ladder",
                     quickActions: "Quick Action"
                 };
 
@@ -91,6 +92,7 @@
                     timers: [],
                     variableMacros: [],
                     viewerRoles: [],
+                    viewerRankLadders: [],
                     quickActions: []
                 };
 
@@ -109,8 +111,9 @@
                     ...timerService.getTimers().map(i => i.id),
                     ...variableMacroService.macros.map(i => i.id),
                     ...viewerRolesService.getCustomRoles().map(i => i.id),
+                    ...viewerRanksService.rankLadders.map(i => i.id),
                     ...quickActionsService.quickActions.map(i => i.id)
-                ].forEach(id => {
+                ].forEach((id) => {
                     $ctrl.currentIds[id] = true;
                 });
 
@@ -127,7 +130,7 @@
 
                 $ctrl.onFileSelected = (filepath) => {
                     $q.when(fsp.readFile(filepath))
-                        .then(setup => {
+                        .then((setup) => {
                             setup = JSON.parse(setup);
                             if (setup == null || setup.components == null) {
                                 $ctrl.resetSelectedFile("Unable to load setup file: file is invalid");
@@ -137,7 +140,7 @@
 
                             Object.entries($ctrl.setup.components)
                                 .forEach(([componentType, components]) => {
-                                    components.forEach(component => {
+                                    components.forEach((component) => {
                                         if ($ctrl.currentIds[component.id]) {
                                             $ctrl.componentsToRemove[componentType].push({
                                                 id: component.id,
@@ -164,7 +167,7 @@
                             components: $ctrl.componentsToRemove
                         })
                     )
-                        .then(successful => {
+                        .then((successful) => {
                             if (successful) {
                                 ngToast.create({
                                     className: 'success',
@@ -186,4 +189,4 @@
                 };
             }
         });
-}());
+})();

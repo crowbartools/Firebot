@@ -30,7 +30,7 @@
             </div>
             <div class="modal-footer text-center">
                 <button type="button" class="btn btn-default" ng-click="$ctrl.cancel()">{{$ctrl.hasFinished ? 'Close' : 'Cancel'}}</button>
-                <button ng-hide="$ctrl.hasStarted || $ctrl.hasFinished" type="button" class="btn btn-primary" ng-click="$ctrl.start()">Recalculate</button>
+                <button ng-if="!$ctrl.hasStarted && !$ctrl.hasFinished" type="button" class="btn btn-primary" ng-click="$ctrl.start()">Recalculate</button>
             </div>
             `,
         bindings: {

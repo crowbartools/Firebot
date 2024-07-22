@@ -23,6 +23,10 @@ class RankManager extends JsonDbManager<RankLadder> {
         }
         return new RankLadderHelper(rankLadder);
     }
+
+    triggerUiRefresh(): void {
+        frontendCommunicator.send("rank-ladders:updated");
+    }
 }
 
 const rankManager = new RankManager();

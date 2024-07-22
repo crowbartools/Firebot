@@ -13,6 +13,7 @@ const presetEffectListManager = require("../../effects/preset-lists/preset-effec
 const customRolesManager = require("../../roles/custom-roles-manager");
 const quickActionManager = require("../../quick-actions/quick-action-manager");
 const variableMacroManager = require("../../variables/macro-manager");
+const rankManager = require("../../ranks/rank-manager");
 const { escapeRegExp } = require("../../utility");
 
 function findAndReplaceCurrency(data, currency) {
@@ -178,6 +179,13 @@ async function importSetup(setup, selectedCurrency) {
     }
     customRolesManager.triggerUiRefresh();
 
+    // viewer rank ladders
+    const rankLadders = setup.components.viewerRankLadders || [];
+    for (const rankLadder of rankLadders) {
+        rankManager.saveItem(rankLadder);
+    }
+    rankManager.triggerUiRefresh();
+
     // quick actions
     const quickActions = setup.components.quickActions || [];
     if (quickActions.length > 0) {
@@ -228,6 +236,9 @@ function removeSetupComponents(components) {
                     case "viewerRoles":
                         customRolesManager.deleteCustomRole(id);
                         break;
+                    case "viewerRankLadders":
+                        rankManager.deleteItem(id);
+                        break;
                     case "quickActions":
                         quickActionManager.deleteQuickAction(id);
                         break;
@@ -253,6 +264,8 @@ function removeSetupComponents(components) {
                 variableMacroManager.triggerUiRefresh();
             } else if (componentType === "viewerRoles") {
                 customRolesManager.triggerUiRefresh();
+            } else if (componentType === "viewerRankLadders") {
+                rankManager.triggerUiRefresh();
             } else if (componentType === "quickActions") {
                 quickActionManager.triggerUiRefresh();
             }

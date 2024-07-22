@@ -33,6 +33,10 @@
                 }
             };
 
+            backendCommunicator.on("rank-ladders:updated", () => {
+                service.loadRankLadders();
+            });
+
             /**
              * @param {string} ladderId
              * @returns {RankLadder}
