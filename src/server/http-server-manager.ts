@@ -1,6 +1,5 @@
 import { EventEmitter } from "events";
 import { ipcMain } from "electron";
-import WebSocket from "ws";
 import express, { Express, Request, Response } from "express";
 import http from "http";
 import bodyParser from "body-parser";
@@ -9,8 +8,8 @@ import path from 'path';
 import logger from "../backend/logwrapper";
 import { settings } from "../backend/common/settings-access";
 import effectManager from "../backend/effects/effectManager";
-import eventManager from "../backend/events/EventManager";
 import resourceTokenManager from "../backend/resourceTokenManager";
+import websocketServerManager from "./websocket-server-manager";
 
 import dataAccess from "../backend/common/data-access";
 
@@ -46,7 +45,6 @@ interface CustomRoute {
 class HttpServerManager extends EventEmitter {
     serverInstances: ServerInstance[];
     defaultServerInstance: Express;
-    defaultWebsocketServerInstance: WebSocket.Server;
     defaultHttpServer: http.Server;
     overlayServer: http.Server;
     isDefaultServerStarted: boolean;
@@ -58,7 +56,6 @@ class HttpServerManager extends EventEmitter {
 
         this.serverInstances = [];
         this.defaultServerInstance = null;
-        this.defaultWebsocketServerInstance = null;
         this.defaultHttpServer = null;
         this.overlayServer = null;
         this.isDefaultServerStarted = false;
@@ -204,28 +201,16 @@ class HttpServerManager extends EventEmitter {
     startDefaultHttpServer() {
         const port: number = settings.getWebServerPort();
 
-        // Setup default Websocket server
-        this.defaultWebsocketServerInstance = new WebSocket.Server({
-            server: this.defaultHttpServer
+        websocketServerManager.createServer(this.defaultHttpServer);
+
+        // Shim for any consumers of the EventEmitter
+
+        websocketServerManager.on("overlay-connected", (instanceName: string) => {
+            this.emit("overlay-connected", instanceName);
         });
 
-        this.defaultWebsocketServerInstance.on('connection', (ws) => {
-            ws.on('message', (message) => {
-                try {
-                    const event = JSON.parse(message.toString());
-
-                    if (event.name === "overlay-connected") {
-                        eventManager.triggerEvent("firebot", "overlay-connected", {
-                            instanceName: event.data.instanceName
-                        });
-                        this.emit("overlay-connected", event.data.instanceName);
-                    } else {
-                        this.emit("overlay-event", event);
-                    }
-                } catch (error) {
-                    logger.error("Error parsing overlay event", error);
-                }
-            });
+        websocketServerManager.on("overlay-event", (event: unknown) => {
+            this.emit("overlay-event", event);
         });
 
         try {
@@ -249,22 +234,7 @@ class HttpServerManager extends EventEmitter {
     }
 
     sendToOverlay(eventName: string, meta: Record<string, unknown> = {}, overlayInstance: string = null) {
-        if (this.defaultWebsocketServerInstance == null || eventName == null) {
-            return;
-        }
-
-        const data = { event: eventName, meta: meta, overlayInstance: overlayInstance },
-            dataRaw = JSON.stringify(data);
-
-        this.defaultWebsocketServerInstance.clients.forEach(function each(client) {
-            if (client.readyState === 1) {
-                client.send(dataRaw, (err) => {
-                    if (err) {
-                        logger.error(err.message);
-                    }
-                });
-            }
-        });
+        websocketServerManager.sendToOverlay(eventName, meta, overlayInstance);
     }
 
     createServerInstance() {
@@ -428,37 +398,13 @@ class HttpServerManager extends EventEmitter {
 
 const manager = new HttpServerManager();
 
-setInterval(() => {
-    const clientsConnected = manager.defaultWebsocketServerInstance == null
-        ? false
-        : manager.defaultWebsocketServerInstance.clients.size > 0;
-
-    if (clientsConnected !== manager.overlayHasClients) {
-        const renderWindow: electron.BrowserWindow | undefined = global.renderWindow;
-
-        if (global.hasOwnProperty("renderWindow") && renderWindow?.webContents?.isDestroyed() === false) {
-            renderWindow.webContents.send("overlayStatusUpdate", {
-                clientsConnected: clientsConnected,
-                serverStarted: manager.isDefaultServerStarted
-            });
-        }
-        manager.overlayHasClients = clientsConnected;
-    }
-}, 3000);
+setInterval(() => websocketServerManager.reportClientsToFrontend(manager.isDefaultServerStarted), 3000);
 
 ipcMain.on("getOverlayStatus", (event) => {
     event.returnValue = {
-        clientsConnected: manager.overlayHasClients,
+        clientsConnected: websocketServerManager.overlayHasClients,
         serverStarted: manager.isDefaultServerStarted
     };
-});
-
-
-effectManager.on("effectRegistered", (effect) => {
-    if (effect.overlayExtension) {
-        // tell the overlay to refresh because a new effect with an overlay extension has been registered
-        manager.sendToOverlay("OVERLAY:REFRESH", { global: true });
-    }
 });
 
 export = manager;
