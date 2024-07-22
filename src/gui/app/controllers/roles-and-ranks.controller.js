@@ -71,20 +71,21 @@
                             viewerRanksService.showAddOrEditRankLadderModal(item);
                         }
                     },
-                    // {
-                    //     html: `<a href><i class="far fa-toggle-off" style="margin-right: 10px;"></i> ${item.enabled ? "Disable Rank Ladder" : "Enable Rank Ladder"}</a>`,
-                    //     click: function () {
-                    //         item.enabled = !item.enabled;
-                    //         viewerRanksService.saveRankLadder(item);
-                    //     },
-                    //     compile: true
-                    // },
                     {
                         html: `<a href ><i class="far fa-clone" style="margin-right: 10px;"></i> Duplicate</a>`,
                         click: function () {
                             viewerRanksService.duplicateRankLadder(item.id);
                         }
                     },
+                    ...(item.mode === "auto" ?
+                        [{
+                            html: `<a href ><i class="far fa-calculator" style="margin-right: 10px;"></i> Recalculate Ranks</a>`,
+                            click: function () {
+                                viewerRanksService.showRecalculateRanksModal(item);
+                            }
+                        }
+                        ] : []
+                    ),
                     {
                         html: `<a href style="color: #fb7373;"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>`,
                         click: function () {
@@ -109,4 +110,4 @@
                 return options;
             };
         });
-}());
+})();

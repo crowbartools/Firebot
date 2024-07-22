@@ -456,6 +456,19 @@ textarea.form-control {
     opacity: 0.75;
 }
 
+.progress {
+    background-color: $form-control-bg;
+    border-radius: 8px;
+    height: 30px;
+}
+
+.progress-bar {
+    line-height: 30px;
+    text-wrap: nowrap;
+}
+
+
+
 label {
     font-size: 15px;
     font-weight: 400;

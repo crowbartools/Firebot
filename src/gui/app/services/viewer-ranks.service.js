@@ -115,6 +115,22 @@
                 });
             };
 
+            /**
+             * @param {RankLadder} [rankLadder]
+             * @returns {void}
+             */
+            service.showRecalculateRanksModal = (rankLadder) => {
+                utilityService.showModal({
+                    component: "recalculateRanksModal",
+                    size: "sm",
+                    keyboard: false,
+                    backdrop: "static",
+                    resolveObj: {
+                        rankLadder: () => rankLadder
+                    }
+                });
+            };
+
             service.ladderModes = [
                 {
                     id: "auto",

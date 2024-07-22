@@ -27,7 +27,7 @@
                         const eventListeners = listeners[name];
                         for (const listener of eventListeners) {
                             if (listener.async) {
-                                listener.callback(data).then(returnValue => {
+                                listener.callback(data).then((returnValue) => {
                                     service.fireEvent(`${name}:reply`, returnValue);
                                 });
                             } else {
@@ -35,7 +35,7 @@
                             }
                         }
                     });
-                }(eventName));
+                })(eventName);
             }
 
             service.on = function(eventName, callback, async = false) {
@@ -88,4 +88,4 @@
 
             return service;
         });
-}());
+})();

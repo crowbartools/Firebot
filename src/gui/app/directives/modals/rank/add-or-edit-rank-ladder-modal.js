@@ -289,11 +289,8 @@
 
             $ctrl.save = () => {
                 if ($scope.ladderSettings.$invalid) {
-                    console.log("Invalid form");
-                    console.log($scope.ladderSettings);
                     return;
                 }
-                console.log("valid!");
 
                 viewerRanksService
                     .saveRankLadder($ctrl.rankLadder)
@@ -307,4 +304,4 @@
             };
         }
     });
-}());
+})();

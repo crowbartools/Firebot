@@ -13,7 +13,7 @@ import eventManager from "../events/EventManager";
 import backupManager from "../backup-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import rankManager from "../ranks/rank-manager";
-import util from "../utility";
+import util, { wait } from "../utility";
 import { Rank, RankLadder } from "../../types/ranks";
 import twitchChat from "../chat/twitch-chat";
 import { userIsActive } from "../chat/chat-listeners/active-user-handler";
@@ -48,6 +48,8 @@ interface ViewerPurgeOptions {
 class ViewerDatabase extends EventEmitter {
     private _db: Datastore<FirebotViewer>;
     private _dbCompactionInterval = 30000;
+
+    private cancelRankRecalculation = false;
 
     constructor() {
         super();
@@ -114,6 +116,19 @@ class ViewerDatabase extends EventEmitter {
         frontendCommunicator.onAsync("update-viewer-rank", async (data: UpdateViewerRankPacket) => {
             const { userId, rankLadderId, rankId } = data;
             await this.setViewerRankById(userId, rankLadderId, rankId);
+        });
+
+        frontendCommunicator.onAsync("get-viewer-count", async () => {
+            return await this._db.countAsync({});
+        });
+
+        frontendCommunicator.onAsync("rank-recalculation:start", async (rankLadderId: string) => {
+            this.cancelRankRecalculation = false;
+            await this.recalculateRanksForAllViewers(rankLadderId);
+        });
+
+        frontendCommunicator.onAsync("rank-recalculation:cancel", async () => {
+            this.cancelRankRecalculation = true;
         });
     }
 
@@ -587,6 +602,57 @@ class ViewerDatabase extends EventEmitter {
                 await this.setViewerRank(viewer, ladder.id, highestQualifiedRankId);
             }
         }
+    }
+
+    async recalculateRanksForAllViewers(rankLadderId: string): Promise<void> {
+        const ladder = rankManager.getRankLadderHelper(rankLadderId);
+
+        if (this.isViewerDBOn() !== true || ladder == null) {
+            frontendCommunicator.send("rank-recalculation:complete");
+            return;
+        }
+
+        await wait(1000);
+
+        const viewers = await this.getAllViewers();
+
+        let processedViewers = 0;
+        for (const viewer of viewers) {
+            if (this.cancelRankRecalculation) {
+                this.cancelRankRecalculation = false;
+                return;
+            }
+
+            if (viewer.ranks == null) {
+                viewer.ranks = {};
+            }
+
+            const currentRankId = viewer.ranks[ladder.id];
+            const highestQualifiedRankId = ladder.getHighestQualifiedRankId(viewer);
+
+            try {
+                if (currentRankId !== highestQualifiedRankId) {
+                    await this.setViewerRank(viewer, ladder.id, highestQualifiedRankId);
+                }
+
+                processedViewers += 1;
+
+                if (processedViewers % 5 === 0) {
+                    frontendCommunicator.send("rank-recalculation:progress", processedViewers);
+                    await wait(5);
+                }
+            } catch (error) {
+                logger.error("Error recalculating ranks for viewer", viewer._id, error);
+            }
+        }
+
+        frontendCommunicator.send("rank-recalculation:progress", processedViewers);
+
+        await this._db.compactDatafileAsync();
+
+        await wait(1000);
+
+        frontendCommunicator.send("rank-recalculation:complete");
     }
 }
 
