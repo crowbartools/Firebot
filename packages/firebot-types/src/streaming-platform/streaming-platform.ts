@@ -1,8 +1,8 @@
 import { PlatformApi } from "./api";
 import { ChatProvider } from "./chat";
 import { StreamingPlatformAuthConfig } from "./auth";
-import { Account } from "../firebot";
-import { Connectable } from "firebot/connections";
+import { Account, Connectable } from "../firebot";
+
 
 export interface StreamingPlatform extends Connectable {
   id: string;

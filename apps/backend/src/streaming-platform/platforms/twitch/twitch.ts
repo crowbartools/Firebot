@@ -111,6 +111,8 @@ class Twitch extends ConnectionEventEmitter implements StreamingPlatform {
     console.log("Twitch init");
   }
 
+  canConnect = () => true;
+
   disconnect() {
     this.emit("disconnected");
   }
