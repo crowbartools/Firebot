@@ -1,6 +1,6 @@
 import { makeAutoObservable } from "mobx";
 
-export type FirebotTheme = "shadow" | "slate" | "snow";
+export type FirebotTheme = "shadow" | "slate" | "storm" | "snow";
 
 class SettingsStore {
 

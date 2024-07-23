@@ -43,6 +43,7 @@ module.exports = {
     safelist: [
         'snow',
         'slate',
+        'storm'
     ],
     plugins: [
         require('tailwind-scrollbar'),
@@ -68,6 +69,17 @@ module.exports = {
                             "secondary-bg": "#36393F",
                             "primary-text": "#D4D4D8",
                             "muted-text": "#bdbdbf",
+                        }
+                    }
+                },
+                {
+                    name: "storm",
+                    extend: {
+                        colors: {
+                            "primary-bg": "#1F2433",
+                            "secondary-bg": "#293042",
+                            "primary-text": "#D4D4D8",
+                            "muted-text": "#7E8492",
                         }
                     }
                 },

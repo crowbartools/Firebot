@@ -6,10 +6,11 @@ import { FirebotTheme } from "@/stores/settings-store";
 import { observer } from "mobx-react-lite";
 
 const themes: SelectItem<FirebotTheme>[] = [
-    { name: "Shadow", value: "shadow"},
-    { name: "Slate", value: "slate"},
-    { name: "Snow", value: "snow"},
-]
+  { name: "Shadow", value: "shadow" },
+  { name: "Slate", value: "slate" },
+  { name: "Storm", value: "storm" },
+  { name: "Snow", value: "snow" },
+];
 
 export const SettingsPage: React.FC = observer(() => {
     const { settingsStore } = useStores();
