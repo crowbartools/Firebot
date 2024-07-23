@@ -1646,7 +1646,6 @@ thead th{
   height: 40px;
   padding-left: 15px;
   border-radius: 8px;
-  margin-bottom: 5px;
   line-height: 1.1;
   justify-content: space-between;
 
@@ -1659,6 +1658,39 @@ thead th{
     background: #136e87;
     cursor: pointer;
   }
+
+  &.has-bottom-panel {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}
+
+.small-slider {
+    .rzslider {
+        margin: 16px 0 15px 0 !important;
+        .rz-pointer {
+            top: -7px !important;
+            width: 16px !important;
+            height: 16px !important;
+
+            &::after {
+                top: 5px !important;
+                left: 5px !important;
+                width: 6px !important;
+                height: 6px !important;
+            }
+        }
+    }
+}
+
+.effect-weight-panel {
+    height: 40px;
+    background: rgb(19 130 157 / 27%);
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    padding: 0 15px;
+    display: flex;
+    align-items: center;
 }
 
 .flex-center {

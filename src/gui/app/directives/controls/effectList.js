@@ -15,7 +15,8 @@
                 header: "@",
                 headerClasses: "@",
                 effectContainerClasses: "@",
-                hideNumbers: "<"
+                hideNumbers: "<",
+                weighted: "<"
             },
             template: `
             <div class="effect-list">
@@ -130,43 +131,62 @@
                 </div>
                 <div class="{{$ctrl.effectContainerClasses}} mx-6 pb-6">
                     <div ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.effectsData.list">
-                        <div ng-repeat="effect in $ctrl.effectsData.list track by $index" context-menu="$ctrl.createEffectMenuOptions(effect)">
+                        <div
+                            ng-repeat="effect in $ctrl.effectsData.list track by $index"
+                            context-menu="$ctrl.createEffectMenuOptions(effect)"
+                            style="margin-bottom: 7.5px;"
+                        >
                             <div
                                 role="button"
                                 class="effect-bar"
-                                ng-class="{'disabled': !effect.active}"
+                                ng-class="{'disabled': !effect.active, 'has-bottom-panel': $ctrl.showBottomPanel(effect)}"
                                 ng-click="$ctrl.openEditEffectModal(effect, $index, $ctrl.trigger, false)"
                                 ng-mouseenter="hovering = true"
-                                ng-mouseleave="hovering = false">
-                                    <span class="pr-4" style="display: inline-block;text-overflow: ellipsis;overflow: hidden;line-height: 20px;white-space: nowrap;">
-                                        <span class="muted" ng-hide="$ctrl.hideNumbers === true">{{$index + 1}}. </span>
-                                        {{$ctrl.getEffectNameById(effect.type)}}
-                                        <span ng-if="effect.effectLabel" class="muted"> ({{effect.effectLabel}})</span>
+                                ng-mouseleave="hovering = false"
+                            >
+                                <span class="pr-4" style="display: inline-block;text-overflow: ellipsis;overflow: hidden;line-height: 20px;white-space: nowrap;">
+                                    <span class="muted" ng-hide="$ctrl.hideNumbers === true">{{$index + 1}}. </span>
+                                    {{$ctrl.getEffectNameById(effect.type)}}
+                                    <span ng-if="effect.effectLabel" class="muted"> ({{effect.effectLabel}})</span>
+                                </span>
+                                <span class="flex-row-center">
+                                    <span class="dragHandle flex items-center justify-center" style="height: 38px; width: 15px;" ng-class="{'hiddenHandle': !hovering}" ng-click="$event.stopPropagation()">
+                                        <i class="fal fa-bars"></i>
                                     </span>
-                                    <span class="flex-row-center">
-                                        <span class="dragHandle flex items-center justify-center" style="height: 38px; width: 15px;" ng-class="{'hiddenHandle': !hovering}" ng-click="$event.stopPropagation()">
-                                            <i class="fal fa-bars"></i>
-                                        </span>
-                                        <div
-                                            class="flex items-center justify-center"
-                                            style="font-size: 20px;height: 38px;width: 35px;text-align: center;"
-                                            ng-click="$event.stopPropagation()"
+                                    <div
+                                        class="flex items-center justify-center"
+                                        style="font-size: 20px;height: 38px;width: 35px;text-align: center;"
+                                        ng-click="$event.stopPropagation()"
+                                    >
+                                        <a
+                                            href
+                                            class="effects-actions-btn"
+                                            aria-label="Open effect menu"
+                                            uib-tooltip="Open effect menu"
+                                            tooltip-append-to-body="true"
+                                            role="button"
+                                            context-menu="$ctrl.createEffectMenuOptions(effect)"
+                                            context-menu-on="click"
+                                            context-menu-orientation="top"
                                         >
-                                            <a
-                                                href
-                                                class="effects-actions-btn"
-                                                aria-label="Open effect menu"
-                                                uib-tooltip="Open effect menu"
-                                                tooltip-append-to-body="true"
-                                                role="button"
-                                                context-menu="$ctrl.createEffectMenuOptions(effect)"
-                                                context-menu-on="click"
-                                                context-menu-orientation="top"
-                                            >
-                                                <i class="fal fa-ellipsis-v"></i>
-                                            </a>
-                                        </div>
+                                            <i class="fal fa-ellipsis-v"></i>
+                                        </a>
+                                    </div>
+                                </span>
+                            </div>
+                            <div ng-if="$ctrl.showBottomPanel(effect)" class="effect-weight-panel">
+                                <div class="volume-slider-wrapper small-slider" style="flex-grow: 1">
+                                    <i class="fas fa-balance-scale-left mr-5" uib-tooltip="Weight"></i>
+                                    <rzslider rz-slider-model="effect.percentWeight" rz-slider-options="{floor: 0.0001, ceil: 1.0, step: 0.0001, precision: 4, hideLimitLabels: true, hidePointerLabels: true, showSelectionBar: true}"></rzslider>
+                                </div>
+                                <div class="ml-5 mr-5" style="width: 1px;height: 70%;background: rgb(255 255 255 / 25%);border-radius: 2px;flex-grow: 0; flex-shrink: 0;"></div>
+                                <div>
+                                    <span uib-tooltip="Calculated Chance">
+                                        <i class="fas fa-dice mr-2"></i>
+                                        <span style="font-family: monospace; width: 52px; display: inline-block; text-align: end;">{{$ctrl.getPercentChanceForEffect(effect)}}%</span>
                                     </span>
+                                    <i class="fas fa-edit ml-2 muted" uib-tooltip="Set target percentage" tooltip-append-to-body="true" ng-click="$ctrl.openSetTargetChancePercentageModal(effect)"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -180,7 +200,7 @@
 
             </div>
             `,
-            controller: function($q, utilityService, effectHelperService, objectCopyHelper, effectQueuesService, presetEffectListsService,
+            controller: function($q, $scope, utilityService, effectHelperService, objectCopyHelper, effectQueuesService, presetEffectListsService,
                 backendCommunicator, ngToast, $http) {
                 const ctrl = this;
 
@@ -189,6 +209,16 @@
                 };
 
                 let effectDefinitions = [];
+
+                const ensureDefaultWeights = (reset = false) => {
+                    ctrl.effectsData.list.forEach((e) => {
+                        if (!ctrl.weighted) {
+                            e.percentWeight = null;
+                        } else if (e.percentWeight == null || reset) {
+                            e.percentWeight = 0.5;
+                        }
+                    });
+                };
 
                 function createEffectsData() {
                     if (ctrl.effects != null && !Array.isArray(ctrl.effects)) {
@@ -208,7 +238,88 @@
                     });
 
                     ctrl.effectsUpdate();
+
+                    $scope.$broadcast('rzSliderForceRender');
                 }
+
+                $scope.$watch("$ctrl.weighted", (newValue, oldValue) => {
+                    if (!oldValue && newValue) {
+                        ensureDefaultWeights(true);
+                    } else {
+                        ensureDefaultWeights();
+                    }
+                    ctrl.effectsUpdate();
+                });
+
+                const getSumOfAllWeights = () => {
+                    ensureDefaultWeights();
+                    const sumOfAllWeights = ctrl
+                        .effectsData.list
+                        .filter((e) => e.active)
+                        .reduce((acc, e) => acc + (e.percentWeight ?? 0.5), 0);
+                    return sumOfAllWeights;
+                };
+
+
+                ctrl.getPercentChanceForEffect = (effect) => {
+                    const sumOfAllWeights = getSumOfAllWeights();
+                    const percentChance = (effect.percentWeight / sumOfAllWeights) * 100;
+                    return percentChance.toFixed(2);
+                };
+
+                ctrl.openSetTargetChancePercentageModal = (effect) => {
+                    utilityService.openGetInputModal(
+                        {
+                            model: parseFloat(ctrl.getPercentChanceForEffect(effect) || "0.5"),
+                            label: "Set Target Percentage",
+                            descriptionText: "Enter the target chance percentage for this effect. The weights of this and other effects will be adjusted as needed to reach the percentage.",
+                            inputType: "number",
+                            saveText: "Save",
+                            inputPlaceholder: "Enter percentage",
+                            validationFn: (value) => {
+                                return new Promise((resolve) => {
+                                    if (value == null || isNaN(value) || value < 0.0001 || value >= 100.0) {
+                                        resolve(false);
+                                    }
+                                    resolve(true);
+                                });
+                            },
+                            validationText: "Please enter a valid percentage greater than 0 and less than 100"
+                        },
+                        (newPercentage) => {
+                            const sumOfAllWeights = getSumOfAllWeights();
+                            const currentThisWeight = effect.percentWeight ?? 0.5;
+                            const sumOfOtherWeights = sumOfAllWeights - currentThisWeight;
+
+                            const newThisWeight = (newPercentage / 100) * sumOfAllWeights;
+                            effect.percentWeight = newThisWeight;
+
+                            const newSumOfOtherWeights = sumOfAllWeights - newThisWeight;
+
+                            const otherEffects = ctrl.effectsData.list.filter(e => e.active && e.id !== effect.id);
+                            let imperfect = false;
+                            for (const otherEffect of otherEffects) {
+                                let newWeight = (otherEffect.percentWeight ?? 0.5) * (newSumOfOtherWeights / sumOfOtherWeights);
+                                if (newWeight < 0.0001) {
+                                    imperfect = true;
+                                    newWeight = 0.0001;
+                                }
+                                otherEffect.percentWeight = newWeight;
+                            }
+
+                            ngToast.create({
+                                className: imperfect ? "warning" : "success",
+                                content: imperfect ? "Couldn't perfectly match target percent as some weights hit the minimum value." : "The weights were adjusted to fit the target percentage."
+                            });
+
+                            ctrl.effectsUpdate();
+                        });
+                };
+
+
+                ctrl.showBottomPanel = (effect) => {
+                    return ctrl.weighted && effect?.active;
+                };
 
                 ctrl.createAllEffectsMenuOptions = () => {
                     const allEffectsMenuOptions = [
@@ -432,6 +543,7 @@
                             const effectsData = await getSharedEffects(shareCode);
                             if (effectsData.effects != null) {
                                 ctrl.effectsData.list = ctrl.effectsData.list.concat(effectsData.effects);
+                                ensureDefaultWeights();
                             }
                         });
                 };
@@ -455,6 +567,7 @@
                 };
 
                 ctrl.effectsUpdate = function() {
+                    ensureDefaultWeights();
                     ctrl.update({ effects: ctrl.effectsData });
                 };
 

@@ -3,6 +3,7 @@
 const effectRunner = require("../../common/effect-runner");
 const util = require("../../utility");
 const { EffectCategory } = require('../../../shared/effect-constants');
+const logger = require("../../logwrapper");
 
 const randomQueuesCache = {};
 
@@ -36,10 +37,12 @@ const randomEffect = {
         <p>This effect will run a random effect from the list below.</p>
 
         <div style="padding-top: 10px;">
-            <label class="control-fb control--checkbox"> Don't Repeat <tooltip text="'If checked, each effect in this list will be played once before the list is shuffled again, preventing the same effect from repeating successively.'"></tooltip>
-                <input type="checkbox" ng-model="effect.dontRepeat">
-                <div class="control__indicator"></div>
-            </label>
+            <firebot-checkbox
+                model="effect.weighted"
+                label="Weighted Chances"
+                tooltip="If checked, the effects chances are determined by their weight value. If unchecked, each effect will have an equal chance of being selected."
+                style="margin-bottom: 0"
+            />
         </div>
     </eos-container>
 
@@ -50,10 +53,18 @@ const randomEffect = {
             update="effectListUpdated(effects)"
             header="Effects"
             modalId="{{modalId}}"
-            hide-numbers="true"></effect-list>
+            hide-numbers="true"
+            weighted="effect.weighted"
+        ></effect-list>
     </eos-container>
 
     <eos-container header="Options" pad-top="true">
+        <firebot-checkbox
+            ng-hide="effect.weighted"
+            model="effect.dontRepeat"
+            label="Don't Repeat"
+            tooltip="If checked, each effect in this list will be played once before the list is shuffled again, preventing the same effect from repeating successively."
+        />
         <firebot-checkbox
             model="effect.bubbleOutputs"
             label="Apply effect outputs to parent list"
@@ -93,8 +104,29 @@ const randomEffect = {
 
             const dontRepeat = effect.dontRepeat;
 
-            // if we shouldnt repeat, we need to use queues
-            if (dontRepeat) {
+            if (effect.weighted) {
+                const sumOfAllWeights = enabledEffectList.reduce((acc, e) => acc + (e.percentWeight ?? 0.5), 0);
+                const effectsWithPercentages = enabledEffectList.map(e => ({
+                    effect: e,
+                    chance: ((e.percentWeight ?? 0.5) / sumOfAllWeights) * 100
+                }));
+
+                const min = 0.0001, max = 100.0;
+                const random = Math.random() * (max - min) + min;
+
+                logger.debug("Random effect chance roll: ", random);
+
+                let currentChance = 0;
+                for (let i = 0; i < effectsWithPercentages.length; i++) {
+                    const effectWithPercentage = effectsWithPercentages[i];
+                    currentChance += effectWithPercentage.chance;
+                    if (random <= currentChance) {
+                        chosenEffect = effectWithPercentage.effect;
+                        break;
+                    }
+                }
+            } else if (dontRepeat) {
+                // if we shouldnt repeat, we need to use queues
 
                 const containsAll = (arr1, arr2) =>
                     arr2.every(arr2Item => arr1.includes(arr2Item));
