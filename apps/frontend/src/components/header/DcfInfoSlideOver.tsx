@@ -58,11 +58,12 @@ const DcfInfoSlideOverContent: FbSlideOverContent<DcfInfoSlideOverParams> = ({
           <span className="block font-mono text-2xl">
             {params.dcfCodeDetails.code}
           </span>
-          <FontAwesomeIcon
-            className="text-5xl"
-            icon={["fas", "circle-notch"]}
-            spin
-          />
+          <div>
+            <FontAwesomeIcon
+              className="w-10 animate-spin"
+              icon={["fas", "circle-notch"]}
+            />
+          </div>
           <span className="block text-primary-text/50 text-sm">
             Waiting for login confirmation...
           </span>
