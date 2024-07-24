@@ -21,9 +21,12 @@ function overlaySocketConnect(){
 
 			const olInstance = params.get("instance");
 
-            sendWebsocketEvent("overlay-connected", {
-                instanceName: olInstance == null || olInstance === "" ? "Default" : olInstance
-            });
+			ws.send(JSON.stringify({
+				type: "overlay-connected",
+				data: {
+					instanceName: olInstance == null || olInstance === "" ? "Default" : olInstance
+				}
+			}));
 		};
 
 		// When we get a message from the Firebot GUI...
@@ -80,11 +83,13 @@ overlaySocketConnect();
 
 function sendWebsocketEvent(name, data) {
 	ws.send(JSON.stringify({
-		name,
-		data
-	}))
+		type: "overlay-event",
+		data: {
+			name,
+			data
+		}
+	}));
 }
-
 
 function loadFonts() {
 	$.get(`//${baseUrl}/api/v1/fonts`, (fonts) => {

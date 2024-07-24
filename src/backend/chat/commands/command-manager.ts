@@ -9,6 +9,9 @@ import profileManager from "../../common/profile-manager";
 import frontendCommunicator from "../../common/frontend-communicator";
 import accountAccess from "../../common/account-access";
 
+import webSocketServerManager from "../../../server/websocket-server-manager";
+import { WebSocketEventType } from "../../../types/websocket";
+
 interface SystemCommandOverrides {
     [overrideId: string]: SystemCommandDefinition
 }
@@ -71,6 +74,8 @@ class CommandManager extends EventEmitter {
 
         this._registeredSysCommands.push(command);
 
+        webSocketServerManager.triggerEvent("command:system:created", command);
+
         logger.debug(`Registered Sys Command ${command.definition.id}`);
 
         this.emit("systemCommandRegistered", command);
@@ -82,7 +87,10 @@ class CommandManager extends EventEmitter {
      * @param id The ID of the system command to unregister
      */
     unregisterSystemCommand(id: string): void {
+        const command = this._registeredSysCommands.find(c => c.definition.id === id);
         this._registeredSysCommands = this._registeredSysCommands.filter(c => c.definition.id !== id);
+
+        webSocketServerManager.triggerEvent("command:system:deleted", command);
         this.emit("systemCommandUnRegistered", id);
         logger.debug(`Unregistered Sys Command ${id}`);
     }
@@ -242,7 +250,7 @@ class CommandManager extends EventEmitter {
         const override = this._commandCache.systemCommandOverrides[id];
         if (override != null) {
             override.trigger = newTrigger;
-            this.saveSystemCommandOverride(override);
+            this.saveSystemCommandOverride(override, false);
         }
 
         const defaultCmd = this._registeredSysCommands.find(
@@ -250,6 +258,7 @@ class CommandManager extends EventEmitter {
         );
         if (defaultCmd != null) {
             defaultCmd.definition.trigger = newTrigger;
+            webSocketServerManager.triggerEvent("command:system:updated", defaultCmd);
         }
 
         frontendCommunicator.send("system-commands-updated");
@@ -260,7 +269,7 @@ class CommandManager extends EventEmitter {
      *
      * @param command The `SystemCommandDefinition` with the system command override data
      */
-    saveSystemCommandOverride(command: SystemCommandDefinition): void {
+    saveSystemCommandOverride(command: SystemCommandDefinition, emitWebsocket = true): void {
         this._commandCache.systemCommandOverrides[command.id] = command;
 
         const commandDb = this.getCommandsDb();
@@ -270,6 +279,10 @@ class CommandManager extends EventEmitter {
 
         try {
             commandDb.push(`/systemCommandOverrides/${id}`, command);
+
+            if (emitWebsocket) {
+                webSocketServerManager.triggerEvent("command:system:updated", command);
+            }
         } catch (err) { }
 
         frontendCommunicator.send("system-command-override-saved", command);
@@ -289,6 +302,8 @@ class CommandManager extends EventEmitter {
         id = id.replace("/", "");
         try {
             commandDb.delete(`/systemCommandOverrides/${id}`);
+            const command = this.getSystemCommandById(id);
+            webSocketServerManager.triggerEvent("command:system:updated", command);
         } catch (err) {} //eslint-disable-line no-empty
 
         frontendCommunicator.send("system-commands-updated");
@@ -304,7 +319,9 @@ class CommandManager extends EventEmitter {
      * @param user The user who is creating/editing the custom command
      */
     saveCustomCommand(command: CommandDefinition, user?: string): void {
+        let eventType: WebSocketEventType = "command:custom:updated";
         if (command.id == null || command.id === "") {
+            eventType = "command:custom:created";
             // generate id for new command
             const uuidv1 = require("uuid/v1");
             command.id = uuidv1();
@@ -330,6 +347,7 @@ class CommandManager extends EventEmitter {
 
         try {
             commandDb.push(`/customCommands/${command.id}`, command);
+            webSocketServerManager.triggerEvent(eventType, command);
         } catch (err) {}
 
         const existingCommandIndex = this._commandCache.customCommands.findIndex(c => c.id === command.id);
@@ -392,7 +410,9 @@ class CommandManager extends EventEmitter {
         }
 
         try {
+            const command = this.getCustomCommandById(id);
             commandDb.delete(`/customCommands/${id}`);
+            webSocketServerManager.triggerEvent("command:custom:deleted", command);
         } catch (err) {
             logger.warn("error when deleting command", err.message);
         }

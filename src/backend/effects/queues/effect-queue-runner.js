@@ -4,6 +4,8 @@ const effectRunner = require("../../common/effect-runner");
 const eventManager = require("../../events/EventManager");
 const frontendCommunicator = require("../../common/frontend-communicator");
 
+const webSocketServerManager = require("../../../server/websocket-server-manager");
+
 /**
  * Queue Entry
  * @typedef {Object} QueueEntry
@@ -31,14 +33,18 @@ class EffectQueue {
     }
 
     sendQueueLengthUpdate(lengthOverride = null) {
-        frontendCommunicator.send("updateQueueLength", {
+        const queue = {
             id: this.id,
             length: lengthOverride ?? this._queue.length
-        });
+        };
+
+        frontendCommunicator.send("updateQueueLength", queue);
+
+        webSocketServerManager.triggerEvent("effect-queue:length-updated", queue);
     }
 
     runQueue() {
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             if (this._queue.length === 0 || this.canceled || this._paused === true) {
                 return resolve();
             }
@@ -55,7 +61,7 @@ class EffectQueue {
 
             if (this.mode === "interval") {
                 effectRunner.runEffects(runEffectsContext)
-                    .catch(err => {
+                    .catch((err) => {
                         logger.warn(`Error while processing effects for queue ${this.id}`, err);
                     });
                 setTimeout(() => {
@@ -63,7 +69,7 @@ class EffectQueue {
                 }, this.interval * 1000);
             } else if (this.mode === "auto") {
                 effectRunner.runEffects(runEffectsContext)
-                    .catch(err => {
+                    .catch((err) => {
                         logger.warn(`Error while processing effects for queue ${this.id}`, err);
                     })
                     .finally(() => {
@@ -73,7 +79,7 @@ class EffectQueue {
                     });
             } else if (this.mode === "custom") {
                 effectRunner.runEffects(runEffectsContext)
-                    .catch(err => {
+                    .catch((err) => {
                         logger.warn(`Error while processing effects for queue ${this.id}`, err);
                     });
                 setTimeout(() => {

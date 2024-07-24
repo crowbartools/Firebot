@@ -10,6 +10,8 @@ import twitchApi from "../twitch-api/api";
 import twitchRoleManager from "../../shared/twitch-roles";
 import { BasicViewer } from "../../types/viewers";
 
+import webSocketServerManager from "../../server/websocket-server-manager";
+
 interface LegacyCustomRole {
     id: string;
     name: string;
@@ -214,12 +216,16 @@ class CustomRolesManager {
             return;
         }
 
+        const eventType = this._customRoles[role.id] == null ? "custom-role:created" : "custom-role:updated";
+
         this._customRoles[role.id] = role;
 
         try {
             const rolesDb = this.getCustomRolesDb();
 
             rolesDb.push(`/${role.id}`, role);
+
+            webSocketServerManager.triggerEvent(eventType, role);
 
             logger.debug(`Saved role ${role.id} to file.`);
         } catch (error) {
@@ -315,12 +321,16 @@ class CustomRolesManager {
             return;
         }
 
+        const role = this._customRoles[roleId];
+
         delete this._customRoles[roleId];
 
         try {
             const rolesDb = this.getCustomRolesDb();
 
             rolesDb.delete(`/${roleId}`);
+
+            webSocketServerManager.triggerEvent("custom-role:deleted", role);
 
             logger.debug(`Deleted role: ${roleId}`);
         } catch (error) {

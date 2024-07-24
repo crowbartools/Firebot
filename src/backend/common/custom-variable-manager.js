@@ -7,6 +7,8 @@ const { ipcMain } = require("electron");
 
 const NodeCache = require("node-cache");
 
+const webSocketServerManager = require("../../server/websocket-server-manager");
+
 const cache = new NodeCache({ stdTTL: 0, checkperiod: 1 });
 exports._cache = cache;
 
@@ -20,7 +22,11 @@ const onCustomVariableExpire = (key, value) => {
     windowManagement.sendVariableExpireToInspector(key, value);
 };
 
-const onCustomVariableDelete = (key) => {
+const onCustomVariableDelete = (key, value) => {
+    webSocketServerManager.triggerEvent("custom-variable:deleted", {
+        name: key,
+        value: value
+    });
     windowManagement.sendVariableDeleteToInspector(key);
 };
 
@@ -85,6 +91,8 @@ exports.addCustomVariable = (name, data, ttl = 0, propertyPath = null) => {
         //silently fail
     }
 
+    const eventType = !cache.keys().includes(name) ? "custom-variable:created" : "custom-variable:updated";
+
     const dataRaw = data != null ? data.toString().toLowerCase() : "null";
     const dataIsNull = dataRaw === "null" || dataRaw === "undefined";
 
@@ -97,6 +105,10 @@ exports.addCustomVariable = (name, data, ttl = 0, propertyPath = null) => {
             dataToSet = currentData;
         }
         cache.set(name, dataToSet, ttl === "" ? 0 : ttl);
+        webSocketServerManager.triggerEvent(eventType, {
+            name: name,
+            value: dataToSet
+        });
     } else {
         const currentData = cache.get(name);
         if (!currentData) {
@@ -132,6 +144,10 @@ exports.addCustomVariable = (name, data, ttl = 0, propertyPath = null) => {
                 }
             }
             cache.set(name, currentData, ttl === "" ? 0 : ttl);
+            webSocketServerManager.triggerEvent(eventType, {
+                name: name,
+                value: currentData
+            });
         } catch (error) {
             logger.debug(`error setting data to custom variable ${name} using property path ${propertyPath}`);
         }
