@@ -34,18 +34,18 @@ const model : ReplaceVariable = {
             return "[Unable to get random active user]";
         }
 
-        if (ignoreUser != null) {
+        if (ignoreUser != null && `${ignoreUser}`.toLowerCase() !== 'null') {
             const randomViewer = activeUserHandler.getRandomActiveUser(ignoreUser);
             return randomViewer ? randomViewer.username : "[Unable to get random active user]";
         }
 
-        if (roleName != null) {
+        if (roleName != null && `${roleName}`.toLowerCase() !== 'null') {
             const customRole = customRoleManager.getRoleByName(roleName);
             if (customRole == null) {
                 return "[Unable to get random active user]";
             }
 
-            const customRoleUsers = customRole.viewers;
+            const customRoleUsers = customRole.viewers.map(crv => crv.username);
             if (customRoleUsers.length === 0) {
                 return "[Unable to get random active user, customroles]";
             }

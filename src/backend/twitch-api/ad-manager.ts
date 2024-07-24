@@ -108,8 +108,10 @@ class AdManager {
         this.runAdCheck();
     }
 
-    startAdCheck(): void {
+    async startAdCheck(): Promise<void> {
         if (this._adCheckIntervalId == null) {
+            await this.runAdCheck();
+
             this._adCheckIntervalId = setInterval(async () => {
                 await this.runAdCheck();
             }, 15 * 1000);

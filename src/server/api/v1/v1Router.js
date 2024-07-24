@@ -7,7 +7,7 @@ const logger = require("../../../backend/logwrapper");
 router.use(function log(req, res, next) {
     // here we could do stuff for every request if we wanted
     logger.info(
-        `API Request from: ${req.headers.host}, for path: ${req.originalUrl}`
+        `API Request from: ${req.socket.remoteAddress}, for path: ${req.originalUrl}`
     );
     next();
 });

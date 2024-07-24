@@ -10,6 +10,7 @@ export type VariableCategory =
 
 interface VariableDefinition {
     handle: string;
+    aliases?: string[];
     usage?: string;
     description: string;
     examples?: Array<{

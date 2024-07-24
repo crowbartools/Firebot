@@ -1,5 +1,6 @@
 import commandManager from "./command-manager";
 import currencyCommandManager from '../../currency/currency-command-manager';
+import rankCommandManager from "../../ranks/rank-command-manager";
 
 import { CommandListSystemCommand } from "./builtin/command-list";
 import { CommandManagementSystemCommand } from "./builtin/command-management";
@@ -26,4 +27,6 @@ export function loadSystemCommands() {
     commandManager.registerSystemCommand(UptimeSystemCommand);
 
     currencyCommandManager.createAllCurrencyCommands();
+
+    rankCommandManager.createAllRankLadderCommands();
 }

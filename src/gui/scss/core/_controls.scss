@@ -12,6 +12,57 @@
     }
 }
 
+.list-add-btn-wrapper {
+    margin:  5px 0 10px 0px;
+
+    .list-add-btn {
+        background: #24262A;
+        width: auto;
+        display: inline-flex;
+        flex-direction: row;
+        align-items: center;
+        color: white;
+        height: 30px;
+        font-size: 13px;
+        padding: 0 10px;
+        border-radius: 8px;
+        margin-bottom: 4px;
+        justify-content: space-between;
+        cursor: pointer;
+        border: none;
+        &:hover, &:focus {
+            opacity: 0.8;
+        }
+    }
+
+    &.connected {
+        margin-top: 0px;
+        text-align: center;
+    }
+}
+
+.fb-arrow-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    &.up {
+        transform: rotate(180deg);
+    }
+    .arrow-line {
+        width: 2px;
+        background: #24262A;
+        height: 10px;
+    }
+    .arrow-tip {
+        width: 0;
+        height: 0;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 10px solid #24262A;
+    }
+}
+
 .control-group {
     display: inline-block;
     vertical-align: top;

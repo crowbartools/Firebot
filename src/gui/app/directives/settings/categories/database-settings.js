@@ -18,6 +18,7 @@
                             selected="viewerDb"
                             on-update="settings.setViewerDB(option === 'true')"
                             right-justify="true"
+                            aria-label="enable or disable Viewer Database"
                         />
                     </firebot-setting>
 
@@ -31,6 +32,7 @@
                             selected="autoFlagBots"
                             on-update="settings.setAutoFlagBots(option === 'true')"
                             right-justify="true"
+                            aria-label="enable or disable Auto Flag Bots"
                         />
                     </firebot-setting>
 
@@ -44,6 +46,7 @@
                             selected="viewerListPageSize"
                             on-update="settings.setViewerListPageSize(option)"
                             right-justify="true"
+                            aria-label="enable or disable Viewers Table Page Size"
                         />
                     </firebot-setting>
 

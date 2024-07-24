@@ -86,7 +86,7 @@ class TwitchStreamInfoManager {
 
                 // We just went live, so start the ad check
                 if (!this.streamInfo.isLive) {
-                    adManager.startAdCheck();
+                    await adManager.startAdCheck();
                 }
             }
             this.streamInfo.isLive = true;

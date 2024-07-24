@@ -18,7 +18,7 @@
                     menuPosition: "@",
                     buttonPosition: "@"
                 },
-                controller: function($scope, $element, replaceVariableService, $timeout, $sce) {
+                controller: function($scope, $element, replaceVariableService, $timeout, $sce, variableMacroService) {
 
                     const insertAt = (str, sub, pos) => `${str.slice(0, pos)}${sub}${str.slice(pos)}`;
 
@@ -33,6 +33,8 @@
                     };
 
                     $scope.hasMagicVariables = false;
+
+                    $scope.variableMacroService = variableMacroService;
 
                     $scope.activeCategory = "common";
                     $scope.setActiveCategory = (category) => {
@@ -137,11 +139,30 @@
                         }
                     };
 
+                    $scope.addMacro = (macro) => {
+                        let baseVariableText = `$%${macro.name}`;
+                        if (macro.argNames?.length) {
+                            baseVariableText += `[${macro.argNames.join(", ")}]`;
+                        }
+                        $scope.insertText(baseVariableText);
+                    };
+
                     $scope.addVariable = (variable) => {
                         const display = variable.usage ? variable.usage : variable.handle;
                         $scope.insertText(`$${display}`);
                     };
 
+                    $scope.showAddOrEditVariableMacroModal = (macro) => {
+                        $scope.keepMenuOpen = true;
+                        variableMacroService.showAddOrEditVariableMacroModal(macro, () => {
+                            $element.next(".variable-menu").find("#variable-search").focus();
+                            $scope.keepMenuOpen = false;
+                        });
+                    };
+
+                    $scope.getAliases = (variable) => {
+                        return variable.aliases?.map(a => `$${a}`).join(", ");
+                    };
                 },
                 link: function(scope, element) {
 
@@ -181,8 +202,14 @@
                             </div>
 
                             <div style="display: flex; flex-direction: row;">
-                                <div style="width: 125px;display:flex;flex-direction:column;flex-shrink: 0;background: #18191b;">
-                                    <div class="effect-category-header">Categories</div>
+                                <div style="width: 125px;display:flex;flex-direction:column;flex-shrink: 0;background: #18191b;padding-top: 5px;">
+                                    <div
+                                        class="effect-category-wrapper dark"
+                                        ng-class="{'selected': activeCategory === 'macros'}"
+                                        ng-click="setActiveCategory('macros');"
+                                    >
+                                        <div class="category-text"><i class="fas fa-layer-group"></i> Macros</div>
+                                    </div>
                                     <div
                                         class="effect-category-wrapper dark"
                                         ng-class="{'selected': activeCategory === 'magic'}"
@@ -191,6 +218,7 @@
                                     >
                                         <div class="category-text"><i class="far fa-magic"></i> Magic</div>
                                     </div>
+                                    <div class="effect-category-header" style="padding-top:5px;">Categories</div>
                                     <div class="effect-category-wrapper dark" ng-class="{'selected': activeCategory == null}" ng-click="setActiveCategory(null);">
                                         <div class="category-text">All</div>
                                     </div>
@@ -198,9 +226,12 @@
                                         <div class="category-text">{{category}}</div>
                                     </div>
                                 </div>
-                                <div style="padding: 10px;overflow-y: auto;width: 100%;" ng-style="{ height: hasMagicVariables ? '315px': '280px'}">
-                                    <div ng-hide="activeCategory === 'magic'" ng-repeat="variable in variables | orderBy:'handle' | variableCategoryFilter:activeCategory | variableSearch:variableSearchText" style="margin-bottom: 8px;">
+                                <div style="overflow-y: auto;width: 100%;" ng-style="{ height: hasMagicVariables ? '315px': '280px', padding: activeCategory === 'macros' ? '10px 0' : '10px' }">
+                                    <div ng-hide="activeCategory === 'magic' || activeCategory === 'macros'" ng-repeat="variable in variables | orderBy:'handle' | variableCategoryFilter:activeCategory | variableSearch:variableSearchText" style="margin-bottom: 8px;">
                                         <div style="font-weight: 900;">\${{variable.usage ? variable.usage : variable.handle}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="addVariable(variable)"></i></div>
+                                        <div ng-if="variable.aliases && variable.aliases.length > 0">
+                                            <div style="font-size: 12px; opacity: 0.75;">Aliases: {{getAliases(variable)}}</div>
+                                        </div>
                                         <div class="muted" ng-bind-html="variable.description"></div>
                                         <div ng-show="variable.examples && variable.examples.length > 0" style="font-size: 13px;padding-left: 5px; margin-top:3px;">
                                             <collapsable-section show-text="Other examples" hide-text="Other examples" text-color="#0b8dc6">
@@ -210,6 +241,17 @@
                                                 </div>
                                             </collapsable-section>
                                         </div>
+                                    </div>
+                                    <div ng-show="activeCategory === 'macros'" style="position: relative;">
+                                        <div class="mb-2 pr-4" style="text-align: right;">
+                                            <firebot-button type="primary" size="small" icon="fas fa-plus-circle" text="Add Macro" ng-click="showAddOrEditVariableMacroModal()" />
+                                        </div>
+                                        <macro-list-item
+                                            ng-repeat="macro in variableMacroService.macros | filter: { name: variableSearchText } track by macro.name"
+                                            macro="macro"
+                                            on-edit-clicked="showAddOrEditVariableMacroModal(macro)"
+                                            on-add-to-text-clicked="addMacro(macro)"
+                                        />
                                     </div>
                                     <div ng-show="activeCategory === 'magic'" style="position: relative;">
                                         <div style="position: absolute; right: 0;">
@@ -272,7 +314,8 @@
                             scope.showMenu &&
                             !wrapper[0].contains(event.target) &&
                             !button[0].contains(event.target) &&
-                            !menu[0].contains(event.target)
+                            !menu[0].contains(event.target) &&
+                            !scope.keepMenuOpen
                         ) {
                             scope.setMenu(false);
                         }

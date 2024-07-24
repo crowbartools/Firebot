@@ -13,6 +13,7 @@ const accountEvents = new EventEmitter();
  * @typedef {Object} FirebotAccount
  * @property {string} username - The account username
  * @property {string} displayName - The users displayName
+ * @property {string} description - The users description
  * @property {string} userId - The user id for the account
  * @property {number} channelId - DEPRECATED: The channel id for the account (same as userId)
  * @property {string} avatar - The avatar url for the account

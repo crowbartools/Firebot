@@ -28,7 +28,9 @@ import {
     OBS_INPUT_AUDIO_BALANCE_CHANGED_EVENT_ID,
     OBS_INPUT_AUDIO_SYNC_OFFSET_CHANGED_EVENT_ID,
     OBS_INPUT_AUDIO_MONITOR_TYPE_CHANGED_EVENT_ID,
-    OBS_INPUT_AUDIO_TRACKS_CHANGED_EVENT_ID
+    OBS_INPUT_AUDIO_TRACKS_CHANGED_EVENT_ID,
+    OBS_CONNECTED_EVENT_ID,
+    OBS_DISCONNECTED_EVENT_ID
 } from "./constants";
 import logger from "../../../logwrapper";
 
@@ -371,6 +373,7 @@ async function maintainConnection(
             logger.info("Successfully connected to OBS.");
 
             connected = true;
+            eventManager?.triggerEvent(OBS_EVENT_SOURCE_ID, OBS_CONNECTED_EVENT_ID, {});
 
             setupRemoteListeners();
 
@@ -378,7 +381,10 @@ async function maintainConnection(
                 if (!connected) {
                     return;
                 }
+
                 connected = false;
+                eventManager?.triggerEvent(OBS_EVENT_SOURCE_ID, OBS_DISCONNECTED_EVENT_ID, {});
+
                 if (isForceClosing) {
                     return;
                 }
@@ -833,6 +839,24 @@ export async function setTextSourceSettings(sourceName: string, settings: OBSTex
     }
 }
 
+export async function createRecordChapter(chapterName: string) {
+    try {
+        // obs-websockets-js hasn't been updated to include "CreateRecordChapter" yet
+        // @ts-expect-error
+        await obs.call("CreateRecordChapter", {
+            chapterName
+        });
+    } catch (error) {
+        if (error.code === 501) {
+            logger.error("Failed to create OBS Chapter Marker: Output Not Running");
+        } else if (error.code === 204) {
+            logger.error("Failed to create OBS Chapter Marker: Outdated OBS version");
+        } else {
+            logger.error("Failed to create OBS Chapter Marker:", error.message ?? error);
+        }
+    }
+}
+
 export async function getBrowserSources(): Promise<Array<OBSSource>> {
     const sources = await getAllSources();
     return sources?.filter(s => s.typeId === "browser_source");
@@ -967,6 +991,8 @@ export async function stopVirtualCam(): Promise<void> {
         return;
     }
 }
+
+export const isConnected = (): boolean => connected;
 
 export async function isStreaming(): Promise<boolean> {
     let isRunning = false;

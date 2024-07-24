@@ -25,6 +25,7 @@
                             selected="customScriptsEnabled"
                             on-update="settings.setCustomScriptsEnabled(option === 'true')"
                             right-justify="true"
+                            aria-label="Enable or disable custom scripts"
                         />
                     </firebot-setting>
 
@@ -50,6 +51,7 @@
                             selected="clearCache"
                             on-update="settings.setClearCustomScriptCache(option === 'true')"
                             right-justify="true"
+                            aria-label="Enable or disable the Clearing of Custom Script Cache"
                         />
                     </firebot-setting>
 
