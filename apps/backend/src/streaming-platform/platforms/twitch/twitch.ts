@@ -108,17 +108,26 @@ class Twitch extends ConnectionEventEmitter implements StreamingPlatform {
       streamerAccount,
       botAccount
     );
-    console.log("Twitch init");
+    console.log("### Twitch init");
   }
 
   canConnect = () => true;
 
-  disconnect() {
+  get connected() {
+    return this.chat.connected;
+  }
+
+  async disconnect() {
+    await this.chat.disconnect(false);
     this.emit("disconnected");
   }
 
-  connect() {
-    this.emit("connected");
+  async connect() {
+    const didConnect = await this.chat.connect();
+    if (didConnect) {
+      this.emit("connected");
+    }
+    return didConnect;
   }
 
   onLoginUpdate(streamerAccount?: Account, botAccount?: Account) {

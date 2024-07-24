@@ -5,11 +5,15 @@ import Twitch from "./platforms/twitch/twitch";
 import { AuthProviderManager } from "../auth/auth-provider-manager.service";
 import { StreamingPlatformConfig } from "../config/streaming-platform.config";
 import { ConfigType } from "@nestjs/config";
+import { ConnectableRegistryService } from "connection/connectable-registry.service";
+import { StreamingPlatformLoginsStore } from "../data-access/stores/streaming-platform-logins.store";
 
 @Injectable()
 export class PlatformManagerService {
   constructor(
     private readonly authProviderManager: AuthProviderManager,
+    private readonly connectableRegistryService: ConnectableRegistryService,
+    private readonly loginsStore: StreamingPlatformLoginsStore,
     @Inject(StreamingPlatformConfig.KEY)
     private streamingPlatformConfig: ConfigType<typeof StreamingPlatformConfig>
   ) {
@@ -40,12 +44,20 @@ export class PlatformManagerService {
       scopes: botScopes,
     };
 
-    try { 
+    try {
       this.authProviderManager.registerProvider(streamerAuth);
       this.authProviderManager.registerProvider(botAuth);
     } catch (e) {
       console.log("Failed to register auth provider", e);
     }
+
+    const activeLogin = this.getActiveLoginConfigForPlatform(platform.id);
+    platform.init(activeLogin?.streamer, activeLogin?.bot);
+
+    this.connectableRegistryService.registerConnectable(
+      platform,
+      "streaming-platform"
+    );
   }
 
   getPlatform(id: string): StreamingPlatform | void {
@@ -56,12 +68,26 @@ export class PlatformManagerService {
     return this.platforms;
   }
 
-  triggerLoginUpdate(platformId: string, streamerAccount?: Account, botAccount?: Account) {
+  triggerLoginUpdate(
+    platformId: string,
+    streamerAccount?: Account,
+    botAccount?: Account
+  ) {
     const platform = this.getPlatform(platformId);
     if (!platform) {
       return;
     }
-    
+
     platform.onLoginUpdate(streamerAccount, botAccount);
+  }
+
+  private getActiveLoginConfigForPlatform(platformId: string) {
+    const platformLogins = this.loginsStore.get(platformId);
+    if (!platformLogins) {
+      return null;
+    }
+    return platformLogins.loginConfigs.find(
+      (lc) => lc.id === platformLogins.activeLoginConfigId
+    );
   }
 }

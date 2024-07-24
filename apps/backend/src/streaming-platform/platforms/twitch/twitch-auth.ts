@@ -6,6 +6,9 @@ class TwitchAccountAuthProvider {
   streamerProvider: StaticAuthProvider | null = null;
   botProvider: StaticAuthProvider | null = null;
 
+  streamerAccount: Account | undefined = undefined;
+  botAccount: Account | undefined = undefined;
+
   clientId: string | undefined = undefined;
 
   setClientId(clientId: string) {
@@ -13,6 +16,8 @@ class TwitchAccountAuthProvider {
   }
 
   async setupAccountProviders(streamerAccount?: Account, botAccount?: Account) {
+    this.streamerAccount = streamerAccount;
+    this.botAccount = botAccount;
     if (streamerAccount) {
       this.streamerProvider = new StaticAuthProvider(
         this.clientId!,

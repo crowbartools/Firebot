@@ -12,7 +12,8 @@ export class ConnectionEventEmitter extends TypedEmitter<ConnectionEvents> {}
 export interface Connectable extends ConnectionEventEmitter {
   id: string;
   name: string;
+  connected?: boolean;
   canConnect: () => boolean;
-  connect: () => void;
-  disconnect: () => void;
+  connect: () => PromiseLike<boolean>;
+  disconnect: () => PromiseLike<void>;
 }

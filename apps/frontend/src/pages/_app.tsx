@@ -40,7 +40,6 @@ export default function App({ Component, pageProps }: AppProps) {
                     >
                       <Component {...pageProps} />
                     </div>
-                    <div className="h-9 bg-secondary-bg z-50"></div>
                   </div>
                 </FbSlideOverProvider>
               </FbModalProvider>

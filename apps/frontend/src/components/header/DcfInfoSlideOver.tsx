@@ -26,13 +26,9 @@ const DcfInfoSlideOverContent: FbSlideOverContent<DcfInfoSlideOverParams> = ({
   params,
   onDismiss,
 }) => {
-  useRealTimeEvent<{ providerId: string }>(
-    "device-flow-finished",
-    ({ providerId }) => {
-      console.log(providerId, params.providerId);
-      onDismiss();
-    }
-  );
+  useRealTimeEvent<{ providerId: string }>("device-flow-finished", () => {
+    onDismiss();
+  });
 
   return (
     <div>

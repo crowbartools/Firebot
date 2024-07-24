@@ -10,6 +10,7 @@ import { DataAccessModule } from "./data-access/data-access.module";
 import { AppConfig } from "./config/app.config";
 import { StreamingPlatformConfig } from "./config/streaming-platform.config";
 import configSchema from "./config/config.schema";
+import { ConnectionModule } from "connection/connection.module";
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import configSchema from "./config/config.schema";
     AuthModule,
     RealTimeModule,
     StreamingPlatformModule,
+    ConnectionModule,
   ],
   controllers: [ExampleController],
   providers: [],

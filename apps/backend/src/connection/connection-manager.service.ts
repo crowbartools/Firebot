@@ -1,20 +1,32 @@
 import { Injectable } from "@nestjs/common";
-import { Connectable, ConnectionType } from "firebot-types";
-import { RealTimeGateway } from "real-time/real-time.gateway";
+import { ConnectableRegistryService } from "./connectable-registry.service";
 
 @Injectable()
 export class ConnectionManagerService {
-  private connectables: Record<ConnectionType, Connectable[]> = {
-    "streaming-platform": [],
-    integration: [],
-    overlay: [],
-  };
+  constructor(
+    private readonly connectableRegistryService: ConnectableRegistryService
+  ) {}
 
-  constructor(private readonly realTimeGateway: RealTimeGateway) {}
+  async connectAll() {
+    console.log("Connecting all connectables");
+    const connectables = this.connectableRegistryService.getConnectables();
+    for (const connectable of connectables["streaming-platform"]) {
+      if (connectable.canConnect()) {
+        console.log(`Connecting ${connectable.name}`);
+        await connectable.connect();
+      }
+    }
+    console.log("All connectables connected");
+  }
 
-  registerConnectable(connectable: Connectable, type: ConnectionType) {
-    this.connectables[type].push(connectable);
-    connectable.on("connected", () => {});
-    connectable.on("disconnected", () => {});
+  async disconnectAll() {
+    console.log("Disconnecting all connectables");
+    const connectables = this.connectableRegistryService.getConnectables();
+    for (const connectable of connectables["streaming-platform"]) {
+      if (connectable.canConnect()) {
+        await connectable.disconnect();
+      }
+    }
+    console.log("All connectables disconnected");
   }
 }

@@ -34,7 +34,7 @@ const profileStores = [
     LoginService,
   ],
   controllers: [ProfileController, LoginController],
-  exports: [...profileStores],
+  exports: [...profileStores, LoginService],
   imports: [StreamingPlatformModule],
 })
 export class DataAccessModule extends ConfigurableModuleClass {}
