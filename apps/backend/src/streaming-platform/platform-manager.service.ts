@@ -7,6 +7,7 @@ import { StreamingPlatformConfig } from "../config/streaming-platform.config";
 import { ConfigType } from "@nestjs/config";
 import { ConnectableRegistryService } from "connection/connectable-registry.service";
 import { StreamingPlatformLoginsStore } from "../data-access/stores/streaming-platform-logins.store";
+import { PlatformEventListenerService } from "./platform-event-listener.service";
 
 @Injectable()
 export class PlatformManagerService {
@@ -14,6 +15,7 @@ export class PlatformManagerService {
     private readonly authProviderManager: AuthProviderManager,
     private readonly connectableRegistryService: ConnectableRegistryService,
     private readonly loginsStore: StreamingPlatformLoginsStore,
+    private readonly platformEventListenerService: PlatformEventListenerService,
     @Inject(StreamingPlatformConfig.KEY)
     private streamingPlatformConfig: ConfigType<typeof StreamingPlatformConfig>
   ) {
@@ -58,6 +60,8 @@ export class PlatformManagerService {
       platform,
       "streaming-platform"
     );
+
+    this.platformEventListenerService.addPlatformListeners(platform);
   }
 
   getPlatform(id: string): StreamingPlatform | void {

@@ -1,5 +1,5 @@
-import { ChatProvider } from "firebot-types";
-import { ChatClient } from "@twurple/chat";
+import { ChatItem, ChatProvider, MessagePart } from "firebot-types";
+import { ChatClient, parseChatMessage } from "@twurple/chat";
 
 import { twitchAccountAuthProvider } from "./twitch-auth";
 
@@ -68,7 +68,50 @@ export class TwitchChat extends ChatProvider<{
     });
 
     this.streamerClient?.onMessage(async (channel, user, message, msg) => {
-      console.log("message", channel, user, message, msg);
+      const parsedParts: MessagePart[] = parseChatMessage(
+        message,
+        msg.emoteOffsets,
+        []
+      ).map((twurpleChatPart) => {
+        if (twurpleChatPart.type === "emote") {
+          return {
+            type: "emote",
+            id: twurpleChatPart.id,
+            name: twurpleChatPart.name,
+            url: `https://static-cdn.jtvnw.net/emoticons/v1/${twurpleChatPart.id}/1.0`,
+          };
+        } else if (twurpleChatPart.type === "cheer") {
+          return {
+            type: "text",
+            text: `cheer${twurpleChatPart.amount}`,
+          };
+        } else {
+          return {
+            type: "text",
+            text: twurpleChatPart.text,
+          };
+        }
+      });
+      const chatItem: ChatItem = {
+        type: "message",
+        platformId: "twitch",
+        chatMessage: {
+          id: msg.id,
+          parts: parsedParts,
+          avatarUrl: "",
+          badges: [],
+          user: {
+            id: msg.userInfo.userId,
+            username: msg.userInfo.userName,
+            displayName: msg.userInfo.displayName,
+            roles: [],
+          },
+          rawText: message,
+          whisper: false,
+          metadata: {},
+        },
+      };
+      this.emit("chatItem", chatItem);
     });
 
     this.streamerClient?.connect();
@@ -109,4 +152,3 @@ export class TwitchChat extends ChatProvider<{
     return this.streamerClient?.isConnected ?? false;
   }
 }
-

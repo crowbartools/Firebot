@@ -11,7 +11,7 @@ export interface Badge {
 }
 
 export interface MessagePartType {
-  type: "text" | "emote";
+  type: "text" | "emote" | "link";
 }
 
 export interface TextMessagePart extends MessagePartType {
@@ -24,11 +24,22 @@ export interface EmoteMessagePart extends MessagePartType {
   id: Id;
   name: string;
   url: string;
+  animatedUrl?: string;
+  color?: string;
+  isThirdParty?: boolean;
+  thirdPartySource?: string;
 }
+
+export interface LinkMessagePart extends MessagePartType {
+  type: "link";
+  text: string;
+  url: string;
+}
+
+export type MessagePart = TextMessagePart | EmoteMessagePart | LinkMessagePart;
 
 export interface ChatMessage {
   id: Id;
-  platformId: string;
   user: OnlyRequire<PlatformUser, "id" | "username" | "displayName" | "roles">;
   avatarUrl: string;
   deleted?: boolean;
@@ -36,7 +47,7 @@ export interface ChatMessage {
   whisper: boolean;
   badges: Badge[];
   rawText: string;
-  parts: Array<TextMessagePart | EmoteMessagePart>;
+  parts: MessagePart[];
   metadata: Record<string, unknown>;
 }
 
@@ -56,7 +67,11 @@ export interface ChatNotificationItem {
   icon: string;
 }
 
-export type ChatItem = ChatMessageItem | ChatModerationItem | ChatNotificationItem;
+export type ChatItem = { platformId: string } & (
+  | ChatMessageItem
+  | ChatModerationItem
+  | ChatNotificationItem
+);
 
 interface ChatEvents {
   chatItem: (chatItem: ChatItem) => void;
