@@ -806,7 +806,11 @@ export async function setSourceMuted(sourceName: string, muted: boolean) {
 
 export async function getTextSources(): Promise<Array<OBSSource>> {
     const sources = await getAllSources();
-    return sources?.filter(s => s.typeId === "text_gdiplus_v2" || s.typeId === "text_ft2_source_v2");
+    return sources?.filter(({ typeId: id }) => (
+        id === 'text_gdiplus_v2' ||
+        id === 'text_gdiplus_v3' ||
+        id === 'text_ft2_source_v2'
+    ));
 }
 
 export async function setTextSourceSettings(sourceName: string, settings: OBSTextSourceSettings) {
