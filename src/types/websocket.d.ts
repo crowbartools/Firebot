@@ -1,4 +1,9 @@
 export type WebSocketEventType =
+"subscribe-events" |
+"overlay-connected" |
+"overlay-event" |
+"send-to-overlay" |
+
 "command:custom:updated" |
 "command:custom:created" |
 "command:custom:deleted" |
@@ -32,27 +37,26 @@ export type WebSocketEventType =
 "timer:updated" |
 "timer:deleted";
 
-export type WebSocketMessageType =
-"overlay-connected" |
-"overlay-event" |
-"subscribe" |
-"event";
-
-export type WebSocketEventData<T = unknown> = {
-    eventType: WebSocketEventType;
-    data: T;
-}
-
-export type OverlayEventData<T = unknown> = {
+interface Message {
+    type: string;
+    id?: number|string;
     name: string;
-    data: T;
+    data?: unknown;
+}
+interface InvokeMessage extends Message {
+    type: "invoke";
+    id: string|number;
+    data: unknown[];
+}
+interface ResponseMessage extends Message {
+    type: "response";
+    id: number|string;
+    name: "error"|"success";
+}
+interface EventMessage extends Message {
+    type: "event"
 }
 
 export type OverlayConnectedData = {
     instanceName: string;
-}
-
-export type WebSocketMessage<T = unknown> = {
-    type: WebSocketMessageType;
-    data: T;
 }

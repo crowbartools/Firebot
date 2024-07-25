@@ -5,8 +5,28 @@ import eventManager from "../backend/events/EventManager";
 import http from "http";
 import logger from "../backend/logwrapper";
 import WebSocket from "ws";
-import { OverlayConnectedData, OverlayEventData, WebSocketEventType, WebSocketMessage } from "../types/websocket";
+import { OverlayConnectedData, WebSocketEventType, Message, ResponseMessage, EventMessage } from "../types/websocket";
 import { WebSocketClient } from "./websocket-client";
+
+function sendResponse(ws: WebSocketClient, messageId: string | number, data: unknown = null) {
+    const response: ResponseMessage = {
+        type: "response",
+        id: messageId,
+        name: "success",
+        data
+    };
+    ws.send(JSON.stringify(response));
+}
+
+function sendError(ws: WebSocketClient, messageId: string | number, errorMessage: string) {
+    const error: ResponseMessage = {
+        type: "response",
+        id: messageId,
+        name: "error",
+        data: errorMessage
+    };
+    ws.send(JSON.stringify(error));
+}
 
 class WebSocketServerManager extends EventEmitter {
     overlayHasClients = false;
@@ -18,56 +38,76 @@ class WebSocketServerManager extends EventEmitter {
             server: httpServer
         });
 
-        this.server.on('connection', (ws) => {
+        this.server.on('connection', (ws, req) => {
             ws.registrationTimeout = setTimeout(() => {
+                logger.info(`Unknown Websocket connection timed out from ${req.socket.remoteAddress}`);
                 ws.close(4000, "Registration timed out");
             }, 5000);
 
-            ws.on('message', (message) => {
+            ws.on('message', (data) => {
                 try {
-                    const event = JSON.parse(message.toString()) as WebSocketMessage;
+                    const message = JSON.parse(data.toString()) as Message;
 
-                    switch (event.type) {
-                        case "overlay-connected":
-                        {
-                            if (ws.type != null) {
-                                return;
+                    switch (message.type) {
+                        case "invoke": {
+                            switch (message.name) {
+                                case "subscribe-events": {
+                                    if (ws.type != null) {
+                                        sendError(ws, message.id, "socket already subscribed");
+                                        break;
+                                    }
+
+                                    clearTimeout(ws.registrationTimeout);
+                                    ws.type = "events";
+
+                                    logger.info(`Websocket Event Connection from ${req.socket.remoteAddress}`);
+
+                                    sendResponse(ws, message.id);
+
+                                    break;
+                                }
+                                case "overlay-connected": {
+                                    if (ws.type != null) {
+                                        sendError(ws, message.id, "socket already subscribed");
+                                        break;
+                                    }
+
+                                    clearTimeout(ws.registrationTimeout);
+                                    ws.type = "overlay";
+
+                                    logger.info(`Websocket Overlay Connection from ${req.socket.remoteAddress}`);
+
+                                    sendResponse(ws, message.id);
+
+                                    const instanceName = (message.data as OverlayConnectedData).instanceName;
+                                    eventManager.triggerEvent("firebot", "overlay-connected", {
+                                        instanceName
+                                    });
+                                    this.emit("overlay-connected", instanceName);
+
+                                    break;
+                                }
+                                case "overlay-event": {
+                                    if (ws.type !== "overlay") {
+                                        sendError(ws, message.id, "socket type is not overlay");
+                                        break;
+                                    }
+
+                                    sendResponse(ws, message.id);
+
+                                    this.emit("overlay-event", message.data[0]);
+                                    break;
+                                }
+                                default: {
+                                    sendError(ws, message.id, "unknown command invocation");
+                                    break;
+                                }
                             }
-
-                            clearTimeout(ws.registrationTimeout);
-
-                            ws.type = "overlay";
-
-                            const instanceName = (event.data as OverlayConnectedData).instanceName;
-                            eventManager.triggerEvent("firebot", "overlay-connected", {
-                                instanceName
-                            });
-                            this.emit("overlay-connected", instanceName);
                             break;
                         }
-                        case "overlay-event":
-                        {
-                            if (ws.type !== "overlay") {
-                                return;
-                            }
-                            this.emit("overlay-event", event.data as OverlayEventData);
-                            break;
-                        }
-                        case "subscribe":
-                        {
-                            if (ws.type != null) {
-                                return;
-                            }
-
-                            ws.type = "events";
-
-                            clearTimeout(ws.registrationTimeout);
-
-                            break;
-                        }
+                        case "response":
                         case "event":
-                        default:
-                        {
+                        default: {
                             break;
                         }
                     }
@@ -90,8 +130,15 @@ class WebSocketServerManager extends EventEmitter {
             return;
         }
 
-        const data = { event: eventName, meta: meta, overlayInstance: overlayInstance },
-            dataRaw = JSON.stringify(data);
+        const data = { event: eventName, meta: meta, overlayInstance: overlayInstance };
+
+        const message: EventMessage = {
+            type: "event",
+            name: "send-to-overlay",
+            data
+        };
+
+        const dataRaw = JSON.stringify(message);
 
         this.server.clients.forEach(function each(client) {
             if (client.readyState !== 1 || client.type !== "overlay") {
@@ -111,18 +158,20 @@ class WebSocketServerManager extends EventEmitter {
             return;
         }
 
+        const message: EventMessage = {
+            type: "event",
+            name: eventType,
+            data: payload
+        };
+
+        const dataRaw = JSON.stringify(message);
+
         this.server.clients.forEach(function each(client) {
             if (client.readyState !== 1 || client.type !== "events") {
                 return;
             }
 
-            client.send(JSON.stringify({
-                type: "event",
-                data: {
-                    eventType,
-                    data: payload
-                }
-            }), (err) => {
+            client.send(dataRaw, (err) => {
                 if (err) {
                     logger.error(err.message);
                 }
