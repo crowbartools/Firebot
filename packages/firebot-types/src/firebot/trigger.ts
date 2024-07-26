@@ -1,12 +1,12 @@
+import { ActionFlow } from "./actions";
+
 export type TriggerType = "command";
 
-export interface Trigger<
-  Metadata extends Record<string, unknown> = Record<string, unknown>,
-> {
-  type: TriggerType;
+export interface Trigger<T extends TriggerType, Metadata extends object> {
+  type: T;
   id: string;
-  name: string;
+  name?: string;
   description?: string;
   metadata: Metadata;
-  actions: any[];
+  actionFlow: ActionFlow;
 }
