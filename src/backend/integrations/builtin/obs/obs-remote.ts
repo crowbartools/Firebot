@@ -785,6 +785,23 @@ export async function getAudioSources(): Promise<Array<OBSSource>> {
     return audioSupportedSources;
 }
 
+export async function getTransformableSources(): Promise<Array<OBSSource>> {
+    const sources = await getAllSources();
+    const transformableSources = [];
+    for (const source of sources) {
+        try {
+            const getMonitorResponse = await obs.call("GetInputAudioMonitorType", {
+                inputName: source.name
+            });
+            if (getMonitorResponse?.monitorType == null) {
+                transformableSources.push(source);
+            }
+        } catch (e) {}
+    }
+
+    return transformableSources;
+}
+
 export async function toggleSourceMuted(sourceName: string) {
     try {
         await obs.call("ToggleInputMute", {
