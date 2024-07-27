@@ -40,6 +40,8 @@ const obs = new OBSWebSocket();
 
 let connected = false;
 
+const TEXT_SOURCE_IDS = ["text_gdiplus_v2", "text_gdiplus_v3", "text_ft2_source_v2"];
+
 function setupRemoteListeners() {
     obs.on("CurrentProgramSceneChanged", ({ sceneName }) => {
         eventManager?.triggerEvent(
@@ -806,7 +808,7 @@ export async function setSourceMuted(sourceName: string, muted: boolean) {
 
 export async function getTextSources(): Promise<Array<OBSSource>> {
     const sources = await getAllSources();
-    return sources?.filter(s => s.typeId === "text_gdiplus_v2" || s.typeId === "text_ft2_source_v2");
+    return sources?.filter(s => TEXT_SOURCE_IDS.includes(s.typeId));
 }
 
 export async function setTextSourceSettings(sourceName: string, settings: OBSTextSourceSettings) {
