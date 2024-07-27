@@ -22,7 +22,7 @@
             update: "&"
         },
         template: `
-      <ui-select ng-model="$ctrl.selectedEvent" on-select="$ctrl.selectOption($item, $model)" theme="bootstrap" title="{{$select.selected ? $select.selected.name + ' ' + $select.selected.source.name : 'Select or search for an event...'}}">
+      <ui-select ng-model="$ctrl.selectedEvent" on-select="$ctrl.selectOption($item, $model)" theme="bootstrap" title="{{$select.selected != null ? $select.selected.name + ' ' + $select.selected.source.name : 'Select or search for an event...'}}">
         <ui-select-match placeholder="Select or search for an event... ">{{$select.selected.name}} ({{$select.selected.source.name}})</ui-select-match>
         <ui-select-choices repeat="option in $ctrl.options | eventfilter: $select.search" style="position:relative;">
           <div>
