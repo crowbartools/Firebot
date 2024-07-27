@@ -13,7 +13,8 @@ import {
     getImageSources,
     getMediaSources,
     getColorSources,
-    getSupportedImageFormats
+    getSupportedImageFormats,
+    getTransformableSources
 } from "./obs-remote";
 
 export function setupFrontendListeners(
@@ -37,6 +38,11 @@ export function setupFrontendListeners(
     frontendCommunicator.onAsync<never, Array<OBSSource>>(
         "obs-get-sources-with-filters",
         getSourcesWithFilters
+    );
+
+    frontendCommunicator.onAsync<never, Array<OBSSource>>(
+        "obs-get-transformable-sources",
+        getTransformableSources
     );
 
     frontendCommunicator.onAsync<never, Array<OBSSource>>(
