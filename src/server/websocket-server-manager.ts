@@ -87,17 +87,6 @@ class WebSocketServerManager extends EventEmitter {
 
                                     break;
                                 }
-                                case "overlay-event": {
-                                    if (ws.type !== "overlay") {
-                                        sendError(ws, message.id, "socket type is not overlay");
-                                        break;
-                                    }
-
-                                    sendResponse(ws, message.id);
-
-                                    this.emit("overlay-event", message.data[0]);
-                                    break;
-                                }
                                 default: {
                                     sendError(ws, message.id, "unknown command invocation");
                                     break;
@@ -105,8 +94,19 @@ class WebSocketServerManager extends EventEmitter {
                             }
                             break;
                         }
+                        case "event": {
+                            if (message.name !== "overlay-event") {
+                                break;
+                            }
+
+                            if (ws.type !== "overlay") {
+                                break;
+                            }
+
+                            this.emit("overlay-event", message.data);
+                            break;
+                        }
                         case "response":
-                        case "event":
                         default: {
                             break;
                         }

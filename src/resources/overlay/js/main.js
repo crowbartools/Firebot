@@ -94,15 +94,12 @@ overlaySocketConnect();
 
 function sendWebsocketEvent(name, data) {
 	ws.send(JSON.stringify({
-		type: "invoke",
+		type: "event",
 		name: "overlay-event",
-		id: 1,
-		data: [
-			{
-				name,
-				data
-			}
-		]
+		data: {
+			name,
+			data
+		}
 	}));
 }
 
