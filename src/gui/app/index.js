@@ -28,7 +28,6 @@ require("angular-ui-validate");
 require("angularjs-slider");
 require("../js/plugins/scroll-glue");
 require("../../../node_modules/angular-ui-codemirror/src/ui-codemirror");
-require("ui-select");
 require("angular-ui-sortable");
 require('ng-youtube-embed');
 require("ng-toast");
