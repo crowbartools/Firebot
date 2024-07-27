@@ -41,7 +41,7 @@ const findAndReplaceVariables = async (data, trigger, effectOutputs) => {
             data[key] = replacedValue;
         } else if (value && typeof value === "object") {
             // recurse
-            await findAndReplaceVariables(value, trigger);
+            await findAndReplaceVariables(value, trigger, effectOutputs);
         }
     }
 };
