@@ -30,7 +30,7 @@ const model : ReplaceVariable = {
     },
     // eslint-disable-next-line @typescript-eslint/no-inferrable-types
     evaluator: (_, date?: string, format?: string) => {
-        const time = date ? moment(date, format) : moment();
+        const time = moment(date, format);
 
         return time.unix();
     }
