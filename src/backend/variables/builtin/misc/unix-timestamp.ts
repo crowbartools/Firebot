@@ -24,7 +24,7 @@ const model : ReplaceVariable = {
                 description: "Unix timestamp for date variable set to 2 weeks ago formatted as MMM Do YYYY"
             }
         ],
-        description: "The current date formatted as miliseconds since January 1, 1970 00:00:00 UTC",
+        description: "The current date formatted as seconds since January 1, 1970 00:00:00 UTC",
         categories: [VariableCategory.COMMON],
         possibleDataOutput: [OutputDataType.TEXT]
     },
