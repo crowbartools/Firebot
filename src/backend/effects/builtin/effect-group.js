@@ -16,11 +16,11 @@ const effectGroup = {
     },
     optionsTemplate: `
         <eos-container header="List Type">
-            <dropdown-select options="{ custom: 'Custom', preset: 'Preset'}" selected="effect.listType"></dropdown-select>
+            <dropdown-select options="{ custom: 'Custom Effect List', preset: 'Preset Effect List'}" selected="effect.listType"></dropdown-select>
         </eos-container>
 
         <eos-container ng-show="effect.listType === 'preset'" header="Preset Effect List" pad-top="true">
-            <ui-select ng-model="effect.presetListId" theme="bootstrap"  on-select="presetListSelected($item)">
+            <ui-select ng-model="effect.presetListId" theme="bootstrap" on-select="presetListSelected($item)" title="{{selectedPresetList ? selectedPresetList.name : 'Select or search for a preset effect list... '}}">
                 <ui-select-match placeholder="Select or search for a preset effect list... ">{{$select.selected.name}}</ui-select-match>
                 <ui-select-choices repeat="presetList.id as presetList in presetEffectLists | filter: { name: $select.search }" style="position:relative;">
                     <div ng-bind-html="presetList.name | highlight: $select.search"></div>
