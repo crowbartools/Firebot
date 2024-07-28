@@ -787,19 +787,24 @@ export async function getAudioSources(): Promise<Array<OBSSource>> {
 
 export async function getTransformableSources(): Promise<Array<OBSSource>> {
     const sources = await getAllSources();
-    const transformableSources = [];
-    for (const source of sources) {
-        try {
-            const getMonitorResponse = await obs.call("GetInputAudioMonitorType", {
-                inputName: source.name
-            });
-            if (getMonitorResponse?.monitorType == null) {
-                transformableSources.push(source);
-            }
-        } catch (e) {}
-    }
+    return sources?.filter(s => !s.typeId.startsWith("wasapi"));
+}
 
-    return transformableSources;
+export enum OBSTransformEaseMode {
+    Linear = "LINEAR",
+    EaseIn = "EASEIN",
+    EaseOut = "EASEOUT",
+    EaseInOut = "EASEINOUT"
+}
+
+export async function transformSourceScale(sourceName: string, scaleTo: number, scaleFrom?: number, easeMode = OBSTransformEaseMode.Linear) {
+    try {
+        await obs.callBatch([
+
+        ]);
+    } catch (error) {
+        logger.error("Failed to scale source", error);
+    }
 }
 
 export async function toggleSourceMuted(sourceName: string) {
