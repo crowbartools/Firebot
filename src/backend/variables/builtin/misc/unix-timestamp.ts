@@ -8,8 +8,20 @@ const model : ReplaceVariable = {
         handle: "unixTimestamp",
         examples: [
             {
-                usage: "unixTimestamp[date]",
-                description: "Provided date formatted as miliseconds since January 1, 1970 00:00:00 UTC."
+                usage: "unixTimestamp[2011-03-18 18:49 UTC]",
+                description: "Unix timestamp for provided date"
+            },
+            {
+                usage: "unixTimestamp[07/28/2024, MM/DD/YYYY]",
+                description: "Unix timestamp for provided date with specified format"
+            },
+            {
+                usage: "unixTimestamp[$accountCreationDate]",
+                description: "Unix timestamp for provided account creation date"
+            },
+            {
+                usage: "unixTimestamp[$date[MMM Do YYYY, -14, days], MMM Do YYYY]",
+                description: "Unix timestamp for date variable set to 2 weeks ago formatted as MMM Do YYYY"
             }
         ],
         description: "The current date formatted as miliseconds since January 1, 1970 00:00:00 UTC",
@@ -17,8 +29,8 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     // eslint-disable-next-line @typescript-eslint/no-inferrable-types
-    evaluator: (_, date?: string) => {
-        const time = date ? moment(new Date(date)) : moment();
+    evaluator: (_, date?: string, format?: string) => {
+        const time = date ? moment(date, format) : moment();
 
         return time.unix();
     }
