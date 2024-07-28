@@ -1,16 +1,16 @@
 import { EffectType } from "../../../../../types/effects";
-import { OBSSource } from "../obs-remote";
+import { OBSSource, OBSTransformEaseMode, transformSourceScale } from "../obs-remote";
 
 export const TransformSourceScaleEffectType: EffectType<{
-    textSourceName: string;
-    textSource: "static" | "file";
+    transformableSourceName: string;
+    isAnimated: boolean;
     text: string;
     file: string;
 }> = {
     definition: {
-        id: "firebot:obs-set-source-text",
-        name: "Set OBS Source Text",
-        description: "Sets the text in an OBS text source",
+        id: "firebot:obs-transform-source-scale",
+        name: "Transform OBS Source Scale",
+        description: "Transforms the scale of an OBS source either instantly or animated over time",
         icon: "fad fa-font-case",
         categories: ["common"]
     },
@@ -19,7 +19,7 @@ export const TransformSourceScaleEffectType: EffectType<{
         <div>
             <button class="btn btn-link" ng-click="getTransformableSources()">Refresh Source Data</button>
         </div>
-        <ui-select ng-if="transformableSources != null" ng-model="selected" on-select="selectTextSource($select.selected.name)">
+        <ui-select ng-if="transformableSources != null" ng-model="selected" on-select="selectTransformableSource($select.selected.name)">
             <ui-select-match placeholder="Select a Transformable Source...">{{$select.selected.name}}</ui-select-match>
             <ui-select-choices repeat="source in transformableSources | filter: {name: $select.search}">
                 <div ng-bind-html="source.name | highlight: $select.search"></div>
@@ -32,13 +32,11 @@ export const TransformSourceScaleEffectType: EffectType<{
             No sources found. {{ isObsConfigured ? "Is OBS running?" : "Have you configured the OBS integration?" }}
         </div>
     </eos-container>
-    <eos-container ng-if="transformableSources != null && effect.textSourceName != null" header="Text" style="margin-top: 10px;" pad-top="true">
-        <label class="control-fb control--checkbox">Use file as text source
-            <input type="checkbox" ng-click="toggleSource()" ng-checked="effect.textSource === 'file'"  aria-label="..." >
+    <eos-container ng-if="transformableSources != null && effect.transformableSourceName != null" header="Transform" style="margin-top: 10px;" pad-top="true">
+        <label class="control-fb control--checkbox">Animate </tooltip>
+            <input type="checkbox" ng-model="effect.isAnimated" >
             <div class="control__indicator"></div>
         </label>
-        <firebot-input ng-if="effect.textSource === 'static'" model="effect.text" use-text-area="true"></firebot-input>
-        <file-chooser ng-if="effect.textSource === 'file'" model="effect.file" options="{ filters: [ {name: 'Text File', extensions: ['txt']}, {name: 'All Files', extensions: ['*']} ]}" on-update="textFileUpdated(filepath)"></file-chooser>
     </eos-container>
   `,
     optionsController: ($scope: any, backendCommunicator: any, $q: any) => {
@@ -46,16 +44,16 @@ export const TransformSourceScaleEffectType: EffectType<{
 
         $scope.transformableSources = [];
 
-        if ($scope.effect.textSource == null) {
-            $scope.effect.textSource = "static";
+        if ($scope.effect.transformableSource == null) {
+            $scope.effect.transformableSource = "static";
         }
 
-        $scope.selectTextSource = (textSourceName: string) => {
-            $scope.effect.textSourceName = textSourceName;
+        $scope.selectTransformableSource = (transformableSourceName: string) => {
+            $scope.effect.transformableSourceName = transformableSourceName;
         };
 
         $scope.toggleSource = () => {
-            $scope.effect.textSource = $scope.effect.textSource === "static" ? "file" : "static";
+            $scope.effect.transformableSource = $scope.effect.transformableSource === "static" ? "file" : "static";
         };
 
         $scope.textFileUpdated = (file: string) => {
@@ -69,22 +67,23 @@ export const TransformSourceScaleEffectType: EffectType<{
                 backendCommunicator.fireEventAsync("obs-get-transformable-sources")
             ).then((transformableSources: OBSSource[]) => {
                 $scope.transformableSources = transformableSources;
-                $scope.selected = $scope.transformableSources?.find(source => source.name === $scope.effect.textSourceName);
+                $scope.selected = $scope.transformableSources?.find(source => source.name === $scope.effect.transformableSourceName);
             });
         };
         $scope.getTransformableSources();
     },
     optionsValidator: (effect) => {
-        if (effect.textSourceName == null) {
+        if (effect.transformableSourceName == null) {
             return ["Please select a text source."];
         }
         return [];
     },
     onTriggerEvent: async ({ effect }) => {
-        // await settransformableSourcesettings(effect.textSourceName, {
-        //     text: effect.textSource === "static" ? effect.text : null,
-        //     readFromFile: effect.textSource === "file",
-        //     file: effect.textSource === "file" ? effect.file : null
+        await transformSourceScale(effect.transformableSourceName, 1000, 500, OBSTransformEaseMode.EaseIn);
+        // await settransformableSourcesettings(effect.transformableSourceName, {
+        //     text: effect.transformableSource === "static" ? effect.text : null,
+        //     readFromFile: effect.transformableSource === "file",
+        //     file: effect.transformableSource === "file" ? effect.file : null
         // });
         return true;
     }
