@@ -26,7 +26,7 @@ const model : ReplaceVariable = {
         ],
         description: "The current date formatted as seconds since January 1, 1970 00:00:00 UTC",
         categories: [VariableCategory.COMMON],
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.NUMBER]
     },
     // eslint-disable-next-line @typescript-eslint/no-inferrable-types
     evaluator: (_, date?: string, format?: string) => {
