@@ -40,7 +40,7 @@
 
                     <div class="controls-fb-inline effect-setting-container">
                         <label class="control-fb control--checkbox">Is Enabled
-                            <input type="checkbox" ng-model="$ctrl.event.active" aria-label="..." checked>
+                            <input type="checkbox" ng-model="$ctrl.event.active" aria-label="Is Active" checked>
                             <div class="control__indicator"></div>
                         </label>
                     </div>
@@ -48,13 +48,13 @@
                 <div class="cooldown-title">
                     <div class="controls-fb-inline effect-custom-cooldown-container">
                         <label class="control-fb control--checkbox">Custom Cooldown
-                            <input type="checkbox" ng-model="$ctrl.event.customCooldown" aria-label="..." >
+                            <input type="checkbox" ng-model="$ctrl.event.customCooldown" aria-label="Use Custom Cooldown" >
                             <div class="control__indicator"></div>
                         </label>
                         <div id="cooldown-options" ng-if="$ctrl.event.customCooldown" class="nav-body-wrapper" style="padding-left: 29px;">
                             <input type="number" class="form-control event-id" aria-describedby="basic-addon3" placeholder="Enter time in seconds" ng-model="$ctrl.event.customCooldownSecs" style="margin-bottom: 6px;">
                             <label class="control-fb control--checkbox">Apply Cooldown Per User
-                                <input type="checkbox" ng-model="$ctrl.event.customCooldownPerUser" aria-label="..." >
+                                <input type="checkbox" ng-model="$ctrl.event.customCooldownPerUser" aria-label="Apply Cooldown Per User" >
                                 <div class="control__indicator"></div>
                             </label>
                         </div>
