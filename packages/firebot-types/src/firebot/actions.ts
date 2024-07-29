@@ -7,5 +7,21 @@ export interface Action<M = Record<string, unknown>> {
 
 export interface ActionFlow {
   id: string;
-  actions: Action[];
+  queue: {
+    id: string;
+    duration: number;
+  };
+  nodes: Array<{
+    id: string;
+    position: {
+      x: number;
+      y: number;
+    };
+    action: Action;
+  }>;
+  edges: Array<{
+    id: string;
+    source: string;
+    target: string;
+  }>;
 }
