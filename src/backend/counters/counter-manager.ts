@@ -11,7 +11,6 @@ import profileManager from "../common/profile-manager";
 import { TriggerType } from "../common/EffectType";
 import { Counter } from "../../types/counters";
 import { EffectList } from "../../types/effects";
-import webSocketServerManager from "../../server/websocket-server-manager";
 
 class CounterManager extends JsonDbManager<Counter> {
     constructor() {
@@ -62,13 +61,7 @@ class CounterManager extends JsonDbManager<Counter> {
     override saveItem(counter: Counter): Counter {
         this.updateCounterTxtFile(counter.name, counter.value);
 
-        const eventType = counter.id == null || this.getItem(counter.id) == null ? "counter:created" : "counter:updated";
-
-        const finalCounter = super.saveItem(counter);
-
-        webSocketServerManager.triggerEvent(eventType, finalCounter);
-
-        return finalCounter;
+        return super.saveItem(counter);
     }
 
     override deleteItem(counterId: string): boolean {
@@ -76,7 +69,6 @@ class CounterManager extends JsonDbManager<Counter> {
 
         const result = super.deleteItem(counterId);
         if (result === true) {
-            webSocketServerManager.triggerEvent("counter:deleted", counter);
             this.deleteCounterTxtFile(counter.name);
         }
 

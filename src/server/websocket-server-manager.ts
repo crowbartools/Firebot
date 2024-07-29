@@ -5,7 +5,7 @@ import eventManager from "../backend/events/EventManager";
 import http from "http";
 import logger from "../backend/logwrapper";
 import WebSocket from "ws";
-import { OverlayConnectedData, WebSocketEventType, Message, ResponseMessage, EventMessage } from "../types/websocket";
+import { OverlayConnectedData, Message, ResponseMessage, EventMessage } from "../types/websocket";
 import { WebSocketClient } from "./websocket-client";
 
 function sendResponse(ws: WebSocketClient, messageId: string | number, data: unknown = null) {
@@ -112,7 +112,7 @@ class WebSocketServerManager extends EventEmitter {
                         }
                     }
                 } catch (error) {
-                    logger.error("Error parsing overlay event", error);
+                    ws.close(4006, error.message);
                 }
             });
         });
@@ -153,7 +153,7 @@ class WebSocketServerManager extends EventEmitter {
         });
     }
 
-    triggerEvent(eventType: WebSocketEventType, payload: object) {
+    triggerEvent(eventType: string, payload: object) {
         if (this.server == null) {
             return;
         }

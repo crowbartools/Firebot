@@ -9,8 +9,6 @@ import accountAccess from "../common/account-access";
 import effectRunner from "../common/effect-runner";
 import frontendCommunicator from "../common/frontend-communicator";
 
-import webSocketServerManager from "../../server/websocket-server-manager";
-
 class TimerManager extends JsonDbManager<Timer> {
     private timerIntervalCache = {};
 
@@ -21,13 +19,10 @@ class TimerManager extends JsonDbManager<Timer> {
     }
 
     saveItem(timer: Timer): Timer | null {
-        const existingTimer = super.getItem(timer.id);
-        const eventType = existingTimer == null ? "timer:created" : "timer:updated";
         const savedTimer = super.saveItem(timer);
 
         if (savedTimer != null) {
             this.updateIntervalForTimer(timer);
-            webSocketServerManager.triggerEvent(eventType, savedTimer);
             return savedTimer;
         }
 
@@ -35,11 +30,9 @@ class TimerManager extends JsonDbManager<Timer> {
     }
 
     deleteItem(timerId: string): boolean {
-        const timer = super.getItem(timerId);
         const itemDeleted = super.deleteItem(timerId);
 
         if (itemDeleted) {
-            webSocketServerManager.triggerEvent("timer:deleted", timer);
             this.clearIntervalForTimerId(timerId);
             return true;
         }

@@ -5,9 +5,9 @@ const eventManager = require("../events/EventManager");
 const windowManagement = require("../app-management/electron/window-management");
 const { ipcMain } = require("electron");
 
-const NodeCache = require("node-cache");
+const EventEmitter = require("events");
 
-const webSocketServerManager = require("../../server/websocket-server-manager");
+const NodeCache = require("node-cache");
 
 const cache = new NodeCache({ stdTTL: 0, checkperiod: 1 });
 exports._cache = cache;
@@ -23,7 +23,7 @@ const onCustomVariableExpire = (key, value) => {
 };
 
 const onCustomVariableDelete = (key, value) => {
-    webSocketServerManager.triggerEvent("custom-variable:deleted", {
+    exports.events.emit("deleted-item", {
         name: key,
         value: value
     });
@@ -91,7 +91,7 @@ exports.addCustomVariable = (name, data, ttl = 0, propertyPath = null) => {
         //silently fail
     }
 
-    const eventType = !cache.keys().includes(name) ? "custom-variable:created" : "custom-variable:updated";
+    const eventType = !cache.keys().includes(name) ? "created-item" : "updated-item";
 
     const dataRaw = data != null ? data.toString().toLowerCase() : "null";
     const dataIsNull = dataRaw === "null" || dataRaw === "undefined";
@@ -105,7 +105,7 @@ exports.addCustomVariable = (name, data, ttl = 0, propertyPath = null) => {
             dataToSet = currentData;
         }
         cache.set(name, dataToSet, ttl === "" ? 0 : ttl);
-        webSocketServerManager.triggerEvent(eventType, {
+        exports.events.emit(eventType, {
             name: name,
             value: dataToSet
         });
@@ -144,7 +144,7 @@ exports.addCustomVariable = (name, data, ttl = 0, propertyPath = null) => {
                 }
             }
             cache.set(name, currentData, ttl === "" ? 0 : ttl);
-            webSocketServerManager.triggerEvent(eventType, {
+            exports.events.emit(eventType, {
                 name: name,
                 value: currentData
             });
@@ -204,5 +204,14 @@ function deleteCustomVariable(name) {
 ipcMain.on("customVariableDelete", (_, key) => {
     deleteCustomVariable(key);
 });
+
+/**
+ * @type {import("tiny-typed-emitter").TypedEmitter<{
+*    "created-item": (item: unknown) => void;
+*    "deleted-item": (item: unknown) => void;
+*    "updated-item": (item: unknown) => void;
+*  }>}
+*/
+exports.events = new EventEmitter();
 
 exports.deleteCustomVariable = deleteCustomVariable;

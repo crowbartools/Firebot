@@ -3,8 +3,7 @@ const logger = require("../../logwrapper");
 const effectRunner = require("../../common/effect-runner");
 const eventManager = require("../../events/EventManager");
 const frontendCommunicator = require("../../common/frontend-communicator");
-
-const webSocketServerManager = require("../../../server/websocket-server-manager");
+const EventEmitter = require("events");
 
 /**
  * Queue Entry
@@ -40,7 +39,7 @@ class EffectQueue {
 
         frontendCommunicator.send("updateQueueLength", queue);
 
-        webSocketServerManager.triggerEvent("effect-queue:length-updated", queue);
+        exports.events.emit("length-updated", queue);
     }
 
     runQueue() {
@@ -208,6 +207,13 @@ function getQueue(queueId) {
 function clearAllQueues() {
     Object.keys(queues).forEach(queueId => removeQueue(queueId));
 }
+
+/**
+ * @type {import("tiny-typed-emitter").TypedEmitter<{
+*    "length-updated": (item: object) => void;
+*  }>}
+*/
+exports.events = new EventEmitter();
 
 exports.addEffectsToQueue = addEffectsToQueue;
 exports.getQueue = getQueue;

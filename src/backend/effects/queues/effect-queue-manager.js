@@ -4,8 +4,6 @@ const frontendCommunicator = require("../../common/frontend-communicator");
 const JsonDbManager = require("../../database/json-db-manager");
 const effectQueueRunner = require("./effect-queue-runner");
 
-const webSocketServerManager = require("../../../server/websocket-server-manager");
-
 /**
  * @typedef EffectQueue
  * @prop {string} id - the id of the effect queue
@@ -55,28 +53,16 @@ class EffectQueueManager extends JsonDbManager {
      * @returns {EffectQueue | null}
      * */
     saveItem(effectQueue) {
-        const existingQueue = super.getItem(effectQueue.id);
-        const outputQueue = structuredClone(effectQueue);
-        const eventType = existingQueue == null ? "effect-queue:created" : "effect-queue:updated";
         delete effectQueue.length;
         delete effectQueue.queue;
         const savedEffectQueue = super.saveItem(effectQueue);
 
         if (savedEffectQueue) {
             effectQueueRunner.updateQueueConfig(savedEffectQueue);
-            webSocketServerManager.triggerEvent(eventType, outputQueue);
             return savedEffectQueue;
         }
 
         return null;
-    }
-
-    deleteItem(queueId) {
-        const queue = super.getItem(queueId);
-
-        if (super.deleteItem(queueId)) {
-            webSocketServerManager.triggerEvent("effect-queue:deleted", queue);
-        }
     }
 
     /**

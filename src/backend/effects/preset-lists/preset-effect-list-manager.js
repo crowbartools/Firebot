@@ -2,7 +2,6 @@
 
 const frontendCommunicator = require("../../common/frontend-communicator");
 const JsonDbManager = require("../../database/json-db-manager");
-const webSocketServerManager = require("../../../server/websocket-server-manager");
 
 /**
  * @typedef PresetEffectList
@@ -23,24 +22,6 @@ const webSocketServerManager = require("../../../server/websocket-server-manager
 class PresetEffectListManager extends JsonDbManager {
     constructor() {
         super("Preset Effect List", "/effects/preset-effect-lists");
-    }
-
-    saveItem(presetList) {
-        const eventType = presetList.id == null || super.getItem(presetList.id) == null ? "preset-effect-list:created" : "preset-effect-list:updated";
-
-        const finalPresetList = super.saveItem(presetList);
-
-        webSocketServerManager.triggerEvent(eventType, finalPresetList);
-
-        return finalPresetList;
-    }
-
-    deleteItem(presetListId) {
-        const presetList = super.getItem(presetListId);
-
-        if (super.deleteItem(presetListId)) {
-            webSocketServerManager.triggerEvent("preset-effect-list:deleted", presetList);
-        }
     }
 
     /**
