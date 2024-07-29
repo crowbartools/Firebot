@@ -2038,6 +2038,8 @@ uis.directive('uiSelectSingle', ['$timeout','$compile', function($timeout, $comp
       scope.$watch('$select.selected', function(newValue) {
         if (ngModel.$viewValue !== newValue) {
           ngModel.$setViewValue(newValue);
+          $select.baseTitle = newValue.name || 'Select box';
+          $select.focusserTitle = $select.baseTitle + ' focus';
         }
       });
 

@@ -106,7 +106,7 @@ class JsonDbManager<T extends Item, E extends ListenerSignature<E> = DefaultEven
             logger.debug(`Saved ${this.type} with id ${item.id} to file.`);
 
             //@ts-ignore - typescript is handling the types for .emit poorly
-            this.emit(isCreating ? "updated-item" : "updated-item", item);
+            this.emit(isCreating ? "created-item" : "updated-item", item);
             return item;
         } catch (err) {
             logger.error(`There was an error saving ${this.type}.`, err);
