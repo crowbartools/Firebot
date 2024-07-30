@@ -180,7 +180,11 @@ class WebSocketServerManager extends EventEmitter {
     }
 
     reportClientsToFrontend(isDefaultServerStarted: boolean) {
-        const hasClients = this.server == null ? false : this.server.clients.size > 0;
+        if (this.server == null) {
+            return;
+        }
+        const overlayClientsLength = [...this.server.clients].filter(client => client.type === "overlay").length;
+        const hasClients = overlayClientsLength > 0;
         if (hasClients !== this.overlayHasClients) {
             const renderWindow: electron.BrowserWindow | undefined = global.renderWindow;
 
