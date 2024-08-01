@@ -28,7 +28,7 @@ module.exports = {
     presetValues: (viewerRanksService) => {
         return viewerRanksService
             .rankLadders
-            .flatMap(l => l.ranks.map(r => ({value: `${l.name}:${r.name}`, display: `${r.name} (${l.name})`})));
+            .flatMap(l => l.ranks.map(r => ({value: `${l.id}:${r.id}`, display: `${r.name} (${l.name})`})));
     },
     valueIsStillValid: (filterSettings, viewerRanksService) => {
         const [ladderId, rankId] = filterSettings.value?.split(":") ?? [];
@@ -77,7 +77,7 @@ module.exports = {
 
             const [ladderId, rankId] = value?.split(":") ?? [];
 
-            const hasRank = viewerDatabase.viewerHasRankById(userId, rankId, ladderId);
+            const hasRank = await viewerDatabase.viewerHasRankById(userId, ladderId, rankId);
 
             switch (comparisonType) {
                 case "include":
