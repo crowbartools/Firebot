@@ -58,7 +58,12 @@ class FirebotDeviceAuthProvider {
             });
 
             this.streamerProvider.onRefresh((userId, token) => this.onRefresh("streamer", userId, token));
-            this.streamerProvider.onRefreshFailure(() => accountAccess.setAccountTokenIssue("streamer"));
+            this.streamerProvider.onRefreshFailure((_userId, isENotFoundError) => {
+                if (isENotFoundError) {
+                    return;
+                }
+                accountAccess.setAccountTokenIssue("streamer");
+            });
         } else {
             this.streamerProvider = null;
         }
@@ -83,7 +88,12 @@ class FirebotDeviceAuthProvider {
             });
 
             this.botProvider.onRefresh((userId, token) => this.onRefresh("bot", userId, token));
-            this.botProvider.onRefreshFailure(() => accountAccess.setAccountTokenIssue("bot"));
+            this.botProvider.onRefreshFailure((_userId, isENotFoundError) => {
+                if (isENotFoundError) {
+                    return;
+                }
+                accountAccess.setAccountTokenIssue("bot");
+            });
         } else {
             this.botProvider = null;
         }

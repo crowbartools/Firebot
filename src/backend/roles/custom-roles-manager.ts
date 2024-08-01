@@ -9,6 +9,13 @@ import frontendCommunicator from "../common/frontend-communicator";
 import twitchApi from "../twitch-api/api";
 import twitchRoleManager from "../../shared/twitch-roles";
 import { BasicViewer } from "../../types/viewers";
+import { TypedEmitter } from "tiny-typed-emitter";
+
+type Events = {
+    "created-item": (item: object) => void;
+    "updated-item": (item: object) => void;
+    "deleted-item": (item: object) => void;
+};
 
 interface LegacyCustomRole {
     id: string;
@@ -28,10 +35,12 @@ interface CustomRole {
 
 const ROLES_FOLDER = "roles";
 
-class CustomRolesManager {
+class CustomRolesManager extends TypedEmitter<Events> {
     private _customRoles: Record<string, CustomRole> = {};
 
     constructor() {
+        super();
+
         frontendCommunicator.onAsync("get-custom-roles", async () => this._customRoles);
 
         frontendCommunicator.on("save-custom-role", (role: CustomRole) => {
@@ -214,12 +223,16 @@ class CustomRolesManager {
             return;
         }
 
+        const eventType = this._customRoles[role.id] == null ? "created-item" : "updated-item";
+
         this._customRoles[role.id] = role;
 
         try {
             const rolesDb = this.getCustomRolesDb();
 
             rolesDb.push(`/${role.id}`, role);
+
+            this.emit(eventType, role);
 
             logger.debug(`Saved role ${role.id} to file.`);
         } catch (error) {
@@ -315,12 +328,16 @@ class CustomRolesManager {
             return;
         }
 
+        const role = this._customRoles[roleId];
+
         delete this._customRoles[roleId];
 
         try {
             const rolesDb = this.getCustomRolesDb();
 
             rolesDb.delete(`/${roleId}`);
+
+            this.emit("deleted-item", role);
 
             logger.debug(`Deleted role: ${roleId}`);
         } catch (error) {
