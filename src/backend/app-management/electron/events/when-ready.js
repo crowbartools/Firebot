@@ -241,6 +241,10 @@ exports.whenReady = async () => {
     const httpServerManager = require("../../../../server/http-server-manager");
     httpServerManager.start();
 
+    // register websocket event handlers
+    const websocketEventsHandler = require("../../../../server/websocket-events-handler");
+    websocketEventsHandler.createComponentEventListeners();
+
     windowManagement.updateSplashScreenStatus("Loading channel rewards...");
     const channelRewardManager = require("../../../channel-rewards/channel-reward-manager");
     await channelRewardManager.loadChannelRewards();

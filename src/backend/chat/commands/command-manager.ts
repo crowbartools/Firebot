@@ -1,4 +1,4 @@
-import EventEmitter from "events";
+import { TypedEmitter } from "tiny-typed-emitter";
 import { JsonDB } from "node-json-db";
 import { DateTime } from "luxon";
 
@@ -8,6 +8,14 @@ import util from "../../utility";
 import profileManager from "../../common/profile-manager";
 import frontendCommunicator from "../../common/frontend-communicator";
 import accountAccess from "../../common/account-access";
+
+type Events = {
+    "created-item": (item: object) => void;
+    "updated-item": (item: object) => void;
+    "deleted-item": (item: object) => void;
+    "systemCommandRegistered": (item: SystemCommand) => void;
+    "systemCommandUnRegistered": (id: string) => void;
+};
 
 interface SystemCommandOverrides {
     [overrideId: string]: SystemCommandDefinition
@@ -21,7 +29,7 @@ interface CommandCache {
 /**
  * The class for the manager object that maintains Firebot system/custom chat commands
  */
-class CommandManager extends EventEmitter {
+class CommandManager extends TypedEmitter<Events> {
     private _registeredSysCommands: SystemCommand[] = [];
     private _commandCache: CommandCache = {
         systemCommandOverrides: {},
@@ -71,6 +79,8 @@ class CommandManager extends EventEmitter {
 
         this._registeredSysCommands.push(command);
 
+        this.emit("created-item", command);
+
         logger.debug(`Registered Sys Command ${command.definition.id}`);
 
         this.emit("systemCommandRegistered", command);
@@ -82,7 +92,10 @@ class CommandManager extends EventEmitter {
      * @param id The ID of the system command to unregister
      */
     unregisterSystemCommand(id: string): void {
+        const command = this._registeredSysCommands.find(c => c.definition.id === id);
         this._registeredSysCommands = this._registeredSysCommands.filter(c => c.definition.id !== id);
+
+        this.emit("deleted-item", command);
         this.emit("systemCommandUnRegistered", id);
         logger.debug(`Unregistered Sys Command ${id}`);
     }
@@ -242,7 +255,7 @@ class CommandManager extends EventEmitter {
         const override = this._commandCache.systemCommandOverrides[id];
         if (override != null) {
             override.trigger = newTrigger;
-            this.saveSystemCommandOverride(override);
+            this.saveSystemCommandOverride(override, false);
         }
 
         const defaultCmd = this._registeredSysCommands.find(
@@ -250,6 +263,7 @@ class CommandManager extends EventEmitter {
         );
         if (defaultCmd != null) {
             defaultCmd.definition.trigger = newTrigger;
+            this.emit("updated-item", defaultCmd);
         }
 
         frontendCommunicator.send("system-commands-updated");
@@ -260,7 +274,7 @@ class CommandManager extends EventEmitter {
      *
      * @param command The `SystemCommandDefinition` with the system command override data
      */
-    saveSystemCommandOverride(command: SystemCommandDefinition): void {
+    saveSystemCommandOverride(command: SystemCommandDefinition, fireEvent = true): void {
         this._commandCache.systemCommandOverrides[command.id] = command;
 
         const commandDb = this.getCommandsDb();
@@ -270,6 +284,10 @@ class CommandManager extends EventEmitter {
 
         try {
             commandDb.push(`/systemCommandOverrides/${id}`, command);
+
+            if (fireEvent) {
+                this.emit("updated-item", command);
+            }
         } catch (err) { }
 
         frontendCommunicator.send("system-command-override-saved", command);
@@ -289,6 +307,8 @@ class CommandManager extends EventEmitter {
         id = id.replace("/", "");
         try {
             commandDb.delete(`/systemCommandOverrides/${id}`);
+            const command = this.getSystemCommandById(id);
+            this.emit("updated-item", command);
         } catch (err) {} //eslint-disable-line no-empty
 
         frontendCommunicator.send("system-commands-updated");
@@ -304,7 +324,9 @@ class CommandManager extends EventEmitter {
      * @param user The user who is creating/editing the custom command
      */
     saveCustomCommand(command: CommandDefinition, user?: string): void {
+        let eventType: keyof Events = "updated-item";
         if (command.id == null || command.id === "") {
+            eventType = "created-item";
             // generate id for new command
             const uuidv1 = require("uuid/v1");
             command.id = uuidv1();
@@ -330,6 +352,7 @@ class CommandManager extends EventEmitter {
 
         try {
             commandDb.push(`/customCommands/${command.id}`, command);
+            this.emit(eventType, command);
         } catch (err) {}
 
         const existingCommandIndex = this._commandCache.customCommands.findIndex(c => c.id === command.id);
@@ -392,7 +415,9 @@ class CommandManager extends EventEmitter {
         }
 
         try {
+            const command = this.getCustomCommandById(id);
             commandDb.delete(`/customCommands/${id}`);
+            this.emit("deleted-item", command);
         } catch (err) {
             logger.warn("error when deleting command", err.message);
         }

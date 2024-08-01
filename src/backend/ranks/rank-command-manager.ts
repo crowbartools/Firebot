@@ -233,9 +233,7 @@ class RankCommandManager {
 
                 // If no arguments are provided, show the user's rank
                 if (args.length === 0) {
-                    const commandSenderViewer = await viewerDatabase.getViewerByUsername(event.userCommand.commandSender);
-                    await viewerDatabase.calculateAutoRanks(commandSenderViewer._id);
-                    const userRank = viewerDatabase.getViewerRankForLadder(commandSenderViewer, rankLadder.id);
+                    const userRank = await viewerDatabase.getViewerRankForLadderByUserName(event.userCommand.commandSender, rankLadder.id);
                     if (userRank) {
                         const rankMessage =
                             commandOptions.selfRankMessageTemplate
@@ -253,9 +251,7 @@ class RankCommandManager {
                             return;
                         }
 
-                        await viewerDatabase.calculateAutoRanks(viewer._id);
-
-                        const viewerRank = viewerDatabase.getViewerRankForLadder(viewer, rankLadder.id);
+                        const viewerRank = await viewerDatabase.getViewerRankForLadder(viewer._id, rankLadder.id);
                         if (viewerRank) {
                             const rankMessage =
                                 commandOptions.otherRankMessageTemplate
@@ -291,7 +287,7 @@ class RankCommandManager {
                             return;
                         }
                         const ladderHelper = rankManager.getRankLadderHelper(rankLadder.id);
-                        const currentRank = viewerDatabase.getViewerRankForLadder(viewer, rankLadder.id);
+                        const currentRank = await viewerDatabase.getViewerRankForLadder(viewer._id, rankLadder.id);
                         const nextRankId = ladderHelper.getNextRankId(currentRank?.id);
 
                         if (!nextRankId) {
@@ -321,7 +317,7 @@ class RankCommandManager {
                             return;
                         }
                         const ladderHelper = rankManager.getRankLadderHelper(rankLadder.id);
-                        const currentRank = viewerDatabase.getViewerRankForLadder(viewer, rankLadder.id);
+                        const currentRank = await viewerDatabase.getViewerRankForLadder(viewer._id, rankLadder.id);
 
                         if (!currentRank) {
                             await sendMessage(`${username} is not ranked and cannot be demoted.`);
