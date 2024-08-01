@@ -11,11 +11,11 @@
         <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
 		<link href="css/main.css" rel='stylesheet' type='text/css'>
 
-        <% for(let cssDep of dependancies.css) { %>
+        <% for(let cssDep of dependencies.css) { %>
             <link rel="stylesheet" type="text/css" href="<%-cssDep%>">
         <% } %>
 
-        <% for(let globalStyle of dependancies.globalStyles) { %>
+        <% for(let globalStyle of dependencies.globalStyles) { %>
             <style><%-globalStyle%></style>
         <% } %>
 
@@ -40,7 +40,7 @@
     <script src="js/main.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
 
-    <% for(let jsDep of dependancies.js) { %>
+    <% for(let jsDep of dependencies.js) { %>
         <script src="<%-jsDep%>"></script>
     <% } %>
 

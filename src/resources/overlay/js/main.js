@@ -21,29 +21,43 @@ function overlaySocketConnect(){
 
 			const olInstance = params.get("instance");
 
-            sendWebsocketEvent("overlay-connected", {
-                instanceName: olInstance == null || olInstance === "" ? "Default" : olInstance
-            });
+			ws.send(JSON.stringify({
+				type: "invoke",
+				id: 0,
+				name: "overlay-connected",
+				data: [
+					{
+						instanceName: olInstance == null || olInstance === "" ? "Default" : olInstance
+					}
+				]
+			}));
 		};
 
 		// When we get a message from the Firebot GUI...
 		ws.onmessage = function (evt){
-			var data = JSON.parse(evt.data);
-			var event = data.event;
+			const message = JSON.parse(evt.data);
+			if (message.type !== "event" || message.name !== "send-to-overlay") {
+				return;
+			}
+			const data = message.data;
+			
+			const event = data.event;
 
-			var olInstance = params.get("instance");
+			const meta = data.meta;
+
+			const olInstance = params.get("instance");
 
 			console.log(`Received Event: ${event}`);
-			console.log(`Overlay Instance: ${olInstance}, Event Instance: ${data.meta.overlayInstance}`)
+			console.log(`Overlay Instance: ${olInstance}, Event Instance: ${message.data.overlayInstance}`);
 
-            if(!data.meta.global) {
+			if(!meta.global) {
                 if(olInstance != null && olInstance != "") {
-                    if(data.meta.overlayInstance != olInstance) {
+                    if(meta.overlayInstance != olInstance) {
                         console.log("Event is for a different instance. Ignoring.")
                         return;
                     }
                 } else {
-                    if(data.meta.overlayInstance != null && data.meta.overlayInstance != "") {
+                    if(meta.overlayInstance != null && meta.overlayInstance != "") {
                         console.log("Event is for a specific instance. Ignoring.")
                         return;
                     }
@@ -53,7 +67,7 @@ function overlaySocketConnect(){
             }
 
 			if(event == "OVERLAY:REFRESH") {
-				console.log(`Refreshing ${data.meta.overlayInstance || ""} overlay...`);
+				console.log(`Refreshing ${meta.overlayInstance || ""} overlay...`);
 				location.reload();
 
 				return;
@@ -80,11 +94,14 @@ overlaySocketConnect();
 
 function sendWebsocketEvent(name, data) {
 	ws.send(JSON.stringify({
-		name,
-		data
-	}))
+		type: "event",
+		name: "overlay-event",
+		data: {
+			name,
+			data
+		}
+	}));
 }
-
 
 function loadFonts() {
 	$.get(`//${baseUrl}/api/v1/fonts`, (fonts) => {

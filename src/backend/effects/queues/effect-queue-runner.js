@@ -3,6 +3,7 @@ const logger = require("../../logwrapper");
 const effectRunner = require("../../common/effect-runner");
 const eventManager = require("../../events/EventManager");
 const frontendCommunicator = require("../../common/frontend-communicator");
+const EventEmitter = require("events");
 
 /**
  * Queue Entry
@@ -31,14 +32,18 @@ class EffectQueue {
     }
 
     sendQueueLengthUpdate(lengthOverride = null) {
-        frontendCommunicator.send("updateQueueLength", {
+        const queue = {
             id: this.id,
             length: lengthOverride ?? this._queue.length
-        });
+        };
+
+        frontendCommunicator.send("updateQueueLength", queue);
+
+        exports.events.emit("length-updated", queue);
     }
 
     runQueue() {
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             if (this._queue.length === 0 || this.canceled || this._paused === true) {
                 return resolve();
             }
@@ -55,7 +60,7 @@ class EffectQueue {
 
             if (this.mode === "interval") {
                 effectRunner.runEffects(runEffectsContext)
-                    .catch(err => {
+                    .catch((err) => {
                         logger.warn(`Error while processing effects for queue ${this.id}`, err);
                     });
                 setTimeout(() => {
@@ -63,7 +68,7 @@ class EffectQueue {
                 }, this.interval * 1000);
             } else if (this.mode === "auto") {
                 effectRunner.runEffects(runEffectsContext)
-                    .catch(err => {
+                    .catch((err) => {
                         logger.warn(`Error while processing effects for queue ${this.id}`, err);
                     })
                     .finally(() => {
@@ -73,7 +78,7 @@ class EffectQueue {
                     });
             } else if (this.mode === "custom") {
                 effectRunner.runEffects(runEffectsContext)
-                    .catch(err => {
+                    .catch((err) => {
                         logger.warn(`Error while processing effects for queue ${this.id}`, err);
                     });
                 setTimeout(() => {
@@ -202,6 +207,13 @@ function getQueue(queueId) {
 function clearAllQueues() {
     Object.keys(queues).forEach(queueId => removeQueue(queueId));
 }
+
+/**
+ * @type {import("tiny-typed-emitter").TypedEmitter<{
+*    "length-updated": (item: object) => void;
+*  }>}
+*/
+exports.events = new EventEmitter();
 
 exports.addEffectsToQueue = addEffectsToQueue;
 exports.getQueue = getQueue;
