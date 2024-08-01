@@ -178,7 +178,7 @@ class NotificationManager {
             this.setKnownExternalNotifications(newKnownExtNotis);
 
         } catch (error) {
-            logger.error("Error loading external notifications", error);
+            logger.error("Error loading external notifications", error.message);
         }
     }
 
