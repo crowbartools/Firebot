@@ -552,14 +552,29 @@ class ViewerDatabase extends EventEmitter {
         return this.viewerHasRank(viewer, ladderId, rankId);
     }
 
-    getViewerRankForLadder(viewer: FirebotViewer, ladderId: string): Rank | null {
+    async getViewerRankForLadderByUserName(userName: string, ladderId: string): Promise<Rank | null> {
         if (this.isViewerDBOn() !== true) {
             return null;
         }
 
-        if (!viewer) {
+        const viewer = await this.getViewerByUsername(userName);
+
+        if (viewer == null) {
             return null;
         }
+
+        return await this.getViewerRankForLadder(viewer._id, ladderId);
+    }
+
+
+    async getViewerRankForLadder(userId: string, ladderId: string): Promise<Rank | null> {
+        if (this.isViewerDBOn() !== true) {
+            return null;
+        }
+
+        await this.calculateAutoRanks(userId);
+
+        const viewer = await this.getViewerById(userId);
 
         const ladder = rankManager.getRankLadderHelper(ladderId);
 
