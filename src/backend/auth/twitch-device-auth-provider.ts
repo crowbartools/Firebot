@@ -184,7 +184,7 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
      *
      * @param userId The ID of the user whose token wasn't successfully refreshed.
      */
-    readonly onRefreshFailure = this.registerEvent<[userId: string]>();
+    readonly onRefreshFailure = this.registerEvent<[userId: string, isENotFoundError: boolean]>();
 
     /**
      * Creates a new auth provider with Device Code Flow credentials.
@@ -397,8 +397,11 @@ export class DeviceAuthProvider extends EventEmitter implements AuthProvider {
         try {
             return await refreshUserToken(this.clientId, refreshToken);
         } catch (e) {
-            this._cachedRefreshFailures.add(this._userId);
-            this.emit(this.onRefreshFailure, this._userId);
+            const isENotFoundError = e?.code === "ENOTFOUND";
+            if (!isENotFoundError) {
+                this._cachedRefreshFailures.add(this._userId);
+            }
+            this.emit(this.onRefreshFailure, this._userId, isENotFoundError);
             throw e;
         }
     }
