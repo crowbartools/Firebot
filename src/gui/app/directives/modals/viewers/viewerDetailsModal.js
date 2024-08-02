@@ -230,7 +230,7 @@
                             } catch (error) { /* silently fail */ }
 
                             backendCommunicator.fireEvent("update-viewer-metadata", {
-                                username: $ctrl.viewerDetails.twitchData.username,
+                                username: $ctrl.viewerDetails.firebotData.username,
                                 key,
                                 value
                             });
@@ -250,7 +250,7 @@
                     }).then((confirmed) => {
                         if (confirmed) {
                             backendCommunicator.fireEvent("delete-viewer-metadata", {
-                                username: $ctrl.viewerDetails.twitchData.username,
+                                username: $ctrl.viewerDetails.firebotData.username,
                                 key
                             });
 
