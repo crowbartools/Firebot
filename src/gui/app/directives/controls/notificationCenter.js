@@ -61,7 +61,19 @@
             </div>
           </div>
           <div class="modal-footer" style="text-align:center;">
-            <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+            <button
+                ng-if="showOpenScriptsFolderButton"
+                class="btn btn-default mr-5 pull-left"
+                type="button"
+                ng-click="openScriptsFolder()"
+            >Open Scripts Folder</button>
+            <button
+                class="btn btn-primary"
+                ng-class="{'pull-right': showOpenScriptsFolderButton}"
+                style="min-width: 75px;"
+                type="button"
+                ng-click="ok()"
+            >OK</button>
           </div>
         </script>
        `,
@@ -143,6 +155,7 @@
                             $scope,
                             $uibModalInstance,
                             $sce,
+                            backendCommunicator,
                             notification,
                             iconClass
                         ) => {
@@ -161,6 +174,11 @@
 
                             $scope.notification = notification;
                             $scope.iconClass = iconClass;
+
+                            $scope.showOpenScriptsFolderButton = notification.source === "script" && notification.type === "update";
+                            $scope.openScriptsFolder = () => {
+                                backendCommunicator.fireEvent("openScriptsFolder");
+                            };
 
                             $scope.ok = function() {
                                 $uibModalInstance.dismiss("cancel");
