@@ -1,6 +1,8 @@
 "use strict";
 
 (function() {
+
+
     angular
         .module("firebotApp")
         .factory("notificationService", function(backendCommunicator) {

@@ -1,6 +1,8 @@
 "use strict";
 (function() {
-    //This a wrapped dropdown element that automatically handles the particulars
+
+    const { marked } = require("marked");
+    const { sanitize } = require("dompurify");
 
     angular
         .module("firebotApp")
@@ -49,7 +51,13 @@
           <div class="modal-body">
             <div style="display: flex;">
               <div class="modal-icon"><i class="fad" ng-class="iconClass" aria-hidden="true"></i></div>
-              <dynamic-element message="notification.message"></dynamic-element>
+              <dynamic-element ng-if="notification.source !== 'script'" message="message"></dynamic-element>
+              <div
+                ng-if="notification.source === 'script'"
+                style="width:100%; height: 100%; position: relative;"
+                ng-bind-html="message"
+              >
+              </div>
             </div>
           </div>
           <div class="modal-footer" style="text-align:center;">
@@ -134,9 +142,23 @@
                         controllerFunc: (
                             $scope,
                             $uibModalInstance,
+                            $sce,
                             notification,
                             iconClass
                         ) => {
+                            $scope.message = notification.message;
+                            if ($scope.message) {
+                                if (notification.source === "script") {
+                                    $scope.message = $sce.trustAsHtml(
+                                        sanitize(marked($scope.message))
+                                    );
+                                } else {
+                                    $scope.message = $sce.trustAsHtml(
+                                        marked($scope.message)
+                                    );
+                                }
+                            }
+
                             $scope.notification = notification;
                             $scope.iconClass = iconClass;
 

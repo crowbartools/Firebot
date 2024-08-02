@@ -74,6 +74,8 @@ function buildModules(scriptManifest) {
         customRequest.prototype.init.call(this, options);
     };
 
+    const notificationManager = require("../../../notifications/notification-manager").default;
+
     return {
         request: customRequest,
         spawn: require('child_process').spawn,
@@ -131,7 +133,35 @@ function buildModules(scriptManifest) {
         frontendCommunicator: require("../../frontend-communicator"),
         counterManager: require("../../../counters/counter-manager"),
         utils: require("../../../utility"),
-        resourceTokenManager: require("../../../resourceTokenManager")
+        resourceTokenManager: require("../../../resourceTokenManager"),
+
+        notificationManager: {
+            addNotification: (notificationBase, permanentlySave = true) => {
+                return notificationManager.addNotification({
+                    ...notificationBase,
+                    source: "script",
+                    scriptName: scriptManifest.name ?? "unknown"
+                }, permanentlySave);
+            },
+            getNotification: (id) => {
+                return notificationManager.getNotification(id);
+            },
+            getNotifications: () => {
+                return notificationManager.getNotifications()
+                    .filter(n => n.source === "script" && n.scriptName === (scriptManifest.name ?? "unknown"));
+            },
+            deleteNotification: (id) => {
+                const notification = notificationManager.getNotification(id);
+                if (notification && notification.source === "script" && notification.scriptName === (scriptManifest.name ?? "unknown")) {
+                    notificationManager.deleteNotification(id);
+                }
+            },
+            clearAllNotifications: () => {
+                notificationManager.getNotifications()
+                    .filter(n => n.source === "script" && n.scriptName === (scriptManifest.name ?? "unknown"))
+                    .forEach(n => notificationManager.deleteNotification(n.id));
+            }
+        }
     };
 }
 
