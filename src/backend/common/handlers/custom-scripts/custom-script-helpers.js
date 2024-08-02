@@ -144,7 +144,11 @@ function buildModules(scriptManifest) {
                 }, permanentlySave);
             },
             getNotification: (id) => {
-                return notificationManager.getNotification(id);
+                const notification = notificationManager.getNotification(id);
+                if (notification && notification.source === "script" && notification.scriptName === (scriptManifest.name ?? "unknown")) {
+                    return notification;
+                }
+                return null;
             },
             getNotifications: () => {
                 return notificationManager.getNotifications()
