@@ -1942,3 +1942,7 @@ column-resizer {
         border-radius: 8px;
     }
 }
+
+.markdown-container > *:last-child {
+    margin-bottom: 0;
+}
