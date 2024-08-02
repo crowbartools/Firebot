@@ -180,7 +180,7 @@ class WebSocketServerManager extends EventEmitter {
     }
 
     reportClientsToFrontend(isDefaultServerStarted: boolean) {
-        let hasClients = this.server !== null;
+        let hasClients = this.server != null;
         if (hasClients) {
             hasClients = [...this.server.clients].filter(client => client.type === "overlay").length > 0;
         }
