@@ -14,7 +14,8 @@
             listenerService,
             logger,
             $timeout,
-            backendCommunicator
+            backendCommunicator,
+            ngToast
         ) {
             const service = {};
 
@@ -44,6 +45,10 @@
                     closeCallback: () => {},
                     dismissCallback: () => {}
                 });
+            });
+
+            backendCommunicator.on("showToast", (messageOrOptions) => {
+                ngToast.create(messageOrOptions);
             });
 
             service.openGetIdEntyModal = function(options, callback) {

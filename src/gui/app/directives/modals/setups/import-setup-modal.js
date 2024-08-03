@@ -3,7 +3,7 @@
 (function() {
     const fsp = require("fs/promises");
 
-    const marked = require("marked");
+    const { marked } = require("marked");
     const { sanitize } = require("dompurify");
 
     angular.module("firebotApp")

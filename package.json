@@ -101,7 +101,7 @@
         "howler": "https://github.com/ebiggz/howler.js/tarball/master",
         "list.js": "^1.5.0",
         "luxon": "^3.1.1",
-        "marked": "^0.7.0",
+        "marked": "^13.0.3",
         "mathjs": "^7.5.1",
         "moment": "^2.24.0",
         "nedb": "^1.8.0",
