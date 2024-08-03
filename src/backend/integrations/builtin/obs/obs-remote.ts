@@ -799,8 +799,28 @@ export enum OBSTransformEaseMode {
 
 export async function transformSourceScale(sourceName: string, scaleTo: number, scaleFrom?: number, easeMode = OBSTransformEaseMode.Linear) {
     try {
+        logger.info("Broke in to transformSourceScale");
         await obs.callBatch([
-
+            {
+                requestType: "GetVersion"
+            },
+            {
+                requestType: "SetCurrentPreviewScene",
+                requestData: {
+                    sceneName: "Recording Mario 64"
+                }
+            },
+            {
+                requestType: "SetCurrentSceneTransition",
+                requestData: {transitionName: "Fade"}
+            },
+            {
+                requestType: "Sleep",
+                requestData: {sleepMillis: 1000}
+            },
+            {
+                requestType: "TriggerStudioModeTransition"
+            }
         ]);
     } catch (error) {
         logger.error("Failed to scale source", error);
