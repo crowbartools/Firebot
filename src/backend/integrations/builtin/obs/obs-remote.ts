@@ -785,8 +785,14 @@ export async function getAudioSources(): Promise<Array<OBSSource>> {
     return audioSupportedSources;
 }
 
-export async function getTransformableSources(): Promise<Array<OBSSource>> {
-    const sources = await getAllSources();
+export async function getTransformableSources(sceneName?: string): Promise<Array<OBSSource>> {
+    let sources = (await getAllSources()) ?? [];
+
+    if (sceneName != null) {
+        const sceneItems = await getAllSceneItemsInScene(sceneName);
+        sources = sources.filter(source => !sceneItems.some(item => item.name === source.name));
+    }
+
     return sources?.filter(s => !s.typeId.startsWith("wasapi"));
 }
 

@@ -1,9 +1,9 @@
 import { EffectType } from "../../../../../types/effects";
-import { OBSSceneItem, OBSTransformEaseMode, transformSourceScale } from "../obs-remote";
+import { OBSSource, OBSTransformEaseMode, transformSourceScale } from "../obs-remote";
 
 export const TransformSourceScaleEffectType: EffectType<{
     sceneName?: string;
-    sceneItemName?: string;
+    sourceName?: string;
     isAnimated: boolean;
     text: string;
     file: string;
@@ -30,24 +30,24 @@ export const TransformSourceScaleEffectType: EffectType<{
             </ui-select-no-choice>
         </ui-select>
     </eos-container>
-    <eos-container ng-if="sceneItems != null && effect.sceneName != null" header="OBS Source" pad-top="true">
+    <eos-container ng-if="sources != null && effect.sceneName != null" header="OBS Source" pad-top="true">
         <div>
-            <button class="btn btn-link" ng-click="getSceneItems(effect.sceneName)">Refresh Source Data</button>
+            <button class="btn btn-link" ng-click="getSources(effect.sceneName)">Refresh Source Data</button>
         </div>
-        <ui-select ng-model="selectedSceneItem" on-select="selectSceneItem($select.selected.name)">
+        <ui-select ng-model="selectedSource" on-select="selectSource($select.selected.name)">
             <ui-select-match placeholder="Select a Source...">{{$select.selected.name}}</ui-select-match>
-            <ui-select-choices repeat="source in sceneItems | filter: {name: $select.search}">
+            <ui-select-choices repeat="source in sources | filter: {name: $select.search}">
                 <div ng-bind-html="source.name | highlight: $select.search"></div>
             </ui-select-choices>
             <ui-select-no-choice>
                 <b>No transformable sources found.</b>
             </ui-select-no-choice>
         </ui-select>
-        <div ng-if="sceneItems == null" class="muted">
+        <div ng-if="sources == null" class="muted">
             No sources found. {{ isObsConfigured ? "Is OBS running?" : "Have you configured the OBS integration?" }}
         </div>
     </eos-container>
-    <eos-container ng-if="effect.sceneItemName != null" header="Transform" style="margin-top: 10px;" pad-top="true">
+    <eos-container ng-if="effect.sourceName != null" header="Transform" style="margin-top: 10px;" pad-top="true">
         <label class="control-fb control--checkbox">Animate </tooltip>
             <input type="checkbox" ng-model="effect.isAnimated" >
             <div class="control__indicator"></div>
@@ -58,17 +58,19 @@ export const TransformSourceScaleEffectType: EffectType<{
         $scope.isObsConfigured = false;
 
         $scope.scenes = [];
-        $scope.sceneItems = [];
+        $scope.sources = [];
+
+        console.log($scope.selectedSource);
 
         $scope.selectScene = (sceneName: string) => {
             $scope.effect.sceneName = sceneName;
-            $scope.effect.sceneItemName = undefined;
-            $scope.selectedSceneItem = undefined;
-            $scope.getSceneItems(sceneName);
+            $scope.effect.sourceName = undefined;
+            $scope.selectedSource = null;
+            $scope.getSources(sceneName);
         };
 
-        $scope.selectSceneItem = (sceneItemName: string) => {
-            $scope.effect.sceneItemName = sceneItemName;
+        $scope.selectSource = (sourceName: string) => {
+            $scope.effect.sourceName = sourceName;
         };
 
         $scope.getScenes = () => {
@@ -90,22 +92,23 @@ export const TransformSourceScaleEffectType: EffectType<{
                     }
 
                     if ($scope.selectedScene != null) {
-                        $scope.getSceneItems($scope.selectedScene.name);
+                        $scope.getSources($scope.selectedScene.name);
                     }
                 }
             );
         };
         $scope.getScenes();
 
-        $scope.getSceneItems = (sceneName: string) => {
+        $scope.getSources = (sceneName: string) => {
             $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
 
             $q.when(
-                backendCommunicator.fireEventAsync("obs-get-scene-items", [sceneName])
-            ).then((sceneItems: OBSSceneItem[]) => {
-                $scope.sceneItems = sceneItems;
-                if ($scope.effect.sceneItemName != null) {
-                    $scope.selectedSource = $scope.sceneItems?.find(source => source.name === $scope.effect.sceneItemName);
+                backendCommunicator.fireEventAsync("obs-get-transformable-sources", [sceneName])
+            ).then((sources: OBSSource[]) => {
+                $scope.sources = sources;
+                if ($scope.effect.sourceName != null) {
+                    $scope.selectedSource = $scope.sources?.find(source => source.name === $scope.effect.sourceName);
+                    console.log($scope.selectedSource);
                 }
             });
         };
@@ -114,13 +117,13 @@ export const TransformSourceScaleEffectType: EffectType<{
         if (effect.sceneName == null) {
             return ["Please select a scene."];
         }
-        if (effect.sceneItemName == null) {
+        if (effect.sourceName == null) {
             return ["Please select a source."];
         }
         return [];
     },
     onTriggerEvent: async ({ effect }) => {
-        await transformSourceScale(effect.sceneItemName, 1000, 500, OBSTransformEaseMode.EaseIn);
+        await transformSourceScale(effect.sourceName, 1000, 500, OBSTransformEaseMode.EaseIn);
         // await settransformableSourcesettings(effect.transformableSourceName, {
         //     text: effect.transformableSource === "static" ? effect.text : null,
         //     readFromFile: effect.transformableSource === "file",

@@ -42,9 +42,12 @@ export function setupFrontendListeners(
         getSourcesWithFilters
     );
 
-    frontendCommunicator.onAsync<never, Array<OBSSource>>(
+    frontendCommunicator.onAsync<unknown[], Array<OBSSource>>(
         "obs-get-transformable-sources",
-        getTransformableSources
+        (args: [sceneName?: string]) => {
+            const [sceneName] = args;
+            return getTransformableSources(sceneName);
+        }
     );
 
     frontendCommunicator.onAsync<never, Array<OBSSource>>(
@@ -87,7 +90,7 @@ export function setupFrontendListeners(
         getAllSources
     );
 
-    frontendCommunicator.onAsync<string[], Array<OBSSceneItem>>(
+    frontendCommunicator.onAsync<unknown[], Array<OBSSceneItem>>(
         "obs-get-scene-items",
         (args: [sceneName: string]) => {
             const [sceneName] = args;
