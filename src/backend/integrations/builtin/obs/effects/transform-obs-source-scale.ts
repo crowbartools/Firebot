@@ -33,6 +33,7 @@ export const TransformSourceScaleEffectType: EffectType<{
     <eos-container ng-if="sources != null && effect.sceneName != null" header="OBS Source" pad-top="true">
         <div>
             <button class="btn btn-link" ng-click="getSources(effect.sceneName)">Refresh Source Data</button>
+            <button class="btn btn-link" ng-click="clearSelection()">Clear Selection</button> <!-- New button to clear selection -->
         </div>
         <ui-select ng-model="selectedSource" on-select="selectSource($select.selected.name)">
             <ui-select-match placeholder="Select a Source...">{{$select.selected.name}}</ui-select-match>
@@ -64,8 +65,7 @@ export const TransformSourceScaleEffectType: EffectType<{
 
         $scope.selectScene = (sceneName: string) => {
             $scope.effect.sceneName = sceneName;
-            $scope.effect.sourceName = undefined;
-            $scope.selectedSource = null;
+            $scope.clearSelection();
             $scope.getSources(sceneName);
         };
 
@@ -111,6 +111,12 @@ export const TransformSourceScaleEffectType: EffectType<{
                     console.log($scope.selectedSource);
                 }
             });
+        };
+
+        $scope.clearSelection = function() {
+            $scope.selectedSource = null;
+            $scope.effect.sourceName = null;
+            $scope.$applyAsync(); // Ensure the UI updates
         };
     },
     optionsValidator: (effect) => {
