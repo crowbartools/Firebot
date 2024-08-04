@@ -799,64 +799,87 @@ export enum OBSTransformEaseMode {
     EaseInOut = "EASEINOUT"
 }
 
-// function getLerpedValues(start: number, end: number, time: number) {
-//     const frameMs = 1000 / 60;
-//     const frames[]: { step: number, delay: number }[] = [];
+function getLerpedCallsArray(sceneName: string, sceneItemId: number, transformStart: Record<string, number>, transformEnd: Record<string, number>, duration: number, easeIn = false, easeOut = false) {
+    if (!transformEnd || !Object.keys(transformEnd).length) {
+        return [];
+    }
 
-//     while (time > 0) {
-//         const delay = Math.min(time, frameMs);
-//     }
-//     return start + (end - start) * time;
-// }
+    const calls = [];
+    const interval = 1 / 60;
 
-export async function transformSourceScale(sceneName: string, sceneItemId: number, duration: number, scaleTo: number, scaleFrom?: number, easeMode = OBSTransformEaseMode.Linear) {
+    calls.push({
+        requestType: "SetSceneItemTransform",
+        requestData: {
+            sceneName,
+            sceneItemId,
+            sceneItemTransform: transformStart
+        }
+    });
+
+    let time = 0;
+    let first = true; // Ensure end value is used even if duration is 0
+    while (first || time < duration) {
+        first = false;
+        const delay = Math.min(interval * 1000, duration - time);
+        const frame = {};
+
+        calls.push({
+            requestType: "Sleep",
+            requestData: { sleepMillis: delay }
+        });
+
+        time += delay;
+
+        Object.keys(transformEnd).forEach((key) => {
+            let ratio = time / duration;
+            if (easeIn && easeOut) {
+                ratio = ratio < 0.5 ? 2 * ratio * ratio : -1 + (4 - 2 * ratio) * ratio;
+            } else if (easeIn) {
+                ratio = ratio * ratio;
+            } else if (easeOut) {
+                ratio = ratio * (2 - ratio);
+            }
+            frame[key] = transformStart[key] + (transformEnd[key] - transformStart[key]) * ratio;
+        });
+
+        calls.push({
+            requestType: "SetSceneItemTransform",
+            requestData: {
+                sceneName,
+                sceneItemId,
+                sceneItemTransform: frame
+            }
+        });
+    }
+    return calls;
+}
+
+export async function transformSceneItem(
+    sceneName: string,
+    sceneItemId: number,
+    duration: number,
+    transformStart: Record<string, number>,
+    transformEnd: Record<string, number>,
+    easeIn: boolean,
+    easeOut: boolean
+) {
     try {
-        //const frameMs = 1000 / 60;
-        //const frameCount = Math.round(duration / frameMs);
+        const currentTransform = (await obs.call("GetSceneItemTransform", {
+            sceneName,
+            sceneItemId
+        })).sceneItemTransform;
 
-        logger.info("Broke in to transformSourceScale", duration, scaleTo, scaleFrom, easeMode);
-        await obs.callBatch([
-            {
-                requestType: "SetSceneItemTransform",
-                requestData: {
-                    sceneName,
-                    sceneItemId,
-                    sceneItemTransform: {
-                        position: {
-                            x: 0,
-                            y: 0
-                        },
-                        scale: {
-                            x: 1,
-                            y: 1
-                        },
-                        rotation: 0
-                    }
-                }
+        Object.keys(transformEnd).forEach((key) => {
+            if (!transformStart.hasOwnProperty(key)) {
+                transformStart[key] = Number(currentTransform[key]);
             }
-        ]);
-        await obs.callBatch([
-            {
-                requestType: "GetVersion"
-            },
-            {
-                requestType: "SetCurrentPreviewScene",
-                requestData: {
-                    sceneName: "Recording Mario 64"
-                }
-            },
-            {
-                requestType: "SetCurrentSceneTransition",
-                requestData: {transitionName: "Fade"}
-            },
-            {
-                requestType: "Sleep",
-                requestData: {sleepMillis: 1000}
-            },
-            {
-                requestType: "TriggerStudioModeTransition"
+            if (transformEnd[key] === transformStart[key]) {
+                delete transformEnd[key];
             }
-        ]);
+        });
+
+        const calls = getLerpedCallsArray(sceneName, sceneItemId, transformStart, transformEnd, duration, easeIn, easeOut);
+        await obs.callBatch(calls);
     } catch (error) {
         logger.error("Failed to scale source", error);
     }
