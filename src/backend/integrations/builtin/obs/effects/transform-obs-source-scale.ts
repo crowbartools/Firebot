@@ -12,8 +12,6 @@ export const TransformSourceScaleEffectType: EffectType<{
     isTransformingRotation: boolean;
     startTransform: Record<string, string>;
     endTransform: Record<string, string>;
-    text: string;
-    file: string;
 }> = {
     definition: {
         id: "firebot:obs-transform-source",
