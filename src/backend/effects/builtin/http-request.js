@@ -76,12 +76,11 @@ const effect = {
     </eos-container>
 
     <eos-container header="Options" pad-top="true">
-        <div style="margin-bottom: 10px;">
-            <label class="control-fb control--checkbox"> Include Twitch auth header <tooltip text="'Automatically include an Authorization header with the streamers twitch access token. Only use when calling the Twitch API!'"></tooltip>
-                <input type="checkbox" ng-model="effect.options.useTwitchAuth">
-                <div class="control__indicator"></div>
-            </label>
-        </div>
+        <firebot-checkbox
+            label="Include Twitch auth header"
+            tooltip="Automatically include an Authorization header with the streamers twitch access token. Only use when calling the Twitch API!"
+            model="effect.options.useTwitchAuth"
+        />
         <label ng-show="effect.options.putResponseInVariable" class="control-fb control--checkbox"> Put response body in a variable <tooltip text="'Put the response body into a variable so you can use it later'"></tooltip>
             <input type="checkbox" ng-model="effect.options.putResponseInVariable">
             <div class="control__indicator"></div>
@@ -91,12 +90,20 @@ const effect = {
             <firebot-input style="margin-top: 10px;" input-title="Variable TTL" model="effect.options.variableTtl" input-type="number" disable-variables="true" placeholder-text="Enter secs | Optional" />
             <firebot-input style="margin-top: 10px;" input-title="Variable Property Path" model="effect.options.variablePropertyPath" input-type="text" disable-variables="true" placeholder-text="Optional" />
         </div>
-        <div style="margin-top: 10px;">
-            <label class="control-fb control--checkbox"> Run effects on error <tooltip text="'Run a list of effects if the request fails. Useful for when you want to do clean up or stop effect execution all together.'"></tooltip>
-                <input type="checkbox" ng-model="effect.options.runEffectsOnError">
-                <div class="control__indicator"></div>
-            </label>
+        <firebot-checkbox
+            ng-init="timeoutRequest = effect.options.timeout != null"
+            label="Set timeout"
+            tooltip="Set a timeout for the request"
+            model="timeoutRequest"
+        />
+        <div ng-show="timeoutRequest" style="padding-left: 15px;" class="mb-6">
+            <firebot-input input-title="Timeout (ms)" model="effect.options.timeout" input-type="number" disable-variables="true" placeholder-text="Enter ms" />
         </div>
+        <firebot-checkbox
+            label="Run effects on error"
+            tooltip="Run a list of effects if the request fails. Useful for when you want to do clean up or stop effect execution all together."
+            model="effect.options.runEffectsOnError"
+        />
     </eos-container>
 
     <eos-container header="Error Effects" pad-top="true" ng-if="effect.options.runEffectsOnError">
@@ -259,6 +266,7 @@ const effect = {
                 method: effect.method.toLowerCase(),
                 url: effect.url,
                 headers,
+                timeout: effect.options.timeout && effect.options.timeout > 0 ? effect.options.timeout : undefined,
                 data: sendBodyData === true ? bodyData : null
             });
 

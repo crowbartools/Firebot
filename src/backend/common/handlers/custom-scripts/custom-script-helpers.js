@@ -105,6 +105,7 @@ function buildModules(scriptManifest) {
         commandManager: require("../../../chat/commands/command-manager"),
         eventManager: require("../../../events/EventManager"),
         eventFilterManager: require("../../../events/filters/filter-manager"),
+        eventFilterFactory: require("../../../events/filters/filter-factory"),
         replaceVariableManager: require("../../../variables/replace-variable-manager"),
         replaceVariableFactory: require("../../../variables/variable-factory"),
         integrationManager: require("../../../integrations/integration-manager"),
