@@ -1,5 +1,5 @@
 import { EffectType } from "../../../../../types/effects";
-import { OBSSceneItem, OBSTransformEaseMode, transformSceneItem } from "../obs-remote";
+import { OBSSceneItem, transformSceneItem } from "../obs-remote";
 
 export const TransformSourceScaleEffectType: EffectType<{
     sceneName?: string;
@@ -12,7 +12,6 @@ export const TransformSourceScaleEffectType: EffectType<{
     isTransformingRotation: boolean;
     startTransform: Record<string, string>;
     endTransform: Record<string, string>;
-    easeMode: OBSTransformEaseMode;
     text: string;
     file: string;
 }> = {

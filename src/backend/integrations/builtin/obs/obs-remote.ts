@@ -792,13 +792,6 @@ export async function getTransformableSceneItems(sceneName: string): Promise<Arr
     return sceneItems.filter(item => sources.some(source => source.name === item.name && !source.typeId.startsWith("wasapi")));
 }
 
-export enum OBSTransformEaseMode {
-    Linear = "LINEAR",
-    EaseIn = "EASEIN",
-    EaseOut = "EASEOUT",
-    EaseInOut = "EASEINOUT"
-}
-
 function getLerpedCallsArray(sceneName: string, sceneItemId: number, transformStart: Record<string, number>, transformEnd: Record<string, number>, duration: number, easeIn = false, easeOut = false) {
     if (!transformEnd || !Object.keys(transformEnd).length) {
         return [];
