@@ -874,7 +874,7 @@ export async function transformSceneItem(
         const calls = getLerpedCallsArray(sceneName, sceneItemId, transformStart, transformEnd, duration, easeIn, easeOut);
         await obs.callBatch(calls);
     } catch (error) {
-        logger.error("Failed to scale source", error);
+        logger.error("Failed to transform scene item", error);
     }
 }
 
