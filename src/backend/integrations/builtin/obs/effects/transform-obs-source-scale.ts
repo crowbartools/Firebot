@@ -58,10 +58,10 @@ export const TransformSourceScaleEffectType: EffectType<{
         <eos-container ng-if="effect.sceneItem != null" header="Duration" pad-top="true">
             <firebot-input
                 input-type="number"
-                input-title="Duration (Milliseconds)"
-                placeholder-text="1000"
+                input-title="Duration"
+                placeholder-text="milliseconds"
                 model="effect.duration"
-                style="margin-bottom:20px;" />
+                style="margin-bottom: 20px;" />
             <div style="display: flex; gap: 20px;">
                 <label class="control-fb control--checkbox" style="flex-basis: 50%">Ease-In </tooltip>
                     <input type="checkbox" ng-model="effect.easeIn" >
@@ -94,12 +94,10 @@ export const TransformSourceScaleEffectType: EffectType<{
                 <div style="display: flex; gap: 20px; margin-bottom: 20px">
                     <firebot-input
                         input-title="End X"
-                        placeholder-text="0"
                         model="effect.endTransform.positionX"
                         style="flex-basis: 50%" />
                     <firebot-input
                         input-title="End Y"
-                        placeholder-text="0"
                         model="effect.endTransform.positionY"
                         style="flex-basis: 50%" />
                 </div>
@@ -124,12 +122,12 @@ export const TransformSourceScaleEffectType: EffectType<{
                 <div style="display: flex; gap: 20px; margin-bottom: 20px;">
                     <firebot-input
                         input-title="End X Scale"
-                        placeholder-text="1.0"
+                        placeholder-text="0.0 - 1.0"
                         model="effect.endTransform.scaleX"
                         style="flex-basis: 50%" />
                     <firebot-input
                         input-title="End Y Scale"
-                        placeholder-text="1.0"
+                        placeholder-text="0.0 - 1.0"
                         model="effect.endTransform.scaleY"
                         style="flex-basis: 50%" />
                 </div>
@@ -147,7 +145,7 @@ export const TransformSourceScaleEffectType: EffectType<{
                         style="flex-basis: 50%" />
                     <firebot-input
                         input-title="End Rotation"
-                        placeholder-text="Current Rotation"
+                        placeholder-text="0 - 360"
                         model="effect.endTransform.rotation"
                         style="flex-basis: 50%" />
                 </div>
