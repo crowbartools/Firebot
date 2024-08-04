@@ -15,7 +15,6 @@ import {
     getColorSources,
     getSupportedImageFormats,
     getTransformableSceneItems,
-    getAllSceneItemsInScene,
     OBSSceneItem
 } from "./obs-remote";
 
@@ -88,13 +87,5 @@ export function setupFrontendListeners(
     frontendCommunicator.onAsync<never, Array<OBSSource>>(
         "obs-get-all-sources",
         getAllSources
-    );
-
-    frontendCommunicator.onAsync<unknown[], Array<OBSSceneItem>>(
-        "obs-get-scene-items",
-        (args: [sceneName: string]) => {
-            const [sceneName] = args;
-            return getAllSceneItemsInScene(sceneName);
-        }
     );
 }
