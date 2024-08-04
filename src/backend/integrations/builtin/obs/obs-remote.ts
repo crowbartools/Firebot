@@ -785,15 +785,11 @@ export async function getAudioSources(): Promise<Array<OBSSource>> {
     return audioSupportedSources;
 }
 
-export async function getTransformableSources(sceneName?: string): Promise<Array<OBSSource>> {
-    let sources = (await getAllSources()) ?? [];
+export async function getTransformableSceneItems(sceneName: string): Promise<Array<OBSSceneItem>> {
+    const sceneItems = await getAllSceneItemsInScene(sceneName) ?? [];
+    const sources = (await getAllSources()) ?? [];
 
-    if (sceneName != null) {
-        const sceneItems = await getAllSceneItemsInScene(sceneName);
-        sources = sources.filter(source => !sceneItems.some(item => item.name === source.name));
-    }
-
-    return sources?.filter(s => !s.typeId.startsWith("wasapi"));
+    return sceneItems.filter(item => sources.some(source => source.name === item.name && !source.typeId.startsWith("wasapi")));
 }
 
 export enum OBSTransformEaseMode {
@@ -803,9 +799,42 @@ export enum OBSTransformEaseMode {
     EaseInOut = "EASEINOUT"
 }
 
-export async function transformSourceScale(sourceName: string, scaleTo: number, scaleFrom?: number, easeMode = OBSTransformEaseMode.Linear) {
+// function getLerpedValues(start: number, end: number, time: number) {
+//     const frameMs = 1000 / 60;
+//     const frames[]: { step: number, delay: number }[] = [];
+
+//     while (time > 0) {
+//         const delay = Math.min(time, frameMs);
+//     }
+//     return start + (end - start) * time;
+// }
+
+export async function transformSourceScale(sceneName: string, sceneItemId: number, duration: number, scaleTo: number, scaleFrom?: number, easeMode = OBSTransformEaseMode.Linear) {
     try {
-        logger.info("Broke in to transformSourceScale");
+        //const frameMs = 1000 / 60;
+        //const frameCount = Math.round(duration / frameMs);
+
+        logger.info("Broke in to transformSourceScale", duration, scaleTo, scaleFrom, easeMode);
+        await obs.callBatch([
+            {
+                requestType: "SetSceneItemTransform",
+                requestData: {
+                    sceneName,
+                    sceneItemId,
+                    sceneItemTransform: {
+                        position: {
+                            x: 0,
+                            y: 0
+                        },
+                        scale: {
+                            x: 1,
+                            y: 1
+                        },
+                        rotation: 0
+                    }
+                }
+            }
+        ]);
         await obs.callBatch([
             {
                 requestType: "GetVersion"
