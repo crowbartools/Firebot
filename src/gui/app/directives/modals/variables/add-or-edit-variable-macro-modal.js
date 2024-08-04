@@ -36,6 +36,8 @@
                                     ng-model="$ctrl.macro.name"
                                     ng-disabled="$ctrl.nameFieldLocked"
                                     ng-style="{'padding-right': $ctrl.nameFieldLocked ? '77px' : ''}"
+                                    ng-keyup="$event.keyCode == 13 && $ctrl.save()"
+                                    ng-keydown="$event.keyCode != 13 ? $event:$event.preventDefault()"
                                 />
                                 <div
                                     style="width: 67px;size: 16px;position: absolute;top: 50%;transform: translateY(-50%);right: 10px;"
@@ -66,6 +68,8 @@
                                 style="font-size: 16px; padding: 10px 16px;"
                                 ng-model="$ctrl.macro.description"
                                 placeholder="Optional"
+                                ng-keyup="$event.keyCode == 13 && $ctrl.save()"
+                                ng-keydown="$event.keyCode != 13 ? $event:$event.preventDefault()"
                             />
                         </div>
 
