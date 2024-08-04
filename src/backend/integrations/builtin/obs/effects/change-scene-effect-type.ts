@@ -52,7 +52,7 @@ export const ChangeSceneEffectType: EffectType<{
                 (scenes: string[]) => {
                     $scope.scenes = [];
                     if (scenes != null) {
-                        scenes.forEach((scene) => {
+                        scenes.forEach(scene => {
                             $scope.scenes.push({name: scene, custom: false});
                         });
                     }
