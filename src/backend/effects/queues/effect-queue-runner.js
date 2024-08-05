@@ -4,6 +4,7 @@ const effectRunner = require("../../common/effect-runner");
 const eventManager = require("../../events/EventManager");
 const frontendCommunicator = require("../../common/frontend-communicator");
 const EventEmitter = require("events");
+const { abortEffectList } = require("../../common/effect-abort-helpers");
 
 /**
  * Queue Entry
@@ -28,6 +29,13 @@ class EffectQueue {
         this._queue = [];
         this._running = false;
         this._paused = !active;
+
+        /**
+         * The effect list(s) that are currently being processed by the effect runner
+         * @type {string[]}
+         */
+        this._activeEffectListIds = [];
+
         this.canceled = false;
     }
 
@@ -40,6 +48,19 @@ class EffectQueue {
         frontendCommunicator.send("updateQueueLength", queue);
 
         exports.events.emit("length-updated", queue);
+    }
+
+    _addActiveEffectListId(effectListId) {
+        if (effectListId) {
+            this._activeEffectListIds.push(effectListId);
+        }
+    }
+
+    _removeActiveEffectListId(effectListId) {
+        const index = this._activeEffectListIds.indexOf(effectListId);
+        if (index > -1) {
+            this._activeEffectListIds.splice(index, 1);
+        }
     }
 
     runQueue() {
@@ -59,27 +80,37 @@ class EffectQueue {
             this.sendQueueLengthUpdate();
 
             if (this.mode === "interval") {
-                effectRunner.runEffects(runEffectsContext)
-                    .catch((err) => {
-                        logger.warn(`Error while processing effects for queue ${this.id}`, err);
-                    });
-                setTimeout(() => {
-                    resolve(this.runQueue());
-                }, this.interval * 1000);
-            } else if (this.mode === "auto") {
+                this._addActiveEffectListId(runEffectsContext.effects?.id);
                 effectRunner.runEffects(runEffectsContext)
                     .catch((err) => {
                         logger.warn(`Error while processing effects for queue ${this.id}`, err);
                     })
                     .finally(() => {
+                        this._removeActiveEffectListId(runEffectsContext.effects?.id);
+                    });
+                setTimeout(() => {
+                    resolve(this.runQueue());
+                }, this.interval * 1000);
+            } else if (this.mode === "auto") {
+                this._addActiveEffectListId(runEffectsContext.effects?.id);
+                effectRunner.runEffects(runEffectsContext)
+                    .catch((err) => {
+                        logger.warn(`Error while processing effects for queue ${this.id}`, err);
+                    })
+                    .finally(() => {
+                        this._removeActiveEffectListId(runEffectsContext.effects?.id);
                         setTimeout(() => {
                             resolve(this.runQueue());
                         }, (this.interval ?? 0) * 1000);
                     });
             } else if (this.mode === "custom") {
+                this._addActiveEffectListId(runEffectsContext.effects?.id);
                 effectRunner.runEffects(runEffectsContext)
                     .catch((err) => {
                         logger.warn(`Error while processing effects for queue ${this.id}`, err);
+                    })
+                    .finally(() => {
+                        this._removeActiveEffectListId(runEffectsContext.effects?.id);
                     });
                 setTimeout(() => {
                     resolve(this.runQueue());
@@ -182,7 +213,7 @@ function updateQueueConfig(queueConfig) {
     }
 }
 
-function removeQueue(queueId) {
+function removeQueue(queueId, abortActiveEffectLists = false) {
     if (queueId == null) {
         return;
     }
@@ -192,6 +223,14 @@ function removeQueue(queueId) {
         logger.debug(`Removing queue ${queue.id}`);
         queue.canceled = true;
         queue.sendQueueLengthUpdate(0);
+
+        if (abortActiveEffectLists) {
+            queue._activeEffectListIds.forEach((id) => {
+                abortEffectList(id, true);
+            });
+            queue._activeEffectListIds = [];
+        }
+
         delete queues[queueId];
     }
 }
@@ -204,8 +243,8 @@ function getQueue(queueId) {
     return queue._queue;
 }
 
-function clearAllQueues() {
-    Object.keys(queues).forEach(queueId => removeQueue(queueId));
+function clearAllQueues(abortActiveEffectLists = false) {
+    Object.keys(queues).forEach(queueId => removeQueue(queueId, abortActiveEffectLists));
 }
 
 /**

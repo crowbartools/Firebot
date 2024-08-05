@@ -150,6 +150,15 @@
                                     <span ng-if="effect.effectLabel" class="muted"> ({{effect.effectLabel}})</span>
                                 </span>
                                 <span class="flex-row-center">
+                                    <span
+                                        ng-if="effect.abortTimeout && effect.abortTimeout > 0"
+                                        uib-tooltip="Abort Timeout"
+                                        tooltip-append-to-body="true"
+                                        class="muted mr-5 flex items-center justify-center"
+                                    >
+                                        <i class="fas fa-stopwatch"></i>
+                                        <div class="ml-1">{{effect.abortTimeout}}s</div>
+                                    </span>
                                     <span class="dragHandle flex items-center justify-center" style="height: 38px; width: 15px;" ng-class="{'hiddenHandle': !hovering}" ng-click="$event.stopPropagation()">
                                         <i class="fal fa-bars"></i>
                                     </span>
@@ -200,7 +209,7 @@
 
             </div>
             `,
-            controller: function($q, $scope, utilityService, effectHelperService, objectCopyHelper, effectQueuesService, presetEffectListsService,
+            controller: function($q, $rootScope, $scope, utilityService, effectHelperService, objectCopyHelper, effectQueuesService, presetEffectListsService,
                 backendCommunicator, ngToast, $http) {
                 const ctrl = this;
 
@@ -324,13 +333,6 @@
                 ctrl.createAllEffectsMenuOptions = () => {
                     const allEffectsMenuOptions = [
                         {
-                            html: `<a href role="menuitem"><i class="fal fa-magic mr-4"></i> Convert to Preset Effect List</a>`,
-                            click: function () {
-                                ctrl.convertToPresetEffectList();
-                            },
-                            enabled: ctrl.effectsData.list.length > 0
-                        },
-                        {
                             html: `<a href role="menuitem"><span class="iconify mr-4" data-icon="mdi:content-copy"></span> Copy all effects</a>`,
                             click: () => {
                                 ctrl.copyEffects();
@@ -350,6 +352,29 @@
                                 ctrl.removeAllEffects();
                             },
                             enabled: ctrl.effectsData.list.length > 0
+                        },
+                        {
+                            text: "Advanced...",
+                            hasTopDivider: true,
+                            children: [
+                                {
+                                    html: `<a href role="menuitem"><i class="fal fa-magic mr-4"></i> Convert to Preset Effect List</a>`,
+                                    click: function () {
+                                        ctrl.convertToPresetEffectList();
+                                    },
+                                    enabled: ctrl.effectsData.list.length > 0
+                                },
+                                {
+                                    html: `<a href role="menuitem"><i class="fal fa-fingerprint mr-4"></i> Copy Effect List ID</a>`,
+                                    click: function () {
+                                        $rootScope.copyTextToClipboard(ctrl.effectsData.id);
+                                        ngToast.create({
+                                            className: "success",
+                                            content: `Copied ${ctrl.effectsData.id} to clipboard.`
+                                        });
+                                    }
+                                }
+                            ]
                         },
                         {
                             html: `<a href role="menuitem"><i class="far fa-share-alt mr-4"></i> Share effects</a>`,
@@ -373,18 +398,18 @@
                 ctrl.createEffectMenuOptions = (effect) => {
                     const effectMenuOptions = [
                         {
-                            html: `<a href ><i class="far fa-tag mr-4"></i> Edit Label</a>`,
-                            click: function ($itemScope) {
-                                const $index = $itemScope.$index;
-                                ctrl.editLabelForEffectAtIndex($index);
-                            }
-                        },
-                        {
                             html: `<a href ><i class="far fa-edit mr-4"></i> Edit Effect</a>`,
                             click: function ($itemScope) {
                                 const $index = $itemScope.$index;
                                 const effect = $itemScope.effect;
                                 ctrl.openEditEffectModal(effect, $index, ctrl.trigger, false);
+                            }
+                        },
+                        {
+                            html: `<a href ><i class="far fa-tag mr-4"></i> Edit Label</a>`,
+                            click: function ($itemScope) {
+                                const $index = $itemScope.$index;
+                                ctrl.editLabelForEffectAtIndex($index);
                             }
                         },
                         {
@@ -414,6 +439,35 @@
                                 const $index = $itemScope.$index;
                                 ctrl.removeEffectAtIndex($index);
                             }
+                        },
+                        {
+                            text: "Advanced...",
+                            hasTopDivider: true,
+                            children: [
+                                {
+                                    html: `<a href ><i class="far fa-stopwatch mr-4"></i> Edit Timeout</a>`,
+                                    enabled: function($itemScope) {
+                                        const effect = $itemScope.effect;
+                                        const effectDefinition = effectDefinitions.find(e => e.id === effect.type);
+                                        return !effectDefinition?.exemptFromTimeouts;
+                                    },
+                                    click: function ($itemScope) {
+                                        const $index = $itemScope.$index;
+                                        ctrl.editTimeoutForEffectAtIndex($index);
+                                    }
+                                },
+                                {
+                                    html: `<a href role="menuitem"><i class="fal fa-fingerprint mr-4"></i> Copy Effect ID</a>`,
+                                    click: function ($itemScope) {
+                                        const effect = $itemScope.effect;
+                                        $rootScope.copyTextToClipboard(effect.id);
+                                        ngToast.create({
+                                            className: "success",
+                                            content: `Copied ${effect.id} to clipboard.`
+                                        });
+                                    }
+                                }
+                            ]
                         },
                         {
                             text: "Paste...",
@@ -600,6 +654,35 @@
                             } else {
                                 effect.effectLabel = newLabel;
                             }
+                        });
+                };
+
+                ctrl.editTimeoutForEffectAtIndex = function(index) {
+                    const effect = ctrl.effectsData.list[index];
+                    const timeout = effect.abortTimeout;
+                    utilityService.openGetInputModal(
+                        {
+                            model: timeout,
+                            label: "Set Effect Timeout",
+                            descriptionText: "Enter the number of seconds to wait before Firebot automatically aborts this effect.",
+                            saveText: "Save Timeout",
+                            inputType: "number",
+                            inputPlaceholder: "Enter seconds",
+                            validationFn: (value) => {
+                                return new Promise((resolve) => {
+                                    if (value == null) {
+                                        resolve(true);
+                                    }
+                                    if (isNaN(value) || value < 0) {
+                                        resolve(false);
+                                    }
+                                    resolve(true);
+                                });
+                            },
+                            validationText: "Please enter a valid number of seconds"
+                        },
+                        (newTimeout) => {
+                            effect.abortTimeout = newTimeout;
                         });
                 };
 
