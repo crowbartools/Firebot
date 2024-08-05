@@ -247,6 +247,20 @@ function clearAllQueues(abortActiveEffectLists = false) {
     Object.keys(queues).forEach(queueId => removeQueue(queueId, abortActiveEffectLists));
 }
 
+function abortActiveEffectListsForQueue(queueId, bubbleStop = true) {
+    const queue = queues[queueId];
+    if (queue != null) {
+        queue._activeEffectListIds.forEach((id) => {
+            abortEffectList(id, bubbleStop);
+        });
+        queue._activeEffectListIds = [];
+    }
+}
+
+function abortActiveEffectListsForAllQueues(bubbleStop = true) {
+    Object.keys(queues).forEach(queueId => abortActiveEffectListsForQueue(queueId, bubbleStop));
+}
+
 /**
  * @type {import("tiny-typed-emitter").TypedEmitter<{
 *    "length-updated": (item: object) => void;
@@ -259,3 +273,5 @@ exports.getQueue = getQueue;
 exports.updateQueueConfig = updateQueueConfig;
 exports.removeQueue = removeQueue;
 exports.clearAllQueues = clearAllQueues;
+exports.abortActiveEffectListsForQueue = abortActiveEffectListsForQueue;
+exports.abortActiveEffectListsForAllQueues = abortActiveEffectListsForAllQueues;

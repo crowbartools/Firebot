@@ -72,14 +72,14 @@ const delay = {
                     </ul>
                 </div>
                 <firebot-checkbox
-                    label="Abort running effect lists"
-                    tooltip="Abort any effect lists from the queue(s) that are currently running effects"
+                    label="Abort running effect lists for queue(s)"
+                    tooltip="Abort any effect lists from the queue(s) that are actively executing effects"
                     model="effect.abortActiveQueueEffectLists"
                 />
             </div>
             <firebot-checkbox
-                label="Running Effect Lists"
-                tooltip="Abort any effect lists that are currently running effects"
+                label="All Running Effect Lists"
+                tooltip="Abort any effect lists that are actively running effects"
                 model="effect.activeEffectLists"
             />
         </eos-container>
