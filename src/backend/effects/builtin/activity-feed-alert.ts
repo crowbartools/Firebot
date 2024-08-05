@@ -1,6 +1,5 @@
 import { EffectType } from "../../../types/effects";
-import { EffectCategory, EffectDependency } from "../../../shared/effect-constants";
-import logger from "../../logwrapper"; 
+import { EffectCategory } from "../../../shared/effect-constants";
 import moment from "moment";
 import { v4 as uuid } from "uuid";
 import frontendCommunicator from "./../../common/frontend-communicator";
@@ -20,7 +19,7 @@ const effect: EffectType<{
     },
     optionsTemplate: `
     <eos-container>
-        <p>Use this effect to send yourself alerts in Firebot's activity feed. This alert is are only visible to you if the activity feed is visible.</p>
+        <p>Use this effect to send yourself alerts in Firebot's activity feed. This alert is only visible to you if the activity feed is visible.</p>
     </eos-container>
     <eos-container header="Alert Icon" pad-top="true">
         <h3>Icon</h3>
@@ -32,7 +31,7 @@ const effect: EffectType<{
     </eos-container> 
     `,
     optionsController: () => { },
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.message == null || effect.message === "") {
             errors.push("Alert message can't be blank.");
@@ -42,19 +41,19 @@ const effect: EffectType<{
     onTriggerEvent: async ({ effect }) => {
 
         frontendCommunicator.send('event-activity', {
-           message: effect.message,
+            message: effect.message,
             icon: effect.icon ?? "fad fa-tv-alt",
-           acknowledged: false,
-           event: {
-               id: "activity-feed-alert",
-               name: "Activity Feed Alert",
-           },
-           id: uuid(),
-           source:{
-               id: "firebot",
-               name: "Firebot",
-           },
-           timestamp: moment().format("H:mm"),
+            acknowledged: false,
+            event: {
+                id: "activity-feed-alert",
+                name: "Activity Feed Alert"
+            },
+            id: uuid(),
+            source: {
+                id: "firebot",
+                name: "Firebot"
+            },
+            timestamp: moment().format("H:mm")
         });
 
         return true;
