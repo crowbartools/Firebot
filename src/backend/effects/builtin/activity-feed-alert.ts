@@ -42,7 +42,7 @@ const effect: EffectType<{
 
         frontendCommunicator.send('event-activity', {
             message: effect.message,
-            icon: effect.icon ?? "fad fa-tv-alt",
+            icon: effect.icon || "fad fa-comment-exclamation",
             acknowledged: false,
             event: {
                 id: "activity-feed-alert",
