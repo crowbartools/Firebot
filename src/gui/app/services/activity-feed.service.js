@@ -24,7 +24,7 @@
                 }
 
                 const allowedEvents = settingsService.getAllowedActivityEvents();
-                if (!allowedEvents.includes(`${activity.source.id}:${activity.event.id}`)) {
+                if (!allowedEvents.includes(`${activity.source.id}:${activity.event.id}`) && `${activity.source.id}:${activity.event.id}` !== "firebot:activity-feed-alert") {
                     return;
                 }
 

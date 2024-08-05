@@ -270,6 +270,7 @@
           style="font-size: 15px; display: flex; align-items: center"
         >
           <i
+            ng-if="activity.source.id + ':' + activity.event.id !== 'firebot:activity-feed-alert'"
             class="clickable far fa-redo mr-4"
             ng-click="afs.retriggerEvent(activity.id)"
             uib-tooltip="Retrigger event"
