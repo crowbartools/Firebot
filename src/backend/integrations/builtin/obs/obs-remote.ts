@@ -39,14 +39,56 @@ let eventManager: ScriptModules["eventManager"];
 const obs = new OBSWebSocket();
 
 let connected = false;
+type GroupSceneInfo = {
+    /// The name of the scene that the group resides in.
+    sceneName: string;
+    /// The item id for the group inside of this scene.
+    itemId: number;
+}
+type GroupInfo = {
+    /// The name of a group.
+    groupName: string;
+    /// The list of scenes that contain the group, and the group's id within those scenes.
+    scenes: GroupSceneInfo[];
+}
+/// A cached list of OBS groups, which are the proverbial red-headed step-children of nested scenes.
+let groupInfos: Array<GroupInfo> = [];
+/// The cached preview scene name. `null` when not in studio mode.
+let previewSceneName: string | null;
+/// The cached program scene name.
+let programSceneName: string;
 
 const TEXT_SOURCE_IDS = ["text_gdiplus_v2", "text_gdiplus_v3", "text_ft2_source_v2"];
 
-function setupRemoteListeners() {
+async function refreshGroupsAndScenes() {
+    const sceneList = await obs.call("GetSceneList");
+    previewSceneName = sceneList.currentPreviewSceneName;
+    programSceneName = sceneList.currentProgramSceneName ?? "";
+
+    const groupNames: string[] = (await obs.call("GetGroupList"))?.groups ?? [];
+    groupInfos = groupNames.map(gn => ({
+        groupName: gn,
+        scenes: []
+    }));
+
+    const sceneNames: string[] = sceneList.scenes.map(s => s.sceneName as string) ?? [];
+    
+}
+
+async function setupRemoteListeners() {
     obs.on("CurrentProgramSceneChanged", ({ sceneName }) => {
+        programSceneName = sceneName ?? "";
+
         eventManager?.triggerEvent(
             OBS_EVENT_SOURCE_ID,
             OBS_SCENE_CHANGED_EVENT_ID,
+            {
+                sceneName
+            }
+        );
+        eventManager?.triggerEvent(
+            OBS_EVENT_SOURCE_ID,
+            OBS_CURRENT_PROGRAM_SCENE_CHANGED_EVENT_ID,
             {
                 sceneName
             }
@@ -93,16 +135,43 @@ function setupRemoteListeners() {
         }
     });
 
-    obs.on("SceneItemEnableStateChanged", ({ sceneName, sceneItemId, sceneItemEnabled }) => {
+    obs.on("SceneItemEnableStateChanged", async ({ sceneName, sceneItemId, sceneItemEnabled }) => {
+        type EventData = {
+            groupItemId?: number;
+            groupName?: string;
+            sceneItemEnabled: boolean;
+            sceneItemName: string;
+            sceneName: string;
+        }
+        const eventData: EventData = {
+            sceneItemEnabled,
+            sceneItemName: "",
+            sceneName: sceneName
+        };
+
+        if (groupInfos.some(gn => gn.groupName === sceneName)) {
+            const actualSceneName = previewSceneName ?? programSceneName ?? "";
+            eventData.groupItemId = sceneItemId;
+            eventData.groupName = sceneName;
+            eventData.sceneName = actualSceneName;
+
+            const items = await obs.call("GetSceneItemList", { sceneName: actualSceneName });
+
+        }
+
         eventManager?.triggerEvent(
             OBS_EVENT_SOURCE_ID,
             OBS_SCENE_ITEM_ENABLE_STATE_CHANGED_EVENT_ID,
-            {
-                sceneName,
-                sceneItemId,
-                sceneItemEnabled
-            }
+            eventData
         );
+        //    {
+        //        sceneName: previewSceneName ?? programSceneName,
+        //        sceneItemId,
+        //        sceneItemEnabled,
+        //        ...(sceneName !== (previewSceneName ?? programSceneName) && { groupItemId: 0 }),
+        //        ...(sceneName !== (previewSceneName ?? programSceneName) && { groupName: sceneName })
+        //    }
+        //);
     });
 
     obs.on("SceneTransitionStarted", ({ transitionName }) => {
@@ -121,16 +190,6 @@ function setupRemoteListeners() {
             OBS_SCENE_TRANSITION_ENDED_EVENT_ID,
             {
                 transitionName
-            }
-        );
-    });
-
-    obs.on("CurrentProgramSceneChanged", ({ sceneName }) => {
-        eventManager?.triggerEvent(
-            OBS_EVENT_SOURCE_ID,
-            OBS_CURRENT_PROGRAM_SCENE_CHANGED_EVENT_ID,
-            {
-                sceneName
             }
         );
     });
@@ -340,6 +399,60 @@ function setupRemoteListeners() {
                 monitorType
             }
         );
+    });
+
+    obs.on("SceneCreated", ({ sceneName, isGroup }) => {
+        if (isGroup) {
+            groupInfos.push({ groupName: sceneName, scenes: [] });
+        }
+    });
+
+    obs.on("SceneRemoved", ({ sceneName, isGroup }) => {
+        const gidx = isGroup ? groupInfos.findIndex(gi => gi.groupName === sceneName) : -1;
+        if (gidx >= 0) {
+            groupInfos.splice(gidx);
+        }
+    });
+
+    obs.on("SceneNameChanged", ({ oldSceneName, sceneName }) => {
+        const gidx = groupInfos.findIndex(gi => gi.groupName === oldSceneName);
+        if (gidx >= 0) {
+            groupInfos[gidx].groupName = sceneName;
+        }
+    });
+
+
+    obs.on("SceneItemRemoved", ({ sceneName, sourceName }) => {
+        const gidx = groupInfos.findIndex(gi => gi.groupName === sourceName);
+        if (gidx >= 0) {
+            const sidx = groupInfos[gidx].scenes.findIndex(si => si.sceneName === sceneName);
+            if (sidx >= 0) {
+                groupInfos[gidx].scenes.splice(sidx, 1);
+            }
+            // Remove the group entirely if it's no longer in any scenes
+            if (groupInfos[gidx].scenes.length === 0) {
+                groupInfos.splice(gidx);
+            }
+        }
+    });
+
+    obs.on("SceneItemListReindexed", ({ sceneName, sceneItems }) => {
+        // Figure out which groups this scene contains, then update those in the cache
+        const groupsInScene = sceneItems
+            .map(si => ({ id: si.sceneItemId as number, name: si.sceneItemName as string }))
+            .filter(si => Number.isFinite(si.id) && si.id >= 0 && si.name !== null && si.name !== "" && groupInfos.some(gi => gi.groupName === si.name));
+        groupsInScene.forEach((gis) => {
+            const gidx = groupInfos.findIndex(gi => gi.groupName === gis.name);
+            if (gidx < 0) {
+                return;
+            }
+            const sidx = groupInfos[gidx].scenes.findIndex(gsi => gsi.sceneName === sceneName);
+            if (sidx < 0) {
+                return;
+            }
+
+            groupInfos[gidx].scenes[sidx].itemId = gis.id;
+        });
     });
 }
 
