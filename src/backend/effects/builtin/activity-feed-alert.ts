@@ -1,9 +1,6 @@
 import { EffectType } from "../../../types/effects";
 import { EffectCategory } from "../../../shared/effect-constants";
-import moment from "moment";
-import { v4 as uuid } from "uuid";
-import frontendCommunicator from "./../../common/frontend-communicator";
-
+import { handleTriggeredEvent } from "../../events/activity-feed-manager";
 
 const effect: EffectType<{
     message: string;
@@ -39,22 +36,24 @@ const effect: EffectType<{
         return errors;
     },
     onTriggerEvent: async ({ effect }) => {
-
-        frontendCommunicator.send('event-activity', {
-            message: effect.message,
-            icon: effect.icon || "fad fa-comment-exclamation",
-            acknowledged: false,
-            event: {
-                id: "activity-feed-alert",
-                name: "Activity Feed Alert"
-            },
-            id: uuid(),
-            source: {
+        handleTriggeredEvent(
+            {
                 id: "firebot",
                 name: "Firebot"
             },
-            timestamp: moment().format("H:mm")
-        });
+            {
+                id: "activity-feed-alert",
+                name: "Activity Feed Alert",
+                activityFeed: {
+                    icon: effect.icon || "fad fa-comment-exclamation",
+                    getMessage: () => {
+                        return effect.message;
+                    }
+                }
+            },
+            {
+                username: "firebot"
+            });
 
         return true;
     }

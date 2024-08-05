@@ -12,7 +12,7 @@ const timeFormat = isUSLocale ? "h:mm" : "H:mm";
 
 const previousActivity = [];
 
-function handleTriggeredEvent(source, event, metadata) {
+export function handleTriggeredEvent(source, event, metadata) {
     if (source == null || event == null || metadata == null) {
         return;
     }
