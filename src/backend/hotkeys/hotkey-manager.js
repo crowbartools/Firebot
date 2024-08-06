@@ -44,7 +44,7 @@ function registerHotkey(accelerator) {
             runHotkey(accelerator);
         });
         if (!success) {
-            logger.warn(`Unable to register hotkey ${accelerator} with OS. This typically means it's already taken by another application.`);
+            logger.warn(`Unable to register hotkey ${accelerator} with OS. This typically means it is already taken by another application.`);
         }
     } catch (error) {
         logger.error(`Error while registering hotkey ${accelerator} with OS`, error);

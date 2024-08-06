@@ -61,7 +61,7 @@ const html = {
         <div class="effect-info alert alert-warning">
             This effect requires the Firebot overlay to be loaded in your broadcasting software. <a href ng-click="showOverlayInfoModal()" style="text-decoration:underline">Learn more</a>
             <br /><br />
-            Please be aware that this effect is <i>extremely</i> prone to errors due to it's open-ended nature.
+            Please be aware that this effect is <i>extremely</i> prone to errors due to its open-ended nature.
             <br /><br />
             When using variables that are derived from user provided content, it is recommended to escape the value using <code>$encodeForHtml[$variable]</code>.
         </div>
