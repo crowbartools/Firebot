@@ -66,7 +66,7 @@
             SHOW_VIDEO: "showVideo",
             SHOW_TEXT: "showText",
             SHOW_HTML: "showHtml",
-            CELEBREATE: "celebrate",
+            CELEBRATE: "celebrate",
             INFO: "info",
             INTEGRATION_CONNECTION_UPDATE: "integrationConnectionUpdate",
             INTEGRATIONS_UPDATED: "integrationsUpdated",
@@ -120,7 +120,7 @@
                 uuid: uuid,
                 type: request.type,
                 callback: callback, // the callback when this listener is triggered
-                runOnce: request.runOnce === true // Means the listener will remove itself after the first time its called
+                runOnce: request.runOnce === true // Means the listener will remove itself after the first time it is called
             };
 
             const publishEvent = request.publishEvent === true;

@@ -36,7 +36,7 @@ async function deleteHueUser() {
 
     renderWindow.webContents.send(
         "error",
-        "The Hue API does not allow Firebot to delete it's access from the hue bridge. Please visit https://account.meethue.com/apps and click deactivate on Firebot."
+        "The Hue API does not allow Firebot to delete its access from the hue bridge. Please visit https://account.meethue.com/apps and click deactivate on Firebot."
     );
 }
 
