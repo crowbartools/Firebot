@@ -9,7 +9,8 @@ const model = {
         description: "Pause between effects",
         icon: "fad fa-stopwatch",
         categories: [EffectCategory.COMMON, EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
-        dependencies: []
+        dependencies: [],
+        exemptFromTimeouts: true
     },
     globalSettings: {},
     optionsTemplate: `

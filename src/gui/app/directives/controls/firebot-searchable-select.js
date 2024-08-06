@@ -9,10 +9,18 @@
                 placeholder: "@?",
                 name: "@?",
                 id: "@?",
-                items: "<"
+                items: "<",
+                onSelect: "&?"
             },
             template: `
-                <ui-select input-id="{{$ctrl.id || ''}}" name="{{$ctrl.name || ''}}" ng-model="$ctrl.modelValue" theme="bootstrap" class="control-type-list">
+                <ui-select
+                    input-id="{{$ctrl.id || ''}}"
+                    name="{{$ctrl.name || ''}}"
+                    ng-model="$ctrl.modelValue"
+                    on-select="$ctrl.onSelect != null ? $ctrl.onSelect({ item: $item }) : undefined"
+                    theme="bootstrap"
+                    class="control-type-list"
+                >
                     <ui-select-match placeholder="{{$ctrl.placeholder || ''}}">{{$select.selected.name}}</ui-select-match>
                     <ui-select-choices repeat="item.id as item in $ctrl.items | filter: { name: $select.search }" style="position:relative;">
                         <div class="flex-row-center">

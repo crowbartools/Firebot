@@ -230,7 +230,7 @@ const effect = {
         const customVariableManager = require("../../common/custom-variable-manager");
         const effectRunner = require("../../common/effect-runner");
 
-        const { effect, trigger, outputs } = event;
+        const { effect, trigger, outputs, abortSignal } = event;
 
         let headers = effect.headers.reduce((acc, next) => {
             acc[next.key] = next.value;
@@ -286,7 +286,7 @@ const effect = {
         } catch (error) {
             logger.error("Error running http request", error.message);
 
-            if (effect.options.runEffectsOnError) {
+            if (effect.options.runEffectsOnError && !abortSignal?.aborted) {
                 const processEffectsRequest = {
                     trigger,
                     effects: effect.errorEffects,
