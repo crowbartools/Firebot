@@ -12,7 +12,7 @@ const timeFormat = isUSLocale ? "h:mm" : "H:mm";
 
 const previousActivity = [];
 
-export function handleTriggeredEvent(source, event, metadata) {
+export function handleTriggeredEvent(source, event, metadata, eventSettings = { forceAllow: false, canRetrigger: true }) {
     if (source == null || event == null || metadata == null) {
         return;
     }
@@ -44,7 +44,8 @@ export function handleTriggeredEvent(source, event, metadata) {
         },
         event: {
             id: event.id,
-            name: event.name
+            name: event.name,
+            ...eventSettings
         },
         message: event.activityFeed.getMessage(metadata),
         icon: event.activityFeed.icon,

@@ -16,15 +16,25 @@ const effect: EffectType<{
     },
     optionsTemplate: `
     <eos-container>
-        <p>Use this effect to send yourself alerts in Firebot's activity feed. This alert is only visible to you if the activity feed is visible.</p>
+        <p>Use this effect to send yourself alerts in Firebot's activity feed.</p>
     </eos-container>
-    <eos-container header="Alert Icon" pad-top="true">
-        <h3>Icon</h3>
-        <p class="muted">A custom icon which allows you to identify your Activity alert.</p>
-        <input maxlength="2" type="text" class="form-control" ng-model="effect.icon" icon-picker required>
-    </eos-container>
-    <eos-container header="Alert Message" pad-top="true">
-        <textarea ng-model="effect.message" class="form-control" name="text" placeholder="Enter message" rows="4" cols="40" replace-variables></textarea>
+    <eos-container header="Message" pad-top="true">
+        <firebot-input 
+            model="effect.message" 
+            placeholder-text="Enter message"
+            use-text-area="true"
+            rows="4"
+            cols="40"
+        />
+    </eos-container> 
+    <eos-container header="Icon" pad-top="true">
+        <input 
+			maxlength="2" 
+			type="text" 
+			class="form-control" 
+			ng-model="effect.icon" 
+			icon-picker required
+		/>
     </eos-container> 
     `,
     optionsController: () => { },
@@ -53,6 +63,10 @@ const effect: EffectType<{
             },
             {
                 username: "firebot"
+            },
+            {
+                forceAllow: true,
+                canRetrigger: false
             });
 
         return true;
