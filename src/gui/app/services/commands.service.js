@@ -38,9 +38,9 @@
                 logger.debug(`saving command: ${command.trigger}`);
 
                 // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
-                // and other magical things. Angular has a .toJson() convienence method that coverts an object to a json string
+                // and other magical things. Angular has a .toJson() convenience method that coverts an object to a json string
                 // while removing internal angular properties. We then convert this string back to an object with
-                // JSON.parse. It's kinda hacky, but it's an easy way to ensure we arn't accidentally saving anything extra.
+                // JSON.parse. It's kinda hacky, but it's an easy way to ensure we aren't accidentally saving anything extra.
                 const cleanedCommand = JSON.parse(angular.toJson(command));
 
                 backendCommunicator.send("save-custom-command", {
