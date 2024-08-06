@@ -31,7 +31,7 @@
         }
 
         /** Wrappers for the main Winston Logger methods. All these do is prefix the "msg" argument
-     * with "(Renderer)" so its easier to differentiate logs from the renderer vs main processes
+     * with "(Renderer)" so it's easier to differentiate logs from the renderer vs main processes
      * in the log file
      */
         service.error = (...args) => {

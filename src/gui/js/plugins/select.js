@@ -757,10 +757,10 @@ uis.controller('uiSelectCtrl',
 
   $scope.$watch(function () {
     return angular.isDefined(ctrl.lockChoiceExpression) && ctrl.lockChoiceExpression !== "";
-  }, _initaliseLockedChoices);
+  }, _initializeLockedChoices);
 
-  function _initaliseLockedChoices(doInitalise) {
-    if(!doInitalise) return;
+  function _initializeLockedChoices(doInitialize) {
+    if(!doInitialize) return;
 
     var lockedItems = [];
 
@@ -775,7 +775,7 @@ uis.controller('uiSelectCtrl',
       }
     }
 
-    function _isItemlocked(item) {
+    function _isItemLocked(item) {
       return lockedItems.indexOf(item) > -1;
     }
 
@@ -788,7 +788,7 @@ uis.controller('uiSelectCtrl',
           isLocked = !!(itemScope.$eval(ctrl.lockChoiceExpression));
           _updateItemLocked(item, isLocked);
         } else {
-          isLocked = _isItemlocked(item);
+          isLocked = _isItemLocked(item);
         }
       }
 
@@ -840,7 +840,7 @@ uis.controller('uiSelectCtrl',
     var processed = true;
     switch (key) {
       case KEY.DOWN:
-        if (!ctrl.open && ctrl.multiple) ctrl.activate(false, true); //In case its the search input in 'multiple' mode
+        if (!ctrl.open && ctrl.multiple) ctrl.activate(false, true); //In case it's the search input in 'multiple' mode
         else if (ctrl.activeIndex < ctrl.items.length - 1) {
           var idx = ++ctrl.activeIndex;
           while(_isItemDisabled(ctrl.items[idx]) && idx < ctrl.items.length) {
@@ -850,7 +850,7 @@ uis.controller('uiSelectCtrl',
         break;
       case KEY.UP:
         var minActiveIndex = (ctrl.search.length === 0 && ctrl.tagging.isActivated) ? -1 : 0;
-        if (!ctrl.open && ctrl.multiple) ctrl.activate(false, true); //In case its the search input in 'multiple' mode
+        if (!ctrl.open && ctrl.multiple) ctrl.activate(false, true); //In case it's the search input in 'multiple' mode
         else if (ctrl.activeIndex > minActiveIndex) {
           var idxmin = --ctrl.activeIndex;
           while(_isItemDisabled(ctrl.items[idxmin]) && idxmin > minActiveIndex) {
@@ -865,7 +865,7 @@ uis.controller('uiSelectCtrl',
         if(ctrl.open && (ctrl.tagging.isActivated || ctrl.activeIndex >= 0)){
           ctrl.select(ctrl.items[ctrl.activeIndex], ctrl.skipFocusser); // Make sure at least one dropdown item is highlighted before adding if not in tagging mode
         } else {
-          ctrl.activate(false, true); //In case its the search input in 'multiple' mode
+          ctrl.activate(false, true); //In case it's the search input in 'multiple' mode
         }
         break;
       case KEY.ESC:
@@ -1280,7 +1280,7 @@ uis.directive('uiSelect',
           }
         });
 
-        // Support for appending the select field to the body when its open
+        // Support for appending the select field to the body when it's open
         var appendToBody = scope.$eval(attrs.appendToBody);
         if (appendToBody !== undefined ? appendToBody : uiSelectConfig.appendToBody) {
           scope.$watch('$select.open', function(isOpen) {

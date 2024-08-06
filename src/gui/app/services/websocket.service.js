@@ -266,7 +266,7 @@
             );
 
             listenerService.registerListener(
-                { type: listenerService.ListenerType.CELEBREATE },
+                { type: listenerService.ListenerType.CELEBRATE },
                 data => {
                     service.broadcast(data);
                 }

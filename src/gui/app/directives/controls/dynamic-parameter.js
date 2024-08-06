@@ -171,7 +171,7 @@
                 if (ctrl.metadata.value === undefined || ctrl.metadata.value === null) {
                     ctrl.metadata.value = ctrl.metadata.default;
 
-                    // If its an enum and no default is supplied, select the first one
+                    // If it is an enum and no default is supplied, select the first one
                     if (ctrl.metadata.type === "enum") {
                         if (ctrl.metadata.default == null) {
                             ctrl.metadata.value = ctrl.metadata.options[0];
