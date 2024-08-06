@@ -15,7 +15,7 @@ export const InputAudioMonitorTypeVariable: ReplaceVariable = {
     definition: {
         handle: "obsInputMonitorType",
         description: "Returns the audio monitor type of the OBS input. Values are `None`, `Monitor Only`, or `Monitor and Output`.",
-        possibleDataOutput: ["object"]
+        possibleDataOutput: ["text"]
     },
     evaluator: async (trigger) => {
         const monitorType = trigger.metadata?.eventData?.monitorType;
