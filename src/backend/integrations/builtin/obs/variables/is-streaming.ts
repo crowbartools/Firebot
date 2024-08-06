@@ -6,7 +6,7 @@ export const IsStreamingVariable: ReplaceVariable = {
         handle: "obsIsStreaming",
         description:
       "Returns 'true' if OBS is currently streaming or 'false' if it is not.",
-        possibleDataOutput: ["text"]
+        possibleDataOutput: ["bool"]
     },
     evaluator: async () => {
         const streamState = await isStreaming();
