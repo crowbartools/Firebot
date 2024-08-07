@@ -1,5 +1,5 @@
 import { EffectType } from "../../../../../types/effects";
-import { OBSSceneItem, transformSceneItem } from "../obs-remote";
+import { OBSSceneItem, OBSSourceTransformKeys, transformSceneItem } from "../obs-remote";
 
 export const TransformSourceScaleEffectType: EffectType<{
     sceneName?: string;
@@ -207,7 +207,7 @@ export const TransformSourceScaleEffectType: EffectType<{
     onTriggerEvent: async ({ effect }) => {
         const parsedStart: Record<string, number> = {};
         const parsedEnd: Record<string, number> = {};
-        const transformKeys = [];
+        const transformKeys: Array<OBSSourceTransformKeys> = [];
         if (effect.isTransformingPosition) {
             transformKeys.push("positionX", "positionY");
         }

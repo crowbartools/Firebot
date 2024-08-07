@@ -648,6 +648,13 @@ export type OBSSourceScreenshotSettings = {
     imageCompressionQuality?: number;
 }
 
+export type OBSSourceTransformKeys =
+    | "positionX"
+    | "positionY"
+    | "scaleX"
+    | "scaleY"
+    | "rotation";
+
 export async function getAllSources(): Promise<Array<OBSSource> | null> {
     if (!connected) {
         return null;
@@ -792,6 +799,18 @@ export async function getTransformableSceneItems(sceneName: string): Promise<Arr
     return sceneItems.filter(item => sources.some(source => source.name === item.name && !source.typeId.startsWith("wasapi")));
 }
 
+const transformWebsocketRequest = (sceneName: string, sceneItemId: number, sceneItemTransform: Record<OBSSourceTransformKeys, number>) => ({
+    requestType: "SetSceneItemTransform",
+    requestData: {
+        sceneName,
+        sceneItemId,
+        sceneItemTransform
+    }
+});
+
+// For future Oshi or someone who thinks up a clean solution to this, this method should ultimately allow
+// for any two OBS websocket payloads of the same type to be passed in, and will create a lerped response between
+// them both, not be opinionated to just work with Transform.
 function getLerpedCallsArray(
     sceneName: string,
     sceneItemId: number,
@@ -802,29 +821,21 @@ function getLerpedCallsArray(
     easeOut = false
 ) {
     if (!duration) {
-        return [{
-            requestType: "SetSceneItemTransform",
-            requestData: {
+        return [
+            transformWebsocketRequest(
                 sceneName,
                 sceneItemId,
-                sceneItemTransform: transformEnd && Object.keys(transformEnd).length
+                transformEnd && Object.keys(transformEnd).length
                     ? transformEnd
                     : transformStart
-            }
-        }];
+            )
+        ];
     }
 
     const calls = [];
     const interval = 1 / 60;
 
-    calls.push({
-        requestType: "SetSceneItemTransform",
-        requestData: {
-            sceneName,
-            sceneItemId,
-            sceneItemTransform: transformStart
-        }
-    });
+    calls.push(transformWebsocketRequest(sceneName, sceneItemId, transformStart));
     if (!transformEnd || !Object.keys(transformEnd).length) {
         return calls;
     }
@@ -832,7 +843,7 @@ function getLerpedCallsArray(
     let time = 0;
     do {
         const delay = Math.min(interval * 1000, duration - time);
-        const frame = {};
+        const frame: Record<string, number> = {};
 
         calls.push({
             requestType: "Sleep",
@@ -855,14 +866,7 @@ function getLerpedCallsArray(
             frame[key] = transformStart[key] + (transformEnd[key] - transformStart[key]) * ratio;
         });
 
-        calls.push({
-            requestType: "SetSceneItemTransform",
-            requestData: {
-                sceneName,
-                sceneItemId,
-                sceneItemTransform: frame
-            }
-        });
+        calls.push(transformWebsocketRequest(sceneName, sceneItemId, frame));
     } while (time < duration);
     return calls;
 }
