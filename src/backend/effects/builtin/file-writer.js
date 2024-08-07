@@ -126,7 +126,7 @@ const fileWriter = {
    * When the effect is triggered by something
    * Used to validate fields in the option template.
    */
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.filepath == null || effect.filepath === "") {
             errors.push("Please select a text file to write to.");
@@ -148,7 +148,7 @@ const fileWriter = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         await fileWriterProcessor.run(event.effect, event.trigger);
         return true;
     }
