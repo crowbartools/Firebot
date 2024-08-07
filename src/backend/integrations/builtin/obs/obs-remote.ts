@@ -62,22 +62,39 @@ const TEXT_SOURCE_IDS = ["text_gdiplus_v2", "text_gdiplus_v3", "text_ft2_source_
 
 async function refreshGroupsAndScenes() {
     const sceneList = await obs.call("GetSceneList");
-    previewSceneName = sceneList.currentPreviewSceneName;
-    programSceneName = sceneList.currentProgramSceneName ?? "";
+    previewSceneName = sceneList?.currentPreviewSceneName || null;
+    programSceneName = sceneList?.currentProgramSceneName || "";
 
-    const groupNames: string[] = (await obs.call("GetGroupList"))?.groups ?? [];
-    groupInfos = groupNames.map(gn => ({
-        groupName: gn,
+    groupInfos = ((await obs.call("GetGroupList"))?.groups || []).map(groupName => ({
+        groupName,
         scenes: []
     }));
 
-    const sceneNames: string[] = sceneList.scenes.map(s => s.sceneName as string) ?? [];
-    
+    const sceneNames: string[] = sceneList?.scenes?.map(s => s.sceneName as string) || [];
+    for (const sceneName of sceneNames) {
+        const groupsInScene = (await obs.call("GetSceneItemList", { sceneName }))?.sceneItems
+            .map(si => ({
+                name: si.sourceName as string,
+                id: si.sceneItemId as number
+            }))
+            .filter(si => groupInfos.some(gi => gi.groupName === si.name));
+        groupsInScene.forEach((gis) => {
+            const groupIdx = groupInfos.findIndex(gi => gi.groupName === gis.name);
+            groupInfos[groupIdx].scenes.push({
+                sceneName,
+                itemId: gis.id
+            });
+        });
+    }
 }
 
 async function setupRemoteListeners() {
+    obs.on("CurrentPreviewSceneChanged", ({ sceneName }) => {
+        previewSceneName = sceneName || null;
+    });
+
     obs.on("CurrentProgramSceneChanged", ({ sceneName }) => {
-        programSceneName = sceneName ?? "";
+        programSceneName = sceneName || "";
 
         eventManager?.triggerEvent(
             OBS_EVENT_SOURCE_ID,
@@ -135,43 +152,26 @@ async function setupRemoteListeners() {
         }
     });
 
-    obs.on("SceneItemEnableStateChanged", async ({ sceneName, sceneItemId, sceneItemEnabled }) => {
-        type EventData = {
-            groupItemId?: number;
-            groupName?: string;
-            sceneItemEnabled: boolean;
-            sceneItemName: string;
-            sceneName: string;
-        }
-        const eventData: EventData = {
-            sceneItemEnabled,
-            sceneItemName: "",
-            sceneName: sceneName
-        };
-
-        if (groupInfos.some(gn => gn.groupName === sceneName)) {
-            const actualSceneName = previewSceneName ?? programSceneName ?? "";
-            eventData.groupItemId = sceneItemId;
-            eventData.groupName = sceneName;
-            eventData.sceneName = actualSceneName;
-
-            const items = await obs.call("GetSceneItemList", { sceneName: actualSceneName });
-
-        }
+    obs.on("SceneItemEnableStateChanged", ({ sceneName, sceneItemId, sceneItemEnabled }) => {
+        // An item's enabled state was changed. sceneName and sceneItemId will be either the owning group /or/ the owning scene.
+        const actualSceneName = previewSceneName ?? programSceneName;
+        const groupInfo = groupInfos.find(gi => gi.groupName === sceneName);
+        const sceneInfo = groupInfo?.scenes.find(si => si.sceneName === actualSceneName);
 
         eventManager?.triggerEvent(
             OBS_EVENT_SOURCE_ID,
             OBS_SCENE_ITEM_ENABLE_STATE_CHANGED_EVENT_ID,
-            eventData
+            {
+                // group-unique numeric ID of the item, if grouped
+                ...(groupInfo && { groupItemId: sceneItemId }),
+                // name of containing group, if grouped
+                ...(groupInfo && { groupName: sceneName }),
+                sceneItemEnabled,
+                // scene-unique numeric ID of the item, /or/ the scene-unique id of the containing group
+                sceneItemId: (groupInfo ? (sceneInfo?.itemId ?? -1) : sceneItemId),
+                sceneName: (groupInfo ? actualSceneName : sceneName)
+            }
         );
-        //    {
-        //        sceneName: previewSceneName ?? programSceneName,
-        //        sceneItemId,
-        //        sceneItemEnabled,
-        //        ...(sceneName !== (previewSceneName ?? programSceneName) && { groupItemId: 0 }),
-        //        ...(sceneName !== (previewSceneName ?? programSceneName) && { groupName: sceneName })
-        //    }
-        //);
     });
 
     obs.on("SceneTransitionStarted", ({ transitionName }) => {
@@ -403,57 +403,98 @@ async function setupRemoteListeners() {
 
     obs.on("SceneCreated", ({ sceneName, isGroup }) => {
         if (isGroup) {
+            // A group was created
             groupInfos.push({ groupName: sceneName, scenes: [] });
         }
     });
 
     obs.on("SceneRemoved", ({ sceneName, isGroup }) => {
-        const gidx = isGroup ? groupInfos.findIndex(gi => gi.groupName === sceneName) : -1;
-        if (gidx >= 0) {
-            groupInfos.splice(gidx);
+        if (isGroup) {
+            // A group was deleted from the last scene that it was contained within
+            groupInfos = groupInfos.filter(gi => gi.groupName !== sceneName);
+        } else {
+            // A scene was deleted.
+            // TODO: verify that the above condition will get invoked when this scene contains the last reference to a group.
+            groupInfos.forEach((gi, gidx) => {
+                groupInfos[gidx].scenes = gi.scenes.filter(si => si.sceneName !== sceneName);
+            });
         }
     });
 
     obs.on("SceneNameChanged", ({ oldSceneName, sceneName }) => {
         const gidx = groupInfos.findIndex(gi => gi.groupName === oldSceneName);
         if (gidx >= 0) {
+            // This is a group being renamed
             groupInfos[gidx].groupName = sceneName;
+        } else if (groupInfos.some(gi => gi.scenes.some(si => si.sceneName === oldSceneName))) {
+            // This is a scene being renamed, and it contains at least one group
+            for (let n = 0; n < groupInfos.length; ++n) {
+                // Update every group info that is a part of this scene
+                const sidx = groupInfos[n].scenes.findIndex(si => si.sceneName === oldSceneName);
+                if (sidx >= 0) {
+                    groupInfos[n].scenes[sidx].sceneName = sceneName;
+                }
+            }
         }
     });
-
 
     obs.on("SceneItemRemoved", ({ sceneName, sourceName }) => {
         const gidx = groupInfos.findIndex(gi => gi.groupName === sourceName);
         if (gidx >= 0) {
+            // This is a group being removed from a scene.
             const sidx = groupInfos[gidx].scenes.findIndex(si => si.sceneName === sceneName);
             if (sidx >= 0) {
                 groupInfos[gidx].scenes.splice(sidx, 1);
             }
             // Remove the group entirely if it's no longer in any scenes
             if (groupInfos[gidx].scenes.length === 0) {
-                groupInfos.splice(gidx);
+                groupInfos.splice(gidx, 1);
             }
         }
     });
 
     obs.on("SceneItemListReindexed", ({ sceneName, sceneItems }) => {
-        // Figure out which groups this scene contains, then update those in the cache
+        // Abort early if this is a group being reindexed.
+        if (groupInfos.some(gi => gi.groupName === sceneName)) {
+            return;
+        }
+
+        // Figure out which groups this scene contains
         const groupsInScene = sceneItems
+            // limit to known groups
+            .filter(si => groupInfos.some(gi => gi.groupName === si.sceneItemName as string))
+            // grab the item id and the group name
             .map(si => ({ id: si.sceneItemId as number, name: si.sceneItemName as string }))
-            .filter(si => Number.isFinite(si.id) && si.id >= 0 && si.name !== null && si.name !== "" && groupInfos.some(gi => gi.groupName === si.name));
+            // and just ensure that the item id and group name are both legit
+            .filter(si => Number.isFinite(si.id) && si.id >= 0 && si.name !== null && si.name !== "");
+
+        // Iterate over every group in the scene
         groupsInScene.forEach((gis) => {
+            // This should never be -1, per the filter above.
             const gidx = groupInfos.findIndex(gi => gi.groupName === gis.name);
-            if (gidx < 0) {
-                return;
-            }
             const sidx = groupInfos[gidx].scenes.findIndex(gsi => gsi.sceneName === sceneName);
             if (sidx < 0) {
-                return;
+                // Mark the group as being contained in the scene. Not sure why we weren't aware of it before. This is likely a bug or oversight.
+                groupInfos[gidx].scenes.push({
+                    sceneName: sceneName,
+                    itemId: gis.id
+                });
+            } else {
+                // Refresh the group's id in the scene.
+                groupInfos[gidx].scenes[sidx].itemId = gis.id;
             }
-
-            groupInfos[gidx].scenes[sidx].itemId = gis.id;
         });
     });
+
+    obs.on("StudioModeStateChanged", async ({ studioModeEnabled }) => {
+        if (studioModeEnabled) {
+            previewSceneName = (await obs.call("GetCurrentPreviewScene"))?.currentPreviewSceneName || null;
+        } else {
+            previewSceneName = null;
+        }
+    });
+
+    await refreshGroupsAndScenes();
 }
 
 let reconnectTimeout: NodeJS.Timeout | null = null;
