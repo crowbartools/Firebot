@@ -5,6 +5,7 @@ const effectManager = require("./effectManager");
 exports.loadEffects = () => {
     [
         'active-user-lists',
+        'activity-feed-alert',
         'add-quote',
         'api',
         'block-unblock',

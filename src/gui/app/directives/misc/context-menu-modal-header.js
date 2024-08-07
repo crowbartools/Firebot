@@ -52,10 +52,11 @@
                         if ($ctrl.allSortTags.length > 0) {
                             menuItems.push({
                                 text: "Tags...",
+                                childrenMenuClass: "sort-tag-menu",
                                 children: $ctrl.allSortTags.map(st => {
                                     const isSelected = $ctrl.sortTags && $ctrl.sortTags.includes(st.id);
                                     return {
-                                        html: `<a href><i class="${isSelected ? 'fas fa-check' : ''}" style="margin-right: ${isSelected ? '10' : '27'}px;"></i> ${st.name}</a>`,
+                                        html: `<a href class="sort-tag-item"><i class="${isSelected ? 'fas fa-check' : ''}" style="margin-right: ${isSelected ? '10' : '27'}px;"></i> ${st.name}</a>`,
                                         click: () => {
                                             $ctrl.toggleSortTag(st.id);
                                         }
