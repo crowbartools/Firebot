@@ -75,7 +75,7 @@ export const TransformSourceScaleEffectType: EffectType<{
         <eos-container ng-if="effect.sceneItem != null" header="Transform" pad-top="true">
             <firebot-checkbox 
                 label="Position" 
-                tooltip=Transform the position of the OBS source" 
+                tooltip="Transform the position of the OBS source" 
                 model="effect.isTransformingPosition" />
             <div ng-if="effect.isTransformingPosition" style="margin-top: 10px">
                 <div style="display: flex; gap: 20px; margin-bottom: 20px;">
@@ -103,7 +103,7 @@ export const TransformSourceScaleEffectType: EffectType<{
             </div>
             <firebot-checkbox 
                 label="Scale" 
-                tooltip=Transform the scale of the OBS source" 
+                tooltip="Transform the scale of the OBS source" 
                 model="effect.isTransformingScale" />
             <div ng-if="effect.isTransformingScale" style="margin-bottom: 20px">
                 <div style="display: flex; gap: 20px; margin-bottom: 20px;">
@@ -133,7 +133,7 @@ export const TransformSourceScaleEffectType: EffectType<{
             </div>
             <firebot-checkbox 
                 label="Rotation" 
-                tooltip=Transform the rotation of the OBS source" 
+                tooltip="Transform the rotation of the OBS source" 
                 model="effect.isTransformingRotation" />
             <div ng-if="effect.isTransformingRotation" style="margin-bottom: 20px">
                 <div style="display: flex; gap: 20px; margin-bottom: 20px;">

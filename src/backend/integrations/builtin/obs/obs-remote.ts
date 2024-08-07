@@ -792,9 +792,26 @@ export async function getTransformableSceneItems(sceneName: string): Promise<Arr
     return sceneItems.filter(item => sources.some(source => source.name === item.name && !source.typeId.startsWith("wasapi")));
 }
 
-function getLerpedCallsArray(sceneName: string, sceneItemId: number, transformStart: Record<string, number>, transformEnd: Record<string, number>, duration: number, easeIn = false, easeOut = false) {
-    if (!transformEnd || !Object.keys(transformEnd).length) {
-        return [];
+function getLerpedCallsArray(
+    sceneName: string,
+    sceneItemId: number,
+    transformStart: Record<string, number>,
+    transformEnd: Record<string, number>,
+    duration: number,
+    easeIn = false,
+    easeOut = false
+) {
+    if (!duration) {
+        return [{
+            requestType: "SetSceneItemTransform",
+            requestData: {
+                sceneName,
+                sceneItemId,
+                sceneItemTransform: transformEnd && Object.keys(transformEnd).length
+                    ? transformEnd
+                    : transformStart
+            }
+        }];
     }
 
     const calls = [];
@@ -808,11 +825,12 @@ function getLerpedCallsArray(sceneName: string, sceneItemId: number, transformSt
             sceneItemTransform: transformStart
         }
     });
+    if (!transformEnd || !Object.keys(transformEnd).length) {
+        return calls;
+    }
 
     let time = 0;
-    let first = true; // Ensure end value is used even if duration is 0
-    while (first || time < duration) {
-        first = false;
+    do {
         const delay = Math.min(interval * 1000, duration - time);
         const frame = {};
 
@@ -822,8 +840,10 @@ function getLerpedCallsArray(sceneName: string, sceneItemId: number, transformSt
         });
 
         time += delay;
-
         Object.keys(transformEnd).forEach((key) => {
+            if (transformStart[key] === transformEnd[key]) {
+                return;
+            }
             let ratio = time / duration;
             if (easeIn && easeOut) {
                 ratio = ratio < 0.5 ? 2 * ratio * ratio : -1 + (4 - 2 * ratio) * ratio;
@@ -843,7 +863,7 @@ function getLerpedCallsArray(sceneName: string, sceneItemId: number, transformSt
                 sceneItemTransform: frame
             }
         });
-    }
+    } while (time < duration);
     return calls;
 }
 
