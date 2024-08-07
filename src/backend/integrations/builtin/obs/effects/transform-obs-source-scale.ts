@@ -71,10 +71,11 @@ export const TransformSourceScaleEffectType: EffectType<{
             </div>
         </eos-container>
         <eos-container ng-if="effect.sceneItem != null" header="Transform" pad-top="true">
-            <label class="control-fb control--checkbox">Position </tooltip>
-                <input type="checkbox" ng-model="effect.isTransformingPosition" >
-                <div class="control__indicator"></div>
-            </label>
+            <firebot-checkbox 
+                label="Position" 
+                tooltip=Transform the position of the OBS source" 
+                model="effect.isTransformingPosition"
+            />
             <div ng-if="effect.isTransformingPosition" style="margin-top: 10px">
                 <div style="display: flex; gap: 20px; margin-bottom: 20px;">
                     <firebot-input
@@ -99,10 +100,11 @@ export const TransformSourceScaleEffectType: EffectType<{
                         style="flex-basis: 50%" />
                 </div>
             </div>
-            <label class="control-fb control--checkbox">Scale </tooltip>
-                <input type="checkbox" ng-model="effect.isTransformingScale" >
-                <div class="control__indicator"></div>
-            </label>
+            <firebot-checkbox 
+                label="Scale" 
+                tooltip=Transform the scale of the OBS source" 
+                model="effect.isTransformingScale"
+            />
             <div ng-if="effect.isTransformingScale" style="margin-bottom: 20px">
                 <div style="display: flex; gap: 20px; margin-bottom: 20px;">
                     <firebot-input
@@ -129,10 +131,11 @@ export const TransformSourceScaleEffectType: EffectType<{
                         style="flex-basis: 50%" />
                 </div>
             </div>
-            <label class="control-fb control--checkbox">Rotation </tooltip>
-                <input type="checkbox" ng-model="effect.isTransformingRotation" >
-                <div class="control__indicator"></div>
-            </label>
+            <firebot-checkbox 
+                label="Rotation" 
+                tooltip=Transform the rotation of the OBS source" 
+                model="effect.isTransformingScale"
+            />
             <div ng-if="effect.isTransformingRotation" style="margin-bottom: 20px">
                 <div style="display: flex; gap: 20px; margin-bottom: 20px;">
                     <firebot-input
@@ -149,7 +152,7 @@ export const TransformSourceScaleEffectType: EffectType<{
             </div>
         </eos-container>
     `,
-    optionsController: ($scope: any, backendCommunicator: any, $q: any) => {
+    optionsController: ($scope: any, backendCommunicator: any) => {
         $scope.isObsConfigured = false;
 
         $scope.scenes = [];
@@ -167,7 +170,7 @@ export const TransformSourceScaleEffectType: EffectType<{
         $scope.getScenes = () => {
             $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
 
-            $q.when(backendCommunicator.fireEventAsync("obs-get-scene-list")).then(
+            backendCommunicator.fireEventAsync("obs-get-scene-list").then(
                 (scenes: string[] | undefined) => {
                     $scope.scenes = scenes?.map(scene => ({ name: scene, custom: false })) ?? [];
                     $scope.scenes.push($scope.customScene);
@@ -183,11 +186,11 @@ export const TransformSourceScaleEffectType: EffectType<{
         $scope.getSources = (sceneName: string) => {
             $scope.isObsConfigured = backendCommunicator.fireEventSync("obs-is-configured");
 
-            $q.when(
-                backendCommunicator.fireEventAsync("obs-get-transformable-scene-items", [sceneName])
-            ).then((sceneItems: OBSSceneItem[]) => {
-                $scope.sceneItems = sceneItems ?? [];
-            });
+            backendCommunicator.fireEventAsync("obs-get-transformable-scene-items", [sceneName]).then(
+                (sceneItems: OBSSceneItem[]) => {
+                    $scope.sceneItems = sceneItems ?? [];
+                }
+            );
         };
     },
     optionsValidator: (effect) => {
