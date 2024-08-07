@@ -68,7 +68,7 @@ const fileWriter = {
 
         <eos-container header="Delete Line(s) Options" pad-top="true" ng-if="effect.writeMode === 'delete'">
             <div class="controls-fb" style="padding-bottom: 5px;">
-                <label class="control-fb control--radio">Delete by line numbers(s) <tooltip text="'Deletes line(s) at the specified number(s)'"></tooltip>
+                <label class="control-fb control--radio">Delete by line number(s) <tooltip text="'Deletes line(s) at the specified number(s)'"></tooltip>
                     <input type="radio" ng-model="effect.deleteLineMode" value="lines"/>
                     <div class="control__indicator"></div>
                 </label>
@@ -126,7 +126,7 @@ const fileWriter = {
    * When the effect is triggered by something
    * Used to validate fields in the option template.
    */
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.filepath == null || effect.filepath === "") {
             errors.push("Please select a text file to write to.");
@@ -148,7 +148,7 @@ const fileWriter = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         await fileWriterProcessor.run(event.effect, event.trigger);
         return true;
     }
