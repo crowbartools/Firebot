@@ -60,22 +60,23 @@ export const TransformSourceScaleEffectType: EffectType<{
                 model="effect.duration"
                 style="margin-bottom: 20px;" />
             <div style="display: flex; gap: 20px;">
-                <label class="control-fb control--checkbox" style="flex-basis: 50%">Ease-In </tooltip>
-                    <input type="checkbox" ng-model="effect.easeIn" >
-                    <div class="control__indicator"></div>
-                </label>
-                <label class="control-fb control--checkbox" style="flex-basis: 50%">Ease-Out </tooltip>
-                    <input type="checkbox" ng-model="effect.easeOut" >
-                    <div class="control__indicator"></div>
-                </label>
+                <firebot-checkbox 
+                    label="Ease-In" 
+                    tooltip="Smooth the start of the animation" 
+                    model="effect.easeIn"
+                    style="flex-basis: 50%" />
+                <firebot-checkbox 
+                    label="Ease-Out" 
+                    tooltip="Smooth the end of the animation" 
+                    model="effect.easeOut"
+                    style="flex-basis: 50%" />
             </div>
         </eos-container>
         <eos-container ng-if="effect.sceneItem != null" header="Transform" pad-top="true">
             <firebot-checkbox 
                 label="Position" 
                 tooltip=Transform the position of the OBS source" 
-                model="effect.isTransformingPosition"
-            />
+                model="effect.isTransformingPosition" />
             <div ng-if="effect.isTransformingPosition" style="margin-top: 10px">
                 <div style="display: flex; gap: 20px; margin-bottom: 20px;">
                     <firebot-input
@@ -103,8 +104,7 @@ export const TransformSourceScaleEffectType: EffectType<{
             <firebot-checkbox 
                 label="Scale" 
                 tooltip=Transform the scale of the OBS source" 
-                model="effect.isTransformingScale"
-            />
+                model="effect.isTransformingScale" />
             <div ng-if="effect.isTransformingScale" style="margin-bottom: 20px">
                 <div style="display: flex; gap: 20px; margin-bottom: 20px;">
                     <firebot-input
@@ -134,8 +134,7 @@ export const TransformSourceScaleEffectType: EffectType<{
             <firebot-checkbox 
                 label="Rotation" 
                 tooltip=Transform the rotation of the OBS source" 
-                model="effect.isTransformingScale"
-            />
+                model="effect.isTransformingRotation" />
             <div ng-if="effect.isTransformingRotation" style="margin-bottom: 20px">
                 <div style="display: flex; gap: 20px; margin-bottom: 20px;">
                     <firebot-input
