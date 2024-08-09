@@ -428,7 +428,6 @@ async function setupRemoteListeners() {
             groupInfos = groupInfos.filter(gi => gi.groupName !== sceneName);
         } else {
             // A scene was deleted.
-            // TODO: verify that the above condition actually gets invoked when a scene containing the last reference to a group gets deleted.
             groupInfos.forEach((gi, gidx) => {
                 groupInfos[gidx].scenes = gi.scenes.filter(si => si.sceneName !== sceneName);
             });
