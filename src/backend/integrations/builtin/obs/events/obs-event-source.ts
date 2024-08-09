@@ -84,7 +84,13 @@ export const OBSEventSource: EventSource = {
             id: OBS_SCENE_ITEM_ENABLE_STATE_CHANGED_EVENT_ID,
             name: "OBS Scene Item Enable State Changed",
             description: "When an item in a scene is enabled/disabled",
-            manualMetadata: {}
+            manualMetadata: {
+                groupItemId: -1,
+                groupName: "Test Group Name",
+                sceneItemEnabled: true,
+                sceneItemId: -1,
+                sceneName: "Test Scene Name"
+            }
         },
         {
             id: OBS_SCENE_TRANSITION_STARTED_EVENT_ID,

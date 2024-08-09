@@ -6,7 +6,7 @@ export const IsRecordingVariable: ReplaceVariable = {
         handle: "obsIsRecording",
         description:
       "Returns 'true' if OBS is currently recording or 'false' if it is not.",
-        possibleDataOutput: ["text"]
+        possibleDataOutput: ["bool"]
     },
     evaluator: async () => {
         const recordState = await isRecording();

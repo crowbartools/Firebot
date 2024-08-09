@@ -157,7 +157,7 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
         }
 
         const screenshotSettings: OBSSourceScreenshotSettings = {
-            sourceName: effect.useActiveScene ? await getCurrentSceneName() : effect.source,
+            sourceName: effect.useActiveScene ? getCurrentSceneName() : effect.source,
             imageFormat: isLegacyEffect && effect.format ? effect.format : "png",
             imageHeight: effect.height,
             imageWidth: effect.width,
