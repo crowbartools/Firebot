@@ -6,6 +6,7 @@ const triggers = {};
 triggers[TriggerType.EVENT] = [
     `${OBS_EVENT_SOURCE_ID}:${OBS_SCENE_ITEM_ENABLE_STATE_CHANGED_EVENT_ID}`
 ];
+triggers[TriggerType.MANUAL] = true;
 
 export const GroupItemIdVariable: ReplaceVariable = {
     definition: {
