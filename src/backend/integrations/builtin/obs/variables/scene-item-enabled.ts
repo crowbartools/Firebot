@@ -12,7 +12,7 @@ export const SceneItemEnabledVariable: ReplaceVariable = {
         handle: "obsSceneItemEnabled",
         description:
       "Returns `true` if the OBS scene item that triggered the event is enabled, or `false` otherwise.",
-        possibleDataOutput: ["text"],
+        possibleDataOutput: ["bool"],
         triggers: triggers
     },
     evaluator: async (trigger) => {

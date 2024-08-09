@@ -13,7 +13,7 @@ export const SceneItemNameVariable: ReplaceVariable = {
         handle: "obsSceneItemName",
         description:
       "The name of the OBS scene item that triggered the event.",
-        possibleDataOutput: ["number"],
+        possibleDataOutput: ["text"],
         triggers: triggers
     },
     evaluator: async (trigger) => {
