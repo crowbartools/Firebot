@@ -74,6 +74,8 @@ function buildModules(scriptManifest) {
         customRequest.prototype.init.call(this, options);
     };
 
+    const notificationManager = require("../../../notifications/notification-manager").default;
+
     return {
         request: customRequest,
         spawn: require('child_process').spawn,
@@ -103,7 +105,9 @@ function buildModules(scriptManifest) {
         commandManager: require("../../../chat/commands/command-manager"),
         eventManager: require("../../../events/EventManager"),
         eventFilterManager: require("../../../events/filters/filter-manager"),
+        eventFilterFactory: require("../../../events/filters/filter-factory"),
         replaceVariableManager: require("../../../variables/replace-variable-manager"),
+        replaceVariableFactory: require("../../../variables/variable-factory"),
         integrationManager: require("../../../integrations/integration-manager"),
         customVariableManager: require("../../../common/custom-variable-manager"),
         customRolesManager: require("../../../roles/custom-roles-manager"),
@@ -130,7 +134,39 @@ function buildModules(scriptManifest) {
         frontendCommunicator: require("../../frontend-communicator"),
         counterManager: require("../../../counters/counter-manager"),
         utils: require("../../../utility"),
-        resourceTokenManager: require("../../../resourceTokenManager")
+        resourceTokenManager: require("../../../resourceTokenManager"),
+
+        notificationManager: {
+            addNotification: (notificationBase, permanentlySave = true) => {
+                return notificationManager.addNotification({
+                    ...notificationBase,
+                    source: "script",
+                    scriptName: scriptManifest.name ?? "unknown"
+                }, permanentlySave);
+            },
+            getNotification: (id) => {
+                const notification = notificationManager.getNotification(id);
+                if (notification && notification.source === "script" && notification.scriptName === (scriptManifest.name ?? "unknown")) {
+                    return notification;
+                }
+                return null;
+            },
+            getNotifications: () => {
+                return notificationManager.getNotifications()
+                    .filter(n => n.source === "script" && n.scriptName === (scriptManifest.name ?? "unknown"));
+            },
+            deleteNotification: (id) => {
+                const notification = notificationManager.getNotification(id);
+                if (notification && notification.source === "script" && notification.scriptName === (scriptManifest.name ?? "unknown")) {
+                    notificationManager.deleteNotification(id);
+                }
+            },
+            clearAllNotifications: () => {
+                notificationManager.getNotifications()
+                    .filter(n => n.source === "script" && n.scriptName === (scriptManifest.name ?? "unknown"))
+                    .forEach(n => notificationManager.deleteNotification(n.id));
+            }
+        }
     };
 }
 

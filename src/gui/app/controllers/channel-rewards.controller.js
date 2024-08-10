@@ -10,6 +10,8 @@
         ) {
             $scope.channelRewardsService = channelRewardsService;
 
+            $scope.activeChannelRewardTab = 0;
+
             $scope.canUseChannelRewards = () => accountAccess.accounts["streamer"].loggedIn
                 && (accountAccess.accounts["streamer"].broadcasterType === "affiliate"
                     || accountAccess.accounts["streamer"].broadcasterType === "partner");
@@ -21,7 +23,7 @@
                 channelRewardsService.saveAllRewards(items);
             };
 
-            $scope.headers = [
+            $scope.rewardHeaders = [
                 {
                     headerStyles: {
                         'width': '50px'
@@ -39,12 +41,16 @@
                     headerStyles: {
                         'min-width': '125px'
                     },
+                    dataField: "twitchData.title",
+                    sortable: true,
                     cellTemplate: `{{data.twitchData.title}} <i ng-hide="data.manageable" class="fas fa-lock muted" style="font-size: 12px;" uib-tooltip="This reward was created either outside of Firebot or in an older version. Its settings cannot be changed in Firebot." />`,
                     cellController: () => {}
                 },
                 {
                     name: "COST",
                     icon: "fa-coin",
+                    dataField: "twitchData.cost",
+                    sortable: true,
                     cellTemplate: `{{data.twitchData.cost}}`,
                     cellController: () => {}
                 },
@@ -98,7 +104,7 @@
                                     confirmLabel: "Delete",
                                     confirmBtnType: "btn-danger"
                                 })
-                                .then(confirmed => {
+                                .then((confirmed) => {
                                     if (confirmed) {
                                         channelRewardsService.deleteChannelReward(item.id);
                                     }

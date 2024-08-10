@@ -1,17 +1,15 @@
 "use strict";
 
-(function() {
-
-    angular
-        .module("firebotApp")
-        .component("generalSettings", {
-            template: `
+(function () {
+    angular.module("firebotApp").component("generalSettings", {
+        template: `
                 <div>
                     <firebot-setting
                         name="Theme"
                         description="Choose your color theme for Firebot!"
                     >
                         <firebot-select
+                            aria-label="App Theme"
                             options="['Light', 'Midnight', 'Obsidian']"
                             ng-init="selectedTheme = settings.getTheme()"
                             selected="selectedTheme"
@@ -28,6 +26,8 @@
                             toggle-model="settings.getMinimizeToTray()"
                             on-toggle="settings.setMinimizeToTray(!settings.getMinimizeToTray())"
                             font-size="40"
+                            aria-label="Minimize to Tray, When minimized, Firebot will minimize to tray instead of task bar"
+                            accessibility-label="(settings.getMinimizeToTray() ? 'Enabled' : 'Disabled') + ' When minimized, Firebot will minimize to tray instead of task bar'"
                         />
                     </firebot-setting>
 
@@ -39,6 +39,8 @@
                             toggle-model="settings.soundsEnabled() === 'On'"
                             on-toggle="settings.setSoundsEnabled(settings.soundsEnabled() === 'On' ? 'Off' : 'On')"
                             font-size="40"
+                            aria-label="Minimize to Tray, When minimized, Firebot will minimize to tray instead of task bar"
+                            accessibility-label="(settings.soundsEnabled() ? 'Enabled' : 'Disabled') + ' Get audible alerts when Firebot connects or disconnects.'"
                         />
                     </firebot-setting>
 
@@ -54,6 +56,7 @@
                                 data-toggle="dropdown"
                                 aria-haspopup="true"
                                 aria-expanded="true"
+                                aria-label="Choose your audio output device {{settings.getAudioOutputDevice().label}}"
                             >
                                 <span class="dropdown-text">{{settings.getAudioOutputDevice().label}}</span>
                                 <span class="caret"></span>
@@ -85,17 +88,33 @@
                             toggle-model="settings.notifyOnBeta()"
                             on-toggle="settings.setNotifyOnBeta(!settings.notifyOnBeta())"
                             font-size="40"
+                            aria-label="Firebot automatically updates to new stable versions. It does not automatically update to betas or major new
+                        releases however. Enable if you want to be notified of new beta releases."
+                            accessibility-label="(settings.notifyOnBeta() ? 'Enabled' : 'Disabled') + ' Firebot automatically updates to new stable versions. It does not automatically update to betas or major new
+                        releases however. Enable if you want to be notified of new beta releases.'"
                         />
                     </firebot-setting>
 
                     <firebot-setting
                         name="Feature My Stream on Firebot.app"
-                        description="Enable this setting to have your stream displayed on Firebot's website when you're live"
+                        description=""
                     >
+
+                        <setting-description-addon>
+                            <div style="margin-top: 10px;">
+                                Enable this setting to have your stream displayed on <a
+                                    class="clickable"
+                                    ng-click="openLink('https://firebot.app/watch')"
+                                >Firebot's website</a> when you're live.
+                            </div>
+                        </setting-description-addon>
+
                         <toggle-button
                             toggle-model="settings.getWebOnlineCheckin()"
                             on-toggle="settings.setWebOnlineCheckin(!settings.getWebOnlineCheckin())"
                             font-size="40"
+                            aria-label="Enable this setting to have your stream displayed on Firebot's website when you're live"
+                            accessibility-label="(settings.getWebOnlineCheckin() ? 'Enabled' : 'Disabled') + ' Enable this setting to have your stream displayed on Firebot\\'s website when you\\'re live'"
                         />
                     </firebot-setting>
 
@@ -110,7 +129,7 @@
                                     type="checkbox"
                                     ng-click="settings.setShowUptimeStat(!settings.getShowUptimeStat())"
                                     ng-checked="settings.getShowUptimeStat()"
-                                    aria-label="..."
+                                    aria-label="Uptime"
                                 />
                                 <div class="control__indicator"></div>
                             </label>
@@ -120,7 +139,7 @@
                                     type="checkbox"
                                     ng-click="settings.setShowViewerCountStat(!settings.getShowViewerCountStat())"
                                     ng-checked="settings.getShowViewerCountStat()"
-                                    aria-label="..."
+                                    aria-label="Viewer count"
                                 />
                                 <div class="control__indicator"></div>
                             </label>
@@ -130,7 +149,17 @@
                                     type="checkbox"
                                     ng-click="settings.setShowHypeTrainIndicator(!settings.getShowHypeTrainIndicator())"
                                     ng-checked="settings.getShowHypeTrainIndicator()"
-                                    aria-label="..."
+                                    aria-label="Hype Trains"
+                                />
+                                <div class="control__indicator"></div>
+                            </label>
+                            <label class="control-fb control--checkbox"
+                                >Ad Breaks
+                                <input
+                                    type="checkbox"
+                                    ng-click="settings.setShowAdBreakIndicator(!settings.getShowAdBreakIndicator())"
+                                    ng-checked="settings.getShowAdBreakIndicator()"
+                                    aria-label="Ad Breaks"
                                 />
                                 <div class="control__indicator"></div>
                             </label>
@@ -147,6 +176,7 @@
                             selected="selectedTimeout"
                             on-update="setActiveChatUserTimeout(option)"
                             right-justify="true"
+                            aria-label="Choose your Inactive Viewer Time"
                         />
                         <span> minutes</span>
                     </firebot-setting>
@@ -159,45 +189,41 @@
                             toggle-model="settings.getOpenStreamPreviewOnLaunch()"
                             on-toggle="settings.setOpenStreamPreviewOnLaunch(!settings.getOpenStreamPreviewOnLaunch())"
                             font-size="40"
-                            accessibility-label="(settings.getOpenStreamPreviewOnLaunch() ? 'Disable' : 'Enable') + ' Stream Preview on Launch'"
+                            accessibility-label="(settings.getOpenStreamPreviewOnLaunch() ? 'Enabled' : 'Disabled') + ' Stream Preview on Launch'"
                         />
                     </firebot-setting>
                 </div>
           `,
-            controller: function($scope, settingsService, $q) {
-                $scope.settings = settingsService;
+        controller: function ($rootScope, $scope, settingsService, $q) {
+            $scope.openLink = $rootScope.openLinkExternally;
+            $scope.settings = settingsService;
 
-                $scope.audioOutputDevices = [{
+            $scope.audioOutputDevices = [
+                {
                     label: "System Default",
                     deviceId: "default"
-                }];
+                }
+            ];
 
-                $q
-                    .when(navigator.mediaDevices.enumerateDevices())
-                    .then((deviceList) => {
-                        deviceList = deviceList
-                            .filter(
-                                d =>
-                                    d.kind === "audiooutput" &&
-                                d.deviceId !== "communications" &&
-                                d.deviceId !== "default"
-                            )
-                            .map((d) => {
-                                return { label: d.label, deviceId: d.deviceId };
-                            });
-
-                        $scope.audioOutputDevices = $scope.audioOutputDevices.concat(
-                            deviceList
-                        );
+            $q.when(navigator.mediaDevices.enumerateDevices()).then((deviceList) => {
+                deviceList = deviceList
+                    .filter(
+                        (d) => d.kind === "audiooutput" && d.deviceId !== "communications" && d.deviceId !== "default"
+                    )
+                    .map((d) => {
+                        return { label: d.label, deviceId: d.deviceId };
                     });
 
-                $scope.setActiveChatUserTimeout = (value) => {
-                    if (value == null) {
-                        value = "10";
-                    }
-                    settingsService.setActiveChatUserListTimeout(value);
-                    ipcRenderer.send('setActiveChatUserTimeout', value);
-                };
-            }
-        });
-}());
+                $scope.audioOutputDevices = $scope.audioOutputDevices.concat(deviceList);
+            });
+
+            $scope.setActiveChatUserTimeout = (value) => {
+                if (value == null) {
+                    value = "10";
+                }
+                settingsService.setActiveChatUserListTimeout(value);
+                ipcRenderer.send("setActiveChatUserTimeout", value);
+            };
+        }
+    });
+})();

@@ -36,7 +36,13 @@
         </eos-collapsable-panel>
 
         <div style="margin-top:20px;">
-            <effect-list header="What should this hotkey do?" effects="$ctrl.hotkey.effects" trigger="hotkey" update="$ctrl.effectListUpdated(effects)"></effect-list>
+            <effect-list 
+                header="What should this hotkey do?" 
+                effects="$ctrl.hotkey.effects" 
+                trigger="hotkey" 
+                trigger-meta="{ rootEffects: $ctrl.hotkey.effects }"
+                update="$ctrl.effectListUpdated(effects)"
+            ></effect-list>
         </div>
     </div>
 </div>

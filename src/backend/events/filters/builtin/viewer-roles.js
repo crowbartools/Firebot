@@ -24,7 +24,8 @@ module.exports = {
         { eventSourceId: "twitch", eventId: "whisper" },
         { eventSourceId: "streamloots", eventId: "purchase" },
         { eventSourceId: "streamloots", eventId: "redemption" },
-        { eventSourceId: "firebot", eventId: "view-time-update" }
+        { eventSourceId: "firebot", eventId: "view-time-update" },
+        { eventSourceId: "firebot", eventId: "viewer-rank-updated" }
     ],
     comparisonTypes: ["include", "doesn't include"],
     valueType: "preset",
@@ -65,14 +66,21 @@ module.exports = {
         const { eventMeta } = eventData;
 
         const { username } = eventMeta;
-        if (!username) {
+        let { userId } = eventMeta;
+
+        if (!username && !userId) {
             return false;
         }
 
         try {
-            const user = await twitchApi.users.getUserByName(username);
-            if (user == null) {
-                return false;
+            if (userId == null) {
+                const user = await twitchApi.users.getUserByName(username);
+
+                if (user == null) {
+                    return false;
+                }
+
+                userId = user.id;
             }
 
             /** @type {string[]} */
@@ -85,11 +93,11 @@ module.exports = {
                 || value === "tier3"
                 || value === "viewerlistbot"
             ) {
-                twitchUserRoles = await chatRolesManager.getUsersChatRoles(user.id);
+                twitchUserRoles = await chatRolesManager.getUsersChatRoles(userId);
             }
 
-            const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(user.id) || [];
-            const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(user.id) || [];
+            const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(userId) || [];
+            const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(userId) || [];
             const userTwitchRoles = (twitchUserRoles || [])
                 .map(twitchRolesManager.mapTwitchRole);
 

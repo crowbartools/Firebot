@@ -28,7 +28,6 @@ require("angular-ui-validate");
 require("angularjs-slider");
 require("../js/plugins/scroll-glue");
 require("../../../node_modules/angular-ui-codemirror/src/ui-codemirror");
-require("ui-select");
 require("angular-ui-sortable");
 require('ng-youtube-embed');
 require("ng-toast");
@@ -38,7 +37,7 @@ require("../../../node_modules/angular-translate-loader-url/angular-translate-lo
 require("../../../node_modules/angular-translate-loader-static-files/angular-translate-loader-static-files");
 require('countup.js-angular1');
 require("angular-pageslide-directive");
-require("angular-bootstrap-contextmenu");
+require("../js/plugins/angular-bootstrap-contextmenu");
 require("../../../node_modules/tinycolor2/dist/tinycolor-min");
 require("angularjs-color-picker");
 

@@ -52,19 +52,22 @@
   background: #060707;
   position: absolute;
   right: 0px;
-  top: -307px;
+  top: -341px;
   z-index: 3000;
   border-radius: 8px;
+  &.has-magic-vars {
+    top: -376px;
+  }
   &.below {
-    top: 41px;
+    top: 41px !important;
   }
   &.bottom {
     bottom: 41px;
-    top: unset;
+    top: unset !important;
   }
   &.under {
     bottom: unset;
-    top: unset;
+    top: unset !important;
   }
 }
 
@@ -1472,6 +1475,44 @@ thead th{
   padding-right: 25px;
   margin-bottom: 5px;
 }
+.fb-radio-card-container {
+    display: grid;
+    gap: 10px;
+    grid-template-rows: max-content;
+    grid-template-columns: repeat(2, 1fr);
+    .fb-radio-card {
+        display: flex;
+        padding: 10px;
+        border-radius: 8px;
+        color: $content-text-color;
+        cursor: pointer;
+        transition: 0.2s;
+        border: 2px solid $default-btn-bg-color;
+        &.selected {
+            border-color: #16809c;
+        }
+        .fb-radio-card-text-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .fb-radio-card-title {
+            font-size: 15px;
+            font-weight: 600;
+        }
+        .fb-radio-card-description {
+            font-size: 11px;
+            opacity: 0.75;
+        }
+        .fb-radio-card-icon {
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+            padding-top: 2px;
+        }
+    }
+}
 
 
 .script-name {
@@ -1605,7 +1646,6 @@ thead th{
   height: 40px;
   padding-left: 15px;
   border-radius: 8px;
-  margin-bottom: 5px;
   line-height: 1.1;
   justify-content: space-between;
 
@@ -1613,6 +1653,44 @@ thead th{
     background: #6c6c6c;
     color: rgba(255,255,255,0.8);
   }
+
+  &:hover {
+    background: #136e87;
+    cursor: pointer;
+  }
+
+  &.has-bottom-panel {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}
+
+.small-slider {
+    .rzslider {
+        margin: 16px 0 15px 0 !important;
+        .rz-pointer {
+            top: -7px !important;
+            width: 16px !important;
+            height: 16px !important;
+
+            &::after {
+                top: 5px !important;
+                left: 5px !important;
+                width: 6px !important;
+                height: 6px !important;
+            }
+        }
+    }
+}
+
+.effect-weight-panel {
+    height: 40px;
+    background: rgb(19 130 157 / 27%);
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    padding: 0 15px;
+    display: flex;
+    align-items: center;
 }
 
 .flex-center {
@@ -1850,4 +1928,21 @@ column-resizer {
             }
         }
     }
+}
+
+.macro-line-item {
+    padding: 0 10px;
+    &:hover {
+        background-color: rgb(100 100 100 / 10%);
+    }
+    .edit-macro-btn {
+        background: none;
+        outline: none;
+        border: 1px solid $default-btn-bg-color;
+        border-radius: 8px;
+    }
+}
+
+.markdown-container > *:last-child {
+    margin-bottom: 0;
 }

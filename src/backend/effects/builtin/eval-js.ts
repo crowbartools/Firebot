@@ -64,9 +64,7 @@ const model: EffectType<{
             sortable: true,
             showIndex: true,
             indexZeroBased: true,
-            indexTemplate: "parameters[{index}]",
-            trigger: $scope.trigger,
-            triggerMeta: $scope.triggerMeta
+            indexTemplate: "parameters[{index}]"
         };
 
         $scope.codemirrorLoaded = function(_editor) {

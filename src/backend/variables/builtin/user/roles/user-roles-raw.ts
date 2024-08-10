@@ -4,14 +4,6 @@ import { EffectTrigger } from '../../../../../shared/effect-constants';
 
 import userRoles from './user-roles';
 
-const triggers = {};
-triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.EVENT] = true;
-triggers[EffectTrigger.MANUAL] = true;
-triggers[EffectTrigger.CUSTOM_SCRIPT] = true;
-triggers[EffectTrigger.PRESET_LIST] = true;
-triggers[EffectTrigger.CHANNEL_REWARD] = true;
-
 const model : ReplaceVariable = {
     definition: {
         handle: "rawUserRoles",
@@ -47,7 +39,6 @@ const model : ReplaceVariable = {
                 description: "Returns all Twitch team roles of the specified user"
             }
         ],
-        triggers: triggers,
         categories: [VariableCategory.COMMON, VariableCategory.USER],
         possibleDataOutput: [OutputDataType.ALL]
     },

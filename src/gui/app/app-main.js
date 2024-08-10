@@ -102,6 +102,7 @@
         chatMessagesService,
         activityFeedService,
         viewerRolesService,
+        viewerRanksService,
         connectionService,
         notificationService,
         $timeout,
@@ -123,14 +124,16 @@
         sortTagsService,
         iconsService,
         videoService,
-        replaceVariableService
+        replaceVariableService,
+        variableMacroService,
     ) {
         // 'chatMessagesService' and 'videoService' are included so they're instantiated on app start
 
         connectionService.loadProfiles();
 
-        //load viewer roles
+        //load viewer roles and ranks
         viewerRolesService.loadCustomRoles();
+        viewerRanksService.loadRankLadders();
 
         //load commands
         commandsService.refreshCommands();
@@ -157,10 +160,13 @@
         effectQueuesService.loadEffectQueues();
 
         channelRewardsService.loadChannelRewards();
+        channelRewardsService.refreshChannelRewardRedemptions();
 
         sortTagsService.loadSortTags();
 
         iconsService.loadFontAwesomeIcons();
+
+        variableMacroService.loadMacros();
 
         //start notification check
         $timeout(() => {
@@ -460,6 +466,12 @@
         };
     });
 
+    app.filter("dynamicFilter", function($filter) {
+        return function(items, filterName, ...args) {
+            return $filter(filterName ?? "filter")(items, ...args);
+        };
+    });
+
     // This adds a filter that we can use for searching command triggers
     app.filter("triggerSearch", function() {
         return function(commands, query) {
@@ -557,7 +569,7 @@
             const normalizedQuery = query.replace("$", "").toLowerCase();
             return variables
                 .filter(v =>
-                    v.handle.toLowerCase().includes(normalizedQuery)
+                    v.handle.toLowerCase().includes(normalizedQuery) || v.aliases?.some(a => a.toLowerCase().includes(normalizedQuery))
                 );
         };
     });
@@ -613,6 +625,24 @@
     app.filter('prettyDate', function() {
         return function(input) {
             return (input) ? moment(input).format('L') : 'Not saved';
+        };
+    });
+
+    app.filter('timeFromNow', function() {
+        return function(input, hideSuffix = false) {
+            return moment(input).fromNow(hideSuffix);
+        };
+    });
+
+    app.filter('hideEmptyRewardQueues', function() {
+        return function(queue) {
+            const newQueueObj = { ...queue };
+            for (const key in newQueueObj) {
+                if (newQueueObj[key].length === 0) {
+                    delete newQueueObj[key];
+                }
+            }
+            return newQueueObj;
         };
     });
 

@@ -22,14 +22,16 @@ exports.loadFilters = () => {
         'previous-currency-amount',
         'previous-view-time',
         'raid-viewer-count',
+        'rank-ladder',
         'reward-name',
         'reward',
         'stream-category',
         'sub-kind',
         'sub-type',
         'username',
+        'viewer-ranks',
         'viewer-roles'
-    ].forEach(filename => {
+    ].forEach((filename) => {
         const definition = require(`./builtin/${filename}.js`);
         filterManager.registerFilter(definition);
     });

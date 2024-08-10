@@ -1,7 +1,9 @@
 import chatMessageAnimatedEmoteUrls from './chat-message-animated-emote-urls';
 import chatMessageEmoteNames from './chat-message-emote-names';
 import chatMessageEmoteUrls from './chat-message-emote-urls';
+import chatMessageTextOnly from './chat-message-text-only';
 import chatMessage from './chat-message';
+import chatColor from './chat-user-color';
 
 import isWhisper from './is-whisper';
 
@@ -12,8 +14,10 @@ export default [
     chatMessageAnimatedEmoteUrls,
     chatMessageEmoteNames,
     chatMessageEmoteUrls,
+    chatMessageTextOnly,
     chatMessage,
 
+    chatColor,
     isWhisper,
     whisperMessage,
     whisperRecipient

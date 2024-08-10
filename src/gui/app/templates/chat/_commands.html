@@ -1,12 +1,4 @@
-<div
-  style="
-    min-width: 500px;
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-  "
->
+<div class="fb-tabbed-page">
   <div class="fb-tab-wrapper">
     <ul class="nav nav-tabs fb-tabs">
       <li
@@ -26,218 +18,39 @@
     </ul>
   </div>
 
-  <div style="overflow-y: scroll; height: 100%">
-    <!-- <div ng-if="activeCmdTab === 0">
-      <firebot-item-table
-        items="commandsService.getCustomCommands()"
-        on-items-update="onRewardsUpdated(items)"
-        headers="headers"
-        sort-tag-context="commands"
-        orderable="true"
-        add-new-button-disabled="channelRewardsService.channelRewards.length >= 50"
-        add-new-button-text="New Custom Command"
-        on-add-new-clicked="openAddOrEditCustomCommandModal()"
-        context-menu-options="commandMenuOptions()"
-        no-data-message="No custom commands saved. You should make one! :)"
-        none-found-message="No custom commands found."
-        search-placeholder="Search custom commands"
-        test-button="true"
-        on-test-button-clicked="channelRewardsService.manuallyTriggerReward(itemId)"
-        status-field="twitchData.isEnabled"
-      ></firebot-item-table>
-    </div> -->
-    <div ng-if="activeCmdTab === 0">
-      <scroll-sentinel element-class="custom-cmd-header"></scroll-sentinel>
-      <div
-        class="light-bg sticky-top custom-cmd-header p-6 my-6 mx-0"
-        style="
-          display: flex;
-          flex-direction: row;
-          justify-content: space-between;
-        "
-      >
-        <div class="flex-row">
-          <button
-            ng-click="openAddOrEditCustomCommandModal()"
-            class="btn btn-primary hvr-icon-grow mr-4"
-          >
-            <i class="fas fa-plus-circle hvr-icon mr-2"></i>
-            New Custom Command
-          </button>
-  
-          <button
-            ng-click="resetActiveCooldowns()"
-            class="btn btn-default hvr-icon-grow"
-          >
-            <i class="iconify hvr-icon mr-2" data-icon="mdi:clock-fast"></i>
-            Clear All Cooldowns
-          </button>
-        </div>
-
-        <div style="display: flex; flex-direction: row; align-items: center">
-          <sort-tag-dropdown context="commands" class="mr-4" />
-
-          <searchbar
-            ng-show="commandsService.getCustomCommands().length > 0"
-            placeholder-text="Search commands"
-            query="commandsService.customCommandSearch"
-            style="flex-basis: 250px"
-          ></searchbar>
-        </div>
-      </div>
-      <div class="p-6">
-        <div
-          ng-if="commandsService.getCustomCommands().length === 0"
-          class="noselect muted pl-5"
+  <firebot-item-table
+    ng-if="activeCmdTab === 0"
+    items="commandsService.getCustomCommands()"
+    on-items-update="saveAllCommands(items)"
+    headers="customCommandHeaders"
+    sort-tag-context="commands"
+    orderable="true"
+    add-new-button-text="New Custom Command"
+    on-add-new-clicked="openAddOrEditCustomCommandModal()"
+    context-menu-options="commandMenuOptions(item)"
+    no-data-message="No custom commands saved. You should make one! :)"
+    none-found-message="No custom commands found."
+    search-placeholder="Search commands"
+    test-button="true"
+    on-test-button-clicked="manuallyTriggerCommand(itemId)"
+    status-field="active"
+    custom-filter-name="triggerSearch"
+  >
+    <fb-item-table-toolbar>
+      <button
+          ng-click="resetActiveCooldowns()"
+          class="btn btn-default hvr-icon-grow"
         >
-          <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span
-          ><span class="ml-3"
-            >No custom commands saved. You should make one! :)
-          </span>
-        </div>
-        <div
-          ng-if="commandsService.getCustomCommands().length > 0 && filteredCommands && filteredCommands.length < 1"
-          class="noselect muted pl-5"
-        >
-          <span class="ml-3">No custom commands found.</span>
-        </div>
-        <table
-          ng-show="commandsService.getCustomCommands().length > 0 && (filteredCommands == null || filteredCommands.length > 0)"
-          class="fb-table"
-        >
-          <thead>
-            <tr style="font-size: 11px">
-              <th style="width: 5%"></th>
-              <th class="muted"><i class="fas fa-exclamation"></i> TRIGGER</th>
-              <th class="muted"><i class="fas fa-clock"></i> COOLDOWNS</th>
-              <th class="muted"><i class="fas fa-lock-alt"></i> PERMISSIONS</th>
-              <th class="muted"><i class="fas fa-tag"></i> TAGS</th>
-              <th></th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody
-            ui-sortable="sortableOptions"
-            ng-model="commandsService.commandsCache.customCommands"
-          >
-            <tr
-              ng-repeat="command in (commandsService.commandsCache.customCommands | sortTagSearch:sts.getSelectedSortTag('commands') | triggerSearch:commandsService.customCommandSearch) as filteredCommands track by command.id"
-              context-menu="commandMenuOptions(command)"
-              context-menu-class="angular-context-menu"
-              style="width: 100%"
-            >
-              <td style="text-align: center">
-                <span
-                  style="color: #16809c; font-size: 20px"
-                  ng-click="manuallyTriggerCommand(command.id)"
-                  uib-tooltip="Test Effects"
-                  tooltip-append-to-body="true"
-                >
-                  <i class="fas fa-play-circle clickable"></i>
-                </span>
-              </td>
-              <td class="command-trigger-cell">
-                <span
-                  class="trigger"
-                  uib-tooltip="{{command.trigger}}"
-                  tooltip-popup-delay="500"
-                  tooltip-append-to-body="true"
-                  >{{command.trigger}}</span
-                >
-                <tooltip
-                  ng-if="command.triggerIsRegex"
-                  text="'Description: ' + command.regexDescription"
-                ></tooltip>
-                <span
-                  class="muted ml-2"
-                  style="font-size: 11px"
-                  ng-show="command.hidden"
-                  uib-tooltip="Hidden from !commands list"
-                  tooltip-append-to-body="true"
-                >
-                  <i class="fas fa-eye-slash"></i>
-                </span>
-              </td>
-              <td>
-                <span
-                  style="min-width: 51px; display: inline-block"
-                  uib-tooltip="Global cooldown"
-                >
-                  <i class="far fa-globe-americas"></i>
-                  {{command.cooldown.global ? command.cooldown.global + "s" :
-                  "-" }}
-                </span>
-                <span uib-tooltip="User cooldown">
-                  <i class="far fa-user"></i> {{command.cooldown.user ?
-                  command.cooldown.user + "s" : "-" }}
-                </span>
-              </td>
-              <td>
-                <span style="text-transform: capitalize"
-                  >{{getPermissionType(command)}}</span
-                >
-                <tooltip
-                  type="info"
-                  text="getPermissionTooltip(command)"
-                ></tooltip>
-              </td>
-              <td style="max-width: 180px;min-width: 100px" class="py-4">
-                <sort-tags-row item="command" context="'commands'" on-update="commandsService.saveCustomCommand(command); commandsService.refreshCommands();">
-                </sort-tags-row>
-              </td>
-              <td>
-                <div
-                  style="
-                    min-width: 75px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                  "
-                >
-                  <span
-                    class="status-dot mr-2"
-                    ng-class="{'active': command.active, 'notactive': !command.active}"
-                  ></span
-                  >{{command.active ? "Enabled" : "Disabled"}}
-                </div>
-              </td>
-              <td>
-                <div
-                  style="
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                  "
-                >
-                  <span
-                    class="dragHandle"
-                    ng-click="$event.stopPropagation();"
-                    ng-show="sts.getSelectedSortTag('commands') == null && (commandsService.customCommandSearch == null || commandsService.customCommandSearch.length < 1)"
-                  >
-                    <i class="fal fa-bars" aria-hidden="true"></i>
-                  </span>
-                  <div style="text-align: right; margin-left: auto">
-                    <button
-                      class="noselect clickable text-5xl"
-                      style="background: transparent;border: none;"
-                      context-menu="commandMenuOptions(command)"
-                      context-menu-class="angular-context-menu"
-                      context-menu-on="click"
-                      context-menu-orientation="left"
-                      ><i class="fal fa-ellipsis-h"></i
-                    ></button>
-                  </div>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <div ng-if="activeCmdTab === 1">
+          <i class="iconify hvr-icon mr-2" data-icon="mdi:clock-fast"></i>
+          Clear All Cooldowns
+      </button>
+    </fb-item-table-toolbar>
+  </firebot-item-table>
+  <div ng-if="activeCmdTab === 1" style="height: 100%; overflow-y: scroll;">
+    <div>
       <scroll-sentinel element-class="sys-cmd-header"></scroll-sentinel>
       <div
-        class="light-bg sticky-top sys-cmd-header p-6 my-6 mx-0"
+        class="light-bg sticky-top sys-cmd-header p-6 m-0"
         style="
           display: flex;
           flex-direction: row;

@@ -11,8 +11,7 @@
             listenerService,
             viewerRolesService,
             objectCopyHelper,
-            sortTagsService,
-            effectQueuesService
+            sortTagsService
         ) {
             // Cache commands on app load.
             commandsService.refreshCommands();
@@ -21,52 +20,6 @@
 
             $scope.commandsService = commandsService;
             $scope.sts = sortTagsService;
-
-            function filterCommands() {
-                return triggerSearchFilter(sortTagSearchFilter(commandsService.getCustomCommands(), sortTagsService.getSelectedSortTag("commands")), commandsService.customCommandSearch);
-            }
-
-            $scope.filteredCommands = filterCommands();
-
-            $scope.getPermissionType = (command) => {
-
-                const permissions = command.restrictionData && command.restrictionData.restrictions &&
-                    command.restrictionData.restrictions.find(r => r.type === "firebot:permissions");
-
-                if (permissions) {
-                    if (permissions.mode === "roles") {
-                        return "Roles";
-                    } else if (permissions.mode === "viewer") {
-                        return "Viewer";
-                    }
-                } else {
-                    return "None";
-                }
-            };
-
-            $scope.getPermissionTooltip = (command) => {
-
-                const permissions = command.restrictionData && command.restrictionData.restrictions &&
-                    command.restrictionData.restrictions.find(r => r.type === "firebot:permissions");
-
-                if (permissions) {
-                    if (permissions.mode === "roles") {
-                        const roleIds = permissions.roleIds;
-                        let output = "None selected";
-                        if (roleIds.length > 0) {
-                            output = roleIds
-                                .filter(id => viewerRolesService.getRoleById(id) != null)
-                                .map(id => viewerRolesService.getRoleById(id).name)
-                                .join(", ");
-                        }
-                        return `Roles (${output})`;
-                    } else if (permissions.mode === "viewer") {
-                        return `Viewer (${permissions.username ? permissions.username : 'No name'})`;
-                    }
-                } else {
-                    return "This command is available to everyone";
-                }
-            };
 
             $scope.manuallyTriggerCommand = (id) => {
                 listenerService.fireEvent(
@@ -81,6 +34,15 @@
                 }
 
                 command.active = !command.active;
+                commandsService.saveCustomCommand(command);
+            };
+
+            $scope.toggleCustomCommandVisibilityState = (command) => {
+                if (command == null) {
+                    return;
+                }
+
+                command.hidden = !command.hidden;
                 commandsService.saveCustomCommand(command);
             };
 
@@ -115,6 +77,7 @@
             $scope.openAddOrEditCustomCommandModal = function(command) {
                 utilityService.showModal({
                     component: "addOrEditCustomCommandModal",
+                    breadcrumbName: command ? "Edit Command" : "Add Command",
                     resolveObj: {
                         command: () => command
                     },
@@ -143,108 +106,185 @@
                 commandsService.resetCooldownsForCommand(command.id);
             };
 
-            $scope.sortableOptions = {
-                handle: ".dragHandle",
-                'ui-preserve-size': true,
-                stop: (e, ui) => {
-                    console.log(e, ui);
-                    if (sortTagsService.getSelectedSortTag("commands") != null &&
-                        (commandsService.customCommandSearch == null ||
-                            commandsService.customCommandSearch.length < 1)) {
-                        return;
-                    }
-
-                    commandsService.saveAllCustomCommands(commandsService.commandsCache.customCommands);
-                }
+            $scope.saveAllCommands = (commands) => {
+                commandsService.saveAllCustomCommands(commands ?? commandsService.commandsCache.customCommands);
             };
 
-            $scope.addToEffectQueue = (command, queueId) => {
-                if (command == null) {
-                    return;
-                }
-
-                if (command.effects) {
-                    command.effects.queue = queueId;
-                }
-
-                commandsService.saveCustomCommand(command);
-            };
-
-            $scope.clearEffectQueue = (command) => {
-                command.effects.queue = null;
-            };
-
-            $scope.getEffectQueueMenuOptions = (command) => {
-                const queues = effectQueuesService.getEffectQueues();
-                if (command.effects != null && queues != null && queues.length > 0) {
-                    const children = queues.map((q) => {
-                        const isSelected = command.effects.queue && command.effects.queue === q.id;
-                        return {
-                            html: `<a href><i class="${isSelected ? 'fas fa-check' : ''}" style="margin-right: ${isSelected ? '10' : '27'}px;"></i> ${q.name}</a>`,
-                            click: () => {
-                                $scope.addToEffectQueue(command, q.id);
-                            }
-                        };
-                    });
-
-                    const hasEffectQueue = command.effects.queue != null && command.effects.queue !== "";
-                    children.push({
-                        html: `<a href><i class="${!hasEffectQueue ? 'fas fa-check' : ''}" style="margin-right: ${!hasEffectQueue ? '10' : '27'}px;"></i> None</a>`,
-                        click: () => {
-                            $scope.clearEffectQueue(command);
-                        },
-                        hasTopDivider: true
-                    });
-
-                    return children;
-                }
-            };
-
-            $scope.commandMenuOptions = (command) => {
-                const options = [
+            $scope.commandMenuOptions = (item) => {
+                const command = item;
+                return [
                     {
                         html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
-                        click: ($itemScope) => {
-                            const command = $itemScope.command;
+                        click: () => {
                             $scope.openAddOrEditCustomCommandModal(command);
                         }
                     },
                     {
                         html: `<a href ><i class="iconify" data-icon="mdi:clock-fast" style="margin-right: 10px;"></i> Clear Cooldowns</a>`,
-                        click: ($itemScope) => {
-                            const command = $itemScope.command;
+                        click: () => {
                             $scope.resetCooldownsForCommand(command);
                         }
                     },
                     {
-                        html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> ${command.active ? "Disable Command" : "Enable Command"}</a>`,
-                        click: ($itemScope) => {
-                            const command = $itemScope.command;
+                        html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> ${item.active ? "Disable Command" : "Enable Command"}</a>`,
+                        click: () => {
                             $scope.toggleCustomCommandActiveState(command);
                         }
                     },
                     {
+                        html: `<a href ><i class="${item.hidden ? "fas fa-eye" : "fas fa-eye-slash"}" style="margin-right: 10px;"></i> ${item.hidden ? "Show Command" : "Hide Command"}</a>`,
+                        click: () => {
+                            $scope.toggleCustomCommandVisibilityState(command);
+                        }
+                    },
+                    {
                         html: `<a href ><i class="far fa-clone" style="margin-right: 10px;"></i> Duplicate</a>`,
-                        click: ($itemScope) => {
-                            const command = $itemScope.command;
+                        click: () => {
                             $scope.duplicateCustomCommand(command);
                         }
                     },
                     {
                         html: `<a href style="color: #fb7373;"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>`,
-                        click: ($itemScope) => {
-                            const command = $itemScope.command;
+                        click: () => {
                             $scope.deleteCustomCommand(command);
                         }
-                    },
-                    {
-                        text: `Effect Queues...`,
-                        children: $scope.getEffectQueueMenuOptions(command),
-                        hasTopDivider: true
                     }
                 ];
-
-                return options;
             };
+
+            $scope.customCommandHeaders = [
+                {
+                    name: "TRIGGER",
+                    icon: "fa-exclamation",
+                    dataField: "trigger",
+                    sortable: true,
+                    cellClass: "command-trigger-cell",
+                    cellTemplate: `
+                        <span
+                            class="trigger"
+                            uib-tooltip="{{data.trigger}}"
+                            tooltip-popup-delay="500"
+                            tooltip-append-to-body="true"
+                        >{{data.trigger}}</span>
+                        <tooltip
+                            ng-if="data.triggerIsRegex"
+                            text="'Description: ' + data.regexDescription"
+                        ></tooltip>
+                        <span
+                            class="muted ml-2"
+                            style="font-size: 11px"
+                            ng-show="data.hidden"
+                            uib-tooltip="Hidden from !commands list"
+                            tooltip-append-to-body="true"
+                        >
+                            <i class="fas fa-eye-slash"></i>
+                        </span>
+                    `,
+                    cellController: () => {}
+                },
+                {
+                    name: "COOLDOWNS",
+                    icon: "fa-clock",
+                    cellTemplate: `
+                        <span
+                            style="min-width: 51px; display: inline-block"
+                            uib-tooltip="Global cooldown"
+                        >
+                            <i class="far fa-globe-americas"></i>
+                            {{data.cooldown.global ? data.cooldown.global + "s" : "-" }}
+                        </span>
+                        <span uib-tooltip="User cooldown">
+                            <i class="far fa-user"></i> {{data.cooldown.user ? data.cooldown.user + "s" : "-" }}
+                        </span>
+                    `,
+                    cellController: () => {}
+                },
+                {
+                    name: "PERMISSIONS",
+                    icon: "lock-alt",
+                    cellTemplate: `
+                        <span style="text-transform: capitalize">{{getPermissionType(data)}}</span>
+                        <tooltip
+                            type="info"
+                            text="getPermissionTooltip(data)"
+                        ></tooltip>
+                    `,
+                    cellController: ($scope, viewerRolesService, viewerRanksService) => {
+                        $scope.getPermissionType = (command) => {
+
+                            const permissions = command.restrictionData && command.restrictionData.restrictions &&
+                    command.restrictionData.restrictions.find(r => r.type === "firebot:permissions");
+
+                            if (permissions) {
+                                if (permissions.mode === "roles") {
+                                    return "Roles & Ranks";
+                                } else if (permissions.mode === "viewer") {
+                                    return "Viewer";
+                                }
+                            } else {
+                                return "None";
+                            }
+                        };
+
+                        $scope.getPermissionTooltip = (command) => {
+
+                            const permissions = command.restrictionData && command.restrictionData.restrictions &&
+                    command.restrictionData.restrictions.find(r => r.type === "firebot:permissions");
+
+                            if (permissions) {
+                                if (permissions.mode === "roles") {
+                                    const roleIds = permissions.roleIds;
+                                    let rolesOutput = "None selected";
+                                    if (roleIds.length > 0) {
+                                        rolesOutput = roleIds
+                                            .filter(id => viewerRolesService.getRoleById(id) != null)
+                                            .map(id => viewerRolesService.getRoleById(id).name)
+                                            .join(", ");
+                                    }
+                                    const rolesDisplay = `Roles (${rolesOutput})`;
+
+                                    const ranks = permissions.ranks ?? [];
+                                    let ranksOutput = "None selected";
+                                    if (ranks.length > 0) {
+                                        const groupedByLadder = ranks.reduce((acc, r) => {
+                                            if (!acc.some(l => l.ladderId === r.ladderId)) {
+                                                acc.push({ ladderId: r.ladderId, rankIds: [] });
+                                            }
+                                            const ladder = acc.find(l => l.ladderId === r.ladderId);
+                                            ladder.rankIds.push(r.rankId);
+                                            return acc;
+                                        }, []);
+                                        ranksOutput = groupedByLadder
+                                            .filter(r => viewerRanksService.getRankLadder(r.ladderId) != null)
+                                            .map((r) => {
+                                                const ladder = viewerRanksService.getRankLadder(r.ladderId);
+                                                const rankNames = r.rankIds
+                                                    .map(id => ladder.ranks.find(rank => rank.id === id))
+                                                    .filter(rank => rank != null)
+                                                    .map(rank => rank.name);
+                                                return `${ladder.name}: ${rankNames.join(", ")}`;
+                                            })
+                                            .join(", ");
+                                    }
+                                    const ranksDisplay = `Ranks (${ranksOutput})`;
+
+                                    const itemsToDisplay = [];
+                                    if (rolesOutput !== "None selected") {
+                                        itemsToDisplay.push(rolesDisplay);
+                                    }
+                                    if (ranksOutput !== "None selected") {
+                                        itemsToDisplay.push(ranksDisplay);
+                                    }
+                                    return itemsToDisplay.length > 0 ? itemsToDisplay.join(", ") : "Roles/Ranks (None selected)";
+                                } else if (permissions.mode === "viewer") {
+                                    return `Viewer (${permissions.username ? permissions.username : 'No name'})`;
+                                }
+                            } else {
+                                return "This command is available to everyone";
+                            }
+                        };
+                    }
+                }
+            ];
         });
 }());

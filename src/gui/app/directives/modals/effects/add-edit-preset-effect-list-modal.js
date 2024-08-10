@@ -37,7 +37,12 @@
                 </div>
 
                 <div style="margin-top:20px;">
-                    <effect-list effects="$ctrl.presetList.effects" trigger="preset" update="$ctrl.effectListUpdated(effects)"></effect-list>
+                    <effect-list
+                    effects="$ctrl.presetList.effects"
+                    trigger="preset"
+                    trigger-meta="{ rootEffects: $ctrl.presetList.effects, presetListArgs: $ctrl.presetList.args }"
+                    update="$ctrl.effectListUpdated(effects)"
+                ></effect-list>
                 </div>
 
                 <div style="margin-top: 20px;">
@@ -134,11 +139,11 @@
                     return;
                 }
 
-                presetEffectListsService.savePresetEffectList($ctrl.presetList).then(successful => {
-                    if (successful) {
+                presetEffectListsService.savePresetEffectList($ctrl.presetList).then((savedList) => {
+                    if (savedList != null) {
                         $ctrl.close({
                             $value: {
-                                presetEffectList: $ctrl.presetList
+                                presetEffectList: savedList
                             }
                         });
                     } else {

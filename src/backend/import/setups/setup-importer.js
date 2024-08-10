@@ -12,6 +12,8 @@ const timerManager = require("../../timers/timer-manager");
 const presetEffectListManager = require("../../effects/preset-lists/preset-effect-list-manager");
 const customRolesManager = require("../../roles/custom-roles-manager");
 const quickActionManager = require("../../quick-actions/quick-action-manager");
+const variableMacroManager = require("../../variables/macro-manager");
+const rankManager = require("../../ranks/rank-manager");
 const { escapeRegExp } = require("../../utility");
 
 function findAndReplaceCurrency(data, currency) {
@@ -163,12 +165,26 @@ async function importSetup(setup, selectedCurrency) {
     }
     timerManager.triggerUiRefresh();
 
+    // variable macros
+    const variableMacros = setup.components.variableMacros || [];
+    for (const macro of variableMacros) {
+        variableMacroManager.saveItem(macro);
+    }
+    variableMacroManager.triggerUiRefresh();
+
     // viewer roles
     const roles = setup.components.viewerRoles || [];
     for (const role of roles) {
         await customRolesManager.importCustomRole(role);
     }
     customRolesManager.triggerUiRefresh();
+
+    // viewer rank ladders
+    const rankLadders = setup.components.viewerRankLadders || [];
+    for (const rankLadder of rankLadders) {
+        rankManager.saveItem(rankLadder);
+    }
+    rankManager.triggerUiRefresh();
 
     // quick actions
     const quickActions = setup.components.quickActions || [];
@@ -214,8 +230,14 @@ function removeSetupComponents(components) {
                     case "timers":
                         timerManager.deleteItem(id);
                         break;
+                    case "variableMacros":
+                        variableMacroManager.deleteItem(id);
+                        break;
                     case "viewerRoles":
                         customRolesManager.deleteCustomRole(id);
+                        break;
+                    case "viewerRankLadders":
+                        rankManager.deleteItem(id);
                         break;
                     case "quickActions":
                         quickActionManager.deleteQuickAction(id);
@@ -238,8 +260,12 @@ function removeSetupComponents(components) {
                 presetEffectListManager.triggerUiRefresh();
             } else if (componentType === "timers") {
                 timerManager.triggerUiRefresh();
+            } else if (componentType === "variableMacros") {
+                variableMacroManager.triggerUiRefresh();
             } else if (componentType === "viewerRoles") {
                 customRolesManager.triggerUiRefresh();
+            } else if (componentType === "viewerRankLadders") {
+                rankManager.triggerUiRefresh();
             } else if (componentType === "quickActions") {
                 quickActionManager.triggerUiRefresh();
             }

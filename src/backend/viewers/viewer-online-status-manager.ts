@@ -106,6 +106,9 @@ class ViewerOnlineStatusManager {
             }
 
             await viewerDatabase.getViewerDb().updateAsync({ _id: viewer.id }, { $set: dbData });
+
+            await viewerDatabase.calculateAutoRanks(viewer.id);
+
         } catch (error) {
             logger.error("Failed to set viewer to online", error);
         }
@@ -255,6 +258,8 @@ class ViewerOnlineStatusManager {
                 previousViewTime: previousHours,
                 newViewTime: newHours
             });
+
+            viewerDatabase.calculateAutoRanks(viewer._id, "view_time");
         }
     }
 }

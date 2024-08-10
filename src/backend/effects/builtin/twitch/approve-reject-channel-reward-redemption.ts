@@ -1,10 +1,12 @@
 import { EffectType } from "../../../../types/effects";
 import { EffectCategory } from "../../../../shared/effect-constants";
-import twitchApi from "../../../twitch-api/api";
+import channelRewardManager from "../../../channel-rewards/channel-reward-manager";
 
 const model: EffectType<{
-    rewardId: string;
-    redemptionId: string;
+    rewardMode?: "custom" | "current";
+    rewardId?: string;
+    redemptionMode?: "custom" | "current";
+    redemptionId?: string;
     approve: boolean;
 }> = {
     definition: {
@@ -19,11 +21,17 @@ const model: EffectType<{
     },
     optionsTemplate: `
         <eos-container header="Reward Info">
-            <firebot-input input-title="Reward ID" model="effect.rewardId" placeholder-text="Enter reward ID" menu-position="below" />
+            <firebot-radio-container>
+                <firebot-radio label="Use current reward" model="effect.rewardMode" value="'current'" tooltip="Uses the reward that triggered this effect" />
+                <firebot-radio label="Custom" model="effect.rewardMode" value="'custom'" />
+                <firebot-input ng-if="effect.rewardMode === 'custom'" input-title="Reward ID" model="effect.rewardId" placeholder-text="Enter reward ID" menu-position="below" />
+            </firebot-radio-container>
         </eos-container>
 
         <eos-container header="Redemption Info" pad-top="true">
-            <firebot-input input-title="Redemption ID" model="effect.redemptionId" placeholder-text="Enter redemption ID" />
+            <firebot-radio label="Use current redemption" model="effect.redemptionMode" value="'current'" tooltip="Uses the reward that triggered this effect" />
+            <firebot-radio label="Custom" model="effect.redemptionMode" value="'custom'" />
+            <firebot-input ng-if="effect.redemptionMode === 'custom'" input-title="Redemption ID" model="effect.redemptionId" placeholder-text="Enter redemption ID" />
         </eos-container>
 
         <eos-container header="Action" pad-top="true">
@@ -51,9 +59,12 @@ const model: EffectType<{
     optionsValidator: (effect) => {
         const errors: string[] = [];
 
-        if (!effect.rewardId?.length) {
+        const rewardMode = effect.rewardMode ?? "custom";
+        const redemptionMode = effect.redemptionMode ?? "custom";
+
+        if (rewardMode === "custom" && !effect.rewardId?.length) {
             errors.push("You must enter a reward ID");
-        } else if (!effect.redemptionId?.length) {
+        } else if (redemptionMode === "custom" && !effect.redemptionId?.length) {
             errors.push("You must enter a redemption ID");
         } else if (effect.approve == null) {
             errors.push("You must select an action");
@@ -61,13 +72,40 @@ const model: EffectType<{
 
         return errors;
     },
-    optionsController: () => {},
-    onTriggerEvent: async ({ effect }) => {
-        return await twitchApi.channelRewards.approveOrRejectChannelRewardRedemption(
-            effect.rewardId,
-            effect.redemptionId,
-            effect.approve
-        );
+    optionsController: ($scope) => {
+        if ($scope.effect.rewardMode == null) {
+            $scope.effect.rewardMode = "custom";
+        }
+        if ($scope.effect.redemptionMode == null) {
+            $scope.effect.redemptionMode = "custom";
+        }
+    },
+    onTriggerEvent: async ({ effect, trigger }) => {
+
+        const rewardMode = effect.rewardMode ?? "custom";
+        const redemptionMode = effect.redemptionMode ?? "custom";
+
+        const rewardId = (rewardMode === "custom" ?
+            effect.rewardId :
+            trigger.metadata.eventData ?
+                trigger.metadata.eventData.rewardId :
+                trigger.metadata.rewardId) as string;
+
+        const redemptionId = (redemptionMode === "custom" ?
+            effect.redemptionId :
+            trigger.metadata.eventData ?
+                trigger.metadata.eventData.redemptionId :
+                trigger.metadata.redemptionId) as string;
+
+        if (!rewardId || !redemptionId) {
+            return;
+        }
+
+        return await channelRewardManager.approveOrRejectChannelRewardRedemptions({
+            rewardId: rewardId,
+            redemptionIds: [redemptionId],
+            approve: effect.approve
+        });
     }
 };
 

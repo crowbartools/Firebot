@@ -38,6 +38,18 @@ export type EffectDependencies = {
     integrations?: Record<string, boolean>;
 };
 
+export type OverlayExtension = {
+    dependencies?: {
+        globalStyles?: string;
+        css?: string[];
+        js?: string[];
+    };
+    event: {
+        name: string;
+        onOverlayEvent: (data: OverlayData) => void;
+    };
+};
+
 export type EffectType<EffectModel = unknown, OverlayData = unknown> = {
     definition: {
         id: string;
@@ -60,17 +72,7 @@ export type EffectType<EffectModel = unknown, OverlayData = unknown> = {
         trigger: Trigger;
         sendDataToOverlay: (data: OverlayData, overlayInstance?: string) => void;
     }) => Promise<void | boolean | EffectTriggerResponse>;
-    overlayExtension?: {
-        dependencies?: {
-            globalStyles?: string;
-            css?: string[];
-            js?: string[];
-        };
-        event: {
-            name: string;
-            onOverlayEvent: (data: OverlayData) => void;
-        };
-    };
+    overlayExtension?: OverlayExtension;
 };
 
 export interface EffectList {

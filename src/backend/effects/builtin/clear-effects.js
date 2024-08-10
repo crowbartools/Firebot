@@ -5,6 +5,7 @@ const frontendCommunicator = require("../../common/frontend-communicator");
 const effectQueueRunner = require("../../effects/queues/effect-queue-runner");
 const { EffectCategory } = require('../../../shared/effect-constants');
 const { settings } = require("../../common/settings-access");
+const { abortAllEffectLists } = require("../../common/effect-abort-helpers");
 
 /**
  * The Delay effect
@@ -34,10 +35,10 @@ const delay = {
             <p>This effect clears currently running effects. Useful, for example, if you are entering a cutscene. You can also use it to purge effect queues.</p>
         </eos-container>
         <eos-container header="Effects To Clear">
-            <label class="control-fb control--checkbox"> Overlay Effects
-                <input type="checkbox" ng-model="effect.overlay">
-                <div class="control__indicator"></div>
-            </label>
+            <firebot-checkbox
+                label="Overlay Effects"
+                model="effect.overlay"
+            />
             <div class="mt-0 mr-0 mb-6 ml-6" uib-collapse="!effect.overlay || !settings.useOverlayInstances()">
                 <div class="btn-group">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -51,16 +52,16 @@ const delay = {
                     </ul>
                 </div>
             </div>
-            <label class="control-fb control--checkbox"> Sounds
-                <input type="checkbox" ng-model="effect.sounds">
-                <div class="control__indicator"></div>
-            </label>
-            <label class="control-fb control--checkbox"> Effect Queues
-                <input type="checkbox" ng-model="effect.queues">
-                <div class="control__indicator"></div>
-            </label>
-            <div uib-collapse="!effect.queues" style="margin: 0 0 15px 15px;">
-                <div class="btn-group" uib-dropdown>
+            <firebot-checkbox
+                label="Sounds"
+                model="effect.sounds"
+            />
+            <firebot-checkbox
+                label="Effect Queues"
+                model="effect.queues"
+            />
+            <div uib-collapse="!effect.queues" style="margin: 0 0 15px 15px;" class="mb-6">
+                <div class="btn-group mb-5" uib-dropdown>
                     <button id="single-button" type="button" class="btn btn-default" uib-dropdown-toggle>
                     {{ getSelectedEffectQueueDisplay() }} <span class="caret"></span>
                     </button>
@@ -70,7 +71,17 @@ const delay = {
                         <li role="menuitem" ng-repeat="queue in effectQueues" ng-click="effect.queueId = queue.id"><a href>{{queue.name}}</a></li>
                     </ul>
                 </div>
+                <firebot-checkbox
+                    label="Abort running effect lists for queue(s)"
+                    tooltip="Abort any effect lists from the queue(s) that are actively executing effects"
+                    model="effect.abortActiveQueueEffectLists"
+                />
             </div>
+            <firebot-checkbox
+                label="All Running Effect Lists"
+                tooltip="Abort any effect lists that are actively running effects"
+                model="effect.activeEffectLists"
+            />
         </eos-container>
     `,
     /**
@@ -142,10 +153,10 @@ const delay = {
 
         if (effect.queues) {
             if (effect.queueId === "all") {
-                effectQueueRunner.clearAllQueues();
+                effectQueueRunner.clearAllQueues(effect.abortActiveQueueEffectLists);
             } else {
                 if (effect.queueId) {
-                    effectQueueRunner.removeQueue(effect.queueId);
+                    effectQueueRunner.removeQueue(effect.queueId, effect.abortActiveQueueEffectLists);
                 }
             }
         }
@@ -167,6 +178,10 @@ const delay = {
             }
 
             webServer.sendToOverlay("OVERLAY:REFRESH");
+        }
+
+        if (effect.activeEffectLists) {
+            abortAllEffectLists(true);
         }
 
         return true;

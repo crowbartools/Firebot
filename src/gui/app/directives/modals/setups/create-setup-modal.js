@@ -83,8 +83,8 @@
             },
             controller: function(commandsService, countersService, currencyService,
                 effectQueuesService, eventsService, hotkeyService, presetEffectListsService,
-                timerService, viewerRolesService, quickActionsService, accountAccess, utilityService,
-                ngToast, backendCommunicator, $q) {
+                timerService, viewerRolesService, quickActionsService, variableMacroService, viewerRanksService, accountAccess, utilityService,
+                ngToast, backendCommunicator, sortTagsService, $q) {
 
                 const $ctrl = this;
 
@@ -144,10 +144,22 @@
                         key: "timers"
                     },
                     {
+                        label: "Variable Macros",
+                        all: variableMacroService.macros,
+                        nameField: "name",
+                        key: "variableMacros"
+                    },
+                    {
                         label: "Viewer Roles",
                         all: viewerRolesService.getCustomRoles(),
                         nameField: "name",
                         key: "viewerRoles"
+                    },
+                    {
+                        label: "Viewer Rank Ladders",
+                        all: viewerRanksService.rankLadders,
+                        nameField: "name",
+                        key: "viewerRankLadders"
                     },
                     {
                         label: "Quick Actions",
@@ -158,10 +170,11 @@
                 ];
 
                 $ctrl.addOrEditComponent = (componentConfig) => {
-                    const components = componentConfig.all.map(c => {
+                    const components = componentConfig.all.map((c) => {
                         return {
                             id: c.id,
-                            name: c[componentConfig.nameField]
+                            name: c[componentConfig.nameField],
+                            tags: sortTagsService.getSortTagsForItem(componentConfig.key, c.sortTags).map(st => st.name)
                         };
                     });
                     const selectedIds = $ctrl.setup.components[componentConfig.key].map(c => c.id);
@@ -186,7 +199,9 @@
                         hotkeys: [],
                         presetEffectLists: [],
                         timers: [],
+                        variableMacros: [],
                         viewerRoles: [],
+                        viewerRankLadders: [],
                         quickActions: []
                     },
                     requireCurrency: false,
@@ -229,7 +244,7 @@
                     $q.when(backendCommunicator.fireEventAsync("show-save-dialog", {
                         options: saveDialogOptions
                     }))
-                        .then(saveResponse => {
+                        .then((saveResponse) => {
                             if (saveResponse.canceled) {
                                 return;
                             }
@@ -246,7 +261,7 @@
 
                 $ctrl.onFileSelected = (filepath) => {
                     $q.when(fsp.readFile(filepath))
-                        .then(setup => {
+                        .then((setup) => {
                             setup = JSON.parse(setup);
                             if (setup == null || setup.components == null) {
                                 ngToast.create("Unable to load previous Setup!");
@@ -276,7 +291,7 @@
                                 filters: [{name: 'Firebot Setups', extensions: ['firebotsetup']}]
                             }
                         }))
-                        .then(response => {
+                        .then((response) => {
                             if (response.path == null) {
                                 return;
                             }
@@ -328,4 +343,4 @@
                 };
             }
         });
-}());
+})();

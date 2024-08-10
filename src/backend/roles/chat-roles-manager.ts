@@ -28,7 +28,9 @@ class ChatRolesManager {
         }
 
         try {
-            const responseData = (await axios.get<KnownBotServiceResponse>(VIEWLIST_BOTS_URL)).data;
+            const responseData = (await axios.get<KnownBotServiceResponse>(VIEWLIST_BOTS_URL, {
+                timeout: 30000
+            })).data;
             if (responseData?.bots != null) {
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 this._knownBots = responseData.bots.map(([username, channels, _lastSeen]) => {

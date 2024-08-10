@@ -1,10 +1,14 @@
-import { FirebotChatMessage } from "../../../types/chat";
 import logger from "../../logwrapper";
 import twitchApi from "../../twitch-api/api";
 
+interface RaidMessage {
+    rawText: string;
+    userId: string;
+}
+
 class RaidMessageChecker {
     private readonly _chatCacheLimit = 50;
-    private _messageCache: FirebotChatMessage[] = [];
+    private _messageCache: RaidMessage[] = [];
     private _raidMessage = "";
     private _checkerEnabled = false;
     private _settings = {
@@ -12,7 +16,7 @@ class RaidMessageChecker {
         shouldBlock: false
     };
 
-    private async handleRaider(message: FirebotChatMessage): Promise<void> {
+    private async handleRaider(message: RaidMessage): Promise<void> {
         if (this._settings.shouldBan) {
             await twitchApi.moderation.banUser(message.userId);
         }
@@ -48,19 +52,19 @@ class RaidMessageChecker {
         }
     }
 
-    async sendMessageToCache(firebotChatMessage: FirebotChatMessage): Promise<void> {
+    async sendMessageToCache(raidMessage: RaidMessage): Promise<void> {
         if (this._messageCache.length >= this._chatCacheLimit) {
             this._messageCache.shift();
         }
 
-        if (firebotChatMessage.rawText.length > 10) {
-            firebotChatMessage.rawText = firebotChatMessage.rawText.substr(10);
+        if (raidMessage.rawText.length > 10) {
+            raidMessage.rawText = raidMessage.rawText.substr(10);
         }
 
-        this._messageCache.push(firebotChatMessage);
+        this._messageCache.push(raidMessage);
 
-        if (firebotChatMessage && this._checkerEnabled && firebotChatMessage.rawText === this._raidMessage) {
-            await this.handleRaider(firebotChatMessage);
+        if (raidMessage && this._checkerEnabled && raidMessage.rawText === this._raidMessage) {
+            await this.handleRaider(raidMessage);
         }
     }
 

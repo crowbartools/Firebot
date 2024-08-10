@@ -17,7 +17,8 @@
             <span>Only trigger this event when</span>
 
             <div class="text-dropdown filter-mode-dropdown" uib-dropdown uib-dropdown-toggle>
-                  <div class="noselect pointer ddtext" style="font-size: 12px;">{{$ctrl.getFilterModeDisplay()}}<span class="fb-arrow down ddtext"></span></div>
+                <a href role="button"
+                   class="noselect pointer ddtext" style="font-size: 12px;">{{$ctrl.getFilterModeDisplay()}}<span class="fb-arrow down ddtext"></span></a>
                   <ul class="dropdown-menu" style="z-index: 10000000;" uib-dropdown-menu>
 
                     <li ng-click="$ctrl.filterData.mode = 'exclusive'">

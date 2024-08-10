@@ -5,6 +5,7 @@ const frontendCommunicator = require("../../common/frontend-communicator");
 const firebotDeviceAuthProvider = require("../../auth/firebot-device-auth-provider");
 const chatRolesManager = require("../../roles/chat-roles-manager");
 const { PubSubClient } = require("@twurple/pubsub");
+const chatCommandHandler = require("../../chat/commands/chat-command-handler");
 
 /**@type {PubSubClient} */
 let pubSubClient;
@@ -172,6 +173,8 @@ async function createClient() {
                 );
 
                 frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
+                chatCommandHandler.handleChatMessage(firebotChatMessage);
+                twitchEventsHandler.chatMessage.triggerChatMessage(firebotChatMessage);
             }
         });
         listeners.push(chatRoomListener);

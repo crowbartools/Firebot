@@ -30,7 +30,8 @@ class QuickActionManager extends JsonDbManager {
         [
             "give-currency",
             "stream-info",
-            "stream-preview"
+            "stream-preview",
+            "open-reward-request-queue"
         ].forEach((filename) => {
             const quickAction = require(`./builtin/${filename}.js`);
             this.systemQuickActions.push(quickAction);

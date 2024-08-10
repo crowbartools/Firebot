@@ -393,13 +393,13 @@
                             return {
                                 html: html,
                                 click: () => {
-                                    $ctrl.messageActionSelected(a.name, message.username, message.userId, message.id, message.rawText);
+                                    $ctrl.messageActionSelected(a.name, message.username, message.userId, message.displayName, message.id, message.rawText);
                                 }
                             };
                         })];
                 };
 
-                $ctrl.messageActionSelected = (action, username, userId, msgId, rawText) => {
+                $ctrl.messageActionSelected = (action, username, userId, displayName, msgId, rawText) => {
                     switch (action.toLowerCase()) {
                         case "delete message":
                             chatMessagesService.deleteMessage(msgId);
@@ -459,7 +459,7 @@
                             updateChatField(`!quote add @${username} ${rawText}`);
                             break;
                         case "spotlight message":
-                            chatMessagesService.highlightMessage(username, rawText);
+                            chatMessagesService.highlightMessage(username, userId, displayName, rawText);
                             break;
                         case "shoutout":
                             updateChatField(`!so @${username}`);

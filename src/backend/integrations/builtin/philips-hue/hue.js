@@ -2,9 +2,9 @@
 const EventEmitter = require("events");
 const logger = require("../../../logwrapper");
 const hueManager = require("./hue-manager");
-const v3 = require('node-hue-api').v3,
-    discovery = v3.discovery,
-    hueApi = v3.api;
+const nodeApi = require('node-hue-api'),
+    discovery = nodeApi.discovery,
+    hueApi = nodeApi.api;
 
 const appName = 'Firebot';
 const deviceName = 'Firebot-Hue';
@@ -39,9 +39,9 @@ class HueIntegration extends EventEmitter {
         this.connected = false;
     }
     init(linked, integrationData) {
-        // Register hue specific events and variables here.
 
         effectManager.registerEffect(require("./effects/hue-scenes"));
+        effectManager.registerEffect(require("./effects/control-light"));
 
         if (linked) {
             if (integrationData && integrationData.settings && integrationData.settings.user) {
@@ -50,7 +50,6 @@ class HueIntegration extends EventEmitter {
         }
     }
     disconnect() {
-        // TODO: Disconnect from authed instance.
         this.emit("disconnected", integrationDefinition.id);
     }
     async link() {
@@ -77,10 +76,17 @@ class HueIntegration extends EventEmitter {
         await hueManager.deleteHueUser();
     }
     async discoverBridge() {
-        const discoveryResults = await discovery.nupnpSearch();
+        logger.info('Attempting to discover Hue Bridges via mDNS');
+        let discoveryResults = await discovery.mdnsSearch();
 
         if (discoveryResults.length === 0) {
-            logger.error('Failed to resolve any Hue Bridges');
+            logger.warn('Failed to resolve any Hue Bridges via MDNS');
+            logger.info('Attempting to discover Hue Bridges via N-UPnP');
+            discoveryResults = await discovery.nupnpSearch();
+        }
+
+        if (discoveryResults.length === 0) {
+            logger.error('Failed to resolve any Hue Bridges via N-UPnP');
             return null;
         }
         // Ignoring that you could have more than one Hue Bridge on a network as this is unlikely in 99.9% of users situations
@@ -88,6 +94,11 @@ class HueIntegration extends EventEmitter {
     }
     async discoverAndCreateUser() {
         const ipAddress = await this.discoverBridge();
+
+        if (ipAddress == null) {
+            logger.warn('Failed to discover any Hue Bridges');
+            return false;
+        }
 
         // Create an unauthenticated instance of the Hue API so that we can create a new user
         const unauthenticatedApi = await hueApi.createLocal(ipAddress).connect();

@@ -42,7 +42,14 @@
                 </div>
 
                 <div class="function-button-settings" style="margin-top: 15px;">
-                    <effect-list header="What should this timer do?" effects="$ctrl.timer.effects" trigger="timer" trigger-meta="$ctrl.triggerMeta" update="$ctrl.effectListUpdated(effects)" modalId="{{$ctrl.modalId}}"></effect-list>
+                    <effect-list
+                        header="What should this timer do?"
+                        effects="$ctrl.timer.effects"
+                        trigger="timer"
+                        trigger-meta="{ rootEffects: $ctrl.timer.effects }"
+                        update="$ctrl.effectListUpdated(effects)"
+                        modalId="{{$ctrl.modalId}}"
+                    ></effect-list>
                 </div>
                 <p class="muted" style="font-size:11px;margin-top:6px;">
                     <b>ProTip:</b> If you want to have this timer display a single chat message at a time, try the <b>Run Random Effect</b> or <b>Run Sequential Effect</b>
@@ -78,24 +85,6 @@
                 } else {
                     $ctrl.timer = JSON.parse(JSON.stringify($ctrl.resolve.timer));
                 }
-
-                const modalId = $ctrl.resolve.modalId;
-                $ctrl.modalId = modalId;
-                utilityService.addSlidingModal(
-                    $ctrl.modalInstance.rendered.then(() => {
-                        const modalElement = $(`.${modalId}`).children();
-                        return {
-                            element: modalElement,
-                            name: "Edit Timer",
-                            id: modalId,
-                            instance: $ctrl.modalInstance
-                        };
-                    })
-                );
-
-                $scope.$on("modal.closing", function() {
-                    utilityService.removeSlidingModal();
-                });
             };
 
             $ctrl.effectListUpdated = function(effects) {

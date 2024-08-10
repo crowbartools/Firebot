@@ -14,21 +14,29 @@
                 {
                     name: "NAME",
                     icon: "fa-user",
+                    dataField: "name",
+                    sortable: true,
                     cellTemplate: `{{data.name}}`
                 },
                 {
                     name: "VALUE",
                     icon: "fa-tally",
+                    dataField: "value",
+                    sortable: true,
                     cellTemplate: `{{data.value}}`
                 },
                 {
                     name: "MINIMUM",
                     icon: "fa-arrow-to-bottom",
+                    dataField: "minimum",
+                    sortable: true,
                     cellTemplate: `{{data.minimum ? data.minimum : 'n/a'}}`
                 },
                 {
                     name: "MAXIMUM",
                     icon: "fa-arrow-to-top",
+                    dataField: "maximum",
+                    sortable: true,
                     cellTemplate: `{{data.maximum ? data.maximum : 'n/a'}}`
                 }
             ];

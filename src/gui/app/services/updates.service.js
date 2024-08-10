@@ -5,7 +5,7 @@
     //This handles updates
     const VersionCompare = require('../../shared/compare-versions');
     const UpdateType = VersionCompare.UpdateType;
-    const marked = require("marked");
+    const { marked } = require("marked");
 
     const { sanitize } = require("dompurify");
 
@@ -133,7 +133,8 @@
                                 gitLink: gitLink,
                                 gitNotes: $sce.trustAsHtml(gitNotes),
                                 gitZipDownloadUrl: gitZipDownloadUrl,
-                                updateIsAvailable: updateIsAvailable
+                                updateIsAvailable,
+                                latestUpdateType
                             };
                         }
 
@@ -165,8 +166,14 @@
             };
 
             service.downloadAndInstallUpdate = function() {
-                service.downloadUpdate();
-                service.installUpdate();
+                if (service.updateData?.updateIsAvailable === true
+                    && service.updateData?.latestUpdateType === UpdateType.PRERELEASE
+                ) {
+                    window.open(`https://github.com/crowbartools/Firebot/releases/${service.updateData.gitVersion}`, "_blank");
+                } else {
+                    service.downloadUpdate();
+                    service.installUpdate();
+                }
             };
 
             return service;

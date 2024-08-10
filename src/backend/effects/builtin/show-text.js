@@ -30,7 +30,7 @@ const showText = {
    */
     optionsTemplate: `
     <eos-container header="Text">
-        <div ng-class="editorClass" replace-variables on-variable-insert="onVariableInsert(variable)" menu-position="bottom">
+        <div ng-class="editorClass" replace-variables on-variable-insert="onVariableInsert(text)" menu-position="bottom">
             <summernote on-editor-ready="editorReady(editor)" ng-model="effect.text" config="editorOptions" editor="editor" editable="editable"></summernote>
         </div>
         <div style="margin-top: 10px;">
@@ -180,15 +180,14 @@ const showText = {
             $scope.editor = editor;
         };
 
-        $scope.onVariableInsert = (variable) => {
+        $scope.onVariableInsert = (text) => {
             if ($scope.editor == null) {
                 return;
             }
             $scope.editor.summernote('restoreRange');
             $scope.editor.summernote("focus");
             $timeout(() => {
-                const display = variable.usage ? variable.usage : variable.handle;
-                $scope.editor.summernote("insertText", `$${display}`);
+                $scope.editor.summernote("insertText", text);
             }, 100);
 
         };

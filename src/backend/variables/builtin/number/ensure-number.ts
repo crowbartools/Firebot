@@ -4,7 +4,7 @@ import { OutputDataType, VariableCategory } from "../../../../shared/variable-co
 const model : ReplaceVariable = {
     definition: {
         handle: "ensureNumber",
-        description: "Guarantees a number output. If the input is a number, it's passed through. If it's not, the given default number is used instead.",
+        description: "Guarantees a number output. If the input is a number, it is passed through. If it's not, the given default number is used instead.",
         usage: "ensureNumber[input, defaultNumber]",
         categories: [VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
@@ -14,7 +14,7 @@ const model : ReplaceVariable = {
         input: unknown,
         defaultNumber: unknown
     ) : number => {
-        if (input != null && Number.isFinite(Number(input))) {
+        if (input != null && input !== '' && Number.isFinite(Number(input))) {
             return Number(input);
         }
 

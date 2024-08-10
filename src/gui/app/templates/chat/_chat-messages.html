@@ -262,7 +262,7 @@
         <div
           style="width: 100%"
           class="activity-message"
-          ng-hide="hideEventLabel"
+          ng-hide="hideEventLabel()"
           ng-bind-html="activity.message"
         ></div>
         <div
@@ -270,6 +270,7 @@
           style="font-size: 15px; display: flex; align-items: center"
         >
           <i
+            ng-if="activity.event.canRetrigger !== false"
             class="clickable far fa-redo mr-4"
             ng-click="afs.retriggerEvent(activity.id)"
             uib-tooltip="Retrigger event"

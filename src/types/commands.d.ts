@@ -1,5 +1,6 @@
 import { FirebotChatMessage } from "./chat";
 import { EffectList } from "./effects";
+import { RestrictionData } from "./restrictions";
 
 export type CommandType = "system" | "custom";
 
@@ -12,20 +13,6 @@ type Cooldown = {
      * Cooldown for each user to use a command in seconds.
      */
     user: number | undefined;
-};
-
-type RestrictionData = {
-    /**
-     * Sets the command to only trigger when all/any/none of the restrictions pass.
-     */
-    mode?: "all" | "any" | "none";
-    /**
-     * If a chat message should be sent when the restrictions are not met.
-     */
-    sendFailMessage?: boolean;
-    useCustomFailMessage?: boolean;
-    failMessage?: string;
-    restrictions: unknown[]; // TODO: change when restriction-manager and companion types are added
 };
 
 export type SubCommand = {
@@ -131,6 +118,9 @@ export type CommandDefinition = {
     treatQuotedTextAsSingleArg?: boolean | undefined;
     minArgs?: number;
     options?: Record<keyof OptionsModel, CommandOption>;
+    /**
+     * Only set for currency system commands.
+     */
     currency?: {
         name: string;
         id: string;

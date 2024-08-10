@@ -29,6 +29,8 @@
                     headerStyles: {
                         'min-width': '150px'
                     },
+                    dataField: "name",
+                    sortable: true,
                     cellTemplate: `{{data.name}}`,
                     cellController: () => {}
                 },
@@ -38,6 +40,8 @@
                     headerStyles: {
                         'min-width': '100px'
                     },
+                    dataField: "eventId",
+                    sortable: true,
                     cellTemplate: `{{data.eventId && data.sourceId ?
                         friendlyEventTypeName(data.sourceId, data.eventId) : "No
                         Type"}}`,
@@ -166,6 +170,7 @@
 
                 utilityService.showModal({
                     component: "addOrEditEventModal",
+                    breadcrumbName: "Edit Event",
                     resolveObj: {
                         event: () => event,
                         groupId: () => selectedGroupId

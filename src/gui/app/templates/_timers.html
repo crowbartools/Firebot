@@ -1,12 +1,4 @@
-<div
-  style="
-    min-width: 500px;
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-  "
->
+<div class="fb-tabbed-page">
   <div class="fb-tab-wrapper">
     <ul class="nav nav-tabs fb-tabs">
       <li
@@ -25,39 +17,37 @@
       </li>
     </ul>
   </div>
-  
-  <div style="overflow-y: scroll; height: 100%;">
-    <firebot-item-table
-      ng-if="activeTimerTab === 0"
-      items="timerService.timers"
-      on-items-update="onTimersUpdated(items)"
-      headers="timerHeaders"
-      sort-tag-context="timers"
-      orderable="true"
-      add-new-button-text="New Timer"
-      on-add-new-clicked="timerService.showAddEditTimerModal()"
-      context-menu-options="timerOptions(item)"
-      no-data-message="No timers saved. You should make one! :)"
-      none-found-message="No timers found."
-      search-placeholder="Search timers"
-      test-button="false"
-      status-field="active"
-    ></firebot-item-table>
-    <firebot-item-table
-      ng-if="activeTimerTab === 1"
-      items="scheduledTaskService.scheduledTasks"
-      on-items-update="onScheduledTasksUpdated(items)"
-      headers="scheduledTaskHeaders"
-      sort-tag-context="scheduled effect lists"
-      orderable="true"
-      add-new-button-text="New Scheduled Effect List"
-      on-add-new-clicked="scheduledTaskService.showAddEditScheduledTaskModal()"
-      context-menu-options="scheduledTaskOptions(item)"
-      no-data-message="No scheduled effect lists saved. You should make one! :)"
-      none-found-message="No scheduled effect lists found."
-      search-placeholder="Search scheduled effect lists"
-      test-button="false"
-      status-field="enabled"
-    ></firebot-item-table>
-  </div>
+
+  <firebot-item-table
+    ng-if="activeTimerTab === 0"
+    items="timerService.timers"
+    on-items-update="onTimersUpdated(items)"
+    headers="timerHeaders"
+    sort-tag-context="timers"
+    orderable="true"
+    add-new-button-text="New Timer"
+    on-add-new-clicked="timerService.showAddEditTimerModal()"
+    context-menu-options="timerOptions(item)"
+    no-data-message="No timers saved. You should make one! :)"
+    none-found-message="No timers found."
+    search-placeholder="Search timers"
+    test-button="false"
+    status-field="active"
+  ></firebot-item-table>
+  <firebot-item-table
+    ng-if="activeTimerTab === 1"
+    items="scheduledTaskService.scheduledTasks"
+    on-items-update="onScheduledTasksUpdated(items)"
+    headers="scheduledTaskHeaders"
+    sort-tag-context="scheduled effect lists"
+    orderable="true"
+    add-new-button-text="New Scheduled Effect List"
+    on-add-new-clicked="scheduledTaskService.showAddEditScheduledTaskModal()"
+    context-menu-options="scheduledTaskOptions(item)"
+    no-data-message="No scheduled effect lists saved. You should make one! :)"
+    none-found-message="No scheduled effect lists found."
+    search-placeholder="Search scheduled effect lists"
+    test-button="false"
+    status-field="enabled"
+  ></firebot-item-table>
 </div>

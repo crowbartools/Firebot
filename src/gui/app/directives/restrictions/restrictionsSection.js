@@ -119,13 +119,15 @@
                 }
 
                 $ctrl.$onInit = function() {
+                    const DEFAULT_FAIL_MESSAGE = `Sorry @{user}, you cannot use this ${$ctrl.trigger.trim().replace(/_/, " ") ?? ''} because: {reason}`;
+
                     if ($ctrl.restrictionData == null) {
                         $ctrl.restrictionData = {
                             restrictions: [],
                             mode: "all",
                             sendFailMessage: true,
                             useCustomFailMessage: false,
-                            failMessage: "Sorry, you cannot use this command because: {reason}"
+                            failMessage: DEFAULT_FAIL_MESSAGE
                         };
                     }
 
@@ -142,7 +144,7 @@
                     }
 
                     if ($ctrl.restrictionData.failMessage == null) {
-                        $ctrl.restrictionData.failMessage = "Sorry, you cannot use this command because: {reason}";
+                        $ctrl.restrictionData.failMessage = DEFAULT_FAIL_MESSAGE;
                     }
 
                     updateCanAddMoreRestrictions();

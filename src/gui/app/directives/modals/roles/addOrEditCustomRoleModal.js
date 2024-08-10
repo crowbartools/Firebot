@@ -123,24 +123,6 @@
                     $ctrl.role = JSON.parse(JSON.stringify($ctrl.resolve.role));
                     $ctrl.isNewRole = false;
                 }
-
-                const modalId = $ctrl.resolve.modalId;
-                utilityService.addSlidingModal(
-                    $ctrl.modalInstance.rendered.then(() => {
-                        const modalElement = $(`.${modalId}`).children();
-                        return {
-                            element: modalElement,
-                            name: "Add/Edit Custom Role",
-                            id: modalId,
-                            instance: $ctrl.modalInstance
-                        };
-                    })
-                );
-
-                $scope.$on("modal.closing", function() {
-                    utilityService.removeSlidingModal();
-                });
-
             };
 
             $ctrl.delete = function() {

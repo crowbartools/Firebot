@@ -24,7 +24,7 @@
                                 </div>
                             </ui-select-choices>
                         </ui-select>
-                        <div id="helpBlock2" class="help-block" ng-show="$ctrl.kindError">Please select an arg type.</div>
+                        <div id="helpBlock2" class="help-block" ng-show="$ctrl.kindError">{{$ctrl.kindErrorText}}</div>
                     </div>
                 </div>
 
@@ -53,7 +53,11 @@
             controller: function($timeout) {
                 const $ctrl = this;
 
+                $ctrl.kindErrorText = "";
                 $ctrl.nameErrorText = 'Please provide trigger text.';
+
+                $ctrl.kindError = false;
+                $ctrl.nameError = false;
 
                 $timeout(() => {
                     angular.element("#nameField").trigger("focus");
@@ -70,10 +74,8 @@
                 $ctrl.onTypeChange = () => {
                     $ctrl.arg.usage = null;
                     $ctrl.arg.arg = null;
+                    $ctrl.kindError = false;
                 };
-
-                $ctrl.nameError = false;
-                $ctrl.kindError = false;
 
                 $ctrl.argTypes = [
                     {
@@ -101,7 +103,17 @@
 
                 function validateArgType() {
                     const type = $ctrl.arg.type;
-                    return type != null && type.length > 0;
+
+                    if (type == null || !type.length) {
+                        $ctrl.kindErrorText = "Please select an arg type.";
+                        return false;
+                    } else if (type === "Fallback" && !$ctrl.resolve.hasAnyArgs) {
+                        $ctrl.kindErrorText = "You must add another arg type before adding a fallback.";
+                        return false;
+                    }
+
+                    $ctrl.kindErrorText = "";
+                    return true;
                 }
 
                 const numberRegex = "\\d+";

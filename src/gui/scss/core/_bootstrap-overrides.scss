@@ -144,18 +144,29 @@ textarea.form-control {
 // Buttons
 
 .btn {
-    &.btn-lg {
-        height: 40px;
-        font-size: 14px;
-    }
     border-radius: 8px;
     padding: 9px 12px;
     transform: scale(1.0) translateZ(0);
     transition-property: transform;
     transition-duration: 0.3s;
+    &.btn-lg {
+        height: 40px;
+        font-size: 14px;
+    }
+    &.btn-sm {
+        padding: 5px 10px !important;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+    &.btn-xs {
+        padding: 3px 6px !important;
+        font-size: 12px !important;
+        line-height: 1.5 !important;
+    }
     &:hover {
         // transform: scale(1.02) translateZ(0);
     }
+
 }
 
 .btn.dropdown-toggle, .btn.form-control {
@@ -190,6 +201,16 @@ textarea.form-control {
     border: 1px solid transparent;
     background-color: $default-btn-bg-color;
     color: $default-btn-text-color;
+    &:disabled {
+        background-color: $default-btn-bg-color;
+        color: $default-btn-text-color;
+        opacity: 0.5;
+        &:hover {
+            background-color: $default-btn-bg-color;
+            color: $default-btn-text-color;
+            opacity: 0.75;
+        };
+    }
     &:hover {
         background-color: $default-btn-hover-bg;
         // border-color: $default-btn-hover-border;
@@ -395,7 +416,7 @@ textarea.form-control {
 }
 
 .form-group {
-    margin-bottom: 30px;
+    margin-bottom: 25px;
     & .form-label {
         font-size: 15px;
         font-weight: 500;
@@ -404,6 +425,9 @@ textarea.form-control {
     & .help-block {
         font-size: 13px;
         color: #9a9a9a;
+    }
+    &.has-error .help-block {
+        color: #a94442;
     }
 }
 
@@ -428,9 +452,22 @@ textarea.form-control {
 }
 
 .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
-    background-color: adjust-color($form-control-bg, $red: 50, $green: 50, $blue: 50);
-    opacity: 1;
+    background-color: $form-control-bg;
+    opacity: 0.75;
 }
+
+.progress {
+    background-color: $form-control-bg;
+    border-radius: 8px;
+    height: 30px;
+}
+
+.progress-bar {
+    line-height: 30px;
+    text-wrap: nowrap;
+}
+
+
 
 label {
     font-size: 15px;
@@ -459,6 +496,14 @@ label {
     color: $alert-danger-text-color;
     background-color: $alert-danger-bg;
     border-color: transparent;
+}
+
+.fb-tabbed-page {
+    min-width: 500px;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 // This is for pages that use tabbed navigation. IE: Commands
@@ -659,4 +704,8 @@ a {
 code {
     color: #daf4fc;
     background-color: #334557;
+}
+
+.update-notes img {
+    max-width: 80%;
 }
