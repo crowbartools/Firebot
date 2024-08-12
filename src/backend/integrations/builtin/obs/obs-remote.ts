@@ -900,12 +900,35 @@ export async function getAllSceneItemsInScene(sceneName: string): Promise<Array<
     }
 }
 
+export async function getAllSceneItemsInGroup(groupName: string): Promise<Array<OBSSceneItem>> {
+    try {
+        const response = await obs.call("GetGroupSceneItemList", { sceneName: groupName });
+        return response.sceneItems.map(item => ({
+            id: item.sceneItemId as number,
+            name: item.sourceName as string
+        }));
+    } catch (error) {
+        logger.error(`Failed to get OBS scene items in group "${groupName}"`, error);
+        return null;
+    }
+}
+
 export async function getSceneItem(sceneName: string, sceneItemId: number): Promise<OBSSceneItem> {
     try {
         const sceneItems = await getAllSceneItemsInScene(sceneName);
         return sceneItems.find(item => item.id === sceneItemId);
     } catch (error) {
         logger.error(`Failed to get OBS scene item ${sceneItemId} in scene "${sceneName}"`, error);
+        return null;
+    }
+}
+
+export async function getGroupItem(groupName: string, groupItemId: number): Promise<OBSSceneItem> {
+    try {
+        const groupItems = await getAllSceneItemsInGroup(groupName);
+        return groupItems.find(item => item.id === groupItemId);
+    } catch (error) {
+        logger.error(`Failed to get OBS scene item ${groupItemId} in group "${groupName}"`, error);
         return null;
     }
 }
