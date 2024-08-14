@@ -648,6 +648,13 @@ export type OBSSourceScreenshotSettings = {
     imageCompressionQuality?: number;
 }
 
+export type OBSSourceTransformKeys =
+    | "positionX"
+    | "positionY"
+    | "scaleX"
+    | "scaleY"
+    | "rotation";
+
 export async function getAllSources(): Promise<Array<OBSSource> | null> {
     if (!connected) {
         return null;
@@ -783,6 +790,116 @@ export async function getAudioSources(): Promise<Array<OBSSource>> {
     }
 
     return audioSupportedSources;
+}
+
+export async function getTransformableSceneItems(sceneName: string): Promise<Array<OBSSceneItem>> {
+    const sceneItems = await getAllSceneItemsInScene(sceneName) ?? [];
+    const sources = (await getAllSources()) ?? [];
+
+    return sceneItems.filter(item => sources.some(source => source.name === item.name && !source.typeId.startsWith("wasapi")));
+}
+
+const transformWebsocketRequest = (sceneName: string, sceneItemId: number, sceneItemTransform: Record<OBSSourceTransformKeys, number>) => ({
+    requestType: "SetSceneItemTransform",
+    requestData: {
+        sceneName,
+        sceneItemId,
+        sceneItemTransform
+    }
+});
+
+// For future Oshi or someone who thinks up a clean solution to this, this method should ultimately allow
+// for any two OBS websocket payloads of the same type to be passed in, and will create a lerped response between
+// them both, not be opinionated to just work with Transform.
+function getLerpedCallsArray(
+    sceneName: string,
+    sceneItemId: number,
+    transformStart: Record<string, number>,
+    transformEnd: Record<string, number>,
+    duration: number,
+    easeIn = false,
+    easeOut = false
+) {
+    if (!duration) {
+        return [
+            transformWebsocketRequest(
+                sceneName,
+                sceneItemId,
+                transformEnd && Object.keys(transformEnd).length
+                    ? transformEnd
+                    : transformStart
+            )
+        ];
+    }
+
+    const calls = [];
+    const interval = 1 / 60;
+
+    calls.push(transformWebsocketRequest(sceneName, sceneItemId, transformStart));
+    if (!transformEnd || !Object.keys(transformEnd).length) {
+        return calls;
+    }
+
+    let time = 0;
+    do {
+        const delay = Math.min(interval * 1000, duration - time);
+        const frame: Record<string, number> = {};
+
+        calls.push({
+            requestType: "Sleep",
+            requestData: { sleepMillis: delay }
+        });
+
+        time += delay;
+        Object.keys(transformEnd).forEach((key) => {
+            if (transformStart[key] === transformEnd[key]) {
+                return;
+            }
+            let ratio = time / duration;
+            if (easeIn && easeOut) {
+                ratio = ratio < 0.5 ? 2 * ratio * ratio : -1 + (4 - 2 * ratio) * ratio;
+            } else if (easeIn) {
+                ratio = ratio * ratio;
+            } else if (easeOut) {
+                ratio = ratio * (2 - ratio);
+            }
+            frame[key] = transformStart[key] + (transformEnd[key] - transformStart[key]) * ratio;
+        });
+
+        calls.push(transformWebsocketRequest(sceneName, sceneItemId, frame));
+    } while (time < duration);
+    return calls;
+}
+
+export async function transformSceneItem(
+    sceneName: string,
+    sceneItemId: number,
+    duration: number,
+    transformStart: Record<string, number>,
+    transformEnd: Record<string, number>,
+    easeIn: boolean,
+    easeOut: boolean
+) {
+    try {
+        const currentTransform = (await obs.call("GetSceneItemTransform", {
+            sceneName,
+            sceneItemId
+        })).sceneItemTransform;
+
+        Object.keys(transformEnd).forEach((key) => {
+            if (!transformStart.hasOwnProperty(key)) {
+                transformStart[key] = Number(currentTransform[key]);
+            }
+            if (transformEnd[key] === transformStart[key]) {
+                delete transformEnd[key];
+            }
+        });
+
+        const calls = getLerpedCallsArray(sceneName, sceneItemId, transformStart, transformEnd, duration, easeIn, easeOut);
+        await obs.callBatch(calls);
+    } catch (error) {
+        logger.error("Failed to transform scene item", error);
+    }
 }
 
 export async function toggleSourceMuted(sourceName: string) {
