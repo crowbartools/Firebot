@@ -7,6 +7,7 @@ triggers[EffectTrigger.MANUAL] = true;
 triggers[EffectTrigger.COMMAND] = true;
 triggers[EffectTrigger.EVENT] = [
     "twitch:chat-message",
+    "twitch:chat-message-deleted",
     "twitch:first-time-chat",
     "firebot:highlight-message",
     "twitch:announcement",

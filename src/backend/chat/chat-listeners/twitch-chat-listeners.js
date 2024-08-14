@@ -165,7 +165,8 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
         );
     });
 
-    streamerChatClient.onMessageRemove((_channel, messageId) => {
+    streamerChatClient.onMessageRemove((_channel, messageId, message) => {
+        twitchEventsHandler.chatMessage.triggerChatMessageDeleted(message);
         frontendCommunicator.send("twitch:chat:message:deleted", messageId);
     });
 
