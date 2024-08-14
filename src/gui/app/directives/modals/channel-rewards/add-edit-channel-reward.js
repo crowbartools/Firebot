@@ -299,7 +299,7 @@
             controller: function($scope, ngToast, channelRewardsService) {
                 const $ctrl = this;
 
-                const generateRandomColor = () => `#${Math.floor(Math.random() * 8 ** 8).toString(16)}`;
+                const generateRandomColor = () => `#${Math.floor(Math.random() * 8 ** 8).toString(16).padStart(6, '0')}`;
 
                 $ctrl.formFieldHasError = (fieldName) => {
                     return ($scope.rewardSettings.$submitted || $scope.rewardSettings[fieldName].$touched)
