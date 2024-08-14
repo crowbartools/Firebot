@@ -78,7 +78,8 @@
                     noDuplicates: false,
                     maxItems: undefined,
                     trigger: undefined,
-                    triggerMeta: undefined
+                    triggerMeta: undefined,
+                    inputPlaceholder: undefined
                 };
 
 
@@ -143,7 +144,8 @@
                             }),
                             validationText: $ctrl.settings.validationText,
                             trigger: $ctrl.settings.trigger,
-                            triggerMeta: $ctrl.settings.triggerMeta
+                            triggerMeta: $ctrl.settings.triggerMeta,
+                            inputPlaceholder: $ctrl.settings.inputPlaceholder
                         },
                         cb);
                 }
