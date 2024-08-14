@@ -3,6 +3,7 @@
 exports.ad = require("./twitch-events/ad");
 exports.announcement = require("./twitch-events/announcement");
 exports.charity = require("./twitch-events/charity");
+exports.chat = require("./twitch-events/chat");
 exports.chatMessage = require("./twitch-events/chat-message");
 exports.chatModeChanged = require("./twitch-events/chat-mode-changed");
 exports.cheer = require("./twitch-events/cheer");
