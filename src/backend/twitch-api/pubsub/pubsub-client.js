@@ -128,11 +128,12 @@ async function createClient() {
                     break;
                 default:
                     switch (message.action) {
-                        case "clear":
+                        case "clear": {
                             const { userName, userId } = message;
                             frontendCommunicator.send("twitch:chat:clear-feed", userName);
                             twitchEventsHandler.chat.triggerChatCleared(userName, userId);
                             break;
+                        }
                         case "emoteonly":
                         case "emoteonlyoff":
                         case "subscribers":
