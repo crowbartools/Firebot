@@ -9,6 +9,7 @@ export function triggerChatMessage(firebotChatMessage: FirebotChatMessage): void
         userDisplayName: firebotChatMessage.userDisplayName,
         twitchUserRoles: firebotChatMessage.roles,
         messageText: firebotChatMessage.rawText,
+        messageId: firebotChatMessage.id,
         chatMessage: firebotChatMessage
     });
 }
@@ -29,6 +30,7 @@ export function triggerFirstTimeChat(firebotChatMessage: FirebotChatMessage): vo
         userDisplayName: firebotChatMessage.userDisplayName,
         twitchUserRoles: firebotChatMessage.roles,
         messageText: firebotChatMessage.rawText,
+        messageId: firebotChatMessage.id,
         chatMessage: firebotChatMessage
     });
 }

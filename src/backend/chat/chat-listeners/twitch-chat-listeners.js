@@ -44,7 +44,8 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
             firebotChatMessage.userId,
             firebotChatMessage.userDisplayName,
             firebotChatMessage.roles,
-            firebotChatMessage.rawText
+            firebotChatMessage.rawText,
+            firebotChatMessage.id
         );
     });
 
