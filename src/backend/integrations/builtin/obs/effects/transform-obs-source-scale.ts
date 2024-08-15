@@ -4,7 +4,7 @@ import { OBSSceneItem, OBSSourceTransformKeys, transformSceneItem } from "../obs
 export const TransformSourceScaleEffectType: EffectType<{
     sceneName?: string;
     sceneItem?: OBSSceneItem;
-    duration: number;
+    duration: string | number;
     easeIn: boolean;
     easeOut: boolean;
     isTransformingPosition: boolean;
@@ -56,7 +56,7 @@ export const TransformSourceScaleEffectType: EffectType<{
             <firebot-input
                 input-type="number"
                 input-title="Duration"
-                placeholder-text="milliseconds"
+                placeholder-text="seconds"
                 model="effect.duration"
                 style="margin-bottom: 20px;" />
             <div style="display: flex; gap: 20px;">
@@ -199,12 +199,15 @@ export const TransformSourceScaleEffectType: EffectType<{
         if (effect.sceneItem == null) {
             return ["Please select a source."];
         }
-        if (effect.duration == null) {
+        if (effect.duration == null || effect.duration !== "") {
             return ["Please enter a duration."];
         }
         return [];
     },
     onTriggerEvent: async ({ effect }) => {
+        if (isNaN(Number(effect.duration))) {
+            effect.duration = 0;
+        }
         const parsedStart: Record<string, number> = {};
         const parsedEnd: Record<string, number> = {};
         const transformKeys: Array<OBSSourceTransformKeys> = [];
@@ -233,7 +236,7 @@ export const TransformSourceScaleEffectType: EffectType<{
             }
         });
 
-        await transformSceneItem(effect.sceneName, effect.sceneItem.id, effect.duration, parsedStart, parsedEnd, effect.easeIn, effect.easeOut);
+        await transformSceneItem(effect.sceneName, effect.sceneItem.id, Number(effect.duration) * 1000, parsedStart, parsedEnd, effect.easeIn, effect.easeOut);
 
         return true;
     }
