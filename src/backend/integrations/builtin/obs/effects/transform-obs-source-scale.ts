@@ -236,7 +236,15 @@ export const TransformSourceScaleEffectType: EffectType<{
             }
         });
 
-        await transformSceneItem(effect.sceneName, effect.sceneItem.id, Number(effect.duration) * 1000, parsedStart, parsedEnd, effect.easeIn, effect.easeOut);
+        await transformSceneItem(
+            effect.sceneItem.groupName ?? effect.sceneName,
+            effect.sceneItem.id,
+            Number(effect.duration) * 1000,
+            parsedStart,
+            parsedEnd,
+            effect.easeIn,
+            effect.easeOut
+        );
 
         return true;
     }
