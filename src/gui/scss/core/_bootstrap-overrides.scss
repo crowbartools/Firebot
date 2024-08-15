@@ -709,3 +709,12 @@ code {
 .update-notes img {
     max-width: 80%;
 }
+
+.input-group .form-control:has(~ .variables-btn:last-child) {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.input-group .form-control:has(~ .variables-btn.below:last-child) {
+    border-bottom-right-radius: 0px;
+}
