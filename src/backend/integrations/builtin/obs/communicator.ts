@@ -14,7 +14,9 @@ import {
     getImageSources,
     getMediaSources,
     getColorSources,
-    getSupportedImageFormats
+    getSupportedImageFormats,
+    getTransformableSceneItems,
+    OBSSceneItem
 } from "./obs-remote";
 
 export function setupFrontendListeners(
@@ -43,6 +45,14 @@ export function setupFrontendListeners(
     frontendCommunicator.onAsync<never, Array<OBSSource>>(
         "obs-get-sources-with-filters",
         getSourcesWithFilters
+    );
+
+    frontendCommunicator.onAsync<unknown[], Array<OBSSceneItem>>(
+        "obs-get-transformable-scene-items",
+        (args: [sceneName: string]) => {
+            const [sceneName] = args;
+            return getTransformableSceneItems(sceneName);
+        }
     );
 
     frontendCommunicator.onAsync<never, Array<OBSSource>>(
