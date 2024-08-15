@@ -124,17 +124,23 @@ const playVideo = {
                 model="effect.twitchClipUsername"
                 placeholder-text="Ex: $streamer, $user, etc"
             />
+            <div class="mt-10 form-group flex-row jspacebetween" style="margin-bottom: 0;">
+                <firebot-checkbox 
+                    label="Only Featured Clips" 
+                    model="effect.isFeatured"
+                    style="margin: 0px 15px 0px 0px"
+                />
+            </div>
             <div
                 class="mt-6 mb-2"
                 ng-class="{'has-error': $ctrl.formFieldHasError('clipSeconds')}"
             >
                 <div class="form-group flex-row jspacebetween" style="margin-bottom: 0;">
-                    <div>
-                        <label class="control-fb control--checkbox" style="margin:0;"> Maximum Clip Age
-                        <input type="checkbox" ng-model="effect.useMaxClipAge">
-                            <div class="control__indicator"></div>
-                        </label>
-                    </div>
+                    <firebot-checkbox 
+                        label="Maximum Clip Age" 
+                        model="effect.useMaxClipAge"
+                        style="margin: 0px 15px 0px 0px"
+                    />
                 </div>
                 <div class="mt-2">
                     <time-input
@@ -147,14 +153,6 @@ const playVideo = {
                         disabled="!effect.useMaxClipAge"
                     />
                 </div>
-                    <div class="mt-6 form-group flex-row jspacebetween" style="margin-bottom: 0;">
-                        <div>
-                            <label class="control-fb control--checkbox" style="margin:0;"> Only Featured Clips
-                                <input type="checkbox" ng-model="effect.isFeatured">
-                                <div class="control__indicator"></div>
-                            </label>
-                        </div>
-                    </div>
             </div>
         </div>
 
