@@ -199,7 +199,7 @@ export const TransformSourceScaleEffectType: EffectType<{
         if (effect.sceneItem == null) {
             return ["Please select a source."];
         }
-        if (effect.duration == null || effect.duration !== "") {
+        if (effect.duration == null || effect.duration === "") {
             return ["Please enter a duration."];
         }
         return [];
