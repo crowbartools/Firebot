@@ -6,6 +6,7 @@ const frontendCommunicator = require("../../common/frontend-communicator");
 const EventEmitter = require("events");
 const { abortEffectList } = require("../../common/effect-abort-helpers");
 
+
 /**
  * Queue Entry
  * @typedef {Object} QueueEntry
@@ -260,7 +261,6 @@ function abortActiveEffectListsForQueue(queueId, bubbleStop = true) {
 function abortActiveEffectListsForAllQueues(bubbleStop = true) {
     Object.keys(queues).forEach(queueId => abortActiveEffectListsForQueue(queueId, bubbleStop));
 }
-
 /**
  * @type {import("tiny-typed-emitter").TypedEmitter<{
 *    "length-updated": (item: object) => void;
