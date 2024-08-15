@@ -5,13 +5,15 @@ export function triggerAnnouncement(
     userId: string,
     userDisplayName: string,
     twitchUserRoles: string[],
-    messageText: string
+    messageText: string,
+    messageId: string
 ): void {
     eventManager.triggerEvent("twitch", "announcement", {
         username,
         userId,
         userDisplayName,
         twitchUserRoles,
-        messageText
+        messageText,
+        messageId
     });
 }
