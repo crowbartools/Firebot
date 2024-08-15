@@ -39,6 +39,7 @@ import { TakeOBSSourceScreenshotEffectType } from "./effects/take-obs-source-scr
 
 import { OBSEventSource } from "./events/obs-event-source";
 
+import { GroupNameEventFilter } from "./filters/group-name-filter";
 import { SceneNameEventFilter } from "./filters/scene-name-filter";
 
 import { SceneNameVariable } from "./variables/scene-name-variable";
@@ -71,6 +72,8 @@ import { InputAudioBalanceVariable } from "./variables/input-audio-balance";
 import { InputAudioSyncOffsetVariable } from "./variables/input-audio-sync-offset";
 import { InputAudioTracksVariable } from "./variables/input-audio-tracks";
 import { InputAudioMonitorTypeVariable } from "./variables/input-audio-monitor-type";
+import { GroupItemIdVariable } from "./variables/group-item-id";
+import { GroupNameVariable } from "./variables/group-name";
 
 type ObsSettings = {
     websocketSettings: {
@@ -159,6 +162,7 @@ class ObsIntegration
 
         eventManager.registerEventSource(OBSEventSource);
 
+        eventFilterManager.registerFilter(GroupNameEventFilter);
         eventFilterManager.registerFilter(SceneNameEventFilter);
 
         replaceVariableManager.registerReplaceVariable(SceneNameVariable);
@@ -167,6 +171,8 @@ class ObsIntegration
         replaceVariableManager.registerReplaceVariable(IsStreamingVariable);
         replaceVariableManager.registerReplaceVariable(IsRecordingVariable);
         replaceVariableManager.registerReplaceVariable(ColorValueVariable);
+        replaceVariableManager.registerReplaceVariable(GroupItemIdVariable);
+        replaceVariableManager.registerReplaceVariable(GroupNameVariable);
         replaceVariableManager.registerReplaceVariable(SceneItemIdVariable);
         replaceVariableManager.registerReplaceVariable(SceneItemNameVariable);
         replaceVariableManager.registerReplaceVariable(SceneItemEnabledVariable);

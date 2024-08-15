@@ -1,6 +1,7 @@
 import { ScriptModules } from "@crowbartools/firebot-custom-scripts-types";
 import {
     getAllSources,
+    getGroupList,
     getSceneList,
     getSceneCollectionList,
     getSourceData,
@@ -21,6 +22,11 @@ import {
 export function setupFrontendListeners(
     frontendCommunicator: ScriptModules["frontendCommunicator"]
 ) {
+    frontendCommunicator.on<never, string[]>(
+        "obs-get-group-list",
+        getGroupList
+    );
+
     frontendCommunicator.onAsync<never, string[]>(
         "obs-get-scene-list",
         getSceneList
