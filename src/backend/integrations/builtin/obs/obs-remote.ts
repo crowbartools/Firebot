@@ -1081,7 +1081,12 @@ function getLerpedCallsArray(
             } else if (easeOut) {
                 ratio = ratio * (2 - ratio);
             }
+
             frame[key] = transformStart[key] + (transformEnd[key] - transformStart[key]) * ratio;
+
+            if (key === "rotation") {
+                frame[key] = frame[key] % 360;
+            }
         });
 
         calls.push(transformWebsocketRequest(sceneName, sceneItemId, frame));

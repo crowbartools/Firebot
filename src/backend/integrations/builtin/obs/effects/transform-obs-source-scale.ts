@@ -144,7 +144,7 @@ export const TransformSourceScaleEffectType: EffectType<{
                         style="flex-basis: 50%" />
                     <firebot-input
                         input-title="End Rotation"
-                        placeholder-text="0 - 360"
+                        placeholder-text="rotation in degrees"
                         model="effect.endTransform.rotation"
                         style="flex-basis: 50%" />
                 </div>
