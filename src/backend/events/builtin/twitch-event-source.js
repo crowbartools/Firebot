@@ -317,6 +317,17 @@ module.exports = {
             }
         },
         {
+            id: "chat-message-deleted",
+            name: "Chat Message Deleted",
+            description: "When a chat message is deleted in your channel",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                username: "firebot",
+                messageText: "Test message"
+            }
+        },
+        {
             id: "first-time-chat",
             name: "First Time Chat",
             description: "When someone chats in your channel for the very first time",
