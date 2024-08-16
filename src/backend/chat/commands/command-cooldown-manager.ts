@@ -48,14 +48,18 @@ class CommandCooldownManager {
     }
 
     getRemainingCooldown(command: CommandDefinition, triggeredSubcmd: SubCommand, username: string): number {
+        const subCommandId = triggeredSubcmd && !triggeredSubcmd.inheritBaseCommandCooldown
+            ? triggeredSubcmd.id ?? triggeredSubcmd.arg
+            : null;
+
         const globalCacheKey = this.buildCooldownCacheKey(
             command.id,
-            triggeredSubcmd ? triggeredSubcmd.id || triggeredSubcmd.arg : null
+            subCommandId
         );
 
         const userCacheKey = this.buildCooldownCacheKey(
             command.id,
-            triggeredSubcmd ? triggeredSubcmd.id || triggeredSubcmd.arg : null,
+            subCommandId,
             username
         );
 
@@ -82,7 +86,7 @@ class CommandCooldownManager {
 
     cooldownCommand(command: CommandDefinition, triggeredSubcmd: SubCommand, username: string): void {
         let cooldown;
-        if (triggeredSubcmd == null || triggeredSubcmd.cooldown == null) {
+        if (triggeredSubcmd == null || triggeredSubcmd.cooldown == null || triggeredSubcmd?.inheritBaseCommandCooldown) {
             cooldown = command.cooldown;
         } else {
             cooldown = triggeredSubcmd.cooldown;
@@ -92,14 +96,18 @@ class CommandCooldownManager {
         }
         logger.debug("Triggering cooldown for command");
 
+        const subCommandId = triggeredSubcmd && !triggeredSubcmd.inheritBaseCommandCooldown
+            ? triggeredSubcmd.id ?? triggeredSubcmd.arg
+            : null;
+
         const globalCacheKey = this.buildCooldownCacheKey(
             command.id,
-            triggeredSubcmd ? triggeredSubcmd.id || triggeredSubcmd.arg : null
+            subCommandId
         );
 
         const userCacheKey = this.buildCooldownCacheKey(
             command.id,
-            triggeredSubcmd ? triggeredSubcmd.id || triggeredSubcmd.arg : null,
+            subCommandId,
             username
         );
 

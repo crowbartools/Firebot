@@ -5,7 +5,8 @@
         .component("commandCooldownSettings", {
             bindings: {
                 command: "=",
-                messageSettingDisabled: "<?"
+                messageSettingDisabled: "<?",
+                disabled: "<?"
             },
             template: `
                 <div class="input-group pb-0">
@@ -15,6 +16,7 @@
                         type="number"
                         min="0"
                         placeholder="secs"
+                        ng-disabled="$ctrl.disabled"
                         ng-model="$ctrl.command.cooldown.global"
                     />
                     <span class="input-group-addon">User</span>
@@ -23,6 +25,7 @@
                         type="number"
                         min="0"
                         placeholder="secs"
+                        ng-disabled="$ctrl.disabled"
                         ng-model="$ctrl.command.cooldown.user"
                     />
                 </div>
