@@ -11,6 +11,7 @@
                 showTriggerName: "<"
             },
             template: `
+            <scroll-sentinel element-class="context-menu-modal-header"></scroll-sentinel>
             <div class="modal-header context-menu-modal-header sticky-header">
                 <button
                     type="button"
@@ -53,7 +54,7 @@
                             menuItems.push({
                                 text: "Tags...",
                                 childrenMenuClass: "sort-tag-menu",
-                                children: $ctrl.allSortTags.map(st => {
+                                children: $ctrl.allSortTags.map((st) => {
                                     const isSelected = $ctrl.sortTags && $ctrl.sortTags.includes(st.id);
                                     return {
                                         html: `<a href class="sort-tag-item"><i class="${isSelected ? 'fas fa-check' : ''}" style="margin-right: ${isSelected ? '10' : '27'}px;"></i> ${st.name}</a>`,

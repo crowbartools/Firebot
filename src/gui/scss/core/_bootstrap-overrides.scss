@@ -17,13 +17,13 @@
     }
 }
 
-.sticky-header {
+.modal-header.sticky-header, .sticky-element {
     position: sticky;
-    top: 22px;
     background-color: $light-background-color;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
     z-index: 999;
+    top: 22px;
     &.is-stuck {
         border-bottom: 1px solid #24262A;
         margin-bottom: 10px;
