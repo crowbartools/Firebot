@@ -491,14 +491,19 @@ class ViewerDatabase extends EventEmitter {
             twitchChat.sendChatMessage(`@${viewer.displayName} has achieved the rank of ${newRank?.name}${ladder.mode === "auto" ? ` (${rankValueDescription})` : ''}!`);
         }
 
+        const newRank = ladder.getRank(newRankId);
+        const previousRank = ladder.getRank(currentRankId);
+
         eventManager.triggerEvent("firebot", "viewer-rank-updated", {
             username: viewer.username,
             userId: viewer._id,
             userDisplayName: viewer.displayName,
             rankLadderName: ladder.name,
             rankLadderId: ladderId,
-            newRankName: ladder.getRank(newRankId)?.name,
-            previousRankName: ladder.getRank(currentRankId)?.name,
+            newRankName: newRank?.name,
+            newRankId: newRank?.id,
+            previousRankName: previousRank?.name,
+            previousRankId: previousRank?.id,
             isPromotion: isPromotion,
             isDemotion: !isPromotion
         });
