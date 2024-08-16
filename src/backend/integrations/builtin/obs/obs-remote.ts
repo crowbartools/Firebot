@@ -809,6 +809,7 @@ export type OBSSource = {
 export type OBSSceneItem = {
     id: number;
     name: string;
+    groupName?: string;
 };
 
 export type OBSTextSourceSettings = {
@@ -894,28 +895,41 @@ export async function getAllSources(): Promise<Array<OBSSource> | null> {
     }
 }
 
-export async function getAllSceneItemsInScene(sceneName: string): Promise<Array<OBSSceneItem>> {
-    try {
-        const response = await obs.call("GetSceneItemList", { sceneName });
-        return response.sceneItems.map(item => ({
-            id: item.sceneItemId as number,
-            name: item.sourceName as string
-        }));
-    } catch (error) {
-        logger.error(`Failed to get OBS scene items in scene "${sceneName}"`, error);
-        return null;
-    }
-}
-
 export async function getAllSceneItemsInGroup(groupName: string): Promise<Array<OBSSceneItem>> {
     try {
         const response = await obs.call("GetGroupSceneItemList", { sceneName: groupName });
         return response.sceneItems.map(item => ({
             id: item.sceneItemId as number,
-            name: item.sourceName as string
+            name: item.sourceName as string,
+            groupName
         }));
     } catch (error) {
         logger.error(`Failed to get OBS scene items in group "${groupName}"`, error);
+        return null;
+    }
+}
+
+export async function getAllSceneItemsInScene(sceneName: string): Promise<Array<OBSSceneItem>> {
+    try {
+        const response = await obs.call("GetSceneItemList", { sceneName });
+        const sceneItems: OBSSceneItem[] = [];
+
+        for (const item of response.sceneItems) {
+            sceneItems.push({
+                id: item.sceneItemId as number,
+                name: item.sourceName as string
+            });
+
+            if (!item.isGroup) {
+                continue;
+            }
+
+            sceneItems.push(...await getAllSceneItemsInGroup(item.sourceName as string));
+        }
+
+        return sceneItems;
+    } catch (error) {
+        logger.error(`Failed to get OBS scene items in scene "${sceneName}"`, error);
         return null;
     }
 }
@@ -1081,7 +1095,12 @@ function getLerpedCallsArray(
             } else if (easeOut) {
                 ratio = ratio * (2 - ratio);
             }
+
             frame[key] = transformStart[key] + (transformEnd[key] - transformStart[key]) * ratio;
+
+            if (key === "rotation") {
+                frame[key] = frame[key] % 360;
+            }
         });
 
         calls.push(transformWebsocketRequest(sceneName, sceneItemId, frame));
