@@ -12,6 +12,7 @@ export type RankLadder = {
         trackBy?: "view_time" | "currency",
         currencyId?: string;
         announcePromotionsInChat?: boolean;
+        customPromotionMessageTemplate?: string;
     };
     ranks: Rank[];
 };

@@ -44,7 +44,8 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
             firebotChatMessage.userId,
             firebotChatMessage.userDisplayName,
             firebotChatMessage.roles,
-            firebotChatMessage.rawText
+            firebotChatMessage.rawText,
+            firebotChatMessage.id
         );
     });
 
@@ -165,7 +166,8 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
         );
     });
 
-    streamerChatClient.onMessageRemove((_channel, messageId) => {
+    streamerChatClient.onMessageRemove((_channel, messageId, message) => {
+        twitchEventsHandler.chatMessage.triggerChatMessageDeleted(message);
         frontendCommunicator.send("twitch:chat:message:deleted", messageId);
     });
 

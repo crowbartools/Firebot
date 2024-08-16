@@ -488,8 +488,18 @@ class ViewerDatabase extends EventEmitter {
         if (isPromotion && ladder.announcePromotionsInChat && userIsActive(viewer._id)) {
             const newRank = ladder.getRank(newRankId);
             const rankValueDescription = ladder.getRankValueDescription(newRankId);
-            twitchChat.sendChatMessage(`@${viewer.displayName} has achieved the rank of ${newRank?.name}${ladder.mode === "auto" ? ` (${rankValueDescription})` : ''}!`);
+
+            const promotionMessageTemplate = ladder.promotionMessageTemplate;
+            const promotionMessage = promotionMessageTemplate
+                .replace(/{user}/g, viewer.displayName)
+                .replace(/{rank}/g, newRank?.name)
+                .replace(/{rankDescription}/g, rankValueDescription);
+
+            twitchChat.sendChatMessage(promotionMessage);
         }
+
+        const newRank = ladder.getRank(newRankId);
+        const previousRank = ladder.getRank(currentRankId);
 
         eventManager.triggerEvent("firebot", "viewer-rank-updated", {
             username: viewer.username,
@@ -497,8 +507,10 @@ class ViewerDatabase extends EventEmitter {
             userDisplayName: viewer.displayName,
             rankLadderName: ladder.name,
             rankLadderId: ladderId,
-            newRankName: ladder.getRank(newRankId)?.name,
-            previousRankName: ladder.getRank(currentRankId)?.name,
+            newRankName: newRank?.name,
+            newRankId: newRank?.id,
+            previousRankName: previousRank?.name,
+            previousRankId: previousRank?.id,
             isPromotion: isPromotion,
             isDemotion: !isPromotion
         });

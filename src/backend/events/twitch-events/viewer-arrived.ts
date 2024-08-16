@@ -13,6 +13,7 @@ export function triggerViewerArrived(
         userId,
         userDisplayName,
         messageText,
+        messageId: chatMessage.id,
         chatMessage
     });
 }

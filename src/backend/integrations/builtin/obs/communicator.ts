@@ -1,6 +1,7 @@
 import { ScriptModules } from "@crowbartools/firebot-custom-scripts-types";
 import {
     getAllSources,
+    getGroupList,
     getSceneList,
     getSceneCollectionList,
     getSourceData,
@@ -13,12 +14,19 @@ import {
     getImageSources,
     getMediaSources,
     getColorSources,
-    getSupportedImageFormats
+    getSupportedImageFormats,
+    getTransformableSceneItems,
+    OBSSceneItem
 } from "./obs-remote";
 
 export function setupFrontendListeners(
     frontendCommunicator: ScriptModules["frontendCommunicator"]
 ) {
+    frontendCommunicator.on<never, string[]>(
+        "obs-get-group-list",
+        getGroupList
+    );
+
     frontendCommunicator.onAsync<never, string[]>(
         "obs-get-scene-list",
         getSceneList
@@ -37,6 +45,14 @@ export function setupFrontendListeners(
     frontendCommunicator.onAsync<never, Array<OBSSource>>(
         "obs-get-sources-with-filters",
         getSourcesWithFilters
+    );
+
+    frontendCommunicator.onAsync<unknown[], Array<OBSSceneItem>>(
+        "obs-get-transformable-scene-items",
+        (args: [sceneName: string]) => {
+            const [sceneName] = args;
+            return getTransformableSceneItems(sceneName);
+        }
     );
 
     frontendCommunicator.onAsync<never, Array<OBSSource>>(

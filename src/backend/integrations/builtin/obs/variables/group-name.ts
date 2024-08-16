@@ -6,17 +6,18 @@ const triggers = {};
 triggers[TriggerType.EVENT] = [
     `${OBS_EVENT_SOURCE_ID}:${OBS_SCENE_ITEM_ENABLE_STATE_CHANGED_EVENT_ID}`
 ];
+triggers[TriggerType.MANUAL] = true;
 
-export const SceneItemEnabledVariable: ReplaceVariable = {
+export const GroupNameVariable: ReplaceVariable = {
     definition: {
-        handle: "obsSceneItemEnabled",
+        handle: "obsGroupName",
         description:
-      "Returns `true` if the OBS scene item that triggered the event is enabled, or `false` otherwise.",
-        possibleDataOutput: ["bool"],
+            "The name of the OBS group containing the item that triggered the event, or 'Unknown' if the element isn't grouped.",
+        possibleDataOutput: ["text"],
         triggers: triggers
     },
     evaluator: async (trigger) => {
-        const sceneItemEnabled = trigger.metadata?.eventData?.sceneItemEnabled;
-        return sceneItemEnabled ?? false;
+        const groupName = trigger.metadata?.eventData?.groupName;
+        return groupName ?? "Unknown";
     }
 };
