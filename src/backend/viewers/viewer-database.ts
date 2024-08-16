@@ -488,7 +488,14 @@ class ViewerDatabase extends EventEmitter {
         if (isPromotion && ladder.announcePromotionsInChat && userIsActive(viewer._id)) {
             const newRank = ladder.getRank(newRankId);
             const rankValueDescription = ladder.getRankValueDescription(newRankId);
-            twitchChat.sendChatMessage(`@${viewer.displayName} has achieved the rank of ${newRank?.name}${ladder.mode === "auto" ? ` (${rankValueDescription})` : ''}!`);
+
+            const promotionMessageTemplate = ladder.promotionMessageTemplate;
+            const promotionMessage = promotionMessageTemplate
+                .replace(/{user}/g, viewer.displayName)
+                .replace(/{rank}/g, newRank?.name)
+                .replace(/{rankDescription}/g, rankValueDescription);
+
+            twitchChat.sendChatMessage(promotionMessage);
         }
 
         const newRank = ladder.getRank(newRankId);
