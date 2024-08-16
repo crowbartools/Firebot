@@ -210,7 +210,7 @@
             </div>
             `,
             controller: function($q, $rootScope, $scope, utilityService, effectHelperService, objectCopyHelper, effectQueuesService, presetEffectListsService,
-                settingsService, backendCommunicator, ngToast, $http) {
+                settingsService, backendCommunicator, ngToast, $http, $injector) {
                 const ctrl = this;
 
                 ctrl.effectsData = {
@@ -264,7 +264,7 @@
                     ensureDefaultWeights();
                     const sumOfAllWeights = ctrl
                         .effectsData.list
-                        .filter((e) => e.active)
+                        .filter(e => e.active)
                         .reduce((acc, e) => acc + (e.percentWeight ?? 0.5), 0);
                     return sumOfAllWeights;
                 };
@@ -602,12 +602,6 @@
                         });
                 };
 
-                // when the element is initialized
-                ctrl.$onInit = async function() {
-                    createEffectsData();
-                    effectDefinitions = await effectHelperService.getAllEffectTypes();
-                };
-
                 ctrl.getEffectNameById = (id) => {
                     if (!effectDefinitions || effectDefinitions.length < 1) {
                         return "";
@@ -616,33 +610,101 @@
                     return effectDefinitions.find(e => e.definition.id === id).definition.name;
                 };
 
+                /**
+                 * @type {{ [effectId: string]: string }}
+                 */
+                ctrl.effectDefaultLabels = {};
+
+                async function getDefaultLabels() {
+                    const effects = ctrl.effectsData?.list ?? [];
+
+                    /**
+                     * @type {Promise<{ id: string; defaultLabel?: string; }>[]}
+                     */
+                    const promises = [];
+                    for (const effect of effects) {
+                        if (!effect?.id) {
+                            continue;
+                        }
+
+                        const effectDef = effectDefinitions.find(e => e.definition.id === effect.type);
+
+                        if (!effectDef?.getDefaultLabel) {
+                            continue;
+                        }
+
+                        const promise = Promise.resolve(
+                            $injector.invoke(effectDef.getDefaultLabel, {}, {
+                                effect: effect
+                            })
+                        ).then((label) => {
+                            return {
+                                id: effect.id,
+                                defaultLabel: label
+                            };
+                        }).catch(() => {
+                            return {
+                                id: effect.id,
+                                defaultLabel: null
+                            };
+                        });
+
+                        promises.push(promise);
+                    }
+
+                    return $q.when(Promise.all(promises).then((results) => {
+                        return results.reduce((acc, result) => {
+                            if (result?.id && result?.defaultLabel != null) {
+                                acc[result.id] = result.defaultLabel;
+                            }
+                            return acc;
+                        }, {});
+                    }));
+                }
+
+                function updateDefaultLabels() {
+                    getDefaultLabels().then((labels) => {
+                        ctrl.effectDefaultLabels = labels;
+                    });
+                }
+
                 ctrl.getEffectLabel = (effect) => {
                     if (effect.effectLabel?.length) {
                         return effect.effectLabel;
                     }
 
-                    if (settingsService.getDefaultEffectLabelsEnabled()) {
-                        const effectDef = effectDefinitions.find(e => e.definition.id === effect.type);
+                    if (effect?.id && settingsService.getDefaultEffectLabelsEnabled()) {
+                        const defaultLabel = ctrl.effectDefaultLabels[effect.id];
 
-                        if (effectDef?.getDefaultLabel) {
-                            return effectDef.getDefaultLabel(effect);
+                        if (defaultLabel != null) {
+                            return defaultLabel;
                         }
                     }
 
                     return;
                 };
 
+                // when the element is initialized
+                ctrl.$onInit = async function() {
+                    createEffectsData();
+                    effectDefinitions = await effectHelperService.getAllEffectTypes();
+                    updateDefaultLabels();
+                };
+
                 ctrl.$onChanges = function() {
                     createEffectsData();
+                    updateDefaultLabels();
                 };
 
                 ctrl.effectsUpdate = function() {
                     ensureDefaultWeights();
+                    updateDefaultLabels();
                     ctrl.update({ effects: ctrl.effectsData });
                 };
 
                 ctrl.effectTypeChanged = function(effectType, index) {
                     ctrl.effectsData.list[index].type = effectType.id;
+                    updateDefaultLabels();
                 };
                 ctrl.testEffects = function() {
                     ipcRenderer.send('runEffectsManually', { effects: ctrl.effectsData });
