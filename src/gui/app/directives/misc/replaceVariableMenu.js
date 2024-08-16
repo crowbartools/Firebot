@@ -88,11 +88,11 @@
                                 type: trigger,
                                 id: triggerMeta && triggerMeta.triggerId,
                                 dataOutput: $scope.replaceVariables
-                            }).map(v => {
+                            }).map((v) => {
                                 return {
                                     ...v,
                                     description: parseMarkdown(v.description || ""),
-                                    examples: v.examples?.map(e => {
+                                    examples: v.examples?.map((e) => {
                                         return {
                                             ...e,
                                             description: parseMarkdown(e.description || "")
@@ -175,7 +175,7 @@
                     let wrapper = parent;
                     if (!parent.hasClass("input-group")) {
                         wrapper = angular.element(`
-                            <div style="position: relative;"></div>`
+                            <div style="position: relative;display: table; width: 100%;"></div>`
                         );
                         const compiled = $compile(wrapper)(scope);
                         element.wrap(compiled);

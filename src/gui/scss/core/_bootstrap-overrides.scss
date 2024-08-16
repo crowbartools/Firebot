@@ -106,10 +106,6 @@
     border: none;
 }
 
-textarea.form-control {
-    resize: vertical;
-}
-
 /* Tabs */
 
 .nav-tabs {
@@ -456,6 +452,18 @@ textarea.form-control {
     opacity: 0.75;
 }
 
+textarea.form-control {
+    resize: vertical;
+    padding-top: 9px;
+    min-height: 40px;
+    float: left !important;
+    &.single-line-textarea {
+        height: 40px;
+        scrollbar-width: none;
+        scrollbar-color: transparent transparent;
+    }
+}
+
 .progress {
     background-color: $form-control-bg;
     border-radius: 8px;
@@ -466,7 +474,6 @@ textarea.form-control {
     line-height: 30px;
     text-wrap: nowrap;
 }
-
 
 
 label {

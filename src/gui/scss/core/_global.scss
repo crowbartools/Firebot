@@ -922,16 +922,16 @@ body {
 }
 
 // Scrollbar adjustments
-::-webkit-scrollbar {
+::-webkit-scrollbar:not(.disable-custom-scroll-styles) {
   width: 10px;
 }
 
-::-webkit-scrollbar-track {
+::-webkit-scrollbar-track:not(.disable-custom-scroll-styles) {
   background-color: $scrollbar-background-color;
   border-radius: 8px;
 }
 
-::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb:not(.disable-custom-scroll-styles) {
   background-color: $scrollbar-bar-color;
   border-radius: 8px;
 }
