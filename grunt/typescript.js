@@ -4,7 +4,7 @@ module.exports = function (grunt) {
     grunt.config.merge({
         shell: {
             tsc: {
-                command: 'tsc'
+                command: 'tsc --build'
             }
         }
     });

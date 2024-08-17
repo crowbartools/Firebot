@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "noImplicitAny": false,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "sourceMap": true,
+        "allowJs": true,
+        "outDir": "build",
+        "baseUrl": ".",
+        "moduleResolution": "node",
+        "skipLibCheck": true,
+        "experimentalDecorators": true,
+        "downlevelIteration": true,
+        "paths": {
+            "*": ["node_modules/*"]
+        },
+        "target": "ES2022"
+    }
+}
