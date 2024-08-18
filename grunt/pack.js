@@ -6,8 +6,8 @@ grunt pack
 */
 'use strict';
 
-const formatIgnoreList = ignoreList => {
-    return ignoreList.map(item => {
+const formatIgnoreList = (ignoreList) => {
+    return ignoreList.map((item) => {
         if (item.dotfiles) {
             return '--ignore="^[\\\\\\/]?\\.[^\\\\\\/]+$"';
         }
@@ -69,13 +69,13 @@ module.exports = function (grunt) {
     grunt.config.merge({
         shell: {
             packwin64: {
-                command: `npx --no-install electron-packager . Firebot --platform=win32 ${flags}`
+                command: `npx --no-install @electron/packager . Firebot --platform=win32 ${flags}`
             },
             packdarwin: {
-                command: `npx --no-install electron-packager . Firebot --platform=darwin ${flags}`
+                command: `npx --no-install @electron/packager . Firebot --platform=darwin ${flags}`
             },
             packlinux: {
-                command: `npx --no-install electron-packager . Firebot --platform=linux ${flags}`
+                command: `npx --no-install @electron/packager . Firebot --platform=linux ${flags}`
             }
         }
     });
