@@ -80,7 +80,7 @@ export const SetOBSColorSourceColorEffectType: EffectType<{
         if (hexColor.length === 8) {
             obsFormattedHexColor = `${hexColor.substring(0, 2)}${hexColor.substring(6, 8)}${hexColor.substring(4, 6)}${hexColor.substring(2, 4)}`;
         } else {
-            obsFormattedHexColor = `${hexColor.substring(4, 6)}${hexColor.substring(2, 4)}${hexColor.substring(0, 2)}`;
+            obsFormattedHexColor = `FF${hexColor.substring(4, 6)}${hexColor.substring(2, 4)}${hexColor.substring(0, 2)}`;
         }
 
         const intColorValue = parseInt(obsFormattedHexColor, 16);
