@@ -28,8 +28,8 @@
         "@types/uuid": "^10.0.0",
         "@typescript-eslint/eslint-plugin": "^5.62.0",
         "@typescript-eslint/parser": "^5.62.0",
-        "electron": "^28.2.3",
-        "electron-packager": "^17.1.1",
+        "electron": "^31.4.0",
+        "electron-packager": "^17.1.2",
         "electron-rebuild": "^1.8.6",
         "eslint": "^8.56.0",
         "eslint-plugin-angular": "^4.0.1",
@@ -130,7 +130,7 @@
         "electron-installer-dmg": "github:SReject/electron-installer-dmg#9bdb5217b078c724918271549f34d362aecbf6bb"
     },
     "volta": {
-        "node": "18.18.2",
-        "npm": "10.2.4"
+        "node": "20.14.0",
+        "npm": "10.8.1"
     }
 }
