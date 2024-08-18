@@ -12,17 +12,14 @@
                     let isClicking = false;
 
                     $element.on("mousedown", function() {
-                        console.log("mousedown");
                         isClicking = true;
                     });
 
                     $element.on("mouseup", function() {
-                        console.log("mouseup");
                         isClicking = false;
                     });
 
                     $element.on("mouseleave", function() {
-                        console.log("mouseleave");
                         isClicking = false;
                     });
 

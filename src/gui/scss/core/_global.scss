@@ -25,6 +25,23 @@
                                   supported by Chrome and Opera */
 }
 
+// Global scrollbar adjustments
+*:not(.disable-custom-scroll-styles) {
+    &::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background-color: $scrollbar-background-color;
+        border-radius: 8px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: $scrollbar-bar-color;
+        border-radius: 8px;
+    }
+}
+
 // Fix icon alignment
 .fa, .fas, .far, .fal, .fab {
   vertical-align: -0%;
@@ -910,21 +927,6 @@ body {
 
 .effect-info {
   margin-top: 20px;
-}
-
-// Scrollbar adjustments
-::-webkit-scrollbar:not(.disable-custom-scroll-styles) {
-  width: 10px;
-}
-
-::-webkit-scrollbar-track:not(.disable-custom-scroll-styles) {
-  background-color: $scrollbar-background-color;
-  border-radius: 8px;
-}
-
-::-webkit-scrollbar-thumb:not(.disable-custom-scroll-styles) {
-  background-color: $scrollbar-bar-color;
-  border-radius: 8px;
 }
 
 /**
