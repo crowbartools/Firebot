@@ -39,13 +39,18 @@ export const SetOBSColorSourceColorEffectType: EffectType<{
     <eos-container ng-if="colorSources != null && effect.colorSourceName != null" header="Color" style="margin-top: 10px;" pad-top="true">
         <firebot-checkbox
             label="Use Custom Color"
-            tooltip="Allow entering custom hex colors or variables. Will fail if variables don't resolve to hex color"
+            tooltip="Allow entering custom hex colors or replace variables. Will fail if the result is not a valid hex color."
             model="effect.customColor"
-            ng-click="toggleCustomColor()"
+            on-change="toggleCustomColor(newValue)"
             class="mb4"
         />
-        <firebot-input ng-if="effect.customColor" model="effect.color" placeholder-text="Format: #0066FF or #FF336699"></firebot-input>
-        <color-picker-input ng-if="!effect.customColor" model="effect.color" alpha="true" lg-input="true"></color-picker-input>
+        <firebot-input
+            input-title="#ARGB"
+            ng-if="effect.customColor"
+            model="effect.color"
+            placeholder-text="Format: #0066FF or #FF336699"
+        />
+        <color-picker-input label="#RGBA" ng-if="!effect.customColor" model="effect.color" alpha="true" lg-input="true"></color-picker-input>
     </eos-container>
   `,
     optionsController: ($scope: any, backendCommunicator: any, $q: any) => {
@@ -78,27 +83,19 @@ export const SetOBSColorSourceColorEffectType: EffectType<{
             $scope.effect.colorSourceName = colorSourceName;
         };
 
-        $scope.toggleCustomColor = () => {
-            if ($scope.debounce) {
-                return;
-            }
-
-            $scope.debounce = true;
-
-            setTimeout(() => $scope.debounce = false, 5);
-
-            const value = !$scope.effect.customColor;
-            if (
-                (!value &&
+        $scope.toggleCustomColor = (newValue: boolean) => {
+            // Ignore the conversion when variables are included or when only RGB is provided
+            if ((
                 !rgbRegexp.test($scope.effect.color) &&
-                !argbRegexp.test($scope.effect.color)) ||
-                $scope.effect.color.length !== 9
-            ) {
-                //$scope.effect.color = "#FF0000FF";
+                !argbRegexp.test($scope.effect.color)
+            ) || (
+                rgbRegexp.test($scope.effect.color) &&
+                !argbRegexp.test($scope.effect.color)
+            )) {
                 return;
             }
 
-            $scope.effect.color = `#${value ? rgbaToArgb($scope.effect.color) : argbToRgba($scope.effect.color)}`;
+            $scope.effect.color = `#${newValue ? rgbaToArgb($scope.effect.color) : argbToRgba($scope.effect.color)}`;
         };
 
         $scope.getColorSources = () => {
