@@ -47,6 +47,12 @@ const model : ReplaceVariable = {
 
         const nodes = propertyPath.split(".");
 
+        if (typeof data === "string") {
+            try {
+                data = JSON.parse(data as string);
+            } catch (_) { }
+        }
+
         try {
             for (const node of nodes) {
                 if (data == null) {
