@@ -61,6 +61,10 @@ export const SetOBSColorSourceColorEffectType: EffectType<{
             $scope.effect.customColor = true;
         }
 
+        if ($scope.effect.customColor == null) {
+            $scope.effect.customColor = false;
+        }
+
         function argbToRgba(hexColor: string) {
             hexColor = hexColor.replace("#", "");
             return `${hexColor.substring(2, 4)}${hexColor.substring(4, 6)}${hexColor.substring(6, 8)}${hexColor.substring(0, 2)}`;
@@ -143,7 +147,7 @@ export const SetOBSColorSourceColorEffectType: EffectType<{
         let obsFormattedHexColor = "";
 
         // OBS likes the color values in the OTHER direction
-        if (!effect.customColor) {
+        if (effect.customColor === false) {
             obsFormattedHexColor = rgbaToAbgr(hexColor);
         } else if (hexColor.length === 8) {
             obsFormattedHexColor = argbToAbgr(hexColor);
