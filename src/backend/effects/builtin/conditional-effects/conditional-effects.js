@@ -118,7 +118,7 @@ const model = {
     onTriggerEvent: event => {
         return new Promise(async (resolve) => {
             // What should this do when triggered.
-            const { effect, trigger, outputs } = event;
+            const { effect, trigger, outputs, abortSignal } = event;
 
             let effectsToRun = null;
             if (effect.ifs != null) {
@@ -142,7 +142,7 @@ const model = {
                 effectsToRun = effect.otherwiseEffectData;
             }
 
-            if (effectsToRun != null) {
+            if (effectsToRun != null && !abortSignal?.aborted) {
                 const processEffectsRequest = {
                     trigger: event.trigger,
                     effects: effectsToRun,

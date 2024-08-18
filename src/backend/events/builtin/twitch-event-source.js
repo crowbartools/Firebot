@@ -293,6 +293,17 @@ module.exports = {
             }
         },
         {
+            id: "chat-cleared",
+            name: "Chat Cleared",
+            description: "When chat is cleared in your channel",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                username: "firebot",
+                userId: ""
+            }
+        },
+        {
             id: "chat-message",
             name: "Chat Message",
             description: "When someone chats in your channel",
@@ -302,6 +313,17 @@ module.exports = {
                 username: "firebot",
                 userDisplayName: "Firebot",
                 userId: "",
+                messageText: "Test message"
+            }
+        },
+        {
+            id: "chat-message-deleted",
+            name: "Chat Message Deleted",
+            description: "When a chat message is deleted in your channel",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                username: "firebot",
                 messageText: "Test message"
             }
         },

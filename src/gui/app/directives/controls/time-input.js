@@ -10,7 +10,8 @@
                 validationError: "<?",
                 large: "<?",
                 disabled: "<?",
-                maxTimeUnit: "<?"
+                maxTimeUnit: "<?",
+                minTimeUnit: "<?"
             },
             require: { ngModelCtrl: 'ngModel' },
             template: `
@@ -69,8 +70,6 @@
                     }
                 }
 
-                $ctrl.selectedTimeUnit = $ctrl.timeUnits[0];
-
                 function determineTimeUnit(seconds) {
                     if (seconds % YEAR === 0) {
                         return "Years";
@@ -113,9 +112,15 @@
                 };
 
                 $ctrl.$onInit = () => {
+                    if ($ctrl.minTimeUnit != null && $ctrl.timeUnits.includes($ctrl.minTimeUnit)) {
+                        $ctrl.timeUnits = $ctrl.timeUnits.slice($ctrl.timeUnits.findIndex(unit => unit === $ctrl.minTimeUnit));
+                    }
+
                     if ($ctrl.maxTimeUnit != null && $ctrl.timeUnits.includes($ctrl.maxTimeUnit)) {
                         $ctrl.timeUnits.length = $ctrl.timeUnits.findIndex(unit => unit === $ctrl.maxTimeUnit) + 1;
                     }
+
+                    $ctrl.selectedTimeUnit = $ctrl.timeUnits[0];
 
                     if ($ctrl.ngModel != null) {
                         $ctrl.selectedTimeUnit = determineTimeUnit($ctrl.ngModel);

@@ -124,6 +124,36 @@ const playVideo = {
                 model="effect.twitchClipUsername"
                 placeholder-text="Ex: $streamer, $user, etc"
             />
+            <div class="mt-10 form-group flex-row jspacebetween" style="margin-bottom: 0;">
+                <firebot-checkbox 
+                    label="Only Featured Clips" 
+                    model="effect.isFeatured"
+                    style="margin: 0px 15px 0px 0px"
+                />
+            </div>
+            <div
+                class="mt-6 mb-2"
+                ng-class="{'has-error': $ctrl.formFieldHasError('clipSeconds')}"
+            >
+                <div class="form-group flex-row jspacebetween" style="margin-bottom: 0;">
+                    <firebot-checkbox 
+                        label="Maximum Clip Age" 
+                        model="effect.useMaxClipAge"
+                        style="margin: 0px 15px 0px 0px"
+                    />
+                </div>
+                <div class="mt-2">
+                    <time-input
+                        ng-model="effect.maxClipAge"
+                        min-time-unit="'Days'"
+                        name="clipSeconds"
+                        ui-validate="'!effect.useMaxClipAge || ($value != null && $value >= 86400)'"
+                        ui-validate-watch="'effect.useMaxClipAge'"
+                        large="true"
+                        disabled="!effect.useMaxClipAge"
+                    />
+                </div>
+            </div>
         </div>
 
     </eos-container>
@@ -262,6 +292,10 @@ const playVideo = {
             $scope.effect.volume = 5;
         }
 
+        if ($scope.effect.maxClipAge === undefined) {
+            $scope.effect.maxClipAge = 8035200;
+        }
+
         // Force ratio toggle
         $scope.forceRatio = true;
         $scope.forceRatioToggle = function () {
@@ -296,6 +330,13 @@ const playVideo = {
         if (effect.videoType == null) {
             errors.push("Please select a video type.");
         }
+
+        if (effect.videoType === "Random Twitch Clip") {
+            if (effect.useMaxClipAge && !effect.maxClipAge || effect.maxClipAge < 86400) {
+                errors.push("Maximum Clip Age must be at least 1 day");
+            }
+        }
+
         return errors;
     },
     /**
@@ -412,8 +453,20 @@ const playVideo = {
                         logger.warn(`Could not found a user by the username ${username}`);
                         return true;
                     }
+                    const filter = {
+                        limit: 100,
+                        // discard isFeatured parameter if it is falsy so featured clips aren't excluded
+                        isFeatured: effect.isFeatured || undefined
+                    };
 
-                    const clips = await client.clips.getClipsForBroadcaster(user.id, { limit: 100 });
+                    if (effect.useMaxClipAge === true) {
+                        const dateNow = new Date();
+                        const startDate = new Date(dateNow - (effect.maxClipAge * 1000)).toISOString();
+                        filter.startDate = startDate;
+                        filter.endDate = dateNow.toISOString();
+                    }
+
+                    const clips = await client.clips.getClipsForBroadcaster(user.id, filter);
 
                     if (clips.data.length < 1) {
                         logger.warn(`User ${username} has no clips. Unable to get random.`);
@@ -500,14 +553,14 @@ const playVideo = {
 
                 let overlayTimeout;
                 waitPromise = new Promise((resolve, reject) => {
-                    function callbackAvailable({name}) {
+                    function callbackAvailable({ name }) {
                         if (name === `play-video:callback:available:${resourceToken}`) {
                             clearTimeout(overlayTimeout);
                             webServer.off("overlay-event", callbackAvailable);
                         }
                     }
 
-                    function callbackDuration({name, data}) {
+                    function callbackDuration({ name, data }) {
                         if (name === `play-video:callback:duration:${resourceToken}`) {
                             webServer.off("overlay-event", callbackDuration);
                             waitFunction(Math.ceil(data.duration / 1000)).then(resolve);
@@ -756,13 +809,13 @@ const playVideo = {
 
                                 if (event.target.getDuration() === 0) { // Error state
                                     // eslint-disable-next-line no-undef
-                                    sendWebsocketEvent(`play-video:callback:duration:${data.resourceToken}`, {duration: 0});
+                                    sendWebsocketEvent(`play-video:callback:duration:${data.resourceToken}`, { duration: 0 });
                                 } else if (videoDuration) {
                                     // eslint-disable-next-line no-undef
-                                    sendWebsocketEvent(`play-video:callback:duration:${data.resourceToken}`, {duration: videoDuration});
+                                    sendWebsocketEvent(`play-video:callback:duration:${data.resourceToken}`, { duration: videoDuration });
                                 } else {
                                     // eslint-disable-next-line no-undef
-                                    sendWebsocketEvent(`play-video:callback:duration:${data.resourceToken}`, {duration: (event.target.getDuration() - parseInt(videoStarttime)) * 1000});
+                                    sendWebsocketEvent(`play-video:callback:duration:${data.resourceToken}`, { duration: (event.target.getDuration() - parseInt(videoStarttime)) * 1000 });
                                 }
 
                                 $(`#${ytPlayerId}`).show();

@@ -2,6 +2,8 @@
 
 (function() {
     const fs = require("fs");
+    const { marked } = require("marked");
+    const { sanitize } = require("dompurify");
 
     angular
         .module('firebotApp')
@@ -40,23 +42,28 @@
                 <div ng-if="scriptManifest != null" style="padding-bottom:10px;">
                     <div class="script-name">{{scriptManifest.name ? scriptManifest.name : "Unnamed Script"}} <span class="script-version muted">{{scriptManifest.version ? scriptManifest.version : "Unknown"}}</span></div>
                     <div style="font-size: 13px;">by <span class="script-author">{{scriptManifest.author ? scriptManifest.author : "Unknown"}}</span><span ng-if="scriptManifest.website" class="script-website"> (<a ng-click="openScriptsWebsite()" class="clickable">{{scriptManifest.website}}</a>)</span><span></span></div>
-                    <div class="script-description">{{scriptManifest.description}}</div>
+                    <div
+                        class="script-description markdown-container"
+                        ng-bind-html="scriptManifest.description"
+                    ></div>
                 </div>
             </eos-container>
 
-            <eos-container header="Script Options" ng-show="effect.scriptName != null">
+            <eos-container header="Settings" ng-show="effect.scriptName != null">
                 <div ng-show="isLoadingParameters">
-                    Loading options...
+                    Loading settings...
                 </div>
                 <div ng-hide="isLoadingParameters">
-                    <span ng-hide="scriptHasParameters()" class="muted">Script has no options.</span>
+                    <span ng-hide="scriptHasParameters()" class="muted">Script has no settings.</span>
                     <div ng-show="scriptHasParameters()">
-                        <script-parameter-option ng-repeat="(parameterName, parameterMetadata) in effect.parameters"
-                        name="parameterName"
-                        metadata="parameterMetadata"
-                        trigger="{{trigger}}"
-                        trigger-meta="triggerMeta"
-                        modalId="{{modalId}}"></script-parameter-option>
+                        <dynamic-parameter
+                            ng-repeat="(parameterName, parameterMetadata) in effect.parameters"
+                            name="parameterName"
+                            metadata="parameterMetadata"
+                            trigger="{{trigger}}"
+                            trigger-meta="triggerMeta"
+                            modalId="{{modalId}}"
+                        ></dynamic-parameter>
                     </div>
                 </div>
             </eos-container>
@@ -68,7 +75,7 @@
             </eos-container>
             `,
             controller: function($scope, utilityService, $rootScope, $q, logger,
-                backendCommunicator, profileManager) {
+                $sce, backendCommunicator, profileManager) {
 
                 const $ctrl = this;
 
@@ -88,6 +95,11 @@
                         //grab the manifest
                         if (typeof customScript.getScriptManifest === "function") {
                             $scope.scriptManifest = customScript.getScriptManifest();
+                            if ($scope.scriptManifest && $scope.scriptManifest.description) {
+                                $scope.scriptManifest.description = $sce.trustAsHtml(
+                                    sanitize(marked($scope.scriptManifest.description))
+                                );
+                            }
                         } else {
                             $scope.scriptManifest = null;
                         }
@@ -162,12 +174,18 @@
                 $scope.isLoadingParameters = true;
 
                 const scriptFolderPath = profileManager.getPathInProfile("/scripts");
-                // Grab files in folder when button effect shown.
-                $scope.scriptArray = fs.readdirSync(scriptFolderPath);
+
+                const loadScriptFileNames = () => {
+                    const scriptDirFileNames = fs.readdirSync(scriptFolderPath, {
+                        recursive: true
+                    });
+                    $scope.scriptArray = scriptDirFileNames?.filter(fileName => fileName.endsWith(".js")) ?? [];
+                };
+                loadScriptFileNames();
 
                 // Grab files in folder on refresh click.
                 $scope.getNewScripts = function() {
-                    $scope.scriptArray = fs.readdirSync(scriptFolderPath);
+                    loadScriptFileNames();
                     if ($scope.effect.scriptName != null) {
                         loadParameters($scope.effect.scriptName);
                     }

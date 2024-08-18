@@ -31,6 +31,14 @@ export class RankLadderHelper {
         return this.rankLadder.settings?.announcePromotionsInChat ?? false;
     }
 
+    get promotionMessageTemplate() {
+        const customTemplate = this.rankLadder.settings?.customPromotionMessageTemplate;
+        if (customTemplate?.length) {
+            return customTemplate;
+        }
+        return `@{user} has achieved the rank of {rank}${this.rankLadder.mode === "auto" ? ' ({rankDescription})' : ''}!`;
+    }
+
     getRank(rankId: string): Rank | undefined {
         return this.rankLadder.ranks.find(rank => rank.id === rankId);
     }

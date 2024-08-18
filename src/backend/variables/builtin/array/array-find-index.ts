@@ -93,7 +93,7 @@ const model : ReplaceVariable = {
     definition: {
         handle: 'arrayFindIndex',
         usage: 'arrayFindIndex[array, matcher, propertyPath?, exact?]',
-        description: "Finds a matching element in the array and returns it's index, or null if the element is absent",
+        description: "Finds a matching element in the array and returns its index, or null if the element is absent",
         examples: [
             {
                 usage: 'arrayFindIndex["[\\"a\\",\\"b\\",\\"c\\"]", b]',

@@ -52,6 +52,11 @@ if (!gotTheLock) {
 
 logger.debug("...Single instance lock acquired");
 
+// Enable Text-To-Speech on Linux through speech-dispatcher
+if (process.platform === "linux") {
+    app.commandLine.appendSwitch('enable-speech-dispatcher');
+}
+
 // Setup app listeners
 app.on('second-instance', secondInstance);
 app.on("window-all-closed", windowsAllClosed);

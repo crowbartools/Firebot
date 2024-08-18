@@ -76,9 +76,22 @@
                             <label class="control-label" style="margin:0;">Announce Promotions in Chat</label>
                             <p class="help-block">If enabled, send a chat message when a viewer moves to a higher rank only if that viewer is active in chat.</p>
                         </div>
-                        <div>
+                        <div class="ml-5">
                             <toggle-button toggle-model="$ctrl.rankLadder.settings.announcePromotionsInChat" auto-update-value="true" font-size="32"></toggle-button>
                         </div>
+                    </div>
+
+                     <div class="form-group" ng-if="$ctrl.rankLadder.settings.announcePromotionsInChat">
+                        <label for="promotionMessageTemplate" class="control-label">Promotion Message Template</label>
+                        <p class="help-block">Variables: {{$ctrl.getApplicableMessageVariables()}}</p>
+                        <textarea
+                            class="form-control"
+                            name="text"
+                            placeholder="Enter message (Leave blank for default)"
+                            rows="4"
+                            cols="40"
+                            ng-model="$ctrl.rankLadder.customPromotionMessageTemplate"
+                        />
                     </div>
 
                     <div
@@ -127,7 +140,8 @@
                 settings: {
                     trackBy: undefined,
                     currencyId: undefined,
-                    announcePromotionsInChat: undefined
+                    announcePromotionsInChat: undefined,
+                    customPromotionMessageTemplate: undefined
                 },
                 ranks: []
             };
@@ -155,6 +169,17 @@
                     hintTemplate,
                     noneAddedText: 'No ranks added yet.'
                 };
+            };
+
+            $ctrl.getApplicableMessageVariables = () => {
+                const variables = [
+                    "{user}",
+                    "{rank}"
+                ];
+                if ($ctrl.rankLadder.mode === 'auto') {
+                    variables.push("{rankDescription}");
+                }
+                return variables?.join(", ") ?? "";
             };
 
             $ctrl.formFieldHasError = (fieldName) => {

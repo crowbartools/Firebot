@@ -9,7 +9,8 @@ import utils from "../utility";
 
 export enum NotificationSource {
     EXTERNAL = "external",
-    INTERNAL = "internal"
+    INTERNAL = "internal",
+    SCRIPT = "script"
 }
 
 export enum NotificationType {
@@ -26,12 +27,14 @@ type ExternalNotification = {
     type: NotificationType;
 }
 
-type NotificationBase = {
+export type NotificationBase = {
     title: string;
     message: string;
     type: NotificationType;
     source?: NotificationSource;
+    scriptName?: string;
     externalId?: string;
+    metadata?: Record<string, unknown>;
 }
 
 export type Notification = NotificationBase & {
@@ -98,13 +101,13 @@ class NotificationManager {
         this._notificationCache = this.getNotificationDb().getData("/");
     }
 
-    addNotification(notification: NotificationBase, permenantlySave = false): void {
+    addNotification(notification: NotificationBase, permanentlySave = false): Notification {
         const newNotification: Notification = {
             ...notification,
             id: uuid(),
             timestamp: new Date(),
             read: false,
-            saved: permenantlySave ?? false,
+            saved: permanentlySave ?? false,
             source: notification.source ?? NotificationSource.INTERNAL,
             type: notification.type ?? NotificationType.INFO
         };
@@ -112,6 +115,8 @@ class NotificationManager {
         this. _notificationCache.notifications.push(newNotification);
         frontendCommunicator.send("new-notification", newNotification);
         this.saveNotifications();
+
+        return newNotification;
     }
 
     private saveNotifications(): void {
@@ -141,6 +146,10 @@ class NotificationManager {
         }
 
         frontendCommunicator.send("notification-marked-as-read", id);
+    }
+
+    getNotification(id: string): Notification | null {
+        return this._notificationCache.notifications.find(n => n.id === id) ?? null;
     }
 
     private getKnownExternalNotifications(): string[] {

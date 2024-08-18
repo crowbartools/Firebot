@@ -721,57 +721,54 @@
 
     <!-- Edit Effect Modal -->
     <script type="text/ng-template" id="editEffectModal.html">
-      <div class="edit-effect-header">
-            <div class="modal-header flex-row-center jspacebetween no-before no-after" style="padding-bottom: 0">
-                <h4 class="modal-title" style="display:inline;">{{isAddMode ? "Add New Effect" : "Edit Effect"}}</h4>
+      <scroll-sentinel element-class="edit-effect-header"></scroll-sentinel>
+      <div class="edit-effect-header sticky-element">
+          <div class="modal-header flex-row-center jspacebetween no-before no-after" style="padding-bottom: 0">
+              <h4 class="modal-title" style="display:inline;">{{isAddMode ? "Add New Effect" : "Edit Effect"}}</h4>
 
-                <div class="flex-row acenter jspacebetween">
-                  <div
-                        class="test-effects-btn clickable"
-                        uib-tooltip="Test Effect" 
-                        ng-hide="effect == null || effect.type === 'Nothing'" 
-                        ng-click="runEffect()" 
-                        aria-label="Test Effect" 
-                        role="button"
-                    >
-                        <i class="far fa-play-circle"></i>
-                    </div> 
-                    <div>
-                        <a href role="button"
-                            aria-label="Open effect menu"
-                            class="effects-actions-btn"
-                            uib-tooltip="Open effect menu"
-                            uib-dropdown-menu
-                            context-menu="getOverflowMenu()"
-                            context-menu-on="click"
-                            context-menu-class="effect-overflow-menu"
-                            tooltip-append-to-body="true"
-                            style="font-size: 31px"
-                        >
-                          <i class="fal fa-ellipsis-v"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <ol class="breadcrumb" style="margin-bottom: 0px;padding-bottom:11px;background-color:transparent;">
-                <li ng-repeat="modal in openModals"><a href ng-click="closeToModal(modal.id)">{{modal.name}}</a></li>
-                <li class="active">{{effectDefinition.definition.name}}</li>
-            </ol>
-
-            <div style="padding-left: 15px;margin-bottom: 20px;margin-top: 10px;">
-              <div class="muted" style="font-size:12.5px;">CURRENT EFFECT:</div>
-              <div style="display:flex;align-items: center;">
-                <div style="font-size: 20px;font-weight: 100;">{{effectDefinition.definition.name}}</div>
-                <button type="button" ng-click="openNewEffectModal()" class="change-effect-button clickable" style="margin-left: 10px;">Change</button>
+              <div class="flex-row acenter jspacebetween">
+                <div
+                      class="test-effects-btn clickable"
+                      uib-tooltip="Test Effect" 
+                      ng-hide="effect == null || effect.type === 'Nothing'" 
+                      ng-click="runEffect()" 
+                      aria-label="Test Effect" 
+                      role="button"
+                  >
+                      <i class="far fa-play-circle"></i>
+                  </div> 
+                  <div>
+                      <a href role="button"
+                          aria-label="Open effect menu"
+                          class="effects-actions-btn"
+                          uib-tooltip="Open effect menu"
+                          uib-dropdown-menu
+                          context-menu="getOverflowMenu()"
+                          context-menu-on="click"
+                          context-menu-class="effect-overflow-menu"
+                          tooltip-append-to-body="true"
+                          style="font-size: 31px"
+                      >
+                        <i class="fal fa-ellipsis-v"></i>
+                      </a>
+                  </div>
               </div>
-            </div>
+          </div>
 
-            <!--<div class="effect-select-wrapper">
-                <searchable-effect-dropdown trigger="{{triggerType}}" trigger-meta="triggerMeta" selected="effect.type" style="width:100%" update="effectTypeChanged(effectType, $index)"></searchable-effect-dropdown>
-            </div>-->
+          <ol class="breadcrumb" style="margin-bottom: 0px;padding-bottom:11px;background-color:transparent;">
+              <li ng-repeat="modal in openModals"><a href ng-click="closeToModal(modal.id)">{{modal.name}}</a></li>
+              <li class="active">{{effectDefinition.definition.name}}</li>
+          </ol>
       </div>
       <div class="modal-body">
+          <div style="padding-left: 15px;margin-bottom: 20px;margin-top: 10px;">
+            <div class="muted" style="font-size:12.5px;">CURRENT EFFECT:</div>
+            <div style="display:flex;align-items: center;">
+              <div style="font-size: 20px;font-weight: 100;">{{effectDefinition.definition.name}}</div>
+              <button type="button" ng-click="openNewEffectModal()" class="change-effect-button clickable" style="margin-left: 10px;">Change</button>
+            </div>
+          </div>
+          
           <div class="effect-settings-panel">
               <div ng-show="effect.type == 'Nothing'" class="effect-specific-title"><h4>Please select an effect.</h4></div>
               <effect-options effect="effect" type="effect.type" trigger="{{triggerType}}" ng-show="effect.type != null" trigger-meta="triggerMeta"><effect-options>
@@ -802,7 +799,6 @@
           </div>
       </div>
       <scroll-sentinel element-class="edit-effect-footer"></scroll-sentinel>
-      <!--<div class="effect-footer-sentinel"></div>-->
     </script>
   </body>
 </html>

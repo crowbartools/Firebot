@@ -14,7 +14,8 @@
             listenerService,
             logger,
             $timeout,
-            backendCommunicator
+            backendCommunicator,
+            ngToast
         ) {
             const service = {};
 
@@ -44,6 +45,10 @@
                     closeCallback: () => {},
                     dismissCallback: () => {}
                 });
+            });
+
+            backendCommunicator.on("showToast", (messageOrOptions) => {
+                ngToast.create(messageOrOptions);
             });
 
             service.openGetIdEntyModal = function(options, callback) {
@@ -707,35 +712,6 @@
                                     }
                                 },
                                 {
-                                    text: "Copy Effect JSON",
-                                    children: [
-                                        {
-                                            text: "For Custom Scripts",
-                                            click: () => {
-                                                $rootScope.copyTextToClipboard(angular.toJson($scope.effect));
-
-                                                ngToast.create({
-                                                    className: 'success',
-                                                    content: 'Copied effect json to clipboard.'
-                                                });
-                                            }
-                                        },
-                                        {
-                                            text: "For $runEffect[]",
-                                            click: () => {
-                                                $rootScope.copyTextToClipboard(
-                                                    `$runEffect[\`\`${angular.toJson($scope.effect)}\`\`]`
-                                                );
-
-                                                ngToast.create({
-                                                    className: 'success',
-                                                    content: 'Copied $runEffect with effect json to clipboard.'
-                                                });
-                                            }
-                                        }
-                                    ]
-                                },
-                                {
                                     html: `<a href ><span class="iconify" data-icon="mdi:content-paste" style="margin-right: 10px;" aria-hidden="true"></span> Paste</a>`,
                                     enabled: $scope.hasCopiedEffect(),
                                     click: function () {
@@ -747,6 +723,52 @@
                                     click: function () {
                                         $scope.delete();
                                     }
+                                },
+                                {
+                                    hasTopDivider: true,
+                                    text: "Advanced...",
+                                    children: [
+                                        {
+                                            html: `<a href role="menuitem"><i class="fal fa-fingerprint mr-4"></i> Copy Effect ID</a>`,
+                                            click: function () {
+                                                $rootScope.copyTextToClipboard($scope.effect.id);
+                                                ngToast.create({
+                                                    className: "success",
+                                                    content: `Copied ${$scope.effect.id} to clipboard.`
+                                                });
+                                            }
+                                        },
+                                        {
+                                            text: "Copy Effect JSON",
+                                            html: `<a href role="menuitem"><i class="fal fa-brackets-curly mr-4"></i> Copy Effect JSON  ></a>`,
+                                            children: [
+                                                {
+                                                    text: "For Custom Scripts",
+                                                    click: () => {
+                                                        $rootScope.copyTextToClipboard(angular.toJson($scope.effect));
+
+                                                        ngToast.create({
+                                                            className: 'success',
+                                                            content: 'Copied effect json to clipboard.'
+                                                        });
+                                                    }
+                                                },
+                                                {
+                                                    text: "For $runEffect[]",
+                                                    click: () => {
+                                                        $rootScope.copyTextToClipboard(
+                                                            `$runEffect[\`\`${angular.toJson($scope.effect)}\`\`]`
+                                                        );
+
+                                                        ngToast.create({
+                                                            className: 'success',
+                                                            content: 'Copied $runEffect with effect json to clipboard.'
+                                                        });
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
                                 }
                             ];
                         };

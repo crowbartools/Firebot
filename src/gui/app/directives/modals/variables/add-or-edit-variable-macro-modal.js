@@ -36,6 +36,8 @@
                                     ng-model="$ctrl.macro.name"
                                     ng-disabled="$ctrl.nameFieldLocked"
                                     ng-style="{'padding-right': $ctrl.nameFieldLocked ? '77px' : ''}"
+                                    ng-keyup="$event.keyCode == 13 && $ctrl.save()"
+                                    ng-keydown="$event.keyCode != 13 ? $event:$event.preventDefault()"
                                 />
                                 <div
                                     style="width: 67px;size: 16px;position: absolute;top: 50%;transform: translateY(-50%);right: 10px;"
@@ -66,6 +68,8 @@
                                 style="font-size: 16px; padding: 10px 16px;"
                                 ng-model="$ctrl.macro.description"
                                 placeholder="Optional"
+                                ng-keyup="$event.keyCode == 13 && $ctrl.save()"
+                                ng-keydown="$event.keyCode != 13 ? $event:$event.preventDefault()"
                             />
                         </div>
 
@@ -89,7 +93,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="args" class="control-label">Args</label>
+                            <label for="args" class="control-label">Arguments</label>
                             <editable-list settings="$ctrl.argListSettings" model="$ctrl.macro.argNames" />
                         </div>
                     </form>
@@ -132,16 +136,35 @@
                     hintTemplate: "$^{name}",
                     showCopyButton: true,
                     copyTemplate: "$^{name}",
-                    addLabel: "Add Arg",
-                    editLabel: "Edit Arg",
+                    addLabel: "Add Macro Argument",
+                    editLabel: "Edit Macro Argument",
+                    inputPlaceholder: "Enter Argument Name",
                     noDuplicates: true,
                     customValidators: [
                         (argName) => {
                             if (/^\d+$/.test(argName)) {
                                 return {
                                     success: false,
-                                    reason: "Arg name cannot be only numbers."
+                                    reason: "Argument Name cannot be only numbers."
                                 };
+                            }
+                            return true;
+                        },
+                        (argName) => {
+                            if (!/^.{2,}$/.test(argName)) {
+                                return {
+                                    success: false,
+                                    reason: "Argument Name length must be at least 2 characters."
+                                }
+                            }
+                            return true;
+                        },
+                        (argName) => {
+                            if (!/^[a-z]+/.test(argName)) {
+                                return {
+                                    success: false,
+                                    reason: "Argument Name must start with a lowercase letter."
+                                }
                             }
                             return true;
                         },
@@ -149,7 +172,7 @@
                             if (!/^[a-z][a-zA-Z0-9]+$/.test(argName)) {
                                 return {
                                     success: false,
-                                    reason: "Arg name must be alphanumeric with no spaces or special characters."
+                                    reason: "Argument Name must be alphanumeric with no spaces or special characters."
                                 };
                             }
                             return true;
