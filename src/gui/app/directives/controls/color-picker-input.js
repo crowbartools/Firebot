@@ -8,6 +8,7 @@
             bindings: {
                 model: "=",
                 label: "@?",
+                alpha: "<",
                 style: "@",
                 lgInput: "<",
                 showClear: "<"
@@ -39,10 +40,10 @@
                         required: true,
                         inputClass: `form-control ${$ctrl.lgInput ? 'input-lg' : ''}`,
                         allowEmpty: false,
-                        format: "hexString",
+                        format: $ctrl.alpha ? "hex8String" : "hexString",
                         placeholder: "#ffffff",
                         case: "lower",
-                        alpha: false,
+                        alpha: $ctrl.alpha,
                         clear: {
                             show: $ctrl.showClear !== false,
                             label: 'Clear',
