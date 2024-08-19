@@ -66,10 +66,17 @@ module.exports = function (grunt) {
         ...ignoreFlags
     ].join(' ');
 
+    const appPackageJson = grunt.file.readJSON('./package.json');
+
+    // electron-packager doesn't like prerelease tags with dots in them for the Windows target
+    // see: https://github.com/electron/packager/issues/1714
+    const [appVersion, prereleaseTag] = appPackageJson.version.split('-');
+    const windowsAppVersion = appVersion + (prereleaseTag ? `-${prereleaseTag.replace(/\./g, '')}` : '');
+
     grunt.config.merge({
         shell: {
             packwin64: {
-                command: `npx --no-install @electron/packager . Firebot --platform=win32 ${flags}`
+                command: `npx --no-install @electron/packager . Firebot --platform=win32 ${flags} --app-version=${windowsAppVersion}`
             },
             packdarwin: {
                 command: `npx --no-install @electron/packager . Firebot --platform=darwin ${flags}`
