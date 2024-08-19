@@ -22,19 +22,16 @@
                     Place scripts in the <a id="scriptFolderBtn" ng-click="openScriptsFolder()" style="text-decoration:underline;color:#53afff;cursor:pointer;">scripts folder</a> of the Firebot user-settings directory, then refresh the dropdown.
                 </div>
 
-                <div class="btn-group">
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="script-type">{{effect.scriptName ? effect.scriptName : 'Pick one'}}</span> <span class="caret"></span>
-                    </button>
+                <div class="flex items-center">
+                    <firebot-searchable-select
+                        items="scriptArray"
+                        ng-model="effect.scriptName"
+                        placeholder="Select script"
+                        on-select="selectScript(item)"
+                        style="flex-grow: 1;"
+                        class="mr-2"
+                    />
                     <a ng-click="getNewScripts()" id="refreshScriptList" style="padding-left:5px;height:100%;cursor:pointer;"><i class="far fa-sync" id="refreshIcon" style="margin-top:10px;" aria-hidden="true"></i></a>
-                    <ul class="dropdown-menu script-dropdown">
-                        <li ng-show="scriptArray.length == 0" class="muted">
-                            <a href>No scripts found.</a>
-                        </li>
-                        <li ng-repeat="script in scriptArray" ng-click="selectScript(script)">
-                            <a href>{{script}}</a>
-                        </li>
-                    </ul>
                 </div>
             </eos-container>
 
@@ -131,13 +128,13 @@
                                 parameterRequest
                             );
 
-                            $q.when(parametersPromise).then(parameters => {
+                            $q.when(parametersPromise).then((parameters) => {
                                 const defaultParameters = parameters;
 
                                 if (currentParameters != null) {
                                     //get rid of old params that no longer exist
                                     Object.keys(currentParameters).forEach(
-                                        currentParameterName => {
+                                        (currentParameterName) => {
                                             const currentParamInDefaults = defaultParameters[currentParameterName];
                                             if (currentParamInDefaults == null) {
                                                 delete currentParameters[currentParameterName];
@@ -147,7 +144,7 @@
 
                                     //handle any new params
                                     Object.keys(defaultParameters).forEach(
-                                        defaultParameterName => {
+                                        (defaultParameterName) => {
                                             const currentParam = currentParameters[defaultParameterName];
                                             const defaultParam = defaultParameters[defaultParameterName];
                                             if (currentParam != null) {
@@ -179,7 +176,12 @@
                     const scriptDirFileNames = fs.readdirSync(scriptFolderPath, {
                         recursive: true
                     });
-                    $scope.scriptArray = scriptDirFileNames?.filter(fileName => fileName.endsWith(".js")) ?? [];
+                    $scope.scriptArray = (scriptDirFileNames
+                        ?.filter(fileName =>
+                            fileName.endsWith(".js") &&
+                            !fileName.includes("node_modules"))
+                        ?? [])
+                        .map(f => ({ id: f, name: f }));
                 };
                 loadScriptFileNames();
 
@@ -204,7 +206,8 @@
                     $rootScope.openLinkExternally($scope.scriptManifest.website);
                 };
 
-                $scope.selectScript = function(scriptName) {
+                $scope.selectScript = function(scriptItem) {
+                    const scriptName = scriptItem.name;
                     $scope.effect.scriptName = scriptName;
                     $scope.effect.parameters = null;
                     $scope.scriptManifest = null;
