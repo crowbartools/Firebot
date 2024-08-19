@@ -88,7 +88,7 @@
                         <label class="control-fb control--checkbox"
                             >Before updates
                             <tooltip
-                                text="'Firebot will always back up before updates. This cannot be turned off. It's for your own good <3'"
+                                text="'Firebot will always back up before updates. This cannot be turned off. It\\'s for your own good <3'"
                             ></tooltip>
                             <input
                                 type="checkbox"
