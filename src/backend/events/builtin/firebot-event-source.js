@@ -132,6 +132,17 @@ const firebotEventSource = {
                 isPromotion: true,
                 isDemotion: false
             }
+        },
+        {
+            id: "viewer-metadata-updated",
+            name: "Viewer Metadata Updated",
+            description: "When a viewer's metadata value is updated.",
+            cached: false,
+            manualMetadata: {
+                username: "Firebot",
+                metadataKey: "testKey",
+                metadataValue: "testValue"
+            }
         }
     ]
 };

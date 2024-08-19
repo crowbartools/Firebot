@@ -71,7 +71,9 @@
             $ctrl.isNewRank = true;
 
             $ctrl.ladderMode = 'auto';
-            $ctrl.ladderTrackBy = 'currency';
+            $ctrl.ladderSettings = {
+                trackBy: 'currency'
+            };
 
             $ctrl.currentRanks = [];
 
@@ -82,7 +84,16 @@
             };
 
             $ctrl.getValueTypeLabel = () => {
-                return $ctrl.ladderTrackBy === "currency" ? "Required Currency" : "Required View Time (hrs)";
+                if ($ctrl.ladderSettings.trackBy === "currency") {
+                    return "Required Currency";
+                }
+                if ($ctrl.ladderSettings.trackBy === "view_time") {
+                    return "Required View Time (hrs)";
+                }
+                if ($ctrl.ladderSettings.trackBy === "metadata") {
+                    return $ctrl.ladderSettings.metadataKey ? `Metadata (${$ctrl.ladderSettings.metadataKey})` : 'metadata';
+                }
+                return "";
             };
 
             $ctrl.formFieldHasError = (fieldName) => {
@@ -96,7 +107,7 @@
                     $ctrl.isNewRank = false;
                 }
                 $ctrl.ladderMode = $ctrl.resolve.ladderMode;
-                $ctrl.ladderTrackBy = $ctrl.resolve.ladderTrackBy;
+                $ctrl.ladderSettings = $ctrl.resolve.ladderSettings;
                 $ctrl.currentRanks = $ctrl.resolve.currentRanks ?? [];
             };
 

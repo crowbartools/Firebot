@@ -9,8 +9,10 @@ export type RankLadder = {
     name: string;
     mode: "manual" | "auto";
     settings: {
-        trackBy?: "view_time" | "currency",
+        trackBy?: "view_time" | "currency" | "metadata",
         currencyId?: string;
+        metadataKey?: string;
+        restrictedToRoleIds?: string[];
         announcePromotionsInChat?: boolean;
         customPromotionMessageTemplate?: string;
     };

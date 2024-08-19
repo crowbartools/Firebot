@@ -58,6 +58,7 @@
                                 id="trackBy"
                                 name="trackBy"
                                 ng-required="$ctrl.rankLadder.mode == 'auto'"
+                                grid-columns="3"
                             ></firebot-radio-cards>
                             <div ng-show="$ctrl.rankLadder.settings.trackBy == 'currency'" class="form-group mb-0 mt-2" ng-class="{'has-error': $ctrl.formFieldHasError('currency')}">
                                 <label for="currency" class="control-label" style="display: none;">Currency</label>
@@ -67,6 +68,19 @@
                                     name="currency"
                                     ng-required="$ctrl.rankLadder.mode == 'auto' && $ctrl.rankLadder.settings.trackBy == 'currency'"
                                 ></searchable-currency-select>
+                            </div>
+                            <div ng-show="$ctrl.rankLadder.settings.trackBy == 'metadata'" class="form-group mb-0 mt-2" ng-class="{'has-error': $ctrl.formFieldHasError('metadata')}">
+                                <label for="metadata" class="control-label" style="display: none;">Metadata</label>
+                                <input
+                                    type="text"
+                                    id="metadata"
+                                    name="metadata"
+                                    ng-required="$ctrl.rankLadder.mode == 'auto' && $ctrl.rankLadder.settings.trackBy == 'metadata'"
+                                    class="form-control input-lg"
+                                    placeholder="Enter metadata key"
+                                    ng-model="$ctrl.rankLadder.settings.metadataKey"
+                                />
+                                <p class="help-block">If a viewer's metadata value for this key is not numeric, they will be treated as unranked.</p>
                             </div>
                         </div>
                     </div>
@@ -156,6 +170,8 @@
                     } else if ($ctrl.rankLadder.settings.trackBy === 'currency') {
                         const currency = currencyService.getCurrency($ctrl.rankLadder.settings.currencyId);
                         hintTemplate = `({value} ${currency?.name ?? 'currency'})`;
+                    } else if ($ctrl.rankLadder.settings.trackBy === 'metadata') {
+                        hintTemplate = `({value})`;
                     } else {
                         hintTemplate = '({value})';
                     }
@@ -229,7 +245,8 @@
 
             $ctrl.trackByOptions = [
                 { value: "view_time", label: "View Time", iconClass: "fa-clock" },
-                { value: "currency", label: "Currency", iconClass: "fa-money-bill" }
+                { value: "currency", label: "Currency", iconClass: "fa-money-bill" },
+                { value: "metadata", label: "Metadata", iconClass: "fa-user-tag" }
             ];
 
             $ctrl.nameIsTaken = (name) => {
@@ -268,7 +285,7 @@
                     resolveObj: {
                         rank: () => rank,
                         ladderMode: () => $ctrl.rankLadder.mode,
-                        ladderTrackBy: () => $ctrl.rankLadder.settings.trackBy,
+                        ladderSettings: () => $ctrl.rankLadder.settings,
                         currentRanks: () => $ctrl.rankLadder.ranks
                     },
                     closeCallback: (resp) => {

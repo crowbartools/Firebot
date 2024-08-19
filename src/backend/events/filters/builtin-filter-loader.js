@@ -17,6 +17,8 @@ exports.loadFilters = () => {
         'gift-duration',
         'is-anonymous',
         'message',
+        'metadata-key',
+        'metadata-value',
         'new-currency-amount',
         'new-rank',
         'new-view-time',

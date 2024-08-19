@@ -96,7 +96,7 @@
                         .replace(/{index}/, $ctrl.storedSettings.indexZeroBased ? index : index + 1);
                     const props = [...new Set(templateString.match(/(?<={)[a-zA-Z]+(?=})/gm))];
                     for (const prop of props) {
-                        resolvedTemplate = resolvedTemplate.replace(new RegExp(`{${prop}}`), item[prop] ?? 'Not set');
+                        resolvedTemplate = resolvedTemplate.replace(new RegExp(`{${prop}}`), item[prop] ?? '-');
                     }
                     return resolvedTemplate;
                 };
