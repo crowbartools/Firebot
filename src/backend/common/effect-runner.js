@@ -122,11 +122,12 @@ function triggerEffect(effect, trigger, outputs, manualAbortSignal, listAbortSig
 
 function runEffects(runEffectsContext) {
     return new Promise(async (resolve) => {
+        //ref the effect context so it is not lost from stringify
+        const trigger = runEffectsContext.trigger,
+            effects = runEffectsContext.effects.list,
+            outputs = runEffectsContext.outputs;
         runEffectsContext = JSON.parse(JSON.stringify(runEffectsContext));
         runEffectsContext.executionId = uuid();
-
-        const trigger = runEffectsContext.trigger,
-            effects = runEffectsContext.effects.list;
 
         const effectListAbortController = new AbortController();
 
@@ -149,7 +150,7 @@ function runEffects(runEffectsContext) {
             resolve({
                 success: true,
                 stopEffectExecution: !!bubbleStop,
-                outputs: runEffectsContext.outputs ?? {}
+                outputs: outputs ?? {}
             });
         });
 
@@ -174,7 +175,7 @@ function runEffects(runEffectsContext) {
             logger.debug("Looking and handling replace variables...");
 
             await findAndReplaceVariables(effect, trigger, Object.freeze({
-                ...(runEffectsContext.outputs ?? {})
+                ...(outputs ?? {})
             }));
 
             try {
@@ -189,7 +190,7 @@ function runEffects(runEffectsContext) {
                 const response = await triggerEffect(
                     effect,
                     trigger,
-                    runEffectsContext.outputs,
+                    outputs,
                     effectAbortController.signal,
                     effectListAbortController.signal
                 );
@@ -225,7 +226,7 @@ function runEffects(runEffectsContext) {
                             return resolve({
                                 success: true,
                                 stopEffectExecution: execution.bubbleStop,
-                                outputs: runEffectsContext.outputs ?? {}
+                                outputs: outputs ?? {}
                             });
                         }
                     }
@@ -250,7 +251,7 @@ function runEffects(runEffectsContext) {
         return resolve({
             success: true,
             stopEffectExecution: false,
-            outputs: runEffectsContext.outputs ?? {}
+            outputs: outputs ?? {}
         });
     });
 }
