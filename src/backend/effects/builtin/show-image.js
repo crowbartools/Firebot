@@ -65,11 +65,10 @@ const showImage = {
         </div>
     </div>
     </div>
-    <eos-overlay-position effect="effect" class="setting-padtop"></eos-overlay-position>
-
+    
     <eos-overlay-dimensions effect="effect" pad-top="true"></eos-overlay-dimensions>
-
-    <eos-enter-exit-animations effect="effect" class="setting-padtop"></eos-enter-exit-animations>
+   
+    <eos-overlay-position effect="effect" class="setting-padtop"></eos-overlay-position>
 
     <div class="effect-setting-container setting-padtop">
     <div class="effect-specific-title"><h4>Duration</h4></div>
@@ -85,6 +84,11 @@ const showImage = {
         </div>
     </div>
     </div>
+
+    <eos-overlay-rotation effect="effect" pad-top="true"></eos-overlay-rotation>
+
+    <eos-enter-exit-animations effect="effect" class="setting-padtop"></eos-enter-exit-animations>
+
     <eos-overlay-instance effect="effect" class="setting-padtop"></eos-overlay-instance>
     <div class="effect-info alert alert-warning">
     This effect requires the Firebot overlay to be loaded in your broadcasting software. <a href ng-click="showOverlayInfoModal()" style="text-decoration:underline">Learn more</a>
@@ -179,7 +183,8 @@ const showImage = {
             enterDuration: effect.enterDuration,
             exitAnimation: effect.exitAnimation,
             exitDuration: effect.exitDuration,
-            customCoords: effect.customCoords
+            customCoords: effect.customCoords,
+            imageRotation: effect.rotation ? effect.rotation + effect.rotType : "0deg"
         };
 
         if (settings.useOverlayInstances()) {
@@ -265,7 +270,10 @@ const showImage = {
 
                 const styles =
                     (data.imageWidth ? `width: ${data.imageWidth};` : "") +
-                    (data.imageHeight ? `height: ${data.imageHeight};` : "");
+                    (data.imageHeight ? `height: ${data.imageHeight};` : "") +
+                    (data.imageRotation ? `transform: rotate(${data.imageRotation});` : "");
+                console.log(data.imageRotation);
+                console.log(styles);
                 const imageTag = `<img src="${filepathNew}" style="${styles}" />`;
 
                 showElement(imageTag, positionData, animationData); // eslint-disable-line no-undef

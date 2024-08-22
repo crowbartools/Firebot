@@ -175,6 +175,14 @@ const playVideo = {
             </eos-container>
         </div>
 
+        <eos-container header="Volume" pad-top="true">
+            <div class="volume-slider-wrapper">
+                <i class="fal fa-volume-down volume-low"></i>
+                <rzslider rz-slider-model="effect.volume" rz-slider-options="{floor: 0, ceil: 10, hideLimitLabels: true}"></rzslider>
+                <i class="fal fa-volume-up volume-high"></i>
+            </div>
+        </eos-container>
+
         <eos-container header="Duration" pad-top="true">
             <div class="input-group">
                 <span class="input-group-addon">Seconds</span>
@@ -194,14 +202,6 @@ const playVideo = {
                 <input type="checkbox" ng-model="effect.wait" ng-change="waitChange()">
                 <div class="control__indicator"></div>
             </label>
-        </eos-container>
-
-        <eos-container header="Volume" pad-top="true">
-            <div class="volume-slider-wrapper">
-                <i class="fal fa-volume-down volume-low"></i>
-                <rzslider rz-slider-model="effect.volume" rz-slider-options="{floor: 0, ceil: 10, hideLimitLabels: true}"></rzslider>
-                <i class="fal fa-volume-up volume-high"></i>
-            </div>
         </eos-container>
 
         <eos-overlay-position effect="effect" pad-top="true"></eos-overlay-position>
@@ -234,6 +234,8 @@ const playVideo = {
             </div>
         </eos-container>
 
+        <eos-overlay-rotation effect="effect" pad-top="true"></eos-overlay-rotation>
+        
         <eos-enter-exit-animations effect="effect" pad-top="true"></eos-enter-exit-animations>
 
         <eos-overlay-instance effect="effect" pad-top="true"></eos-overlay-instance>
@@ -370,7 +372,8 @@ const playVideo = {
             inbetweenDuration: effect.inbetweenDuration,
             inbetweenRepeat: effect.inbetweenRepeat,
             customCoords: effect.customCoords,
-            loop: effect.loop === true
+            loop: effect.loop === true,
+            rotation: effect.rotation ? effect.rotation + effect.rotType : "0deg"
         };
 
         // Get random sound
@@ -511,7 +514,8 @@ const playVideo = {
                 inbetweenRepeat: effect.inbetweenRepeat,
                 exitAnimation: effect.exitAnimation,
                 exitDuration: effect.exitDuration,
-                overlayInstance: data.overlayInstance
+                overlayInstance: data.overlayInstance,
+                rotation: effect.rotation ? effect.rotation + effect.rotType : "0deg"
             });
 
             if (effect.wait) {
@@ -687,7 +691,8 @@ const playVideo = {
 
                 const sizeStyles =
                     (data.videoWidth ? `width: ${data.videoWidth}px;` : "") +
-                    (data.videoHeight ? `height: ${data.videoHeight}px;` : "");
+                    (data.videoHeight ? `height: ${data.videoHeight}px;` : "") +
+                    (data.rotation ? `transform: rotate(${data.rotation});` : '');
 
                 if (videoType === "Local Video") {
                     const loopAttribute = loop ? "loop" : "";

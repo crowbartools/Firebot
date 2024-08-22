@@ -10,7 +10,20 @@
             },
             template: `
             <eos-container header="Rotation" pad-top="$ctrl.padTop">
-
+                <div style="display: flex; flex-direction: row; width: 100%; height: 36px; align-items: center;">
+                    <firebot-input
+                        style="flex-grow:1"
+                        input-title="Rotation"
+                        model="$ctrl.effect.rotation"
+                        placeholder-text="Enter rotation"
+                        data-type="number"
+                    />
+                    <dropdown-select 
+                        style="margin: 0 0 0 10px;"
+                        options=" $ctrl.selectOptions"
+                        selected="$ctrl.effect.rotType">
+                    </dropdown-select>
+                </div>
             </eos-container>
        `,
             controller: function() {
@@ -18,6 +31,15 @@
 
                 $ctrl.$onInit = function() {
                     // do stuff on init
+                    $ctrl.selectOptions = {
+                        deg: 'deg',
+                        rad: 'rad',
+                        turn: 'turn'
+                    };
+
+                    if ($ctrl.effect.rotType == null) {
+                        $ctrl.effect.rotType = "deg";
+                    }
                 };
             }
         });
