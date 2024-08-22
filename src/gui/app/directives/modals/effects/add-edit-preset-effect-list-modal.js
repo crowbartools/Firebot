@@ -2,8 +2,6 @@
 
 (function() {
 
-    const uuidv1 = require("uuid/v1");
-
     angular.module("firebotApp").component("addOrEditPresetEffectListModal", {
         template: `
             <scroll-sentinel element-class="edit-preset-effect-list-header"></scroll-sentinel>
@@ -92,7 +90,7 @@
                         inputPlaceholder: "Enter name",
                         saveText: "Save",
                         validationFn: (value) => {
-                            return new Promise(resolve => {
+                            return new Promise((resolve) => {
                                 if (value == null || value.trim().length < 1) {
                                     resolve(false);
                                 } else if ($ctrl.presetList.args.some(a => a.name === value.trim())) {
@@ -126,10 +124,6 @@
                     }
 
                     $ctrl.isNewPresetList = false;
-                }
-
-                if ($ctrl.isNewPresetList && $ctrl.presetList.id == null) {
-                    $ctrl.presetList.id = uuidv1();
                 }
             };
 
