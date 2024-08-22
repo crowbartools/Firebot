@@ -204,8 +204,6 @@ const playVideo = {
             </label>
         </eos-container>
 
-        <eos-overlay-position effect="effect" pad-top="true"></eos-overlay-position>
-
         <eos-container header="Size" pad-top="true">
             <label class="control-fb control--checkbox"> Force 16:9 Ratio
                 <input type="checkbox" ng-click="forceRatioToggle();" ng-checked="forceRatio">
@@ -234,8 +232,10 @@ const playVideo = {
             </div>
         </eos-container>
 
-        <eos-overlay-rotation effect="effect" pad-top="true"></eos-overlay-rotation>
+        <eos-overlay-position effect="effect" pad-top="true"></eos-overlay-position>
         
+        <eos-overlay-rotation effect="effect" pad-top="true"></eos-overlay-rotation>
+
         <eos-enter-exit-animations effect="effect" pad-top="true"></eos-enter-exit-animations>
 
         <eos-overlay-instance effect="effect" pad-top="true"></eos-overlay-instance>
