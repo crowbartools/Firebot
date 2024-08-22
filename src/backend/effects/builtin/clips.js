@@ -273,11 +273,13 @@ const clip = {
                     inbetweenDelay,
                     inbetweenRepeat,
                     exitAnimation,
-                    exitDuration
+                    exitDuration,
+                    rotation
                 } = event;
 
                 const styles = (width ? `width: ${width}px;` : '') +
-                    (height ? `height: ${height}px;` : '');
+                    (height ? `height: ${height}px;` : '') +
+                    (rotation ? `transform: rotate(${rotation});` : '');
 
                 const videoElement = `
                     <video autoplay
