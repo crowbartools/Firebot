@@ -79,7 +79,7 @@ module.exports = function (grunt) {
                 command: `npx --no-install @electron/packager . Firebot --platform=win32 ${flags} --app-version=${windowsAppVersion}`
             },
             packdarwin: {
-                command: `npx --no-install @electron/packager . Firebot --platform=darwin ${flags}`
+                command: `npx --no-install @electron/packager . Firebot --platform=darwin ${flags} --extend-info="extra.plist" --extra-resource="./src/resources/firebot-setup-file-icon.icns"`
             },
             packlinux: {
                 command: `npx --no-install @electron/packager . Firebot --platform=linux ${flags}`

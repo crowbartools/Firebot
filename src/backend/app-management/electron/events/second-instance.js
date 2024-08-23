@@ -22,7 +22,8 @@ exports.secondInstance = (event, argv) => {
             }
             mainWindow.focus();
 
-            fileOpenHelpers.checkForFirebotSetupPath(argv);
+
+            fileOpenHelpers.checkForFirebotSetupPathInArgs(argv);
 
             openUrl(event, argv.pop());
         }

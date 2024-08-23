@@ -1,7 +1,7 @@
 "use strict";
 
 
-const {checkForFirebotSetupPath} = require("../../file-open-helpers");
+const {checkForFirebotSetupPathInArgs} = require("../../file-open-helpers");
 
 exports.whenReady = async () => {
     const logger = require("../../../logwrapper");
@@ -16,7 +16,7 @@ exports.whenReady = async () => {
 
     logger.debug("...Checking for setup file");
 
-    checkForFirebotSetupPath(process.argv);
+    checkForFirebotSetupPathInArgs(process.argv);
 
     logger.debug("...Loading window management");
     const windowManagement = require("../window-management");
