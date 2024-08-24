@@ -19,7 +19,17 @@ export function triggerChatMessageDeleted(deletedChatMessage: ClearMsg): void {
         username: deletedChatMessage.userName,
         messageText: deletedChatMessage.text,
         messageId: deletedChatMessage.targetMessageId,
-        deletedChatMessage
+        deletedChatMessage: {
+            text: deletedChatMessage.text,
+            userName: deletedChatMessage.userName,
+            channelId: deletedChatMessage.channelId,
+            targetMessageId: deletedChatMessage.targetMessageId,
+            paramCount: deletedChatMessage.paramCount,
+            prefix: deletedChatMessage.prefix,
+            command: deletedChatMessage.command,
+            tags: deletedChatMessage.tags,
+            rawLine: deletedChatMessage.rawLine
+        }
     });
 }
 
