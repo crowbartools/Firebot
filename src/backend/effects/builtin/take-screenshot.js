@@ -2,7 +2,6 @@
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 const {sendEmbedToDiscord} = require("../../common/screenshot-helpers");
-const screenshotHelpers = require("../../common/screenshot-helpers");
 
 const clip = {
     definition: {
