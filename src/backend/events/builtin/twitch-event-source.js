@@ -594,7 +594,9 @@ module.exports = {
             cached: false,
             queued: false,
             manualMetadata: {
-                title: "Poll name"
+                title: "Poll name",
+                winningChoiceName: "Leading Choice Name",
+                winningChoiceVotes: 11
             },
             activityFeed: {
                 icon: "fad fa-poll-h",
@@ -610,7 +612,9 @@ module.exports = {
             cached: false,
             queued: false,
             manualMetadata: {
-                title: "Poll name"
+                title: "Poll name",
+                winningChoiceName: "Winning Choice Name",
+                winningChoiceVotes: 12
             },
             activityFeed: {
                 icon: "fad fa-poll-h",
