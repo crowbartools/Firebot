@@ -1,3 +1,4 @@
+import { pick } from "../../utils";
 import eventManager from "../EventManager";
 import {
     EventSubChannelPollBeginChoice,
@@ -25,18 +26,8 @@ function getWinningChoices(choices: EventSubChannelPollChoice[]): TwitchPollWinn
     };
 }
 
-function mapChoices(choices: Array<EventSubChannelPollChoice | EventSubChannelPollBeginChoice>): Array<{
-    id: string,
-    title: string,
-    totalVotes?: number,
-    channelPointsVotes?: number
-}> {
-    return choices.map(choice => ({
-        id: choice.id,
-        title: choice.title,
-        totalVotes: (choice as EventSubChannelPollChoice).totalVotes,
-        channelPointsVotes: (choice as EventSubChannelPollChoice).channelPointsVotes
-    }));
+function mapChoices(choices: Array<EventSubChannelPollChoice>) {
+    return choices.map(c => pick(c, ["id", "title", "totalVotes", "channelPointsVotes"]));
 }
 
 export function triggerChannelPollBegin(
@@ -49,7 +40,7 @@ export function triggerChannelPollBegin(
 ) {
     eventManager.triggerEvent("twitch", "channel-poll-begin", {
         title,
-        choices: mapChoices(choices),
+        choices: choices.map(c => pick(c, ["id", "title"])),
         startDate,
         endDate,
         isChannelPointsVotingEnabled,
