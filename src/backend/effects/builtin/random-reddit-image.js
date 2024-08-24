@@ -15,7 +15,8 @@ const model = {
         description: "Pulls a random image from a selected subreddit.",
         icon: "fab fa-reddit-alien",
         categories: [EffectCategory.FUN, EffectCategory.CHAT_BASED, EffectCategory.OVERLAY],
-        dependencies: []
+        dependencies: [],
+        hidden: true
     },
     globalSettings: {},
     optionsTemplate: `
@@ -66,11 +67,11 @@ const model = {
         <eos-overlay-dimensions effect="effect" pad-top="true"></eos-overlay-dimensions>
 
         <eos-overlay-position effect="effect" class="setting-padtop"></eos-overlay-position>
-        
+
         <eos-overlay-rotation effect="effect" pad-top="true"></eos-overlay-rotation>
 
         <eos-enter-exit-animations effect="effect" class="setting-padtop"></eos-enter-exit-animations>
-        
+
         <eos-overlay-instance effect="effect" class="setting-padtop"></eos-overlay-instance>
         <div class="effect-info alert alert-warning">
             This effect requires the Firebot overlay to be loaded in your broadcasting software. <a href ng-click="showOverlayInfoModal()" style="text-decoration:underline">Learn more</a>
