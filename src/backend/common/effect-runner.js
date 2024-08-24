@@ -14,7 +14,6 @@ const {
     addEffectAbortController,
     removeEffectAbortController
 } = require("./effect-abort-helpers");
-const { klona } = require("klona/full");
 
 const SKIP_VARIABLE_PROPERTIES = ["list", "leftSideValue", "rightSideValue", "effectLabel", 'effectListLabel'];
 
@@ -123,7 +122,8 @@ function triggerEffect(effect, trigger, outputs, manualAbortSignal, listAbortSig
 
 function runEffects(runEffectsContext) {
     return new Promise(async (resolve) => {
-        runEffectsContext = klona(runEffectsContext);
+        runEffectsContext = structuredClone(runEffectsContext);
+
         runEffectsContext.executionId = uuid();
 
         const trigger = runEffectsContext.trigger,
@@ -266,7 +266,7 @@ async function processEffects(processEffectsRequest) {
     const runEffectsContext = processEffectsRequest;
     runEffectsContext["username"] = username;
 
-    runEffectsContext.effects = klona(runEffectsContext.effects);
+    runEffectsContext.effects = structuredClone(runEffectsContext.effects);
 
     if (runEffectsContext.outputs == null) {
         runEffectsContext.outputs = {};
