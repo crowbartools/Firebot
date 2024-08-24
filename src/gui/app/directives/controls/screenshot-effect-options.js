@@ -42,7 +42,7 @@
                             <dropdown-select options="channelOptions" selected="effect.discordChannelId"></dropdown-select>
                         </div>
 
-                        <div style="padding-top:15px">
+                        <div ng-init="showOverlayOption = effect.showInOverlay == true"  style="padding-top:15px" ng-if="showOverlayOption">
                             <label class="control-fb control--checkbox"> Show screenshot in overlay
                                 <input type="checkbox" ng-model="effect.showInOverlay">
                                 <div class="control__indicator"></div>

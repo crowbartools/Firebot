@@ -100,6 +100,7 @@
         "glob": "^10.3.10",
         "he": "^1.2.0",
         "howler": "https://github.com/ebiggz/howler.js/tarball/master",
+        "klona": "^2.0.6",
         "list.js": "^1.5.0",
         "luxon": "^3.1.1",
         "marked": "^13.0.3",
