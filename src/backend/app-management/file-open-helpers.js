@@ -18,20 +18,30 @@ exports.setWindowReady = (ready) => {
 };
 
 /**
+ *
+ * @param {string} filePath
+ */
+exports.checkForFirebotSetupInPath = (filePath) => {
+    if (filePath.endsWith(".firebotsetup")) {
+        logger.info("Firebot setup file opened!", filePath);
+        if (windowReady) {
+            sendSetupPathToFrontend(filePath);
+        } else {
+            pendingSetupFilePath = filePath;
+        }
+        return true;
+    }
+    return false;
+};
+
+/**
  * @param {string[]} args
  */
-exports.checkForFirebotSetupPath = (args) => {
+exports.checkForFirebotSetupPathInArgs = (args) => {
     if (args == null) {
         return;
     }
     for (const arg of args) {
-        if (arg.endsWith(".firebotsetup")) {
-            logger.info("Firebot setup file opened!", arg);
-            if (windowReady) {
-                sendSetupPathToFrontend(arg);
-            } else {
-                pendingSetupFilePath = arg;
-            }
-        }
+        exports.checkForFirebotSetupInPath(arg);
     }
 };
