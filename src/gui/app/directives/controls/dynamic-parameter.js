@@ -67,7 +67,7 @@
           </div>
 
           <div ng-switch-when="filepath">
-            <file-chooser model="$ctrl.metadata.value" options="$ctrl.metadata.fileOptions"></file-chooser></file-chooser>
+            <file-chooser model="$ctrl.metadata.value" options="$ctrl.metadata.fileOptions"></file-chooser>
           </div>
 
           <div ng-switch-when="role-percentages">
