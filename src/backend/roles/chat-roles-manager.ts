@@ -4,6 +4,7 @@ import { BasicViewer } from "../../types/viewers";
 import logger from "../logwrapper";
 import accountAccess from "../common/account-access";
 import twitchApi from "../twitch-api/api";
+import { TypedEmitter } from "tiny-typed-emitter";
 
 const VIEWLIST_BOTS_URL = "https://api.twitchinsights.net/v1/bots/all";
 
@@ -17,10 +18,18 @@ interface KnownBotServiceResponse {
     bots: Array<[string, number, number]>
 }
 
-class ChatRolesManager {
+type Events = {
+    "viewer-role-updated": (userId: string, roleId: string, action: "added" | "removed") => void;
+};
+
+class ChatRolesManager extends TypedEmitter<Events> {
     private _knownBots: KnownBot[] = [];
     private _vips: BasicViewer[] = [];
     private _moderators: BasicViewer[] = [];
+
+    constructor() {
+        super();
+    }
 
     async cacheViewerListBots(): Promise<void> {
         if (this._knownBots?.length) {
@@ -81,11 +90,13 @@ class ChatRolesManager {
     addVipToVipList(viewer: BasicViewer): void {
         if (!this._vips.some(v => v.id === viewer.id)) {
             this._vips.push(viewer);
+            this.emit("viewer-role-updated", viewer.id, "vip", "added");
         }
     }
 
     removeVipFromVipList(userId: string): void {
         this._vips = this._vips.filter(v => v.id !== userId);
+        this.emit("viewer-role-updated", userId, "vip", "removed");
     }
 
     async loadModerators(): Promise<void> {
@@ -100,11 +111,13 @@ class ChatRolesManager {
     addModeratorToModeratorsList(viewer: BasicViewer): void {
         if (!this._moderators.some(v => v.id === viewer.id)) {
             this._moderators.push(viewer);
+            this.emit("viewer-role-updated", viewer.id, "mod", "added");
         }
     }
 
     removeModeratorFromModeratorsList(userId: string): void {
         this._moderators = this._moderators.filter(v => v.id !== userId);
+        this.emit("viewer-role-updated", userId, "mod", "removed");
     }
 
     private async getUserSubscriberRole(userIdOrName: string): Promise<string> {

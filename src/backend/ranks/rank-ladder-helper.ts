@@ -43,6 +43,10 @@ export class RankLadderHelper {
         return `@{user} has achieved the rank of {rank}${this.rankLadder.mode === "auto" ? ' ({rankDescription})' : ''}!`;
     }
 
+    get restrictedToRoleIds() {
+        return this.rankLadder.settings?.viewerRestrictions?.roleIds ?? [];
+    }
+
     getRank(rankId: string): Rank | undefined {
         return this.rankLadder.ranks.find(rank => rank.id === rankId);
     }

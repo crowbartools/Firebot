@@ -12,7 +12,9 @@ export type RankLadder = {
         trackBy?: "view_time" | "currency" | "metadata",
         currencyId?: string;
         metadataKey?: string;
-        restrictedToRoleIds?: string[];
+        viewerRestrictions?: {
+            roleIds?: string[];
+        },
         announcePromotionsInChat?: boolean;
         customPromotionMessageTemplate?: string;
     };
