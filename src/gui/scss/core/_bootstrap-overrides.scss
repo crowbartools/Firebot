@@ -456,12 +456,15 @@ textarea.form-control {
     resize: vertical;
     padding-top: 9px;
     min-height: 40px;
-    float: left !important;
     &.single-line-textarea {
         height: 40px;
         scrollbar-width: none;
         scrollbar-color: transparent transparent;
     }
+}
+
+.input-group > textarea.form-control {
+    float: left !important;
 }
 
 .progress {

@@ -22,7 +22,7 @@ const showImage = {
         description: "Shows an image in the overlay.",
         icon: "fad fa-image",
         categories: [EffectCategory.COMMON, EffectCategory.FUN, EffectCategory.OVERLAY],
-        dependencies: [],
+        dependencies: []
     },
     /**
      * Global settings that will be available in the Settings tab
@@ -65,31 +65,11 @@ const showImage = {
         </div>
     </div>
     </div>
+    
+    <eos-overlay-dimensions effect="effect" pad-top="true"></eos-overlay-dimensions>
+   
     <eos-overlay-position effect="effect" class="setting-padtop"></eos-overlay-position>
-    <eos-enter-exit-animations effect="effect" class="setting-padtop"></eos-enter-exit-animations>
-    <div class="effect-setting-container setting-padtop">
-    <div class="effect-specific-title"><h4>Dimensions</h4></div>
-    <div class="effect-setting-content">
-        <div class="input-group">
-            <span class="input-group-addon">Width</span>
-            <input
-                type="number"
-                class="form-control"
-                aria-describeby="image-width-setting-type"
-                type="number"
-                ng-model="effect.width"
-                placeholder="px">
-            <span class="input-group-addon">Height</span>
-            <input
-                type="number"
-                class="form-control"
-                aria-describeby="image-height-setting-type"
-                type="number"
-                ng-model="effect.height"
-                placeholder="px">
-        </div>
-    </div>
-    </div>
+
     <div class="effect-setting-container setting-padtop">
     <div class="effect-specific-title"><h4>Duration</h4></div>
     <div class="effect-setting-content">
@@ -104,6 +84,11 @@ const showImage = {
         </div>
     </div>
     </div>
+
+    <eos-overlay-rotation effect="effect" pad-top="true"></eos-overlay-rotation>
+
+    <eos-enter-exit-animations effect="effect" class="setting-padtop"></eos-enter-exit-animations>
+
     <eos-overlay-instance effect="effect" class="setting-padtop"></eos-overlay-instance>
     <div class="effect-info alert alert-warning">
     This effect requires the Firebot overlay to be loaded in your broadcasting software. <a href ng-click="showOverlayInfoModal()" style="text-decoration:underline">Learn more</a>
@@ -199,6 +184,7 @@ const showImage = {
             exitAnimation: effect.exitAnimation,
             exitDuration: effect.exitDuration,
             customCoords: effect.customCoords,
+            imageRotation: effect.rotation ? effect.rotation + effect.rotType : "0deg"
         };
 
         if (settings.useOverlayInstances()) {
@@ -226,7 +212,7 @@ const showImage = {
                 logger.warn("Unable to read image folder", err);
             }
 
-            const filteredFiles = files.filter((i) => /\.(bmp|gif|jpg|jpeg|png|apng|svg|webp)$/i.test(i));
+            const filteredFiles = files.filter(i => /\.(bmp|gif|jpg|jpeg|png|apng|svg|webp)$/i.test(i));
 
             const chosenFile = filteredFiles[Math.floor(Math.random() * filteredFiles.length)];
 
@@ -246,7 +232,7 @@ const showImage = {
     overlayExtension: {
         dependencies: {
             css: [],
-            js: [],
+            js: []
         },
         event: {
             name: "image",
@@ -266,7 +252,7 @@ const showImage = {
                 // NEW WAY EXAMPLE:
                 const positionData = {
                     position: data.imagePosition,
-                    customCoords: data.customCoords,
+                    customCoords: data.customCoords
                 };
 
                 const animationData = {
@@ -279,18 +265,21 @@ const showImage = {
                     exitAnimation: data.exitAnimation,
                     exitDuration: data.exitDuration,
                     totalDuration: parseFloat(data.imageDuration) * 1000,
-                    resourceToken: data.resourceToken,
+                    resourceToken: data.resourceToken
                 };
 
                 const styles =
                     (data.imageWidth ? `width: ${data.imageWidth};` : "") +
-                    (data.imageHeight ? `height: ${data.imageHeight};` : "");
+                    (data.imageHeight ? `height: ${data.imageHeight};` : "") +
+                    (data.imageRotation ? `transform: rotate(${data.imageRotation});` : "");
+                console.log(data.imageRotation);
+                console.log(styles);
                 const imageTag = `<img src="${filepathNew}" style="${styles}" />`;
 
                 showElement(imageTag, positionData, animationData); // eslint-disable-line no-undef
-            },
-        },
-    },
+            }
+        }
+    }
 };
 
 module.exports = showImage;

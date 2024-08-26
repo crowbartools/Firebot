@@ -1,8 +1,6 @@
 "use strict";
 
 (function() {
-    const uuidv1 = require("uuid/v1");
-
     angular.module("firebotApp")
         .component("addOrEditCustomQuickActionModal", {
             template: `
@@ -122,10 +120,6 @@
                         rootEffects: $ctrl.quickAction.effectList
                     };
 
-                    if ($ctrl.isNewQuickAction && $ctrl.quickAction.id == null) {
-                        $ctrl.quickAction.id = uuidv1();
-                    }
-
                     $ctrl.listType = $ctrl.quickAction.presetListId != null ? "preset" : "custom";
 
                     if ($ctrl.listType === "preset") {
@@ -160,7 +154,7 @@
                         $ctrl.quickAction.icon = "far fa-magic";
                     }
 
-                    quickActionsService.saveCustomQuickAction($ctrl.quickAction).then(successful => {
+                    quickActionsService.saveCustomQuickAction($ctrl.quickAction).then((successful) => {
                         if (successful) {
                             $ctrl.close();
                         } else {

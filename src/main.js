@@ -10,7 +10,8 @@ const {
     windowsAllClosed,
     willQuit,
     secondInstance,
-    openUrl
+    openUrl,
+    openFile
 } = require("./backend/app-management/electron/electron-events");
 
 logger.info("Starting Firebot...");
@@ -59,9 +60,10 @@ if (process.platform === "linux") {
 
 // Setup app listeners
 app.on('second-instance', secondInstance);
+app.on("open-file", openFile);
 app.on("window-all-closed", windowsAllClosed);
 app.on("will-quit", willQuit);
-app.whenReady().then(whenReady).catch(error => {
+app.whenReady().then(whenReady).catch((error) => {
     logger.debug("Error on when ready step", error);
 });
 app.on("open-url", openUrl);

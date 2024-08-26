@@ -16,6 +16,16 @@ function sendStartProgressEventToFrontend(
     });
 }
 
+function mapContribution(contribution: EventSubChannelHypeTrainContribution) {
+    return {
+        userDisplayName: contribution.userDisplayName,
+        userName: contribution.userName,
+        userId: contribution.userId,
+        type: contribution.type,
+        total: contribution.total
+    };
+}
+
 export function triggerHypeTrainStart(
     total: number,
     progress: number,
@@ -33,8 +43,8 @@ export function triggerHypeTrainStart(
         level,
         startDate,
         expiryDate,
-        lastContribution,
-        topContributors
+        lastContribution: mapContribution(lastContribution),
+        topContributors: topContributors.map(mapContribution)
     });
 
     sendStartProgressEventToFrontend("start", level, goal, progress, expiryDate);
@@ -57,8 +67,8 @@ export function triggerHypeTrainProgress(
         level,
         startDate,
         expiryDate,
-        lastContribution,
-        topContributors
+        lastContribution: mapContribution(lastContribution),
+        topContributors: topContributors.map(mapContribution)
     });
 
     sendStartProgressEventToFrontend("progress", level, goal, progress, expiryDate);
@@ -78,7 +88,7 @@ export function triggerHypeTrainEnd(
         startDate,
         endDate,
         cooldownEndDate,
-        topContributors
+        topContributors: topContributors.map(mapContribution)
     });
 
     frontendCommunicator.send("hype-train:end");

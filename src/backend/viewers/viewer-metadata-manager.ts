@@ -4,6 +4,7 @@ import logger from "../logwrapper";
 import viewerDatabase from "./viewer-database";
 import jsonDataHelpers from "../common/json-data-helpers";
 import frontendCommunicator from "../common/frontend-communicator";
+import eventManager from "../events/EventManager";
 
 interface ViewerMetadataUpdateRequest {
     username: string;
@@ -113,6 +114,15 @@ class ViewerMetadataManager {
             viewer.metadata = metadata;
 
             await viewerDatabase.updateViewer(viewer);
+
+            await viewerDatabase.calculateAutoRanks(viewer._id, "metadata");
+
+            eventManager.triggerEvent("firebot", "viewer-metadata-updated", {
+                username,
+                metadataKey: key,
+                metadataValue: dataToSet
+            });
+
         } catch (error) {
             logger.error("Unable to set metadata for viewer");
         }
@@ -135,6 +145,14 @@ class ViewerMetadataManager {
         viewer.metadata = metadata;
 
         await viewerDatabase.updateViewer(viewer);
+
+        await viewerDatabase.calculateAutoRanks(viewer._id, "metadata");
+
+        eventManager.triggerEvent("firebot", "viewer-metadata-updated", {
+            username,
+            metadataKey: key,
+            metadataValue: null
+        });
     }
 }
 

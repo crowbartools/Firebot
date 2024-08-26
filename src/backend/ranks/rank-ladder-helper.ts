@@ -27,6 +27,10 @@ export class RankLadderHelper {
         return this.rankLadder.settings?.currencyId;
     }
 
+    get metadataKey() {
+        return this.rankLadder.settings?.metadataKey;
+    }
+
     get announcePromotionsInChat() {
         return this.rankLadder.settings?.announcePromotionsInChat ?? false;
     }
@@ -37,6 +41,10 @@ export class RankLadderHelper {
             return customTemplate;
         }
         return `@{user} has achieved the rank of {rank}${this.rankLadder.mode === "auto" ? ' ({rankDescription})' : ''}!`;
+    }
+
+    get restrictedToRoleIds() {
+        return this.rankLadder.settings?.viewerRestrictions?.roleIds ?? [];
     }
 
     getRank(rankId: string): Rank | undefined {
@@ -121,6 +129,13 @@ export class RankLadderHelper {
                 return viewer.minutesInChannel / 60;
             case "currency":
                 return viewer.currency?.[this.currencyId ?? ''] ?? 0;
+            case "metadata": {
+                const metadataValue = Number(viewer.metadata?.[this.metadataKey ?? '']);
+                if (!isNaN(metadataValue)) {
+                    return metadataValue;
+                }
+                return 0;
+            }
             default:
                 return 0;
         }

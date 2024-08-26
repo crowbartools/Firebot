@@ -58,6 +58,7 @@
                                 id="trackBy"
                                 name="trackBy"
                                 ng-required="$ctrl.rankLadder.mode == 'auto'"
+                                grid-columns="3"
                             ></firebot-radio-cards>
                             <div ng-show="$ctrl.rankLadder.settings.trackBy == 'currency'" class="form-group mb-0 mt-2" ng-class="{'has-error': $ctrl.formFieldHasError('currency')}">
                                 <label for="currency" class="control-label" style="display: none;">Currency</label>
@@ -67,6 +68,41 @@
                                     name="currency"
                                     ng-required="$ctrl.rankLadder.mode == 'auto' && $ctrl.rankLadder.settings.trackBy == 'currency'"
                                 ></searchable-currency-select>
+                            </div>
+                            <div ng-show="$ctrl.rankLadder.settings.trackBy == 'metadata'" class="form-group mb-0 mt-2" ng-class="{'has-error': $ctrl.formFieldHasError('metadata')}">
+                                <label for="metadata" class="control-label" style="display: none;">Metadata</label>
+                                <input
+                                    type="text"
+                                    id="metadata"
+                                    name="metadata"
+                                    ng-required="$ctrl.rankLadder.mode == 'auto' && $ctrl.rankLadder.settings.trackBy == 'metadata'"
+                                    class="form-control input-lg"
+                                    placeholder="Enter metadata key"
+                                    ng-model="$ctrl.rankLadder.settings.metadataKey"
+                                />
+                                <p class="help-block">If a viewer's metadata value for this key is not numeric, they will be treated as unranked.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="form-group"
+                        ng-if="$ctrl.rankLadder.mode === 'auto'"
+                        ng-class="{'has-error': $ctrl.formFieldHasError('restrictedToRoles')}"
+                    >
+                        <label class="control-label">Restricted To Roles</label>
+                        <div>
+                            <span class="help-block">If roles are specified here, viewers must have one of these roles to be eligible for this rank.</span>
+                        </div>
+                        <div>
+                            <div class="role-bar" ng-repeat="roleId in $ctrl.rankLadder.settings.viewerRestrictions.roleIds track by $index">
+                                <span>{{$ctrl.roleIdNameMap[roleId]}}</span>
+                                <span class="clickable" style="padding-left: 10px;" ng-click="$ctrl.removeRole(roleId)" uib-tooltip="Remove role" tooltip-append-to-body="true">
+                                    <i class="far fa-times"></i>
+                                </span>
+                            </div>
+                            <div class="role-bar clickable" ng-click="$ctrl.openAddRoleModal()" uib-tooltip="Add role" tooltip-append-to-body="true">
+                                <i class="far fa-plus"></i>
                             </div>
                         </div>
                     </div>
@@ -129,7 +165,7 @@
             dismiss: "&",
             modalInstance: "<"
         },
-        controller: function($scope, ngToast, viewerRanksService, utilityService, currencyService) {
+        controller: function($scope, ngToast, viewerRanksService, viewerRolesService, utilityService, currencyService) {
             const $ctrl = this;
 
             $ctrl.isNewLadder = true;
@@ -140,6 +176,9 @@
                 settings: {
                     trackBy: undefined,
                     currencyId: undefined,
+                    viewerRestrictions: {
+                        roleIds: []
+                    },
                     announcePromotionsInChat: undefined,
                     customPromotionMessageTemplate: undefined
                 },
@@ -156,6 +195,8 @@
                     } else if ($ctrl.rankLadder.settings.trackBy === 'currency') {
                         const currency = currencyService.getCurrency($ctrl.rankLadder.settings.currencyId);
                         hintTemplate = `({value} ${currency?.name ?? 'currency'})`;
+                    } else if ($ctrl.rankLadder.settings.trackBy === 'metadata') {
+                        hintTemplate = `({value})`;
                     } else {
                         hintTemplate = '({value})';
                     }
@@ -190,6 +231,11 @@
             $ctrl.$onInit = () => {
                 if ($ctrl.resolve.rankLadder != null) {
                     $ctrl.rankLadder = JSON.parse(angular.toJson($ctrl.resolve.rankLadder));
+
+                    if (!$ctrl.rankLadder.settings.viewerRestrictions) {
+                        $ctrl.rankLadder.settings.viewerRestrictions = { roleIds: [] };
+                    }
+
                     $ctrl.isNewLadder = false;
                 }
                 $ctrl.rankListSettings = getRankListSettings();
@@ -229,7 +275,8 @@
 
             $ctrl.trackByOptions = [
                 { value: "view_time", label: "View Time", iconClass: "fa-clock" },
-                { value: "currency", label: "Currency", iconClass: "fa-money-bill" }
+                { value: "currency", label: "Currency", iconClass: "fa-money-bill" },
+                { value: "metadata", label: "Metadata", iconClass: "fa-user-tag" }
             ];
 
             $ctrl.nameIsTaken = (name) => {
@@ -268,7 +315,7 @@
                     resolveObj: {
                         rank: () => rank,
                         ladderMode: () => $ctrl.rankLadder.mode,
-                        ladderTrackBy: () => $ctrl.rankLadder.settings.trackBy,
+                        ladderSettings: () => $ctrl.rankLadder.settings,
                         currentRanks: () => $ctrl.rankLadder.ranks
                     },
                     closeCallback: (resp) => {
@@ -326,6 +373,46 @@
                             ngToast.create("Failed to save rank ladder. Please try again or view logs for details.");
                         }
                     });
+            };
+
+            $ctrl.allRoles = viewerRolesService.getAllRoles();
+
+            $ctrl.roleIdNameMap = $ctrl.allRoles.reduce((acc, role) => {
+                acc[role.id] = role.name;
+                return acc;
+            }, {});
+
+            $ctrl.openAddRoleModal = () => {
+                const options = $ctrl.allRoles
+                    .filter(r => !$ctrl.rankLadder.settings.viewerRestrictions.roleIds.includes(r.id));
+                utilityService.openSelectModal(
+                    {
+                        label: "Add Role",
+                        options: options,
+                        saveText: "Add",
+                        validationText: "Please select a role."
+
+                    },
+                    (roleId) => {
+                        if (!roleId) {
+                            return;
+                        }
+
+                        if ($ctrl.rankLadder.settings.viewerRestrictions.roleIds.includes(roleId)) {
+                            return;
+                        }
+
+                        $ctrl.rankLadder.settings.viewerRestrictions.roleIds.push(roleId);
+                    });
+            };
+
+            $ctrl.removeRole = (roleId) => {
+                const index = $ctrl.rankLadder.settings.viewerRestrictions.roleIds.indexOf(roleId);
+                if (index === -1) {
+                    return;
+                }
+
+                $ctrl.rankLadder.settings.viewerRestrictions.roleIds.splice(index, 1);
             };
         }
     });

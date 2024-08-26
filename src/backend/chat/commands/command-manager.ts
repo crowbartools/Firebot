@@ -166,8 +166,14 @@ class CommandManager extends TypedEmitter<Events> {
                     override.options = null;
                 }
 
-                if (c.definition.baseCommandDescription) {
-                    override.baseCommandDescription = c.definition.baseCommandDescription;
+                const alwaysUseDefaultProps: Array<keyof typeof override> = [
+                    "description",
+                    "name"
+                ];
+                for (const prop of alwaysUseDefaultProps) {
+                    if (c.definition[prop] != null) {
+                        (override as unknown)[prop] = c.definition[prop];
+                    }
                 }
 
                 if (c.definition.subCommands) {
