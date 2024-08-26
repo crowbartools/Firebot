@@ -79,7 +79,7 @@ class WebSocketServerManager extends EventEmitter {
 
                                     sendResponse(ws, message.id);
 
-                                    const instanceName = (message.data as OverlayConnectedData).instanceName;
+                                    const instanceName = (message.data as Array<OverlayConnectedData>)[0].instanceName;
                                     eventManager.triggerEvent("firebot", "overlay-connected", {
                                         instanceName
                                     });
