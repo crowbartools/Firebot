@@ -95,11 +95,13 @@
                     const eventSource = await backendCommunicator.fireEventAsync("getEventSource", event);
                     if (eventSource.manualMetadata) {
                         $ctrl.metadata = Object.keys(eventSource.manualMetadata).map(mmd => {
+                            const meta = eventSource.manualMetadata[mmd];
+                            const dataType = meta == null ? "string" : meta.type || typeof meta;
                             const data = {
                                 key: mmd,
                                 title: getTitle(mmd),
-                                type: eventSource.manualMetadata[mmd].type || typeof eventSource.manualMetadata[mmd],
-                                options: eventSource.manualMetadata[mmd].options || {}
+                                type: dataType,
+                                options: meta?.options || {}
                             };
 
                             return data;

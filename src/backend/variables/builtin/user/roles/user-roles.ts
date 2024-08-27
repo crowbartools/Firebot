@@ -1,17 +1,8 @@
 import { ReplaceVariable } from "../../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
-import { EffectTrigger } from "../../../../../shared/effect-constants";
 
 import twitchApi from "../../../../twitch-api/api";
 import roleHelpers from "../../../../roles/role-helpers";
-
-const triggers = {};
-triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.EVENT] = true;
-triggers[EffectTrigger.MANUAL] = true;
-triggers[EffectTrigger.CUSTOM_SCRIPT] = true;
-triggers[EffectTrigger.PRESET_LIST] = true;
-triggers[EffectTrigger.CHANNEL_REWARD] = true;
 
 const model : ReplaceVariable = {
     definition: {
@@ -48,7 +39,6 @@ const model : ReplaceVariable = {
                 description: "Returns all Twitch team roles of the specified user"
             }
         ],
-        triggers: triggers,
         categories: [VariableCategory.COMMON, VariableCategory.USER],
         possibleDataOutput: [OutputDataType.ALL]
     },
@@ -73,15 +63,15 @@ const model : ReplaceVariable = {
             if (user == null) {
                 return [];
             }
-    
+
             const userRoles = await roleHelpers.getAllRolesForViewerNameSpaced(user.id);
-    
+
             Object
                 .keys(userRoles)
                 .forEach((key: string) => {
                     userRoles[key] = userRoles[key].map(r => r.name);
                 });
-    
+
             if (roleType === "all") {
                 return [
                     userRoles.twitchRoles || [],

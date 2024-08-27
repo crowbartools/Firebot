@@ -124,6 +124,36 @@ const playVideo = {
                 model="effect.twitchClipUsername"
                 placeholder-text="Ex: $streamer, $user, etc"
             />
+            <div class="mt-10 form-group flex-row jspacebetween" style="margin-bottom: 0;">
+                <firebot-checkbox 
+                    label="Only Featured Clips" 
+                    model="effect.isFeatured"
+                    style="margin: 0px 15px 0px 0px"
+                />
+            </div>
+            <div
+                class="mt-6 mb-2"
+                ng-class="{'has-error': $ctrl.formFieldHasError('clipSeconds')}"
+            >
+                <div class="form-group flex-row jspacebetween" style="margin-bottom: 0;">
+                    <firebot-checkbox 
+                        label="Maximum Clip Age" 
+                        model="effect.useMaxClipAge"
+                        style="margin: 0px 15px 0px 0px"
+                    />
+                </div>
+                <div class="mt-2">
+                    <time-input
+                        ng-model="effect.maxClipAge"
+                        min-time-unit="'Days'"
+                        name="clipSeconds"
+                        ui-validate="'!effect.useMaxClipAge || ($value != null && $value >= 86400)'"
+                        ui-validate-watch="'effect.useMaxClipAge'"
+                        large="true"
+                        disabled="!effect.useMaxClipAge"
+                    />
+                </div>
+            </div>
         </div>
 
     </eos-container>
@@ -145,6 +175,14 @@ const playVideo = {
             </eos-container>
         </div>
 
+        <eos-container header="Volume" pad-top="true">
+            <div class="volume-slider-wrapper">
+                <i class="fal fa-volume-down volume-low"></i>
+                <rzslider rz-slider-model="effect.volume" rz-slider-options="{floor: 0, ceil: 10, hideLimitLabels: true}"></rzslider>
+                <i class="fal fa-volume-up volume-high"></i>
+            </div>
+        </eos-container>
+
         <eos-container header="Duration" pad-top="true">
             <div class="input-group">
                 <span class="input-group-addon">Seconds</span>
@@ -165,16 +203,6 @@ const playVideo = {
                 <div class="control__indicator"></div>
             </label>
         </eos-container>
-
-        <eos-container header="Volume" pad-top="true">
-            <div class="volume-slider-wrapper">
-                <i class="fal fa-volume-down volume-low"></i>
-                <rzslider rz-slider-model="effect.volume" rz-slider-options="{floor: 0, ceil: 10, hideLimitLabels: true}"></rzslider>
-                <i class="fal fa-volume-up volume-high"></i>
-            </div>
-        </eos-container>
-
-        <eos-overlay-position effect="effect" pad-top="true"></eos-overlay-position>
 
         <eos-container header="Size" pad-top="true">
             <label class="control-fb control--checkbox"> Force 16:9 Ratio
@@ -203,6 +231,10 @@ const playVideo = {
                 Just put numbers in the fields (ex: 250). This will set the max width/height of the video and scale it down proportionally.
             </div>
         </eos-container>
+
+        <eos-overlay-position effect="effect" pad-top="true"></eos-overlay-position>
+        
+        <eos-overlay-rotation effect="effect" pad-top="true"></eos-overlay-rotation>
 
         <eos-enter-exit-animations effect="effect" pad-top="true"></eos-enter-exit-animations>
 
@@ -262,6 +294,10 @@ const playVideo = {
             $scope.effect.volume = 5;
         }
 
+        if ($scope.effect.maxClipAge === undefined) {
+            $scope.effect.maxClipAge = 8035200;
+        }
+
         // Force ratio toggle
         $scope.forceRatio = true;
         $scope.forceRatioToggle = function () {
@@ -296,6 +332,13 @@ const playVideo = {
         if (effect.videoType == null) {
             errors.push("Please select a video type.");
         }
+
+        if (effect.videoType === "Random Twitch Clip") {
+            if (effect.useMaxClipAge && !effect.maxClipAge || effect.maxClipAge < 86400) {
+                errors.push("Maximum Clip Age must be at least 1 day");
+            }
+        }
+
         return errors;
     },
     /**
@@ -329,7 +372,8 @@ const playVideo = {
             inbetweenDuration: effect.inbetweenDuration,
             inbetweenRepeat: effect.inbetweenRepeat,
             customCoords: effect.customCoords,
-            loop: effect.loop === true
+            loop: effect.loop === true,
+            rotation: effect.rotation ? effect.rotation + effect.rotType : "0deg"
         };
 
         // Get random sound
@@ -412,8 +456,20 @@ const playVideo = {
                         logger.warn(`Could not found a user by the username ${username}`);
                         return true;
                     }
+                    const filter = {
+                        limit: 100,
+                        // discard isFeatured parameter if it is falsy so featured clips aren't excluded
+                        isFeatured: effect.isFeatured || undefined
+                    };
 
-                    const clips = await client.clips.getClipsForBroadcaster(user.id, { limit: 100 });
+                    if (effect.useMaxClipAge === true) {
+                        const dateNow = new Date();
+                        const startDate = new Date(dateNow - (effect.maxClipAge * 1000)).toISOString();
+                        filter.startDate = startDate;
+                        filter.endDate = dateNow.toISOString();
+                    }
+
+                    const clips = await client.clips.getClipsForBroadcaster(user.id, filter);
 
                     if (clips.data.length < 1) {
                         logger.warn(`User ${username} has no clips. Unable to get random.`);
@@ -458,7 +514,8 @@ const playVideo = {
                 inbetweenRepeat: effect.inbetweenRepeat,
                 exitAnimation: effect.exitAnimation,
                 exitDuration: effect.exitDuration,
-                overlayInstance: data.overlayInstance
+                overlayInstance: data.overlayInstance,
+                rotation: effect.rotation ? effect.rotation + effect.rotType : "0deg"
             });
 
             if (effect.wait) {
@@ -500,14 +557,14 @@ const playVideo = {
 
                 let overlayTimeout;
                 waitPromise = new Promise((resolve, reject) => {
-                    function callbackAvailable({name}) {
+                    function callbackAvailable({ name }) {
                         if (name === `play-video:callback:available:${resourceToken}`) {
                             clearTimeout(overlayTimeout);
                             webServer.off("overlay-event", callbackAvailable);
                         }
                     }
 
-                    function callbackDuration({name, data}) {
+                    function callbackDuration({ name, data }) {
                         if (name === `play-video:callback:duration:${resourceToken}`) {
                             webServer.off("overlay-event", callbackDuration);
                             waitFunction(Math.ceil(data.duration / 1000)).then(resolve);
@@ -634,7 +691,8 @@ const playVideo = {
 
                 const sizeStyles =
                     (data.videoWidth ? `width: ${data.videoWidth}px;` : "") +
-                    (data.videoHeight ? `height: ${data.videoHeight}px;` : "");
+                    (data.videoHeight ? `height: ${data.videoHeight}px;` : "") +
+                    (data.rotation ? `transform: rotate(${data.rotation});` : '');
 
                 if (videoType === "Local Video") {
                     const loopAttribute = loop ? "loop" : "";
@@ -756,13 +814,13 @@ const playVideo = {
 
                                 if (event.target.getDuration() === 0) { // Error state
                                     // eslint-disable-next-line no-undef
-                                    sendWebsocketEvent(`play-video:callback:duration:${data.resourceToken}`, {duration: 0});
+                                    sendWebsocketEvent(`play-video:callback:duration:${data.resourceToken}`, { duration: 0 });
                                 } else if (videoDuration) {
                                     // eslint-disable-next-line no-undef
-                                    sendWebsocketEvent(`play-video:callback:duration:${data.resourceToken}`, {duration: videoDuration});
+                                    sendWebsocketEvent(`play-video:callback:duration:${data.resourceToken}`, { duration: videoDuration });
                                 } else {
                                     // eslint-disable-next-line no-undef
-                                    sendWebsocketEvent(`play-video:callback:duration:${data.resourceToken}`, {duration: (event.target.getDuration() - parseInt(videoStarttime)) * 1000});
+                                    sendWebsocketEvent(`play-video:callback:duration:${data.resourceToken}`, { duration: (event.target.getDuration() - parseInt(videoStarttime)) * 1000 });
                                 }
 
                                 $(`#${ytPlayerId}`).show();

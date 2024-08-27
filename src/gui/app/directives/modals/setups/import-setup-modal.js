@@ -3,7 +3,7 @@
 (function() {
     const fsp = require("fs/promises");
 
-    const marked = require("marked");
+    const { marked } = require("marked");
     const { sanitize } = require("dompurify");
 
     angular.module("firebotApp")
@@ -24,7 +24,7 @@
                         </file-chooser>
                     </div>
                     <div ng-if="$ctrl.setupSelected">
-                        <div style="padding: 15px;background: #242529;border-radius: 5px;">
+                        <div class="effect-list" style="padding: 15px;border-radius: 5px;">
                             <div class="script-name" style="font-size: 30px;font-weight: 100;">{{$ctrl.setup.name || "Unnamed Setup"}} <span class="script-version muted">v{{$ctrl.setup.version}}</span></div>
                             <div style="font-size: 13px;">by <span class="script-author">{{$ctrl.setup.author}}</span></div>
                             <div class="script-description" ng-bind-html="$ctrl.setup.description"></div>
@@ -36,7 +36,7 @@
                             <div ng-repeat="(key, name) in $ctrl.componentTypes">
                                 <div ng-repeat="component in $ctrl.setup.components[key]">
                                     <div style="display: flex;align-items: center;">
-                                        <span style="padding: 2px 7px;font-size: 13px;background: #242529;border-radius: 3px;">{{name}}</span>
+                                        <span class="list-group-item" style="padding: 2px 7px;font-size: 13px;border-radius: 3px;">{{name}}</span>
                                         <span style="margin-left: 5px;font-size: 20px;font-weight: 500;">{{component.trigger || component.name}}</span>
                                         <span ng-show="$ctrl.currentIds[component.id]" style="color:red;margin-left: 4px;"><i class="far fa-exclamation-triangle" uib-tooltip="This {{name}} already exists for you. If you import this Setup, the {{name}} will be replaced by the version in this setup."></i></span>
                                     </div>
@@ -46,9 +46,9 @@
 
                         <div ng-show="$ctrl.setup.requireCurrency" style="margin-top: 25px;">
                             <h4 class="muted">Currency To Use:</h4>
-                            <p class="muted">This setup requires that you select one of your currencies so it can be used in the included effects, variables, and restrictions.</p>
+                            <h5>This setup requires that you select one of your currencies so it can be used in the included effects, variables, and restrictions.</h5>
                             <select
-                                class="fb-select"
+                                class="form-control fb-select"
                                 ng-model="$ctrl.selectedCurrency"
                                 ng-options="currency as currency.name for currency in $ctrl.currencies">
                                 <option value="" disabled selected>Select currency...</option>
@@ -77,7 +77,7 @@
             },
             controller: function($q, logger, ngToast, commandsService, countersService, currencyService,
                 effectQueuesService, eventsService, hotkeyService, presetEffectListsService,
-                timerService, viewerRolesService, quickActionsService, backendCommunicator, $sce) {
+                timerService, viewerRolesService, quickActionsService, variableMacroService, viewerRanksService, backendCommunicator, $sce) {
                 const $ctrl = this;
 
                 $ctrl.setupFilePath = null;
@@ -98,11 +98,13 @@
                     ...hotkeyService.getHotkeys().map(i => i.id),
                     ...presetEffectListsService.getPresetEffectLists().map(i => i.id),
                     ...timerService.getTimers().map(i => i.id),
+                    ...variableMacroService.macros.map(i => i.id),
                     ...viewerRolesService.getCustomRoles().map(i => i.id),
+                    ...viewerRanksService.rankLadders.map(i => i.id),
                     ...quickActionsService.quickActions
                         .filter(qa => qa.type === "custom")
                         .map(i => i.id)
-                ].forEach(id => {
+                ].forEach((id) => {
                     $ctrl.currentIds[id] = true;
                 });
 
@@ -116,7 +118,9 @@
                     hotkeys: "Hotkey",
                     presetEffectLists: "Preset Effect List",
                     timers: "Timer",
+                    variableMacros: "Variable Macro",
                     viewerRoles: "Viewer Role",
+                    viewerRankLadders: "Viewer Rank Ladder",
                     quickActions: "Quick Action"
                 };
 
@@ -140,13 +144,12 @@
                     `);
 
                     modal.document.title = `Firebot Setup - ${$ctrl.setup.name}`;
-                    modal.document.body.style.color = "white";
                     modal.document.body.style.fontFamily = "sans-serif";
                 };
 
                 $ctrl.onFileSelected = (filepath) => {
                     $q.when(fsp.readFile(filepath))
-                        .then(setup => {
+                        .then((setup) => {
                             setup = JSON.parse(setup);
                             if (setup == null || setup.components == null) {
                                 $ctrl.resetSelectedFile("Unable to load setup file: file is invalid");
@@ -159,7 +162,7 @@
                             );
                             //set default answers
                             if ($ctrl.setup.importQuestions) {
-                                $ctrl.setup.importQuestions = $ctrl.setup.importQuestions.map(q => {
+                                $ctrl.setup.importQuestions = $ctrl.setup.importQuestions.map((q) => {
                                     if (q.defaultAnswer) {
                                         q.answer = q.defaultAnswer;
                                     }
@@ -194,7 +197,7 @@
                             selectedCurrency: $ctrl.selectedCurrency
                         })
                     )
-                        .then(successful => {
+                        .then((successful) => {
                             if (successful) {
                                 ngToast.create({
                                     className: 'success',
@@ -216,4 +219,4 @@
                 };
             }
         });
-}());
+})();

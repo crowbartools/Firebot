@@ -4,7 +4,7 @@
 
 (function() {
 
-    const marked = require("marked");
+    const { marked } = require("marked");
     const { sanitize } = require("dompurify");
 
     angular
@@ -21,10 +21,10 @@
                     <div style="margin-bottom: 5px;opacity: 0.8;font-weight: 800;font-size: 16px;">STEPS</div>
                     <div ng-bind-html="$ctrl.steps"></div>
                 </div>
-             
+
                 <div style="margin-top: 15px;">
                     <div ng-show="$ctrl.hasSteps" style="margin-bottom: 5px;opacity: 0.8;font-weight: 800;font-size: 16px;text-transform: uppercase;">{{$ctrl.idLabel}}</div>
-                    <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;">     
+                    <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
                         <div style="width: 95%; position: relative;">
                             <div class="form-group" ng-class="{'has-error': $ctrl.hasValidationError}">
                                 <textarea type="text" class="form-control" rows="2" ng-model="$ctrl.model" ng-keyup="$event.keyCode == 13 && $ctrl.save()" aria-describedby="helpBlock" placeholder="{{$ctrl.inputPlaceholder}}"></textarea>
@@ -33,8 +33,8 @@
                         </div>
                     </div>
                 </div>
-                
-                
+
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>

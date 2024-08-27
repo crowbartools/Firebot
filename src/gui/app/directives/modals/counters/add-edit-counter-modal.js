@@ -1,7 +1,6 @@
 "use strict";
 
 (function() {
-    const uuidv1 = require("uuid/v4");
     angular.module("firebotApp").component("addOrEditCounterModal", {
         template: `
             <context-menu-modal-header
@@ -132,7 +131,7 @@
                     return;
                 }
 
-                countersService.saveCounter($ctrl.counter).then(successful => {
+                countersService.saveCounter($ctrl.counter).then((successful) => {
                     if (successful) {
                         $ctrl.close({
                             $value: {
@@ -260,10 +259,6 @@
                     }
 
                     $ctrl.isNewCounter = false;
-                }
-
-                if ($ctrl.isNewCounter && $ctrl.counter.id == null) {
-                    $ctrl.counter.id = uuidv1();
                 }
 
                 $ctrl.txtFilePath = countersService.getTxtFilePath($ctrl.counter.name);

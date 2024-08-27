@@ -17,15 +17,27 @@ const model : ReplaceVariable = {
             },
             {
                 usage: "readFile[path\\to\\file.txt, first]",
-                description: "Read the last line from the file."
+                description: "Read the first line from the file."
+            },
+            {
+                usage: "readFile[path\\to\\file.txt, first, true]",
+                description: "Removes leading, trailing, and empty lines before grabbing the first line"
             },
             {
                 usage: "readFile[path\\to\\file.txt, last]",
                 description: "Read the last line from the file."
             },
             {
+                usage: "readFile[path\\to\\file.txt, last, true]",
+                description: "Removes leading, trailing, and empty lines before grabbing the last line"
+            },
+            {
                 usage: "readFile[path\\to\\file.txt, random]",
                 description: "Read a random line from the file."
+            },
+            {
+                usage: "readFile[path\\to\\file.txt, random, true]",
+                description: "Removes leading, trailing, and empty lines before grabbing a random line"
             }
         ],
         categories: [VariableCategory.ADVANCED],
@@ -34,7 +46,8 @@ const model : ReplaceVariable = {
     evaluator: (
         trigger: Trigger,
         filePath: string,
-        lineOrRandom: null | number | "first" | "last" | "random"
+        lineOrRandom: null | number | "first" | "last" | "random",
+        ignoreWhitespace?: string | boolean
     ) : string => {
 
         if (filePath === null) {
@@ -53,7 +66,22 @@ const model : ReplaceVariable = {
             return contents;
         }
 
-        const lines = contents.split(/[\r\n]+/g);
+        let lines : string[];
+        if (ignoreWhitespace === true || `${ignoreWhitespace}`.toLowerCase() === 'true') {
+            lines = contents
+
+                // remove leading and trailing whitespace (EOLs, spaces, tabs, etc)
+                .trim()
+
+                // Split based on new lines, consuming all whitespace around the new line character.
+                // This effectively removes empty lines, lines containing only spaces and
+                // leading/trailing spaces from each line
+                .split(/[ \t\f]*[\r\n]\s*/g);
+
+        } else {
+            lines = contents.split(/[\r\n]+/g);
+        }
+
         if (Number.isFinite(Number(lineOrRandom))) {
             if (Number(lineOrRandom) <= lines.length) {
                 return lines[Number(lineOrRandom) - 1];

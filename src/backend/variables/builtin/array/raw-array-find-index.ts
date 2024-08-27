@@ -7,7 +7,7 @@ import arrayFindIndex from './array-find-index';
 const model : ReplaceVariable = {
     definition: {
         handle: "rawArrayFindIndex",
-        description: "(Deprecated: use $arrayFindIndex) Finds a matching element in the array and returns it's index, or null if the element is absent",
+        description: "(Deprecated: use $arrayFindIndex) Finds a matching element in the array and returns its index, or null if the element is absent",
         usage: "rawArrayFindIndex[array, matcher, propertyPath]",
 
         examples: [

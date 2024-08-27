@@ -21,6 +21,8 @@
                             options="[3,5,10,25,'All']"
                             selected="currentMaxBackups"
                             on-update="settings.setMaxBackupCount(option)"
+                            aria-label="Choose your Max Number of backups"
+
                         ></dropdown-select>
                     </firebot-setting>
 
@@ -38,7 +40,7 @@
                                 type="checkbox"
                                 ng-click="settings.setBackupIgnoreResources(!settings.backupIgnoreResources())"
                                 ng-checked="settings.backupIgnoreResources()"
-                                aria-label="..."
+                                aria-label="Don't include overlay resource folder in backups"
                             />
                             <div class="control__indicator"></div>
                         </label>
@@ -56,7 +58,7 @@
                                 type="checkbox"
                                 ng-click="settings.setBackupOnExit(!settings.backupOnExit())"
                                 ng-checked="settings.backupOnExit()"
-                                aria-label="..."
+                                aria-label="Automatic update when Firebot closes"
                             />
                             <div class="control__indicator"></div>
                         </label>
@@ -66,7 +68,7 @@
                                 type="checkbox"
                                 ng-click="settings.setBackupOnceADay(!settings.backupOnceADay())"
                                 ng-checked="settings.backupOnceADay()"
-                                aria-label="..."
+                                aria-label="Automatic update Once a day"
                             />
                             <div class="control__indicator"></div>
                         </label>
@@ -78,7 +80,7 @@
                             <input
                                 type="checkbox"
                                 ng-checked="true"
-                                aria-label="..."
+                                aria-label="Automatic update Before viewer purges. Firebot will always backup before you do viewer purges"
                                 disabled
                             />
                             <div class="control__indicator" disabled></div>
@@ -86,12 +88,12 @@
                         <label class="control-fb control--checkbox"
                             >Before updates
                             <tooltip
-                                text="'Firebot will always back up before updates. This cannot be turned off. Its for your own good <3'"
+                                text="'Firebot will always back up before updates. This cannot be turned off. It\\'s for your own good <3'"
                             ></tooltip>
                             <input
                                 type="checkbox"
                                 ng-checked="true"
-                                aria-label="..."
+                                aria-label="Automatic update before updates. This cannot be turned off. It's for your own good <3"
                                 disabled
                             />
                             <div class="control__indicator" disabled></div>

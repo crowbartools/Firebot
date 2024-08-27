@@ -26,3 +26,5 @@ export const OBS_INPUT_AUDIO_BALANCE_CHANGED_EVENT_ID = "input-audio-balance-cha
 export const OBS_INPUT_AUDIO_SYNC_OFFSET_CHANGED_EVENT_ID = "input-audio-sync-offset-changed";
 export const OBS_INPUT_AUDIO_TRACKS_CHANGED_EVENT_ID = "input-audio-tracks-changed";
 export const OBS_INPUT_AUDIO_MONITOR_TYPE_CHANGED_EVENT_ID = "input-audio-monitor-type-changed";
+export const OBS_CONNECTED_EVENT_ID = "connected";
+export const OBS_DISCONNECTED_EVENT_ID = "disconnected";

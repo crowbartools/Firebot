@@ -62,6 +62,7 @@
             controller: function($scope, $timeout, utilityService) {
                 const $ctrl = this;
 
+                $ctrl.initialModel = null;
                 $ctrl.model = "";
 
                 $ctrl.label = "Enter Text";
@@ -85,11 +86,13 @@
 
                     if ($ctrl.resolve.model !== undefined && $ctrl.resolve.model !== null) {
                         $ctrl.model = $ctrl.resolve.model;
+                        $ctrl.initialModel = $ctrl.resolve.model;
                     }
 
                     if ($ctrl.resolve.inputType) {
                         $ctrl.inputType = $ctrl.resolve.inputType;
                         $ctrl.model = $ctrl.resolve.model;
+                        $ctrl.initialModel = $ctrl.resolve.model;
                     } else {
                         if (typeof $ctrl.model == 'number') {
                             $ctrl.inputType = "number";
@@ -126,23 +129,6 @@
                     if ($ctrl.resolve.useTextArea) {
                         $ctrl.useTextArea = $ctrl.resolve.useTextArea === true;
                     }
-
-                    const modalId = $ctrl.resolve.modalId;
-                    utilityService.addSlidingModal(
-                        $ctrl.modalInstance.rendered.then(() => {
-                            const modalElement = $(`.${modalId}`).children();
-                            return {
-                                element: modalElement,
-                                name: "",
-                                id: modalId,
-                                instance: $ctrl.modalInstance
-                            };
-                        })
-                    );
-
-                    $scope.$on("modal.closing", function() {
-                        utilityService.removeSlidingModal();
-                    });
 
                     $timeout(() => {
                         angular.element("#inputField").trigger("focus");

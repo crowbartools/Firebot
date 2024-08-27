@@ -2,14 +2,15 @@
 
 const viewerDatabase = require("../../../../backend/viewers/viewer-database");
 const customRolesManager = require("../../../../backend/roles/custom-roles-manager");
+const currencyAccess = require("../../../../backend/currency/currency-access").default;
 const currencyManager = require("../../../../backend/currency/currency-manager");
 const customRolesApiController = require("./customRolesApiController");
 
-exports.getAllUsers = async function(req, res) {
+exports.getAllUsers = async function (req, res) {
     return res.json(await viewerDatabase.getAllUsernamesWithIds());
 };
 
-exports.getUserMetadata = async function(req, res) {
+exports.getUserMetadata = async function (req, res) {
     const { userId } = req.params;
     const { username } = req.query;
 
@@ -40,7 +41,7 @@ exports.getUserMetadata = async function(req, res) {
     return res.json(metadata);
 };
 
-exports.getUserCurrency = async function(req, res) {
+exports.getUserCurrency = async function (req, res) {
     const { userId, currencyId } = req.params;
 
     const { username } = req.query;
@@ -61,7 +62,7 @@ exports.getUserCurrency = async function(req, res) {
     res.json(currencies);
 };
 
-exports.setUserCurrency = async function(req, res) {
+exports.setUserCurrency = async function (req, res) {
     const { userId, currencyId } = req.params;
     const { username } = req.query;
     const options = req.body;
@@ -74,15 +75,25 @@ exports.setUserCurrency = async function(req, res) {
     }
 
     if (username === "true") {
-        await currencyManager.adjustCurrencyForViewer(userId, currencyId, parseInt(options.amount), options.setAmount ? "set" : "adjust");
+        await currencyManager.adjustCurrencyForViewer(
+            userId,
+            currencyId,
+            parseInt(options.amount),
+            options.setAmount ? "set" : "adjust"
+        );
     } else {
-        await currencyManager.adjustCurrencyForViewerById(userId, currencyId, parseInt(options.amount), options.setAmount === true);
+        await currencyManager.adjustCurrencyForViewerById(
+            userId,
+            currencyId,
+            parseInt(options.amount),
+            options.setAmount === true
+        );
     }
 
     res.status(204).send();
 };
 
-exports.getUserCustomRoles = async function(req, res) {
+exports.getUserCustomRoles = async function (req, res) {
     const { userId } = req.params;
     const { username } = req.query;
 
@@ -112,10 +123,39 @@ exports.getUserCustomRoles = async function(req, res) {
     return res.json(customRoles);
 };
 
-exports.addUserToCustomRole = async function(req, res) {
+exports.addUserToCustomRole = async function (req, res) {
     return customRolesApiController.addUserToCustomRole(req, res);
 };
 
-exports.removeUserFromCustomRole = async function(req, res) {
+exports.removeUserFromCustomRole = async function (req, res) {
     return customRolesApiController.removeUserFromCustomRole(req, res);
+};
+
+exports.getAllUserDataAsJSON = async function (req, res) {
+    const viewerDb = viewerDatabase.getViewerDb();
+
+    const allCurrencyDetails = currencyAccess.getCurrencies();
+
+    res.json(
+        (await viewerDb.findAsync({})).map((user) => {
+            const expandedUserCurrencies = {};
+            Object.keys(user.currency).forEach((userCurrencyKey) => {
+                if (Object.hasOwn(allCurrencyDetails, userCurrencyKey)) {
+                    expandedUserCurrencies[userCurrencyKey] = {
+                        id: userCurrencyKey,
+                        name: allCurrencyDetails[userCurrencyKey].name,
+                        amount: user.currency[userCurrencyKey]
+                    };
+                } else {
+                    expandedUserCurrencies[userCurrencyKey] = {
+                        id: userCurrencyKey,
+                        name: "unknown",
+                        amount: user.currency[userCurrencyKey]
+                    };
+                }
+            });
+            user.currency = expandedUserCurrencies;
+            return user;
+        })
+    );
 };

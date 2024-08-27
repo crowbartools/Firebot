@@ -13,18 +13,14 @@ exports.handleSquirrelEvents = () => {
         const { ProgId, Regedit, ShellOption } = require('electron-regedit');
 
         new ProgId({
-            description: 'Firebot Setup',
-            progExt: "firebotsetup",
-            squirrel: true,
+            description: 'Firebot',
+            appName: "firebot",
+            friendlyAppName: "Firebot",
+            squirrel: "Firebot v5.exe",
             icon: './resources/firebot-setup-file-icon.ico',
             extensions: ['firebotsetup'],
             shell: [
-                new ShellOption({
-                    verb: 'import',
-                    action: 'Import into Firebot',
-                    selected: true,
-                    icon: path.join(path.dirname(process.execPath), '..', 'app.ico')
-                })
+                new ShellOption({ verb: ShellOption.OPEN, selected: true })
             ]
         });
 

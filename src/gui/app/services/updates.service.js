@@ -5,7 +5,7 @@
     //This handles updates
     const VersionCompare = require('../../shared/compare-versions');
     const UpdateType = VersionCompare.UpdateType;
-    const marked = require("marked");
+    const { marked } = require("marked");
 
     const { sanitize } = require("dompurify");
 

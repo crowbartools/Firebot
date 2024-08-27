@@ -1,14 +1,9 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType } from "../../../../shared/variable-constants";
 
-import variableManager from '../../replace-variable-manager';
+import macroManager from '../../macro-manager';
 
-// TODO: stub until macro manager is implemented
-const macroManager = {
-    getMacro(name: string) : null | string {
-        return null;
-    }
-};
+import variableManager from '../../replace-variable-manager';
 
 const model : ReplaceVariable = {
     definition: {
@@ -18,14 +13,12 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator(trigger: Trigger, name: string, ...macroArgs: unknown[]) {
-        const macro = macroManager.getMacro(name);
-
-        // nothing to do
+        const macro = macroManager.getMacroByName(name);
         if (macro == null) {
             return null;
         }
-
-        return variableManager.evaluateText(macro, { macroArgs }, trigger);
+        const { argNames: macroArgNames } = macro;
+        return variableManager.evaluateText(macro.expression, { macroArgs, macroArgNames }, trigger);
     }
 };
 export default model;

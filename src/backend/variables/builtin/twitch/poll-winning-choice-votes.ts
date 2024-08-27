@@ -18,7 +18,7 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {
-        return trigger.metadata.eventData.winningChoiceVotes;
+        return trigger.metadata?.eventData?.winningChoiceVotes ?? -1;
     }
 };
 

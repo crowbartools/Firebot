@@ -2,7 +2,7 @@
 
 (function() {
 
-    const marked = require("marked");
+    const { marked } = require("marked");
     const { sanitize } = require("dompurify");
 
     angular
@@ -24,7 +24,7 @@
                 }
 
                 const allowedEvents = settingsService.getAllowedActivityEvents();
-                if (!allowedEvents.includes(`${activity.source.id}:${activity.event.id}`)) {
+                if (!activity.event.forceAllow && !allowedEvents.includes(`${activity.source.id}:${activity.event.id}`)) {
                     return;
                 }
 
@@ -42,13 +42,13 @@
             };
 
             service.markAllAcknowledged = () => {
-                service.allActivities.forEach(a => {
+                service.allActivities.forEach((a) => {
                     a.acknowledged = true;
                 });
             };
 
             service.markAllNotAcknowledged = () => {
-                service.allActivities.forEach(a => {
+                service.allActivities.forEach((a) => {
                     a.acknowledged = false;
                 });
             };

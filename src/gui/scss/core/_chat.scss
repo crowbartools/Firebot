@@ -713,6 +713,8 @@
     flex-shrink: 0;
     height: 100%;
     min-width: 145px;
+    display: flex;
+    flex-direction: column;
 }
 
 // Chat Screen

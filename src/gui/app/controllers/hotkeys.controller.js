@@ -20,6 +20,7 @@
             $scope.openAddOrEditHotkeyModal = function(hotkey) {
                 utilityService.showModal({
                     component: "addOrEditHotkeyModal",
+                    breadcrumbName: "Edit Hotkey",
                     resolveObj: {
                         hotkey: () => hotkey
                     },

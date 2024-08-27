@@ -16,11 +16,11 @@ const effectGroup = {
     },
     optionsTemplate: `
         <eos-container header="List Type">
-            <dropdown-select options="{ custom: 'Custom', preset: 'Preset'}" selected="effect.listType"></dropdown-select>
+            <dropdown-select options="{ custom: 'Custom Effect List', preset: 'Preset Effect List'}" selected="effect.listType"></dropdown-select>
         </eos-container>
 
         <eos-container ng-show="effect.listType === 'preset'" header="Preset Effect List" pad-top="true">
-            <ui-select ng-model="effect.presetListId" theme="bootstrap"  on-select="presetListSelected($item)">
+            <ui-select ng-model="effect.presetListId" theme="bootstrap" on-select="presetListSelected($item)" title="{{selectedPresetList ? selectedPresetList.name : 'Select or search for a preset effect list... '}}">
                 <ui-select-match placeholder="Select or search for a preset effect list... ">{{$select.selected.name}}</ui-select-match>
                 <ui-select-choices repeat="presetList.id as presetList in presetEffectLists | filter: { name: $select.search }" style="position:relative;">
                     <div ng-bind-html="presetList.name | highlight: $select.search"></div>
@@ -42,7 +42,7 @@ const effectGroup = {
                 <div style="display: flex; align-items: center; justify-content: space-between;">
                     <span><b>{{arg.name}}: </b></span>
                     <div style="width: 100%; padding: 0 10px;">
-                        <input type="text" class="form-control" placeholder="Enter data" ng-model="effect.presetListArgs[arg.name]" replace-variables />
+                    <textarea type="text" class="form-control" placeholder="Enter data" ng-model="effect.presetListArgs[arg.name]" replace-variables rows="1"></textarea>
                     </div>
                 </div>
             </div>
@@ -88,7 +88,7 @@ const effectGroup = {
                 return;
             }
             presetEffectListsService.showAddEditPresetEffectListModal($scope.selectedPresetList)
-                .then(presetList => {
+                .then((presetList) => {
                     if (presetList) {
                         $scope.selectedPresetList = presetList;
                     }
@@ -123,15 +123,15 @@ const effectGroup = {
         }
 
     },
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.listType === 'preset' && effect.presetListId == null) {
             errors.push("Please select a preset list");
         }
         return errors;
     },
-    onTriggerEvent: event => {
-        return new Promise(resolve => {
+    onTriggerEvent: (event) => {
+        return new Promise((resolve) => {
 
             const { effect, trigger, outputs } = event;
 
@@ -175,7 +175,7 @@ const effectGroup = {
             if (effect.dontWait) {
                 resolve(true);
             } else {
-                effectExecutionPromise.then(result => {
+                effectExecutionPromise.then((result) => {
                     if (result != null && result.success === true) {
 
                         if (result.stopEffectExecution) {

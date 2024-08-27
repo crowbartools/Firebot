@@ -7,7 +7,7 @@ const chat = {
     definition: {
         id: "firebot:reset-timer",
         name: "Reset Timer",
-        description: "Force a timer to restart it's interval",
+        description: "Force a timer to restart its interval",
         icon: "fad fa-stopwatch",
         categories: [EffectCategory.COMMON],
         dependencies: []
@@ -15,7 +15,7 @@ const chat = {
     globalSettings: {},
     optionsTemplate: `
         <eos-container>
-            <p>This effect let's you force a timer to restart it's interval.</p>
+            <p>This effect let's you force a timer to restart its interval.</p>
         </eos-container>
 
         <eos-container ng-hide="hasTimers" pad-top="true">

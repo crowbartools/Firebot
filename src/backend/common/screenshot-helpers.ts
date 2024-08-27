@@ -75,6 +75,8 @@ export type ScreenshotEffectData = {
     inbetweenRepeat?: number;
     exitAnimation?: string;
     exitDuration?: number;
+    rotation?: string;
+    rotType?: string;
 }
 
 export function sendScreenshotToOverlay(screenshotDataUrl: string, effect: ScreenshotEffectData) {
@@ -107,6 +109,7 @@ export function sendScreenshotToOverlay(screenshotDataUrl: string, effect: Scree
         inbetweenRepeat: effect.inbetweenRepeat,
         exitAnimation: effect.exitAnimation,
         exitDuration: effect.exitDuration,
-        overlayInstance: overlayInstance
+        overlayInstance: overlayInstance,
+        rotation: effect.rotation ? effect.rotation + effect.rotType : "0deg"
     });
 }

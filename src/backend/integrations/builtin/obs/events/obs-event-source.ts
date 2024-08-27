@@ -6,6 +6,8 @@ import {
     OBS_CURRENT_SCENE_TRANSITION_CHANGED_EVENT_ID,
     OBS_CURRENT_SCENE_TRANSITION_DURATION_CHANGED_EVENT_ID,
     OBS_EVENT_SOURCE_ID,
+    OBS_CONNECTED_EVENT_ID,
+    OBS_DISCONNECTED_EVENT_ID,
     OBS_RECORDING_STARTED_EVENT_ID,
     OBS_RECORDING_STOPPED_EVENT_ID,
     OBS_REPLAY_BUFFER_SAVED_EVENT_ID,
@@ -34,6 +36,18 @@ export const OBSEventSource: EventSource = {
     id: OBS_EVENT_SOURCE_ID,
     name: "OBS",
     events: [
+        {
+            id: OBS_CONNECTED_EVENT_ID,
+            name: "OBS Connected",
+            description: "When OBS websocket is connected",
+            manualMetadata: {}
+        },
+        {
+            id: OBS_DISCONNECTED_EVENT_ID,
+            name: "OBS Disconnected",
+            description: "When OBS websocket is disconnected",
+            manualMetadata: {}
+        },
         {
             id: OBS_SCENE_CHANGED_EVENT_ID,
             name: "OBS Scene Changed",
@@ -70,7 +84,13 @@ export const OBSEventSource: EventSource = {
             id: OBS_SCENE_ITEM_ENABLE_STATE_CHANGED_EVENT_ID,
             name: "OBS Scene Item Enable State Changed",
             description: "When an item in a scene is enabled/disabled",
-            manualMetadata: {}
+            manualMetadata: {
+                groupItemId: -1,
+                groupName: "Test Group Name",
+                sceneItemEnabled: true,
+                sceneItemId: -1,
+                sceneName: "Test Scene Name"
+            }
         },
         {
             id: OBS_SCENE_TRANSITION_STARTED_EVENT_ID,
