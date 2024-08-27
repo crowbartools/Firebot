@@ -174,7 +174,8 @@ async function setupRemoteListeners() {
         );
     });
 
-    obs.on("SceneTransitionStarted", ({ transitionName }) => {
+    obs.on("SceneTransitionStarted", async ({ transitionName }) => {
+        programSceneName = (await obs.call("GetCurrentProgramScene"))?.sceneName || "";
         eventManager?.triggerEvent(
             OBS_EVENT_SOURCE_ID,
             OBS_SCENE_TRANSITION_STARTED_EVENT_ID,
