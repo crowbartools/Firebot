@@ -194,16 +194,6 @@ async function setupRemoteListeners() {
         );
     });
 
-    obs.on("CurrentProgramSceneChanged", ({ sceneName }) => {
-        eventManager?.triggerEvent(
-            OBS_EVENT_SOURCE_ID,
-            OBS_CURRENT_PROGRAM_SCENE_CHANGED_EVENT_ID,
-            {
-                sceneName
-            }
-        );
-    });
-
     obs.on("CurrentSceneTransitionChanged", ({ transitionName }) => {
         eventManager?.triggerEvent(
             OBS_EVENT_SOURCE_ID,
