@@ -1,6 +1,5 @@
 "use strict";
 
-const viewerDatabase = require("../viewers/viewer-database");
 const accountAccess = require("../common/account-access");
 const NodeCache = require('node-cache');
 const twitchApi = require("../twitch-api/api");
@@ -56,6 +55,8 @@ async function userFollowsChannels(username, channelNames, durationInSeconds = 0
 }
 
 async function getUserDetails(userId) {
+
+    const viewerDatabase = require("../viewers/viewer-database");
 
     await viewerDatabase.calculateAutoRanks(userId);
 

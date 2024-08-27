@@ -175,7 +175,7 @@
                     let wrapper = parent;
                     if (!parent.hasClass("input-group")) {
                         wrapper = angular.element(`
-                            <div style="position: relative;display: table; width: 100%;"></div>`
+                            <div style="position: relative;"></div>`
                         );
                         const compiled = $compile(wrapper)(scope);
                         element.wrap(compiled);
