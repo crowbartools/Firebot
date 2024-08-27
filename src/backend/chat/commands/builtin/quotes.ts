@@ -278,6 +278,11 @@ export const QuotesManagementSystemCommand: SystemCommand<{
                     const channelData = await TwitchApi.channels.getChannelInformation();
 
                     const currentGameName = channelData && channelData.gameName ? channelData.gameName : "Unknown game";
+                    
+                    //If no @ is included in the originator arg, set to @streamerName and the rest is the quote
+                    if (!args[1].includes("@")) { 
+                        args.splice(1,0,"@"+channelData.displayName) 
+                    }
 
                     const newQuote = {
                         text: args.slice(2, args.length).join(" "),
