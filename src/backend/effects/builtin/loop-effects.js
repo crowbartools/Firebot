@@ -100,9 +100,14 @@ const model = {
             const { effect, trigger, outputs } = event;
             const effectList = effect.effectList;
 
+            /**
+             * @type {AbortSignal}
+             */
+            const abortSignal = event.abortSignal;
+
             let lastOutputs = outputs ?? {};
 
-            if (!effectList || !effectList.list) {
+            if (!effectList || !effectList.list || effectList.list.length === 0 || abortSignal.aborted) {
                 return resolve(true);
             }
 
@@ -143,6 +148,9 @@ const model = {
                 }
 
                 for (let i = 0; i < loopCount; i++) {
+                    if (abortSignal.aborted) {
+                        return resolve(true);
+                    }
                     const result = await runEffects(i, null, lastOutputs);
                     lastOutputs = {
                         ...lastOutputs,
@@ -170,6 +178,9 @@ const model = {
                 }
 
                 while (true) { //eslint-disable-line no-constant-condition
+                    if (abortSignal.aborted) {
+                        return resolve(true);
+                    }
                     if (effect.conditionData == null || effectList == null) {
                         break;
                     }
@@ -226,6 +237,9 @@ const model = {
 
                 let currentLoopCount = 0;
                 for (const item of arrayToIterate) {
+                    if (abortSignal.aborted) {
+                        return resolve(true);
+                    }
                     const result = await runEffects(currentLoopCount, item, lastOutputs);
                     lastOutputs = {
                         ...lastOutputs,

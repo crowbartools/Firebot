@@ -9,12 +9,7 @@ import frontendCommunicator from "../common/frontend-communicator";
 import twitchApi from "../twitch-api/api";
 import twitchRoleManager from "../../shared/twitch-roles";
 import { BasicViewer } from "../../types/viewers";
-
-interface LegacyCustomRole {
-    id: string;
-    name: string;
-    viewers: string[];
-}
+import { TypedEmitter } from "tiny-typed-emitter";
 
 interface CustomRole {
     id: string;
@@ -26,12 +21,27 @@ interface CustomRole {
     }>;
 }
 
+type Events = {
+    "created-item": (item: object) => void;
+    "updated-item": (item: object) => void;
+    "deleted-item": (item: object) => void;
+    "viewer-role-updated": (userId: string, roleId: string, action: "added" | "removed") => void;
+};
+
+interface LegacyCustomRole {
+    id: string;
+    name: string;
+    viewers: string[];
+}
+
 const ROLES_FOLDER = "roles";
 
-class CustomRolesManager {
+class CustomRolesManager extends TypedEmitter<Events> {
     private _customRoles: Record<string, CustomRole> = {};
 
     constructor() {
+        super();
+
         frontendCommunicator.onAsync("get-custom-roles", async () => this._customRoles);
 
         frontendCommunicator.on("save-custom-role", (role: CustomRole) => {
@@ -214,12 +224,28 @@ class CustomRolesManager {
             return;
         }
 
+        const previousRole = this._customRoles[role.id];
+
+        const viewersAdded = role.viewers.filter(v => !previousRole?.viewers.map(pv => pv.id).includes(v.id)) ?? [];
+        const viewersRemoved = previousRole?.viewers.filter(pv => !role.viewers.map(v => v.id).includes(pv.id)) ?? [];
+
+        for (const viewer of viewersAdded) {
+            this.emit("viewer-role-updated", viewer.id, role.id, "added");
+        }
+        for (const viewer of viewersRemoved) {
+            this.emit("viewer-role-updated", viewer.id, role.id, "removed");
+        }
+
+        const eventType = this._customRoles[role.id] == null ? "created-item" : "updated-item";
+
         this._customRoles[role.id] = role;
 
         try {
             const rolesDb = this.getCustomRolesDb();
 
             rolesDb.push(`/${role.id}`, role);
+
+            this.emit(eventType, role);
 
             logger.debug(`Saved role ${role.id} to file.`);
         } catch (error) {
@@ -315,12 +341,16 @@ class CustomRolesManager {
             return;
         }
 
+        const role = this._customRoles[roleId];
+
         delete this._customRoles[roleId];
 
         try {
             const rolesDb = this.getCustomRolesDb();
 
             rolesDb.delete(`/${roleId}`);
+
+            this.emit("deleted-item", role);
 
             logger.debug(`Deleted role: ${roleId}`);
         } catch (error) {

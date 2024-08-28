@@ -5,6 +5,8 @@ const customRolesManager = require("../../roles/custom-roles-manager");
 const teamRolesManager = require("../../roles/team-roles-manager");
 const twitchRolesManager = require("../../../shared/twitch-roles");
 const twitchApi = require("../../twitch-api/api");
+const rankManager = require("../../ranks/rank-manager");
+const viewerDatabase = require("../../viewers/viewer-database");
 
 const model = {
     definition: {
@@ -19,7 +21,7 @@ const model = {
                 Mode
             </div>
             <div style="margin-bottom: 10px">
-                <label class="control-fb control--radio">Roles <span class="muted"><br />Restrict access to select viewer roles</span>
+                <label class="control-fb control--radio">Roles & Ranks <span class="muted"><br />Restrict access to select viewer roles & ranks</span>
                     <input type="radio" ng-model="restriction.mode" value="roles"/>
                     <div class="control__indicator"></div>
                 </label>
@@ -31,7 +33,7 @@ const model = {
 
             <div ng-if="restriction.mode === 'roles'">
                 <div id="roles" class="modal-subheader" style="padding: 0 0 4px 0">
-                    Viewer Roles
+                    Roles
                 </div>
                 <div class="viewer-group-list">
                     <div ng-show="hasCustomRoles" style="margin-bottom: 10px;">
@@ -54,6 +56,22 @@ const model = {
                         </label>
                     </div>
                 </div>
+
+                <div id="roles" class="modal-subheader mt-4" style="padding: 0 0 4px 0">
+                    Ranks
+                </div>
+                <div class="viewer-group-list">
+                    <div ng-show="hasRankLadders" style="margin-bottom: 10px;" ng-repeat="ladder in rankLadders">
+                        <div style="font-size: 16px;font-weight: 900;color: #b9b9b9;font-family: 'Quicksand';margin-bottom: 5px;">{{ladder.name}}</div>
+                        <label ng-repeat="rank in ladder.ranks" class="control-fb control--checkbox">{{rank.name}}
+                            <input type="checkbox" ng-click="toggleRank(ladder, rank)" ng-checked="isRankChecked(ladder, rank)"  aria-label="..." >
+                            <div class="control__indicator"></div>
+                        </label>
+                    </div>
+                    <div ng-if="!hasRankLadders" style="margin-bottom: 10px;">
+                        <div style="font-size: 16px;font-weight: 900;color: #b9b9b9;font-family: 'Quicksand';margin-bottom: 5px;">No ranks saved.</div>
+                    </div>
+                </div>
             </div>
 
             <div ng-if="restriction.mode === 'viewer'">
@@ -64,13 +82,17 @@ const model = {
             </div>
         </div>
     `,
-    optionsController: ($scope, viewerRolesService) => {
+    optionsController: ($scope, viewerRolesService, viewerRanksService) => {
         if (!$scope.restriction.mode) {
             $scope.restriction.mode = "roles";
         }
 
         if (!$scope.restriction.roleIds) {
             $scope.restriction.roleIds = [];
+        }
+
+        if (!$scope.restriction.ranks) {
+            $scope.restriction.ranks = [];
         }
 
         $scope.hasCustomRoles = viewerRolesService.getCustomRoles().length > 0;
@@ -89,18 +111,67 @@ const model = {
                 $scope.restriction.roleIds.push(role.id);
             }
         };
+
+        $scope.rankLadders = viewerRanksService.rankLadders;
+        $scope.hasRankLadders = $scope.rankLadders.length > 0;
+
+        $scope.isRankChecked = function(rankLadder, rank) {
+            return $scope.restriction.ranks.some(r => r.ladderId === rankLadder.id && r.rankId === rank.id);
+        };
+
+        $scope.toggleRank = function(rankLadder, rank) {
+            if ($scope.isRankChecked(rankLadder, rank)) {
+                $scope.restriction.ranks = $scope.restriction.ranks.filter(r => r.ladderId !== rankLadder.id || r.rankId !== rank.id);
+            } else {
+                $scope.restriction.ranks.push({ ladderId: rankLadder.id, rankId: rank.id });
+            }
+        };
     },
-    optionsValueDisplay: (restriction, viewerRolesService) => {
+    optionsValueDisplay: (restriction, viewerRolesService, viewerRanksService) => {
         if (restriction.mode === "roles") {
             const roleIds = restriction.roleIds;
-            let output = "None selected";
+            let rolesOutput = "None selected";
             if (roleIds.length > 0) {
-                output = roleIds
+                rolesOutput = roleIds
                     .filter(id => viewerRolesService.getRoleById(id) != null)
                     .map(id => viewerRolesService.getRoleById(id).name)
                     .join(", ");
             }
-            return `Roles (${output})`;
+            const rolesDisplay = `Roles (${rolesOutput})`;
+
+            const ranks = restriction.ranks ?? [];
+            let ranksOutput = "None selected";
+            if (ranks.length > 0) {
+                const groupedByLadder = ranks.reduce((acc, r) => {
+                    if (!acc.some(l => l.ladderId === r.ladderId)) {
+                        acc.push({ ladderId: r.ladderId, rankIds: [] });
+                    }
+                    const ladder = acc.find(l => l.ladderId === r.ladderId);
+                    ladder.rankIds.push(r.rankId);
+                    return acc;
+                }, []);
+                ranksOutput = groupedByLadder
+                    .filter(r => viewerRanksService.getRankLadder(r.ladderId) != null)
+                    .map((r) => {
+                        const ladder = viewerRanksService.getRankLadder(r.ladderId);
+                        const rankNames = r.rankIds
+                            .map(id => ladder.ranks.find(rank => rank.id === id))
+                            .filter(rank => rank != null)
+                            .map(rank => rank.name);
+                        return `${ladder.name}: ${rankNames.join(", ")}`;
+                    })
+                    .join(", ");
+            }
+            const ranksDisplay = `Ranks (${ranksOutput})`;
+
+            const itemsToDisplay = [];
+            if (rolesOutput !== "None selected") {
+                itemsToDisplay.push(rolesDisplay);
+            }
+            if (ranksOutput !== "None selected") {
+                itemsToDisplay.push(ranksDisplay);
+            }
+            return itemsToDisplay.length > 0 ? itemsToDisplay.join(", ") : "Roles/Ranks (None selected)";
         } else if (restriction.mode === "viewer") {
             return `Viewer (${restriction.username ? restriction.username : 'No name'})`;
         }
@@ -152,7 +223,29 @@ const model = {
 
                 const hasARole = allRoles.some(r => expectedRoleIds.includes(r.id));
 
-                if (hasARole) {
+                const expectedRanks = (restrictionData.ranks || [])
+                    .filter(r => rankManager.getItem(r.ladderId) != null);
+
+                let hasARank = false;
+
+                const viewer = await viewerDatabase.getViewerById(userId);
+                if (viewer) {
+                    const rankLadders = rankManager.getRankLadderHelpers();
+                    for (const rankDetails of expectedRanks) {
+                        const ladder = rankLadders.find(l => l.id === rankDetails.ladderId);
+                        if (ladder != null) {
+                            const rank = ladder.getRank(rankDetails.rankId);
+                            if (rank != null) {
+                                hasARank = await viewerDatabase.viewerHasRank(viewer, ladder.id, rank.id);
+                                if (hasARank) {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (hasARole || hasARank) {
                     resolve();
                 } else {
                     reject("You do not have permission");

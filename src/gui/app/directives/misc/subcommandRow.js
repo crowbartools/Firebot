@@ -21,12 +21,18 @@
                     </div>
 
                     <div style="width: 25%">
-                        <span style="min-width: 51px; display: inline-block;" uib-tooltip="Global cooldown">
-                            <i class="fal fa-globe"></i> {{$ctrl.subcommand.cooldown.global ? $ctrl.subcommand.cooldown.global + "s" : "-" }}
-                        </span>
-                        <span uib-tooltip="User cooldown">
-                            <i class="fal fa-user"></i> {{$ctrl.subcommand.cooldown.user ? $ctrl.subcommand.cooldown.user + "s" : "-" }}
-                        </span>
+                        <div ng-if="!$ctrl.subcommand.inheritBaseCommandCooldown">
+                            <span style="min-width: 51px; display: inline-block;" uib-tooltip="Global cooldown">
+                                <i class="fal fa-globe"></i> {{$ctrl.subcommand.cooldown.global ? $ctrl.subcommand.cooldown.global + "s" : "-" }}
+                            </span>
+                            <span uib-tooltip="User cooldown">
+                                <i class="fal fa-user"></i> {{$ctrl.subcommand.cooldown.user ? $ctrl.subcommand.cooldown.user + "s" : "-" }}
+                            </span>
+                        </div>
+                        <div ng-if="$ctrl.subcommand.inheritBaseCommandCooldown">
+                            <span style="text-transform: capitalize;">Inherited</span>
+                            <tooltip type="info" text="'This subcommand will use the cooldowns of the base command.'"></tooltip>
+                        </div>
                     </div>
 
                     <div style="width: 25%">
@@ -95,7 +101,22 @@
                             <div class="settings-title">
                                 <h4 class="font-semibold">Cooldowns</h4>
                             </div>
-                            <command-cooldown-settings command="$ctrl.subcommand" message-setting-disabled="true"></command-cooldown-settings>
+                            <firebot-checkbox
+                                model="$ctrl.subcommand.inheritBaseCommandCooldown"
+                                label="Inherit base command cooldowns"
+                                tooltip="If enabled, this subcommand will use the cooldowns set on the base command."
+                            />
+                            <command-cooldown-settings
+                                ng-if="!$ctrl.subcommand.inheritBaseCommandCooldown"
+                                command="$ctrl.subcommand"
+                                message-setting-disabled="true"
+                            />
+                            <command-cooldown-settings
+                                ng-if="$ctrl.subcommand.inheritBaseCommandCooldown"
+                                disabled="true"
+                                command="{ cooldown: {}}"
+                                message-setting-disabled="true"
+                            />
                         </div>
 
                         <div class="mt-10">

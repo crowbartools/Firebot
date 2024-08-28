@@ -200,6 +200,7 @@ class ConnectionManager extends EventEmitter {
 
         currentlyWaitingService = null;
 
+        await util.wait(250);
         frontendCommunicator.send("connect-services-complete");
     }
 }

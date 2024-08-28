@@ -12,12 +12,23 @@ import currencyAccess from "../currency/currency-access";
 import eventManager from "../events/EventManager";
 import backupManager from "../backup-manager";
 import frontendCommunicator from "../common/frontend-communicator";
-import util from "../utility";
+import rankManager from "../ranks/rank-manager";
+import util, { wait } from "../utility";
+import { Rank, RankLadder } from "../../types/ranks";
+import twitchChat from "../chat/twitch-chat";
+import { userIsActive } from "../chat/chat-listeners/active-user-handler";
+import roleHelpers from "../roles/role-helpers";
 
 interface ViewerDbChangePacket {
     userId: string;
     field: string;
     value: unknown;
+}
+
+interface UpdateViewerRankPacket {
+    userId: string;
+    rankLadderId: string;
+    rankId: string;
 }
 
 interface ViewerPurgeOptions {
@@ -38,6 +49,8 @@ interface ViewerPurgeOptions {
 class ViewerDatabase extends EventEmitter {
     private _db: Datastore<FirebotViewer>;
     private _dbCompactionInterval = 30000;
+
+    private cancelRankRecalculation = false;
 
     constructor() {
         super();
@@ -84,6 +97,7 @@ class ViewerDatabase extends EventEmitter {
         });
 
         frontendCommunicator.onAsync("get-firebot-viewer-data", async (userId: string) => {
+            await this.calculateAutoRanks(userId);
             return await this.getViewerById(userId);
         });
 
@@ -98,6 +112,24 @@ class ViewerDatabase extends EventEmitter {
         frontendCommunicator.onAsync("update-firebot-viewer-data-field", async (data: ViewerDbChangePacket) => {
             const { userId, field, value } = data;
             await this.updateViewerDataField(userId, field, value);
+        });
+
+        frontendCommunicator.onAsync("update-viewer-rank", async (data: UpdateViewerRankPacket) => {
+            const { userId, rankLadderId, rankId } = data;
+            await this.setViewerRankById(userId, rankLadderId, rankId);
+        });
+
+        frontendCommunicator.onAsync("get-viewer-count", async () => {
+            return await this._db.countAsync({});
+        });
+
+        frontendCommunicator.onAsync("rank-recalculation:start", async (rankLadderId: string) => {
+            this.cancelRankRecalculation = false;
+            await this.recalculateRanksForAllViewers(rankLadderId);
+        });
+
+        frontendCommunicator.onAsync("rank-recalculation:cancel", async () => {
+            this.cancelRankRecalculation = true;
         });
     }
 
@@ -176,7 +208,8 @@ class ViewerDatabase extends EventEmitter {
             disableActiveUserList: false,
             disableViewerList: false,
             metadata: {},
-            currency: {}
+            currency: {},
+            ranks: {}
         };
 
         // THIS IS WHERE YOU ADD IN ANY DYNAMIC FIELDS THAT ALL VIEWERS SHOULD HAVE.
@@ -264,20 +297,21 @@ class ViewerDatabase extends EventEmitter {
         }
     }
 
-    async getAllUsernamesWithIds(): Promise<{ id: string; username: string; }[]> {
+    async getAllUsernamesWithIds(): Promise<{ id: string; username: string; displayName: string; }[]> {
         if (this.isViewerDBOn() !== true) {
             return [];
         }
 
         const projectionObj = {
-            displayName: 1
+            displayName: 1,
+            username: 1
         };
 
         try {
             const viewers = await this._db.findAsync({ twitch: true })
                 .projection(projectionObj);
 
-            return viewers?.map(u => ({ id: u._id, username: u.displayName })) ?? [];
+            return viewers?.map(u => ({ id: u._id, username: u.username, displayName: u.displayName })) ?? [];
         } catch (error) {
             logger.error("Error getting all viewers: ", error);
             return [];
@@ -425,6 +459,253 @@ class ViewerDatabase extends EventEmitter {
                 return 0;
             }
         });
+    }
+
+    async setViewerRank(viewer: FirebotViewer, ladderId: string, newRankId?: string): Promise<void> {
+        if (this.isViewerDBOn() !== true) {
+            return;
+        }
+
+        const ladder = rankManager.getRankLadderHelper(ladderId);
+        if (!ladder) {
+            return;
+        }
+
+        if (viewer.ranks == null) {
+            viewer.ranks = {};
+        }
+
+        const currentRankId = viewer.ranks[ladderId];
+        if (currentRankId === newRankId) {
+            return;
+        }
+
+        viewer.ranks[ladderId] = newRankId;
+
+        await this.updateViewer(viewer);
+
+        const isPromotion = ladder.isRankHigher(newRankId, currentRankId);
+
+        if (isPromotion && ladder.announcePromotionsInChat && userIsActive(viewer._id)) {
+            const newRank = ladder.getRank(newRankId);
+            const rankValueDescription = ladder.getRankValueDescription(newRankId);
+
+            const promotionMessageTemplate = ladder.promotionMessageTemplate;
+            const promotionMessage = promotionMessageTemplate
+                .replace(/{user}/g, viewer.displayName)
+                .replace(/{rank}/g, newRank?.name)
+                .replace(/{rankDescription}/g, rankValueDescription);
+
+            twitchChat.sendChatMessage(promotionMessage);
+        }
+
+        const newRank = ladder.getRank(newRankId);
+        const previousRank = ladder.getRank(currentRankId);
+
+        eventManager.triggerEvent("firebot", "viewer-rank-updated", {
+            username: viewer.username,
+            userId: viewer._id,
+            userDisplayName: viewer.displayName,
+            rankLadderName: ladder.name,
+            rankLadderId: ladderId,
+            newRankName: newRank?.name,
+            newRankId: newRank?.id,
+            previousRankName: previousRank?.name,
+            previousRankId: previousRank?.id,
+            isPromotion: isPromotion,
+            isDemotion: !isPromotion
+        });
+    }
+
+    async setViewerRankById(userId: string, ladderId: string, rankId: string): Promise<void> {
+        if (this.isViewerDBOn() !== true) {
+            return;
+        }
+
+        const viewer = await this.getViewerById(userId);
+
+        if (viewer == null) {
+            return;
+        }
+
+        await this.setViewerRank(viewer, ladderId, rankId);
+    }
+
+    async viewerHasRank(viewer: FirebotViewer, ladderId: string, rankId: string): Promise<boolean> {
+        if (this.isViewerDBOn() !== true) {
+            return false;
+        }
+
+        if (!viewer) {
+            return false;
+        }
+
+        const ladder = rankManager.getRankLadderHelper(ladderId);
+
+        if (ladder == null) {
+            return false;
+        }
+
+        if (!ladder.hasRank(rankId)) {
+            return false;
+        }
+
+        const viewersCurrentRankId = viewer.ranks?.[ladderId] ?? null;
+
+        return rankId === viewersCurrentRankId;
+    }
+
+    async viewerHasRankById(userId: string, ladderId: string, rankId: string): Promise<boolean> {
+        if (this.isViewerDBOn() !== true) {
+            return false;
+        }
+
+        const viewer = await this.getViewerById(userId);
+
+        return this.viewerHasRank(viewer, ladderId, rankId);
+    }
+
+    async getViewerRankForLadderByUserName(userName: string, ladderId: string): Promise<Rank | null> {
+        if (this.isViewerDBOn() !== true) {
+            return null;
+        }
+
+        const viewer = await this.getViewerByUsername(userName);
+
+        if (viewer == null) {
+            return null;
+        }
+
+        return await this.getViewerRankForLadder(viewer._id, ladderId);
+    }
+
+
+    async getViewerRankForLadder(userId: string, ladderId: string): Promise<Rank | null> {
+        if (this.isViewerDBOn() !== true) {
+            return null;
+        }
+
+        await this.calculateAutoRanks(userId);
+
+        const viewer = await this.getViewerById(userId);
+
+        const ladder = rankManager.getRankLadderHelper(ladderId);
+
+        if (ladder == null) {
+            return null;
+        }
+
+        const viewersCurrentRankId = viewer.ranks?.[ladderId] ?? null;
+
+        return ladder.getRank(viewersCurrentRankId);
+    }
+
+    async calculateAutoRanks(userId: string, trackByType?: RankLadder["settings"]["trackBy"]): Promise<void> {
+        if (this.isViewerDBOn() !== true) {
+            return;
+        }
+
+        const applicableLadders = rankManager.getRankLadderHelpers()
+            .filter(ladder => ladder.mode === "auto" && (trackByType == null || ladder.trackBy === trackByType));
+
+        if (applicableLadders.length === 0) {
+            return;
+        }
+
+        const viewer = await this.getViewerById(userId);
+
+        if (viewer == null) {
+            return;
+        }
+
+        if (viewer.ranks == null) {
+            viewer.ranks = {};
+        }
+
+        for (const ladder of applicableLadders) {
+
+            const currentRankId = viewer.ranks[ladder.id];
+
+            if (ladder.restrictedToRoleIds.length > 0) {
+                const userRoles = await roleHelpers.getAllRolesForViewer(userId);
+                if (!userRoles.some(r => ladder.restrictedToRoleIds.includes(r.id))) {
+                    if (currentRankId != null) {
+                        await this.setViewerRank(viewer, ladder.id, undefined);
+                    }
+                    continue;
+                }
+            }
+
+            const highestQualifiedRankId = ladder.getHighestQualifiedRankId(viewer);
+
+            if (currentRankId !== highestQualifiedRankId) {
+                await this.setViewerRank(viewer, ladder.id, highestQualifiedRankId);
+            }
+        }
+    }
+    async calculateAutoRanksByName(userName: string, trackByType?: RankLadder["settings"]["trackBy"]): Promise<void> {
+        if (this.isViewerDBOn() !== true) {
+            return;
+        }
+
+        const viewer = await this.getViewerByUsername(userName);
+
+        if (viewer == null) {
+            return;
+        }
+
+        await this.calculateAutoRanks(viewer._id, trackByType);
+    }
+
+    async recalculateRanksForAllViewers(rankLadderId: string): Promise<void> {
+        const ladder = rankManager.getRankLadderHelper(rankLadderId);
+
+        if (this.isViewerDBOn() !== true || ladder == null) {
+            frontendCommunicator.send("rank-recalculation:complete");
+            return;
+        }
+
+        await wait(1000);
+
+        const viewers = await this.getAllViewers();
+
+        let processedViewers = 0;
+        for (const viewer of viewers) {
+            if (this.cancelRankRecalculation) {
+                this.cancelRankRecalculation = false;
+                return;
+            }
+
+            if (viewer.ranks == null) {
+                viewer.ranks = {};
+            }
+
+            const currentRankId = viewer.ranks[ladder.id];
+            const highestQualifiedRankId = ladder.getHighestQualifiedRankId(viewer);
+
+            try {
+                if (currentRankId !== highestQualifiedRankId) {
+                    await this.setViewerRank(viewer, ladder.id, highestQualifiedRankId);
+                }
+
+                processedViewers += 1;
+
+                if (processedViewers % 5 === 0) {
+                    frontendCommunicator.send("rank-recalculation:progress", processedViewers);
+                    await wait(5);
+                }
+            } catch (error) {
+                logger.error("Error recalculating ranks for viewer", viewer._id, error);
+            }
+        }
+
+        frontendCommunicator.send("rank-recalculation:progress", processedViewers);
+
+        await this._db.compactDatafileAsync();
+
+        await wait(1000);
+
+        frontendCommunicator.send("rank-recalculation:complete");
     }
 }
 

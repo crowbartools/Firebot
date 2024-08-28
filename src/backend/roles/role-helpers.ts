@@ -4,6 +4,7 @@ import chatRolesManager from "./chat-roles-manager";
 import teamRolesManager from "./team-roles-manager";
 import customRolesManager from "./custom-roles-manager";
 import twitchRolesManager from "../../shared/twitch-roles";
+import { TypedEmitter } from "tiny-typed-emitter";
 
 export interface FirebotViewerRoles {
     twitchRoles: FirebotRole[];
@@ -12,7 +13,23 @@ export interface FirebotViewerRoles {
     teamRoles: FirebotRole[];
 }
 
-class RoleHelpers {
+type Events = {
+    "viewer-role-updated": (userId: string, roleId: string, action: "added" | "removed") => void;
+};
+
+class RoleHelpers extends TypedEmitter<Events> {
+    constructor() {
+        super();
+
+        chatRolesManager.on("viewer-role-updated", (userId, roleId, action) => {
+            this.emit("viewer-role-updated", userId, roleId, action);
+        });
+
+        customRolesManager.on("viewer-role-updated", (userId, roleId, action) => {
+            this.emit("viewer-role-updated", userId, roleId, action);
+        });
+    }
+
     async getAllRolesForViewer(userId: string): Promise<FirebotRole[]> {
         const roles = await this.getAllRolesForViewerNameSpaced(userId);
 

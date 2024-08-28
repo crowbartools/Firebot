@@ -293,6 +293,17 @@ module.exports = {
             }
         },
         {
+            id: "chat-cleared",
+            name: "Chat Cleared",
+            description: "When chat is cleared in your channel",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                username: "firebot",
+                userId: ""
+            }
+        },
+        {
             id: "chat-message",
             name: "Chat Message",
             description: "When someone chats in your channel",
@@ -302,6 +313,17 @@ module.exports = {
                 username: "firebot",
                 userDisplayName: "Firebot",
                 userId: "",
+                messageText: "Test message"
+            }
+        },
+        {
+            id: "chat-message-deleted",
+            name: "Chat Message Deleted",
+            description: "When a chat message is deleted in your channel",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                username: "firebot",
                 messageText: "Test message"
             }
         },
@@ -437,6 +459,56 @@ module.exports = {
             }
         },
         {
+            id: "channel-reward-redemption-fulfilled",
+            name: "Channel Reward Redemption Approved",
+            description: "When a CUSTOM channel reward redemption is Completed/Approved",
+            cached: false,
+            cacheMetaKey: "username",
+            cacheTtlInSecs: 1,
+            queued: false,
+            manualMetadata: {
+                username: "firebot",
+                userDisplayName: "Firebot",
+                userId: "",
+                rewardName: "Test Reward",
+                rewardImage: "https://static-cdn.jtvnw.net/automatic-reward-images/highlight-1.png",
+                rewardCost: 200,
+                messageText: "Test message"
+            },
+            activityFeed: {
+                icon: "fad fa-circle",
+                getMessage: (eventData) => {
+                    const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
+                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""}**'s redemption of **${eventData.rewardName}** was approved. ${eventData.messageText && !!eventData.messageText.length ? `*${eventData.messageText}*` : ''}`;
+                }
+            }
+        },
+        {
+            id: "channel-reward-redemption-canceled",
+            name: "Channel Reward Redemption Rejected",
+            description: "When a CUSTOM channel reward redemption is Rejected/Refunded",
+            cached: false,
+            cacheMetaKey: "username",
+            cacheTtlInSecs: 1,
+            queued: false,
+            manualMetadata: {
+                username: "firebot",
+                userDisplayName: "Firebot",
+                userId: "",
+                rewardName: "Test Reward",
+                rewardImage: "https://static-cdn.jtvnw.net/automatic-reward-images/highlight-1.png",
+                rewardCost: 200,
+                messageText: "Test message"
+            },
+            activityFeed: {
+                icon: "fad fa-circle",
+                getMessage: (eventData) => {
+                    const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
+                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""}**'s redemption of **${eventData.rewardName}** was rejected. ${eventData.messageText && !!eventData.messageText.length ? `*${eventData.messageText}*` : ''}`;
+                }
+            }
+        },
+        {
             id: "whisper",
             name: "Whisper",
             description: "When someone sends you or your bot account a whisper.",
@@ -522,7 +594,9 @@ module.exports = {
             cached: false,
             queued: false,
             manualMetadata: {
-                title: "Poll name"
+                title: "Poll name",
+                winningChoiceName: "Leading Choice Name",
+                winningChoiceVotes: 11
             },
             activityFeed: {
                 icon: "fad fa-poll-h",
@@ -538,7 +612,9 @@ module.exports = {
             cached: false,
             queued: false,
             manualMetadata: {
-                title: "Poll name"
+                title: "Poll name",
+                winningChoiceName: "Winning Choice Name",
+                winningChoiceVotes: 12
             },
             activityFeed: {
                 icon: "fad fa-poll-h",

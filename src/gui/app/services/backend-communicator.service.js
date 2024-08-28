@@ -27,7 +27,7 @@
                         const eventListeners = listeners[name];
                         for (const listener of eventListeners) {
                             if (listener.async) {
-                                listener.callback(data).then(returnValue => {
+                                listener.callback(data).then((returnValue) => {
                                     service.fireEvent(`${name}:reply`, returnValue);
                                 });
                             } else {
@@ -35,7 +35,7 @@
                             }
                         }
                     });
-                }(eventName));
+                })(eventName);
             }
 
             service.on = function(eventName, callback, async = false) {
@@ -68,12 +68,12 @@
                 if (data !== undefined) {
                     data = JSON.parse(JSON.stringify(data));
                 }
-                return new Promise(resolve => {
+                return $q.when(new Promise((resolve) => {
                     ipcRenderer.send(type, data);
                     ipcRenderer.once(`${type}:reply`, (_, eventData) => {
                         resolve(eventData);
                     });
-                });
+                }));
             };
 
             service.fireEventSync = function(type, data) {
@@ -88,4 +88,4 @@
 
             return service;
         });
-}());
+})();

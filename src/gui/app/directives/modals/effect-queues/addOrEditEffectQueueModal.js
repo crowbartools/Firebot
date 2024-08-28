@@ -1,7 +1,5 @@
 "use strict";
 (function() {
-    const uuidv1 = require("uuid/v1");
-
     angular.module("firebotApp").component("addOrEditEffectQueueModal", {
         template: `
             <scroll-sentinel element-class="edit-effect-queue-header"></scroll-sentinel>
@@ -89,10 +87,6 @@
 
                     $ctrl.isNewQueue = false;
                 }
-
-                if ($ctrl.isNewQueue && $ctrl.effectQueue.id == null) {
-                    $ctrl.effectQueue.id = uuidv1();
-                }
             };
 
             $ctrl.queueModes = effectQueuesService.queueModes;
@@ -108,7 +102,7 @@
                     return;
                 }
 
-                effectQueuesService.saveEffectQueue($ctrl.effectQueue).then(successful => {
+                effectQueuesService.saveEffectQueue($ctrl.effectQueue).then((successful) => {
                     if (successful) {
                         $ctrl.close({
                             $value: {

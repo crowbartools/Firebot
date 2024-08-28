@@ -41,6 +41,7 @@
                     "events",
                     "timers",
                     "channel rewards",
+                    "roles and ranks",
                     "moderation",
                     "buttons",
                     "settings",
@@ -49,7 +50,8 @@
                     "effect queues",
                     "currency",
                     "quotes",
-                    "viewers"
+                    "viewers",
+                    "variable macros"
                 ].includes(service.currentTab.toLowerCase());
             };
 
@@ -60,7 +62,9 @@
                     "events",
                     "timers",
                     "channel rewards",
+                    "roles and ranks",
                     "preset effect lists",
+                    "variable macros",
                     "counters",
                     "effect queues",
                     "settings"
@@ -77,9 +81,9 @@
         function($routeProvider) {
             $routeProvider
 
-                .when("/viewer-roles", {
-                    templateUrl: "./templates/_viewerroles.html",
-                    controller: "viewerRolesController"
+                .when("/roles-and-ranks", {
+                    templateUrl: "./templates/_roles-and-ranks.html",
+                    controller: "rolesAndRanksController"
                 })
 
                 .when("/", {
@@ -165,6 +169,11 @@
                 .when("/games", {
                     templateUrl: "./templates/_games.html",
                     controller: "gamesController"
+                })
+
+                .when("/variable-macros", {
+                    templateUrl: "./templates/_variable-macros.html",
+                    controller: "variableMacrosController"
                 });
         }
     ]);

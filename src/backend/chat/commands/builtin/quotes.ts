@@ -270,7 +270,7 @@ export const QuotesManagementSystemCommand: SystemCommand<{
                     logger.debug(`We pulled a quote using an id: ${formattedQuote}`);
                 } else {
                     // If we get here, it's likely the command was used wrong. Tell the sender they done fucked up
-                    await twitchChat.sendChatMessage(`Sorry! We couldn't find a quote with that id.`);
+                    await twitchChat.sendChatMessage(`Sorry! We could not find a quote with that id.`);
                 }
                 return resolve();
             }
@@ -319,7 +319,7 @@ export const QuotesManagementSystemCommand: SystemCommand<{
                         return resolve();
                     }
 
-                    await twitchChat.sendChatMessage(`Sorry! We couldn't find a quote with that id number.`);
+                    await twitchChat.sendChatMessage(`Sorry! We could not find a quote with that id.`);
                     logger.error('Quotes: NaN passed to remove quote command.');
                     return resolve();
                 }
@@ -337,7 +337,7 @@ export const QuotesManagementSystemCommand: SystemCommand<{
                     if (binId == null) {
                         await twitchChat.sendChatMessage("There are no quotes to pull!");
                     } else {
-                        await twitchChat.sendChatMessage(`Here a list of quotes! https://firebot.app/profile?id=${binId}`);
+                        await twitchChat.sendChatMessage(`Here is a list of quotes! https://firebot.app/profile?id=${binId}`);
                     }
 
                     return resolve();
@@ -366,7 +366,7 @@ export const QuotesManagementSystemCommand: SystemCommand<{
                         // no matching quote found
                     } else {
 
-                        await twitchChat.sendChatMessage(`Sorry! We couldn't find a quote using those terms.`);
+                        await twitchChat.sendChatMessage(`Sorry! We could not find a quote using those terms.`);
                     }
 
                     // resolve promise
@@ -383,7 +383,7 @@ export const QuotesManagementSystemCommand: SystemCommand<{
                         sendToTTS(formattedQuote);
                         await twitchChat.sendChatMessage(formattedQuote);
                     } else {
-                        await twitchChat.sendChatMessage(`Sorry! We couldn't find a quote by ${username}`);
+                        await twitchChat.sendChatMessage(`Sorry! We could not find a quote by ${username}`);
                     }
                     return resolve();
                 }
@@ -395,7 +395,7 @@ export const QuotesManagementSystemCommand: SystemCommand<{
                         await twitchChat.sendChatMessage(formattedQuote);
                         sendToTTS(formattedQuote);
                     } else {
-                        await twitchChat.sendChatMessage(`Sorry! We couldn't find a quote with game ${searchTerm}`);
+                        await twitchChat.sendChatMessage(`Sorry! We could not find a quote with game ${searchTerm}`);
                     }
                     return resolve();
                 }
@@ -425,7 +425,7 @@ export const QuotesManagementSystemCommand: SystemCommand<{
                         await twitchChat.sendChatMessage(formattedQuote);
                         sendToTTS(formattedQuote);
                     } else {
-                        await twitchChat.sendChatMessage(`Sorry! We couldn't find a quote with date ${day}/${month}/${year || "*"}`);
+                        await twitchChat.sendChatMessage(`Sorry! We could not find a quote with date ${day}/${month}/${year || "*"}`);
                     }
                     return resolve();
                 }
@@ -444,7 +444,7 @@ export const QuotesManagementSystemCommand: SystemCommand<{
                     const quote = await quotesManager.getQuote(quoteId);
 
                     if (quote == null) {
-                        await twitchChat.sendChatMessage(`Cannot find quote with id ${quoteId}`);
+                        await twitchChat.sendChatMessage(`Could not find a quote with id ${quoteId}`);
                         return resolve();
                     }
 
@@ -482,7 +482,7 @@ export const QuotesManagementSystemCommand: SystemCommand<{
                     const quote = await quotesManager.getQuote(quoteId);
 
                     if (quote == null) {
-                        await twitchChat.sendChatMessage(`Cannot find quote with id ${quoteId}`);
+                        await twitchChat.sendChatMessage(`Could not find a quote with id ${quoteId}`);
                         return resolve();
                     }
 
@@ -522,7 +522,7 @@ export const QuotesManagementSystemCommand: SystemCommand<{
                     const quote = await quotesManager.getQuote(quoteId);
 
                     if (quote == null) {
-                        await twitchChat.sendChatMessage(`Cannot find quote with id ${quoteId}`);
+                        await twitchChat.sendChatMessage(`Could not find a quote with id ${quoteId}`);
                         return resolve();
                     }
 
@@ -569,7 +569,7 @@ export const QuotesManagementSystemCommand: SystemCommand<{
 
                     if (quote == null) {
                         await twitchChat.sendChatMessage(
-                            `Cannot find quote with id ${quoteId}`);
+                            `Could not find a quote with id ${quoteId}`);
                         return resolve();
                     }
 

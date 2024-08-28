@@ -1,7 +1,7 @@
 "use strict";
 
 
-const {checkForFirebotSetupPath} = require("../../file-open-helpers");
+const {checkForFirebotSetupPathInArgs} = require("../../file-open-helpers");
 
 exports.whenReady = async () => {
     const logger = require("../../../logwrapper");
@@ -16,7 +16,7 @@ exports.whenReady = async () => {
 
     logger.debug("...Checking for setup file");
 
-    checkForFirebotSetupPath(process.argv);
+    checkForFirebotSetupPathInArgs(process.argv);
 
     logger.debug("...Loading window management");
     const windowManagement = require("../window-management");
@@ -74,6 +74,10 @@ exports.whenReady = async () => {
     const currencyAccess = require("../../../currency/currency-access").default;
     currencyAccess.refreshCurrencyCache();
 
+    windowManagement.updateSplashScreenStatus("Loading ranks...");
+    const viewerRanksManager = require("../../../ranks/rank-manager");
+    viewerRanksManager.loadItems();
+
     // load commands
     logger.debug("Loading sys commands...");
     windowManagement.updateSplashScreenStatus("Loading system commands...");
@@ -103,6 +107,10 @@ exports.whenReady = async () => {
     windowManagement.updateSplashScreenStatus("Loading variables...");
     const { loadReplaceVariables } = require("../../../variables/variable-loader");
     loadReplaceVariables();
+
+    windowManagement.updateSplashScreenStatus("Loading variable macros...");
+    const macroManager = require("../../../variables/macro-manager");
+    macroManager.loadItems();
 
     // load restrictions
     logger.debug("Loading restrictions...");
@@ -232,6 +240,10 @@ exports.whenReady = async () => {
     windowManagement.updateSplashScreenStatus("Starting internal web server...");
     const httpServerManager = require("../../../../server/http-server-manager");
     httpServerManager.start();
+
+    // register websocket event handlers
+    const websocketEventsHandler = require("../../../../server/websocket-events-handler");
+    websocketEventsHandler.createComponentEventListeners();
 
     windowManagement.updateSplashScreenStatus("Loading channel rewards...");
     const channelRewardManager = require("../../../channel-rewards/channel-reward-manager");

@@ -34,19 +34,6 @@
                     $ctrl.currency = JSON.parse(JSON.stringify($ctrl.resolve.currency));
                 }
 
-                const modalId = $ctrl.resolve.modalId;
-                utilityService.addSlidingModal(
-                    $ctrl.modalInstance.rendered.then(() => {
-                        const modalElement = $(`.${modalId}`).children();
-                        return {
-                            element: modalElement,
-                            name: "Edit Currency",
-                            id: modalId,
-                            instance: $ctrl.modalInstance
-                        };
-                    })
-                );
-
                 // Set our transfer status.
                 $ctrl.setTransferEnabled = function(state) {
                     $ctrl.currency.transfer = state;
@@ -54,10 +41,6 @@
 
                 // Get the groups we want people to be able to give bonus currency to...
                 $ctrl.viewerRoles = viewerRolesService.getAllRoles().filter(r => r.id !== "Owner");
-
-                $scope.$on("modal.closing", function() {
-                    utilityService.removeSlidingModal();
-                });
             };
 
             $ctrl.delete = function() {

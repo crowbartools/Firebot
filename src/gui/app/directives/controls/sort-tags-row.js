@@ -12,6 +12,7 @@
                 <div
                     style="display: flex; position: relative;"
                     uib-popover-template="'sortTagsPopover.html'"
+                    popover-is-open="$ctrl.isPopupVisible"
                     popover-placement="auto bottom-left"
                     popover-append-to-body="true"
                     popover-trigger="'outsideClick'"
@@ -25,7 +26,7 @@
                             class="sort-tag-add mb-px"
                             aria-label="Add tag"
                         >
-                                <i class="far fa-plus"></i>
+                            <i class="far fa-plus"></i>
                         </button>
                     </div>
                     <div style="position: absolute;" ng-show="hasOverflow()" uib-tooltip-html="getSortTagNames()">
@@ -47,13 +48,26 @@
                                 <input type="checkbox" ng-click="$ctrl.toggleSortTag(tag)" ng-checked="$ctrl.item.sortTags.includes(tag.id)">
                                 <div class="control__indicator"></div>
                             </label>
-                            <div ng-if="sts.getSortTags($ctrl.context).length === 0">No tags created yet</div>
+                            <div class="button mb-2" ng-click="editSortTags()" ng-if="sts.getSortTags($ctrl.context).length === 0">
+                                Add tags
+                            </div>
+                            <hr class="divider mt-1 mb-1" ng-if="sts.getSortTags($ctrl.context).length > 0" />
+                            <div class="button mt-4 mb-2" ng-click="editSortTags()" ng-if="sts.getSortTags($ctrl.context).length > 0">
+                                Add/edit tags
+                            </div>
                         </div>
                     </script>
-                <div>
+                </div>
             `,
             controller: function($scope, $element, sortTagsService) {
                 const $ctrl = this;
+
+                $ctrl.isPopupVisible = false;
+
+                $scope.editSortTags = () => {
+                    $ctrl.isPopupVisible = false;
+                    sortTagsService.showEditSortTagsModal($ctrl.context);
+                };
 
                 $scope.getSortTags = () => sortTagsService.getSortTagsForItem($ctrl.context, $ctrl.item.sortTags);
 

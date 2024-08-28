@@ -25,9 +25,9 @@
                     tooltip-placement="{{$ctrl.tooltipPlacement || 'top'}}"
                     tooltip-append-to-body="true"
                 >
-                <i ng-if="$ctrl.loading" class="far fa-spinner-third fa-spin" style="margin-right: 5px;"></i>
-                <i ng-if="$ctrl.icon && !$ctrl.loading" ng-class="$ctrl.iconClass" style="margin-right: 5px;"></i>
-                <span>{{$ctrl.text}}</span>
+                    <i ng-if="$ctrl.loading" class="far fa-spinner-third fa-spin" style="margin-right: 5px;"></i>
+                    <i ng-if="$ctrl.icon && !$ctrl.loading" ng-class="$ctrl.iconClass" style="margin-right: 5px;"></i>
+                    <span>{{$ctrl.text}}</span>
                 </button>
             `,
             controller: function() {
@@ -43,14 +43,14 @@
 
                 $ctrl.sizeClass = "";
 
-                $ctrl.$onInit = () => {
-                    if ($ctrl.type == null) {
+                const init = () => {
+                    if (!$ctrl.type) {
                         $ctrl.type = "default";
                     }
-                    if ($ctrl.size != null) {
+                    if ($ctrl.size) {
                         $ctrl.sizeClass = buttonSizes[$ctrl.size] ?? "";
                     }
-                    if ($ctrl.icon != null) {
+                    if ($ctrl.icon) {
                         const classes = $ctrl.icon.split(" ");
                         if (classes.length === 1) {
                             $ctrl.iconClass = `far ${classes[0]}`;
@@ -59,6 +59,9 @@
                         }
                     }
                 };
+
+                $ctrl.$onChanges = init;
+                $ctrl.$onInit = init;
             }
         });
 }());

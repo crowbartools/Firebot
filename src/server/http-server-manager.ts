@@ -1,31 +1,61 @@
-"use strict";
+import { EventEmitter } from "events";
+import { ipcMain } from "electron";
+import express, { Express, Request, Response } from "express";
+import http from "http";
+import bodyParser from "body-parser";
+import cors from 'cors';
+import path from 'path';
+import logger from "../backend/logwrapper";
+import { settings } from "../backend/common/settings-access";
+import effectManager from "../backend/effects/effectManager";
+import resourceTokenManager from "../backend/resourceTokenManager";
+import websocketServerManager from "./websocket-server-manager";
 
-const { EventEmitter } = require("events");
-const { ipcMain } = require("electron");
-const WebSocket = require("ws");
-const express = require("express");
-const http = require("http");
-const bodyParser = require("body-parser");
-const cors = require('cors');
-const path = require('path');
-const logger = require("../backend/logwrapper");
-const { settings } = require("../backend/common/settings-access");
-const effectManager = require("../backend/effects/effectManager");
-const eventManager = require("../backend/events/EventManager");
-const resourceTokenManager = require("../backend/resourceTokenManager");
+import dataAccess from "../backend/common/data-access";
 
-const electron = require('electron');
+import electron from 'electron';
 const workingDirectoryRoot = process.platform === 'darwin' ? process.resourcesPath : process.cwd();
 const cwd = !electron.app.isPackaged ? path.join(electron.app.getAppPath(), "build") : workingDirectoryRoot;
 
+interface ServerInstance {
+    name: string;
+    port: number;
+    server: http.Server;
+}
+
+type HttpMethod =
+    | "GET"
+    | "POST"
+    | "PUT"
+    | "PATCH"
+    | "DELETE"
+    | "HEAD"
+    | "CONNECT"
+    | "OPTIONS"
+    | "TRACE";
+
+interface CustomRoute {
+    prefix: string;
+    route: string;
+    fullRoute: string;
+    method: HttpMethod;
+    callback: (req: Request, res: Response) => Promise<void> | void;
+}
 
 class HttpServerManager extends EventEmitter {
+    serverInstances: ServerInstance[];
+    defaultServerInstance: Express;
+    defaultHttpServer: http.Server;
+    overlayServer: http.Server;
+    isDefaultServerStarted: boolean;
+    overlayHasClients: boolean;
+    customRoutes: CustomRoute[];
+
     constructor() {
         super();
 
         this.serverInstances = [];
         this.defaultServerInstance = null;
-        this.defaultWebsocketServerInstance = null;
         this.defaultHttpServer = null;
         this.overlayServer = null;
         this.isDefaultServerStarted = false;
@@ -79,13 +109,13 @@ class HttpServerManager extends EventEmitter {
         app.get("/overlay/", function(req, res) {
             const effectDefs = effectManager.getEffectOverlayExtensions();
 
-            const combinedCssDeps = [...new Set([].concat.apply([], effectDefs
+            const combinedCssDeps = [...new Set(effectDefs
                 .filter(ed => ed.dependencies != null && ed.dependencies.css != null)
-                .map(ed => ed.dependencies.css)))];
+                .map(ed => ed.dependencies.css))];
 
-            const combinedJsDeps = [...new Set([].concat.apply([], effectDefs
-                .filter(ed => ed.dependencies != null && ed.dependencies.js != null)
-                .map(ed => ed.dependencies.js)))];
+            const combinedJsDeps = [...new Set(effectDefs
+                .filter(ed => ed != null && ed.dependencies != null && ed.dependencies.js != null)
+                .map(ed => ed.dependencies.js))];
 
             const combinedGlobalStyles = effectDefs
                 .filter(ed => ed != null && ed.dependencies != null && ed.dependencies.globalStyles != null)
@@ -94,14 +124,13 @@ class HttpServerManager extends EventEmitter {
             const overlayTemplate = path.join(cwd, './resources/overlay');
             res.render(overlayTemplate, {
                 events: effectDefs.map(ed => ed.event),
-                dependancies: {
+                dependencies: {
                     css: combinedCssDeps,
                     js: combinedJsDeps,
                     globalStyles: combinedGlobalStyles
                 }
             });
         });
-        const dataAccess = require("../backend/common/data-access");
         app.use("/overlay-resources", express.static(dataAccess.getPathInUserData("/overlay-resources")));
 
         // Set up resource endpoint
@@ -170,33 +199,23 @@ class HttpServerManager extends EventEmitter {
     }
 
     startDefaultHttpServer() {
-        const port = settings.getWebServerPort();
+        const port: number = settings.getWebServerPort();
 
-        // Setup default Websocket server
-        this.defaultWebsocketServerInstance = new WebSocket.Server({
-            server: this.defaultHttpServer
+        websocketServerManager.createServer(this.defaultHttpServer);
+
+        // Shim for any consumers of the EventEmitter
+
+        websocketServerManager.on("overlay-connected", (instanceName: string) => {
+            this.emit("overlay-connected", instanceName);
         });
 
-        this.defaultWebsocketServerInstance.on('connection', (ws) => {
-            ws.on('message', (message) => {
-                try {
-                    const event = JSON.parse(message);
-
-                    if (event.name === "overlay-connected") {
-                        eventManager.triggerEvent("firebot", "overlay-connected", {
-                            instanceName: event.data.instanceName
-                        });
-                        this.emit("overlay-connected", event.data.instanceName);
-                    } else {
-                        this.emit("overlay-event", event);
-                    }
-                } catch (error) {
-                    logger.error("Error parsing overlay event", error);
-                }
-            });
+        websocketServerManager.on("overlay-event", (event: unknown) => {
+            this.emit("overlay-event", event);
         });
 
         try {
+            // According to typescript and the documentation, this should not be possible. But it clearly works in the bot
+            // @ts-expect-error TS2769
             this.overlayServer = this.defaultHttpServer.listen(port, ["0.0.0.0", "::"], () => {
                 this.isDefaultServerStarted = true;
 
@@ -206,30 +225,16 @@ class HttpServerManager extends EventEmitter {
                     server: this.overlayServer
                 });
 
-                logger.info(`Default web server started, listening on port ${this.overlayServer.address().port}`);
+                const addressInfo = this.overlayServer.address();
+                logger.info(`Default web server started, listening on port ${typeof addressInfo === 'string' ? addressInfo : addressInfo.port}`);
             });
         } catch (error) {
             logger.error(`Unable to start default web server on port ${port}: ${error}`);
         }
     }
 
-    sendToOverlay(eventName, meta = {}, overlayInstance) {
-        if (this.defaultWebsocketServerInstance == null || eventName == null) {
-            return;
-        }
-
-        const data = { event: eventName, meta: meta, overlayInstance: overlayInstance },
-            dataRaw = JSON.stringify(data);
-
-        this.defaultWebsocketServerInstance.clients.forEach(function each(client) {
-            if (client.readyState === 1) {
-                client.send(dataRaw, (err) => {
-                    if (err) {
-                        logger.error(err);
-                    }
-                });
-            }
-        });
+    sendToOverlay(eventName: string, meta: Record<string, unknown> = {}, overlayInstance: string = null) {
+        websocketServerManager.sendToOverlay(eventName, meta, overlayInstance);
     }
 
     createServerInstance() {
@@ -246,6 +251,8 @@ class HttpServerManager extends EventEmitter {
             }
 
             let newHttpServer = http.createServer(instance);
+            // According to typescript and the documentation, this should not be possible. But it clearly works in the bot
+            // @ts-expect-error TS2769
             newHttpServer = newHttpServer.listen(port, ["0.0.0.0", "::"]);
 
             this.serverInstances.push({
@@ -254,7 +261,8 @@ class HttpServerManager extends EventEmitter {
                 server: newHttpServer
             });
 
-            logger.info(`Web server instance "${name}" started, listening on port ${newHttpServer.address().port}`);
+            const addressInfo = this.overlayServer.address();
+            logger.info(`Default web server started, listening on port ${typeof addressInfo === 'string' ? addressInfo : addressInfo.port}`);
             return newHttpServer;
         } catch (error) {
             logger.error(`Unable to start web server instance "${name}" on port ${port}: ${error}`);
@@ -291,7 +299,7 @@ class HttpServerManager extends EventEmitter {
         }
     }
 
-    registerCustomRoute(prefix, route, method, callback) {
+    registerCustomRoute(prefix: string, route: string, method: string, callback: CustomRoute["callback"]) {
         if (prefix == null || prefix === "") {
             logger.error(`Failed to register custom route: No custom route prefix specified`);
             return false;
@@ -333,7 +341,7 @@ class HttpServerManager extends EventEmitter {
         return true;
     }
 
-    unregisterCustomRoute(prefix, route, method) {
+    unregisterCustomRoute(prefix: string, route: string, method: string) {
         if (prefix == null || prefix === "") {
             logger.error(`Failed to unregister custom route: No custom route prefix specified`);
             return false;
@@ -371,10 +379,10 @@ class HttpServerManager extends EventEmitter {
         return true;
     }
 
-    buildCustomRouteParameters(prefix, route, method) {
+    buildCustomRouteParameters(prefix: string, route: string, method: string) {
         const normalizedPrefix = prefix.toLowerCase();
         const normalizedRoute = route.toLowerCase().replace(/\/$/, '');
-        const normalizedMethod = method.toUpperCase();
+        const normalizedMethod = method.toUpperCase() as HttpMethod;
 
         // Force POSIX paths because URL
         const fullRoute = path.posix.join(normalizedPrefix, normalizedRoute);
@@ -390,35 +398,13 @@ class HttpServerManager extends EventEmitter {
 
 const manager = new HttpServerManager();
 
-setInterval(() => {
-    const clientsConnected = manager.defaultWebsocketServerInstance == null
-        ? false
-        : manager.defaultWebsocketServerInstance.clients.size > 0;
-
-    if (clientsConnected !== manager.overlayHasClients) {
-        if (global.hasOwnProperty("renderWindow") && renderWindow?.webContents?.isDestroyed() === false) {
-            renderWindow.webContents.send("overlayStatusUpdate", {
-                clientsConnected: clientsConnected,
-                serverStarted: manager.isDefaultServerStarted
-            });
-        }
-        manager.overlayHasClients = clientsConnected;
-    }
-}, 3000);
+setInterval(() => websocketServerManager.reportClientsToFrontend(manager.isDefaultServerStarted), 3000);
 
 ipcMain.on("getOverlayStatus", (event) => {
     event.returnValue = {
-        clientsConnected: manager.overlayHasClients,
+        clientsConnected: websocketServerManager.overlayHasClients,
         serverStarted: manager.isDefaultServerStarted
     };
 });
 
-
-effectManager.on("effectRegistered", (effect) => {
-    if (effect.overlayExtension) {
-        // tell the overlay to refresh because a new effect with an overlay extension has been registered
-        manager.sendToOverlay("OVERLAY:REFRESH", { global: true });
-    }
-});
-
-module.exports = manager;
+export = manager;

@@ -170,6 +170,7 @@
 
                 utilityService.showModal({
                     component: "addOrEditEventModal",
+                    breadcrumbName: "Edit Event",
                     resolveObj: {
                         event: () => event,
                         groupId: () => selectedGroupId

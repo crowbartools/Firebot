@@ -68,11 +68,20 @@
                         </div>
 
                         <div class="viewer-detail-data" ng-show="$ctrl.hasFirebotData" style="margin-top: 10px;">
-                            <div class="detail-data clickable" ng-repeat="dataPoint in $ctrl.dataPoints" ng-click="dataPoint.onClick()" aria-label="Edit {{dataPoint.name}}">
+                            <div
+                                ng-repeat="dataPoint in $ctrl.dataPoints"
+                                ng-click="dataPoint.canEdit ? dataPoint.onClick() : undefined"
+                                class="detail-data"
+                                ng-class="{ clickable: dataPoint.canEdit }"
+                                aria-label="Edit {{dataPoint.name}}"
+                                uib-tooltip="{{dataPoint.tooltip}}"
+                                tooltip-enable="dataPoint.tooltip"
+                                tooltip-append-to-body="true"
+                            >
                                 <div class="data-title">
                                     <i class="far" ng-class="dataPoint.icon"></i> {{dataPoint.name}}
                                 </div>
-                                <div class="data-point">{{dataPoint.display}}<span class="edit-data-btn muted"><i class="fas fa-edit"></i></span></div>
+                                <div class="data-point">{{dataPoint.display}}<span class="edit-data-btn muted" ng-show="dataPoint.canEdit"><i class="fas fa-edit"></i></span></div>
                             </div>
                         </div>
 
@@ -159,7 +168,6 @@
                             <i class="far fa-plus"></i>
                         </div>
                     </div>
-
                 </div>
             </div>
             <div class="modal-footer"></div>
@@ -169,7 +177,10 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function($rootScope, $q, backendCommunicator, viewersService, currencyService, utilityService, viewerRolesService, connectionService, settingsService, accountAccess) {
+            controller: function($rootScope, $q, backendCommunicator, viewersService, currencyService,
+                utilityService, viewerRolesService, connectionService, settingsService, accountAccess,
+                viewerRanksService
+            ) {
                 const $ctrl = this;
 
                 $ctrl.loading = true;
@@ -183,6 +194,23 @@
                 $ctrl.viewerDbEnabled = settingsService.getViewerDB();
 
                 $ctrl.accountAccess = accountAccess;
+
+                $ctrl.viewerRanksService = viewerRanksService;
+
+                $ctrl.viewerRankData = {};
+
+                $ctrl.rankLadderMap = viewerRanksService.rankLadders.reduce((acc, ladder) => {
+                    const rankMap = ladder.ranks.reduce((acc, rank) => {
+                        acc[rank.id] = rank.name;
+                        return acc;
+                    }, {});
+                    acc[ladder.id] = {
+                        name: ladder.name,
+                        ranks: rankMap
+                    };
+                    return acc;
+                }, {});
+
 
                 $ctrl.getAccountAge = function(date) {
                     return moment(date).fromNow(true);
@@ -202,7 +230,7 @@
                             } catch (error) { /* silently fail */ }
 
                             backendCommunicator.fireEvent("update-viewer-metadata", {
-                                username: $ctrl.viewerDetails.twitchData.username,
+                                username: $ctrl.viewerDetails.firebotData.username,
                                 key,
                                 value
                             });
@@ -222,7 +250,7 @@
                     }).then((confirmed) => {
                         if (confirmed) {
                             backendCommunicator.fireEvent("delete-viewer-metadata", {
-                                username: $ctrl.viewerDetails.twitchData.username,
+                                username: $ctrl.viewerDetails.firebotData.username,
                                 key
                             });
 
@@ -457,7 +485,7 @@
                 };
 
                 class ViewerDataPoint {
-                    constructor(name, icon, value, displayFunc, fieldName, valueType, beforeEditFunc, afterEditFunc) {
+                    constructor(name, icon, value, displayFunc, fieldName, valueType, beforeEditFunc, afterEditFunc, reloadViewerDataOnSave = false, metadata = {}, canEdit = true, tooltip = null) {
                         this.name = name;
                         this.icon = icon;
                         this.value = value;
@@ -467,6 +495,10 @@
                         this._beforeEditFunc = beforeEditFunc;
                         this._afterEditFunc = afterEditFunc;
                         this.display = this._displayFunc(this.value);
+                        this.canEdit = canEdit;
+                        this.tooltip = tooltip;
+                        this.metadata = metadata;
+                        this._reloadViewerDataOnSave = reloadViewerDataOnSave;
                     }
 
                     onClick() {
@@ -512,15 +544,40 @@
                                     this.saveValue();
                                 }
                             );
+                        } else if (this._valueType === "rank") {
+                            utilityService.showModal({
+                                component: "editViewerRankModal",
+                                size: "sm",
+                                resolveObj: {
+                                    rankLadderId: () => this.metadata.rankLadderId,
+                                    currentRankId: () => this.value
+                                },
+                                closeCallback: (newRankId) => {
+                                    this.value = this._afterEditFunc(newRankId);
+                                    this.display = this._displayFunc(this.value);
+                                    this.saveValue();
+                                }
+                            });
                         }
                     }
 
-                    saveValue() {
-                        backendCommunicator.fireEvent("update-firebot-viewer-data-field", {
-                            userId: $ctrl.resolve.userId,
-                            field: this._fieldName,
-                            value: this.value
-                        });
+                    async saveValue() {
+                        if (this._valueType === "rank") {
+                            await backendCommunicator.fireEventAsync("update-viewer-rank", {
+                                userId: $ctrl.resolve.userId,
+                                rankLadderId: this.metadata.rankLadderId,
+                                rankId: this.value
+                            });
+                        } else {
+                            await backendCommunicator.fireEventAsync("update-firebot-viewer-data-field", {
+                                userId: $ctrl.resolve.userId,
+                                field: this._fieldName,
+                                value: this.value
+                            });
+                        }
+                        if (this._reloadViewerDataOnSave) {
+                            $ctrl.reloadFirebotData();
+                        }
                     }
                 }
 
@@ -588,7 +645,8 @@
                             const mins = parseInt(value) * 60;
 
                             return mins;
-                        }
+                        },
+                        true
                     ));
 
                     const chatMessages = $ctrl.viewerDetails.firebotData.chatMessages || 0;
@@ -611,7 +669,7 @@
 
                     for (const currency of currencies) {
                         dataPoints.push(new ViewerDataPoint(
-                            currency.name,
+                            `${currency.name} (Currency)`,
                             "fa-money-bill",
                             $ctrl.viewerDetails.firebotData.currency[currency.id] || 0,
                             value => value,
@@ -622,7 +680,43 @@
                             },
                             (value) => {
                                 return value ? parseInt(value) : 0;
+                            },
+                            true
+                        ));
+                    }
+
+                    for (const rankLadder of viewerRanksService.rankLadders) {
+                        const rankId = $ctrl.viewerDetails.firebotData.ranks?.[rankLadder.id];
+
+                        let tooltip = undefined;
+                        if (rankLadder.mode === "auto") {
+                            let trackByText = '';
+                            if (rankLadder.settings.trackBy === "view_time") {
+                                trackByText = " by this viewer's view time";
+                            } else if (rankLadder.settings.trackBy === "currency") {
+                                const currency = currencyService.getCurrency(rankLadder.settings.currencyId);
+                                trackByText = ` by this viewer's ${currency?.name ?? 'currency'} balance`;
                             }
+                            tooltip = `This rank is automatically determined${trackByText}`;
+                        }
+
+                        dataPoints.push(new ViewerDataPoint(
+                            `${rankLadder.name} (Rank Ladder)`,
+                            "fa-award",
+                            rankId,
+                            (_rankId) => {
+                                return rankLadder.ranks.find(r => r.id === _rankId)?.name ?? "Not ranked";
+                            },
+                            `ranks.${rankLadder.id}`,
+                            "rank",
+                            value => value,
+                            value => value,
+                            false,
+                            {
+                                rankLadderId: rankLadder.id
+                            },
+                            rankLadder.mode === "manual",
+                            tooltip
                         ));
                     }
 
@@ -693,6 +787,7 @@
                 function init() {
                     $ctrl.hasFirebotData = Object.keys($ctrl.viewerDetails.firebotData).length > 0;
                     buildDataPoints();
+                    $ctrl.viewerRankData = $ctrl.viewerDetails.firebotData.ranks || {};
                     if ($ctrl.viewerDetails.twitchData != null) {
                         buildActions();
                         loadRoles();
@@ -763,20 +858,31 @@
                     });
                 };
 
-                $ctrl.$onInit = function() {
-                    const userId = $ctrl.resolve.userId;
-
+                $ctrl.loadViewerDetails = function() {
                     $q((resolve) => {
-                        backendCommunicator.fireEventAsync("get-viewer-details", userId)
+                        backendCommunicator.fireEventAsync("get-viewer-details", $ctrl.userId)
                             .then((viewerDetails) => {
                                 resolve(viewerDetails);
                             });
                     }).then((viewerDetails) => {
-                        console.log(viewerDetails);
                         $ctrl.viewerDetails = viewerDetails;
                         init();
                         $ctrl.loading = false;
                     });
+                };
+
+                $ctrl.reloadFirebotData = function() {
+                    backendCommunicator.fireEventAsync("get-firebot-viewer-data", $ctrl.userId)
+                        .then((firebotData) => {
+                            $ctrl.viewerDetails.firebotData = firebotData;
+                            init();
+                        });
+                };
+
+                $ctrl.$onInit = function() {
+                    $ctrl.userId = $ctrl.resolve.userId;
+
+                    $ctrl.loadViewerDetails();
                 };
             }
         });

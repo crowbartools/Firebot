@@ -16,6 +16,7 @@ export interface FirebotViewer {
     disableViewerList: boolean;
     metadata: Record<string, unknown>;
     currency: Record<string, number>;
+    ranks: Record<string, string>;
 }
 
 export interface BasicViewer {

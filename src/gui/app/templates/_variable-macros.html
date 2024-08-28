@@ -1,0 +1,14 @@
+<firebot-item-table
+  items="variableMacroService.macros"
+  on-items-update="onMacrosUpdated(items)"
+  headers="headers"
+  sort-tag-context="variable macros"
+  orderable="true"
+  add-new-button-text="New Variable Macro"
+  on-add-new-clicked="variableMacroService.showAddOrEditVariableMacroModal()"
+  context-menu-options="macroContextMenuOptions(item)"
+  no-data-message="No variable macros saved. You should make one! :)"
+  none-found-message="No variable macros found."
+  search-placeholder="Search variable macros"
+  test-button="false"
+></firebot-item-table>

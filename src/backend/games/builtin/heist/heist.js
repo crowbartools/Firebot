@@ -209,7 +209,7 @@ module.exports = {
                 onCooldown: {
                     type: "string",
                     title: "When On Cooldown",
-                    description: "Sent when someone tries to trigger the heist and it's on cooldown (leave empty for no message).",
+                    description: "Sent when someone tries to trigger the heist and it is on cooldown (leave empty for no message).",
                     useTextArea: true,
                     default: "The area is still too hot! Better wait awhile. Cooldown: {cooldown}",
                     tip: "Available variables: {cooldown}"

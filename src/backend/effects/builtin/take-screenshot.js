@@ -2,7 +2,6 @@
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 const {sendEmbedToDiscord} = require("../../common/screenshot-helpers");
-const screenshotHelpers = require("../../common/screenshot-helpers");
 
 const clip = {
     definition: {
@@ -49,7 +48,7 @@ const clip = {
             $scope.effect.displayId = displays[0].id;
         }
     },
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         const rgbRegexp = /^#?[0-9a-f]{6}$/ig;
         if (!(effect.saveLocally || effect.overwriteExisting || effect.postInDiscord || effect.showInOverlay)) {
@@ -69,7 +68,7 @@ const clip = {
         }
         return errors;
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const screenHelpers = require("../../app-management/electron/screen-helpers");
         const screenshotHelpers = require("../../common/screenshot-helpers");
 
@@ -120,7 +119,7 @@ const clip = {
         },
         event: {
             name: "showScreenshot",
-            onOverlayEvent: event => {
+            onOverlayEvent: (event) => {
                 const {
                     screenshotDataUrl,
                     width,
@@ -135,11 +134,13 @@ const clip = {
                     inbetweenDelay,
                     inbetweenRepeat,
                     exitAnimation,
-                    exitDuration
+                    exitDuration,
+                    rotation
                 } = event;
 
                 const styles = (width ? `width: ${width}px;` : '') +
-                    (height ? `height: ${height}px;` : '');
+                    (height ? `height: ${height}px;` : '') +
+                    (rotation ? `transform: rotate(${rotation});` : "");
 
                 const imageElement = `<img src="${screenshotDataUrl}" style="${styles}">`;
 

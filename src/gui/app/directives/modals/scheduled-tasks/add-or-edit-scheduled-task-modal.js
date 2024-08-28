@@ -108,24 +108,6 @@
                 }
 
                 $ctrl.updateScheduleData();
-
-                const modalId = $ctrl.resolve.modalId;
-                $ctrl.modalId = modalId;
-                utilityService.addSlidingModal(
-                    $ctrl.modalInstance.rendered.then(() => {
-                        const modalElement = $(`.${modalId}`).children();
-                        return {
-                            element: modalElement,
-                            name: "Edit Scheduled Effect List",
-                            id: modalId,
-                            instance: $ctrl.modalInstance
-                        };
-                    })
-                );
-
-                $scope.$on("modal.closing", function() {
-                    utilityService.removeSlidingModal();
-                });
             };
 
             $ctrl.effectListUpdated = function(effects) {

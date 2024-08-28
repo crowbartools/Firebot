@@ -118,6 +118,31 @@ const firebotEventSource = {
             name: "Before Firebot Closed",
             description: "Just before firebot is closed",
             cached: false
+        },
+        {
+            id: "viewer-rank-updated",
+            name: "Viewer Rank Updated",
+            description: "When a viewer's rank is updated within a rank ladder.",
+            cached: false,
+            manualMetadata: {
+                username: "Firebot",
+                rankLadderName: "Rank Ladder",
+                newRankName: "New Rank",
+                previousRankName: "Previous Rank",
+                isPromotion: true,
+                isDemotion: false
+            }
+        },
+        {
+            id: "viewer-metadata-updated",
+            name: "Viewer Metadata Updated",
+            description: "When a viewer's metadata value is updated.",
+            cached: false,
+            manualMetadata: {
+                username: "Firebot",
+                metadataKey: "testKey",
+                metadataValue: "testValue"
+            }
         }
     ]
 };

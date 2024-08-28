@@ -5,6 +5,7 @@ const effectManager = require("./effectManager");
 exports.loadEffects = () => {
     [
         'active-user-lists',
+        'activity-feed-alert',
         'add-quote',
         'api',
         'block-unblock',
@@ -61,6 +62,7 @@ exports.loadEffects = () => {
         'update-channel-reward',
         'update-counter',
         'update-role',
+        'update-viewer-rank',
         'update-vip-role',
 
         'twitch/ad-break',

@@ -85,23 +85,6 @@
                     if ($ctrl.resolve.tags != null) {
                         $ctrl.tags = JSON.parse(angular.toJson($ctrl.resolve.tags));
                     }
-
-                    const modalId = $ctrl.resolve.modalId;
-                    utilityService.addSlidingModal(
-                        $ctrl.modalInstance.rendered.then(() => {
-                            const modalElement = $(`.${modalId}`).children();
-                            return {
-                                element: modalElement,
-                                name: "",
-                                id: modalId,
-                                instance: $ctrl.modalInstance
-                            };
-                        })
-                    );
-
-                    $scope.$on("modal.closing", function() {
-                        utilityService.removeSlidingModal();
-                    });
                 };
 
                 $ctrl.save = () => {

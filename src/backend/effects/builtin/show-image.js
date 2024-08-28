@@ -4,8 +4,8 @@ const { settings } = require("../../common/settings-access");
 const resourceTokenManager = require("../../resourceTokenManager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/http-server-manager");
-const fs = require('fs/promises');
-const { EffectCategory } = require('../../../shared/effect-constants');
+const fs = require("fs/promises");
+const { EffectCategory } = require("../../../shared/effect-constants");
 const logger = require("../../logwrapper");
 const path = require("path");
 
@@ -14,8 +14,8 @@ const path = require("path");
  */
 const showImage = {
     /**
-   * The definition of the Effect
-   */
+     * The definition of the Effect
+     */
     definition: {
         id: "firebot:showImage",
         name: "Show Image/GIF",
@@ -25,13 +25,13 @@ const showImage = {
         dependencies: []
     },
     /**
-   * Global settings that will be available in the Settings tab
-   */
+     * Global settings that will be available in the Settings tab
+     */
     globalSettings: {},
     /**
-   * The HTML template for the Options view (ie options when effect is added to something such as a button.
-   * You can alternatively supply a url to a html file via optionTemplateUrl
-   */
+     * The HTML template for the Options view (ie options when effect is added to something such as a button.
+     * You can alternatively supply a url to a html file via optionTemplateUrl
+     */
     optionsTemplate: `
   <div class="effect-setting-container">
     <div class="effect-specific-title"><h4>Image</h4></div>
@@ -58,38 +58,18 @@ const showImage = {
             <file-chooser model="effect.folder" options="{ directoryOnly: true, filters: [], title: 'Select Image Folder'}"></file-chooser>
         </div>
         <div ng-if="effect.imageType === 'local'" style="display: flex;flex-direction: row;align-items: center;">
-            <file-chooser model="effect.file" options="{ filters: [ {name: 'Image', extensions: ['jpg', 'gif', 'png', 'jpeg']} ]}"></file-chooser>
+            <file-chooser model="effect.file" options="{ filters: [{ name: 'Image', extensions: [ 'bmp', 'gif', 'jpg', 'jpeg', 'png', 'apng', 'svg', 'webp' ]}, { name: 'All Files', extensions: ['*']} ]}"></file-chooser>
         </div>
         <div ng-if="effect.imageType === 'url'">
             <input type="text" class="form-control" ng-model="effect.url" placeholder="Enter url" replace-variables>
         </div>
     </div>
     </div>
+    
+    <eos-overlay-dimensions effect="effect" pad-top="true"></eos-overlay-dimensions>
+   
     <eos-overlay-position effect="effect" class="setting-padtop"></eos-overlay-position>
-    <eos-enter-exit-animations effect="effect" class="setting-padtop"></eos-enter-exit-animations>
-    <div class="effect-setting-container setting-padtop">
-    <div class="effect-specific-title"><h4>Dimensions</h4></div>
-    <div class="effect-setting-content">
-        <div class="input-group">
-            <span class="input-group-addon">Width</span>
-            <input
-                type="number"
-                class="form-control"
-                aria-describeby="image-width-setting-type"
-                type="number"
-                ng-model="effect.width"
-                placeholder="px">
-            <span class="input-group-addon">Height</span>
-            <input
-                type="number"
-                class="form-control"
-                aria-describeby="image-height-setting-type"
-                type="number"
-                ng-model="effect.height"
-                placeholder="px">
-        </div>
-    </div>
-    </div>
+
     <div class="effect-setting-container setting-padtop">
     <div class="effect-specific-title"><h4>Duration</h4></div>
     <div class="effect-setting-content">
@@ -104,32 +84,37 @@ const showImage = {
         </div>
     </div>
     </div>
+
+    <eos-overlay-rotation effect="effect" pad-top="true"></eos-overlay-rotation>
+
+    <eos-enter-exit-animations effect="effect" class="setting-padtop"></eos-enter-exit-animations>
+
     <eos-overlay-instance effect="effect" class="setting-padtop"></eos-overlay-instance>
     <div class="effect-info alert alert-warning">
     This effect requires the Firebot overlay to be loaded in your broadcasting software. <a href ng-click="showOverlayInfoModal()" style="text-decoration:underline">Learn more</a>
     </div>
     `,
     /**
-   * The controller for the front end Options
-   * Port over from effectHelperService.js
-   */
+     * The controller for the front end Options
+     * Port over from effectHelperService.js
+     */
     optionsController: ($scope, utilityService) => {
         if ($scope.effect.imageType == null) {
             $scope.effect.imageType = "local";
         }
 
-        $scope.showOverlayInfoModal = function(overlayInstance) {
+        $scope.showOverlayInfoModal = function (overlayInstance) {
             utilityService.showOverlayInfoModal(overlayInstance);
         };
 
         $scope.placeHolderUrl = "../images/placeholders/image.png";
 
         $scope.showImage = false;
-        $scope.imageLoaded = function(successful) {
+        $scope.imageLoaded = function (successful) {
             $scope.showImage = successful;
         };
 
-        $scope.getImagePreviewSrc = function() {
+        $scope.getImagePreviewSrc = function () {
             let path;
             if ($scope.effect.imageType === "local") {
                 path = $scope.effect.file;
@@ -142,7 +127,7 @@ const showImage = {
             return path;
         };
 
-        $scope.imageTypeUpdated = function() {
+        $scope.imageTypeUpdated = function () {
             if ($scope.effect.imageType === "local") {
                 $scope.effect.url = undefined;
                 $scope.effect.folder = undefined;
@@ -156,10 +141,10 @@ const showImage = {
         };
     },
     /**
-   * When the effect is triggered by something
-   * Used to validate fields in the option template.
-   */
-    optionsValidator: effect => {
+     * When the effect is triggered by something
+     * Used to validate fields in the option template.
+     */
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.imageType == null) {
             errors.push("Please select an image type.");
@@ -170,9 +155,9 @@ const showImage = {
         return errors;
     },
     /**
-   * When the effect is triggered by something
-   */
-    onTriggerEvent: async event => {
+     * When the effect is triggered by something
+     */
+    onTriggerEvent: async (event) => {
         // What should this do when triggered.
         const effect = event.effect;
 
@@ -198,7 +183,8 @@ const showImage = {
             enterDuration: effect.enterDuration,
             exitAnimation: effect.exitAnimation,
             exitDuration: effect.exitDuration,
-            customCoords: effect.customCoords
+            customCoords: effect.customCoords,
+            imageRotation: effect.rotation ? effect.rotation + effect.rotType : "0deg"
         };
 
         if (settings.useOverlayInstances()) {
@@ -214,15 +200,11 @@ const showImage = {
         }
 
         if (effect.imageType === "local") {
-            const resourceToken = resourceTokenManager.storeResourcePath(
-                effect.file,
-                effect.length
-            );
+            const resourceToken = resourceTokenManager.storeResourcePath(effect.file, effect.length);
             data.resourceToken = resourceToken;
         }
 
         if (effect.imageType === "folderRandom") {
-
             let files = [];
             try {
                 files = await fs.readdir(effect.folder);
@@ -230,16 +212,13 @@ const showImage = {
                 logger.warn("Unable to read image folder", err);
             }
 
-            const filteredFiles = files.filter(i => (/\.(gif|jpg|jpeg|png)$/i).test(i));
+            const filteredFiles = files.filter(i => /\.(bmp|gif|jpg|jpeg|png|apng|svg|webp)$/i.test(i));
 
             const chosenFile = filteredFiles[Math.floor(Math.random() * filteredFiles.length)];
 
             const fullFilePath = path.join(effect.folder, chosenFile);
 
-            const resourceToken = resourceTokenManager.storeResourcePath(
-                fullFilePath,
-                effect.length
-            );
+            const resourceToken = resourceTokenManager.storeResourcePath(fullFilePath, effect.length);
 
             data.resourceToken = resourceToken;
         }
@@ -248,8 +227,8 @@ const showImage = {
         return true;
     },
     /**
-   * Code to run in the overlay
-   */
+     * Code to run in the overlay
+     */
     overlayExtension: {
         dependencies: {
             css: [],
@@ -257,7 +236,7 @@ const showImage = {
         },
         event: {
             name: "image",
-            onOverlayEvent: event => {
+            onOverlayEvent: (event) => {
                 // Image Handling
                 // This will take the data that is sent to it from the GUI and render an image on the overlay.
                 const data = event;
@@ -267,9 +246,7 @@ const showImage = {
                     filepathNew = data.url;
                 } else {
                     const token = encodeURIComponent(data.resourceToken);
-                    filepathNew = `http://${
-                        window.location.hostname
-                    }:7472/resource/${token}`;
+                    filepathNew = `http://${window.location.hostname}:7472/resource/${token}`;
                 }
 
                 // NEW WAY EXAMPLE:
@@ -291,8 +268,12 @@ const showImage = {
                     resourceToken: data.resourceToken
                 };
 
-                const styles = (data.imageWidth ? `width: ${data.imageWidth};` : '') +
-                            (data.imageHeight ? `height: ${data.imageHeight};` : '');
+                const styles =
+                    (data.imageWidth ? `width: ${data.imageWidth};` : "") +
+                    (data.imageHeight ? `height: ${data.imageHeight};` : "") +
+                    (data.imageRotation ? `transform: rotate(${data.imageRotation});` : "");
+                console.log(data.imageRotation);
+                console.log(styles);
                 const imageTag = `<img src="${filepathNew}" style="${styles}" />`;
 
                 showElement(imageTag, positionData, animationData); // eslint-disable-line no-undef

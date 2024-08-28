@@ -27,6 +27,7 @@ export type SubCommand = {
     fallback?: boolean;
     restrictionData?: RestrictionData;
     cooldown?: Cooldown | undefined;
+    inheritBaseCommandCooldown?: boolean;
     effects?: EffectList;
 };
 
@@ -118,6 +119,9 @@ export type CommandDefinition = {
     treatQuotedTextAsSingleArg?: boolean | undefined;
     minArgs?: number;
     options?: Record<keyof OptionsModel, CommandOption>;
+    /**
+     * Only set for currency system commands.
+     */
     currency?: {
         name: string;
         id: string;

@@ -156,7 +156,7 @@
                         const profileDb = dataAccess.getJsonDbInUserData(`./profiles/${profileId}/auth-twitch`);
                         streamer = profileDb.getData("/streamer");
                     } catch (err) {
-                        logger.info(`Couldn't get streamer data for profile ${profileId} while updating the UI. Its possible this account hasn't logged in yet.`);
+                        logger.info(`Couldn't get streamer data for profile ${profileId} while updating the UI. It's possible this account hasn't logged in yet.`);
                     }
 
                     if (streamer) {

@@ -10,12 +10,10 @@
 
                     <firebot-setting 
                         name="Debug Mode"
-                        description="When Debug Mode is enabled, Firebot will log a lot more information to it's log files. This is often useful when troubleshooting an obscure problem."
+                        description="When Debug Mode is enabled, Firebot will log a lot more information to its log files. This is often useful when troubleshooting an obscure problem."
                     >
                         <setting-description-addon>
-                            <b
-                                >Firebot must be restarted for changes to this setting to take effect.</b
-                            >
+                            <b>Firebot must be restarted for changes to this setting to take effect.</b>
                         </setting-description-addon>
                         <firebot-button 
                             text="{{settings.debugModeEnabled() ? 'Disable Debug Mode' : 'Enable Debug Mode' }}"
@@ -28,9 +26,7 @@
                         description="Enable or disable the conditional 'While Loop' option in the Loop Effects effect."
                     >
                         <setting-description-addon>
-                            <b
-                                >If you aren't careful, you can cause an infinite loop and freeze Firebot.</b
-                            >
+                            <b>If you aren't careful, you can cause an infinite loop and freeze Firebot.</b>
                         </setting-description-addon>
                         <firebot-button 
                             text="{{settings.getWhileLoopEnabled() ? 'Disable While Loops' : 'Enable While Loops' }}"
@@ -43,9 +39,7 @@
                         description="Quote IDs in Firebot are static, even if a quote before another is deleted. If you would like to recalculate your quote IDs so that there isn't any skipped quote numbers, you can use this option."
                     >
                         <setting-description-addon>
-                            <b
-                                >We recommend that you make a backup first, just in case.</b
-                            >
+                            <b>We recommend that you make a backup first, just in case.</b>
                         </setting-description-addon>
                         <firebot-button 
                             text="Recalculate Quote IDs"
@@ -63,6 +57,8 @@
                             selected="allowQuoteCsv" 
                             on-update="settings.setAllowQuoteCSVDownloads(option === 'true')"
                             right-justify="true"
+                            aria-label="Choose Whether or not you want the 'Export as .CSV' button available for quotes on the profile page."
+
                         />
                     </firebot-setting>
 
@@ -76,6 +72,7 @@
                             selected="persistVariables" 
                             on-update="settings.setPersistCustomVariables(option === 'true')"
                             right-justify="true"
+                            aria-label="enable or disabel persistent Custom Variables"
                         />
                     </firebot-setting>
 

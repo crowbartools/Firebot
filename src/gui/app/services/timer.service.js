@@ -103,6 +103,7 @@
                 return new Promise(resolve => {
                     utilityService.showModal({
                         component: "addOrEditTimerModal",
+                        breadcrumbName: "Edit Timer",
                         size: "md",
                         resolveObj: {
                             timer: () => timer
