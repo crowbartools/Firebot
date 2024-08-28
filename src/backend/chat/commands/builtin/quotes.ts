@@ -281,7 +281,7 @@ export const QuotesManagementSystemCommand: SystemCommand<{
                     
                     //If no @ is included in the originator arg, set to @streamerName and the rest is the quote
                     if (!args[1].includes("@")) { 
-                        args.splice(1,0,"@"+channelData.displayName) 
+                        args.splice(1,0,`@${channelData.displayName}`) 
                     }
 
                     const newQuote = {
