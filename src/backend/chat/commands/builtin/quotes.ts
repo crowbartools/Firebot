@@ -12,6 +12,7 @@ export const QuotesManagementSystemCommand: SystemCommand<{
     quoteDisplayTemplate: string;
     quoteDateFormat: string;
     useTTS: boolean;
+    defaultStreamerAttribution: boolean;
 }> = {
     definition: {
         id: "firebot:quotesmanagement",
@@ -49,6 +50,12 @@ export const QuotesManagementSystemCommand: SystemCommand<{
                 type: "boolean",
                 title: "Read Quotes via TTS",
                 description: "Have quotes read by TTS whenever one is created or looked up.",
+                default: false
+            },
+            defaultStreamerAttribution: {
+                type: "boolean",
+                title: "Attribute new quote to streamer if nobody is explicitly tagged with @",
+                description: "If @username is not included when adding a quote, it is attributed to the streamer.",
                 default: false
             }
         },
@@ -279,9 +286,11 @@ export const QuotesManagementSystemCommand: SystemCommand<{
 
                     const currentGameName = channelData && channelData.gameName ? channelData.gameName : "Unknown game";
                     
-                    //If no @ is included in the originator arg, set to @streamerName and the rest is the quote
-                    if (!args[1].includes("@")) { 
-                        args.splice(1,0,`@${channelData.displayName}`) 
+                    // //If no @ is included in the originator arg, set to @streamerName and the rest is the quote
+                    if (commandOptions.defaultStreamerAttribution) {
+                        if (!args[1].includes("@")) { 
+                            args.splice(1,0,`@${channelData.displayName}`)
+                        }
                     }
 
                     const newQuote = {
