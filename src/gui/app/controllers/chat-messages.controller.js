@@ -16,7 +16,7 @@
             $scope.afs = activityFeedService;
 
             $scope.chatMessage = "";
-            $scope.chatSender = "Streamer";
+            $scope.chatSender = settingsService.getChatSender("Streamer");
             $scope.disabledMessage = "";
 
             $scope.cms = chatMessagesService;
@@ -128,6 +128,11 @@
             $scope.updateChatInput = function(text) {
                 $scope.chatMessage = text;
                 focusMessageInput();
+            };
+
+            $scope.setChatSender = function(chatter) {
+                $scope.chatSender = chatter;
+                settingsService.setChatSender(chatter);
             };
 
             $scope.setThreadDetails = (threadOrReplyMessageId) => {

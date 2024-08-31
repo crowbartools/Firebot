@@ -139,10 +139,8 @@
             <div class="fb-arrow down mx-4 mb-1"></div>
           </span>
           <ul class="dropdown-menu">
-            <li ng-click="chatSender = 'Streamer'"><a href>Streamer</a></li>
-            <li ng-click="chatSender = 'Bot'" ng-show="botLoggedIn">
-              <a href>Bot</a>
-            </li>
+            <li ng-click="setChatSender('Streamer')"><a>Streamer</a></li>
+            <li ng-click="setChatSender('Bot')" ng-show="botLoggedIn"><a>Bot</a></li>
           </ul>
         </div>
 
