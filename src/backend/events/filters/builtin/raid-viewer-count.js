@@ -7,7 +7,8 @@ module.exports = {
     name: "Raid Viewer Count",
     description: "Filter by how many viewers have been brought over by the raid.",
     events: [
-        { eventSourceId: "twitch", eventId: "raid" }
+        { eventSourceId: "twitch", eventId: "raid" },
+        { eventSourceId: "twitch", eventId: "raid-sent-off" }
     ],
     comparisonTypes: [
         ComparisonType.IS,
@@ -19,7 +20,6 @@ module.exports = {
     ],
     valueType: "number",
     predicate: (filterSettings, eventData) => {
-
         const { comparisonType, value } = filterSettings;
         const { eventMeta } = eventData;
 
