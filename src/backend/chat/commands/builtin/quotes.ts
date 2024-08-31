@@ -277,11 +277,6 @@ export const QuotesManagementSystemCommand: SystemCommand<{
 
             switch (triggeredArg) {
                 case "add": {
-                    if (args.length < 3) {
-                        await twitchChat.sendChatMessage(`Please provide some quote text!`);
-                        return resolve();
-                    }
-
                     const channelData = await TwitchApi.channels.getChannelInformation();
 
                     const currentGameName = channelData && channelData.gameName ? channelData.gameName : "Unknown game";
@@ -291,6 +286,11 @@ export const QuotesManagementSystemCommand: SystemCommand<{
                         if (!args[1].includes("@")) { 
                             args.splice(1,0,`@${channelData.displayName}`)
                         }
+                    }
+
+                    if (args.length < 3) {
+                        await twitchChat.sendChatMessage(`Please provide some quote text!`);
+                        return resolve();
                     }
 
                     const newQuote = {
