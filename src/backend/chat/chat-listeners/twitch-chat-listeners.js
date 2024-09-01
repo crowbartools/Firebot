@@ -202,7 +202,7 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
         } catch (error) {
             logger.error("Failed to parse resub message", error);
         }
-        viewerDatabase.calculateAutoRanksByName(subInfo.userId);
+        viewerDatabase.calculateAutoRanks(subInfo.userId);
     });
 
     streamerChatClient.onCommunitySub((_channel, _user, subInfo) => {
@@ -225,7 +225,7 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
             subInfo.months,
             subInfo.streak ?? 1
         );
-        viewerDatabase.calculateAutoRanksByName(subInfo.userId);
+        viewerDatabase.calculateAutoRanks(subInfo.userId);
     });
 
     streamerChatClient.onGiftPaidUpgrade((_channel, _user, subInfo, msg) => {
@@ -236,7 +236,7 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
             subInfo.gifterDisplayName,
             subInfo.plan
         );
-        viewerDatabase.calculateAutoRanksByName(subInfo.userId);
+        viewerDatabase.calculateAutoRanks(subInfo.userId);
     });
 
     streamerChatClient.onPrimePaidUpgrade((_channel, _user, subInfo, msg) => {
@@ -246,6 +246,6 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
             subInfo.displayName,
             subInfo.plan
         );
-        viewerDatabase.calculateAutoRanksByName(subInfo.userId);
+        viewerDatabase.calculateAutoRanks(subInfo.userId);
     });
 };
