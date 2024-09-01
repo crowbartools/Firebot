@@ -9,6 +9,7 @@ triggers[EffectTrigger.EVENT] = [
     "twitch:channel-poll-end",
     "twitch:channel-poll-progress"
 ];
+triggers[EffectTrigger.MANUAL] = true;
 
 // From ../../../../events/twitch-events/poll.ts mapChoices(...)
 type PollChoice = {
@@ -20,16 +21,12 @@ type PollChoice = {
 
 const model: ReplaceVariable = {
     definition: {
-        handle: "pollChoices[index|points|title|votes|count|raw, sortOrder, choiceIndex]",
-        description: 'Returns the choices available in the poll that triggered the event. sortOrder defaults to the order as presented to users (index), and choiceIndex defaults to `0` which will return the array of choices.',
+        handle: "pollChoices",
+        description: 'Returns an array of objects representing the choices in the poll that triggered the event, or an empty array if the trigger lacks poll info. Properties will include `index` and `title`, and *may* include `points` and `votes`.',
         triggers: triggers,
         categories: [VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.ARRAY, OutputDataType.NUMBER, OutputDataType.OBJECT, OutputDataType.TEXT],
         examples: [
-            {
-                usage: "pollChoices",
-                description: "Gets the raw array of poll choices in their original order. Properties will include `index` and `title`, and *may* include `points` and `votes`."
-            },
             {
                 usage: "pollChoices[count]",
                 description: "Gets the number of poll choices that are/were available to chose from, or `-1` if no polling information was provided in the trigger."

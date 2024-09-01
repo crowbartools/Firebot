@@ -583,7 +583,7 @@ module.exports = {
                     { id: "122", title: "Test Choice 2" },
                     { id: "123", title: "Test Choice 3" }
                 ],
-                title: "Test Poll name"
+                title: "Test Poll Name"
             },
             activityFeed: {
                 icon: "fad fa-poll-h",
