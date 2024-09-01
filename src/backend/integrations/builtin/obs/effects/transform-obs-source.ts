@@ -10,7 +10,7 @@ export const TransformSourceEffectType: EffectType<{
     isTransformingPosition: boolean;
     isTransformingScale: boolean;
     isTransformingRotation: boolean;
-    positionalAlignment: number;
+    alignment: number;
     startTransform: Record<string, string>;
     endTransform: Record<string, string>;
 }> = {
@@ -76,8 +76,8 @@ export const TransformSourceEffectType: EffectType<{
             </eos-container>
             <eos-container header="Positional Alignment" pad-top="true">
                 <dropdown-select
-                    options="positionalAlignmentOptions"
-                    selected="effect.positionalAlignment"
+                    options="alignmentOptions"
+                    selected="effect.alignment"
                     placeholder="Unchanged" />
             </eos-container>
             <eos-container header="Transform" pad-top="true">
@@ -165,7 +165,7 @@ export const TransformSourceEffectType: EffectType<{
 
         $scope.scenes = [];
         $scope.sceneItems = [];
-        $scope.positionalAlignmentOptions = Object.freeze({
+        $scope.alignmentOptions = Object.freeze({
             [5]: "Top Left",
             [4]: "Top",
             [6]: "Top Right",
@@ -228,6 +228,7 @@ export const TransformSourceEffectType: EffectType<{
         if (isNaN(Number(effect.duration))) {
             effect.duration = 0;
         }
+        const alignment = effect.alignment ? Number(effect.alignment) : undefined;
         const parsedStart: Record<string, number> = {};
         const parsedEnd: Record<string, number> = {};
         const transformKeys: Array<OBSSourceTransformKeys> = [];
@@ -263,7 +264,8 @@ export const TransformSourceEffectType: EffectType<{
             parsedStart,
             parsedEnd,
             effect.easeIn,
-            effect.easeOut
+            effect.easeOut,
+            alignment
         );
 
         return true;

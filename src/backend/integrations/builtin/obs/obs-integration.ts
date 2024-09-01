@@ -23,7 +23,7 @@ import { CreateRecordChapter } from "./effects/create-recording-chapter";
 import { ToggleSourceVisibilityEffectType } from "./effects/toggle-obs-source-visibility";
 import { ToggleSourceFilterEffectType } from "./effects/toggle-obs-source-filter";
 import { ToggleSourceMutedEffectType } from "./effects/toggle-obs-source-muted";
-import { TransformSourceEffectType } from "./effects/transform-obs-source-scale";
+import { TransformSourceEffectType } from "./effects/transform-obs-source";
 import { StartStreamEffectType } from "./effects/start-stream";
 import { StopStreamEffectType } from "./effects/stop-stream";
 import { StartVirtualCamEffectType } from "./effects/start-virtual-cam";

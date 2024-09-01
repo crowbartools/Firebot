@@ -1099,16 +1099,15 @@ function getLerpedCallsArray(
     return calls;
 }
 
-export function getOffsetMultipliersFromAlignment(alignment: number) {
-    const offsets = [
+export const getOffsetMultipliersFromAlignment = (alignment: number) => (
+    [
         alignment % 4, // X position, 0 if center, 1 if left, 2 if right
         Math.floor(alignment / 4) // Y position, 0 if center, 1 if top, 2 if bottom
     ].map(offset =>
         // Convert to usable offset multiplier
         [0.5, 0, 1][offset]
-    );
-    return offsets;
-}
+    )
+);
 
 export async function transformSceneItem(
     sceneName: string,
@@ -1118,7 +1117,7 @@ export async function transformSceneItem(
     transformEnd: Record<string, number>,
     easeIn: boolean,
     easeOut: boolean,
-    positionalAlignment?: number
+    alignment?: number
 ) {
     try {
         const currentTransform = (await obs.call("GetSceneItemTransform", {
@@ -1127,21 +1126,24 @@ export async function transformSceneItem(
         })).sceneItemTransform;
 
         // If anchor change, update transformStart to account
-        if (positionalAlignment && positionalAlignment !== currentTransform.alignment) {
-            const [currentXOffset, currentYOffset] = getOffsetMultipliersFromAlignment(Number(currentTransform.alignment));
-            const [endXOffset, endYOffset] = getOffsetMultipliersFromAlignment(Number(positionalAlignment));
+        const currentAlignment = Number(currentTransform.alignment);
+        if (!isNaN(alignment) && alignment !== currentAlignment) {
+            const [currentXOffset, currentYOffset] = getOffsetMultipliersFromAlignment(currentAlignment);
+            const [endXOffset, endYOffset] = getOffsetMultipliersFromAlignment(alignment);
 
-            transformStart.alignment = positionalAlignment;
+            transformStart.alignment = alignment;
             if (!transformStart.hasOwnProperty("positionX")) {
                 const posX = Number(currentTransform.positionX);
-                transformStart.positionX = posX + posX * (currentXOffset - endXOffset);
+                const width = Number(currentTransform.width);
+                transformStart.positionX = posX + width * (endXOffset - currentXOffset);
             }
             if (!transformEnd.hasOwnProperty("positionX")) {
                 transformEnd.positionX = transformStart.positionX;
             }
             if (!transformStart.hasOwnProperty("positionY")) {
                 const posY = Number(currentTransform.positionY);
-                transformStart.positionY = posY + posY * (currentYOffset - endYOffset);
+                const height = Number(currentTransform.height);
+                transformStart.positionY = posY + height * (endYOffset - currentYOffset);
             }
             if (!transformEnd.hasOwnProperty("positionY")) {
                 transformEnd.positionY = transformStart.positionY;
