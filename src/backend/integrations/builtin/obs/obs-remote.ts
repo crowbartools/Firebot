@@ -1108,6 +1108,17 @@ function getLerpedCallsArray(
     return calls;
 }
 
+export function getOffsetMultipliersFromAlignment(alignment: number) {
+    const offsets = [
+        alignment % 4, // X position, 0 if center, 1 if left, 2 if right
+        Math.floor(alignment / 4) // Y position, 0 if center, 1 if top, 2 if bottom
+    ].map(offset =>
+        // Convert to usable offset multiplier
+        [0.5, 0, 1][offset]
+    );
+    return offsets;
+}
+
 export async function transformSceneItem(
     sceneName: string,
     sceneItemId: number,
@@ -1115,13 +1126,36 @@ export async function transformSceneItem(
     transformStart: Record<string, number>,
     transformEnd: Record<string, number>,
     easeIn: boolean,
-    easeOut: boolean
+    easeOut: boolean,
+    positionalAlignment?: number
 ) {
     try {
         const currentTransform = (await obs.call("GetSceneItemTransform", {
             sceneName,
             sceneItemId
         })).sceneItemTransform;
+
+        // If anchor change, update transformStart to account
+        if (positionalAlignment && positionalAlignment !== currentTransform.alignment) {
+            const [currentXOffset, currentYOffset] = getOffsetMultipliersFromAlignment(Number(currentTransform.alignment));
+            const [endXOffset, endYOffset] = getOffsetMultipliersFromAlignment(Number(positionalAlignment));
+
+            transformStart.alignment = positionalAlignment;
+            if (!transformStart.hasOwnProperty("positionX")) {
+                const posX = Number(currentTransform.positionX);
+                transformStart.positionX = posX + posX * (currentXOffset - endXOffset);
+            }
+            if (!transformEnd.hasOwnProperty("positionX")) {
+                transformEnd.positionX = transformStart.positionX;
+            }
+            if (!transformStart.hasOwnProperty("positionY")) {
+                const posY = Number(currentTransform.positionY);
+                transformStart.positionY = posY + posY * (currentYOffset - endYOffset);
+            }
+            if (!transformEnd.hasOwnProperty("positionY")) {
+                transformEnd.positionY = transformStart.positionY;
+            }
+        }
 
         Object.keys(transformEnd).forEach((key) => {
             if (!transformStart.hasOwnProperty(key)) {
@@ -1133,6 +1167,7 @@ export async function transformSceneItem(
         });
 
         const calls = getLerpedCallsArray(sceneName, sceneItemId, transformStart, transformEnd, duration, easeIn, easeOut);
+
         await obs.callBatch(calls);
     } catch (error) {
         logger.error("Failed to transform scene item", error);

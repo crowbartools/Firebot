@@ -1,7 +1,7 @@
 import { EffectType } from "../../../../../types/effects";
 import { OBSSceneItem, OBSSourceTransformKeys, transformSceneItem } from "../obs-remote";
 
-export const TransformSourceScaleEffectType: EffectType<{
+export const TransformSourceEffectType: EffectType<{
     sceneName?: string;
     sceneItem?: OBSSceneItem;
     duration: string | number;
@@ -10,6 +10,7 @@ export const TransformSourceScaleEffectType: EffectType<{
     isTransformingPosition: boolean;
     isTransformingScale: boolean;
     isTransformingRotation: boolean;
+    positionalAlignment: number;
     startTransform: Record<string, string>;
     endTransform: Record<string, string>;
 }> = {
@@ -52,110 +53,129 @@ export const TransformSourceScaleEffectType: EffectType<{
                 No transformable sources found. {{ isObsConfigured ? "Is OBS running?" : "Have you configured the OBS integration?" }}
             </div>
         </eos-container>
-        <eos-container ng-if="effect.sceneItem != null" header="Duration" pad-top="true">
-            <firebot-input
-                input-type="number"
-                input-title="Duration"
-                placeholder-text="seconds"
-                model="effect.duration"
-                style="margin-bottom: 20px;" />
-            <div style="display: flex; gap: 20px;">
+        <div ng-if="effect.sceneItem != null">
+            <eos-container header="Duration" pad-top="true">
+                <firebot-input
+                    input-type="number"
+                    input-title="Duration"
+                    placeholder-text="seconds"
+                    model="effect.duration"
+                    style="margin-bottom: 20px;" />
+                <div style="display: flex; gap: 20px;">
+                    <firebot-checkbox 
+                        label="Ease-In" 
+                        tooltip="Smooth the start of the animation" 
+                        model="effect.easeIn"
+                        style="flex-basis: 50%" />
+                    <firebot-checkbox 
+                        label="Ease-Out" 
+                        tooltip="Smooth the end of the animation" 
+                        model="effect.easeOut"
+                        style="flex-basis: 50%" />
+                </div>
+            </eos-container>
+            <eos-container header="Positional Alignment" pad-top="true">
+                <dropdown-select
+                    options="positionalAlignmentOptions"
+                    selected="effect.positionalAlignment"
+                    placeholder="Unchanged" />
+            </eos-container>
+            <eos-container header="Transform" pad-top="true">
                 <firebot-checkbox 
-                    label="Ease-In" 
-                    tooltip="Smooth the start of the animation" 
-                    model="effect.easeIn"
-                    style="flex-basis: 50%" />
+                    label="Position" 
+                    tooltip="Transform the position of the OBS source" 
+                    model="effect.isTransformingPosition" />
+                <div ng-if="effect.isTransformingPosition" style="margin-top: 10px">
+                    <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+                        <firebot-input
+                            input-title="Start X"
+                            placeholder-text="Current X"
+                            model="effect.startTransform.positionX"
+                            style="flex-basis: 50%" />
+                        <firebot-input
+                            input-title="Start Y"
+                            placeholder-text="Current Y"
+                            model="effect.startTransform.positionY"
+                            style="flex-basis: 50%" />
+                    </div>
+                    <div style="display: flex; gap: 20px; margin-bottom: 20px">
+                        <firebot-input
+                            input-title="End X"
+                            model="effect.endTransform.positionX"
+                            style="flex-basis: 50%" />
+                        <firebot-input
+                            input-title="End Y"
+                            model="effect.endTransform.positionY"
+                            style="flex-basis: 50%" />
+                    </div>
+                </div>
                 <firebot-checkbox 
-                    label="Ease-Out" 
-                    tooltip="Smooth the end of the animation" 
-                    model="effect.easeOut"
-                    style="flex-basis: 50%" />
-            </div>
-        </eos-container>
-        <eos-container ng-if="effect.sceneItem != null" header="Transform" pad-top="true">
-            <firebot-checkbox 
-                label="Position" 
-                tooltip="Transform the position of the OBS source" 
-                model="effect.isTransformingPosition" />
-            <div ng-if="effect.isTransformingPosition" style="margin-top: 10px">
-                <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-                    <firebot-input
-                        input-title="Start X"
-                        placeholder-text="Current X"
-                        model="effect.startTransform.positionX"
-                        style="flex-basis: 50%" />
-                    <firebot-input
-                        input-title="Start Y"
-                        placeholder-text="Current Y"
-                        model="effect.startTransform.positionY"
-                        style="flex-basis: 50%" />
+                    label="Scale" 
+                    tooltip="Transform the scale of the OBS source" 
+                    model="effect.isTransformingScale" />
+                <div ng-if="effect.isTransformingScale" style="margin-bottom: 20px">
+                    <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+                        <firebot-input
+                            input-title="Start X Scale"
+                            placeholder-text="Current X Scale"
+                            model="effect.startTransform.scaleX"
+                            style="flex-basis: 50%" />
+                        <firebot-input
+                            input-title="Start Y Scale"
+                            placeholder-text="Current Y Scale"
+                            model="effect.startTransform.scaleY"
+                            style="flex-basis: 50%" />
+                    </div>
+                    <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+                        <firebot-input
+                            input-title="End X Scale"
+                            placeholder-text="0.0 - 1.0"
+                            model="effect.endTransform.scaleX"
+                            style="flex-basis: 50%" />
+                        <firebot-input
+                            input-title="End Y Scale"
+                            placeholder-text="0.0 - 1.0"
+                            model="effect.endTransform.scaleY"
+                            style="flex-basis: 50%" />
+                    </div>
                 </div>
-                <div style="display: flex; gap: 20px; margin-bottom: 20px">
-                    <firebot-input
-                        input-title="End X"
-                        model="effect.endTransform.positionX"
-                        style="flex-basis: 50%" />
-                    <firebot-input
-                        input-title="End Y"
-                        model="effect.endTransform.positionY"
-                        style="flex-basis: 50%" />
+                <firebot-checkbox 
+                    label="Rotation" 
+                    tooltip="Transform the rotation of the OBS source" 
+                    model="effect.isTransformingRotation" />
+                <div ng-if="effect.isTransformingRotation" style="margin-bottom: 20px">
+                    <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+                        <firebot-input
+                            input-title="Start Rotation"
+                            placeholder-text="Current Rotation"
+                            model="effect.startTransform.rotation"
+                            style="flex-basis: 50%" />
+                        <firebot-input
+                            input-title="End Rotation"
+                            placeholder-text="rotation in degrees"
+                            model="effect.endTransform.rotation"
+                            style="flex-basis: 50%" />
+                    </div>
                 </div>
-            </div>
-            <firebot-checkbox 
-                label="Scale" 
-                tooltip="Transform the scale of the OBS source" 
-                model="effect.isTransformingScale" />
-            <div ng-if="effect.isTransformingScale" style="margin-bottom: 20px">
-                <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-                    <firebot-input
-                        input-title="Start X Scale"
-                        placeholder-text="Current X Scale"
-                        model="effect.startTransform.scaleX"
-                        style="flex-basis: 50%" />
-                    <firebot-input
-                        input-title="Start Y Scale"
-                        placeholder-text="Current Y Scale"
-                        model="effect.startTransform.scaleY"
-                        style="flex-basis: 50%" />
-                </div>
-                <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-                    <firebot-input
-                        input-title="End X Scale"
-                        placeholder-text="0.0 - 1.0"
-                        model="effect.endTransform.scaleX"
-                        style="flex-basis: 50%" />
-                    <firebot-input
-                        input-title="End Y Scale"
-                        placeholder-text="0.0 - 1.0"
-                        model="effect.endTransform.scaleY"
-                        style="flex-basis: 50%" />
-                </div>
-            </div>
-            <firebot-checkbox 
-                label="Rotation" 
-                tooltip="Transform the rotation of the OBS source" 
-                model="effect.isTransformingRotation" />
-            <div ng-if="effect.isTransformingRotation" style="margin-bottom: 20px">
-                <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-                    <firebot-input
-                        input-title="Start Rotation"
-                        placeholder-text="Current Rotation"
-                        model="effect.startTransform.rotation"
-                        style="flex-basis: 50%" />
-                    <firebot-input
-                        input-title="End Rotation"
-                        placeholder-text="rotation in degrees"
-                        model="effect.endTransform.rotation"
-                        style="flex-basis: 50%" />
-                </div>
-            </div>
-        </eos-container>
+            </eos-container>
+        </div>
     `,
     optionsController: ($scope: any, backendCommunicator: any) => {
         $scope.isObsConfigured = false;
 
         $scope.scenes = [];
         $scope.sceneItems = [];
+        $scope.positionalAlignmentOptions = Object.freeze({
+            [5]: "Top Left",
+            [4]: "Top",
+            [6]: "Top Right",
+            [1]: "Center Left",
+            [0]: "Center",
+            [2]: "Center Right",
+            [8]: "Bottom",
+            [9]: "Bottom Left",
+            [10]: "Bottom Right"
+        });
 
         $scope.selectScene = (sceneName: string) => {
             $scope.effect.sceneItem = undefined;
