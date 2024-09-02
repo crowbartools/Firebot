@@ -37,7 +37,7 @@ const model: ReplaceVariable = {
             },
             {
                 usage: "pollChoices[votes, index, 1]",
-                description: "Gets the total number of votes cast for the first option listed, or `-1` if the trigger lacks voting information such as with a Poll Started event."
+                description: "Gets the total number of votes cast for the first option listed, or `-1` if the trigger lacks voting information such as with a Poll Started trigger."
             },
             {
                 usage: "pollChoices[points, null, 4]",
@@ -49,7 +49,7 @@ const model: ReplaceVariable = {
             },
             {
                 usage: "pollChoices[raw, index, 2]",
-                description: "Gets an object representing the second poll choice, or `null` if the trigger lacks polling information."
+                description: "Gets an object representing the second poll choice presented, or `null` if the trigger lacks polling information."
             }
         ]
     },
@@ -70,23 +70,23 @@ const model: ReplaceVariable = {
         }
 
         // Handle the property selector parameter first. Immediately handle "count", or error out if invalid.
-        if (args.length >= 1 && args[0] !== null && `${args[0]}`.toLowerCase() !== "null") {
+        if (args.length >= 1 && args[0] && `${args[0]}`.toLowerCase() !== "null") {
             propertySelector = `${args[0]}`.toLowerCase();
             // Short-circuit count here for the sake of simplicity
             if (propertySelector === "count") {
                 return pollChoices.length;
-            } else if (!(propertySelector === "index" || propertySelector === "points" || propertySelector === "raw" || propertySelector === "votes")) {
+            } else if (!(propertySelector === "index" || propertySelector === "points" || propertySelector === "raw" || propertySelector === "title" || propertySelector === "votes")) {
                 logger.warn(`$pollChoices invalid property selector received: ${propertySelector}`);
                 return null;
             }
         }
 
-        // Next handle the sort parameter in-place
+        // Next handle the sort parameter in-place. Only "votes" should result in a different sort order.
         if (args.length >= 2 && args[1] && `${args[1]}`.toLowerCase() === "votes") {
             pollChoices.sort((lhs, rhs) => rhs.votes - lhs.votes);
         }
 
-        // Lastly, handle the desired index parameter. Immediately error out if invalid.
+        // Lastly, handle the desired index parameter, and interpret it as a 1-based array index. Immediately error out if invalid.
         if (args.length >= 3 && args[2] && `${args[2]}`.toLowerCase() !== "null") {
             desiredIndex = Number(args[2]);
             if (!Number.isInteger(desiredIndex) || desiredIndex < 0 || desiredIndex > pollChoices.length) {
