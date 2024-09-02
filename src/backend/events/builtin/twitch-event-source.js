@@ -7,7 +7,7 @@ module.exports = {
     events: [
         {
             id: "raid",
-            name: "Incoming Raid",
+            name: "Raid Incoming",
             description: "When someone raids your channel.",
             cached: true,
             cacheMetaKey: "username",
@@ -18,7 +18,7 @@ module.exports = {
                 viewerCount: 5
             },
             activityFeed: {
-                icon: "fad fa-siren-on",
+                icon: "fad fa-portal-enter",
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
                     return `**${eventData.userDisplayName}${
@@ -29,8 +29,8 @@ module.exports = {
         },
         {
             id: "raid-sent-off",
-            name: "Raid Sent Off",
-            description: "When your raid finishes sending off",
+            name: "Raid Outgoing Completed",
+            description: "When your outgoing raid finishes.",
             cached: false,
             cacheMetaKey: "fromUsername",
             manualMetadata: {
@@ -43,7 +43,7 @@ module.exports = {
                 viewerCount: 5
             },
             activityFeed: {
-                icon: "fad fa-siren-on",
+                icon: "fad fa-portal-exit",
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
                     return `**${eventData.userDisplayName}${
