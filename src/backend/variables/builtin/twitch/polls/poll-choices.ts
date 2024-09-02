@@ -58,6 +58,7 @@ const model: ReplaceVariable = {
         let desiredIndex = 0;
         const pollChoices = (trigger.metadata?.eventData?.choices as PollChoice[] ?? []).map((choice, index) => {
             return {
+                id: choice.id,
                 index: index + 1,
                 title: choice.title,
                 points: choice.channelPointsVotes,

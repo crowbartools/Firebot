@@ -579,9 +579,9 @@ module.exports = {
             queued: false,
             manualMetadata: {
                 choices: [
-                    { id: "121", title: "Test Choice 1" },
-                    { id: "122", title: "Test Choice 2" },
-                    { id: "123", title: "Test Choice 3" }
+                    { id: "c0113c14-144e-475c-9647-a65f9177665d", title: "Test Choice 1" },
+                    { id: "6d86797a-d88a-4fc2-b4f6-1895afdc503e", title: "Test Choice 2" },
+                    { id: "791bc06c-c4d5-4c74-b950-8596c04dbb0d", title: "Test Choice 3" }
                 ],
                 title: "Test Poll Name"
             },
@@ -600,9 +600,9 @@ module.exports = {
             queued: false,
             manualMetadata: {
                 choices: [
-                    { id: "123", title: "Test Choice 1", totalVotes: 120, channelPointsVotes: 60 },
-                    { id: "124", title: "Test Choice 2", totalVotes: 140, channelPointsVotes: 40 },
-                    { id: "125", title: "Test Choice 3", totalVotes: 80, channelPointsVotes: 70 }
+                    { id: "c0113c14-144e-475c-9647-a65f9177665d", title: "Test Choice 1", totalVotes: 120, channelPointsVotes: 60 },
+                    { id: "6d86797a-d88a-4fc2-b4f6-1895afdc503e", title: "Test Choice 2", totalVotes: 140, channelPointsVotes: 40 },
+                    { id: "791bc06c-c4d5-4c74-b950-8596c04dbb0d", title: "Test Choice 3", totalVotes: 80, channelPointsVotes: 70 }
                 ],
                 title: "Test Poll Name",
                 winningChoiceName: "Test Choice 2",
@@ -623,9 +623,9 @@ module.exports = {
             queued: false,
             manualMetadata: {
                 choices: [
-                    { id: "126", title: "Test Choice 1", totalVotes: 125, channelPointsVotes: 62 },
-                    { id: "127", title: "Test Choice 2", totalVotes: 145, channelPointsVotes: 42 },
-                    { id: "128", title: "Test Choice 3", totalVotes: 85, channelPointsVotes: 72 }
+                    { id: "c0113c14-144e-475c-9647-a65f9177665d", title: "Test Choice 1", totalVotes: 125, channelPointsVotes: 62 },
+                    { id: "6d86797a-d88a-4fc2-b4f6-1895afdc503e", title: "Test Choice 2", totalVotes: 145, channelPointsVotes: 42 },
+                    { id: "791bc06c-c4d5-4c74-b950-8596c04dbb0d", title: "Test Choice 3", totalVotes: 85, channelPointsVotes: 72 }
                 ],
                 title: "Test Poll Name",
                 winningChoiceName: "Test Choice 2",
