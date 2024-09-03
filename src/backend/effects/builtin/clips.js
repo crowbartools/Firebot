@@ -282,13 +282,13 @@ const clip = {
                     (rotation ? `transform: rotate(${rotation});` : '');
 
                 const videoElement = `
-                    <video autoplay
-                        src="${clipVideoUrl}"
+                    <iframe "style="border: none;${styles}"
+                        src="${clipVideoUrl}&parent=${window.location.hostname}&autoplay=true"
                         height="${height || ""}"
                         width="${width || ""}"
-                        style="border: none;${styles}"
-                        onloadstart="this.volume=${volume}"
-                        allowfullscreen="false" />
+                        frameBorder=0
+                        allowfullscreen>
+                    </iframe>
                 `;
 
                 const positionData = {
