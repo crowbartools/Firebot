@@ -578,11 +578,14 @@ module.exports = {
             cached: false,
             queued: false,
             manualMetadata: {
-                choices: [
-                    { id: "c0113c14-144e-475c-9647-a65f9177665d", title: "Test Choice 1" },
-                    { id: "6d86797a-d88a-4fc2-b4f6-1895afdc503e", title: "Test Choice 2" },
-                    { id: "791bc06c-c4d5-4c74-b950-8596c04dbb0d", title: "Test Choice 3" }
-                ],
+                choices: {
+                    options: { hideVotes: true },
+                    type: "poll-choice-list",
+                    value: [
+                        { id: "c0113c14-144e-475c-9647-a65f9177665d", title: "Test Choice 1" },
+                        { id: "6d86797a-d88a-4fc2-b4f6-1895afdc503e", title: "Test Choice 2" },
+                        { id: "791bc06c-c4d5-4c74-b950-8596c04dbb0d", title: "Test Choice 3" }
+                    ]},
                 title: "Test Poll Name"
             },
             activityFeed: {
@@ -599,11 +602,13 @@ module.exports = {
             cached: false,
             queued: false,
             manualMetadata: {
-                choices: [
-                    { id: "c0113c14-144e-475c-9647-a65f9177665d", title: "Test Choice 1", totalVotes: 120, channelPointsVotes: 60 },
-                    { id: "6d86797a-d88a-4fc2-b4f6-1895afdc503e", title: "Test Choice 2", totalVotes: 140, channelPointsVotes: 40 },
-                    { id: "791bc06c-c4d5-4c74-b950-8596c04dbb0d", title: "Test Choice 3", totalVotes: 80, channelPointsVotes: 70 }
-                ],
+                choices: {
+                    type: "poll-choice-list",
+                    value: [
+                        { id: "c0113c14-144e-475c-9647-a65f9177665d", title: "Test Choice 1", totalVotes: 120, channelPointsVotes: 60 },
+                        { id: "6d86797a-d88a-4fc2-b4f6-1895afdc503e", title: "Test Choice 2", totalVotes: 140, channelPointsVotes: 40 },
+                        { id: "791bc06c-c4d5-4c74-b950-8596c04dbb0d", title: "Test Choice 3", totalVotes: 80, channelPointsVotes: 70 }
+                    ]},
                 title: "Test Poll Name",
                 winningChoiceName: "Test Choice 2",
                 winningChoiceVotes: 140
@@ -622,11 +627,13 @@ module.exports = {
             cached: false,
             queued: false,
             manualMetadata: {
-                choices: [
-                    { id: "c0113c14-144e-475c-9647-a65f9177665d", title: "Test Choice 1", totalVotes: 125, channelPointsVotes: 62 },
-                    { id: "6d86797a-d88a-4fc2-b4f6-1895afdc503e", title: "Test Choice 2", totalVotes: 145, channelPointsVotes: 42 },
-                    { id: "791bc06c-c4d5-4c74-b950-8596c04dbb0d", title: "Test Choice 3", totalVotes: 85, channelPointsVotes: 72 }
-                ],
+                choices: {
+                    type: "poll-choice-list",
+                    value: [
+                        { id: "c0113c14-144e-475c-9647-a65f9177665d", title: "Test Choice 1", totalVotes: 125, channelPointsVotes: 62 },
+                        { id: "6d86797a-d88a-4fc2-b4f6-1895afdc503e", title: "Test Choice 2", totalVotes: 145, channelPointsVotes: 42 },
+                        { id: "791bc06c-c4d5-4c74-b950-8596c04dbb0d", title: "Test Choice 3", totalVotes: 85, channelPointsVotes: 72 }
+                    ]},
                 title: "Test Poll Name",
                 winningChoiceName: "Test Choice 2",
                 winningChoiceVotes: 145
