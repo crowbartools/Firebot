@@ -13,13 +13,13 @@ const model: ReplaceVariable = {
         description: "The status of the effect queue.",
         triggers: triggers,
         categories: [VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.BOOLEAN, OutputDataType.NULL]
     },
     evaluator: (trigger) => {
         const queueId = trigger?.metadata?.eventData?.effectQueueId;
         const effectQueue = effectQueueManager.getItem(queueId);
 
-        return effectQueue?.active ?? "Unknown";
+        return effectQueue?.active ?? null;
     }
 };
 
