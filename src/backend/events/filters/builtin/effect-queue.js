@@ -23,15 +23,13 @@ module.exports = {
         return new Promise((resolve) => {
             resolve(
                 effectQueuesService.getEffectQueues().find((c) => c.id === filterSettings.value)?.name ??
-                    "Unknown Currency"
+                    "Unknown Effect Queue"
             );
         });
     },
     predicate: (filterSettings, eventData) => {
         const { comparisonType, value } = filterSettings;
         const { eventMeta } = eventData;
-        console.log("-".repeat(50));
-        console.log(eventMeta);
 
         const actual = eventMeta.effectQueueId;
         const expected = value;
