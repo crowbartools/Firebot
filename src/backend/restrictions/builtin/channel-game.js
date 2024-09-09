@@ -66,7 +66,6 @@ const model = {
     },
     predicate: (triggerData, restrictionData) => {
         return new Promise(async (resolve, reject) => {
-
             const expectedGameId = restrictionData.gameId;
             if (expectedGameId == null) {
                 return resolve();
@@ -92,7 +91,12 @@ const model = {
             if (passed) {
                 resolve();
             } else {
-                reject(`Channel category/game isn't set to the correct category/game.`);
+                const {
+                    name: expectedGameName
+                } = await TwitchApi.categories.getCategoryById(expectedGameId);
+                reject(
+                    `Channel category/game isn't set to ${expectedGameName ?? "the correct category/game"}.`
+                );
             }
         });
     }
