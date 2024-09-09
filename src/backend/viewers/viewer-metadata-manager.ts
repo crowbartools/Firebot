@@ -135,7 +135,7 @@ class ViewerMetadataManager extends TypedEmitter<Events> {
             };
 
             eventManager.triggerEvent("firebot", "viewer-metadata-updated", eventData);
-            
+
             this.emit(eventType, eventData);
         } catch (error) {
             logger.error("Unable to set metadata for viewer");
@@ -169,7 +169,7 @@ class ViewerMetadataManager extends TypedEmitter<Events> {
         };
 
         eventManager.triggerEvent("firebot", "viewer-metadata-updated", eventData);
-            
+
         this.emit("deleted-item", eventData);
     }
 }
