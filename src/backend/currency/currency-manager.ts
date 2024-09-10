@@ -264,7 +264,7 @@ class CurrencyManager {
             let basePayout = currency.payout;
             if (!connectionManager.streamerIsOnline()) {
                 if (currency.offline == null || currency.offline === 0) {
-                    return;
+                    continue;
                 }
 
                 basePayout = currency.offline;
