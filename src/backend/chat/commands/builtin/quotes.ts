@@ -281,11 +281,10 @@ export const QuotesManagementSystemCommand: SystemCommand<{
 
                     const currentGameName = channelData && channelData.gameName ? channelData.gameName : "Unknown game";
                     
-                    // //If no @ is included in the originator arg, set to @streamerName and the rest is the quote
-                    if (commandOptions.defaultStreamerAttribution) {
-                        if (!args[1].includes("@")) { 
+                    const shouldInsertStreamerUsername = args.length === 1 || (commandOptions.defaultStreamerAttribution && !args[1].includes("@"));
+                    // If no @ is included in the originator arg, set to @streamerName and the rest is the quote
+                    if (shouldInsertStreamerUsername) {
                             args.splice(1,0,`@${channelData.displayName}`)
-                        }
                     }
 
                     if (args.length < 3) {
