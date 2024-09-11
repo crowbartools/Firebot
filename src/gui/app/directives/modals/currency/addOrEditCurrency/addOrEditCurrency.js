@@ -56,6 +56,10 @@
                     return;
                 }
 
+                if (!$ctrl.currency.offline || $ctrl.currency.offline === "") {
+                    $ctrl.currency.offline = undefined;
+                }
+
                 logger.debug($ctrl.currency);
 
                 const action = $ctrl.isNewCurrency ? "add" : "update";
