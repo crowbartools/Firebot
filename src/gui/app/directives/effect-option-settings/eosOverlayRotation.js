@@ -10,7 +10,7 @@
             },
             template: `
             <eos-container header="Rotation" pad-top="$ctrl.padTop">
-                <div style="display: flex; flex-direction: row; width: 100%; height: 36px; align-items: center;">
+                <div style="display: flex; flex-direction: row; width: 100%; align-items: center;">
                     <firebot-input
                         style="flex-grow:1"
                         input-title="Rotation"
