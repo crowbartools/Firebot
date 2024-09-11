@@ -32,7 +32,7 @@ const model = {
         const restriction = $scope.restriction;
 
         $scope.games = [];
-        $scope.searchGames = function(gameQuery) {
+        $scope.searchGames = function (gameQuery) {
             $q.when(backendCommunicator.fireEventAsync("search-twitch-games", gameQuery))
                 .then(games => {
                     if (games != null) {
@@ -48,7 +48,7 @@ const model = {
                 }
             });
 
-        $scope.gameSelected = function(game) {
+        $scope.gameSelected = function (game) {
             if (game != null) {
                 restriction.gameId = game.id;
                 restriction.name = game.name;
@@ -93,7 +93,7 @@ const model = {
             } else {
                 const {
                     name: expectedGameName
-                } = await TwitchApi.categories.getCategoryById(expectedGameId);
+                } = (await TwitchApi.categories.getCategoryById(expectedGameId)) ?? {};
                 reject(
                     `Channel category/game isn't set to ${expectedGameName ?? "the correct category/game"}.`
                 );
