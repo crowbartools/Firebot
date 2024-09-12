@@ -126,7 +126,7 @@
         input-id="chatMessageInput"
       >
         <div class="dropup">
-          <span
+          <div
             class="dropdown-toggle chatter-dropdown"
             data-toggle="dropdown"
             uib-tooltip="Chat as"
@@ -135,7 +135,7 @@
           >
             <span class="ml-4" style="width: 100%; text-align: center">{{cms.chatSender}}</span>
             <div class="fb-arrow down mx-4 mb-1"></div>
-          </span>
+          </div>
           <ul class="dropdown-menu">
             <li ng-click="cms.chatSender = 'Streamer'"><a>Streamer</a></li>
             <li ng-click="cms.chatSender = 'Bot'" ng-show="botLoggedIn">
@@ -204,7 +204,6 @@
       </div>
       <div uib-dropdown>
         <a
-          href
           uib-dropdown-toggle
           class="clickable"
           style="color: white; font-size: 20px; line-height: 1"
@@ -214,7 +213,7 @@
         </a>
         <ul class="dropdown-menu right-justified-dropdown" uib-dropdown-menu>
           <li ng-class="{'disabled': afs.activities.length < 1}">
-            <a href ng-click="afs.toggleMarkAllAcknowledged()"
+            <a ng-click="afs.toggleMarkAllAcknowledged()"
               ><i
                 class="far fa-check-square mr-4"
                 aria-label="Mark all events as acknowledged"
@@ -224,7 +223,7 @@
             >
           </li>
           <li>
-            <a href ng-click="afs.showEditActivityFeedEventsModal()"
+            <a ng-click="afs.showEditActivityFeedEventsModal()"
               ><i class="far fa-toggle-off mr-4" aria-label="Edit events"></i>
               Edit events</a
             >
