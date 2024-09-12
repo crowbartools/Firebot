@@ -30,8 +30,6 @@
                 $scope.hideEventLabel = () => ((parseInt(settings.dashboardActivityFeed.replace("%", "") / 100 * $parent.width())) < 180 ? true : false);
             };
 
-            $scope.threadDetails = null;
-
             function getThreadMessages(threadOrReplyMessageId) {
                 return chatMessagesService.chatQueue.filter((chatItem) => {
                     return chatItem.type === "message" && (chatItem.data.id === threadOrReplyMessageId || chatItem.data.replyParentMessageId === threadOrReplyMessageId || chatItem.data.threadParentMessageId === threadOrReplyMessageId);
@@ -39,10 +37,10 @@
             }
 
             $scope.currentThreadMessages = () => {
-                if (!$scope.threadDetails?.threadParentMessageId) {
+                if (!chatMessagesService.threadDetails?.threadParentMessageId) {
                     return [];
                 }
-                return getThreadMessages($scope.threadDetails.threadParentMessageId);
+                return getThreadMessages(chatMessagesService.threadDetails.threadParentMessageId);
             };
 
             $scope.updateLayoutSettings = (updatedSettings) => {
@@ -134,7 +132,7 @@
 
                 const threadParentId = parentReplyMessage.threadParentMessageId || parentReplyMessage.replyParentMessageId || parentReplyMessage.id;
 
-                $scope.threadDetails = {
+                chatMessagesService.threadDetails = {
                     threadParentMessageId: threadParentId,
                     replyToMessageId: threadOrReplyMessageId,
                     replyToUserDisplayName: parentReplyMessage.username
@@ -142,7 +140,7 @@
             };
 
             $scope.closeThreadPanel = () => {
-                $scope.threadDetails = null;
+                chatMessagesService.threadDetails = null;
             };
 
             $scope.onReplyClicked = function(threadOrReplyMessageId) {
@@ -168,11 +166,11 @@
                 if (chatMessagesService.chatMessage == null || chatMessagesService.chatMessage.length < 1) {
                     return;
                 }
-                chatMessagesService.submitChat(chatMessagesService.chatSender, chatMessagesService.chatMessage, $scope.threadDetails?.replyToMessageId);
+                chatMessagesService.submitChat(chatMessagesService.chatSender, chatMessagesService.chatMessage, chatMessagesService.threadDetails?.replyToMessageId);
                 chatHistory.unshift(chatMessagesService.chatMessage);
                 currrentHistoryIndex = -1;
                 chatMessagesService.chatMessage = "";
-                $scope.threadDetails = null;
+                chatMessagesService.threadDetails = null;
             };
 
             $scope.onMessageFieldUpdate = () => {

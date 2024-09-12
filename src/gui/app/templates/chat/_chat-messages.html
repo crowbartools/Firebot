@@ -42,7 +42,7 @@
         >
       </div>
       <button
-        ng-hide="scrollGlued || threadDetails != null"
+        ng-hide="scrollGlued || cms.threadDetails != null"
         ng-click="scrollGlued = true"
         class="chat-scroll-paused-btn btn-sm clickable mb-4"
       >
@@ -89,7 +89,7 @@
       <div class="chat-autodisconnected" ng-show="cms.autodisconnected">
         Disconnected from chat, trying to reconnect...
       </div>
-      <div ng-if="threadDetails != null" class="thread-wrapper" ng-class="{ 'mt-5': alternateBackgrounds}">
+      <div ng-if="cms.threadDetails != null" class="thread-wrapper" ng-class="{ 'mt-5': alternateBackgrounds}">
         <div class="thread-header">
           <h4><i class="fas" ng-class="currentThreadMessages().length < 2 ? 'fa-reply' : 'fa-comment-alt-lines'" style="margin-right: 10px;"></i>{{currentThreadMessages().length < 2 ? "Reply to" : "Thread"}}</h4>
           <button type="button" class="thread-close-btn clickable" aria-label="Close" ng-click="closeThreadPanel()"><i class="far fa-times"></i></button>
@@ -112,9 +112,9 @@
               chat-size-style="{{customFontSizeStyle}}"
             />
         </div>
-        <div class="thread-replying-to" ng-if="threadDetails.replyToMessageId != threadDetails.threadParentMessageId">
-          <span>Replying to <span style="font-weight: 800">@{{threadDetails.replyToUserDisplayName}}</span></span>
-          <button class="btn btn-link" ng-click="threadDetails.replyToMessageId = threadDetails.threadParentMessageId">Cancel</button>
+        <div class="thread-replying-to" ng-if="cms.threadDetails.replyToMessageId != cms.threadDetails.threadParentMessageId">
+          <span>Replying to <span style="font-weight: 800">@{{cms.threadDetails.replyToUserDisplayName}}</span></span>
+          <button class="btn btn-link" ng-click="cms.threadDetails.replyToMessageId = cms.threadDetails.threadParentMessageId">Cancel</button>
         </div>
       </div>
     </div>
