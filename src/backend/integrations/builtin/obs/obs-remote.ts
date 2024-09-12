@@ -1099,6 +1099,16 @@ function getLerpedCallsArray(
     return calls;
 }
 
+export const getOffsetMultipliersFromAlignment = (alignment: number) => (
+    [
+        alignment % 4, // X position, 0 if center, 1 if left, 2 if right
+        Math.floor(alignment / 4) // Y position, 0 if center, 1 if top, 2 if bottom
+    ].map(offset =>
+        // Convert to usable offset multiplier
+        [0.5, 0, 1][offset]
+    )
+);
+
 export async function transformSceneItem(
     sceneName: string,
     sceneItemId: number,
@@ -1106,13 +1116,39 @@ export async function transformSceneItem(
     transformStart: Record<string, number>,
     transformEnd: Record<string, number>,
     easeIn: boolean,
-    easeOut: boolean
+    easeOut: boolean,
+    alignment?: number
 ) {
     try {
         const currentTransform = (await obs.call("GetSceneItemTransform", {
             sceneName,
             sceneItemId
         })).sceneItemTransform;
+
+        // If anchor change, update transformStart to account
+        const currentAlignment = Number(currentTransform.alignment);
+        if (!isNaN(alignment) && alignment !== currentAlignment) {
+            const [currentXOffset, currentYOffset] = getOffsetMultipliersFromAlignment(currentAlignment);
+            const [endXOffset, endYOffset] = getOffsetMultipliersFromAlignment(alignment);
+
+            transformStart.alignment = alignment;
+            if (!transformStart.hasOwnProperty("positionX")) {
+                const posX = Number(currentTransform.positionX);
+                const width = Number(currentTransform.width);
+                transformStart.positionX = posX + width * (endXOffset - currentXOffset);
+            }
+            if (!transformEnd.hasOwnProperty("positionX")) {
+                transformEnd.positionX = transformStart.positionX;
+            }
+            if (!transformStart.hasOwnProperty("positionY")) {
+                const posY = Number(currentTransform.positionY);
+                const height = Number(currentTransform.height);
+                transformStart.positionY = posY + height * (endYOffset - currentYOffset);
+            }
+            if (!transformEnd.hasOwnProperty("positionY")) {
+                transformEnd.positionY = transformStart.positionY;
+            }
+        }
 
         Object.keys(transformEnd).forEach((key) => {
             if (!transformStart.hasOwnProperty(key)) {
