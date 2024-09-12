@@ -1,5 +1,5 @@
 import arrayAdd from './array-add';
-import arrayElemenet from './array-element';
+import arrayElement from './array-element';
 import arrayFilter from './array-filter';
 import arrayFindIndex from './array-find-index';
 import arrayFind from './array-find';
@@ -11,6 +11,7 @@ import arrayRandomItem from './array-random-item';
 import arrayRemove from './array-remove';
 import arrayReverse from './array-reverse';
 import arrayShuffle from './array-shuffle';
+import arraySlice from './array-slice';
 
 // Deprecated
 import rawArrayAdd from './raw-array-add';
@@ -27,7 +28,7 @@ import rawArrayShuffle from './raw-array-shuffle';
 
 export default [
     arrayAdd,
-    arrayElemenet,
+    arrayElement,
     arrayFilter,
     arrayFindIndex,
     arrayFind,
@@ -39,6 +40,7 @@ export default [
     arrayRemove,
     arrayReverse,
     arrayShuffle,
+    arraySlice,
 
     // Deprecated
     rawArrayAdd,
