@@ -11,15 +11,11 @@
             utilityService,
             activityFeedService
         ) {
+            $scope.afs = activityFeedService;
+            $scope.cms = chatMessagesService;
             $scope.settings = settingsService;
 
-            $scope.afs = activityFeedService;
-
-            $scope.chatMessage = "";
-            $scope.chatSender = "Streamer";
             $scope.disabledMessage = "";
-
-            $scope.cms = chatMessagesService;
 
             $scope.selectedUserData = {};
 
@@ -126,7 +122,7 @@
             };
 
             $scope.updateChatInput = function(text) {
-                $scope.chatMessage = text;
+                chatMessagesService.chatMessage = text;
                 focusMessageInput();
             };
 
@@ -169,13 +165,13 @@
             const chatHistory = [];
             let currrentHistoryIndex = -1;
             $scope.submitChat = function() {
-                if ($scope.chatMessage == null || $scope.chatMessage.length < 1) {
+                if (chatMessagesService.chatMessage == null || chatMessagesService.chatMessage.length < 1) {
                     return;
                 }
-                chatMessagesService.submitChat($scope.chatSender, $scope.chatMessage, $scope.threadDetails?.replyToMessageId);
-                chatHistory.unshift($scope.chatMessage);
+                chatMessagesService.submitChat(chatMessagesService.chatSender, chatMessagesService.chatMessage, $scope.threadDetails?.replyToMessageId);
+                chatHistory.unshift(chatMessagesService.chatMessage);
                 currrentHistoryIndex = -1;
-                $scope.chatMessage = "";
+                chatMessagesService.chatMessage = "";
                 $scope.threadDetails = null;
             };
 
@@ -188,23 +184,23 @@
                 if (keyCode === 38) {
                     //up arrow
                     if (
-                        $scope.chatMessage.length < 1 ||
-            $scope.chatMessage === chatHistory[currrentHistoryIndex]
+                        chatMessagesService.chatMessage.length < 1 ||
+                        chatMessagesService.chatMessage === chatHistory[currrentHistoryIndex]
                     ) {
                         if (currrentHistoryIndex + 1 < chatHistory.length) {
                             currrentHistoryIndex++;
-                            $scope.chatMessage = chatHistory[currrentHistoryIndex];
+                            chatMessagesService.chatMessage = chatHistory[currrentHistoryIndex];
                         }
                     }
                 } else if (keyCode === 40) {
                     //down arrow
                     if (
-                        $scope.chatMessage.length > 0 ||
-            $scope.chatMessage === chatHistory[currrentHistoryIndex]
+                        chatMessagesService.chatMessage.length > 0 ||
+                        chatMessagesService.chatMessage === chatHistory[currrentHistoryIndex]
                     ) {
                         if (currrentHistoryIndex - 1 >= 0) {
                             currrentHistoryIndex--;
-                            $scope.chatMessage = chatHistory[currrentHistoryIndex];
+                            chatMessagesService.chatMessage = chatHistory[currrentHistoryIndex];
                         }
                     }
                 } else if (keyCode === 13) {
