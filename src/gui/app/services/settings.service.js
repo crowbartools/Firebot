@@ -837,16 +837,6 @@
                 pushDataToFile("/settings/webOnlineCheckin", value);
             };
 
-            service.getChatSender = (defaultValue) => {
-                if (settingsCache['/settings/chatSender'] == null) {
-                    settingsCache['/settings/chatSender'] = defaultValue;
-                }
-                return settingsCache['/settings/chatSender'];
-            };
-            service.setChatSender = (value) => {
-                settingsCache['/settings/chatSender'] = value;
-            };
-
             return service;
         });
 }());
