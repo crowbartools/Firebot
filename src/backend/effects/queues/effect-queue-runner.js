@@ -142,6 +142,10 @@ class EffectQueue {
 
         logger.debug(`Added more effects to queue ${this.id}. Current length=${this._queue.length}`);
 
+        eventManager.triggerEvent("firebot", "effect-queue-added", {
+            effectQueueId: this.id
+        });
+
         this.sendQueueLengthUpdate();
 
         this.processEffectQueue();
@@ -169,11 +173,21 @@ class EffectQueue {
 
     pauseQueue() {
         logger.debug(`Pausing queue ${this.id}...`);
+
+        eventManager.triggerEvent("firebot", "effect-queue-status", {
+            effectQueueId: this.id
+        });
+
         this._paused = true;
     }
 
     resumeQueue() {
         logger.debug(`Resuming queue ${this.id}...`);
+
+        eventManager.triggerEvent("firebot", "effect-queue-status", {
+            effectQueueId: this.id
+        });
+
         this._paused = false;
         this.processEffectQueue();
     }
