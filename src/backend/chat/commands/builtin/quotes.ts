@@ -277,19 +277,23 @@ export const QuotesManagementSystemCommand: SystemCommand<{
 
             switch (triggeredArg) {
                 case "add": {
+                    const shouldInsertStreamerUsername = (commandOptions.defaultStreamerAttribution && args.length === 1) 
+                                                      || (commandOptions.defaultStreamerAttribution && !args[1].includes("@"));
+                    const expectedArgs = shouldInsertStreamerUsername
+                      ? 2
+                      : 3;
+                    
+                    if (args.length < expectedArgs) {
+                    await twitchChat.sendChatMessage(`Please provide some quote text!`);
+                    return resolve();
+                    }
+                    // Once we've evaluated that the syntax is correct we make our API calls
                     const channelData = await TwitchApi.channels.getChannelInformation();
-
                     const currentGameName = channelData && channelData.gameName ? channelData.gameName : "Unknown game";
                     
-                    const shouldInsertStreamerUsername = args.length === 1 || (commandOptions.defaultStreamerAttribution && !args[1].includes("@"));
-                    // If no @ is included in the originator arg, set to @streamerName and the rest is the quote
+                    // If shouldInsertStreamerUsername and no @ is included in the originator arg, set originator @streamerName and treat the rest as the quote
                     if (shouldInsertStreamerUsername) {
                             args.splice(1,0,`@${channelData.displayName}`)
-                    }
-
-                    if (args.length < 3) {
-                        await twitchChat.sendChatMessage(`Please provide some quote text!`);
-                        return resolve();
                     }
 
                     const newQuote = {
