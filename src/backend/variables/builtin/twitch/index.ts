@@ -6,6 +6,7 @@ import cheerVariables from './cheer';
 import cheermoteVariables from './cheermote';
 import hypetrainVariables from './hype-train';
 import pollVariables from './polls';
+import raidVariables from './raid';
 import rewardVariables from './reward';
 import streamVariables from './stream';
 import subVariables from './subs';
@@ -13,7 +14,6 @@ import subVariables from './subs';
 import followAge from './follow-age';
 import followCount from './follow-count';
 import predictionWinningOutcomeName from './prediction-winning-outcome-name';
-import raidViewerCounter from './raid-viewer-count';
 import twitchChannelUrl from './twitch-channel-url';
 import viewerCount from './viewer-count';
 
@@ -27,6 +27,7 @@ export default [
     ...cheermoteVariables,
     ...hypetrainVariables,
     ...pollVariables,
+    ...raidVariables,
     ...rewardVariables,
     ...streamVariables,
     ...subVariables,
@@ -34,7 +35,6 @@ export default [
     followAge,
     followCount,
     predictionWinningOutcomeName,
-    raidViewerCounter,
     twitchChannelUrl,
     viewerCount
 ];

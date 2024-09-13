@@ -21,6 +21,13 @@
 
             service.autodisconnected = false;
 
+            // The active chat sender identifier, either "Streamer" or "Bot"
+            service.chatSender = "Streamer";
+            // The pending but unsent outgoing chat message text
+            service.messageText = "";
+            // The message/thread currently being replied to
+            service.threadDetails = null;
+
             // Tells us if we should process in app chat or not.
             service.getChatFeed = function() {
                 return settingsService.getRealChatFeed();

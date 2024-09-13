@@ -266,6 +266,7 @@
                 const events = getDataFromFile("/settings/allowedActivityEvents");
                 return events == null ? [
                     "twitch:raid",
+                    "twitch:raid-sent-off",
                     "twitch:follow",
                     "twitch:sub",
                     "twitch:subs-gifted",
