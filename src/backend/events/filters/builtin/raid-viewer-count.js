@@ -5,9 +5,10 @@ const { ComparisonType } = require("../../../../shared/filter-constants");
 module.exports = {
     id: "firebot:raid-viewer-count",
     name: "Raid Viewer Count",
-    description: "Filter by how many viewers have been brought over by the raid.",
+    description: "Filter by how many viewers have been brought or are being sent over by the raid.",
     events: [
-        { eventSourceId: "twitch", eventId: "raid" }
+        { eventSourceId: "twitch", eventId: "raid" },
+        { eventSourceId: "twitch", eventId: "raid-sent-off" }
     ],
     comparisonTypes: [
         ComparisonType.IS,
@@ -19,7 +20,6 @@ module.exports = {
     ],
     valueType: "number",
     predicate: (filterSettings, eventData) => {
-
         const { comparisonType, value } = filterSettings;
         const { eventMeta } = eventData;
 
