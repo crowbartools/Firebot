@@ -1,9 +1,9 @@
-import { ReplaceVariable } from "../../../../types/variables";
-import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
-import { EffectTrigger } from "../../../../shared/effect-constants";
+import { ReplaceVariable } from "../../../../../types/variables";
+import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
+import { EffectTrigger } from "../../../../../shared/effect-constants";
 
 const triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:raid"];
+triggers[EffectTrigger.EVENT] = ["twitch:raid", "twitch:raid-sent-off"];
 triggers[EffectTrigger.MANUAL] = true;
 
 
@@ -16,7 +16,7 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: async (trigger) => {
-        return trigger.metadata.eventData.viewerCount || 0;
+        return trigger.metadata.eventData?.viewerCount || 0;
     }
 };
 
