@@ -12,6 +12,7 @@ export const QuotesManagementSystemCommand: SystemCommand<{
     quoteDisplayTemplate: string;
     quoteDateFormat: string;
     useTTS: boolean;
+    defaultStreamerAttribution: boolean;
 }> = {
     definition: {
         id: "firebot:quotesmanagement",
@@ -49,6 +50,12 @@ export const QuotesManagementSystemCommand: SystemCommand<{
                 type: "boolean",
                 title: "Read Quotes via TTS",
                 description: "Have quotes read by TTS whenever one is created or looked up.",
+                default: false
+            },
+            defaultStreamerAttribution: {
+                type: "boolean",
+                title: "Attribute new quote to streamer if nobody is explicitly tagged with @",
+                description: "If @username is not included when adding a quote, it is attributed to the streamer.",
                 default: false
             }
         },
@@ -270,14 +277,24 @@ export const QuotesManagementSystemCommand: SystemCommand<{
 
             switch (triggeredArg) {
                 case "add": {
-                    if (args.length < 3) {
-                        await twitchChat.sendChatMessage(`Please provide some quote text!`);
-                        return resolve();
+                    const shouldInsertStreamerUsername = (commandOptions.defaultStreamerAttribution && args.length === 1) 
+                                                      || (commandOptions.defaultStreamerAttribution && !args[1].includes("@"));
+                    const expectedArgs = shouldInsertStreamerUsername
+                      ? 2
+                      : 3;
+                    
+                    if (args.length < expectedArgs) {
+                    await twitchChat.sendChatMessage(`Please provide some quote text!`);
+                    return resolve();
                     }
-
+                    // Once we've evaluated that the syntax is correct we make our API calls
                     const channelData = await TwitchApi.channels.getChannelInformation();
-
                     const currentGameName = channelData && channelData.gameName ? channelData.gameName : "Unknown game";
+                    
+                    // If shouldInsertStreamerUsername and no @ is included in the originator arg, set originator @streamerName and treat the rest as the quote
+                    if (shouldInsertStreamerUsername) {
+                            args.splice(1,0,`@${channelData.displayName}`)
+                    }
 
                     const newQuote = {
                         text: args.slice(2, args.length).join(" "),
