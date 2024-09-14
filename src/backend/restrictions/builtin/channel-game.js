@@ -91,11 +91,9 @@ const model = {
             if (passed) {
                 resolve();
             } else {
-                const {
-                    name: expectedGameName
-                } = (await TwitchApi.categories.getCategoryById(expectedGameId)) ?? {};
+                const expectedGame = await TwitchApi.categories.getCategoryById(expectedGameId);
                 reject(
-                    `Channel category/game isn't set to ${expectedGameName ?? "the correct category/game"}.`
+                    `Channel category/game isn't set to ${expectedGame?.name ?? "the correct category/game"}.`
                 );
             }
         });
