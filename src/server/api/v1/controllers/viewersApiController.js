@@ -43,7 +43,7 @@ exports.getUserMetadata = async function (req, res) {
 };
 
 exports.updateUserMetadataKey = async function (req, res) {
-    const metadataValue = req.body;
+    const { data: metadataValue } = req.body;
     const { metadataKey, userId } = req.params;
     const { username } = req.query;
 
