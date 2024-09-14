@@ -5,6 +5,7 @@ import charityVariables from './charity';
 import cheerVariables from './cheer';
 import cheermoteVariables from './cheermote';
 import hypetrainVariables from './hype-train';
+import raidVariables from './raid';
 import rewardVariables from './reward';
 import streamVariables from './stream';
 import subVariables from './subs';
@@ -14,7 +15,6 @@ import followCount from './follow-count';
 import pollWinningChoiceName from './poll-winning-choice-name';
 import pollWinningChoiceVotes from './poll-winning-choice-votes';
 import predictionWinningOutcomeName from './prediction-winning-outcome-name';
-import raidViewerCounter from './raid-viewer-count';
 import twitchChannelUrl from './twitch-channel-url';
 import viewerCount from './viewer-count';
 
@@ -27,6 +27,7 @@ export default [
     ...cheerVariables,
     ...cheermoteVariables,
     ...hypetrainVariables,
+    ...raidVariables,
     ...rewardVariables,
     ...streamVariables,
     ...subVariables,
@@ -36,7 +37,6 @@ export default [
     pollWinningChoiceName,
     pollWinningChoiceVotes,
     predictionWinningOutcomeName,
-    raidViewerCounter,
     twitchChannelUrl,
     viewerCount
 ];

@@ -51,7 +51,8 @@ class QuickActionManager extends JsonDbManager {
     }
 
     saveQuickAction(quickAction, notify = true) {
-        if (!super.saveItem(quickAction)) {
+        const savedQuickAction = super.saveItem(quickAction);
+        if (!savedQuickAction) {
             return;
         }
         const quickActionSettings = settings.getQuickActionSettings();
@@ -62,7 +63,7 @@ class QuickActionManager extends JsonDbManager {
         if (notify) {
             this.triggerUiRefresh();
         }
-        return true;
+        return savedQuickAction;
     }
 
     deleteQuickAction(customQuickActionId) {
