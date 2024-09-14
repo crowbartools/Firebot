@@ -133,16 +133,33 @@ class TwitchEventSubClient {
         });
         this._subscriptions.push(customRewardRedemptionUpdateSubscription);
 
-        // Raid
-        const raidSubscription = this._eventSubListener.onChannelRaidTo(streamer.userId, (event) => {
-            twitchEventsHandler.raid.triggerRaid(
+        // Incoming Raid
+        const incomingRaidSubscription = this._eventSubListener.onChannelRaidTo(streamer.userId, (event) => {
+            twitchEventsHandler.raid.triggerIncomingRaid(
                 event.raidingBroadcasterName,
                 event.raidingBroadcasterId,
                 event.raidingBroadcasterDisplayName,
                 event.viewers
             );
         });
-        this._subscriptions.push(raidSubscription);
+        this._subscriptions.push(incomingRaidSubscription);
+
+        // Outbound Raid Sent Off
+        const outboundRaidSubscription = this._eventSubListener.onChannelRaidFrom(streamer.userId, (event) => {
+            // sent off
+            if (event.raidingBroadcasterId === streamer.userId && event.raidedBroadcasterId !== streamer.userId) {
+                twitchEventsHandler.raid.triggerRaidSentOff(
+                    event.raidingBroadcasterName,
+                    event.raidingBroadcasterId,
+                    event.raidingBroadcasterDisplayName,
+                    event.raidedBroadcasterName,
+                    event.raidedBroadcasterId,
+                    event.raidedBroadcasterDisplayName,
+                    event.viewers
+                );
+            }
+        });
+        this._subscriptions.push(outboundRaidSubscription);
 
         // Shoutout sent to another channel
         const shoutoutSentSubscription = this._eventSubListener.onChannelShoutoutCreate(streamer.userId, streamer.userId, (event) => {
