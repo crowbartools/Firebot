@@ -211,7 +211,7 @@ const clip = {
                 }
 
                 webServer.sendToOverlay("playTwitchClip", {
-                    clipSlug: clip.id,
+                    clipVideoUrl: clip.embedUrl,
                     width: effect.width,
                     height: effect.height,
                     duration: clipDuration,
@@ -277,18 +277,19 @@ const clip = {
                     rotation
                 } = event;
 
-                const styles = (width ? `width: ${width}px;` : '') +
-                    (height ? `height: ${height}px;` : '') +
-                    (rotation ? `transform: rotate(${rotation});` : '');
+                // eslint-disable-next-line prefer-template
+                const styles = `width: ${width || screen.width}px;
+                 height: ${height || screen.height}px;
+                 transform: rotate(${rotation || 0});`;
 
                 const videoElement = `
-                    <video autoplay
-                        src="${clipVideoUrl}"
-                        height="${height || ""}"
-                        width="${width || ""}"
-                        style="border: none;${styles}"
-                        onloadstart="this.volume=${volume}"
-                        allowfullscreen="false" />
+                    <iframe style="border: none; ${styles}"
+                        src="${clipVideoUrl}&parent=${window.location.hostname}&autoplay=true"
+                        height="${height || screen.height}"
+                        width="${width || screen.width}"
+                        frameBorder=0
+                        allowfullscreen>
+                    </iframe>
                 `;
 
                 const positionData = {

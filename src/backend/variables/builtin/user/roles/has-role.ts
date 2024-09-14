@@ -17,12 +17,22 @@ const model : ReplaceVariable = {
     definition: {
         handle: "hasRole",
         usage: "hasRole[user, role]",
-        description: "Returns true if the user has the specified role. Only valid within $if",
+        description: "Returns true if the user has the specified role. Only valid within `$if`",
+        examples: [
+            {
+                usage: "hasRole[user, Moderator]",
+                description: "Returns true if user is a mod"
+            },
+            {
+                usage: "hasRole[user, VIP]",
+                description: "Returns true if user is a VIP"
+            }
+        ],
         triggers: triggers,
         categories: [VariableCategory.COMMON, VariableCategory.USER],
         possibleDataOutput: [OutputDataType.ALL]
     },
-    evaluator: async (trigger, username: string, role: string) => {
+    evaluator: async (_trigger, username: string, role: string) => {
         if (username == null || username === "") {
             return false;
         }
@@ -41,7 +51,7 @@ const model : ReplaceVariable = {
         } catch {
             // Silently fail
         }
-        
+
         return false;
     }
 };
