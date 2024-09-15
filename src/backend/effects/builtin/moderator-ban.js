@@ -69,7 +69,7 @@ const model = {
             const user = await twitchApi.users.getUserByName(event.effect.username);
 
             if (user != null) {
-                const result = await twitchApi.moderation.unban(user.id);
+                const result = await twitchApi.moderation.unbanUser(user.id);
 
                 if (result === true) {
                     logger.debug(`${event.effect.username} was unbanned via the Ban effect.`);
