@@ -13,6 +13,7 @@ exports.loadFilters = () => {
         'custom-variable-name',
         'donation-amount',
         'donation-from',
+        'effect-queue',
         'gift-count',
         'gift-duration',
         'is-anonymous',

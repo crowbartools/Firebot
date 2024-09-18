@@ -175,7 +175,7 @@ const playVideo = {
             </eos-container>
         </div>
 
-        <eos-container header="Volume" pad-top="true">
+        <eos-container ng-if="effect.videoType != 'Random Twitch Clip' && effect.videoType != 'Twitch Clip'" header="Volume" pad-top="true">
             <div class="volume-slider-wrapper">
                 <i class="fal fa-volume-down volume-low"></i>
                 <rzslider rz-slider-model="effect.volume" rz-slider-options="{floor: 0, ceil: 10, hideLimitLabels: true}"></rzslider>
@@ -486,7 +486,8 @@ const playVideo = {
                 }
             }
 
-            const clipVideoUrl = `${clip.thumbnailUrl.split("-preview-")[0]}.mp4`;
+            //const clipVideoUrl = `${clip.thumbnailUrl.split("-preview-")[0]}.mp4`;
+            const clipVideoUrl = clip.embedUrl;
             const clipDuration = clip.duration;
             const volume = parseInt(effect.volume) / 10;
 

@@ -7,6 +7,7 @@ import count from './count';
 import effectOutput from './effect-output';
 import effectQueueId from './effect-queue-id';
 import effectQueueName from './effect-queue-name';
+import effectQueueStatus from './effect-queue-status';
 import overlayInstance from './overlay-instance';
 import presetListArg from './preset-list-arg';
 import user from './user';
@@ -26,6 +27,7 @@ export default [
     effectOutput,
     effectQueueId,
     effectQueueName,
+    effectQueueStatus,
     overlayInstance,
     presetListArg,
     user,
