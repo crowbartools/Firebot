@@ -4,7 +4,7 @@ import { EffectCategory } from '../../../shared/effect-constants';
 import moment from "moment";
 import { EffectType } from "../../../types/effects";
 
-const addQuoteEffect: EffectType<{
+const model: EffectType<{
     creator: string;
     originator: string;
     text: string;
@@ -82,4 +82,4 @@ const addQuoteEffect: EffectType<{
     }
 };
 
-export = addQuoteEffect;
+export = model;
