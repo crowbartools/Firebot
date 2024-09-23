@@ -4,6 +4,7 @@ const { settings } = require("../../common/settings-access");
 const webServer = require("../../../server/http-server-manager");
 const logger = require("../../logwrapper");
 const { EffectCategory } = require('../../../shared/effect-constants');
+const mediaProcessor = require("../../common/handlers/mediaProcessor");
 
 /**
  * The Show Text effect
@@ -264,7 +265,7 @@ const showText = {
         const position = dto.position;
         if (position === "Random") {
             logger.debug("Getting random preset location");
-            dto.position = getRandomPresetLocation(); //eslint-disable-line no-undef
+            dto.position = mediaProcessor.randomLocation(); //eslint-disable-line no-undef
         }
 
         if (settings.useOverlayInstances()) {

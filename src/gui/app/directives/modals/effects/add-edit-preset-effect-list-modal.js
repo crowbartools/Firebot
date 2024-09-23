@@ -49,7 +49,7 @@
                         <ol>
                             <li>Add "Website" Action to a StreamDeck button</li>
                             <li>Set URL to <b>http://localhost:7472/api/v1/effects/preset/{{$ctrl.presetList.id}}</b></li>
-                            <li>Check "Access in background"</li>
+                            <li>Check "GET request in background"</li>
                         </ol>
                     </collapsable-panel>
                 </div>
