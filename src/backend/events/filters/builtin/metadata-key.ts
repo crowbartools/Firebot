@@ -10,4 +10,4 @@ const metadataKeyFilter = createTextFilter({
     ]
 });
 
-export default metadataKeyFilter;
+exports = metadataKeyFilter;

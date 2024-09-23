@@ -1,11 +1,8 @@
-import filterManager from "./filter-manager";
-import metadataKeyFilter from "./builtin/metadata-key";
-import metadataValueFilter from "./builtin/metadata-value";
+"use strict";
 
-export function loadFilters() {
-    filterManager.registerFilter(metadataKeyFilter);
-    filterManager.registerFilter(metadataValueFilter);
+const filterManager = require("./filter-manager");
 
+exports.loadFilters = () => {
     [
         'bits-badge-tier',
         'chat-mode-duration',
@@ -21,6 +18,8 @@ export function loadFilters() {
         'gift-duration',
         'is-anonymous',
         'message',
+        'metadata-key',
+        'metadata-value',
         'new-currency-amount',
         'new-rank',
         'new-view-time',
@@ -42,4 +41,4 @@ export function loadFilters() {
         const definition = require(`./builtin/${filename}.js`);
         filterManager.registerFilter(definition);
     });
-}
+};

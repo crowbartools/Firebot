@@ -10,4 +10,4 @@ const metadataValueFilter = createTextOrNumberFilter({
     ]
 });
 
-export default metadataValueFilter;
+exports = metadataValueFilter;
