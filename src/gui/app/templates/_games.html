@@ -1,4 +1,4 @@
-<div class="mt-8" style="display:flex;flex-wrap: wrap;">
+<div style="display:flex;flex-wrap: wrap;">
     <div ng-repeat="game in gamesService.games track by game.id" class="fb-tile orange centered mr-4" ng-class="{'inactive': !game.active}" style="flex: 0 0 auto;width:250px;height:150px;">
         <div class="edit-btn" ng-click="openEditGameSettingsModal(game)"></div>
         <div class="content">
