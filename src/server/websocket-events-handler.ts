@@ -9,6 +9,7 @@ import { events as customVariablesEvents } from "../backend/common/custom-variab
 import effectQueueManager from "../backend/effects/queues/effect-queue-manager";
 import { events as effectQueueRunnerEvents } from "../backend/effects/queues/effect-queue-runner";
 import presetEffectListManager from "../backend/effects/preset-lists/preset-effect-list-manager";
+import { events as quotesEvents } from "../backend/quotes/quotes-manager";
 import timerManager from "../backend/timers/timer-manager";
 import viewerMetadataManager from "../backend/viewers/viewer-metadata-manager";
 
@@ -61,6 +62,10 @@ const FIREBOT_COMPONENT_MANAGERS: Array<ComponentManager> = [
     {
         componentName: "preset-effect-list",
         manager: presetEffectListManager
+    },
+    {
+        componentName: "quote",
+        manager: quotesEvents
     },
     {
         componentName: "timer",
