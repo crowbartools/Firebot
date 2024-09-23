@@ -7,6 +7,7 @@ import evalJS from './eval-js';
 import evalVars from './eval-vars';
 import fileExists from './file-exists';
 import fileLineCount from './file-line-count';
+import fileName from './file-name';
 import fileRead from './file-read';
 import filesInDirectory from './files-in-directory';
 import getEffectQueueLength from "./get-effect-queue-length";
@@ -27,6 +28,7 @@ export default [
     evalVars,
     fileExists,
     fileLineCount,
+    fileName,
     fileRead,
     filesInDirectory,
     getEffectQueueLength,
