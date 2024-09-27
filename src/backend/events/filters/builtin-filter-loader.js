@@ -38,7 +38,7 @@ exports.loadFilters = () => {
         'viewer-ranks',
         'viewer-roles'
     ].forEach((filename) => {
-        const definition = require(`./builtin/${filename}.js`);
+        const definition = require(`./builtin/${filename}`);
         filterManager.registerFilter(definition);
     });
 };

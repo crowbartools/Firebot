@@ -1,20 +1,29 @@
-"use strict";
+import twitchApi from "../../twitch-api/api";
+import quotesManager from "../../quotes/quotes-manager";
+import { EffectCategory } from '../../../shared/effect-constants';
+import moment from "moment";
+import { EffectType } from "../../../types/effects";
 
-const TwitchApi = require("../../twitch-api/api");
-const quotesManager = require("../../quotes/quotes-manager");
-const { EffectCategory } = require('../../../shared/effect-constants');
-const moment = require("moment");
-
-const addQuoteEffect = {
+const model: EffectType<{
+    creator: string;
+    originator: string;
+    text: string;
+}> = {
     definition: {
         id: "firebot:add-quote",
         name: "Add Quote",
         description: "Adds a quote to the quote database.",
         icon: "fad fa-quote-right",
         categories: [EffectCategory.FUN],
-        dependencies: []
+        dependencies: [],
+        outputs: [
+            {
+                label: "Quote ID",
+                description: "ID of the created quote",
+                defaultName: "quoteId"
+            }
+        ]
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container header="Quote Creator">
             <p class="muted">This is the name of the person who is creating the quote entry.</p>
@@ -32,7 +41,7 @@ const addQuoteEffect = {
         </eos-container>
     `,
     optionsController: () => {},
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.creator == null || effect.creator === "") {
             errors.push("Please provide a quote creator.");
@@ -47,10 +56,10 @@ const addQuoteEffect = {
         }
         return errors;
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const { effect } = event;
 
-        const channelData = await TwitchApi.channels.getChannelInformation();
+        const channelData = await twitchApi.channels.getChannelInformation();
 
         const currentGameName = channelData && channelData.gameName ? channelData.gameName : "Unknown game";
 
@@ -62,10 +71,15 @@ const addQuoteEffect = {
             createdAt: moment().toISOString()
         };
 
-        quotesManager.addQuote(newQuote);
+        const id = await quotesManager.addQuote(newQuote);
 
-        return true;
+        return {
+            success: true,
+            outputs: {
+                quoteId: id
+            }
+        };
     }
 };
 
-module.exports = addQuoteEffect;
+export = model;
