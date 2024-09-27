@@ -51,7 +51,7 @@
                         </div>
                         <file-chooser ng-show="selectedNotificationSound.name === 'Custom'"
                             model="selectedNotificationSound.path"
-                            options="{title: 'Select Sound File', filters: [{name: 'Audio', extensions: ['mp3', 'ogg', 'wav', 'flac']}]}"
+                            options="{title: 'Select Sound File', filters: [{name: 'Audio', extensions: ['mp3', 'ogg', 'oga', 'wav', 'flac']}]}"
                             on-update="setCustomNotiPath(filepath)"></file-chooser>
                         <div class="volume-slider-wrapper" ng-hide="selectedNotificationSound.name === 'None'">
                             <i class="fal fa-volume-down volume-low pb-2 text-4xl"></i>
