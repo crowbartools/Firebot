@@ -52,7 +52,7 @@ class CurrencyAccess {
         let issue2801 = false;
         const cache = db.getData("/");
         Object.keys(cache).forEach((currencyId) => {
-            if (cache[currencyId].offline === "") {
+            if (cache[currencyId].offline === null || cache[currencyId].offline === "") {
                 issue2801 = true;
                 cache[currencyId].offline = undefined;
             }

@@ -107,12 +107,12 @@
             ipcRenderer.send("refreshCurrencyCommands", {"action": "delete", "currency": currency});
         };
 
-        backendCommunicator.on("import-currency", currency => {
+        backendCommunicator.on("import-currency", (currency) => {
             if (currency == null || currency.id == null) {
                 return;
             }
 
-            if (currency.offline === "") {
+            if (!currency.offline) {
                 currency.offline = undefined;
             }
 
@@ -123,7 +123,7 @@
             }
         });
 
-        backendCommunicator.on("remove-currency", currency => {
+        backendCommunicator.on("remove-currency", (currency) => {
             service.deleteCurrency(currency);
         });
 
