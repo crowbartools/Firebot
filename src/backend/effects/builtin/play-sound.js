@@ -38,7 +38,7 @@ const playSound = {
 
             <div ng-if="effect.soundType === 'local'">
                 <div style="margin-bottom: 10px">
-                    <file-chooser model="effect.filepath" options="{ filters: [ {name: 'Audio', extensions: ['mp3', 'ogg', 'wav', 'flac']} ]}" on-update="soundFileUpdated(filepath)"></file-chooser>
+                    <file-chooser model="effect.filepath" options="{ filters: [ {name: 'Audio', extensions: ['mp3', 'ogg', 'oga', 'wav', 'flac']} ]}" on-update="soundFileUpdated(filepath)"></file-chooser>
                 </div>
                 <div>
                     <sound-player path="effect.filepath" volume="effect.volume" output-device="effect.audioOutputDevice"></sound-player>
@@ -120,7 +120,7 @@ const playSound = {
                 logger.warn("Unable to read sound folder", err);
             }
 
-            const filteredFiles = files.filter(i => (/\.(mp3|ogg|wav|flac)$/i).test(i));
+            const filteredFiles = files.filter(i => (/\.(mp3|ogg|oga|wav|flac)$/i).test(i));
             const chosenFile = filteredFiles[Math.floor(Math.random() * filteredFiles.length)];
 
             if (filteredFiles.length === 0) {
@@ -218,6 +218,8 @@ const playSound = {
                 if (filepath.endsWith("mp3")) {
                     mediaType = "audio/mpeg";
                 } else if (filepath.endsWith("ogg")) {
+                    mediaType = "audio/ogg";
+                } else if (filepath.endsWith("oga")) {
                     mediaType = "audio/ogg";
                 } else if (filepath.endsWith("wav")) {
                     mediaType = "audio/wav";

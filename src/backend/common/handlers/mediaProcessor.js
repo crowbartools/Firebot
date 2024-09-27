@@ -12,7 +12,7 @@ const webServer = require("../../../server/http-server-manager");
 ipcMain.on("getSoundPath", function(event, uniqueid) {
     const path = dialog.showOpenDialogSync({
         properties: ["openFile"],
-        filters: [{ name: "Audio", extensions: ["mp3", "ogg", "wav", "flac"] }]
+        filters: [{ name: "Audio", extensions: ["mp3", "ogg", "oga", "wav", "flac"] }]
     });
     event.sender.send("gotSoundFilePath", { path: path, id: uniqueid });
 });
