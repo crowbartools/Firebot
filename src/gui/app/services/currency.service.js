@@ -112,6 +112,10 @@
                 return;
             }
 
+            if (currency.offline === "") {
+                currency.offline = undefined;
+            }
+
             if (service.getCurrency(currency.id)) {
                 service.updateCurrency(currency);
             } else {
