@@ -56,7 +56,7 @@
                     return;
                 }
 
-                if (!$ctrl.currency.offline || $ctrl.currency.offline === "") {
+                if (!$ctrl.currency.offline) {
                     $ctrl.currency.offline = undefined;
                 }
 
@@ -81,7 +81,7 @@
                         question: "Are you sure you'd like to delete this currency?",
                         confirmLabel: "Delete"
                     })
-                    .then(confirmed => {
+                    .then((confirmed) => {
                         if (confirmed) {
                             currencyService.deleteCurrency(currency);
                             $ctrl.close({
@@ -104,7 +104,7 @@
               "Are you sure you'd like to purge this currency? This currency will be set to 0 for all users.",
                         confirmLabel: "Purge"
                     })
-                    .then(confirmed => {
+                    .then((confirmed) => {
                         if (confirmed) {
                             currencyService.purgeCurrency(currency.id);
                             $ctrl.close({
