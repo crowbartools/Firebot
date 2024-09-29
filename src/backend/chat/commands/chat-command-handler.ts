@@ -121,8 +121,18 @@ class CommandHandler {
             return false;
         }
 
-        if (firebotChatMessage.isSharedChatMessage && !settings.getAllowCommandsInSharedChat()) {
-            return false;
+        // Check whether or not chat message is from shared chat
+        // And whether or not shared chat is allowed globally
+        // And by the specific command.
+        if (firebotChatMessage.isSharedChatMessage) {
+            if (command.allowTriggerBySharedChat === false) {
+                return false;
+            }
+
+            // 'inherit' or undefined = inherit app settings
+            if (command.allowTriggerBySharedChat !== true && !settings.getAllowCommandsInSharedChat()) {
+                return false;
+            }
         }
 
         const { streamer, bot } = accountAccess.getAccounts();
