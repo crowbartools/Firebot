@@ -11,6 +11,7 @@ import commandManager from "./command-manager";
 import commandCooldownManager from "./command-cooldown-manager";
 import twitchApi from "../../twitch-api/api";
 import commandRunner from "./command-runner";
+import { settings } from "../../common/settings-access";
 
 const DEFAULT_COOLDOWN_MESSAGE = "This command is still on cooldown for: {timeLeft}";
 const DEFAULT_RESTRICTION_MESSAGE = "Sorry, you cannot use this command because: {reason}";
@@ -117,6 +118,10 @@ class CommandHandler {
 
         // command wasn't found
         if (command == null) {
+            return false;
+        }
+
+        if (firebotChatMessage.isSharedChatMessage && !settings.getAllowCommandsInSharedChat()) {
             return false;
         }
 
