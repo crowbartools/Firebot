@@ -19,10 +19,10 @@ exports.createClip = async function(effect) {
     const broadcast = await client.streams.getStreamByUserId(streamerAccount.userId);
     const channelId = (await twitchApi.users.getUserById(streamerAccount.userId)).id;
 
-    if (broadcast == null) {
-        renderWindow.webContents.send('error', `Failed to create a clip. Reason: Streamer is not live.`);
-        return null;
-    }
+    // if (broadcast == null) {
+    //     renderWindow.webContents.send('error', `Failed to create a clip. Reason: Streamer is not live.`);
+    //     return null;
+    // }
 
     if (effect.postLink) {
         await twitchChat.sendChatMessage("Creating clip...");
