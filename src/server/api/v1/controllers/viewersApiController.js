@@ -1,6 +1,7 @@
 "use strict";
 
 const viewerDatabase = require("../../../../backend/viewers/viewer-database");
+const viewerMetaDataManager = require("../../../../backend/viewers/viewer-metadata-manager");
 const customRolesManager = require("../../../../backend/roles/custom-roles-manager");
 const currencyAccess = require("../../../../backend/currency/currency-access").default;
 const currencyManager = require("../../../../backend/currency/currency-manager");
@@ -39,6 +40,89 @@ exports.getUserMetadata = async function (req, res) {
     metadata.customRoles = customRoles;
 
     return res.json(metadata);
+};
+
+exports.updateUserMetadataKey = async function (req, res) {
+    const { data: metadataValue } = req.body;
+    const { metadataKey, userId } = req.params;
+    const { username } = req.query;
+
+    if (userId == null) {
+        return res.status(400).send({
+            status: "error",
+            message: `No viewerIdOrName provided`
+        });
+    }
+
+    if (metadataKey == null) {
+        return res.status(400).send({
+            status: "error",
+            message: `No metadataKey provided`
+        });
+    }
+
+    let viewer;
+    if (username === "true") {
+        viewer = await viewerDatabase.getViewerByUsername(userId);
+    } else {
+        viewer = await viewerDatabase.getViewerById(userId);
+    }
+
+    if (viewer === null) {
+        return res.status(404).send({
+            status: "error",
+            message: `Specified viewer does not exist`
+        });
+    }
+
+    await viewerMetaDataManager.updateViewerMetadata(viewer.username, metadataKey, metadataValue);
+    const status = metadataKey in viewer.metadata ? 204 : 201;
+
+    return res.status(status).send();
+};
+
+exports.removeUserMetadataKey = async function (req, res) {
+    const { metadataKey, userId } = req.params;
+    const { username } = req.query;
+
+    if (userId == null) {
+        return res.status(400).send({
+            status: "error",
+            message: `No viewerIdOrName provided`
+        });
+    }
+
+    if (metadataKey == null) {
+        return res.status(400).send({
+            status: "error",
+            message: `No metadataKey provided`
+        });
+    }
+
+    let viewer;
+    if (username === "true") {
+        viewer = await viewerDatabase.getViewerByUsername(userId);
+    } else {
+        viewer = await viewerDatabase.getViewerById(userId);
+    }
+
+    if (viewer === null) {
+        return res.status(404).send({
+            status: "error",
+            message: `Specified viewer does not exist`
+        });
+    }
+
+    if (!(metadataKey in viewer.metadata)) {
+        return res.status(404).send({
+            status: "error",
+            message: `Specified metadataKey does not exist`
+        });
+    }
+
+    await viewerMetaDataManager.removeViewerMetadata(viewer.username, metadataKey);
+
+    return res.status(204).send();
 };
 
 exports.getUserCurrency = async function (req, res) {

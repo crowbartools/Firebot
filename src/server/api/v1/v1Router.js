@@ -81,6 +81,11 @@ router.route("/viewers/export").get(viewers.getAllUserDataAsJSON);
 
 router.route("/viewers/:userId").get(viewers.getUserMetadata);
 
+router.route("/viewers/:userId/metadata/:metadataKey")
+    .post(viewers.updateUserMetadataKey)
+    .put(viewers.updateUserMetadataKey)
+    .delete(viewers.removeUserMetadataKey);
+
 router.route("/viewers/:userId/currency").get(viewers.getUserCurrency);
 
 router.route("/viewers/:userId/currency/:currencyId").get(viewers.getUserCurrency).post(viewers.setUserCurrency);
