@@ -5,6 +5,13 @@ import viewerDatabase from "./viewer-database";
 import jsonDataHelpers from "../common/json-data-helpers";
 import frontendCommunicator from "../common/frontend-communicator";
 import eventManager from "../events/EventManager";
+import { TypedEmitter } from "tiny-typed-emitter";
+
+type Events = {
+    "created-item": (item: object) => void;
+    "updated-item": (item: object) => void;
+    "deleted-item": (item: object) => void;
+};
 
 interface ViewerMetadataUpdateRequest {
     username: string;
@@ -17,8 +24,10 @@ interface ViewerMetadataDeleteRequest {
     key: string;
 }
 
-class ViewerMetadataManager {
+class ViewerMetadataManager extends TypedEmitter<Events> {
     constructor() {
+        super();
+
         frontendCommunicator.onAsync("update-viewer-metadata",
             async (updateRequest: ViewerMetadataUpdateRequest) => {
                 this.updateViewerMetadata(updateRequest.username, updateRequest.key, updateRequest.value);
@@ -107,6 +116,8 @@ class ViewerMetadataManager {
 
         const metadata = viewer.metadata || {};
 
+        const eventType = !(key in metadata) ? "created-item" : "updated-item";
+
         try {
             const dataToSet = jsonDataHelpers.parseData(value, metadata[key], propertyPath);
             metadata[key] = dataToSet;
@@ -117,12 +128,15 @@ class ViewerMetadataManager {
 
             await viewerDatabase.calculateAutoRanks(viewer._id, "metadata");
 
-            eventManager.triggerEvent("firebot", "viewer-metadata-updated", {
+            const eventData = {
                 username,
                 metadataKey: key,
                 metadataValue: dataToSet
-            });
+            };
 
+            eventManager.triggerEvent("firebot", "viewer-metadata-updated", eventData);
+
+            this.emit(eventType, eventData);
         } catch (error) {
             logger.error("Unable to set metadata for viewer");
         }
@@ -148,11 +162,15 @@ class ViewerMetadataManager {
 
         await viewerDatabase.calculateAutoRanks(viewer._id, "metadata");
 
-        eventManager.triggerEvent("firebot", "viewer-metadata-updated", {
+        const eventData = {
             username,
             metadataKey: key,
             metadataValue: null
-        });
+        };
+
+        eventManager.triggerEvent("firebot", "viewer-metadata-updated", eventData);
+
+        this.emit("deleted-item", eventData);
     }
 }
 
