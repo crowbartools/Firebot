@@ -126,6 +126,7 @@ export type CommandDefinition = {
         name: string;
         id: string;
     };
+    allowTriggerBySharedChat?: boolean | "inherit" | undefined;
 };
 
 type UserCommand = {

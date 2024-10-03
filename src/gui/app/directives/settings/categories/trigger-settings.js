@@ -1,6 +1,6 @@
 "use strict";
 
-(function() {
+(function () {
 
     angular
         .module("firebotApp")
@@ -21,6 +21,20 @@
                             on-update="settings.setDefaultToAdvancedCommandMode(option === 'true')"
                             right-justify="true"
                             aria-label="Choose your Default Mode For New Commands"
+                        />
+                    </firebot-setting>
+
+                    <firebot-setting
+                        name="Allow Shared Chat To Trigger Commands"
+                        description="Allow commands to be triggered by chat messages sent in other channels during Twitch Shared Chat"
+                    >
+                        <firebot-select
+                            options="{ true: 'Yes', false: 'No' }"
+                            ng-init="allowSharedChatCommands = settings.getAllowCommandsInSharedChat()"
+                            selected="allowSharedChatCommands"
+                            on-update="settings.setAllowCommandsInSharedChat(option === 'true')"
+                            right-justify="true"
+                            aria-label="Allow Shared Chat To Trigger Commands"
                         />
                     </firebot-setting>
 
@@ -57,7 +71,7 @@
                     </firebot-setting>
                 </div>
           `,
-            controller: function($scope, settingsService) {
+            controller: function ($scope, settingsService) {
                 $scope.settings = settingsService;
             }
         });

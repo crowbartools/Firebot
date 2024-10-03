@@ -55,6 +55,8 @@ export type FirebotChatMessage = {
     threadParentMessageId?: string;
     threadParentMessageSenderUserId?: string;
     threadParentMessageSenderDisplayName?: string;
+    isSharedChatMessage: boolean;
+    sharedChatRoomId?: string;
 };
 
 export type FirebotEmote = {

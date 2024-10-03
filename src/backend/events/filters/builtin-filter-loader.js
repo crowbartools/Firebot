@@ -31,6 +31,7 @@ exports.loadFilters = () => {
         'rank-transition-type',
         'reward-name',
         'reward',
+        'shared-chat',
         'stream-category',
         'sub-kind',
         'sub-type',
