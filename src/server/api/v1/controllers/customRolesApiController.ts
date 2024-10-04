@@ -139,3 +139,28 @@ export async function removeUserFromCustomRole(req: Request, res: Response): Pro
 
     return res.status(204).send();
 }
+
+export async function removeAllViewersFromRole(req: Request, res: Response): Promise<Response> {
+    const { customRoleId } = req.params;
+
+
+    if (customRoleId == null) {
+        return res.status(400).send({
+            status: "error",
+            message: `No customRoleId provided`
+        });
+    }
+
+    const customRole = customRolesManager.getCustomRoles().find(cr => cr.id.toLowerCase() === customRoleId.toLowerCase());
+
+    if (customRole == null) {
+        return res.status(404).send({
+            status: "error",
+            message: `Specified custom role does not exist`
+        });
+    }
+
+    customRolesManager.removeAllViewersFromRole(customRole.id);
+
+    return res.status(204).send();
+}
