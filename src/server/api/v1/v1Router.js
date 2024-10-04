@@ -99,6 +99,8 @@ router.route("/customRoles").get(customRoles.getCustomRoles);
 
 router.route("/customRoles/:customRoleId").get(customRoles.getCustomRoleById);
 
+router.route("/customRoles/:customRoleId/clear").get(customRoles.removeAllViewersFromRole);
+
 router
     .route("/customRoles/:customRoleId/viewer/:userId")
     .post(customRoles.addUserToCustomRole)
