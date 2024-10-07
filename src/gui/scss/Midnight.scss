@@ -6,12 +6,16 @@ $dark-background-color: #141828;
 $dark-background-border: #2e3240;
 $dark-background-box-shadow: adjust-color($dark-background-color, $red: 7, $green: 7, $blue: 7);
 
-$content-text-color: #ffffff;
 
 $bad-color: #ff0000;
 $good-color: #90ee90;
 $info-color: #30a6ce;
 $highlight-color: #ebb11f;
+
+
+$content-text-color: #ffffff;
+$content-background-color: $light-background-color;
+$chat-alert-background-color: $info-color;
 
 // Scrollbar
 $scrollbar-background-color: rgba(97, 97, 105, 0.58);
@@ -41,7 +45,7 @@ $board-settings-btn-color: #a9a9a9;
 $change-board-dropdown-color: #a9a9a9;
 $downarrow-color: #a9a9a9;
 $sort-tags-bg: #808080;
-
+$effect-def-background-color: #43454A;
 $toggle-button-off-bg-color: #ffffff;
 
 $change-note-palette-title-color: orange;
