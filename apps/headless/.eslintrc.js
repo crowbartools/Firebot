@@ -1,5 +1,7 @@
 module.exports = {
     root: true,
     extends: ["custom"],
-    env: ["node"]
+    env: {
+        node: true
+    }
 }
