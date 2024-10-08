@@ -8,25 +8,6 @@ import { PageTitle } from "@/components/PageTitle";
 
 
 export default function Home() {
-  const [helloWorld, setHelloWorld] = useState("");
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const host = getServerUri();
-      try {
-        const response = await fetch(`${host}/api/v1/example`, {
-          credentials: "include",
-        });
-        const text = await response.text();
-        setHelloWorld(text);
-      } catch (error) {
-        console.log("Failed to get hello world", error);
-      }
-    }
-
-    fetchData();
-  }, []);
-
   return (
     <>
       <Head>
@@ -36,7 +17,7 @@ export default function Home() {
         <link rel="icon" href={favIcon.src} />
       </Head>
       <PageWrapper>
-        <PageTitle title={helloWorld} />
+        <PageTitle title="Dashboard" />
         <div>Does fast reloading work?</div>
       </PageWrapper>
     </>

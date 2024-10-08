@@ -1,23 +1,23 @@
 {
-    "$schema": "https://turbo.build/schema.json",
-    "pipeline": {
-      "build": {
-        "dependsOn": ["^build"],
-        "outputs": ["dist/**"]
-      },
-      "lint": {
-        "outputs": []
-      },
-      "dev": {
-        "dependsOn": ["^predev"],
-        "cache": false
-      },
-      "predev": {
-        "outputs": ["dist/**"]
-      },
-      "precompile": {
-        "dependsOn": ["build"],
-        "outputs": ["/build/"]
-      }
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["./dist/**"]
+    },
+    "lint": {
+      "outputs": []
+    },
+    "dev": {
+      "dependsOn": ["^predev"],
+      "cache": false
+    },
+    "predev": {
+      "outputs": ["./dist/**"]
+    },
+    "precompile": {
+      "dependsOn": ["build"],
+      "outputs": ["./build/"]
     }
+  }
 }

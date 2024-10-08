@@ -3,8 +3,6 @@ import { Server, WebSocket } from "ws";
 
 @WebSocketGateway({ path: "/api/v1/realtime" })
 export class RealTimeGateway {
-  constructor() {}
-
   @WebSocketServer()
   server!: Server;
 

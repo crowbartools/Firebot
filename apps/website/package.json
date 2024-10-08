@@ -1,14 +1,14 @@
 {
-    "name": "firebot-website",
-    "version": "1.0.0",
-    "author": "CrowbarTools",
-    "license": "GPL-3.0",
-    "scripts": {
-        "lint": "eslint --fix --ext .ts,.tsx src/**"
-    },
-    "devDependencies": {
-        "@types/node": "^18.13.0",
-        "eslint-config-custom": "*",
-        "tsconfig": "*"
-    }
+  "name": "firebot-website",
+  "version": "1.0.0",
+  "author": "CrowbarTools",
+  "license": "GPL-3.0",
+  "scripts": {
+    "lint": "eslint --fix --ext .ts,.tsx src/**"
+  },
+  "devDependencies": {
+    "@types/node": "^20.16.9",
+    "eslint-config-custom": "*",
+    "tsconfig": "*"
+  }
 }

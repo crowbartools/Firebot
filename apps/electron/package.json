@@ -1,33 +1,33 @@
 {
-    "name": "firebot",
-    "private": true,
-    "version": "6.0.0",
-    "license": "GPL-3.0",
-    "main": "./dist/index.js",
-    "scripts": {
-        "build": "tsc",
-        "watch": "tsc -w",
-        "dev": "npm run build && cross-env NODE_ENV=development electron ./dist/index.js",
-        "lint": "eslint --fix --ext .ts,.tsx src/**"
-    },
-    "devDependencies": {
-        "@nestjs/platform-fastify": "^10.3.0",
-        "cross-env": "^7.0.3",
-        "electron": "^23.0.0",
-        "eslint-config-custom": "*",
-        "tsc-watch": "^6.0.0",
-        "tsconfig": "*"
-    },
-    "dependencies": {
-        "assets": "*",
-        "backend": "*"
-    },
-    "engines": {
-        "node": ">=18.12.1",
-        "npm": ">=8.19.2"
-    },
-    "volta": {
-        "node": "18.12.1",
-        "npm": "8.19.2"
-    }
+  "name": "firebot",
+  "private": true,
+  "version": "6.0.0",
+  "license": "GPL-3.0",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "dev": "npm run build && cross-env NODE_ENV=development electron ./dist/index.js",
+    "lint": "eslint --fix --ext .ts,.tsx src/**"
+  },
+  "devDependencies": {
+    "@nestjs/platform-fastify": "^10.3.0",
+    "cross-env": "^7.0.3",
+    "electron": "^32.1.2",
+    "eslint-config-custom": "*",
+    "tsc-watch": "^6.2.0",
+    "tsconfig": "*"
+  },
+  "dependencies": {
+    "assets": "*",
+    "backend": "*"
+  },
+  "engines": {
+    "node": ">=20.16.0",
+    "npm": ">=10.8.2"
+  },
+  "volta": {
+    "node": "20.16.0",
+    "npm": "10.8.2"
+  }
 }

@@ -17,6 +17,4 @@ export class FbApi {
   public readonly login = new LoginApi(this.api);
   public readonly authProvider = new AuthProviderApi(this.api);
   public readonly connection = new ConnectionApi(this.api);
-
-  constructor() {}
 }
