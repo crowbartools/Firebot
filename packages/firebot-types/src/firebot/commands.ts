@@ -5,9 +5,8 @@ export interface CommandConfigMetadata {
   scanWholeMessage?: boolean;
 }
 
-export interface CommandConfig
-  extends Trigger<"command", CommandConfigMetadata> {}
+export type CommandConfig = Trigger<"command", CommandConfigMetadata>;
 
 export interface CommandConfigsSettings {
-  commands: CommandConfigMetadata[];
+  commands: CommandConfig[];
 }

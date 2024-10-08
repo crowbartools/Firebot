@@ -11,6 +11,7 @@ import { AppConfig } from "./config/app.config";
 import { StreamingPlatformConfig } from "./config/streaming-platform.config";
 import configSchema from "./config/config.schema";
 import { ConnectionModule } from "connection/connection.module";
+import { CommandsModule } from "commands/commands.module";
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { ConnectionModule } from "connection/connection.module";
     RealTimeModule,
     StreamingPlatformModule,
     ConnectionModule,
+    CommandsModule,
   ],
   controllers: [ExampleController],
   providers: [],
