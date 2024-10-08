@@ -13,5 +13,8 @@ module.exports = {
     },
     ignorePatterns: [
         "dist/**/*"
-    ]
+    ],
+    rules: {
+        "@typescript-eslint/no-unnecessary-type-arguments": "off"
+    }
 };
