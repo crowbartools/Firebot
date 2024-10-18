@@ -65,7 +65,7 @@ class PermitManager {
                     return;
                 }
 
-                const target = args[0].replace("@", "");
+                const target = args[0].replace("@", "").toLowerCase();
                 if (!target) {
                     await twitchChat.sendChatMessage("Please specify a user to permit.");
                     return;
