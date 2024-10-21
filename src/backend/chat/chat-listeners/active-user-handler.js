@@ -187,11 +187,13 @@ exports.addOnlineUser = async (viewer) => {
                 return;
             }
 
+            const roles = await chatRolesManager.getUsersChatRoles(twitchUser.id);
+
             const userDetails = {
                 id: twitchUser.id,
                 username: twitchUser.name,
                 displayName: twitchUser.displayName,
-                twitchRoles: [],
+                twitchRoles: roles,
                 profilePicUrl: twitchUser.profilePictureUrl,
                 disableViewerList: false
             };
