@@ -120,7 +120,7 @@ const effect: EffectType<{
             commandManager.saveCustomCommand(customCommand, "System");
         } else if (commandType === "tag") {
             let commands = commandManager.getAllCustomCommands();
-            commands = commands.filter(c => c.sortTags.includes(sortTagId));
+            commands = commands.filter(c => c.sortTags?.includes(sortTagId));
 
             commands.forEach((customCommand) => {
                 customCommand.active = toggleType === "toggle" ? !customCommand.active : toggleType === "enable";

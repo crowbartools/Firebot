@@ -354,11 +354,14 @@ class FirebotChatHelpers {
             tagged: false,
             badges: [],
             parts: [],
-            roles: []
+            roles: [],
+            isSharedChatMessage: false
         };
     }
 
     async buildFirebotChatMessage(msg: ChatMessage, msgText: string, whisper = false, action = false) {
+        const sharedChatRoomId = msg.tags.get("source-room-id");
+        const isSharedChatMessage = sharedChatRoomId != null && sharedChatRoomId !== accountAccess.getAccounts().streamer.userId;
         const firebotChatMessage: FirebotChatMessage = {
             id: msg.tags.get("id"),
             username: msg.userInfo.userName,
@@ -391,7 +394,9 @@ class FirebotChatHelpers {
             isCheer: msg.isCheer,
             badges: [],
             parts: [],
-            roles: []
+            roles: [],
+            isSharedChatMessage,
+            sharedChatRoomId: isSharedChatMessage ? sharedChatRoomId : null
         };
 
         const profilePicUrl = await this.getUserProfilePicUrl(firebotChatMessage.userId);
@@ -493,7 +498,8 @@ class FirebotChatHelpers {
                 })
             )) : [],
             parts: this._getMessageParts(text),
-            roles: []
+            roles: [],
+            isSharedChatMessage: false // todo: check if extension messages pass through Shared Chat, and if we can listen for it
         };
 
         firebotChatMessage.parts = this._parseMessageParts(firebotChatMessage, firebotChatMessage.parts);
@@ -527,7 +533,8 @@ class FirebotChatHelpers {
             roles: [],
             isAutoModHeld: true,
             autoModStatus: msg.status,
-            autoModReason: msg.contentClassification.category
+            autoModReason: msg.contentClassification.category,
+            isSharedChatMessage: false // todo: check if automod messages have a way to associate them with shared chat
         };
 
         return viewerFirebotChatMessage;
