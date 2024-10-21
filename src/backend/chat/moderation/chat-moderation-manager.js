@@ -204,7 +204,12 @@ async function moderateMessage(chatMessage) {
     }
 
     const userExemptForUrlModeration = rolesManager.userIsInRole(chatMessage.userId, chatMessage.roles, chatModerationSettings.urlModeration.exemptRoles);
-    if (chatModerationSettings.urlModeration.enabled && !userExemptForUrlModeration && !permitCommand.hasTemporaryPermission(chatMessage.username)) {
+    if (
+        chatModerationSettings.urlModeration.enabled &&
+        !userExemptForUrlModeration &&
+        !permitCommand.hasTemporaryPermission(chatMessage.username) &&
+        !permitCommand.hasTemporaryPermission(chatMessage.userDisplayName.toLowerCase())
+    ) {
         let shouldDeleteMessage = false;
         const message = chatMessage.rawText;
         const regex = utils.getUrlRegex();

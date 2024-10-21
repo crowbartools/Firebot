@@ -295,7 +295,7 @@ const model: EffectType<EffectMeta> = {
         }
 
         const rewards = Object.values(channelRewardsManager.channelRewards as Record<string, RewardWithTags>)
-            .filter(reward => reward.sortTags.includes(effect.sortTagId) && reward.manageable);
+            .filter(reward => reward.sortTags?.includes(effect.sortTagId) && reward.manageable);
 
         const promises: Promise<SavedChannelReward>[] = [];
 
