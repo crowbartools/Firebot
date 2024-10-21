@@ -1,9 +1,11 @@
-"use strict";
+import { EffectType } from "../../../types/effects";
+import { EffectCategory } from "../../../shared/effect-constants";
+import logger from "../../logwrapper";
 
-const { EffectCategory } = require('../../../shared/effect-constants');
-const logger = require("../../../backend/logwrapper");
-
-const addFirebotLogMessage = {
+const model: EffectType<{
+    logLevel: "Info" | "Warning" | "Error" | "Debug";
+    logMessage: string;
+}> = {
     definition: {
         id: "firebot:log-message",
         name: "Log Message",
@@ -12,7 +14,6 @@ const addFirebotLogMessage = {
         categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
         dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
         <eos-container header="Message Text">
             <p class="muted">Enter the message you would like to write to the Firebot log file.</p>
@@ -68,4 +69,4 @@ const addFirebotLogMessage = {
     }
 };
 
-module.exports = addFirebotLogMessage;
+module.exports = model;

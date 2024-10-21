@@ -121,6 +121,16 @@
     </div>
   </setting-container>
 
+  <setting-container header="Shared Chat" pad-top="true">
+    <div class="controls-fb-inline">
+      <firebot-radios
+        options="$ctrl.sharedChatRadioOptions"
+        model="$ctrl.command.allowTriggerBySharedChat"
+        inline="true"
+      />
+    </div>
+  </setting-container>
+
   <setting-container
     header="Settings"
     ng-if="$ctrl.command.options != null"

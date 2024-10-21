@@ -240,6 +240,17 @@
                                 <div class="control__indicator"></div>
                             </label>
                         </div>
+
+                        <div class="controls-fb-inline mt-4">
+                            <div class="settings-title">
+                                <h3>Shared Chat</h3>
+                            </div>
+                            <firebot-radios
+                                options="$ctrl.sharedChatRadioOptions"
+                                model="$ctrl.command.allowTriggerBySharedChat"
+                                inline="true"
+                            />
+                        </div>
                     </div>
                 </div>
                 <div class="mt-10">
