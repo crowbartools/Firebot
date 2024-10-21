@@ -102,6 +102,10 @@
             <gift-receivers-list model="$ctrl.metadata.value"></gift-receivers-list>
           </div>
 
+          <div ng-switch-when="poll-choice-list" class="pt-5">
+            <poll-choice-list model="$ctrl.metadata.value" options="$ctrl.metadata.options"></poll-choice-list>
+          </div>
+
           <div ng-switch-when="effectlist">
             <effect-list
                 effects="$ctrl.metadata.value"
