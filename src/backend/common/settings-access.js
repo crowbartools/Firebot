@@ -11,7 +11,7 @@ const settings = {};
 
 let settingsCache = {};
 
-settings.flushSettingsCache = function() {
+settings.flushSettingsCache = function () {
     settingsCache = {};
     frontendCommunicator.send("flush-settings-cache");
 };
@@ -81,169 +81,169 @@ function getDataFromFile(path, forceCacheUpdate = false, defaultValue = undefine
     return settingsCache[path];
 }
 
-settings.getAutoFlagBots = function() {
+settings.getAutoFlagBots = function () {
     const autoFlagBots = getDataFromFile("/settings/autoFlagBots");
     return autoFlagBots != null ? autoFlagBots : true;
 };
 
-settings.getEventSettings = function() {
+settings.getEventSettings = function () {
     return getDataFromFile("/settings/eventSettings");
 };
 
-settings.isCustomScriptsEnabled = function() {
+settings.isCustomScriptsEnabled = function () {
     return getDataFromFile("/settings/runCustomScripts") === true;
 };
 
-settings.setCustomScriptsEnabled = function(enabled) {
+settings.setCustomScriptsEnabled = function (enabled) {
     pushDataToFile("/settings/runCustomScripts", enabled === true);
 };
 
-settings.ignoreSubsequentSubEventsAfterCommunitySub = function() {
+settings.ignoreSubsequentSubEventsAfterCommunitySub = function () {
     const ignoreSubEvents = getDataFromFile("/settings/ignoreSubsequentSubEventsAfterCommunitySub");
     return ignoreSubEvents != null ? ignoreSubEvents : true;
 };
 
-settings.hasJustUpdated = function() {
+settings.hasJustUpdated = function () {
     const updated = getDataFromFile("/settings/justUpdated");
     return updated != null ? updated : false;
 };
 
-settings.setJustUpdated = function(justUpdated) {
+settings.setJustUpdated = function (justUpdated) {
     pushDataToFile("/settings/justUpdated", justUpdated === true);
 };
 
-settings.getOverlayVersion = function() {
+settings.getOverlayVersion = function () {
     const version = getDataFromFile("/settings/copiedOverlayVersion");
     return version != null ? version : "";
 };
 
-settings.setOverlayVersion = function(newVersion) {
+settings.setOverlayVersion = function (newVersion) {
     pushDataToFile("/settings/copiedOverlayVersion", newVersion.toString());
 };
 
-settings.getClearCustomScriptCache = function() {
+settings.getClearCustomScriptCache = function () {
     const clear = getDataFromFile("/settings/clearCustomScriptCache");
     return clear != null ? clear : false;
 };
 
-settings.setClearCustomScriptCache = function(clear) {
+settings.setClearCustomScriptCache = function (clear) {
     pushDataToFile("/settings/clearCustomScriptCache", clear === true);
 };
 
-settings.getCustomScriptsEnabled = function() {
+settings.getCustomScriptsEnabled = function () {
     return getDataFromFile("/settings/runCustomScripts") === true;
 };
 
-settings.setCustomScriptsEnabled = function(enabled) {
+settings.setCustomScriptsEnabled = function (enabled) {
     pushDataToFile("/settings/runCustomScripts", enabled === true);
 };
 
-settings.getPersistCustomVariables = function() {
+settings.getPersistCustomVariables = function () {
     return getDataFromFile("/settings/persistCustomVariables") === true;
 };
 
-settings.setPersistCustomVariables = function(enabled) {
+settings.setPersistCustomVariables = function (enabled) {
     pushDataToFile("/settings/persistCustomVariables", enabled === true);
 };
 
-settings.useOverlayInstances = function() {
+settings.useOverlayInstances = function () {
     const oi = getDataFromFile("/settings/useOverlayInstances");
     return oi != null ? oi : false;
 };
 
-settings.setUseOverlayInstances = function(oi) {
+settings.setUseOverlayInstances = function (oi) {
     pushDataToFile("/settings/useOverlayInstances", oi === true);
 };
 
-settings.getOverlayInstances = function() {
+settings.getOverlayInstances = function () {
     const ois = getDataFromFile("/settings/overlayInstances");
     return ois != null ? ois : [];
 };
 
-settings.setOverlayInstances = function(ois) {
+settings.setOverlayInstances = function (ois) {
     pushDataToFile("/settings/overlayInstances", ois);
 };
 
-settings.getForceOverlayEffectsToContinueOnRefresh = function() {
+settings.getForceOverlayEffectsToContinueOnRefresh = function () {
     const forceOverlayEffectsToContinueOnRefresh = getDataFromFile("/settings/forceOverlayEffectsToContinueOnRefresh", false, true);
     return forceOverlayEffectsToContinueOnRefresh === true;
 };
 
-settings.setForceOverlayEffectsToContinueOnRefresh = function(value) {
+settings.setForceOverlayEffectsToContinueOnRefresh = function (value) {
     pushDataToFile("/settings/forceOverlayEffectsToContinueOnRefresh", value);
 };
 
-settings.backupKeepAll = function() {
+settings.backupKeepAll = function () {
     const backupKeepAll = getDataFromFile("/settings/backupKeepAll");
     return backupKeepAll != null ? backupKeepAll : false;
 };
 
-settings.backupOnExit = function() {
+settings.backupOnExit = function () {
     const backupOnExit = getDataFromFile("/settings/backupOnExit");
     return backupOnExit != null ? backupOnExit : true;
 };
 
-settings.backupIgnoreResources = function() {
+settings.backupIgnoreResources = function () {
     const save = getDataFromFile("/settings/backupIgnoreResources");
     return save != null ? save : true;
 };
 
-settings.setBackupIgnoreResources = function(backupIgnoreResources) {
+settings.setBackupIgnoreResources = function (backupIgnoreResources) {
     pushDataToFile("/settings/backupIgnoreResources", backupIgnoreResources === false);
 };
 
-settings.backupBeforeUpdates = function() {
+settings.backupBeforeUpdates = function () {
     const backupBeforeUpdates = getDataFromFile("/settings/backupBeforeUpdates");
     return backupBeforeUpdates != null ? backupBeforeUpdates : true;
 };
 
-settings.backupOnceADay = function() {
+settings.backupOnceADay = function () {
     const backupOnceADay = getDataFromFile("/settings/backupOnceADay");
     return backupOnceADay != null ? backupOnceADay : true;
 };
 
-settings.setBackupOnceADay = function(backupOnceADay) {
+settings.setBackupOnceADay = function (backupOnceADay) {
     pushDataToFile("/settings/backupOnceADay", backupOnceADay === true);
 };
 
-settings.lastBackupDate = function() {
+settings.lastBackupDate = function () {
     const lastBackup = getDataFromFile("/settings/lastBackupDate");
     return lastBackup != null ? new Date(lastBackup) : null;
 };
 
-settings.setLastBackupDate = function(lastBackup) {
+settings.setLastBackupDate = function (lastBackup) {
     pushDataToFile("/settings/lastBackupDate", lastBackup.toJSON());
 };
 
-settings.maxBackupCount = function() {
+settings.maxBackupCount = function () {
     const maxBackupCount = getDataFromFile("/settings/maxBackupCount");
     return maxBackupCount != null ? maxBackupCount : 25;
 };
 
-settings.setMaxBackupCount = function(maxBackupCount) {
+settings.setMaxBackupCount = function (maxBackupCount) {
     pushDataToFile("/settings/maxBackupCount", maxBackupCount);
 };
 
-settings.getAllowQuoteCSVDownloads = function() {
+settings.getAllowQuoteCSVDownloads = function () {
     return getDataFromFile("/settings/allowQuoteCSVDownloads") !== false;
 };
 
-settings.getActiveChatUserListTimeout = function() {
+settings.getActiveChatUserListTimeout = function () {
     const inactiveTimer = getDataFromFile("/settings/activeChatUsers/inactiveTimer");
     return inactiveTimer != null ? parseInt(inactiveTimer) : 5;
 };
 
-settings.getWebSocketPort = function() {
+settings.getWebSocketPort = function () {
     const websocketPort = getDataFromFile("/settings/websocketPort");
     return websocketPort != null ? websocketPort : 8080;
 };
 
-settings.getWebServerPort = function() {
+settings.getWebServerPort = function () {
     const serverPort = getDataFromFile("/settings/webServerPort");
     return serverPort != null ? serverPort : 7472;
 };
 
-settings.getViewerDbStatus = function() {
+settings.getViewerDbStatus = function () {
     const status = getDataFromFile("/settings/viewerDB");
     return status != null ? status : true;
 };
@@ -255,34 +255,34 @@ settings.getViewerDbStatus = function() {
 * 3 = major release,
 * 4 = betas
 */
-settings.getAutoUpdateLevel = function() {
+settings.getAutoUpdateLevel = function () {
     const updateLevel = getDataFromFile("/settings/autoUpdateLevel");
     return updateLevel != null ? updateLevel : 2;
 };
 
-settings.getAudioOutputDevice = function() {
+settings.getAudioOutputDevice = function () {
     const device = getDataFromFile("/settings/audioOutputDevice");
     return device != null
         ? device
         : { label: "System Default", deviceId: "default" };
 };
 
-settings.debugModeEnabled = function() {
+settings.debugModeEnabled = function () {
     const enabled = getDataFromFile("/settings/debugMode");
     return enabled != null ? enabled : false;
 };
 
-settings.getWhileLoopEnabled = function() {
+settings.getWhileLoopEnabled = function () {
     const enabled = getDataFromFile('/settings/whileLoopEnabled');
     return enabled !== undefined ? enabled : false;
 };
 
-settings.setWhileLoopEnabled = function(enabled) {
+settings.setWhileLoopEnabled = function (enabled) {
     pushDataToFile('/settings/whileLoopEnabled', enabled === true);
 };
 
 /**@returns {string[]} */
-settings.getSidebarControlledServices = function() {
+settings.getSidebarControlledServices = function () {
     const services = getDataFromFile("/settings/sidebarControlledServices");
     return services != null
         ? services
@@ -322,13 +322,21 @@ settings.setWebOnlineCheckin = (value) => {
     pushDataToFile("/settings/webOnlineCheckin", value);
 };
 
-settings.getTriggerUpcomingAdBreakMinutes = function() {
+settings.getTriggerUpcomingAdBreakMinutes = function () {
     const value = getDataFromFile("/settings/triggerUpcomingAdBreakMinutes", false, 0);
     return value ?? 0;
 };
 
-settings.setTriggerUpcomingAdBreakMinutes = function(value) {
+settings.setTriggerUpcomingAdBreakMinutes = function (value) {
     pushDataToFile("/settings/triggerUpcomingAdBreakMinutes", value);
+};
+
+settings.getAllowCommandsInSharedChat = function () {
+    return getDataFromFile("/settings/allowCommandsInSharedChat", false, false); // default OFF
+};
+
+settings.setAllowCommandsInSharedChat = function (value) {
+    pushDataToFile("/settings/allowCommandsInSharedChat", value);
 };
 
 exports.settings = settings;

@@ -1,6 +1,9 @@
 "use strict";
 
-(function() {
+(function () {
+
+    const uuid = require("uuid");
+
     const firebotSelectComponent = {
         bindings: {
             options: "=",
@@ -13,10 +16,10 @@
         },
         template: `
         <div class="btn-group" uib-dropdown>
-            <button id="single-button" aria-label="{{($ctrl.ariaLabel || 'Selected') + ': ' + $ctrl.getSelectedOption()}}" type="button" class="btn btn-default" uib-dropdown-toggle ng-disabled="$ctrl.isDisabled">
+            <button id="{{$ctrl.id}}" aria-label="{{($ctrl.ariaLabel || 'Selected') + ': ' + $ctrl.getSelectedOption()}}" type="button" class="btn btn-default" uib-dropdown-toggle ng-disabled="$ctrl.isDisabled">
             {{$ctrl.getSelectedOption()}} <span class="caret" aria-hidden="true"></span>
             </button>
-            <ul class="dropdown-menu" ng-class="$ctrl.rightJustify ? 'right-justified-dropdown' : ''" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+            <ul class="dropdown-menu" ng-class="$ctrl.rightJustify ? 'right-justified-dropdown' : ''" uib-dropdown-menu role="menu" aria-labelledby="{{$ctrl.id}}">
                 <li
                     ng-if="!$ctrl.objectMode"
                     ng-repeat="option in $ctrl.options"
@@ -40,24 +43,26 @@
             </ul>
         </div>
         `,
-        controller: function($timeout) {
+        controller: function ($timeout) {
 
             const ctrl = this;
 
+            ctrl.id = uuid();
+
             ctrl.objectMode = false;
 
-            ctrl.selectOption = function(option) {
+            ctrl.selectOption = function (option) {
                 if (option === 'separator') {
                     return;
                 }
 
                 ctrl.selected = option;
                 $timeout(() => {
-                    ctrl.onUpdate({option: option});
+                    ctrl.onUpdate({ option: option });
                 }, 1);
             };
 
-            ctrl.getSelectedOption = function() {
+            ctrl.getSelectedOption = function () {
                 if (ctrl.selected == null) {
                     return ctrl.placeholder;
                 }
