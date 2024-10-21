@@ -103,7 +103,7 @@ const model: EffectType<{
             return true;
         }
 
-        const tasks = scheduledTaskManager.getAllItems().filter(task => task.sortTags.includes(effect.sortTagId));
+        const tasks = scheduledTaskManager.getAllItems().filter(task => task.sortTags?.includes(effect.sortTagId));
 
         tasks.forEach((scheduledTask) => {
             scheduledTask.enabled = effect.toggleType === "toggle" ? !scheduledTask.enabled : effect.toggleType === "enable";

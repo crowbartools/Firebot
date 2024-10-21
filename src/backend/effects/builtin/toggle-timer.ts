@@ -102,7 +102,7 @@ const model: EffectType<{
 
             return true;
         }
-        const timers = timerManager.getAllItems().filter(timer => timer.sortTags.includes(effect.sortTagId));
+        const timers = timerManager.getAllItems().filter(timer => timer.sortTags?.includes(effect.sortTagId));
         timers.forEach((timer) => {
             const isActive = effect.toggleType === "toggle" ? !timer.active : effect.toggleType === "enable";
             timerManager.updateTimerActiveStatus(timer.id, isActive);
