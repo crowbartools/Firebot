@@ -48,7 +48,19 @@ class CurrencyAccess {
 
         logger.debug("Refreshing currency cache");
         const db = profileManager.getJsonDbInProfile("/currency/currency");
-        this._currencyCache = db.getData("/");
+
+        let issue2801 = false;
+        const cache = db.getData("/");
+        Object.keys(cache).forEach((currencyId) => {
+            if (cache[currencyId].offline === null || cache[currencyId].offline === "") {
+                issue2801 = true;
+                cache[currencyId].offline = undefined;
+            }
+        });
+        if (issue2801) {
+            db.push("/", cache);
+        }
+        this._currencyCache = cache;
     }
 
     getCurrencies(): CurrencyCache {
