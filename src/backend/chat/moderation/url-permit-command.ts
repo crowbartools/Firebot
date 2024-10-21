@@ -66,12 +66,13 @@ class PermitManager {
                 }
 
                 const target = args[0].replace("@", "");
+                const normalizedTarget = target.toLowerCase();
                 if (!target) {
                     await twitchChat.sendChatMessage("Please specify a user to permit.");
                     return;
                 }
 
-                this._tempPermittedUsers.push(target);
+                this._tempPermittedUsers.push(normalizedTarget);
                 logger.debug(`URL moderation: ${target} has been temporary permitted to post a URL.`);
 
                 const message = commandOptions.permitDisplayTemplate.replace("{target}", target).replace("{duration}", commandOptions.permitDuration.toString());
@@ -81,7 +82,7 @@ class PermitManager {
                 }
 
                 setTimeout(() => {
-                    this._tempPermittedUsers = this._tempPermittedUsers.filter(user => user !== target);
+                    this._tempPermittedUsers = this._tempPermittedUsers.filter(user => user !== normalizedTarget);
                     logger.debug(`URL moderation: Temporary URL permission for ${target} expired.`);
                 }, commandOptions.permitDuration * 1000);
             }

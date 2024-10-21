@@ -215,7 +215,7 @@ const model = {
 
         if (effect.sortTagId != null && effect.selectionType === "sortTag") {
             const commandManager = require("../../chat/commands/command-manager");
-            const commands = commandManager.getAllCustomCommands().filter(c => c.sortTags.includes(effect.sortTagId));
+            const commands = commandManager.getAllCustomCommands().filter(c => c.sortTags?.includes(effect.sortTagId));
             commands.forEach(c => commandIds.push(c.id));
         }
 
