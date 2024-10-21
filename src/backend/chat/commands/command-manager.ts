@@ -154,14 +154,15 @@ class CommandManager extends TypedEmitter<Events> {
             const override = this._commandCache.systemCommandOverrides[c.definition.id];
             if (override != null) {
                 if (c.definition.options) {
-                    override.options = Object.assign(c.definition.options, override.options);
-
-                    //remove now nonexistent options
-                    for (const overrideOptionName of Object.keys(override.options)) {
-                        if (c.definition.options[overrideOptionName] == null) {
-                            delete override.options[overrideOptionName];
+                    const options = structuredClone(c.definition.options);
+                    if (override.options) {
+                        for (const key of Object.keys(options)) {
+                            if (override.options[key]?.value) {
+                                options[key].value = override.options[key].value;
+                            }
                         }
                     }
+                    override.options = options;
                 } else {
                     override.options = null;
                 }
