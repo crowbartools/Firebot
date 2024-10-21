@@ -81,6 +81,11 @@ router.route("/viewers/export").get(viewers.getAllUserDataAsJSON);
 
 router.route("/viewers/:userId").get(viewers.getUserMetadata);
 
+router.route("/viewers/:userId/metadata/:metadataKey")
+    .post(viewers.updateUserMetadataKey)
+    .put(viewers.updateUserMetadataKey)
+    .delete(viewers.removeUserMetadataKey);
+
 router.route("/viewers/:userId/currency").get(viewers.getUserCurrency);
 
 router.route("/viewers/:userId/currency/:currencyId").get(viewers.getUserCurrency).post(viewers.setUserCurrency);
@@ -98,6 +103,8 @@ const customRoles = require("./controllers/customRolesApiController");
 router.route("/customRoles").get(customRoles.getCustomRoles);
 
 router.route("/customRoles/:customRoleId").get(customRoles.getCustomRoleById);
+
+router.route("/customRoles/:customRoleId/clear").get(customRoles.removeAllViewersFromRole);
 
 router
     .route("/customRoles/:customRoleId/viewer/:userId")

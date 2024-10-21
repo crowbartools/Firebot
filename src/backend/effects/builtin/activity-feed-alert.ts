@@ -25,6 +25,7 @@ const effect: EffectType<{
             use-text-area="true"
             rows="4"
             cols="40"
+            menu-position="under"
         />
     </eos-container> 
     <eos-container header="Icon" pad-top="true">
