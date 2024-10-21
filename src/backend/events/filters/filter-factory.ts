@@ -1,15 +1,20 @@
 import { EventFilter } from "../../../types/events";
 import { ComparisonType } from "../../../shared/filter-constants";
 
+type EventData = {
+    eventSourceId: string;
+    eventId: string;
+    eventMeta: Record<string, unknown>;
+}
+
+type FilterEvent = Omit<EventData, "eventMeta">;
+
 type FilterConfig = {
     id: string;
     name: string;
     description: string;
-    events: Array<{
-        eventSourceId: string;
-        eventId: string;
-    }>;
-    eventMetaKey: string;
+    events: Array<FilterEvent>;
+    eventMetaKey: string | ((eventData: EventData) => string);
     caseInsensitive?: boolean;
 };
 
@@ -59,6 +64,12 @@ function compareValue(
     }
 }
 
+function getMetaKey(eventMetaKey: FilterConfig["eventMetaKey"], event: EventData): string {
+    if (typeof eventMetaKey === "function") {
+        return eventMetaKey(event);
+    }
+    return eventMetaKey;
+}
 
 export function createTextFilter({
     eventMetaKey,
@@ -73,7 +84,7 @@ export function createTextFilter({
             const { comparisonType, value } = filterSettings;
             const { eventMeta } = eventData;
 
-            let eventValue = eventMeta[eventMetaKey] ?? "";
+            let eventValue = eventMeta[getMetaKey(eventMetaKey, eventData)] ?? "";
             if (caseInsensitive) {
                 eventValue = eventValue.toString().toLowerCase();
             }
@@ -99,7 +110,7 @@ export function createNumberFilter({
             const { comparisonType, value } = filterSettings;
             const { eventMeta } = eventData;
 
-            const eventValue = eventMeta[eventMetaKey] ?? 0;
+            const eventValue = eventMeta[getMetaKey(eventMetaKey, eventData)] ?? 0;
 
             return compareValue(comparisonType, value, eventValue);
         }
@@ -118,10 +129,9 @@ export function createTextOrNumberFilter({
             const { comparisonType, value: filterValue } = filterSettings;
             const { eventMeta } = eventData;
 
-            const eventValue = eventMeta[eventMetaKey] ?? "";
+            const eventValue = eventMeta[getMetaKey(eventMetaKey, eventData)] ?? "";
 
             return compareValue(comparisonType, filterValue, eventValue);
         }
     };
 }
-
