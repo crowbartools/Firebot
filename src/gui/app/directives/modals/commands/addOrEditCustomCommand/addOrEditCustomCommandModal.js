@@ -2,19 +2,19 @@
 
 // Modal for adding or editing a command
 
-(function() {
+(function () {
     const uuid = require("uuid/v4");
 
     angular.module("firebotApp").component("addOrEditCustomCommandModal", {
         templateUrl:
-      "./directives/modals/commands/addOrEditCustomCommand/addOrEditCustomCommandModal.html",
+            "./directives/modals/commands/addOrEditCustomCommand/addOrEditCustomCommandModal.html",
         bindings: {
             resolve: "<",
             close: "&",
             dismiss: "&",
             modalInstance: "<"
         },
-        controller: function($scope, utilityService, commandsService, ngToast, settingsService) {
+        controller: function ($scope, utilityService, commandsService, ngToast, settingsService) {
             const $ctrl = this;
 
             $ctrl.command = {
@@ -34,7 +34,14 @@
                 },
                 aliases: [],
                 sortTags: [],
-                treatQuotedTextAsSingleArg: false
+                treatQuotedTextAsSingleArg: false,
+                allowTriggerBySharedChat: "inherit"
+            };
+
+            $ctrl.sharedChatRadioOptions = {
+                true: "Allow",
+                false: "Ignore",
+                inherit: { text: "Inherit", tooltip: "Inherit settings from Settings > Triggers > Allow Shared Chat To Trigger Commands" }
             };
 
             $scope.trigger = "command";
@@ -52,7 +59,7 @@
                 if (currentlyAdvanced) {
                     const willBeRemoved = [];
                     if ($ctrl.command.effects.list.length > 1 ||
-                            $ctrl.command.effects.list.some(e => e.type !== "firebot:chat")) {
+                        $ctrl.command.effects.list.some(e => e.type !== "firebot:chat")) {
                         willBeRemoved.push("all effects save for a single Chat effect");
                     }
                     if ($ctrl.command.restrictionData.restrictions.length > 1 ||
@@ -114,7 +121,7 @@
                 }
             };
 
-            $ctrl.$onInit = function() {
+            $ctrl.$onInit = function () {
                 if ($ctrl.resolve.command == null) {
                     $ctrl.isNewCommand = true;
                 } else {
@@ -139,9 +146,14 @@
                 if ($ctrl.command.treatQuotedTextAsSingleArg == null) {
                     $ctrl.command.treatQuotedTextAsSingleArg = false;
                 }
+
+                if ($ctrl.command.allowTriggerBySharedChat == null) {
+                    $ctrl.command.allowTriggerBySharedChat = "inherit";
+                }
+                $ctrl.command.allowTriggerBySharedChat = String($ctrl.command.allowTriggerBySharedChat);
             };
 
-            $ctrl.effectListUpdated = function(effects) {
+            $ctrl.effectListUpdated = function (effects) {
                 $ctrl.command.effects = effects;
             };
 
@@ -221,7 +233,7 @@
                 });
             };
 
-            $ctrl.delete = function() {
+            $ctrl.delete = function () {
                 if ($ctrl.isNewCommand) {
                     return;
                 }
@@ -237,7 +249,7 @@
                 });
             };
 
-            $ctrl.save = function() {
+            $ctrl.save = function () {
                 if ($ctrl.command.trigger == null || $ctrl.command.trigger === "") {
                     ngToast.create("Please provide a trigger.");
                     return;
@@ -256,6 +268,11 @@
                     return;
                 }
 
+                if ($ctrl.command.allowTriggerBySharedChat === "true") {
+                    $ctrl.command.allowTriggerBySharedChat = true;
+                } else if ($ctrl.command.allowTriggerBySharedChat === "false") {
+                    $ctrl.command.allowTriggerBySharedChat = false;
+                }
 
                 const action = $ctrl.isNewCommand ? "add" : "update";
                 $ctrl.close({

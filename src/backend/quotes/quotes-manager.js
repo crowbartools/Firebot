@@ -5,6 +5,8 @@ const profileManager = require("../common/profile-manager");
 const logger = require("../logwrapper");
 const frontendCommunicator = require("../common/frontend-communicator");
 
+const EventEmitter = require("events");
+
 const regExpEscape = input => input.replace(/[$^|.*+?(){}\\[\]]/g, '\\$&');
 
 /**
@@ -95,6 +97,7 @@ function addQuote(quote) {
                 logger.error("QuoteDB: Error adding quote: ", err.message);
                 return reject();
             }
+            exports.events.emit("created-item", { quote });
             frontendCommunicator.send("quotes-update");
             resolve(quote._id);
         });
@@ -119,6 +122,11 @@ const addQuotes = (quotes) => {
                 logger.error("QuoteDB: Error adding quotes: ", err.message);
                 return reject();
             }
+
+            for (const quote of quotes) {
+                exports.events.emit("created-item", { quote });
+            }
+
             frontendCommunicator.send("quotes-update");
             resolve();
         });
@@ -133,6 +141,9 @@ function updateQuote(quote, dontSendUiUpdateEvent = false) {
                 logger.error("QuoteDB: Error updating quote: ", err.message);
                 return reject();
             }
+
+            exports.events.emit("updated-item", { quote });
+
             if (!dontSendUiUpdateEvent) {
                 frontendCommunicator.send("quotes-update");
             }
@@ -148,6 +159,9 @@ function removeQuote(quoteId, dontSendUiUpdateEvent = false) {
             if (err) {
                 logger.warn("Error while removing quote", err);
             }
+
+            exports.events.emit("deleted-item", { quote: { _id: quoteId } });
+
             if (!dontSendUiUpdateEvent) {
                 frontendCommunicator.send("quotes-update");
             }
@@ -317,6 +331,9 @@ function updateQuoteId(quote, newId) {
                 logger.error("QuoteDB: Error adding quote: ", err.message);
                 return resolve(false);
             }
+
+            exports.events.emit("created-item", { quote });
+
             resolve(true);
         });
     });
@@ -370,6 +387,15 @@ frontendCommunicator.onAsync("get-all-quotes", async () => {
 frontendCommunicator.on("recalc-quote-ids", () => {
     recalculateQuoteIds();
 });
+
+/**
+ * @type {import("tiny-typed-emitter").TypedEmitter<{
+*    "created-item": (item: unknown) => void;
+*    "deleted-item": (item: unknown) => void;
+*    "updated-item": (item: unknown) => void;
+*  }>}
+*/
+exports.events = new EventEmitter();
 
 exports.addQuote = addQuote;
 exports.removeQuote = removeQuote;
