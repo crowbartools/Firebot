@@ -22,7 +22,7 @@
                         </span>
                     </div>
                     <p class="muted" ng-show="$ctrl.model.length == 0">No Choices added.</p>
-                    <p class="muted" ng-show="$ctrl.model.length < 2 ">Not enough Choices added.</p>
+                    <p class="muted" ng-show="$ctrl.model.length < 2 && $ctrl.model.length != 0 ">Not enough Choices added.</p>
                     <div class="mx-0 mt-2.5 mb-4">
                         <button ng-if="$ctrl.model.length < 5" class="filter-bar" ng-click="$ctrl.showAddOrEditPollChoiceModal()" uib-tooltip="Add Poll Choice" tooltip-append-to-body="true" aria-label="Add Poll Choice">
                             <i class="far fa-plus"></i>
