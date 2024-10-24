@@ -2,8 +2,7 @@
 
 const logger = require("../../../logwrapper");
 const frontEndCommunicator = require("../../../common/frontend-communicator");
-const colorConvert = require("color-convert");
-
+const tinycolor = require("tinycolor2");
 const { api: hueApi, model } = require('node-hue-api');
 
 const { LightState } = model;
@@ -111,8 +110,8 @@ async function controlHueLight(lightId, controlOptions) {
         }
 
         if (controlOptions.updateColor && controlOptions.color != null) {
-            const color = colorConvert.hex.rgb(controlOptions.color);
-            updatedLightState.rgb(color[0], color[1], color[2]);
+            const color = tinycolor(controlOptions.color).setAlpha(1).toRgb();
+            updatedLightState.rgb(color.r, color.g, color.b);
         }
 
         if (controlOptions.triggerAlert) {
