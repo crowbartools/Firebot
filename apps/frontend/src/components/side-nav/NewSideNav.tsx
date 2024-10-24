@@ -13,6 +13,7 @@ import firebotLogo from "assets/images/firebot-logo.png";
 import { menuItems } from "./nav-menu-items";
 import { useRouter } from "next/router";
 import { ProfileDropdownNew } from "../header/ProfileDropdownNew";
+import { ConnectionButton } from "./ConnectionButton";
 
 export const NewSideNav: React.FC = () => {
   const router = useRouter();
@@ -47,6 +48,7 @@ export const NewSideNav: React.FC = () => {
       </SidebarBody>
       <SidebarFooter className="max-lg:hidden">
         <ProfileDropdownNew />
+        <ConnectionButton />
       </SidebarFooter>
     </Sidebar>
   );
