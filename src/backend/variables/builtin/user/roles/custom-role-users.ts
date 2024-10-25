@@ -8,7 +8,7 @@ const model : ReplaceVariable = {
         usage: "customRoleUsers[role]",
         description: "Returns an array of all the user display names in the specified custom role.",
         categories: [VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.OBJECT],
+        possibleDataOutput: [OutputDataType.ARRAY],
         examples: [
             {
                 usage: "customRoleUsers[role, username]",
