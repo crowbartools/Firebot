@@ -29,8 +29,6 @@ const model : ReplaceVariable = {
 
         if (propertyName?.toLowerCase() === "username") {
             return customRole?.viewers?.map(v => v.username) || [];
-        } else if (propertyName?.toLowerCase() === "id") {
-            return customRole?.viewers?.map(v => v.id) || [];
         } else if (propertyName?.toLowerCase() === "raw") {
             return customRole?.viewers || [];
         }
