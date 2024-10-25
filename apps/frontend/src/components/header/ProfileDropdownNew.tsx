@@ -61,7 +61,7 @@ export const ProfileDropdownNew: React.FC = () => {
                 {activeProfile?.name}
               </span>
 
-              <span className="block truncate text-xs/5 font-normal text-zinc-500 dark:text-zinc-400">
+              <span className="block truncate text-xs/5 w-5 font-normal text-zinc-500 dark:text-zinc-400">
                 {streamingPlatformsWithLogins.map((platform) => (
                   <FontAwesomeIcon
                     key={platform.id}

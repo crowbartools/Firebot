@@ -37,7 +37,7 @@ export const NewSideNav: React.FC = () => {
               <SidebarItem
                 key={item.title}
                 href={item.route}
-                current={router.asPath === item.route}
+                current={item.route === "/" ? router.asPath === "/" : router.asPath?.startsWith(item.route)}
               >
                 {item.icon}
                 <SidebarLabel>{item.title}</SidebarLabel>

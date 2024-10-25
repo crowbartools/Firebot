@@ -1,6 +1,7 @@
 import type { AppProps } from "next/app";
 import { initialStore, Provider as StoreProvider } from "../stores";
 import "@/styles/globals.css";
+import '@xyflow/react/dist/style.css';
 import NoSSRWrapper from "@/components/NoSSRWrapper";
 import { FbApiProvider } from "@/api/FbApiContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
