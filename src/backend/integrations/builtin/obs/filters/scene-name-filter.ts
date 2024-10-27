@@ -15,7 +15,7 @@ export const SceneNameEventFilter: EventFilter = {
     description: "Filter on the name of the now active OBS scene",
     valueType: "preset",
     comparisonTypes: ["is", "is not"],
-    presetValues: (backendCommunicator: any, $q) => {
+    presetValues: (backendCommunicator: any, $q: any) => {
         return $q
             .when(backendCommunicator.fireEventAsync("obs-get-scene-list"))
             .then((scenes: string[]) =>

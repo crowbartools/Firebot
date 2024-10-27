@@ -1,5 +1,7 @@
-import { EventFilter } from "../../../types/events";
+import { EventFilter, FilterSettings, PresetValue } from "../../../types/events";
 import { ComparisonType } from "../../../shared/filter-constants";
+import { extractPropertyWithPath } from "../../utility";
+import { auto } from "angular";
 
 type EventData = {
     eventSourceId: string;
@@ -14,9 +16,16 @@ type FilterConfig = {
     name: string;
     description: string;
     events: Array<FilterEvent>;
-    eventMetaKey: string | ((eventData: EventData) => string);
+    eventMetaKey: string | ((eventData: EventData, filterSettings: FilterSettings) => string);
     caseInsensitive?: boolean;
 };
+
+type PresetFilterConfig = FilterConfig & {
+    presetValues: (...args: unknown[]) => Promise<PresetValue[]> | PresetValue[];
+    valueIsStillValid?(filterSettings: FilterSettings, ...args: unknown[]): Promise<boolean> | boolean;
+    getSelectedValueDisplay?(filterSettings: FilterSettings, ...args: unknown[]): Promise<string> | string;
+    allowIsNot?: boolean;
+}
 
 const TEXT_COMPARISON_TYPES = [
     ComparisonType.IS,
@@ -103,9 +112,9 @@ function compareValue(
     }
 }
 
-function getMetaKey(eventMetaKey: FilterConfig["eventMetaKey"], event: EventData): string {
+function getMetaKey(eventMetaKey: FilterConfig["eventMetaKey"], event: EventData, filter: FilterSettings): string {
     if (typeof eventMetaKey === "function") {
-        return eventMetaKey(event);
+        return eventMetaKey(event, filter);
     }
     return eventMetaKey;
 }
@@ -114,7 +123,7 @@ export function createTextFilter({
     eventMetaKey,
     caseInsensitive,
     ...config
-}: FilterConfig): Omit<EventFilter, "presetValues"> {
+}: Omit<FilterConfig, "presetValues" | "allowIsNot">): Omit<EventFilter, "presetValues"> {
     return {
         ...config,
         comparisonTypes: TEXT_COMPARISON_TYPES,
@@ -123,7 +132,7 @@ export function createTextFilter({
             const { comparisonType, value } = filterSettings;
             const { eventMeta } = eventData;
 
-            let eventValue = eventMeta[getMetaKey(eventMetaKey, eventData)] ?? "";
+            let eventValue = extractPropertyWithPath(eventMeta, getMetaKey(eventMetaKey, eventData, filterSettings)) ?? "";
             if (caseInsensitive) {
                 eventValue = eventValue.toString().toLowerCase();
             }
@@ -138,7 +147,7 @@ export function createTextFilter({
 export function createNumberFilter({
     eventMetaKey,
     ...config
-}: Omit<FilterConfig, "caseInsensitive">): Omit<EventFilter, "presetValues" | "valueType"> & {
+}: Omit<FilterConfig, "caseInsensitive" | "presetValues" | "allowIsNot">): Omit<EventFilter, "presetValues" | "valueType"> & {
         valueType: "number";
     } {
     return {
@@ -149,7 +158,7 @@ export function createNumberFilter({
             const { comparisonType, value } = filterSettings;
             const { eventMeta } = eventData;
 
-            const eventValue = eventMeta[getMetaKey(eventMetaKey, eventData)] ?? 0;
+            const eventValue = extractPropertyWithPath(eventMeta, getMetaKey(eventMetaKey, eventData, filterSettings)) ?? 0;
 
             return compareValue(comparisonType, value, eventValue);
         }
@@ -158,19 +167,64 @@ export function createNumberFilter({
 
 export function createTextOrNumberFilter({
     eventMetaKey,
+    caseInsensitive,
     ...config
-}: Omit<FilterConfig, "caseInsensitive">): Omit<EventFilter, "presetValues"> {
+}: Omit<FilterConfig, "presetValues" | "allowIsNot">): Omit<EventFilter, "presetValues"> {
     return {
         ...config,
         comparisonTypes: NUMBER_TEXT_COMPARISON_TYPES,
         valueType: "text",
         async predicate(filterSettings, eventData) {
-            const { comparisonType, value: filterValue } = filterSettings;
+            const { comparisonType, value } = filterSettings;
             const { eventMeta } = eventData;
 
-            const eventValue = eventMeta[getMetaKey(eventMetaKey, eventData)] ?? "";
-
+            let eventValue = extractPropertyWithPath(eventMeta, getMetaKey(eventMetaKey, eventData, filterSettings)) ?? "";
+            if (caseInsensitive) {
+                eventValue = eventValue.toString().toLowerCase();
+            }
+            const filterValue =
+        (caseInsensitive ? value?.toString()?.toLowerCase() : value) ?? "";
             return compareValue(comparisonType, filterValue, eventValue);
+        }
+    };
+}
+
+export function createPresetFilter({
+    eventMetaKey,
+    presetValues,
+    getSelectedValueDisplay,
+    valueIsStillValid,
+    allowIsNot = false,
+    ...config
+}: Omit<PresetFilterConfig, "caseInsensitive">): EventFilter {
+    const comparisonTypes: ComparisonType[] = [ComparisonType.IS];
+    if (allowIsNot) {
+        comparisonTypes.push(ComparisonType.IS_NOT);
+    }
+
+    const valueDisplay = getSelectedValueDisplay ?? (async (filterSettings, $injector: auto.IInjectorService) => {
+        return (await $injector.invoke(presetValues, {}, {}))
+            .find(pv => pv.value === filterSettings.value)?.display ?? "[Not Set]";
+    });
+
+    return {
+        ...config,
+        comparisonTypes,
+        valueType: "preset",
+        presetValues,
+        getSelectedValueDisplay: valueDisplay,
+        valueIsStillValid,
+        async predicate(filterSettings, eventData) {
+            const { value, comparisonType } = filterSettings;
+            const { eventMeta } = eventData;
+
+            const data = extractPropertyWithPath(eventMeta, getMetaKey(eventMetaKey, eventData, filterSettings));
+
+            const output = data === value ||
+                (data === true && value === "true") ||
+                (data === false && value === "false");
+
+            return comparisonType === ComparisonType.IS ? output : !output;
         }
     };
 }

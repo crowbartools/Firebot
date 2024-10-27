@@ -13,7 +13,7 @@ export const GroupNameEventFilter: EventFilter = {
     description: "Filter on the name of the group owning the item that triggered the event",
     valueType: "preset",
     comparisonTypes: ["is", "is not"],
-    presetValues: (backendCommunicator, $q) => {
+    presetValues: (backendCommunicator: any, $q: any) => {
         return $q
             .when(backendCommunicator.fireEvents("obs-get-group-list"))
             .then((groups: string[]) =>
