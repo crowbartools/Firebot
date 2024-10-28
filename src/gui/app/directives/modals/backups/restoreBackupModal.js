@@ -17,7 +17,7 @@
                     <i class="fad fa-sad-tear" style="font-size: 150px;"></i>
                 </div>
                 <div ng-if="$ctrl.restoreComplete" style="height: 220px;display:flex;justify-content:center;align-items:center;">
-                    <i class="fad fa-check-circle" style="font-size: 150px; color:lightgreen"></i>
+                    <i class="fad fa-check-circle restore-succeeded-check" style="font-size: 150px;"></i>
                 </div>
                 <p ng-if="$ctrl.restoreHasError" style="color:#ed5e5e;">
                     <b>Restore failed because:</b><br>{{$ctrl.errorMessage}}

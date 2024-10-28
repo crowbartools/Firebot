@@ -1940,3 +1940,7 @@ column-resizer {
 .markdown-container > *:last-child {
     margin-bottom: 0;
 }
+
+.restore-succeeded-check {
+  color: $good-color;
+}

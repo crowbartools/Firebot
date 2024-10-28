@@ -655,7 +655,7 @@ table.fb-table-alt {
     border-radius: 10px;
     display: inline-block;
     &.unpaused {
-        background: lightgreen;
+        background: $good-color;
     }
     &.paused {
         background: orange;
@@ -668,7 +668,7 @@ table.fb-table-alt {
     border-radius: 10px;
     display: inline-block;
     &.active {
-        background: lightgreen;
+        background: $good-color;
     }
     &.notactive {
         background: gray;
