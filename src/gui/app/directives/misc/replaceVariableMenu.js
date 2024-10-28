@@ -202,27 +202,27 @@
                             </div>
 
                             <div style="display: flex; flex-direction: row;">
-                                <div style="width: 125px;display:flex;flex-direction:column;flex-shrink: 0;background: #18191b;padding-top: 5px;">
+                                <div class="effect-categories dark">
                                     <div
-                                        class="effect-category-wrapper dark"
+                                        class="effect-category-wrapper dark noselect"
                                         ng-class="{'selected': activeCategory === 'macros'}"
                                         ng-click="setActiveCategory('macros');"
                                     >
                                         <div class="category-text"><i class="fas fa-layer-group"></i> Macros</div>
                                     </div>
                                     <div
-                                        class="effect-category-wrapper dark"
+                                        class="effect-category-wrapper dark noselect"
                                         ng-class="{'selected': activeCategory === 'magic'}"
                                         ng-click="setActiveCategory('magic');"
                                         ng-show="hasMagicVariables"
                                     >
                                         <div class="category-text"><i class="far fa-magic"></i> Magic</div>
                                     </div>
-                                    <div class="effect-category-header" style="padding-top:5px;">Categories</div>
-                                    <div class="effect-category-wrapper dark" ng-class="{'selected': activeCategory == null}" ng-click="setActiveCategory(null);">
+                                    <div class="effect-category-header noselect" style="padding-top:5px;">Categories</div>
+                                    <div class="effect-category-wrapper dark noselect" ng-class="{'selected': activeCategory == null}" ng-click="setActiveCategory(null);">
                                         <div class="category-text">All</div>
                                     </div>
-                                    <div class="effect-category-wrapper dark" ng-repeat="category in categories" ng-class="{'selected': activeCategory === category}" ng-click="setActiveCategory(category);">
+                                    <div class="effect-category-wrapper dark noselect" ng-repeat="category in categories" ng-class="{'selected': activeCategory === category}" ng-click="setActiveCategory(category);">
                                         <div class="category-text">{{category}}</div>
                                     </div>
                                 </div>
@@ -256,7 +256,7 @@
                                     <div ng-show="activeCategory === 'magic'" style="position: relative;">
                                         <div style="position: absolute; right: 0;">
                                             <a
-                                                style="text-decoration: underline;color: white;"
+                                                class="magic-tooltip"
                                                 uib-tooltip="These are custom variables, effect outputs, and preset list arg variables that Firebot thinks might be relevant to this effect. This is not an exhaustive list and the variables that are listed may or may not be available at the time of effect execution. Treat these as a helpful hint rather than a guarantee."
                                                 tooltip-append-to-body="true"
                                                 tooltip-placement="auto top"
