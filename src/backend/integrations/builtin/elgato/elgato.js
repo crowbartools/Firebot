@@ -100,8 +100,8 @@ class ElgatoIntegration extends EventEmitter {
                 const color = tinycolor(lightStrip.options.color).setAlpha(1).toHsv();
 
                 settings.hue = color.h;
-                settings.saturation = color.s;
-                settings.brightness = color.v;
+                settings.saturation = color.s * 100;
+                settings.brightness = color.v * 100;
             }
 
             /** @type {import("@zunderscore/elgato-light-control").LightStripOptions} */
