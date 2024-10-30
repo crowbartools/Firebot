@@ -15,7 +15,7 @@ const { EffectCategory } = require("../../shared/effect-constants");
                 </div>
                 <div style="display: flex;flex-direction:row;height: 450px;">
                     <div class="effect-categories">
-                        <div class="effect-category-header">Categories</div>
+                        <div class="effect-category-header muted">Categories</div>
                         <div class="effect-category-wrapper" ng-class="{'selected': $ctrl.activeCategory == null}" ng-click="$ctrl.activeCategory = null;">
                             <div class="category-text">All</div>
                         </div>
