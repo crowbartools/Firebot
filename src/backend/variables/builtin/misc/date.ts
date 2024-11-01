@@ -9,6 +9,10 @@ const model : ReplaceVariable = {
         examples: [
             {
                 usage: "date[dddd MMMM Do]",
+                description: 'Format with the preferred tokens. Format uses <a href="https://momentjs.com/docs/#/displaying/format/">moment.js</a> formatting rules.'
+            },
+            {
+                usage: "date[YYYY-DD-MM HH:mm:ss]",
                 description: "Format with the preferred tokens."
             },
             {
