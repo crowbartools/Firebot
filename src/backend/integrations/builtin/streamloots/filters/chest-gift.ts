@@ -1,8 +1,8 @@
-"use strict";
+import { EventFilter } from "../../../../../types/events";
 
 const { ComparisonType } = require("../../../../../shared/filter-constants");
 
-module.exports = {
+const filter: EventFilter = {
     id: "streamloots:gift-purchase",
     name: "Chest Purchase",
     description: "Filter by whether or not the StreamLoots chest purchase was a gift.",
@@ -43,3 +43,5 @@ module.exports = {
         return filterGiftValue === isGift;
     }
 };
+
+module.exports = filter;
