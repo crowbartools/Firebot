@@ -46,28 +46,36 @@ module.exports = function (grunt) {
         shell: {
             'compile-darwin': {
                 command: `npx --no-install electron-installer-dmg "${macPathIn}" firebot-v${version}-macos-x64 --out="${macPathOut}" --background="${macDmgBg}" --icon="${macDmgIcon}" --title="Firebot Installer" --debug`
+            },
+            'compile-rpm': {
+                command: `npx --no-install electron-installer-redhat --src dist/pack/Firebot-linux-x64/ --dest dist/install/rpm/ --arch x86_64 --bin "Firebot v5"`
+            },
+            'compile-deb': {
+                command: `npx --no-install electron-installer-debian --src dist/pack/Firebot-linux-x64/ --dest dist/install/deb/ --arch x86_64 --bin "Firebot v5"`
             }
         }
     });
 
     grunt.loadNpmTasks('grunt-electron-installer');
     grunt.loadNpmTasks('grunt-contrib-compress');
-    let compileCommand;
+    let compileCommands = ['cleanup:install'];
     switch (grunt.config.get('platform')) {
         case 'win64':
-            compileCommand = 'create-windows-installer:win64';
+            compileCommands.push('create-windows-installer:win64');
             break;
 
         case 'linux':
-            compileCommand = 'compress:linux';
+            compileCommands.push('compress:linux');
+            compileCommands.push('shell:compile-rpm');
+            compileCommands.push('shell:compile-deb');
             break;
 
         case 'darwin':
-            compileCommand = 'shell:compile-darwin';
+            compileCommands.push('shell:compile-darwin');
             break;
 
         default:
             throw new Error('unknonw platform');
     }
-    grunt.registerTask('compile', ['cleanup:install', compileCommand]);
+    grunt.registerTask('compile', compileCommands);
 };

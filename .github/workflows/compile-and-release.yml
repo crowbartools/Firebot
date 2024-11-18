@@ -111,6 +111,20 @@ jobs:
           name: ${{ runner.os }}
           path: ./dist/install/${{ runner.os == 'macOS' && 'darwin' || runner.os }}/
 
+      - name: Upload RPM
+        if: runner.os == 'linux'
+        uses: actions/upload-artifact@v3
+        with:
+          name: RPM
+          path: ./dist/install/rpm/
+
+      - name: Upload DEB
+        if: runner.os == 'linux'
+        uses: actions/upload-artifact@v3
+        with:
+          name: DEB
+          path: ./dist/install/deb/
+
   draft:
     name: Draft Github Release
     needs: [checkversion, compile]
@@ -139,4 +153,6 @@ jobs:
             ./bundles/Windows/firebot-${{ needs.checkversion.outputs.version }}-full.nupkg
             ./bundles/Windows/RELEASES
             ./bundles/Linux/firebot-v${{ needs.checkversion.outputs.version }}-linux-x64.tar.gz
+            ./bundles/DEB/firebotv5_${{ needs.checkversion.outputs.version }}_x86_64.deb
+            ./bundles/RPM/firebotv5-${{ needs.checkversion.outputs.version }}-1.x86_64.rpm
             ./bundles/macOS/firebot-v${{ needs.checkversion.outputs.version }}-macos-x64.dmg
