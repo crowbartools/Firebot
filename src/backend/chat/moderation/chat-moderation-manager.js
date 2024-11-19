@@ -248,7 +248,7 @@ async function moderateMessage(chatMessage) {
                     const viewerDatabase = require('../../viewers/viewer-database');
                     const viewer = await viewerDatabase.getViewerByUsername(chatMessage.username);
 
-                    const viewerViewTime = viewer.minutesInChannel / 60;
+                    const viewerViewTime = viewer?.minutesInChannel ? viewer?.minutesInChannel / 60 : 0;
                     const minimumViewTime = settings.viewTime.viewTimeInHours;
 
                     if (viewerViewTime <= minimumViewTime) {
