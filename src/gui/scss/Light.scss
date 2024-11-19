@@ -45,7 +45,6 @@ $board-settings-btn-color: $light-text-color;
 $change-board-dropdown-color: $light-text-color;
 $downarrow-color: $light-text-color;
 $sort-tags-bg: #d3d3d3;
-$effect-def-background-color: #f3f5f5;
 $toggle-button-off-bg-color: #757373;
 
 $change-note-palette-title-color: $light-text-color;
@@ -127,6 +126,19 @@ $integration-row-bg: $light-background-color;
 $settings-sidebar-bg: #ffffff;
 $settings-category-selected-bg: #ededed;
 $settings-category-hover-bg: #ebeaea;
+
+/* effect & variable choosers */
+$effect-category-bg: #dcdcdc;
+$effect-category-hover-bg: #f4f4f4;
+$effect-category-selected-bg: #f8f8f8;
+$effect-def-bg: #edebe8;
+$effect-def-hover-bg: #c6c4c0;
+$effect-def-selected-border: #89857e;
+$effect-def-selected-check: #10a010;
+$effect-dialog-bg: $light-background-color;
+$variable-category-bg: #d5d4d1;
+$variable-magic-tooltip-fg: #31708f;
+$variable-menu-bg: #e9e8e8;
 
 // Import Core Styles
 @import './core/$importer';
