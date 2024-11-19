@@ -13,6 +13,10 @@ const model : ReplaceVariable = {
             {
                 usage: "time[format]",
                 description: 'Outputs the current time in a specific format. Format uses <a href="https://momentjs.com/docs/#/displaying/format/">moment.js</a> formatting rules.'
+            },
+            {
+                usage: "time[YYYY-DD-MM HH:mm:ss]",
+                description: "Format with the preferred tokens."
             }
         ]
     },
