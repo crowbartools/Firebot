@@ -127,7 +127,7 @@
 
             ctrl.isViewerDBOn = settingsService.getViewerDB;
 
-            ctrl.extensionPages = uiExtensionsService.extensions.map(e => e.pages).flat();
+            ctrl.extensionPages = () => uiExtensionsService.extensions.map(e => e.pages).flat();
 
             ctrl.showConnectionPanelModal = function() {
                 utilityService.showModal({
