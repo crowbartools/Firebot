@@ -126,6 +126,7 @@
         videoService,
         replaceVariableService,
         variableMacroService,
+        uiExtensionsService
     ) {
         // 'chatMessagesService' and 'videoService' are included so they're instantiated on app start
 
@@ -186,6 +187,8 @@
                 settingsService.setDefaultTtsVoiceId(ttsService.getOsDefaultVoiceId());
             }
         });
+
+        uiExtensionsService.setAsReady();
     });
 
     app.controller("MainController", function($scope, $rootScope, $timeout, connectionService, utilityService,

@@ -26,6 +26,11 @@
                             <nav-link page="Hotkeys" name="{{'SIDEBAR.OTHER.HOTKEYS' | translate }}" icon="fa-keyboard"></nav-link>
                             <nav-link page="Counters" name="Counters" icon="fa-tally"></nav-link>
 
+                            <div ng-if="$ctrl.extensionPages().length">
+                                <nav-category name="Extensions" pad-top="true"></nav-category>
+                                <nav-link ng-repeat="page in $ctrl.extensionPages()" page="extension.{{page.id}}" name="{{ page.name }}" icon="{{page.icon}}"></nav-link>
+                            </div>
+
                             <nav-category name="{{'SIDEBAR.MANAGEMENT' | translate }}" pad-top="true"></nav-category>
                             <nav-link page="Effect Queues" name="{{ 'SIDEBAR.OTHER.EFFECT_QUEUES' | translate }}" icon="fa-stream"></nav-link>
                             <nav-link page="Variable Macros" name="Variable Macros" icon="fa-layer-group"></nav-link>
@@ -107,7 +112,8 @@
             integrationService,
             websocketService,
             utilityService,
-            settingsService
+            settingsService,
+            uiExtensionsService
         ) {
             const ctrl = this;
 
@@ -120,6 +126,8 @@
             ctrl.is = integrationService;
 
             ctrl.isViewerDBOn = settingsService.getViewerDB;
+
+            ctrl.extensionPages = uiExtensionsService.extensions.map(e => e.pages).flat();
 
             ctrl.showConnectionPanelModal = function() {
                 utilityService.showModal({
