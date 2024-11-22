@@ -27,7 +27,7 @@
                             <nav-link page="Counters" name="Counters" icon="fa-tally"></nav-link>
 
                             <div ng-if="$ctrl.extensionPages().length">
-                                <nav-category name="Extensions" pad-top="true"></nav-category>
+                                <nav-category name="Custom" pad-top="true"></nav-category>
                                 <nav-link ng-repeat="page in $ctrl.extensionPages()" extension-id="page.extensionId" extension-page-id="page.id" custom-href="{{page.href}}" page="{{page.href}}" name="{{ page.name }}" icon="{{page.icon}}"></nav-link>
                             </div>
 
