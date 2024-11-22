@@ -2,7 +2,7 @@
 (function() {
     angular
         .module("firebotApp")
-        .directive("extensionPageContent", function($compile) {
+        .directive("angularjsExtensionPageContent", function($compile) {
             return {
                 restrict: "E",
                 scope: {
