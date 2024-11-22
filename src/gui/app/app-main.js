@@ -33,7 +33,14 @@
         'color.picker',
         'ngAria',
         'ui.codemirror'
-    ]);
+    ], function($controllerProvider, $compileProvider, $provide, $filterProvider) {
+        global.ngProviders = {
+            $controllerProvider: $controllerProvider,
+            $compileProvider: $compileProvider,
+            $provide: $provide,
+            $filterProvider: $filterProvider
+        };
+    });
 
     app.factory("$exceptionHandler", function(logger) {
     // this catches angular exceptions so we can send it to winston

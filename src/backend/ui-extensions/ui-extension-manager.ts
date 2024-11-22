@@ -35,6 +35,8 @@ class UIExtensionManager {
                 icon: page.icon,
                 type: page.type,
                 template: page.template,
+                fullPage: page.fullPage,
+                disableScroll: page.disableScroll,
                 controllerRaw: page.controller?.toString()
             })),
             providers: extension.providers
@@ -45,7 +47,7 @@ class UIExtensionManager {
                     })),
                     components: extension.providers.components?.map(component => ({
                         name: component.name,
-                        binding: component.binding,
+                        bindings: component.bindings,
                         template: component.template,
                         transclude: component.transclude,
                         controllerRaw: component.controller?.toString()

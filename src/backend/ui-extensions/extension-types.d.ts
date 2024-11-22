@@ -3,6 +3,8 @@ export type BasePage = {
     id: string;
     name: string;
     icon: `fa-${string}`;
+    fullPage?: boolean;
+    disableScroll?: boolean;
 }
 
 export type AngularJsPage = BasePage & {
@@ -25,7 +27,7 @@ export type AngularJsFactory = {
 
 export type AngularJsComponent = {
     name: string;
-    binding: Record<string, string>;
+    bindings: Record<string, string>;
     template: string;
     transclude?: boolean | string | {[slot: string]: string};
     // eslint-disable-next-line @typescript-eslint/ban-types

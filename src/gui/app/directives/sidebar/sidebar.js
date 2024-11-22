@@ -28,7 +28,7 @@
 
                             <div ng-if="$ctrl.extensionPages().length">
                                 <nav-category name="Extensions" pad-top="true"></nav-category>
-                                <nav-link ng-repeat="page in $ctrl.extensionPages()" page="extension.{{page.id}}" name="{{ page.name }}" icon="{{page.icon}}"></nav-link>
+                                <nav-link ng-repeat="page in $ctrl.extensionPages()" extension-id="page.extensionId" extension-page-id="page.id" custom-href="{{page.href}}" page="{{page.href}}" name="{{ page.name }}" icon="{{page.icon}}"></nav-link>
                             </div>
 
                             <nav-category name="{{'SIDEBAR.MANAGEMENT' | translate }}" pad-top="true"></nav-category>
@@ -127,7 +127,10 @@
 
             ctrl.isViewerDBOn = settingsService.getViewerDB;
 
-            ctrl.extensionPages = () => uiExtensionsService.extensions.map(e => e.pages).flat();
+            ctrl.extensionPages = () => uiExtensionsService.extensions.map(e => e.pages.map(p => {
+                p.extensionId = e.id;
+                return p;
+            })).flat();
 
             ctrl.showConnectionPanelModal = function() {
                 utilityService.showModal({
