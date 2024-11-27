@@ -21,11 +21,11 @@ const model : ReplaceVariable = {
     },
     evaluator: async (trigger, username: string) => {
         if (username == null) {
-            const userDisplayName = trigger.metadata.userDisplayName ?? trigger.metadata.userDisplayName;
+            const userDisplayName = trigger.metadata?.eventData?.userDisplayName ?? trigger.metadata?.userDisplayName;
             if (userDisplayName != null) {
                 return userDisplayName;
             }
-            username = trigger.metadata.username;
+            username = trigger.metadata?.eventData?.username ?? trigger.metadata?.username;
             if (username == null) {
                 return "[No username available]";
             }
