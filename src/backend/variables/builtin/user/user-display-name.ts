@@ -8,14 +8,14 @@ import twitchApi from "../../../twitch-api/api";
 const model : ReplaceVariable = {
     definition: {
         handle: "userDisplayName",
-        usage: "userDisplayName[username]",
-        description: "Gets the formatted display name for the given username. Searches local viewer DB first, then Twitch API.",
+        usage: "userDisplayName",
+        description: "Gets the formatted display name of the associated user (if there is one) for the given trigger.",
         categories: [VariableCategory.USER],
         possibleDataOutput: [OutputDataType.TEXT],
         examples: [
             {
-                usage: "userDisplayName",
-                description: "The formatted display name of the associated user (if there is one) for the given trigger."
+                usage: "userDisplayName[username]",
+                description: "The formatted display name for the given username. Searches local viewer DB first, then Twitch API."
             }
         ]
     },

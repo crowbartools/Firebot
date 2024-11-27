@@ -8,14 +8,14 @@ import twitchApi from "../../../twitch-api/api";
 const model : ReplaceVariable = {
     definition: {
         handle: "userId",
-        usage: "userId[username]",
-        description: "Gets the user ID for the given username. Searches local viewer DB first, then Twitch API.",
+        usage: "userId",
+        description: "Gets the user ID of the associated user (if there is one) for the given trigger.",
         categories: [VariableCategory.USER],
         possibleDataOutput: [OutputDataType.TEXT],
         examples: [
             {
-                usage: "userId",
-                description: "The user ID of the associated user (if there is one) for the given trigger."
+                usage: "userId[username]",
+                description: "The user ID for the given username. Searches local viewer DB first, then Twitch API."
             }
         ]
     },
