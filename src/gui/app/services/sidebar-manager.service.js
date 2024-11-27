@@ -3,7 +3,7 @@
 (function() {
     angular
         .module("firebotApp")
-        .factory("sidebarManager", function($timeout, $rootScope, settingsService) {
+        .factory("sidebarManager", function($timeout, $rootScope, settingsService, uiExtensionsService) {
             const service = {};
 
             service.navExpanded = settingsService.getSidebarExpanded();
@@ -17,10 +17,16 @@
             service.currentTab = "chat feed";
             service.currentTabName = "Dashboard";
 
-            service.setTab = function(tabId, name) {
+            service.fullPage = true;
+            service.disableScroll = true;
+
+            service.setTab = function(tabId, name, extensionId, extensionPageId) {
                 service.currentTab = tabId.toLowerCase();
 
                 service.currentTabName = name ? name : tabId;
+
+                service.fullPage = service.currentTabIsFullScreen(extensionId, extensionPageId);
+                service.disableScroll = service.currentTabShouldntScroll(extensionId, extensionPageId);
 
                 //hack that somewhat helps with the autoupdate slider styling issues on first load
                 $timeout(function() {
@@ -32,7 +38,12 @@
                 return service.currentTab.toLowerCase() === tabId.toLowerCase();
             };
 
-            service.currentTabIsFullScreen = function() {
+            service.currentTabIsFullScreen = function(extensionId, extensionPageId) {
+                const isExtensionPage = extensionId != null;
+                if (isExtensionPage) {
+                    const page = uiExtensionsService.getPage(extensionId, extensionPageId);
+                    return page?.fullPage ?? false;
+                }
                 return [
                     "chat feed",
                     "commands",
@@ -55,7 +66,12 @@
                 ].includes(service.currentTab.toLowerCase());
             };
 
-            service.currentTabShouldntScroll = function() {
+            service.currentTabShouldntScroll = function(extensionId, extensionPageId) {
+                const isExtensionPage = extensionId != null;
+                if (isExtensionPage) {
+                    const page = uiExtensionsService.getPage(extensionId, extensionPageId);
+                    return page?.disableScroll ?? false;
+                }
                 return [
                     "chat feed",
                     "commands",
@@ -174,6 +190,11 @@
                 .when("/variable-macros", {
                     templateUrl: "./templates/_variable-macros.html",
                     controller: "variableMacrosController"
+                })
+
+                .when("/extension/:extensionId/:pageId", {
+                    templateUrl: "./templates/_extension-page.html",
+                    controller: "extensionPageController"
                 });
         }
     ]);
