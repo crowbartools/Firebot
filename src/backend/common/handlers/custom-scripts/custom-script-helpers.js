@@ -166,7 +166,8 @@ function buildModules(scriptManifest) {
                     .filter(n => n.source === "script" && n.scriptName === (scriptManifest.name ?? "unknown"))
                     .forEach(n => notificationManager.deleteNotification(n.id));
             }
-        }
+        },
+        uiExtensionManager: require("../../../ui-extensions/ui-extension-manager")
     };
 }
 

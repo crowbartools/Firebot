@@ -45,6 +45,7 @@ exports.loadEffects = () => {
         'reset-timer',
         'run-command',
         'run-program',
+        'send-custom-websocket-event',
         'sequential-effect',
         'set-user-metadata',
         'shoutout',

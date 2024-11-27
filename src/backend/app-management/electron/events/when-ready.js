@@ -264,6 +264,9 @@ exports.whenReady = async () => {
     await notificationManager.loadAllNotifications();
     notificationManager.startExternalNotificationCheck();
 
+    // get ui extension manager in memory
+    require("../../../ui-extensions/ui-extension-manager");
+
     logger.debug('...loading main window');
     windowManagement.updateSplashScreenStatus("Here we go!");
     await windowManagement.createMainWindow();
