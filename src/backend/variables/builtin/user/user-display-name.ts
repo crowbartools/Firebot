@@ -11,7 +11,13 @@ const model : ReplaceVariable = {
         usage: "userDisplayName[username]",
         description: "Gets the formatted display name for the given username. Searches local viewer DB first, then Twitch API.",
         categories: [VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.TEXT],
+        examples: [
+            {
+                usage: "userDisplayName",
+                description: "The formatted display name of the associated user (if there is one) for the given trigger."
+            }
+        ]
     },
     evaluator: async (trigger, username: string) => {
         if (username == null) {
