@@ -69,7 +69,7 @@ twitchListeners.events.on("chat-message", async (data) => {
 
         await twitchChat.sendChatMessage(`${chatMessage.userDisplayName ?? username}, that is correct! You have won ${util.commafy(winnings)} ${currency.name}`, null, chatter);
     } else {
-        await twitchChat.sendChatMessage(`Sorry ${chatMessage.userDisplayName ?? username}, that is incorrect. Better luck next time!`, null, chatter);
+        await twitchChat.sendChatMessage(`Sorry ${chatMessage.userDisplayName ?? username}, that is incorrect. The answer was ${question.correctIndex}. Better luck next time!`, null, chatter);
     }
     clearCurrentQuestion();
 });
