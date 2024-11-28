@@ -9,14 +9,24 @@ const htmlPath = join(__dirname, './sandbox.html');
 
 const { getCustomVariable } = require('../../custom-variable-manager');
 
-const charList = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-const handlers = new Map<string, (...args: unknown[]) => unknown>();
+import replaceVariableManager from '../../../variables/replace-variable-manager';
 
-handlers.set('getCustomVariable', (name) => {
+const charList = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+const handlers = new Map<string, (trigger: Trigger, ...args: unknown[]) => unknown>();
+
+handlers.set('getCustomVariable', (_trigger, name) => {
     if (name == null || typeof name !== 'string') {
         throw new Error('variable name must be a string');
     }
     return getCustomVariable(name);
+});
+
+handlers.set('evaluateVariableExpression', (trigger, expressionString) => {
+    if (expressionString == null || typeof expressionString !== 'string') {
+        throw new Error('variable expression must be a string');
+    }
+
+    return replaceVariableManager.evaluateText(expressionString, trigger?.metadata, trigger);
 });
 
 interface Sandbox {
@@ -29,7 +39,9 @@ interface Sandbox {
     reject?: (...args: unknown[]) => void
 }
 
-export const evalSandboxedJs = async (code: string, args: unknown[], metadata: Trigger["metadata"]) => {
+export const evalSandboxedJs = async (code: string, args: unknown[], trigger: Trigger) => {
+    const metadata = trigger.metadata;
+
     if (<unknown>code instanceof String) {
         code = `${code}`;
     }
@@ -119,7 +131,7 @@ export const evalSandboxedJs = async (code: string, args: unknown[], metadata: T
 
                 } else if (handlers.has(method)) {
                     try {
-                        const result = await handlers.get(method)(...parameters);
+                        const result = await handlers.get(method)(trigger, ...parameters);
                         if (sandbox.finished) {
                             return;
                         }
