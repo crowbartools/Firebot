@@ -87,7 +87,7 @@ const model: EffectType<{
     },
     onTriggerEvent: async ({ effect, trigger }) => {
         try {
-            const result = await evalSandboxedJs(effect.code, effect.parameters ?? [], trigger.metadata);
+            const result = await evalSandboxedJs(effect.code, effect.parameters ?? [], trigger);
             return {
                 success: true,
                 outputs: {
