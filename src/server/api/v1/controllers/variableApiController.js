@@ -1,23 +1,10 @@
 "use strict";
 
-const variableManager = require("../../../../backend//variables/replace-variable-manager");
+const manager = require("../../../../backend//variables/replace-variable-manager");
 
 exports.getReplaceVariables = function(req, res) {
-    const variables = variableManager.getReplaceVariables();
+    const sortedVariables = [...manager.getReplaceVariables()]
+        .sort((a, b) => a.definition.handle.localeCompare(b.definition.handle));
 
-    if (Array.isArray(variables)) {
-        variables.sort((a, b) => {
-            const handleA = a.definition.handle.toLowerCase();
-            const handleB = b.definition.handle.toLowerCase();
-            if (handleA < handleB) {
-                return -1;
-            }
-            if (handleA > handleB) {
-                return 1;
-            }
-            return 0;
-        });
-    }
-
-    res.json(variables);
+    res.json(sortedVariables);
 };
