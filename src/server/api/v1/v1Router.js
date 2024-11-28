@@ -72,6 +72,11 @@ router
     .get(customVariables.getCustomVariable)
     .post(customVariables.setCustomVariable);
 
+// builtin variables
+const variableManager = require("./controllers/variableApiController");
+
+router.route("/variables").get(variableManager.getReplaceVariables);
+
 // viewers
 const viewers = require("./controllers/viewersApiController");
 
