@@ -112,13 +112,11 @@ class CommandCooldownManager {
         );
 
         if (cooldown.global > 0) {
-            if (this._cooldownCache.get(globalCacheKey) == null) {
-                this._cooldownCache.set(
-                    globalCacheKey,
-                    DateTime.utc().plus({ seconds: cooldown.global }),
-                    cooldown.global
-                );
-            }
+            this._cooldownCache.set(
+                globalCacheKey,
+                DateTime.utc().plus({ seconds: cooldown.global }),
+                cooldown.global
+            );
         }
         if (cooldown.user > 0) {
             this._cooldownCache.set(
@@ -147,13 +145,11 @@ class CommandCooldownManager {
         );
 
         if (config.cooldown.global > 0) {
-            if (this._cooldownCache.get(globalCacheKey) == null) {
-                this._cooldownCache.set(
-                    globalCacheKey,
-                    DateTime.utc().plus({ seconds: config.cooldown.global }),
-                    config.cooldown.global
-                );
-            }
+            this._cooldownCache.set(
+                globalCacheKey,
+                DateTime.utc().plus({ seconds: config.cooldown.global }),
+                config.cooldown.global
+            );
         }
         if (config.cooldown.user > 0 && config.username != null) {
             this._cooldownCache.set(
