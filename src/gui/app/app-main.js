@@ -33,7 +33,14 @@
         'color.picker',
         'ngAria',
         'ui.codemirror'
-    ]);
+    ], function($controllerProvider, $compileProvider, $provide, $filterProvider) {
+        global.ngProviders = {
+            $controllerProvider: $controllerProvider,
+            $compileProvider: $compileProvider,
+            $provide: $provide,
+            $filterProvider: $filterProvider
+        };
+    });
 
     app.factory("$exceptionHandler", function(logger) {
     // this catches angular exceptions so we can send it to winston
@@ -126,6 +133,7 @@
         videoService,
         replaceVariableService,
         variableMacroService,
+        uiExtensionsService
     ) {
         // 'chatMessagesService' and 'videoService' are included so they're instantiated on app start
 
@@ -186,6 +194,8 @@
                 settingsService.setDefaultTtsVoiceId(ttsService.getOsDefaultVoiceId());
             }
         });
+
+        uiExtensionsService.setAsReady();
     });
 
     app.controller("MainController", function($scope, $rootScope, $timeout, connectionService, utilityService,
