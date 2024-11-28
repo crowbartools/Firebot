@@ -8,18 +8,24 @@ import twitchApi from "../../../twitch-api/api";
 const model : ReplaceVariable = {
     definition: {
         handle: "userDisplayName",
-        usage: "userDisplayName[username]",
-        description: "Gets the formatted display name for the given username. Searches local viewer DB first, then Twitch API.",
+        usage: "userDisplayName",
+        description: "Gets the formatted display name of the associated user (if there is one) for the given trigger.",
         categories: [VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.TEXT],
+        examples: [
+            {
+                usage: "userDisplayName[username]",
+                description: "The formatted display name for the given username. Searches local viewer DB first, then Twitch API."
+            }
+        ]
     },
     evaluator: async (trigger, username: string) => {
         if (username == null) {
-            const userDisplayName = trigger.metadata.userDisplayName ?? trigger.metadata.userDisplayName;
+            const userDisplayName = trigger.metadata?.eventData?.userDisplayName ?? trigger.metadata?.userDisplayName;
             if (userDisplayName != null) {
                 return userDisplayName;
             }
-            username = trigger.metadata.username;
+            username = trigger.metadata?.eventData?.username ?? trigger.metadata?.username;
             if (username == null) {
                 return "[No username available]";
             }
