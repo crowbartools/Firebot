@@ -6,6 +6,16 @@ const model : ReplaceVariable = {
         handle: "floor",
         description: "Rounds down the given number to the nearest whole number.",
         usage: "floor[num]",
+        examples: [
+            {
+                usage: "floor[3.7]",
+                description: "Returns 3"
+            },
+            {
+                usage: "floor[$presetListArg[Number]]",
+                description: "Rounds down the preset list argument value"
+            }
+        ],
         categories: [VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },

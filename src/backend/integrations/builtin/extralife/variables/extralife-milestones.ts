@@ -29,7 +29,7 @@ const ExtraLifeMilestones: ReplaceVariable = {
                 description: "Returns three milestones in JSON format."
             }
         ],
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
+        categories: [VariableCategory.COMMON, VariableCategory.INTEGRATION],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async (_, milestoneGoal: string, numResults: number, participantID: number, returnJson: boolean) => {

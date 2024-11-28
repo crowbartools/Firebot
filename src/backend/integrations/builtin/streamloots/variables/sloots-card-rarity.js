@@ -12,7 +12,7 @@ const model = {
         handle: "slootsCardRarity",
         description: "The rarity of a StreamLoots Card.",
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
+        categories: [VariableCategory.COMMON, VariableCategory.INTEGRATION],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {

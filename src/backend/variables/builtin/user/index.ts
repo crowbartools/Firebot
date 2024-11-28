@@ -1,4 +1,4 @@
-import accountCreationDate from './account-creation-date';
+import accountCreationDate from '../twitch/account-creation-date';
 import chatMessages from './chat-messages';
 import isUserInChat from './is-user-in-chat';
 import metadataKey from './metadata-key';

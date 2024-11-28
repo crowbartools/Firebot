@@ -6,6 +6,12 @@ const model : ReplaceVariable = {
         handle: "max",
         description: "Returns the highest-value numbered passed",
         usage: "max[num1, num2, ...]",
+        examples: [
+            {
+                usage: "max[1, 5, 3, 10]",
+                description: "Returns 10, the highest value from the input numbers"
+            }
+        ],
         categories: [VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },

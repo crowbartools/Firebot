@@ -6,6 +6,12 @@ const model : ReplaceVariable = {
         handle: "capitalize",
         description: "Capitalizes the given text.",
         usage: "capitalize[text]",
+        examples: [
+            {
+                usage: `capitalize["hello world"]`,
+                description: `Returns "Hello world".`
+            }
+        ],
         categories: [VariableCategory.TEXT],
         possibleDataOutput: [OutputDataType.TEXT]
     },
