@@ -448,11 +448,11 @@
         </div>
         <div
           class="tab-body-wrapper"
-          ng-class="{ 'no-scroll': sbm.currentTabShouldntScroll() }"
+          ng-class="{ 'no-scroll': sbm.disableScroll }"
         >
           <div
             class="tab-body"
-            ng-class="{ 'fullpage-tab': sbm.currentTabIsFullScreen() }"
+            ng-class="{ 'fullpage-tab': sbm.fullPage }"
             role="main"
           >
             <!-- angular templating -->

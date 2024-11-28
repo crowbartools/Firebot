@@ -15,7 +15,6 @@ const doesFileExist = (filepath) => {
 
 function removeLines(filepath, lines = []) {
     const contents = fs.readFileSync(filepath, { encoding: "utf8" });
-
     return `${contents
         .split('\n')
         .filter(l => l != null && l.trim() !== "")
@@ -27,7 +26,7 @@ function removeLinesWithText(filepath, text) {
     const contents = fs.readFileSync(filepath, { encoding: "utf8" });
     return `${contents
         .split('\n')
-        .map(l => {
+        .map((l) => {
             return l.replace('\r', "");
         })
         .filter(l => l != null && l.trim() !== "")
@@ -51,14 +50,17 @@ function replaceLinesWithText(filepath, text, replacement) {
     const contents = fs.readFileSync(filepath, { encoding: "utf8" });
     return `${contents
         .split('\n')
+        .map((l) => {
+            return l.replace('\r', "");
+        })
         .filter(l => l != null && l.trim() !== "")
-        .map(l => {
+        .map((l) => {
             return l === text ? replacement : l;
         })
         .join('\n')}\n`;
 }
 
-exports.run = async effect => {
+exports.run = async (effect) => {
     if (effect == null || effect.filepath == null) {
         return;
     }
