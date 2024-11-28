@@ -37,32 +37,41 @@ class UIExtensionManager {
                 template: page.template,
                 fullPage: page.fullPage,
                 disableScroll: page.disableScroll,
-                controllerRaw: page.controller?.toString()
+                controllerRaw: this.prepareFunc(page.controller, "pageCtrl")
             })),
             providers: extension.providers
                 ? {
                     factories: extension.providers.factories?.map(factory => ({
                         name: factory.name,
-                        functionRaw: factory.function?.toString()
+                        functionRaw: this.prepareFunc(factory.function, "factoryFunc")
                     })),
                     components: extension.providers.components?.map(component => ({
                         name: component.name,
                         bindings: component.bindings,
                         template: component.template,
                         transclude: component.transclude,
-                        controllerRaw: component.controller?.toString()
+                        controllerRaw: this.prepareFunc(component.controller, "componentCtrl")
                     })),
                     directives: extension.providers.directives?.map(directive => ({
                         name: directive.name,
-                        functionRaw: directive.function?.toString()
+                        functionRaw: this.prepareFunc(directive.function, "directiveCtrl")
                     })),
                     filters: extension.providers.filters?.map(filter => ({
                         name: filter.name,
-                        functionRaw: filter.function?.toString()
+                        functionRaw: this.prepareFunc(filter.function, "filterFunc")
                     }))
                 }
                 : undefined
         };
+    }
+
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    private prepareFunc(func: Function | undefined, name: string) {
+        let rawFunc = func?.toString() ?? "() => {}";
+        if (rawFunc.startsWith("function(")) {
+            rawFunc = rawFunc.replace("function(", `function ${name}(`);
+        }
+        return rawFunc;
     }
 }
 
