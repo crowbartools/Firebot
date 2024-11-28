@@ -4,6 +4,7 @@ import {
     OBS_CURRENT_SCENE_TRANSITION_DURATION_CHANGED_EVENT_ID,
     OBS_EVENT_SOURCE_ID
 } from "../constants";
+import { VariableCategory } from "../../../../../shared/variable-constants";
 
 const triggers = {};
 triggers[TriggerType.EVENT] = [
@@ -16,6 +17,7 @@ export const TransitionDurationVariable: ReplaceVariable = {
         description:
       "The new duration (in milliseconds) of the OBS transition that was updated.",
         possibleDataOutput: ["number"],
+        categories: [VariableCategory.ADVANCED, VariableCategory.INTEGRATION, VariableCategory.OBS],
         triggers: triggers
     },
     evaluator: async (trigger) => {

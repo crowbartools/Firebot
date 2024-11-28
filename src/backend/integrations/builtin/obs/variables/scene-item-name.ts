@@ -2,6 +2,7 @@ import { TriggerType } from "../../../../common/EffectType";
 import { ReplaceVariable } from "../../../../../types/variables";
 import { OBS_EVENT_SOURCE_ID, OBS_SCENE_ITEM_ENABLE_STATE_CHANGED_EVENT_ID } from "../constants";
 import { getGroupItem, getSceneItem } from "../obs-remote";
+import { VariableCategory } from "../../../../../shared/variable-constants";
 
 const triggers = {};
 triggers[TriggerType.EVENT] = [
@@ -15,6 +16,7 @@ export const SceneItemNameVariable: ReplaceVariable = {
         description:
       "The name of the OBS scene item that triggered the event.",
         possibleDataOutput: ["text"],
+        categories: [VariableCategory.ADVANCED, VariableCategory.INTEGRATION, VariableCategory.OBS],
         triggers: triggers
     },
     evaluator: async (trigger) => {

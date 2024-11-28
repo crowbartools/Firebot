@@ -33,7 +33,7 @@ const ExtraLifeDonations: ReplaceVariable = {
                 description: "Returns top 3 donations for current signed in extra life account in JSON format."
             }
         ],
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
+        categories: [VariableCategory.COMMON, VariableCategory.INTEGRATION],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, sortName: string, numResults: number, participantID: number, returnJson: boolean) => {

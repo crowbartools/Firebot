@@ -8,6 +8,20 @@ const model : ReplaceVariable = {
         handle: "setObjectProperty",
         description: "Adds or updates a property's value in the given JSON object. For nested properties, you can use dot notation (e.g. some.property). Set value to null to remove property.",
         usage: "setObjectProperty[object, propertyPath, value]",
+        examples: [
+            {
+                usage: `setObjectProperty[{"name": "John"}, age, 25]`,
+                description: `Adds/updates the age property to 25. Result: {"name": "John", "age": 25}`
+            },
+            {
+                usage: `setObjectProperty[{"user": {"name": "John"}}, user.age, 25]`,
+                description: `Adds/updates a nested property using dot notation. Result: {"user": {"name": "John", "age": 25}}`
+            },
+            {
+                usage: `setObjectProperty[{"name": "John", "age": 25}, age, null]`,
+                description: `Removes the age property. Result: {"name": "John"}`
+            }
+        ],
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },

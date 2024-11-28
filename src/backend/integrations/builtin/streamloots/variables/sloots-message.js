@@ -12,7 +12,7 @@ const model = {
         handle: "slootsMessage",
         description: "The users message included with a StreamLoots Chest/Card.",
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
+        categories: [VariableCategory.COMMON, VariableCategory.INTEGRATION],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
