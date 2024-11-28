@@ -10,6 +10,12 @@ const model : ReplaceVariable = {
         handle: "topCurrency",
         description: "Comma separated list of users with the most of the given currency. Defaults to top 10, you can provide a custom number as a second argument.",
         usage: "topCurrency[currencyName]",
+        examples: [
+            {
+                usage: "topCurrency[Points, 5]",
+                description: "Returns comma-separated list of top 5 users with their Points amounts"
+            }
+        ],
         possibleDataOutput: [OutputDataType.TEXT]
     },
 

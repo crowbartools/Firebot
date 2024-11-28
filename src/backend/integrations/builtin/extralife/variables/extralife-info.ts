@@ -57,7 +57,7 @@ const ExtraLifeInfo: ReplaceVariable = {
                 description: "Get all profile data for the current logged in extra life account in JSON format."
             }
         ],
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
+        categories: [VariableCategory.COMMON, VariableCategory.INTEGRATION],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, infoPath: string, participantID: number, returnJson: boolean) => {

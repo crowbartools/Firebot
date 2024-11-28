@@ -9,6 +9,12 @@ const model : ReplaceVariable = {
         handle: "encodeForHtml",
         description: "Encodes input text for safe use within HTML templates",
         usage: "encodeForHtml[text]",
+        examples: [
+            {
+                usage: "encodeForHtml[<p>Hello & Welcome!</p>]",
+                description: `Returns "&lt;p&gt;Hello &amp; Welcome!&lt;/p&gt;"`
+            }
+        ],
         categories: [VariableCategory.TEXT],
         possibleDataOutput: [OutputDataType.TEXT]
     },

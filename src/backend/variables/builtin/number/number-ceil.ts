@@ -6,6 +6,12 @@ const model : ReplaceVariable = {
         handle: "ceil",
         description: "Rounds up the given number to the nearest whole number.",
         usage: "ceil[num]",
+        examples: [
+            {
+                usage: "ceil[3.2]",
+                description: "Returns 4"
+            }
+        ],
         categories: [VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },

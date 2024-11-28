@@ -12,7 +12,7 @@ const model = {
         handle: "slootsSoundUrl",
         description: "The sound url for the StreamLoots Chest/Card.",
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
+        categories: [VariableCategory.COMMON, VariableCategory.INTEGRATION],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {

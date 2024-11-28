@@ -6,6 +6,16 @@ const model : ReplaceVariable = {
         handle: "arrayJoin",
         description: "Returns a string with each array item joined together with the given separator",
         usage: "arrayJoin[array, separator]",
+        examples: [
+            {
+                usage: `arrayJoin["[1,2,3]", ", "]`,
+                description: `Returns "1, 2, 3".`
+            },
+            {
+                usage: `arrayJoin["["apple","banana","cherry"]", " - "]`,
+                description: `Returns "apple - banana - cherry".`
+            }
+        ],
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },

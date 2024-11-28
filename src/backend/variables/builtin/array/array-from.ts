@@ -6,6 +6,16 @@ const model : ReplaceVariable = {
         handle: "arrayFrom",
         usage: "arrayFrom[value, value, ...]",
         description: "Returns a raw array containing the listed values",
+        examples: [
+            {
+                usage: "arrayFrom[1, 2, 3]",
+                description: "Returns [1, 2, 3]."
+            },
+            {
+                usage: `arrayFrom["a", "b", "c"]`,
+                description: `Returns ["a", "b", "c"].`
+            }
+        ],
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },

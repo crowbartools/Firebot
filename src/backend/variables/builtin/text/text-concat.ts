@@ -7,6 +7,12 @@ const model : ReplaceVariable = {
         handle: "concat",
         description: "Appends text together",
         usage: "concat[text, text, ...]",
+        examples: [
+            {
+                usage: `concat[Hello, " ", World]`,
+                description: `Returns "Hello World"`
+            }
+        ],
         categories: [VariableCategory.TEXT],
         possibleDataOutput: [OutputDataType.TEXT]
     },

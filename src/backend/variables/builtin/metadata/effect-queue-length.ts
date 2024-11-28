@@ -12,7 +12,7 @@ const model : ReplaceVariable = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async (_trigger, text = "") => {
-        const selectedQueue = effectQueueManager.getAllItems().find((queue) => queue.name === text);
+        const selectedQueue = effectQueueManager.getAllItems().find(queue => queue.name === text);
         if (selectedQueue) {
             return selectedQueue.length.toString();
         }

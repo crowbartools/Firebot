@@ -4,6 +4,7 @@ import {
     OBS_CURRENT_PROFILE_CHANGED_EVENT_ID,
     OBS_EVENT_SOURCE_ID
 } from "../constants";
+import { VariableCategory } from "../../../../../shared/variable-constants";
 
 const triggers = {};
 triggers[TriggerType.EVENT] = [
@@ -16,6 +17,7 @@ export const ProfileNameVariable: ReplaceVariable = {
         description:
       "The name of the OBS profile that triggered the event.",
         possibleDataOutput: ["text"],
+        categories: [VariableCategory.ADVANCED, VariableCategory.INTEGRATION, VariableCategory.OBS],
         triggers: triggers
     },
     evaluator: async (trigger) => {
