@@ -8,7 +8,7 @@ const model : ReplaceVariable = {
     definition: {
         handle: "currencyRank",
         description: "Returns the rank of the current user based on how much of the given currency they have.",
-        usage: "currencyRank[currencyName, username]",
+        usage: "currencyRank[currencyName]",
         examples: [
             {
                 usage: "currencyRank[currencyName, username]",

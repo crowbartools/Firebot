@@ -11,11 +11,11 @@ const model : ReplaceVariable = {
         description: "Attempts to retrieve video duration.",
         examples: [
             {
-                usage: "videoDuration[\"path/to/video.mp4\"]",
+                usage: `videoDuration["path/to/video.mp4"]`,
                 description: "Returns the duration of the video file in seconds."
             },
             {
-                usage: "videoDuration[\"https://example.com/video.mp4\"]",
+                usage: `videoDuration["https://example.com/video.mp4"]`,
                 description: "Returns the duration of the video file from a URL in seconds."
             }
         ],

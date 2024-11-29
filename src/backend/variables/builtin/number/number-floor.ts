@@ -10,10 +10,6 @@ const model : ReplaceVariable = {
             {
                 usage: "floor[3.7]",
                 description: "Returns 3"
-            },
-            {
-                usage: "floor[$presetListArg[Number]]",
-                description: "Rounds down the preset list argument value"
             }
         ],
         categories: [VariableCategory.NUMBERS],
