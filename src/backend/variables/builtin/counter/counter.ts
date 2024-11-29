@@ -7,12 +7,6 @@ const model: ReplaceVariable = {
         handle: "counter",
         usage: "counter[name]",
         description: "Displays the value of the given counter.",
-        examples: [
-            {
-                usage: "counter[name]",
-                description: "Returns the value of the specified counter"
-            }
-        ],
         categories: [VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
