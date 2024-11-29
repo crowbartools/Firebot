@@ -4,7 +4,7 @@ import { OutputDataType, VariableCategory } from "../../../../shared/variable-co
 const model : ReplaceVariable = {
     definition: {
         handle: "max",
-        description: "Returns the highest-value numbered passed",
+        description: "Returns the highest-value number",
         usage: "max[num1, num2, ...]",
         examples: [
             {

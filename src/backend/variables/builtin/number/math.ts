@@ -7,16 +7,16 @@ const logger = require("../../../logwrapper");
 const model : ReplaceVariable = {
     definition: {
         handle: "math",
-        usage: "math[expression]", 
+        usage: "math[expression]",
         description: 'Evaluate a math equation using <a href="https://mathjs.org/docs/index.html">math.js</a>',
         examples: [
             {
                 usage: "math[2 + 2]",
-                description: "Simple addition calculation returns 4"
+                description: `Returns 4`
             },
             {
                 usage: "math[5 * (3 + 2)]",
-                description: "Complex calculation returns 25"
+                description: `Returns 25`
             }
         ],
         categories: [VariableCategory.COMMON, VariableCategory.NUMBERS],
