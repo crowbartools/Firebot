@@ -8,18 +8,24 @@ import twitchApi from "../../../twitch-api/api";
 const model : ReplaceVariable = {
     definition: {
         handle: "userId",
-        usage: "userId[username]",
-        description: "Gets the user ID for the given username. Searches local viewer DB first, then Twitch API.",
+        usage: "userId",
+        description: "Gets the user ID of the associated user (if there is one) for the given trigger.",
         categories: [VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.TEXT],
+        examples: [
+            {
+                usage: "userId[username]",
+                description: "The user ID for the given username. Searches local viewer DB first, then Twitch API."
+            }
+        ]
     },
     evaluator: async (trigger, username: string) => {
         if (username == null) {
-            const userId = trigger.metadata.userid ?? trigger.metadata.userId;
+            const userId = trigger.metadata?.eventData?.userid ?? trigger.metadata?.userId;
             if (userId != null) {
                 return userId;
             }
-            username = trigger.metadata.username;
+            username = trigger.metadata?.eventData?.username ?? trigger.metadata?.username;
             if (username == null) {
                 return "[No username available]";
             }

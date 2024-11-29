@@ -12,7 +12,7 @@ const model = {
         handle: "slootsGiftee",
         description: "The person who was gifted StreamLoots Chests.",
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
+        categories: [VariableCategory.COMMON, VariableCategory.INTEGRATION],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {

@@ -6,8 +6,18 @@ import viewerDatabase from "../../../viewers/viewer-database";
 const model : ReplaceVariable = {
     definition: {
         handle: "chatMessages",
-        usage: "chatMessages[username]",
+        usage: "chatMessages",
         description: "Displays the number of chat messages for a viewer (leave blank to use current viewer)",
+        examples: [
+            {
+                usage: "chatMessages",
+                description: "Returns the number of chat messages for the current viewer"
+            },
+            {
+                usage: "chatMessages[username]",
+                description: "Returns the number of chat messages for the specified user"
+            }
+        ],
         categories: [VariableCategory.USER],
         possibleDataOutput: [OutputDataType.NUMBER]
     },

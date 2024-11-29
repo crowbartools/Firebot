@@ -15,6 +15,7 @@ import {
     OBS_INPUT_AUDIO_MONITOR_TYPE_CHANGED_EVENT_ID,
     OBS_INPUT_AUDIO_TRACKS_CHANGED_EVENT_ID
 } from "../constants";
+import { VariableCategory } from "../../../../../shared/variable-constants";
 
 const triggers = {};
 triggers[TriggerType.EVENT] = [
@@ -37,7 +38,8 @@ export const InputUuidVariable: ReplaceVariable = {
     definition: {
         handle: "obsInputUuid",
         description: "Returns the UUID of the OBS input.",
-        possibleDataOutput: ["text"]
+        possibleDataOutput: ["text"],
+        categories: [VariableCategory.ADVANCED, VariableCategory.INTEGRATION, VariableCategory.OBS]
     },
     evaluator: async (trigger) => {
         const inputUuid = trigger.metadata?.eventData?.inputUuid;

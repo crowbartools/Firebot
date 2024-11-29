@@ -9,7 +9,7 @@ const model : ReplaceVariable = {
         usage: "userExists[username]",
         description: "Outputs 'true' if a user exists in Firebot's database, 'false' if not",
         categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.BOOLEAN]
     },
     evaluator: async (_, username: string) => {
         const user = await viewerDatabase.getViewerByUsername(username);

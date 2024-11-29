@@ -9,6 +9,12 @@ const model : ReplaceVariable = {
         handle: "topMetadata",
         description: "Comma separated list of users with the most of the given metadata key. Defaults to top 10, you can provide a custom number as a second argument.",
         usage: "topMetadata[metadataKey]",
+        examples: [
+            {
+                usage: "topMetadata[deaths, 5]",
+                description: "Returns comma-separated list of top 5 users with their death counts"
+            }
+        ],
         possibleDataOutput: [OutputDataType.TEXT]
     },
 

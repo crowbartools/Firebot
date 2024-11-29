@@ -7,6 +7,12 @@ const model : ReplaceVariable = {
         handle: "encodeForUrl",
         description: "Encodes input text for use in a URL",
         usage: "encodeForUrl[text]",
+        examples: [
+            {
+                usage: "encodeForUrl[Hello World!]",
+                description: `Returns "Hello%20World%21"`
+            }
+        ],
         categories: [VariableCategory.TEXT],
         possibleDataOutput: [OutputDataType.TEXT]
     },
