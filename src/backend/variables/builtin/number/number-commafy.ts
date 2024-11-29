@@ -9,7 +9,7 @@ const model : ReplaceVariable = {
         examples: [
             {
                 usage: "commafy[1000000]",
-                description: "Returns \"1,000,000\""
+                description: `Returns "1,000,000"`
             }
         ],
         categories: [VariableCategory.NUMBERS],
