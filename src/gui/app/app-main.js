@@ -87,6 +87,10 @@
         ]);
     });
 
+    app.config(function($animateProvider) {
+        $animateProvider.classNameFilter(/^(?:(?!ng-animate-disabled).)*$/);
+    });
+
     app.config([
         "ngToastProvider",
         function(ngToast) {

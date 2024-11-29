@@ -14,6 +14,7 @@
             disableVariables: "<",
             forceInput: "<?",
             onInputUpdate: "&",
+            codeMirrorOptions: "<?",
             model: "=",
             style: "@",
             menuPosition: "@?",
@@ -22,13 +23,13 @@
         },
         template: `
                 <div style="{{$ctrl.style}}" class="{{$ctrl.class}}">
-                    <div ng-if="$ctrl.useInputGroup" class="input-group">
+                    <div ng-if="$ctrl.useInputGroup && $ctrl.inputType != 'codemirror'" class="input-group">
                         <span class="input-group-addon" id="{{$ctrl.inputGroupId}}">{{$ctrl.inputTitle}}<tooltip ng-if="$ctrl.titleTooltip != null" text="$ctrl.titleTooltip"></tooltip></span>
                         <input
                             id="{{$ctrl.inputId}}"
                             ng-if="$ctrl.forceInputInternal"
                             type="{{$ctrl.disableVariables ? $ctrl.inputType || 'text' : 'text'}}"
-                            class="form-control"
+                            class="form-control ng-animate-disabled"
                             ng-model="$ctrl.model"
                             ng-change="$ctrl.onChange($ctrl.model)"
                             placeholder="{{$ctrl.placeholderText}}"
@@ -42,7 +43,7 @@
                             ng-if="!$ctrl.forceInputInternal"
                             ng-model="$ctrl.model"
                             ng-change="$ctrl.onChange($ctrl.model)"
-                            class="form-control disable-custom-scroll-styles"
+                            class="form-control disable-custom-scroll-styles ng-animate-disabled"
                             ng-class="{ 'single-line-textarea disable-custom-scroll-styles': !$ctrl.allowNewLines }"
                             placeholder="{{$ctrl.placeholderText}}"
                             rows="4"
@@ -57,11 +58,12 @@
                         ></textarea>
                     </div>
 
-                    <div ng-if="!$ctrl.useInputGroup">
+                    <div ng-if="!$ctrl.useInputGroup && $ctrl.inputType != 'codemirror'">
                         <input
                             id="{{$ctrl.inputId}}"
                             ng-if="$ctrl.forceInputInternal"
-                            type="{{$ctrl.disableVariables ? $ctrl.inputType || 'text' : 'text'}}" class="form-control"
+                            type="{{$ctrl.disableVariables ? $ctrl.inputType || 'text' : 'text'}}"
+                            class="form-control ng-animate-disabled"
                             ng-model="$ctrl.model"
                             ng-change="$ctrl.onChange($ctrl.model)"
                             placeholder="{{$ctrl.placeholderText}}"
@@ -75,7 +77,7 @@
                             ng-if="!$ctrl.forceInputInternal"
                             ng-model="$ctrl.model"
                             ng-change="$ctrl.onChange($ctrl.model)"
-                            class="form-control disable-custom-scroll-styles"
+                            class="form-control disable-custom-scroll-styles ng-animate-disabled"
                             ng-class="{ 'single-line-textarea disable-custom-scroll-styles': !$ctrl.allowNewLines }"
                             placeholder="{{$ctrl.placeholderText}}"
                             rows="4"
@@ -90,6 +92,18 @@
                         ></textarea>
                     </div>
 
+                    <div ng-if="$ctrl.inputType == 'codemirror' && $ctrl.codeMirrorOptions">
+                        <div
+                            ui-codemirror="{onLoad : $ctrl.codemirrorLoaded}"
+                            ui-codemirror-opts="$ctrl.codeMirrorOptions"
+                            ui-refresh='$ctrl.codeMirrorOptions'
+                            ng-model="$ctrl.model"
+                            replace-variables="{{$ctrl.dataType}}"
+                            disable-variable-menu="$ctrl.disableVariables"
+                            menu-position="{{$ctrl.menuPosition || 'under'}}"
+                        >
+                        </div>
+                    </div>
                 </div>
             `,
         controller: function ($timeout) {
@@ -104,26 +118,37 @@
 
             $ctrl.forceInputInternal = false;
 
+            $ctrl.cmEditor = null;
+
             $ctrl.onChange = (model) => {
                 if (!$ctrl.allowNewLines) {
                     model = model.replace(/\n/gm, "");
                 }
                 $ctrl.model = model;
                 $timeout(() => {
-                    $ctrl.onInputUpdate();
+                    $ctrl.onInputUpdate?.();
                 }, 25);
             };
 
-            $ctrl.$onInit = () => {
-                $ctrl.forceInputInternal = !$ctrl.useTextArea && ($ctrl.forceInput || $ctrl.disableVariables && $ctrl.inputType !== 'text');
+            const init = () => {
+
                 $ctrl.allowNewLines = $ctrl.useTextArea === true;
                 $ctrl.wrapMode = $ctrl.useTextArea ? "soft" : "off";
                 $ctrl.useInputGroup = $ctrl.inputTitle != null && $ctrl.inputTitle !== "";
 
+                $ctrl.forceInputInternal = !$ctrl.useTextArea && ($ctrl.forceInput || ($ctrl.disableVariables && $ctrl.inputType !== 'text'));
+
+                if ($ctrl.inputType === 'codemirror') {
+                    $ctrl.cmEditor?.refresh();
+                }
+
                 $timeout(() => {
-                    $ctrl.onInputUpdate();
+                    $ctrl.onInputUpdate?.();
                 }, 25);
             };
+
+            $ctrl.$onInit = init;
+            $ctrl.$onChanges = init;
 
             $ctrl.onResize = () => {
                 $ctrl.wrapMode = "soft";
@@ -132,7 +157,7 @@
             // This is a hack to make the input field resize properly when it has a scrollbar
             $ctrl.$postLink = () => {
                 $timeout(() => {
-                    if ($ctrl.useTextArea || $ctrl.forceInputInternal) {
+                    if ($ctrl.inputType === "codemirror" || $ctrl.useTextArea || $ctrl.forceInputInternal) {
                         return;
                     }
 
@@ -152,6 +177,17 @@
                         }
                     }, 25);
                 }, 25);
+            };
+
+            $ctrl.codemirrorLoaded = function(_editor) {
+                $ctrl.cmEditor = _editor;
+                $ctrl.cmEditor.refresh();
+                const cmResize = require("cm-resize");
+                cmResize(_editor, {
+                    minHeight: 200,
+                    resizableWidth: false,
+                    resizableHeight: true
+                });
             };
         }
     });

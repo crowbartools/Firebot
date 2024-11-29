@@ -17,27 +17,49 @@ const model: EffectType<{
     },
     optionsTemplate: `
         <eos-container header="Event Name">
-            <p class="muted">Enter the name of the event you'd like to send. It will be sent as:<br/><code>custom-event:eventname</code></p>
+            <p class="muted">Enter the name of the event you'd like to send.</p>
             <firebot-input
                 model="effect.eventName"
                 placeholder-text="Enter event name"
                 menu-position="under"
             />
+            <p class="help-block">It will be sent as: <code>custom-event:{{effect.eventName || 'eventname'}}</code></p>
         </eos-container>
 
         <eos-container header="Event Data" pad-top="true">
             <p class="muted">Enter any event data that you'd like to include with the event.</p>
-            <firebot-input
+            <selectable-input-editors
+                editors="editors"
+                initial-editor-label="initialEditorLabel"
                 model="effect.eventData"
-                placeholder-text="Enter event data"
-                use-text-area="true"
-                rows="4"
-                cols="40"
-                menu-position="under"
             />
         </eos-container>
     `,
-    optionsController: () => { },
+    optionsController: ($scope) => {
+        $scope.editors = [
+            {
+                label: "Basic",
+                inputType: "text",
+                useTextArea: true,
+                placeholderText: "Enter event data",
+                menuPosition: "under"
+            },
+            {
+                label: "JSON",
+                inputType: "codemirror",
+                menuPosition: "under",
+                codeMirrorOptions: {
+                    mode: {name: "javascript", json: true},
+                    theme: 'blackboard',
+                    lineNumbers: true,
+                    autoRefresh: true,
+                    showGutter: true
+                }
+            }
+        ];
+
+        $scope.initialEditorLabel = $scope.effect?.eventData?.startsWith("{") || $scope.effect?.eventData?.startsWith("[") ? "JSON" : "Basic";
+    },
     optionsValidator: (effect) => {
         const errors = [];
         if (!(effect.eventName?.length > 0)) {
