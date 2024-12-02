@@ -17,7 +17,6 @@
             toggleServicesRequest: {},
             chatMessage: {},
             chatUpdate: {},
-            error: {},
             updateError: {},
             updateDownloaded: {},
             installingUpdate: {},
@@ -55,7 +54,6 @@
             CHAT_MESSAGE: "chatMessage",
             CHAT_UPDATE: "chatUpdate",
             CURRENT_VIEWERS_UPDATE: "currentViewersUpdate",
-            ERROR: "error",
             UPDATE_ERROR: "updateError",
             UPDATE_DOWNLOADED: "updateDownloaded",
             INSTALLING_UPDATE: "installingUpdate",
@@ -283,15 +281,6 @@
         ipcRenderer.on("currentViewersUpdate", function(event, data) {
             _.forEach(registeredListeners.currentViewersUpdate, (listener) => {
                 runListener(listener, data);
-            });
-        });
-
-        /**
-     * Error event listener
-     */
-        ipcRenderer.on("error", function(event, errorMessage) {
-            _.forEach(registeredListeners.error, (listener) => {
-                runListener(listener, errorMessage);
             });
         });
 

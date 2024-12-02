@@ -1,0 +1,202 @@
+import { Integration } from "@crowbartools/firebot-custom-scripts-types";
+import { Effect, EffectList, EffectType } from "./effects";
+import { Trigger } from "./triggers";
+import { Awaitable, NoFunctionValue } from "./util-types";
+import { ReplaceVariable } from "./variables";
+import { EventFilter } from "./events";
+import { RestrictionType } from "@crowbartools/firebot-custom-scripts-types/types/restrictions";
+import { SystemCommand } from "./commands";
+import { FirebotGame } from "src/backend/games/game-manager";
+import winston from "winston";
+import { FrontendCommunicatorModule } from "./script-modules";
+import EffectManager from "../backend/effects/effectManager";
+import ReplaceVariableManager from "../backend/variables/replace-variable-manager";
+
+
+export type InstalledPluginConfig = {
+    id: string,
+    fileName: string,
+    enabled?: boolean,
+    legacyImport?: boolean,
+    parameters: Record<string, Record<string, unknown>>
+};
+
+type ScriptContext = {
+    trigger?: Trigger;
+    parameters: Record<string, unknown>;
+}
+
+type DynamicArray<T> = Array<T | ((context: ScriptContext) => Awaitable<T>)>;
+
+type ScriptType = "script" | "plugin"
+
+interface ManifestDescription {
+    short: string;
+    long?: string;
+}
+
+interface ManifestFirebotVersion {
+    major: number;
+    minor?: number;
+    patch?: number;
+}
+
+interface Manifest {
+    name: string;
+    version: string;
+    author: string;
+    description: string | ManifestDescription;
+
+    keywords?: string[];
+
+    repo?: string;
+
+    // Note: autofilled if repo is assumed github and not specified
+    website?: string;
+    report?: string;
+    source?: string;
+
+    minimumFirebotVersion?: ManifestFirebotVersion;
+    maximumFirebotVersion?: ManifestFirebotVersion;
+
+    type: ScriptType;
+}
+
+interface ScriptParameter {
+    name: string;
+    description: string;
+    type: ParameterType; // input, select, toggle/checkbox, etc
+    validate?: (value: unknown) => boolean;
+
+    placeholder?: string; // hint-text; only viable only for specific types
+
+    // If value is a function, call said function to get definition
+    // If definition is or evaluates to promise, await promise
+    default: NoFunctionValue | (() => Awaitable<unknown>);
+}
+
+type EffectScriptResult = {
+    success: boolean;
+    errorMessage?: string;
+    effects?: EffectList | Array<Effect>;
+    onEffectsDone?: () => Awaitable<void>;
+};
+
+
+interface ScriptBase {
+    manifest: Manifest;
+
+    // if uninstalled is true, the script is being removed by the user, thus the script should remove related data files/assets
+    // otherwise the script should assume firebot is closing or the script is being reloaded
+    onUnload?: (pluginManager: PluginManager, /* args, */ uninstalled: boolean) => NoResult;
+}
+
+// Supplants the "Run Script" effect script functionality
+interface EffectScript extends ScriptBase {
+    run: (context: ScriptContext) => Awaitable<void | EffectScriptResult>;
+}
+
+// Supplants the "Start up" script functionality
+interface Plugin extends ScriptBase {
+    parameters: Record<string, ScriptParameter>;
+
+    // Note: Atleast one is required: onLoad or registers.*
+    // if not met, the script will not be loaded and it should be logged the script does nothing
+
+    // Automatically handles registration with appropriate managers for definitions
+    // when the script is unloaded, definitions will automagically be unregistered
+    registers?: {
+
+        // If value within array is a function, call said function to get definition
+        // If definition is or evaluates to promise, await promise
+        effects?: DynamicArray<EffectType>;
+        eventSources?: DynamicArray<EventSource>;
+        variables?: DynamicArray<ReplaceVariable>;
+        // endpoints?: DynamicArray<HttpEndpoint>;
+        integrations?: DynamicArray<Integration>;
+        filters?: DynamicArray<EventFilter>;
+        restrictions?: DynamicArray<RestrictionType>;
+        systemCommands?: DynamicArray<SystemCommand>;
+        games?: DynamicArray<FirebotGame>;
+    };
+
+    // Called when the script is loaded
+    onLoad?: (context: ScriptContext, isInstalling?: boolean) => NoResult;
+
+    // Called when firebot is closing or plugin is disabled / removed
+    onUnload?: (parameters: Parameters, isUninstalling?: boolean) => NoResult;
+
+    // called when the user updates plugin-specific parameters
+    onParameterUpdate?: (parameters: Parameters) => NoResult;
+}
+
+/* Legacy types */
+
+type LegacyScriptParameters = Record<
+string,
+{
+    type: string;
+    description: string;
+    secondaryDescription: string;
+    value: unknown;
+    default: unknown;
+}
+>;
+
+type LegacyScriptReturnObject = {
+    success: boolean;
+    errorMessage?: string;
+    effects: unknown[] | { id: string; list: unknown[] };
+    callback?: VoidFunction;
+};
+
+type LegacyRunRequest = {
+    parameters: Record<string, unknown>;
+    modules: Record<string, unknown>;
+    firebot: {
+        accounts: {
+            streamer: unknown;
+            bot: unknown;
+        };
+        settings: {
+            webServerPort: number;
+        };
+        version: string;
+    };
+    trigger: Trigger;
+};
+
+type LegacyCustomScriptManifest = {
+    name: string;
+    description: string;
+    version: string;
+    author: string;
+    website?: string;
+    startupOnly?: boolean;
+    firebotVersion?: "5";
+};
+
+export type LegacyScriptData = {
+    id: string;
+    name: string;
+    scriptName: string;
+    parameters: LegacyScriptParameters;
+};
+
+export type LegacyCustomScript = {
+    getScriptManifest(): Awaitable<LegacyCustomScriptManifest>;
+    getDefaultParameters(): LegacyScriptParameters;
+    run(
+        runRequest: LegacyRunRequest
+    ): Awaitable<void | LegacyScriptReturnObject>;
+    parametersUpdated?: (parameters: Record<string, unknown>) => Awaitable<void>;
+    stop?: () => Awaitable<void>;
+};
+
+export type FirebotScriptApi = {
+    version: string;
+    logger: winston.LoggerInstance;
+    frontend: FrontendCommunicatorModule;
+    effects: EffectManager;
+    replaceVariables: ReplaceVariableManager;
+}

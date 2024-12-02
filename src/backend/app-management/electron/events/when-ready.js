@@ -1,6 +1,5 @@
 "use strict";
 
-
 const {checkForFirebotSetupPathInArgs} = require("../../file-open-helpers");
 
 exports.whenReady = async () => {
@@ -156,9 +155,12 @@ exports.whenReady = async () => {
     const quickActionManager = require("../../../quick-actions/quick-action-manager");
     quickActionManager.loadItems();
 
-    windowManagement.updateSplashScreenStatus("Loading startup script data...");
-    const startupScriptsManager = require("../../../common/handlers/custom-scripts/startup-scripts-manager");
-    startupScriptsManager.loadStartupConfig();
+    // get ui extension manager in memory
+    require("../../../ui-extensions/ui-extension-manager");
+
+    windowManagement.updateSplashScreenStatus("Loading plugins...");
+    const pluginManager = require("../../../custom-scripts/plugin-manager");
+    pluginManager.loadItems();
 
     windowManagement.updateSplashScreenStatus("Starting chat moderation manager...");
     const chatModerationManager = require("../../../chat/moderation/chat-moderation-manager");
@@ -264,8 +266,6 @@ exports.whenReady = async () => {
     await notificationManager.loadAllNotifications();
     notificationManager.startExternalNotificationCheck();
 
-    // get ui extension manager in memory
-    require("../../../ui-extensions/ui-extension-manager");
 
     logger.debug('...loading main window');
     windowManagement.updateSplashScreenStatus("Here we go!");

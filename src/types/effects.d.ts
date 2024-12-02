@@ -74,6 +74,15 @@ export type EffectType<EffectModel = unknown, OverlayData = unknown> = {
     overlayExtension?: OverlayExtension;
 };
 
+export type Effect<EffectProperties extends Record<string, unknown> = Record<string, never>> = {
+    id: string;
+    type: string;
+    active?: boolean;
+    effectLabel?: string;
+    percentWeight?: number;
+    abortTimeout?: number;
+} & EffectProperties;
+
 export interface EffectList {
     id: string;
     list: any[];
