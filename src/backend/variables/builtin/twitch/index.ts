@@ -11,6 +11,7 @@ import rewardVariables from './reward';
 import streamVariables from './stream';
 import subVariables from './subs';
 
+import accountCreationDate from './account-creation-date';
 import followAge from './follow-age';
 import followCount from './follow-count';
 import predictionWinningOutcomeName from './prediction-winning-outcome-name';
@@ -32,6 +33,7 @@ export default [
     ...streamVariables,
     ...subVariables,
 
+    accountCreationDate,
     followAge,
     followCount,
     predictionWinningOutcomeName,
