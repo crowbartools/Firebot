@@ -1,7 +1,7 @@
 import { EffectType } from "../../../types/effects";
 import { EffectCategory } from "../../../shared/effect-constants";
 import logger from "../../logwrapper";
-import WebSocketServerManager from "../../../server/websocket-server-manager";
+import HttpServerManager from "../../../server/http-server-manager";
 
 const model: EffectType<{
     eventName: string;
@@ -74,7 +74,7 @@ const model: EffectType<{
             try {
                 data = JSON.parse(effect.eventData);
             } catch { }
-            WebSocketServerManager.triggerEvent(`custom-event:${effect.eventName}`, data as object);
+            HttpServerManager.triggerCustomWebSocketEvent(effect.eventName, data as object);
         } catch (error) {
             logger.error(`Error sending custom WebSocket event ${effect.eventName}`, error);
         }
