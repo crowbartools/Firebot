@@ -86,6 +86,16 @@ export class LegacyStartUpScript extends IPluginExecutor {
         };
     }
 
+    async unloadPlugin(script: ScriptBase | LegacyCustomScript) {
+        if (!this.isLegacyScript(script)) {
+            return;
+        }
+
+        if (script.stop != null && typeof script.stop === "function") {
+            await script.stop();
+        }
+    }
+
     private isLegacyScript(script: ScriptBase | LegacyCustomScript): script is LegacyCustomScript {
         return (script as ScriptBase).manifest == null;
     }

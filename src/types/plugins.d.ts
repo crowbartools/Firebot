@@ -124,10 +124,10 @@ interface Plugin extends ScriptBase {
     onLoad?: (context: ScriptContext, isInstalling?: boolean) => NoResult;
 
     // Called when firebot is closing or plugin is disabled / removed
-    onUnload?: (parameters: Parameters, isUninstalling?: boolean) => NoResult;
+    onUnload?: (context: ScriptContext, isUninstalling?: boolean) => NoResult;
 
     // called when the user updates plugin-specific parameters
-    onParameterUpdate?: (parameters: Parameters) => NoResult;
+    onParameterUpdate?: (context: ScriptContext) => NoResult;
 }
 
 /* Legacy types */

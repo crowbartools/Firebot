@@ -24,13 +24,8 @@ export class PluginExecutor extends IPluginExecutor {
             };
         }
 
-        const parameters = Object.entries(script.parameters).reduce((acc, [key, value]) => {
-            acc[key] = config.parameters?.[key] ?? value?.default;
-            return acc;
-        }, {} as Record<string, unknown>);
-
         const context: ScriptContext = {
-            parameters
+            parameters: this.buildParameters(script, config)
         };
 
         if (script.registers) {
@@ -51,6 +46,30 @@ export class PluginExecutor extends IPluginExecutor {
         return {
             success: true
         };
+    }
+
+    async unloadPlugin(
+        script: ScriptBase | LegacyCustomScript,
+        config: InstalledPluginConfig,
+        isUninstalling?: boolean
+    ): Promise<void> {
+        // this is mainly for type checking
+        if (!this.isPlugin(script)) {
+            return;
+        }
+
+        const context: ScriptContext = {
+            parameters: this.buildParameters(script, config)
+        };
+
+        await script.onUnload?.(context, isUninstalling);
+    }
+
+    private buildParameters(script: Plugin, config: InstalledPluginConfig) {
+        return Object.entries(script.parameters).reduce((acc, [key, value]) => {
+            acc[key] = config.parameters?.[key] ?? value?.default;
+            return acc;
+        }, {} as Record<string, unknown>);
     }
 
     private isPlugin(script: ScriptBase | LegacyCustomScript): script is Plugin {

@@ -20,6 +20,12 @@ export abstract class IPluginExecutor extends IBaseScriptExecutor {
         config: InstalledPluginConfig,
         isInstalling?: boolean
     ): Awaitable<ScriptExecutionResult>;
+
+    abstract unloadPlugin(
+        script: ScriptBase | LegacyCustomScript,
+        config: InstalledPluginConfig,
+        isUninstalling?: boolean
+    ): Awaitable<void>;
 }
 
 export type EffectScriptExecutionResult = ScriptExecutionResult & {
