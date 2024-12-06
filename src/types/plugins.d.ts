@@ -6,6 +6,7 @@ import { ReplaceVariable } from "./variables";
 import { EventFilter } from "./events";
 import { RestrictionType } from "@crowbartools/firebot-custom-scripts-types/types/restrictions";
 import { SystemCommand } from "./commands";
+import { FirebotParameterCategories, FirebotParams } from "./parameters";
 import { FirebotGame } from "src/backend/games/game-manager";
 import winston from "winston";
 import { FrontendCommunicatorModule } from "./script-modules";
@@ -41,7 +42,7 @@ interface ManifestFirebotVersion {
     patch?: number;
 }
 
-interface Manifest {
+export interface Manifest {
     name: string;
     version: string;
     author: string;
@@ -83,8 +84,10 @@ type EffectScriptResult = {
 };
 
 
-interface ScriptBase {
+interface ScriptBase<Params extends FirebotParams = Record<string, Record<string, unknown>>> {
     manifest: Manifest;
+
+    parameters?: FirebotParameterCategories<Params>;
 
     // if uninstalled is true, the script is being removed by the user, thus the script should remove related data files/assets
     // otherwise the script should assume firebot is closing or the script is being reloaded
@@ -92,14 +95,12 @@ interface ScriptBase {
 }
 
 // Supplants the "Run Script" effect script functionality
-interface EffectScript extends ScriptBase {
+interface EffectScript<Params extends FirebotParams = Record<string, Record<string, unknown>>> extends ScriptBase<Params> {
     run: (context: ScriptContext) => Awaitable<void | EffectScriptResult>;
 }
 
 // Supplants the "Start up" script functionality
-interface Plugin extends ScriptBase {
-    parameters: Record<string, ScriptParameter>;
-
+interface Plugin<Params extends FirebotParams = Record<string, Record<string, unknown>>> extends ScriptBase<Params> {
     // Note: Atleast one is required: onLoad or registers.*
     // if not met, the script will not be loaded and it should be logged the script does nothing
 

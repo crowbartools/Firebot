@@ -7,7 +7,7 @@ import logger from "../logwrapper.js";
 /**
  * Manages installed plugins (formerly known as "start up scripts")
  */
-class PluginManager extends JsonDbManager<InstalledPluginConfig> {
+class PluginConfigManager extends JsonDbManager<InstalledPluginConfig> {
     constructor() {
         super("Plugin", "/plugins");
     }
@@ -57,7 +57,7 @@ class PluginManager extends JsonDbManager<InstalledPluginConfig> {
     }
 }
 
-const manager = new PluginManager();
+const manager = new PluginConfigManager();
 
 frontendCommunicator.onAsync("plugin-manager:get-all-configs", async () =>
     manager.getAllItems()

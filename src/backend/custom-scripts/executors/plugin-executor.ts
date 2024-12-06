@@ -1,5 +1,5 @@
 import { ScriptBase, LegacyCustomScript, Plugin, ScriptContext, InstalledPluginConfig } from "../../../types/plugins";
-import { IPluginExecutor, ScriptExecutionResult } from "./script-executor.interface";
+import { IPluginExecutor, ScriptDetails, ScriptExecutionResult } from "./script-executor.interface";
 import effectManager from "../../effects/effectManager";
 
 export class PluginExecutor extends IPluginExecutor {
@@ -9,6 +9,18 @@ export class PluginExecutor extends IPluginExecutor {
 
     canHandle(script: ScriptBase | LegacyCustomScript) {
         return this.isPlugin(script);
+    }
+
+    async getScriptDetails(script: ScriptBase | LegacyCustomScript): Promise<ScriptDetails> {
+        // this is mainly for type checking
+        if (!this.isPlugin(script)) {
+            return null;
+        }
+
+        return {
+            manifest: script.manifest,
+            parameters: script.parameters
+        };
     }
 
     async executePlugin(
