@@ -4,7 +4,7 @@ const logger = require("../../logwrapper");
 
 const { IncompatibilityError } = require("./import-helpers").errors;
 
-const uuid = require("uuid/v1");
+const { v4: uuid } = require("uuid");
 
 //v4 effect types are keys, supported v5 types are values
 const v4EffectTypeMap = {

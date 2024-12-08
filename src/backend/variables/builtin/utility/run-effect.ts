@@ -1,7 +1,7 @@
 import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-const uuid = require("uuid/v4");
+const { v4: uuid } = require("uuid");
 
 const logger = require("../../../logwrapper");
 const effectRunner = require("../../../common/effect-runner");
