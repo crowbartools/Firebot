@@ -13,6 +13,7 @@ export const TransformSourceEffectType: EffectType<{
     alignment: number;
     startTransform: Record<string, string>;
     endTransform: Record<string, string>;
+    isShitFucked: boolean;
 }> = {
     definition: {
         id: "firebot:obs-transform-source",
@@ -22,6 +23,13 @@ export const TransformSourceEffectType: EffectType<{
         categories: ["common"]
     },
     optionsTemplate: `
+        <eos-container ng-if="effect.isShitFucked" pad-top="true">
+            <div class="alert alert-danger">
+                <p ng-if="effect.isShitFucked" style="margin: 0">
+                    <b>Error:</b> Due to a previous bug with duplicating Preset Effect Lists, you will need to set the Scene Item again, this shouldn't be necessary again in the future.
+                </p>
+            </div>
+        </eos-container>
         <eos-container header="OBS Scene" pad-top="true">
             <div>
                 <button class="btn btn-link" ng-click="getScenes()">Refresh Scene Data</button>
@@ -101,10 +109,12 @@ export const TransformSourceEffectType: EffectType<{
                     <div style="display: flex; gap: 20px; margin-bottom: 20px">
                         <firebot-input
                             input-title="End X"
+                            placeholder-text="Position in pixels"
                             model="effect.endTransform.positionX"
                             style="flex-basis: 50%" />
                         <firebot-input
                             input-title="End Y"
+                            placeholder-text="Position in pixels"
                             model="effect.endTransform.positionY"
                             style="flex-basis: 50%" />
                     </div>
@@ -129,12 +139,12 @@ export const TransformSourceEffectType: EffectType<{
                     <div style="display: flex; gap: 20px; margin-bottom: 20px;">
                         <firebot-input
                             input-title="End X Scale"
-                            placeholder-text="0.0 - 1.0"
+                            placeholder-text="eg. 0.5 = 50% scale"
                             model="effect.endTransform.scaleX"
                             style="flex-basis: 50%" />
                         <firebot-input
                             input-title="End Y Scale"
-                            placeholder-text="0.0 - 1.0"
+                            placeholder-text="eg. 0.5 = 50% scale"
                             model="effect.endTransform.scaleY"
                             style="flex-basis: 50%" />
                     </div>
@@ -177,6 +187,17 @@ export const TransformSourceEffectType: EffectType<{
             [10]: "Bottom Right"
         });
 
+        // If legacy property sceneItem.id exists, we need to fix it
+        if (!!$scope.effect.sceneItem?.id) {
+            if (typeof ($scope.effect.sceneItem.id) !== "number") {
+                $scope.effect.isShitFucked = true;
+                delete $scope.effect.sceneItem;
+            } else {
+                $scope.effect.sceneItem.itemId = $scope.effect.sceneItem.id;
+                delete $scope.effect.sceneItem.id;
+            }
+        }
+
         $scope.selectScene = (sceneName: string) => {
             $scope.effect.sceneItem = undefined;
             $scope.getSources(sceneName);
@@ -184,6 +205,7 @@ export const TransformSourceEffectType: EffectType<{
 
         $scope.selectSceneItem = (sceneItem: OBSSceneItem) => {
             $scope.effect.sceneItem = sceneItem;
+            $scope.effect.isShitFucked = false;
         };
 
         $scope.getScenes = () => {
@@ -259,7 +281,7 @@ export const TransformSourceEffectType: EffectType<{
 
         await transformSceneItem(
             effect.sceneItem.groupName ?? effect.sceneName,
-            effect.sceneItem.id,
+            effect.sceneItem.itemId,
             Number(effect.duration) * 1000,
             parsedStart,
             parsedEnd,

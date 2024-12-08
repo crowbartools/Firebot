@@ -798,7 +798,8 @@ export type OBSSource = {
 };
 
 export type OBSSceneItem = {
-    id: number;
+    id?: number; // this is for legacy support, swapped to itemId to avoid breaking on copy preset effect list
+    itemId: number;
     name: string;
     groupName?: string;
 };
@@ -890,7 +891,7 @@ export async function getAllSceneItemsInGroup(groupName: string): Promise<Array<
     try {
         const response = await obs.call("GetGroupSceneItemList", { sceneName: groupName });
         return response.sceneItems.map(item => ({
-            id: item.sceneItemId as number,
+            itemId: item.sceneItemId as number,
             name: item.sourceName as string,
             groupName
         }));
@@ -907,7 +908,7 @@ export async function getAllSceneItemsInScene(sceneName: string): Promise<Array<
 
         for (const item of response.sceneItems) {
             sceneItems.push({
-                id: item.sceneItemId as number,
+                itemId: item.sceneItemId as number,
                 name: item.sourceName as string
             });
 
