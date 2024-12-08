@@ -13,11 +13,11 @@
             modalInstance: "<"
         },
         controller: function($scope, utilityService, currencyService, viewerRolesService, logger) {
-            const uuidv1 = require("uuid/v1");
+            const { v4: uuid } = require("uuid");
             const $ctrl = this;
 
             $ctrl.currency = {
-                id: uuidv1(),
+                id: uuid(),
                 name: "Points",
                 active: true,
                 payout: 5,
