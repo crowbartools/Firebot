@@ -798,7 +798,7 @@ export type OBSSource = {
 };
 
 export type OBSSceneItem = {
-    id?: number; // this is for legacy support, swapped to itemId to avoid breaking on copy preset effect list
+    id?: number; // this is for legacy support, swapped to itemId to avoid breaking on duplicating Preset Effect Lists
     itemId: number;
     name: string;
     groupName?: string;
