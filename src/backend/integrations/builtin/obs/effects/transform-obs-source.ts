@@ -205,7 +205,7 @@ export const TransformSourceEffectType: EffectType<{
 
         $scope.selectSceneItem = (sceneItem: OBSSceneItem) => {
             $scope.effect.sceneItem = sceneItem;
-            $scope.effect.isUsingInvalidItemId = false;
+            $scope.isUsingInvalidItemId = false;
         };
 
         $scope.getScenes = () => {
