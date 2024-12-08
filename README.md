@@ -7,6 +7,7 @@ An all-in-one desktop bot for Twitch featuring support for Chat Commands, Events
 [![Total Downloads](https://img.shields.io/github/downloads/crowbartools/firebot/total.svg)](https://firebot.app)
 [![Version](https://img.shields.io/github/release/crowbartools/firebot.svg)](https://github.com/crowbartools/Firebot/releases)
 [![Discord](https://img.shields.io/discord/372817064034959370.svg?label=Discord+(chat))](https://discord.gg/crowbartools-372817064034959370)
+[![Bluesky](https://img.shields.io/badge/Bluesky-@firebot.app-0285FF.svg?logo=bluesky&logoColor=fff)](https://bsky.app/profile/firebot.app)
 
 ![Firebot Screenshot](https://i.imgur.com/Iu9BIix.png)
 
