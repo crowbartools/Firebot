@@ -13,7 +13,7 @@ export const TransformSourceEffectType: EffectType<{
     alignment: number;
     startTransform: Record<string, string>;
     endTransform: Record<string, string>;
-    isShitFucked: boolean;
+    isUsingInvalidItemId: boolean;
 }> = {
     definition: {
         id: "firebot:obs-transform-source",
@@ -23,9 +23,9 @@ export const TransformSourceEffectType: EffectType<{
         categories: ["common"]
     },
     optionsTemplate: `
-        <eos-container ng-if="effect.isShitFucked" pad-top="true">
+        <eos-container ng-if="effect.isUsingInvalidItemId" pad-top="true">
             <div class="alert alert-danger">
-                <p ng-if="effect.isShitFucked" style="margin: 0">
+                <p style="margin: 0">
                     <b>Error:</b> Due to a previous bug with duplicating Preset Effect Lists, you will need to set the Scene Item again, this shouldn't be necessary again in the future.
                 </p>
             </div>
@@ -190,7 +190,7 @@ export const TransformSourceEffectType: EffectType<{
         // If legacy property sceneItem.id exists, we need to fix it
         if (!!$scope.effect.sceneItem?.id) {
             if (typeof ($scope.effect.sceneItem.id) !== "number") {
-                $scope.effect.isShitFucked = true;
+                $scope.effect.isUsingInvalidItemId = true;
                 delete $scope.effect.sceneItem;
             } else {
                 $scope.effect.sceneItem.itemId = $scope.effect.sceneItem.id;
@@ -205,7 +205,7 @@ export const TransformSourceEffectType: EffectType<{
 
         $scope.selectSceneItem = (sceneItem: OBSSceneItem) => {
             $scope.effect.sceneItem = sceneItem;
-            $scope.effect.isShitFucked = false;
+            $scope.effect.isUsingInvalidItemId = false;
         };
 
         $scope.getScenes = () => {
