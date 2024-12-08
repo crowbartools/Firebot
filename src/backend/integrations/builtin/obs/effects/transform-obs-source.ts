@@ -281,7 +281,7 @@ export const TransformSourceEffectType: EffectType<{
 
         await transformSceneItem(
             effect.sceneItem.groupName ?? effect.sceneName,
-            effect.sceneItem.itemId,
+            effect.sceneItem.id ?? effect.sceneItem.itemId,
             Number(effect.duration) * 1000,
             parsedStart,
             parsedEnd,
