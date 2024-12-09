@@ -114,7 +114,7 @@
                         }
 
                         if (!initialLoad && ($scope.scriptManifest == null || $scope.scriptManifest.firebotVersion !== "5")) {
-                            utilityService.showInfoModal("The selected script may not have been written for Firebot V5 and so might not function as expected. Please reach out to us on Discord or Twitter if you need assistance.");
+                            utilityService.showInfoModal("The selected script may not have been written for Firebot V5 and so might not function as expected. Please reach out to us on Discord or Bluesky if you need assistance.");
                         }
 
                         const currentParameters = $scope.effect.parameters;

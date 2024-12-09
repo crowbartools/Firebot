@@ -2,7 +2,7 @@
 
 const path = require("path");
 const logger = require("../../../logwrapper");
-const uuid = require("uuid/v1");
+const { v4: uuid } = require("uuid");
 const importHelpers = require("../import-helpers");
 
 const customRolesManager = require("../../../roles/custom-roles-manager");

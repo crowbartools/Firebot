@@ -1,4 +1,4 @@
-import uuidv1 from "uuid/v1";
+import { v4 as uuid } from "uuid";
 
 import { SystemCommand } from "../../../../types/commands";
 import util from "../../../utility";
@@ -277,10 +277,10 @@ export const CommandManagementSystemCommand: SystemCommand = {
                         global: 0
                     },
                     effects: {
-                        id: uuidv1(),
+                        id: uuid(),
                         list: [
                             {
-                                id: uuidv1(),
+                                id: uuid(),
                                 type: "firebot:chat",
                                 message: remainingData
                             }
@@ -326,7 +326,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
                     chatEffect.message = remainingData;
                 } else {
                     const chatEffect = {
-                        id: uuidv1(),
+                        id: uuid(),
                         type: "firebot:chat",
                         message: remainingData
                     };
@@ -473,7 +473,7 @@ export const CommandManagementSystemCommand: SystemCommand = {
                 }
 
                 restrictions.push({
-                    id: uuidv1(),
+                    id: uuid(),
                     type: "firebot:permissions",
                     mode: "roles",
                     roleIds: roleIds

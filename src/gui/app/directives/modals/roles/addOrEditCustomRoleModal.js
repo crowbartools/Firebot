@@ -2,7 +2,7 @@
 
 (function() {
 
-    const uuidv1 = require("uuid/v1");
+    const { v4: uuid } = require("uuid");
 
     angular.module("firebotApp").component("addOrEditCustomRoleModal", {
         template: `
@@ -145,7 +145,7 @@
                 }
 
                 if ($ctrl.isNewRole) {
-                    $ctrl.role.id = uuidv1();
+                    $ctrl.role.id = uuid();
                 }
 
                 $ctrl.close({

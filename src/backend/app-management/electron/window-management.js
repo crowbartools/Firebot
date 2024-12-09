@@ -359,16 +359,16 @@ async function createMainWindow() {
                 {
                     label: 'Join our Discord',
                     click: () => {
-                        shell.openExternal("https://discord.gg/tTmMbrG");
+                        shell.openExternal("https://discord.gg/crowbartools-372817064034959370");
                     },
                     icon: await createIconImage("../../../gui/images/icons/discord.png")
                 },
                 {
-                    label: 'Follow @FirebotApp on Twitter',
+                    label: 'Follow @firebot.app on Bluesky',
                     click: () => {
-                        shell.openExternal("https://twitter.com/FirebotApp");
+                        shell.openExternal("https://bsky.app/profile/firebot.app");
                     },
-                    icon: await createIconImage("../../../gui/images/icons/mdi/twitter.png")
+                    icon: await createIconImage("../../../gui/images/icons/bluesky.png")
                 },
                 {
                     type: 'separator'
