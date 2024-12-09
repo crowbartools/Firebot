@@ -42,7 +42,7 @@ interface Message {
 interface InvokeMessage extends Message {
     type: "invoke";
     id: string|number;
-    data: unknown[];
+    data: unknown;
 }
 interface ResponseMessage extends Message {
     type: "response";
@@ -51,6 +51,16 @@ interface ResponseMessage extends Message {
 }
 interface EventMessage extends Message {
     type: "event"
+}
+
+interface InvokePluginMessage extends InvokeMessage {
+    name: "plugin";
+    pluginName: string;
+}
+
+interface CustomWebSocketHandler {
+    pluginName: string;
+    callback: (data: unknown | unknown[]) => Promise<void> | void;
 }
 
 export type OverlayConnectedData = {

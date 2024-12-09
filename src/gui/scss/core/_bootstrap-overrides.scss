@@ -728,3 +728,8 @@ code {
 .input-group .form-control:has(~ .variables-btn.below:last-child) {
     border-bottom-right-radius: 0px;
 }
+
+.input-editor-selector-container .form-control,
+.input-editor-selector-container .CodeMirror {
+    border-top-left-radius: 0px !important;
+}

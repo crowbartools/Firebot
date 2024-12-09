@@ -1,6 +1,6 @@
 import { JsonDB } from "node-json-db";
 import axios from "axios";
-import uuid from "uuid/v4";
+import { v4 as uuid } from "uuid";
 
 import logger from "../logwrapper";
 import profileManager from "../common/profile-manager";

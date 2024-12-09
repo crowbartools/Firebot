@@ -21,7 +21,7 @@
     }
 }
 
-.filter-mode-dropdown {
+.filter-mode-dropdown, .input-editor-dropdown  {
     border-bottom: 0px solid #eaecec;
     display: inline-block;
     color: white;
@@ -50,6 +50,19 @@
         .fb-arrow {
             border-color: #c4c4c4;
         }
+    }
+}
+
+.input-editor-dropdown {
+    background: rgb(83, 83, 83);
+    padding: 2px 10px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    &:hover, &.open {
+         background: rgb(69, 69, 69);
+    }
+    .dropdown-menu {
+        border-top-left-radius: 0;
     }
 }
 

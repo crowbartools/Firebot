@@ -24,7 +24,11 @@ const effect = {
 
         <eos-container header="Data" pad-top="true">
             <p class="muted">This is the data that will be saved under the above key in the user's data. Can be text or another replace phrase.</p>
-            <textarea ng-model="effect.data" rows="3" class="form-control" id="data" placeholder="Enter text/data" replace-variables></textarea>
+            <selectable-input-editors
+                editors="editors"
+                initial-editor-label="initialEditorLabel"
+                model="effect.data"
+            />
             <p class="muted" style="font-size: 11px;"><b>Note:</b> If data is a valid JSON string, it will be parsed into an object or array.</p>
 
             <div style="margin-top: 10px;">
@@ -44,7 +48,30 @@ const effect = {
             </div>
         </eos-container>
     `,
-    optionsController: () => {},
+    optionsController: ($scope) => {
+        $scope.editors = [
+            {
+                label: "Basic",
+                inputType: "text",
+                useTextArea: true,
+                placeholderText: "Enter text/data"
+            },
+            {
+                label: "JSON",
+                inputType: "codemirror",
+                placeholderText: "Enter text/data",
+                codeMirrorOptions: {
+                    mode: {name: "javascript", json: true},
+                    theme: 'blackboard',
+                    lineNumbers: true,
+                    autoRefresh: true,
+                    showGutter: true
+                }
+            }
+        ];
+
+        $scope.initialEditorLabel = $scope.effect?.data?.startsWith("{") || $scope.effect?.data?.startsWith("[") ? "JSON" : "Basic";
+    },
     optionsValidator: (effect) => {
         const errors = [];
         if (effect.username == null || effect.username === "") {

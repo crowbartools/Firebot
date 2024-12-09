@@ -12,7 +12,7 @@ const model : ReplaceVariable = {
         examples: [
             {
                 usage: "currency[currencyName, username]",
-                description: "Returns the amount of specified currency the given user fas"
+                description: "Returns the amount of specified currency the given user has"
             }
         ],
         categories: [VariableCategory.USER, VariableCategory.NUMBERS],

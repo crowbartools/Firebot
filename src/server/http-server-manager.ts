@@ -10,6 +10,7 @@ import { settings } from "../backend/common/settings-access";
 import effectManager from "../backend/effects/effectManager";
 import resourceTokenManager from "../backend/resourceTokenManager";
 import websocketServerManager from "./websocket-server-manager";
+import { CustomWebSocketHandler } from "../types/websocket";
 
 import dataAccess from "../backend/common/data-access";
 
@@ -237,6 +238,10 @@ class HttpServerManager extends EventEmitter {
         websocketServerManager.sendToOverlay(eventName, meta, overlayInstance);
     }
 
+    triggerCustomWebSocketEvent(eventType: string, payload: object) {
+        websocketServerManager.triggerEvent(`custom-event:${eventType}`, payload);
+    }
+
     createServerInstance() {
         const app = express();
 
@@ -393,6 +398,14 @@ class HttpServerManager extends EventEmitter {
             normalizedMethod,
             fullRoute
         };
+    }
+
+    registerCustomWebSocketListener(pluginName: string, callback: CustomWebSocketHandler["callback"]): boolean {
+        return websocketServerManager.registerCustomWebSocketListener(pluginName, callback);
+    }
+
+    unregisterCustomWebSocketListener(pluginName: string): boolean {
+        return websocketServerManager.unregisterCustomWebSocketListener(pluginName);
     }
 }
 
