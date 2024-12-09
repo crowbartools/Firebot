@@ -77,7 +77,7 @@ class StreamlabsIntegration extends EventEmitter {
             }
         );
 
-        this._socket.on("event", eventData => {
+        this._socket.on("event", (eventData) => {
             slEventHandler.processStreamLabsEvent(eventData);
         });
 
