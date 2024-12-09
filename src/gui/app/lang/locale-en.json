@@ -16,7 +16,8 @@
       "EFFECT_QUEUES": "Effect Queues",
       "TIME_BASED": "Time-Based",
       "HOTKEYS": "Hotkeys",
-      "CHANNELREWARDS": "Channel Rewards"
+      "CHANNELREWARDS": "Channel Rewards",
+      "COUNTERS": "Counters"
     },
     "MANAGEMENT": {
       "MANAGEMENT": "Management",

@@ -112,7 +112,7 @@ class TipeeeStreamIntegration extends EventEmitter {
             this.emit("disconnected", integrationDefinition.id);
         });
 
-        this._socket.on("new-event", data => {
+        this._socket.on("new-event", (data) => {
             const eventData = data.event;
             tsEventHandler.processTipeeeStreamEvent(eventData);
         });

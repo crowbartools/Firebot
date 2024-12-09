@@ -3,7 +3,7 @@
 (function() {
     angular
         .module("firebotApp")
-        .factory("sidebarManager", function($timeout, $rootScope, settingsService, uiExtensionsService) {
+        .factory("sidebarManager", function($timeout, $rootScope, $location, $translate, settingsService, uiExtensionsService, backendCommunicator) {
             const service = {};
 
             service.navExpanded = settingsService.getSidebarExpanded();
@@ -86,6 +86,69 @@
                     "settings"
                 ].includes(service.currentTab.toLowerCase());
             };
+
+            backendCommunicator.on("navigate", (tabId) => {
+                switch (tabId) {
+                    case "dashboard":
+                        $translate("SIDEBAR.CHAT.CHAT_FEED").then((tabName) => {
+                            service.setTab("chat feed", tabName);
+                            $location.path("/chat-feed");
+                        });
+                        break;
+
+                    case "commands":
+                        $translate("SIDEBAR.CHAT.COMMANDS").then((tabName) => {
+                            service.setTab("commands", tabName);
+                            $location.path("/commands");
+                        });
+                        break;
+
+                    case "events":
+                        $translate("SIDEBAR.OTHER.EVENTS").then((tabName) => {
+                            service.setTab("events", tabName);
+                            $location.path("/events");
+                        });
+                        break;
+
+                    case "time-based":
+                        $translate("SIDEBAR.OTHER.TIME_BASED").then((tabName) => {
+                            service.setTab("timers", tabName);
+                            $location.path("/timers");
+                        });
+                        break;
+
+                    case "channel-rewards":
+                        $translate("SIDEBAR.OTHER.CHANNELREWARDS").then((tabName) => {
+                            service.setTab("channel rewards", tabName);
+                            $location.path("/channel-rewards");
+                        });
+                        break;
+
+                    case "preset-effect-lists":
+                        $translate("SIDEBAR.OTHER.PRESET_EFFECT_LISTS").then((tabName) => {
+                            service.setTab("preset effect lists", tabName);
+                            $location.path("/preset-effect-lists");
+                        });
+                        break;
+
+                    case "hotkeys":
+                        $translate("SIDEBAR.OTHER.HOTKEYS").then((tabName) => {
+                            service.setTab("hotkeys", tabName);
+                            $location.path("/hotkeys");
+                        });
+                        break;
+
+                    case "counters":
+                        $translate("SIDEBAR.OTHER.COUNTERS").then((tabName) => {
+                            service.setTab("counters", tabName);
+                            $location.path("/counters");
+                        });
+                        break;
+
+                    default:
+                        break;
+                }
+            });
 
             return service;
         });

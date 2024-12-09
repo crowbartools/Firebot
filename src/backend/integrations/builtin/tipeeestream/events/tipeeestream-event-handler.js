@@ -21,6 +21,7 @@ const eventSourceDefinition = {
             manualMetadata: {
                 from: "TipeeeStream",
                 formattedDonationAmount: 5,
+                donationAmount: 5,
                 donationMessage: "Test message"
             },
             isIntegration: true,
