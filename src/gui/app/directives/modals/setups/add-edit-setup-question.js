@@ -1,7 +1,7 @@
 "use strict";
 
 (function() {
-    const uuid = require("uuid/v4");
+    const { v4: uuid } = require("uuid");
     angular.module("firebotApp")
         .component("addOrEditSetupQuestion", {
             template: `
@@ -12,7 +12,7 @@
                 <div class="modal-body">
                     <h3>Question <tooltip text="'This is the question that will be asked when a user imports. Ie, What should be the default bet amount?'"/></h3>
                     <textarea type="text" class="form-control" rows="3" ng-model="$ctrl.question.question" placeholder="Enter question"></textarea>
-                    
+
                     <h3>Replace Token <tooltip text="'Firebot will replace any instances of this token with the users answer to this question. A token can be anything but you might want to use uncommon characters. Ie %WagerAmount%'"/></h3>
                     <input type="text" class="form-control" ng-model="$ctrl.question.replaceToken" placeholder="Enter text" />
 
@@ -20,10 +20,10 @@
                     <textarea type="text" class="form-control" rows="3" ng-model="$ctrl.question.helpText" placeholder="Optional"></textarea>
 
                     <h3>Answer Type</h3>
-                    <select 
-                        class="fb-select" 
+                    <select
+                        class="fb-select"
                         ng-model="$ctrl.question.answerType"
-                        ng-change="$ctrl.question.defaultAnswer = undefined"; 
+                        ng-change="$ctrl.question.defaultAnswer = undefined";
                         ng-options="answerType.id as answerType.name for answerType in $ctrl.answerTypes">
                         <option value="" disabled selected>Select answer type...</option>
                     </select>

@@ -10,7 +10,7 @@ const model : ReplaceVariable = {
         examples: [
             {
                 usage: `decodeFromUrl["Hello%20World%21"]`,
-                description: "Returns Hello World!"
+                description: `Returns "Hello World!"`
             }
         ],
         categories: [VariableCategory.TEXT],

@@ -27,8 +27,8 @@
                 <section>
                     <h5><b>Connect With Us</b></h5>
                     <div id="aboutModalSocialButtons" style="font-size: 28px;">
-                        <a href ng-click="$root.openLinkExternally('https://discord.gg/tTmMbrG')" title="Discord"><i class="fab fa-discord"></i></a>
-                        <a href ng-click="$root.openLinkExternally('https://twitter.com/FirebotApp')" title="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href ng-click="$root.openLinkExternally('https://discord.gg/crowbartools-372817064034959370')" title="Discord"><i class="fab fa-discord"></i></a>
+                        <a href ng-click="$root.openLinkExternally('https://bsky.app/profile/firebot.app')" title="Bluesky"><i class="fas fa-cloud"></i></a>
                         <a href ng-click="$root.openLinkExternally('https://github.com/crowbartools/Firebot')" title="GitHub"><i class="fab fa-github"></i></a>
                     </div>
                 </section>
