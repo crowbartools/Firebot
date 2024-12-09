@@ -1,6 +1,6 @@
 "use strict";
 const { ipcMain, shell } = require("electron");
-const uuid = require("uuid/v4");
+const { v4: uuid } = require("uuid");
 const logger = require("../../../logwrapper");
 const { settings } = require("../../settings-access");
 const utils = require("../../../utility");

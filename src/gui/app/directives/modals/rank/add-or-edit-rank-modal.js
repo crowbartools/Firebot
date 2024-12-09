@@ -1,7 +1,7 @@
 "use strict";
 (function() {
 
-    const uuid = require("uuid/v4");
+    const { v4: uuid } = require("uuid");
 
     angular.module("firebotApp").component("addOrEditRankModal", {
         template: `

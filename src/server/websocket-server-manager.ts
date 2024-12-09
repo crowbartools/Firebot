@@ -46,6 +46,8 @@ class WebSocketServerManager extends EventEmitter {
             }, 5000);
 
             ws.on('message', (data) => {
+                logger.debug(`Incoming WebSocket message from: ${req.socket.remoteAddress}, message data: ${data.toString().replace(/(\n|\s+)/g, " ")}`);
+
                 try {
                     const message = JSON.parse(data.toString()) as Message;
 

@@ -1,6 +1,6 @@
 "use strict";
 
-const uuid = require("uuid/v1");
+const { v4: uuid } = require("uuid");
 
 function mapV4RolesToMixerRoles(permissions) {
     if (permissions == null || !Array.isArray(permissions) || permissions.length === 0) {
