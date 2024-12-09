@@ -17,6 +17,7 @@
                         model="$ctrl.effect.rotation"
                         placeholder-text="Enter rotation"
                         data-type="number"
+                        menu-position="under"
                     />
                     <dropdown-select 
                         style="margin: 0 0 0 10px;"
