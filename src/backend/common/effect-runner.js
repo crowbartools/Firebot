@@ -9,7 +9,7 @@ const effectQueueManager = require("../effects/queues/effect-queue-manager");
 const effectQueueRunner = require("../effects/queues/effect-queue-runner");
 const webServer = require("../../server/http-server-manager");
 const util = require("../utility");
-const uuid = require("uuid/v4");
+const { v4: uuid } = require("uuid");
 const {
     addEffectAbortController,
     removeEffectAbortController

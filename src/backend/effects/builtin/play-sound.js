@@ -211,7 +211,7 @@ const playSound = {
 
                 // Generate UUID to use as class name.
                 // eslint-disable-next-line no-undef
-                const uuid = uuidv4();
+                const uuid = uuid();
 
                 const filepath = data.isUrl ? data.url : data.filepath.toLowerCase();
                 let mediaType;

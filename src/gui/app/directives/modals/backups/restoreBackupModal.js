@@ -75,7 +75,7 @@
                     } catch (error) {
                         logger.error("Unknown error while attempting to restore backup", error);
                         $ctrl.restoreHasError = true;
-                        $ctrl.errorMessage = "An unknown error occurred while attempting to restore the backup. Please reach out on Discord or Twitter. We are happy to help!";
+                        $ctrl.errorMessage = "An unknown error occurred while attempting to restore the backup. Please reach out on Discord or Bluesky. We are happy to help!";
                     }
                     resolve();
                 });
@@ -89,7 +89,7 @@
                 $timeout(() => {
                     if (!$ctrl.restoreComplete && !$ctrl.restoreHasError) {
                         $ctrl.restoreHasError = true;
-                        $ctrl.errorMessage = "Restore is taking longer than it should. There is likely an issue. You can close and try again. If you continue having issues, please reach out on Discord or Twitter. We are happy to help!";
+                        $ctrl.errorMessage = "Restore is taking longer than it should. There is likely an issue. You can close and try again. If you continue having issues, please reach out on Discord or Bluesky. We are happy to help!";
                     }
                 }, 30 * 1000);
             };

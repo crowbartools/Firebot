@@ -125,8 +125,8 @@ const playVideo = {
                 placeholder-text="Ex: $streamer, $user, etc"
             />
             <div class="mt-10 form-group flex-row jspacebetween" style="margin-bottom: 0;">
-                <firebot-checkbox 
-                    label="Only Featured Clips" 
+                <firebot-checkbox
+                    label="Only Featured Clips"
                     model="effect.isFeatured"
                     style="margin: 0px 15px 0px 0px"
                 />
@@ -136,8 +136,8 @@ const playVideo = {
                 ng-class="{'has-error': $ctrl.formFieldHasError('clipSeconds')}"
             >
                 <div class="form-group flex-row jspacebetween" style="margin-bottom: 0;">
-                    <firebot-checkbox 
-                        label="Maximum Clip Age" 
+                    <firebot-checkbox
+                        label="Maximum Clip Age"
                         model="effect.useMaxClipAge"
                         style="margin: 0px 15px 0px 0px"
                     />
@@ -233,7 +233,7 @@ const playVideo = {
         </eos-container>
 
         <eos-overlay-position effect="effect" pad-top="true"></eos-overlay-position>
-        
+
         <eos-overlay-rotation effect="effect" pad-top="true"></eos-overlay-rotation>
 
         <eos-enter-exit-animations effect="effect" pad-top="true"></eos-enter-exit-animations>
@@ -672,7 +672,7 @@ const playVideo = {
 
                 // Generate UUID to use as id
                 // eslint-disable-next-line no-undef
-                const uuid = uuidv4();
+                const uuid = uuid();
                 const videoPlayerId = `${uuid}-video`;
 
                 const enterAnimation = data.enterAnimation ? data.enterAnimation : "fadeIn";
@@ -705,7 +705,7 @@ const playVideo = {
                     `;
 
                     // eslint-disable-next-line no-undef
-                    const wrapperId = uuidv4();
+                    const wrapperId = uuid();
                     const wrappedHtml = getPositionWrappedHTML(wrapperId, positionData, videoElement); // eslint-disable-line no-undef
 
                     $(".wrapper").append(wrappedHtml);
@@ -766,12 +766,12 @@ const playVideo = {
                     };
                 } else {
                     // eslint-disable-next-line no-undef
-                    const ytPlayerId = `yt-${uuidv4()}`;
+                    const ytPlayerId = `yt-${uuid()}`;
 
                     const youtubeElement = `<div id="${ytPlayerId}" style="display:none;${sizeStyles}"></div>`;
 
                     // eslint-disable-next-line no-undef
-                    const wrapperId = uuidv4();
+                    const wrapperId = uuid();
                     const wrappedHtml = getPositionWrappedHTML(wrapperId, positionData, youtubeElement); // eslint-disable-line no-undef
 
                     $(".wrapper").append(wrappedHtml);
