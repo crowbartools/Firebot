@@ -672,8 +672,8 @@ const playVideo = {
 
                 // Generate UUID to use as id
                 // eslint-disable-next-line no-undef
-                const uuid = uuid();
-                const videoPlayerId = `${uuid}-video`;
+                const elementId = uuid();
+                const videoPlayerId = `${elementId}-video`;
 
                 const enterAnimation = data.enterAnimation ? data.enterAnimation : "fadeIn";
                 const exitAnimation = data.exitAnimation ? data.exitAnimation : "fadeIn";
