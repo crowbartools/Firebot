@@ -1,6 +1,7 @@
 import ensureNumber from './ensure-number';
 import numberCeil from './number-ceil';
 import numberCommafy from './number-commafy';
+import numberCommafyPad from "./number-commafy-pad";
 import numberFloor from './number-floor';
 import numberMax from './number-max';
 import numberMin from './number-min';
@@ -14,6 +15,7 @@ export default [
     ensureNumber,
     numberCeil,
     numberCommafy,
+    numberCommafyPad,
     numberFloor,
     numberMax,
     numberMin,
