@@ -258,7 +258,7 @@ class CommandHandler {
                             .replace("{reason}", reason),
                         null,
                         null,
-                        firebotChatMessage.id
+                        restrictionData.sendAsReply === true ? firebotChatMessage.id : undefined
                     );
                 }
 

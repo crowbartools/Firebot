@@ -1,3 +1,5 @@
+import bodyParser from "body-parser";
+
 export type RestrictionData = {
     /**
      * Sets the command to only trigger when all/any/none of the restrictions pass.
@@ -10,4 +12,5 @@ export type RestrictionData = {
     useCustomFailMessage?: boolean;
     failMessage?: string;
     restrictions: unknown[]; // TODO: change when restriction-manager and companion types are added
+    sendAsReply?:boolean;
 };
