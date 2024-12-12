@@ -34,6 +34,7 @@ class CurrencyCommandManager {
         currencyBalanceMessageTemplate: string;
         whisperCurrencyBalanceMessage: boolean;
         addMessageTemplate: string;
+        setMessageTemplate: string;
         removeMessageTemplate: string;
         addAllMessageTemplate: string;
         removeAllMessageTemplate: string;
@@ -47,6 +48,7 @@ class CurrencyCommandManager {
             currencyBalanceMessageTemplate: string;
             whisperCurrencyBalanceMessage: boolean;
             addMessageTemplate: string;
+            setMessageTemplate: string;
             removeMessageTemplate: string;
             addAllMessageTemplate: string;
             removeAllMessageTemplate: string;
@@ -113,6 +115,14 @@ class CurrencyCommandManager {
                         tip: "Variables: {currency}, {amount}",
                         default: `Removed {amount} {currency} from everyone!`,
                         useTextArea: true
+                    },
+                    setMessageTemplate: {
+                        type: "string",
+                        title: "Set Currency Message Template",
+                        description: "How the !currency set message appears in chat.",
+                        tip: "Variables: {user}, {currency}, {amount}",
+                        default: `set {user}'s {currency} to {amount} !`,
+                        useTextArea: true
                     }
                 },
                 subCommands: [
@@ -156,6 +166,24 @@ class CurrencyCommandManager {
                         arg: "give",
                         usage: "give [@user] [amount]",
                         description: "Gives currency from one user to another user."
+                    },
+                    {
+                        arg: "set",
+                        usage: "set [@user] [amount]",
+                        description: "sets currency to the amount.",
+                        restrictionData: {
+                            restrictions: [
+                                {
+                                    id: "sys-cmd-mods-only-perms",
+                                    type: "firebot:permissions",
+                                    mode: "roles",
+                                    roleIds: [
+                                        "mod",
+                                        "broadcaster"
+                                    ]
+                                }
+                            ]
+                        }
                     },
                     {
                         arg: "addall",
@@ -265,6 +293,28 @@ class CurrencyCommandManager {
                             // Error removing currency.
                             await twitchChat.sendChatMessage(`Error: Could not remove currency from user.`);
                             logger.error(`Error removing currency for user (${username}) via chat command. Currency: ${currencyId}. Value: ${currencyAdjust}`);
+                        }
+
+                        break;
+                    }
+                    case "set": {
+                        // Get username and make sure our currency amount is a positive integer.
+                        const username = args[1].replace(/^@/, ''),
+                            currencyAdjust = Math.abs(parseInt(args[2]));
+
+                        // Adjust currency, it will return true on success and false on failure.
+                        const status = await currencyManager.adjustCurrencyForViewer(username, currencyId, currencyAdjust, "set");
+
+                        if (status) {
+                            const setMessageTemplate = commandOptions.setMessageTemplate
+                                .replace("{user}", username)
+                                .replace("{currency}", currencyName)
+                                .replace("{amount}", util.commafy(currencyAdjust));
+                            await twitchChat.sendChatMessage(setMessageTemplate);
+                        } else {
+                            // Error removing currency.
+                            await twitchChat.sendChatMessage(`Error: Could not set currency for user.`);
+                            logger.error(`Error setting currency for user (${username}) via chat command. Currency: ${currencyId}. Value: ${currencyAdjust}`);
                         }
 
                         break;
