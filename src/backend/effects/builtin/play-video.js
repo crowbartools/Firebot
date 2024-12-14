@@ -13,7 +13,7 @@ const path = require("path");
 const frontendCommunicator = require('../../common/frontend-communicator');
 const { wait } = require("../../utility");
 const { parseYoutubeId } = require("../../../shared/youtube-url-parser");
-const uuid = require("uuid");
+const { v4: uuid } = require("uuid");
 
 /**
  * The Play Video effect
@@ -672,8 +672,8 @@ const playVideo = {
 
                 // Generate UUID to use as id
                 // eslint-disable-next-line no-undef
-                const uuid = uuid();
-                const videoPlayerId = `${uuid}-video`;
+                const elementId = uuid();
+                const videoPlayerId = `${elementId}-video`;
 
                 const enterAnimation = data.enterAnimation ? data.enterAnimation : "fadeIn";
                 const exitAnimation = data.exitAnimation ? data.exitAnimation : "fadeIn";

@@ -211,7 +211,7 @@ const playSound = {
 
                 // Generate UUID to use as class name.
                 // eslint-disable-next-line no-undef
-                const uuid = uuid();
+                const elementId = uuid();
 
                 const filepath = data.isUrl ? data.url : data.filepath.toLowerCase();
                 let mediaType;
@@ -227,18 +227,18 @@ const playSound = {
                     mediaType = "audio/flac";
                 }
 
-                const audioElement = `<audio id="${uuid}" src="${data.isUrl ? data.url : resourcePath}" type="${mediaType}"></audio>`;
+                const audioElement = `<audio id="${elementId}" src="${data.isUrl ? data.url : resourcePath}" type="${mediaType}"></audio>`;
 
                 // Throw audio element on page.
                 $("#wrapper").append(audioElement);
 
-                const audio = document.getElementById(uuid);
+                const audio = document.getElementById(elementId);
                 audio.volume = parseFloat(data.volume) / 10;
 
                 audio.oncanplay = () => audio.play();
 
                 audio.onended = () => {
-                    $(`#${uuid}`).remove();
+                    $(`#${elementId}`).remove();
                 };
             }
         }

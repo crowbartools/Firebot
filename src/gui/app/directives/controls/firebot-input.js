@@ -1,7 +1,7 @@
 "use strict";
 
 (function () {
-    const uuid = require("uuid");
+    const { v4: uuid } = require("uuid");
 
     angular.module("firebotApp").component("firebotInput", {
         bindings: {

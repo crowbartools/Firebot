@@ -301,7 +301,7 @@ const findIndexIgnoreCase = (array, element) => {
  * @returns {*|undefined} value at path, defaultValue or undefined
  */
 const extractPropertyWithPath = (obj, path, defaultValue = undefined) => {
-    const propertyPath = path.split("");
+    const propertyPath = path.split(".");
     let data = structuredClone(obj);
     try {
         for (const item of propertyPath) {
