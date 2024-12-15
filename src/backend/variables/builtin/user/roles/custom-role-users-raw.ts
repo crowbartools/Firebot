@@ -9,7 +9,8 @@ const model : ReplaceVariable = {
         usage: "rawCustomRoleUsers[role]",
         description: "(Deprecated: use $customRoleUsers) Returns an array of all the users in the specified custom role.",
         categories: [VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.ARRAY],
+        hidden: true
     },
     evaluator: customRoleUsers.evaluator
 };
