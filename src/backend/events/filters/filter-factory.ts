@@ -202,8 +202,8 @@ export function createPresetFilter({
         comparisonTypes.push(ComparisonType.IS_NOT);
     }
 
-    const valueDisplay = getSelectedValueDisplay ?? (async (filterSettings, $injector: auto.IInjectorService) => {
-        return (await $injector.invoke(presetValues, {}, {}))
+    const valueDisplay = getSelectedValueDisplay ?? (async (filterSettings, filterType: any, $injector: auto.IInjectorService) => {
+        return (await $injector.invoke(filterType.getPresetValues, {}, {}))
             .find(pv => pv.value === filterSettings.value)?.display ?? "[Not Set]";
     });
 
