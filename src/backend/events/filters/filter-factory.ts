@@ -220,9 +220,7 @@ export function createPresetFilter({
 
             const data = extractPropertyWithPath(eventMeta, getMetaKey(eventMetaKey, eventData, filterSettings));
 
-            const output = data === value ||
-                (data === true && value === "true") ||
-                (data === false && value === "false");
+            const output = data === value || data.toString() === value;
 
             return comparisonType === ComparisonType.IS ? output : !output;
         }
