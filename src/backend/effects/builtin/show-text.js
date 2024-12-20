@@ -1,6 +1,6 @@
 "use strict";
 
-const { settings } = require("../../common/settings-access");
+const { SettingsManager } = require("../../common/settings-manager");
 const webServer = require("../../../server/http-server-manager");
 const logger = require("../../logwrapper");
 const { EffectCategory } = require('../../../shared/effect-constants');
@@ -268,10 +268,10 @@ const showText = {
             dto.position = mediaProcessor.randomLocation(); //eslint-disable-line no-undef
         }
 
-        if (settings.useOverlayInstances()) {
+        if (SettingsManager.getSetting("UseOverlayInstances")) {
             if (dto.overlayInstance != null) {
                 //reset overlay if it doesnt exist
-                if (!settings.getOverlayInstances().includes(dto.overlayInstance)) {
+                if (!SettingsManager.getSetting("OverlayInstances").includes(dto.overlayInstance)) {
                     dto.overlayInstance = null;
                 }
             }

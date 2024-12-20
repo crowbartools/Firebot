@@ -2,11 +2,11 @@
 const { ipcMain, shell } = require("electron");
 const { v4: uuid } = require("uuid");
 const logger = require("../../../logwrapper");
-const { settings } = require("../../settings-access");
 const utils = require("../../../utility");
 const profileManager = require("../../profile-manager");
 const { getScriptPath, buildRunRequest, mapParameters, mapV4EffectToV5 } = require("./custom-script-helpers");
 const effectRunner = require("../../effect-runner.js");
+import { SettingsManager } from "../../settings-manager";
 
 /**
  * @typedef { import('./script-types').ScriptData } ScriptData
@@ -36,7 +36,7 @@ async function executeScript(scriptData, trigger, isStartupScript = false) {
     let customScript;
     try {
         // Make sure we first remove the cached version, incase there was any changes
-        if (settings.getClearCustomScriptCache()) {
+        if (SettingsManager.getSetting("ClearCustomScriptCache")) {
             delete require.cache[require.resolve(scriptFilePath)];
         }
         customScript = require(scriptFilePath);
@@ -168,7 +168,7 @@ async function runStartUpScript(startUpScriptConfig) {
     const { scriptName } = startUpScriptConfig;
     logger.debug(`running startup script: ${scriptName}`);
 
-    if (!settings.isCustomScriptsEnabled()) {
+    if (SettingsManager.getSetting("RunCustomScripts") !== true) {
         logger.warn("Attempted to run startup script but custom scripts are disabled.");
         return;
     }
@@ -229,7 +229,7 @@ function runScript(effect, trigger) {
 
     logger.debug(`running script: ${scriptName}`);
 
-    if (!settings.isCustomScriptsEnabled()) {
+    if (SettingsManager.getSetting("RunCustomScripts")) {
         renderWindow.webContents.send(
             "error",
             "Something attempted to run a custom script but this feature is disabled!"

@@ -2,7 +2,7 @@ import { DateTime } from "luxon";
 import axios from "axios";
 import logger from "../logwrapper";
 import accountAccess from "../common/account-access";
-import { settings } from "../common/settings-access";
+import { SettingsManager } from "../common/settings-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import TwitchApi from "./api";
 import {
@@ -93,7 +93,7 @@ class TwitchStreamInfoManager {
             this.streamInfo.viewers = stream.viewers;
             this.streamInfo.startedAt = stream.startDate;
 
-            if (settings.getWebOnlineCheckin() === true) {
+            if (SettingsManager.getSetting("WebOnlineCheckin") === true) {
                 await this.doWebCheckin();
             }
 

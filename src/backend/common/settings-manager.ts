@@ -1,9 +1,14 @@
-import fs from "fs";
 import { JsonDB } from "node-json-db";
+import fs from "fs";
 import logger from "../logwrapper";
 import profileManager from "./profile-manager";
 import frontendCommunicator from "./frontend-communicator";
-import { SettingsDefaults, SettingsTypes } from "./settings-types";
+import {
+    FirebotAutoUpdateLevel,
+    FirebotSettingsDefaults,
+    FirebotSettingsPaths,
+    FirebotSettingsTypes
+} from "./settings-types";
 
 interface SettingsData {
     path: string;
@@ -28,7 +33,7 @@ class SettingsManager {
         }));
     }
 
-    getDataFromFile(path: string, forceCacheUpdate = false, defaultValue = undefined) {
+    private getDataFromFile(path: string, forceCacheUpdate = false, defaultValue = undefined) {
         try {
             if (this.settingsCache[path] == null || forceCacheUpdate) {
                 const data = this.getSettingsFile().getData(path);
@@ -52,7 +57,7 @@ class SettingsManager {
         return this.settingsCache[path];
     }
 
-    pushDataToFile(path: string, data: unknown) {
+    private pushDataToFile(path: string, data: unknown) {
         try {
             this.getSettingsFile().push(path, data);
             this.settingsCache[path] = data;
@@ -67,277 +72,332 @@ class SettingsManager {
         frontendCommunicator.send("flush-settings-cache");
     }
 
-    getSetting<Type extends keyof SettingsTypes>(settingName: Type): SettingsTypes[Type] {
-        return this.getDataFromFile(settingName) ?? SettingsDefaults[settingName];
+    /**
+     * Get the JSON data path for a specific Firebot setting in the settings file
+     *
+     * @param settingName Name of the setting
+     * @returns String representing the full JSON path of the setting data
+     */
+    getSettingPath(settingName: string) {
+        return FirebotSettingsPaths[settingName] ?? `/settings/${settingName[0].toLowerCase()}${settingName.slice(1)}`;
     }
 
-    getAutoFlagBots = (): boolean => this.getSetting("AutoFlagBots");
+    /**
+     * Get a Firebot setting value or its default
+     *
+     * @param settingName Name of the setting to get
+     * @param forceCacheUpdate Force an update to the settings cache. Defaults to `false`.
+     * @returns Setting value, or the default if one isn't explicitly set
+     */
+    getSetting<SettingName extends keyof FirebotSettingsTypes>(settingName: SettingName, forceCacheUpdate = false): FirebotSettingsTypes[SettingName] {
+        const value = this.getDataFromFile(this.getSettingPath(settingName), forceCacheUpdate, FirebotSettingsDefaults[settingName]);
 
+        // Eventually, when we upgrade node-json-db, the library will handle this for us
+        if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/m.exec(value)) {
+            // This is a load-bearing cast
+            return new Date(value) as FirebotSettingsTypes[SettingName];
+        }
+
+        return value;
+    }
+
+    /**
+     * Save a Firebot setting
+     *
+     * @param settingName Name of the setting to save
+     * @param data Setting data
+     */
+    saveSetting<SettingName extends keyof FirebotSettingsTypes>(settingName: SettingName, data: FirebotSettingsTypes[SettingName]): void {
+        this.pushDataToFile(this.getSettingPath(settingName), data);
+    }
+
+
+    // Everything below this is older, deprecated functions. Leaving them for back compat.
+    // You should use either getSetting or saveSetting with the relevant setting name.
+
+    /** @deprecated Use `getSetting("AutoFlagBots")` instead */
+    getAutoFlagBots(): boolean {
+        return this.getSetting("AutoFlagBots");
+    }
+
+    /** @deprecated Use `getSetting("EventSettings")` instead */
     getEventSettings() {
-        return this.getDataFromFile("/settings/eventSettings");
+        return this.getSetting("EventSettings");
     }
 
-    isCustomScriptsEnabled() {
-        return this.getDataFromFile("/settings/runCustomScripts") === true;
-    }
-
+    /** @deprecated Use `getSetting("IgnoreSubsequentSubEventsAfterCommunitySub")` instead */
     ignoreSubsequentSubEventsAfterCommunitySub() {
-        const ignoreSubEvents = this.getDataFromFile("/settings/ignoreSubsequentSubEventsAfterCommunitySub");
-        return ignoreSubEvents != null ? ignoreSubEvents : true;
+        return this.getSetting("IgnoreSubsequentSubEventsAfterCommunitySub");
     }
 
-    hasJustUpdated() {
-        const updated = this.getDataFromFile("/settings/justUpdated");
-        return updated != null ? updated : false;
+    /** @deprecated Use `getSetting("JustUpdated")` instead */
+    hasJustUpdated(): boolean {
+        return this.getSetting("JustUpdated");
     }
 
-    setJustUpdated(justUpdated) {
-        this.pushDataToFile("/settings/justUpdated", justUpdated === true);
+    /** @deprecated Use `saveSetting("JustUpdated", value)` instead */
+    setJustUpdated(justUpdated: boolean) {
+        this.saveSetting("JustUpdated", justUpdated);
     }
 
+    /** @deprecated Use `getSetting("CopiedOverlayVersion")` instead */
     getOverlayVersion() {
-        const version = this.getDataFromFile("/settings/copiedOverlayVersion");
-        return version != null ? version : "";
+        return this.getSetting("CopiedOverlayVersion");
     }
 
-    setOverlayVersion(newVersion) {
-        this.pushDataToFile("/settings/copiedOverlayVersion", newVersion.toString());
+    /** @deprecated Use `saveSetting("CopiedOverlayVersion", value)` instead */
+    setOverlayVersion(newVersion: string) {
+        this.saveSetting("CopiedOverlayVersion", newVersion);
     }
 
+    /** @deprecated Use `getSetting("ClearCustomScriptCache")` instead */
     getClearCustomScriptCache() {
-        const clear = this.getDataFromFile("/settings/clearCustomScriptCache");
-        return clear != null ? clear : false;
+        return this.getSetting("ClearCustomScriptCache");
     }
 
-    setClearCustomScriptCache(clear) {
-        this.pushDataToFile("/settings/clearCustomScriptCache", clear === true);
+    /** @deprecated Use `saveSetting("ClearCustomScriptCache", value)` instead */
+    setClearCustomScriptCache(clear: boolean) {
+        this.saveSetting("ClearCustomScriptCache", clear);
     }
 
+    /** @deprecated Use `getSetting("RunCustomScripts")` instead */
+    isCustomScriptsEnabled() {
+        return this.getSetting("RunCustomScripts");
+    }
+
+    /** @deprecated Use `getSetting("RunCustomScripts")` instead */
     getCustomScriptsEnabled() {
-        return this.getDataFromFile("/settings/runCustomScripts") === true;
+        return this.getSetting("RunCustomScripts");
     }
 
-    setCustomScriptsEnabled(enabled) {
-        this.pushDataToFile("/settings/runCustomScripts", enabled === true);
+    /** @deprecated Use `saveSetting("RunCustomScripts", value)` instead */
+    setCustomScriptsEnabled(enabled: boolean) {
+        this.saveSetting("RunCustomScripts", enabled);
     }
 
+    /** @deprecated Use `getSetting("PersistCustomVariables")` instead */
     getPersistCustomVariables() {
-        return this.getDataFromFile("/settings/persistCustomVariables") === true;
+        return this.getSetting("PersistCustomVariables");
     }
 
-    setPersistCustomVariables(enabled) {
-        this.pushDataToFile("/settings/persistCustomVariables", enabled === true);
+    /** @deprecated Use `saveSetting("PersistCustomVariables", value)` instead */
+    setPersistCustomVariables(enabled: boolean) {
+        this.saveSetting("PersistCustomVariables", enabled);
     }
 
-    useOverlayInstances() {
-        const oi = this.getDataFromFile("/settings/useOverlayInstances");
-        return oi != null ? oi : false;
+    /** @deprecated Use `getSetting("UseOverlayInstances")` instead */
+    useOverlayInstances(): boolean {
+        return this.getSetting("UseOverlayInstances");
     }
 
-    setUseOverlayInstances(oi) {
-        this.pushDataToFile("/settings/useOverlayInstances", oi === true);
+    /** @deprecated Use `saveSetting("UseOverlayInstances", value)` instead */
+    setUseOverlayInstances(oi: boolean) {
+        this.saveSetting("UseOverlayInstances", oi);
     }
 
+    /** @deprecated Use `getSetting("OverlayInstances")` instead */
     getOverlayInstances() {
-        const ois = this.getDataFromFile("/settings/overlayInstances");
-        return ois != null ? ois : [];
+        return this.getSetting("OverlayInstances");
     }
 
-    setOverlayInstances(ois) {
-        this.pushDataToFile("/settings/overlayInstances", ois);
+    /** @deprecated Use `saveSetting("OverlayInstances", value)` instead */
+    setOverlayInstances(ois: string[]) {
+        this.saveSetting("OverlayInstances", ois);
     }
 
+    /** @deprecated Use `getSetting("ForceOverlayEffectsToContinueOnRefresh")` instead */
     getForceOverlayEffectsToContinueOnRefresh() {
-        const forceOverlayEffectsToContinueOnRefresh = this.getDataFromFile("/settings/forceOverlayEffectsToContinueOnRefresh", false, true);
-        return forceOverlayEffectsToContinueOnRefresh === true;
+        return this.getSetting("ForceOverlayEffectsToContinueOnRefresh");
     }
 
-    setForceOverlayEffectsToContinueOnRefresh(value) {
-        this.pushDataToFile("/settings/forceOverlayEffectsToContinueOnRefresh", value);
+    /** @deprecated Use `saveSetting("ForceOverlayEffectsToContinueOnRefresh", value)` instead */
+    setForceOverlayEffectsToContinueOnRefresh(value: boolean) {
+        this.saveSetting("ForceOverlayEffectsToContinueOnRefresh", value);
     }
 
-    backupLocation() {
-        const backupLocation = this.getDataFromFile("/settings/backupLocation");
-        return backupLocation != null ? backupLocation : undefined;
-    }
-
+    /** @deprecated Use `getSetting("BackupKeepAll")` instead */
     backupKeepAll() {
-        const backupKeepAll = this.getDataFromFile("/settings/backupKeepAll");
-        return backupKeepAll != null ? backupKeepAll : false;
+        return this.getSetting("BackupKeepAll");
     }
 
+    /** @deprecated Use `getSetting("BackupOnExit")` instead */
     backupOnExit() {
-        const backupOnExit = this.getDataFromFile("/settings/backupOnExit");
-        return backupOnExit != null ? backupOnExit : true;
+        return this.getSetting("BackupOnExit");
     }
 
+    /** @deprecated Use `getSetting("BackupIgnoreResources")` instead */
     backupIgnoreResources() {
-        const save = this.getDataFromFile("/settings/backupIgnoreResources");
-        return save != null ? save : true;
+        return this.getSetting("BackupIgnoreResources");
     }
 
-    setBackupIgnoreResources(backupIgnoreResources) {
-        this.pushDataToFile("/settings/backupIgnoreResources", backupIgnoreResources === false);
+    /** @deprecated Use `saveSetting("BackupIgnoreResources", value)` instead */
+    setBackupIgnoreResources(backupIgnoreResources: boolean) {
+        this.saveSetting("BackupIgnoreResources", backupIgnoreResources);
     }
 
+    /** @deprecated Use `getSetting("BackupBeforeUpdates")` instead */
     backupBeforeUpdates() {
-        const backupBeforeUpdates = this.getDataFromFile("/settings/backupBeforeUpdates");
-        return backupBeforeUpdates != null ? backupBeforeUpdates : true;
+        return this.getSetting("BackupBeforeUpdates");
     }
 
+    /** @deprecated Use `getSetting("BackupOnceADay")` instead */
     backupOnceADay() {
-        const backupOnceADay = this.getDataFromFile("/settings/backupOnceADay");
-        return backupOnceADay != null ? backupOnceADay : true;
+        return this.getSetting("BackupOnceADay");
     }
 
-    setBackupOnceADay(backupOnceADay) {
-        this.pushDataToFile("/settings/backupOnceADay", backupOnceADay === true);
+    /** @deprecated Use `saveSetting("BackupOnceADay", value)` instead */
+    setBackupOnceADay(backupOnceADay: boolean) {
+        this.saveSetting("BackupOnceADay", backupOnceADay);
     }
 
+    /** @deprecated Use `getSetting("LastBackupDate")` instead */
     lastBackupDate() {
-        const lastBackup = this.getDataFromFile("/settings/lastBackupDate");
-        return lastBackup != null ? new Date(lastBackup) : null;
+        return this.getSetting("LastBackupDate");
     }
 
+    /** @deprecated Use `saveSetting("LastBackupDate", value)` instead */
     setLastBackupDate(lastBackup) {
-        this.pushDataToFile("/settings/lastBackupDate", lastBackup.toJSON());
+        this.saveSetting("LastBackupDate", lastBackup);
     }
 
+    /** @deprecated Use `getSetting("MaxBackupCount")` instead */
     maxBackupCount() {
-        const maxBackupCount = this.getDataFromFile("/settings/maxBackupCount");
-        return maxBackupCount != null ? maxBackupCount : 25;
+        return this.getSetting("MaxBackupCount");
     }
 
-    setMaxBackupCount(maxBackupCount) {
-        this.pushDataToFile("/settings/maxBackupCount", maxBackupCount);
+    /** @deprecated Use `getSetting("MaxBackupCount")` instead */
+    setMaxBackupCount(maxBackupCount: number) {
+        this.saveSetting("MaxBackupCount", maxBackupCount);
     }
 
+    /** @deprecated Use `getSetting("AllowQuoteCSVDownloads")` instead */
     getAllowQuoteCSVDownloads() {
-        return this.getDataFromFile("/settings/allowQuoteCSVDownloads") !== false;
+        return this.getSetting("AllowQuoteCSVDownloads");
     }
 
+    /** @deprecated Use `getSetting("ActiveChatUserListTimeout")` instead */
     getActiveChatUserListTimeout() {
-        const inactiveTimer = this.getDataFromFile("/settings/activeChatUsers/inactiveTimer");
-        return inactiveTimer != null ? parseInt(inactiveTimer) : 5;
+        return this.getSetting("ActiveChatUserListTimeout");
     }
 
+    /** @deprecated Use `getSetting("WebsocketPort")` instead */
     getWebSocketPort() {
-        const websocketPort = this.getDataFromFile("/settings/websocketPort");
-        return websocketPort != null ? websocketPort : 8080;
+        return this.getSetting("WebsocketPort");
     }
 
+    /** @deprecated Use `getSetting("WebServerPort")` instead */
     getWebServerPort() {
         return this.getSetting("WebServerPort");
-        const serverPort = this.getDataFromFile("/settings/webServerPort");
-        return serverPort != null ? serverPort : 7472;
     }
 
+    /** @deprecated Use `getSetting("ViewerDB")` instead */
     getViewerDbStatus() {
-        const status = this.getDataFromFile("/settings/viewerDB");
-        return status != null ? status : true;
+        return this.getSetting("ViewerDB");
     }
 
-    /*
-    * 0 = off,
-    * 1 = bugfix,
-    * 2 = feature,
-    * 3 = major release,
-    * 4 = betas
-    */
-    getAutoUpdateLevel() {
-        const updateLevel = this.getDataFromFile("/settings/autoUpdateLevel");
-        return updateLevel != null ? updateLevel : 2;
+    /** @deprecated Use `getSetting("AutoUpdateLevel")` instead */
+    getAutoUpdateLevel(): FirebotAutoUpdateLevel {
+        return this.getSetting("AutoUpdateLevel");
     }
 
+    /** @deprecated Use `getSetting("AudioOutputDevice")` instead */
     getAudioOutputDevice() {
-        const device = this.getDataFromFile("/settings/audioOutputDevice");
-        return device != null
-            ? device
-            : { label: "System Default", deviceId: "default" };
+        return this.getSetting("AudioOutputDevice");
     }
 
+    /** @deprecated Use `getSetting("DebugMode")` instead */
     debugModeEnabled(): boolean {
-        const enabled = this.getDataFromFile("/settings/debugMode");
-        return enabled != null ? enabled : false;
+        return this.getSetting("DebugMode");
     }
 
+    /** @deprecated Use `getSetting("WhileLoopEnabled")` instead */
     getWhileLoopEnabled(): boolean {
-        const enabled = this.getDataFromFile("/settings/whileLoopEnabled");
-        return enabled !== undefined ? enabled : false;
+        return this.getSetting("WhileLoopEnabled");
     }
 
+    /** @deprecated Use `saveSetting("WhileLoopEnabled", value)` instead */
     setWhileLoopEnabled(enabled: boolean) {
-        this.pushDataToFile("/settings/whileLoopEnabled", enabled === true);
+        this.saveSetting("WhileLoopEnabled", enabled);
     }
 
+    /** @deprecated Use `getSetting("SidebarControlledServices")` instead */
     getSidebarControlledServices(): string[] {
-        const services = this.getDataFromFile("/settings/sidebarControlledServices");
-        return services != null
-            ? services
-            : ["chat"];
+        return this.getSetting("SidebarControlledServices");
     }
 
+    /** @deprecated Use `getSetting("MinimizeToTray")` instead */
     getMinimizeToTray() {
-        const minimizeToTray = this.getDataFromFile("/settings/minimizeToTray");
-        return minimizeToTray === true;
-    }
-    setMinimizeToTray(minimizeToTray) {
-        this.pushDataToFile("/settings/minimizeToTray", minimizeToTray === true);
+        return this.getSetting("MinimizeToTray");
     }
 
+    /** @deprecated Use `saveSetting("MinimizeToTray", value)` instead */
+    setMinimizeToTray(minimizeToTray: boolean) {
+        this.saveSetting("MinimizeToTray", minimizeToTray);
+    }
+
+    /** @deprecated Use `getSetting("OpenStreamPreviewOnLaunch")` instead */
     getOpenStreamPreviewOnLaunch() {
-        const openStreamPreviewOnLaunch = this.getDataFromFile("/settings/openStreamPreviewOnLaunch", false, false);
-        return openStreamPreviewOnLaunch === true;
+        return this.getSetting("OpenStreamPreviewOnLaunch");
     }
 
+    /** @deprecated Use `saveSetting("OpenStreamPreviewOnLaunch", value)` instead */
     setOpenStreamPreviewOnLaunch(enabled: boolean) {
-        this.pushDataToFile("/settings/openStreamPreviewOnLaunch", enabled === true);
+        this.saveSetting("OpenStreamPreviewOnLaunch", enabled);
     }
 
+    /** @deprecated Use `getSetting("QuickActions")` instead */
     getQuickActionSettings() {
-        return this.getDataFromFile("/settings/quickActions");
+        return this.getSetting("QuickActions");
     }
 
+    /** @deprecated Use `saveSetting("QuickActions", value)` instead */
     setQuickActionSettings(quickActions) {
-        this.pushDataToFile("/settings/quickActions", quickActions);
+        this.saveSetting("QuickActions", quickActions);
     }
 
+    /** @deprecated Use `getSetting("WebOnlineCheckin")` instead */
     getWebOnlineCheckin() {
-        const webOnlineCheckin = this.getDataFromFile("/settings/webOnlineCheckin");
-        return webOnlineCheckin === true;
+        return this.getSetting("WebOnlineCheckin");
     }
 
+    /** @deprecated Use `saveSetting("WebOnlineCheckin", value)` instead */
     setWebOnlineCheckin(value: boolean) {
-        this.pushDataToFile("/settings/webOnlineCheckin", value);
+        this.saveSetting("WebOnlineCheckin", value);
     }
 
+    /** @deprecated Use `getSetting("TriggerUpcomingAdBreakMinutes")` instead */
     getTriggerUpcomingAdBreakMinutes() {
-        const value = this.getDataFromFile("/settings/triggerUpcomingAdBreakMinutes", false, 0);
-        return value ?? 0;
+        return this.getSetting("TriggerUpcomingAdBreakMinutes");
     }
 
+    /** @deprecated Use `saveSetting("TriggerUpcomingAdBreakMinutes", value)` instead */
     setTriggerUpcomingAdBreakMinutes(value: number) {
-        this.pushDataToFile("/settings/triggerUpcomingAdBreakMinutes", value);
+        this.saveSetting("TriggerUpcomingAdBreakMinutes", value);
     }
 
+    /** @deprecated Use `getSetting("AllowCommandsInSharedChat")` instead */
     getAllowCommandsInSharedChat() {
-        return this.getDataFromFile("/settings/allowCommandsInSharedChat", false, false); // default OFF
+        return this.getSetting("AllowCommandsInSharedChat");
     }
 
+    /** @deprecated Use `saveSetting("AllowCommandsInSharedChat", value)` instead */
     setAllowCommandsInSharedChat(value: boolean) {
-        this.pushDataToFile("/settings/allowCommandsInSharedChat", value);
+        this.saveSetting("AllowCommandsInSharedChat", value);
     }
 }
 
 const settings = new SettingsManager();
 
-
 frontendCommunicator.on("settings:get-all-setting-values", () => {
     return settings.settingsCache;
 });
 
-frontendCommunicator.onAsync("settings:get-setting-value", async (settingName: keyof SettingsTypes) => {
+frontendCommunicator.on("settings:get-setting-value", (settingName: keyof FirebotSettingsTypes) => {
     return settings.getSetting(settingName);
+});
+
+frontendCommunicator.on("settings:save-setting-value", (settingName: keyof FirebotSettingsTypes, data: FirebotSettingsTypes[keyof FirebotSettingsTypes]) => {
+    return settings.saveSetting(settingName, data);
 });
 
 frontendCommunicator.on("settings-updated-renderer", (settingsUpdate: SettingsData) => {
@@ -355,4 +415,4 @@ frontendCommunicator.on("purge-settings-cache", () => {
     settings.flushSettingsCache();
 });
 
-exports.settings = settings;
+export { settings as SettingsManager };

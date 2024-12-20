@@ -4,7 +4,7 @@ const webServer = require("../../../server/http-server-manager");
 const frontendCommunicator = require("../../common/frontend-communicator");
 const effectQueueRunner = require("../../effects/queues/effect-queue-runner");
 const { EffectCategory } = require('../../../shared/effect-constants');
-const { settings } = require("../../common/settings-access");
+const { SettingsManager } = require("../../common/settings-manager");
 const { abortAllEffectLists } = require("../../common/effect-abort-helpers");
 
 /**
@@ -148,7 +148,7 @@ const delay = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const effect = event.effect;
 
         if (effect.queues) {
@@ -166,7 +166,7 @@ const delay = {
         }
 
         if (effect.overlay) {
-            if (settings.useOverlayInstances() && effect.overlayInstance != null) {
+            if (SettingsManager.getSetting("UseOverlayInstances") && effect.overlayInstance != null) {
                 if (effect.overlayInstance === "all") {
                     webServer.sendToOverlay("OVERLAY:REFRESH", { global: true });
 
