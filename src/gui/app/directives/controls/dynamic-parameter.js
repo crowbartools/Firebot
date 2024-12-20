@@ -181,6 +181,13 @@
                             ctrl.metadata.value = ctrl.metadata.options[0];
                         }
                     }
+
+                    // If it is a boolean and no default is supplied, set to false
+                    if (ctrl.metadata.type === "boolean") {
+                        if (ctrl.metadata.default == null) {
+                            ctrl.metadata.value = false;
+                        }
+                    }
                 }
 
                 console.log(ctrl.metadata);
