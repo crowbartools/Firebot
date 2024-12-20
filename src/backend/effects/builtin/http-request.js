@@ -9,12 +9,12 @@ const axios = axiosDefault.create({
     }
 });
 
-axios.interceptors.request.use(request => {
+axios.interceptors.request.use((request) => {
     //logger.debug('HTTP Request Effect [Request]: ', JSON.parse(JSON.stringify(request)));
     return request;
 });
 
-axios.interceptors.response.use(response => {
+axios.interceptors.response.use((response) => {
     //logger.debug('HTTP Request Effect [Response]: ', JSON.parse(JSON.stringify(response)));
     return response;
 });
@@ -159,7 +159,7 @@ const effect = {
                 resolveObj: {
                     header: () => header
                 },
-                closeCallback: newHeader => {
+                closeCallback: (newHeader) => {
                     console.log(newHeader);
                     $scope.effect.headers = $scope.effect.headers.filter(h => h.key !== newHeader.key);
                     $scope.effect.headers.push(newHeader);
@@ -222,7 +222,7 @@ const effect = {
         }
         return errors;
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
 
         const logger = require("../../logwrapper");
         const twitchAuth = require("../../auth/twitch-auth");
@@ -284,7 +284,12 @@ const effect = {
                 );
             }
         } catch (error) {
-            logger.error("Error running http request", error.message);
+            const message = {
+                errorMessage: error.message,
+                responseData: error.response.data
+            };
+
+            logger.error("Error running http request", message);
 
             if (effect.options.runEffectsOnError && !abortSignal?.aborted) {
                 const processEffectsRequest = {
