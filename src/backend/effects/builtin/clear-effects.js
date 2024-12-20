@@ -39,7 +39,7 @@ const delay = {
                 label="Overlay Effects"
                 model="effect.overlay"
             />
-            <div class="mt-0 mr-0 mb-6 ml-6" uib-collapse="!effect.overlay || !settings.useOverlayInstances()">
+            <div class="mt-0 mr-0 mb-6 ml-6" uib-collapse="!effect.overlay || !settings.getSetting('UseOverlayInstances')">
                 <div class="btn-group">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="chat-effect-type">{{ getSelectedOverlayDisplay() }}</span> <span class="caret"></span>
@@ -90,7 +90,7 @@ const delay = {
     optionsController: ($scope, effectQueuesService, settingsService) => {
         $scope.settings = settingsService;
         $scope.effectQueues = effectQueuesService.getEffectQueues() || [];
-        $scope.overlayInstances = settingsService.getOverlayInstances() || [];
+        $scope.overlayInstances = settingsService.getSetting("OverlayInstances") || [];
 
         if ($scope.effect.overlayInstance != null && $scope.effect.overlayInstance !== "all") {
             if (!$scope.overlayInstances.includes($scope.effect.overlayInstance)) {

@@ -69,7 +69,7 @@ const model = {
    */
     optionsController: ($scope, settingsService) => {
 
-        $scope.whileLoopEnabled = settingsService.getWhileLoopEnabled();
+        $scope.whileLoopEnabled = settingsService.getSetting("WhileLoopEnabled");
 
         if ($scope.effect.effectList == null) {
             $scope.effect.effectList = [];

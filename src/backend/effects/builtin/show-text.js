@@ -141,7 +141,7 @@ const showText = {
         $scope.editorClass = "text-editor-white-bg";
 
         $scope.editorSettings = {
-            editorBackground: settingsService.getWysiwygBackground()
+            editorBackground: settingsService.getSetting("WysiwygBackground")
         };
 
         function updateEditorClass() {
@@ -154,7 +154,7 @@ const showText = {
         updateEditorClass();
 
         $scope.editorBackgroundChanged = function() {
-            settingsService.setWysiwygBackground($scope.editorSettings.editorBackground);
+            settingsService.saveSetting("WysiwygBackground", $scope.editorSettings.editorBackground);
             updateEditorClass();
         };
 
