@@ -98,10 +98,17 @@ const model: EffectType<{
                 gameId: event.effect.gameId
             });
         } else {
-            const categories = await twitchApi.categories.searchCategories(event.effect.gameName.trim());
+            if (!event.effect.gameName) {
+                //user left the gamename blank
+                await twitchApi.channels.updateChannelInformation({
+                    gameId: ''
+                });
+                return true;
+            }
+            const categories = await twitchApi.categories.searchCategories(event.effect.gameName?.trim());
             if (categories?.length) {
                 const category =
-                    categories.find((c) => c.name.toLowerCase() === event.effect.gameName.toLowerCase()) ??
+                    categories.find(c => c.name.toLowerCase() === event.effect.gameName.toLowerCase()) ??
                     categories[0];
 
                 if (!category) {
