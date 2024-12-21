@@ -18,21 +18,21 @@
                         <span style="font-weight: 900;" id="selectAllLabel">Select All</span>
                         <span>
                             <input class="tgl tgl-light sr-only" id="select-all" type="checkbox" aria-labelledby="selectAllLabel"
-                            ng-checked="$ctrl.allEventsChecked()" 
+                            ng-checked="$ctrl.allEventsChecked()"
                             ng-click="$ctrl.toggleAllEvents()"/>
                         <label class="tgl-btn" for="select-all"></label>
                     </span>
-                </div> 
+                </div>
                 <div ng-repeat="event in $ctrl.events | orderBy:'eventName' | filter:eventSearch">
                   <div style="display: flex;align-items: center;justify-content: space-between;margin-bottom:5px;">
                       <span><span style="font-weight: 900;">{{event.eventName}}</span> <span>({{event.sourceName}})</span></span>
                       <span>
                           <input class="tgl tgl-light sr-only" id="{{event.sourceId}}:{{event.eventId}}" type="checkbox" aria-label="{{event.sourceId}} {{event.eventId}}"
-                            ng-checked="$ctrl.eventIsChecked(event)" 
+                            ng-checked="$ctrl.eventIsChecked(event)"
                             ng-click="$ctrl.toggleEventChecked(event)"/>
                         <label class="tgl-btn" for="{{event.sourceId}}:{{event.eventId}}"></label>
                       </span>
-                  </div>                   
+                  </div>
                 </div>
               </div>
             </div>
@@ -52,11 +52,11 @@
 
                 $ctrl.events = [];
 
-                $ctrl.allowedEvents = settingsService.getAllowedActivityEvents();
+                $ctrl.allowedEvents = settingsService.getSetting("AllowedActivityEvents");
 
                 $q.when(backendCommunicator
                     .fireEventAsync("get-activity-feed-supported-events"))
-                    .then(supportedEvents => {
+                    .then((supportedEvents) => {
                         if (supportedEvents != null) {
                             $ctrl.events = supportedEvents;
                         }
@@ -90,7 +90,7 @@
 
                 $ctrl.save = () => {
                     console.log($ctrl.allowedEvents);
-                    settingsService.setAllowedActivityEvents($ctrl.allowedEvents);
+                    settingsService.saveSetting("AllowedActivityEvents", $ctrl.allowedEvents);
                     $ctrl.close();
                 };
 

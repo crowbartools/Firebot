@@ -2,20 +2,20 @@ import { EventEmitter } from "events";
 import ClientOAuth2 from "client-oauth2";
 import logger from "../logwrapper";
 import { AuthProvider, AuthProviderDefinition } from "./auth";
-import { settings } from "../common/settings-access";
+import { SettingsManager } from "../common/settings-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import { Notification, app } from "electron";
 import windowManagement from "../app-management/electron/window-management";
 
 class AuthManager extends EventEmitter {
-    private readonly _httpPort: string;
+    private readonly _httpPort: number;
     private _authProviders: AuthProvider[];
 
     constructor() {
         super();
 
         this._authProviders = [];
-        this._httpPort = settings.getWebServerPort();
+        this._httpPort = SettingsManager.getSetting("WebServerPort");
     }
 
     registerAuthProvider(provider: AuthProviderDefinition): void {

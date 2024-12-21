@@ -1,6 +1,6 @@
 "use strict";
 
-const { settings } = require("../../common/settings-access");
+const { SettingsManager } = require("../../common/settings-manager");
 const resourceTokenManager = require("../../resourceTokenManager");
 const webServer = require("../../../server/http-server-manager");
 const fs = require('fs/promises');
@@ -133,7 +133,7 @@ const playSound = {
         // Set output device.
         let selectedOutputDevice = effect.audioOutputDevice;
         if (selectedOutputDevice == null || selectedOutputDevice.label === "App Default") {
-            selectedOutputDevice = settings.getAudioOutputDevice();
+            selectedOutputDevice = SettingsManager.getSetting("AudioOutputDevice");
         }
         data.audioOutputDevice = selectedOutputDevice;
 
@@ -161,7 +161,7 @@ const playSound = {
                 });
 
                 if (selectedOutputDevice.deviceId === "overlay"
-                    && settings.getForceOverlayEffectsToContinueOnRefresh() === true) {
+                    && SettingsManager.getSetting("ForceOverlayEffectsToContinueOnRefresh") === true) {
                     let currentDuration = 0;
                     let returnNow = false;
                     const overlayInstance = effect.overlayInstance ?? "Default";

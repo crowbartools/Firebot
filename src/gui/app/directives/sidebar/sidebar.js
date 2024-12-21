@@ -125,7 +125,7 @@
 
             ctrl.is = integrationService;
 
-            ctrl.isViewerDBOn = settingsService.getViewerDB;
+            ctrl.isViewerDBOn = () => settingsService.getSetting("ViewerDB");
 
             ctrl.extensionPages = () => uiExtensionsService.extensions.map(e => e.pages.map((p) => {
                 p.extensionId = e.id;

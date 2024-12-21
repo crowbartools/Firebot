@@ -3,7 +3,7 @@
 const path = require("path");
 const logger = require("../../../logwrapper");
 const importHelpers = require("../import-helpers");
-const { settings } = require("../../../common/settings-access");
+const { SettingsManager } = require("../../../common/settings-manager");
 
 
 async function checkForV4SettingsFile() {
@@ -29,12 +29,12 @@ exports.run = async () => {
 
         if (allV4Settings != null) {
             const useOverlayInstances = allV4Settings.settings.useOverlayInstances === true;
-            settings.setUseOverlayInstances(useOverlayInstances);
+            SettingsManager.saveSetting("UseOverlayInstances", useOverlayInstances);
 
             const overlayInstances = allV4Settings.settings.overlayInstances || [];
-            settings.setOverlayInstances(overlayInstances);
+            SettingsManager.saveSetting("OverlayInstances", overlayInstances);
 
-            settings.flushSettingsCache();
+            SettingsManager.flushSettingsCache();
         }
     }
 

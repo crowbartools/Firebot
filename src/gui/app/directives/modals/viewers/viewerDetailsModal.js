@@ -191,7 +191,7 @@
 
                 $ctrl.hasFirebotData = false;
 
-                $ctrl.viewerDbEnabled = settingsService.getViewerDB();
+                $ctrl.viewerDbEnabled = settingsService.getSetting("ViewerDB");
 
                 $ctrl.accountAccess = accountAccess;
 
