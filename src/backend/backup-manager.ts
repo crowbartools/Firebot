@@ -6,7 +6,7 @@ import { glob } from "glob";
 import { DeflateOptions, Zip, ZipDeflate, unzipSync } from "fflate";
 import logger from "./logwrapper";
 import utils from "./utility";
-import { settings } from "./common/settings-access";
+import { SettingsManager } from "./common/settings-manager";
 import dataAccess from "./common/data-access.js";
 import frontendCommunicator from "./common/frontend-communicator";
 
@@ -31,7 +31,7 @@ class BackupManager {
     }
 
     private async cleanUpOldBackups(callback: () => void) {
-        const maxBackups = settings.maxBackupCount();
+        const maxBackups = SettingsManager.getSetting("MaxBackupCount");
 
         if (maxBackups !== "All") {
             const fileNames = (await fsp.readdir(this._backupFolderPath))
@@ -78,7 +78,7 @@ class BackupManager {
 
         // listen for all archive data to be written
         output.on("close", async () => {
-            settings.setLastBackupDate(new Date());
+            SettingsManager.saveSetting("LastBackupDate", new Date());
             await this.cleanUpOldBackups(callback);
         });
 
@@ -107,7 +107,7 @@ class BackupManager {
         //archive.directory(folderPath, "profiles");
 
         const varIgnoreInArchive = ['backups/**', 'clips/**', 'logs/**', 'overlay.html'];
-        const ignoreResources = settings.backupIgnoreResources();
+        const ignoreResources = SettingsManager.getSetting("BackupIgnoreResources");
 
         if (ignoreResources && !manualActivation) {
             logger.info("Ignoring overlay-resources folder");
@@ -147,8 +147,8 @@ class BackupManager {
     }
 
     async onceADayBackUpCheck() {
-        const shouldBackUp = settings.backupOnceADay(),
-            lastBackupDate = settings.lastBackupDate(),
+        const shouldBackUp = SettingsManager.getSetting("BackupOnceADay"),
+            lastBackupDate = SettingsManager.getSetting("LastBackupDate"),
             todayDate = new Date();
 
         if (shouldBackUp) {

@@ -1,7 +1,7 @@
 "use strict";
 
 const { ipcMain, dialog } = require("electron");
-const settings = require("../settings-access").settings;
+const { SettingsManager } = require("../settings-manager");
 const resourceTokenManager = require("../../resourceTokenManager.js");
 const util = require("../../utility");
 const logger = require("../../logwrapper");
@@ -73,7 +73,7 @@ function soundProcessor(effect) {
         selectedOutputDevice == null ||
     selectedOutputDevice.label === "App Default"
     ) {
-        selectedOutputDevice = settings.getAudioOutputDevice();
+        selectedOutputDevice = SettingsManager.getSetting("AudioOutputDevice");
     }
     data.audioOutputDevice = selectedOutputDevice;
 
@@ -82,9 +82,9 @@ function soundProcessor(effect) {
         data.resourceToken = resourceToken;
     }
 
-    if (settings.useOverlayInstances()) {
+    if (SettingsManager.getSetting("UseOverlayInstances")) {
         if (effect.overlayInstance != null) {
-            if (settings.getOverlayInstances().includes(effect.overlayInstance)) {
+            if (SettingsManager.getSetting("OverlayInstances").includes(effect.overlayInstance)) {
                 data.overlayInstance = effect.overlayInstance;
             }
         }
@@ -125,9 +125,9 @@ async function imageProcessor(effect, trigger) {
         "customCoords": effect.customCoords
     };
 
-    if (settings.useOverlayInstances()) {
+    if (SettingsManager.getSetting("UseOverlayInstances")) {
         if (effect.overlayInstance != null) {
-            if (settings.getOverlayInstances().includes(effect.overlayInstance)) {
+            if (SettingsManager.getSetting("OverlayInstances").includes(effect.overlayInstance)) {
                 data.overlayInstance = effect.overlayInstance;
             }
         }
@@ -181,9 +181,9 @@ function videoProcessor(effect) {
         "loop": effect.loop === true
     };
 
-    if (settings.useOverlayInstances()) {
+    if (SettingsManager.getSetting("UseOverlayInstances")) {
         if (effect.overlayInstance != null) {
-            if (settings.getOverlayInstances().includes(effect.overlayInstance)) {
+            if (SettingsManager.getSetting("OverlayInstances").includes(effect.overlayInstance)) {
                 data.overlayInstance = effect.overlayInstance;
             }
         }
@@ -230,10 +230,10 @@ async function showText(effect, trigger) {
         dto.position = getRandomPresetLocation();
     }
 
-    if (settings.useOverlayInstances()) {
+    if (SettingsManager.getSetting("UseOverlayInstances")) {
         if (dto.overlayInstance != null) {
             //reset overlay if it doesnt exist
-            if (!settings.getOverlayInstances().includes(dto.overlayInstance)) {
+            if (!SettingsManager.getSetting("OverlayInstances").includes(dto.overlayInstance)) {
                 dto.overlayInstance = null;
             }
         }

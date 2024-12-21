@@ -1,7 +1,7 @@
 "use strict";
 
 const chatHelpers = require("../chat-helpers");
-const { settings } = require("../../common/settings-access");
+const { SettingsManager } = require("../../common/settings-manager");
 const frontendCommunicator = require("../../common/frontend-communicator");
 const utils = require("../../utility");
 const chatRolesManager = require("../../roles/chat-roles-manager");
@@ -235,7 +235,7 @@ exports.addActiveUser = async (chatUser, includeInOnline = false, forceActive = 
 
     const viewerDatabase = require("../../viewers/viewer-database");
 
-    const ttl = settings.getActiveChatUserListTimeout() * 60;
+    const ttl = SettingsManager.getSetting("ActiveChatUserListTimeout") * 60;
 
     let user = await viewerDatabase.getViewerById(chatUser.userId);
 

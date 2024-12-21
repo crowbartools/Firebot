@@ -5,7 +5,7 @@ const profileManager = require("../common/profile-manager");
 const authManager = require("../auth/auth-manager");
 const EventEmitter = require("events");
 const { shell } = require('electron');
-const { settings } = require('../common/settings-access');
+const { SettingsManager } = require('../common/settings-manager');
 const frontEndCommunicator = require('../common/frontend-communicator');
 const { setValuesForFrontEnd, buildSaveDataFromSettingValues } = require("../common/firebot-setting-helpers");
 
@@ -63,7 +63,7 @@ class IntegrationManager extends EventEmitter {
             global.renderWindow.webContents.send("integrationsUpdated");
         }
 
-        integration.integration.on("connected", id => {
+        integration.integration.on("connected", (id) => {
             renderWindow.webContents.send("integrationConnectionUpdate", {
                 id: id,
                 connected: true
@@ -72,7 +72,7 @@ class IntegrationManager extends EventEmitter {
             logger.info(`Successfully connected to ${id}`);
         });
 
-        integration.integration.on("disconnected", id => {
+        integration.integration.on("disconnected", (id) => {
             renderWindow.webContents.send("integrationConnectionUpdate", {
                 id: id,
                 connected: false
@@ -81,7 +81,7 @@ class IntegrationManager extends EventEmitter {
             logger.info(`Disconnected from ${id}`);
         });
 
-        integration.integration.on("reconnect", id => {
+        integration.integration.on("reconnect", (id) => {
             logger.debug(`Reconnecting to ${id}...`);
             this.connectIntegration(id);
         });
@@ -158,7 +158,7 @@ class IntegrationManager extends EventEmitter {
     getAllIntegrationDefinitions() {
         return this._integrations
             .map(i => i.definition)
-            .map(i => {
+            .map((i) => {
                 return {
                     id: i.id,
                     name: i.name,
@@ -210,7 +210,7 @@ class IntegrationManager extends EventEmitter {
         }
 
         if (int.definition.linkType === "auth") {
-            shell.openExternal(`http://localhost:${settings.getWebServerPort()}/api/v1/auth?providerId=${encodeURIComponent(int.definition.authProviderDetails.id)}`);
+            shell.openExternal(`http://localhost:${SettingsManager.getSetting("WebServerPort")}/api/v1/auth?providerId=${encodeURIComponent(int.definition.authProviderDetails.id)}`);
         } else if (int.definition.linkType === "id") {
             frontEndCommunicator.send("requestIntegrationAccountId", {
                 integrationId: int.definition.id,
@@ -419,7 +419,7 @@ ipcMain.on("disconnectIntegration", (event, integrationId) => {
     manager.disconnectIntegration(integrationId);
 });
 
-ipcMain.on("getAllIntegrationDefinitions", event => {
+ipcMain.on("getAllIntegrationDefinitions", (event) => {
     logger.info("got 'get all integrations' request");
     event.returnValue = manager.getAllIntegrationDefinitions();
 });

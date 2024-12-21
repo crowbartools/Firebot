@@ -5,7 +5,7 @@ const logger = require("../../../logwrapper");
 const importHelpers = require("../import-helpers");
 const fse = require("fs-extra");
 const profileManager = require("../../../common/profile-manager");
-const { settings } = require("../../../common/settings-access");
+const { SettingsManager } = require("../../../common/settings-manager");
 
 const v4ScriptsPath = path.join(importHelpers.v4DataPath, "/scripts");
 const v5ScriptsPath = profileManager.getPathInProfile("/scripts");
@@ -45,9 +45,9 @@ exports.run = async () => {
 
         if (allV4Settings != null) {
             const runCustomScripts = allV4Settings.settings.runCustomScripts === true;
-            settings.setCustomScriptsEnabled(runCustomScripts);
+            SettingsManager.saveSetting("RunCustomScripts", runCustomScripts);
 
-            settings.flushSettingsCache();
+            SettingsManager.flushSettingsCache();
         }
 
     }

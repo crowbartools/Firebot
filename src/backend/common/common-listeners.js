@@ -11,7 +11,7 @@ exports.setupCommonListeners = () => {
     const frontendCommunicator = require("./frontend-communicator");
     const dataAccess = require("./data-access");
     const profileManager = require("./profile-manager");
-    const { settings } = require("./settings-access");
+    const { SettingsManager } = require("./settings-manager");
     const backupManager = require("../backup-manager");
     const webServer = require("../../server/http-server-manager");
 
@@ -198,7 +198,7 @@ exports.setupCommonListeners = () => {
         const GhReleases = require("electron-gh-releases");
 
         //back up first
-        if (settings.backupBeforeUpdates()) {
+        if (SettingsManager.getSetting("BackupBeforeUpdates")) {
             await backupManager.startBackup();
         }
 
@@ -221,7 +221,7 @@ exports.setupCommonListeners = () => {
             renderWindow.webContents.send("updateDownloaded");
 
             // Prepare for update install on next run
-            settings.setJustUpdated(true);
+            SettingsManager.saveSetting("JustUpdated", true);
         });
     });
 
