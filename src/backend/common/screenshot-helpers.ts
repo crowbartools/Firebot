@@ -5,7 +5,7 @@ import logger from "../logwrapper";
 import twitchApi from "../twitch-api/api";
 import discordEmbedBuilder from "../integrations/builtin/discord/discord-embed-builder";
 import discord from "../integrations/builtin/discord/discord-message-sender";
-import { settings } from "../common/settings-access";
+import { SettingsManager } from "../common/settings-manager";
 import mediaProcessor from "../common/handlers/mediaProcessor";
 import webServer from "../../server/http-server-manager";
 import moment from "moment";
@@ -86,9 +86,9 @@ export function sendScreenshotToOverlay(screenshotDataUrl: string, effect: Scree
     }
 
     let overlayInstance = null;
-    if (settings.useOverlayInstances()) {
+    if (SettingsManager.getSetting("UseOverlayInstances")) {
         if (effect.overlayInstance != null) {
-            if (settings.getOverlayInstances().includes(effect.overlayInstance)) {
+            if (SettingsManager.getSetting("OverlayInstances").includes(effect.overlayInstance)) {
                 overlayInstance = effect.overlayInstance;
             }
         }

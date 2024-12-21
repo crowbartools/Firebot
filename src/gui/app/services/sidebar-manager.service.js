@@ -6,12 +6,12 @@
         .factory("sidebarManager", function($timeout, $rootScope, $location, $translate, settingsService, uiExtensionsService, backendCommunicator) {
             const service = {};
 
-            service.navExpanded = settingsService.getSidebarExpanded();
+            service.navExpanded = settingsService.getSetting("SidebarExpanded");
 
             service.toggleNav = function() {
                 service.navExpanded = !service.navExpanded;
                 $rootScope.$broadcast("navToggled");
-                settingsService.setSidebarExpanded(service.navExpanded);
+                settingsService.saveSetting("SidebarExpanded", service.navExpanded);
             };
 
             service.currentTab = "chat feed";
