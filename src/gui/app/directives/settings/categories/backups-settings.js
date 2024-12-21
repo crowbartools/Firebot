@@ -17,10 +17,10 @@
                         description="The maximum number of backups to keep. When Firebot makes a new backup, it will delete the oldest if this number has been reached."
                     >
                         <dropdown-select
-                            ng-init="currentMaxBackups = settings.maxBackupCount()"
+                            ng-init="currentMaxBackups = settings.getSetting('MaxBackupCount')"
                             options="[3,5,10,25,'All']"
                             selected="currentMaxBackups"
-                            on-update="settings.setMaxBackupCount(option)"
+                            on-update="settings.saveSetting('MaxBackupCount', option)"
                             aria-label="Choose your Max Number of backups"
 
                         ></dropdown-select>
@@ -38,8 +38,8 @@
                             ></tooltip>
                             <input
                                 type="checkbox"
-                                ng-click="settings.setBackupIgnoreResources(!settings.backupIgnoreResources())"
-                                ng-checked="settings.backupIgnoreResources()"
+                                ng-click="settings.saveSetting('BackupIgnoreResources', !settings.getSetting('BackupIgnoreResources'))"
+                                ng-checked="settings.getSetting('BackupIgnoreResources')"
                                 aria-label="Don't include overlay resource folder in backups"
                             />
                             <div class="control__indicator"></div>
@@ -56,8 +56,8 @@
                             >When Firebot closes
                             <input
                                 type="checkbox"
-                                ng-click="settings.setBackupOnExit(!settings.backupOnExit())"
-                                ng-checked="settings.backupOnExit()"
+                                ng-click="settings.saveSetting('BackupOnExit', !settings.getSetting('BackupOnExit'))"
+                                ng-checked="settings.getSetting('BackupOnExit')"
                                 aria-label="Automatic update when Firebot closes"
                             />
                             <div class="control__indicator"></div>
@@ -66,8 +66,8 @@
                             >Once a day
                             <input
                                 type="checkbox"
-                                ng-click="settings.setBackupOnceADay(!settings.backupOnceADay())"
-                                ng-checked="settings.backupOnceADay()"
+                                ng-click="settings.saveSetting('BackupOnceADay', !settings.getSetting('BackupOnceADay'))"
+                                ng-checked="settings.getSetting('BackupOnceADay')"
                                 aria-label="Automatic update Once a day"
                             />
                             <div class="control__indicator"></div>

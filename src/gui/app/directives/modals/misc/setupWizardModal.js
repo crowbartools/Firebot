@@ -222,7 +222,7 @@
                         <p style="font-weight: 700;margin-top: 20px;">Would you like to be <a href="https:firebot.app/watch">featured on our website</a> during your live streams?</p>
                         <div style="margin-top: 20px;">
                             <label class="control-fb control--checkbox" style="margin-bottom: 0px; font-size: 16px;opacity:0.9;display:inline-block;"> Yes, feature my stream!
-                                <input type="checkbox" ng-click="$ctrl.settings.setWebOnlineCheckin(!$ctrl.settings.getWebOnlineCheckin())" ng-checked="$ctrl.settings.getWebOnlineCheckin()" >
+                                <input type="checkbox" ng-click="$ctrl.settings.saveSetting('WebOnlineCheckin', !$ctrl.settings.getSetting('WebOnlineCheckin'))" ng-checked="$ctrl.settings.getSetting('WebOnlineCheckin')" >
                                 <div class="control__indicator"></div>
                             </label>
                         </div>
@@ -373,7 +373,7 @@
 
             $ctrl.v4DataDetected = false;
             backendCommunicator.fireEventAsync("v4-data-check")
-                .then(detected => {
+                .then((detected) => {
                     $ctrl.v4DataDetected = detected;
                 });
 
@@ -406,11 +406,11 @@
                 $ctrl.importStarted = true;
             });
 
-            backendCommunicator.on("v4-import-update", data => {
+            backendCommunicator.on("v4-import-update", (data) => {
                 $ctrl.currentlyImporting = data.importing;
             });
 
-            backendCommunicator.on("v4-import-complete", data => {
+            backendCommunicator.on("v4-import-complete", (data) => {
                 $ctrl.importCompleted = true;
                 $ctrl.importStarted = false;
                 $ctrl.importSuccess = data.success;
@@ -492,7 +492,7 @@
 
             $ctrl.startBackupRestoreProcess = () => {
                 backupService.openBackupZipFilePicker()
-                    .then(backupFilePath => {
+                    .then((backupFilePath) => {
                         if (backupFilePath != null) {
                             backupService.initiateBackupRestore(backupFilePath);
                         }

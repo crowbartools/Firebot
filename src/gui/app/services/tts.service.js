@@ -26,8 +26,8 @@
                 });
             };
             service.obtainVoices = () => {
-                return new Promise(resolve => {
-                    $q.when(obtainVoices()).then(foundVoices => {
+                return new Promise((resolve) => {
+                    $q.when(obtainVoices()).then((foundVoices) => {
                         voices = foundVoices;
                         resolve();
                     });
@@ -35,7 +35,7 @@
             };
 
             service.getVoices = () => {
-                return voices.map(v => {
+                return voices.map((v) => {
                     return {
                         id: v.voiceURI,
                         name: v.name
@@ -52,7 +52,7 @@
             };
 
             service.getFirebotDefaultVoiceId = () => {
-                const savedDefaultVoiceId = settingsService.getDefaultTtsVoiceId();
+                const savedDefaultVoiceId = settingsService.getSetting("DefaultTtsVoiceId");
                 if (savedDefaultVoiceId) {
                     return savedDefaultVoiceId;
                 }
@@ -86,8 +86,8 @@
 
                 const msg = new SpeechSynthesisUtterance();
                 msg.voice = speechSynthesisVoice;
-                msg.volume = settingsService.getTtsVoiceVolume();
-                msg.rate = settingsService.getTtsVoiceRate();
+                msg.volume = settingsService.getSetting("TtsVoiceVolume");
+                msg.rate = settingsService.getSetting("TtsVoiceRate");
                 msg.text = text;
                 msg.lang = 'en-US';
 

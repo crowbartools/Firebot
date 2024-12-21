@@ -3,7 +3,7 @@ const { EventEmitter } = require("events");
 const util = require("../utility");
 const logger = require("../logwrapper");
 const frontendCommunicator = require("./frontend-communicator");
-const { settings } = require("./settings-access");
+const { SettingsManager } = require("./settings-manager");
 const twitchApi = require("../twitch-api/api");
 const twitchChat = require("../chat/twitch-chat");
 const twitchPubSubClient = require("../twitch-api/pubsub/pubsub-client");
@@ -224,7 +224,7 @@ manager.on("service-connection-update", (data) => {
 });
 
 frontendCommunicator.onAsync("connect-sidebar-controlled-services", async () => {
-    const serviceIds = settings.getSidebarControlledServices();
+    const serviceIds = SettingsManager.getSetting("SidebarControlledServices");
 
     await manager.updateConnectionForServices(serviceIds.map(id => ({
         id,
@@ -233,7 +233,7 @@ frontendCommunicator.onAsync("connect-sidebar-controlled-services", async () => 
 });
 
 frontendCommunicator.on("disconnect-sidebar-controlled-services", () => {
-    const serviceIds = settings.getSidebarControlledServices();
+    const serviceIds = SettingsManager.getSetting("SidebarControlledServices");
     for (const id of serviceIds) {
         manager.updateServiceConnection(id, false);
     }

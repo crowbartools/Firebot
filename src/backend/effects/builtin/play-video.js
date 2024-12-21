@@ -1,10 +1,10 @@
 "use strict";
 
-const { settings } = require("../../common/settings-access");
+const { SettingsManager } = require("../../common/settings-manager");
 const resourceTokenManager = require("../../resourceTokenManager");
 const webServer = require("../../../server/http-server-manager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
-const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
+const { EffectCategory } = require('../../../shared/effect-constants');
 const logger = require("../../logwrapper");
 const accountAccess = require("../../common/account-access");
 const util = require("../../utility");
@@ -397,9 +397,9 @@ const playVideo = {
             }
         }
 
-        if (settings.useOverlayInstances()) {
+        if (SettingsManager.getSetting("UseOverlayInstances")) {
             if (effect.overlayInstance != null) {
-                if (settings.getOverlayInstances().includes(effect.overlayInstance)) {
+                if (SettingsManager.getSetting("OverlayInstances").includes(effect.overlayInstance)) {
                     data.overlayInstance = effect.overlayInstance;
                 }
             }
@@ -408,7 +408,7 @@ const playVideo = {
         const overlayInstance = data.overlayInstance ?? "Default";
 
         async function waitFunction(duration) {
-            if (settings.getForceOverlayEffectsToContinueOnRefresh() === true) {
+            if (SettingsManager.getSetting("ForceOverlayEffectsToContinueOnRefresh") === true) {
                 let currentDuration = 0;
                 let returnNow = false;
 

@@ -12,11 +12,11 @@
             service.getOverlayPath = function(instanceName) {
                 let overlayPath = dataAccess.getPathInUserData("overlay.html");
 
-                const port = settingsService.getWebServerPort();
+                const port = settingsService.getSetting("WebServerPort");
 
                 const params = {};
                 if (port !== 7472 && !isNaN(port)) {
-                    params["port"] = settingsService.getWebServerPort();
+                    params["port"] = settingsService.getSetting("WebServerPort");
                 }
 
                 if (instanceName != null && instanceName !== "") {
@@ -24,7 +24,7 @@
                 }
 
                 let paramCount = 0;
-                Object.entries(params).forEach(p => {
+                Object.entries(params).forEach((p) => {
                     const key = p[0],
                         value = p[1];
 

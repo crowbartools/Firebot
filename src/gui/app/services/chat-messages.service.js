@@ -28,11 +28,6 @@
             // The message/thread currently being replied to
             service.threadDetails = null;
 
-            // Tells us if we should process in app chat or not.
-            service.getChatFeed = function() {
-                return settingsService.getRealChatFeed();
-            };
-
             // Return the chat queue.
             service.getChatQueue = function() {
                 return service.chatQueue;
@@ -243,17 +238,8 @@
             };
 
             // Gets view count setting for ui.
-            service.getChatViewCountSetting = function() {
-                const viewCount = settingsService.getChatViewCount();
-                if (viewCount === "On") {
-                    return true;
-                }
-                return false;
-            };
-
-            // Gets view count setting for ui.
             service.getChatViewerListSetting = function() {
-                return settingsService.getShowChatViewerList();
+                return settingsService.getSetting("ShowChatViewerList");
             };
 
             function markMessageAsDeleted(messageId) {
@@ -307,29 +293,26 @@
             // }, 250);
 
             backendCommunicator.on("twitch:chat:rewardredemption", (redemption) => {
-                if (settingsService.getRealChatFeed()) {
+                const redemptionItem = {
+                    id: uuid(),
+                    type: "redemption",
+                    data: redemption
+                };
 
-                    const redemptionItem = {
-                        id: uuid(),
-                        type: "redemption",
-                        data: redemption
-                    };
-
-                    if (service.chatQueue && service.chatQueue.length > 0) {
-                        const lastQueueItem = service.chatQueue[service.chatQueue.length - 1];
-                        if (!lastQueueItem.rewardMatched &&
+                if (service.chatQueue && service.chatQueue.length > 0) {
+                    const lastQueueItem = service.chatQueue[service.chatQueue.length - 1];
+                    if (!lastQueueItem.rewardMatched &&
                             lastQueueItem.type === "message" &&
                             lastQueueItem.data.customRewardId != null &&
                             lastQueueItem.data.customRewardId === redemption.reward.id &&
                             lastQueueItem.data.userId === redemption.user.id) {
-                            lastQueueItem.rewardMatched = true;
-                            service.chatQueue.splice(-1, 0, redemptionItem);
-                            return;
-                        }
+                        lastQueueItem.rewardMatched = true;
+                        service.chatQueue.splice(-1, 0, redemptionItem);
+                        return;
                     }
-
-                    service.chatQueue.push(redemptionItem);
                 }
+
+                service.chatQueue.push(redemptionItem);
             });
 
             backendCommunicator.on("twitch:chat:user-joined", (user) => {
@@ -376,7 +359,7 @@
             });
 
             backendCommunicator.on("twitch:chat:clear-feed", (modUsername) => {
-                const clearMode = settingsService.getClearChatFeedMode();
+                const clearMode = settingsService.getSetting("ClearChatFeedMode");
 
                 const isStreamer = accountAccess.accounts.streamer.username.toLowerCase()
                     === modUsername.toLowerCase();
@@ -428,37 +411,35 @@
                     service.chatUserUpdated(user);
                 }
 
-                if (settingsService.getRealChatFeed()) {
-                    // Push new message to queue.
-                    const messageItem = {
-                        id: uuid(),
-                        type: "message",
-                        data: chatMessage
-                    };
+                // Push new message to queue.
+                const messageItem = {
+                    id: uuid(),
+                    type: "message",
+                    data: chatMessage
+                };
 
-                    if (chatMessage.customRewardId != null &&
+                if (chatMessage.customRewardId != null &&
                         service.chatQueue &&
                         service.chatQueue.length > 0) {
-                        const lastQueueItem = service.chatQueue[service.chatQueue.length - 1];
-                        if (lastQueueItem.type === "redemption" &&
+                    const lastQueueItem = service.chatQueue[service.chatQueue.length - 1];
+                    if (lastQueueItem.type === "redemption" &&
                             lastQueueItem.data.reward.id === chatMessage.customRewardId &&
                             lastQueueItem.data.user.id === chatMessage.userId) {
-                            messageItem.rewardMatched = true;
-                        }
+                        messageItem.rewardMatched = true;
                     }
-
-                    service.chatQueue.push(messageItem);
-
-                    service.pruneChatQueue();
                 }
+
+                service.chatQueue.push(messageItem);
+
+                service.pruneChatQueue();
             });
 
             service.allEmotes = [];
             service.filteredEmotes = [];
             service.refreshEmotes = () => {
-                const showBttvEmotes = settingsService.getShowBttvEmotes();
-                const showFfzEmotes = settingsService.getShowFfzEmotes();
-                const showSevenTvEmotes = settingsService.getShowSevenTvEmotes();
+                const showBttvEmotes = settingsService.getSetting("ChatShowBttvEmotes");
+                const showFfzEmotes = settingsService.getSetting("ChatShowFfzEmotes");
+                const showSevenTvEmotes = settingsService.getSetting("ChatShowSevenTvEmotes");
 
                 service.filteredEmotes = service.allEmotes.filter((e) => {
                     if (showBttvEmotes !== true && e.origin === "BTTV") {
@@ -487,9 +468,7 @@
             listenerService.registerListener(
                 { type: listenerService.ListenerType.CHAT_UPDATE },
                 (data) => {
-                    if (settingsService.getRealChatFeed() === true) {
-                        service.chatUpdateHandler(data);
-                    }
+                    service.chatUpdateHandler(data);
                 }
             );
 

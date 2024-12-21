@@ -9,19 +9,19 @@
             bindings: {},
             template: `
                 <div ng-if="sis.streamInfo.isLive" class="stream-info-stats-wrapper">
-                    <div class="stream-info-stat" ng-show="settings.getShowUptimeStat()">
+                    <div class="stream-info-stat" ng-show="settings.getSetting('ShowUptimeStat')">
                         <span style="margin-right: 5px; background: red;display: inline-block;width: 12px;height: 12px;border-radius: 15px;"></span>
                         <span>{{sessionTimeDisplay}}</span>
                     </div>
 
-                    <div class="stream-info-stat" ng-show="settings.getShowViewerCountStat()" style="margin-left:10px">
+                    <div class="stream-info-stat" ng-show="settings.getSetting('ShowViewerCountStat')" style="margin-left:10px">
                         <i class="fas fa-user" style="margin-right: 5px; font-size: 12px;" />
                         <span>{{sis.streamInfo.viewers}}</span>
                     </div>
 
-                    <hype-train-indicator ng-if="settings.getShowHypeTrainIndicator() && hts.hypeTrainActive"></hype-train-indicator>
+                    <hype-train-indicator ng-if="settings.getSetting('ShowHypeTrainIndicator') && hts.hypeTrainActive"></hype-train-indicator>
 
-                    <ad-break-indicator ng-if="settings.getShowAdBreakIndicator() && abs.showAdBreakTimer"></ad-break-service>
+                    <ad-break-indicator ng-if="settings.getSetting('ShowAdBreakIndicator') && abs.showAdBreakTimer"></ad-break-service>
                 </div>
             `,
             controller: function($scope, streamInfoService, settingsService, hypeTrainService, adBreakService, $interval) {
