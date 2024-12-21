@@ -2,7 +2,7 @@ import { FirebotViewer } from "../../types/viewers";
 
 import logger from "../logwrapper";
 import frontendCommunicator from "../common/frontend-communicator";
-import { settings } from "../common/settings-access";
+import { SettingsManager } from "../common/settings-manager";
 import profileManager from "../common/profile-manager";
 
 export type Currency = {
@@ -38,7 +38,7 @@ class CurrencyAccess {
     }
 
     isViewerDBOn(): boolean {
-        return settings.getViewerDbStatus();
+        return SettingsManager.getSetting("ViewerDB");
     }
 
     refreshCurrencyCache(): void {

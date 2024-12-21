@@ -277,23 +277,24 @@ export const QuotesManagementSystemCommand: SystemCommand<{
 
             switch (triggeredArg) {
                 case "add": {
-                    const shouldInsertStreamerUsername = (commandOptions.defaultStreamerAttribution && args.length === 1) 
-                                                      || (commandOptions.defaultStreamerAttribution && !args[1].includes("@"));
+                    const shouldInsertStreamerUsername =
+                        (commandOptions.defaultStreamerAttribution && args.length === 1) ||
+                        (commandOptions.defaultStreamerAttribution && !args[1].includes("@"));
                     const expectedArgs = shouldInsertStreamerUsername
-                      ? 2
-                      : 3;
-                    
+                        ? 2
+                        : 3;
+
                     if (args.length < expectedArgs) {
-                    await twitchChat.sendChatMessage(`Please provide some quote text!`);
-                    return resolve();
+                        await twitchChat.sendChatMessage(`Please provide some quote text!`);
+                        return resolve();
                     }
                     // Once we've evaluated that the syntax is correct we make our API calls
                     const channelData = await TwitchApi.channels.getChannelInformation();
                     const currentGameName = channelData && channelData.gameName ? channelData.gameName : "Unknown game";
-                    
+
                     // If shouldInsertStreamerUsername and no @ is included in the originator arg, set originator @streamerName and treat the rest as the quote
                     if (shouldInsertStreamerUsername) {
-                            args.splice(1,0,`@${channelData.displayName}`)
+                        args.splice(1, 0, `@${channelData.displayName}`);
                     }
 
                     const newQuote = {
@@ -404,8 +405,8 @@ export const QuotesManagementSystemCommand: SystemCommand<{
                 }
                 case "searchdate": {
                     const rawDay = parseInt(args[1]);
-                    const rawMonth = parseInt(args[1]);
-                    const rawYear = parseInt(args[1]);
+                    const rawMonth = parseInt(args[2]);
+                    const rawYear = parseInt(args[3]);
 
                     const day = !isNaN(rawDay) ? rawDay : null;
                     const month = !isNaN(rawMonth) ? rawMonth : null;

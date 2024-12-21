@@ -96,7 +96,7 @@
             };
 
             $scope.getSelectedVoiceName = () => {
-                const selectedVoiceId = settingsService.getDefaultTtsVoiceId();
+                const selectedVoiceId = settingsService.getSetting("DefaultTtsVoiceId");
                 const voice = ttsService.getVoiceById(selectedVoiceId);
                 return voice ? voice.name : "Unknown Voice";
             };
@@ -107,7 +107,7 @@
             }, {});
 
             $scope.ttsVolumeSlider = {
-                value: settingsService.getTtsVoiceVolume(),
+                value: settingsService.getSetting("TtsVoiceVolume"),
                 options: {
                     floor: 0,
                     ceil: 1,
@@ -117,20 +117,20 @@
                         return Math.floor(value * 10);
                     },
                     onChange: (_, value) => {
-                        settingsService.setTtsVoiceVolume(value);
+                        settingsService.saveSetting("TtsVoiceVolume", value);
                     }
                 }
             };
 
             $scope.ttsRateSlider = {
-                value: settingsService.getTtsVoiceRate(),
+                value: settingsService.getSetting("TtsVoiceRate"),
                 options: {
                     floor: 0.1,
                     ceil: 10,
                     step: 0.1,
                     precision: 1,
                     onChange: (_, value) => {
-                        settingsService.setTtsVoiceRate(value);
+                        settingsService.saveSetting("TtsVoiceRate", value);
                     }
                 }
             };
@@ -183,10 +183,10 @@
                 backupService.startBackup();
             };
 
-            $scope.currentMaxBackups = settingsService.maxBackupCount();
+            $scope.currentMaxBackups = settingsService.getSetting("MaxBackupCount");
 
             $scope.updateMaxBackups = function(option) {
-                settingsService.setMaxBackupCount(option);
+                settingsService.saveSetting("MaxBackupCount", option);
             };
 
             $scope.openDevTools = () => {
@@ -209,10 +209,10 @@
             };
 
             $scope.toggleWhileLoops = () => {
-                const whileLoopsEnabled = settingsService.getWhileLoopEnabled();
+                const whileLoopsEnabled = settingsService.getSetting("WhileLoopEnabled");
 
                 if (whileLoopsEnabled) {
-                    settingsService.setWhileLoopEnabled(false);
+                    settingsService.saveSetting("WhileLoopEnabled", false);
                 } else {
                     utilityService
                         .showConfirmationModal({
@@ -223,24 +223,10 @@
                         })
                         .then((confirmed) => {
                             if (confirmed) {
-                                settingsService.setWhileLoopEnabled(true);
+                                settingsService.saveSetting("WhileLoopEnabled", true);
                             }
                         });
                 }
-            };
-
-            $scope.setActiveChatUsers = (value) => {
-                value = value === true;
-                settingsService.setActiveChatUsers(value);
-                ipcRenderer.send("setActiveChatUsers", value);
-            };
-
-            $scope.setActiveChatUserTimeout = (value) => {
-                if (value == null) {
-                    value = "10";
-                }
-                settingsService.setActiveChatUserListTimeout(value);
-                ipcRenderer.send('setActiveChatUserTimeout', value);
             };
 
             $scope.audioOutputDevices = [{
@@ -281,12 +267,12 @@
             }
             );
 
-            if (settingsService.getAutoUpdateLevel() > 3) {
-                settingsService.setAutoUpdateLevel(3);
+            if (settingsService.getSetting("AutoUpdateLevel") > 3) {
+                settingsService.saveSetting("AutoUpdateLevel", 3);
             }
 
             $scope.autoUpdateSlider = {
-                value: settingsService.getAutoUpdateLevel(),
+                value: settingsService.getSetting("AutoUpdateLevel"),
                 options: {
                     showSelectionBar: true,
                     showTicks: true,
@@ -312,7 +298,7 @@
                         return "orange";
                     },
                     onChange: function() {
-                        settingsService.setAutoUpdateLevel($scope.autoUpdateSlider.value);
+                        settingsService.saveSetting("AutoUpdateLevel", $scope.autoUpdateSlider.value);
                     }
                 }
             };
@@ -332,7 +318,7 @@
                 }
             };
 
-            $scope.currentPort = settingsService.getWebSocketPort();
+            $scope.currentPort = settingsService.getSetting("WebServerPort");
 
             /**
             * Modals
@@ -475,48 +461,6 @@
                     }
                 };
                 utilityService.showModal(showBackupListModalContext);
-            };
-
-            $scope.showChangePortModal = function() {
-                const showChangePortModalContext = {
-                    templateUrl: "changePortModal.html",
-                    size: "sm",
-                    controllerFunc: ($scope, settingsService, $uibModalInstance) => {
-                        $scope.newPort = settingsService.getWebSocketPort();
-
-                        $scope.newPortError = false;
-
-                        // When the user clicks a call to action that will close the modal, such as "Save"
-                        $scope.changePort = function() {
-                            // validate port number
-                            const newPort = $scope.newPort;
-                            if (
-                                newPort == null ||
-                newPort === "" ||
-                newPort <= 1024 ||
-                newPort >= 49151
-                            ) {
-                                $scope.newPortError = true;
-                                return;
-                            }
-
-                            // Save port. This will save to both firebot and the overlay.
-                            settingsService.setWebSocketPort(newPort);
-
-                            $uibModalInstance.close(newPort);
-                        };
-
-                        // When they hit cancel, click the little x, or click outside the modal, we don't want to do anything.
-                        $scope.dismiss = function() {
-                            $uibModalInstance.dismiss("cancel");
-                        };
-                    },
-                    closeCallback: (port) => {
-                        // Update the local port scope var so setting input updates
-                        $scope.currentPort = port;
-                    }
-                };
-                utilityService.showModal(showChangePortModalContext);
             };
         });
 }());

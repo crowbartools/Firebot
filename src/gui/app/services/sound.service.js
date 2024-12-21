@@ -13,8 +13,8 @@
 
             // Connection Sounds
             service.connectSound = function(type) {
-                if (settingsService.soundsEnabled() === "On") {
-                    const outputDevice = settingsService.getAudioOutputDevice();
+                if (settingsService.getSetting("SoundsEnabled") === "On") {
+                    const outputDevice = settingsService.getSetting("AudioOutputDevice");
                     if (type === "Online") {
                         service.playSound("../sounds/connect_new_b.mp3", 0.2, outputDevice);
                     } else {
@@ -25,8 +25,8 @@
 
             let popCounter = 0;
             service.popSound = function() {
-                if (settingsService.soundsEnabled() === "On") {
-                    const outputDevice = settingsService.getAudioOutputDevice();
+                if (settingsService.getSetting("SoundsEnabled") === "On") {
+                    const outputDevice = settingsService.getSetting("AudioOutputDevice");
                     popCounter++;
                     if (popCounter > 4) {
                         popCounter = 1;
@@ -79,7 +79,7 @@
             ];
 
             service.playChatNotification = function() {
-                let selectedSound = settingsService.getTaggedNotificationSound();
+                let selectedSound = settingsService.getSetting("ChatTaggedNotificationSound");
 
                 if (selectedSound.name === "None") {
                     return;
@@ -91,7 +91,7 @@
                     );
                 }
 
-                const volume = settingsService.getTaggedNotificationVolume() / 100 * 10;
+                const volume = settingsService.getSetting("ChatTaggedNotificationVolume") / 100 * 10;
                 if (selectedSound.path != null && selectedSound.path !== "") {
                     service.playSound(selectedSound.path, volume);
                 }
@@ -101,11 +101,11 @@
             service.playSound = function(path, volume, outputDevice, fileType = null, maxSoundLength = null) {
 
                 if (outputDevice == null) {
-                    outputDevice = settingsService.getAudioOutputDevice();
+                    outputDevice = settingsService.getSetting("AudioOutputDevice");
                 }
 
                 $q.when(service.getHowlSound(path, volume, outputDevice, fileType))
-                    .then(sound => {
+                    .then((sound) => {
 
                         let maxSoundLengthTimeout;
                         // Clear listener after first call.
@@ -131,9 +131,9 @@
                     });
             };
 
-            service.getHowlSound = function(path, volume, outputDevice = settingsService.getAudioOutputDevice(), fileType = null) {
+            service.getHowlSound = function(path, volume, outputDevice = settingsService.getSetting("AudioOutputDevice"), fileType = null) {
                 return navigator.mediaDevices.enumerateDevices()
-                    .then(deviceList => {
+                    .then((deviceList) => {
                         const filteredDevice = deviceList.filter(d => d.label === outputDevice.label
                             || d.deviceId === outputDevice.deviceId);
 
@@ -153,7 +153,7 @@
             };
 
             service.getSoundDuration = function(path, format = undefined) {
-                return new Promise(resolve => {
+                return new Promise((resolve) => {
 
                     console.log("duration for", path, format);
 
@@ -178,7 +178,7 @@
             // Watches for an event from main process
             listenerService.registerListener(
                 { type: listenerService.ListenerType.PLAY_SOUND },
-                data => {
+                (data) => {
                     const filepath = data.filepath;
                     const volume = data.volume / 100 * 10;
 
@@ -187,7 +187,7 @@
                         selectedOutputDevice == null ||
                         selectedOutputDevice.label === "App Default"
                     ) {
-                        selectedOutputDevice = settingsService.getAudioOutputDevice();
+                        selectedOutputDevice = settingsService.getSetting("AudioOutputDevice");
                     }
 
                     if (selectedOutputDevice.deviceId === 'overlay') {
