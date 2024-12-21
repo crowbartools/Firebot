@@ -286,7 +286,7 @@ const effect = {
         } catch (error) {
             const message = {
                 errorMessage: error.message,
-                responseData: error.response.data
+                responseData: error.response?.data
             };
 
             logger.error("Error running http request", message);
