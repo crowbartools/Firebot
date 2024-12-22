@@ -1,15 +1,14 @@
 "use strict";
 
 (function() {
-
-    const { Howl, Howler } = require("howler");
-
     // This provides methods for playing sounds
 
     angular
         .module("firebotApp")
         .factory("soundService", function(logger, settingsService, listenerService, $q, websocketService, backendCommunicator) {
             const service = {};
+            /** @type {HTMLAudioElement[]} */
+            const sounds = [];
 
             // Connection Sounds
             service.connectSound = function(type) {
@@ -99,74 +98,74 @@
 
 
             service.playSound = function(path, volume, outputDevice, fileType = null, maxSoundLength = null) {
-
                 if (outputDevice == null) {
                     outputDevice = settingsService.getSetting("AudioOutputDevice");
                 }
 
-                $q.when(service.getHowlSound(path, volume, outputDevice, fileType))
-                    .then((sound) => {
-
+                $q.when(service.getSound(path, volume, outputDevice, fileType))
+                    .then(/** @param {HTMLAudioElement} sound */ (sound) => {
                         let maxSoundLengthTimeout;
-                        // Clear listener after first call.
-                        sound.once('load', function() {
+                        sounds.push(sound);
+
+                        const soundEndEventHandler = function() {
+                            // Clear listener after first call.
+                            sound.removeEventListener("ended", soundEndEventHandler);
+                            sound.srcObject = null;
+                            sounds.splice(sounds.indexOf(sound), 1);
+                            clearInterval(maxSoundLengthTimeout);
+                        };
+
+                        const soundLoadEventHandler = function() {
+                            // Clear listener after first call.
+                            sound.removeEventListener("canplay", soundLoadEventHandler);
                             sound.play();
 
                             const intMaxSoundLength = parseInt(maxSoundLength);
                             if (intMaxSoundLength > 0) {
                                 maxSoundLengthTimeout = setTimeout(function() {
-                                    sound.stop();
-                                    sound.unload();
+                                    sound.pause();
+                                    soundEndEventHandler();
                                 }, maxSoundLength * 1000);
                             }
-                        });
+                        };
+
+                        sound.addEventListener("canplay", soundLoadEventHandler);
 
                         // Fires when the sound finishes playing.
-                        sound.once('end', function() {
-                            sound.unload();
-                            clearInterval(maxSoundLengthTimeout);
-                        });
+                        sound.addEventListener("ended", soundEndEventHandler);
 
                         sound.load();
                     });
             };
 
-            service.getHowlSound = function(path, volume, outputDevice = settingsService.getSetting("AudioOutputDevice"), fileType = null) {
-                return navigator.mediaDevices.enumerateDevices()
-                    .then((deviceList) => {
-                        const filteredDevice = deviceList.filter(d => d.label === outputDevice.label
-                            || d.deviceId === outputDevice.deviceId);
+            service.getSound = async function(path, volume, outputDevice = settingsService.getSetting("AudioOutputDevice")) {
+                const deviceList = await navigator.mediaDevices.enumerateDevices();
 
-                        const sinkId = filteredDevice.length > 0 ? filteredDevice[0].deviceId : 'default';
+                const filteredDevice = deviceList.find(d => d.label === outputDevice.label
+                    || d.deviceId === outputDevice.deviceId);
 
-                        const sound = new Howl({
-                            src: [path],
-                            volume: volume,
-                            format: fileType,
-                            html5: true,
-                            sinkId: sinkId,
-                            preload: false
-                        });
+                const sound = new Audio(path);
+                sound.volume = volume;
+                await sound.setSinkId(filteredDevice?.deviceId ?? 'default');
 
-                        return sound;
-                    });
+                return sound;
             };
 
-            service.getSoundDuration = function(path, format = undefined) {
+            /**
+             * Combination of fix from:
+             * https://github.com/nmori/Firebot/blob/f53d12fe774059327dadedf4fa8268f4e53cad7f/src/gui/app/services/sound.service.js#L174-L182
+             *
+             * While maintaining duration precision from Howler:
+             * https://github.com/ebiggz/howler.js/blob/0bbfe6623e13bef8e58c789f5f67bfc87d50000b/src/howler.core.js#L2052
+             */
+            service.getSoundDuration = function(path) {
                 return new Promise((resolve) => {
-
-                    console.log("duration for", path, format);
-
-                    const sound = new Howl({
-                        src: [path],
-                        format: format || [],
-                        onload: () => {
-                            resolve(sound.duration());
-                            sound.unload();
-                        },
-                        onloaderror: () => {
-                            resolve(0);
-                        }
+                    const audio = new Audio(path);
+                    audio.addEventListener("loadedmetadata", () => {
+                        resolve(Math.ceil(audio.duration * 10) / 10);
+                    });
+                    audio.addEventListener("error", () => {
+                        resolve(0);
                     });
                 });
             };
@@ -212,7 +211,14 @@
 
             service.stopAllSounds = function() {
                 logger.info("Stopping all sounds...");
-                Howler.unload();
+                while (sounds.length > 0) {
+                    let sound = sounds.pop();
+                    if (sound) {
+                        sound.pause();
+                        sound.srcObject = null;
+                        sound = null;
+                    }
+                }
             };
 
             backendCommunicator.on("stop-all-sounds", () => {
