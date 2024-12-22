@@ -6,10 +6,11 @@ import bodyParser from "body-parser";
 import cors from 'cors';
 import path from 'path';
 import logger from "../backend/logwrapper";
-import { settings } from "../backend/common/settings-access";
+import { SettingsManager } from "../backend/common/settings-manager";
 import effectManager from "../backend/effects/effectManager";
 import resourceTokenManager from "../backend/resourceTokenManager";
 import websocketServerManager from "./websocket-server-manager";
+import { CustomWebSocketHandler } from "../types/websocket";
 
 import dataAccess from "../backend/common/data-access";
 
@@ -199,7 +200,7 @@ class HttpServerManager extends EventEmitter {
     }
 
     startDefaultHttpServer() {
-        const port: number = settings.getWebServerPort();
+        const port: number = SettingsManager.getSetting("WebServerPort");
 
         websocketServerManager.createServer(this.defaultHttpServer);
 
@@ -235,6 +236,10 @@ class HttpServerManager extends EventEmitter {
 
     sendToOverlay(eventName: string, meta: Record<string, unknown> = {}, overlayInstance: string = null) {
         websocketServerManager.sendToOverlay(eventName, meta, overlayInstance);
+    }
+
+    triggerCustomWebSocketEvent(eventType: string, payload: object) {
+        websocketServerManager.triggerEvent(`custom-event:${eventType}`, payload);
     }
 
     createServerInstance() {
@@ -393,6 +398,14 @@ class HttpServerManager extends EventEmitter {
             normalizedMethod,
             fullRoute
         };
+    }
+
+    registerCustomWebSocketListener(pluginName: string, callback: CustomWebSocketHandler["callback"]): boolean {
+        return websocketServerManager.registerCustomWebSocketListener(pluginName, callback);
+    }
+
+    unregisterCustomWebSocketListener(pluginName: string): boolean {
+        return websocketServerManager.unregisterCustomWebSocketListener(pluginName);
     }
 }
 

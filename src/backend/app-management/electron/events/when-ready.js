@@ -178,8 +178,8 @@ exports.whenReady = async () => {
     builtinGameLoader.loadGames();
 
     windowManagement.updateSplashScreenStatus("Loading custom variables...");
-    const {settings} = require("../../../common/settings-access");
-    if (settings.getPersistCustomVariables()) {
+    const { SettingsManager } = require("../../../common/settings-manager");
+    if (SettingsManager.getSetting("PersistCustomVariables")) {
         const customVariableManager = require("../../../common/custom-variable-manager");
         customVariableManager.loadVariablesFromFile();
     }

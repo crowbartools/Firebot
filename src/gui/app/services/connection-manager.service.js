@@ -18,7 +18,7 @@
             let overlayStatus = listenerService.fireEventSync("getOverlayStatus");
 
             function delay(time) {
-                return new Promise(resolve => {
+                return new Promise((resolve) => {
                     setTimeout(() => {
                         resolve();
                     }, time || 100);
@@ -31,7 +31,7 @@
                 {
                     type: listenerService.ListenerType.OVERLAY_CONNECTION_STATUS
                 },
-                overlayStatusData => {
+                (overlayStatusData) => {
                     overlayStatus = overlayStatusData;
                 }
             );
@@ -45,13 +45,13 @@
             };
 
             service.setConnectionToChat = function(shouldConnect) {
-                return new Promise(resolve => {
+                return new Promise((resolve) => {
                     listenerService.registerListener(
                         {
                             type: listenerService.ListenerType.CHAT_CONNECTION_STATUS,
                             runOnce: true
                         },
-                        isChatConnected => {
+                        (isChatConnected) => {
                             resolve(isChatConnected);
                         }
                     );
@@ -66,12 +66,12 @@
 
             service.connectedServiceCount = function(services) {
                 if (services == null) {
-                    services = settingsService.getSidebarControlledServices();
+                    services = settingsService.getSetting("SidebarControlledServices");
                 }
 
                 let count = 0;
 
-                services.forEach(s => {
+                services.forEach((s) => {
                     switch (s) {
                         case "chat":
                             if (connectionService.connectedToChat) {
@@ -92,21 +92,21 @@
             };
 
             service.partialServicesConnected = function() {
-                const services = settingsService.getSidebarControlledServices();
+                const services = settingsService.getSetting("SidebarControlledServices");
                 const connectedCount = service.connectedServiceCount();
 
                 return connectedCount > 0 && services.length > connectedCount;
             };
 
             service.allServicesConnected = function() {
-                const services = settingsService.getSidebarControlledServices();
+                const services = settingsService.getSetting("SidebarControlledServices");
                 const connectedCount = service.connectedServiceCount();
 
                 return services.length === connectedCount;
             };
 
             service.toggleSidebarServices = function() {
-                const services = settingsService.getSidebarControlledServices();
+                const services = settingsService.getSetting("SidebarControlledServices");
 
                 // we only want to connect if none of the connections are currently connected
                 // otherwise we will attempt to disconnect everything.
@@ -190,12 +190,12 @@
                     }
                     case "integrations": {
                         const sidebarControlledIntegrations = settingsService
-                            .getSidebarControlledServices()
+                            .getSetting("SidebarControlledServices")
                             .filter(s => s.startsWith("integration."))
                             .map(s => s.replace("integration.", ""));
 
                         let connectedCount = 0;
-                        sidebarControlledIntegrations.forEach(i => {
+                        sidebarControlledIntegrations.forEach((i) => {
                             if (integrationService.integrationIsConnected(i)) {
                                 connectedCount++;
                             }

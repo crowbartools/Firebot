@@ -39,8 +39,8 @@ import { TakeOBSSourceScreenshotEffectType } from "./effects/take-obs-source-scr
 
 import { OBSEventSource } from "./events/obs-event-source";
 
-import { GroupNameEventFilter } from "./filters/group-name-filter";
-import { SceneNameEventFilter } from "./filters/scene-name-filter";
+import GroupNameEventFilter from "./filters/group-name-filter";
+import SceneNameEventFilter from "./filters/scene-name-filter";
 
 import { SceneNameVariable } from "./variables/scene-name-variable";
 import { SceneCollectionNameVariable } from "./variables/scene-collection-name";

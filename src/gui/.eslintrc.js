@@ -11,7 +11,6 @@ module.exports = {
         "fs": true,
         "request": true,
         "List": true,
-        "howler": true,
         "compareVersions": true,
         "marked": true,
         "path": true,

@@ -1,7 +1,7 @@
 import { BasicViewer, FirebotViewer } from "../../types/viewers";
 import logger from "../logwrapper";
 
-import { settings } from "../common/settings-access";
+import { SettingsManager } from "../common/settings-manager";
 import viewerDatabase from "./viewer-database";
 import chatRolesManager from "../roles/chat-roles-manager";
 import connectionManager from "../common/connection-manager";
@@ -100,7 +100,7 @@ class ViewerOnlineStatusManager {
                 lastSeen: now
             };
 
-            if (await chatRolesManager.userIsKnownBot(viewer.id) === true && settings.getAutoFlagBots()) {
+            if (await chatRolesManager.userIsKnownBot(viewer.id) === true && SettingsManager.getSetting("AutoFlagBots")) {
                 dbData.disableAutoStatAccrual = true;
                 dbData.disableActiveUserList = true;
             }

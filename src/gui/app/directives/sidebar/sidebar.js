@@ -24,7 +24,7 @@
                             <nav-link page="Channel Rewards" name="{{'SIDEBAR.OTHER.CHANNELREWARDS' | translate }}" icon="fa-gifts"></nav-link>
                             <nav-link page="Preset Effect Lists" name="{{ 'SIDEBAR.OTHER.PRESET_EFFECT_LISTS' | translate }}" icon="fa-magic"></nav-link>
                             <nav-link page="Hotkeys" name="{{'SIDEBAR.OTHER.HOTKEYS' | translate }}" icon="fa-keyboard"></nav-link>
-                            <nav-link page="Counters" name="Counters" icon="fa-tally"></nav-link>
+                            <nav-link page="Counters" name="{{'SIDEBAR.OTHER.COUNTERS' | translate }}" icon="fa-tally"></nav-link>
 
                             <div ng-if="$ctrl.extensionPages().length">
                                 <nav-category name="Custom" pad-top="true"></nav-category>
@@ -125,9 +125,9 @@
 
             ctrl.is = integrationService;
 
-            ctrl.isViewerDBOn = settingsService.getViewerDB;
+            ctrl.isViewerDBOn = () => settingsService.getSetting("ViewerDB");
 
-            ctrl.extensionPages = () => uiExtensionsService.extensions.map(e => e.pages.map(p => {
+            ctrl.extensionPages = () => uiExtensionsService.extensions.map(e => e.pages.map((p) => {
                 p.extensionId = e.id;
                 return p;
             })).flat();

@@ -1,10 +1,10 @@
 "use strict";
 
 const { getPathInTmpDir } = require("../../../common/data-access");
-const { settings } = require("../../../common/settings-access");
+const { SettingsManager } = require("../../../common/settings-manager");
 const resourceTokenManager = require("../../../resourceTokenManager");
 const webServer = require("../../../../server/http-server-manager");
-const uuid = require("uuid/v4");
+const { v4: uuid } = require("uuid");
 const fs = require('fs');
 const fsp = require('fs/promises');
 const path = require("path");
@@ -359,7 +359,7 @@ const playSound = {
         };
 
         $q.when(backendCommunicator.fireEventAsync("getAwsPollyVoices"))
-            .then(voices => {
+            .then((voices) => {
                 $scope.isFetchingVoices = false;
 
                 const voicesArray = voices.voices;
@@ -455,7 +455,7 @@ const playSound = {
             });
 
         $q.when(backendCommunicator.fireEventAsync("getAwsPollyLexicons"))
-            .then(lexicons => {
+            .then((lexicons) => {
                 $scope.isFetchingLexicons = false;
 
                 $scope.lexicons = lexicons.lexicons;
@@ -471,7 +471,7 @@ const playSound = {
     /**
    * When the effect is saved
    */
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
 
         if (effect.engine !== "standard" && effect.engine !== "neural") {
@@ -491,7 +491,7 @@ const playSound = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const effect = event.effect;
 
         const awsIntegration = integrationManager.getIntegrationDefinitionById("aws");
@@ -591,7 +591,7 @@ const playSound = {
         // Set output device.
         let selectedOutputDevice = effect.audioOutputDevice;
         if (selectedOutputDevice == null || selectedOutputDevice.label === "App Default") {
-            selectedOutputDevice = settings.getAudioOutputDevice();
+            selectedOutputDevice = SettingsManager.getSetting("AudioOutputDevice");
         }
         data.audioOutputDevice = selectedOutputDevice;
 

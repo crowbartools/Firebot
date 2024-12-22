@@ -1,7 +1,7 @@
 "use strict";
 const app = require('electron').app;
 const moment = require("moment");
-const uuid = require("uuid/v4");
+const { v4: uuid } = require("uuid");
 const frontendCommunicator = require("../common/frontend-communicator");
 const rewardManager = require("../channel-rewards/channel-reward-manager");
 
@@ -102,9 +102,3 @@ frontendCommunicator.onAsync("get-activity-feed-supported-events", async () => {
         .flat()
         .filter(e => e != null);
 });
-
-
-
-
-
-

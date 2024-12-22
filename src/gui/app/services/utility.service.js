@@ -321,7 +321,7 @@
                         instanceName
                     ) => {
 
-                        $scope.usingOverlayInstances = settingsService.useOverlayInstances();
+                        $scope.usingOverlayInstances = settingsService.getSetting("UseOverlayInstances");
 
                         $scope.broadcastingSoftwares = [
                             "Local", "Direct Link/2 PC Setup"
@@ -338,7 +338,7 @@
                         $scope.buildOverlayPath = () => {
                             let overlayPath = dataAccess.getPathInUserData("overlay.html");
 
-                            const port = settingsService.getWebServerPort();
+                            const port = settingsService.getSetting("WebServerPort");
 
                             const params = {};
                             if ($scope.selectedBroadcastingSoftware === "Direct Link/2 PC Setup") {
@@ -346,7 +346,7 @@
 
                             } else {
                                 if (port !== 7472 && !isNaN(port)) {
-                                    params["port"] = settingsService.getWebServerPort();
+                                    params["port"] = settingsService.getSetting("WebServerPort");
                                 }
                                 overlayPath = `file:///${overlayPath.replace(/^\//g, "")}`;
                             }
@@ -408,10 +408,10 @@
                         $uibModalInstance,
                         settingsService
                     ) => {
-                        $scope.textSettings = settingsService.getOverlayEventsSettings();
+                        $scope.textSettings = settingsService.getSetting("EventSettings");
 
                         $scope.save = function() {
-                            settingsService.saveOverlayEventsSettings($scope.textSettings);
+                            settingsService.saveSetting("EventsSettings", $scope.textSettings);
                             $uibModalInstance.dismiss();
                         };
 

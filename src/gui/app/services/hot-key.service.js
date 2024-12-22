@@ -1,6 +1,6 @@
 "use strict";
 const profileManager = require("../../backend/common/profile-manager.js");
-const uuidv1 = require("uuid/v1");
+const { v4: uuid } = require("uuid");
 
 (function() {
     // This provides methods for handling hotkeys
@@ -272,7 +272,7 @@ const uuidv1 = require("uuid/v1");
             }
 
             service.saveHotkey = function(hotkey) {
-                hotkey.id = uuidv1();
+                hotkey.id = uuid();
 
                 userHotkeys.push(hotkey);
 
