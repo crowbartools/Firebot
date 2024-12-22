@@ -442,7 +442,7 @@
             });
         });
 
-        backendCommunicator.on("restore-backup", () => {
+        backendCommunicator.on("backups:start-restore-backup", () => {
             backupService.openBackupZipFilePicker()
                 .then((backupFilePath) => {
                     if (backupFilePath != null) {

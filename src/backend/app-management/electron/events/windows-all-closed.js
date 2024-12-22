@@ -8,7 +8,7 @@ exports.windowsAllClosed = async () => {
     logger.debug("All windows closed triggered");
 
     const { SettingsManager } = require("../../../common/settings-manager");
-    const backupManager = require("../../../backup-manager");
+    const { BackupManager } = require("../../../backup-manager");
 
     // Stop all scheduled tasks
     const scheduledTaskManager = require("../../../timers/scheduled-task-manager");
@@ -38,7 +38,7 @@ exports.windowsAllClosed = async () => {
 
     if (SettingsManager.getSetting("BackupOnExit")) {
         // Make a backup
-        await backupManager.startBackup(false, app.quit);
+        await BackupManager.startBackup(false, app.quit);
     } else {
         app.quit();
     }

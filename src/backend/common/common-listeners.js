@@ -12,7 +12,7 @@ exports.setupCommonListeners = () => {
     const dataAccess = require("./data-access");
     const profileManager = require("./profile-manager");
     const { SettingsManager } = require("./settings-manager");
-    const backupManager = require("../backup-manager");
+    const { BackupManager } = require("../backup-manager");
     const webServer = require("../../server/http-server-manager");
 
     frontendCommunicator.on("show-twitch-preview", () => {
@@ -113,36 +113,9 @@ exports.setupCommonListeners = () => {
         event.sender.send("gotImportFolderPath", { path: path, id: uniqueid });
     });
 
-    // Get Get Backup Zip Path
-    // This listens for an event from the render media.js file to open a dialog to get a filepath.
-    ipcMain.on("getBackupZipPath", (event, uniqueid) => {
-        const backupsFolderPath = path.resolve(
-            `${dataAccess.getUserDataPath() + path.sep}backups${path.sep}`
-        );
-
-        const fs = require("fs");
-        let backupsFolderExists = false;
-        try {
-            backupsFolderExists = fs.existsSync(backupsFolderPath);
-        } catch (err) {
-            logger.warn("cannot check if backup folder exists", err);
-        }
-
-        const zipPath = dialog.showOpenDialogSync({
-            title: "Select backup zp",
-            buttonLabel: "Select Backup",
-            defaultPath: backupsFolderExists ? backupsFolderPath : undefined,
-            filters: [{ name: "Zip", extensions: ["zip"] }]
-        });
-        event.sender.send("gotBackupZipPath", { path: zipPath, id: uniqueid });
-    });
-
     // Opens the firebot backup folder
     ipcMain.on("open-backup-folder", () => {
-        // We include "fakefile.txt" as a workaround to make it open into the 'root' folder instead
-        // of opening to the poarent folder with 'Firebot'folder selected.
-        const backupFolder = path.resolve(`${dataAccess.getUserDataPath() + path.sep}backups${path.sep}`);
-        shell.openPath(backupFolder);
+        shell.openPath(BackupManager.backupFolderPath);
     });
 
     // When we get an event from the renderer to create a new profile.
@@ -199,7 +172,7 @@ exports.setupCommonListeners = () => {
 
         //back up first
         if (SettingsManager.getSetting("BackupBeforeUpdates")) {
-            await backupManager.startBackup();
+            await BackupManager.startBackup();
         }
 
         // Download Update
