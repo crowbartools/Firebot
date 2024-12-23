@@ -5,6 +5,7 @@ import chatMode from "./chat-mode";
 import cheerBitsAmount from "./cheer-bits-amount";
 import giftCount from "./gift-count";
 import giftDuration from "./gift-duration";
+import goldenKappaTrain from "./golden-kappa-train";
 import isAnonymous from "./is-anonymous";
 import message from "./message";
 import raidViewerCount from "./raid-viewer-count";
@@ -24,6 +25,7 @@ export default [
     cheerBitsAmount,
     giftCount,
     giftDuration,
+    goldenKappaTrain,
     isAnonymous,
     message,
     raidViewerCount,
