@@ -10,7 +10,7 @@ import accountAccess from "../common/account-access";
 import userAccess from "../common/user-access";
 import currencyAccess from "../currency/currency-access";
 import eventManager from "../events/EventManager";
-import backupManager from "../backup-manager";
+import { BackupManager } from "../backup-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import rankManager from "../ranks/rank-manager";
 import util, { wait } from "../utility";
@@ -449,7 +449,7 @@ class ViewerDatabase extends EventEmitter {
     }
 
     async purgeViewers(options: ViewerPurgeOptions): Promise<void> {
-        await backupManager.startBackup(false, async () => {
+        await BackupManager.startBackup(false, async () => {
             try {
                 const numRemoved = await this._db
                     .removeAsync({ $where: this.getPurgeWherePredicate(options)}, {multi: true});
