@@ -84,7 +84,7 @@
 
                             if (!foundMajorRelease && (updateType === UpdateType.MAJOR || updateType === UpdateType.MAJOR_PRERELEASE)) {
                                 foundMajorRelease = true;
-                                if (settingsService.notifyOnBeta()) {
+                                if (settingsService.getSetting("NotifyOnBeta")) {
                                     service.majorUpdate = {
                                         gitName: release.name,
                                         gitVersion: release.tag_name,
@@ -95,7 +95,7 @@
                                 updateType === UpdateType.PATCH ||
                                 updateType === UpdateType.MINOR ||
                                 updateType === UpdateType.NONE ||
-                                (updateType === UpdateType.PRERELEASE && settingsService.notifyOnBeta())) {
+                                (updateType === UpdateType.PRERELEASE && settingsService.getSetting("NotifyOnBeta"))) {
                                 latestRelease = release;
                                 latestUpdateType = updateType;
                                 break;
@@ -117,7 +117,7 @@
                             let updateIsAvailable = false;
                             if (latestUpdateType !== UpdateType.NONE) {
                                 updateIsAvailable = true;
-                                const autoUpdateLevel = settingsService.getAutoUpdateLevel();
+                                const autoUpdateLevel = settingsService.getSetting("AutoUpdateLevel");
 
                                 // Check if we should auto update based on the users setting
                                 if (shouldAutoUpdate(autoUpdateLevel, latestUpdateType)) {

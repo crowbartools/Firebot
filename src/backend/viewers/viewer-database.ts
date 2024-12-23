@@ -3,7 +3,7 @@ import Datastore from "@seald-io/nedb";
 import { DateTime } from "luxon";
 
 import { BasicViewer, FirebotViewer } from "../../types/viewers";
-import { settings } from "../common/settings-access";
+import { SettingsManager } from "../common/settings-manager";
 import logger from "../logwrapper";
 import profileManager from "../common/profile-manager";
 import accountAccess from "../common/account-access";
@@ -138,7 +138,7 @@ class ViewerDatabase extends EventEmitter {
      * @returns `true` if the viewer database is enabled, or `false` otherwise
      */
     isViewerDBOn(): boolean {
-        return settings.getViewerDbStatus();
+        return SettingsManager.getSetting("ViewerDB");
     }
 
     async connectViewerDatabase(): Promise<void> {

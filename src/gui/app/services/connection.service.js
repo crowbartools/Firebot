@@ -201,7 +201,7 @@
             function updateSidebarServicesOverallStatus() {
                 let oneDisconnected = false;
                 let oneConnected = false;
-                const serviceIds = settingsService.getSidebarControlledServices();
+                const serviceIds = settingsService.getSetting("SidebarControlledServices");
                 for (const serviceId of serviceIds) {
 
                     if (serviceId == null || (serviceId !== "chat" && !serviceId.startsWith("integration."))) {

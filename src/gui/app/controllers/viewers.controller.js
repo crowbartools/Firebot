@@ -7,7 +7,7 @@
         .controller("viewersController", function($route, $scope, viewersService, currencyService,
             utilityService, settingsService) {
 
-            $scope.viewerTablePageSize = settingsService.getViewerListPageSize();
+            $scope.viewerTablePageSize = settingsService.getSetting("ViewerListPageSize");
 
             $scope.showUserDetailsModal = (userId) => {
                 const closeFunc = () => {

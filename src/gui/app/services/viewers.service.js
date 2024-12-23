@@ -9,7 +9,7 @@
 
             // Check to see if the DB is turned on or not.
             service.isViewerDbOn = function() {
-                return settingsService.getViewerDB();
+                return settingsService.getSetting("ViewerDB");
             };
 
             service.viewers = [];

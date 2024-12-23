@@ -37,7 +37,7 @@
                 $ctrl.create = () => {
                     if (
                         settingsService
-                            .getOverlayInstances()
+                            .getSetting("OverlayInstances")
                             .includes($ctrl.name) || $ctrl.name === ""
                     ) {
                         $ctrl.createError = true;

@@ -97,7 +97,6 @@
         "fuse.js": "^7.0.0",
         "glob": "^10.3.10",
         "he": "^1.2.0",
-        "howler": "https://github.com/ebiggz/howler.js/tarball/master",
         "list.js": "^1.5.0",
         "luxon": "^3.1.1",
         "marked": "^13.0.3",

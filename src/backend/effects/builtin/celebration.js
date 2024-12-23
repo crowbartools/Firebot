@@ -1,8 +1,8 @@
 "use strict";
 
 const webServer = require("../../../server/http-server-manager");
-const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
-const { settings } = require("../../common/settings-access");
+const { EffectCategory } = require('../../../shared/effect-constants');
+const { SettingsManager } = require("../../common/settings-manager");
 
 /**
  * The Celebration effect
@@ -100,9 +100,9 @@ const celebration = {
             celebrationDuration: celebrationDuration
         };
 
-        if (settings.useOverlayInstances()) {
+        if (SettingsManager.getSetting("UseOverlayInstances")) {
             if (effect.overlayInstance != null) {
-                if (settings.getOverlayInstances().includes(effect.overlayInstance)) {
+                if (SettingsManager.getSetting("OverlayInstances").includes(effect.overlayInstance)) {
                     data.overlayInstance = effect.overlayInstance;
                 }
             }
