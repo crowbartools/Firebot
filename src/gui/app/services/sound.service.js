@@ -5,7 +5,7 @@
 
     angular
         .module("firebotApp")
-        .factory("soundService", function(logger, settingsService, listenerService, $q, websocketService, backendCommunicator) {
+        .factory("soundService", function(logger, settingsService, listenerService, $q, backendCommunicator) {
             const service = {};
             /** @type {HTMLAudioElement[]} */
             const sounds = [];
@@ -178,7 +178,6 @@
             listenerService.registerListener(
                 { type: listenerService.ListenerType.PLAY_SOUND },
                 (data) => {
-                    const filepath = data.filepath;
                     const volume = data.volume / 100 * 10;
 
                     let selectedOutputDevice = data.audioOutputDevice;
@@ -189,21 +188,7 @@
                         selectedOutputDevice = settingsService.getSetting("AudioOutputDevice");
                     }
 
-                    if (selectedOutputDevice.deviceId === 'overlay') {
-
-                        websocketService.broadcast({
-                            event: "sound",
-                            filepath: filepath,
-                            url: data.url,
-                            isUrl: data.isUrl,
-                            format: data.format,
-                            volume: volume,
-                            resourceToken: data.resourceToken,
-                            overlayInstance: data.overlayInstance,
-                            maxSoundLength: data.maxSoundLength
-                        });
-
-                    } else {
+                    if (selectedOutputDevice.deviceId !== 'overlay') {
                         service.playSound(data.isUrl ? data.url : data.filepath, volume, selectedOutputDevice, data.format, data.maxSoundLength);
                     }
                 }
