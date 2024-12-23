@@ -868,7 +868,7 @@ module.exports = {
                 progress: "150",
                 goal: "500",
                 level: "1",
-                isGoldenKappa: false
+                isGoldenKappaTrain: false
             },
             activityFeed: {
                 icon: "fad fa-train",
@@ -888,7 +888,7 @@ module.exports = {
                 progress: "150",
                 goal: "500",
                 level: "1",
-                isGoldenKappa: false
+                isGoldenKappaTrain: false
             },
             activityFeed: {
                 icon: "fad fa-train",
@@ -908,7 +908,7 @@ module.exports = {
             manualMetadata: {
                 total: "150",
                 level: "1",
-                isGoldenKappa: false
+                isGoldenKappaTrain: false
             },
             activityFeed: {
                 icon: "fad fa-train",

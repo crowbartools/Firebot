@@ -3,19 +3,23 @@ import { EffectTrigger } from "../../../../../shared/effect-constants";
 import { OutputDataType, VariableCategory } from "../../../../../shared/variable-constants";
 
 const triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:hype-train-start", "twitch:hype-train-progress", "twitch:hype-train-end"];
+triggers[EffectTrigger.EVENT] = [
+    "twitch:hype-train-end",
+    "twitch:hype-train-progress",
+    "twitch:hype-train-start"
+];
 triggers[EffectTrigger.MANUAL] = true;
 
 const model: ReplaceVariable = {
     definition: {
         handle: "isGoldenKappaTrain",
-        description: "Whether or not a Twitch Hype Train is a Golden Kappa Train.",
+        description: "`true` when the hype train is a Golden Kappa Train, `false` otherwise.",
         triggers: triggers,
         categories: [VariableCategory.TRIGGER],
         possibleDataOutput: [OutputDataType.BOOLEAN]
     },
     evaluator: (trigger) => {
-        return trigger.metadata?.eventData?.isGoldenKappa ?? false;
+        return trigger.metadata?.eventData?.isGoldenKappaTrain ?? false;
     }
 };
 
