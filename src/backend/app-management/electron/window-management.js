@@ -11,7 +11,8 @@ const logger = require("../../logwrapper");
 const { setupTitlebar, attachTitlebarToWindow } = require("custom-electron-titlebar/main");
 const screenHelpers = require("./screen-helpers");
 const frontendCommunicator = require("../../common/frontend-communicator");
-const { settings } = require("../../common/settings-access");
+const { SettingsManager } = require("../../common/settings-manager");
+const { BackupManager } = require("../../backup-manager");
 
 const argv = require('../../common/argv-parser');
 
@@ -253,9 +254,7 @@ async function createMainWindow() {
                     toolTip: "Open the folder where backups are stored",
                     sublabel: "Open the folder where backups are stored",
                     click: () => {
-                        const backupFolder = path.resolve(
-                            dataAccess.getPathInUserData("/backups/")
-                        );
+                        const backupFolder = BackupManager.backupFolderPath;
                         shell.openPath(backupFolder);
                     },
                     icon: await createIconImage("../../../gui/images/icons/mdi/folder-refresh-outline.png")
@@ -330,7 +329,7 @@ async function createMainWindow() {
                     toolTip: "Restores Firebot from a backup",
                     sublabel: "Restores Firebot from a backup",
                     click: async () => {
-                        frontendCommunicator.send("restore-backup");
+                        frontendCommunicator.send("backups:start-restore-backup");
                     },
                     icon: await createIconImage("../../../gui/images/icons/mdi/backup-restore.png")
                 },
@@ -473,7 +472,7 @@ async function createMainWindow() {
             username: "Firebot"
         });
 
-        if (settings.getOpenStreamPreviewOnLaunch() === true) {
+        if (SettingsManager.getSetting("OpenStreamPreviewOnLaunch") === true) {
             createStreamPreviewWindow();
         }
 
@@ -483,7 +482,7 @@ async function createMainWindow() {
 
     mainWindow.on("close", (event) => {
         const connectionManager = require("../../common/connection-manager");
-        if (!settings.hasJustUpdated() && connectionManager.chatIsConnected() && connectionManager.streamerIsOnline()) {
+        if (!SettingsManager.getSetting("JustUpdated") && connectionManager.chatIsConnected() && connectionManager.streamerIsOnline()) {
             event.preventDefault();
             dialog.showMessageBox(mainWindow, {
                 message: "Are you sure you want to close Firebot while connected to Twitch?",

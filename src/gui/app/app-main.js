@@ -194,8 +194,8 @@
         connectionService.validateAccounts();
 
         ttsService.obtainVoices().then(() => {
-            if (settingsService.getDefaultTtsVoiceId() == null) {
-                settingsService.setDefaultTtsVoiceId(ttsService.getOsDefaultVoiceId());
+            if (settingsService.getSetting("DefaultTtsVoiceId") == null) {
+                settingsService.saveSetting("DefaultTtsVoiceId", ttsService.getOsDefaultVoiceId());
             }
         });
 
@@ -390,12 +390,12 @@
         //$scope.accounts = connectionService.accounts;
         //$scope.profiles = connectionService.profiles;
 
-        if (settingsService.hasJustUpdated()) {
+        if (settingsService.getSetting("JustUpdated")) {
             utilityService.showUpdatedModal();
-            settingsService.setJustUpdated(false);
-        } else if (settingsService.isFirstTimeUse()) {
+            settingsService.saveSetting("JustUpdated", false);
+        } else if (settingsService.getSetting("FirstTimeUse")) {
             utilityService.showSetupWizard();
-            settingsService.setFirstTimeUse(false);
+            settingsService.saveSetting("FirstTimeUse", false);
         }
 
         /**
@@ -415,7 +415,7 @@
 
         // Apply Theme
         $scope.appTheme = function() {
-            return settingsService.getTheme();
+            return settingsService.getSetting("Theme");
         };
 
         $rootScope.showSpinner = false;
@@ -442,7 +442,7 @@
             });
         });
 
-        backendCommunicator.on("restore-backup", () => {
+        backendCommunicator.on("backups:start-restore-backup", () => {
             backupService.openBackupZipFilePicker()
                 .then((backupFilePath) => {
                     if (backupFilePath != null) {
@@ -516,7 +516,7 @@
 
     app.filter("hideBotMessages", function(settingsService, accountAccess) {
         return function(elements) {
-            const shouldHide = settingsService.chatHideBotAccountMessages();
+            const shouldHide = settingsService.getSetting("ChatHideBotAccountMessages");
             if (!shouldHide) {
                 return elements;
             }
@@ -533,7 +533,7 @@
 
     app.filter("hideWhispers", function(settingsService) {
         return function(elements) {
-            const shouldHide = settingsService.getChatHideWhispers();
+            const shouldHide = settingsService.getSetting("ChatHideWhispers");
             if (!shouldHide) {
                 return elements;
             }

@@ -24,7 +24,8 @@ const filter: EventFilter = {
         { eventSourceId: "streamloots", eventId: "purchase" },
         { eventSourceId: "streamloots", eventId: "redemption" },
         { eventSourceId: "firebot", eventId: "view-time-update" },
-        { eventSourceId: "firebot", eventId: "viewer-rank-updated" }
+        { eventSourceId: "firebot", eventId: "viewer-rank-updated" },
+        { eventSourceId: "firebot", eventId: "currency-update" }
     ],
     comparisonTypes: ["include", "doesn't include"],
     valueType: "preset",

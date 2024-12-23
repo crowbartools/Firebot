@@ -1,6 +1,6 @@
 "use strict";
 
-const { settings } = require("../../common/settings-access");
+const { SettingsManager } = require("../../common/settings-manager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/http-server-manager");
 const twitchApi = require("../../twitch-api/api");
@@ -248,9 +248,9 @@ const effect = {
             effect.position = mediaProcessor.randomLocation();
         }
 
-        if (settings.useOverlayInstances()) {
+        if (SettingsManager.getSetting("UseOverlayInstances")) {
             if (effect.overlayInstance != null) {
-                if (!settings.getOverlayInstances().includes(effect.overlayInstance)) {
+                if (!SettingsManager.getSetting("OverlayInstances").includes(effect.overlayInstance)) {
                     effect.overlayInstance = null;
                 }
             }

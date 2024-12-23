@@ -6,7 +6,7 @@ import bodyParser from "body-parser";
 import cors from 'cors';
 import path from 'path';
 import logger from "../backend/logwrapper";
-import { settings } from "../backend/common/settings-access";
+import { SettingsManager } from "../backend/common/settings-manager";
 import effectManager from "../backend/effects/effectManager";
 import resourceTokenManager from "../backend/resourceTokenManager";
 import websocketServerManager from "./websocket-server-manager";
@@ -200,7 +200,7 @@ class HttpServerManager extends EventEmitter {
     }
 
     startDefaultHttpServer() {
-        const port: number = settings.getWebServerPort();
+        const port: number = SettingsManager.getSetting("WebServerPort");
 
         websocketServerManager.createServer(this.defaultHttpServer);
 

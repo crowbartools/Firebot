@@ -176,8 +176,8 @@ exports.whenReady = async () => {
     builtinGameLoader.loadGames();
 
     windowManagement.updateSplashScreenStatus("Loading custom variables...");
-    const {settings} = require("../../../common/settings-access");
-    if (settings.getPersistCustomVariables()) {
+    const { SettingsManager } = require("../../../common/settings-manager");
+    if (SettingsManager.getSetting("PersistCustomVariables")) {
         const customVariableManager = require("../../../common/custom-variable-manager");
         customVariableManager.loadVariablesFromFile();
     }
@@ -233,8 +233,8 @@ exports.whenReady = async () => {
     global.SCRIPTS_DIR = profileManager.getPathInProfile("/scripts/");
 
     windowManagement.updateSplashScreenStatus("Running daily backup...");
-    const backupManager = require("../../../backup-manager");
-    await backupManager.onceADayBackUpCheck();
+    const { BackupManager } = require("../../../backup-manager");
+    await BackupManager.onceADayBackUpCheck();
 
     // start the REST api server
     windowManagement.updateSplashScreenStatus("Starting internal web server...");

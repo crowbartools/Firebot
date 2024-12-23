@@ -2,7 +2,7 @@
 
 const clipProcessor = require("../../common/handlers/createClipProcessor");
 const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
-const { settings } = require("../../common/settings-access");
+const { SettingsManager } = require("../../common/settings-manager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/http-server-manager");
 const utils = require("../../utility");
@@ -202,9 +202,9 @@ const clip = {
                 }
 
                 let overlayInstance = null;
-                if (settings.useOverlayInstances()) {
+                if (SettingsManager.getSetting("UseOverlayInstances")) {
                     if (effect.overlayInstance != null) {
-                        if (settings.getOverlayInstances().includes(effect.overlayInstance)) {
+                        if (SettingsManager.getSetting("OverlayInstances").includes(effect.overlayInstance)) {
                             overlayInstance = effect.overlayInstance;
                         }
                     }
