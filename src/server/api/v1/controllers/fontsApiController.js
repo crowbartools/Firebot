@@ -1,9 +1,9 @@
 'use strict';
 
-const fontManager = require('../../../../backend/fontManager');
+const fontManager = require('../../../../backend/font-manager');
 
 exports.getFontNames = function(req, res) {
-    const fonts = fontManager.getInstalledFonts().map(f => {
+    const fonts = fontManager.getInstalledFonts().map((f) => {
         return {
             name: f.name,
             format: f.format
