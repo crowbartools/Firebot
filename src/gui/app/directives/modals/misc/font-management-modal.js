@@ -24,7 +24,7 @@
                     </div>
                 </div>
                 <div style="color: #fb7373;" ng-if="$ctrl.installError">{{$ctrl.installError}}</div>
-                <div style="color: green;text-align: center;padding-top: 5px;" ng-if="$ctrl.installSuccessful">Font successfully installed! Please <strong>refresh the overlay</strong> to put changes into effect.</div>
+                <div style="color: green;text-align: center;padding-top: 5px;" ng-if="$ctrl.installSuccessful">Font successfully installed!</div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-default pull-left" ng-click="$ctrl.openFileExplorer()">Install Font</button>
