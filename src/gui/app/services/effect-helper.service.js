@@ -4,10 +4,7 @@
 
     angular
         .module("firebotApp")
-        .factory("effectHelperService", function(
-            listenerService,
-            backendCommunicator
-        ) {
+        .factory("effectHelperService", function(backendCommunicator) {
             const service = {};
 
             service.getEffectDefinition = function(id) {
@@ -15,10 +12,7 @@
                     return null;
                 }
 
-                const effectDef = listenerService.fireEventSync(
-                    "getEffectDefinition",
-                    id
-                );
+                const effectDef = backendCommunicator.fireEventSync("getEffectDefinition", id);
 
                 if (effectDef == null) {
                     return null;

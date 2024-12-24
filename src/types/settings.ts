@@ -86,7 +86,15 @@ export type FirebotSettingsTypes = {
 }
 
 export const FirebotGlobalSettings: Partial<Record<keyof FirebotSettingsTypes, boolean>> = {
-    DebugMode: true
+    BackupBeforeUpdates: true,
+    BackupIgnoreResources: true,
+    BackupKeepAll: true,
+    BackupLocation: true,
+    BackupOnceADay: true,
+    BackupOnExit: true,
+    DebugMode: true,
+    LastBackupDate: true,
+    MaxBackupCount: true
 };
 
 export const FirebotSettingsDefaults: FirebotSettingsTypes = {

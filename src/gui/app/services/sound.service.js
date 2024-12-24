@@ -5,7 +5,7 @@
 
     angular
         .module("firebotApp")
-        .factory("soundService", function(logger, settingsService, listenerService, $q, websocketService, backendCommunicator) {
+        .factory("soundService", function(logger, settingsService, $q, backendCommunicator) {
             const service = {};
             /** @type {HTMLAudioElement[]} */
             const sounds = [];
@@ -175,39 +175,21 @@
             });
 
             // Watches for an event from main process
-            listenerService.registerListener(
-                { type: listenerService.ListenerType.PLAY_SOUND },
-                (data) => {
-                    const filepath = data.filepath;
-                    const volume = data.volume / 100 * 10;
+            backendCommunicator.on("playsound", (data) => {
+                const volume = data.volume / 100 * 10;
 
-                    let selectedOutputDevice = data.audioOutputDevice;
-                    if (
-                        selectedOutputDevice == null ||
-                        selectedOutputDevice.label === "App Default"
-                    ) {
-                        selectedOutputDevice = settingsService.getSetting("AudioOutputDevice");
-                    }
-
-                    if (selectedOutputDevice.deviceId === 'overlay') {
-
-                        websocketService.broadcast({
-                            event: "sound",
-                            filepath: filepath,
-                            url: data.url,
-                            isUrl: data.isUrl,
-                            format: data.format,
-                            volume: volume,
-                            resourceToken: data.resourceToken,
-                            overlayInstance: data.overlayInstance,
-                            maxSoundLength: data.maxSoundLength
-                        });
-
-                    } else {
-                        service.playSound(data.isUrl ? data.url : data.filepath, volume, selectedOutputDevice, data.format, data.maxSoundLength);
-                    }
+                let selectedOutputDevice = data.audioOutputDevice;
+                if (
+                    selectedOutputDevice == null ||
+                    selectedOutputDevice.label === "App Default"
+                ) {
+                    selectedOutputDevice = settingsService.getSetting("AudioOutputDevice");
                 }
-            );
+
+                if (selectedOutputDevice.deviceId !== 'overlay') {
+                    service.playSound(data.isUrl ? data.url : data.filepath, volume, selectedOutputDevice, data.format, data.maxSoundLength);
+                }
+            });
 
             service.stopAllSounds = function() {
                 logger.info("Stopping all sounds...");

@@ -59,29 +59,6 @@
   </div>
 </div>
 
-<!-- Modal For Editing Overlay Port -->
-<script type="text/ng-template" id="changePortModal.html">
-  <div class="modal-header">
-    <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <h4 class="modal-title">Edit Web Server Port</h4>
-  </div>
-  <div class="modal-body">
-    <div class="mt-6" style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
-      <div style="width: 55%; position: relative;">
-        <div class="form-group" ng-class="{'has-error': newPortError}">
-          <label class="control-label" for="newPort">New Port</label>
-          <input type="number" class="form-control" id="newPort" ng-model="newPort" aria-describedby="helpBlock">
-          <span id="helpBlock" class="help-block" ng-show="newPortError">This is not a valid port number.</span>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-link" ng-click="dismiss()">Cancel</button>
-    <button type="button" class="btn btn-primary" ng-click="changePort()">Change Port</button>
-  </div>
-</script>
-
 <!-- View Backups Modal -->
 <script type="text/ng-template" id="backupListModal.html">
   <div class="modal-header flex-row-center jspacebetween">

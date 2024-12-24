@@ -16,6 +16,32 @@ import {
 class SettingsManager extends EventEmitter {
     settingsCache = {};
 
+    constructor() {
+        super();
+
+        this.migrateUserSettingsToGlobal();
+
+        frontendCommunicator.on("settings:get-setting-path", (settingName: keyof FirebotSettingsTypes) => {
+            return this.getSettingPath(settingName);
+        });
+
+        frontendCommunicator.on("settings:get-setting", (settingName: keyof FirebotSettingsTypes) => {
+            return this.getSetting(settingName);
+        });
+
+        frontendCommunicator.on("settings:save-setting", (request: { settingName: keyof FirebotSettingsTypes, data: FirebotSettingsTypes[keyof FirebotSettingsTypes] }) => {
+            this.saveSetting(request.settingName, request.data);
+        });
+
+        frontendCommunicator.on("settings:delete-setting", (settingName: keyof FirebotSettingsTypes) => {
+            this.deleteSetting(settingName);
+        });
+
+        frontendCommunicator.on("settings:flush-settings-cache", () => {
+            this.flushSettingsCache();
+        });
+    }
+
     private getSettingsFile(): JsonDB {
         return profileManager.getJsonDbInProfile("/settings");
     }
@@ -33,6 +59,42 @@ class SettingsManager extends EventEmitter {
                 firstTimeUse: false
             }
         }));
+    }
+
+    private migrateUserSettingsToGlobal() {
+        // Iterate through all the global settings
+        Object.keys(FirebotGlobalSettings).forEach((setting: keyof FirebotSettingsTypes) => {
+            const settingPath = this.getSettingPath(setting);
+            const userSettingExists = this.userSettingExists(settingPath);
+            const globalSettingExists = this.globalSettingExists(settingPath);
+
+            // If there IS a user value but NOT a global value,
+            // save the user value to the global file and delete the user value
+            if (userSettingExists && !globalSettingExists) {
+                this.saveSetting(setting, this.getDataFromFile(settingPath, true));
+                this.deleteUserDataAtPath(settingPath);
+            }
+        });
+    }
+
+    private userSettingExists(settingPath: string) {
+        let success = false;
+
+        try {
+            success = this.getSettingsFile().getData(settingPath) != null;
+        } catch { }
+
+        return success;
+    }
+
+    private globalSettingExists(settingPath: string) {
+        let success = false;
+
+        try {
+            success = this.getGlobalSettingsFile().getData(settingPath) != null;
+        } catch { }
+
+        return success;
     }
 
     private getDataFromFile(settingPath: string, forceCacheUpdate = false, defaultValue = undefined) {
@@ -96,9 +158,17 @@ class SettingsManager extends EventEmitter {
         }
     }
 
-    private deleteDataAtPath(settingPath: string) {
+    private deleteUserDataAtPath(settingPath: string) {
         try {
             this.getSettingsFile().delete(settingPath);
+            delete this.settingsCache[settingPath];
+            frontendCommunicator.send("settings:setting-deleted", settingPath);
+        } catch { }
+    }
+
+    private deleteGlobalDataAtPath(settingPath: string) {
+        try {
+            this.getGlobalSettingsFile().delete(settingPath);
             delete this.settingsCache[settingPath];
             frontendCommunicator.send("settings:setting-deleted", settingPath);
         } catch { }
@@ -151,7 +221,9 @@ class SettingsManager extends EventEmitter {
         } else {
             this.pushDataToFile(this.getSettingPath(settingName), data);
         }
-        this.emit(`settings:setting-saved:${settingName}`, data);
+
+        frontendCommunicator.send(`settings:setting-updated:${settingName}`, data);
+        this.emit(`settings:setting-updated:${settingName}`, data);
     }
 
     /**
@@ -160,7 +232,13 @@ class SettingsManager extends EventEmitter {
      * @param settingName Name of the setting to delete
      */
     deleteSetting<SettingName extends keyof FirebotSettingsTypes>(settingName: SettingName) {
-        this.deleteDataAtPath(this.getSettingPath(settingName));
+        if (FirebotGlobalSettings[settingName] === true) {
+            this.deleteGlobalDataAtPath(this.getSettingPath(settingName));
+        } else {
+            this.deleteUserDataAtPath(this.getSettingPath(settingName));
+        }
+
+        frontendCommunicator.send(`settings:setting-updated:${settingName}`, null);
         this.emit(`settings:setting-deleted:${settingName}`);
     }
 
@@ -308,25 +386,5 @@ class SettingsManager extends EventEmitter {
 }
 
 const settings = new SettingsManager();
-
-frontendCommunicator.on("settings:get-setting-path", (settingName: keyof FirebotSettingsTypes) => {
-    return settings.getSettingPath(settingName);
-});
-
-frontendCommunicator.on("settings:get-setting", (settingName: keyof FirebotSettingsTypes) => {
-    return settings.getSetting(settingName);
-});
-
-frontendCommunicator.on("settings:save-setting", (request: { settingName: keyof FirebotSettingsTypes, data: FirebotSettingsTypes[keyof FirebotSettingsTypes] }) => {
-    settings.saveSetting(request.settingName, request.data);
-});
-
-frontendCommunicator.on("settings:delete-setting", (settingName: keyof FirebotSettingsTypes) => {
-    settings.deleteSetting(settingName);
-});
-
-frontendCommunicator.on("settings:flush-settings-cache", () => {
-    settings.flushSettingsCache();
-});
 
 export { settings as SettingsManager };

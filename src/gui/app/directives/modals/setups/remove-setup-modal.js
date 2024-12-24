@@ -57,7 +57,7 @@
             },
             controller: function($q, logger, ngToast, commandsService, countersService, currencyService,
                 effectQueuesService, eventsService, hotkeyService, presetEffectListsService,
-                timerService, viewerRolesService, quickActionsService, variableMacroService, viewerRanksService, backendCommunicator) {
+                timerService, scheduledTaskService, viewerRolesService, quickActionsService, variableMacroService, viewerRanksService, backendCommunicator) {
                 const $ctrl = this;
 
                 $ctrl.setupFilePath = null;
@@ -74,6 +74,7 @@
                     hotkeys: "Hotkey",
                     presetEffectLists: "Preset Effect List",
                     timers: "Timer",
+                    scheduledTasks: "Scheduled Effect List",
                     variableMacros: "Variable Macro",
                     viewerRoles: "Viewer Role",
                     viewerRankLadders: "Viewer Rank Ladder",
@@ -90,6 +91,7 @@
                     hotkeys: [],
                     presetEffectLists: [],
                     timers: [],
+                    scheduledTasks: [],
                     variableMacros: [],
                     viewerRoles: [],
                     viewerRankLadders: [],
@@ -109,6 +111,7 @@
                     ...hotkeyService.getHotkeys().map(i => i.id),
                     ...presetEffectListsService.getPresetEffectLists().map(i => i.id),
                     ...timerService.getTimers().map(i => i.id),
+                    ...scheduledTaskService.getScheduledTasks().map(i => i.id),
                     ...variableMacroService.macros.map(i => i.id),
                     ...viewerRolesService.getCustomRoles().map(i => i.id),
                     ...viewerRanksService.rankLadders.map(i => i.id),
