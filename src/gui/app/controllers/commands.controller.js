@@ -4,12 +4,9 @@
         .module("firebotApp")
         .controller("commandsController", function(
             $scope,
-            triggerSearchFilter,
-            sortTagSearchFilter,
             commandsService,
             utilityService,
-            listenerService,
-            viewerRolesService,
+            backendCommunicator,
             objectCopyHelper,
             sortTagsService
         ) {
@@ -22,10 +19,7 @@
             $scope.sts = sortTagsService;
 
             $scope.manuallyTriggerCommand = (id) => {
-                listenerService.fireEvent(
-                    listenerService.EventType.COMMAND_MANUAL_TRIGGER,
-                    id
-                );
+                backendCommunicator.send("command-manual-trigger", id);
             };
 
             $scope.toggleCustomCommandActiveState = (command) => {

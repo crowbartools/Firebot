@@ -1,41 +1,10 @@
 "use strict";
 
-const { ipcMain, dialog } = require("electron");
 const { SettingsManager } = require("../settings-manager");
 const resourceTokenManager = require("../../resourceTokenManager.js");
 const util = require("../../utility");
 const logger = require("../../logwrapper");
 const webServer = require("../../../server/http-server-manager");
-
-// Get Sound File Path
-// This listens for an event from the render media.js file to open a dialog to get a filepath.
-ipcMain.on("getSoundPath", function(event, uniqueid) {
-    const path = dialog.showOpenDialogSync({
-        properties: ["openFile"],
-        filters: [{ name: "Audio", extensions: ["mp3", "ogg", "oga", "wav", "flac"] }]
-    });
-    event.sender.send("gotSoundFilePath", { path: path, id: uniqueid });
-});
-
-// Get Video File Path
-// This listens for an event from the render media.js file to open a dialog to get a filepath.
-ipcMain.on("getVideoPath", function(event, uniqueid) {
-    const path = dialog.showOpenDialogSync({
-        properties: ["openFile"],
-        filters: [{ name: "Video", extensions: ["mp4", "webm", "ogv"] }]
-    });
-    event.sender.send("gotVideoFilePath", { path: path, id: uniqueid });
-});
-
-// Get Image File Path
-// This listens for an event from the render media.js file to open a dialog to get a filepath.
-ipcMain.on("getImagePath", function(event, uniqueid) {
-    const path = dialog.showOpenDialogSync({
-        properties: ["openFile"],
-        filters: [{ name: "Image", extensions: ["jpg", "gif", "png", "jpeg"] }]
-    });
-    event.sender.send("gotImageFilePath", { path: path, id: uniqueid });
-});
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);

@@ -11,7 +11,7 @@
 
     angular
         .module('firebotApp')
-        .factory('updatesService', function (logger, $q, $http, $sce, settingsService, utilityService, listenerService) {
+        .factory('updatesService', function (logger, $q, $http, $sce, settingsService, utilityService, backendCommunicator) {
             // factory/service object
             const service = {};
 
@@ -122,7 +122,7 @@
                                 // Check if we should auto update based on the users setting
                                 if (shouldAutoUpdate(autoUpdateLevel, latestUpdateType)) {
                                     utilityService.showDownloadModal();
-                                    listenerService.fireEvent(listenerService.EventType.DOWNLOAD_UPDATE);
+                                    backendCommunicator.send("downloadUpdate");
                                 }
                             }
 
@@ -154,14 +154,14 @@
             service.downloadUpdate = function() {
                 if (service.updateIsAvailable()) {
                     utilityService.showDownloadModal();
-                    listenerService.fireEvent(listenerService.EventType.DOWNLOAD_UPDATE);
+                    backendCommunicator.send("downloadUpdate");
                 }
             };
 
             service.installUpdate = function() {
                 if (service.updateIsAvailable()) {
                     utilityService.showDownloadModal();
-                    listenerService.fireEvent(listenerService.EventType.INSTALL_UPDATE);
+                    backendCommunicator.send("installUpdate");
                 }
             };
 

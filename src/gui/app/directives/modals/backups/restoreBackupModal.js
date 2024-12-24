@@ -37,7 +37,7 @@
             dismiss: "&",
             modalInstance: "<"
         },
-        controller: function($timeout, $q, logger, backupService, listenerService) {
+        controller: function($timeout, $q, logger, backupService, backendCommunicator) {
             const $ctrl = this;
 
             $ctrl.restoreComplete = false;
@@ -47,7 +47,7 @@
 
             $ctrl.exit = function() {
                 if ($ctrl.restoreComplete) {
-                    listenerService.fireEvent(listenerService.EventType.RESTART_APP);
+                    backendCommunicator.send("restartApp");
                 } else {
                     $ctrl.modalInstance.dismiss("cancel");
                 }
