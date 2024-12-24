@@ -19,12 +19,13 @@ const model : ReplaceVariable = {
             },
             {
                 usage: 'rawArrayFilter[rawArray, value, key, true]',
-                description: 'Filter out any item in the array that has a key property twitch equals "value"'
+                description: 'Filter out any item in the array that has a key property which equals "value"'
             }
         ],
 
         categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.TEXT],
+        hidden: true
     },
     evaluator: arrayFilter.evaluator
 };

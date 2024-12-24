@@ -6,7 +6,7 @@ import bitsLeaderboard from './bits-leaderboard';
 const model : ReplaceVariable = {
     definition: {
         handle: "rawBitsLeaderboard",
-        description: "(Deprecated: use $bitsLoaderboard) Returns a raw array of the all-time bits leaderboard of the streamer's channel, up to the specified count. Each item in the array has a `username` and `amount` property",
+        description: "(Deprecated: use $bitsLeaderboard) Returns a raw array of the all-time bits leaderboard of the streamer's channel, up to the specified count. Each item in the array has a `username` and `amount` property",
         usage: "rawBitsLeaderboard[count]",
         examples: [
             {
@@ -19,7 +19,8 @@ const model : ReplaceVariable = {
             }
         ],
         categories: [VariableCategory.COMMON, VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.ARRAY],
+        hidden: true
     },
     evaluator: bitsLeaderboard.evaluator,
     argsCheck: bitsLeaderboard.argsCheck
