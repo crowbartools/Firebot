@@ -6,7 +6,7 @@ const logger = require("../logwrapper");
 const commandList = require("./sync-handlers/command-list");
 const quoteList = require("./sync-handlers/quotes-list");
 const frontendCommunicator = require("../common/frontend-communicator");
-const { settings } = require("../common/settings-access");
+const { SettingsManager } = require("../common/settings-manager");
 const rankManager = require("../ranks/rank-manager");
 
 async function syncProfileData(profileSyncData) {
@@ -25,7 +25,7 @@ async function syncProfileData(profileSyncData) {
         'variables': variableManager.getReplaceVariables().map(v => v.definition),
         'ranks': rankManager.getAllItems(),
         'quotes': quotes,
-        'allowQuoteCSVDownloads': settings.getAllowQuoteCSVDownloads()
+        'allowQuoteCSVDownloads': SettingsManager.getSetting("AllowQuoteCSVDownloads")
     };
 
     const binId = await cloudSync.sync(completeSyncJSON);

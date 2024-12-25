@@ -6,7 +6,7 @@ const electron = require("electron");
 const { Menu, Tray, app, nativeImage } = electron;
 
 const frontendCommunicator = require('../../common/frontend-communicator.js');
-const { settings } = require("../../common/settings-access");
+const { SettingsManager } = require("../../common/settings-manager");
 
 let mainTray;
 let minimizedToTray = false;
@@ -62,7 +62,7 @@ module.exports = function createTray(mainWindow) {
     });
 
     mainWindow.on('minimize', () => {
-        if (settings.getMinimizeToTray() && minimizedToTray !== true) {
+        if (SettingsManager.getSetting("MinimizeToTray") && minimizedToTray !== true) {
             mainWindow.hide();
             minimizedToTray = true;
         }

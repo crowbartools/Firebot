@@ -1,14 +1,21 @@
-"use strict";
-
-const { EffectCategory } = require('../../../shared/effect-constants');
-const twitchApi = require("../../twitch-api/api");
-const customRolesManager = require("../../roles/custom-roles-manager");
-const logger = require('../../logwrapper');
+import { EffectType } from "../../../types/effects";
+import { EffectCategory } from "../../../shared/effect-constants";
+import twitchApi from "../../twitch-api/api";
+import customRolesManager from "../../roles/custom-roles-manager";
+import logger from "../../logwrapper";
+import viewerDatabase from "../../viewers/viewer-database";
+import { BasicViewer } from "../../../types/viewers";
 
 /**
- * The Delay effect
+ * The 'Update Role' effect
  */
-const delay = {
+const model: EffectType<{
+    addRoleId: string;
+    customViewer: string;
+    removeRoleId: string;
+    removeAllRoleId: string;
+    viewerType: "current" | "custom";
+}> = {
     /**
    * The definition of the Effect
    */
@@ -20,10 +27,8 @@ const delay = {
         categories: [EffectCategory.ADVANCED],
         dependencies: []
     },
-    globalSettings: {},
     optionsTemplate: `
-
-    <eos-container header="Custom Role Actions" pad-top="true">
+        <eos-container header="Custom Role Actions" pad-top="true">
             <div>
                 <label class="control-fb control--checkbox"> Add user to role</tooltip>
                     <input type="checkbox" ng-init="shouldAddRole = (effect.addRoleId != null && effect.addRoleId !== '')" ng-model="shouldAddRole" ng-click="effect.addRoleId = undefined">
@@ -111,33 +116,53 @@ const delay = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const effect = event.effect;
-        
+
         if (effect.removeAllRoleId) {
             customRolesManager.removeAllViewersFromRole(effect.removeAllRoleId);
             return;
         }
 
-        let username = "";
+        const user: BasicViewer = {
+            id: "",
+            username: ""
+        };
+
         if (effect.viewerType === "current") {
-            username = event.trigger.metadata.username;
+            user.id = event.trigger.metadata.userId as string | undefined ?? event.trigger.metadata.eventData?.userId as string | undefined;
+            user.username = event.trigger.metadata.username as string | undefined ?? event.trigger.metadata.eventData?.username as string | undefined;
+            user.displayName = event.trigger.metadata.userDisplayName as string | undefined ?? event.trigger.metadata.eventData?.userDisplayName as string | undefined;
         } else {
-            username = effect.customViewer ? effect.customViewer.trim() : "";
+            user.username = effect.customViewer ? effect.customViewer.trim() : "";
         }
 
-        const user = await twitchApi.users.getUserByName(username);
-        if (user == null) {
-            logger.warn(`Unable to ${effect.addRoleId ? "add" : "remove"} custom role for ${username}. User does not exist.`);
-            return;
+        if (user.id == null || user.id === "") {
+            if (user.username === "") {
+                logger.warn(`Unable to ${effect.addRoleId ? "add" : "remove"} custom role. No user information provided.`);
+                return;
+            }
+
+            const viewer = await viewerDatabase.getViewerByUsername(user.username);
+
+            if (viewer) {
+                user.id = viewer._id;
+                user.displayName = viewer.displayName;
+            } else {
+                const twitchUser = await twitchApi.users.getUserByName(user.username);
+
+                if (twitchUser == null) {
+                    logger.warn(`Unable to ${effect.addRoleId ? "add" : "remove"} custom role for ${user.username}. User does not exist.`);
+                    return;
+                }
+
+                user.id = twitchUser.id;
+                user.displayName = twitchUser.displayName;
+            }
         }
 
         if (effect.addRoleId) {
-            customRolesManager.addViewerToRole(effect.addRoleId, {
-                id: user.id,
-                username: user.name,
-                displayName: user.displayName
-            });
+            customRolesManager.addViewerToRole(effect.addRoleId, user);
         }
 
         if (effect.removeRoleId) {
@@ -148,4 +173,4 @@ const delay = {
     }
 };
 
-module.exports = delay;
+export = model;

@@ -8,7 +8,7 @@ const model : ReplaceVariable = {
     definition: {
         handle: "rawRandomCustomRoleUser",
         usage: "rawRandomCustomRoleUser[role]",
-        description: "Returns a random user that has the specified custom role as an object containing `id`, `username`, and `displayName` fields.",
+        description: "Returns a random user that has the specified custom role as an object containing `id`, `username`, and `displayName` properties.",
         categories: [VariableCategory.USER],
         possibleDataOutput: [OutputDataType.OBJECT]
     },
