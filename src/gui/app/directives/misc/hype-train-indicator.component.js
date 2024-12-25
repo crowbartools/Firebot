@@ -17,6 +17,12 @@
                 >
                     <i class="fas fa-subway" style="margin-right: 5px; font-size: 12px;" />
                     <span class="level-pill">LVL {{hts.currentLevel}}</span>
+                    <span ng-if="hts.isGoldenKappaTrain"
+                        class="level-pill golden"
+                        uib-tooltip="Congratulations, a Golden Kappa Train is a rare event! Anyone whom cheers 100 bits, subs, re-subs, or gifts a sub during it gains access to the Golden Kappa emote on Twitch for 24 hours."
+                        tooltip-append-to-body="true"
+                        tooltip-placement="bottom"
+                    >Golden Kappa</span>
                     <span ng-if="!hts.hypeTrainEnded" class="pl-2 font-bold">{{hts.currentProgressPercentage}}%</span>
                     <span class="pl-2 time-left">({{!hts.hypeTrainEnded ? timeLeftDisplay : 'Ended'}})</span>
                 </div>

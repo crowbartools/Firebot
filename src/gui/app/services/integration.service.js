@@ -27,9 +27,7 @@
             }
 
             service.updateIntegrations = function() {
-                integrations = listenerService.fireEventSync(
-                    "getAllIntegrationDefinitions"
-                );
+                integrations = backendCommunicator.fireEventSync("getAllIntegrationDefinitions");
             };
 
             service.getIntegrations = function() {
@@ -51,7 +49,7 @@
                 }
 
                 addIntegrationToWaitingConnection(id);
-                listenerService.fireEvent("connectIntegration", id);
+                backendCommunicator.send("connectIntegration", id);
             };
 
             service.disconnectIntegration = function(id) {
@@ -61,7 +59,7 @@
                 }
 
                 addIntegrationToWaitingConnection(id);
-                listenerService.fireEvent("disconnectIntegration", id);
+                backendCommunicator.send("disconnectIntegration", id);
             };
 
             service.toggleConnectionForIntegration = function(id) {
@@ -129,11 +127,11 @@
             };
 
             service.linkIntegration = function(id) {
-                listenerService.fireEvent("linkIntegration", id);
+                backendCommunicator.send("linkIntegration", id);
             };
 
             service.unlinkIntegration = function(id) {
-                listenerService.fireEvent("unlinkIntegration", id);
+                backendCommunicator.send("unlinkIntegration", id);
             };
 
             service.toggleLinkforIntegration = function(id) {

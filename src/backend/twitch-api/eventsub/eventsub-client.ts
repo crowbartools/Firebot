@@ -196,7 +196,8 @@ class TwitchEventSubClient {
                 event.startDate,
                 event.expiryDate,
                 event.lastContribution,
-                event.topContributors
+                event.topContributors,
+                event.isGoldenKappaTrain
             );
         });
         this._subscriptions.push(hypeTrainBeginSubscription);
@@ -211,7 +212,8 @@ class TwitchEventSubClient {
                 event.startDate,
                 event.expiryDate,
                 event.lastContribution,
-                event.topContributors
+                event.topContributors,
+                event.isGoldenKappaTrain
             );
         });
         this._subscriptions.push(hypeTrainProgressSubscription);
@@ -224,7 +226,8 @@ class TwitchEventSubClient {
                 event.startDate,
                 event.endDate,
                 event.cooldownEndDate,
-                event.topContributors
+                event.topContributors,
+                event.isGoldenKappaTrain
             );
         });
         this._subscriptions.push(hypeTrainEndSubscription);

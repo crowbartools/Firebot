@@ -18,7 +18,8 @@ const model : ReplaceVariable = {
         handle: "useridname",
         description: "(Deprecated: Use $user or $username) The associated underlying user identifying name for the given trigger.",
         triggers: triggers,
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.TEXT],
+        hidden: true
     },
     evaluator: user.evaluator
 };

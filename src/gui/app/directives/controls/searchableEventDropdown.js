@@ -33,11 +33,11 @@
         </ui-select-choices>
       </ui-select>
       `,
-        controller: function(listenerService) {
+        controller: function(backendCommunicator) {
             const ctrl = this;
 
-            const events = listenerService.fireEventSync("getAllEvents", false);
-            const sources = listenerService.fireEventSync("getAllEventSources", false);
+            const events = backendCommunicator.fireEventSync("getAllEvents", false);
+            const sources = backendCommunicator.fireEventSync("getAllEventSources", false);
 
             const getSelected = () => {
                 // sort events by name
@@ -60,7 +60,7 @@
                 getSelected();
 
                 // Add source info to event objects for filtering
-                events.forEach(e => {
+                events.forEach((e) => {
                     e.source = {
                         id: e.sourceId,
                         name: ctrl.getSourceName(e.sourceId)

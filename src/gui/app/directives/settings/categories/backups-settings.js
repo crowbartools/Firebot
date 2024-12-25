@@ -1,16 +1,12 @@
 "use strict";
 
 (function() {
-
-    const moment = require("moment");
-    const path = require("path");
-    const fs = require("fs");
-
     angular
         .module("firebotApp")
         .component("backupsSettings", {
             template: `
                 <div>
+                    <div><strong>NOTE: These settings affect ALL user profiles.</strong></div>
 
                     <firebot-setting
                         name="Max Backups"
@@ -130,15 +126,46 @@
                         <div>
                             <firebot-button
                                 text="Manage Backups"
-                                ng-click="showBackupListModal()"
+                                ng-click="backupService.showBackupListModal()"
+                            />
+                        </div>
+                    </firebot-setting>
+
+                    <firebot-setting
+                        name="Move Backup Folder"
+                        description="Choose where Firebot stores backups.">
+
+                        <setting-description-addon>
+                            <div style="margin-top: 10px;"><strong>NOTE</strong>: Changing this setting will copy any existing backups from the current location to the new location. This will overwrite any files with the same name in the new location.</div>
+                            <div style="margin-top: 10px;">Current backup location: <a ng-click="backupService.openBackupFolder()" ng-bind="backupService.backupFolderPath" href></a></div>
+                        </setting-description-addon>
+
+                        <div>
+                            <span
+                                ng-if="isMovingBackupFolder || backupFolderMoveCompleted"
+                                style="padding-left: 10px"
+                            >
+                                <span ng-if="isMovingBackupFolder"> Moving backups to new folder... </span>
+                                <span ng-if="backupFolderMoveCompleted && backupFolderMoveSuccess" style="color: green">
+                                    <i class="fal fa-check-circle"></i> Move successful!
+                                </span>
+                                <span ng-if="backupFolderMoveCompleted && !backupFolderMoveSuccess" style="color: red">
+                                    <i class="fal fa-check-circle"></i> Move failed.
+                                </span>
+                            </span>
+                            <firebot-button
+                                text="Move Backup Folder"
+                                ng-click="backupService.initiateBackupFolderMove()"
+                                ng-disabled="isMovingBackupFolder"
                             />
                         </div>
                     </firebot-setting>
 
                 </div>
           `,
-            controller: function($scope, settingsService, backupService, backendCommunicator, $timeout, utilityService) {
+            controller: function($scope, settingsService, backupService, backendCommunicator, $timeout) {
                 $scope.settings = settingsService;
+                $scope.backupService = backupService;
 
                 $scope.startBackup = function() {
                     $scope.isBackingUp = true;
@@ -146,7 +173,7 @@
                     backupService.startBackup();
                 };
 
-                backendCommunicator.on("backup-complete", (manualActivation) => {
+                backendCommunicator.on("backups:backup-complete", (manualActivation) => {
                     $scope.isBackingUp = false;
 
                     if (manualActivation) {
@@ -161,130 +188,23 @@
                     }
                 });
 
-                $scope.showBackupListModal = function() {
-                    const showBackupListModalContext = {
-                        templateUrl: "backupListModal.html",
-                        size: "sm",
-                        controllerFunc: (
-                            $scope,
-                            $uibModalInstance,
-                            $q,
-                            utilityService,
-                            dataAccess
-                        ) => {
-                            $scope.backups = [];
-
-                            const backupFolderPath = path.resolve(`${dataAccess.getUserDataPath() + path.sep}backups`) + path.sep;
-
-                            $scope.loadingBackups = true;
-                            $q
-                                .when(
-                                    new Promise((resolve) => {
-                                        fs.readdir(backupFolderPath, (err, files) => {
-                                            const backups = files
-                                                .filter(f => f.endsWith(".zip"))
-                                                .map(function(v) {
-                                                    const fileStats = fs.statSync(backupFolderPath + v);
-                                                    const backupDate = moment(fileStats.birthtime);
-
-                                                    let version = "Unknown Version";
-                                                    const versionRe = /_(v?\d+\.\d+\.\d+(?:-[a-zA-Z0-9]+(?:\.\d+)?)?)(?:_|\b)/;
-                                                    const match = v.match(versionRe);
-                                                    if (match != null) {
-                                                        version = match[1];
-                                                    }
-
-                                                    return {
-                                                        name: v.replace(".zip", ""),
-                                                        backupTime: backupDate.toDate().getTime(),
-                                                        backupDateDisplay: backupDate.format(
-                                                            "MMM Do, h:mm A"
-                                                        ),
-                                                        backupDateFull: backupDate.format(
-                                                            "ddd, MMM Do YYYY, h:mm:ss A"
-                                                        ),
-                                                        fromNowDisplay: utilityService.capitalize(
-                                                            backupDate.fromNow()
-                                                        ),
-                                                        dayDifference: moment().diff(backupDate, "days"),
-                                                        version: version,
-                                                        size: Math.round(fileStats.size / 1000),
-                                                        isManual: v.includes("manual"),
-                                                        neverDelete: v.includes("NODELETE")
-                                                    };
-                                                })
-                                                .sort(function(a, b) {
-                                                    return b.backupTime - a.backupTime;
-                                                });
-
-                                            resolve(backups);
-                                        });
-                                    })
-                                )
-                                .then((backups) => {
-                                    $scope.loadingBackups = false;
-                                    $scope.backups = backups;
-                                });
-
-                            $scope.togglePreventDeletion = function(backup) {
-                                backup.neverDelete = !backup.neverDelete;
-                                const oldName = `${backup.name}.zip`;
-                                backup.name = backup.neverDelete
-                                    ? (backup.name += "_NODELETE")
-                                    : backup.name.replace("_NODELETE", "");
-
-                                fs.renameSync(
-                                    backupFolderPath + oldName,
-                                    `${backupFolderPath + backup.name}.zip`
-                                );
-                            };
-
-                            $scope.deleteBackup = function(index, backup) {
-                                utilityService
-                                    .showConfirmationModal({
-                                        title: "Delete Backup",
-                                        question: "Are you sure you'd like to delete this backup?",
-                                        confirmLabel: "Delete"
-                                    })
-                                    .then((confirmed) => {
-                                        if (confirmed) {
-                                            $scope.backups.splice(index, 1);
-                                            fs.unlinkSync(`${backupFolderPath + backup.name}.zip`);
-                                        }
-                                    });
-                            };
-
-                            $scope.restoreBackup = function(backup) {
-                                utilityService
-                                    .showConfirmationModal({
-                                        title: "Restore From Backup",
-                                        question: "Are you sure you'd like to restore from this backup?",
-                                        confirmLabel: "Restore"
-                                    })
-                                    .then((confirmed) => {
-                                        if (confirmed) {
-                                            $uibModalInstance.dismiss("cancel");
-
-                                            const backupFilePath =
-                                                path.join(backupService.BACKUPS_FOLDER_PATH, `${backup.name}.zip`);
-
-                                            backupService.initiateBackupRestore(backupFilePath);
-                                        }
-                                    });
-                            };
-
-                            $scope.openBackupFolder = function() {
-                                backendCommunicator.fireEvent("open-backup-folder");
-                            };
-
-                            $scope.dismiss = function() {
-                                $uibModalInstance.dismiss("cancel");
-                            };
-                        }
-                    };
-                    utilityService.showModal(showBackupListModalContext);
+                $scope.moveBackupFolder = () => {
+                    $scope.isMovingBackupFolder = true;
+                    $scope.backupFolderMoveCompleted = false;
                 };
 
+                backendCommunicator.on("backups:move-backup-folder-completed", (success) => {
+                    $scope.isMovingBackupFolder = false;
+                    $scope.backupFolderMoveCompleted = true;
+                    $scope.backupFolderMoveSuccess = success;
+
+                    // after 5 seconds, hide the completed message
+                    $timeout(() => {
+                        if ($scope.backupFolderMoveCompleted) {
+                            $scope.backupFolderMoveCompleted = false;
+                        }
+                    }, 5000);
+                });
             }
         });
 }());

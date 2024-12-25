@@ -12,7 +12,7 @@ const model : ReplaceVariable = {
         description: "Returns a raw array containing the recipients' usernames and months subbed",
         triggers: triggers,
         categories: [VariableCategory.COMMON, VariableCategory.USER, VariableCategory.TRIGGER],
-        possibleDataOutput: [OutputDataType.ALL]
+        possibleDataOutput: [OutputDataType.ARRAY, OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
         if (trigger == null || trigger.metadata == null || trigger.metadata.eventData == null || trigger.metadata.eventData.giftReceivers == null) {
