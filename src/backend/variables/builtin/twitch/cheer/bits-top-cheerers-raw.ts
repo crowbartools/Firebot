@@ -22,7 +22,8 @@ const model : ReplaceVariable = {
             }
         ],
         categories: [VariableCategory.COMMON, VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.ARRAY],
+        hidden: true
     },
     argsCheck: topBitsCheerers.argsCheck,
     evaluator: topBitsCheerers.evaluator

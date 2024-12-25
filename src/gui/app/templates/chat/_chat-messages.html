@@ -172,13 +172,13 @@
 
   <column-resizer
     on-update="updateLayoutSettings(updatedSettings)"
-    ng-show="settings.showActivityFeed()"
+    ng-show="settings.getSetting('ShowActivityFeed')"
   ></column-resizer>
 
   <div
     id="dashboardActivityFeed"
     class="activity-feed-column"
-    ng-show="settings.showActivityFeed()"
+    ng-show="settings.getSetting('ShowActivityFeed')"
     ng-style="{'width': layout.dashboardActivityFeed }"
   >
     <div class="activity-feed-header">

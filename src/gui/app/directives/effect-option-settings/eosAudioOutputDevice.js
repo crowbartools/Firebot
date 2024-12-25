@@ -49,7 +49,7 @@
                         };
                     }
 
-                    $q.when(navigator.mediaDevices.enumerateDevices()).then(deviceList => {
+                    $q.when(navigator.mediaDevices.enumerateDevices()).then((deviceList) => {
                         deviceList = deviceList
                             .filter(
                                 d =>
@@ -57,7 +57,7 @@
                 d.deviceId !== "communications" &&
                 d.deviceId !== "default"
                             )
-                            .map(d => {
+                            .map((d) => {
                                 return { label: d.label, deviceId: d.deviceId };
                             });
 
@@ -68,7 +68,7 @@
                     if (ctrl.effect.overlayInstance != null) {
                         if (
                             !settingsService
-                                .getOverlayInstances()
+                                .getSetting("OverlayInstances")
                                 .includes(ctrl.effect.overlayInstance)
                         ) {
                             ctrl.effect.overlayInstance = null;

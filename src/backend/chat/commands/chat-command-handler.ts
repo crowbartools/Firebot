@@ -11,7 +11,7 @@ import commandManager from "./command-manager";
 import commandCooldownManager from "./command-cooldown-manager";
 import twitchApi from "../../twitch-api/api";
 import commandRunner from "./command-runner";
-import { settings } from "../../common/settings-access";
+import { SettingsManager } from "../../common/settings-manager";
 
 const DEFAULT_COOLDOWN_MESSAGE = "This command is still on cooldown for: {timeLeft}";
 const DEFAULT_RESTRICTION_MESSAGE = "Sorry, you cannot use this command because: {reason}";
@@ -130,7 +130,7 @@ class CommandHandler {
             }
 
             // 'inherit' or undefined = inherit app settings
-            if (command.allowTriggerBySharedChat !== true && !settings.getAllowCommandsInSharedChat()) {
+            if (command.allowTriggerBySharedChat !== true && !SettingsManager.getSetting("AllowCommandsInSharedChat")) {
                 return false;
             }
         }

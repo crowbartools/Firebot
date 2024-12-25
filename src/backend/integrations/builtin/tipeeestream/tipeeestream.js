@@ -3,7 +3,7 @@ const EventEmitter = require("events");
 const io = require("socket.io-client");
 const axios = require("axios").default;
 const logger = require("../../../logwrapper");
-const { secrets } = require("../../../secrets-manager");
+const { SecretsManager } = require("../../../secrets-manager");
 
 const tsEventHandler = require("./events/tipeeestream-event-handler");
 
@@ -17,8 +17,8 @@ const integrationDefinition = {
         id: "tipeeestream",
         name: "TipeeeStream",
         client: {
-            id: secrets.tipeeeStreamClientId,
-            secret: secrets.tipeeeStreamClientSecret
+            id: SecretsManager.secrets.tipeeeStreamClientId,
+            secret: SecretsManager.secrets.tipeeeStreamClientSecret
         },
         auth: {
             type: "code",

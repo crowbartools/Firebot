@@ -44,7 +44,7 @@
             };
 
             $scope.updateLayoutSettings = (updatedSettings) => {
-                let settings = settingsService.getDashboardLayoutSettings();
+                let settings = settingsService.getSetting("DashboardLayout");
 
                 if (settings == null) {
                     settings = {
@@ -53,7 +53,7 @@
                         dashboardActivityFeed: "275px"
                     };
 
-                    settingsService.setDashboardLayoutSettings(settings);
+                    settingsService.saveSetting("DashboardLayout", settings);
                 }
 
                 if (updatedSettings) {
@@ -61,7 +61,7 @@
                         settings[key] = value;
                     });
 
-                    settingsService.setDashboardLayoutSettings(settings);
+                    settingsService.saveSetting("DashboardLayout", settings);
                 }
 
                 $scope.layout = settings;
@@ -72,17 +72,17 @@
             function getUpdatedChatSettings() {
                 $scope.updateLayoutSettings();
 
-                $scope.compactDisplay = settingsService.isChatCompactMode();
-                $scope.alternateBackgrounds = settingsService.chatAlternateBackgrounds();
-                $scope.hideDeletedMessages = settingsService.chatHideDeletedMessages();
-                $scope.showAvatars = settingsService.getShowAvatars();
-                $scope.showTimestamps = settingsService.getShowTimestamps();
-                $scope.showBttvEmotes = settingsService.getShowBttvEmotes();
-                $scope.showFfzEmotes = settingsService.getShowFfzEmotes();
-                $scope.showSevenTvEmotes = settingsService.getShowSevenTvEmotes();
-                $scope.showPronouns = settingsService.getShowPronouns();
-                $scope.customFontSizeEnabled = settingsService.getChatCustomFontSizeEnabled();
-                $scope.customFontSize = settingsService.getChatCustomFontSize();
+                $scope.compactDisplay = settingsService.getSetting("ChatCompactMode");
+                $scope.alternateBackgrounds = settingsService.getSetting("ChatAlternateBackgrounds");
+                $scope.hideDeletedMessages = settingsService.getSetting("ChatHideDeletedMessages");
+                $scope.showAvatars = settingsService.getSetting("ChatAvatars");
+                $scope.showTimestamps = settingsService.getSetting("ChatTimestamps");
+                $scope.showBttvEmotes = settingsService.getSetting("ChatShowBttvEmotes");
+                $scope.showFfzEmotes = settingsService.getSetting("ChatShowFfzEmotes");
+                $scope.showSevenTvEmotes = settingsService.getSetting("ChatShowSevenTvEmotes");
+                $scope.showPronouns = settingsService.getSetting("ChatPronouns");
+                $scope.customFontSizeEnabled = settingsService.getSetting("ChatCustomFontSizeEnabled");
+                $scope.customFontSize = settingsService.getSetting("ChatCustomFontSize");
                 $scope.customFontSizeStyle = $scope.customFontSizeEnabled ?
                     `font-size: ${$scope.customFontSize}px !important;` : "";
             }

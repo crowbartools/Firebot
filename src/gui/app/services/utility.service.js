@@ -11,7 +11,6 @@
         .factory("utilityService", function(
             $rootScope,
             $uibModal,
-            listenerService,
             logger,
             $timeout,
             backendCommunicator,
@@ -321,7 +320,7 @@
                         instanceName
                     ) => {
 
-                        $scope.usingOverlayInstances = settingsService.useOverlayInstances();
+                        $scope.usingOverlayInstances = settingsService.getSetting("UseOverlayInstances");
 
                         $scope.broadcastingSoftwares = [
                             "Local", "Direct Link/2 PC Setup"
@@ -338,7 +337,7 @@
                         $scope.buildOverlayPath = () => {
                             let overlayPath = dataAccess.getPathInUserData("overlay.html");
 
-                            const port = settingsService.getWebServerPort();
+                            const port = settingsService.getSetting("WebServerPort");
 
                             const params = {};
                             if ($scope.selectedBroadcastingSoftware === "Direct Link/2 PC Setup") {
@@ -346,7 +345,7 @@
 
                             } else {
                                 if (port !== 7472 && !isNaN(port)) {
-                                    params["port"] = settingsService.getWebServerPort();
+                                    params["port"] = settingsService.getSetting("WebServerPort");
                                 }
                                 overlayPath = `file:///${overlayPath.replace(/^\//g, "")}`;
                             }
@@ -408,10 +407,10 @@
                         $uibModalInstance,
                         settingsService
                     ) => {
-                        $scope.textSettings = settingsService.getOverlayEventsSettings();
+                        $scope.textSettings = settingsService.getSetting("EventSettings");
 
                         $scope.save = function() {
-                            settingsService.saveOverlayEventsSettings($scope.textSettings);
+                            settingsService.saveSetting("EventsSettings", $scope.textSettings);
                             $uibModalInstance.dismiss();
                         };
 
@@ -1158,24 +1157,14 @@
             };
 
             // Watches for an event from main process
-            listenerService.registerListener(
-                {
-                    type: listenerService.ListenerType.INFO
-                },
-                (infoMessage) => {
-                    service.showInfoModal(infoMessage);
-                }
-            );
+            backendCommunicator.on("info", (infoMessage) => {
+                service.showInfoModal(infoMessage);
+            });
 
             // Watches for an event from main process
-            listenerService.registerListener(
-                {
-                    type: listenerService.ListenerType.ERROR
-                },
-                (errorMessage) => {
-                    service.showErrorModal(errorMessage);
-                }
-            );
+            backendCommunicator.on("error", (errorMessage) => {
+                service.showErrorModal(errorMessage);
+            });
 
             service.capitalize = function([first, ...rest]) {
                 return first.toUpperCase() + rest.join("").toLowerCase();

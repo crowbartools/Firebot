@@ -30,6 +30,7 @@
                 $scope.durationDisplay = "-:--";
                 $scope.controlsEnabled = false;
 
+                /** @type {HTMLAudioElement} sound */
                 let sound = null;
 
                 function pad(num) {
@@ -62,7 +63,7 @@
                 let previousSeek = 0;
                 const seekPositionTimer = $interval(() => {
                     if (sound != null) {
-                        const currentSeek = sound.seek();
+                        const currentSeek = sound.currentTime;
                         if (currentSeek !== previousSeek) {
                             $scope.seekPositionDisplay = getDurationDisplay(currentSeek);
                             previousSeek = currentSeek;
@@ -70,11 +71,15 @@
                     }
                 }, 250);
 
+                function unloadSound() {
+                    sound.pause();
+                    sound.srcObject = null;
+                    sound = null;
+                }
 
                 function loadSound() {
                     if (sound != null) {
-                        sound.unload();
-                        sound = null;
+                        unloadSound();
                     }
                     if ($ctrl.path == null || $ctrl.path.length === 0) {
                         $scope.seekPositionDisplay = "-:--";
@@ -95,14 +100,17 @@
                         }
                     }
 
-                    soundService.getHowlSound($ctrl.path, volume, $ctrl.outputDevice)
-                        .then(s => {
+                    soundService.getSound($ctrl.path, volume, $ctrl.outputDevice)
+                        .then((s) => {
                             sound = s;
 
-                            sound.on('load', function() {
+                            const soundLoadEventHandler = function() {
+                                sound.removeEventListener("load", soundLoadEventHandler);
                                 $scope.controlsEnabled = true;
-                                $scope.durationDisplay = getDurationDisplay(sound.duration());
-                            });
+                                $scope.durationDisplay = getDurationDisplay(sound.duration);
+                            };
+
+                            sound.addEventListener("canplay", soundLoadEventHandler);
 
                             sound.load();
                         });
@@ -113,7 +121,7 @@
                         return false;
                     }
 
-                    return sound.playing();
+                    return !sound.paused;
                 };
 
                 $scope.playOrPause = () => {
@@ -121,7 +129,7 @@
                         return;
                     }
 
-                    if (sound.playing()) {
+                    if (!sound.paused) {
                         sound.pause();
                     } else {
                         sound.play();
@@ -134,11 +142,12 @@
                         return;
                     }
 
-                    sound.stop();
+                    sound.pause();
+                    sound.currentTime = 0;
                 };
 
 
-                $ctrl.$onChanges = function (changes) {
+                $ctrl.$onChanges = function(changes) {
                     if (changes.path || changes.outputDevice) {
                         loadSound();
                     }
@@ -152,7 +161,7 @@
                                 } else if (newVolume > 0) {
                                     newVolume = newVolume / 10;
                                 }
-                                sound.volume(newVolume);
+                                sound.volume = newVolume;
                             }
                         }
                     }
@@ -161,11 +170,9 @@
                 $ctrl.$onDestroy = function() {
                     $interval.cancel(seekPositionTimer);
                     if (sound != null) {
-                        sound.unload();
+                        unloadSound();
                     }
                 };
-
-
 
                 $ctrl.$onInit = function() {
                     loadSound();

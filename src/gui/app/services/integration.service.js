@@ -27,9 +27,7 @@
             }
 
             service.updateIntegrations = function() {
-                integrations = listenerService.fireEventSync(
-                    "getAllIntegrationDefinitions"
-                );
+                integrations = backendCommunicator.fireEventSync("getAllIntegrationDefinitions");
             };
 
             service.getIntegrations = function() {
@@ -51,7 +49,7 @@
                 }
 
                 addIntegrationToWaitingConnection(id);
-                listenerService.fireEvent("connectIntegration", id);
+                backendCommunicator.send("connectIntegration", id);
             };
 
             service.disconnectIntegration = function(id) {
@@ -61,7 +59,7 @@
                 }
 
                 addIntegrationToWaitingConnection(id);
-                listenerService.fireEvent("disconnectIntegration", id);
+                backendCommunicator.send("disconnectIntegration", id);
             };
 
             service.toggleConnectionForIntegration = function(id) {
@@ -82,12 +80,12 @@
                 integrationId,
                 shouldConnect
             ) {
-                return new Promise(resolve => {
+                return new Promise((resolve) => {
                     const listenerId = listenerService.registerListener(
                         {
                             type: listenerService.ListenerType.INTEGRATION_CONNECTION_UPDATE
                         },
-                        data => {
+                        (data) => {
                             if (data.id === integrationId) {
                                 listenerService.unregisterListener(
                                     listenerService.ListenerType.INTEGRATION_CONNECTION_UPDATE,
@@ -129,11 +127,11 @@
             };
 
             service.linkIntegration = function(id) {
-                listenerService.fireEvent("linkIntegration", id);
+                backendCommunicator.send("linkIntegration", id);
             };
 
             service.unlinkIntegration = function(id) {
-                listenerService.fireEvent("unlinkIntegration", id);
+                backendCommunicator.send("unlinkIntegration", id);
             };
 
             service.toggleLinkforIntegration = function(id) {
@@ -156,7 +154,7 @@
                     resolveObj: {
                         integration: () => integration
                     },
-                    closeCallback: resp => {
+                    closeCallback: (resp) => {
                         const action = resp.action;
 
                         if (action === 'save') {
@@ -190,28 +188,28 @@
                 if (integration == null || !integration.connectionToggle) {
                     return;
                 }
-                const sidebarControlledServices = settingsService.getSidebarControlledServices();
+                const sidebarControlledServices = settingsService.getSetting("SidebarControlledServices");
                 const service = `integration.${integration.id}`;
                 if (!sidebarControlledServices.includes(service)) {
                     sidebarControlledServices.push(service);
                 }
-                settingsService.setSidebarControlledServices(sidebarControlledServices);
+                settingsService.saveSetting("SidebarControlledServices", sidebarControlledServices);
             });
 
             backendCommunicator.on("integrationUnlinked", (intId) => {
-                let sidebarControlledServices = settingsService.getSidebarControlledServices();
+                let sidebarControlledServices = settingsService.getSetting("SidebarControlledServices");
                 const service = `integration.${intId}`;
                 if (sidebarControlledServices.includes(service)) {
                     sidebarControlledServices = sidebarControlledServices.filter(s => s !== service);
                 }
-                settingsService.setSidebarControlledServices(sidebarControlledServices);
+                settingsService.saveSetting("SidebarControlledServices", sidebarControlledServices);
             });
 
             listenerService.registerListener(
                 {
                     type: listenerService.ListenerType.INTEGRATION_CONNECTION_UPDATE
                 },
-                data => {
+                (data) => {
                     const integration = integrations.find(i => i.id === data.id);
                     if (integration != null) {
                         integration.connected = data.connected;

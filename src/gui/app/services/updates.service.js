@@ -11,7 +11,7 @@
 
     angular
         .module('firebotApp')
-        .factory('updatesService', function (logger, $q, $http, $sce, settingsService, utilityService, listenerService) {
+        .factory('updatesService', function (logger, $q, $http, $sce, settingsService, utilityService, backendCommunicator) {
             // factory/service object
             const service = {};
 
@@ -84,7 +84,7 @@
 
                             if (!foundMajorRelease && (updateType === UpdateType.MAJOR || updateType === UpdateType.MAJOR_PRERELEASE)) {
                                 foundMajorRelease = true;
-                                if (settingsService.notifyOnBeta()) {
+                                if (settingsService.getSetting("NotifyOnBeta")) {
                                     service.majorUpdate = {
                                         gitName: release.name,
                                         gitVersion: release.tag_name,
@@ -95,7 +95,7 @@
                                 updateType === UpdateType.PATCH ||
                                 updateType === UpdateType.MINOR ||
                                 updateType === UpdateType.NONE ||
-                                (updateType === UpdateType.PRERELEASE && settingsService.notifyOnBeta())) {
+                                (updateType === UpdateType.PRERELEASE && settingsService.getSetting("NotifyOnBeta"))) {
                                 latestRelease = release;
                                 latestUpdateType = updateType;
                                 break;
@@ -117,12 +117,12 @@
                             let updateIsAvailable = false;
                             if (latestUpdateType !== UpdateType.NONE) {
                                 updateIsAvailable = true;
-                                const autoUpdateLevel = settingsService.getAutoUpdateLevel();
+                                const autoUpdateLevel = settingsService.getSetting("AutoUpdateLevel");
 
                                 // Check if we should auto update based on the users setting
                                 if (shouldAutoUpdate(autoUpdateLevel, latestUpdateType)) {
                                     utilityService.showDownloadModal();
-                                    listenerService.fireEvent(listenerService.EventType.DOWNLOAD_UPDATE);
+                                    backendCommunicator.send("downloadUpdate");
                                 }
                             }
 
@@ -154,14 +154,14 @@
             service.downloadUpdate = function() {
                 if (service.updateIsAvailable()) {
                     utilityService.showDownloadModal();
-                    listenerService.fireEvent(listenerService.EventType.DOWNLOAD_UPDATE);
+                    backendCommunicator.send("downloadUpdate");
                 }
             };
 
             service.installUpdate = function() {
                 if (service.updateIsAvailable()) {
                     utilityService.showDownloadModal();
-                    listenerService.fireEvent(listenerService.EventType.INSTALL_UPDATE);
+                    backendCommunicator.send("installUpdate");
                 }
             };
 

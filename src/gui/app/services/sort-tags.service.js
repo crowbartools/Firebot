@@ -96,7 +96,7 @@
                     resolveObj: {
                         tags: () => sortTagsForContext
                     },
-                    closeCallback: tags => {
+                    closeCallback: (tags) => {
                         sortTags[context] = tags;
                         saveAllSortTags();
                     }
@@ -105,11 +105,11 @@
             };
 
             /** @param {SortTag} context */
-            service.getSelectedSortTag = (context) => selectedSortTags[context];
+            service.getSelectedSortTag = context => selectedSortTags[context];
 
             /** @param {string} context */
             // eslint-disable-next-line no-confusing-arrow
-            service.getSelectedSortTagDisplay = (context) => (selectedSortTags[context] != null ? selectedSortTags[context].name : `All ${context}`);
+            service.getSelectedSortTagDisplay = context => (selectedSortTags[context] != null ? selectedSortTags[context].name : `All ${context}`);
 
             /**
              * @param {string} context
@@ -125,9 +125,9 @@
              */
             service.getLegacyEventAndCommandTags = () => {
 
-                if (!settingsService.legacySortTagsImported()) {
+                if (!settingsService.getSetting("LegacySortTagsImported")) {
 
-                    settingsService.setLegacySortTagsImported(true);
+                    settingsService.saveSetting("LegacySortTagsImported", true);
 
                     /**@type {Object.<string, SortTag[]>} */
                     const legacySortTags = {
@@ -155,7 +155,7 @@
                         // silently fail
                     }
 
-                    Object.keys(legacySortTags).forEach(context => {
+                    Object.keys(legacySortTags).forEach((context) => {
 
                         if (sortTags[context] == null) {
                             sortTags[context] = [];
