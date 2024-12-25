@@ -1,4 +1,3 @@
-import bodyParser from "body-parser";
 
 export type RestrictionData = {
     /**
