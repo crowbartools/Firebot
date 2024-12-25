@@ -4,7 +4,7 @@ const { v4: uuid } = require("uuid");
 const logger = require("../../../logwrapper");
 const utils = require("../../../utility");
 const profileManager = require("../../profile-manager");
-const { getScriptPath, buildRunRequest, mapParameters, mapV4EffectToV5 } = require("./custom-script-helpers");
+const { getScriptPath, buildRunRequest, mapParameters } = require("./custom-script-helpers");
 const effectRunner = require("../../effect-runner.js");
 import { SettingsManager } from "../../settings-manager";
 
@@ -124,7 +124,6 @@ async function executeScript(scriptData, trigger, isStartupScript = false) {
             list: effects
                 .filter(e => e.type != null && e.type !== "")
                 .map((e) => {
-                    e = mapV4EffectToV5(e);
                     if (e.id == null) {
                         e.id = uuid();
                     }

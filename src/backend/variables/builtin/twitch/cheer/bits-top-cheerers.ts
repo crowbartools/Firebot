@@ -24,7 +24,7 @@ const model : ReplaceVariable = {
             }
         ],
         categories: [VariableCategory.COMMON, VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.ARRAY]
     },
     argsCheck: (count: null | number = 1, period: null | string = "all", startDate = null) => {
         if (count == null && period == null && startDate == null) {

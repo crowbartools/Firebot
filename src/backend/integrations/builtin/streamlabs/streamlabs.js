@@ -4,7 +4,7 @@ const io = require("socket.io-client");
 const axios = require("axios").default;
 const logger = require("../../../logwrapper");
 
-const { secrets } = require("../../../secrets-manager");
+const { SecretsManager } = require("../../../secrets-manager");
 
 const slEventHandler = require("./events/streamlabs-event-handler");
 const slEffectsLoader = require("./effects/streamlabs-effect-loader");
@@ -20,8 +20,8 @@ const integrationDefinition = {
         name: "StreamLabs",
         redirectUriHost: "localhost",
         client: {
-            id: secrets.streamLabsClientId,
-            secret: secrets.streamLabsClientSecret
+            id: SecretsManager.secrets.streamLabsClientId,
+            secret: SecretsManager.secrets.streamLabsClientSecret
         },
         auth: {
             type: "code",

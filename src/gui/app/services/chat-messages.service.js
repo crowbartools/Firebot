@@ -6,7 +6,7 @@
 
     angular
         .module('firebotApp')
-        .factory('chatMessagesService', function (logger, listenerService, settingsService,
+        .factory('chatMessagesService', function (logger, settingsService,
             soundService, backendCommunicator, pronounsService, accountAccess, ngToast) {
             const service = {};
 
@@ -465,23 +465,7 @@
 
             // Watches for an chat update from main process
             // This handles clears, deletions, timeouts, etc... Anything that isn't a message.
-            listenerService.registerListener(
-                { type: listenerService.ListenerType.CHAT_UPDATE },
-                (data) => {
-                    service.chatUpdateHandler(data);
-                }
-            );
-
-            // Connection Monitor
-            // Receives event from main process that connection has been established or disconnected.
-            listenerService.registerListener(
-                { type: listenerService.ListenerType.CHAT_CONNECTION_STATUS },
-                (isChatConnected) => {
-                    if (isChatConnected) {
-                        service.chatQueue = [];
-                    }
-                }
-            );
+            backendCommunicator.on("chatUpdate", service.chatUpdateHandler);
 
             return service;
         });

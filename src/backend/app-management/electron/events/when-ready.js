@@ -118,8 +118,9 @@ exports.whenReady = async () => {
     const { loadRestrictions } = require("../../../restrictions/builtin-restrictions-loader");
     loadRestrictions();
 
-    const fontManager = require("../../../fontManager");
-    fontManager.generateAppFontCssFile();
+    windowManagement.updateSplashScreenStatus("Loading fonts...");
+    const { FontManager } = require("../../../font-manager");
+    await FontManager.loadInstalledFonts();
 
     windowManagement.updateSplashScreenStatus("Loading events...");
     const eventsAccess = require("../../../events/events-access");
@@ -184,8 +185,6 @@ exports.whenReady = async () => {
 
     // get importer in memory
     windowManagement.updateSplashScreenStatus("Loading importers...");
-    const v4Importer = require("../../../import/v4/v4-importer");
-    v4Importer.setupListeners();
 
     const setupImporter = require("../../../import/setups/setup-importer");
     setupImporter.setupListeners();

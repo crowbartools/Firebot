@@ -40,7 +40,8 @@ const model : ReplaceVariable = {
             }
         ],
         categories: [VariableCategory.COMMON, VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.ALL]
+        possibleDataOutput: [OutputDataType.ARRAY],
+        hidden: true
     },
     evaluator: userRoles.evaluator
 };

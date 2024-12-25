@@ -203,7 +203,7 @@
     });
 
     app.controller("MainController", function($scope, $rootScope, $timeout, connectionService, utilityService,
-        settingsService, backupService, sidebarManager, logger, backendCommunicator) {
+        settingsService, backupService, sidebarManager, logger, backendCommunicator, fontManager) {
         $rootScope.showSpinner = true;
 
         $scope.fontAwesome5KitUrl = `https://kit.fontawesome.com/${secrets.fontAwesome5KitId}.js`;
@@ -406,7 +406,12 @@
         const appVersion = firebotAppDetails.version;
         $scope.appTitle = `Firebot v${appVersion}`;
 
-        $scope.customFontCssPath = profileManager.getPathInProfile("/fonts/fonts.css");
+        const url = require("url");
+        $scope.customFontCssPath = url.pathToFileURL(fontManager.getFontCssPath());
+
+        backendCommunicator.on("fonts:reload-font-css", () => {
+            $scope.customFontCssPath = `${url.pathToFileURL(fontManager.getFontCssPath())}?reload=${new Date().getTime()}`;
+        });
 
         //make sure sliders render properly
         $timeout(function() {
