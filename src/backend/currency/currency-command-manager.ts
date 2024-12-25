@@ -121,7 +121,7 @@ class CurrencyCommandManager {
                         title: "Set Currency Message Template",
                         description: "How the !currency set message appears in chat.",
                         tip: "Variables: {user}, {currency}, {amount}",
-                        default: `set {user}'s {currency} to {amount} !`,
+                        default: `Set {user}'s {currency} to {amount} !`,
                         useTextArea: true
                     }
                 },
@@ -170,7 +170,7 @@ class CurrencyCommandManager {
                     {
                         arg: "set",
                         usage: "set [@user] [amount]",
-                        description: "sets currency to the amount.",
+                        description: "Sets currency to the amount.",
                         restrictionData: {
                             restrictions: [
                                 {
