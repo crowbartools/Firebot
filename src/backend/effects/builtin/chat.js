@@ -22,6 +22,7 @@ const effect = {
             placeholder-text="Enter message"
             rows="4"
             cols="40"
+            menu-position="under"
         />
         <div style="color: #fb7373;" ng-if="effect.message && effect.message.length > 500">Chat messages cannot be longer than 500 characters. This message will get automatically chunked into multiple messages if it is too long after all replace variables have been populated.</div>
         <div style="display: flex; flex-direction: row; width: 100%; height: 36px; margin: 10px 0 10px; align-items: center;">
