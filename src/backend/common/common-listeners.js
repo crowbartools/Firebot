@@ -1,15 +1,11 @@
 "use strict";
 const electron = require("electron");
 const { app, ipcMain, dialog, shell } = electron;
-
-const path = require("path");
-
 const logger = require("../logwrapper");
 
 exports.setupCommonListeners = () => {
 
     const frontendCommunicator = require("./frontend-communicator");
-    const dataAccess = require("./data-access");
     const profileManager = require("./profile-manager");
     const { SettingsManager } = require("./settings-manager");
     const { BackupManager } = require("../backup-manager");
@@ -84,33 +80,6 @@ exports.setupCommonListeners = () => {
             app.relaunch({ args: process.argv.slice(1).concat(["--relaunch"]) });
             app.exit(0);
         }, 100);
-    });
-
-    // Opens the firebot root folder
-    ipcMain.on("openRootFolder", () => {
-        const rootFolder = path.resolve(
-            profileManager.getPathInProfile("/")
-        );
-        shell.openPath(rootFolder);
-    });
-
-    // Opens the firebot root folder
-    ipcMain.on("openLogsFolder", () => {
-        const rootFolder = path.resolve(
-            dataAccess.getPathInUserData("/logs/")
-        );
-        shell.openPath(rootFolder);
-    });
-
-    // Get Import Folder Path
-    // This listens for an event from the render media.js file to open a dialog to get a filepath.
-    ipcMain.on("getImportFolderPath", (event, uniqueid) => {
-        const path = dialog.showOpenDialogSync({
-            title: "Select 'user-settings' folder",
-            buttonLabel: "Import 'user-settings'",
-            properties: ["openDirectory"]
-        });
-        event.sender.send("gotImportFolderPath", { path: path, id: uniqueid });
     });
 
     // Opens the firebot backup folder

@@ -8,15 +8,13 @@ import path from 'path';
 import logger from "../backend/logwrapper";
 import { SettingsManager } from "../backend/common/settings-manager";
 import effectManager from "../backend/effects/effectManager";
-import resourceTokenManager from "../backend/resourceTokenManager";
+import { ResourceTokenManager } from "../backend/resource-token-manager";
 import websocketServerManager from "./websocket-server-manager";
 import { CustomWebSocketHandler } from "../types/websocket";
 
 import dataAccess from "../backend/common/data-access";
 
-import electron from 'electron';
-const workingDirectoryRoot = process.platform === 'darwin' ? process.resourcesPath : process.cwd();
-const cwd = !electron.app.isPackaged ? path.join(electron.app.getAppPath(), "build") : workingDirectoryRoot;
+const cwd = dataAccess.getWorkingDirectoryPath();
 
 interface ServerInstance {
     name: string;
@@ -138,7 +136,7 @@ class HttpServerManager extends EventEmitter {
         app.get("/resource/:token", function(req, res) {
             const token = req.params.token || null;
             if (token !== null) {
-                let resourcePath = resourceTokenManager.getResourcePath(token) || null;
+                let resourcePath = ResourceTokenManager.getResourcePath(token) || null;
                 if (resourcePath !== null) {
                     resourcePath = resourcePath.replace(/\\/g, "/");
                     res.sendFile(resourcePath);

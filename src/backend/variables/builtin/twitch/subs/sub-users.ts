@@ -8,15 +8,15 @@ const logger = require("../../../../logwrapper");
 const model : ReplaceVariable = {
     definition: {
         handle: "subNames",
-        description: "Returns an array of subscriptions you currently have. Items contain 'username', 'tier' and 'isGift' properties",
+        description: "Returns an array of subscribers you currently have. Items contain `username`, `tier` and `isGift` properties.",
         usage: "subNames",
         examples: [
             {
                 usage: "subNames",
-                description: 'Returns: [{username: "firebottle", displayname: "FireBottle", tier: 2000, isGift:false}, {username: "ebiggz", displayname: "EBiggz", tier: 1000, isGift:true}] To be used with array or custom variables'
+                description: 'Returns: [{username: "firebottle", displayname: "FireBottle", tier: 2000, isGift:false}, {username: "ebiggz", displayname: "EBiggz", tier: 1000, isGift:true}] To be used with array or custom variables.'
             }
         ],
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.ARRAY]
     },
     evaluator: async () => {
         const { streamer } = accountAccess.getAccounts();

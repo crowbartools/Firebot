@@ -58,9 +58,6 @@ exports.whenReady = async () => {
     windowManagement.updateSplashScreenStatus("Refreshing Twitch account data...");
     await accountAccess.refreshTwitchData();
 
-    const twitchFrontendListeners = require("../../../twitch-api/frontend-twitch-listeners");
-    twitchFrontendListeners.setupListeners();
-
     windowManagement.updateSplashScreenStatus("Starting stream status poll...");
     connectionManager.startOnlineCheckInterval();
 
@@ -118,8 +115,9 @@ exports.whenReady = async () => {
     const { loadRestrictions } = require("../../../restrictions/builtin-restrictions-loader");
     loadRestrictions();
 
-    const fontManager = require("../../../fontManager");
-    fontManager.generateAppFontCssFile();
+    windowManagement.updateSplashScreenStatus("Loading fonts...");
+    const { FontManager } = require("../../../font-manager");
+    await FontManager.loadInstalledFonts();
 
     windowManagement.updateSplashScreenStatus("Loading events...");
     const eventsAccess = require("../../../events/events-access");
@@ -184,8 +182,6 @@ exports.whenReady = async () => {
 
     // get importer in memory
     windowManagement.updateSplashScreenStatus("Loading importers...");
-    const v4Importer = require("../../../import/v4/v4-importer");
-    v4Importer.setupListeners();
 
     const setupImporter = require("../../../import/setups/setup-importer");
     setupImporter.setupListeners();
@@ -252,8 +248,8 @@ exports.whenReady = async () => {
     // load activity feed manager
     require("../../../events/activity-feed-manager");
 
-    const iconManager = require("../../../common/icon-manager");
-    iconManager.loadFontAwesomeIcons();
+    const { IconManager } = require("../../../common/icon-manager");
+    await IconManager.loadFontAwesomeIcons();
 
     windowManagement.updateSplashScreenStatus("Starting stream info poll...");
     const streamInfoPoll = require("../../../twitch-api/stream-info-manager");

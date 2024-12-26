@@ -6,9 +6,9 @@ import viewerOnlineStatusManager from "../../../viewers/viewer-online-status-man
 const model : ReplaceVariable = {
     definition: {
         handle: "rawTopViewTime",
-        description: "Returns a raw array containing users with the most view time(in hours). Items contain 'username', 'place' and 'minutes' properties",
+        description: "Returns a raw array containing users with the most view time (in hours). Items contain `username`, 'place` and `minutes` properties.",
         usage: "rawTopViewTime[count]",
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.ARRAY]
     },
 
     // eslint-disable-next-line @typescript-eslint/no-inferrable-types

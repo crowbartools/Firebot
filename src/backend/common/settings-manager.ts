@@ -20,6 +20,26 @@ class SettingsManager extends EventEmitter {
         super();
 
         this.migrateUserSettingsToGlobal();
+
+        frontendCommunicator.on("settings:get-setting-path", (settingName: keyof FirebotSettingsTypes) => {
+            return this.getSettingPath(settingName);
+        });
+
+        frontendCommunicator.on("settings:get-setting", (settingName: keyof FirebotSettingsTypes) => {
+            return this.getSetting(settingName);
+        });
+
+        frontendCommunicator.on("settings:save-setting", (request: { settingName: keyof FirebotSettingsTypes, data: FirebotSettingsTypes[keyof FirebotSettingsTypes] }) => {
+            this.saveSetting(request.settingName, request.data);
+        });
+
+        frontendCommunicator.on("settings:delete-setting", (settingName: keyof FirebotSettingsTypes) => {
+            this.deleteSetting(settingName);
+        });
+
+        frontendCommunicator.on("settings:flush-settings-cache", () => {
+            this.flushSettingsCache();
+        });
     }
 
     private getSettingsFile(): JsonDB {
@@ -366,25 +386,5 @@ class SettingsManager extends EventEmitter {
 }
 
 const settings = new SettingsManager();
-
-frontendCommunicator.on("settings:get-setting-path", (settingName: keyof FirebotSettingsTypes) => {
-    return settings.getSettingPath(settingName);
-});
-
-frontendCommunicator.on("settings:get-setting", (settingName: keyof FirebotSettingsTypes) => {
-    return settings.getSetting(settingName);
-});
-
-frontendCommunicator.on("settings:save-setting", (request: { settingName: keyof FirebotSettingsTypes, data: FirebotSettingsTypes[keyof FirebotSettingsTypes] }) => {
-    settings.saveSetting(request.settingName, request.data);
-});
-
-frontendCommunicator.on("settings:delete-setting", (settingName: keyof FirebotSettingsTypes) => {
-    settings.deleteSetting(settingName);
-});
-
-frontendCommunicator.on("settings:flush-settings-cache", () => {
-    settings.flushSettingsCache();
-});
 
 export { settings as SettingsManager };

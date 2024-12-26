@@ -8,7 +8,7 @@ const model : ReplaceVariable = {
         handle: "usernameArray",
         description: "Returns an array of all usernames saved in the user db",
         categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.ARRAY]
     },
     evaluator: async () => {
         const usernames = await viewerDatabase.getAllUsernames();

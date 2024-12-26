@@ -11,7 +11,6 @@
         .factory("utilityService", function(
             $rootScope,
             $uibModal,
-            listenerService,
             logger,
             $timeout,
             backendCommunicator,
@@ -1158,24 +1157,14 @@
             };
 
             // Watches for an event from main process
-            listenerService.registerListener(
-                {
-                    type: listenerService.ListenerType.INFO
-                },
-                (infoMessage) => {
-                    service.showInfoModal(infoMessage);
-                }
-            );
+            backendCommunicator.on("info", (infoMessage) => {
+                service.showInfoModal(infoMessage);
+            });
 
             // Watches for an event from main process
-            listenerService.registerListener(
-                {
-                    type: listenerService.ListenerType.ERROR
-                },
-                (errorMessage) => {
-                    service.showErrorModal(errorMessage);
-                }
-            );
+            backendCommunicator.on("error", (errorMessage) => {
+                service.showErrorModal(errorMessage);
+            });
 
             service.capitalize = function([first, ...rest]) {
                 return first.toUpperCase() + rest.join("").toLowerCase();
