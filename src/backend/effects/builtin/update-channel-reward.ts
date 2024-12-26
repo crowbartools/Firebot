@@ -3,7 +3,6 @@ import { EffectCategory } from '../../../shared/effect-constants';
 import { SavedChannelReward } from "../../../types/channel-rewards";
 import { EffectType } from "../../../types/effects";
 import channelRewardsManager from "../../channel-rewards/channel-reward-manager";
-import profileManager from "../../common/profile-manager";
 import logger from "../../logwrapper";
 
 type StringUpdatable = { update: boolean, newValue: string };
@@ -23,7 +22,6 @@ type EffectMeta = {
     channelRewardId: string;
     customId: string;
     useTag?: boolean;
-    useCustomId?: boolean;
     sortTagId?: string;
 }
 
@@ -372,11 +370,6 @@ const model: EffectType<EffectMeta> = {
         if (!effect.rewardSettings.enabled.update && !effect.rewardSettings.paused.update) {
             logger.error("Update Channel Reward: Trying to toggle by tag without updating enabled or paused. Skipping.");
             return false;
-        }
-
-        const tagId = effect.useCustomId ? effect.customId : effect.sortTagId;
-        if (effect.useCustomId && !validate(tagId)) {
-            console.log(profileManager.getJsonDbInProfile("sort-tags"));
         }
 
         const rewards = Object.values(channelRewardsManager.channelRewards as Record<string, RewardWithTags>)
