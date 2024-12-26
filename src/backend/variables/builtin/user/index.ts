@@ -1,4 +1,3 @@
-import accountCreationDate from './account-creation-date';
 import chatMessages from './chat-messages';
 import isUserInChat from './is-user-in-chat';
 import metadataKey from './metadata-key';
@@ -25,7 +24,6 @@ import roleVariables from './roles';
 import rankVariables from './ranks';
 
 export default [
-    accountCreationDate,
     chatMessages,
     isUserInChat,
     metadataKey,

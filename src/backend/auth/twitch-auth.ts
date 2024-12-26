@@ -2,7 +2,7 @@ import axios from "axios";
 import authManager from "./auth-manager";
 import accountAccess, { FirebotAccount } from "../common/account-access";
 import logger from "../logwrapper";
-import { secrets } from "../secrets-manager";
+import { SecretsManager } from "../secrets-manager";
 import { AuthProviderDefinition } from "./auth";
 import { getExpiryDateOfAccessToken } from "@twurple/auth";
 
@@ -14,7 +14,7 @@ class TwitchAuthProviders {
     readonly streamerAccountProviderId = "twitch:streamer-account";
     readonly botAccountProviderId = "twitch:bot-account";
 
-    readonly twitchClientId = secrets.twitchClientId;
+    readonly twitchClientId = SecretsManager.secrets.twitchClientId;
 
     readonly streamerAccountProvider: AuthProviderDefinition = {
         id: this.streamerAccountProviderId,

@@ -34,6 +34,17 @@ exports.openUrl = async (event, url) => {
             }
             break;
 
+        case "dashboard":
+        case "commands":
+        case "events":
+        case "time-based":
+        case "channel-rewards":
+        case "preset-effect-lists":
+        case "hotkeys":
+        case "counters":
+            frontendCommunicator.send("navigate", urlParams[0]);
+            break;
+
         default:
             logger.debug("No matching URL commands found");
             break;

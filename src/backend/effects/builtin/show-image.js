@@ -1,6 +1,6 @@
 "use strict";
 
-const { settings } = require("../../common/settings-access");
+const { SettingsManager } = require("../../common/settings-manager");
 const resourceTokenManager = require("../../resourceTokenManager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/http-server-manager");
@@ -65,9 +65,9 @@ const showImage = {
         </div>
     </div>
     </div>
-    
+
     <eos-overlay-dimensions effect="effect" pad-top="true"></eos-overlay-dimensions>
-   
+
     <eos-overlay-position effect="effect" class="setting-padtop"></eos-overlay-position>
 
     <div class="effect-setting-container setting-padtop">
@@ -187,9 +187,9 @@ const showImage = {
             imageRotation: effect.rotation ? effect.rotation + effect.rotType : "0deg"
         };
 
-        if (settings.useOverlayInstances()) {
+        if (SettingsManager.getSetting("UseOverlayInstances")) {
             if (effect.overlayInstance != null) {
-                if (settings.getOverlayInstances().includes(effect.overlayInstance)) {
+                if (SettingsManager.getSetting("OverlayInstances").includes(effect.overlayInstance)) {
                     data.overlayInstance = effect.overlayInstance;
                 }
             }

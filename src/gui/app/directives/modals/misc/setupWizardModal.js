@@ -27,107 +27,6 @@
                     </div>
 
                     <div ng-switch-when="1" class="wave">
-                        <div ng-hide="$ctrl.importStarted || $ctrl.importCompleted" style="display:flex; flex-direction:column; justify-content: space-between;">
-                            <div>
-                                <div>
-                                    <p>We have detected Firebot v4 data on your computer.<br><strong>Would you like to import anything?</strong></p>
-
-                                    <div class="muted" style="font-size:12px;padding: 0 65px;margin-top: 0px;">
-                                        <strong>Please note:</strong><br>Due to some changes and fundamental differences in v5, we may not be able to import 100% of your v4 data. Some additional setup may be required.
-                                    </div>
-                                </div>
-                                <div style="margin-top: 10px;">
-                                    <div class="modal-subheader" style="padding: 0 0 10px 0; font-size: 17px;">
-                                        IMPORT SETTINGS
-                                    </div>
-                                    <div style="text-align:left !important;display:flex; justify-content: center;">
-                                        <div style="transform: translateX(40px);">
-                                            <div style="margin-bottom: 3px">
-                                                <label class="control-fb control--checkbox" style="margin-bottom: 0px; font-size: 13px;opacity:0.9;display:inline-block;"> Chat Commands
-                                                    <input type="checkbox" ng-model="$ctrl.importSettings.commands">
-                                                    <div class="control__indicator"></div>
-                                                </label>
-                                            </div>
-                                            <div style="margin-bottom: 3px">
-                                                <label class="control-fb control--checkbox" style="margin-bottom: 0px; font-size: 13px;opacity:0.9;display:inline-block;"> Events
-                                                    <input type="checkbox" ng-model="$ctrl.importSettings.events">
-                                                    <div class="control__indicator"></div>
-                                                </label>
-                                            </div>
-                                            <div style="margin-bottom: 3px">
-                                                <label class="control-fb control--checkbox" style="margin-bottom: 0px; font-size: 13px;opacity:0.9;display:inline-block;"> Viewer Groups
-                                                    <input type="checkbox" ng-model="$ctrl.importSettings.viewerGroups">
-                                                    <div class="control__indicator"></div>
-                                                </label>
-                                            </div>
-                                            <div style="margin-bottom: 3px">
-                                                <label class="control-fb control--checkbox" style="margin-bottom: 0px; font-size: 13px;opacity:0.9;display:inline-block;"> Hotkeys
-                                                    <input type="checkbox" ng-model="$ctrl.importSettings.hotkeys">
-                                                    <div class="control__indicator"></div>
-                                                </label>
-                                            </div>
-                                            <div style="margin-bottom: 3px">
-                                                <label class="control-fb control--checkbox" style="margin-bottom: 0px; font-size: 13px;opacity:0.9;display:inline-block;"> Extras <span class="muted">(Scripts/Fonts/Overlay Instances)</span>
-                                                    <input type="checkbox" ng-model="$ctrl.importSettings.misc">
-                                                    <div class="control__indicator"></div>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div style="margin-top: 10px;">
-                                    <button class="btn btn-default" ng-click="$ctrl.startImport()" ng-disabled="!$ctrl.canStartImport()"><i class="fad fa-file-import"></i> Import</button>
-                                </div>
-
-                            </div>
-
-                            <div style="margin-top: 15px;">
-                                <div>
-                                    <a class="btn btn-link" style="font-size: 17px;color: #5BC0DE;" ng-click="$ctrl.setCurrentStep(2)">No, don't import for now.</a>
-                                </div>
-                                <div>
-                                    <span style="font-size: 11px; opacity: 0.8; margin-top: 3px;">(You can import later at any time by going to Settings > Open Setup Wizard)</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div ng-show="$ctrl.importStarted && !$ctrl.importCompleted">
-                            <h3>Importing...</h3>
-                            <div style="font-size: 200px;">
-                                <i class="fad fa-spinner fa-pulse"></i>
-                            </div>
-                            <p ng-show="$ctrl.currentlyImporting"><span style="font-weight: 100;">Currently Importing:</span> <strong>{{$ctrl.currentlyImporting}}</strong></h3>
-                        </div>
-
-
-                        <div ng-show="!$ctrl.importStarted && $ctrl.importCompleted">
-                            <div style="font-size: 75px;color:green;line-height: 1;margin-bottom:20px">
-                                <i class="fad fa-check-circle"></i>
-                            </div>
-
-                            <h3 style="margin-top:0;">V4 import completed successfully with <strong>{{$ctrl.importIncompatibilityMessages.length}}</strong> incompatibility warning(s)</h3>
-
-                            <div style="height: 147px;">
-                                <div ng-hide="$ctrl.importIncompatibilityMessages.length < 1">
-                                    <eos-collapsable-panel show-label="Show incompatibility warnings" hide-label="Hide incompatibility warnings" hide-info-box="true">
-                                        <div class="incompat-warnings-wrapper">
-                                            <ul>
-                                                <li ng-repeat="message in $ctrl.importIncompatibilityMessages track by $index">{{message}}</li>
-                                            </ul>
-                                        </div>
-                                    </eos-collapsable-panel>
-                                </div>
-                             </div>
-
-                            <p style="font-size: 18px;font-weight: 100;">You're nearly there! Just a few more steps to go.</p>
-                            <button class="btn btn-info" ng-click="$ctrl.handleNext()">Continue</button>
-                        </div>
-
-
-                    </div>
-
-                    <div ng-switch-when="2" class="wave">
                         <p>
                             Firebot supports two different accounts:</br></br>
                             <b>Streamer</b> - the account you stream with <span class="muted">(Required)</span></br>
@@ -189,7 +88,7 @@
                         </div>
                     </div>
 
-                    <div ng-switch-when="3" class="wave">
+                    <div ng-switch-when="2" class="wave">
 
                         <p>The overlay is what allows Firebot to display images, videos, and more on your stream.</p>
 
@@ -217,12 +116,12 @@
                         </div>
                     </div>
 
-                    <div ng-switch-when="4" class="wave">
+                    <div ng-switch-when="3" class="wave">
                         <p>We love spotlighting the amazing interactive experiences<br />crafted by our community using Firebot.</p>
                         <p style="font-weight: 700;margin-top: 20px;">Would you like to be <a href="https:firebot.app/watch">featured on our website</a> during your live streams?</p>
                         <div style="margin-top: 20px;">
                             <label class="control-fb control--checkbox" style="margin-bottom: 0px; font-size: 16px;opacity:0.9;display:inline-block;"> Yes, feature my stream!
-                                <input type="checkbox" ng-click="$ctrl.settings.setWebOnlineCheckin(!$ctrl.settings.getWebOnlineCheckin())" ng-checked="$ctrl.settings.getWebOnlineCheckin()" >
+                                <input type="checkbox" ng-click="$ctrl.settings.saveSetting('WebOnlineCheckin', !$ctrl.settings.getSetting('WebOnlineCheckin'))" ng-checked="$ctrl.settings.getSetting('WebOnlineCheckin')" >
                                 <div class="control__indicator"></div>
                             </label>
                         </div>
@@ -231,7 +130,7 @@
                         </div>
                     </div>
 
-                    <div ng-switch-when="5" class="slide-fade">
+                    <div ng-switch-when="4" class="slide-fade">
                         <div style="margin-top: 20px" class="animated fadeIn">
                             <img style="width: 80px; height: 80px" class="jump-infinite" src="../images/logo_transparent.png">
                         </div>
@@ -292,9 +191,8 @@
 
             $ctrl.stepTitles = [
                 "",
-                "Import V4 Data",
                 "Get Signed In",
-                "Lets Setup The Overlay",
+                "Let's Setup the Overlay",
                 "Feature Your Stream",
                 ""
             ];
@@ -326,27 +224,15 @@
             };
 
             $ctrl.getNextLabel = function() {
-                switch ($ctrl.step) {
-                    default:
-                        return "Next";
-                }
+                return "Next";
             };
 
             $ctrl.handlePrevious = function() {
-                switch ($ctrl.step) {
-                    case 2:
-                        $ctrl.step = 0;
-                        break;
-                    default:
-                        $ctrl.step -= $ctrl.isFirstStep() ? 0 : 1;
-                }
+                $ctrl.step -= $ctrl.isFirstStep() ? 0 : 1;
             };
 
             $ctrl.showNextButton = function() {
                 if ($ctrl.isFirstStep() || $ctrl.isLastStep()) {
-                    return false;
-                }
-                if ($ctrl.step === 1) {
                     return false;
                 }
                 return true;
@@ -361,87 +247,21 @@
 
             $ctrl.canGoToNext = function() {
                 switch ($ctrl.step) {
-                    case 2:
+                    case 1:
                         return connectionService.accounts.streamer.loggedIn;
-                    case 3: {
+                    case 2: {
                         const overlayStatus = connectionManager.getOverlayStatus();
                         return !overlayStatus.serverStarted || overlayStatus.clientsConnected;
                     }
                 }
                 return true;
             };
-
-            $ctrl.v4DataDetected = false;
-            backendCommunicator.fireEventAsync("v4-data-check")
-                .then(detected => {
-                    $ctrl.v4DataDetected = detected;
-                });
-
-            $ctrl.importSettings = {};
-
-            $ctrl.canStartImport = () => {
-                return $ctrl.importSettings.commands ||
-                $ctrl.importSettings.events ||
-                $ctrl.importSettings.viewerGroups ||
-                $ctrl.importSettings.hotkeys ||
-                $ctrl.importSettings.misc;
-            };
-
-            $ctrl.startImport = () => {
-                if (!$ctrl.canStartImport()) {
-                    return;
-                }
-
-                backendCommunicator.fireEvent("start-v4-import", $ctrl.importSettings);
-            };
-
-            $ctrl.importStarted = false;
-            $ctrl.currentlyImporting = null;
-            $ctrl.importCompleted = false;
-            $ctrl.importSuccess = false;
-            $ctrl.importIncompatibilityMessages = [];
-            $ctrl.importIncompatibilityMessageText = "";
-
-            backendCommunicator.on("v4-import-started", () => {
-                $ctrl.importStarted = true;
-            });
-
-            backendCommunicator.on("v4-import-update", data => {
-                $ctrl.currentlyImporting = data.importing;
-            });
-
-            backendCommunicator.on("v4-import-complete", data => {
-                $ctrl.importCompleted = true;
-                $ctrl.importStarted = false;
-                $ctrl.importSuccess = data.success;
-                $ctrl.importIncompatibilityMessages = data.incompatibilityWarnings;
-            });
-
             $ctrl.handleNext = async function(forceNext) {
                 if ($ctrl.isLastStep()) {
                     $ctrl.close();
                 } else {
-                    switch ($ctrl.step) {
-                        case 0:
-                            if ($ctrl.v4DataDetected) {
-                                $ctrl.step = 1;
-                            } else {
-                                $ctrl.step = 2;
-                            }
-                            return;
-                        case 1:
-                            $ctrl.step = 2;
-                            $ctrl.importCompleted = false;
-                            return;
-                        case 2:
-                        case 3:
-                        case 4: {
-                            if (!$ctrl.canGoToNext() && !forceNext) {
-                                return;
-                            }
-
-                            break;
-                        }
+                    if (!$ctrl.canGoToNext() && !forceNext) {
+                        return;
                     }
                     $ctrl.step += 1;
                 }
@@ -449,10 +269,10 @@
 
             $ctrl.getTooltipText = function() {
                 switch ($ctrl.step) {
-                    case 2:
+                    case 1:
                         return "Please sign into your Streamer account.";
-                    case 3:
-                        return "Please add the overlay url to your broadcasting software.";
+                    case 2:
+                        return "Please add the overlay URL to your broadcasting software.";
                 }
                 return "";
             };
@@ -492,17 +312,11 @@
 
             $ctrl.startBackupRestoreProcess = () => {
                 backupService.openBackupZipFilePicker()
-                    .then(backupFilePath => {
+                    .then((backupFilePath) => {
                         if (backupFilePath != null) {
                             backupService.initiateBackupRestore(backupFilePath);
                         }
                     });
-            };
-
-            $ctrl.$onInit = function() {
-                // When the component is initialized
-                // This is where you can start to access bindings, such as variables stored in 'resolve'
-                // IE $ctrl.resolve.shouldDelete or whatever
             };
         }
     });

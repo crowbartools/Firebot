@@ -7,6 +7,12 @@ const model : ReplaceVariable = {
         handle: "decodeFromUrl",
         description: "Decodes input text from a URL-encoded string",
         usage: "decodeFromUrl[text]",
+        examples: [
+            {
+                usage: `decodeFromUrl["Hello%20World%21"]`,
+                description: `Returns "Hello World!"`
+            }
+        ],
         categories: [VariableCategory.TEXT],
         possibleDataOutput: [OutputDataType.TEXT]
     },

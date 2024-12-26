@@ -1,5 +1,5 @@
 export enum TwitchGoalTypes {
-    follow = "follow",
+    follow = "follower",
     sub = "subscription_count",
     subpoint = "subscription",
     newsub = "new_subscription_count",

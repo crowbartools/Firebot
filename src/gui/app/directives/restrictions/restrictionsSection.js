@@ -1,7 +1,7 @@
 "use strict";
 (function() {
 
-    const uuidv1 = require("uuid/v1");
+    const { v4: uuid } = require("uuid");
 
     angular
         .module('firebotApp')
@@ -191,7 +191,7 @@
                                 .filter(r => r.type !== selectedId);*/
 
                             $ctrl.restrictionData.restrictions.push({
-                                id: uuidv1(),
+                                id: uuid(),
                                 type: selectedId
                             });
 

@@ -29,7 +29,7 @@ const ExtraLifeIncentives: ReplaceVariable = {
                 description: "Returns ten incentives for current logged in extra life account in JSON format."
             }
         ],
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
+        categories: [VariableCategory.COMMON, VariableCategory.INTEGRATION],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async (_, rewardDesc: string, numResults: number, participantID: number, returnJson: boolean) => {

@@ -7,12 +7,14 @@ function sendStartProgressEventToFrontend(
     level: number,
     goal: number,
     progress: number,
-    endsAt: Date
+    endsAt: Date,
+    isGoldenKappaTrain: boolean
 ) {
     frontendCommunicator.send(`hype-train:${eventType}`, {
         level,
         progressPercentage: Math.floor(progress / goal * 100),
-        endsAt
+        endsAt,
+        isGoldenKappaTrain
     });
 }
 
@@ -34,7 +36,8 @@ export function triggerHypeTrainStart(
     startDate: Date,
     expiryDate: Date,
     lastContribution: EventSubChannelHypeTrainContribution,
-    topContributors: EventSubChannelHypeTrainContribution[]
+    topContributors: EventSubChannelHypeTrainContribution[],
+    isGoldenKappaTrain: boolean
 ) {
     eventManager.triggerEvent("twitch", "hype-train-start", {
         total,
@@ -44,10 +47,11 @@ export function triggerHypeTrainStart(
         startDate,
         expiryDate,
         lastContribution: mapContribution(lastContribution),
-        topContributors: topContributors.map(mapContribution)
+        topContributors: topContributors.map(mapContribution),
+        isGoldenKappaTrain: isGoldenKappaTrain
     });
 
-    sendStartProgressEventToFrontend("start", level, goal, progress, expiryDate);
+    sendStartProgressEventToFrontend("start", level, goal, progress, expiryDate, isGoldenKappaTrain);
 }
 
 export function triggerHypeTrainProgress(
@@ -58,7 +62,8 @@ export function triggerHypeTrainProgress(
     startDate: Date,
     expiryDate: Date,
     lastContribution: EventSubChannelHypeTrainContribution,
-    topContributors: EventSubChannelHypeTrainContribution[]
+    topContributors: EventSubChannelHypeTrainContribution[],
+    isGoldenKappaTrain: boolean
 ) {
     eventManager.triggerEvent("twitch", "hype-train-progress", {
         total,
@@ -68,10 +73,11 @@ export function triggerHypeTrainProgress(
         startDate,
         expiryDate,
         lastContribution: mapContribution(lastContribution),
-        topContributors: topContributors.map(mapContribution)
+        topContributors: topContributors.map(mapContribution),
+        isGoldenKappaTrain: isGoldenKappaTrain
     });
 
-    sendStartProgressEventToFrontend("progress", level, goal, progress, expiryDate);
+    sendStartProgressEventToFrontend("progress", level, goal, progress, expiryDate, isGoldenKappaTrain);
 }
 
 export function triggerHypeTrainEnd(
@@ -80,7 +86,8 @@ export function triggerHypeTrainEnd(
     startDate: Date,
     endDate: Date,
     cooldownEndDate: Date,
-    topContributors: EventSubChannelHypeTrainContribution[]
+    topContributors: EventSubChannelHypeTrainContribution[],
+    isGoldenKappaTrain: boolean
 ) {
     eventManager.triggerEvent("twitch", "hype-train-end", {
         total,
@@ -88,7 +95,8 @@ export function triggerHypeTrainEnd(
         startDate,
         endDate,
         cooldownEndDate,
-        topContributors: topContributors.map(mapContribution)
+        topContributors: topContributors.map(mapContribution),
+        isGoldenKappaTrain: isGoldenKappaTrain
     });
 
     frontendCommunicator.send("hype-train:end");

@@ -25,7 +25,7 @@ const { EffectCategory } = require("../../shared/effect-constants");
                                 <tooltip
                                     style="margin-left: 5px"
                                     ng-if="category === 'integrations'"
-                                    text="'Integrations need to be linked in Settings -> Integrations in order for the effects to work.'"
+                                    text="'Integrations need to be linked / configured in Settings -> Integrations in order for the effects to work.'"
                                 ></tooltip>
                             </div>
                         </div>

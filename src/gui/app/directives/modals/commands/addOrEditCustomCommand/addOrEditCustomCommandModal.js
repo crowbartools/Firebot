@@ -3,7 +3,7 @@
 // Modal for adding or editing a command
 
 (function () {
-    const uuid = require("uuid/v4");
+    const { v4: uuid } = require("uuid");
 
     angular.module("firebotApp").component("addOrEditCustomCommandModal", {
         templateUrl:
@@ -19,7 +19,7 @@
 
             $ctrl.command = {
                 active: true,
-                simple: !settingsService.getDefaultToAdvancedCommandMode(),
+                simple: !settingsService.getSetting("DefaultToAdvancedCommandMode"),
                 sendCooldownMessage: true,
                 cooldownMessage: "This command is still on cooldown for: {timeLeft}",
                 cooldown: {},
@@ -96,9 +96,9 @@
                     $ctrl.command.simple = !$ctrl.command.simple;
 
                     if ($ctrl.isNewCommand &&
-                        !settingsService.getDefaultToAdvancedCommandMode() &&
-                        !settingsService.getSeenAdvancedCommandModePopup()) {
-                        settingsService.setSeenAdvancedCommandModePopup(true);
+                        !settingsService.getSetting("DefaultToAdvancedCommandMode") &&
+                        !settingsService.getSetting("SeenAdvancedCommandModePopup")) {
+                        settingsService.saveSetting("SeenAdvancedCommandModePopup", true);
                         utilityService.showConfirmationModal({
                             title: "Default Mode",
                             question: `Do you want to always use Advanced Mode for new Commands?`,
@@ -109,7 +109,7 @@
                             cancelBtnType: "btn-default"
                         }).then((confirmed) => {
                             if (confirmed) {
-                                settingsService.setDefaultToAdvancedCommandMode(true);
+                                settingsService.saveSetting("DefaultToAdvancedCommandMode", true);
                                 ngToast.create({
                                     className: 'success',
                                     content: "New commands will now default to Advanced Mode.",

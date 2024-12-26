@@ -6,10 +6,20 @@ import viewerDatabase from "../../../viewers/viewer-database";
 const model : ReplaceVariable = {
     definition: {
         handle: "viewTime",
-        usage: "viewTime[username]",
+        usage: "viewTime",
         description: "Displays the view time (in hours) of a given viewer (leave blank to use current viewer)",
+        examples: [
+            {
+                usage: "viewTime",
+                description: "Returns view time for current viewer"
+            },
+            {
+                usage: "viewTime[username]",
+                description: "Returns view time for specified viewer"
+            }
+        ],
         categories: [VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
     },
     evaluator: async (trigger, username: string) => {
         if (username == null) {

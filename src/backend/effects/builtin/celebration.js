@@ -1,8 +1,8 @@
 "use strict";
 
 const webServer = require("../../../server/http-server-manager");
-const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
-const { settings } = require("../../common/settings-access");
+const { EffectCategory } = require('../../../shared/effect-constants');
+const { SettingsManager } = require("../../common/settings-manager");
 
 /**
  * The Celebration effect
@@ -75,7 +75,7 @@ const celebration = {
    * When the effect is triggered by something
    * Used to validate fields in the option template.
    */
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.celebration == null) {
             errors.push("Please select how you'd like to celebrate.");
@@ -85,7 +85,7 @@ const celebration = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         // What should this do when triggered.
         const effect = event.effect;
 
@@ -100,9 +100,9 @@ const celebration = {
             celebrationDuration: celebrationDuration
         };
 
-        if (settings.useOverlayInstances()) {
+        if (SettingsManager.getSetting("UseOverlayInstances")) {
             if (effect.overlayInstance != null) {
-                if (settings.getOverlayInstances().includes(effect.overlayInstance)) {
+                if (SettingsManager.getSetting("OverlayInstances").includes(effect.overlayInstance)) {
                     data.overlayInstance = effect.overlayInstance;
                 }
             }
@@ -122,7 +122,7 @@ const celebration = {
         },
         event: {
             name: "celebrate",
-            onOverlayEvent: data => {
+            onOverlayEvent: (data) => {
 
                 // Celebrate Packet
                 //{"event": "celebration", "celebrationType": celebrationType, "celebrationDuration":celebrationDuration};
@@ -131,7 +131,7 @@ const celebration = {
 
                 // Generate UUID to use as class name.
                 // eslint-disable-next-line no-undef
-                const divClass = uuidv4();
+                const divClass = uuid();
 
                 if (type === "Fireworks") {
                     const canvas = `<canvas id="fireworks" class="${divClass}-fireworks celebration ${type}" style="display:none; z-index: 99;"></canvas>`;

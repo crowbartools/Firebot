@@ -17,6 +17,16 @@ const model : ReplaceVariable = {
         handle: "arrayShuffle",
         description: "Returns a new shuffled array",
         usage: "arrayShuffle[array]",
+        examples: [
+            {
+                usage: `arrayShuffle["[1,2,3]"]`,
+                description: "Returns a shuffled version of [1,2,3], e.g., [2,1,3]."
+            },
+            {
+                usage: "arrayShuffle[rawArray]",
+                description: "Returns a shuffled version of the raw array."
+            }
+        ],
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },

@@ -6,7 +6,7 @@ const logger = require("../../../backend/logwrapper");
 
 router.use(function log(req, res, next) {
     // here we could do stuff for every request if we wanted
-    logger.info(`API Request from: ${req.socket.remoteAddress}, for path: ${req.originalUrl}`);
+    logger.debug(`API Request from: ${req.socket.remoteAddress}, for path: ${req.originalUrl}`);
     next();
 });
 
@@ -71,6 +71,11 @@ router
     .route("/custom-variables/:variableName")
     .get(customVariables.getCustomVariable)
     .post(customVariables.setCustomVariable);
+
+// builtin variables
+const variableManager = require("./controllers/variableApiController");
+
+router.route("/variables").get(variableManager.getReplaceVariables);
 
 // viewers
 const viewers = require("./controllers/viewersApiController");

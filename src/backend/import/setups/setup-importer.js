@@ -9,6 +9,7 @@ const countersManager = require("../../counters/counter-manager");
 const effectQueueManager = require("../../effects/queues/effect-queue-manager");
 const eventsAccess = require("../../events/events-access");
 const timerManager = require("../../timers/timer-manager");
+const scheduledTaskManager = require("../../timers/scheduled-task-manager");
 const presetEffectListManager = require("../../effects/preset-lists/preset-effect-list-manager");
 const customRolesManager = require("../../roles/custom-roles-manager");
 const quickActionManager = require("../../quick-actions/quick-action-manager");
@@ -165,6 +166,13 @@ async function importSetup(setup, selectedCurrency) {
     }
     timerManager.triggerUiRefresh();
 
+    // scheduled tasks
+    const scheduledTasks = setup.components.scheduledTasks || [];
+    for (const scheduledTask of scheduledTasks) {
+        scheduledTaskManager.saveScheduledTask(scheduledTask);
+    }
+    scheduledTaskManager.triggerUiRefresh();
+
     // variable macros
     const variableMacros = setup.components.variableMacros || [];
     for (const macro of variableMacros) {
@@ -230,6 +238,9 @@ function removeSetupComponents(components) {
                     case "timers":
                         timerManager.deleteItem(id);
                         break;
+                    case "scheduledTasks":
+                        scheduledTaskManager.deleteScheduledTask(id);
+                        break;
                     case "variableMacros":
                         variableMacroManager.deleteItem(id);
                         break;
@@ -260,6 +271,8 @@ function removeSetupComponents(components) {
                 presetEffectListManager.triggerUiRefresh();
             } else if (componentType === "timers") {
                 timerManager.triggerUiRefresh();
+            } else if (componentType === "scheduledTasks") {
+                scheduledTaskManager.triggerUiRefresh();
             } else if (componentType === "variableMacros") {
                 variableMacroManager.triggerUiRefresh();
             } else if (componentType === "viewerRoles") {

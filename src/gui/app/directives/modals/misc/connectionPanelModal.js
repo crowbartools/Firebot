@@ -91,7 +91,7 @@
 
 
             $ctrl.toggledServiceIsChecked = function(service) {
-                let sidebarControlledServices = settingsService.getSidebarControlledServices();
+                let sidebarControlledServices = settingsService.getSetting("SidebarControlledServices");
                 if (sidebarControlledServices.includes(service)) {
                     sidebarControlledServices = sidebarControlledServices.filter(
                         s => s !== service
@@ -99,11 +99,11 @@
                 } else {
                     sidebarControlledServices.push(service);
                 }
-                settingsService.setSidebarControlledServices(sidebarControlledServices);
+                settingsService.saveSetting("SidebarControlledServices", sidebarControlledServices);
             };
 
             $ctrl.serviceIsChecked = function(service) {
-                const sidebarControlledServices = settingsService.getSidebarControlledServices();
+                const sidebarControlledServices = settingsService.getSetting("SidebarControlledServices");
                 return sidebarControlledServices.includes(service);
             };
 

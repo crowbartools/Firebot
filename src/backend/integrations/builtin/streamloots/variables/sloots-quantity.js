@@ -12,7 +12,7 @@ const model = {
         handle: "slootsChestQuantity",
         description: "The number of purchased StreamLoots Chests.",
         triggers: triggers,
-        categories: [VariableCategory.COMMON, VariableCategory.TRIGGER],
+        categories: [VariableCategory.COMMON, VariableCategory.INTEGRATION],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {

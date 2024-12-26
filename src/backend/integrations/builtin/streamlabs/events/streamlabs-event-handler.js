@@ -22,6 +22,7 @@ const eventSourceDefinition = {
             manualMetadata: {
                 from: "StreamLabs",
                 formattedDonationAmount: 5,
+                donationAmount: 5,
                 donationMessage: "Test message"
             },
             isIntegration: true,
@@ -41,6 +42,7 @@ const eventSourceDefinition = {
             manualMetadata: {
                 from: "Extra Life",
                 formattedDonationAmount: 5,
+                donationAmount: 5,
                 donationMessage: "Test message"
             },
             isIntegration: true,
