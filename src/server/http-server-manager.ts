@@ -14,9 +14,7 @@ import { CustomWebSocketHandler } from "../types/websocket";
 
 import dataAccess from "../backend/common/data-access";
 
-import electron from 'electron';
-const workingDirectoryRoot = process.platform === 'darwin' ? process.resourcesPath : process.cwd();
-const cwd = !electron.app.isPackaged ? path.join(electron.app.getAppPath(), "build") : workingDirectoryRoot;
+const cwd = dataAccess.getWorkingDirectoryPath();
 
 interface ServerInstance {
     name: string;

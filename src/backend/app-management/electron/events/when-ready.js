@@ -251,8 +251,8 @@ exports.whenReady = async () => {
     // load activity feed manager
     require("../../../events/activity-feed-manager");
 
-    const iconManager = require("../../../common/icon-manager");
-    iconManager.loadFontAwesomeIcons();
+    const { IconManager } = require("../../../common/icon-manager");
+    await IconManager.loadFontAwesomeIcons();
 
     windowManagement.updateSplashScreenStatus("Starting stream info poll...");
     const streamInfoPoll = require("../../../twitch-api/stream-info-manager");
