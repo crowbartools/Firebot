@@ -58,9 +58,6 @@ exports.whenReady = async () => {
     windowManagement.updateSplashScreenStatus("Refreshing Twitch account data...");
     await accountAccess.refreshTwitchData();
 
-    const twitchFrontendListeners = require("../../../twitch-api/frontend-twitch-listeners");
-    twitchFrontendListeners.setupListeners();
-
     windowManagement.updateSplashScreenStatus("Starting stream status poll...");
     connectionManager.startOnlineCheckInterval();
 
