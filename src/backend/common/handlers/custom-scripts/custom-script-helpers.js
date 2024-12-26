@@ -90,7 +90,7 @@ function buildModules(scriptManifest) {
         frontendCommunicator: require("../../frontend-communicator"),
         counterManager: require("../../../counters/counter-manager"),
         utils: require("../../../utility"),
-        resourceTokenManager: require("../../../resourceTokenManager"),
+        resourceTokenManager: require("../../../resource-token-manager").ResourceTokenManager,
 
         notificationManager: {
             addNotification: (notificationBase, permanentlySave = true) => {

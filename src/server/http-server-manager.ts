@@ -8,7 +8,7 @@ import path from 'path';
 import logger from "../backend/logwrapper";
 import { SettingsManager } from "../backend/common/settings-manager";
 import effectManager from "../backend/effects/effectManager";
-import resourceTokenManager from "../backend/resourceTokenManager";
+import { ResourceTokenManager } from "../backend/resource-token-manager";
 import websocketServerManager from "./websocket-server-manager";
 import { CustomWebSocketHandler } from "../types/websocket";
 
@@ -136,7 +136,7 @@ class HttpServerManager extends EventEmitter {
         app.get("/resource/:token", function(req, res) {
             const token = req.params.token || null;
             if (token !== null) {
-                let resourcePath = resourceTokenManager.getResourcePath(token) || null;
+                let resourcePath = ResourceTokenManager.getResourcePath(token) || null;
                 if (resourcePath !== null) {
                     resourcePath = resourcePath.replace(/\\/g, "/");
                     res.sendFile(resourcePath);

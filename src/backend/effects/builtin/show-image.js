@@ -1,7 +1,7 @@
 "use strict";
 
 const { SettingsManager } = require("../../common/settings-manager");
-const resourceTokenManager = require("../../resourceTokenManager");
+const { ResourceTokenManager } = require("../../resource-token-manager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/http-server-manager");
 const fs = require("fs/promises");
@@ -200,7 +200,7 @@ const showImage = {
         }
 
         if (effect.imageType === "local") {
-            const resourceToken = resourceTokenManager.storeResourcePath(effect.file, effect.length);
+            const resourceToken = ResourceTokenManager.storeResourcePath(effect.file, effect.length);
             data.resourceToken = resourceToken;
         }
 
@@ -218,7 +218,7 @@ const showImage = {
 
             const fullFilePath = path.join(effect.folder, chosenFile);
 
-            const resourceToken = resourceTokenManager.storeResourcePath(fullFilePath, effect.length);
+            const resourceToken = ResourceTokenManager.storeResourcePath(fullFilePath, effect.length);
 
             data.resourceToken = resourceToken;
         }
