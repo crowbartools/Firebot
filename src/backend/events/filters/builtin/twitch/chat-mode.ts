@@ -29,7 +29,7 @@ const filter: EventFilter = {
                 display: "Slow"
             },
             {
-                value: "r9kbeta",
+                value: "uniquechat",
                 display: "Unique Chat"
             }
         ];

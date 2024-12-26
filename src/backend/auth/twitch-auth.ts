@@ -67,6 +67,7 @@ class TwitchAuthProviders {
             'moderator:manage:shield_mode',
             'moderator:manage:shoutouts',
             'moderator:manage:unban_requests',
+            'moderator:manage:warnings',
             'moderator:read:automod_settings',
             'moderator:read:blocked_terms',
             'moderator:read:chat_settings',
