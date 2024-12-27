@@ -1,13 +1,13 @@
-import { EventEmitter } from "events";
+import { TypedEmitter } from "tiny-typed-emitter";
 import ClientOAuth2 from "client-oauth2";
 import logger from "../logwrapper";
-import { AuthProvider, AuthProviderDefinition } from "./auth";
+import { AuthProvider, AuthProviderDefinition, AuthDetails, AuthManagerEvents } from "./auth";
 import { SettingsManager } from "../common/settings-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import { Notification, app } from "electron";
 import windowManagement from "../app-management/electron/window-management";
 
-class AuthManager extends EventEmitter {
+class AuthManager extends TypedEmitter<AuthManagerEvents> {
     private readonly _httpPort: number;
     private _authProviders: AuthProvider[];
 
@@ -66,17 +66,24 @@ class AuthManager extends EventEmitter {
     }
 
     buildOAuthClientForProvider(provider: AuthProviderDefinition, redirectUri: string): ClientOAuth2 {
-        let scopes;
+        let scopes: string[] = [];
         if (provider.scopes) {
             scopes = Array.isArray(provider.scopes)
                 ? (scopes = provider.scopes)
                 : (scopes = provider.scopes.split(" "));
-        } else {
-            scopes = [];
         }
 
         const authUri = `${provider.auth.authorizeHost ?? provider.auth.tokenHost}${provider.auth.authorizePath}`;
         const tokenUri = `${provider.auth.tokenHost}${provider.auth.tokenPath ?? ""}`;
+
+        // Provide client_id and client_secret in body by default. Override if any options are user-specified.
+        const tokenOptions = { body: {} };
+        if (provider.auth.type === "code") {
+            tokenOptions.body["client_id"] = provider.client.id;
+            tokenOptions.body["client_secret"] = provider.client.secret;
+        }
+        provider.options ??= { body: {} };
+        provider.options.body = Object.assign(tokenOptions.body, provider.options.body ?? {});
 
         return new ClientOAuth2({
             clientId: provider.client.id,
@@ -86,37 +93,80 @@ class AuthManager extends EventEmitter {
             redirectUri: redirectUri,
             scopes: scopes,
             state: provider.id,
-            body: provider?.options?.body,
-            query: provider?.options?.query,
-            headers: provider?.options?.headers
+            body: provider.options.body,
+            query: provider.options?.query,
+            headers: provider.options?.headers
         });
     }
 
-    createToken(providerId: string, tokenData: ClientOAuth2.Data): ClientOAuth2.Token {
-        const provider = this.getAuthProvider(providerId);
-        const accessToken = provider.oauthClient.createToken(tokenData);
+    getAuthDetails(accessToken: ClientOAuth2.Token): AuthDetails {
+        const tokenData: ClientOAuth2.Data = accessToken.data;
+        const accessTokenData: AuthDetails = {
+            access_token: tokenData.access_token, // eslint-disable-line camelcase
+            refresh_token: tokenData.refresh_token, // eslint-disable-line camelcase
+            token_type: tokenData.token_type, // eslint-disable-line camelcase
+            scope: Array.isArray(tokenData.scope) ? (tokenData.scope) : (tokenData.scope.split(" "))
+        };
 
-        // Hack because of a bug in oauth2-client
-        // createToken() adds an expires date property that is claculated with Date() + expires_in instead of created_at + expires_in
-        // As a result, expired() always saw the token valid
-        let tokenExpires: Date;
-        if (typeof tokenData.expires_in === 'number') {
-            tokenExpires = new Date(tokenData.created_at);
-            tokenExpires.setSeconds(tokenExpires.getSeconds() + Number(tokenData.expires_in));
+        if (tokenData.expires_at && tokenData.expires_in) {
+            // induce created_at if not given
+            accessTokenData.expires_in = Number(tokenData.expires_in); // eslint-disable-line camelcase
+            accessTokenData.expires_at = new Date(tokenData.expires_at); // eslint-disable-line camelcase
+            accessTokenData.created_at = tokenData.created_at ? // eslint-disable-line camelcase
+                new Date(tokenData.created_at) :
+                new Date(accessTokenData.expires_at.getTime() - accessTokenData.expires_in * 1000);
+        } else if (tokenData.expires_at && tokenData.created_at) {
+            // induce expires_in
+            accessTokenData.created_at = new Date(tokenData.created_at); // eslint-disable-line camelcase
+            accessTokenData.expires_at = new Date(tokenData.expires_at); // eslint-disable-line camelcase
+            accessTokenData.expires_in = (accessTokenData.expires_at.getTime() - accessTokenData.created_at.getTime()) / 1000; // eslint-disable-line camelcase
+        } else if (tokenData.expires_in) {
+            // induce expires_at
+            // created_at = now if absent
+            accessTokenData.expires_in = Number(tokenData.expires_in); // eslint-disable-line camelcase
+            accessTokenData.created_at = new Date(tokenData?.created_at); // eslint-disable-line camelcase
+            accessTokenData.expires_at = new Date(accessTokenData.created_at.getTime() + accessTokenData.expires_in * 1000); // eslint-disable-line camelcase
+        } else if (tokenData.expires_at) {
+            // induce expires_in
+            // induce created_at = now
+            accessTokenData.expires_at = new Date(tokenData.expires_at); // eslint-disable-line camelcase
+            accessTokenData.created_at = new Date(); // eslint-disable-line camelcase
+            accessTokenData.expires_in = (accessTokenData.expires_at.getTime() - accessTokenData.created_at.getTime()) / 1000; // eslint-disable-line camelcase
         } else {
-            logger.warn(`Unknown duration: ${tokenData.expires_in}`);
-            return null;
+            // Not enough info on expiry time
+            // induce creation time
+            accessTokenData.created_at = new Date(); // eslint-disable-line camelcase
         }
-        // @ts-expect-error 2551
-        accessToken.expires = tokenExpires;
+        return accessTokenData;
+    }
+
+    createToken(providerId: string, tokenData: AuthDetails): ClientOAuth2.Token {
+        const provider = this.getAuthProvider(providerId);
+        const accessToken = provider.oauthClient.createToken(tokenData as ClientOAuth2.Data);
+
+        // Attempt to re-infer expiry date if data is malformed
+        if (!tokenData.expires_at) {
+            tokenData = this.getAuthDetails(accessToken);
+        }
+
+        // Hack to properly recreate the ClientOAuth2 object from the Firebot stored data
+        if (!tokenData.expires_at) {
+            logger.warn(`Token has no expiry data. Assuming it is still valid. `);
+            // @ts-expect-error 2551
+            accessToken.expires = Infinity;
+        } else {
+            // @ts-expect-error 2551
+            accessToken.expires = new Date(tokenData.expires_at);
+        }
+
         return accessToken;
     }
 
-    tokenExpired(providerId: string, tokenData: ClientOAuth2.Data): boolean {
+    tokenExpired(providerId: string, tokenData: AuthDetails): boolean {
         return this.createToken(providerId, tokenData).expired();
     }
 
-    async refreshTokenIfExpired(providerId: string, tokenData: ClientOAuth2.Data): Promise<unknown> {
+    async refreshTokenIfExpired(providerId: string, tokenData: AuthDetails): Promise<AuthDetails> {
         const provider = this.getAuthProvider(providerId);
         let accessToken = this.createToken(providerId, tokenData);
 
@@ -134,10 +184,11 @@ class AuthManager extends EventEmitter {
                 return null;
             }
         }
-        return accessToken.data;
+
+        return this.getAuthDetails(accessToken);
     }
 
-    async revokeTokens(providerId: string, tokenData: ClientOAuth2.Data): Promise<void> {
+    async revokeTokens(providerId: string, tokenData: AuthDetails): Promise<void> {
         const provider = this.getAuthProvider(providerId);
         if (provider == null) {
             return;
@@ -151,15 +202,15 @@ class AuthManager extends EventEmitter {
         }
     }
 
-    successfulAuth(providerId: string, tokenData: unknown): void {
-        this.emit("auth-success", { providerId: providerId, tokenData: tokenData });
+    successfulAuth(providerId: string, tokenData: AuthDetails): void {
+        this.emit("auth-success", providerId, tokenData);
     }
 }
 
-const manager = new AuthManager();
+const authManager = new AuthManager();
 
 frontendCommunicator.onAsync("begin-device-auth", async (providerId: string): Promise<void> => {
-    const provider = manager.getAuthProvider(providerId);
+    const provider = authManager.getAuthProvider(providerId);
     if (provider?.details?.auth?.type !== "device") {
         return;
     }
@@ -204,7 +255,7 @@ frontendCommunicator.onAsync("begin-device-auth", async (providerId: string): Pr
                 clearInterval(tokenCheckInterval);
 
                 const tokenData = await tokenResponse.json();
-                manager.successfulAuth(providerId, tokenData);
+                authManager.successfulAuth(providerId, tokenData);
 
                 if (
                     Notification.isSupported() &&
@@ -233,4 +284,4 @@ frontendCommunicator.onAsync("begin-device-auth", async (providerId: string): Pr
     }
 });
 
-export = manager;
+export = authManager;

@@ -38,14 +38,14 @@ const ExtraLifeIncentives: ReplaceVariable = {
         }
 
         if (participantID == null) {
-            participantID = integrationManager.getIntegrationAccountId("extralife");
+            participantID = Number(integrationManager.getIntegrationAccountId("extralife"));
         }
 
         if (rewardDesc == null || rewardDesc.trim() === '') {
             rewardDesc = null;
         }
 
-        let extraLifeCall = await getParticipantIncentives(participantID, {orderBy: 'amount ASC'}).then((result) => {
+        let extraLifeCall = await getParticipantIncentives(participantID, { orderBy: 'amount ASC' }).then((result) => {
             result = result.data;
 
             if (rewardDesc != null) {

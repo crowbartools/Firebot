@@ -38,7 +38,7 @@ const ExtraLifeMilestones: ReplaceVariable = {
         }
 
         if (participantID == null) {
-            participantID = integrationManager.getIntegrationAccountId("extralife");
+            participantID = Number(integrationManager.getIntegrationAccountId("extralife"));
         }
 
         if (milestoneGoal.trim() === '') {
@@ -54,7 +54,7 @@ const ExtraLifeMilestones: ReplaceVariable = {
             return 0;
         });
 
-        let extraLifeCall = await getParticipantMilestones(participantID, {orderBy: 'fundraisingGoal ASC'}).then((result) => {
+        let extraLifeCall = await getParticipantMilestones(participantID, { orderBy: 'fundraisingGoal ASC' }).then((result) => {
             result = result.data;
 
             if (milestoneGoal != null) {

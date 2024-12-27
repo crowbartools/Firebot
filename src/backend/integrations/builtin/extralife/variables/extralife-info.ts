@@ -62,7 +62,7 @@ const ExtraLifeInfo: ReplaceVariable = {
     },
     evaluator: (_, infoPath: string, participantID: number, returnJson: boolean) => {
         if (participantID == null) {
-            participantID = integrationManager.getIntegrationAccountId("extralife");
+            participantID = Number(integrationManager.getIntegrationAccountId("extralife"));
         }
 
         if (infoPath == null || infoPath.trim() === '') {

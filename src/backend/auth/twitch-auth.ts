@@ -28,6 +28,7 @@ class TwitchAuthProviders {
             tokenPath: this._tokenPath,
             type: "device"
         },
+        autoRefreshToken: false,
         scopes: [
             'bits:read',
             'channel:edit:commercial',
@@ -104,6 +105,7 @@ class TwitchAuthProviders {
             tokenPath: this._tokenPath,
             type: "device"
         },
+        autoRefreshToken: false,
         scopes: [
             'channel:moderate',
             'chat:edit',
@@ -149,8 +151,7 @@ async function getUserCurrent(accessToken: string) {
     return null;
 }
 
-authManager.on("auth-success", async (authData) => {
-    const { providerId, tokenData } = authData;
+authManager.on("auth-success", async (providerId, tokenData) => {
 
     if (providerId === twitchAuthProviders.streamerAccountProviderId
         || providerId === twitchAuthProviders.botAccountProviderId) {
@@ -172,7 +173,7 @@ authManager.on("auth-success", async (authData) => {
             broadcasterType: userData.broadcaster_type,
             auth: {
                 ...tokenData,
-                obtainment_timestamp: obtainmentTimestamp, // eslint-disable-line camelcase
+                created_at: new Date(obtainmentTimestamp), // eslint-disable-line camelcase
                 expires_at: getExpiryDateOfAccessToken({ // eslint-disable-line camelcase
                     expiresIn: tokenData.expires_in,
                     obtainmentTimestamp: obtainmentTimestamp

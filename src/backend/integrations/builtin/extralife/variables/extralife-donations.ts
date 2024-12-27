@@ -42,7 +42,7 @@ const ExtraLifeDonations: ReplaceVariable = {
         }
 
         if (participantID == null) {
-            participantID = integrationManager.getIntegrationAccountId("extralife");
+            participantID = Number(integrationManager.getIntegrationAccountId("extralife"));
         }
 
         if (sortName == null || sortName.trim() === '') {

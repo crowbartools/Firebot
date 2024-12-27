@@ -23,11 +23,11 @@ class FirebotDeviceAuthProvider {
 
         logger.debug(`Persisting ${accountType} access token`);
 
-        const auth: AuthDetails = account.auth ?? { } as AuthDetails;
+        const auth: AuthDetails = account.auth ?? {} as AuthDetails;
         auth.access_token = token.accessToken; // eslint-disable-line camelcase
         auth.refresh_token = token.refreshToken; // eslint-disable-line camelcase
         auth.expires_in = token.expiresIn; // eslint-disable-line camelcase
-        auth.obtainment_timestamp = token.obtainmentTimestamp; // eslint-disable-line camelcase
+        auth.created_at = new Date(token.obtainmentTimestamp); // eslint-disable-line camelcase
         auth.expires_at = getExpiryDateOfAccessToken({ // eslint-disable-line camelcase
             expiresIn: token.expiresIn,
             obtainmentTimestamp: token.obtainmentTimestamp
@@ -52,7 +52,7 @@ class FirebotDeviceAuthProvider {
                     accessToken: streamerAcccount.auth.access_token,
                     refreshToken: streamerAcccount.auth.refresh_token,
                     expiresIn: streamerAcccount.auth.expires_in,
-                    obtainmentTimestamp: streamerAcccount.auth.obtainment_timestamp ?? Date.now(),
+                    obtainmentTimestamp: new Date(streamerAcccount.auth?.created_at).getTime(),
                     scope: scopes
                 }
             });
@@ -82,7 +82,7 @@ class FirebotDeviceAuthProvider {
                     accessToken: botAcccount.auth.access_token,
                     refreshToken: botAcccount.auth.refresh_token,
                     expiresIn: botAcccount.auth.expires_in,
-                    obtainmentTimestamp: botAcccount.auth.obtainment_timestamp ?? Date.now(),
+                    obtainmentTimestamp: new Date(botAcccount.auth?.created_at).getTime(),
                     scope: scopes
                 }
             });

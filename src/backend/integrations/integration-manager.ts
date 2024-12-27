@@ -1,23 +1,40 @@
-"use strict";
-const { ipcMain } = require("electron");
-const logger = require("../logwrapper");
-const profileManager = require("../common/profile-manager");
-const authManager = require("../auth/auth-manager");
-const EventEmitter = require("events");
-const { shell } = require('electron');
-const { SettingsManager } = require('../common/settings-manager');
-const frontEndCommunicator = require('../common/frontend-communicator');
-const { setValuesForFrontEnd, buildSaveDataFromSettingValues } = require("../common/firebot-setting-helpers");
+import { ipcMain, shell } from "electron";
+import { TypedEmitter } from "tiny-typed-emitter";
+import { SettingsManager } from "../common/settings-manager";
+import { setValuesForFrontEnd, buildSaveDataFromSettingValues } from "../common/firebot-setting-helpers";
+import { AuthDetails } from "../auth/auth";
+import {
+    AccountIdDetails,
+    Integration,
+    IntegrationData,
+    IntegrationDefinition,
+    LinkData,
+    IntegrationManagerEvents
+} from "../../types/integrations";
+import { FirebotParams } from "@crowbartools/firebot-custom-scripts-types/types/modules/firebot-parameters";
+import logger from "../logwrapper";
+import profileManager from "../common/profile-manager";
+import authManager from "../auth/auth-manager";
+import frontEndCommunicator from "../common/frontend-communicator";
 
-/**@extends {NodeJS.EventEmitter} */
-class IntegrationManager extends EventEmitter {
+class IntegrationManager extends TypedEmitter<IntegrationManagerEvents> {
+    private _integrations: Array<Integration> = [];
+
     constructor() {
         super();
+        authManager.on("auth-success", (providerId, tokenData) => {
+            const int = this._integrations.find(i => i.definition.linkType === "auth" &&
+                i.definition.authProviderDetails.id === providerId);
+            if (int != null) {
 
-        this._integrations = [];
+                this.saveIntegrationAuth(int, tokenData);
+
+                this.linkIntegration(int, { auth: tokenData });
+            }
+        });
     }
 
-    registerIntegration(integration) {
+    registerIntegration(integration: Integration): void {
         integration.definition.linked = false;
 
         if (integration.definition.linkType === "auth") {
@@ -26,7 +43,7 @@ class IntegrationManager extends EventEmitter {
 
         const integrationDb = profileManager.getJsonDbInProfile("/integrations");
         try {
-            const integrationSettings = integrationDb.getData(`/${integration.definition.id}`);
+            const integrationSettings = integrationDb.getData(`/${integration.definition.id}`) as IntegrationData;
             if (integrationSettings != null) {
                 integration.definition.settings = integrationSettings.settings;
                 integration.definition.userSettings = integrationSettings.userSettings;
@@ -50,7 +67,7 @@ class IntegrationManager extends EventEmitter {
                 accountId: integration.definition.accountId,
                 settings: integration.definition.settings,
                 userSettings: integration.definition.userSettings
-            }
+            } as IntegrationData
         );
 
         this._integrations.push(integration);
@@ -63,35 +80,35 @@ class IntegrationManager extends EventEmitter {
             global.renderWindow.webContents.send("integrationsUpdated");
         }
 
-        integration.integration.on("connected", (id) => {
-            renderWindow.webContents.send("integrationConnectionUpdate", {
-                id: id,
+        integration.integration.on("connected", (integrationId: string) => {
+            global.renderWindow.webContents.send("integrationConnectionUpdate", {
+                id: integrationId,
                 connected: true
             });
-            this.emit("integration-connected", id);
-            logger.info(`Successfully connected to ${id}`);
+            this.emit("integration-connected", integrationId);
+            logger.info(`Successfully connected to ${integrationId}`);
         });
 
-        integration.integration.on("disconnected", (id) => {
-            renderWindow.webContents.send("integrationConnectionUpdate", {
-                id: id,
+        integration.integration.on("disconnected", (integrationId: string) => {
+            global.renderWindow.webContents.send("integrationConnectionUpdate", {
+                id: integrationId,
                 connected: false
             });
-            this.emit("integration-disconnected", id);
-            logger.info(`Disconnected from ${id}`);
+            this.emit("integration-disconnected", integrationId);
+            logger.info(`Disconnected from ${integrationId}`);
         });
 
-        integration.integration.on("reconnect", (id) => {
-            logger.debug(`Reconnecting to ${id}...`);
-            this.connectIntegration(id);
+        integration.integration.on("reconnect", (integrationId: string) => {
+            logger.debug(`Reconnecting to ${integrationId}...`);
+            this.connectIntegration(integrationId);
         });
 
-        integration.integration.on("settings-update", (id, settings) => {
+        integration.integration.on("settings-update", (integrationId: string, settings: FirebotParams) => {
             try {
                 const integrationDb = profileManager.getJsonDbInProfile("/integrations");
-                integrationDb.push(`/${id}/settings`, settings);
+                integrationDb.push(`/${integrationId}/settings`, settings);
 
-                const int = this.getIntegrationById(id);
+                const int = this.getIntegrationById(integrationId);
                 if (int != null) {
                     int.definition.linked = true;
                     int.definition.settings = settings;
@@ -103,15 +120,15 @@ class IntegrationManager extends EventEmitter {
         });
     }
 
-    getIntegrationUserSettings(integrationId) {
-        const int = this.getIntegrationById(integrationId);
+    getIntegrationUserSettings<Params extends FirebotParams = FirebotParams>(integrationId: string): Params {
+        const int = this.getIntegrationById<Params>(integrationId);
         if (int == null) {
             return null;
         }
         return int.definition.userSettings;
     }
 
-    saveIntegrationUserSettings(id, settings, notifyInt = true) {
+    saveIntegrationUserSettings(id: string, settings: FirebotParams, notifyInt = true): void {
         try {
             const integrationDb = profileManager.getJsonDbInProfile("/integrations");
             integrationDb.push(`/${id}/userSettings`, settings);
@@ -127,7 +144,7 @@ class IntegrationManager extends EventEmitter {
                     userSettings: int.definition.userSettings,
                     auth: int.definition.auth,
                     accountId: int.definition.accountId
-                };
+                } as IntegrationData;
                 int.integration.onUserSettingsUpdate(integrationData);
             }
         } catch (error) {
@@ -135,16 +152,16 @@ class IntegrationManager extends EventEmitter {
         }
     }
 
-    getIntegrationById(integrationId) {
-        return this._integrations.find(i => i.definition.id === integrationId);
+    getIntegrationById<Params extends FirebotParams = FirebotParams>(integrationId: string): Integration<Params> {
+        return this._integrations.find(i => i.definition.id === integrationId) as Integration<Params>;
     }
 
-    getIntegrationDefinitionById(integrationId) {
-        const integration = this.getIntegrationById(integrationId);
+    getIntegrationDefinitionById<Params extends FirebotParams = FirebotParams>(integrationId: string): IntegrationDefinition<Params> {
+        const integration = this.getIntegrationById<Params>(integrationId);
         return integration ? integration.definition : null;
     }
 
-    integrationIsConnectable(integrationId) {
+    integrationIsConnectable(integrationId: string): boolean {
         const integration = this.getIntegrationDefinitionById(integrationId);
         if (integration == null) {
             return false;
@@ -155,7 +172,7 @@ class IntegrationManager extends EventEmitter {
         return true;
     }
 
-    getAllIntegrationDefinitions() {
+    getAllIntegrationDefinitions(): Array<IntegrationDefinition> {
         return this._integrations
             .map(i => i.definition)
             .map((i) => {
@@ -165,16 +182,17 @@ class IntegrationManager extends EventEmitter {
                     description: i.description,
                     linked: i.linked,
                     linkType: i.linkType,
+                    idDetails: i.linkType === "id" ? i.idDetails : undefined,
+                    authProviderDetails: i.linkType === "auth" ? i.authProviderDetails : undefined,
                     connectionToggle: i.connectionToggle,
-                    idDetails: i.idDetails,
                     configurable: i.configurable,
                     settings: i.settings,
                     settingCategories: i.settingCategories ? setValuesForFrontEnd(i.settingCategories, i.userSettings) : undefined
-                };
+                } as IntegrationDefinition;
             });
     }
 
-    saveIntegrationAuth(integration, authData) {
+    saveIntegrationAuth(integration: Integration, authData: AuthDetails): void {
         integration.definition.auth = authData;
 
         try {
@@ -186,12 +204,12 @@ class IntegrationManager extends EventEmitter {
         }
     }
 
-    getIntegrationAccountId(integrationId) {
+    getIntegrationAccountId(integrationId: string): AccountIdDetails {
         const int = this.getIntegrationById(integrationId);
         return int?.definition?.accountId;
     }
 
-    saveIntegrationAccountId(integration, accountId) {
+    saveIntegrationAccountId(integration: Integration, accountId: AccountIdDetails): void {
         integration.definition.accountId = accountId;
 
         try {
@@ -203,7 +221,7 @@ class IntegrationManager extends EventEmitter {
         }
     }
 
-    startIntegrationLink(integrationId) {
+    startIntegrationLink(integrationId: string): void {
         const int = this.getIntegrationById(integrationId);
         if (int == null || int.definition.linked) {
             return;
@@ -223,7 +241,7 @@ class IntegrationManager extends EventEmitter {
         }
     }
 
-    async linkIntegration(int, linkData) {
+    async linkIntegration(int: Integration, linkData: LinkData): Promise<void> {
         try {
             await int.integration.link(linkData);
         } catch (error) {
@@ -237,23 +255,25 @@ class IntegrationManager extends EventEmitter {
         integrationDb.push(`/${int.definition.id}/linked`, true);
         int.definition.linked = true;
 
-        renderWindow.webContents.send("integrationsUpdated");
+        global.renderWindow.webContents.send("integrationsUpdated");
         frontEndCommunicator.send("integrationLinked", {
             id: int.definition.id,
             connectionToggle: int.definition.connectionToggle
         });
     }
 
-    unlinkIntegration(integrationId) {
+    unlinkIntegration(integrationId: string): Promise<void> {
         const int = this.getIntegrationById(integrationId);
         if (int == null || !int.definition.linked) {
             return;
         }
 
-        this.disconnectIntegration(int);
+        this.disconnectIntegration(integrationId);
 
         try {
-            int.integration.unlink();
+            if (int.integration.unlink) {
+                int.integration.unlink();
+            }
             const integrationDb = profileManager.getJsonDbInProfile("/integrations");
             integrationDb.delete(`/${integrationId}`);
             int.definition.settings = null;
@@ -264,21 +284,22 @@ class IntegrationManager extends EventEmitter {
             logger.warn(error);
         }
 
-        renderWindow.webContents.send("integrationsUpdated");
+        global.renderWindow.webContents.send("integrationsUpdated");
 
         frontEndCommunicator.send("integrationUnlinked", integrationId);
     }
 
-    async connectIntegration(integrationId) {
+    async connectIntegration(integrationId: string): Promise<void> {
         const int = this.getIntegrationById(integrationId);
         if (int == null || !int.definition.linked) {
             this.emit("integration-disconnected", integrationId);
             return;
         }
 
-        const integrationData = {
+        const integrationData: IntegrationData = {
             settings: int.definition.settings,
-            userSettings: int.definition.userSettings
+            userSettings: int.definition.userSettings,
+            linked: int.definition.linked
         };
 
         if (int.definition.linkType === "auth") {
@@ -291,7 +312,7 @@ class IntegrationManager extends EventEmitter {
                 if (updatedToken == null) {
                     logger.warn("Could not refresh integration access token!");
 
-                    renderWindow.webContents.send("integrationConnectionUpdate", {
+                    global.renderWindow.webContents.send("integrationConnectionUpdate", {
                         id: integrationId,
                         connected: false
                     });
@@ -315,7 +336,7 @@ class IntegrationManager extends EventEmitter {
         int.integration.connect(integrationData);
     }
 
-    disconnectIntegration(integrationId) {
+    disconnectIntegration(integrationId: string): Promise<void> {
         const int = this.getIntegrationById(integrationId);
         if (int == null || !int.definition.linked || !int.integration.connected) {
             return;
@@ -323,39 +344,39 @@ class IntegrationManager extends EventEmitter {
         int.integration.disconnect();
     }
 
-    async getAuth(integrationId) {
+    async getAuth(integrationId: string): Promise<LinkData> {
         const int = this.getIntegrationById(integrationId);
         if (int == null || !int.definition.linked) {
             this.emit("integration-disconnected", integrationId);
             return null;
         }
 
-        let authData = null;
+        let authData: LinkData = null;
         if (int.definition.linkType === "auth") {
             const providerId = int.definition?.authProviderDetails.id;
-            authData = int.definition.auth;
+            authData = { auth: int.definition.auth };
 
             if (int.definition.authProviderDetails &&
                 int.definition.authProviderDetails.autoRefreshToken &&
-                authManager.tokenExpired(providerId, authData)) {
+                authManager.tokenExpired(providerId, authData.auth)) {
 
-                const updatedToken = await authManager.refreshTokenIfExpired(providerId, authData);
+                const updatedToken = await authManager.refreshTokenIfExpired(providerId, authData.auth);
                 if (updatedToken != null) {
                     this.saveIntegrationAuth(int, updatedToken);
                     this.emit("token-refreshed", integrationId, updatedToken);
                 }
-                authData = updatedToken;
-            } else if (authManager.tokenExpired(providerId, authData)) {
+                authData.auth = updatedToken;
+            } else if (authManager.tokenExpired(providerId, authData.auth)) {
                 authData = null;
             }
         } else if (int.definition.linkType === "id") {
-            authData = int.definition.accountId;
+            authData = { accountId: int.definition.accountId };
         }
 
         if (authData == null) {
             logger.warn("Could not refresh integration access token!");
 
-            renderWindow.webContents.send("integrationConnectionUpdate", {
+            global.renderWindow.webContents.send("integrationConnectionUpdate", {
                 id: integrationId,
                 connected: false
             });
@@ -366,21 +387,22 @@ class IntegrationManager extends EventEmitter {
         return authData;
     }
 
-    async refreshToken(integrationId) {
+    async refreshToken(integrationId: string): Promise<AuthDetails> {
         const int = this.getIntegrationById(integrationId);
         if (int == null || !int.definition.linked) {
             this.emit("integration-disconnected", integrationId);
             return;
         }
 
-        const integrationData = {
+        const integrationData: IntegrationData = {
             settings: int.definition.settings,
-            userSettings: int.definition.userSettings
+            userSettings: int.definition.userSettings,
+            linked: int.definition.linked
         };
 
+        let authData = null;
         if (int.definition.linkType === "auth") {
-
-            let authData = int.definition.auth;
+            authData = int.definition.auth;
             if (int.definition.authProviderDetails) {
                 const updatedToken = await authManager.refreshTokenIfExpired(int.definition.authProviderDetails.id,
                     int.definition.auth);
@@ -388,7 +410,7 @@ class IntegrationManager extends EventEmitter {
                 if (updatedToken == null) {
                     logger.warn("Could not refresh integration access token!");
 
-                    renderWindow.webContents.send("integrationConnectionUpdate", {
+                    global.renderWindow.webContents.send("integrationConnectionUpdate", {
                         id: integrationId,
                         connected: false
                     });
@@ -405,26 +427,18 @@ class IntegrationManager extends EventEmitter {
             }
             integrationData.auth = authData;
         }
-        return integrationData;
+        return authData;
     }
 
-    /**
-     * @param {string} integrationId
-     * @returns {boolean}
-     */
-    integrationCanConnect(integrationId) {
+    integrationCanConnect(integrationId: string): boolean {
         const int = this.getIntegrationById(integrationId);
         if (int == null) {
             return false;
         }
-        return !!int.integration.connectionToggle;
+        return !!int.definition.connectionToggle;
     }
 
-    /**
-     * @param {string} integrationId
-     * @returns {boolean}
-     */
-    integrationIsConnected(integrationId) {
+    integrationIsConnected(integrationId: string): boolean {
         const int = this.getIntegrationById(integrationId);
         if (int == null) {
             return false;
@@ -432,81 +446,66 @@ class IntegrationManager extends EventEmitter {
         return int.integration.connected;
     }
 
-    /**
-     * @param {string} integrationId
-     * @returns {boolean}
-     */
-    integrationIsLinked(integrationId) {
+    integrationIsLinked(integrationId: string): boolean {
         const int = this.getIntegrationById(integrationId);
         if (int == null) {
             return false;
         }
-        return int.integration.linked;
+        return int.definition.linked;
     }
 }
 
-const manager = new IntegrationManager();
+const integrationManager = new IntegrationManager();
 
-frontEndCommunicator.on("integrationUserSettingsUpdate", (integrationData) => {
+frontEndCommunicator.on("integrationUserSettingsUpdate", (integrationData: IntegrationDefinition) => {
     if (integrationData == null) {
         return;
     }
 
-    const int = manager.getIntegrationById(integrationData.id);
+    const int = integrationManager.getIntegrationById(integrationData.id);
     if (int != null) {
-        manager.saveIntegrationUserSettings(int.definition.id,
+        integrationManager.saveIntegrationUserSettings(int.definition.id,
             buildSaveDataFromSettingValues(integrationData.settingCategories, int.definition.userSettings));
     }
 });
 
-
-frontEndCommunicator.onAsync("enteredIntegrationAccountId", async (idData) => {
+// TODO: The day the frontend is moved to typescript, this arguments list needs to be flattened
+// Having a dict here allows to tell the frontend what goes where for now
+frontEndCommunicator.onAsync<[{ integrationId: string, accountId: string }]>("enteredIntegrationAccountId", async (idData) => {
     const { integrationId, accountId } = idData;
-    const int = manager.getIntegrationById(integrationId);
+    const int = integrationManager.getIntegrationById(integrationId);
     if (int == null) {
         return;
     }
 
-    manager.saveIntegrationAccountId(int, accountId);
+    integrationManager.saveIntegrationAccountId(int, accountId);
 
-    manager.linkIntegration(int, { accountId: accountId });
-});
-
-authManager.on("auth-success", (authData) => {
-    const { providerId, tokenData } = authData;
-    const int = manager._integrations.find(i => i.definition.linkType === "auth" &&
-        i.definition.authProviderDetails.id === providerId);
-    if (int != null) {
-
-        manager.saveIntegrationAuth(int, tokenData);
-
-        manager.linkIntegration(int, { auth: tokenData });
-    }
+    integrationManager.linkIntegration(int, { accountId: accountId });
 });
 
 ipcMain.on("linkIntegration", (event, integrationId) => {
     logger.info("got 'linkIntegration' request");
-    manager.startIntegrationLink(integrationId);
+    integrationManager.startIntegrationLink(integrationId);
 });
 
 ipcMain.on("unlinkIntegration", (event, integrationId) => {
     logger.info("got 'unlinkIntegration' request");
-    manager.unlinkIntegration(integrationId);
+    integrationManager.unlinkIntegration(integrationId);
 });
 
 ipcMain.on("connectIntegration", (event, integrationId) => {
     logger.info("got 'connectIntegration' request");
-    manager.connectIntegration(integrationId);
+    integrationManager.connectIntegration(integrationId);
 });
 
 ipcMain.on("disconnectIntegration", (event, integrationId) => {
     logger.info("got 'disconnectIntegration' request");
-    manager.disconnectIntegration(integrationId);
+    integrationManager.disconnectIntegration(integrationId);
 });
 
 ipcMain.on("getAllIntegrationDefinitions", (event) => {
     logger.info("got 'get all integrations' request");
-    event.returnValue = manager.getAllIntegrationDefinitions();
+    event.returnValue = integrationManager.getAllIntegrationDefinitions();
 });
 
-module.exports = manager;
+export = integrationManager;

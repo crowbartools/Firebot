@@ -27,6 +27,7 @@ export interface AuthProviderDefinition {
     };
     redirectUriHost?: string;
     scopes?: string[] | string | undefined;
+    autoRefreshToken: boolean;
 }
 
 export interface AuthProvider {
@@ -38,25 +39,39 @@ export interface AuthProvider {
     details: AuthProviderDefinition;
 }
 
+// RFC6749 defines the following fields:
+// - access_token : REQUIRED
+// - refresh_token: OPTIONNAL
+// - token_type : REQUIRED
+// - expires_in: RECOMENDED
+// - scope: OPTIONNAL. REQUIRED if different from client's request
+// - state: REQUIRED
 export interface AuthDetails {
     /** The access token */
     access_token: string;
+
+    /** The refresh token */
+    refresh_token?: string;
 
     /** The type of access token */
     token_type: string;
 
     /** OAuth scopes of the access token */
-    scope: string[];
+    scope?: string[];
 
-    /** When the token was obtained, in epoch timestamp format */
-    obtainment_timestamp?: number;
+    /** When the token has been created */
+    created_at?: Date;
 
     /** How many seconds before the token expires */
     expires_in?: number;
 
-    /** JSON representation of when access token expires */
+    /** When access token expires */
     expires_at?: Date;
 
-    /** The refresh token */
-    refresh_token?: string;
+    /** Extra fields to be compatible with Type ClientOAuth2.Data */
+    [key: string]: unknown;
+}
+
+export interface AuthManagerEvents {
+    "auth-success": (providerId: string, tokenData: AuthDetails) => void
 }
