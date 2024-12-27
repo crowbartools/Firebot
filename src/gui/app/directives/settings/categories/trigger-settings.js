@@ -16,9 +16,9 @@
                     >
                         <firebot-select
                             options="{ true: 'Advanced', false: 'Simple' }"
-                            ng-init="selectedCmdMode = settings.getDefaultToAdvancedCommandMode()"
+                            ng-init="selectedCmdMode = settings.getSetting('DefaultToAdvancedCommandMode')"
                             selected="selectedCmdMode"
-                            on-update="settings.setDefaultToAdvancedCommandMode(option === 'true')"
+                            on-update="settings.saveSetting('DefaultToAdvancedCommandMode', option === 'true')"
                             right-justify="true"
                             aria-label="Choose your Default Mode For New Commands"
                         />
@@ -30,9 +30,9 @@
                     >
                         <firebot-select
                             options="{ true: 'Yes', false: 'No' }"
-                            ng-init="allowSharedChatCommands = settings.getAllowCommandsInSharedChat()"
+                            ng-init="allowSharedChatCommands = settings.getSetting('AllowCommandsInSharedChat')"
                             selected="allowSharedChatCommands"
-                            on-update="settings.setAllowCommandsInSharedChat(option === 'true')"
+                            on-update="settings.saveSetting('AllowCommandsInSharedChat', option === 'true')"
                             right-justify="true"
                             aria-label="Allow Shared Chat To Trigger Commands"
                         />
@@ -48,9 +48,9 @@
                     >
                         <firebot-select
                             options="{ true: 'Yes', false: 'No' }"
-                            ng-init="ignoreSubEvents = settings.ignoreSubsequentSubEventsAfterCommunitySub()"
+                            ng-init="ignoreSubEvents = settings.getSetting('IgnoreSubsequentSubEventsAfterCommunitySub')"
                             selected="ignoreSubEvents"
-                            on-update="settings.setIgnoreSubsequentSubEventsAfterCommunitySub(option === 'true')"
+                            on-update="settings.saveSetting('IgnoreSubsequentSubEventsAfterCommunitySub', option === 'true')"
                             right-justify="true"
                             aria-label="enable or disable Ignore Related Gift Sub Events"
                         />
@@ -62,9 +62,9 @@
                     >
                         <firebot-select
                             options="{ 0: 'Disabled', 1: '1 minute', 3: '3 minutes', 5: '5 minutes', 10: '10 minutes', 15: '15 minutes', 20: '20 minutes' }"
-                            ng-init="triggerUpcomingAdBreakMinutes = settings.getTriggerUpcomingAdBreakMinutes()"
+                            ng-init="triggerUpcomingAdBreakMinutes = settings.getSetting('TriggerUpcomingAdBreakMinutes')"
                             selected="triggerUpcomingAdBreakMinutes"
-                            on-update="settings.setTriggerUpcomingAdBreakMinutes(option)"
+                            on-update="settings.saveSetting('TriggerUpcomingAdBreakMinutes', option)"
                             right-justify="true"
                             aria-label="Choose your Upcoming Scheduled Ad Break Trigger"
                         />

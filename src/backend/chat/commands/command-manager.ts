@@ -335,8 +335,8 @@ class CommandManager extends TypedEmitter<Events> {
         if (command.id == null || command.id === "") {
             eventType = "created-item";
             // generate id for new command
-            const uuidv1 = require("uuid/v1");
-            command.id = uuidv1();
+            const { v4: uuid } = require("uuid");
+            command.id = uuid();
 
             command.createdBy = user
                 ? user

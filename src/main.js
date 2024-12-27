@@ -3,7 +3,7 @@ const { app } = require("electron");
 const path = require('node:path');
 
 const logger = require("./backend/logwrapper");
-const secretsManager = require("./backend/secrets-manager");
+const { SecretsManager } = require("./backend/secrets-manager");
 const { handleSquirrelEvents } = require("./backend/app-management/squirrel-events");
 const {
     whenReady,
@@ -16,7 +16,7 @@ const {
 
 logger.info("Starting Firebot...");
 
-if (!secretsManager.testSecrets()) {
+if (!SecretsManager.testSecrets()) {
     logger.debug("...Testing for secrets failed");
     app.quit();
     return;

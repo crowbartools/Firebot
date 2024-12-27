@@ -2,7 +2,7 @@
 
 import profileManager from "../common/profile-manager";
 import logger from "../logwrapper";
-import uuidv1 from "uuid/v1";
+import { v4 as uuid } from "uuid";
 import { TypedEmitter, type ListenerSignature } from "tiny-typed-emitter";
 import { type JsonDB } from "node-json-db";
 
@@ -94,7 +94,7 @@ class JsonDbManager<T extends Item, E extends ListenerSignature<E> = DefaultEven
 
         let isCreating = false;
         if (item.id == null) {
-            item.id = uuidv1();
+            item.id = uuid();
             isCreating = true;
         }
 

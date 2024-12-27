@@ -3,7 +3,7 @@
 const redditProcessor = require("../../common/handlers/redditProcessor");
 const twitchChat = require("../../chat/twitch-chat");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
-const settings = require("../../common/settings-access").settings;
+const { SettingsManager } = require("../../common/settings-manager");
 const logger = require("../../logwrapper");
 const webServer = require("../../../server/http-server-manager");
 const { EffectCategory } = require('../../../shared/effect-constants');
@@ -132,11 +132,11 @@ const model = {
                 };
 
 
-                if (settings.useOverlayInstances()) {
+                if (SettingsManager.getSetting("UseOverlayInstances")) {
                     if (event.effect.overlayInstance != null) {
                         if (
-                            settings
-                                .getOverlayInstances()
+                            SettingsManager
+                                .getSetting("OverlayInstances")
                                 .includes(event.effect.overlayInstance)
                         ) {
                             data.overlayInstance = event.effect.overlayInstance;

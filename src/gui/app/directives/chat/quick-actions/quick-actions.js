@@ -64,10 +64,10 @@
                 $scope.quickActionsService = quickActionsService;
                 $scope.logger = logger;
 
-                $ctrl.settings = settingsService.getQuickActionSettings();
+                $ctrl.settings = settingsService.getSetting("QuickActions");
 
                 backendCommunicator.on("all-quick-actions", () => {
-                    $ctrl.settings = settingsService.getQuickActionSettings();
+                    $ctrl.settings = settingsService.getSetting("QuickActions");
                 });
 
                 $ctrl.triggerQuickAction = (quickActionId) => {
@@ -90,7 +90,7 @@
                             };
                         });
 
-                        settingsService.setQuickActionSettings($ctrl.settings);
+                        settingsService.saveSetting("QuickActions", $ctrl.settings);
                     } else {
                         let highestPosition = Math.max(...Object.values($ctrl.settings).map(s => s.position));
                         quickActionsService.quickActions.forEach((qa) => {
@@ -149,7 +149,7 @@
                             settings: () => $ctrl.settings
                         },
                         dismissCallback: () => {
-                            settingsService.setQuickActionSettings($ctrl.settings);
+                            settingsService.saveSetting("QuickActions", $ctrl.settings);
                         }
                     });
                 };

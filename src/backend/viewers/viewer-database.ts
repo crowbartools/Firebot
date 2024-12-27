@@ -3,14 +3,14 @@ import Datastore from "@seald-io/nedb";
 import { DateTime } from "luxon";
 
 import { BasicViewer, FirebotViewer } from "../../types/viewers";
-import { settings } from "../common/settings-access";
+import { SettingsManager } from "../common/settings-manager";
 import logger from "../logwrapper";
 import profileManager from "../common/profile-manager";
 import accountAccess from "../common/account-access";
 import userAccess from "../common/user-access";
 import currencyAccess from "../currency/currency-access";
 import eventManager from "../events/EventManager";
-import backupManager from "../backup-manager";
+import { BackupManager } from "../backup-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import rankManager from "../ranks/rank-manager";
 import util, { wait } from "../utility";
@@ -138,7 +138,7 @@ class ViewerDatabase extends EventEmitter {
      * @returns `true` if the viewer database is enabled, or `false` otherwise
      */
     isViewerDBOn(): boolean {
-        return settings.getViewerDbStatus();
+        return SettingsManager.getSetting("ViewerDB");
     }
 
     async connectViewerDatabase(): Promise<void> {
@@ -449,7 +449,7 @@ class ViewerDatabase extends EventEmitter {
     }
 
     async purgeViewers(options: ViewerPurgeOptions): Promise<void> {
-        await backupManager.startBackup(false, async () => {
+        await BackupManager.startBackup(false, async () => {
             try {
                 const numRemoved = await this._db
                     .removeAsync({ $where: this.getPurgeWherePredicate(options)}, {multi: true});

@@ -3,7 +3,7 @@
 const effectRunner = require("../../common/effect-runner");
 const { EffectCategory } = require('../../../shared/effect-constants');
 const logger = require("../../logwrapper");
-const { settings } = require("../../common/settings-access");
+const { SettingsManager } = require("../../common/settings-manager");
 const conditionManager = require("./conditional-effects/conditions/condition-manager");
 
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -69,7 +69,7 @@ const model = {
    */
     optionsController: ($scope, settingsService) => {
 
-        $scope.whileLoopEnabled = settingsService.getWhileLoopEnabled();
+        $scope.whileLoopEnabled = settingsService.getSetting("WhileLoopEnabled");
 
         if ($scope.effect.effectList == null) {
             $scope.effect.effectList = [];
@@ -111,7 +111,7 @@ const model = {
                 return resolve(true);
             }
 
-            if (effect.loopMode === 'conditional' && !settings.getWhileLoopEnabled()) {
+            if (effect.loopMode === 'conditional' && !SettingsManager.getSetting("WhileLoopEnabled")) {
                 return resolve(true);
             }
 

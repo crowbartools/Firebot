@@ -4,7 +4,7 @@
 
 (function() {
 
-    const uuidv1 = require("uuid/v1");
+    const { v4: uuid } = require("uuid");
 
     angular.module("firebotApp").component("addOrEditEventModal", {
         template:
@@ -173,7 +173,7 @@
                 }
 
                 if ($ctrl.isNewEvent) {
-                    $ctrl.event.id = uuidv1();
+                    $ctrl.event.id = uuid();
                 }
 
                 $ctrl.close({

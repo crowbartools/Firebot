@@ -1,7 +1,7 @@
 "use strict";
 
-const { settings } = require("../../common/settings-access");
-const resourceTokenManager = require("../../resourceTokenManager");
+const { SettingsManager } = require("../../common/settings-manager");
+const { ResourceTokenManager } = require("../../resource-token-manager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/http-server-manager");
 const fs = require("fs/promises");
@@ -65,9 +65,9 @@ const showImage = {
         </div>
     </div>
     </div>
-    
+
     <eos-overlay-dimensions effect="effect" pad-top="true"></eos-overlay-dimensions>
-   
+
     <eos-overlay-position effect="effect" class="setting-padtop"></eos-overlay-position>
 
     <div class="effect-setting-container setting-padtop">
@@ -187,9 +187,9 @@ const showImage = {
             imageRotation: effect.rotation ? effect.rotation + effect.rotType : "0deg"
         };
 
-        if (settings.useOverlayInstances()) {
+        if (SettingsManager.getSetting("UseOverlayInstances")) {
             if (effect.overlayInstance != null) {
-                if (settings.getOverlayInstances().includes(effect.overlayInstance)) {
+                if (SettingsManager.getSetting("OverlayInstances").includes(effect.overlayInstance)) {
                     data.overlayInstance = effect.overlayInstance;
                 }
             }
@@ -200,7 +200,7 @@ const showImage = {
         }
 
         if (effect.imageType === "local") {
-            const resourceToken = resourceTokenManager.storeResourcePath(effect.file, effect.length);
+            const resourceToken = ResourceTokenManager.storeResourcePath(effect.file, effect.length);
             data.resourceToken = resourceToken;
         }
 
@@ -218,7 +218,7 @@ const showImage = {
 
             const fullFilePath = path.join(effect.folder, chosenFile);
 
-            const resourceToken = resourceTokenManager.storeResourcePath(fullFilePath, effect.length);
+            const resourceToken = ResourceTokenManager.storeResourcePath(fullFilePath, effect.length);
 
             data.resourceToken = resourceToken;
         }

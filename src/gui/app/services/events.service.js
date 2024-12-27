@@ -2,7 +2,7 @@
 
 (function() {
     //This handles events
-    const uuidv1 = require("uuid/v1");
+    const { v4: uuid } = require("uuid");
 
     angular.module("firebotApp").factory("eventsService", function(backendCommunicator, objectCopyHelper) {
         const service = {};
@@ -72,7 +72,7 @@
         };
 
         service.createGroup = function(name) {
-            const newId = uuidv1();
+            const newId = uuid();
             const newGroup = {
                 id: newId,
                 name: name,

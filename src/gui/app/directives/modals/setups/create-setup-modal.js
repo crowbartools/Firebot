@@ -83,7 +83,7 @@
             },
             controller: function(commandsService, countersService, currencyService,
                 effectQueuesService, eventsService, hotkeyService, presetEffectListsService,
-                timerService, viewerRolesService, quickActionsService, variableMacroService, viewerRanksService, accountAccess, utilityService,
+                timerService, scheduledTaskService, viewerRolesService, quickActionsService, variableMacroService, viewerRanksService, accountAccess, utilityService,
                 ngToast, backendCommunicator, sortTagsService, $q) {
 
                 const $ctrl = this;
@@ -144,6 +144,12 @@
                         key: "timers"
                     },
                     {
+                        label: "Scheduled Effect Lists",
+                        all: scheduledTaskService.getScheduledTasks(),
+                        nameField: "name",
+                        key: "scheduledTasks"
+                    },
+                    {
                         label: "Variable Macros",
                         all: variableMacroService.macros,
                         nameField: "name",
@@ -199,6 +205,7 @@
                         hotkeys: [],
                         presetEffectLists: [],
                         timers: [],
+                        scheduledTasks: [],
                         variableMacros: [],
                         viewerRoles: [],
                         viewerRankLadders: [],
