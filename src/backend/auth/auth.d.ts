@@ -14,6 +14,17 @@ export interface AuthProviderDefinition {
         authorizePath: string;
         tokenPath?: string;
     };
+    options?: {
+        body?: {
+            [key: string]: string | string[];
+        };
+        query?: {
+            [key: string]: string | string[];
+        };
+        headers?: {
+            [key: string]: string | string[];
+        };
+    };
     redirectUriHost?: string;
     scopes?: string[] | string | undefined;
 }

@@ -46,7 +46,7 @@ class IntegrationManager extends EventEmitter {
         integration.integration.init(
             integration.definition.linked,
             {
-                oauth: integration.definition.auth,
+                auth: integration.definition.auth,
                 accountId: integration.definition.accountId,
                 settings: integration.definition.settings,
                 userSettings: integration.definition.userSettings
@@ -125,7 +125,7 @@ class IntegrationManager extends EventEmitter {
                 const integrationData = {
                     settings: int.definition.settings,
                     userSettings: int.definition.userSettings,
-                    oauth: int.definition.auth,
+                    auth: int.definition.auth,
                     accountId: int.definition.accountId
                 };
                 int.integration.onUserSettingsUpdate(integrationData);
@@ -321,6 +321,89 @@ class IntegrationManager extends EventEmitter {
             return;
         }
         int.integration.disconnect();
+    }
+
+    async getAuth(integrationId) {
+        const int = this.getIntegrationById(integrationId);
+        if (int == null || !int.definition.linked) {
+            this.emit("integration-disconnected", integrationId);
+            return null;
+        }
+
+        let authData = null;
+        if (int.definition.linkType === "auth") {
+            const providerId = int.definition?.authProviderDetails.id;
+            authData = int.definition.auth;
+
+            if (int.definition.autoRefreshToken && authManager.tokenExpired(providerId, authData)) {
+                const updatedToken = await authManager.refreshTokenIfExpired(providerId, authData);
+
+                if (updatedToken != null) {
+                    this.saveIntegrationAuth(int, updatedToken);
+                    this.emit("token-refreshed", { "integrationId": integrationId, "auth": updatedToken });
+                }
+                authData = updatedToken;
+            } else if (authManager.tokenExpired(providerId, authData)) {
+                authData = null;
+            }
+        } else if (int.definition.linkType === "id") {
+            authData = int.definition.accountId;
+        }
+
+        if (authData == null) {
+            logger.warn("Could not refresh integration access token!");
+
+            renderWindow.webContents.send("integrationConnectionUpdate", {
+                id: integrationId,
+                connected: false
+            });
+
+            logger.info(`Disconnected from ${int.definition.name}`);
+            this.emit("integration-disconnected", integrationId);
+        }
+        return authData;
+    }
+
+    async refreshToken(integrationId) {
+        const int = this.getIntegrationById(integrationId);
+        if (int == null || !int.definition.linked) {
+            this.emit("integration-disconnected", integrationId);
+            return;
+        }
+
+        const integrationData = {
+            settings: int.definition.settings,
+            userSettings: int.definition.userSettings
+        };
+
+        if (int.definition.linkType === "auth") {
+
+            let authData = int.definition.auth;
+            if (int.definition.authProviderDetails) {
+                const updatedToken = await authManager.refreshTokenIfExpired(int.definition.authProviderDetails.id,
+                    int.definition.auth);
+
+                if (updatedToken == null) {
+                    logger.warn("Could not refresh integration access token!");
+
+                    renderWindow.webContents.send("integrationConnectionUpdate", {
+                        id: integrationId,
+                        connected: false
+                    });
+
+                    logger.info(`Disconnected from ${int.definition.name}`);
+                    this.emit("integration-disconnected", integrationId);
+                    return;
+                }
+
+                this.saveIntegrationAuth(int, updatedToken);
+
+                authData = updatedToken;
+                this.emit("token-refreshed", { "integrationId": integrationId, "auth": authData });
+            }
+            integrationData.auth = authData;
+        }
+        return integrationData;
     }
 
     /**

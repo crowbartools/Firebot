@@ -85,13 +85,40 @@ class AuthManager extends EventEmitter {
             authorizationUri: authUri,
             redirectUri: redirectUri,
             scopes: scopes,
-            state: provider.id
+            state: provider.id,
+            body: provider?.options?.body,
+            query: provider?.options?.query,
+            headers: provider?.options?.headers
         });
+    }
+
+    createToken(providerId: string, tokenData: ClientOAuth2.Data): ClientOAuth2.Token {
+        const provider = this.getAuthProvider(providerId);
+        const accessToken = provider.oauthClient.createToken(tokenData);
+
+        // Hack because of a bug in oauth2-client
+        // createToken() adds an expires date property that is claculated with Date() + expires_in instead of created_at + expires_in
+        // As a result, expired() always saw the token valid
+        let tokenExpires: Date;
+        if (typeof tokenData.expires_in === 'number') {
+            tokenExpires = new Date(tokenData.created_at);
+            tokenExpires.setSeconds(tokenExpires.getSeconds() + Number(tokenData.expires_in));
+        } else {
+            logger.warn(`Unknown duration: ${tokenData.expires_in}`);
+            return null;
+        }
+        // @ts-expect-error 2551
+        accessToken.expires = tokenExpires;
+        return accessToken;
+    }
+
+    tokenExpired(providerId: string, tokenData: ClientOAuth2.Data): boolean {
+        return this.createToken(providerId, tokenData).expired();
     }
 
     async refreshTokenIfExpired(providerId: string, tokenData: ClientOAuth2.Data): Promise<unknown> {
         const provider = this.getAuthProvider(providerId);
-        let accessToken = provider.oauthClient.createToken(tokenData);
+        let accessToken = this.createToken(providerId, tokenData);
 
         if (accessToken.expired()) {
             try {
