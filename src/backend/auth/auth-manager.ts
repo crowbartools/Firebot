@@ -108,13 +108,14 @@ class AuthManager extends TypedEmitter<AuthManagerEvents> {
             scope: Array.isArray(tokenData.scope) ? (tokenData.scope) : (tokenData.scope.split(" "))
         };
 
+        // Attempting to infer missing timestamps and duration from whatever data we have available.
         if (tokenData.expires_at && tokenData.expires_in) {
             // induce created_at if not given
             accessTokenData.expires_in = Number(tokenData.expires_in); // eslint-disable-line camelcase
             accessTokenData.expires_at = new Date(tokenData.expires_at).getTime(); // eslint-disable-line camelcase
             accessTokenData.created_at = tokenData.created_at ? // eslint-disable-line camelcase
                 new Date(tokenData.created_at).getTime() :
-                new Date(accessTokenData.expires_at - accessTokenData.expires_in * 1000).getTime();
+                accessTokenData.expires_at - accessTokenData.expires_in * 1000;
         } else if (tokenData.expires_at && tokenData.created_at) {
             // induce expires_in
             accessTokenData.created_at = new Date(tokenData.created_at).getTime(); // eslint-disable-line camelcase
@@ -125,7 +126,7 @@ class AuthManager extends TypedEmitter<AuthManagerEvents> {
             // created_at = now if absent
             accessTokenData.expires_in = Number(tokenData.expires_in); // eslint-disable-line camelcase
             accessTokenData.created_at = new Date(tokenData?.created_at).getTime(); // eslint-disable-line camelcase
-            accessTokenData.expires_at = new Date(accessTokenData.created_at + accessTokenData.expires_in * 1000).getTime(); // eslint-disable-line camelcase
+            accessTokenData.expires_at = accessTokenData.created_at + accessTokenData.expires_in * 1000; // eslint-disable-line camelcase
         } else if (tokenData.expires_at) {
             // induce expires_in
             // induce created_at = now
