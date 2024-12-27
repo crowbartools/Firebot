@@ -173,11 +173,11 @@ authManager.on("auth-success", async (providerId, tokenData) => {
             broadcasterType: userData.broadcaster_type,
             auth: {
                 ...tokenData,
-                created_at: new Date(obtainmentTimestamp), // eslint-disable-line camelcase
+                created_at: obtainmentTimestamp, // eslint-disable-line camelcase
                 expires_at: getExpiryDateOfAccessToken({ // eslint-disable-line camelcase
                     expiresIn: tokenData.expires_in,
                     obtainmentTimestamp: obtainmentTimestamp
-                })
+                }).getTime()
             }
         };
 

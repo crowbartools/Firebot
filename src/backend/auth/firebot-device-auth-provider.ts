@@ -27,11 +27,11 @@ class FirebotDeviceAuthProvider {
         auth.access_token = token.accessToken; // eslint-disable-line camelcase
         auth.refresh_token = token.refreshToken; // eslint-disable-line camelcase
         auth.expires_in = token.expiresIn; // eslint-disable-line camelcase
-        auth.created_at = new Date(token.obtainmentTimestamp); // eslint-disable-line camelcase
+        auth.created_at = token.obtainmentTimestamp; // eslint-disable-line camelcase
         auth.expires_at = getExpiryDateOfAccessToken({ // eslint-disable-line camelcase
             expiresIn: token.expiresIn,
             obtainmentTimestamp: token.obtainmentTimestamp
-        });
+        }).getTime();
 
         account.auth = auth;
         accountAccess.updateAccount(accountType, account, false);

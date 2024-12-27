@@ -59,14 +59,14 @@ export interface AuthDetails {
     /** OAuth scopes of the access token */
     scope?: string[];
 
-    /** When the token has been created */
-    created_at?: Date;
+    /** Timestamp of when the token has been created */
+    created_at?: number;
 
     /** How many seconds before the token expires */
     expires_in?: number;
 
-    /** When access token expires */
-    expires_at?: Date;
+    /** Timestamp of when access token expires */
+    expires_at?: number;
 
     /** Extra fields to be compatible with Type ClientOAuth2.Data */
     [key: string]: unknown;

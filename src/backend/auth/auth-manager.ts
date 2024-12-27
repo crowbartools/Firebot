@@ -111,31 +111,31 @@ class AuthManager extends TypedEmitter<AuthManagerEvents> {
         if (tokenData.expires_at && tokenData.expires_in) {
             // induce created_at if not given
             accessTokenData.expires_in = Number(tokenData.expires_in); // eslint-disable-line camelcase
-            accessTokenData.expires_at = new Date(tokenData.expires_at); // eslint-disable-line camelcase
+            accessTokenData.expires_at = new Date(tokenData.expires_at).getTime(); // eslint-disable-line camelcase
             accessTokenData.created_at = tokenData.created_at ? // eslint-disable-line camelcase
-                new Date(tokenData.created_at) :
-                new Date(accessTokenData.expires_at.getTime() - accessTokenData.expires_in * 1000);
+                new Date(tokenData.created_at).getTime() :
+                new Date(accessTokenData.expires_at - accessTokenData.expires_in * 1000).getTime();
         } else if (tokenData.expires_at && tokenData.created_at) {
             // induce expires_in
-            accessTokenData.created_at = new Date(tokenData.created_at); // eslint-disable-line camelcase
-            accessTokenData.expires_at = new Date(tokenData.expires_at); // eslint-disable-line camelcase
-            accessTokenData.expires_in = (accessTokenData.expires_at.getTime() - accessTokenData.created_at.getTime()) / 1000; // eslint-disable-line camelcase
+            accessTokenData.created_at = new Date(tokenData.created_at).getTime(); // eslint-disable-line camelcase
+            accessTokenData.expires_at = new Date(tokenData.expires_at).getTime(); // eslint-disable-line camelcase
+            accessTokenData.expires_in = (accessTokenData.expires_at - accessTokenData.created_at) / 1000; // eslint-disable-line camelcase
         } else if (tokenData.expires_in) {
             // induce expires_at
             // created_at = now if absent
             accessTokenData.expires_in = Number(tokenData.expires_in); // eslint-disable-line camelcase
-            accessTokenData.created_at = new Date(tokenData?.created_at); // eslint-disable-line camelcase
-            accessTokenData.expires_at = new Date(accessTokenData.created_at.getTime() + accessTokenData.expires_in * 1000); // eslint-disable-line camelcase
+            accessTokenData.created_at = new Date(tokenData?.created_at).getTime(); // eslint-disable-line camelcase
+            accessTokenData.expires_at = new Date(accessTokenData.created_at + accessTokenData.expires_in * 1000).getTime(); // eslint-disable-line camelcase
         } else if (tokenData.expires_at) {
             // induce expires_in
             // induce created_at = now
-            accessTokenData.expires_at = new Date(tokenData.expires_at); // eslint-disable-line camelcase
-            accessTokenData.created_at = new Date(); // eslint-disable-line camelcase
-            accessTokenData.expires_in = (accessTokenData.expires_at.getTime() - accessTokenData.created_at.getTime()) / 1000; // eslint-disable-line camelcase
+            accessTokenData.expires_at = new Date(tokenData.expires_at).getTime(); // eslint-disable-line camelcase
+            accessTokenData.created_at = new Date().getTime(); // eslint-disable-line camelcase
+            accessTokenData.expires_in = (accessTokenData.expires_at - accessTokenData.created_at) / 1000; // eslint-disable-line camelcase
         } else {
             // Not enough info on expiry time
             // induce creation time
-            accessTokenData.created_at = new Date(); // eslint-disable-line camelcase
+            accessTokenData.created_at = new Date().getTime(); // eslint-disable-line camelcase
         }
         return accessTokenData;
     }
@@ -168,7 +168,7 @@ class AuthManager extends TypedEmitter<AuthManagerEvents> {
 
     async refreshTokenIfExpired(providerId: string, tokenData: AuthDetails): Promise<AuthDetails> {
         const provider = this.getAuthProvider(providerId);
-        let accessToken = this.createToken(providerId, tokenData);
+        let accessToken: ClientOAuth2.Token = this.createToken(providerId, tokenData);
 
         if (accessToken.expired()) {
             try {
@@ -178,6 +178,9 @@ class AuthManager extends TypedEmitter<AuthManagerEvents> {
                         : provider.details.scopes.split(" ")
                 };
 
+                // Remove the useless extra data that would be left untouched by the token provider
+                accessToken.data.created_at = null; // eslint-disable-line camelcase
+                accessToken.data.expires_at = null; // eslint-disable-line camelcase
                 accessToken = await accessToken.refresh(params);
             } catch (error) {
                 logger.warn("Error refreshing access token: ", error);
