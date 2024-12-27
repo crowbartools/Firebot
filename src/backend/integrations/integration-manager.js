@@ -340,7 +340,7 @@ class IntegrationManager extends EventEmitter {
 
                 if (updatedToken != null) {
                     this.saveIntegrationAuth(int, updatedToken);
-                    this.emit("token-refreshed", { "integrationId": integrationId, "auth": updatedToken });
+                    this.emit("token-refreshed", integrationId, updatedToken);
                 }
                 authData = updatedToken;
             } else if (authManager.tokenExpired(providerId, authData)) {
@@ -399,7 +399,7 @@ class IntegrationManager extends EventEmitter {
                 this.saveIntegrationAuth(int, updatedToken);
 
                 authData = updatedToken;
-                this.emit("token-refreshed", { "integrationId": integrationId, "auth": authData });
+                this.emit("token-refreshed", integrationId, updatedToken);
             }
             integrationData.auth = authData;
         }
