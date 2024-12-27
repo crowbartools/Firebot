@@ -335,9 +335,11 @@ class IntegrationManager extends EventEmitter {
             const providerId = int.definition?.authProviderDetails.id;
             authData = int.definition.auth;
 
-            if (int.definition.autoRefreshToken && authManager.tokenExpired(providerId, authData)) {
-                const updatedToken = await authManager.refreshTokenIfExpired(providerId, authData);
+            if (int.definition.authProviderDetails &&
+                int.definition.authProviderDetails.autoRefreshToken &&
+                authManager.tokenExpired(providerId, authData)) {
 
+                const updatedToken = await authManager.refreshTokenIfExpired(providerId, authData);
                 if (updatedToken != null) {
                     this.saveIntegrationAuth(int, updatedToken);
                     this.emit("token-refreshed", integrationId, updatedToken);
