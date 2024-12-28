@@ -53,7 +53,7 @@ export abstract class IntegrationController<
     Params extends FirebotParams = FirebotParams,
     Events extends IntegrationEvents = IntegrationEvents
 > extends TypedEmitter<ListenerSignature<Events>> {
-    connected: boolean;
+    connected = false;
     abstract init(
         linked: boolean,
         integrationData: IntegrationData<Params>
