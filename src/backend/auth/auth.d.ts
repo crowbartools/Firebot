@@ -1,3 +1,4 @@
+import { TypedEmitter } from "tiny-typed-emitter";
 import type ClientOAuth2 from "client-oauth2";
 
 export interface AuthProviderDefinition {
