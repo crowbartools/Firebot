@@ -64,6 +64,24 @@ class HotkeyManager {
         globalShortcut.unregisterAll();
     }
 
+    importHotkeys(hotkeys: FirebotHotkey[]) {
+        if (hotkeys?.length) {
+            for (const hotkey of hotkeys) {
+                const index = this.hotkeys.findIndex(h => h.id === hotkey.id);
+
+                if (index === -1) {
+                    this.hotkeys.push(hotkey);
+                } else {
+                    this.hotkeys[index] = hotkey;
+                }
+            }
+
+            this.saveHotkeys();
+
+            logger.info(`Hotkeys imported: ${hotkeys.length}`);
+        }
+    }
+
     addHotkey(hotkey: FirebotHotkey) {
         hotkey.id = uuid();
 

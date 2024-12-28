@@ -1,13 +1,13 @@
 import JsonDbManager from "../../database/json-db-manager";
 
 const logger = require("../../logwrapper");
-const profileManager = require("../../common/profile-manager");
 const frontendCommunicator = require("../../common/frontend-communicator");
 
 const commandManager = require("../../chat/commands/command-manager");
 const countersManager = require("../../counters/counter-manager");
 const effectQueueManager = require("../../effects/queues/effect-queue-manager");
 const eventsAccess = require("../../events/events-access");
+const { HotkeyManager } = require("../../hotkeys/hotkey-manager");
 const timerManager = require("../../timers/timer-manager");
 const scheduledTaskManager = require("../../timers/scheduled-task-manager");
 const presetEffectListManager = require("../../effects/preset-lists/preset-effect-list-manager");
@@ -38,7 +38,7 @@ class ImportedSetupManager extends JsonDbManager {
                     data[key] = data[key].replace(/\$topCurrencyUser\[\w+\b/gm, `$topCurrencyUser[${currency.name}`);
                 }
             } else if (value && typeof value === "object") {
-    
+
                 // check for currency effect
                 if (value.type === "firebot:currency") {
                     value.currency = currency.id;
@@ -46,7 +46,7 @@ class ImportedSetupManager extends JsonDbManager {
                 } else if (value.type === "firebot:channelcurrency") {
                     value.selectedCurrency = currency.id;
                 }
-    
+
                 // recurse
                 this.findAndReplaceCurrency(value, currency);
             }
@@ -58,14 +58,14 @@ class ImportedSetupManager extends JsonDbManager {
 
         for (const [key, value] of entries) {
             if (value && typeof value === "string") {
-    
+
                 for (const question of questions) {
                     if (value.includes(question.replaceToken)) {
                         const regex = new RegExp(escapeRegExp(question.replaceToken), 'gm');
                         data[key] = data[key].replace(regex, question.answer);
                     }
                 }
-    
+
             } else if (value && typeof value === "object") {
                 // recurse
                 this.replaceQuestionAnswers(value, questions);
@@ -112,15 +112,15 @@ class ImportedSetupManager extends JsonDbManager {
                 quickActions: []
             }
         };
-    
+
         if (setup.requireCurrency) {
             this.replaceCurrency(setup.components, selectedCurrency);
         }
-    
+
         if (setup.importQuestions) {
             this.replaceQuestionAnswers(setup.components, setup.importQuestions);
         }
-    
+
         // commands
         const commands = setup.components.commands || [];
         for (const command of commands) {
@@ -128,7 +128,7 @@ class ImportedSetupManager extends JsonDbManager {
             importedSetup.components.commands.push(command.id);
         }
         commandManager.triggerUiRefresh();
-    
+
         // counters
         const counters = setup.components.counters || [];
         for (const counter of counters) {
@@ -136,14 +136,14 @@ class ImportedSetupManager extends JsonDbManager {
             importedSetup.components.counters.push(counter.id);
         }
         countersManager.triggerUiRefresh();
-    
+
         // currencies
         const currencies = setup.components.currencies || [];
         for (const currency of currencies) {
             frontendCommunicator.send("import-currency", currency);
             importedSetup.components.currencies.push(currency.id);
         }
-    
+
         // effect queues
         const effectQueues = setup.components.effectQueues || [];
         for (const queue of effectQueues) {
@@ -151,7 +151,7 @@ class ImportedSetupManager extends JsonDbManager {
             importedSetup.components.effectQueues.push(queue.id);
         }
         effectQueueManager.triggerUiRefresh();
-    
+
         // events
         const events = setup.components.events || [];
         for (const event of events) {
@@ -159,7 +159,7 @@ class ImportedSetupManager extends JsonDbManager {
             importedSetup.components.events.push(event.id);
         }
         eventsAccess.triggerUiRefresh();
-    
+
         // events sets
         const eventGroups = setup.components.eventGroups || [];
         for (const eventGroup of eventGroups) {
@@ -167,32 +167,14 @@ class ImportedSetupManager extends JsonDbManager {
             importedSetup.components.eventGroups.push(eventGroup.eventId);
         }
         eventsAccess.triggerUiRefresh();
-    
+
         // hotkeys
         const hotkeys = setup.components.hotkeys || [];
-        const hotkeyDb = profileManager.getJsonDbInProfile("/hotkeys");
-        try {
-            const hotkeyData = hotkeyDb.getData("/");
-            let currentHotkeys = [];
-            if (hotkeyData != null && hotkeyData.length > 0) {
-                currentHotkeys = hotkeyData;
-            }
-            for (const hotkey of hotkeys) {
-                const index = currentHotkeys.findIndex(h => h.id === hotkey.id);
-                if (index < 0) {
-                    currentHotkeys.push(hotkey);
-                } else {
-                    currentHotkeys[index] = hotkey;
-                }
-
-                importedSetup.components.hotkeys.push(hotkey.id);
-            }
-            hotkeyDb.push("/", currentHotkeys);
-        } catch (err) {
-            logger.error(err);
+        if (hotkeys.length) {
+            HotkeyManager.importHotkeys(hotkeys);
+            importedSetup.components.hotkeys = hotkeys.map(h => h.id);
         }
-        frontendCommunicator.send("import-hotkeys-update");
-    
+
         // preset effect lists
         const presetEffectLists = setup.components.presetEffectLists || [];
         for (const presetLists of presetEffectLists) {
@@ -200,14 +182,15 @@ class ImportedSetupManager extends JsonDbManager {
             importedSetup.components.presetEffectLists.push(presetLists.id);
         }
         presetEffectListManager.triggerUiRefresh();
-    
+
         // timers
         const timers = setup.components.timers || [];
         for (const timer of timers) {
             timerManager.saveItem(timer);
+            importedSetup.components.timers.push(timer.id);
         }
         timerManager.triggerUiRefresh();
-    
+
         // scheduled tasks
         const scheduledTasks = setup.components.scheduledTasks || [];
         for (const scheduledTask of scheduledTasks) {
@@ -215,7 +198,7 @@ class ImportedSetupManager extends JsonDbManager {
             importedSetup.components.scheduledTasks.push(scheduledTask.id);
         }
         scheduledTaskManager.triggerUiRefresh();
-    
+
         // variable macros
         const variableMacros = setup.components.variableMacros || [];
         for (const macro of variableMacros) {
@@ -223,7 +206,7 @@ class ImportedSetupManager extends JsonDbManager {
             importedSetup.components.variableMacros.push(macro.id);
         }
         variableMacroManager.triggerUiRefresh();
-    
+
         // viewer roles
         const roles = setup.components.viewerRoles || [];
         for (const role of roles) {
@@ -231,7 +214,7 @@ class ImportedSetupManager extends JsonDbManager {
             importedSetup.components.viewerRoles.push(role.id);
         }
         customRolesManager.triggerUiRefresh();
-    
+
         // viewer rank ladders
         const rankLadders = setup.components.viewerRankLadders || [];
         for (const rankLadder of rankLadders) {
@@ -239,7 +222,7 @@ class ImportedSetupManager extends JsonDbManager {
             importedSetup.components.viewerRankLadders.push(rankLadder.id);
         }
         rankManager.triggerUiRefresh();
-    
+
         // quick actions
         const quickActions = setup.components.quickActions || [];
         if (quickActions.length > 0) {
@@ -251,7 +234,7 @@ class ImportedSetupManager extends JsonDbManager {
         }
 
         super.saveItem(importedSetup);
-    
+
         return true;
     }
 
@@ -279,7 +262,7 @@ class ImportedSetupManager extends JsonDbManager {
                             eventsAccess.deleteGroup(id);
                             break;
                         case "hotkeys":
-                            frontendCommunicator.send("remove-hotkey", id);
+                            HotkeyManager.deleteHotkey(id);
                             break;
                         case "presetEffectLists":
                             presetEffectListManager.deleteItem(id);
