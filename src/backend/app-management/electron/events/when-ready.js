@@ -180,6 +180,10 @@ exports.whenReady = async () => {
         customVariableManager.loadVariablesFromFile();
     }
 
+    windowManagement.updateSplashScreenStatus("Loading sort tags...");
+    const { SortTagManager } = require("../../../sort-tags/sort-tag-manager");
+    SortTagManager.loadSortTags();
+
     // get importer in memory
     windowManagement.updateSplashScreenStatus("Loading importers...");
 
