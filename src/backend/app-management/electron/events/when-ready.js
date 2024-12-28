@@ -193,8 +193,8 @@ exports.whenReady = async () => {
     setupCommonListeners();
 
     windowManagement.updateSplashScreenStatus("Loading hotkeys...");
-    const hotkeyManager = require("../../../hotkeys/hotkey-manager");
-    hotkeyManager.refreshHotkeyCache();
+    const { HotkeyManager } = require("../../../hotkeys/hotkey-manager");
+    HotkeyManager.loadHotkeys();
 
     windowManagement.updateSplashScreenStatus("Starting currency timer...");
     const currencyManager = require("../../../currency/currency-manager");
