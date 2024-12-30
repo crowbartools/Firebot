@@ -69,7 +69,7 @@ exports.whenReady = async () => {
 
     windowManagement.updateSplashScreenStatus("Loading currencies...");
     const currencyAccess = require("../../../currency/currency-access").default;
-    currencyAccess.refreshCurrencyCache();
+    currencyAccess.loadCurrencies();
 
     windowManagement.updateSplashScreenStatus("Loading ranks...");
     const viewerRanksManager = require("../../../ranks/rank-manager");

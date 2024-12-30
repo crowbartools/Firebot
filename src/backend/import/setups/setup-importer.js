@@ -16,6 +16,7 @@ const quickActionManager = require("../../quick-actions/quick-action-manager");
 const variableMacroManager = require("../../variables/macro-manager");
 const rankManager = require("../../ranks/rank-manager");
 const { escapeRegExp } = require("../../utility");
+const currencyAccess = require("../../currency/currency-access").default;
 
 function findAndReplaceCurrency(data, currency) {
     const entries = Object.entries(data);
@@ -105,7 +106,7 @@ async function importSetup(setup, selectedCurrency) {
     // currencies
     const currencies = setup.components.currencies || [];
     for (const currency of currencies) {
-        frontendCommunicator.send("import-currency", currency);
+        currencyAccess.importCurrency(currency);
     }
 
     // effect queues
@@ -209,7 +210,7 @@ async function importSetup(setup, selectedCurrency) {
 function removeSetupComponents(components) {
     Object.entries(components)
         .forEach(([componentType, componentList]) => {
-            componentList.forEach(({id, name}) => {
+            componentList.forEach((id) => {
                 switch (componentType) {
                     case "commands":
                         commandManager.deleteCustomCommand(id);
@@ -218,7 +219,7 @@ function removeSetupComponents(components) {
                         countersManager.deleteItem(id);
                         break;
                     case "currencies":
-                        frontendCommunicator.send("remove-currency", { id, name });
+                        currencyAccess.deleteCurrency(id);
                         break;
                     case "effectQueues":
                         effectQueueManager.deleteItem(id);

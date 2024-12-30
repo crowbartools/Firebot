@@ -1,36 +1,31 @@
 import { SystemCommand } from "../../types/commands";
-
-import currencyAccess from "./currency-access";
+import currencyAccess, { Currency } from "./currency-access";
 import currencyManager from "./currency-manager";
 import commandManager from "../chat/commands/command-manager";
 import logger from "../logwrapper";
-import frontendCommunicator from "../common/frontend-communicator";
 import util from "../utility";
-
-interface BasicCurrency {
-    id: string;
-    name: string;
-}
 
 type CurrencyCommandRefreshRequestAction = "create" | "update" | "delete";
 
-interface CurrencyCommandRefreshRequest {
-    action: CurrencyCommandRefreshRequestAction;
-    currency: BasicCurrency;
-}
-
 class CurrencyCommandManager {
     constructor() {
-        // Refresh our currency commands.
-        frontendCommunicator.on("refreshCurrencyCommands", (request: CurrencyCommandRefreshRequest) => {
-            this.refreshCurrencyCommands(request.action, request.currency);
+        currencyAccess.on("currencies:currency-created", (currency: Currency) => {
+            this.refreshCurrencyCommands("create", currency);
+        });
+
+        currencyAccess.on("currencies:currency-updated", (currency: Currency) => {
+            this.refreshCurrencyCommands("update", currency);
+        });
+
+        currencyAccess.on("currencies:currency-deleted", (currency: Currency) => {
+            this.refreshCurrencyCommands("delete", currency);
         });
     }
 
     /**
      * Creates a command definition when given a currency name.
      */
-    createCurrencyCommandDefinition(currency: BasicCurrency): SystemCommand<{
+    createCurrencyCommandDefinition(currency: Partial<Currency>): SystemCommand<{
         currencyBalanceMessageTemplate: string;
         whisperCurrencyBalanceMessage: boolean;
         addMessageTemplate: string;
@@ -438,7 +433,7 @@ class CurrencyCommandManager {
      */
     refreshCurrencyCommands(
         action: CurrencyCommandRefreshRequestAction = null,
-        currency: BasicCurrency = null
+        currency: Partial<Currency> = null
     ): void {
     // If we don't get currency stop here.
         if (currency == null) {
