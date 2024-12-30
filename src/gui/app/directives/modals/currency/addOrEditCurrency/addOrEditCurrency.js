@@ -60,7 +60,7 @@
                     utilityService.showErrorModal(
                         "You cannot create a currency with the same name as another currency!"
                     );
-                    logger.error(`User tried to create currency with the same name as another currency: ${currency.name}.`);
+                    logger.error(`User tried to create currency with the same name as another currency: ${$ctrl.currency.name}.`);
                     return;
                 }
 
