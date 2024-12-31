@@ -1,6 +1,6 @@
 import { EffectType } from "../../../types/effects";
 import { EffectCategory } from '../../../shared/effect-constants';
-import counterManager from "../../counters/counter-manager";
+import { CounterManager } from "../../counters/counter-manager";
 import logger from "../../logwrapper";
 
 const model: EffectType<{
@@ -94,7 +94,7 @@ const model: EffectType<{
             return false;
         }
 
-        await counterManager.updateCounterValue(effect.counterId, value, effect.mode === "set");
+        await CounterManager.updateCounterValue(effect.counterId, value, effect.mode === "set");
 
         return true;
     }

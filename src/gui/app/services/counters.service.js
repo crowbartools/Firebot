@@ -1,18 +1,12 @@
 "use strict";
 
 (function() {
-
-    const sanitizeFileName = require("sanitize-filename");
-    const path = require("path");
-
     angular
         .module("firebotApp")
-        .factory("countersService", function($q, backendCommunicator, profileManager, utilityService, objectCopyHelper, ngToast) {
+        .factory("countersService", function($q, backendCommunicator, utilityService, objectCopyHelper, ngToast) {
             const service = {};
 
             service.counters = [];
-
-            const COUNTERS_FOLDER = profileManager.getPathInProfile("/counters/");
 
             const updateCounter = (counter) => {
                 const index = service.counters.findIndex(c => c.id === counter.id);
@@ -24,8 +18,8 @@
             };
 
             service.loadCounters = () => {
-                $q.when(backendCommunicator.fireEventAsync("getCounters"))
-                    .then(counters => {
+                $q.when(backendCommunicator.fireEventAsync("counters:get-counters"))
+                    .then((counters) => {
                         if (counters) {
                             service.counters = counters;
                         }
@@ -38,7 +32,7 @@
 
             service.deleteCounter = (counterId) => {
                 service.counters = service.counters.filter(c => c.id !== counterId);
-                backendCommunicator.fireEvent("deleteCounter", counterId);
+                backendCommunicator.fireEvent("counters:delete-counter", counterId);
             };
 
             service.saveCounter = async (counter) => {
@@ -46,7 +40,7 @@
                     return;
                 }
 
-                const savedCounter = await backendCommunicator.fireEventAsync("saveCounter", counter);
+                const savedCounter = await backendCommunicator.fireEventAsync("counters:save-counter", counter);
                 if (savedCounter) {
                     updateCounter(savedCounter);
                     return true;
@@ -60,7 +54,7 @@
                     service.counters = counters;
                 }
 
-                backendCommunicator.fireEvent("saveAllCounters", service.counters);
+                backendCommunicator.fireEvent("counters:save-all-counters", service.counters);
             };
 
             service.counterNameExists = (name) => {
@@ -79,7 +73,7 @@
                     copiedCounter.name += " copy";
                 }
 
-                service.saveCounter(copiedCounter).then(successful => {
+                service.saveCounter(copiedCounter).then((successful) => {
                     if (successful) {
                         ngToast.create({
                             className: 'success',
@@ -96,15 +90,14 @@
                     return "";
                 }
 
-                const sanitizedCounterName = sanitizeFileName(counterName);
-                return path.join(COUNTERS_FOLDER, `${sanitizedCounterName}.txt`);
+                return backendCommunicator.fireEventSync("counters:get-counter-file-path", counterName);
             };
 
-            backendCommunicator.on("counter-update", counter => {
+            backendCommunicator.on("counters:counter-updated", (counter) => {
                 updateCounter(counter);
             });
 
-            backendCommunicator.on("all-counters", counters => {
+            backendCommunicator.on("counters:all-counters-updated", (counters) => {
                 if (counters != null) {
                     service.counters = counters;
                 }
