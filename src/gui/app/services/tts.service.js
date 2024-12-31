@@ -67,7 +67,13 @@
                 return defaultVoice;
             };
 
-            service.readText = (text, voiceId) => {
+            /**
+             * @param {string} text The text to be synthesized.
+             * @param {"default" | string | null} voiceId The name of the voice to use.
+             * @param {boolean} wait Whether or not to wait for the speech to finish.
+             * @returns {Promise<void>}
+             */
+            service.readText = async (text, voiceId, wait) => {
                 if (text == null || text.length < 1) {
                     return;
                 }
@@ -89,14 +95,22 @@
                 msg.volume = settingsService.getSetting("TtsVoiceVolume");
                 msg.rate = settingsService.getSetting("TtsVoiceRate");
                 msg.text = text;
-                msg.lang = 'en-US';
+                msg.lang = "en-US";
 
-                speechSynthesis.speak(msg);
+                if (wait === true) {
+                    await new Promise(function(resolve) {
+                        msg.onend = () => resolve();
+                        msg.onerror = () => resolve();
+                        speechSynthesis.speak(msg);
+                    });
+                } else {
+                    speechSynthesis.speak(msg);
+                }
             };
 
-            backendCommunicator.on("read-tts", (data) => {
-                const { text, voiceId } = data;
-                service.readText(text, voiceId);
+            backendCommunicator.onAsync("read-tts", async (data) => {
+                const { text, voiceId, wait } = data;
+                return await service.readText(text, voiceId, wait);
             });
 
             backendCommunicator.on("stop-all-sounds", () => {
