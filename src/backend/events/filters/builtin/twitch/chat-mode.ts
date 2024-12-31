@@ -42,14 +42,16 @@ const filter: EventFilter = {
 
         const { comparisonType, value } = filterSettings;
         const { eventMeta } = eventData;
+        // Unique chat previously used 'r9kbeta' on PubSub; became 'uniquechat' on EventSub.
+        const ucValue = value === "r9kbeta" ? "uniquechat" : value;
 
         const chatModes = eventMeta.chatMode as string;
 
         switch (comparisonType) {
             case ComparisonType.IS:
-                return chatModes.includes(value);
+                return chatModes.includes(ucValue);
             case ComparisonType.IS_NOT:
-                return !chatModes.includes(value);
+                return !chatModes.includes(ucValue);
             default:
                 return false;
         }
