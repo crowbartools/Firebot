@@ -627,7 +627,7 @@ module.exports = {
                         subscribers: "Subscribers Only",
                         followers: "Followers",
                         slow: "Slow",
-                        r9kbeta: "Unique Chat"
+                        uniquechat: "Unique Chat"
                     },
                     value: "emoteonly"
                 },
