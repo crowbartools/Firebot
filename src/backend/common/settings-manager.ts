@@ -1,8 +1,8 @@
 import { EventEmitter } from "events";
 import { JsonDB } from "node-json-db";
 import fs from "fs";
+import path from "path";
 import logger from "../logwrapper";
-import profileManager from "./profile-manager";
 import dataAccess from "./data-access";
 import frontendCommunicator from "./frontend-communicator";
 import {
@@ -42,8 +42,13 @@ class SettingsManager extends EventEmitter {
         });
     }
 
+    private getLoggedInProfilePath(suffix: string) {
+        const loggedInProfile = this.getSetting("LoggedInProfile");
+        return path.join("profiles", loggedInProfile, suffix);
+    }
+
     private getSettingsFile(): JsonDB {
-        return profileManager.getJsonDbInProfile("/settings");
+        return dataAccess.getJsonDbInUserData(this.getLoggedInProfilePath("settings"));
     }
 
     private getGlobalSettingsFile(): JsonDB {
@@ -53,7 +58,7 @@ class SettingsManager extends EventEmitter {
     private handleCorruptSettingsFile() {
         logger.warn("settings.json file appears to be corrupt. Resetting file...");
 
-        const settingsPath = profileManager.getPathInProfile("settings.json");
+        const settingsPath = this.getLoggedInProfilePath("settings.json");
         fs.writeFileSync(settingsPath, JSON.stringify({
             settings: {
                 firstTimeUse: false
