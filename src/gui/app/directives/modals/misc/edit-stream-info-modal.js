@@ -69,7 +69,7 @@
                                         tooltip-append-to-body="true"
                                         ng-click="$ctrl.removeStreamTag(tag)"
                                     >
-                                        <i class="far fa-trash"></i>
+                                        <i class="far fa-times"></i>
                                     </span>
                                 </div>
                                 <div
