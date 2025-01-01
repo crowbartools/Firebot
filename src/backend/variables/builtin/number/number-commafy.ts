@@ -10,6 +10,10 @@ const model : ReplaceVariable = {
             {
                 usage: "commafy[1000000]",
                 description: `Returns "1,000,000"`
+            },
+            {
+                usage: "commafy[1000000, 2]",
+                description: `Returns "1,000,000.00"`
             }
         ],
         categories: [VariableCategory.NUMBERS],
@@ -17,12 +21,21 @@ const model : ReplaceVariable = {
     },
     evaluator: (
         trigger: Trigger,
-        subject: unknown
+        subject: number | string,
+        places: null | number | string
     ) : string => {
         const number = Number(subject);
+        const numPlaces = Number(places);
         if (!Number.isFinite(number)) {
             return "[Error: not a number]";
         }
+
+        if (!Number.isNaN(numPlaces)) {
+            const number = Number(subject).toPrecision(numPlaces);
+            const [integer, fraction] = `${number}.0`.split(/\./g);
+            return `${integer.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}.${fraction}`;
+        }
+
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 };
