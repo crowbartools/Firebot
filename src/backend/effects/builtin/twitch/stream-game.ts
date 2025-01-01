@@ -5,7 +5,7 @@ import twitchApi from "../../../twitch-api/api";
 import eventsManager from "../../../events/EventManager";
 
 const model: EffectType<{
-    mode: "specific" | "custom";
+    mode: "specific" | "custom" | "clear";
     gameId: string;
     gameName: string;
 }> = {
@@ -28,6 +28,10 @@ const model: EffectType<{
                 </label>
                 <label class="control-fb control--radio">Custom category <tooltip text="'Input any name and Firebot will set the closest category it finds when effect is ran (useful with replace variables).'"></tooltip>
                     <input type="radio" ng-model="effect.mode" value="custom"/>
+                    <div class="control__indicator"></div>
+                </label>
+                <label class="control-fb control--radio">Clear category
+                    <input type="radio" ng-model="effect.mode" value="clear"/>
                     <div class="control__indicator"></div>
                 </label>
             </div>
@@ -97,11 +101,16 @@ const model: EffectType<{
             await twitchApi.channels.updateChannelInformation({
                 gameId: event.effect.gameId
             });
-        } else {
-            const categories = await twitchApi.categories.searchCategories(event.effect.gameName.trim());
+        } else if (event.effect.mode === "clear" || event.effect.mode === "custom" && !event.effect.gameName) {
+            //user left the gamename blank
+            await twitchApi.channels.updateChannelInformation({
+                gameId: ''
+            });
+        } else if (event.effect.mode === "custom") {
+            const categories = await twitchApi.categories.searchCategories(event.effect.gameName?.trim());
             if (categories?.length) {
                 const category =
-                    categories.find((c) => c.name.toLowerCase() === event.effect.gameName.toLowerCase()) ??
+                    categories.find(c => c.name.toLowerCase() === event.effect.gameName.toLowerCase()) ??
                     categories[0];
 
                 if (!category) {
