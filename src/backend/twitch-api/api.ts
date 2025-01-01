@@ -1,8 +1,9 @@
-import { ApiClient } from "@twurple/api";
+import { ApiClient, HelixChannelUpdate } from "@twurple/api";
 import { AuthProvider } from "@twurple/auth";
 
 import logger from "../logwrapper";
 import accountAccess from "../common/account-access";
+import frontendCommunicator from "../common/frontend-communicator";
 
 import { UserContextApiClient } from "./user-context-api-client";
 
@@ -27,6 +28,65 @@ import { TwitchHypeTrainApi } from "./resource/hypetrain";
 class TwitchApi {
     private _streamerClient: ApiClient;
     private _botClient: UserContextApiClient;
+
+    constructor() {
+        frontendCommunicator.onAsync("search-twitch-games", (query: string) => {
+            return this.categories.searchCategories(query);
+        });
+
+        frontendCommunicator.onAsync("search-twitch-channels", async (query: string) => {
+            const response = await this.streamerClient.search.searchChannels(query, { limit: 10 });
+            return (response?.data ?? []).map(c => ({
+                id: c.id,
+                username: c.name,
+                displayName: c.displayName,
+                avatarUrl: c.thumbnailUrl
+            }));
+        });
+
+        frontendCommunicator.onAsync("process-automod-message", async ({ messageId, allow }: { messageId: string, allow: boolean }) => {
+            const accountAccess = require("../common/account-access");
+            const streamerChannelId = accountAccess.getAccounts().streamer.channelId;
+            try {
+                await this.streamerClient.moderation.processHeldAutoModMessage(streamerChannelId, messageId, allow);
+            } catch (error) {
+                const likelyExpired = error?.body?.includes("attempted to update a message status that was either already set");
+                frontendCommunicator.send("twitch:chat:automod-update-error", { messageId, likelyExpired });
+                logger.error(error);
+            }
+        });
+
+        frontendCommunicator.onAsync("get-twitch-game", async (gameId: string) => {
+            return await this.categories.getCategoryById(gameId);
+        });
+
+        frontendCommunicator.onAsync("get-channel-info", async () => {
+            try {
+                const channelInfo = await this.channels.getChannelInformation();
+                return {
+                    title: channelInfo.title,
+                    gameId: channelInfo.gameId,
+                    tags: channelInfo.tags
+                };
+            } catch (error) {
+                return null;
+            }
+        });
+
+        frontendCommunicator.onAsync("set-channel-info", async (data: HelixChannelUpdate) => {
+            try {
+                await this.channels.updateChannelInformation(data);
+                return true;
+            } catch (error) {
+                return false;
+            }
+        });
+
+        frontendCommunicator.onAsync("get-channel-rewards", async () => {
+            const rewards = await this.channelRewards.getCustomChannelRewards();
+            return rewards || [];
+        });
+    }
 
     setupApiClients(streamerProvider: AuthProvider, botProvider: AuthProvider): void {
         if (!streamerProvider && !botProvider) {

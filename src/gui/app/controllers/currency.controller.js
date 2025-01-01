@@ -9,10 +9,7 @@
             utilityService,
             currencyService
         ) {
-            // Returns an array of all currencies.
-            $scope.getCurrencies = function() {
-                return currencyService.getCurrencies();
-            };
+            $scope.currencyService = currencyService;
 
             // Open currency modal.
             $scope.openAddOrEditCurrencyModal = function(currency) {
@@ -21,13 +18,13 @@
                     resolveObj: {
                         currency: () => currency
                     },
-                    closeCallback: resp => {
+                    closeCallback: (resp) => {
                         const action = resp.action,
                             currency = resp.currency;
 
                         switch (action) {
                             case "add":
-                                currencyService.saveCurrency(currency);
+                                currencyService.createCurrency(currency);
                                 break;
                             case "update":
                                 currencyService.updateCurrency(currency);
