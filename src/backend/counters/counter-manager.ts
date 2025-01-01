@@ -1,4 +1,3 @@
-import fs from "fs";
 import fsp from "fs/promises";
 import path from "path";
 import sanitizeFileName from "sanitize-filename";
@@ -15,6 +14,21 @@ import { EffectList } from "../../types/effects";
 class CounterManager extends JsonDbManager<Counter> {
     constructor() {
         super("Counter", "/counters/counters");
+
+        frontendCommunicator.onAsync("counters:get-counters",
+            async () => this.getAllItems());
+
+        frontendCommunicator.onAsync("counters:save-counter",
+            async (counter: Counter) => this.saveItem(counter));
+
+        frontendCommunicator.onAsync("counters:save-all-counters",
+            async (allCounters: Counter[]) => this.saveAllItems(allCounters));
+
+        frontendCommunicator.on("counters:delete-counter",
+            (counterId: string) => this.deleteItem(counterId));
+
+        frontendCommunicator.on("counters:get-counter-file-path",
+            (counterName: string) => this.getCounterTxtFilePath(counterName));
     }
 
     /**
@@ -76,7 +90,7 @@ class CounterManager extends JsonDbManager<Counter> {
     }
 
     triggerUiRefresh(): void {
-        frontendCommunicator.send("all-counters", this.getAllItems());
+        frontendCommunicator.send("counters:all-counters-updated", this.getAllItems());
     }
 
     async createCounter(counterName: string): Promise<Counter> {
@@ -133,7 +147,7 @@ class CounterManager extends JsonDbManager<Counter> {
 
         try {
             const txtFilePath = this.getCounterTxtFilePath(counterName);
-            const fileExists = fs.existsSync(txtFilePath);
+            const fileExists = await (fsp.stat(txtFilePath).catch(() => false));
 
             if (fileExists) {
                 return fsp.unlink(txtFilePath);
@@ -196,7 +210,7 @@ class CounterManager extends JsonDbManager<Counter> {
 
         await this.updateCounterTxtFile(counter.name, counter.value);
 
-        frontendCommunicator.send("counter-update", counter);
+        frontendCommunicator.send("counters:counter-updated", counter);
     }
 
     async updateCounterValue(counterId: string, value: string | number, overridePreviousValue = false): Promise<void> {
@@ -237,16 +251,4 @@ class CounterManager extends JsonDbManager<Counter> {
 
 const counterManager = new CounterManager();
 
-frontendCommunicator.onAsync("getCounters",
-    async () => counterManager.getAllItems());
-
-frontendCommunicator.onAsync("saveCounter",
-    async (counter: Counter) => counterManager.saveItem(counter));
-
-frontendCommunicator.onAsync("saveAllCounters",
-    async (allCounters: Counter[]) => counterManager.saveAllItems(allCounters));
-
-frontendCommunicator.on("deleteCounter",
-    (counterId: string) => counterManager.deleteItem(counterId));
-
-export = counterManager;
+export { counterManager as CounterManager };

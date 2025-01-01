@@ -12,7 +12,7 @@
             dismiss: "&",
             modalInstance: "<"
         },
-        controller: function($scope, utilityService, currencyService, viewerRolesService, logger) {
+        controller: function(utilityService, currencyService, viewerRolesService, logger) {
             const { v4: uuid } = require("uuid");
             const $ctrl = this;
 
@@ -53,6 +53,14 @@
 
             $ctrl.save = function() {
                 if ($ctrl.currency.name == null || $ctrl.currency.name === "") {
+                    return;
+                }
+
+                if ($ctrl.isNewCurrency && currencyService.currencies.some(c => c.name === $ctrl.currency.name)) {
+                    utilityService.showErrorModal(
+                        "You cannot create a currency with the same name as another currency!"
+                    );
+                    logger.error(`User tried to create currency with the same name as another currency: ${$ctrl.currency.name}.`);
                     return;
                 }
 

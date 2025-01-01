@@ -1,6 +1,5 @@
 import { app } from "electron";
 import path from "path";
-import fs from "fs";
 import fsp from "fs/promises";
 import { glob } from "glob";
 import { DeflateOptions, Zip, ZipDeflate, unzipSync } from "fflate";
@@ -144,23 +143,23 @@ class BackupManager {
         const maxBackups = SettingsManager.getSetting("MaxBackupCount");
 
         if (maxBackups !== "All") {
-            const fileNames = (await fsp.readdir(this._backupFolderPath))
-                .map((v) => {
+            const fileNames = (await Promise.all((await fsp.readdir(this._backupFolderPath))
+                .map(async (v) => {
                     return {
                         name: v,
-                        time: (fs.statSync(path.join(this._backupFolderPath, v))).birthtime.getTime()
+                        time: (await fsp.stat(path.join(this._backupFolderPath, v))).birthtime.getTime()
                     };
-                })
+                })))
                 .sort((a, b) => b.time - a.time)
                 .map(v => v.name)
                 .filter(n => !n.includes("NODELETE") && n.endsWith(".zip"));
 
             fileNames.splice(0, maxBackups);
 
-            fileNames.forEach((f) => {
+            for (const f of fileNames) {
                 logger.info(`Deleting old backup: ${f}`);
-                fs.unlinkSync(path.join(this._backupFolderPath, f));
-            });
+                await fsp.unlink(path.join(this._backupFolderPath, f));
+            }
 
             if (callback instanceof Function) {
                 callback();
@@ -184,15 +183,9 @@ class BackupManager {
         }.${fileExtension}`;
 
         await fsp.mkdir(this._backupFolderPath, { recursive: true });
-        const output = fs.createWriteStream(path.join(this._backupFolderPath, filename));
+        const output = await fsp.open(path.join(this._backupFolderPath, filename), "w");
 
-        // listen for all archive data to be written
-        output.on("close", async () => {
-            SettingsManager.saveSetting("LastBackupDate", new Date());
-            await this.cleanUpOldBackups(callback);
-        });
-
-        const archive = new Zip((err, data, final) => {
+        const archive = new Zip(async (err, data, final) => {
             if (err) {
                 // throw error
                 if (manualActivation) {
@@ -204,10 +197,12 @@ class BackupManager {
                 globalThis.renderWindow.webContents.send("error", err);
                 throw err;
             } else {
-                output.write(data);
+                await output.write(data);
 
                 if (final) {
-                    output.close();
+                    await output.close();
+                    SettingsManager.saveSetting("LastBackupDate", new Date());
+                    await this.cleanUpOldBackups(callback);
                 }
             }
         });
