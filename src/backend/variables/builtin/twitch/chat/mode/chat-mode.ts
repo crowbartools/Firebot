@@ -28,8 +28,8 @@ const model : ReplaceVariable = {
             case "slow":
             case "slowoff":
                 return "Slow";
-            case "r9kbeta":
-            case "r9kbetaoff":
+            case "uniquechat":
+            case "uniquechatoff":
                 return "Unique Chat";
             default:
                 return "";

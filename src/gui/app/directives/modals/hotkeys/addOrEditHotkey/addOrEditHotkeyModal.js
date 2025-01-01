@@ -11,9 +11,7 @@
             modalInstance: "<"
         },
         controller: function(
-            $scope,
             hotkeyService,
-            utilityService,
             ngToast
         ) {
             const $ctrl = this;

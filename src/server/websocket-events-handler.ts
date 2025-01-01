@@ -3,7 +3,7 @@ import webSocketServerManager from "./websocket-server-manager";
 
 // Firebot Component Managers
 import commandManager from "../backend/chat/commands/command-manager";
-import counterManager from "../backend/counters/counter-manager";
+import { CounterManager } from "../backend/counters/counter-manager";
 import customRolesManager from "../backend/roles/custom-roles-manager";
 import { events as customVariablesEvents } from "../backend/common/custom-variable-manager";
 import effectQueueManager from "../backend/effects/queues/effect-queue-manager";
@@ -38,7 +38,7 @@ const FIREBOT_COMPONENT_MANAGERS: Array<ComponentManager> = [
     },
     {
         componentName: "counter",
-        manager: counterManager
+        manager: CounterManager
     },
     {
         componentName: "custom-role",

@@ -1,7 +1,7 @@
 "use strict";
 
 const { SettingsManager } = require("../../common/settings-manager");
-const resourceTokenManager = require("../../resourceTokenManager");
+const { ResourceTokenManager } = require("../../resource-token-manager");
 const webServer = require("../../../server/http-server-manager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const { EffectCategory } = require('../../../shared/effect-constants');
@@ -544,7 +544,7 @@ const playVideo = {
             if (!isNaN(result)) {
                 duration = result;
             }
-            resourceToken = resourceTokenManager.storeResourcePath(data.filepath, duration);
+            resourceToken = ResourceTokenManager.storeResourcePath(data.filepath, duration);
         }
         if ((data.videoDuration == null || data.videoDuration === "" || data.videoDuration === 0) && duration != null) {
             data.videoDuration = duration;

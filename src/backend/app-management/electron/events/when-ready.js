@@ -58,9 +58,6 @@ exports.whenReady = async () => {
     windowManagement.updateSplashScreenStatus("Refreshing Twitch account data...");
     await accountAccess.refreshTwitchData();
 
-    const twitchFrontendListeners = require("../../../twitch-api/frontend-twitch-listeners");
-    twitchFrontendListeners.setupListeners();
-
     windowManagement.updateSplashScreenStatus("Starting stream status poll...");
     connectionManager.startOnlineCheckInterval();
 
@@ -72,7 +69,7 @@ exports.whenReady = async () => {
 
     windowManagement.updateSplashScreenStatus("Loading currencies...");
     const currencyAccess = require("../../../currency/currency-access").default;
-    currencyAccess.refreshCurrencyCache();
+    currencyAccess.loadCurrencies();
 
     windowManagement.updateSplashScreenStatus("Loading ranks...");
     const viewerRanksManager = require("../../../ranks/rank-manager");
@@ -166,8 +163,8 @@ exports.whenReady = async () => {
     chatModerationManager.load();
 
     windowManagement.updateSplashScreenStatus("Loading counters...");
-    const countersManager = require("../../../counters/counter-manager");
-    countersManager.loadItems();
+    const { CounterManager } = require("../../../counters/counter-manager");
+    CounterManager.loadItems();
 
     windowManagement.updateSplashScreenStatus("Loading games...");
     const gamesManager = require("../../../games/game-manager");
@@ -183,6 +180,10 @@ exports.whenReady = async () => {
         customVariableManager.loadVariablesFromFile();
     }
 
+    windowManagement.updateSplashScreenStatus("Loading sort tags...");
+    const { SortTagManager } = require("../../../sort-tags/sort-tag-manager");
+    SortTagManager.loadSortTags();
+
     // get importer in memory
     windowManagement.updateSplashScreenStatus("Loading importers...");
 
@@ -196,8 +197,8 @@ exports.whenReady = async () => {
     setupCommonListeners();
 
     windowManagement.updateSplashScreenStatus("Loading hotkeys...");
-    const hotkeyManager = require("../../../hotkeys/hotkey-manager");
-    hotkeyManager.refreshHotkeyCache();
+    const { HotkeyManager } = require("../../../hotkeys/hotkey-manager");
+    HotkeyManager.loadHotkeys();
 
     windowManagement.updateSplashScreenStatus("Starting currency timer...");
     const currencyManager = require("../../../currency/currency-manager");
@@ -251,8 +252,8 @@ exports.whenReady = async () => {
     // load activity feed manager
     require("../../../events/activity-feed-manager");
 
-    const iconManager = require("../../../common/icon-manager");
-    iconManager.loadFontAwesomeIcons();
+    const { IconManager } = require("../../../common/icon-manager");
+    await IconManager.loadFontAwesomeIcons();
 
     windowManagement.updateSplashScreenStatus("Starting stream info poll...");
     const streamInfoPoll = require("../../../twitch-api/stream-info-manager");
