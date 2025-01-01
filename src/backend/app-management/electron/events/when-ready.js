@@ -163,8 +163,8 @@ exports.whenReady = async () => {
     chatModerationManager.load();
 
     windowManagement.updateSplashScreenStatus("Loading counters...");
-    const countersManager = require("../../../counters/counter-manager");
-    countersManager.loadItems();
+    const { CounterManager } = require("../../../counters/counter-manager");
+    CounterManager.loadItems();
 
     windowManagement.updateSplashScreenStatus("Loading games...");
     const gamesManager = require("../../../games/game-manager");
