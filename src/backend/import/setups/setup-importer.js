@@ -5,7 +5,7 @@ const profileManager = require("../../common/profile-manager");
 const frontendCommunicator = require("../../common/frontend-communicator");
 
 const commandManager = require("../../chat/commands/command-manager");
-const countersManager = require("../../counters/counter-manager");
+const { CounterManager } = require("../../counters/counter-manager");
 const effectQueueManager = require("../../effects/queues/effect-queue-manager");
 const eventsAccess = require("../../events/events-access");
 const timerManager = require("../../timers/timer-manager");
@@ -16,6 +16,7 @@ const quickActionManager = require("../../quick-actions/quick-action-manager");
 const variableMacroManager = require("../../variables/macro-manager");
 const rankManager = require("../../ranks/rank-manager");
 const { escapeRegExp } = require("../../utility");
+const currencyAccess = require("../../currency/currency-access").default;
 
 function findAndReplaceCurrency(data, currency) {
     const entries = Object.entries(data);
@@ -98,14 +99,14 @@ async function importSetup(setup, selectedCurrency) {
     // counters
     const counters = setup.components.counters || [];
     for (const counter of counters) {
-        await countersManager.saveItem(counter);
+        CounterManager.saveItem(counter);
     }
-    countersManager.triggerUiRefresh();
+    CounterManager.triggerUiRefresh();
 
     // currencies
     const currencies = setup.components.currencies || [];
     for (const currency of currencies) {
-        frontendCommunicator.send("import-currency", currency);
+        currencyAccess.importCurrency(currency);
     }
 
     // effect queues
@@ -209,16 +210,16 @@ async function importSetup(setup, selectedCurrency) {
 function removeSetupComponents(components) {
     Object.entries(components)
         .forEach(([componentType, componentList]) => {
-            componentList.forEach(({id, name}) => {
+            componentList.forEach((id) => {
                 switch (componentType) {
                     case "commands":
                         commandManager.deleteCustomCommand(id);
                         break;
                     case "counters":
-                        countersManager.deleteItem(id);
+                        CounterManager.deleteItem(id);
                         break;
                     case "currencies":
-                        frontendCommunicator.send("remove-currency", { id, name });
+                        currencyAccess.deleteCurrency(id);
                         break;
                     case "effectQueues":
                         effectQueueManager.deleteItem(id);
@@ -260,7 +261,7 @@ function removeSetupComponents(components) {
             if (componentType === "commands") {
                 commandManager.triggerUiRefresh();
             } else if (componentType === "counters") {
-                countersManager.triggerUiRefresh();
+                CounterManager.triggerUiRefresh();
             } else if (componentType === "effectQueues") {
                 effectQueueManager.triggerUiRefresh();
             } else if (componentType === "events") {

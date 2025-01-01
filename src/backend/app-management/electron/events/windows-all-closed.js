@@ -19,8 +19,8 @@ exports.windowsAllClosed = async () => {
     await customScriptRunner.stopAllScripts();
 
     // Unregister all shortcuts.
-    const hotkeyManager = require("../../../hotkeys/hotkey-manager");
-    hotkeyManager.unregisterAllHotkeys();
+    const { HotkeyManager } = require("../../../hotkeys/hotkey-manager");
+    HotkeyManager.unregisterAllHotkeys();
 
     // Stop the chat moderation service
     const chatModerationManager = require("../../../chat/moderation/chat-moderation-manager");

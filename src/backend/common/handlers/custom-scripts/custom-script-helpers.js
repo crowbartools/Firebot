@@ -88,9 +88,9 @@ function buildModules(scriptManifest) {
 
         quotesManager: require("../../../quotes/quotes-manager"),
         frontendCommunicator: require("../../frontend-communicator"),
-        counterManager: require("../../../counters/counter-manager"),
+        counterManager: require("../../../counters/counter-manager").CounterManager,
         utils: require("../../../utility"),
-        resourceTokenManager: require("../../../resourceTokenManager"),
+        resourceTokenManager: require("../../../resource-token-manager").ResourceTokenManager,
 
         notificationManager: {
             addNotification: (notificationBase, permanentlySave = true) => {
