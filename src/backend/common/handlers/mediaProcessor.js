@@ -1,7 +1,7 @@
 "use strict";
 
 const { SettingsManager } = require("../settings-manager");
-const resourceTokenManager = require("../../resourceTokenManager.js");
+const { ResourceTokenManager } = require("../../resource-token-manager");
 const util = require("../../utility");
 const logger = require("../../logwrapper");
 const webServer = require("../../../server/http-server-manager");
@@ -47,7 +47,7 @@ function soundProcessor(effect) {
     data.audioOutputDevice = selectedOutputDevice;
 
     if (selectedOutputDevice.deviceId === "overlay") {
-        const resourceToken = resourceTokenManager.storeResourcePath(effect.file, 30);
+        const resourceToken = ResourceTokenManager.storeResourcePath(effect.file, 30);
         data.resourceToken = resourceToken;
     }
 
@@ -107,7 +107,7 @@ async function imageProcessor(effect, trigger) {
     }
 
     if (effect.imageType === "local") {
-        const resourceToken = resourceTokenManager.storeResourcePath(
+        const resourceToken = ResourceTokenManager.storeResourcePath(
             effect.file,
             effect.length
         );
@@ -158,7 +158,7 @@ function videoProcessor(effect) {
         }
     }
 
-    const resourceToken = resourceTokenManager.storeResourcePath(
+    const resourceToken = ResourceTokenManager.storeResourcePath(
         effect.file,
         effect.length
     );

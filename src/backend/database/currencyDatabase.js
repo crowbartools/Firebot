@@ -4,7 +4,7 @@ const currencyAccess = require("../currency/currency-access").default;
 const currencyManager = require("../currency/currency-manager");
 
 exports.isViewerDBOn = () => currencyAccess.isViewerDBOn();
-exports.refreshCurrencyCache = () => currencyAccess.refreshCurrencyCache();
+exports.refreshCurrencyCache = () => currencyAccess.loadCurrencies();
 exports.addCurrencyToNewUser = viewer => currencyAccess.addCurrencyToNewViewer(viewer);
 exports.getCurrencies = () => currencyAccess.getCurrencies();
 exports.getCurrencyById = id => currencyAccess.getCurrencyById(id);
