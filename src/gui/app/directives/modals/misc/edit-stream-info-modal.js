@@ -49,8 +49,14 @@
                                         </div>
                                     </ui-select-choices>
                                 </ui-select>
-                                <div style="margin-left: 3px">
-                                    <button class="btn btn-danger" ng-click="$ctrl.removeCategory()"><i class="far fa-trash"></i></button>
+                                <div ng-show="$ctrl.selectedGame != null" style="margin-left: 3px">
+                                    <button 
+                                        class="btn btn-default"
+                                        aria-label="Clear category"
+                                        uib-tooltip="Clear category"     
+                                        ng-click="$ctrl.removeCategory()">
+                                        <i class="far fa-times"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
