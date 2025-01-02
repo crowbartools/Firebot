@@ -81,7 +81,7 @@ export interface IntegrationManagerEvents {
     "integrationRegistered": (integration: Integration) => void;
     "integration-connected": (integrationId: string) => void;
     "integration-disconnected": (integrationId: string) => void;
-    "token-refreshed": (integrationId: string, updatedToken: AuthDetails) => void;
+    "token-refreshed": (data: {integrationId: string, updatedToken: AuthDetails}) => void;
 }
 
 export declare class IntegrationManager extends TypedEmitter<IntegrationManagerEvents> {

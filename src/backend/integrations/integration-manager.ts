@@ -363,7 +363,7 @@ class IntegrationManager extends TypedEmitter<IntegrationManagerEvents> {
                 const updatedToken = await authManager.refreshTokenIfExpired(providerId, authData.auth);
                 if (updatedToken != null) {
                     this.saveIntegrationAuth(int, updatedToken);
-                    this.emit("token-refreshed", integrationId, updatedToken);
+                    this.emit("token-refreshed", {"integrationId": integrationId, "updatedToken": updatedToken});
                 }
                 authData.auth = updatedToken;
             } else if (authManager.tokenExpired(providerId, authData.auth)) {
@@ -423,7 +423,7 @@ class IntegrationManager extends TypedEmitter<IntegrationManagerEvents> {
                 this.saveIntegrationAuth(int, updatedToken);
 
                 authData = updatedToken;
-                this.emit("token-refreshed", integrationId, updatedToken);
+                this.emit("token-refreshed", {"integrationId": integrationId, "updatedToken": updatedToken});
             }
             integrationData.auth = authData;
         }
