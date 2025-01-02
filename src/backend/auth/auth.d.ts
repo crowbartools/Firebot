@@ -74,7 +74,7 @@ export interface AuthDetails {
 }
 
 export interface AuthManagerEvents {
-    "auth-success": (providerId: string, tokenData: AuthDetails) => void
+    "auth-success": (data: { providerId: string, tokenData: AuthDetails }) => void
 }
 
 export declare class AuthManager extends TypedEmitter<AuthManagerEvents> {

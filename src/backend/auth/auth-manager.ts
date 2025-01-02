@@ -207,7 +207,7 @@ class AuthManager extends TypedEmitter<AuthManagerEvents> {
     }
 
     successfulAuth(providerId: string, tokenData: AuthDetails): void {
-        this.emit("auth-success", providerId, tokenData);
+        this.emit("auth-success", { "providerId": providerId, "tokenData": tokenData});
     }
 }
 

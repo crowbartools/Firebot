@@ -151,7 +151,7 @@ async function getUserCurrent(accessToken: string) {
     return null;
 }
 
-authManager.on("auth-success", async (providerId, tokenData) => {
+authManager.on("auth-success", async ({providerId, tokenData}) => {
 
     if (providerId === twitchAuthProviders.streamerAccountProviderId
         || providerId === twitchAuthProviders.botAccountProviderId) {

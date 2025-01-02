@@ -22,7 +22,7 @@ class IntegrationManager extends TypedEmitter<IntegrationManagerEvents> {
 
     constructor() {
         super();
-        authManager.on("auth-success", (providerId, tokenData) => {
+        authManager.on("auth-success", ({providerId, tokenData}) => {
             const int = this._integrations.find(i => i.definition.linkType === "auth" &&
                 i.definition.authProviderDetails.id === providerId);
             if (int != null) {
@@ -469,8 +469,6 @@ frontEndCommunicator.on("integrationUserSettingsUpdate", (integrationData: Integ
     }
 });
 
-// TODO: The day the frontend is moved to typescript, this arguments list needs to be flattened
-// Having a dict here allows to tell the frontend what goes where for now
 frontEndCommunicator.onAsync<[{ integrationId: string, accountId: string }]>("enteredIntegrationAccountId", async (idData) => {
     const { integrationId, accountId } = idData;
     const int = integrationManager.getIntegrationById(integrationId);
