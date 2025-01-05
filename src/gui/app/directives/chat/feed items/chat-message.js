@@ -200,7 +200,7 @@
                         </div>
                     </div>
                     <div class="automod-tag" ng-show="$ctrl.message.isAutoModHeld">
-                        <div ng-if="$ctrl.message.autoModStatus === 'PENDING' && !$ctrl.message.autoModErrorMessage">
+                        <div ng-if="$ctrl.message.autoModStatus === 'pending' && !$ctrl.message.autoModErrorMessage">
                             <span>Flagged by AutoMod ({{$ctrl.message.autoModReason}}): </span>
                             <span ng-if="!$ctrl.respondedToAutoMod">
                                 <a href style="font-weight: 700;" ng-click="$ctrl.allowAutoModMessage()">Allow</a>
@@ -211,13 +211,13 @@
                                 Sending...
                             </span>
                         </div>
-                        <div ng-if="$ctrl.message.autoModStatus === 'PENDING' && $ctrl.message.autoModErrorMessage">
+                        <div ng-if="$ctrl.message.autoModStatus === 'pending' && $ctrl.message.autoModErrorMessage">
                             <span style="color: rgb(255 149 149)">{{$ctrl.message.autoModErrorMessage}}</span>
                         </div>
-                        <div ng-if="['ALLOWED', 'DENIED'].includes($ctrl.message.autoModStatus)">
-                            <span>{{$ctrl.message.autoModStatus === 'ALLOWED' ? 'Allowed' : 'Denied'}} by {{$ctrl.message.autoModResolvedBy}}</span>
+                        <div ng-if="['approved', 'denied'].includes($ctrl.message.autoModStatus)">
+                            <span>{{$ctrl.message.autoModStatus === 'approved' ? 'Approved' : 'Denied'}} by {{$ctrl.message.autoModResolvedBy}}</span>
                         </div>
-                        <div ng-if="$ctrl.message.autoModStatus === 'EXPIRED'">
+                        <div ng-if="$ctrl.message.autoModStatus === 'expired'">
                             <span>Expired</span>
                         </div>
                     </div>

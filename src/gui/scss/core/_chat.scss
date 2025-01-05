@@ -82,13 +82,13 @@
         left: 0;
         height: 100%;
         width: 3px;
-        &.ALLOWED {
+        &.approved {
             background: #00db84;
         }
-        &.PENDING {
+        &.pending {
             background: #ffb31a
         }
-        &.DENIED, &.EXPIRED {
+        &.denied, &.expired {
             background: #ff4662;
         }
     }

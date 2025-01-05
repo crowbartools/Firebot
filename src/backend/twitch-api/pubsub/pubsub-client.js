@@ -95,26 +95,6 @@ async function createClient() {
         });
         listeners.push(subsListener);
 
-        const autoModListener = pubSubClient.onAutoModQueue(streamer.userId, streamer.userId, async (message) => {
-            if (message.status === "PENDING") {
-                const chatHelpers = require("../../chat/chat-helpers");
-
-                const firebotChatMessage = await chatHelpers.buildViewerFirebotChatMessageFromAutoModMessage(message);
-
-                frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
-            }
-            if (["ALLOWED", "DENIED", "EXPIRED"].includes(message.status)) {
-                frontendCommunicator.send("twitch:chat:automod-update", {
-                    messageId: message.messageId,
-                    newStatus: message.status,
-                    resolverName: message.resolverName,
-                    resolverId: message.resolverId,
-                    flaggedPhrases: message.foundMessageFragments.filter(f => !!f.automod).map(f => f.text)
-                });
-            }
-        });
-        listeners.push(autoModListener);
-
         const chatRoomListener = pubSubClient.onCustomTopic(streamer.userId, "stream-chat-room-v1", async (event) => {
             const message = event?.data;
             if (message?.type === "extension_message") {

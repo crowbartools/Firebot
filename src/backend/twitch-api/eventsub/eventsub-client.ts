@@ -9,6 +9,7 @@ import twitchApi from "../api";
 import twitchStreamInfoPoll from "../stream-info-manager";
 import rewardManager from "../../channel-rewards/channel-reward-manager";
 import chatRolesManager from "../../roles/chat-roles-manager";
+import chatHelpers from "../../chat/chat-helpers";
 
 class TwitchEventSubClient {
     private _eventSubListener: EventSubWsListener;
@@ -568,6 +569,24 @@ class TwitchEventSubClient {
             }
         });
         this._subscriptions.push(channelModerateSubscription);
+
+        // AutoMod Message Hold
+        const autoModMsgHoldSubscription = this._eventSubListener.onAutoModMessageHold(streamer.userId, streamer.userId, async (event) => {
+            const firebotChatMessage = await chatHelpers.buildViewerFirebotChatMessageFromAutoModMessage(event);
+            frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
+        });
+        this._subscriptions.push(autoModMsgHoldSubscription);
+
+        // AutoMod Message Update
+        const autoModMsgUpdateSubscription = this._eventSubListener.onAutoModMessageUpdate(streamer.userId, streamer.userId, async (event) => {
+            frontendCommunicator.send("twitch:chat:automod-update", {
+                messageId: event.messageId,
+                newStatus: event.status,
+                resolverName: event.moderatorName,
+                userName: event.userName
+            });
+        });
+        this._subscriptions.push(autoModMsgUpdateSubscription);
     }
 
     async createClient(): Promise<void> {

@@ -1,6 +1,6 @@
 import { HelixChatBadgeSet, HelixCheermoteList, HelixEmote } from "@twurple/api";
 import { ChatMessage, ParsedMessageCheerPart, ParsedMessagePart, findCheermotePositions, parseChatMessage } from "@twurple/chat";
-import { PubSubAutoModQueueMessage } from "@twurple/pubsub";
+import { EventSubAutoModMessageHoldEvent } from "@twurple/eventsub-base";
 import { ThirdPartyEmote, ThirdPartyEmoteProvider } from "./third-party/third-party-emote-provider";
 import { BTTVEmoteProvider } from "./third-party/bttv";
 import { FFZEmoteProvider } from "./third-party/ffz";
@@ -507,33 +507,25 @@ class FirebotChatHelpers {
         return firebotChatMessage;
     }
 
-    async buildViewerFirebotChatMessageFromAutoModMessage(msg: PubSubAutoModQueueMessage) {
-        const profilePicUrl = await this.getUserProfilePicUrl(msg.senderId);
-
-        const parts = msg.foundMessageFragments.map(f => ({
-            type: "text",
-            text: f.text,
-            flagged: f.automod != null
-        }));
-
+    async buildViewerFirebotChatMessageFromAutoModMessage(msg: EventSubAutoModMessageHoldEvent) {
+        const profilePicUrl = await this.getUserProfilePicUrl(msg.userId);
         const viewerFirebotChatMessage: FirebotChatMessage = {
             id: msg.messageId,
-            username: msg.senderName,
-            userId: msg.senderId,
-            userDisplayName: msg.senderDisplayName,
-            rawText: msg.messageContent,
+            username: msg.userName,
+            userId: msg.userId,
+            userDisplayName: msg.userDisplayName,
+            rawText: msg.messageText,
             profilePicUrl: profilePicUrl,
             whisper: false,
             action: false,
             tagged: false,
             isBroadcaster: false,
-            color: msg.senderColor,
             badges: [],
-            parts: parts,
+            parts: msg.messageParts,
             roles: [],
             isAutoModHeld: true,
-            autoModStatus: msg.status,
-            autoModReason: msg.contentClassification.category,
+            autoModStatus: "pending",
+            autoModReason: msg.category,
             isSharedChatMessage: false // todo: check if automod messages have a way to associate them with shared chat
         };
 

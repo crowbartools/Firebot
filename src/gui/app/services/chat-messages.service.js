@@ -331,10 +331,10 @@
                 service.clearUserList();
             });
 
-            backendCommunicator.on("twitch:chat:automod-update", ({messageId, newStatus, resolverName, flaggedPhrases}) => {
-                if (newStatus === "ALLOWED") {
+            backendCommunicator.on("twitch:chat:automod-update", ({messageId, newStatus, resolverName, userName}) => {
+                if (newStatus === "approved") {
                     service.chatQueue = service.chatQueue.filter(i => i?.data?.id !== messageId);
-                    service.chatAlertMessage(`${resolverName} approved a message that contains: ${flaggedPhrases.join(", ")}`);
+                    service.chatAlertMessage(`${resolverName} approved an auto-moderated message from ${userName}`);
                 } else {
                     const messageItem = service.chatQueue.find(i => i.type === "message" && i.data.id === messageId);
 
