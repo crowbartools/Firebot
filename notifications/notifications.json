@@ -4,5 +4,11 @@
         "title": "Feature YOUR stream on the Firebot website!",
         "type": "info",
         "message": "Hey there, Firebot users! Did you know YOUR stream could be featured on the Firebot website? Just go to <strong>Settings</strong>, then <strong>General</strong>, and enable the <strong>Feature My Stream</strong> setting. That's it! After that, whenever you're live on Twitch while running Firebot, your stream will automatically appear <a href=\"https://firebot.app/watch\">on our website</a>."
+    },
+    {
+        "id": "twitch-token-issue-2025-01-05",
+        "title": "Known issue with Twitch logins",
+        "type": "alert",
+        "message": "Hey there, Firebot community. We know many of you may be experiencing an issue where Firebot is logging you out of your streamer and/or bot accounts frequently after logging in. Unfortunately, this is currently a known issue on Twitch's side that's affecting multiple bots/tools, not just Firebot, and we don't have an estimated time to resolution. However, we are closely monitoring the situation and will let everyone know once we have an update from Twitch. Thank you for your patience and support."
     }
 ]
