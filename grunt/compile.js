@@ -61,7 +61,6 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.loadNpmTasks('grunt-electron-installer');
     grunt.loadNpmTasks('grunt-contrib-compress');
     let compileCommand;
     switch (grunt.config.get('platform')) {
