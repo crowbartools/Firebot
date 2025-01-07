@@ -146,7 +146,7 @@ const triviaCommand = {
                 }
             }
             const maxWager = triviaSettings.settings.currencySettings.maxWager;
-            if (maxWager != null & maxWager > 0) {
+            if (maxWager != null && maxWager > 0) {
                 if (wagerAmount > maxWager) {
                     await twitchChat.sendChatMessage(`${user.displayName}, your wager amount can be no more than ${maxWager}.`, null, chatter);
                     return;
