@@ -1,6 +1,7 @@
 "use strict";
 
 const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
+const frontendCommunicator = require('../../common/frontend-communicator');
 
 const effect = {
     definition: {
@@ -39,7 +40,7 @@ const effect = {
 
         const { effect } = event;
 
-        renderWindow.webContents.send("chatUpdate", {
+        frontendCommunicator.send("chatUpdate", {
             fbEvent: "ChatAlert",
             message: effect.message
         });

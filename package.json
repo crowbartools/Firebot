@@ -117,7 +117,6 @@
         "socket.io-client": "^2.3.0",
         "tiny-typed-emitter": "^2.1.0",
         "tinycolor2": "^1.6.0",
-        "underscore": "^1.13.1",
         "uuid": "^11.0.3",
         "winston": "^2.4.4",
         "winston-daily-rotate-file": "^1.7.2",

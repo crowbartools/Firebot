@@ -1,5 +1,4 @@
 import effectManager from "../backend/effects/effectManager";
-import electron from "electron";
 import { EventEmitter } from "events";
 import eventManager from "../backend/events/EventManager";
 import http from "http";
@@ -7,6 +6,7 @@ import logger from "../backend/logwrapper";
 import WebSocket from "ws";
 import { OverlayConnectedData, Message, ResponseMessage, EventMessage, InvokePluginMessage, CustomWebSocketHandler } from "../types/websocket";
 import { WebSocketClient } from "./websocket-client";
+import frontendCommunicator from "../backend/common/frontend-communicator";
 
 function sendResponse(ws: WebSocketClient, messageId: string | number, data: unknown = null) {
     const response: ResponseMessage = {
@@ -204,14 +204,10 @@ class WebSocketServerManager extends EventEmitter {
             hasClients = [...this.server.clients].filter(client => client.type === "overlay").length > 0;
         }
         if (hasClients !== this.overlayHasClients) {
-            const renderWindow: electron.BrowserWindow | undefined = global.renderWindow;
-
-            if (global.hasOwnProperty("renderWindow") && renderWindow?.webContents?.isDestroyed() === false) {
-                renderWindow.webContents.send("overlayStatusUpdate", {
-                    clientsConnected: hasClients,
-                    serverStarted: isDefaultServerStarted
-                });
-            }
+            frontendCommunicator.send("overlayStatusUpdate", {
+                clientsConnected: hasClients,
+                serverStarted: isDefaultServerStarted
+            });
             this.overlayHasClients = hasClients;
         }
     }

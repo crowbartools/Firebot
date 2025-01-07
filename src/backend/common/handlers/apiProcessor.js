@@ -4,6 +4,7 @@ const https = require('https');
 
 const axiosDefault = require("axios").default;
 const logger = require("../../logwrapper");
+const frontendCommunicator = require('../frontend-communicator');
 
 const axios = axiosDefault.create({
     httpsAgent: new https.Agent({ rejectUnauthorized: false })
@@ -27,7 +28,7 @@ async function randomAdvice() {
         })
         .catch(function(err) {
             logger.debug(err.message);
-            renderWindow.webContents.send(
+            frontendCommunicator.send(
                 "error",
                 "Couldn't connect to the advice API. It may be down."
             );
@@ -47,7 +48,7 @@ async function randomCatFact() {
         })
         .catch(function(err) {
             logger.debug(err.message);
-            renderWindow.webContents.send(
+            frontendCommunicator.send(
                 "error",
                 "There was an error sending a cat fact to chat."
             );
@@ -67,7 +68,7 @@ async function randomDogFact() {
         })
         .catch(function(err) {
             logger.debug(err.message);
-            renderWindow.webContents.send(
+            frontendCommunicator.send(
                 "error",
                 "Couldn't connect to the dog fact API. It may be down."
             );
@@ -97,7 +98,7 @@ async function randomPokemon() {
         })
         .catch(function(err) {
             logger.debug(err.message);
-            renderWindow.webContents.send(
+            frontendCommunicator.send(
                 "error",
                 "Couldn't connect to the Pokemon API. It may be down."
             );
@@ -116,7 +117,7 @@ async function numberTrivia() {
         })
         .catch(function(err) {
             logger.debug(err.message);
-            renderWindow.webContents.send(
+            frontendCommunicator.send(
                 "error",
                 "Couldn't connect to the number trivia API. It may be down."
             );
@@ -141,7 +142,7 @@ async function dadJoke() {
         })
         .catch(function(err) {
             logger.debug(err.message);
-            renderWindow.webContents.send(
+            frontendCommunicator.send(
                 "error",
                 "Couldn't connect to the dad joke API. It may be down."
             );
