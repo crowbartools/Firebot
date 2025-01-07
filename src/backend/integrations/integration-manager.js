@@ -417,7 +417,7 @@ frontendCommunicator.on("disconnectIntegration", (integrationId) => {
 
 frontendCommunicator.on("getAllIntegrationDefinitions", () => {
     logger.info("got 'get all integrations' request");
-    event.returnValue = manager.getAllIntegrationDefinitions();
+    return manager.getAllIntegrationDefinitions();
 });
 
 module.exports = manager;
