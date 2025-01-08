@@ -1,4 +1,4 @@
-import { ComparisonType } from "src/shared/filter-constants";
+import { ComparisonType } from "../shared/filter-constants";
 
 export type EventSource = {
     id: string;
