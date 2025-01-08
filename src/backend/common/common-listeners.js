@@ -106,23 +106,6 @@ exports.setupCommonListeners = () => {
         profileManager.renameProfile(newProfileId);
     });
 
-    // Get Any kind of file Path
-    // This listens for an event from the front end.
-    ipcMain.on("getAnyFilePath", (event, data) => {
-        const uuid = data.uuid,
-            options = data.options || {};
-
-        const path = dialog.showOpenDialogSync({
-            title: options.title ? options.title : undefined,
-            buttonLabel: options.buttonLabel ? options.buttonLabel : undefined,
-            properties: options.directoryOnly ? ["openDirectory"] : ["openFile"],
-            filters: options.filters ? options.filters : undefined,
-            defaultPath: data.currentPath ? data.currentPath : undefined
-        });
-
-        event.sender.send("gotAnyFilePath", { path: path, id: uuid });
-    });
-
     // Change profile when we get event from renderer
     ipcMain.on("sendToOverlay", function(_, data) {
         if (data == null) {
@@ -160,7 +143,7 @@ exports.setupCommonListeners = () => {
         updater.on("update-downloaded", () => {
             logger.info("Updated downloaded.");
             //let the front end know and wait a few secs.
-            renderWindow.webContents.send("updateDownloaded");
+            frontendCommunicator.send("updateDownloaded");
 
             // Prepare for update install on next run
             SettingsManager.saveSetting("JustUpdated", true);
@@ -169,7 +152,7 @@ exports.setupCommonListeners = () => {
 
     ipcMain.on("installUpdate", () => {
         logger.info("Installing update...");
-        renderWindow.webContents.send("installingUpdate");
+        frontendCommunicator.send("installingUpdate");
 
         const GhReleases = require("electron-gh-releases");
 

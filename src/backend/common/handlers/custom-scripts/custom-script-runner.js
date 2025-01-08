@@ -6,6 +6,7 @@ const utils = require("../../../utility");
 const profileManager = require("../../profile-manager");
 const { getScriptPath, buildRunRequest, mapParameters } = require("./custom-script-helpers");
 const effectRunner = require("../../effect-runner.js");
+import frontendCommunicator from "../../frontend-communicator";
 import { SettingsManager } from "../../settings-manager";
 
 /**
@@ -41,14 +42,14 @@ async function executeScript(scriptData, trigger, isStartupScript = false) {
         }
         customScript = require(scriptFilePath);
     } catch (error) {
-        renderWindow.webContents.send("error", `Error loading the script '${scriptName}' \n\n ${error}`);
+        frontendCommunicator.send("error", `Error loading the script '${scriptName}' \n\n ${error}`);
         logger.error(error);
         return;
     }
 
     // Verify the script contains the "run" function
     if (typeof customScript.run !== "function") {
-        renderWindow.webContents.send(
+        frontendCommunicator.send(
             "error",
             `Error running '${scriptName}', script does not contain an exported 'run' function.`
         );
@@ -72,7 +73,7 @@ async function executeScript(scriptData, trigger, isStartupScript = false) {
     }
 
     if (manifest.startupOnly && !isStartupScript) {
-        renderWindow.webContents.send(
+        frontendCommunicator.send(
             "error",
             `Could not run startup-only script "${manifest.name}" as it was executed outside of Firebot startup (Settings > Advanced > Startup Scripts)`
         );
@@ -100,7 +101,7 @@ async function executeScript(scriptData, trigger, isStartupScript = false) {
 
     if (!response.success) {
         logger.error("Script failed with message:", response.errorMessage);
-        renderWindow.webContents.send("error", `Custom script failed with the message: ${response.errorMessage}`);
+        frontendCommunicator.send("error", `Custom script failed with the message: ${response.errorMessage}`);
         return;
     }
 
@@ -229,7 +230,7 @@ function runScript(effect, trigger) {
     logger.debug(`running script: ${scriptName}`);
 
     if (SettingsManager.getSetting("RunCustomScripts")) {
-        renderWindow.webContents.send(
+        frontendCommunicator.send(
             "error",
             "Something attempted to run a custom script but this feature is disabled!"
         );

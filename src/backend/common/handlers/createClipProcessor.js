@@ -20,7 +20,7 @@ exports.createClip = async function(effect) {
     const channelId = (await twitchApi.users.getUserById(streamerAccount.userId)).id;
 
     // if (broadcast == null) {
-    //     renderWindow.webContents.send('error', `Failed to create a clip. Reason: Streamer is not live.`);
+    //     frontendCommunicator.send('error', `Failed to create a clip. Reason: Streamer is not live.`);
     //     return null;
     // }
 

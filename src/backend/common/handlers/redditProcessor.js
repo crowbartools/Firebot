@@ -2,6 +2,7 @@
 
 const logger = require("../../logwrapper");
 const axios = require("axios");
+const frontendCommunicator = require("../frontend-communicator");
 
 function postPicker(posts) {
     while (posts.length) {
@@ -43,7 +44,7 @@ async function randomImageFromSubReddit(subreddit) {
 
     if (subData == null) {
         logger.error("Couldn't find any valid posts in the subreddit.");
-        renderWindow.webContents.send(
+        frontendCommunicator.send(
             "error",
             "Couldn't find any valid posts in the subreddit."
         );
@@ -54,7 +55,7 @@ async function randomImageFromSubReddit(subreddit) {
     const imageUrl = postPicker(subData);
     if (imageUrl === false) {
         logger.error("Couldn't find any valid posts in the subreddit.");
-        renderWindow.webContents.send(
+        frontendCommunicator.send(
             "error",
             "Couldn't find any valid posts in the subreddit."
         );

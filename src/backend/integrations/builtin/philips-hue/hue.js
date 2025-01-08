@@ -10,6 +10,7 @@ const appName = 'Firebot';
 const deviceName = 'Firebot-Hue';
 
 const effectManager = require("../../../effects/effectManager");
+const frontendCommunicator = require("../../../common/frontend-communicator");
 
 const integrationDefinition = {
     id: "hue",
@@ -26,7 +27,7 @@ async function connectToHue(hueUser) {
         return true;
     }
 
-    renderWindow.webContents.send(
+    frontendCommunicator.send(
         "error",
         "Could not connect to hue. The bridge might have changed ip addresses or lost user info. Try re-linking to hue."
     );
@@ -66,7 +67,7 @@ class HueIntegration extends EventEmitter {
             return;
         }
 
-        renderWindow.webContents.send(
+        frontendCommunicator.send(
             "error",
             "Please press the link button on your hue bridge, then click the link button in Firebot."
         );

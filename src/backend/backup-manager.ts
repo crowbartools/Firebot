@@ -189,12 +189,12 @@ class BackupManager {
             if (err) {
                 // throw error
                 if (manualActivation) {
-                    globalThis.renderWindow.webContents.send(
+                    frontendCommunicator.send(
                         "error",
                         "Something bad happened, please check your logs."
                     );
                 }
-                globalThis.renderWindow.webContents.send("error", err);
+                frontendCommunicator.send("error", err);
                 throw err;
             } else {
                 await output.write(data);

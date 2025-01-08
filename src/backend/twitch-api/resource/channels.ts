@@ -2,6 +2,7 @@ import logger from '../../logwrapper';
 import accountAccess from "../../common/account-access";
 import { ApiClient, CommercialLength, HelixChannel, HelixChannelUpdate, HelixUser, HelixUserRelation } from "@twurple/api";
 import { HelixAdSchedule } from '@twurple/api/lib/endpoints/channel/HelixAdSchedule';
+import frontendCommunicator from '../../common/frontend-communicator';
 
 export class TwitchChannelsApi {
     private _streamerClient: ApiClient;
@@ -127,7 +128,7 @@ export class TwitchChannelsApi {
             return true;
         } catch (error) {
             /** @ts-ignore */
-            renderWindow.webContents.send("error", `Failed to trigger ad-break because: ${error.message}`);
+            frontendCommunicator.send("error", `Failed to trigger ad-break because: ${error.message}`);
             return false;
         }
     }
