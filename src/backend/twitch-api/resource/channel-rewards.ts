@@ -190,7 +190,7 @@ export class TwitchChannelRewardsApi {
     async getCustomChannelRewards(onlyManageable = false): Promise<CustomReward[]> {
         let rewards = [];
         try {
-            const response = await this._streamerClient.channelPoints.getCustomRewards(
+            const response = await this._streamerClient?.channelPoints?.getCustomRewards(
                 accountAccess.getAccounts().streamer.userId,
                 onlyManageable
             );
@@ -210,7 +210,7 @@ export class TwitchChannelRewardsApi {
         let reward: HelixCustomReward;
 
         try {
-            const response = await this._streamerClient.channelPoints.getCustomRewardById(
+            const response = await this._streamerClient?.channelPoints?.getCustomRewardById(
                 accountAccess.getAccounts().streamer.userId,
                 rewardId
             );
@@ -295,15 +295,17 @@ export class TwitchChannelRewardsApi {
                 newestFirst: true
             };
 
-            for (const reward of rewards) {
-                const response = await this._streamerClient.channelPoints.getRedemptionsForBroadcasterPaginated(
-                    accountAccess.getAccounts().streamer.userId,
-                    reward.id,
-                    "UNFULFILLED",
-                    filter
-                ).getAll();
+            if (rewards?.length) {
+                for (const reward of rewards) {
+                    const response = await this._streamerClient.channelPoints.getRedemptionsForBroadcasterPaginated(
+                        accountAccess.getAccounts().streamer.userId,
+                        reward.id,
+                        "UNFULFILLED",
+                        filter
+                    ).getAll();
 
-                redemptions[reward.id] = response.map(r => this.mapCustomRewardRedemptionResponse(r));
+                    redemptions[reward.id] = response.map(r => this.mapCustomRewardRedemptionResponse(r));
+                }
             }
         } catch (error) {
             logger.warn(`There was an error retrieving channel reward redemptions.`, error);
