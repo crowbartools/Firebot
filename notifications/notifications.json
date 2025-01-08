@@ -10,5 +10,11 @@
         "title": "Known issue with Twitch logins",
         "type": "alert",
         "message": "Hey there, Firebot community. We know many of you may be experiencing an issue where Firebot is logging you out of your streamer and/or bot accounts frequently after logging in. Unfortunately, this is currently a known issue on Twitch's side that's affecting multiple bots/tools, not just Firebot, and we don't have an estimated time to resolution. However, we are closely monitoring the situation and will let everyone know once we have an update from Twitch. Thank you for your patience and support."
+    },
+    {
+        "id": "twitch-token-issue-resolved-2025-01-08",
+        "title": "Twitch login issue resolved",
+        "type": "info",
+        "message": "Hello again, Firebot community. We've received word from Twitch that they have resolved the authentication issue and are rolling the fix out to their systems. Thank you all again for your patience and support!"
     }
 ]
