@@ -49,7 +49,9 @@ class TwitchEventSubClient {
 
         // Cheers
         const bitsSubscription = this._eventSubListener.onChannelCheer(streamer.userId, async (event) => {
-            const totalBits = (await twitchApi.bits.getChannelBitsLeaderboard(1, "all", new Date(), event.userId))[0]?.amount ?? 0;
+            const totalBits = event.isAnonymous
+                ? event.bits
+                : (await twitchApi.bits.getChannelBitsLeaderboard(1, "all", new Date(), event.userId))[0]?.amount ?? 0;
 
             twitchEventsHandler.cheer.triggerCheer(
                 event.userName ?? "ananonymouscheerer",
