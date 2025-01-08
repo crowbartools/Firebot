@@ -151,7 +151,7 @@ const playSound = {
             webServer.sendToOverlay("sound", data);
         } else {
             // Send data back to media.js in the gui.
-            renderWindow.webContents.send("playsound", data);
+            frontendCommunicator.send("playsound", data);
         }
 
         if (effect.waitForSound) {

@@ -7,6 +7,7 @@ const { SettingsManager } = require("../../common/settings-manager");
 const logger = require("../../logwrapper");
 const webServer = require("../../../server/http-server-manager");
 const { EffectCategory } = require('../../../shared/effect-constants');
+const frontendCommunicator = require("../../common/frontend-communicator");
 
 const model = {
     definition: {
@@ -148,7 +149,7 @@ const model = {
                 webServer.sendToOverlay("image", data);
             }
         } catch (err) {
-            renderWindow.webContents.send(
+            frontendCommunicator.send(
                 "error",
                 "There was an error sending a reddit picture."
             );

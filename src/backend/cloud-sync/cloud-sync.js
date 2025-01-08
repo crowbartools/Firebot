@@ -1,5 +1,6 @@
 "use strict";
 
+const frontendCommunicator = require("../common/frontend-communicator");
 const logger = require("../logwrapper");
 const axios = require("axios").default;
 
@@ -23,7 +24,7 @@ const sync = async (jsonData) => {
     } catch (error) {
         if (error.code === 429) {
             logger.error('Bytebin rate limit exceeded.');
-            renderWindow.webContents.send(
+            frontendCommunicator.send(
                 "error",
                 "Bytebin rate limit exceeded."
             );

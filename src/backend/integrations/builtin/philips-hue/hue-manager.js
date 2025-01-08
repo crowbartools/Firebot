@@ -1,7 +1,7 @@
 "use strict";
 
 const logger = require("../../../logwrapper");
-const frontEndCommunicator = require("../../../common/frontend-communicator");
+const frontendCommunicator = require("../../../common/frontend-communicator");
 const tinycolor = require("tinycolor2");
 const { api: hueApi, model } = require('node-hue-api');
 
@@ -33,7 +33,7 @@ async function connectHueBridge(hueUser) {
 async function deleteHueUser() {
     // The hue api does not allow deleting users. So, this will just show a popup to the user on where to go to delete Firebot access.
 
-    renderWindow.webContents.send(
+    frontendCommunicator.send(
         "error",
         "The Hue API does not allow Firebot to delete its access from the hue bridge. Please visit https://account.meethue.com/apps and click deactivate on Firebot."
     );
@@ -172,11 +172,11 @@ async function setHueScene(sceneId) {
     logger.debug(`The hue scene ${sceneId} was successfully activated? ${activated}`);
 }
 
-frontEndCommunicator.onAsync("getAllHueScenes", () => {
+frontendCommunicator.onAsync("getAllHueScenes", () => {
     return getAllHueScenes();
 });
 
-frontEndCommunicator.onAsync("getAllHueLights", () => {
+frontendCommunicator.onAsync("getAllHueLights", () => {
     return getAllHueLights();
 });
 

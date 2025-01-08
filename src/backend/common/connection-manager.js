@@ -153,7 +153,7 @@ class ConnectionManager extends EventEmitter {
 
         const accountAccess = require("./account-access");
         if (!accountAccess.getAccounts().streamer.loggedIn) {
-            renderWindow.webContents.send("error", "You must sign into your Streamer Twitch account before connecting.");
+            frontendCommunicator.send("error", "You must sign into your Streamer Twitch account before connecting.");
         } else if (accountAccess.streamerTokenIssue()) {
             const botTokenIssue = accountAccess.getAccounts().bot.loggedIn && accountAccess.botTokenIssue();
 
