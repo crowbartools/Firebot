@@ -261,8 +261,7 @@ exports.whenReady = async () => {
 
     windowManagement.updateSplashScreenStatus("Starting notification manager...");
     const notificationManager = require("../../../notifications/notification-manager").default;
-    await notificationManager.loadAllNotifications();
-    notificationManager.startExternalNotificationCheck();
+    notificationManager.loadNotificationCache();
 
     // get ui extension manager in memory
     require("../../../ui-extensions/ui-extension-manager");
