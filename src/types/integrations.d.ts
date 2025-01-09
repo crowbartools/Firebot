@@ -49,24 +49,24 @@ export interface IntegrationEvents {
     "settings-update": (integrationId: string, settings: FirebotParams) => void;
 }
 
-export abstract class IntegrationController<
+export interface IntegrationController<
     Params extends FirebotParams = FirebotParams,
     Events extends IntegrationEvents = IntegrationEvents
 > extends TypedEmitter<ListenerSignature<Events>> {
-    connected = false;
-    abstract init(
+    connected: boolean;
+    init: (
         linked: boolean,
         integrationData: IntegrationData<Params>
-    ): void | PromiseLike<void>;
-    abstract link?(linkData: LinkData): void | PromiseLike<void>;
-    abstract unlink?(): void | PromiseLike<void>;
-    abstract connect?(
+    ) => void | PromiseLike<void>;
+    link?: (linkData: LinkData) => void | PromiseLike<void>;
+    unlink?: () => void | PromiseLike<void>;
+    connect? :(
         integrationData: IntegrationData<Params>
-    ): void | PromiseLike<void>;
-    abstract disconnect?(): void | PromiseLike<void>;
-    abstract onUserSettingsUpdate?(
+    ) => void | PromiseLike<void>;
+    disconnect?: () => void | PromiseLike<void>;
+    onUserSettingsUpdate?: (
         integrationData: IntegrationData<Params>
-    ): void | PromiseLike<void>;
+    ) => void | PromiseLike<void>;
 }
 
 export type Integration<
@@ -85,8 +85,6 @@ export interface IntegrationManagerEvents {
 }
 
 export declare class IntegrationManager extends TypedEmitter<IntegrationManagerEvents> {
-    private _integrations;
-    constructor();
     registerIntegration(integration: Integration): void;
     getIntegrationUserSettings<Params extends FirebotParams = FirebotParams>(integrationId: string): Params;
     saveIntegrationUserSettings(id: string, settings: FirebotParams, notifyInt?: boolean): void;

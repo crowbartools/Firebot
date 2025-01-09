@@ -1,4 +1,3 @@
-import { TypedEmitter } from "tiny-typed-emitter";
 import type ClientOAuth2 from "client-oauth2";
 
 export interface AuthProviderDefinition {
@@ -75,19 +74,4 @@ export interface AuthDetails {
 
 export interface AuthManagerEvents {
     "auth-success": (data: { providerId: string, tokenData: AuthDetails }) => void
-}
-
-export declare class AuthManager extends TypedEmitter<AuthManagerEvents> {
-    private readonly _httpPort;
-    private _authProviders;
-    constructor();
-    registerAuthProvider(provider: AuthProviderDefinition): void;
-    getAuthProvider(providerId: string): AuthProvider;
-    buildOAuthClientForProvider(provider: AuthProviderDefinition, redirectUri: string): ClientOAuth2;
-    getAuthDetails(accessToken: ClientOAuth2.Token): AuthDetails;
-    createToken(providerId: string, tokenData: AuthDetails): ClientOAuth2.Token;
-    tokenExpired(providerId: string, tokenData: AuthDetails): boolean;
-    refreshTokenIfExpired(providerId: string, tokenData: AuthDetails): Promise<AuthDetails>;
-    revokeTokens(providerId: string, tokenData: AuthDetails): Promise<void>;
-    successfulAuth(providerId: string, tokenData: AuthDetails): void;
 }
