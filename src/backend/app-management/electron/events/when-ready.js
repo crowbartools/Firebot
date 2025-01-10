@@ -159,8 +159,8 @@ exports.whenReady = async () => {
     startupScriptsManager.loadStartupConfig();
 
     windowManagement.updateSplashScreenStatus("Starting chat moderation manager...");
-    const chatModerationManager = require("../../../chat/moderation/chat-moderation-manager");
-    chatModerationManager.load();
+    const { ChatModerationManager } = require("../../../chat/moderation/chat-moderation-manager");
+    ChatModerationManager.load();
 
     windowManagement.updateSplashScreenStatus("Loading counters...");
     const { CounterManager } = require("../../../counters/counter-manager");

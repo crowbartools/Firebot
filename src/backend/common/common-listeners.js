@@ -2,9 +2,9 @@
 const electron = require("electron");
 const { app, ipcMain, dialog, shell } = electron;
 const logger = require("../logwrapper");
+const { restartApp } = require("../app-management/electron/app-helpers");
 
 exports.setupCommonListeners = () => {
-
     const frontendCommunicator = require("./frontend-communicator");
     const profileManager = require("./profile-manager");
     const { SettingsManager } = require("./settings-manager");
@@ -70,22 +70,13 @@ exports.setupCommonListeners = () => {
         eventsManager.triggerEvent("firebot", "category-changed", {category: category});
     });
 
-    // Front old main
+    frontendCommunicator.on("restartApp", () => restartApp());
 
-    // restarts the app
-    ipcMain.on("restartApp", () => {
-        const chatModerationManager = require("../chat/moderation/chat-moderation-manager");
-        chatModerationManager.stopService();
-        setTimeout(() => {
-            app.relaunch({ args: process.argv.slice(1).concat(["--relaunch"]) });
-            app.exit(0);
-        }, 100);
-    });
-
-    // Opens the firebot backup folder
-    ipcMain.on("open-backup-folder", () => {
+    frontendCommunicator.on("open-backup-folder", () => {
         shell.openPath(BackupManager.backupFolderPath);
     });
+
+    // Front old main
 
     // When we get an event from the renderer to create a new profile.
     ipcMain.on("createProfile", (_, profileName) => {

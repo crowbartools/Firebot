@@ -1,9 +1,6 @@
 "use strict";
 
 (function() {
-
-    const fs = require("fs");
-
     angular.module("firebotApp")
         .component("editUrlAllowlistModal", {
             template: `
@@ -53,7 +50,7 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function(chatModerationService, utilityService, logger) {
+            controller: function(chatModerationService, utilityService) {
                 const $ctrl = this;
 
                 $ctrl.search = "";
@@ -111,7 +108,7 @@
                             saveText: "Add",
                             inputPlaceholder: "Enter allowed URL",
                             validationFn: (value) => {
-                                return new Promise(resolve => {
+                                return new Promise((resolve) => {
                                     if (value == null || value.trim().length < 1 || value.trim().length > 359) {
                                         resolve(false);
                                     } else if (chatModerationService.chatModerationData.urlAllowlist
@@ -135,30 +132,14 @@
                         component: "txtFileWordImportModal",
                         size: 'sm',
                         resolveObj: {},
-                        closeCallback: data => {
-                            const filePath = data.filePath,
-                                delimiter = data.delimiter;
+                        closeCallback: async (data) => {
+                            const success = await chatModerationService.importUrlAllowlist(data);
 
-                            let contents;
-                            try {
-                                contents = fs.readFileSync(filePath, { encoding: "utf8" });
-                            } catch (err) {
-                                logger.error("error reading file for allowed URLs", err);
-                                return;
+                            if (!success) {
+                                utilityService.showErrorModal("There was an error importing the URL allowlist. Please check the log for more info.");
                             }
 
-                            let urls = [];
-                            if (delimiter === 'newline') {
-                                urls = contents.replace(/\r\n/g, "\n").split("\n");
-                            } else if (delimiter === "comma") {
-                                urls = contents.split(",");
-                            } else if (delimiter === "space") {
-                                urls = contents.split(" ");
-                            }
-
-                            if (urls != null) {
-                                chatModerationService.addAllowedUrls(urls);
-                            }
+                            return success;
                         }
                     });
                 };
@@ -169,7 +150,7 @@
                         question: `Are you sure you want to delete all allowed URLs?`,
                         confirmLabel: "Delete",
                         confirmBtnType: "btn-danger"
-                    }).then(confirmed => {
+                    }).then((confirmed) => {
                         if (confirmed) {
                             chatModerationService.removeAllAllowedUrls();
                         }
