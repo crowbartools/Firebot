@@ -91,7 +91,7 @@ class HttpServerManager extends EventEmitter {
         app.set("view engine", "ejs");
 
         // Get our router for the current v1 api methods
-        const v1Router = require("./api/v1/v1Router");
+        const v1Router = require("./api/v1/v1-router");
         app.use("/api/v1", v1Router);
 
         app.get("/api/v1/auth/callback", function(_, res) {

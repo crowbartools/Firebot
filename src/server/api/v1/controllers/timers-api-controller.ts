@@ -70,10 +70,10 @@ export async function updateTimerById(req: Request, res: Response): Promise<Resp
 
     if (action === "clear") {
         timersManager.updateIntervalForTimer(timer);
-        return res.status(200).send();
+        return res.status(201).send();
     }
 
     const isActive = action === "toggle" ? !timer.active : action === "enable";
     timersManager.updateTimerActiveStatus(timer.id, isActive);
-    return res.status(200).send();
+    return res.status(201).send();
 }

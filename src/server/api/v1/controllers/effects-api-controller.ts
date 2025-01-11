@@ -1,20 +1,22 @@
-"use strict";
-const { EffectTrigger } = require("../../../../shared/effect-constants");
+import { EffectTrigger } from "../../../../shared/effect-constants";
+import effectRunner from "../../../../backend/common/effect-runner";
+import presetEffectListManager from "../../../../backend/effects/preset-lists/preset-effect-list-manager";
+import { Request, Response } from "express";
+import { ParsedQs } from "qs";
 const effectsManager = require("../../../../backend/effects/effectManager");
-const effectRunner = require("../../../../backend/common/effect-runner");
-const presetEffectListManager = require("../../../../backend/effects/preset-lists/preset-effect-list-manager");
 
-exports.getEffects = function(req, res) {
+export function getEffects (req: Request, res: Response) {
     let effectDefs = effectsManager.getEffectDefinitions();
 
     if (req.query.trigger) {
-        effectDefs = effectDefs.filter(effect => effect.triggers == null || effect.triggers[req.query.trigger]);
+        effectDefs = effectDefs.filter(effect =>
+            effect.triggers == null ||
+            effect.triggers[req.query.trigger.toString()]);
     }
-
     res.json(effectDefs);
-};
+}
 
-exports.getEffect = function(req, res) {
+export function getEffect (req: Request, res: Response) {
     const effectId = req.params.effectId;
     const effect = effectsManager.getEffectById(effectId);
     if (effect == null) {
@@ -26,9 +28,9 @@ exports.getEffect = function(req, res) {
     }
 
     res.json(effect.definition);
-};
+}
 
-exports.runEffects = async function(req, res) {
+export async function runEffects(req: Request, res: Response): Promise<Response> {
     if (req.body.effects != null) {
 
         const triggerData = req.body && req.body.triggerData || {};
@@ -46,16 +48,24 @@ exports.runEffects = async function(req, res) {
 
         try {
             await effectRunner.processEffects(processEffectsRequest);
-            res.status(200).send({ status: "success" });
+            return res.status(200).send({
+                status: "success"
+            });
         } catch (err) {
-            res.status(500).send({ status: "error", message: err.message });
+            return res.status(500).send({
+                status: "error",
+                message: err.message
+            });
         }
     } else {
-        res.status(400).send({ status: "error", message: "No effects provided." });
+        return res.status(400).send({
+            status: "error",
+            message: "No effects provided."
+        });
     }
-};
+}
 
-exports.getPresetLists = async function(req, res) {
+export async function getPresetLists(req: Request, res: Response): Promise<Response> {
     const presetLists = presetEffectListManager.getAllItems();
 
     if (presetLists == null) {
@@ -65,7 +75,7 @@ exports.getPresetLists = async function(req, res) {
         });
     }
 
-    const formattedPresetLists = presetLists.map(presetList => {
+    const formattedPresetLists = presetLists.map((presetList) => {
         return {
             id: presetList.id,
             name: presetList.name,
@@ -74,9 +84,9 @@ exports.getPresetLists = async function(req, res) {
     });
 
     return res.json(formattedPresetLists);
-};
+}
 
-async function runPresetEffectList(req, res, waitForCompletion = false) {
+export async function runPresetEffectList(req: Request, res: Response, waitForCompletion = false): Promise<Response> {
     const presetListId = req.params.presetListId;
 
     if (presetListId == null) {
@@ -96,7 +106,7 @@ async function runPresetEffectList(req, res, waitForCompletion = false) {
 
     const body = req.body || {};
     const query = req.query || {};
-    let args, username;
+    let args: ParsedQs, username: string | ParsedQs | string[] | ParsedQs[];
 
     // GET
     if (req.method === "GET") {
@@ -110,7 +120,10 @@ async function runPresetEffectList(req, res, waitForCompletion = false) {
 
     // Not GET or POST
     } else {
-        return res.status(404).send({ status: "error", message: "Invalid request method" });
+        return res.status(404).send({
+            status: "error",
+            message: "Invalid request method"
+        });
     }
 
     const processEffectsRequest = {
@@ -130,16 +143,21 @@ async function runPresetEffectList(req, res, waitForCompletion = false) {
         } else {
             effectRunner.processEffects(processEffectsRequest);
         }
-        res.status(200).send({ status: "success" });
+        return res.status(200).send({
+            status: "success"
+        });
     } catch (err) {
-        res.status(500).send({ status: "error", message: err.message });
+        return res.status(500).send({
+            status: "error",
+            message: err.message
+        });
     }
 }
 
-exports.runPresetListSynchronous = async function(req, res) {
-    runPresetEffectList(req, res, true);
-};
+export async function runPresetListSynchronous(req: Request, res: Response): Promise<Response> {
+    return runPresetEffectList(req, res, true);
+}
 
-exports.triggerPresetListAsync = async function(req, res) {
-    runPresetEffectList(req, res, false);
-};
+export async function triggerPresetListAsync(req: Request, res: Response): Promise<Response> {
+    return runPresetEffectList(req, res, false);
+}

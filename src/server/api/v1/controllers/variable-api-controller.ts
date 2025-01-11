@@ -1,10 +1,9 @@
-"use strict";
-
 const manager = require("../../../../backend//variables/replace-variable-manager");
+import { Request, Response } from "express";
 
-exports.getReplaceVariables = function(req, res) {
+export async function getReplaceVariables(req: Request, res: Response): Promise<Response> {
     const sortedVariables = [...manager.getReplaceVariables()]
         .sort((a, b) => a.definition.handle.localeCompare(b.definition.handle));
 
-    res.json(sortedVariables);
-};
+    return res.json(sortedVariables);
+}

@@ -1,9 +1,17 @@
-"use strict";
+import quotesManager from "../../../../backend/quotes/quotes-manager";
+import moment from "moment";
+import { Request, Response } from "express";
+// Adding this here cause I'm not sure if it needs to be in the type def or not.
+type Quote = {
+    _id: string;
+    text: string;
+    originator: string;
+    creator: string;
+    game: string;
+    createdAt: string;
+}
 
-const quotesManager = require("../../../../backend/quotes/quotes-manager");
-const moment = require("moment");
-
-function validateQuoteId(quoteId, res) {
+function validateQuoteId(quoteId: string | number, res: Response) {
     if (quoteId == null) {
         res.status(400).send({
             status: "error",
@@ -12,7 +20,7 @@ function validateQuoteId(quoteId, res) {
         return false;
     }
 
-    quoteId = parseInt(quoteId);
+    quoteId = parseInt(quoteId.toString());
     if (isNaN(quoteId)) {
         res.status(400).send({
             status: "error",
@@ -25,7 +33,7 @@ function validateQuoteId(quoteId, res) {
 }
 
 // Formats a quote for API output
-function formatQuote(quote) {
+function formatQuote(quote: Quote) {
     return {
         id: quote._id,
         text: quote.text,
@@ -37,7 +45,7 @@ function formatQuote(quote) {
 }
 
 // Validates that all required quote fields are present and valid
-function validateQuote(quote) {
+function validateQuote(quote: { text?: string; creator?: string; }) {
     quote = quote ?? {};
     const validationErrors = [];
 
@@ -52,37 +60,37 @@ function validateQuote(quote) {
     return validationErrors;
 }
 
-exports.getQuotes = async function(req, res) {
+export async function getQuotes(req: Request, res: Response): Promise<Response> {
     const quotes = await quotesManager.getAllQuotes();
 
-    const formattedQuotes = quotes.map(q => {
+    const formattedQuotes = quotes.map((q:Quote) => {
         return formatQuote(q);
     });
 
-    res.json(formattedQuotes);
-};
+    return res.json(formattedQuotes);
+}
 
-exports.getQuote = async function(req, res) {
-    let { quoteId } = req.params;
+export async function getQuote(req: Request, res: Response): Promise<Response> {
+    const { quoteId } = req.params;
 
-    quoteId = validateQuoteId(quoteId, res);
-    if (!quoteId) {
+    const id = validateQuoteId(quoteId, res);
+    if (!id) {
         return;
     }
 
-    const quote = await quotesManager.getQuote(quoteId);
+    const quote = await quotesManager.getQuote(id);
 
     if (quote == null) {
         return res.status(404).send({
             status: "error",
-            message: `Quote ${quoteId} not found`
+            message: `Quote ${id} not found`
         });
     }
 
-    res.json(formatQuote(quote));
-};
+    return res.json(formatQuote(quote));
+}
 
-exports.postQuote = async function(req, res) {
+export async function postQuote(req: Request, res: Response): Promise<Response> {
     // Make sure the new quote is valid
     const validationErrors = validateQuote(req.body);
 
@@ -112,14 +120,14 @@ exports.postQuote = async function(req, res) {
             message: `Error creating quote: ${e}`
         });
     }
-};
+}
 
-exports.putQuote = async function(req, res) {
-    let { quoteId } = req.params;
+export async function putQuote(req: Request, res: Response): Promise<Response> {
+    const { quoteId } = req.params;
     const quotePut = req.body;
 
-    quoteId = validateQuoteId(quoteId, res);
-    if (!quoteId) {
+    const id = validateQuoteId(quoteId, res);
+    if (!id) {
         return;
     }
 
@@ -134,16 +142,17 @@ exports.putQuote = async function(req, res) {
     }
 
     // Check for an existing quote with that ID
-    let quote = await quotesManager.getQuote(quoteId);
+    let quote = await quotesManager.getQuote(id);
 
     // If no existing quote, create new
     if (quote == null) {
         const newQuote = {
-            _id: quoteId,
+            _id: id,
             text: quotePut.text,
             originator: quotePut.originator.replace(/@/g, ""),
             creator: quotePut.creator.replace(/@/g, ""),
-            game: quotePut.game
+            game: quotePut.game,
+            createdAt: ""
         };
 
         if (quotePut.createdAt && quotePut.createdAt != null && quotePut.createdAt !== "") {
@@ -171,7 +180,7 @@ exports.putQuote = async function(req, res) {
         } catch (e) {
             return res.status(500).send({
                 status: "error",
-                message: `Error storing quote ${quoteId}: ${e}`
+                message: `Error storing quote ${id}: ${e}`
             });
         }
     }
@@ -179,28 +188,28 @@ exports.putQuote = async function(req, res) {
     if (quote == null) {
         return res.status(500).send({
             status: "error",
-            message: `Error storing quote ${quoteId}`
+            message: `Error storing quote ${id}`
         });
     }
 
     return res.status(201).send(formatQuote(quote));
-};
+}
 
-exports.patchQuote = async function(req, res) {
-    let { quoteId } = req.params;
+export async function patchQuote(req: Request, res: Response): Promise<Response> {
+    const { quoteId } = req.params;
     const quotePatch = req.body;
 
-    quoteId = validateQuoteId(quoteId, res);
-    if (!quoteId) {
+    const id = validateQuoteId(quoteId, res);
+    if (!id) {
         return;
     }
 
-    let quote = await quotesManager.getQuote(quoteId);
+    let quote = await quotesManager.getQuote(id);
 
     if (quote == null) {
         return res.status(404).send({
             status: "error",
-            message: `Quote ${quoteId} not found`
+            message: `Quote ${id} not found`
         });
     }
 
@@ -229,31 +238,31 @@ exports.patchQuote = async function(req, res) {
     } catch (e) {
         return res.status(500).send({
             status: "error",
-            message: `Error updating quote ${quoteId}: ${e}`
+            message: `Error updating quote ${id}: ${e}`
         });
     }
 
-    return res.json(formatQuote(quote));
-};
+    return res.status(201).json(formatQuote(quote));
+}
 
-exports.deleteQuote = async function(req, res) {
-    let { quoteId } = req.params;
+export async function deleteQuote(req: Request, res: Response): Promise<Response> {
+    const { quoteId } = req.params;
 
-    quoteId = validateQuoteId(quoteId, res);
-    if (!quoteId) {
+    const id = validateQuoteId(quoteId, res);
+    if (!id) {
         return;
     }
 
-    const quote = await quotesManager.getQuote(quoteId);
+    const quote = await quotesManager.getQuote(id);
 
     if (quote == null) {
         return res.status(404).send({
             status: "error",
-            message: `Quote ${quoteId} not found`
+            message: `Quote ${id} not found`
         });
     }
 
-    await quotesManager.removeQuote(quoteId);
+    await quotesManager.removeQuote(id);
 
     return res.status(204).send();
-};
+}

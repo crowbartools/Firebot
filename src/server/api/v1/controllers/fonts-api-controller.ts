@@ -25,6 +25,8 @@ export function getFont(req: Request, res: Response) {
             return;
         }
     }
-
-    res.status(404).send({status: "error", message: `${req.originalUrl} not found`});
+    res.status(404).send({
+        status: "error",
+        message: `${req.originalUrl} not found`
+    });
 }
