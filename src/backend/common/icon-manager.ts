@@ -1,4 +1,3 @@
-import axios from "axios";
 import frontendCommunicator from "./frontend-communicator";
 import { FontAwesomeIcon } from "../../shared/types";
 
@@ -46,7 +45,7 @@ class IconManager {
     }
 
     async loadFontAwesomeIcons(): Promise<void> {
-        const fontAwesomeIcons: FontAwesomeIconDefinitions = (await axios.get("https://raw.githubusercontent.com/FortAwesome/Font-Awesome/master/metadata/icons.json")).data;
+        const fontAwesomeIcons: FontAwesomeIconDefinitions = await (await fetch("https://raw.githubusercontent.com/FortAwesome/Font-Awesome/master/metadata/icons.json")).json();
 
         for (const iconName in fontAwesomeIcons) {
             if (fontAwesomeIcons[iconName].private) {

@@ -1,4 +1,3 @@
-import axios from "axios";
 import Fuse from "fuse.js";
 
 import logger from "../../../../logwrapper";
@@ -63,7 +62,7 @@ class SteamCacheManager {
         logger.debug('Refreshing Steam library cache');
         const url = "https://api.steampowered.com/ISteamApps/GetAppList/v2/";
         try {
-            const response = (await axios.get<SteamAppList>(url)).data;
+            const response = await (await fetch(url)).json() as SteamAppList;
 
             if (response?.applist?.apps != null) {
                 this._steamCache = response.applist.apps;
@@ -146,7 +145,7 @@ class SteamCacheManager {
         }
 
         try {
-            const response = (await axios.get<SteamAppResponse>(url)).data;
+            const response = await (await fetch(url)).json() as SteamAppResponse;
 
             if (response) {
                 const appData = response[appId];

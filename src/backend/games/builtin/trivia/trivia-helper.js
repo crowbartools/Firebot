@@ -1,13 +1,7 @@
 "use strict";
 
-const https = require('https');
-
-const axios = require("axios").default;
 const logger = require("../../../logwrapper");
 const utils = require("../../../utility");
-
-
-const httpsAgent = new https.Agent({ rejectUnauthorized: false });
 
 const getRandomItem = (array) => {
     if (array == null || !array.length) {
@@ -21,10 +15,11 @@ const fetchQuestion = async (randomCategory, randomDifficulty, randomType, sessi
     const url = `https://opentdb.com/api.php?encode=url3986&amount=1&category=${randomCategory}&difficulty=${randomDifficulty}&type=${randomType}${sessionToken ? `&token=${sessionToken}` : ''}`;
     try {
 
-        const response = await axios.get(url, { httpsAgent });
-        if (response.status === 200 && response.data) {
-            const responseCode = response.data.response_code;
-            const results = (response.data.results || []).map(q => {
+        const response = await fetch(url);
+        if (response.ok) {
+            const data = await response.json();
+            const responseCode = data.response_code;
+            const results = (data.results || []).map((q) => {
                 q.category = decodeURIComponent(q.category);
                 q.question = decodeURIComponent(q.question);
                 // eslint-disable-next-line camelcase
@@ -38,6 +33,8 @@ const fetchQuestion = async (randomCategory, randomDifficulty, randomType, sessi
                 results: results
             };
         }
+
+        throw new Error(`Request failed with status ${response.status}`);
     } catch (error) {
         logger.error("Unable to fetch question from Trivia API:", error.message);
     }
@@ -48,9 +45,14 @@ let sessionToken = null;
 async function getSessionToken(forceNew = false) {
     if (sessionToken == null || forceNew) {
         try {
-            const tokenResponse = await axios.get("https://opentdb.com/api_token.php?command=request", { httpsAgent });
-            if (tokenResponse.status === 200 && tokenResponse.data && tokenResponse.data.response_code === 0) {
-                sessionToken = tokenResponse.data.token;
+            const tokenResponse = await fetch("https://opentdb.com/api_token.php?command=request");
+            if (tokenResponse.ok) {
+                const data = await tokenResponse.json();
+                if (data?.response_code === 0) {
+                    sessionToken = data.token;
+                }
+            } else {
+                throw new Error(`Request failed with status ${tokenResponse.status}`);
             }
         } catch (error) {
             logger.error("Unable to get session token for trivia:", error.message);

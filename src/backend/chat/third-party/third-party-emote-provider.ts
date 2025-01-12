@@ -1,4 +1,3 @@
-import axios from "axios";
 import accountAccess from "../../common/account-access";
 import logger from "../../logwrapper";
 
@@ -24,7 +23,7 @@ export abstract class ThirdPartyEmoteProvider<
     async getAllEmotes(): Promise<ThirdPartyEmote[]> {
         let globalEmotes: ThirdPartyEmote[] = [];
         try {
-            const globalEmotesResponse = (await axios.get<GlobalEmotesResponse>(this.globalEmoteUrl)).data;
+            const globalEmotesResponse = await (await fetch(this.globalEmoteUrl)).json() as GlobalEmotesResponse;
 
             globalEmotes = this.globalEmotesMapper(globalEmotesResponse);
 
@@ -38,9 +37,9 @@ export abstract class ThirdPartyEmoteProvider<
 
         let channelEmotes: ThirdPartyEmote[] = [];
         try {
-            const channelEmotesResponse = (
-                await axios.get<ChannelEmotesResponse>(this.getChannelEmotesUrl(accountAccess.getAccounts().streamer.channelId))
-            ).data;
+            const channelEmotesResponse = await (
+                await fetch(this.getChannelEmotesUrl(accountAccess.getAccounts().streamer.channelId))
+            ).json() as ChannelEmotesResponse;
 
             channelEmotes = this.channelEmotesMapper(channelEmotesResponse);
 
