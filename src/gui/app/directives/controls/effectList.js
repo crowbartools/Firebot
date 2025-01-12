@@ -1,7 +1,7 @@
 "use strict";
 (function() {
 
-    const uuidv1 = require("uuid/v1");
+    const { v4: uuid } = require("uuid");
 
     angular
         .module('firebotApp')
@@ -237,7 +237,7 @@
                         ctrl.effectsData.list = [];
                     }
                     if (ctrl.effectsData.id == null) {
-                        ctrl.effectsData.id = uuidv1();
+                        ctrl.effectsData.id = uuid();
                     }
 
                     ctrl.effectsData.list.forEach((e) => {
@@ -264,7 +264,7 @@
                     ensureDefaultWeights();
                     const sumOfAllWeights = ctrl
                         .effectsData.list
-                        .filter((e) => e.active)
+                        .filter(e => e.active)
                         .reduce((acc, e) => acc + (e.percentWeight ?? 0.5), 0);
                     return sumOfAllWeights;
                 };
@@ -529,7 +529,7 @@
                         }
 
                         ctrl.effectsData.list = [{
-                            id: uuidv1(),
+                            id: uuid(),
                             type: "firebot:run-effect-list",
                             active: true,
                             listType: "preset",
@@ -693,7 +693,7 @@
 
                 ctrl.duplicateEffectAtIndex = function(index) {
                     const effect = JSON.parse(angular.toJson(ctrl.effectsData.list[index]));
-                    effect.id = uuidv1();
+                    effect.id = uuid();
                     ctrl.effectsData.list.splice(index + 1, 0, effect);
                     ctrl.effectsUpdate();
                 };
@@ -769,7 +769,7 @@
                             const { selectedEffectDef } = resp;
 
                             const newEffect = {
-                                id: uuidv1(),
+                                id: uuid(),
                                 type: selectedEffectDef.id,
                                 active: true
                             };

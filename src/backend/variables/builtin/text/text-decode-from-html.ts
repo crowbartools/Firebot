@@ -9,6 +9,12 @@ const model : ReplaceVariable = {
         handle: "decodeFromHtml",
         description: "Decodes input text from an HTML-encoded string",
         usage: "decodeFromHtml[text]",
+        examples: [
+            {
+                usage: `decodeFromHtml[&lt;p&gt;Hello &amp; Welcome!&lt;/p&gt;]`,
+                description: `Returns "<p>Hello & Welcome!</p>"`
+            }
+        ],
         categories: [VariableCategory.TEXT],
         possibleDataOutput: [OutputDataType.TEXT]
     },

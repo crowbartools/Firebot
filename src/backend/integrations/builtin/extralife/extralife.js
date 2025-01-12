@@ -39,6 +39,7 @@ class ExtraLifeIntegration extends EventEmitter {
                     manualMetadata: {
                         from: "ExtraLife",
                         formattedDonationAmount: 5,
+                        donationAmount: 5,
                         donationMessage: "Test message"
                     },
                     isIntegration: true,

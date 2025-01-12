@@ -7,7 +7,7 @@ module.exports = {
     events: [
         {
             id: "raid",
-            name: "Raid",
+            name: "Incoming Raid",
             description: "When someone raids your channel.",
             cached: true,
             cacheMetaKey: "username",
@@ -18,10 +18,39 @@ module.exports = {
                 viewerCount: 5
             },
             activityFeed: {
-                icon: "fad fa-siren-on",
+                icon: "fad fa-inbox-in",
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
-                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""}** raided with **${eventData.viewerCount}** viewer(s)`;
+                    return `**${eventData.userDisplayName}${
+                        showUserIdName ? ` (${eventData.username})` : ""
+                    }** raided with **${eventData.viewerCount}** viewer(s)`;
+                }
+            }
+        },
+        {
+            id: "raid-sent-off",
+            name: "Outgoing Raid",
+            description: "When your outgoing raid is completed.",
+            cached: false,
+            cacheMetaKey: "fromUsername",
+            manualMetadata: {
+                username: "firebot",
+                userId: "",
+                userDisplayName: "Firebot",
+                raidTargetUsername: "user",
+                raidTargetUserId: "",
+                raidTargetUserDisplayName: "User",
+                viewerCount: 5
+            },
+            activityFeed: {
+                icon: "fad fa-inbox-out",
+                getMessage: (eventData) => {
+                    const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
+                    return `**${eventData.userDisplayName}${
+                        showUserIdName ? ` (${eventData.username})` : ""
+                    }** raiding user **${eventData.raidTargetUserDisplayName}** with **${
+                        eventData.viewerCount
+                    }** viewer(s)`;
                 }
             }
         },
@@ -40,7 +69,9 @@ module.exports = {
                 icon: "fas fa-heart",
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
-                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""}** followed`;
+                    return `**${eventData.userDisplayName}${
+                        showUserIdName ? ` (${eventData.username})` : ""
+                    }** followed`;
                 }
             }
         },
@@ -73,8 +104,13 @@ module.exports = {
                 icon: "fas fa-star",
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
-                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""}** ${eventData.isResub ? 'resubscribed' : 'subscribed'} for **${eventData.totalMonths} month(s)** ${eventData.subPlan === 'Prime' ?
-                        "with **Twitch Prime**" : `at **Tier ${eventData.subPlan.replace("000", "")}**`}`;
+                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""}** ${
+                        eventData.isResub ? "resubscribed" : "subscribed"
+                    } for **${eventData.totalMonths} month(s)** ${
+                        eventData.subPlan === "Prime"
+                            ? "with **Twitch Prime**"
+                            : `at **Tier ${eventData.subPlan.replace("000", "")}**`
+                    }`;
                 }
             }
         },
@@ -101,7 +137,9 @@ module.exports = {
                 icon: "fas fa-star",
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
-                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""}** upgraded their Prime sub at **Tier ${eventData.subPlan.replace("000", "")}!**`;
+                    return `**${eventData.userDisplayName}${
+                        showUserIdName ? ` (${eventData.username})` : ""
+                    }** upgraded their Prime sub at **Tier ${eventData.subPlan.replace("000", "")}!**`;
                 }
             }
         },
@@ -129,7 +167,11 @@ module.exports = {
             activityFeed: {
                 icon: "fad fa-gift",
                 getMessage: (eventData) => {
-                    return `**${eventData.isAnonymous ? "An Anonymous Gifter" : eventData.gifterUsername}** gifted a ${eventData.giftDuration > 1 ? ` **${eventData.giftDuration} month** ` : ''} **Tier ${eventData.subPlan.replace("000", "")}** sub to **${eventData.gifteeUsername}** (Subbed for ${eventData.giftSubMonths} month${eventData.giftSubMonths > 1 ? 's' : ''} total)`;
+                    return `**${eventData.isAnonymous ? "An Anonymous Gifter" : eventData.gifterUsername}** gifted a ${
+                        eventData.giftDuration > 1 ? ` **${eventData.giftDuration} month** ` : ""
+                    } **Tier ${eventData.subPlan.replace("000", "")}** sub to **${
+                        eventData.gifteeUsername
+                    }** (Subbed for ${eventData.giftSubMonths} month${eventData.giftSubMonths > 1 ? "s" : ""} total)`;
                 }
             }
         },
@@ -165,7 +207,11 @@ module.exports = {
             activityFeed: {
                 icon: "fad fa-gifts",
                 getMessage: (eventData) => {
-                    return `**${eventData.isAnonymous ? "An Anonymous Gifter" : eventData.gifterUsername}** gifted **${eventData.subCount} Tier ${eventData.subPlan.replace("000", "")}** sub${eventData.subCount > 1 ? 's' : ''} to the community`;
+                    return `**${eventData.isAnonymous ? "An Anonymous Gifter" : eventData.gifterUsername}** gifted **${
+                        eventData.subCount
+                    } Tier ${eventData.subPlan.replace("000", "")}** sub${
+                        eventData.subCount > 1 ? "s" : ""
+                    } to the community`;
                 }
             }
         },
@@ -194,7 +240,9 @@ module.exports = {
                 icon: "fas fa-star",
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
-                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""}** upgraded their gift sub at **Tier ${eventData.subPlan.replace("000", "")}!**`;
+                    return `**${eventData.userDisplayName}${
+                        showUserIdName ? ` (${eventData.username})` : ""
+                    }** upgraded their gift sub at **Tier ${eventData.subPlan.replace("000", "")}!**`;
                 }
             }
         },
@@ -216,7 +264,11 @@ module.exports = {
                 icon: "fad fa-diamond",
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
-                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""}** cheered **${eventData.bits}** bits. They have cheered a total of **${eventData.totalBits}** in the channel.`;
+                    return `**${eventData.userDisplayName}${
+                        showUserIdName ? ` (${eventData.username})` : ""
+                    }** cheered **${eventData.bits}** bits. They have cheered a total of **${
+                        eventData.totalBits
+                    }** in the channel.`;
                 }
             }
         },
@@ -269,7 +321,9 @@ module.exports = {
                 icon: "fad fa-diamond",
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
-                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""}** unlocked the **${eventData.badgeTier}** bits badge in your channel!`;
+                    return `**${eventData.userDisplayName}${
+                        showUserIdName ? ` (${eventData.username})` : ""
+                    }** unlocked the **${eventData.badgeTier}** bits badge in your channel!`;
                 }
             }
         },
@@ -288,7 +342,9 @@ module.exports = {
                 icon: "fad fa-house-return",
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
-                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""}** arrived`;
+                    return `**${eventData.userDisplayName}${
+                        showUserIdName ? ` (${eventData.username})` : ""
+                    }** arrived`;
                 }
             }
         },
@@ -343,7 +399,9 @@ module.exports = {
                 icon: "fad fa-sparkles",
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
-                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""}** has chatted in your channel for the very first time`;
+                    return `**${eventData.userDisplayName}${
+                        showUserIdName ? ` (${eventData.username})` : ""
+                    }** has chatted in your channel for the very first time`;
                 }
             }
         },
@@ -377,7 +435,9 @@ module.exports = {
                 icon: "fad fa-gavel",
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
-                    let message = `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""}** was banned by **${eventData.moderator}**.`;
+                    let message = `**${eventData.userDisplayName}${
+                        showUserIdName ? ` (${eventData.username})` : ""
+                    }** was banned by **${eventData.moderator}**.`;
 
                     if (eventData.modReason) {
                         message = `${message} Reason: **${eventData.modReason}**`;
@@ -402,7 +462,9 @@ module.exports = {
                 icon: "fad fa-gavel",
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
-                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""}** was unbanned by **${eventData.moderator}**.`;
+                    return `**${eventData.userDisplayName}${
+                        showUserIdName ? ` (${eventData.username})` : ""
+                    }** was unbanned by **${eventData.moderator}**.`;
                 }
             }
         },
@@ -424,7 +486,9 @@ module.exports = {
                 icon: "fad fa-stopwatch",
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
-                    let message = `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""}** was timed out for **${eventData.timeoutDuration} sec(s)** by ${eventData.moderator}.`;
+                    let message = `**${eventData.userDisplayName}${
+                        showUserIdName ? ` (${eventData.username})` : ""
+                    }** was timed out for **${eventData.timeoutDuration} sec(s)** by ${eventData.moderator}.`;
 
                     if (eventData.modReason) {
                         message = `${message} Reason: **${eventData.modReason}**`;
@@ -454,7 +518,11 @@ module.exports = {
                 icon: "fad fa-circle",
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
-                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""}** redeemed **${eventData.rewardName}**${eventData.messageText && !!eventData.messageText.length ? `: *${eventData.messageText}*` : ''}`;
+                    return `**${eventData.userDisplayName}${
+                        showUserIdName ? ` (${eventData.username})` : ""
+                    }** redeemed **${eventData.rewardName}**${
+                        eventData.messageText && !!eventData.messageText.length ? `: *${eventData.messageText}*` : ""
+                    }`;
                 }
             }
         },
@@ -479,7 +547,11 @@ module.exports = {
                 icon: "fad fa-circle",
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
-                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""}**'s redemption of **${eventData.rewardName}** was approved. ${eventData.messageText && !!eventData.messageText.length ? `*${eventData.messageText}*` : ''}`;
+                    return `**${eventData.userDisplayName}${
+                        showUserIdName ? ` (${eventData.username})` : ""
+                    }**'s redemption of **${eventData.rewardName}** was approved. ${
+                        eventData.messageText && !!eventData.messageText.length ? `*${eventData.messageText}*` : ""
+                    }`;
                 }
             }
         },
@@ -504,7 +576,11 @@ module.exports = {
                 icon: "fad fa-circle",
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
-                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""}**'s redemption of **${eventData.rewardName}** was rejected. ${eventData.messageText && !!eventData.messageText.length ? `*${eventData.messageText}*` : ''}`;
+                    return `**${eventData.userDisplayName}${
+                        showUserIdName ? ` (${eventData.username})` : ""
+                    }**'s redemption of **${eventData.rewardName}** was rejected. ${
+                        eventData.messageText && !!eventData.messageText.length ? `*${eventData.messageText}*` : ""
+                    }`;
                 }
             }
         },
@@ -531,7 +607,9 @@ module.exports = {
                 icon: "fad fa-comment-alt",
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
-                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""}** sent your **${eventData.sentTo}** account the following whisper: ${eventData.message}`;
+                    return `**${eventData.userDisplayName}${
+                        showUserIdName ? ` (${eventData.username})` : ""
+                    }** sent your **${eventData.sentTo}** account the following whisper: ${eventData.message}`;
                 }
             }
         },
@@ -545,19 +623,19 @@ module.exports = {
                 chatMode: {
                     type: "enum",
                     options: {
-                        "emoteonly": "Emote Only",
-                        "subscribers": "Subscribers Only",
-                        "followers": "Followers",
-                        "slow": "Slow",
-                        "r9kbeta": "Unique Chat"
+                        emoteonly: "Emote Only",
+                        subscribers: "Subscribers Only",
+                        followers: "Followers",
+                        slow: "Slow",
+                        uniquechat: "Unique Chat"
                     },
                     value: "emoteonly"
                 },
                 chatModeState: {
                     type: "enum",
                     options: {
-                        "enabled": "Enabled",
-                        "disabled": "Disabled"
+                        enabled: "Enabled",
+                        disabled: "Disabled"
                     },
                     value: "enabled"
                 },
@@ -578,7 +656,15 @@ module.exports = {
             cached: false,
             queued: false,
             manualMetadata: {
-                title: "Poll name"
+                choices: {
+                    options: { hideVotes: true },
+                    type: "poll-choice-list",
+                    value: [
+                        { id: "c0113c14-144e-475c-9647-a65f9177665d", title: "Test Choice 1" },
+                        { id: "6d86797a-d88a-4fc2-b4f6-1895afdc503e", title: "Test Choice 2" },
+                        { id: "791bc06c-c4d5-4c74-b950-8596c04dbb0d", title: "Test Choice 3" }
+                    ]},
+                title: "Test Poll Name"
             },
             activityFeed: {
                 icon: "fad fa-poll-h",
@@ -594,9 +680,16 @@ module.exports = {
             cached: false,
             queued: false,
             manualMetadata: {
-                title: "Poll name",
-                winningChoiceName: "Leading Choice Name",
-                winningChoiceVotes: 11
+                choices: {
+                    type: "poll-choice-list",
+                    value: [
+                        { id: "c0113c14-144e-475c-9647-a65f9177665d", title: "Test Choice 1", totalVotes: 120, channelPointsVotes: 60 },
+                        { id: "6d86797a-d88a-4fc2-b4f6-1895afdc503e", title: "Test Choice 2", totalVotes: 140, channelPointsVotes: 40 },
+                        { id: "791bc06c-c4d5-4c74-b950-8596c04dbb0d", title: "Test Choice 3", totalVotes: 80, channelPointsVotes: 70 }
+                    ]},
+                title: "Test Poll Name",
+                winningChoiceName: "Test Choice 2",
+                winningChoiceVotes: 140
             },
             activityFeed: {
                 icon: "fad fa-poll-h",
@@ -612,9 +705,16 @@ module.exports = {
             cached: false,
             queued: false,
             manualMetadata: {
-                title: "Poll name",
-                winningChoiceName: "Winning Choice Name",
-                winningChoiceVotes: 12
+                choices: {
+                    type: "poll-choice-list",
+                    value: [
+                        { id: "c0113c14-144e-475c-9647-a65f9177665d", title: "Test Choice 1", totalVotes: 125, channelPointsVotes: 62 },
+                        { id: "6d86797a-d88a-4fc2-b4f6-1895afdc503e", title: "Test Choice 2", totalVotes: 145, channelPointsVotes: 42 },
+                        { id: "791bc06c-c4d5-4c74-b950-8596c04dbb0d", title: "Test Choice 3", totalVotes: 85, channelPointsVotes: 72 }
+                    ]},
+                title: "Test Poll Name",
+                winningChoiceName: "Test Choice 2",
+                winningChoiceVotes: 145
             },
             activityFeed: {
                 icon: "fad fa-poll-h",
@@ -681,9 +781,13 @@ module.exports = {
                 getMessage: (eventData) => {
                     let message;
                     if (eventData.description) {
-                        message = `Channel ${eventData.type} goal **${eventData.description}** has ended. Goal **${eventData.isAchieved ? "was" : "was not"}** achieved. (**${eventData.currentAmount}**/**${eventData.targetAmount}**).`;
+                        message = `Channel ${eventData.type} goal **${eventData.description}** has ended. Goal **${
+                            eventData.isAchieved ? "was" : "was not"
+                        }** achieved. (**${eventData.currentAmount}**/**${eventData.targetAmount}**).`;
                     } else {
-                        message = `Channel ${eventData.type} goal has ended. Goal **${eventData.isAchieved ? "was" : "was not"}** achieved. (**${eventData.currentAmount}**/**${eventData.targetAmount}**).`;
+                        message = `Channel ${eventData.type} goal has ended. Goal **${
+                            eventData.isAchieved ? "was" : "was not"
+                        }** achieved. (**${eventData.currentAmount}**/**${eventData.targetAmount}**).`;
                     }
                     return message;
                 }
@@ -763,7 +867,8 @@ module.exports = {
                 total: "150",
                 progress: "150",
                 goal: "500",
-                level: "1"
+                level: "1",
+                isGoldenKappaTrain: false
             },
             activityFeed: {
                 icon: "fad fa-train",
@@ -782,12 +887,15 @@ module.exports = {
                 total: "150",
                 progress: "150",
                 goal: "500",
-                level: "1"
+                level: "1",
+                isGoldenKappaTrain: false
             },
             activityFeed: {
                 icon: "fad fa-train",
                 getMessage: (eventData) => {
-                    return `Level **${eventData.level}** hype train currently at **${Math.floor((eventData.progress / eventData.goal) * 100)}%**.`;
+                    return `Level **${eventData.level}** hype train currently at **${Math.floor(
+                        (eventData.progress / eventData.goal) * 100
+                    )}%**.`;
                 }
             }
         },
@@ -799,7 +907,8 @@ module.exports = {
             queued: false,
             manualMetadata: {
                 total: "150",
-                level: "1"
+                level: "1",
+                isGoldenKappaTrain: false
             },
             activityFeed: {
                 icon: "fad fa-train",
@@ -814,7 +923,7 @@ module.exports = {
             description: "When your stream starts.",
             cached: false,
             queued: false,
-            manualMetadata: { },
+            manualMetadata: {},
             activityFeed: {
                 icon: "fad fa-play-circle",
                 getMessage: () => {
@@ -828,7 +937,7 @@ module.exports = {
             description: "When your stream ends.",
             cached: false,
             queued: false,
-            manualMetadata: { },
+            manualMetadata: {},
             activityFeed: {
                 icon: "fad fa-stop-circle",
                 getMessage: () => {
@@ -923,7 +1032,9 @@ module.exports = {
             activityFeed: {
                 icon: "fad fa-ribbon",
                 getMessage: (eventData) => {
-                    return `Charity campaign has ended. Goal reached: **${eventData.goalReached ? "Yes" : "No"}**. Total raised: **${eventData.currentTotalAmount} ${eventData.currentTotalCurrency}**.`;
+                    return `Charity campaign has ended. Goal reached: **${
+                        eventData.goalReached ? "Yes" : "No"
+                    }**. Total raised: **${eventData.currentTotalAmount} ${eventData.currentTotalCurrency}**.`;
                 }
             }
         },
@@ -944,7 +1055,9 @@ module.exports = {
                 icon: "fad fa-bullhorn",
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
-                    return `**${eventData.moderator}** sent a shoutout to **${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""}**`;
+                    return `**${eventData.moderator}** sent a shoutout to **${eventData.userDisplayName}${
+                        showUserIdName ? ` (${eventData.username})` : ""
+                    }**`;
                 }
             }
         },
@@ -964,7 +1077,9 @@ module.exports = {
                 icon: "fad fa-bullhorn",
                 getMessage: (eventData) => {
                     const showUserIdName = eventData.username.toLowerCase() !== eventData.userDisplayName.toLowerCase();
-                    return `**${eventData.userDisplayName}${showUserIdName ? ` (${eventData.username})` : ""}** shouted out your channel to ${eventData.viewerCount} viewers`;
+                    return `**${eventData.userDisplayName}${
+                        showUserIdName ? ` (${eventData.username})` : ""
+                    }** shouted out your channel to ${eventData.viewerCount} viewers`;
                 }
             }
         },
@@ -1013,13 +1128,16 @@ module.exports = {
                     const mins = Math.floor(eventData.adBreakDuration / 60);
                     const remainingSecs = eventData.adBreakDuration % 60;
 
-                    const friendlyDuration = mins > 0
-                        ? `${mins}m${remainingSecs > 0 ? ` ${remainingSecs}s` : ""}`
-                        : `${eventData.adBreakDuration}s`;
+                    const friendlyDuration =
+                        mins > 0
+                            ? `${mins}m${remainingSecs > 0 ? ` ${remainingSecs}s` : ""}`
+                            : `${eventData.adBreakDuration}s`;
 
                     const minutesUntilNextAdBreak = Math.round(eventData.secondsUntilNextAdBreak / 60);
 
-                    return `**${friendlyDuration}** scheduled ad break starting in about **${minutesUntilNextAdBreak}** minute${minutesUntilNextAdBreak !== 1 ? "s" : ""}`;
+                    return `**${friendlyDuration}** scheduled ad break starting in about **${minutesUntilNextAdBreak}** minute${
+                        minutesUntilNextAdBreak !== 1 ? "s" : ""
+                    }`;
                 }
             }
         },
@@ -1038,11 +1156,14 @@ module.exports = {
                     const mins = Math.floor(eventData.adBreakDuration / 60);
                     const remainingSecs = eventData.adBreakDuration % 60;
 
-                    const friendlyDuration = mins > 0
-                        ? `${mins}m${remainingSecs > 0 ? ` ${remainingSecs}s` : ""}`
-                        : `${eventData.adBreakDuration}s`;
+                    const friendlyDuration =
+                        mins > 0
+                            ? `${mins}m${remainingSecs > 0 ? ` ${remainingSecs}s` : ""}`
+                            : `${eventData.adBreakDuration}s`;
 
-                    return `**${friendlyDuration}** **${eventData.isAdBreakScheduled ? "scheduled" : "manual"}** ad break started`;
+                    return `**${friendlyDuration}** **${
+                        eventData.isAdBreakScheduled ? "scheduled" : "manual"
+                    }** ad break started`;
                 }
             }
         },
@@ -1061,11 +1182,14 @@ module.exports = {
                     const mins = Math.floor(eventData.adBreakDuration / 60);
                     const remainingSecs = eventData.adBreakDuration % 60;
 
-                    const friendlyDuration = mins > 0
-                        ? `${mins}m${remainingSecs > 0 ? ` ${remainingSecs}s` : ""}`
-                        : `${eventData.adBreakDuration}s`;
+                    const friendlyDuration =
+                        mins > 0
+                            ? `${mins}m${remainingSecs > 0 ? ` ${remainingSecs}s` : ""}`
+                            : `${eventData.adBreakDuration}s`;
 
-                    return `**${friendlyDuration}** **${eventData.isAdBreakScheduled ? "scheduled" : "manual"}** ad break ended`;
+                    return `**${friendlyDuration}** **${
+                        eventData.isAdBreakScheduled ? "scheduled" : "manual"
+                    }** ad break ended`;
                 }
             }
         }

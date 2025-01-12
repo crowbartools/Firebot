@@ -9,6 +9,16 @@ const model : ReplaceVariable = {
         handle: "math",
         usage: "math[expression]",
         description: 'Evaluate a math equation using <a href="https://mathjs.org/docs/index.html">math.js</a>',
+        examples: [
+            {
+                usage: "math[2 + 2]",
+                description: `Returns 4`
+            },
+            {
+                usage: "math[5 * (3 + 2)]",
+                description: `Returns 25`
+            }
+        ],
         categories: [VariableCategory.COMMON, VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },

@@ -1,6 +1,6 @@
 import NodeCache from "node-cache";
 import { DateTime } from "luxon";
-import { settings } from "../../common/settings-access";
+import { SettingsManager } from "../../common/settings-manager";
 import eventManager from "../../events/EventManager";
 import logger from "../../logwrapper";
 
@@ -36,7 +36,7 @@ export function triggerSubGift(
     giftSubMonths: number,
     streak: number
 ): void {
-    if (settings.ignoreSubsequentSubEventsAfterCommunitySub()) {
+    if (SettingsManager.getSetting("IgnoreSubsequentSubEventsAfterCommunitySub")) {
         logger.debug(`Attempting to process community gift sub from ${gifterDisplayName} at ${DateTime.now().toFormat("HH:mm:ss:SSS")}`);
         const cacheKey = `${gifterDisplayName}:${subPlan}`;
 

@@ -1,9 +1,10 @@
 "use strict";
 
-const { settings } = require("../../common/settings-access");
+const { SettingsManager } = require("../../common/settings-manager");
 const webServer = require("../../../server/http-server-manager");
 const logger = require("../../logwrapper");
 const { EffectCategory } = require('../../../shared/effect-constants');
+const mediaProcessor = require("../../common/handlers/mediaProcessor");
 
 /**
  * The Show Text effect
@@ -140,7 +141,7 @@ const showText = {
         $scope.editorClass = "text-editor-white-bg";
 
         $scope.editorSettings = {
-            editorBackground: settingsService.getWysiwygBackground()
+            editorBackground: settingsService.getSetting("WysiwygBackground")
         };
 
         function updateEditorClass() {
@@ -153,7 +154,7 @@ const showText = {
         updateEditorClass();
 
         $scope.editorBackgroundChanged = function() {
-            settingsService.setWysiwygBackground($scope.editorSettings.editorBackground);
+            settingsService.saveSetting("WysiwygBackground", $scope.editorSettings.editorBackground);
             updateEditorClass();
         };
 
@@ -264,13 +265,13 @@ const showText = {
         const position = dto.position;
         if (position === "Random") {
             logger.debug("Getting random preset location");
-            dto.position = getRandomPresetLocation(); //eslint-disable-line no-undef
+            dto.position = mediaProcessor.randomLocation(); //eslint-disable-line no-undef
         }
 
-        if (settings.useOverlayInstances()) {
+        if (SettingsManager.getSetting("UseOverlayInstances")) {
             if (dto.overlayInstance != null) {
                 //reset overlay if it doesnt exist
-                if (!settings.getOverlayInstances().includes(dto.overlayInstance)) {
+                if (!SettingsManager.getSetting("OverlayInstances").includes(dto.overlayInstance)) {
                     dto.overlayInstance = null;
                 }
             }

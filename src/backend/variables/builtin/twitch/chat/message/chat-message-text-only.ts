@@ -52,10 +52,10 @@ const model: ReplaceVariable = {
             .filter(tp => tp !== "");
 
         // Trim the command trigger if this was a command, unless an optional argument of false was provided.
-        if (trigger?.type === EffectTrigger.COMMAND && trigger?.metadata?.command?.trigger !== null &&
+        if (trigger?.type === EffectTrigger.COMMAND && trigger?.metadata?.userCommand?.trigger !== null &&
             (args.length < 1 || !(args[0] === false || `${args[0]}`.toLowerCase() === "false"))) {
 
-            const triggerRegex = new RegExp(trigger.metadata.command.trigger, "i");
+            const triggerRegex = new RegExp(trigger.metadata.userCommand.trigger, "i");
             const triggerIndex = textParts.findIndex(tp => triggerRegex.test(tp));
 
             if (triggerIndex >= 0) {

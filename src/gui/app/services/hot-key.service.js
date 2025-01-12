@@ -1,6 +1,4 @@
 "use strict";
-const profileManager = require("../../backend/common/profile-manager.js");
-const uuidv1 = require("uuid/v1");
 
 (function() {
     // This provides methods for handling hotkeys
@@ -11,8 +9,8 @@ const uuidv1 = require("uuid/v1");
             const service = {};
 
             /**
-       * Hotkey Capturing
-       */
+             * Hotkey Capturing
+             */
             service.isCapturingHotkey = false;
 
             // keys not accepted by Electron for global shortcuts
@@ -147,7 +145,7 @@ const uuidv1 = require("uuid/v1");
                 }
 
                 //clear out any keys that have since been released
-                releasedKeyCodes.forEach(k => {
+                releasedKeyCodes.forEach((k) => {
                     const normalizedK = k.toUpperCase();
                     if (
                         cachedKeys.some(key => key.rawKey.toUpperCase() === normalizedK)
@@ -241,56 +239,22 @@ const uuidv1 = require("uuid/v1");
                 return keys.join(" + ");
             };
 
-            /**
-             * Hotkey Data Access
-             */
-
             let userHotkeys = [];
 
             service.loadHotkeys = function() {
-                const hotkeyDb = profileManager.getJsonDbInProfile("/hotkeys");
-                try {
-                    const hotkeyData = hotkeyDb.getData("/");
-                    if (hotkeyData != null && hotkeyData.length > 0) {
-                        userHotkeys = hotkeyData || [];
-                    }
-                } catch (err) {
-                    logger.error(err);
-                }
+                userHotkeys = backendCommunicator.fireEventSync("hotkeys:get-hotkeys");
             };
 
-            function saveHotkeysToFile() {
-                const hotkeyDb = profileManager.getJsonDbInProfile("/hotkeys");
-                try {
-                    hotkeyDb.push("/", userHotkeys);
-                } catch (err) {
-                    logger.error(err);
-                }
-
-                // Refresh the backend hotkeycache
-                ipcRenderer.send("refreshHotkeyCache");
-            }
-
-            service.saveHotkey = function(hotkey) {
-                hotkey.id = uuidv1();
-
-                userHotkeys.push(hotkey);
-
-                saveHotkeysToFile();
+            service.addHotkey = function(hotkey) {
+                backendCommunicator.send("hotkeys:add-hotkey", hotkey);
             };
 
             service.updateHotkey = function(hotkey) {
-                const index = userHotkeys.findIndex(k => k.id === hotkey.id);
-
-                userHotkeys[index] = hotkey;
-
-                saveHotkeysToFile();
+                backendCommunicator.send("hotkeys:update-hotkey", hotkey);
             };
 
             service.deleteHotkey = function(hotkey) {
-                userHotkeys = userHotkeys.filter(k => k.id !== hotkey.id);
-
-                saveHotkeysToFile();
+                backendCommunicator.send("hotkeys:delete-hotkey", hotkey.id);
             };
 
             service.hotkeyCodeExists = function(hotkeyId, hotkeyCode) {
@@ -309,10 +273,8 @@ const uuidv1 = require("uuid/v1");
                 service.loadHotkeys();
             });
 
-            backendCommunicator.on("remove-hotkey", (hotkeyId) => {
-                service.service.deleteHotkey({
-                    id: hotkeyId
-                });
+            backendCommunicator.on("hotkeys:hotkeys-updated", (hotkeys) => {
+                userHotkeys = hotkeys;
             });
 
             return service;

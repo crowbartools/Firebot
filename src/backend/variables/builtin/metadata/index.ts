@@ -6,7 +6,9 @@ import commandTrigger from './command-trigger';
 import count from './count';
 import effectOutput from './effect-output';
 import effectQueueId from './effect-queue-id';
+import effectQueueLength from './effect-queue-length';
 import effectQueueName from './effect-queue-name';
+import effectQueueStatus from './effect-queue-status';
 import overlayInstance from './overlay-instance';
 import presetListArg from './preset-list-arg';
 import user from './user';
@@ -25,7 +27,9 @@ export default [
     count,
     effectOutput,
     effectQueueId,
+    effectQueueLength,
     effectQueueName,
+    effectQueueStatus,
     overlayInstance,
     presetListArg,
     user,

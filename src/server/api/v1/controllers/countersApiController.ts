@@ -1,8 +1,8 @@
-import counterManager from "../../../../backend/counters/counter-manager";
+import { CounterManager } from "../../../../backend/counters/counter-manager";
 import { Request, Response } from "express";
 
 export async function getCounters(req: Request, res: Response): Promise<Response> {
-    const counters = counterManager.getAllItems()
+    const counters = CounterManager.getAllItems()
         .map((c) => {
             return {
                 id: c.id,
@@ -24,7 +24,7 @@ export async function getCounterById(req: Request, res: Response): Promise<Respo
         });
     }
 
-    const counter = counterManager.getItem(counterId);
+    const counter = CounterManager.getItem(counterId);
 
     if (counter == null) {
         return res.status(404).send({
@@ -69,7 +69,7 @@ export async function updateCounter(req: Request, res: Response): Promise<Respon
         });
     }
 
-    const counter = counterManager.getItem(counterId);
+    const counter = CounterManager.getItem(counterId);
 
     if (counter == null) {
         return res.status(404).send({
@@ -83,8 +83,7 @@ export async function updateCounter(req: Request, res: Response): Promise<Respon
         newValue: 0
     };
 
-    // @ts-ignore
-    await counterManager.updateCounterValue(counter.id, value, override);
-    response.newValue = counterManager.getItem(counterId).value;
+    await CounterManager.updateCounterValue(counter.id, value, override);
+    response.newValue = CounterManager.getItem(counterId).value;
     return res.json(response);
 }

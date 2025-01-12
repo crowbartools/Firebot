@@ -4,6 +4,7 @@ import {
     OBS_EVENT_SOURCE_ID,
     OBS_INPUT_VOLUME_CHANGED_EVENT_ID
 } from "../constants";
+import { VariableCategory } from "../../../../../shared/variable-constants";
 
 const triggers = {};
 triggers[TriggerType.EVENT] = [
@@ -15,7 +16,8 @@ export const InputVolumeDbVariable: ReplaceVariable = {
     definition: {
         handle: "obsInputVolumeDb",
         description: "Returns the volume level in dB of the OBS input.",
-        possibleDataOutput: ["number"]
+        possibleDataOutput: ["number"],
+        categories: [VariableCategory.ADVANCED, VariableCategory.INTEGRATION, VariableCategory.OBS]
     },
     evaluator: async (trigger) => {
         const inputVolumeDb = trigger.metadata?.eventData?.inputVolumeDb;

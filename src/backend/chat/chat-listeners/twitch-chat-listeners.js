@@ -5,7 +5,7 @@ const chatCommandHandler = require("../commands/chat-command-handler");
 const chatHelpers = require("../chat-helpers");
 const activeUserHandler = require("./active-user-handler");
 const accountAccess = require("../../common/account-access");
-const chatModerationManager = require("../moderation/chat-moderation-manager");
+const { ChatModerationManager } = require("../moderation/chat-moderation-manager");
 const chatRolesManager = require("../../roles/chat-roles-manager");
 const twitchEventsHandler = require("../../events/twitch-events");
 const raidMessageChecker = require(".././moderation/raid-message-checker");
@@ -53,7 +53,7 @@ exports.setupChatListeners = (streamerChatClient, botChatClient) => {
     streamerChatClient.onMessage(async (_channel, user, messageText, msg) => {
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText);
 
-        await chatModerationManager.moderateMessage(firebotChatMessage);
+        await ChatModerationManager.moderateMessage(firebotChatMessage);
 
         if (firebotChatMessage.isVip === true) {
             chatRolesManager.addVipToVipList({

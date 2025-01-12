@@ -26,8 +26,8 @@
                 });
             };
             service.obtainVoices = () => {
-                return new Promise(resolve => {
-                    $q.when(obtainVoices()).then(foundVoices => {
+                return new Promise((resolve) => {
+                    $q.when(obtainVoices()).then((foundVoices) => {
                         voices = foundVoices;
                         resolve();
                     });
@@ -35,7 +35,7 @@
             };
 
             service.getVoices = () => {
-                return voices.map(v => {
+                return voices.map((v) => {
                     return {
                         id: v.voiceURI,
                         name: v.name
@@ -52,7 +52,7 @@
             };
 
             service.getFirebotDefaultVoiceId = () => {
-                const savedDefaultVoiceId = settingsService.getDefaultTtsVoiceId();
+                const savedDefaultVoiceId = settingsService.getSetting("DefaultTtsVoiceId");
                 if (savedDefaultVoiceId) {
                     return savedDefaultVoiceId;
                 }
@@ -67,7 +67,13 @@
                 return defaultVoice;
             };
 
-            service.readText = (text, voiceId) => {
+            /**
+             * @param {string} text The text to be synthesized.
+             * @param {"default" | string | null} voiceId The name of the voice to use.
+             * @param {boolean} wait Whether or not to wait for the speech to finish.
+             * @returns {Promise<void>}
+             */
+            service.readText = async (text, voiceId, wait) => {
                 if (text == null || text.length < 1) {
                     return;
                 }
@@ -86,17 +92,25 @@
 
                 const msg = new SpeechSynthesisUtterance();
                 msg.voice = speechSynthesisVoice;
-                msg.volume = settingsService.getTtsVoiceVolume();
-                msg.rate = settingsService.getTtsVoiceRate();
+                msg.volume = settingsService.getSetting("TtsVoiceVolume");
+                msg.rate = settingsService.getSetting("TtsVoiceRate");
                 msg.text = text;
-                msg.lang = 'en-US';
+                msg.lang = "en-US";
 
-                speechSynthesis.speak(msg);
+                if (wait === true) {
+                    await new Promise(function(resolve) {
+                        msg.onend = () => resolve();
+                        msg.onerror = () => resolve();
+                        speechSynthesis.speak(msg);
+                    });
+                } else {
+                    speechSynthesis.speak(msg);
+                }
             };
 
-            backendCommunicator.on("read-tts", (data) => {
-                const { text, voiceId } = data;
-                service.readText(text, voiceId);
+            backendCommunicator.onAsync("read-tts", async (data) => {
+                const { text, voiceId, wait } = data;
+                return await service.readText(text, voiceId, wait);
             });
 
             backendCommunicator.on("stop-all-sounds", () => {

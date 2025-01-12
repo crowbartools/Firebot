@@ -1,6 +1,6 @@
 "use strict";
 
-const { settings } = require("../../common/settings-access");
+const { SettingsManager } = require("../../common/settings-manager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/http-server-manager");
 const twitchApi = require("../../twitch-api/api");
@@ -232,7 +232,7 @@ const effect = {
             utilityService.showOverlayInfoModal(overlayInstance);
         };
     },
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.username == null || effect.username === "") {
             errors.push("Please provide a username.");
@@ -240,7 +240,7 @@ const effect = {
         return errors;
     },
 
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         // What should this do when triggered.
         const { effect } = event;
 
@@ -248,9 +248,9 @@ const effect = {
             effect.position = mediaProcessor.randomLocation();
         }
 
-        if (settings.useOverlayInstances()) {
+        if (SettingsManager.getSetting("UseOverlayInstances")) {
             if (effect.overlayInstance != null) {
-                if (!settings.getOverlayInstances().includes(effect.overlayInstance)) {
+                if (!SettingsManager.getSetting("OverlayInstances").includes(effect.overlayInstance)) {
                     effect.overlayInstance = null;
                 }
             }
@@ -293,7 +293,7 @@ const effect = {
         },
         event: {
             name: "shoutout",
-            onOverlayEvent: event => {
+            onOverlayEvent: (event) => {
 
                 const data = event;
 
@@ -305,7 +305,7 @@ const effect = {
                 const scale = data.scale == null ? 1.0 : data.scale;
 
                 // eslint-disable-next-line no-undef
-                const uniqueId = uuidv4();
+                const uniqueId = uuid();
 
                 const fittyId = `fit-text-${uniqueId}`;
 

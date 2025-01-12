@@ -4,6 +4,7 @@ import {
     OBS_EVENT_SOURCE_ID,
     OBS_VENDOR_EVENT_EVENT_ID
 } from "../constants";
+import { VariableCategory } from "../../../../../shared/variable-constants";
 
 const triggers = {};
 triggers[TriggerType.EVENT] = [
@@ -16,6 +17,7 @@ export const VendorNameVariable: ReplaceVariable = {
         description:
       "The name of the vendor that triggered the OBS vendor event.",
         possibleDataOutput: ["text"],
+        categories: [VariableCategory.ADVANCED, VariableCategory.INTEGRATION, VariableCategory.OBS],
         triggers: triggers
     },
     evaluator: async (trigger) => {

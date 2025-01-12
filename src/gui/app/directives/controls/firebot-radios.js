@@ -1,6 +1,6 @@
 "use strict";
 
-(function() {
+(function () {
     angular
         .module('firebotApp')
         .component("firebotRadios", {
@@ -14,6 +14,7 @@
             <firebot-radio-container inline="$ctrl.inline" style="{{$ctrl.style}}">
                 <firebot-radio
                     ng-repeat="(value, label) in $ctrl.options"
+                    ng-hide="{{$ctrl.labelIsObj(label) ? label.hide : false}}"
                     label="{{$ctrl.labelIsObj(label) ? label.text : label}}"
                     description="{{$ctrl.labelIsObj(label) ? label.description : undefined}}"
                     tooltip="{{$ctrl.labelIsObj(label) ? label.tooltip : undefined}}"
@@ -22,7 +23,7 @@
                 />
             </firebot-radio-container>
             `,
-            controller: function() {
+            controller: function () {
                 const $ctrl = this;
 
                 $ctrl.labelIsObj = label => typeof label === "object";

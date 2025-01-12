@@ -4,8 +4,18 @@ import { OutputDataType, VariableCategory } from "../../../../shared/variable-co
 const model : ReplaceVariable = {
     definition: {
         handle: "capitalize",
-        description: "Capitalizes the given text.",
+        description: "Capitalizes the first letter of the given text, converting the rest into lowercase",
         usage: "capitalize[text]",
+        examples: [
+            {
+                usage: `capitalize["hello world"]`,
+                description: `Returns "Hello world".`
+            },
+            {
+                usage: `capitalize["HELLO WORLD"]`,
+                description: `Returns "Hello world".`
+            }
+        ],
         categories: [VariableCategory.TEXT],
         possibleDataOutput: [OutputDataType.TEXT]
     },

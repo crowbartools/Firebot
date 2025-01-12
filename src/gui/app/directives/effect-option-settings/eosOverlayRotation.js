@@ -10,13 +10,14 @@
             },
             template: `
             <eos-container header="Rotation" pad-top="$ctrl.padTop">
-                <div style="display: flex; flex-direction: row; width: 100%; height: 36px; align-items: center;">
+                <div style="display: flex; flex-direction: row; width: 100%; align-items: center;">
                     <firebot-input
                         style="flex-grow:1"
                         input-title="Rotation"
                         model="$ctrl.effect.rotation"
                         placeholder-text="Enter rotation"
                         data-type="number"
+                        menu-position="under"
                     />
                     <dropdown-select 
                         style="margin: 0 0 0 10px;"

@@ -49,7 +49,9 @@ class TwitchEventSubClient {
 
         // Cheers
         const bitsSubscription = this._eventSubListener.onChannelCheer(streamer.userId, async (event) => {
-            const totalBits = (await twitchApi.bits.getChannelBitsLeaderboard(1, "all", new Date(), event.userId))[0]?.amount ?? 0;
+            const totalBits = event.isAnonymous
+                ? event.bits
+                : (await twitchApi.bits.getChannelBitsLeaderboard(1, "all", new Date(), event.userId))[0]?.amount ?? 0;
 
             twitchEventsHandler.cheer.triggerCheer(
                 event.userName ?? "ananonymouscheerer",
@@ -133,16 +135,33 @@ class TwitchEventSubClient {
         });
         this._subscriptions.push(customRewardRedemptionUpdateSubscription);
 
-        // Raid
-        const raidSubscription = this._eventSubListener.onChannelRaidTo(streamer.userId, (event) => {
-            twitchEventsHandler.raid.triggerRaid(
+        // Incoming Raid
+        const incomingRaidSubscription = this._eventSubListener.onChannelRaidTo(streamer.userId, (event) => {
+            twitchEventsHandler.raid.triggerIncomingRaid(
                 event.raidingBroadcasterName,
                 event.raidingBroadcasterId,
                 event.raidingBroadcasterDisplayName,
                 event.viewers
             );
         });
-        this._subscriptions.push(raidSubscription);
+        this._subscriptions.push(incomingRaidSubscription);
+
+        // Outbound Raid Sent Off
+        const outboundRaidSubscription = this._eventSubListener.onChannelRaidFrom(streamer.userId, (event) => {
+            // sent off
+            if (event.raidingBroadcasterId === streamer.userId && event.raidedBroadcasterId !== streamer.userId) {
+                twitchEventsHandler.raid.triggerRaidSentOff(
+                    event.raidingBroadcasterName,
+                    event.raidingBroadcasterId,
+                    event.raidingBroadcasterDisplayName,
+                    event.raidedBroadcasterName,
+                    event.raidedBroadcasterId,
+                    event.raidedBroadcasterDisplayName,
+                    event.viewers
+                );
+            }
+        });
+        this._subscriptions.push(outboundRaidSubscription);
 
         // Shoutout sent to another channel
         const shoutoutSentSubscription = this._eventSubListener.onChannelShoutoutCreate(streamer.userId, streamer.userId, (event) => {
@@ -179,7 +198,8 @@ class TwitchEventSubClient {
                 event.startDate,
                 event.expiryDate,
                 event.lastContribution,
-                event.topContributors
+                event.topContributors,
+                event.isGoldenKappaTrain
             );
         });
         this._subscriptions.push(hypeTrainBeginSubscription);
@@ -194,7 +214,8 @@ class TwitchEventSubClient {
                 event.startDate,
                 event.expiryDate,
                 event.lastContribution,
-                event.topContributors
+                event.topContributors,
+                event.isGoldenKappaTrain
             );
         });
         this._subscriptions.push(hypeTrainProgressSubscription);
@@ -207,7 +228,8 @@ class TwitchEventSubClient {
                 event.startDate,
                 event.endDate,
                 event.cooldownEndDate,
-                event.topContributors
+                event.topContributors,
+                event.isGoldenKappaTrain
             );
         });
         this._subscriptions.push(hypeTrainEndSubscription);
@@ -452,22 +474,6 @@ class TwitchEventSubClient {
         });
         this._subscriptions.push(channelUpdateSubscription);
 
-        // Moderator added
-        const channelModeratorAddSubscription = this._eventSubListener.onChannelModeratorAdd(streamer.userId, (event) => {
-            chatRolesManager.addModeratorToModeratorsList({
-                id: event.userId,
-                username: event.userName,
-                displayName: event.userDisplayName
-            });
-        });
-        this._subscriptions.push(channelModeratorAddSubscription);
-
-        // Moderator removed
-        const channelModeratorRemoveSubscription = this._eventSubListener.onChannelModeratorRemove(streamer.userId, (event) => {
-            chatRolesManager.removeModeratorFromModeratorsList(event.userId);
-        });
-        this._subscriptions.push(channelModeratorRemoveSubscription);
-
         // Ad break start/end
         const channelAdBreakBeginSubscription = this._eventSubListener.onChannelAdBreakBegin(streamer.userId, (event) => {
             twitchEventsHandler.ad.triggerAdBreakStart(
@@ -493,6 +499,77 @@ class TwitchEventSubClient {
             }, adBreakEndTime.getTime() - (new Date()).getTime());
         });
         this._subscriptions.push(channelAdBreakBeginSubscription);
+
+        // Channel Moderate
+        const channelModerateSubscription = this._eventSubListener.onChannelModerate(streamer.userId, streamer.userId, (event) => {
+            switch (event.moderationAction) {
+                case "clear":
+                    frontendCommunicator.send("twitch:chat:clear-feed", event.moderatorName);
+                    twitchEventsHandler.chat.triggerChatCleared(event.moderatorName, event.moderatorId);
+                    break;
+                case "mod":
+                    chatRolesManager.addModeratorToModeratorsList({
+                        id: event.userId,
+                        username: event.userName,
+                        displayName: event.userDisplayName
+                    });
+                    break;
+                case "unmod":
+                    chatRolesManager.removeModeratorFromModeratorsList(event.userId);
+                    break;
+                case "vip":
+                    chatRolesManager.addVipToVipList({
+                        id: event.userId,
+                        username: event.userName,
+                        displayName: event.userDisplayName
+                    });
+                    break;
+                case "unvip":
+                    chatRolesManager.removeVipFromVipList(event.userId);
+                    break;
+
+                // chat modes
+                case "emoteonly":
+                case "emoteonlyoff":
+                case "subscribers":
+                case "subscribersoff":
+                case "followers":
+                case "followersoff":
+                case "slow":
+                case "slowoff":
+                case "uniquechat":
+                case "uniquechatoff":
+                    twitchEventsHandler.chatModeChanged.triggerChatModeChanged(
+                        event.moderationAction,
+                        event.moderationAction.includes("off") ? "disabled" : "enabled",
+                        event.moderatorName,
+                        event.moderationAction === "slow" ? event.waitTimeSeconds : null
+                    );
+                    break;
+
+                // Reserving; already handled in bespoke events; less expensive to move those here.
+                case "ban":
+                case "unban":
+                case "raid":
+                case "unraid":
+                case "timeout":
+                case "untimeout":
+                    break;
+
+                // Available for future use:
+                case "add_blocked_term":
+                case "add_permitted_term":
+                case "approve_unban_request":
+                case "deny_unban_request":
+                case "delete":
+                case "remove_blocked_term":
+                case "remove_permitted_term":
+                case "warn":
+                default:
+                    break;
+            }
+        });
+        this._subscriptions.push(channelModerateSubscription);
     }
 
     async createClient(): Promise<void> {

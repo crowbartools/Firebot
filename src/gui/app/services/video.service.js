@@ -2,7 +2,7 @@
 
 (function() {
 
-    const uuid = require("uuid");
+    const { v4: uuid } = require("uuid");
 
     // This provides methods for playing sounds
 

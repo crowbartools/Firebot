@@ -1,12 +1,12 @@
 import effectManager from "../backend/effects/effectManager";
-import electron from "electron";
 import { EventEmitter } from "events";
 import eventManager from "../backend/events/EventManager";
 import http from "http";
 import logger from "../backend/logwrapper";
 import WebSocket from "ws";
-import { OverlayConnectedData, Message, ResponseMessage, EventMessage } from "../types/websocket";
+import { OverlayConnectedData, Message, ResponseMessage, EventMessage, InvokePluginMessage, CustomWebSocketHandler } from "../types/websocket";
 import { WebSocketClient } from "./websocket-client";
+import frontendCommunicator from "../backend/common/frontend-communicator";
 
 function sendResponse(ws: WebSocketClient, messageId: string | number, data: unknown = null) {
     const response: ResponseMessage = {
@@ -32,6 +32,7 @@ class WebSocketServerManager extends EventEmitter {
     overlayHasClients = false;
 
     private server: WebSocket.Server<typeof WebSocketClient>;
+    private customHandlers: CustomWebSocketHandler[] = [];
 
     createServer(httpServer: http.Server) {
         this.server = new WebSocket.Server<typeof WebSocketClient>({
@@ -45,6 +46,8 @@ class WebSocketServerManager extends EventEmitter {
             }, 5000);
 
             ws.on('message', (data) => {
+                logger.debug(`Incoming WebSocket message from: ${req.socket.remoteAddress}, message data: ${data.toString().replace(/(\n|\s+)/g, " ")}`);
+
                 try {
                     const message = JSON.parse(data.toString()) as Message;
 
@@ -84,6 +87,22 @@ class WebSocketServerManager extends EventEmitter {
                                         instanceName
                                     });
                                     this.emit("overlay-connected", instanceName);
+
+                                    break;
+                                }
+                                case "plugin": {
+                                    const pluginName = (message as InvokePluginMessage).pluginName;
+                                    if (pluginName == null || pluginName === "") {
+                                        sendError(ws, message.id, "Must specify pluginName");
+                                        break;
+                                    }
+                                    const plugin = this.customHandlers.find(p => p.pluginName.toLowerCase() === pluginName.toLowerCase());
+
+                                    if (plugin != null) {
+                                        plugin.callback(message.data);
+                                    } else {
+                                        sendError(ws, message.id, "Unknown plugin name specified");
+                                    }
 
                                     break;
                                 }
@@ -185,16 +204,39 @@ class WebSocketServerManager extends EventEmitter {
             hasClients = [...this.server.clients].filter(client => client.type === "overlay").length > 0;
         }
         if (hasClients !== this.overlayHasClients) {
-            const renderWindow: electron.BrowserWindow | undefined = global.renderWindow;
-
-            if (global.hasOwnProperty("renderWindow") && renderWindow?.webContents?.isDestroyed() === false) {
-                renderWindow.webContents.send("overlayStatusUpdate", {
-                    clientsConnected: hasClients,
-                    serverStarted: isDefaultServerStarted
-                });
-            }
+            frontendCommunicator.send("overlayStatusUpdate", {
+                clientsConnected: hasClients,
+                serverStarted: isDefaultServerStarted
+            });
             this.overlayHasClients = hasClients;
         }
+    }
+
+    registerCustomWebSocketListener(pluginName: string, callback: CustomWebSocketHandler["callback"]): boolean {
+        if (this.customHandlers.findIndex(p => p.pluginName.toLowerCase() === pluginName.toLowerCase()) === -1) {
+            this.customHandlers.push({
+                pluginName,
+                callback
+            });
+            logger.info(`Registered custom WebSocket listener for plugin "${pluginName}"`);
+            return true;
+        }
+
+        logger.error(`Custom WebSocket listener "${pluginName}" already registered`);
+        return false;
+    }
+
+    unregisterCustomWebSocketListener(pluginName: string): boolean {
+        const pluginHandlerIndex = this.customHandlers.findIndex(p => p.pluginName.toLowerCase() === pluginName.toLowerCase());
+
+        if (pluginHandlerIndex !== -1) {
+            this.customHandlers.splice(pluginHandlerIndex, 1);
+            logger.info(`Unregistered custom WebSocket listener for plugin "${pluginName}"`);
+            return true;
+        }
+
+        logger.error(`Custom WebSocket listener "${pluginName}" is not registered`);
+        return false;
     }
 }
 

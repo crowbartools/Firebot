@@ -21,9 +21,9 @@
                         </setting-description-addon>
                         <firebot-select
                             options="{ true: 'Enabled', false: 'Disabled' }"
-                            ng-init="customScriptsEnabled = settings.getCustomScriptsEnabled()"
+                            ng-init="customScriptsEnabled = settings.getSetting('RunCustomScripts')"
                             selected="customScriptsEnabled"
-                            on-update="settings.setCustomScriptsEnabled(option === 'true')"
+                            on-update="settings.saveSetting('RunCustomScripts', option === 'true')"
                             right-justify="true"
                             aria-label="Enable or disable custom scripts"
                         />
@@ -35,7 +35,7 @@
                     >
                         <firebot-button
                             text="Manage Startup Scripts"
-                            disabled="!settings.getCustomScriptsEnabled()"
+                            disabled="!settings.getSetting('RunCustomScripts')"
                             ng-click="openStartupScriptsModal()"
                         />
                     </firebot-setting>
@@ -46,10 +46,10 @@
                     >
                         <firebot-select
                             options="{ true: 'On', false: 'Off' }"
-                            ng-init="clearCache = settings.getClearCustomScriptCache()"
-                            is-disabled="!settings.getCustomScriptsEnabled()"
+                            ng-init="clearCache = settings.getSetting('ClearCustomScriptCache')"
+                            is-disabled="!settings.getSetting('RunCustomScripts')"
                             selected="clearCache"
-                            on-update="settings.setClearCustomScriptCache(option === 'true')"
+                            on-update="settings.saveSetting('ClearCustomScriptCache', option === 'true')"
                             right-justify="true"
                             aria-label="Enable or disable the Clearing of Custom Script Cache"
                         />

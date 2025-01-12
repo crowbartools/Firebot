@@ -6,6 +6,24 @@
     margin-top: 40px !important;
 }
 
+.rich-toast {
+    max-width: 400px !important;
+}
+
+.rich-toast-header {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.rich-toast-body {
+    display: flex;
+}
+
+.rich-toast-body-content {
+    text-align: left;
+}
+
 .cet-window-icon {
     display: none !important;
 }
@@ -25,5 +43,3 @@
         margin-right: auto;
     }
 }
-
-

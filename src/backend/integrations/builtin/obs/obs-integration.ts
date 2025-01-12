@@ -23,7 +23,7 @@ import { CreateRecordChapter } from "./effects/create-recording-chapter";
 import { ToggleSourceVisibilityEffectType } from "./effects/toggle-obs-source-visibility";
 import { ToggleSourceFilterEffectType } from "./effects/toggle-obs-source-filter";
 import { ToggleSourceMutedEffectType } from "./effects/toggle-obs-source-muted";
-import { TransformSourceScaleEffectType } from "./effects/transform-obs-source-scale";
+import { TransformSourceEffectType } from "./effects/transform-obs-source";
 import { StartStreamEffectType } from "./effects/start-stream";
 import { StopStreamEffectType } from "./effects/stop-stream";
 import { StartVirtualCamEffectType } from "./effects/start-virtual-cam";
@@ -39,8 +39,8 @@ import { TakeOBSSourceScreenshotEffectType } from "./effects/take-obs-source-scr
 
 import { OBSEventSource } from "./events/obs-event-source";
 
-import { GroupNameEventFilter } from "./filters/group-name-filter";
-import { SceneNameEventFilter } from "./filters/scene-name-filter";
+import GroupNameEventFilter from "./filters/group-name-filter";
+import SceneNameEventFilter from "./filters/scene-name-filter";
 
 import { SceneNameVariable } from "./variables/scene-name-variable";
 import { SceneCollectionNameVariable } from "./variables/scene-collection-name";
@@ -146,7 +146,7 @@ class ObsIntegration
         effectManager.registerEffect(ToggleSourceVisibilityEffectType);
         effectManager.registerEffect(ToggleSourceFilterEffectType);
         effectManager.registerEffect(ToggleSourceMutedEffectType);
-        effectManager.registerEffect(TransformSourceScaleEffectType);
+        effectManager.registerEffect(TransformSourceEffectType);
         effectManager.registerEffect(StartStreamEffectType);
         effectManager.registerEffect(StopStreamEffectType);
         effectManager.registerEffect(StartVirtualCamEffectType);

@@ -17,14 +17,14 @@ const model : ReplaceVariable = {
     definition: {
         handle: "hasRoles",
         usage: "hasRoles[user, any|all, role, role2, ...]",
-        description: "Returns true if the user has the specified roles. Only valid within $if",
+        description: "Returns true if the user has the specified roles. Only valid within `$if`",
         examples: [
             {
-                usage: "hasRoles[$user, any, mod, vip]",
+                usage: "hasRoles[$user, any, Moderator, VIP]",
                 description: "returns true if $user is a mod OR VIP"
             },
             {
-                usage: "hasRoles[$user, all, mod, vip]",
+                usage: "hasRoles[$user, all, Moderator, VIP]",
                 description: "Returns true if $user is a mod AND a VIP"
             }
         ],
@@ -32,7 +32,7 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.COMMON, VariableCategory.USER],
         possibleDataOutput: [OutputDataType.ALL]
     },
-    evaluator: async (trigger, username: string, respective, ...roles) => {
+    evaluator: async (_trigger, username: string, respective, ...roles) => {
         if (username == null || username === "") {
             return false;
         }
@@ -55,14 +55,14 @@ const model : ReplaceVariable = {
             if (user == null) {
                 return false;
             }
-    
+
             const userRoles = await roleHelpers.getAllRolesForViewer(user.id);
-    
+
             // any
             if (respective === "any") {
                 return userRoles.some(r => roles.includes(r.name));
             }
-    
+
             // all
             return roles.length === userRoles.filter(r => roles.includes(r.name)).length;
         } catch {

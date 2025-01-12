@@ -66,7 +66,7 @@
 
 .variable-menu {
   width: 500px;
-  background: #060707;
+  background: $variable-menu-bg;
   position: absolute;
   right: 0px;
   bottom: 100%;
@@ -76,6 +76,10 @@
   &.below, &.under, &.bottom {
     bottom: unset;
     top: 100%;
+  }
+  .magic-tooltip {
+    color: $variable-magic-tooltip-fg;
+    text-decoration: underline;
   }
 }
 
@@ -1767,6 +1771,7 @@ thead th{
   padding-bottom: 0;
   font-family: 'Open Sans', sans-serif !important;
   color:$content-text-color;
+  background-color: $content-background-color;
 }
 
 .CodeMirror {

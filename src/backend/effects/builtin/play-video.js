@@ -1,10 +1,10 @@
 "use strict";
 
-const { settings } = require("../../common/settings-access");
-const resourceTokenManager = require("../../resourceTokenManager");
+const { SettingsManager } = require("../../common/settings-manager");
+const { ResourceTokenManager } = require("../../resource-token-manager");
 const webServer = require("../../../server/http-server-manager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
-const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
+const { EffectCategory } = require('../../../shared/effect-constants');
 const logger = require("../../logwrapper");
 const accountAccess = require("../../common/account-access");
 const util = require("../../utility");
@@ -13,7 +13,7 @@ const path = require("path");
 const frontendCommunicator = require('../../common/frontend-communicator');
 const { wait } = require("../../utility");
 const { parseYoutubeId } = require("../../../shared/youtube-url-parser");
-const uuid = require("uuid");
+const { v4: uuid } = require("uuid");
 
 /**
  * The Play Video effect
@@ -125,8 +125,8 @@ const playVideo = {
                 placeholder-text="Ex: $streamer, $user, etc"
             />
             <div class="mt-10 form-group flex-row jspacebetween" style="margin-bottom: 0;">
-                <firebot-checkbox 
-                    label="Only Featured Clips" 
+                <firebot-checkbox
+                    label="Only Featured Clips"
                     model="effect.isFeatured"
                     style="margin: 0px 15px 0px 0px"
                 />
@@ -136,8 +136,8 @@ const playVideo = {
                 ng-class="{'has-error': $ctrl.formFieldHasError('clipSeconds')}"
             >
                 <div class="form-group flex-row jspacebetween" style="margin-bottom: 0;">
-                    <firebot-checkbox 
-                        label="Maximum Clip Age" 
+                    <firebot-checkbox
+                        label="Maximum Clip Age"
                         model="effect.useMaxClipAge"
                         style="margin: 0px 15px 0px 0px"
                     />
@@ -175,7 +175,7 @@ const playVideo = {
             </eos-container>
         </div>
 
-        <eos-container header="Volume" pad-top="true">
+        <eos-container ng-if="effect.videoType != 'Random Twitch Clip' && effect.videoType != 'Twitch Clip'" header="Volume" pad-top="true">
             <div class="volume-slider-wrapper">
                 <i class="fal fa-volume-down volume-low"></i>
                 <rzslider rz-slider-model="effect.volume" rz-slider-options="{floor: 0, ceil: 10, hideLimitLabels: true}"></rzslider>
@@ -233,7 +233,7 @@ const playVideo = {
         </eos-container>
 
         <eos-overlay-position effect="effect" pad-top="true"></eos-overlay-position>
-        
+
         <eos-overlay-rotation effect="effect" pad-top="true"></eos-overlay-rotation>
 
         <eos-enter-exit-animations effect="effect" pad-top="true"></eos-enter-exit-animations>
@@ -397,9 +397,9 @@ const playVideo = {
             }
         }
 
-        if (settings.useOverlayInstances()) {
+        if (SettingsManager.getSetting("UseOverlayInstances")) {
             if (effect.overlayInstance != null) {
-                if (settings.getOverlayInstances().includes(effect.overlayInstance)) {
+                if (SettingsManager.getSetting("OverlayInstances").includes(effect.overlayInstance)) {
                     data.overlayInstance = effect.overlayInstance;
                 }
             }
@@ -408,7 +408,7 @@ const playVideo = {
         const overlayInstance = data.overlayInstance ?? "Default";
 
         async function waitFunction(duration) {
-            if (settings.getForceOverlayEffectsToContinueOnRefresh() === true) {
+            if (SettingsManager.getSetting("ForceOverlayEffectsToContinueOnRefresh") === true) {
                 let currentDuration = 0;
                 let returnNow = false;
 
@@ -486,7 +486,8 @@ const playVideo = {
                 }
             }
 
-            const clipVideoUrl = `${clip.thumbnailUrl.split("-preview-")[0]}.mp4`;
+            //const clipVideoUrl = `${clip.thumbnailUrl.split("-preview-")[0]}.mp4`;
+            const clipVideoUrl = clip.embedUrl;
             const clipDuration = clip.duration;
             const volume = parseInt(effect.volume) / 10;
 
@@ -543,7 +544,7 @@ const playVideo = {
             if (!isNaN(result)) {
                 duration = result;
             }
-            resourceToken = resourceTokenManager.storeResourcePath(data.filepath, duration);
+            resourceToken = ResourceTokenManager.storeResourcePath(data.filepath, duration);
         }
         if ((data.videoDuration == null || data.videoDuration === "" || data.videoDuration === 0) && duration != null) {
             data.videoDuration = duration;
@@ -671,8 +672,8 @@ const playVideo = {
 
                 // Generate UUID to use as id
                 // eslint-disable-next-line no-undef
-                const uuid = uuidv4();
-                const videoPlayerId = `${uuid}-video`;
+                const elementId = uuid();
+                const videoPlayerId = `${elementId}-video`;
 
                 const enterAnimation = data.enterAnimation ? data.enterAnimation : "fadeIn";
                 const exitAnimation = data.exitAnimation ? data.exitAnimation : "fadeIn";
@@ -704,7 +705,7 @@ const playVideo = {
                     `;
 
                     // eslint-disable-next-line no-undef
-                    const wrapperId = uuidv4();
+                    const wrapperId = uuid();
                     const wrappedHtml = getPositionWrappedHTML(wrapperId, positionData, videoElement); // eslint-disable-line no-undef
 
                     $(".wrapper").append(wrappedHtml);
@@ -765,12 +766,12 @@ const playVideo = {
                     };
                 } else {
                     // eslint-disable-next-line no-undef
-                    const ytPlayerId = `yt-${uuidv4()}`;
+                    const ytPlayerId = `yt-${uuid()}`;
 
                     const youtubeElement = `<div id="${ytPlayerId}" style="display:none;${sizeStyles}"></div>`;
 
                     // eslint-disable-next-line no-undef
-                    const wrapperId = uuidv4();
+                    const wrapperId = uuid();
                     const wrappedHtml = getPositionWrappedHTML(wrapperId, positionData, youtubeElement); // eslint-disable-line no-undef
 
                     $(".wrapper").append(wrappedHtml);

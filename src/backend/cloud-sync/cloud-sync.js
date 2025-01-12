@@ -1,29 +1,30 @@
 "use strict";
 
+const frontendCommunicator = require("../common/frontend-communicator");
 const logger = require("../logwrapper");
-const axios = require("axios").default;
 
 const sync = async (jsonData) => {
     try {
-        const response = await axios.post(`https://bytebin.lucko.me/post`,
-            JSON.stringify(jsonData),
-            {
-                headers: {
-                    'User-Agent': 'Firebot V5 - https://firebot.app',
-                    'Content-Type': 'json'
-                }
-            });
+        const response = await fetch(`https://bytebin.lucko.me/post`, {
+            method: "POST",
+            body: JSON.stringify(jsonData),
+            headers: {
+                'User-Agent': 'Firebot V5 - https://firebot.app',
+                'Content-Type': 'json'
+            }
+        });
 
-        if (response) {
-            logger.debug(`Bytebin key: ${response.data.key}`);
-            return response.data.key;
+        if (response?.ok) {
+            const data = await response.json();
+            logger.debug(`Bytebin key: ${data.key}`);
+            return data.key;
         }
 
         return null;
     } catch (error) {
         if (error.code === 429) {
             logger.error('Bytebin rate limit exceeded.');
-            renderWindow.webContents.send(
+            frontendCommunicator.send(
                 "error",
                 "Bytebin rate limit exceeded."
             );
@@ -37,15 +38,14 @@ const sync = async (jsonData) => {
 
 const getData = async (shareCode) => {
     try {
-        const response = await axios.get(`https://bytebin.lucko.me/${shareCode}`,
-            {
-                headers: {
-                    'User-Agent': 'Firebot V5 - https://firebot.app'
-                }
-            });
+        const response = await fetch(`https://bytebin.lucko.me/${shareCode}`, {
+            headers: {
+                'User-Agent': 'Firebot V5 - https://firebot.app'
+            }
+        });
 
-        if (response) {
-            return JSON.parse(JSON.stringify(response.data));
+        if (response?.ok) {
+            return await response.json();
         }
 
         return null;

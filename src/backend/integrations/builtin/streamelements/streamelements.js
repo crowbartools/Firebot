@@ -65,7 +65,7 @@ class StreamElementsIntegration extends EventEmitter {
             this.reconnect();
         });
 
-        this._socket.on('disconnect', reason => {
+        this._socket.on('disconnect', (reason) => {
             this.disconnect();
 
             if (reason !== "io client disconnect") {

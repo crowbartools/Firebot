@@ -5,6 +5,8 @@ grunt compile
 
 'use strict';
 const path = require('path');
+const createWindowsInstaller = require('electron-winstaller').createWindowsInstaller;
+
 module.exports = function (grunt) {
 
     const macPathIn = path.resolve(__dirname, `../dist/pack/Firebot-darwin-x64/Firebot.app`);
@@ -12,6 +14,15 @@ module.exports = function (grunt) {
     const macDmgIcon = path.resolve(__dirname, `../build/gui/images/logo_transparent_2.png`);
     const macDmgBg = path.resolve(__dirname, `../build/gui/images/firebot_dmg_bg.png`);
     const version = grunt.config('pkg').version;
+
+    // Bringing in from https://github.com/electron-archive/grunt-electron-installer/blob/master/tasks/index.js
+    grunt.registerMultiTask('create-windows-installer', 'Create the Windows installer', function () {
+        this.requiresConfig(`${this.name}.${this.target}.appDirectory`);
+
+        const config = grunt.config(`${this.name}.${this.target}`);
+        const done = this.async();
+        createWindowsInstaller(config).then(done, done);
+    });
 
     grunt.config.merge({
         'create-windows-installer': {
@@ -50,7 +61,6 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.loadNpmTasks('grunt-electron-installer');
     grunt.loadNpmTasks('grunt-contrib-compress');
     let compileCommand;
     switch (grunt.config.get('platform')) {

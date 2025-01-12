@@ -4,6 +4,7 @@ import {
     OBS_EVENT_SOURCE_ID,
     OBS_INPUT_NAME_CHANGED_EVENT_ID
 } from "../constants";
+import { VariableCategory } from "../../../../../shared/variable-constants";
 
 const triggers = {};
 triggers[TriggerType.EVENT] = [
@@ -15,6 +16,7 @@ export const OldInputNameVariable: ReplaceVariable = {
     definition: {
         handle: "obsOldInputName",
         description: "Returns the previous name of the OBS input.",
+        categories: [VariableCategory.ADVANCED, VariableCategory.INTEGRATION, VariableCategory.OBS],
         possibleDataOutput: ["text"]
     },
     evaluator: async (trigger) => {

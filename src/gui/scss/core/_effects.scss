@@ -1,6 +1,45 @@
+.select-effect-header {
+    background: $effect-dialog-bg;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.select-effect-footer {
+    align-items: center;
+    background: $effect-dialog-bg;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-top: 2px solid $light-background-border;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.select-effect-search {
+    align-items: center;
+    background: $effect-dialog-bg;
+    border-bottom: 2px solid $light-background-border;
+    border-top: 2px solid $light-background-border;
+    display: flex;
+    height: 55px;
+    padding: 0 13px;
+}
+
+.effect-categories {
+    background: $effect-category-bg;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    height: 100%;
+    width: 150px;
+    &.dark {
+        background: $variable-category-bg;
+        padding-top: 5px;
+        width: 135px;
+    }
+}
+
 .effect-category-header {
-    opacity: 1;
-    color: #6F7074;
     font-weight: 700;
     padding-left: 2.5px;
     padding: 15px 0 5px 15.5px;
@@ -8,10 +47,9 @@
 }
 
 .effect-category-wrapper {
-    color: whitesmoke;
     text-transform: capitalize;
     font-weight: 300;
-    display:flex;
+    display: flex;
     flex-direction: row;
     align-items: center;
     margin: 0 5px;
@@ -30,18 +68,14 @@
     }
 
     &:hover {
-        background: $left-nav-link-text-hover-color;
+        background: $effect-category-hover-bg;
         text-decoration: none;
     }
 
     &.selected {
-        color: white;
         font-weight: 400;
-        background: $nav-link-bg;
-        &.dark {
-            background: #222326;
-        }
-        & .category-bar {
+        background: $effect-category-selected-bg;
+        &.category-bar {
             background: $highlight-color;
         }
     }
@@ -49,7 +83,7 @@
 
 .effect-def-wrapper {
     border-radius: 8px;
-    background: #43454A;
+    background: $effect-def-bg;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -58,7 +92,7 @@
     padding: 6px 0;
     border: solid 2px transparent;
     &:hover {
-        background: rgb(81, 83, 87);
+        background: $effect-def-hover-bg;
         cursor: pointer;
     }
     .effect-icon-wrapper {
@@ -67,13 +101,12 @@
         display: flex;
         justify-content: center;
         margin-right: 4px;
-        color: whitesmoke;
         font-size: 18px;
     }
     .effect-selected-wrapper {
         width: 60px;
         flex-shrink: 0;
-        color: #2df92d;
+        color: $effect-def-selected-check;
         font-size: 24px;
         display: flex;
         align-items: center;
@@ -81,7 +114,7 @@
         opacity: 0;
     }
     &.selected {
-        border: solid 2px rgb(118, 122, 129);
+        border: solid 2px $effect-def-selected-border;
         .effect-selected-wrapper {
             opacity: 1;
         }
@@ -107,6 +140,5 @@
     background-image: none;
     border: 1px solid transparent;
     border-radius: 8px;
-    background: #68696C;
+    background: $default-btn-bg-color;
 }
-

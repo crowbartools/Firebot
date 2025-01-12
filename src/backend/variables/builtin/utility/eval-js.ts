@@ -27,7 +27,7 @@ const model : ReplaceVariable = {
     },
     evaluator: async (trigger: Trigger, code: string, ...args: unknown[]) => {
         try {
-            return await evalSandboxedJs(code, args, trigger.metadata);
+            return await evalSandboxedJs(code, args, trigger);
 
         } catch (err) {
             err.javascript = code;

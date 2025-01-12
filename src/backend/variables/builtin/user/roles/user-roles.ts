@@ -40,7 +40,7 @@ const model : ReplaceVariable = {
             }
         ],
         categories: [VariableCategory.COMMON, VariableCategory.USER],
-        possibleDataOutput: [OutputDataType.ALL]
+        possibleDataOutput: [OutputDataType.ARRAY]
     },
     evaluator: async (trigger, username: null | string, roleType) : Promise<unknown[]> => {
         if (username == null && roleType == null) {

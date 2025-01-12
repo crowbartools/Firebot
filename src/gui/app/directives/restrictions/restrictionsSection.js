@@ -1,7 +1,7 @@
 "use strict";
 (function() {
 
-    const uuidv1 = require("uuid/v1");
+    const { v4: uuid } = require("uuid");
 
     angular
         .module('firebotApp')
@@ -59,7 +59,14 @@
                                 <i class="far fa-plus"></i>
                         </div>
                     </div>
+
                     <div class="ml-3.5" ng-show="$ctrl.restrictionData.restrictions.length > 0">
+                        <firebot-checkbox ng-show="$ctrl.trigger.name !== 'channel_reward'"
+                            label="Send as reply"
+                            tooltip="Replying only works within a Command or Chat Message event"
+                            model="$ctrl.restrictionData.sendAsReply"
+                            style="margin: 0px 15px 0px 0px"
+                        />
                         <label class="control-fb control--checkbox"> Send chat message when restrictions not met
                             <input type="checkbox" ng-model="$ctrl.restrictionData.sendFailMessage">
                             <div class="control__indicator"></div>
@@ -91,7 +98,7 @@
                 const $ctrl = this;
 
                 const restrictionDefinitions = backendCommunicator.fireEventSync("getRestrictions")
-                    .map(r => {
+                    .map((r) => {
                         return {
                             definition: r.definition,
                             optionsTemplate: r.optionsTemplate,
@@ -127,7 +134,8 @@
                             mode: "all",
                             sendFailMessage: true,
                             useCustomFailMessage: false,
-                            failMessage: DEFAULT_FAIL_MESSAGE
+                            failMessage: DEFAULT_FAIL_MESSAGE,
+                            sendAsReply: false
                         };
                     }
 
@@ -145,6 +153,10 @@
 
                     if ($ctrl.restrictionData.failMessage == null) {
                         $ctrl.restrictionData.failMessage = DEFAULT_FAIL_MESSAGE;
+                    }
+
+                    if ($ctrl.restrictionData.sendAsReply == null) {
+                        $ctrl.restrictionData.sendAsReply = false;
                     }
 
                     updateCanAddMoreRestrictions();
@@ -165,7 +177,7 @@
 
                     const options = restrictionDefinitions
                         .filter(r => !r.definition.hidden)
-                        .map(r => {
+                        .map((r) => {
                             return {
                                 id: r.definition.id,
                                 name: r.definition.name,
@@ -191,7 +203,7 @@
                                 .filter(r => r.type !== selectedId);*/
 
                             $ctrl.restrictionData.restrictions.push({
-                                id: uuidv1(),
+                                id: uuid(),
                                 type: selectedId
                             });
 

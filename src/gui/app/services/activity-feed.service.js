@@ -23,7 +23,7 @@
                     service.allActivities.length = 500;
                 }
 
-                const allowedEvents = settingsService.getAllowedActivityEvents();
+                const allowedEvents = settingsService.getSetting("AllowedActivityEvents");
                 if (!activity.event.forceAllow && !allowedEvents.includes(`${activity.source.id}:${activity.event.id}`)) {
                     return;
                 }
@@ -83,7 +83,7 @@
                     component: "editActivityEventsModal",
                     size: "sm",
                     closeCallback: () => {
-                        const allowedEvents = settingsService.getAllowedActivityEvents();
+                        const allowedEvents = settingsService.getSetting("AllowedActivityEvents");
                         service.activities = service.allActivities
                             .filter(a => allowedEvents.includes(`${a.source.id}:${a.event.id}`));
                     }

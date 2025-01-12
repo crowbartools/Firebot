@@ -1,5 +1,5 @@
 import { ipcMain } from "electron";
-import uuidv1 from "uuid/v1";
+import { v4 as uuid } from "uuid";
 
 import { FrontendCommunicatorModule } from "../../types/script-modules";
 
@@ -44,7 +44,7 @@ class FrontendCommunicator implements FrontendCommunicatorModule {
         callback: (...args: ExpectedArgs) => ReturnPayload,
         async = false
     ): string {
-        const id = uuidv1(),
+        const id = uuid(),
             event = {
                 id: id,
                 callback: callback,
