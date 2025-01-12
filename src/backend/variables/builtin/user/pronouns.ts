@@ -1,15 +1,14 @@
 import { app } from "electron";
-import axios from "axios";
 
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 import logger from "../../../logwrapper";
 
-const callUrl = async (url: string) => {
+const callUrl = async (url: string): Promise<Response> => {
     try {
         const appVersion = app.getVersion();
-        const response = await axios.get(url, {
+        const response = await fetch(url, {
             headers: {
                 "User-Agent": `Firebot/${appVersion}`
             }
@@ -62,8 +61,8 @@ const model : ReplaceVariable = {
             return fallback;
         }
         try {
-            const pronouns = (await callUrl('https://pronouns.alejo.io/api/pronouns')).data;
-            let userPronounData = (await callUrl(`https://pronouns.alejo.io/api/users/${username}`)).data[0];
+            const pronouns = await (await callUrl('https://pronouns.alejo.io/api/pronouns')).json();
+            let userPronounData = (await (await callUrl(`https://pronouns.alejo.io/api/users/${username}`)).json())[0];
 
             let pronounArray = [];
             if (userPronounData == null || userPronounData === undefined) {

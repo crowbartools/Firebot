@@ -1,5 +1,4 @@
 import { JsonDB } from "node-json-db";
-import axios from "axios";
 import { v4 as uuid } from "uuid";
 
 import logger from "../logwrapper";
@@ -167,8 +166,8 @@ class NotificationManager {
 
     private async loadExternalNotifications(): Promise<void> {
         try {
-            const response = await axios.get<ExternalNotification[]>(EXTERNAL_NOTIFICATION_SOURCE_URL);
-            const externalNotifications = response.data;
+            const response = await fetch(EXTERNAL_NOTIFICATION_SOURCE_URL);
+            const externalNotifications = await response.json() as ExternalNotification[];
 
             const knownExtNotis = this.getKnownExternalNotifications();
 
