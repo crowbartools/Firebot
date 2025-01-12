@@ -2,7 +2,6 @@ import { EffectTrigger } from "../../../../shared/effect-constants";
 import effectRunner from "../../../../backend/common/effect-runner";
 import presetEffectListManager from "../../../../backend/effects/preset-lists/preset-effect-list-manager";
 import { Request, Response } from "express";
-import { ParsedQs } from "qs";
 const effectsManager = require("../../../../backend/effects/effectManager");
 
 export function getEffects (req: Request, res: Response) {
@@ -106,7 +105,7 @@ export async function runPresetEffectList(req: Request, res: Response, waitForCo
 
     const body = req.body || {};
     const query = req.query || {};
-    let args: ParsedQs, username: string | ParsedQs | string[] | ParsedQs[];
+    let args, username;
 
     // GET
     if (req.method === "GET") {
