@@ -12,8 +12,8 @@ export async function getAllUsers (req: Request, res: Response) {
 }
 
 export async function getUserMetadata(req: Request, res: Response): Promise<Response> {
-    const { userId } = req.params;
-    const { username } = req.query;
+    const userId = req.params.userId;
+    const username = req.query.username;
 
     if (userId == null) {
         return res.status(400).send({
@@ -22,8 +22,7 @@ export async function getUserMetadata(req: Request, res: Response): Promise<Resp
         });
     }
 
-    //left as any because FirebotViewer has no customRoles object
-    let metadata;
+    let metadata: FirebotViewer;
     if (username === "true") {
         metadata = await viewerDatabase.getViewerByUsername(userId);
     } else {
@@ -38,7 +37,7 @@ export async function getUserMetadata(req: Request, res: Response): Promise<Resp
     }
 
     const customRoles = customRolesManager.getAllCustomRolesForViewer(metadata._id) ?? [];
-    metadata.customRoles = customRoles;
+    metadata["customRoles"] = customRoles;
 
     return res.json(metadata);
 }
@@ -128,7 +127,6 @@ export async function removeUserMetadataKey(req: Request, res: Response): Promis
 
 export async function getUserCurrency(req: Request, res: Response) {
     const { userId, currencyId } = req.params;
-
     const { username } = req.query;
 
     if (userId == null) {
