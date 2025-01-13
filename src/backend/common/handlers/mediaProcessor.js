@@ -5,6 +5,7 @@ const { ResourceTokenManager } = require("../../resource-token-manager");
 const util = require("../../utility");
 const logger = require("../../logwrapper");
 const webServer = require("../../../server/http-server-manager");
+const frontendCommunicator = require("../frontend-communicator");
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -60,7 +61,7 @@ function soundProcessor(effect) {
     }
 
     // Send data back to media.js in the gui.
-    renderWindow.webContents.send("playsound", data);
+    frontendCommunicator.send("playsound", data);
 }
 
 // Image Processor

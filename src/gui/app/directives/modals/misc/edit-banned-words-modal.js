@@ -1,11 +1,6 @@
 "use strict";
 
-// Basic template for a modal component, copy this and rename to build a modal.
-
 (function() {
-
-    const fs = require("fs");
-
     angular.module("firebotApp")
         .component("editBannedWordsModal", {
             template: `
@@ -88,7 +83,7 @@
                 $ctrl.regexHeaders = [
                     {
                         name: "REGEX",
-                        icon: "fa-quote-right",
+                        icon: "fa-code",
                         dataField: "text",
                         headerStyles: {
                             'width': '375px'
@@ -167,7 +162,7 @@
                             saveText: "Add",
                             inputPlaceholder: "Enter regex",
                             validationFn: (value) => {
-                                return new Promise(resolve => {
+                                return new Promise((resolve) => {
                                     if (value == null || value.trim().length < 1) {
                                         return resolve({
                                             success: false,
@@ -207,7 +202,7 @@
                             saveText: "Add",
                             inputPlaceholder: "Enter banned word or phrase",
                             validationFn: (value) => {
-                                return new Promise(resolve => {
+                                return new Promise((resolve) => {
                                     if (value == null || value.trim().length < 1 || value.trim().length > 359) {
                                         resolve(false);
                                     } else if (chatModerationService.chatModerationData.bannedWords
@@ -231,30 +226,14 @@
                         component: "txtFileWordImportModal",
                         size: 'sm',
                         resolveObj: {},
-                        closeCallback: data => {
-                            const filePath = data.filePath,
-                                delimiter = data.delimiter;
+                        closeCallback: async (data) => {
+                            const success = await chatModerationService.importBannedWords(data);
 
-                            let contents;
-                            try {
-                                contents = fs.readFileSync(filePath, { encoding: "utf8" });
-                            } catch (err) {
-                                logger.error("error reading file for banned words", err);
-                                return;
+                            if (!success) {
+                                utilityService.showErrorModal("There was an error importing the banned word list. Please check the log for more info.");
                             }
 
-                            let words = [];
-                            if (delimiter === 'newline') {
-                                words = contents.replace(/\r\n/g, "\n").split("\n");
-                            } else if (delimiter === "comma") {
-                                words = contents.split(",");
-                            } else if (delimiter === "space") {
-                                words = contents.split(" ");
-                            }
-
-                            if (words != null) {
-                                chatModerationService.addBannedWords(words);
-                            }
+                            return success;
                         }
                     });
                 };
@@ -265,7 +244,7 @@
                         question: `Are you sure you want to delete all banned words and phrases?`,
                         confirmLabel: "Delete",
                         confirmBtnType: "btn-danger"
-                    }).then(confirmed => {
+                    }).then((confirmed) => {
                         if (confirmed) {
                             chatModerationService.removeAllBannedWords();
                         }
@@ -278,7 +257,7 @@
                         question: `Are you sure you want to delete all regular expressions?`,
                         confirmLabel: "Delete",
                         confirmBtnType: "btn-danger"
-                    }).then(confirmed => {
+                    }).then((confirmed) => {
                         if (confirmed) {
                             chatModerationService.removeAllBannedRegularExpressions();
                         }

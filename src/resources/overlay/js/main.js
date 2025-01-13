@@ -116,7 +116,6 @@ function overlaySocketConnect(){
 		console.error("Woah, something broke. Abandon ship!");
 	}
 }
-overlaySocketConnect();
 
 function sendWebsocketEvent(name, data) {
 	ws.send(JSON.stringify({
@@ -141,4 +140,7 @@ function errorHandle(ws){
   }
 }
 
-loadFonts();
+document.addEventListener("DOMContentLoaded", () => {
+    loadFonts();
+    overlaySocketConnect();
+});

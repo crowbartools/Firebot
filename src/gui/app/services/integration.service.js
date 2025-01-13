@@ -6,7 +6,6 @@
         .factory("integrationService", function(
             $rootScope,
             settingsService,
-            listenerService,
             backendCommunicator,
             utilityService
         ) {
@@ -81,20 +80,11 @@
                 shouldConnect
             ) {
                 return new Promise((resolve) => {
-                    const listenerId = listenerService.registerListener(
-                        {
-                            type: listenerService.ListenerType.INTEGRATION_CONNECTION_UPDATE
-                        },
-                        (data) => {
-                            if (data.id === integrationId) {
-                                listenerService.unregisterListener(
-                                    listenerService.ListenerType.INTEGRATION_CONNECTION_UPDATE,
-                                    listenerId
-                                );
-                                resolve(data.connected);
-                            }
+                    backendCommunicator.on("integrationConnectionUpdate", (data) => {
+                        if (data.id === integrationId) {
+                            resolve(data.connected);
                         }
-                    );
+                    });
 
                     if (shouldConnect) {
                         service.connectIntegration(integrationId);
@@ -175,14 +165,9 @@
                 });
             };
 
-            listenerService.registerListener(
-                {
-                    type: listenerService.ListenerType.INTEGRATIONS_UPDATED
-                },
-                () => {
-                    service.updateIntegrations();
-                }
-            );
+            backendCommunicator.on("integrationsUpdated", () => {
+                service.updateIntegrations();
+            });
 
             backendCommunicator.on("integrationLinked", (integration) => {
                 if (integration == null || !integration.connectionToggle) {
@@ -205,26 +190,21 @@
                 settingsService.saveSetting("SidebarControlledServices", sidebarControlledServices);
             });
 
-            listenerService.registerListener(
-                {
-                    type: listenerService.ListenerType.INTEGRATION_CONNECTION_UPDATE
-                },
-                (data) => {
-                    const integration = integrations.find(i => i.id === data.id);
-                    if (integration != null) {
-                        integration.connected = data.connected;
-                    }
-
-                    integrationsWaitingForConnectionUpdate = integrationsWaitingForConnectionUpdate.filter(
-                        id => id !== data.id
-                    );
-
-                    $rootScope.$broadcast("connection:update", {
-                        type: "integrations",
-                        status: ""
-                    });
+            backendCommunicator.on("integrationConnectionUpdate", (data) => {
+                const integration = integrations.find(i => i.id === data.id);
+                if (integration != null) {
+                    integration.connected = data.connected;
                 }
-            );
+
+                integrationsWaitingForConnectionUpdate = integrationsWaitingForConnectionUpdate.filter(
+                    id => id !== data.id
+                );
+
+                $rootScope.$broadcast("connection:update", {
+                    type: "integrations",
+                    status: ""
+                });
+            });
 
             return service;
         });

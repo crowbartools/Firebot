@@ -2,9 +2,9 @@
 const electron = require("electron");
 const { app, ipcMain, dialog, shell } = electron;
 const logger = require("../logwrapper");
+const { restartApp } = require("../app-management/electron/app-helpers");
 
 exports.setupCommonListeners = () => {
-
     const frontendCommunicator = require("./frontend-communicator");
     const profileManager = require("./profile-manager");
     const { SettingsManager } = require("./settings-manager");
@@ -70,22 +70,13 @@ exports.setupCommonListeners = () => {
         eventsManager.triggerEvent("firebot", "category-changed", {category: category});
     });
 
-    // Front old main
+    frontendCommunicator.on("restartApp", () => restartApp());
 
-    // restarts the app
-    ipcMain.on("restartApp", () => {
-        const chatModerationManager = require("../chat/moderation/chat-moderation-manager");
-        chatModerationManager.stopService();
-        setTimeout(() => {
-            app.relaunch({ args: process.argv.slice(1).concat(["--relaunch"]) });
-            app.exit(0);
-        }, 100);
-    });
-
-    // Opens the firebot backup folder
-    ipcMain.on("open-backup-folder", () => {
+    frontendCommunicator.on("open-backup-folder", () => {
         shell.openPath(BackupManager.backupFolderPath);
     });
+
+    // Front old main
 
     // When we get an event from the renderer to create a new profile.
     ipcMain.on("createProfile", (_, profileName) => {
@@ -104,23 +95,6 @@ exports.setupCommonListeners = () => {
 
     ipcMain.on("renameProfile", function(_, newProfileId) {
         profileManager.renameProfile(newProfileId);
-    });
-
-    // Get Any kind of file Path
-    // This listens for an event from the front end.
-    ipcMain.on("getAnyFilePath", (event, data) => {
-        const uuid = data.uuid,
-            options = data.options || {};
-
-        const path = dialog.showOpenDialogSync({
-            title: options.title ? options.title : undefined,
-            buttonLabel: options.buttonLabel ? options.buttonLabel : undefined,
-            properties: options.directoryOnly ? ["openDirectory"] : ["openFile"],
-            filters: options.filters ? options.filters : undefined,
-            defaultPath: data.currentPath ? data.currentPath : undefined
-        });
-
-        event.sender.send("gotAnyFilePath", { path: path, id: uuid });
     });
 
     // Change profile when we get event from renderer
@@ -160,7 +134,7 @@ exports.setupCommonListeners = () => {
         updater.on("update-downloaded", () => {
             logger.info("Updated downloaded.");
             //let the front end know and wait a few secs.
-            renderWindow.webContents.send("updateDownloaded");
+            frontendCommunicator.send("updateDownloaded");
 
             // Prepare for update install on next run
             SettingsManager.saveSetting("JustUpdated", true);
@@ -169,7 +143,7 @@ exports.setupCommonListeners = () => {
 
     ipcMain.on("installUpdate", () => {
         logger.info("Installing update...");
-        renderWindow.webContents.send("installingUpdate");
+        frontendCommunicator.send("installingUpdate");
 
         const GhReleases = require("electron-gh-releases");
 

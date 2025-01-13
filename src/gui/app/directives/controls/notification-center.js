@@ -119,27 +119,7 @@
                     }
                 };
 
-                const getIconClass = (type) => {
-                    const NotificationType = notificationService.NotificationType;
-                    let iconClass = "";
-                    switch (type) {
-                        case NotificationType.UPDATE:
-                            iconClass = "download";
-                            break;
-                        case NotificationType.ALERT:
-                            iconClass = "exclamation-circle";
-                            break;
-                        case NotificationType.TIP:
-                            iconClass = "question-circle";
-                            break;
-                        case NotificationType.INFO:
-                        default:
-                            iconClass = "info-circle";
-                    }
-                    return `fa-${iconClass}`;
-                };
-
-                $scope.getIconClass = getIconClass;
+                $scope.getIconClass = notificationService.getIconClass;
 
                 ctrl.openNotification = (notification, index) => {
                     notificationService.markNotificationAsRead(notification.id);
@@ -149,7 +129,7 @@
                         resolveObj: {
                             notification: () => notification,
                             index: () => index,
-                            iconClass: () => getIconClass(notification.type)
+                            iconClass: () => notificationService.getIconClass(notification.type)
                         },
                         controllerFunc: (
                             $scope,

@@ -69,7 +69,7 @@ exports.whenReady = async () => {
 
     windowManagement.updateSplashScreenStatus("Loading currencies...");
     const currencyAccess = require("../../../currency/currency-access").default;
-    currencyAccess.refreshCurrencyCache();
+    currencyAccess.loadCurrencies();
 
     windowManagement.updateSplashScreenStatus("Loading ranks...");
     const viewerRanksManager = require("../../../ranks/rank-manager");
@@ -159,12 +159,12 @@ exports.whenReady = async () => {
     startupScriptsManager.loadStartupConfig();
 
     windowManagement.updateSplashScreenStatus("Starting chat moderation manager...");
-    const chatModerationManager = require("../../../chat/moderation/chat-moderation-manager");
-    chatModerationManager.load();
+    const { ChatModerationManager } = require("../../../chat/moderation/chat-moderation-manager");
+    ChatModerationManager.load();
 
     windowManagement.updateSplashScreenStatus("Loading counters...");
-    const countersManager = require("../../../counters/counter-manager");
-    countersManager.loadItems();
+    const { CounterManager } = require("../../../counters/counter-manager");
+    CounterManager.loadItems();
 
     windowManagement.updateSplashScreenStatus("Loading games...");
     const gamesManager = require("../../../games/game-manager");
@@ -180,6 +180,10 @@ exports.whenReady = async () => {
         customVariableManager.loadVariablesFromFile();
     }
 
+    windowManagement.updateSplashScreenStatus("Loading sort tags...");
+    const { SortTagManager } = require("../../../sort-tags/sort-tag-manager");
+    SortTagManager.loadSortTags();
+
     // get importer in memory
     windowManagement.updateSplashScreenStatus("Loading importers...");
 
@@ -193,8 +197,8 @@ exports.whenReady = async () => {
     setupCommonListeners();
 
     windowManagement.updateSplashScreenStatus("Loading hotkeys...");
-    const hotkeyManager = require("../../../hotkeys/hotkey-manager");
-    hotkeyManager.refreshHotkeyCache();
+    const { HotkeyManager } = require("../../../hotkeys/hotkey-manager");
+    HotkeyManager.loadHotkeys();
 
     windowManagement.updateSplashScreenStatus("Starting currency timer...");
     const currencyManager = require("../../../currency/currency-manager");
@@ -257,8 +261,7 @@ exports.whenReady = async () => {
 
     windowManagement.updateSplashScreenStatus("Starting notification manager...");
     const notificationManager = require("../../../notifications/notification-manager").default;
-    await notificationManager.loadAllNotifications();
-    notificationManager.startExternalNotificationCheck();
+    notificationManager.loadNotificationCache();
 
     // get ui extension manager in memory
     require("../../../ui-extensions/ui-extension-manager");

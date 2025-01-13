@@ -43,10 +43,7 @@ const celebration = {
     </eos-container>
 
     <eos-container header="Duration" pad-top="true">
-        <div class="input-group">
-            <span class="input-group-addon" id="celebration-length-effect-type">Seconds</span>
-            <input type="text" ng-model="effect.length" class="form-control" id="celebration-amount-setting" aria-describedby="celebration-length-effect-type" replace-variables="number">
-        </div>
+        <firebot-input input-title="Seconds" data-type="number" model="effect.length" placeholder-text="5" menu-position="under"/>
     </eos-container>
 
     <eos-overlay-instance effect="effect" pad-top="true"></eos-overlay-instance>

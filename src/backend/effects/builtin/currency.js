@@ -188,7 +188,7 @@ const currency = {
         $scope.currencies = currencyService.getCurrencies();
 
         $scope.getCurrencyName = function(currencyId) {
-            const currency = currencyService.getCurrencies(currencyId);
+            const currency = currencyService.getCurrency(currencyId);
             return currency.name;
         };
 
