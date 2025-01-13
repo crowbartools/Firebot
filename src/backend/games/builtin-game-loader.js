@@ -4,12 +4,12 @@ const gameManager = require("./game-manager");
 
 exports.loadGames = () => {
     [
-        'bid/bid',
-        'heist/heist',
-        'slots/slots',
-        'trivia/trivia'
-    ].forEach(filename => {
-        const definition = require(`./builtin/${filename}.js`);
+        'bid',
+        'heist',
+        'slots',
+        'trivia'
+    ].forEach((gameName) => {
+        const definition = require(`./builtin/${gameName}/${gameName}`).default;
         gameManager.registerGame(definition);
     });
 };

@@ -1,26 +1,26 @@
-"use strict";
-
-const util = require("../../../utility");
-const twitchChat = require("../../../chat/twitch-chat");
-const commandManager = require("../../../chat/commands/command-manager");
-const gameManager = require("../../game-manager");
-const currencyAccess = require("../../../currency/currency-access").default;
-const currencyManager = require("../../../currency/currency-manager");
-const customRolesManager = require("../../../roles/custom-roles-manager");
-const teamRolesManager = require("../../../roles/team-roles-manager");
-const twitchRolesManager = require("../../../../shared/twitch-roles");
-const slotMachine = require("./slot-machine");
-const logger = require("../../../logwrapper");
-const moment = require("moment");
-const NodeCache = require("node-cache");
-const twitchApi = require("../../../twitch-api/api");
+import util from "../../../utility";
+import twitchChat from "../../../chat/twitch-chat";
+import commandManager from "../../../chat/commands/command-manager";
+import gameManager from "../../game-manager";
+import currencyAccess from "../../../currency/currency-access";
+import currencyManager from "../../../currency/currency-manager";
+import customRolesManager from "../../../roles/custom-roles-manager";
+import teamRolesManager from "../../../roles/team-roles-manager";
+import twitchRolesManager from "../../../../shared/twitch-roles";
+import { SystemCommand } from "../../../../types/commands";
+import { GameSettings } from "../../../../types/game-manager";
+import slotMachine from "./slot-machine";
+import { SlotSettings } from "./slot-settings";
+import logger from "../../../logwrapper";
+import moment from "moment";
+import NodeCache from "node-cache";
 
 const activeSpinners = new NodeCache({checkperiod: 2});
 const cooldownCache = new NodeCache({checkperiod: 5});
 
 const SPIN_COMMAND_ID = "firebot:spin";
 
-const spinCommand = {
+const spinCommand: SystemCommand = {
     definition: {
         id: SPIN_COMMAND_ID,
         name: "Spin (Slots)",
@@ -42,20 +42,18 @@ const spinCommand = {
         ]
     },
     onTriggerEvent: async (event) => {
+        const { chatMessage, userCommand } = event;
 
-        const { userCommand } = event;
-
-        const slotsSettings = gameManager.getGameSettings("firebot-slots");
+        const slotsSettings = gameManager.getGameSettings("firebot-slots") as GameSettings<SlotSettings>;
         const chatter = slotsSettings.settings.chatSettings.chatter;
-        const username = userCommand.commandSender;
-        const user = await twitchApi.users.getUserByName(username);
-        if (user == null) {
-            logger.warn(`Could not process spin command for ${username}. User does not exist.`);
-            return;
-        }
+        const username = chatMessage.username;
+        const user = {
+            id: chatMessage.userId,
+            displayName: chatMessage.userDisplayName ?? username
+        };
 
         // parse the wager amount
-        let wagerAmount;
+        let wagerAmount: number;
         if (event.userCommand.args.length < 1) {
             const defaultWager = slotsSettings.settings.currencySettings.defaultWager;
             if (defaultWager == null || defaultWager < 1) {
@@ -99,7 +97,8 @@ const spinCommand = {
             if (slotsSettings.settings.generalMessages.onCooldown) {
                 const timeRemainingDisplay = util.secondsForHumans(Math.abs(moment().diff(cooldownExpireTime, 'seconds')));
                 const cooldownMsg = slotsSettings.settings.generalMessages.onCooldown
-                    .replace("{username}", user.displayName).replace("{timeRemaining}", timeRemainingDisplay);
+                    .replace("{username}", user.displayName)
+                    .replace("{timeRemaining}", timeRemainingDisplay);
 
                 await twitchChat.sendChatMessage(cooldownMsg, null, chatter);
             }
@@ -123,7 +122,8 @@ const spinCommand = {
             if (wagerAmount < minWager) {
                 if (slotsSettings.settings.generalMessages.minWager) {
                     const minWagerMsg = slotsSettings.settings.generalMessages.minWager
-                        .replace("{username}", user.displayName).replace("{minWager}", minWager);
+                        .replace("{username}", user.displayName)
+                        .replace("{minWager}", `${minWager}`);
 
                     await twitchChat.sendChatMessage(minWagerMsg, null, chatter);
                 }
@@ -136,7 +136,8 @@ const spinCommand = {
             if (wagerAmount > maxWager) {
                 if (slotsSettings.settings.generalMessages.maxWager) {
                     const maxWagerMsg = slotsSettings.settings.generalMessages.maxWager
-                        .replace("{username}", user.displayName).replace("{maxWager}", maxWager);
+                        .replace("{username}", user.displayName)
+                        .replace("{maxWager}", `${maxWager}`);
 
                     await twitchChat.sendChatMessage(maxWagerMsg, null, chatter);
                 }
@@ -146,7 +147,7 @@ const spinCommand = {
         }
 
         const currencyId = slotsSettings.settings.currencySettings.currencyId;
-        let userBalance;
+        let userBalance: number;
         try {
             userBalance = await currencyManager.getViewerCurrencyAmount(username, currencyId);
         } catch (error) {
@@ -228,14 +229,13 @@ const spinCommand = {
 
             const spinSuccessfulMsg = slotsSettings.settings.generalMessages.spinSuccessful
                 .replace("{username}", user.displayName)
-                .replace("{successfulRolls}", successfulRolls)
+                .replace("{successfulRolls}", `${successfulRolls}`)
                 .replace("{winningsAmount}", util.commafy(winnings))
                 .replace("{currencyName}", currency.name);
             await twitchChat.sendChatMessage(spinSuccessfulMsg, null, chatter);
         }
 
         activeSpinners.del(username);
-
     }
 };
 
@@ -246,7 +246,9 @@ function registerSpinCommand() {
 }
 
 function unregisterSpinCommand() {
-    commandManager.unregisterSystemCommand(SPIN_COMMAND_ID);
+    if (commandManager.hasSystemCommand(SPIN_COMMAND_ID)) {
+        commandManager.unregisterSystemCommand(SPIN_COMMAND_ID);
+    }
 }
 
 function purgeCaches() {
@@ -254,6 +256,8 @@ function purgeCaches() {
     activeSpinners.flushAll();
 }
 
-exports.purgeCaches = purgeCaches;
-exports.registerSpinCommand = registerSpinCommand;
-exports.unregisterSpinCommand = unregisterSpinCommand;
+export default {
+    purgeCaches,
+    registerSpinCommand,
+    unregisterSpinCommand
+};

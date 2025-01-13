@@ -1,11 +1,8 @@
-"use strict";
+import { FirebotGame } from "../../../../types/game-manager";
+import heistCommand from "./heist-command";
+import { HeistSettings } from "./heist-settings";
 
-const heistCommand = require("./heist-command");
-
-/**
- * @type {import('../../game-manager').FirebotGame}
- */
-module.exports = {
+const heistGame: FirebotGame<HeistSettings> = {
     id: "firebot-heist",
     name: "Heist",
     subtitle: "Score big as a team",
@@ -64,7 +61,7 @@ module.exports = {
             settings: {
                 successChances: {
                     type: "role-percentages",
-                    description: "The chances the viewer has of being surviving a heist",
+                    description: "The chances the viewer has of surviving a heist",
                     tip: "The success chance for the first user role a viewer has in this list is used, so ordering is important!"
                 }
             }
@@ -395,3 +392,5 @@ module.exports = {
         heistCommand.clearCooldown();
     }
 };
+
+export default heistGame;

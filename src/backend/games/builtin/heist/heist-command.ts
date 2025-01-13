@@ -1,24 +1,22 @@
-"use strict";
-
-
-const util = require("../../../utility");
-const twitchChat = require("../../../chat/twitch-chat");
-const twitchApi = require("../../../twitch-api/api");
-const commandManager = require("../../../chat/commands/command-manager");
-const gameManager = require("../../game-manager");
-const currencyAccess = require("../../../currency/currency-access").default;
-const currencyManager = require("../../../currency/currency-manager");
-const customRolesManager = require("../../../roles/custom-roles-manager");
-const teamRolesManager = require("../../../roles/team-roles-manager");
-const twitchRolesManager = require("../../../../shared/twitch-roles");
-const moment = require("moment");
-
-const heistRunner = require("./heist-runner");
-const logger = require("../../../logwrapper");
+import util from "../../../utility";
+import twitchChat from "../../../chat/twitch-chat";
+import twitchApi from "../../../twitch-api/api";
+import commandManager from "../../../chat/commands/command-manager";
+import gameManager from "../../game-manager";
+import currencyAccess from "../../../currency/currency-access";
+import currencyManager from "../../../currency/currency-manager";
+import customRolesManager from "../../../roles/custom-roles-manager";
+import teamRolesManager from "../../../roles/team-roles-manager";
+import twitchRolesManager from "../../../../shared/twitch-roles";
+import { SystemCommand } from "../../../../types/commands";
+import { GameSettings } from "../../../../types/game-manager";
+import heistRunner from "./heist-runner";
+import { HeistSettings } from "./heist-settings";
+import moment from "moment";
 
 const HEIST_COMMAND_ID = "firebot:heist";
 
-const heistCommand = {
+const heistCommand: SystemCommand = {
     definition: {
         id: HEIST_COMMAND_ID,
         name: "Heist",
@@ -41,26 +39,25 @@ const heistCommand = {
         ]
     },
     onTriggerEvent: async (event) => {
-
-        const { chatEvent, userCommand } = event;
+        const { chatMessage, userCommand } = event;
 
         const username = userCommand.commandSender;
-        const user = await twitchApi.users.getUserByName(username);
-        if (user == null) {
-            logger.warn(`Could not process heist command for ${username}. User does not exist.`);
-            return;
-        }
-
-        const heistSettings = gameManager.getGameSettings("firebot-heist");
+        const user = {
+            displayName: chatMessage.userDisplayName ?? userCommand.commandSender,
+            id: chatMessage.userId
+        };
+        const heistSettings = gameManager.getGameSettings("firebot-heist") as GameSettings<HeistSettings>;
+        const { currencySettings } = heistSettings.settings;
         const chatter = heistSettings.settings.chatSettings.chatter;
 
-        const currencyId = heistSettings.settings.currencySettings.currencyId;
+        const currencyId = currencySettings.currencyId;
         const currency = currencyAccess.getCurrencyById(currencyId);
 
         // make sure the currency still exists
         if (currency == null) {
             await twitchChat.sendChatMessage("Unable to start a Heist game as the selected currency appears to not exist anymore.", null, chatter);
-            await twitchApi.chat.deleteChatMessage(chatEvent.id);
+            await twitchApi.chat.deleteChatMessage(chatMessage.id);
+            return;
         }
 
         // see if the heist is on cooldown before doing anything else
@@ -89,10 +86,10 @@ const heistCommand = {
         }
 
         // parse the wager amount
-        let wagerAmount;
+        let wagerAmount: number = undefined;
         if (event.userCommand.args.length < 1) {
-            const defaultWager = heistSettings.settings.currencySettings.defaultWager;
-            if ((defaultWager == null || defaultWager < 1)) {
+            const { defaultWager } = currencySettings;
+            if (defaultWager == null || defaultWager < 1) {
                 if (heistSettings.settings.entryMessages.noWagerAmount) {
                     const noWagerAmountMsg = heistSettings.settings.entryMessages.noWagerAmount
                         .replace("{user}", user.displayName);
@@ -106,7 +103,9 @@ const heistCommand = {
         } else if (event.userCommand.subcommandId === "wagerAmount") {
             const triggeredArg = userCommand.args[0];
             wagerAmount = parseInt(triggeredArg);
-        } else {
+        }
+
+        if (wagerAmount == null || Number.isNaN(wagerAmount) || !Number.isFinite(wagerAmount) || wagerAmount < 0) {
             if (heistSettings.settings.entryMessages.invalidWagerAmount) {
                 const invalidWagerAmountMsg = heistSettings.settings.entryMessages.invalidWagerAmount
                     .replace("{user}", user.displayName);
@@ -117,36 +116,37 @@ const heistCommand = {
             return;
         }
 
-        wagerAmount = Math.floor(wagerAmount || 0);
+        wagerAmount = Math.floor(wagerAmount);
 
-        // make sure wager doesnt violate min or max values
-        const minWager = heistSettings.settings.currencySettings.minWager || 1;
-        if (minWager != null && minWager > 0) {
-            if (wagerAmount < minWager) {
-                if (heistSettings.settings.entryMessages.wagerAmountTooLow) {
-                    const wagerAmountTooLowMsg = heistSettings.settings.entryMessages.wagerAmountTooLow
-                        .replace("{user}", user.displayName)
-                        .replace("{minWager}", minWager);
+        // make sure wager doesn't violate min or max values
+        const minWager = currencySettings.minWager && !Number.isNaN(currencySettings.minWager) && currencySettings.minWager > 0
+            ? currencySettings.minWager
+            : 1;
+        if (wagerAmount < minWager) {
+            if (heistSettings.settings.entryMessages.wagerAmountTooLow) {
+                const wagerAmountTooLowMsg = heistSettings.settings.entryMessages.wagerAmountTooLow
+                    .replace("{user}", user.displayName)
+                    .replace("{minWager}", `${minWager}`);
 
-                    await twitchChat.sendChatMessage(wagerAmountTooLowMsg, null, chatter);
-                }
-
-                return;
+                await twitchChat.sendChatMessage(wagerAmountTooLowMsg, null, chatter);
             }
+
+            return;
         }
-        const maxWager = heistSettings.settings.currencySettings.maxWager;
-        if (maxWager != null && maxWager > 0) {
-            if (wagerAmount > maxWager) {
-                if (heistSettings.settings.entryMessages.wagerAmountTooHigh) {
-                    const wagerAmountTooHighMsg = heistSettings.settings.entryMessages.wagerAmountTooHigh
-                        .replace("{user}", user.displayName)
-                        .replace("{maxWager}", maxWager);
+        const maxWager = currencySettings.maxWager && !Number.isNaN(currencySettings.maxWager) && currencySettings.maxWager > minWager
+            ? currencySettings.maxWager
+            : Number.MAX_SAFE_INTEGER;
+        const maxWagerText = maxWager !== Number.MAX_SAFE_INTEGER ? util.commafy(maxWager) : "unlimited";
+        if (wagerAmount > maxWager) {
+            if (heistSettings.settings.entryMessages.wagerAmountTooHigh) {
+                const wagerAmountTooHighMsg = heistSettings.settings.entryMessages.wagerAmountTooHigh
+                    .replace("{user}", user.displayName)
+                    .replace("{maxWager}", maxWagerText);
 
-                    await twitchChat.sendChatMessage(wagerAmountTooHighMsg, null, chatter);
-                }
-
-                return;
+                await twitchChat.sendChatMessage(wagerAmountTooHighMsg, null, chatter);
             }
+
+            return;
         }
 
         // check users balance
@@ -163,7 +163,7 @@ const heistCommand = {
         }
 
         // deduct wager from user balance
-        await currencyManager.adjustCurrencyForViewerById(user.id, currencyId, 0 - Math.abs(wagerAmount));
+        await currencyManager.adjustCurrencyForViewerById(user.id, currencyId, -wagerAmount);
 
         // get all user roles
         const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(user.id) || [];
@@ -179,11 +179,11 @@ const heistCommand = {
 
         // get the users success percentage
         let successChance = 50;
-        const successChancesSettings = heistSettings.settings.successChanceSettings.successChances;
-        if (successChancesSettings) {
-            successChance = successChancesSettings.basePercent;
+        const { successChances } = heistSettings.settings.successChanceSettings;
+        if (successChances) {
+            successChance = successChances.basePercent;
 
-            for (const role of successChancesSettings.roles) {
+            for (const role of successChances.roles) {
                 if (allRoles.some(r => r.id === role.roleId)) {
                     successChance = role.percent;
                     break;
@@ -207,18 +207,17 @@ const heistCommand = {
 
         // Ensure the game has been started and the lobby ready
         if (!heistRunner.lobbyOpen) {
-
             const startDelay = heistSettings.settings.generalSettings.startDelay || 1;
             heistRunner.triggerLobbyStart(startDelay);
 
-            const teamCreationMessage = heistSettings.settings.generalMessages.teamCreation
-                .replace("{user}", user.displayName)
-                .replace("{command}", userCommand.trigger)
-                .replace("{maxWager}", maxWager)
-                .replace("{minWager}", minWager)
-                .replace("{requiredUsers}", heistSettings.settings.generalSettings.minimumUsers);
+            if (heistSettings.settings.generalMessages.teamCreation) {
+                const teamCreationMessage = heistSettings.settings.generalMessages.teamCreation
+                    .replace("{user}", user.displayName)
+                    .replace("{command}", userCommand.trigger)
+                    .replace("{maxWager}", maxWagerText)
+                    .replace("{minWager}", util.commafy(minWager))
+                    .replace("{requiredUsers}", `${heistSettings.settings.generalSettings.minimumUsers ?? "1"}`);
 
-            if (teamCreationMessage) {
                 await twitchChat.sendChatMessage(teamCreationMessage, null, chatter);
             }
         }
@@ -232,12 +231,12 @@ const heistCommand = {
             winnings: Math.floor(wagerAmount * winningsMultiplier)
         });
 
-        const onJoinMessage = heistSettings.settings.entryMessages.onJoin
-            .replace("{user}", user.displayName)
-            .replace("{wager}", util.commafy(wagerAmount))
-            .replace("{currency}", currency.name);
+        if (heistSettings.settings.entryMessages.onJoin) {
+            const onJoinMessage = heistSettings.settings.entryMessages.onJoin
+                .replace("{user}", user.displayName)
+                .replace("{wager}", util.commafy(wagerAmount))
+                .replace("{currency}", currency.name);
 
-        if (onJoinMessage) {
             await twitchChat.sendChatMessage(onJoinMessage, null, chatter);
         }
     }
@@ -250,13 +249,17 @@ function registerHeistCommand() {
 }
 
 function unregisterHeistCommand() {
-    commandManager.unregisterSystemCommand(HEIST_COMMAND_ID);
+    if (commandManager.hasSystemCommand(HEIST_COMMAND_ID)) {
+        commandManager.unregisterSystemCommand(HEIST_COMMAND_ID);
+    }
 }
 
 function clearCooldown() {
     heistRunner.clearCooldowns();
 }
 
-exports.clearCooldown = clearCooldown;
-exports.registerHeistCommand = registerHeistCommand;
-exports.unregisterHeistCommand = unregisterHeistCommand;
+export default {
+    clearCooldown,
+    registerHeistCommand,
+    unregisterHeistCommand
+};

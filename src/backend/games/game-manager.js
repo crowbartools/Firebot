@@ -3,8 +3,6 @@
 const profileManager = require("../common/profile-manager");
 const frontendCommunicator = require("../common/frontend-communicator");
 
-const getGameDb = () => profileManager.getJsonDbInProfile("/games");
-
 /**
  * @typedef {"string" | "number" | "boolean" | "enum" | "filepath" | "currency-select" | "chatter-select" | "editable-list" | "role-percentages" | "role-numbers"} SettingType
  */
@@ -57,6 +55,10 @@ const getGameDb = () => profileManager.getJsonDbInProfile("/games");
   * @property {GameFn} onSettingsUpdate - Called whenever the settings from settingCategories are updated by the user.
   */
 
+/**
+ * @return {Object.<string, GameSettings>}
+ */
+const getGameDb = () => profileManager.getJsonDbInProfile("/games");
 
 /**
  * @type {Object.<string, GameSettings>}
@@ -96,6 +98,25 @@ function registerGame(game) {
     registeredGames.push(game);
 }
 
+/**
+ * @param {string} gameId
+ */
+function unregisterGame(gameId) {
+    const gameIdx = registeredGames.findIndex(g => g.id === gameId);
+    if (gameIdx >= 0) {
+        if (registeredGames[gameIdx].onUnload) {
+            const gameSettings = allGamesSettings[gameId];
+            gameSettings.active = false;
+            registeredGames[gameIdx].onUnload(gameSettings);
+        }
+        registeredGames.splice(gameIdx, 1);
+    }
+}
+
+/**
+ * @param {FirebotGame} game
+ * @param {Object.<string, Object.<string, unknown>>} savedSettings
+ */
 function buildGameSettings(game, savedSettings) {
     let settingsData = {
         active: game.active,
@@ -121,6 +142,10 @@ function buildGameSettings(game, savedSettings) {
     return settingsData;
 }
 
+/**
+ * @param {Object.<string, SettingDefinition>} settingCategories
+ * @param {Object.<string, Object.<string, unknown>>} savedSettings
+ */
 function setGameSettingValues(settingCategories, savedSettings) {
     if (settingCategories && savedSettings) {
         for (const categoryId of Object.keys(settingCategories)) {
@@ -134,6 +159,10 @@ function setGameSettingValues(settingCategories, savedSettings) {
     return settingCategories;
 }
 
+/**
+ * @param {Object.<string, SettingDefinition>} settingCategories
+ * @param {Object.<string, Object.<string, unknown>>} savedSettings
+ */
 function getGameSettingsFromValues(settingCategories, savedSettings) {
     if (settingCategories && savedSettings) {
         for (const categoryId of Object.keys(settingCategories)) {
@@ -178,7 +207,7 @@ function saveAllGameSettings() {
 }
 
 function getGames() {
-    return registeredGames.map(g => {
+    return registeredGames.map((g) => {
         return {
             id: g.id,
             name: g.name,
@@ -195,6 +224,11 @@ frontendCommunicator.onAsync('get-games', async () => {
     return getGames();
 });
 
+/**
+ * @param {string} gameId
+ * @param {Record<string, GameSettings>} settingCategories
+ * @param {boolean} activeStatus
+ */
 function updateGameSettings(gameId, settingCategories, activeStatus) {
     const game = registeredGames.find(g => g.id === gameId);
 
@@ -262,4 +296,5 @@ frontendCommunicator.on('reset-game-to-defaults', (gameId) => {
 
 exports.loadGameSettings = loadGameSettings;
 exports.registerGame = registerGame;
+exports.unregisterGame = unregisterGame;
 exports.getGameSettings = getGameSettings;

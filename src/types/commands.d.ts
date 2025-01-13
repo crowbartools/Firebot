@@ -151,8 +151,13 @@ CommandDefinition,
 | "simple"
 >;
 
-export type SystemCommandDefinition = CommandDefinition & {
+type SystemSubcommand = SubCommand & {
     hideCooldowns?: boolean;
+};
+
+export type SystemCommandDefinition = Omit<CommandDefinition, "subCommands"> & {
+    hideCooldowns?: boolean;
+    subCommands?: SystemSubcommand[];
 };
 
 export type SystemCommand<OptionsModel = unknown> = {

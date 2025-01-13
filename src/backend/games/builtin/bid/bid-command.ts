@@ -1,35 +1,47 @@
-"use strict";
+import util from "../../../utility";
+import twitchChat from "../../../chat/twitch-chat";
+import commandManager from "../../../chat/commands/command-manager";
+import gameManager from "../../game-manager";
+import currencyAccess from "../../../currency/currency-access";
+import currencyManager from "../../../currency/currency-manager";
+import { SystemCommand } from "../../../../types/commands";
+import { GameSettings } from "../../../../types/game-manager";
+import { BidSettings } from "./bid-settings";
+import moment from "moment";
+import NodeCache from "node-cache";
 
-const util = require("../../../utility");
-const twitchChat = require("../../../chat/twitch-chat");
-const commandManager = require("../../../chat/commands/command-manager");
-const gameManager = require("../../game-manager");
-const currencyAccess = require("../../../currency/currency-access").default;
-const currencyManager = require("../../../currency/currency-manager");
-const moment = require("moment");
-const NodeCache = require("node-cache");
-
-let activeBiddingInfo = {
-    "active": false,
-    "currentBid": 0,
-    "topBidder": "",
-    "topBidderDisplayName": ""
+type GameData = {
+    active: boolean;
+    currentBid: number;
+    topBidder: string;
+    topBidderDisplayName: string;
 };
-let bidTimer;
+
+let activeBiddingInfo: GameData = {
+    active: false,
+    currentBid: 0,
+    topBidder: "",
+    topBidderDisplayName: ""
+};
+let bidTimer: NodeJS.Timeout|null;
 const cooldownCache = new NodeCache({checkperiod: 5});
 const BID_COMMAND_ID = "firebot:bid";
 
 function purgeCaches() {
     cooldownCache.flushAll();
     activeBiddingInfo = {
-        "active": false,
-        "currentBid": 0,
-        "topBidder": ""
+        active: false,
+        currentBid: 0,
+        topBidder: "",
+        topBidderDisplayName: ""
     };
 }
 
-async function stopBidding(chatter) {
-    clearTimeout(bidTimer);
+async function stopBidding(chatter: string) {
+    if (bidTimer) {
+        clearTimeout(bidTimer);
+        bidTimer = null;
+    }
     if (activeBiddingInfo.topBidder) {
         await twitchChat.sendChatMessage(`${activeBiddingInfo.topBidderDisplayName} has won the bidding with ${activeBiddingInfo.currentBid}!`, null, chatter);
     } else {
@@ -39,7 +51,7 @@ async function stopBidding(chatter) {
     purgeCaches();
 }
 
-const bidCommand = {
+const bidCommand: SystemCommand = {
     definition: {
         id: BID_COMMAND_ID,
         name: "Bid",
@@ -103,7 +115,7 @@ const bidCommand = {
     onTriggerEvent: async (event) => {
         const { chatMessage, userCommand } = event;
 
-        const bidSettings = gameManager.getGameSettings("firebot-bid");
+        const bidSettings = gameManager.getGameSettings("firebot-bid") as GameSettings<BidSettings>;
         const chatter = bidSettings.settings.chatSettings.chatter;
 
         const currencyId = bidSettings.settings.currencySettings.currencyId;
@@ -130,9 +142,10 @@ const bidCommand = {
             }
 
             activeBiddingInfo = {
-                "active": true,
-                "currentBid": bidAmount,
-                "topBidder": ""
+                active: true,
+                currentBid: bidAmount,
+                topBidder: "",
+                topBidderDisplayName: ""
             };
 
             const raiseMinimum = bidSettings.settings.currencySettings.minIncrement;
@@ -176,11 +189,9 @@ const bidCommand = {
             }
 
             const minBid = bidSettings.settings.currencySettings.minBid;
-            if (minBid != null && minBid > 0) {
-                if (bidAmount < minBid) {
-                    await twitchChat.sendChatMessage(`Bid amount must be at least ${minBid} ${currencyName}.`, null, chatter, chatMessage.id);
-                    return;
-                }
+            if (minBid != null && minBid > 0 && bidAmount < minBid) {
+                await twitchChat.sendChatMessage(`Bid amount must be at least ${minBid} ${currencyName}.`, null, chatter, chatMessage.id);
+                return;
             }
 
             const userBalance = await currencyManager.getViewerCurrencyAmount(username, currencyId);
@@ -228,15 +239,19 @@ function registerBidCommand() {
 }
 
 function unregisterBidCommand() {
-    commandManager.unregisterSystemCommand(BID_COMMAND_ID);
+    if (commandManager.hasSystemCommand(BID_COMMAND_ID)) {
+        commandManager.unregisterSystemCommand(BID_COMMAND_ID);
+    }
 }
 
-function setNewHighBidder(username, userDisplayName, amount) {
+function setNewHighBidder(username: string, userDisplayName: string, amount: number) {
     activeBiddingInfo.currentBid = amount;
     activeBiddingInfo.topBidder = username;
     activeBiddingInfo.topBidderDisplayName = userDisplayName;
 }
 
-exports.purgeCaches = purgeCaches;
-exports.registerBidCommand = registerBidCommand;
-exports.unregisterBidCommand = unregisterBidCommand;
+export default {
+    purgeCaches,
+    registerBidCommand,
+    unregisterBidCommand
+};

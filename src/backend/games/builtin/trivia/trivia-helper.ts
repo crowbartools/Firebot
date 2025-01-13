@@ -1,31 +1,56 @@
-"use strict";
+import logger from "../../../logwrapper";
+import utils from "../../../utility";
 
-const logger = require("../../../logwrapper");
-const utils = require("../../../utility");
+export type Difficulty = "easy" | "medium" | "hard";
+export type QuestionType = "boolean" | "multiple";
 
-const getRandomItem = (array) => {
+type OpenTdbMultipleChoiceQuestion = {
+    correct_answer: string;
+    incorrect_answers: string[];
+    type: "multiple";
+};
+type OpenTdbBooleanQuestion = {
+    correct_answer: "True" | "False";
+    type: "boolean";
+};
+type OpenTdbQuestion = (OpenTdbMultipleChoiceQuestion | OpenTdbBooleanQuestion) & {
+    category: string;
+    difficulty: Difficulty;
+    question: string;
+};
+type OpenTdbQuestionResponse = {
+    response_code: number;
+    results?: OpenTdbQuestion[];
+};
+type OpenTdbTokenResponse = {
+    response_code: number;
+    token: string;
+};
+
+function getRandomItem<T = unknown>(array: T[]): T | null {
     if (array == null || !array.length) {
         return null;
     }
     const randomIndex = utils.getRandomInt(0, array.length - 1);
     return array[randomIndex];
-};
+}
 
-const fetchQuestion = async (randomCategory, randomDifficulty, randomType, sessionToken) => {
-    const url = `https://opentdb.com/api.php?encode=url3986&amount=1&category=${randomCategory}&difficulty=${randomDifficulty}&type=${randomType}${sessionToken ? `&token=${sessionToken}` : ''}`;
+async function fetchQuestion (category: number, difficulty: Difficulty, type: QuestionType, token: string) {
+    const url = `https://opentdb.com/api.php?encode=url3986&amount=1&category=${category}&difficulty=${difficulty}&type=${type}${token ? `&token=${token}` : ''}`;
     try {
-
         const response = await fetch(url);
         if (response.ok) {
-            const data = await response.json();
+            const data = await response.json() as OpenTdbQuestionResponse;
             const responseCode = data.response_code;
             const results = (data.results || []).map((q) => {
                 q.category = decodeURIComponent(q.category);
                 q.question = decodeURIComponent(q.question);
                 // eslint-disable-next-line camelcase
                 q.correct_answer = decodeURIComponent(q.correct_answer);
-                // eslint-disable-next-line camelcase
-                q.incorrect_answers = q.incorrect_answers.map(a => decodeURIComponent(a));
+                if (q.type === "multiple" && q.incorrect_answers) {
+                    // eslint-disable-next-line camelcase
+                    q.incorrect_answers = q.incorrect_answers.map(a => decodeURIComponent(a));
+                }
                 return q;
             });
             return {
@@ -39,17 +64,18 @@ const fetchQuestion = async (randomCategory, randomDifficulty, randomType, sessi
         logger.error("Unable to fetch question from Trivia API:", error.message);
     }
     return null;
-};
+}
 
-let sessionToken = null;
+let sessionToken: string = null;
 async function getSessionToken(forceNew = false) {
-    if (sessionToken == null || forceNew) {
+    let resultToken = sessionToken;
+    if (forceNew || !resultToken) {
         try {
             const tokenResponse = await fetch("https://opentdb.com/api_token.php?command=request");
             if (tokenResponse.ok) {
-                const data = await tokenResponse.json();
+                const data = await tokenResponse.json() as OpenTdbTokenResponse;
                 if (data?.response_code === 0) {
-                    sessionToken = data.token;
+                    resultToken = data.token;
                 }
             } else {
                 throw new Error(`Request failed with status ${tokenResponse.status}`);
@@ -58,35 +84,43 @@ async function getSessionToken(forceNew = false) {
             logger.error("Unable to get session token for trivia:", error.message);
         }
     }
-    return sessionToken;
+    return resultToken;
 }
 
-exports.getQuestion = async (categories, difficulties, types) => {
+async function getQuestion(
+    categories: number[],
+    difficulties: Difficulty[],
+    types: QuestionType[]
+) {
     const randomCategory = getRandomItem(categories);
     const randomDifficulty = getRandomItem(difficulties);
     const randomType = getRandomItem(types);
 
-    const sessionToken = await getSessionToken();
+    sessionToken ??= await getSessionToken();
+
     let questionResponse = await fetchQuestion(randomCategory, randomDifficulty,
         randomType, sessionToken);
 
     if (questionResponse) {
+        // Code 3: Token Not Found; Session Token does not exist.
+        // Code 4: Token Empty; Session Token has returned all possible questions for the specified query. Resetting the Token is necessary.
         if (questionResponse.responseCode === 3 || questionResponse.responseCode === 4) {
-            const sessionToken = await getSessionToken(true);
+            sessionToken = await getSessionToken(true);
             questionResponse = await fetchQuestion(randomCategory, randomDifficulty,
                 randomType, sessionToken);
         }
 
         if (questionResponse && questionResponse.responseCode === 0 && !!questionResponse.results.length) {
-            const questionData = questionResponse.results[0];
-            let answers;
-            let correctIndex;
+            const questionData = questionResponse.results[0] as OpenTdbQuestion;
+            let answers: string[];
+            let correctIndex: number;
             if (questionData.type === "boolean") {
                 answers = ["True", "False"];
                 // using 1 based index since this is how users will answer
                 correctIndex = questionData.correct_answer === "True" ? 1 : 2;
-            } else {
-                answers = utils.shuffleArray([...questionData.incorrect_answers, questionData.correct_answer]);
+            } else if (questionData.type === "multiple") {
+                answers = [...questionData.incorrect_answers, questionData.correct_answer];
+                answers = utils.shuffleArray(answers as []);
                 // using 1 based index since this is how users will answer
                 correctIndex = answers.findIndex(a => a === questionData.correct_answer) + 1;
             }
@@ -102,4 +136,8 @@ exports.getQuestion = async (categories, difficulties, types) => {
         }
     }
     return null;
+}
+
+export default {
+    getQuestion
 };

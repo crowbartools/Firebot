@@ -1,11 +1,8 @@
-"use strict";
+import { FirebotGame } from "../../../../types/game-manager";
+import bidCommand from "./bid-command";
+import { BidSettings } from "./bid-settings";
 
-const bidCommand = require("./bid-command");
-
-/**
- * @type {import('../../game-manager').FirebotGame}
- */
-module.exports = {
+const bidGame: FirebotGame<BidSettings> = {
     id: "firebot-bid",
     name: "Bid",
     subtitle: "Put something up for auction",
@@ -108,3 +105,5 @@ module.exports = {
         bidCommand.purgeCaches();
     }
 };
+
+export default bidGame;
