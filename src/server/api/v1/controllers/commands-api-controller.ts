@@ -1,29 +1,32 @@
-"use strict";
+import { Trigger } from "../../../../types/triggers";
+import commandManager from "../../../../backend/chat/commands/command-manager";
+import commandRunner from "../../../../backend/chat/commands/command-runner";
+import { Request, Response } from "express";
 
-const commandManager = require("../../../../backend/chat/commands/command-manager");
-const commandRunner = require("../../../../backend/chat/commands/command-runner");
-
-function getCommandTriggerAndArgs(req) {
+function getCommandTriggerAndArgs(req: Request) {
     const body = req.body || {};
     const query = req.query || {};
-    let args, username, metadata;
+    let args: string[],
+        username: string,
+        metadata: Trigger["metadata"];
 
     // GET
     if (req.method === "GET") {
-        args = query.args;
-        username = query.username;
+        args = query.args as string[];
+        username = query.username as string;
 
     // POST
     } else if (req.method === "POST") {
-        args = body.args;
-        username = body.username;
+        args = body.args as string[];
+        username = body.username as string;
         metadata = body.metadata;
     }
 
     username = username ?? "API User";
 
-    const trigger = {
-        metadata: metadata || { }
+    const trigger:Trigger = {
+        type: "api",
+        metadata: metadata || { username }
     };
 
     trigger.metadata.username = trigger.metadata.username ?? username;
@@ -31,7 +34,7 @@ function getCommandTriggerAndArgs(req) {
     return { trigger, args };
 }
 
-exports.getSystemCommands = async function(req, res) {
+export async function getSystemCommands(req: Request, res: Response): Promise<Response> {
     const sysCommands = commandManager.getAllSystemCommandDefinitions();
 
     if (sysCommands == null) {
@@ -50,9 +53,9 @@ exports.getSystemCommands = async function(req, res) {
     });
 
     return res.json(formattedSysCommands);
-};
+}
 
-exports.getSystemCommand = async function(req, res) {
+export async function getSystemCommand(req: Request, res: Response): Promise<Response> {
     const sysCommandId = req.params.sysCommandId;
 
     if (!(sysCommandId?.length > 0)) {
@@ -72,9 +75,9 @@ exports.getSystemCommand = async function(req, res) {
     }
 
     return res.json(sysCommand.definition);
-};
+}
 
-exports.runSystemCommand = async function(req, res) {
+export async function runSystemCommand(req: Request, res: Response): Promise<Response> {
     const sysCommandId = req.params.sysCommandId;
 
     if (!(sysCommandId?.length > 0)) {
@@ -108,9 +111,9 @@ exports.runSystemCommand = async function(req, res) {
         status: "success",
         message: `System command '${sysCommandId}' executed successfully`
     });
-};
+}
 
-exports.getCustomCommands = async function(req, res) {
+export async function getCustomCommands(req: Request, res: Response): Promise<Response> {
     const customCommands = commandManager.getAllCustomCommands();
 
     if (customCommands == null) {
@@ -129,9 +132,9 @@ exports.getCustomCommands = async function(req, res) {
     });
 
     return res.json(formattedCustomCommands);
-};
+}
 
-exports.getCustomCommand = async function(req, res) {
+export async function getCustomCommand(req: Request, res: Response): Promise<Response> {
     const customCommandId = req.params.customCommandId;
 
     if (!(customCommandId?.length > 0)) {
@@ -151,9 +154,9 @@ exports.getCustomCommand = async function(req, res) {
     }
 
     return res.json(customCommand);
-};
+}
 
-exports.runCustomCommand = async function(req, res) {
+export async function runCustomCommand(req: Request, res: Response): Promise<Response> {
     const customCommandId = req.params.customCommandId;
 
     if (!(customCommandId?.length > 0)) {
@@ -187,4 +190,4 @@ exports.runCustomCommand = async function(req, res) {
         status: "success",
         message: `Custom command '${customCommandId}' executed successfully`
     });
-};
+}

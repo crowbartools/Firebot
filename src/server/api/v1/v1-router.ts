@@ -48,7 +48,7 @@ router.route("/effects/preset/:presetListId/run")
     .post(effects.triggerPresetListAsync);
 
 // Commands
-import * as commands from "./controllers/commandsApiController";
+import * as commands from "./controllers/commands-api-controller";
 
 router.route("/commands/system")
     .get(commands.getSystemCommands);
