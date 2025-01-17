@@ -1,0 +1,15 @@
+{
+    "src": "dist/pack/Firebot-linux-x64",
+    "bin": "Firebot v5",
+    "options": {
+        "productName": "Firebot v5",
+        "genericName": "Firebot v5",
+        "icon": {
+            "48x48": "src/gui/images/macTrayIcon@3x.png",
+            "64x64": "src/gui/images/logo_64x.png",
+            "128x128": "src/gui/images/logo_128x.png",
+            "256x256": "src/gui/images/logo_transparent.png",
+            "scalable": "src/gui/images/logo.svg"
+        }
+    }
+}

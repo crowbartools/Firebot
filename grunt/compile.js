@@ -59,10 +59,10 @@ module.exports = function (grunt) {
                 command: `npx --no-install electron-installer-dmg "${macPathIn}" firebot-v${version}-macos-x64 --out="${macPathOut}" --background="${macDmgBg}" --icon="${macDmgIcon}" --title="Firebot Installer" --debug`
             },
             'compile-deb': {
-                command: `npx --no-install electron-installer-debian --src dist/pack/Firebot-linux-x64/ --dest dist/install/deb/ --arch amd64 --bin "Firebot v5"`
+                command: `npx --no-install electron-installer-debian --dest dist/install/deb/ --arch amd64 --config build-linux.json`
             },
             'compile-rpm': {
-                command: `npx --no-install electron-installer-redhat --src dist/pack/Firebot-linux-x64/ --dest dist/install/rpm/ --arch x86_64 --bin "Firebot v5"`
+                command: `npx --no-install electron-installer-redhat --dest dist/install/rpm/ --arch x86_64 --config build-linux.json`
             }
         }
     });
