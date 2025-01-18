@@ -36,7 +36,7 @@ const effect = {
                         headers: {
                             "Content-Type": "application/json"
                         },
-                        body: { "access_token": accessToken }
+                        body: JSON.stringify({ "access_token": accessToken })
                     });
 
                 if (response.ok) {
