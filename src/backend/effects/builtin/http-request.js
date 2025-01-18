@@ -232,18 +232,16 @@ const effect = {
             };
         }
 
-        let bodyData = effect.body;
-        if (effect.body != null) {
-            try {
-                bodyData = JSON.parse(effect.body);
-            } catch (error) {
-                logger.debug("Failed to parse body json for request", error);
-            }
-        }
-
         const sendBodyData = effect.method.toLowerCase() === "post" ||
             effect.method.toLowerCase() === "put" ||
             effect.method.toLowerCase() === "patch";
+
+        if (sendBodyData) {
+            headers = {
+                ...headers,
+                "Content-Type": "application/json"
+            };
+        }
 
         let responseData;
 
@@ -254,7 +252,7 @@ const effect = {
                 timeout: effect.options.timeout && effect.options.timeout > 0
                     ? AbortSignal.timeout(effect.options.timeout)
                     : undefined,
-                body: sendBodyData === true ? bodyData : null
+                body: sendBodyData === true ? effect.body : null
             });
 
             responseData = await response.text();
