@@ -50,7 +50,7 @@
         "@twurple/eventsub-ws": "^7.2.1",
         "@twurple/pubsub": "^7.2.1",
         "@types/tinycolor2": "^1.4.6",
-        "@zunderscore/elgato-light-control": "^1.1.2",
+        "@zunderscore/elgato-light-control": "^1.2.0",
         "angular": "^1.8.0",
         "angular-animate": "^1.7.8",
         "angular-aria": "^1.7.9",
