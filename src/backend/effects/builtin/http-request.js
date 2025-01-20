@@ -237,10 +237,14 @@ const effect = {
             effect.method.toLowerCase() === "patch";
 
         if (sendBodyData) {
-            headers = {
-                ...headers,
-                "Content-Type": "application/json"
-            };
+            try {
+                // Add the JSON header if the body is valid JSON
+                JSON.parse(effect.body);
+                headers = {
+                    ...headers,
+                    "Content-Type": "application/json"
+                };
+            } catch { }
         }
 
         let responseData;
