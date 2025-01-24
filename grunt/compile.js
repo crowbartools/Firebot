@@ -9,7 +9,8 @@ const createWindowsInstaller = require('electron-winstaller').createWindowsInsta
 
 module.exports = function (grunt) {
 
-    const macPathIn = path.resolve(__dirname, `../dist/pack/Firebot-darwin-x64/Firebot.app`);
+    const macIntelPathIn = path.resolve(__dirname, `../dist/pack/Firebot-darwin-x64/Firebot.app`);
+    const macArmPathIn = path.resolve(__dirname, `../dist/pack/Firebot-darwin-arm64/Firebot.app`);
     const macPathOut = path.resolve(__dirname, '../dist/install/darwin');
     const macDmgIcon = path.resolve(__dirname, `../build/gui/images/logo_transparent_2.png`);
     const macDmgBg = path.resolve(__dirname, `../build/gui/images/firebot_dmg_bg.png`);
@@ -55,29 +56,32 @@ module.exports = function (grunt) {
             }
         },
         shell: {
-            'compile-darwin': {
-                command: `npx --no-install electron-installer-dmg "${macPathIn}" firebot-v${version}-macos-x64 --out="${macPathOut}" --background="${macDmgBg}" --icon="${macDmgIcon}" --title="Firebot Installer" --debug`
+            'compile-darwin-x64': {
+                command: `npx --no-install electron-installer-dmg "${macIntelPathIn}" firebot-v${version}-macos-x64 --out="${macPathOut}" --background="${macDmgBg}" --icon="${macDmgIcon}" --title="Firebot Installer" --debug`
+            },
+            'compile-darwin-arm64': {
+                command: `npx --no-install electron-installer-dmg "${macArmPathIn}" firebot-v${version}-macos-arm64 --out="${macPathOut}" --background="${macDmgBg}" --icon="${macDmgIcon}" --title="Firebot Installer" --debug`
             }
         }
     });
 
     grunt.loadNpmTasks('grunt-contrib-compress');
-    let compileCommand;
+    let compileCommands = [];
     switch (grunt.config.get('platform')) {
         case 'win64':
-            compileCommand = 'create-windows-installer:win64';
+            compileCommands = ['create-windows-installer:win64'];
             break;
 
         case 'linux':
-            compileCommand = 'compress:linux';
+            compileCommands = ['compress:linux'];
             break;
 
         case 'darwin':
-            compileCommand = 'shell:compile-darwin';
+            compileCommands = ['shell:compile-darwin-x64', 'shell:compile-darwin-arm64'];
             break;
 
         default:
-            throw new Error('unknonw platform');
+            throw new Error('unknown platform');
     }
-    grunt.registerTask('compile', ['cleanup:install', compileCommand]);
+    grunt.registerTask('compile', ['cleanup:install', ...compileCommands]);
 };
