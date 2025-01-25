@@ -66,7 +66,7 @@ module.exports = function (grunt) {
                 command: `npx --no-install electron-installer-debian --dest dist/install/deb/ --arch amd64 --config build-linux.json`
             },
             'compile-linux-rpm': {
-                command: `npx --no-install electron-installer-redhat --dest dist/install/rpm/ --arch x86_64 --config build-linux.json`
+                command: `npx --no-install @dennisrijsdijk/electron-installer-redhat --no-strip --dest dist/install/rpm/ --arch x86_64 --config build-linux.json`
             }
         }
     });
