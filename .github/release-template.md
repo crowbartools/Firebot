@@ -15,7 +15,7 @@
 - Download and run Firebot-v{0}-setup.exe
 
 ## MacOS Install
-- Download Firebot-v{0}-macos-x64.dmg
+- Download Firebot-v{0}-macos-arm64.dmg (Apple Silicon) or Firebot-v{0}-macos-x64.dmg (Intel Macs)
 - Right click the .dmg and select "Open"
 - In the dialog that appears click "Cancel"
 - Right click the .dmg again and select "Open"

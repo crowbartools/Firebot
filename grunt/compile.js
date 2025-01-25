@@ -9,7 +9,8 @@ const createWindowsInstaller = require('electron-winstaller').createWindowsInsta
 
 module.exports = function (grunt) {
 
-    const macPathIn = path.resolve(__dirname, `../dist/pack/Firebot-darwin-x64/Firebot.app`);
+    const macIntelPathIn = path.resolve(__dirname, `../dist/pack/Firebot-darwin-x64/Firebot.app`);
+    const macArmPathIn = path.resolve(__dirname, `../dist/pack/Firebot-darwin-arm64/Firebot.app`);
     const macPathOut = path.resolve(__dirname, '../dist/install/darwin');
     const macDmgIcon = path.resolve(__dirname, `../build/gui/images/logo_transparent_2.png`);
     const macDmgBg = path.resolve(__dirname, `../build/gui/images/firebot_dmg_bg.png`);
@@ -55,37 +56,38 @@ module.exports = function (grunt) {
             }
         },
         shell: {
-            'compile-darwin': {
-                command: `npx --no-install electron-installer-dmg "${macPathIn}" firebot-v${version}-macos-x64 --out="${macPathOut}" --background="${macDmgBg}" --icon="${macDmgIcon}" --title="Firebot Installer" --debug`
+            'compile-darwin-x64': {
+                command: `npx --no-install electron-installer-dmg "${macIntelPathIn}" firebot-v${version}-macos-x64 --out="${macPathOut}" --background="${macDmgBg}" --icon="${macDmgIcon}" --title="Firebot Installer" --debug`
             },
-            'compile-deb': {
+            'compile-darwin-arm64': {
+                command: `npx --no-install electron-installer-dmg "${macArmPathIn}" firebot-v${version}-macos-arm64 --out="${macPathOut}" --background="${macDmgBg}" --icon="${macDmgIcon}" --title="Firebot Installer" --debug`
+            },
+            'compile-linux-deb': {
                 command: `npx --no-install electron-installer-debian --dest dist/install/deb/ --arch amd64 --config build-linux.json`
             },
-            'compile-rpm': {
+            'compile-linux-rpm': {
                 command: `npx --no-install electron-installer-redhat --dest dist/install/rpm/ --arch x86_64 --config build-linux.json`
             }
         }
     });
 
     grunt.loadNpmTasks('grunt-contrib-compress');
-    const compileCommands = ['cleanup:install'];
+    let compileCommands = [];
     switch (grunt.config.get('platform')) {
         case 'win64':
-            compileCommands.push('create-windows-installer:win64');
+            compileCommands = ['create-windows-installer:win64'];
             break;
 
         case 'linux':
-            compileCommands.push('compress:linux');
-            compileCommands.push('shell:compile-rpm');
-            compileCommands.push('shell:compile-deb');
+            compileCommands = ['compress:linux', 'shell:compile-linux-deb', 'shell:compile-linux-rpm'];
             break;
 
         case 'darwin':
-            compileCommands.push('shell:compile-darwin');
+            compileCommands = ['shell:compile-darwin-x64', 'shell:compile-darwin-arm64'];
             break;
 
         default:
             throw new Error('unknown platform');
     }
-    grunt.registerTask('compile', compileCommands);
+    grunt.registerTask('compile', ['cleanup:install', ...compileCommands]);
 };

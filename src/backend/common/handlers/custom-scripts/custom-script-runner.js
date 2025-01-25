@@ -229,7 +229,7 @@ function runScript(effect, trigger) {
 
     logger.debug(`running script: ${scriptName}`);
 
-    if (SettingsManager.getSetting("RunCustomScripts")) {
+    if (!SettingsManager.getSetting("RunCustomScripts")) {
         frontendCommunicator.send(
             "error",
             "Something attempted to run a custom script but this feature is disabled!"
