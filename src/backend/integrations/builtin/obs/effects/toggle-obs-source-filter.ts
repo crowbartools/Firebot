@@ -30,7 +30,26 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
           categories: ["common"]
       },
       optionsTemplate: `
-    <eos-container header="Filters">
+    <eos-container ng-show="orphanedSources.length > 0" header="Missing Filters">
+        <div class="effect-setting-container ">
+            <div ng-repeat="filterName in orphanedSources track by $index">
+             <div class="well list-item mb-5" style="font-size: 16px; font-weight: 900;color: #b9b9b9;display:flex;border: 2px solid #3e4045;box-shadow: none;border-radius: 8px;">
+              <div>
+                <span>Source: {{filterName.sourceName}}</span>
+                 <ul>            
+                   <li>Name: {{filterName.filterName}}</li>
+                   <li>Action: {{filterName.action}}</li>
+                 </ul>
+              </div>   
+              <div style="margin-top: 10px;">
+                  <button class="btn btn-danger" ng-click="deleteSceneAtIndex($index)"><i class="far fa-trash"></i></button>
+              </div>
+             </div>
+            </div>
+        </div>
+    </eos-container>
+
+    <eos-container header="Filters" pad-top="orphanedSources.length > 0">
       <div class="effect-setting-container">
         <div class="input-group">
           <span class="input-group-addon">Filter</span>
@@ -76,13 +95,15 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
 
           $scope.searchText = "";
 
+          $scope.orphanedSources = [];
+
           if ($scope.effect.selectedFilters == null) {
               $scope.effect.selectedFilters = [];
           }
 
           $scope.filterIsSelected = (sourceName: string, filterName: string) => {
               return $scope.effect.selectedFilters.some(
-                  (s) => s.sourceName === sourceName && s.filterName === filterName
+                  s => s.sourceName === sourceName && s.filterName === filterName
               );
           };
 
@@ -92,7 +113,7 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
           ) => {
               if ($scope.filterIsSelected(sourceName, filterName)) {
                   $scope.effect.selectedFilters = $scope.effect.selectedFilters.filter(
-                      (s) => !(s.sourceName === sourceName && s.filterName === filterName)
+                      s => !(s.sourceName === sourceName && s.filterName === filterName)
                   );
               } else {
                   $scope.effect.selectedFilters.push({
@@ -109,7 +130,7 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
               action: "toggle" | boolean
           ) => {
               const selectedFilter = $scope.effect.selectedFilters.find(
-                  (s) => s.sourceName === sourceName && s.filterName === filterName
+                  s => s.sourceName === sourceName && s.filterName === filterName
               );
               if (selectedFilter != null) {
                   selectedFilter.action = action;
@@ -121,8 +142,11 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
               filterName: string
           ) => {
               const selectedFilter = $scope.effect.selectedFilters.find(
-                  (s) => s.sourceName === sourceName && s.filterName === filterName
+                  s => s.sourceName === sourceName && s.filterName === filterName
               );
+
+              $scope.orphanedSources = $scope.orphanedSources.filter(item => item !== selectedFilter);
+
               if (selectedFilter == null) {
                   return "";
               }
@@ -140,7 +164,7 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
               input
                   .split(" ")
                   .map(
-                      (w) => w[0].toLocaleUpperCase() + w.substr(1).toLocaleLowerCase()
+                      w => w[0].toLocaleUpperCase() + w.substr(1).toLocaleLowerCase()
                   )
                   .join(" ");
 
@@ -153,10 +177,23 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
                   $scope.searchText = searchText;
               }
               $scope.sourceListFiltered = ($scope.sourceList as Array<OBSSource>).filter((source: OBSSource) => {
-                  return source.filters.some(filter => {
+                  return source.filters.some((filter) => {
                       return filter.name.toLowerCase().includes(searchText.toLowerCase());
                   });
               });
+          };
+
+          $scope.deleteSceneAtIndex = (index: number) => {
+              $scope.effect.selectedFilters = $scope.effect.selectedFilters.filter(
+                  item => item !== $scope.orphanedSources[index]
+              );
+              $scope.orphanedSources.splice(index, 1);
+          };
+
+          $scope.getOrphanedData = () => {
+              for (const filterName of $scope.effect.selectedFilters) {
+                  $scope.orphanedSources.push(filterName);
+              }
           };
 
           $scope.getSourceList = () => {
@@ -171,6 +208,7 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
           };
 
           $scope.getSourceList();
+          $scope.getOrphanedData();
       },
       optionsValidator: () => {
           return [];
