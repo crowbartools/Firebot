@@ -32,25 +32,28 @@ export const ToggleSourceVisibilityEffectType: Firebot.EffectType<EffectProperti
         categories: ["common"]
     },
     optionsTemplate: `
-<eos-container ng-show="orphanedSources.length > 0" header="Missing Sources">
-  <div class="effect-setting-container ">
+<eos-container ng-show="orphanedSources.length > 0">
+        <div class="effect-info alert alert-warning">
+             <p><b>Warning!</b> There are {{orphanedSources.length}} orphaned source(s) referenced by this effect. 
+             Items in <b>inactive</b> OBS profiles or scene collections <i>will</i> inaccurately show these errors.
+             </p>
+        </div>
+</eos-container>
+<setting-container ng-show="orphanedSources.length > 0" header="Missing Sources ({{orphanedSources.length}})" collapsed="true">
     <div ng-repeat="sceneName in orphanedSources track by $index">
-      <div class="well list-item mb-5" style="font-size: 16px; font-weight: 900;color: #b9b9b9;display:flex;border: 2px solid #3e4045;box-shadow: none;border-radius: 8px;">
-        <div>
-          <span>Scene: {{sceneName.sceneName}}</span>
-          <ul>            
-            <li ng-if="sceneName.sourceName != null">Name: {{sceneName.sourceName}}</li>
-            <li>Id: {{sceneName.sourceId}}</li>
-            <li>Action: {{sceneName.action}}</li>
-          </ul>
+      <div class="list-item" style="display: flex;border: 2px solid #3e4045;box-shadow: none;border-radius: 8px;padding: 5px 5px;">
+        <div class="pl-5">
+          <span>Scene: {{sceneName.sceneName}},</span>
+            <span ng-if="sceneName.sourceName != null">Name: {{sceneName.sourceName}},</span>
+            <span>Id: {{sceneName.sourceId}},</span>
+            <span>Action: {{sceneName.action}}</span>
         </div>   
-        <div style="margin-top: 10px;">
+        <div>
             <button class="btn btn-danger" ng-click="deleteSceneAtIndex($index)"><i class="far fa-trash"></i></button>
         </div>
       </div>
     </div>
-  </div>
-</eos-container>
+</setting-container>
 
 <eos-container header="Sources" pad-top="orphanedSources.length > 0">
   <div class="effect-setting-container">

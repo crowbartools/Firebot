@@ -25,20 +25,25 @@ export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
           categories: ["common"]
       },
       optionsTemplate: `
-    <eos-container ng-show="orphanedSources.length > 0" header="Missing Audio Sources">
-        <div class="effect-setting-container ">
-            <div ng-repeat="sourceList in orphanedSources track by $index">
-             <div class="well list-item mb-5" style="font-size: 16px; font-weight: 900;color: #b9b9b9;display:flex;border: 2px solid #3e4045;box-shadow: none;border-radius: 8px;">
-              <div>
-                <span>Source: {{sourceList.sourceName}}</span>
-              </div>   
-              <div style="margin-top: 10px;">
-                  <button class="btn btn-danger" ng-click="deleteSceneAtIndex($index)"><i class="far fa-trash"></i></button>
-              </div>
-             </div>
-            </div>
+    <eos-container ng-show="orphanedSources.length > 0">
+        <div class="effect-info alert alert-warning">
+             <p><b>Warning!</b> There are {{orphanedSources.length}} orphaned source(s) referenced by this effect. 
+             Items in <b>inactive</b> OBS profiles or scene collections <i>will</i> inaccurately show these errors.
+             </p>
         </div>
     </eos-container>
+    <setting-container ng-show="orphanedSources.length > 0" header="Missing Audio Sources ({{orphanedSources.length}})" collapsed="true">
+        <div ng-repeat="sourceList in orphanedSources track by $index">
+          <div class="list-item" style="display: flex;border: 2px solid #3e4045;box-shadow: none;border-radius: 8px;padding: 5px 5px;">
+            <div class="pl-5">
+                <span>Source: {{sourceList.sourceName}}</span>
+            </div>   
+            <div>
+                <button class="btn btn-danger" ng-click="deleteSceneAtIndex($index)"><i class="far fa-trash"></i></button>
+            </div>
+          </div>
+        </div>
+    </setting-container>
 
     <eos-container header="Audio Sources" pad-top="orphanedSources.length > 0">
       <firebot-input model="searchText" input-title="Filter" disable-variables="true"></firebot-input>
