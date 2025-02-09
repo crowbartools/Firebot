@@ -63,10 +63,10 @@ module.exports = function (grunt) {
                 command: `npx --no-install electron-installer-dmg "${macArmPathIn}" firebot-v${version}-macos-arm64 --out="${macPathOut}" --background="${macDmgBg}" --icon="${macDmgIcon}" --title="Firebot Installer" --debug`
             },
             'compile-linux-deb': {
-                command: `npx --no-install electron-installer-debian --dest dist/install/deb/ --arch amd64 --config build-linux.json`
+                command: `npx --no-install electron-installer-debian --arch amd64 --config build-linux.json`
             },
             'compile-linux-rpm': {
-                command: `npx --no-install @dennisrijsdijk/electron-installer-redhat --no-strip --dest dist/install/rpm/ --arch x86_64 --config build-linux.json`
+                command: `npx --no-install @dennisrijsdijk/electron-installer-redhat --no-strip --arch x86_64 --config build-linux.json`
             }
         }
     });
