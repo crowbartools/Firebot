@@ -16,6 +16,24 @@ module.exports = function (grunt) {
     const macDmgBg = path.resolve(__dirname, `../build/gui/images/firebot_dmg_bg.png`);
     const version = grunt.config('pkg').version;
 
+    const linuxInstallerConfig = {
+        src: "dist/pack/Firebot-linux-x64",
+        dest: "dist/install/Linux",
+        bin: "Firebot v5",
+        options: {
+            productName: "Firebot v5",
+            genericName: "Firebot v5",
+            homepage: "https://firebot.app",
+            icon: {
+                "48x48": "src/gui/images/macTrayIcon@3x.png",
+                "64x64": "src/gui/images/logo_64x.png",
+                "128x128": "src/gui/images/logo_128x.png",
+                "256x256": "src/gui/images/logo_transparent.png",
+                scalable: "src/gui/images/logo.svg"
+            }
+        }
+    };
+
     // Bringing in from https://github.com/electron-archive/grunt-electron-installer/blob/master/tasks/index.js
     grunt.registerMultiTask('create-windows-installer', 'Create the Windows installer', function () {
         this.requiresConfig(`${this.name}.${this.target}.appDirectory`);
@@ -23,6 +41,31 @@ module.exports = function (grunt) {
         const config = grunt.config(`${this.name}.${this.target}`);
         const done = this.async();
         createWindowsInstaller(config).then(done, done);
+    });
+
+    grunt.registerTask('create-redhat-installer', 'Create the Redhat .rpm installer', async function () {
+        const done = this.async();
+        const installer = require('@dennisrijsdijk/electron-installer-redhat');
+        installer({
+            ...linuxInstallerConfig,
+            strip: false,
+            arch: "x86_64",
+            rename: function (dest) {
+                return path.join(dest, `firebot-v${version}-linux-x64.rpm`);
+            }
+        }).then(done, done);
+    });
+
+    grunt.registerTask('create-debian-installer', 'Create the Debian .deb installer', async function () {
+        const done = this.async();
+        const installer = require('electron-installer-debian');
+        installer({
+            ...linuxInstallerConfig,
+            arch: "amd64",
+            rename: function (dest) {
+                return path.join(dest, `firebot-v${version}-linux-x64.deb`);
+            }
+        }).then(done, done);
     });
 
     grunt.config.merge({
@@ -61,12 +104,6 @@ module.exports = function (grunt) {
             },
             'compile-darwin-arm64': {
                 command: `npx --no-install electron-installer-dmg "${macArmPathIn}" firebot-v${version}-macos-arm64 --out="${macPathOut}" --background="${macDmgBg}" --icon="${macDmgIcon}" --title="Firebot Installer" --debug`
-            },
-            'compile-linux-deb': {
-                command: `npx --no-install electron-installer-debian --arch amd64 --config build-linux.json`
-            },
-            'compile-linux-rpm': {
-                command: `npx --no-install @dennisrijsdijk/electron-installer-redhat --no-strip --arch x86_64 --config build-linux.json`
             }
         }
     });
@@ -79,7 +116,7 @@ module.exports = function (grunt) {
             break;
 
         case 'linux':
-            compileCommands = ['compress:linux', 'shell:compile-linux-deb', 'shell:compile-linux-rpm'];
+            compileCommands = ['compress:linux', 'create-debian-installer', 'create-redhat-installer'];
             break;
 
         case 'darwin':

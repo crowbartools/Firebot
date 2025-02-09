@@ -25,7 +25,7 @@
 
 ## Linux Install
 - DEB or RPM based distributions:
-  - Download firebotv5_{0}_amd64.deb or firebotv5-{0}-1.x86_64.rpm
+  - Download Firebot-v{0}-linux-x64.deb or Firebot-v{0}-linux-x64.rpm
   - Install the file using your system package manager
   - Open Firebot v5 from your system program runner
 - Other distributions:
