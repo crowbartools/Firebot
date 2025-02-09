@@ -4,6 +4,7 @@
     "options": {
         "productName": "Firebot v5",
         "genericName": "Firebot v5",
+        "homepage": "https://firebot.app",
         "icon": {
             "48x48": "src/gui/images/macTrayIcon@3x.png",
             "64x64": "src/gui/images/logo_64x.png",
