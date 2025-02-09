@@ -39,7 +39,10 @@
                 bannedRegularExpressions: [],
 
                 /** @type {import("../../../backend/chat/moderation/chat-moderation-manager").ModerationTerm[]} */
-                urlAllowlist: []
+                urlAllowlist: [],
+
+                /** @type {import("../../../backend/chat/moderation/chat-moderation-manager").ModerationTerm[]} */
+                userAllowlist: []
             };
 
             service.loadChatModerationData = () => {
@@ -107,6 +110,27 @@
                 return await backendCommunicator.fireEventAsync("chat-moderation:import-url-allowlist", request);
             };
 
+            service.addAllowedUsers = (users) => {
+                const normalizedUsers = users
+                    .filter(u => u != null && u.trim().length > 0 && u.trim().length < 360)
+                    .map(u => u.trim());
+
+                backendCommunicator.fireEvent("chat-moderation:add-allowed-users", normalizedUsers);
+            };
+
+            service.removeAllowedUserByText = (text) => {
+                backendCommunicator.fireEvent("chat-moderation:remove-allowed-user", text);
+            };
+
+            service.removeAllAllowedUsers = () => {
+                backendCommunicator.fireEvent("chat-moderation:remove-all-allowed-users");
+            };
+
+            /** @param {import("../../../backend/chat/moderation/chat-moderation-manager").BannedWordImportRequest} request */
+            service.importUserAllowlist = async (request) => {
+                return await backendCommunicator.fireEventAsync("chat-moderation:import-user-allowlist", request);
+            };
+
             service.registerPermitCommand = () => {
                 backendCommunicator.fireEvent("registerPermitCommand");
             };
@@ -129,6 +153,10 @@
 
             backendCommunicator.on("chat-moderation:url-allowlist-updated", (urls) => {
                 service.chatModerationData.urlAllowlist = urls;
+            });
+
+            backendCommunicator.on("chat-moderation:user-allowlist-updated", (users) => {
+                service.chatModerationData.userAllowlist = users;
             });
 
             return service;
