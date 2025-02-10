@@ -27,9 +27,9 @@ export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
       optionsTemplate: `
     <eos-container ng-show="orphanedSources.length > 0">
         <div class="effect-info alert alert-warning">
-             <p><b>Warning!</b> There are {{orphanedSources.length}} orphaned source(s) referenced by this effect. 
-             Items in <b>inactive</b> OBS profiles or scene collections <i>will</i> inaccurately show these errors.
-             </p>
+            <p><b>Warning!</b> 
+                Cannot find {{orphanedSources.length}} sources in this effect. Ensure the correct profile or scene collection is loaded in OBS, and OBS is running.
+            </p>
         </div>
     </eos-container>
     <setting-container ng-show="orphanedSources.length > 0" header="Missing Audio Sources ({{orphanedSources.length}})" collapsed="true">
