@@ -44,9 +44,9 @@ export const ToggleSourceVisibilityEffectType: Firebot.EffectType<EffectProperti
       <div class="list-item" style="display: flex;border: 2px solid #3e4045;box-shadow: none;border-radius: 8px;padding: 5px 5px;">
         <div class="pl-5">
           <span>Scene: {{sceneName.sceneName}},</span>
-            <span ng-if="sceneName.sourceName != null">Name: {{sceneName.sourceName}},</span>
+            <span>Name: {{sceneName.sourceName || 'Unknown'}},</span>
             <span>Id: {{sceneName.sourceId}},</span>
-            <span>Action: {{geMissingActionDisplay(sceneName.action)}}</span>
+            <span>Action: {{getMissingActionDisplay(sceneName.action)}}</span>
         </div>   
         <div>
             <button class="btn btn-danger" ng-click="deleteSceneAtIndex($index)"><i class="far fa-trash"></i></button>
@@ -184,7 +184,7 @@ export const ToggleSourceVisibilityEffectType: Firebot.EffectType<EffectProperti
             return "Hide";
         };
 
-        $scope.geMissingActionDisplay = (
+        $scope.getMissingActionDisplay = (
             selectedFilter: unknown
         ) => {
             if (selectedFilter == null) {

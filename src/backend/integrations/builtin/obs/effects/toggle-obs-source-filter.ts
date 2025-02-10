@@ -163,9 +163,10 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
               return "Disable";
           };
 
-          $scope.geMissingActionDisplay = (
+          $scope.getMissingActionDisplay = (
               selectedFilter: unknown
           ) => {
+              console.log(selectedFilter);
               if (selectedFilter == null) {
                   return "";
               }
