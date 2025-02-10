@@ -25,15 +25,15 @@ export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
           categories: ["common"]
       },
       optionsTemplate: `
-    <eos-container ng-show="orphanedSources.length > 0">
+    <eos-container ng-show="missingSources.length > 0">
         <div class="effect-info alert alert-warning">
             <p><b>Warning!</b> 
-                Cannot find {{orphanedSources.length}} sources in this effect. Ensure the correct profile or scene collection is loaded in OBS, and OBS is running.
+                Cannot find {{missingSources.length}} sources in this effect. Ensure the correct profile or scene collection is loaded in OBS, and OBS is running.
             </p>
         </div>
     </eos-container>
-    <setting-container ng-show="orphanedSources.length > 0" header="Missing Audio Sources ({{orphanedSources.length}})" collapsed="true">
-        <div ng-repeat="sourceList in orphanedSources track by $index">
+    <setting-container ng-show="missingSources.length > 0" header="Missing Audio Sources ({{missingSources.length}})" collapsed="true">
+        <div ng-repeat="sourceList in missingSources track by $index">
           <div class="list-item" style="display: flex;border: 2px solid #3e4045;box-shadow: none;border-radius: 8px;padding: 5px 5px;">
             <div class="pl-5">
                 <span>Source: {{sourceList.sourceName}}</span>
@@ -45,7 +45,7 @@ export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
         </div>
     </setting-container>
 
-    <eos-container header="Audio Sources" pad-top="orphanedSources.length > 0">
+    <eos-container header="Audio Sources" pad-top="missingSources.length > 0">
       <firebot-input model="searchText" input-title="Filter" disable-variables="true"></firebot-input>
       <div>
           <button class="btn btn-link" ng-click="getSourceList()">Refresh Sources</button>
@@ -81,7 +81,7 @@ export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
 
           $scope.sourceList = null;
 
-          $scope.orphanedSources = [];
+          $scope.missingSources = [];
 
           if ($scope.effect.selectedSources == null) {
               $scope.effect.selectedSources = [];
@@ -123,7 +123,7 @@ export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
                   s => s.sourceName === sourceName
               );
 
-              $scope.orphanedSources = $scope.orphanedSources.filter(item => item !== selectedSource);
+              $scope.missingSources = $scope.missingSources.filter(item => item !== selectedSource);
 
               if (selectedSource == null) {
                   return "";
@@ -152,14 +152,14 @@ export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
 
           $scope.deleteSceneAtIndex = (index: number) => {
               $scope.effect.selectedSources = $scope.effect.selectedSources.filter(
-                  item => item !== $scope.orphanedSources[index]
+                  item => item !== $scope.missingSources [index]
               );
-              $scope.orphanedSources.splice(index, 1);
+              $scope.missingSources.splice(index, 1);
           };
 
-          $scope.getOrphanedData = () => {
+          $scope.getMissingData = () => {
               for (const sceneName of $scope.effect.selectedSources) {
-                  $scope.orphanedSources.push(sceneName);
+                  $scope.missingSources.push(sceneName);
               }
           };
 
@@ -174,7 +174,7 @@ export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
           };
 
           $scope.getSourceList();
-          $scope.getOrphanedData();
+          $scope.getMissingData();
       },
       optionsValidator: () => {
           return [];

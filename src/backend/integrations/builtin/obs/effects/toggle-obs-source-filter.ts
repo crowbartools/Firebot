@@ -30,20 +30,20 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
           categories: ["common"]
       },
       optionsTemplate: `
-    <eos-container ng-show="orphanedSources.length > 0">
+    <eos-container ng-show="missingSources.length > 0">
         <div class="effect-info alert alert-warning">
              <p><b>Warning!</b> 
-                 Cannot find {{orphanedSources.length}} sources in this effect. Ensure the correct profile or scene collection is loaded in OBS, and OBS is running.
+                 Cannot find {{missingSources.length}} sources in this effect. Ensure the correct profile or scene collection is loaded in OBS, and OBS is running.
              </p>
         </div>
     </eos-container>
-    <setting-container ng-show="orphanedSources.length > 0" header="Missing Filters ({{orphanedSources.length}})" collapsed="true">
-        <div ng-repeat="filterName in orphanedSources track by $index">
+    <setting-container ng-show="missingSources.length > 0" header="Missing Filters ({{missingSources.length}})" collapsed="true">
+        <div ng-repeat="filterName in missingSources track by $index">
           <div class="list-item" style="display: flex;border: 2px solid #3e4045;box-shadow: none;border-radius: 8px;padding: 5px 5px;">
             <div class="pl-5">
                 <span>Source: {{filterName.sourceName}},</span>
                 <span>Name: {{filterName.filterName}},</span>
-                <span>Action: {{filterName.action}}</span>
+                <span>Action: {{getMissingActionDisplay(filterName.action)}}</span>
             </div>   
             <div>
                   <button class="btn btn-danger" ng-click="deleteSceneAtIndex($index)"><i class="far fa-trash"></i></button>
@@ -52,7 +52,7 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
         </div>
     </setting-container>
 
-    <eos-container header="Filters" pad-top="orphanedSources.length > 0">
+    <eos-container header="Filters" pad-top="missingSources.length > 0">
       <div class="effect-setting-container">
         <div class="input-group">
           <span class="input-group-addon">Filter</span>
@@ -98,7 +98,7 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
 
           $scope.searchText = "";
 
-          $scope.orphanedSources = [];
+          $scope.missingSources = [];
 
           if ($scope.effect.selectedFilters == null) {
               $scope.effect.selectedFilters = [];
@@ -148,7 +148,7 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
                   s => s.sourceName === sourceName && s.filterName === filterName
               );
 
-              $scope.orphanedSources = $scope.orphanedSources.filter(item => item !== selectedFilter);
+              $scope.missingSources = $scope.missingSources.filter(item => item !== selectedFilter);
 
               if (selectedFilter == null) {
                   return "";
@@ -158,6 +158,21 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
                   return "Toggle";
               }
               if (selectedFilter.action === true) {
+                  return "Enable";
+              }
+              return "Disable";
+          };
+
+          $scope.geMissingActionDisplay = (
+              selectedFilter: unknown
+          ) => {
+              if (selectedFilter == null) {
+                  return "";
+              }
+              if (selectedFilter === "toggle") {
+                  return "Toggle";
+              }
+              if (selectedFilter === true) {
                   return "Enable";
               }
               return "Disable";
@@ -188,14 +203,14 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
 
           $scope.deleteSceneAtIndex = (index: number) => {
               $scope.effect.selectedFilters = $scope.effect.selectedFilters.filter(
-                  item => item !== $scope.orphanedSources[index]
+                  item => item !== $scope.missingSources [index]
               );
-              $scope.orphanedSources.splice(index, 1);
+              $scope.missingSources.splice(index, 1);
           };
 
-          $scope.getOrphanedData = () => {
+          $scope.getMissingData = () => {
               for (const filterName of $scope.effect.selectedFilters) {
-                  $scope.orphanedSources.push(filterName);
+                  $scope.missingSources.push(filterName);
               }
           };
 
@@ -211,7 +226,7 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
           };
 
           $scope.getSourceList();
-          $scope.getOrphanedData();
+          $scope.getMissingData();
       },
       optionsValidator: () => {
           return [];

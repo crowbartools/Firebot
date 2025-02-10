@@ -32,21 +32,21 @@ export const ToggleSourceVisibilityEffectType: Firebot.EffectType<EffectProperti
         categories: ["common"]
     },
     optionsTemplate: `
-<eos-container ng-show="orphanedSources.length > 0">
+<eos-container ng-show="missingSources.length > 0">
         <div class="effect-info alert alert-warning">
             <p><b>Warning!</b> 
-                Cannot find {{orphanedSources.length}} sources in this effect. Ensure the correct profile or scene collection is loaded in OBS, and OBS is running.
+                Cannot find {{missingSources.length}} sources in this effect. Ensure the correct profile or scene collection is loaded in OBS, and OBS is running.
             </p>
         </div>
 </eos-container>
-<setting-container ng-show="orphanedSources.length > 0" header="Missing Sources ({{orphanedSources.length}})" collapsed="true">
-    <div ng-repeat="sceneName in orphanedSources track by $index">
+<setting-container ng-show="missingSources.length > 0" header="Missing Sources ({{missingSources.length}})" collapsed="true">
+    <div ng-repeat="sceneName in missingSources track by $index">
       <div class="list-item" style="display: flex;border: 2px solid #3e4045;box-shadow: none;border-radius: 8px;padding: 5px 5px;">
         <div class="pl-5">
           <span>Scene: {{sceneName.sceneName}},</span>
             <span ng-if="sceneName.sourceName != null">Name: {{sceneName.sourceName}},</span>
             <span>Id: {{sceneName.sourceId}},</span>
-            <span>Action: {{sceneName.action}}</span>
+            <span>Action: {{geMissingActionDisplay(sceneName.action)}}</span>
         </div>   
         <div>
             <button class="btn btn-danger" ng-click="deleteSceneAtIndex($index)"><i class="far fa-trash"></i></button>
@@ -55,7 +55,7 @@ export const ToggleSourceVisibilityEffectType: Firebot.EffectType<EffectProperti
     </div>
 </setting-container>
 
-<eos-container header="Sources" pad-top="orphanedSources.length > 0">
+<eos-container header="Sources" pad-top="missingSources.length > 0">
   <div class="effect-setting-container">
     <div class="input-group">
       <span class="input-group-addon">Filter</span>
@@ -102,7 +102,7 @@ export const ToggleSourceVisibilityEffectType: Firebot.EffectType<EffectProperti
 
         $scope.sceneNames = [];
 
-        $scope.orphanedSources = [];
+        $scope.missingSources = [];
 
         if ($scope.effect.selectedSources == null) {
             $scope.effect.selectedSources = [];
@@ -169,7 +169,7 @@ export const ToggleSourceVisibilityEffectType: Firebot.EffectType<EffectProperti
                 s => s.sceneName === sceneName && s.sourceId === sourceId
             );
 
-            $scope.orphanedSources = $scope.orphanedSources.filter(item => item !== selectedSource);
+            $scope.missingSources = $scope.missingSources.filter(item => item !== selectedSource);
 
             if (selectedSource == null) {
                 return "";
@@ -184,16 +184,31 @@ export const ToggleSourceVisibilityEffectType: Firebot.EffectType<EffectProperti
             return "Hide";
         };
 
-        $scope.deleteSceneAtIndex = (index: number) => {
-            $scope.effect.selectedSources = $scope.effect.selectedSources.filter(
-                item => item !== $scope.orphanedSources[index]
-            );
-            $scope.orphanedSources.splice(index, 1);
+        $scope.geMissingActionDisplay = (
+            selectedFilter: unknown
+        ) => {
+            if (selectedFilter == null) {
+                return "";
+            }
+            if (selectedFilter === "toggle") {
+                return "Toggle";
+            }
+            if (selectedFilter === true) {
+                return "Enable";
+            }
+            return "Disable";
         };
 
-        $scope.getOrphanedData = () => {
+        $scope.deleteSceneAtIndex = (index: number) => {
+            $scope.effect.selectedSources = $scope.effect.selectedSources.filter(
+                item => item !== $scope.missingSources [index]
+            );
+            $scope.missingSources.splice(index, 1);
+        };
+
+        $scope.getMissingData = () => {
             for (const sceneName of $scope.effect.selectedSources) {
-                $scope.orphanedSources.push(sceneName);
+                $scope.missingSources.push(sceneName);
             }
         };
 
@@ -208,7 +223,7 @@ export const ToggleSourceVisibilityEffectType: Firebot.EffectType<EffectProperti
             );
         };
         $scope.getSourceData();
-        $scope.getOrphanedData();
+        $scope.getMissingData();
     },
     optionsValidator: () => {
         return [];
