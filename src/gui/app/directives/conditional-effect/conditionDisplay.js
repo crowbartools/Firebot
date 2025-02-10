@@ -46,7 +46,7 @@
                 $ctrl.leftSideValueDisplay = "[Not Set]";
 
                 function getRightSideValueDisplay() {
-                    return $q(async resolve => {
+                    return $q(async (resolve) => {
                         if ($ctrl.condition == null || $ctrl.condition.rightSideValue == null || $ctrl.condition.rightSideValue === "") {
                             resolve("[Not Set]");
                         } else {
@@ -59,7 +59,7 @@
                 }
 
                 function getLeftSideValueDisplay() {
-                    return $q(async resolve => {
+                    return $q(async (resolve) => {
                         if ($ctrl.condition == null || $ctrl.condition.leftSideValue == null || $ctrl.condition.leftSideValue === "") {
                             resolve("[Not Set]");
                         } else {
@@ -72,10 +72,10 @@
                 }
 
                 $ctrl.$onInit = function() {
-                    getRightSideValueDisplay().then(value => {
+                    getRightSideValueDisplay().then((value) => {
                         $ctrl.rightSideValueDisplay = value || "[Not Set]";
                     });
-                    getLeftSideValueDisplay().then(value => {
+                    getLeftSideValueDisplay().then((value) => {
                         $ctrl.leftSideValueDisplay = value || "[Not Set]";
                     });
                 };
