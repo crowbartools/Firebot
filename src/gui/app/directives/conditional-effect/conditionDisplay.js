@@ -47,7 +47,7 @@
 
                 function getRightSideValueDisplay() {
                     return $q(async resolve => {
-                        if ($ctrl.condition == null || $ctrl.condition.rightSideValue == null) {
+                        if ($ctrl.condition == null || $ctrl.condition.rightSideValue == null || $ctrl.condition.rightSideValue === "") {
                             resolve("[Not Set]");
                         } else {
                             const value = await $injector.invoke($ctrl.conditionType.getRightSideValueDisplay, {}, {
@@ -60,7 +60,7 @@
 
                 function getLeftSideValueDisplay() {
                     return $q(async resolve => {
-                        if ($ctrl.condition == null || $ctrl.condition.leftSideValue == null) {
+                        if ($ctrl.condition == null || $ctrl.condition.leftSideValue == null || $ctrl.condition.leftSideValue === "") {
                             resolve("[Not Set]");
                         } else {
                             const value = await $injector.invoke($ctrl.conditionType.getLeftSideValueDisplay, {}, {
@@ -73,19 +73,19 @@
 
                 $ctrl.$onInit = function() {
                     getRightSideValueDisplay().then(value => {
-                        $ctrl.rightSideValueDisplay = value;
+                        $ctrl.rightSideValueDisplay = value || "[Not Set]";
                     });
                     getLeftSideValueDisplay().then(value => {
-                        $ctrl.leftSideValueDisplay = value;
+                        $ctrl.leftSideValueDisplay = value || "[Not Set]";
                     });
                 };
 
                 $ctrl.$onChanges = function() {
-                    getRightSideValueDisplay().then(value => {
-                        $ctrl.rightSideValueDisplay = value;
+                    getRightSideValueDisplay().then((value) => {
+                        $ctrl.rightSideValueDisplay = value || "[Not Set]";
                     });
-                    getLeftSideValueDisplay().then(value => {
-                        $ctrl.leftSideValueDisplay = value;
+                    getLeftSideValueDisplay().then((value) => {
+                        $ctrl.leftSideValueDisplay = value || "[Not Set]";
                     });
                 };
             }
