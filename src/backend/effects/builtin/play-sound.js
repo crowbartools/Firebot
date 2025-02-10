@@ -1,7 +1,7 @@
 "use strict";
 
-const { settings } = require("../../common/settings-access");
-const resourceTokenManager = require("../../resourceTokenManager");
+const { SettingsManager } = require("../../common/settings-manager");
+const { ResourceTokenManager } = require("../../resource-token-manager");
 const webServer = require("../../../server/http-server-manager");
 const fs = require('fs/promises');
 const logger = require("../../logwrapper");
@@ -38,7 +38,7 @@ const playSound = {
 
             <div ng-if="effect.soundType === 'local'">
                 <div style="margin-bottom: 10px">
-                    <file-chooser model="effect.filepath" options="{ filters: [ {name: 'Audio', extensions: ['mp3', 'ogg', 'wav', 'flac']} ]}" on-update="soundFileUpdated(filepath)"></file-chooser>
+                    <file-chooser model="effect.filepath" options="{ filters: [ {name: 'Audio', extensions: ['mp3', 'ogg', 'oga', 'wav', 'flac']} ]}" on-update="soundFileUpdated(filepath)"></file-chooser>
                 </div>
                 <div>
                     <sound-player path="effect.filepath" volume="effect.volume" output-device="effect.audioOutputDevice"></sound-player>
@@ -120,7 +120,7 @@ const playSound = {
                 logger.warn("Unable to read sound folder", err);
             }
 
-            const filteredFiles = files.filter(i => (/\.(mp3|ogg|wav|flac)$/i).test(i));
+            const filteredFiles = files.filter(i => (/\.(mp3|ogg|oga|wav|flac)$/i).test(i));
             const chosenFile = filteredFiles[Math.floor(Math.random() * filteredFiles.length)];
 
             if (filteredFiles.length === 0) {
@@ -133,14 +133,14 @@ const playSound = {
         // Set output device.
         let selectedOutputDevice = effect.audioOutputDevice;
         if (selectedOutputDevice == null || selectedOutputDevice.label === "App Default") {
-            selectedOutputDevice = settings.getAudioOutputDevice();
+            selectedOutputDevice = SettingsManager.getSetting("AudioOutputDevice");
         }
         data.audioOutputDevice = selectedOutputDevice;
 
         // Generate token if going to overlay, otherwise send to gui.
         if (selectedOutputDevice.deviceId === "overlay") {
             if (effect.soundType !== "url") {
-                const resourceToken = resourceTokenManager.storeResourcePath(
+                const resourceToken = ResourceTokenManager.storeResourcePath(
                     data.filepath,
                     30
                 );
@@ -151,7 +151,7 @@ const playSound = {
             webServer.sendToOverlay("sound", data);
         } else {
             // Send data back to media.js in the gui.
-            renderWindow.webContents.send("playsound", data);
+            frontendCommunicator.send("playsound", data);
         }
 
         if (effect.waitForSound) {
@@ -161,7 +161,7 @@ const playSound = {
                 });
 
                 if (selectedOutputDevice.deviceId === "overlay"
-                    && settings.getForceOverlayEffectsToContinueOnRefresh() === true) {
+                    && SettingsManager.getSetting("ForceOverlayEffectsToContinueOnRefresh") === true) {
                     let currentDuration = 0;
                     let returnNow = false;
                     const overlayInstance = effect.overlayInstance ?? "Default";
@@ -211,7 +211,7 @@ const playSound = {
 
                 // Generate UUID to use as class name.
                 // eslint-disable-next-line no-undef
-                const uuid = uuidv4();
+                const elementId = uuid();
 
                 const filepath = data.isUrl ? data.url : data.filepath.toLowerCase();
                 let mediaType;
@@ -219,24 +219,26 @@ const playSound = {
                     mediaType = "audio/mpeg";
                 } else if (filepath.endsWith("ogg")) {
                     mediaType = "audio/ogg";
+                } else if (filepath.endsWith("oga")) {
+                    mediaType = "audio/ogg";
                 } else if (filepath.endsWith("wav")) {
                     mediaType = "audio/wav";
                 } else if (filepath.endsWith("flac")) {
                     mediaType = "audio/flac";
                 }
 
-                const audioElement = `<audio id="${uuid}" src="${data.isUrl ? data.url : resourcePath}" type="${mediaType}"></audio>`;
+                const audioElement = `<audio id="${elementId}" src="${data.isUrl ? data.url : resourcePath}" type="${mediaType}"></audio>`;
 
                 // Throw audio element on page.
                 $("#wrapper").append(audioElement);
 
-                const audio = document.getElementById(uuid);
+                const audio = document.getElementById(elementId);
                 audio.volume = parseFloat(data.volume) / 10;
 
                 audio.oncanplay = () => audio.play();
 
                 audio.onended = () => {
-                    $(`#${uuid}`).remove();
+                    $(`#${elementId}`).remove();
                 };
             }
         }

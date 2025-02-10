@@ -2,7 +2,6 @@
 
 const { EffectCategory } = require("../../../../../shared/effect-constants");
 const integrationManager = require("../../../integration-manager");
-const axios = require("axios").default;
 const logger = require("../../../../logwrapper");
 
 const effect = {
@@ -31,12 +30,20 @@ const effect = {
 
         if (accessToken) {
             try {
-                await axios.post("https://streamlabs.com/api/v1.0/wheel/spin",
+                const response = await fetch("https://streamlabs.com/api/v1.0/wheel/spin",
                     {
-                        "access_token": accessToken
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ "access_token": accessToken })
                     });
 
-                return true;
+                if (response.ok) {
+                    return true;
+                }
+
+                throw new Error(`Request failed with status ${response.status}`);
             } catch (error) {
                 logger.error("Failed to spin Streamlabs wheel", error.message);
                 return false;

@@ -1,9 +1,8 @@
 "use strict";
 const EventEmitter = require("events");
 const io = require("socket.io-client");
-const axios = require("axios").default;
 const logger = require("../../../logwrapper");
-const { secrets } = require("../../../secrets-manager");
+const { SecretsManager } = require("../../../secrets-manager");
 
 const tsEventHandler = require("./events/tipeeestream-event-handler");
 
@@ -17,8 +16,8 @@ const integrationDefinition = {
         id: "tipeeestream",
         name: "TipeeeStream",
         client: {
-            id: secrets.tipeeeStreamClientId,
-            secret: secrets.tipeeeStreamClientSecret
+            id: SecretsManager.secrets.tipeeeStreamClientId,
+            secret: SecretsManager.secrets.tipeeeStreamClientSecret
         },
         auth: {
             type: "code",
@@ -33,16 +32,14 @@ const integrationDefinition = {
 
 const getTipeeeAPIKey = async (accessToken) => {
     try {
-        const response = await axios.get("https://api.tipeeestream.com/v1.0/me/api",
-            {
-                params: {
-                    "access_token": accessToken
-                }
-            });
+        const response = await fetch(`https://api.tipeeestream.com/v1.0/me/api?access_token=${accessToken}`);
 
-        if (response && response.data && response.data.apiKey) {
-            return response.data.apiKey;
+        if (response.ok) {
+            const data = await response.json();
+            return data.apiKey;
         }
+
+        throw new Error(`Request failed with status ${response.status}`);
     } catch (error) {
         logger.error("Failed to get TipeeeStream API key", error.message);
         return null;
@@ -51,9 +48,9 @@ const getTipeeeAPIKey = async (accessToken) => {
 
 const getSocketUrl = async () => {
     try {
-        const response = (await axios.get("https://api.tipeeestream.com/v2.0/site/socket")).data;
+        const response = await (await fetch("https://api.tipeeestream.com/v2.0/site/socket")).json();
 
-        if (response && response.datas) {
+        if (response?.datas) {
             const data = response.datas;
 
             return `${data.host}:${data.port}`;
@@ -112,7 +109,7 @@ class TipeeeStreamIntegration extends EventEmitter {
             this.emit("disconnected", integrationDefinition.id);
         });
 
-        this._socket.on("new-event", data => {
+        this._socket.on("new-event", (data) => {
             const eventData = data.event;
             tsEventHandler.processTipeeeStreamEvent(eventData);
         });

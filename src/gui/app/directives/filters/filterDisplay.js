@@ -26,7 +26,8 @@
                             resolve("[Not Set]");
                         } else {
                             const value = await $injector.invoke($ctrl.filterType.getSelectedValueDisplay, {}, {
-                                filterSettings: $ctrl.filter
+                                filterSettings: $ctrl.filter,
+                                filterType: $ctrl.filterType
                             });
                             resolve(value);
                         }

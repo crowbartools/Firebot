@@ -11,7 +11,10 @@ const logger = require("../../logwrapper");
 const { setupTitlebar, attachTitlebarToWindow } = require("custom-electron-titlebar/main");
 const screenHelpers = require("./screen-helpers");
 const frontendCommunicator = require("../../common/frontend-communicator");
-const { settings } = require("../../common/settings-access");
+const { SettingsManager } = require("../../common/settings-manager");
+const { BackupManager } = require("../../backup-manager");
+
+const argv = require('../../common/argv-parser');
 
 setupTitlebar();
 
@@ -144,6 +147,12 @@ async function createMainWindow() {
         event.returnValue = false;
     });
 
+    const additionalArguments = [];
+
+    if (Object.hasOwn(argv, 'fbuser-data-directory') && argv['fbuser-data-directory'] != null && argv['fbuser-data-directory'] !== '') {
+        additionalArguments.push(`--fbuser-data-directory=${argv['fbuser-data-directory']}`);
+    }
+
     // Create the browser window.
     const mainWindow = new BrowserWindow({
         x: mainWindowState.x,
@@ -165,7 +174,8 @@ async function createMainWindow() {
             worldSafeExecuteJavaScript: false,
             enableRemoteModule: true,
             sandbox: false,
-            preload: path.join(__dirname, './preload.js')
+            preload: path.join(__dirname, './preload.js'),
+            additionalArguments
         }
     });
     mainWindow.setBounds({
@@ -244,9 +254,7 @@ async function createMainWindow() {
                     toolTip: "Open the folder where backups are stored",
                     sublabel: "Open the folder where backups are stored",
                     click: () => {
-                        const backupFolder = path.resolve(
-                            dataAccess.getPathInUserData("/backups/")
-                        );
+                        const backupFolder = BackupManager.backupFolderPath;
                         shell.openPath(backupFolder);
                     },
                     icon: await createIconImage("../../../gui/images/icons/mdi/folder-refresh-outline.png")
@@ -321,7 +329,7 @@ async function createMainWindow() {
                     toolTip: "Restores Firebot from a backup",
                     sublabel: "Restores Firebot from a backup",
                     click: async () => {
-                        frontendCommunicator.send("restore-backup");
+                        frontendCommunicator.send("backups:start-restore-backup");
                     },
                     icon: await createIconImage("../../../gui/images/icons/mdi/backup-restore.png")
                 },
@@ -350,16 +358,16 @@ async function createMainWindow() {
                 {
                     label: 'Join our Discord',
                     click: () => {
-                        shell.openExternal("https://discord.gg/tTmMbrG");
+                        shell.openExternal("https://discord.gg/crowbartools-372817064034959370");
                     },
                     icon: await createIconImage("../../../gui/images/icons/discord.png")
                 },
                 {
-                    label: 'Follow @FirebotApp on Twitter',
+                    label: 'Follow @firebot.app on Bluesky',
                     click: () => {
-                        shell.openExternal("https://twitter.com/FirebotApp");
+                        shell.openExternal("https://bsky.app/profile/firebot.app");
                     },
-                    icon: await createIconImage("../../../gui/images/icons/mdi/twitter.png")
+                    icon: await createIconImage("../../../gui/images/icons/bluesky.png")
                 },
                 {
                     type: 'separator'
@@ -464,7 +472,7 @@ async function createMainWindow() {
             username: "Firebot"
         });
 
-        if (settings.getOpenStreamPreviewOnLaunch() === true) {
+        if (SettingsManager.getSetting("OpenStreamPreviewOnLaunch") === true) {
             createStreamPreviewWindow();
         }
 
@@ -474,7 +482,7 @@ async function createMainWindow() {
 
     mainWindow.on("close", (event) => {
         const connectionManager = require("../../common/connection-manager");
-        if (!settings.hasJustUpdated() && connectionManager.chatIsConnected() && connectionManager.streamerIsOnline()) {
+        if (!SettingsManager.getSetting("JustUpdated") && connectionManager.chatIsConnected() && connectionManager.streamerIsOnline()) {
             event.preventDefault();
             dialog.showMessageBox(mainWindow, {
                 message: "Are you sure you want to close Firebot while connected to Twitch?",
@@ -482,7 +490,7 @@ async function createMainWindow() {
                 type: "question",
                 buttons: ["Close Firebot", "Cancel"]
 
-            }).then(({response}) => {
+            }).then(({ response }) => {
                 if (response === 0) {
                     mainWindow.destroy();
                     global.renderWindow = null;

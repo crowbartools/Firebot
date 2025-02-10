@@ -1,3 +1,5 @@
+import { ComparisonType } from "../shared/filter-constants";
+
 export type EventSource = {
     id: string;
     name: string;
@@ -10,6 +12,16 @@ export type EventSource = {
     }>;
 };
 
+export type PresetValue = {
+    value: any;
+    display: string;
+}
+
+export type FilterSettings = {
+    comparisonType: ComparisonType;
+    value: any;
+};
+
 export type EventFilter = {
     id: string;
     name: string;
@@ -20,13 +32,15 @@ export type EventFilter = {
     }>;
     comparisonTypes: string[];
     valueType: "text" | "preset";
-    presetValues(...args: any[]): Promise<unknown[]>;
+    presetValues?(...args: unknown[]): Promise<PresetValue[]> | PresetValue[];
+    valueIsStillValid?(filterSettings: FilterSettings, ...args: unknown[]): Promise<boolean> | boolean;
+    getSelectedValueDisplay?(filterSettings: FilterSettings, ...args: unknown[]): Promise<string> | string;
     predicate(
-        filterSettings: { comparisonType: string; value: any },
+        filterSettings: FilterSettings,
         eventData: {
             eventSourceId: string;
             eventId: string;
-            eventMeta: Record<string, any>;
+            eventMeta: Record<string, unknown>;
         }
-    ): Promise<boolean>;
+    ): Promise<boolean> | boolean;
 };

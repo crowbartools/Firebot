@@ -45,25 +45,23 @@
                 const $ctrl = this;
 
                 $ctrl.getOverlayInstances = () => {
-                    return settingsService.getOverlayInstances();
+                    return settingsService.getSetting("OverlayInstances");
                 };
 
-                $ctrl.usingObs = settingsService.getOverlayCompatibility() === "OBS";
-
                 $ctrl.deleteOverlayInstanceAtIndex = (index) => {
-                    const instances = settingsService.getOverlayInstances();
+                    const instances = settingsService.getSetting("OverlayInstances");
 
                     instances.splice(index, 1);
 
-                    settingsService.setOverlayInstances(instances);
+                    settingsService.saveSetting("OverlayInstances", instances);
                 };
 
                 const addOverlayInstance = (overlayInstance) => {
-                    const instances = settingsService.getOverlayInstances();
+                    const instances = settingsService.getSetting("OverlayInstances");
 
                     instances.push(overlayInstance);
 
-                    settingsService.setOverlayInstances(instances);
+                    settingsService.saveSetting("OverlayInstances", instances);
                 };
 
                 $ctrl.showViewUrlModal = (instanceName) => {
@@ -73,7 +71,7 @@
                 $ctrl.showCreateInstanceModal = () => {
                     utilityService.showModal({
                         component: "createOverlayInstancesModal",
-                        closeCallback: response => {
+                        closeCallback: (response) => {
                             addOverlayInstance(response.instanceName);
                         }
                     });

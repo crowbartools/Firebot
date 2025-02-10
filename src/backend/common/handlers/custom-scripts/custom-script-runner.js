@@ -1,12 +1,13 @@
 "use strict";
 const { ipcMain, shell } = require("electron");
-const uuid = require("uuid/v4");
+const { v4: uuid } = require("uuid");
 const logger = require("../../../logwrapper");
-const { settings } = require("../../settings-access");
 const utils = require("../../../utility");
 const profileManager = require("../../profile-manager");
-const { getScriptPath, buildRunRequest, mapParameters, mapV4EffectToV5 } = require("./custom-script-helpers");
+const { getScriptPath, buildRunRequest, mapParameters } = require("./custom-script-helpers");
 const effectRunner = require("../../effect-runner.js");
+import frontendCommunicator from "../../frontend-communicator";
+import { SettingsManager } from "../../settings-manager";
 
 /**
  * @typedef { import('./script-types').ScriptData } ScriptData
@@ -36,19 +37,19 @@ async function executeScript(scriptData, trigger, isStartupScript = false) {
     let customScript;
     try {
         // Make sure we first remove the cached version, incase there was any changes
-        if (settings.getClearCustomScriptCache()) {
+        if (SettingsManager.getSetting("ClearCustomScriptCache")) {
             delete require.cache[require.resolve(scriptFilePath)];
         }
         customScript = require(scriptFilePath);
     } catch (error) {
-        renderWindow.webContents.send("error", `Error loading the script '${scriptName}' \n\n ${error}`);
+        frontendCommunicator.send("error", `Error loading the script '${scriptName}' \n\n ${error}`);
         logger.error(error);
         return;
     }
 
     // Verify the script contains the "run" function
     if (typeof customScript.run !== "function") {
-        renderWindow.webContents.send(
+        frontendCommunicator.send(
             "error",
             `Error running '${scriptName}', script does not contain an exported 'run' function.`
         );
@@ -72,7 +73,7 @@ async function executeScript(scriptData, trigger, isStartupScript = false) {
     }
 
     if (manifest.startupOnly && !isStartupScript) {
-        renderWindow.webContents.send(
+        frontendCommunicator.send(
             "error",
             `Could not run startup-only script "${manifest.name}" as it was executed outside of Firebot startup (Settings > Advanced > Startup Scripts)`
         );
@@ -100,7 +101,7 @@ async function executeScript(scriptData, trigger, isStartupScript = false) {
 
     if (!response.success) {
         logger.error("Script failed with message:", response.errorMessage);
-        renderWindow.webContents.send("error", `Custom script failed with the message: ${response.errorMessage}`);
+        frontendCommunicator.send("error", `Custom script failed with the message: ${response.errorMessage}`);
         return;
     }
 
@@ -124,7 +125,6 @@ async function executeScript(scriptData, trigger, isStartupScript = false) {
             list: effects
                 .filter(e => e.type != null && e.type !== "")
                 .map((e) => {
-                    e = mapV4EffectToV5(e);
                     if (e.id == null) {
                         e.id = uuid();
                     }
@@ -168,7 +168,7 @@ async function runStartUpScript(startUpScriptConfig) {
     const { scriptName } = startUpScriptConfig;
     logger.debug(`running startup script: ${scriptName}`);
 
-    if (!settings.isCustomScriptsEnabled()) {
+    if (SettingsManager.getSetting("RunCustomScripts") !== true) {
         logger.warn("Attempted to run startup script but custom scripts are disabled.");
         return;
     }
@@ -229,8 +229,8 @@ function runScript(effect, trigger) {
 
     logger.debug(`running script: ${scriptName}`);
 
-    if (!settings.isCustomScriptsEnabled()) {
-        renderWindow.webContents.send(
+    if (!SettingsManager.getSetting("RunCustomScripts")) {
+        frontendCommunicator.send(
             "error",
             "Something attempted to run a custom script but this feature is disabled!"
         );

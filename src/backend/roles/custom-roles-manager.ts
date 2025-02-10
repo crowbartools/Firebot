@@ -11,18 +11,6 @@ import twitchRoleManager from "../../shared/twitch-roles";
 import { BasicViewer } from "../../types/viewers";
 import { TypedEmitter } from "tiny-typed-emitter";
 
-type Events = {
-    "created-item": (item: object) => void;
-    "updated-item": (item: object) => void;
-    "deleted-item": (item: object) => void;
-};
-
-interface LegacyCustomRole {
-    id: string;
-    name: string;
-    viewers: string[];
-}
-
 interface CustomRole {
     id: string;
     name: string;
@@ -31,6 +19,19 @@ interface CustomRole {
         username: string;
         displayName: string;
     }>;
+}
+
+type Events = {
+    "created-item": (item: object) => void;
+    "updated-item": (item: object) => void;
+    "deleted-item": (item: object) => void;
+    "viewer-role-updated": (userId: string, roleId: string, action: "added" | "removed") => void;
+};
+
+interface LegacyCustomRole {
+    id: string;
+    name: string;
+    viewers: string[];
 }
 
 const ROLES_FOLDER = "roles";
@@ -221,6 +222,18 @@ class CustomRolesManager extends TypedEmitter<Events> {
         if (role.viewers?.length && !role.viewers[0].id) {
             logger.error(`Cannot save custom role ${role} as it is in an older format`);
             return;
+        }
+
+        const previousRole = this._customRoles[role.id];
+
+        const viewersAdded = role.viewers.filter(v => !previousRole?.viewers.map(pv => pv.id).includes(v.id)) ?? [];
+        const viewersRemoved = previousRole?.viewers.filter(pv => !role.viewers.map(v => v.id).includes(pv.id)) ?? [];
+
+        for (const viewer of viewersAdded) {
+            this.emit("viewer-role-updated", viewer.id, role.id, "added");
+        }
+        for (const viewer of viewersRemoved) {
+            this.emit("viewer-role-updated", viewer.id, role.id, "removed");
         }
 
         const eventType = this._customRoles[role.id] == null ? "created-item" : "updated-item";

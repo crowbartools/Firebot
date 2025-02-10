@@ -42,7 +42,7 @@
                             <dropdown-select options="channelOptions" selected="effect.discordChannelId"></dropdown-select>
                         </div>
 
-                        <div style="padding-top:15px">
+                        <div ng-init="showOverlayOption = effect.showInOverlay == true"  style="padding-top:15px" ng-if="showOverlayOption">
                             <label class="control-fb control--checkbox"> Show screenshot in overlay
                                 <input type="checkbox" ng-model="effect.showInOverlay">
                                 <div class="control__indicator"></div>
@@ -81,6 +81,7 @@
                             </div>
                         </eos-container>
                         <eos-overlay-position effect="effect" class="setting-padtop"></eos-overlay-position>
+                        <eos-overlay-rotation effect="effect" pad-top="true"></eos-overlay-rotation>
                         <eos-enter-exit-animations effect="effect" class="setting-padtop"></eos-enter-exit-animations>
                         <eos-overlay-instance effect="effect" class="setting-padtop"></eos-overlay-instance>
                     </div>
@@ -127,7 +128,7 @@
                 $scope.hasChannels = false;
                 $scope.channelOptions = {};
                 $q.when(backendCommunicator.fireEventAsync("getDiscordChannels"))
-                    .then(channels => {
+                    .then((channels) => {
                         if (channels && channels.length > 0) {
                             const newChannels = {};
 

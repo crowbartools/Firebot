@@ -7,8 +7,14 @@ import currencyManager from "../../../currency/currency-manager";
 const model : ReplaceVariable = {
     definition: {
         handle: "currencyRank",
-        description: "Returns the rank of the given user based on how much of the given currency they have.",
-        usage: "currencyRank[currencyName, username]",
+        description: "Returns the rank of the current user based on how much of the given currency they have.",
+        usage: "currencyRank[currencyName]",
+        examples: [
+            {
+                usage: "currencyRank[currencyName, username]",
+                description: "Returns the rank for the specified user in the specified currency"
+            }
+        ],
         categories: [VariableCategory.USER, VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },

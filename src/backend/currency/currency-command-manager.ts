@@ -1,39 +1,35 @@
 import { SystemCommand } from "../../types/commands";
-
-import currencyAccess from "./currency-access";
+import currencyAccess, { Currency } from "./currency-access";
 import currencyManager from "./currency-manager";
 import commandManager from "../chat/commands/command-manager";
 import logger from "../logwrapper";
-import frontendCommunicator from "../common/frontend-communicator";
 import util from "../utility";
-
-interface BasicCurrency {
-    id: string;
-    name: string;
-}
 
 type CurrencyCommandRefreshRequestAction = "create" | "update" | "delete";
 
-interface CurrencyCommandRefreshRequest {
-    action: CurrencyCommandRefreshRequestAction;
-    currency: BasicCurrency;
-}
-
 class CurrencyCommandManager {
     constructor() {
-        // Refresh our currency commands.
-        frontendCommunicator.on("refreshCurrencyCommands", (request: CurrencyCommandRefreshRequest) => {
-            this.refreshCurrencyCommands(request.action, request.currency);
+        currencyAccess.on("currencies:currency-created", (currency: Currency) => {
+            this.refreshCurrencyCommands("create", currency);
+        });
+
+        currencyAccess.on("currencies:currency-updated", (currency: Currency) => {
+            this.refreshCurrencyCommands("update", currency);
+        });
+
+        currencyAccess.on("currencies:currency-deleted", (currency: Currency) => {
+            this.refreshCurrencyCommands("delete", currency);
         });
     }
 
     /**
      * Creates a command definition when given a currency name.
      */
-    createCurrencyCommandDefinition(currency: BasicCurrency): SystemCommand<{
+    createCurrencyCommandDefinition(currency: Partial<Currency>): SystemCommand<{
         currencyBalanceMessageTemplate: string;
         whisperCurrencyBalanceMessage: boolean;
         addMessageTemplate: string;
+        setMessageTemplate: string;
         removeMessageTemplate: string;
         addAllMessageTemplate: string;
         removeAllMessageTemplate: string;
@@ -47,6 +43,7 @@ class CurrencyCommandManager {
             currencyBalanceMessageTemplate: string;
             whisperCurrencyBalanceMessage: boolean;
             addMessageTemplate: string;
+            setMessageTemplate: string;
             removeMessageTemplate: string;
             addAllMessageTemplate: string;
             removeAllMessageTemplate: string;
@@ -113,6 +110,14 @@ class CurrencyCommandManager {
                         tip: "Variables: {currency}, {amount}",
                         default: `Removed {amount} {currency} from everyone!`,
                         useTextArea: true
+                    },
+                    setMessageTemplate: {
+                        type: "string",
+                        title: "Set Currency Message Template",
+                        description: "How the !currency set message appears in chat.",
+                        tip: "Variables: {user}, {currency}, {amount}",
+                        default: `Set {user}'s {currency} to {amount} !`,
+                        useTextArea: true
                     }
                 },
                 subCommands: [
@@ -156,6 +161,24 @@ class CurrencyCommandManager {
                         arg: "give",
                         usage: "give [@user] [amount]",
                         description: "Gives currency from one user to another user."
+                    },
+                    {
+                        arg: "set",
+                        usage: "set [@user] [amount]",
+                        description: "Sets currency to the amount.",
+                        restrictionData: {
+                            restrictions: [
+                                {
+                                    id: "sys-cmd-mods-only-perms",
+                                    type: "firebot:permissions",
+                                    mode: "roles",
+                                    roleIds: [
+                                        "mod",
+                                        "broadcaster"
+                                    ]
+                                }
+                            ]
+                        }
                     },
                     {
                         arg: "addall",
@@ -265,6 +288,28 @@ class CurrencyCommandManager {
                             // Error removing currency.
                             await twitchChat.sendChatMessage(`Error: Could not remove currency from user.`);
                             logger.error(`Error removing currency for user (${username}) via chat command. Currency: ${currencyId}. Value: ${currencyAdjust}`);
+                        }
+
+                        break;
+                    }
+                    case "set": {
+                        // Get username and make sure our currency amount is a positive integer.
+                        const username = args[1].replace(/^@/, ''),
+                            currencyAdjust = Math.abs(parseInt(args[2]));
+
+                        // Adjust currency, it will return true on success and false on failure.
+                        const status = await currencyManager.adjustCurrencyForViewer(username, currencyId, currencyAdjust, "set");
+
+                        if (status) {
+                            const setMessageTemplate = commandOptions.setMessageTemplate
+                                .replace("{user}", username)
+                                .replace("{currency}", currencyName)
+                                .replace("{amount}", util.commafy(currencyAdjust));
+                            await twitchChat.sendChatMessage(setMessageTemplate);
+                        } else {
+                            // Error removing currency.
+                            await twitchChat.sendChatMessage(`Error: Could not set currency for user.`);
+                            logger.error(`Error setting currency for user (${username}) via chat command. Currency: ${currencyId}. Value: ${currencyAdjust}`);
                         }
 
                         break;
@@ -388,7 +433,7 @@ class CurrencyCommandManager {
      */
     refreshCurrencyCommands(
         action: CurrencyCommandRefreshRequestAction = null,
-        currency: BasicCurrency = null
+        currency: Partial<Currency> = null
     ): void {
     // If we don't get currency stop here.
         if (currency == null) {

@@ -1,8 +1,8 @@
 "use strict";
 
-const { settings } = require("../../common/settings-access");
+const { SettingsManager } = require("../../common/settings-manager");
 const webServer = require("../../../server/http-server-manager");
-const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
+const { EffectCategory } = require('../../../shared/effect-constants');
 
 /**
  * The HTML effect
@@ -99,7 +99,7 @@ const html = {
    * When the effect is triggered by something
    * Used to validate fields in the option template.
    */
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.html == null) {
             errors.push("Please enter some HTML to show in the overlay.");
@@ -112,7 +112,7 @@ const html = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         // What should this do when triggered.
         const effect = event.effect;
 
@@ -136,9 +136,9 @@ const html = {
             exitDuration: effect.exitDuration
         };
 
-        if (settings.useOverlayInstances()) {
+        if (SettingsManager.getSetting("UseOverlayInstances")) {
             if (effect.overlayInstance != null) {
-                if (settings.getOverlayInstances().includes(effect.overlayInstance)) {
+                if (SettingsManager.getSetting("OverlayInstances").includes(effect.overlayInstance)) {
                     data.overlayInstance = effect.overlayInstance;
                 }
             }
@@ -157,7 +157,7 @@ const html = {
         },
         event: {
             name: "html",
-            onOverlayEvent: event => {
+            onOverlayEvent: (event) => {
                 // The absolute position prevents the html effect from always being underneath other effects.
                 const element = $(event.html).css({"position": "absolute"});
 

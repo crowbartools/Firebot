@@ -1,7 +1,7 @@
 "use strict";
-(function() {
+(function () {
 
-    const uuidv1 = require("uuid/v1");
+    const { v4: uuid } = require("uuid");
 
     angular
         .module('firebotApp')
@@ -209,7 +209,7 @@
 
             </div>
             `,
-            controller: function($q, $rootScope, $scope, utilityService, effectHelperService, objectCopyHelper, effectQueuesService, presetEffectListsService,
+            controller: function ($q, $rootScope, $scope, utilityService, effectHelperService, objectCopyHelper, effectQueuesService, presetEffectListsService,
                 settingsService, backendCommunicator, ngToast, $http, $injector) {
                 const ctrl = this;
 
@@ -237,7 +237,7 @@
                         ctrl.effectsData.list = [];
                     }
                     if (ctrl.effectsData.id == null) {
-                        ctrl.effectsData.id = uuidv1();
+                        ctrl.effectsData.id = uuid();
                     }
 
                     ctrl.effectsData.list.forEach((e) => {
@@ -446,7 +446,7 @@
                             children: [
                                 {
                                     html: `<a href ><i class="far fa-stopwatch mr-4"></i> Edit Timeout</a>`,
-                                    enabled: function($itemScope) {
+                                    enabled: function ($itemScope) {
                                         const effect = $itemScope.effect;
                                         const effectDefinition = effectDefinitions.find(e => e.id === effect.type);
                                         return !effectDefinition?.exemptFromTimeouts;
@@ -529,7 +529,7 @@
                         }
 
                         ctrl.effectsData.list = [{
-                            id: uuidv1(),
+                            id: uuid(),
                             type: "firebot:run-effect-list",
                             active: true,
                             listType: "preset",
@@ -673,7 +673,7 @@
                         return effect.effectLabel;
                     }
 
-                    if (effect?.id && settingsService.getDefaultEffectLabelsEnabled()) {
+                    if (effect?.id && settingsService.getSetting("DefaultEffectLabelsEnabled")) {
                         const defaultLabel = ctrl.effectDefaultLabels[effect.id];
 
                         if (defaultLabel != null) {
@@ -685,39 +685,39 @@
                 };
 
                 // when the element is initialized
-                ctrl.$onInit = async function() {
+                ctrl.$onInit = async function () {
                     createEffectsData();
                     effectDefinitions = await effectHelperService.getAllEffectTypes();
                     updateDefaultLabels();
                 };
 
-                ctrl.$onChanges = function() {
+                ctrl.$onChanges = function () {
                     createEffectsData();
                     updateDefaultLabels();
                 };
 
-                ctrl.effectsUpdate = function() {
+                ctrl.effectsUpdate = function () {
                     ensureDefaultWeights();
                     updateDefaultLabels();
                     ctrl.update({ effects: ctrl.effectsData });
                 };
 
-                ctrl.effectTypeChanged = function(effectType, index) {
+                ctrl.effectTypeChanged = function (effectType, index) {
                     ctrl.effectsData.list[index].type = effectType.id;
                     updateDefaultLabels();
                 };
-                ctrl.testEffects = function() {
+                ctrl.testEffects = function () {
                     ipcRenderer.send('runEffectsManually', { effects: ctrl.effectsData });
                 };
 
-                ctrl.getLabelButtonTextForLabel = function(labelModel) {
+                ctrl.getLabelButtonTextForLabel = function (labelModel) {
                     if (labelModel == null || labelModel.length === 0) {
                         return "Add Label";
                     }
                     return "Edit Label";
                 };
 
-                ctrl.editLabelForEffectAtIndex = function(index) {
+                ctrl.editLabelForEffectAtIndex = function (index) {
                     const effect = ctrl.effectsData.list[index];
                     const label = effect.effectLabel;
                     utilityService.openGetInputModal(
@@ -735,7 +735,7 @@
                         });
                 };
 
-                ctrl.editTimeoutForEffectAtIndex = function(index) {
+                ctrl.editTimeoutForEffectAtIndex = function (index) {
                     const effect = ctrl.effectsData.list[index];
                     const timeout = effect.abortTimeout;
                     utilityService.openGetInputModal(
@@ -769,9 +769,9 @@
                     effect.active = !effect.active;
                 };
 
-                ctrl.duplicateEffectAtIndex = function(index) {
+                ctrl.duplicateEffectAtIndex = function (index) {
                     const effect = JSON.parse(angular.toJson(ctrl.effectsData.list[index]));
-                    effect.id = uuidv1();
+                    effect.id = uuid();
                     ctrl.effectsData.list.splice(index + 1, 0, effect);
                     ctrl.effectsUpdate();
                 };
@@ -783,21 +783,21 @@
                     }
                 };
 
-                ctrl.removeEffectAtIndex = function(index) {
+                ctrl.removeEffectAtIndex = function (index) {
                     ctrl.effectsData.list.splice(index, 1);
                     ctrl.effectsUpdate();
                 };
 
-                ctrl.removeAllEffects = function() {
+                ctrl.removeAllEffects = function () {
                     ctrl.effectsData.list = [];
                     ctrl.effectsUpdate();
                 };
 
-                ctrl.hasCopiedEffects = function() {
+                ctrl.hasCopiedEffects = function () {
                     return objectCopyHelper.hasCopiedEffects();
                 };
 
-                ctrl.pasteEffects = async function(append = false) {
+                ctrl.pasteEffects = async function (append = false) {
                     if (objectCopyHelper.hasCopiedEffects()) {
                         if (append) {
                             ctrl.effectsData.list = ctrl.effectsData.list.concat(
@@ -821,11 +821,11 @@
                     }
                 };
 
-                ctrl.copyEffectAtIndex = function(index) {
+                ctrl.copyEffectAtIndex = function (index) {
                     objectCopyHelper.copyEffects([ctrl.effectsData.list[index]]);
                 };
 
-                ctrl.copyEffects = function() {
+                ctrl.copyEffects = function () {
                     objectCopyHelper.copyEffects(ctrl.effectsData.list);
                 };
 
@@ -847,7 +847,7 @@
                             const { selectedEffectDef } = resp;
 
                             const newEffect = {
-                                id: uuidv1(),
+                                id: uuid(),
                                 type: selectedEffectDef.id,
                                 active: true
                             };

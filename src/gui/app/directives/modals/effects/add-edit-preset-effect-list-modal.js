@@ -2,8 +2,6 @@
 
 (function() {
 
-    const uuidv1 = require("uuid/v1");
-
     angular.module("firebotApp").component("addOrEditPresetEffectListModal", {
         template: `
             <scroll-sentinel element-class="edit-preset-effect-list-header"></scroll-sentinel>
@@ -51,7 +49,7 @@
                         <ol>
                             <li>Add "Website" Action to a StreamDeck button</li>
                             <li>Set URL to <b>http://localhost:7472/api/v1/effects/preset/{{$ctrl.presetList.id}}</b></li>
-                            <li>Check "Access in background"</li>
+                            <li>Check "GET request in background"</li>
                         </ol>
                     </collapsable-panel>
                 </div>
@@ -92,7 +90,7 @@
                         inputPlaceholder: "Enter name",
                         saveText: "Save",
                         validationFn: (value) => {
-                            return new Promise(resolve => {
+                            return new Promise((resolve) => {
                                 if (value == null || value.trim().length < 1) {
                                     resolve(false);
                                 } else if ($ctrl.presetList.args.some(a => a.name === value.trim())) {
@@ -126,10 +124,6 @@
                     }
 
                     $ctrl.isNewPresetList = false;
-                }
-
-                if ($ctrl.isNewPresetList && $ctrl.presetList.id == null) {
-                    $ctrl.presetList.id = uuidv1();
                 }
             };
 

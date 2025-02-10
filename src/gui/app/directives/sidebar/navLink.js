@@ -7,11 +7,14 @@
             page: "@",
             icon: "@",
             isIndex: "<",
-            badgeText: "<"
+            badgeText: "<",
+            customHref: "@?",
+            extensionId: "<?",
+            extensionPageId: "<?"
         },
         template: `
             <li>
-                <a draggable=false class="fb-nav-link" href="{{$ctrl.href}}" ng-class="{'selected': $ctrl.sbm.tabIsSelected($ctrl.page)}" ng-click="$ctrl.sbm.setTab($ctrl.page, $ctrl.name)"  uib-tooltip="{{!$ctrl.sbm.navExpanded ? $ctrl.name : ''}}" tooltip-placement="right" tooltip-append-to-body="true">
+                <a draggable=false class="fb-nav-link" href="{{$ctrl.href}}" ng-class="{'selected': $ctrl.sbm.tabIsSelected($ctrl.page)}" ng-click="$ctrl.sbm.setTab($ctrl.page, $ctrl.name, $ctrl.extensionId, $ctrl.extensionPageId)"  uib-tooltip="{{!$ctrl.sbm.navExpanded ? $ctrl.name : ''}}" tooltip-placement="right" tooltip-append-to-body="true">
                     <div class="nav-link-bar"></div>
                     <div class="nav-link-icon">
                     <span class="nav-icon-wrapper">
@@ -31,9 +34,13 @@
             ctrl.sbm = sidebarManager;
 
             ctrl.$onInit = function() {
-                ctrl.href = ctrl.isIndex
-                    ? "#"
-                    : `#!${ctrl.page.toLowerCase().replace(/\W/g, "-")}`;
+                if (!ctrl.customHref?.length) {
+                    ctrl.href = ctrl.isIndex
+                        ? "#"
+                        : `#!${ctrl.page.toLowerCase().replace(/\W/g, "-")}`;
+                } else {
+                    ctrl.href = `#!${ctrl.customHref}`;
+                }
             };
 
             ctrl.hasBadge = function () {

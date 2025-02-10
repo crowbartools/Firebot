@@ -57,7 +57,7 @@ export type EffectType<EffectModel = unknown, OverlayData = unknown> = {
         description: string;
         icon: string;
         categories: EffectCategory[];
-        hidden?: boolean | Func<bool>;
+        hidden?: boolean | Func<boolean>;
         triggers?: TriggerType[] | TriggersObject;
         dependencies?: EffectDependencies | Array<"chat">;
         showWhenDependenciesNotMet?: boolean;

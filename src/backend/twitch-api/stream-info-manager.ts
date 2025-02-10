@@ -1,8 +1,7 @@
 import { DateTime } from "luxon";
-import axios from "axios";
 import logger from "../logwrapper";
 import accountAccess from "../common/account-access";
-import { settings } from "../common/settings-access";
+import { SettingsManager } from "../common/settings-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import TwitchApi from "./api";
 import {
@@ -50,7 +49,9 @@ class TwitchStreamInfoManager {
             if (Math.abs(this._lastWebCheckin.diffNow("minutes").minutes) >= WEB_CHECKIN_INTERVAL) {
                 logger.debug("Sending online heartbeat to firebot.app");
 
-                await axios.post(`https://firebot.app/api/live-now/${accountAccess.getAccounts().streamer.userId}`);
+                await fetch(`https://firebot.app/api/live-now/${accountAccess.getAccounts().streamer.userId}`, {
+                    method: "POST"
+                });
 
                 this._lastWebCheckin = DateTime.utc();
             }
@@ -93,7 +94,7 @@ class TwitchStreamInfoManager {
             this.streamInfo.viewers = stream.viewers;
             this.streamInfo.startedAt = stream.startDate;
 
-            if (settings.getWebOnlineCheckin() === true) {
+            if (SettingsManager.getSetting("WebOnlineCheckin") === true) {
                 await this.doWebCheckin();
             }
 

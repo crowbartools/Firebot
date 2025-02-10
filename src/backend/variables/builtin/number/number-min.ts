@@ -4,8 +4,14 @@ import { OutputDataType, VariableCategory } from "../../../../shared/variable-co
 const model : ReplaceVariable = {
     definition: {
         handle: "min",
-        description: "Returns the lowest-value numbered passed",
+        description: "Returns the lowest-value number",
         usage: "min[num1, num2, ...]",
+        examples: [
+            {
+                usage: "min[1, 5, 3, 10]",
+                description: "Returns 1, the lowest value from the input numbers"
+            }
+        ],
         categories: [VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NULL, OutputDataType.NUMBER]
     },

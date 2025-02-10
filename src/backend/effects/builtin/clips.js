@@ -2,7 +2,7 @@
 
 const clipProcessor = require("../../common/handlers/createClipProcessor");
 const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
-const { settings } = require("../../common/settings-access");
+const { SettingsManager } = require("../../common/settings-manager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/http-server-manager");
 const utils = require("../../utility");
@@ -202,16 +202,16 @@ const clip = {
                 }
 
                 let overlayInstance = null;
-                if (settings.useOverlayInstances()) {
+                if (SettingsManager.getSetting("UseOverlayInstances")) {
                     if (effect.overlayInstance != null) {
-                        if (settings.getOverlayInstances().includes(effect.overlayInstance)) {
+                        if (SettingsManager.getSetting("OverlayInstances").includes(effect.overlayInstance)) {
                             overlayInstance = effect.overlayInstance;
                         }
                     }
                 }
 
                 webServer.sendToOverlay("playTwitchClip", {
-                    clipSlug: clip.id,
+                    clipVideoUrl: clip.embedUrl,
                     width: effect.width,
                     height: effect.height,
                     duration: clipDuration,
@@ -273,20 +273,23 @@ const clip = {
                     inbetweenDelay,
                     inbetweenRepeat,
                     exitAnimation,
-                    exitDuration
+                    exitDuration,
+                    rotation
                 } = event;
 
-                const styles = (width ? `width: ${width}px;` : '') +
-                    (height ? `height: ${height}px;` : '');
+                // eslint-disable-next-line prefer-template
+                const styles = `width: ${width || screen.width}px;
+                 height: ${height || screen.height}px;
+                 transform: rotate(${rotation || 0});`;
 
                 const videoElement = `
-                    <video autoplay
-                        src="${clipVideoUrl}"
-                        height="${height || ""}"
-                        width="${width || ""}"
-                        style="border: none;${styles}"
-                        onloadstart="this.volume=${volume}"
-                        allowfullscreen="false" />
+                    <iframe style="border: none; ${styles}"
+                        src="${clipVideoUrl}&parent=${window.location.hostname}&autoplay=true"
+                        height="${height || screen.height}"
+                        width="${width || screen.width}"
+                        frameBorder=0
+                        allowfullscreen>
+                    </iframe>
                 `;
 
                 const positionData = {

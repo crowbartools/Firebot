@@ -1,41 +1,11 @@
 "use strict";
 
-const { ipcMain, dialog } = require("electron");
-const settings = require("../settings-access").settings;
-const resourceTokenManager = require("../../resourceTokenManager.js");
+const { SettingsManager } = require("../settings-manager");
+const { ResourceTokenManager } = require("../../resource-token-manager");
 const util = require("../../utility");
 const logger = require("../../logwrapper");
 const webServer = require("../../../server/http-server-manager");
-
-// Get Sound File Path
-// This listens for an event from the render media.js file to open a dialog to get a filepath.
-ipcMain.on("getSoundPath", function(event, uniqueid) {
-    const path = dialog.showOpenDialogSync({
-        properties: ["openFile"],
-        filters: [{ name: "Audio", extensions: ["mp3", "ogg", "wav", "flac"] }]
-    });
-    event.sender.send("gotSoundFilePath", { path: path, id: uniqueid });
-});
-
-// Get Video File Path
-// This listens for an event from the render media.js file to open a dialog to get a filepath.
-ipcMain.on("getVideoPath", function(event, uniqueid) {
-    const path = dialog.showOpenDialogSync({
-        properties: ["openFile"],
-        filters: [{ name: "Video", extensions: ["mp4", "webm", "ogv"] }]
-    });
-    event.sender.send("gotVideoFilePath", { path: path, id: uniqueid });
-});
-
-// Get Image File Path
-// This listens for an event from the render media.js file to open a dialog to get a filepath.
-ipcMain.on("getImagePath", function(event, uniqueid) {
-    const path = dialog.showOpenDialogSync({
-        properties: ["openFile"],
-        filters: [{ name: "Image", extensions: ["jpg", "gif", "png", "jpeg"] }]
-    });
-    event.sender.send("gotImageFilePath", { path: path, id: uniqueid });
-});
+const frontendCommunicator = require("../frontend-communicator");
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -73,25 +43,25 @@ function soundProcessor(effect) {
         selectedOutputDevice == null ||
     selectedOutputDevice.label === "App Default"
     ) {
-        selectedOutputDevice = settings.getAudioOutputDevice();
+        selectedOutputDevice = SettingsManager.getSetting("AudioOutputDevice");
     }
     data.audioOutputDevice = selectedOutputDevice;
 
     if (selectedOutputDevice.deviceId === "overlay") {
-        const resourceToken = resourceTokenManager.storeResourcePath(effect.file, 30);
+        const resourceToken = ResourceTokenManager.storeResourcePath(effect.file, 30);
         data.resourceToken = resourceToken;
     }
 
-    if (settings.useOverlayInstances()) {
+    if (SettingsManager.getSetting("UseOverlayInstances")) {
         if (effect.overlayInstance != null) {
-            if (settings.getOverlayInstances().includes(effect.overlayInstance)) {
+            if (SettingsManager.getSetting("OverlayInstances").includes(effect.overlayInstance)) {
                 data.overlayInstance = effect.overlayInstance;
             }
         }
     }
 
     // Send data back to media.js in the gui.
-    renderWindow.webContents.send("playsound", data);
+    frontendCommunicator.send("playsound", data);
 }
 
 // Image Processor
@@ -125,9 +95,9 @@ async function imageProcessor(effect, trigger) {
         "customCoords": effect.customCoords
     };
 
-    if (settings.useOverlayInstances()) {
+    if (SettingsManager.getSetting("UseOverlayInstances")) {
         if (effect.overlayInstance != null) {
-            if (settings.getOverlayInstances().includes(effect.overlayInstance)) {
+            if (SettingsManager.getSetting("OverlayInstances").includes(effect.overlayInstance)) {
                 data.overlayInstance = effect.overlayInstance;
             }
         }
@@ -138,7 +108,7 @@ async function imageProcessor(effect, trigger) {
     }
 
     if (effect.imageType === "local") {
-        const resourceToken = resourceTokenManager.storeResourcePath(
+        const resourceToken = ResourceTokenManager.storeResourcePath(
             effect.file,
             effect.length
         );
@@ -181,15 +151,15 @@ function videoProcessor(effect) {
         "loop": effect.loop === true
     };
 
-    if (settings.useOverlayInstances()) {
+    if (SettingsManager.getSetting("UseOverlayInstances")) {
         if (effect.overlayInstance != null) {
-            if (settings.getOverlayInstances().includes(effect.overlayInstance)) {
+            if (SettingsManager.getSetting("OverlayInstances").includes(effect.overlayInstance)) {
                 data.overlayInstance = effect.overlayInstance;
             }
         }
     }
 
-    const resourceToken = resourceTokenManager.storeResourcePath(
+    const resourceToken = ResourceTokenManager.storeResourcePath(
         effect.file,
         effect.length
     );
@@ -230,10 +200,10 @@ async function showText(effect, trigger) {
         dto.position = getRandomPresetLocation();
     }
 
-    if (settings.useOverlayInstances()) {
+    if (SettingsManager.getSetting("UseOverlayInstances")) {
         if (dto.overlayInstance != null) {
             //reset overlay if it doesnt exist
-            if (!settings.getOverlayInstances().includes(dto.overlayInstance)) {
+            if (!SettingsManager.getSetting("OverlayInstances").includes(dto.overlayInstance)) {
                 dto.overlayInstance = null;
             }
         }

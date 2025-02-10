@@ -1,6 +1,6 @@
 "use strict";
 
-(function() {
+(function () {
 
     angular
         .module("firebotApp")
@@ -13,15 +13,15 @@
                     >
                         <firebot-select
                             options="{ true: 'On', false: 'Off' }"
-                            ng-init="effectLabelsEnabled = settings.getDefaultEffectLabelsEnabled()"
+                            ng-init="effectLabelsEnabled = settings.getSetting('DefaultEffectLabelsEnabled')"
                             selected="effectLabelsEnabled"
-                            on-update="settings.setDefaultEffectLabelsEnabled(option === 'true')"
+                            on-update="settings.saveSetting('DefaultEffectLabelsEnabled', option === 'true')"
                             right-justify="true"
                         />
                     </firebot-setting>
                 </div>
           `,
-            controller: function($scope, settingsService) {
+            controller: function ($scope, settingsService) {
                 $scope.settings = settingsService;
             }
         });

@@ -1,9 +1,10 @@
 "use strict";
 
-const { settings } = require("../../common/settings-access");
+const { SettingsManager } = require("../../common/settings-manager");
 const webServer = require("../../../server/http-server-manager");
 const logger = require("../../logwrapper");
 const { EffectCategory } = require('../../../shared/effect-constants');
+const mediaProcessor = require("../../common/handlers/mediaProcessor");
 
 /**
  * The Show Text effect
@@ -51,6 +52,17 @@ const showText = {
             <input type="checkbox" ng-model="effect.dropShadow" />
             <div class="control__indicator"></div>
         </label>
+    </eos-container>
+
+    <eos-container header="Duration" class="setting-padtop">
+        <div class="input-group">
+            <span class="input-group-addon">Seconds</span>
+            <input
+                class="form-control"
+                type="text"
+                ng-model="effect.duration"
+                replace-variables="number">
+        </div>
     </eos-container>
 
     <eos-container header="Container Settings" class="setting-padtop">
@@ -111,23 +123,13 @@ const showText = {
 
     <eos-overlay-position effect="effect" class="setting-padtop"></eos-overlay-position>
 
+    <eos-overlay-rotation effect="effect" pad-top="true"></eos-overlay-rotation>
+
     <eos-enter-exit-animations effect="effect" class="setting-padtop"></eos-enter-exit-animations>
 
-    <eos-container header="Duration" class="setting-padtop">
-        <div class="input-group">
-            <span class="input-group-addon">Seconds</span>
-            <input
-                class="form-control"
-                type="text"
-                ng-model="effect.duration"
-                replace-variables="number">
-        </div>
-    </eos-container>
-
     <eos-overlay-instance effect="effect" class="setting-padtop"></eos-overlay-instance>
-
     <div class="effect-info alert alert-warning">
-    This effect requires the Firebot overlay to be loaded in your broadcasting software. <a href ng-click="showOverlayInfoModal(effect.overlayInstance)" style="text-decoration:underline">Learn more</a>
+        This effect requires the Firebot overlay to be loaded in your broadcasting software. <a href ng-click="showOverlayInfoModal(effect.overlayInstance)" style="text-decoration:underline">Learn more</a>
     </div>
     `,
     /**
@@ -139,7 +141,7 @@ const showText = {
         $scope.editorClass = "text-editor-white-bg";
 
         $scope.editorSettings = {
-            editorBackground: settingsService.getWysiwygBackground()
+            editorBackground: settingsService.getSetting("WysiwygBackground")
         };
 
         function updateEditorClass() {
@@ -152,7 +154,7 @@ const showText = {
         updateEditorClass();
 
         $scope.editorBackgroundChanged = function() {
-            settingsService.setWysiwygBackground($scope.editorSettings.editorBackground);
+            settingsService.saveSetting("WysiwygBackground", $scope.editorSettings.editorBackground);
             updateEditorClass();
         };
 
@@ -220,7 +222,7 @@ const showText = {
    * When the effect is triggered by something
    * Used to validate fields in the option template.
    */
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.text == null) {
             errors.push("Please enter some text to show.");
@@ -230,7 +232,7 @@ const showText = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
 
         // What should this do when triggered.
         const effect = event.effect;
@@ -256,19 +258,20 @@ const showText = {
             dontWrap: effect.dontWrap,
             debugBorder: effect.debugBorder,
             dropShadow: effect.dropShadow,
-            overlayInstance: effect.overlayInstance
+            overlayInstance: effect.overlayInstance,
+            rotation: effect.rotation ? effect.rotation + effect.rotType : "0deg"
         };
 
         const position = dto.position;
         if (position === "Random") {
             logger.debug("Getting random preset location");
-            dto.position = getRandomPresetLocation(); //eslint-disable-line no-undef
+            dto.position = mediaProcessor.randomLocation(); //eslint-disable-line no-undef
         }
 
-        if (settings.useOverlayInstances()) {
+        if (SettingsManager.getSetting("UseOverlayInstances")) {
             if (dto.overlayInstance != null) {
                 //reset overlay if it doesnt exist
-                if (!settings.getOverlayInstances().includes(dto.overlayInstance)) {
+                if (!SettingsManager.getSetting("OverlayInstances").includes(dto.overlayInstance)) {
                     dto.overlayInstance = null;
                 }
             }
@@ -316,7 +319,7 @@ const showText = {
         },
         event: {
             name: "text",
-            onOverlayEvent: event => {
+            onOverlayEvent: (event) => {
 
                 const data = event;
 
@@ -349,6 +352,10 @@ const showText = {
                 let styles = `height:${data.height}px;width:${data.width}px;`;
 
                 styles += `justify-content:${data.justify};text-align:${textAlign};align-items:${data.align};`;
+
+                if (data.rotation) {
+                    styles += `transform: rotate(${data.rotation});`;
+                }
 
                 let innerStyles = "width: 100%;";
                 if (data.dontWrap) {

@@ -6,8 +6,8 @@ grunt pack
 */
 'use strict';
 
-const formatIgnoreList = ignoreList => {
-    return ignoreList.map(item => {
+const formatIgnoreList = (ignoreList) => {
+    return ignoreList.map((item) => {
         if (item.dotfiles) {
             return '--ignore="^[\\\\\\/]?\\.[^\\\\\\/]+$"';
         }
@@ -55,7 +55,6 @@ module.exports = function (grunt) {
         '--out="./dist/pack"',
         '--arch=x64',
         `--electronVersion=${version}`,
-        '--asar.unpack="moderation-service.js"',
         '--prune',
         '--overwrite',
         '--version-string.ProductName="Firebot v5"',
@@ -66,16 +65,23 @@ module.exports = function (grunt) {
         ...ignoreFlags
     ].join(' ');
 
+    const appPackageJson = grunt.file.readJSON('./package.json');
+
+    // electron-packager doesn't like prerelease tags with dots in them for the Windows target
+    // see: https://github.com/electron/packager/issues/1714
+    const [appVersion, prereleaseTag] = appPackageJson.version.split('-');
+    const windowsAppVersion = appVersion + (prereleaseTag ? `-${prereleaseTag.replace(/\./g, '')}` : '');
+
     grunt.config.merge({
         shell: {
             packwin64: {
-                command: `npx --no-install electron-packager . Firebot --platform=win32 ${flags}`
+                command: `npx --no-install @electron/packager . Firebot --platform=win32 ${flags} --app-version=${windowsAppVersion}`
             },
             packdarwin: {
-                command: `npx --no-install electron-packager . Firebot --platform=darwin ${flags}`
+                command: `npx --no-install @electron/packager . Firebot --platform=darwin ${flags} --arch=arm64 --extend-info="extra.plist" --extra-resource="./src/resources/firebot-setup-file-icon.icns"`
             },
             packlinux: {
-                command: `npx --no-install electron-packager . Firebot --platform=linux ${flags}`
+                command: `npx --no-install @electron/packager . Firebot --platform=linux ${flags}`
             }
         }
     });

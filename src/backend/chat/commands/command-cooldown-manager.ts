@@ -48,14 +48,18 @@ class CommandCooldownManager {
     }
 
     getRemainingCooldown(command: CommandDefinition, triggeredSubcmd: SubCommand, username: string): number {
+        const subCommandId = triggeredSubcmd && !triggeredSubcmd.inheritBaseCommandCooldown
+            ? triggeredSubcmd.id ?? triggeredSubcmd.arg
+            : null;
+
         const globalCacheKey = this.buildCooldownCacheKey(
             command.id,
-            triggeredSubcmd ? triggeredSubcmd.id || triggeredSubcmd.arg : null
+            subCommandId
         );
 
         const userCacheKey = this.buildCooldownCacheKey(
             command.id,
-            triggeredSubcmd ? triggeredSubcmd.id || triggeredSubcmd.arg : null,
+            subCommandId,
             username
         );
 
@@ -82,7 +86,7 @@ class CommandCooldownManager {
 
     cooldownCommand(command: CommandDefinition, triggeredSubcmd: SubCommand, username: string): void {
         let cooldown;
-        if (triggeredSubcmd == null || triggeredSubcmd.cooldown == null) {
+        if (triggeredSubcmd == null || triggeredSubcmd.cooldown == null || triggeredSubcmd?.inheritBaseCommandCooldown) {
             cooldown = command.cooldown;
         } else {
             cooldown = triggeredSubcmd.cooldown;
@@ -92,25 +96,27 @@ class CommandCooldownManager {
         }
         logger.debug("Triggering cooldown for command");
 
+        const subCommandId = triggeredSubcmd && !triggeredSubcmd.inheritBaseCommandCooldown
+            ? triggeredSubcmd.id ?? triggeredSubcmd.arg
+            : null;
+
         const globalCacheKey = this.buildCooldownCacheKey(
             command.id,
-            triggeredSubcmd ? triggeredSubcmd.id || triggeredSubcmd.arg : null
+            subCommandId
         );
 
         const userCacheKey = this.buildCooldownCacheKey(
             command.id,
-            triggeredSubcmd ? triggeredSubcmd.id || triggeredSubcmd.arg : null,
+            subCommandId,
             username
         );
 
         if (cooldown.global > 0) {
-            if (this._cooldownCache.get(globalCacheKey) == null) {
-                this._cooldownCache.set(
-                    globalCacheKey,
-                    DateTime.utc().plus({ seconds: cooldown.global }),
-                    cooldown.global
-                );
-            }
+            this._cooldownCache.set(
+                globalCacheKey,
+                DateTime.utc().plus({ seconds: cooldown.global }),
+                cooldown.global
+            );
         }
         if (cooldown.user > 0) {
             this._cooldownCache.set(
@@ -139,13 +145,11 @@ class CommandCooldownManager {
         );
 
         if (config.cooldown.global > 0) {
-            if (this._cooldownCache.get(globalCacheKey) == null) {
-                this._cooldownCache.set(
-                    globalCacheKey,
-                    DateTime.utc().plus({ seconds: config.cooldown.global }),
-                    config.cooldown.global
-                );
-            }
+            this._cooldownCache.set(
+                globalCacheKey,
+                DateTime.utc().plus({ seconds: config.cooldown.global }),
+                config.cooldown.global
+            );
         }
         if (config.cooldown.user > 0 && config.username != null) {
             this._cooldownCache.set(

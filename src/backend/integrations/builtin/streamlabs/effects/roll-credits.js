@@ -1,7 +1,6 @@
 "use strict";
 
 const { EffectCategory } = require("../../../../../shared/effect-constants");
-const axios = require("axios").default;
 const logger = require("../../../../logwrapper");
 const integrationManager = require("../../../integration-manager");
 
@@ -53,14 +52,22 @@ const effect = {
 
         if (accessToken) {
             try {
-                await axios.post("https://streamlabs.com/api/v1.0/credits/roll",
+                const response = await fetch("https://streamlabs.com/api/v1.0/credits/roll",
                     {
-                        "access_token": accessToken
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ "access_token": accessToken })
                     });
 
-                return true;
+                if (response.ok) {
+                    return true;
+                }
+
+                throw new Error(`Request failed with status ${response.status}`);
             } catch (error) {
-                logger.error("Failed to roll Streamlabs credits", error.response.data.message);
+                logger.error("Failed to roll Streamlabs credits", error.message);
                 return false;
             }
         }

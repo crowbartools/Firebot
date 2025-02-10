@@ -16,7 +16,8 @@
       "EFFECT_QUEUES": "Effect Queues",
       "TIME_BASED": "Time-Based",
       "HOTKEYS": "Hotkeys",
-      "CHANNELREWARDS": "Channel Rewards"
+      "CHANNELREWARDS": "Channel Rewards",
+      "COUNTERS": "Counters"
     },
     "MANAGEMENT": {
       "MANAGEMENT": "Management",
@@ -31,7 +32,7 @@
     },
     "CONNECTIONS": {
       "CONNECTIONS": "Connections",
-      "MIXER_TOGGLE": "Click to toggle connections",
+      "TOGGLE": "Click to toggle connections",
       "OPEN_CONNECTION_PANNEL": "Open Connection Panel"
     },
     "ABOUT": "About"

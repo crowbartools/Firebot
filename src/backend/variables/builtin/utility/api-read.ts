@@ -3,12 +3,11 @@ import { OutputDataType, VariableCategory } from "../../../../shared/variable-co
 
 import logger from "../../../logwrapper";
 import { app } from "electron";
-import axios from "axios";
 
-const callUrl = async (url: string) => {
+const callUrl = async (url: string): Promise<Response> => {
     try {
         const appVersion = app.getVersion();
-        const response = await axios.get(url, {
+        const response = await fetch(url, {
             headers: {
                 "User-Agent": `Firebot/${appVersion}`
             }
@@ -43,14 +42,14 @@ const model: ReplaceVariable = {
         responseJsonPath: string
     ) => {
         try {
-            const content = (await callUrl(url)).data;
+            const content = await (await callUrl(url)).text();
             if (responseJsonPath != null) {
                 if (content != null) {
                     const jsonPathNodes = responseJsonPath.split(".");
                     try {
                         let currentObject = null;
                         for (const node of jsonPathNodes) {
-                            const objToTraverse = currentObject === null ? content : currentObject;
+                            const objToTraverse = currentObject === null ? JSON.parse(content) : currentObject;
                             if (objToTraverse[node] != null) {
                                 currentObject = objToTraverse[node];
                             } else {

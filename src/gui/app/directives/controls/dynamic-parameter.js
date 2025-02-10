@@ -67,7 +67,7 @@
           </div>
 
           <div ng-switch-when="filepath">
-            <file-chooser model="$ctrl.metadata.value" options="$ctrl.metadata.fileOptions"></file-chooser></file-chooser>
+            <file-chooser model="$ctrl.metadata.value" options="$ctrl.metadata.fileOptions"></file-chooser>
           </div>
 
           <div ng-switch-when="role-percentages">
@@ -100,6 +100,10 @@
 
           <div ng-switch-when="gift-receivers-list" class="pt-5">
             <gift-receivers-list model="$ctrl.metadata.value"></gift-receivers-list>
+          </div>
+
+          <div ng-switch-when="poll-choice-list" class="pt-5">
+            <poll-choice-list model="$ctrl.metadata.value" options="$ctrl.metadata.options"></poll-choice-list>
           </div>
 
           <div ng-switch-when="effectlist">
@@ -175,6 +179,13 @@
                     if (ctrl.metadata.type === "enum") {
                         if (ctrl.metadata.default == null) {
                             ctrl.metadata.value = ctrl.metadata.options[0];
+                        }
+                    }
+
+                    // If it is a boolean and no default is supplied, set to false
+                    if (ctrl.metadata.type === "boolean") {
+                        if (ctrl.metadata.default == null) {
+                            ctrl.metadata.value = false;
                         }
                     }
                 }

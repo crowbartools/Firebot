@@ -1,12 +1,11 @@
 "use strict";
-const { ipcMain } = require("electron");
 const logger = require("../logwrapper");
 const profileManager = require("../common/profile-manager");
 const authManager = require("../auth/auth-manager");
 const EventEmitter = require("events");
 const { shell } = require('electron');
-const { settings } = require('../common/settings-access');
-const frontEndCommunicator = require('../common/frontend-communicator');
+const { SettingsManager } = require('../common/settings-manager');
+const frontendCommunicator = require('../common/frontend-communicator');
 const { setValuesForFrontEnd, buildSaveDataFromSettingValues } = require("../common/firebot-setting-helpers");
 
 /**@extends {NodeJS.EventEmitter} */
@@ -59,12 +58,10 @@ class IntegrationManager extends EventEmitter {
 
         this.emit("integrationRegistered", integration);
 
-        if (global.renderWindow?.webContents != null) {
-            global.renderWindow.webContents.send("integrationsUpdated");
-        }
+        frontendCommunicator.send("integrationsUpdated");
 
-        integration.integration.on("connected", id => {
-            renderWindow.webContents.send("integrationConnectionUpdate", {
+        integration.integration.on("connected", (id) => {
+            frontendCommunicator.send("integrationConnectionUpdate", {
                 id: id,
                 connected: true
             });
@@ -72,8 +69,8 @@ class IntegrationManager extends EventEmitter {
             logger.info(`Successfully connected to ${id}`);
         });
 
-        integration.integration.on("disconnected", id => {
-            renderWindow.webContents.send("integrationConnectionUpdate", {
+        integration.integration.on("disconnected", (id) => {
+            frontendCommunicator.send("integrationConnectionUpdate", {
                 id: id,
                 connected: false
             });
@@ -81,7 +78,7 @@ class IntegrationManager extends EventEmitter {
             logger.info(`Disconnected from ${id}`);
         });
 
-        integration.integration.on("reconnect", id => {
+        integration.integration.on("reconnect", (id) => {
             logger.debug(`Reconnecting to ${id}...`);
             this.connectIntegration(id);
         });
@@ -158,7 +155,7 @@ class IntegrationManager extends EventEmitter {
     getAllIntegrationDefinitions() {
         return this._integrations
             .map(i => i.definition)
-            .map(i => {
+            .map((i) => {
                 return {
                     id: i.id,
                     name: i.name,
@@ -210,9 +207,9 @@ class IntegrationManager extends EventEmitter {
         }
 
         if (int.definition.linkType === "auth") {
-            shell.openExternal(`http://localhost:${settings.getWebServerPort()}/api/v1/auth?providerId=${encodeURIComponent(int.definition.authProviderDetails.id)}`);
+            shell.openExternal(`http://localhost:${SettingsManager.getSetting("WebServerPort")}/api/v1/auth?providerId=${encodeURIComponent(int.definition.authProviderDetails.id)}`);
         } else if (int.definition.linkType === "id") {
-            frontEndCommunicator.send("requestIntegrationAccountId", {
+            frontendCommunicator.send("requestIntegrationAccountId", {
                 integrationId: int.definition.id,
                 integrationName: int.definition.name,
                 steps: int.definition.idDetails && int.definition.idDetails.steps,
@@ -237,8 +234,8 @@ class IntegrationManager extends EventEmitter {
         integrationDb.push(`/${int.definition.id}/linked`, true);
         int.definition.linked = true;
 
-        renderWindow.webContents.send("integrationsUpdated");
-        frontEndCommunicator.send("integrationLinked", {
+        frontendCommunicator.send("integrationsUpdated");
+        frontendCommunicator.send("integrationLinked", {
             id: int.definition.id,
             connectionToggle: int.definition.connectionToggle
         });
@@ -264,9 +261,8 @@ class IntegrationManager extends EventEmitter {
             logger.warn(error);
         }
 
-        renderWindow.webContents.send("integrationsUpdated");
-
-        frontEndCommunicator.send("integrationUnlinked", integrationId);
+        frontendCommunicator.send("integrationsUpdated");
+        frontendCommunicator.send("integrationUnlinked", integrationId);
     }
 
     async connectIntegration(integrationId) {
@@ -291,7 +287,7 @@ class IntegrationManager extends EventEmitter {
                 if (updatedToken == null) {
                     logger.warn("Could not refresh integration access token!");
 
-                    renderWindow.webContents.send("integrationConnectionUpdate", {
+                    frontendCommunicator.send("integrationConnectionUpdate", {
                         id: integrationId,
                         connected: false
                     });
@@ -362,7 +358,7 @@ class IntegrationManager extends EventEmitter {
 
 const manager = new IntegrationManager();
 
-frontEndCommunicator.on("integrationUserSettingsUpdate", (integrationData) => {
+frontendCommunicator.on("integrationUserSettingsUpdate", (integrationData) => {
     if (integrationData == null) {
         return;
     }
@@ -375,7 +371,7 @@ frontEndCommunicator.on("integrationUserSettingsUpdate", (integrationData) => {
 });
 
 
-frontEndCommunicator.onAsync("enteredIntegrationAccountId", async (idData) => {
+frontendCommunicator.onAsync("enteredIntegrationAccountId", async (idData) => {
     const { integrationId, accountId } = idData;
     const int = manager.getIntegrationById(integrationId);
     if (int == null) {
@@ -399,29 +395,29 @@ authManager.on("auth-success", (authData) => {
     }
 });
 
-ipcMain.on("linkIntegration", (event, integrationId) => {
+frontendCommunicator.on("linkIntegration", (integrationId) => {
     logger.info("got 'linkIntegration' request");
     manager.startIntegrationLink(integrationId);
 });
 
-ipcMain.on("unlinkIntegration", (event, integrationId) => {
+frontendCommunicator.on("unlinkIntegration", (integrationId) => {
     logger.info("got 'unlinkIntegration' request");
     manager.unlinkIntegration(integrationId);
 });
 
-ipcMain.on("connectIntegration", (event, integrationId) => {
+frontendCommunicator.on("connectIntegration", (integrationId) => {
     logger.info("got 'connectIntegration' request");
     manager.connectIntegration(integrationId);
 });
 
-ipcMain.on("disconnectIntegration", (event, integrationId) => {
+frontendCommunicator.on("disconnectIntegration", (integrationId) => {
     logger.info("got 'disconnectIntegration' request");
     manager.disconnectIntegration(integrationId);
 });
 
-ipcMain.on("getAllIntegrationDefinitions", event => {
+frontendCommunicator.on("getAllIntegrationDefinitions", () => {
     logger.info("got 'get all integrations' request");
-    event.returnValue = manager.getAllIntegrationDefinitions();
+    return manager.getAllIntegrationDefinitions();
 });
 
 module.exports = manager;

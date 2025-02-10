@@ -191,7 +191,7 @@
 
                 $ctrl.hasFirebotData = false;
 
-                $ctrl.viewerDbEnabled = settingsService.getViewerDB();
+                $ctrl.viewerDbEnabled = settingsService.getSetting("ViewerDB");
 
                 $ctrl.accountAccess = accountAccess;
 
@@ -835,15 +835,12 @@
                         return;
                     }
 
-                    const relationshipData = $ctrl.viewerDetails.twitchData.relationship;
-                    const channelRoles = relationshipData ? relationshipData.roles : [];
-
                     const createViewerRequest = {
                         id: $ctrl.resolve.userId,
                         username: $ctrl.viewerDetails.twitchData.username,
                         displayName: $ctrl.viewerDetails.twitchData.displayName,
                         profilePicUrl: $ctrl.viewerDetails.twitchData.profilePicUrl,
-                        twitchRoles: channelRoles
+                        twitchRoles: $ctrl.viewerDetails.twitchData.userRoles
                     };
 
                     $q((resolve) => {

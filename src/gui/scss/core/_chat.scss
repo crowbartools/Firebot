@@ -43,7 +43,7 @@
     display: flex;
     padding: 6px;
     padding-left: 10px;
-    background: rgb(49, 49, 49);
+    background: $chat-alert-background-color;
     border-top: 1px solid #29292988;
 
     span {
@@ -380,6 +380,10 @@
         padding: 2px 6px;
         font-weight: bolder;
         text-wrap: nowrap;
+    }
+    .golden {
+        color: gold;
+        margin-left: 6px;
     }
     .time-left {
         opacity: 0.5;

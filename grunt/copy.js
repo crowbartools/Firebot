@@ -60,6 +60,13 @@ module.exports = function (grunt) {
                         cwd: 'build/resources/',
                         src: ['**'],
                         filter: 'isFile'
+                    },
+                    {
+                        expand: true,
+                        dest: 'dist/pack/Firebot-darwin-arm64/Firebot.app/Contents/Resources/resources/',
+                        cwd: 'build/resources/',
+                        src: ['**'],
+                        filter: 'isFile'
                     }
                 ]
             },

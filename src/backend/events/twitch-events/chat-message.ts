@@ -1,6 +1,7 @@
 import { ClearMsg } from "@twurple/chat";
 import { FirebotChatMessage } from "../../../types/chat";
 import eventManager from "../../events/EventManager";
+import { pick } from "../../utils";
 
 export function triggerChatMessage(firebotChatMessage: FirebotChatMessage): void {
     eventManager.triggerEvent("twitch", "chat-message", {
@@ -18,8 +19,7 @@ export function triggerChatMessageDeleted(deletedChatMessage: ClearMsg): void {
     eventManager.triggerEvent("twitch", "chat-message-deleted", {
         username: deletedChatMessage.userName,
         messageText: deletedChatMessage.text,
-        messageId: deletedChatMessage.targetMessageId,
-        deletedChatMessage
+        messageId: deletedChatMessage.targetMessageId
     });
 }
 

@@ -5,13 +5,25 @@ grunt compile
 
 'use strict';
 const path = require('path');
+const createWindowsInstaller = require('electron-winstaller').createWindowsInstaller;
+
 module.exports = function (grunt) {
 
-    const macPathIn = path.resolve(__dirname, `../dist/pack/Firebot-darwin-x64/Firebot.app`);
+    const macIntelPathIn = path.resolve(__dirname, `../dist/pack/Firebot-darwin-x64/Firebot.app`);
+    const macArmPathIn = path.resolve(__dirname, `../dist/pack/Firebot-darwin-arm64/Firebot.app`);
     const macPathOut = path.resolve(__dirname, '../dist/install/darwin');
     const macDmgIcon = path.resolve(__dirname, `../build/gui/images/logo_transparent_2.png`);
     const macDmgBg = path.resolve(__dirname, `../build/gui/images/firebot_dmg_bg.png`);
     const version = grunt.config('pkg').version;
+
+    // Bringing in from https://github.com/electron-archive/grunt-electron-installer/blob/master/tasks/index.js
+    grunt.registerMultiTask('create-windows-installer', 'Create the Windows installer', function () {
+        this.requiresConfig(`${this.name}.${this.target}.appDirectory`);
+
+        const config = grunt.config(`${this.name}.${this.target}`);
+        const done = this.async();
+        createWindowsInstaller(config).then(done, done);
+    });
 
     grunt.config.merge({
         'create-windows-installer': {
@@ -44,30 +56,32 @@ module.exports = function (grunt) {
             }
         },
         shell: {
-            'compile-darwin': {
-                command: `npx --no-install electron-installer-dmg "${macPathIn}" firebot-v${version}-macos-x64 --out="${macPathOut}" --background="${macDmgBg}" --icon="${macDmgIcon}" --title="Firebot Installer" --debug`
+            'compile-darwin-x64': {
+                command: `npx --no-install electron-installer-dmg "${macIntelPathIn}" firebot-v${version}-macos-x64 --out="${macPathOut}" --background="${macDmgBg}" --icon="${macDmgIcon}" --title="Firebot Installer" --debug`
+            },
+            'compile-darwin-arm64': {
+                command: `npx --no-install electron-installer-dmg "${macArmPathIn}" firebot-v${version}-macos-arm64 --out="${macPathOut}" --background="${macDmgBg}" --icon="${macDmgIcon}" --title="Firebot Installer" --debug`
             }
         }
     });
 
-    grunt.loadNpmTasks('grunt-electron-installer');
     grunt.loadNpmTasks('grunt-contrib-compress');
-    let compileCommand;
+    let compileCommands = [];
     switch (grunt.config.get('platform')) {
         case 'win64':
-            compileCommand = 'create-windows-installer:win64';
+            compileCommands = ['create-windows-installer:win64'];
             break;
 
         case 'linux':
-            compileCommand = 'compress:linux';
+            compileCommands = ['compress:linux'];
             break;
 
         case 'darwin':
-            compileCommand = 'shell:compile-darwin';
+            compileCommands = ['shell:compile-darwin-x64', 'shell:compile-darwin-arm64'];
             break;
 
         default:
-            throw new Error('unknonw platform');
+            throw new Error('unknown platform');
     }
-    grunt.registerTask('compile', ['cleanup:install', compileCommand]);
+    grunt.registerTask('compile', ['cleanup:install', ...compileCommands]);
 };

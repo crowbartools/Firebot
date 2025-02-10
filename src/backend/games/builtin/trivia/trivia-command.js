@@ -38,7 +38,7 @@ twitchListeners.events.on("chat-message", async (data) => {
     if (!currentQuestion) {
         return;
     }
-    const { username, question, wager, winningsMultiplier, currencyId, chatter } = currentQuestion;
+    const { username, question, wager, winningsMultiplier, currencyId, chatter, postCorrectAnswer } = currentQuestion;
     //ensure chat is from question user
     if (username !== chatMessage.username) {
         return;
@@ -69,12 +69,12 @@ twitchListeners.events.on("chat-message", async (data) => {
 
         await twitchChat.sendChatMessage(`${chatMessage.userDisplayName ?? username}, that is correct! You have won ${util.commafy(winnings)} ${currency.name}`, null, chatter);
     } else {
-        await twitchChat.sendChatMessage(`Sorry ${chatMessage.userDisplayName ?? username}, that is incorrect. Better luck next time!`, null, chatter);
+        await twitchChat.sendChatMessage(`Sorry ${chatMessage.userDisplayName ?? username}, that is incorrect.${postCorrectAnswer ? ` The correct answer was ${question.answers[question.correctIndex - 1]}.` : ""} Better luck next time!`, null, chatter);
     }
     clearCurrentQuestion();
 });
 
-const cooldownCache = new NodeCache({checkperiod: 5});
+const cooldownCache = new NodeCache({ checkperiod: 5 });
 
 const TRIVIA_COMMAND_ID = "firebot:trivia";
 
@@ -146,7 +146,7 @@ const triviaCommand = {
                 }
             }
             const maxWager = triviaSettings.settings.currencySettings.maxWager;
-            if (maxWager != null & maxWager > 0) {
+            if (maxWager != null && maxWager > 0) {
                 if (wagerAmount > maxWager) {
                     await twitchChat.sendChatMessage(`${user.displayName}, your wager amount can be no more than ${maxWager}.`, null, chatter);
                     return;
@@ -237,7 +237,8 @@ const triviaCommand = {
                 wager: wagerAmount,
                 winningsMultiplier: winningsMultiplier,
                 currencyId: currencyId,
-                chatter: chatter
+                chatter: chatter,
+                postCorrectAnswer: triviaSettings.settings.chatSettings.postCorrectAnswer
             };
 
             const answerTimeout = triviaSettings.settings.questionSettings.answerTime;

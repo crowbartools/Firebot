@@ -31,8 +31,7 @@ const model : ReplaceVariable = {
             }
         ],
         categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER],
-        hidden: true
+        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
     },
 
     evaluator: (

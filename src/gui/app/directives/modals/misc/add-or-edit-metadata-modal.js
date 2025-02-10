@@ -14,15 +14,15 @@
 
                         <div class="form-group" ng-class="{'has-error': $ctrl.formFieldHasError('key')}">
                             <label for="key" class="control-label">Key</label>
-                            <input 
+                            <input
                                 ng-if="$ctrl.isNew"
-                                type="text" 
-                                id="key" 
-                                name="key" 
-                                class="form-control input-lg" 
+                                type="text"
+                                id="key"
+                                name="key"
+                                class="form-control input-lg"
                                 placeholder="Enter key"
                                 ng-model="$ctrl.metadata.key"
-                                ui-validate="'$value != null && $value.length > 0'" 
+                                ui-validate="'$value != null && $value.length > 0'"
                                 required
                                 disable-variables="true"
                             />
@@ -31,34 +31,12 @@
 
                         <div class="form-group" ng-class="{'has-error': $ctrl.formFieldHasError('value')}">
                             <label for="value" class="control-label">Data</label>
-                            <input
-                                ng-if="expectedValueType === 'string' || expectedValueType === 'number'" 
-                                type="{{expectedValueType === 'number' ? 'number' : 'text'}}" 
-                                id="value" 
-                                name="value" 
-                                class="form-control input-lg" 
-                                placeholder="Enter value"
-                                ng-model="$ctrl.metadata.value"
-                                disable-variables="true"
+                            <selectable-input-editors
+                                editors="editors"
+                                initial-editor-label="initialEditorLabel"
+                                model="$ctrl.metadata.value"
                             />
-                            <div
-                                ng-if="expectedValueType === 'json'"
-                                ui-codemirror="{ onLoad : codemirrorLoaded }"
-                                ui-codemirror-opts="editorSettings"
-                                ng-model="$ctrl.metadata.value"
-                            >
-                            </div>
                         </div>
-
-                        <div ng-show="$ctrl.isNew">
-                            <div>Data Editor Type</div>
-                            <dropdown-select 
-                                options="{ string: 'Text', number: 'Number', json: 'JSON' }" 
-                                selected="expectedValueType"
-                            >
-                            </dropdown-select>
-                        </div>
-                        
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -74,32 +52,39 @@
             controller: function($scope) {
                 const $ctrl = this;
 
-                // string, number, json
-                $scope.expectedValueType = "string";
                 $scope.$watch("type", (newValue) => {
                     if (newValue === "json") {
                         $ctrl.metadata.value = ($ctrl.metadata.value || "").toString();
                     }
                 });
 
-                $scope.editorSettings = {
-                    mode: {name: "javascript", json: true},
-                    theme: 'blackboard',
-                    lineNumbers: true,
-                    autoRefresh: true,
-                    showGutter: true
-                };
-
-                $scope.codemirrorLoaded = function(_editor) {
-                    // Editor part
-                    _editor.refresh();
-                    const cmResize = require("cm-resize");
-                    cmResize(_editor, {
-                        minHeight: 200,
-                        resizableWidth: false,
-                        resizableHeight: true
-                    });
-                };
+                $scope.editors = [
+                    {
+                        label: "Text",
+                        inputType: "text",
+                        placeholderText: "Enter value",
+                        disableVariables: true
+                    },
+                    {
+                        label: "Number",
+                        inputType: "number",
+                        placeholderText: "Enter value",
+                        disableVariables: true,
+                        forceInput: true
+                    },
+                    {
+                        label: "JSON",
+                        inputType: "codemirror",
+                        disableVariables: true,
+                        codeMirrorOptions: {
+                            mode: {name: "javascript", json: true},
+                            theme: 'blackboard',
+                            lineNumbers: true,
+                            autoRefresh: true,
+                            showGutter: true
+                        }
+                    }
+                ];
 
                 $ctrl.isNew = true;
 
@@ -124,14 +109,13 @@
                         $ctrl.isNew = false;
 
                         const valueType = typeof $ctrl.metadata.value;
-                        console.log($ctrl.metadata.value, valueType);
                         if (valueType === "number") {
-                            $scope.expectedValueType = "number";
+                            $scope.initialEditorLabel = "Number";
                         } else if (valueType === "object") {
-                            $scope.expectedValueType = "json";
                             $ctrl.metadata.value = JSON.stringify($ctrl.metadata.value, null, 4);
+                            $scope.initialEditorLabel = "JSON";
                         } else {
-                            $scope.expectedValueType = "string";
+                            $scope.initialEditorLabel = "Text";
                         }
                     }
                 };

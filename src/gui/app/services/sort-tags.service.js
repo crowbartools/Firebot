@@ -10,51 +10,21 @@
 
     angular
         .module("firebotApp")
-        .factory("sortTagsService", function(logger, profileManager,
-            utilityService, settingsService, backendCommunicator) {
+        .factory("sortTagsService", function(utilityService, backendCommunicator) {
             const service = {};
 
             /**
-             * @type {Object.<string, SortTag[]>}
+             * @type {Record<string, SortTag[]>}
              */
             let sortTags = {};
 
             /**
-             * @type {Record<string,SortTag>}
+             * @type {Record<string, SortTag>}
              */
             const selectedSortTags = {};
 
-            function getSortTagsDb() {
-                return profileManager
-                    .getJsonDbInProfile("sort-tags");
-            }
-
-            function saveAllSortTags() {
-                try {
-                    getSortTagsDb().push("/", sortTags);
-
-                    logger.debug(`Saved tags.`);
-                } catch (err) {
-                    logger.warn(`There was an error saving tags.`, err);
-                }
-            }
-
             service.loadSortTags = () => {
-                logger.debug(`Attempting to load tags...`);
-
-                try {
-                    const sortTagsData = getSortTagsDb().getData("/");
-
-                    if (sortTagsData) {
-                        sortTags = sortTagsData;
-                    }
-
-                    logger.debug(`Loaded tags.`);
-                } catch (err) {
-                    logger.warn(`There was an error reading tags file.`, err);
-                }
-
-                service.getLegacyEventAndCommandTags();
+                sortTags = backendCommunicator.fireEventSync("sort-tags:get-sort-tags");
             };
 
             /**
@@ -96,20 +66,24 @@
                     resolveObj: {
                         tags: () => sortTagsForContext
                     },
-                    closeCallback: tags => {
-                        sortTags[context] = tags;
-                        saveAllSortTags();
+                    closeCallback: (tags) => {
+                        backendCommunicator.send("sort-tags:save-sort-tags", {
+                            context,
+                            sortTags: tags
+                        });
                     }
                 });
-                saveAllSortTags();
             };
 
-            /** @param {SortTag} context */
-            service.getSelectedSortTag = (context) => selectedSortTags[context];
+            /** @param {string} context */
+            service.getSelectedSortTag = context => selectedSortTags[context];
 
             /** @param {string} context */
-            // eslint-disable-next-line no-confusing-arrow
-            service.getSelectedSortTagDisplay = (context) => (selectedSortTags[context] != null ? selectedSortTags[context].name : `All ${context}`);
+            service.getSelectedSortTagDisplay = context => (
+                selectedSortTags[context] != null
+                    ? selectedSortTags[context].name
+                    : `All ${context}`
+            );
 
             /**
              * @param {string} context
@@ -119,62 +93,9 @@
                 selectedSortTags[context] = tag;
             };
 
-            /**
-             * This asks the backend to give us any old event and/or command tags that need to be
-             * imported into the new model
-             */
-            service.getLegacyEventAndCommandTags = () => {
-
-                if (!settingsService.legacySortTagsImported()) {
-
-                    settingsService.setLegacySortTagsImported(true);
-
-                    /**@type {Object.<string, SortTag[]>} */
-                    const legacySortTags = {
-                        commands: [],
-                        events: []
-                    };
-
-                    try {
-                        const commandsDb = profileManager.getJsonDbInProfile("/chat/commands");
-
-                        legacySortTags.commands = commandsDb.getData("/sortTags");
-
-                        commandsDb.delete("/sortTags");
-                    } catch (err) {
-                        // silently fail
-                    }
-
-                    try {
-                        const eventsDb = profileManager.getJsonDbInProfile("/events/events");
-
-                        legacySortTags.events = eventsDb.getData("/sortTags");
-
-                        eventsDb.delete("/sortTags");
-                    } catch (err) {
-                        // silently fail
-                    }
-
-                    Object.keys(legacySortTags).forEach(context => {
-
-                        if (sortTags[context] == null) {
-                            sortTags[context] = [];
-                        }
-
-                        const tags = legacySortTags[context]
-                            .filter(t => sortTags[context].every(st => st.id !== t.id));
-
-                        if (tags.length > 0) {
-                            sortTags[context] = [
-                                ...sortTags[context],
-                                ...tags
-                            ];
-                        }
-                    });
-
-                    saveAllSortTags();
-                }
-            };
+            backendCommunicator.on("sort-tags:updated-sort-tags", (updatedSortTags) => {
+                sortTags = updatedSortTags;
+            });
 
             return service;
         });

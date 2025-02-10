@@ -3,19 +3,20 @@ const { app } = require("electron");
 const path = require('node:path');
 
 const logger = require("./backend/logwrapper");
-const secretsManager = require("./backend/secrets-manager");
+const { SecretsManager } = require("./backend/secrets-manager");
 const { handleSquirrelEvents } = require("./backend/app-management/squirrel-events");
 const {
     whenReady,
     windowsAllClosed,
     willQuit,
     secondInstance,
-    openUrl
+    openUrl,
+    openFile
 } = require("./backend/app-management/electron/electron-events");
 
 logger.info("Starting Firebot...");
 
-if (!secretsManager.testSecrets()) {
+if (!SecretsManager.testSecrets()) {
     logger.debug("...Testing for secrets failed");
     app.quit();
     return;
@@ -52,11 +53,17 @@ if (!gotTheLock) {
 
 logger.debug("...Single instance lock acquired");
 
+// Enable Text-To-Speech on Linux through speech-dispatcher
+if (process.platform === "linux") {
+    app.commandLine.appendSwitch('enable-speech-dispatcher');
+}
+
 // Setup app listeners
 app.on('second-instance', secondInstance);
+app.on("open-file", openFile);
 app.on("window-all-closed", windowsAllClosed);
 app.on("will-quit", willQuit);
-app.whenReady().then(whenReady).catch(error => {
+app.whenReady().then(whenReady).catch((error) => {
     logger.debug("Error on when ready step", error);
 });
 app.on("open-url", openUrl);

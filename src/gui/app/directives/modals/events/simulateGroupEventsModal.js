@@ -50,6 +50,7 @@
                 const $ctrl = this;
 
                 $ctrl.metadata = [];
+                $ctrl.manualMetadata = {};
                 $ctrl.eventData = {
                     eventId: null,
                     sourceId: null,
@@ -64,7 +65,11 @@
                     if (username && isAnon) {
                         username.value = `An Anonymous ${usernameType}`;
                     } else {
-                        username.value = "";
+                        const originalUsername = $ctrl.manualMetadata[key];
+
+                        if (originalUsername) {
+                            username.value = originalUsername;
+                        }
                     }
 
                     const index = $ctrl.metadata.findIndex(md => md.key === key);
@@ -94,13 +99,15 @@
 
                     const eventSource = await backendCommunicator.fireEventAsync("getEventSource", event);
                     if (eventSource.manualMetadata) {
-                        $ctrl.metadata = Object.keys(eventSource.manualMetadata).map(mmd => {
+                        $ctrl.manualMetadata = eventSource.manualMetadata;
+                        $ctrl.metadata = Object.keys(eventSource.manualMetadata).map((mmd) => {
                             const meta = eventSource.manualMetadata[mmd];
                             const dataType = meta == null ? "string" : meta.type || typeof meta;
                             const data = {
                                 key: mmd,
                                 title: getTitle(mmd),
                                 type: dataType,
+                                value: dataType !== "enum" ? (meta.value ?? meta) : undefined,
                                 options: meta?.options || {}
                             };
 

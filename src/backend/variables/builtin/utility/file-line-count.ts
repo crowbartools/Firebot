@@ -16,7 +16,7 @@ const model : ReplaceVariable = {
         trigger: Trigger,
         filePath: string
     ) : number => {
-        if (filePath === null || typeof filePath !== 'string' || !filePath.endsWith(".txt")) {
+        if (filePath === null || typeof filePath !== 'string') {
             logger.error(`Couldn't read file (${filePath}) to count the lines in it.`);
             return 0;
         }

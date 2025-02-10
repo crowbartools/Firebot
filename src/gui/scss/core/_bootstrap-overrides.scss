@@ -17,13 +17,13 @@
     }
 }
 
-.sticky-header {
+.modal-header.sticky-header, .sticky-element {
     position: sticky;
-    top: 22px;
     background-color: $light-background-color;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
     z-index: 999;
+    top: 22px;
     &.is-stuck {
         border-bottom: 1px solid #24262A;
         margin-bottom: 10px;
@@ -104,10 +104,6 @@
     margin-bottom: 0px;
     background: #25282b;
     border: none;
-}
-
-textarea.form-control {
-    resize: vertical;
 }
 
 /* Tabs */
@@ -456,6 +452,21 @@ textarea.form-control {
     opacity: 0.75;
 }
 
+textarea.form-control {
+    resize: vertical;
+    padding-top: 9px;
+    min-height: 40px;
+    &.single-line-textarea {
+        height: 40px;
+        scrollbar-width: none;
+        scrollbar-color: transparent transparent;
+    }
+}
+
+.input-group > textarea.form-control {
+    float: left !important;
+}
+
 .progress {
     background-color: $form-control-bg;
     border-radius: 8px;
@@ -466,7 +477,6 @@ textarea.form-control {
     line-height: 30px;
     text-wrap: nowrap;
 }
-
 
 
 label {
@@ -717,4 +727,9 @@ code {
 
 .input-group .form-control:has(~ .variables-btn.below:last-child) {
     border-bottom-right-radius: 0px;
+}
+
+.input-editor-selector-container .form-control,
+.input-editor-selector-container .CodeMirror {
+    border-top-left-radius: 0px !important;
 }

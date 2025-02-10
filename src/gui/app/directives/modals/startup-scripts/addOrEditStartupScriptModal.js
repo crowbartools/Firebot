@@ -2,7 +2,7 @@
 
 (function() {
 
-    const uuid = require("uuid/v4");
+    const { v4: uuid } = require("uuid");
 
     angular.module("firebotApp")
         .component("addOrEditStartupScriptModal", {
@@ -13,9 +13,9 @@
             </div>
             <div class="modal-body">
                 <div style="margin-top: 20px;">
-                    <custom-script-settings 
-                        effect="$ctrl.scriptData" 
-                        modal-id="null" 
+                    <custom-script-settings
+                        effect="$ctrl.scriptData"
+                        modal-id="null"
                         trigger="'startup_script'"
                         allow-startup="true"
                     />

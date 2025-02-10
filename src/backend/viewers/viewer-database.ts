@@ -3,20 +3,21 @@ import Datastore from "@seald-io/nedb";
 import { DateTime } from "luxon";
 
 import { BasicViewer, FirebotViewer } from "../../types/viewers";
-import { settings } from "../common/settings-access";
+import { SettingsManager } from "../common/settings-manager";
 import logger from "../logwrapper";
 import profileManager from "../common/profile-manager";
 import accountAccess from "../common/account-access";
 import userAccess from "../common/user-access";
 import currencyAccess from "../currency/currency-access";
 import eventManager from "../events/EventManager";
-import backupManager from "../backup-manager";
+import { BackupManager } from "../backup-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import rankManager from "../ranks/rank-manager";
 import util, { wait } from "../utility";
 import { Rank, RankLadder } from "../../types/ranks";
 import twitchChat from "../chat/twitch-chat";
 import { userIsActive } from "../chat/chat-listeners/active-user-handler";
+import roleHelpers from "../roles/role-helpers";
 
 interface ViewerDbChangePacket {
     userId: string;
@@ -137,7 +138,7 @@ class ViewerDatabase extends EventEmitter {
      * @returns `true` if the viewer database is enabled, or `false` otherwise
      */
     isViewerDBOn(): boolean {
-        return settings.getViewerDbStatus();
+        return SettingsManager.getSetting("ViewerDB");
     }
 
     async connectViewerDatabase(): Promise<void> {
@@ -448,7 +449,7 @@ class ViewerDatabase extends EventEmitter {
     }
 
     async purgeViewers(options: ViewerPurgeOptions): Promise<void> {
-        await backupManager.startBackup(false, async () => {
+        await BackupManager.startBackup(false, async () => {
             try {
                 const numRemoved = await this._db
                     .removeAsync({ $where: this.getPurgeWherePredicate(options)}, {multi: true});
@@ -460,7 +461,7 @@ class ViewerDatabase extends EventEmitter {
         });
     }
 
-    async setViewerRank(viewer: FirebotViewer, ladderId: string, newRankId: string): Promise<void> {
+    async setViewerRank(viewer: FirebotViewer, ladderId: string, newRankId?: string): Promise<void> {
         if (this.isViewerDBOn() !== true) {
             return;
         }
@@ -479,11 +480,11 @@ class ViewerDatabase extends EventEmitter {
             return;
         }
 
-        const isPromotion = ladder.isRankHigher(newRankId, currentRankId);
-
         viewer.ranks[ladderId] = newRankId;
 
         await this.updateViewer(viewer);
+
+        const isPromotion = ladder.isRankHigher(newRankId, currentRankId);
 
         if (isPromotion && ladder.announcePromotionsInChat && userIsActive(viewer._id)) {
             const newRank = ladder.getRank(newRankId);
@@ -622,13 +623,38 @@ class ViewerDatabase extends EventEmitter {
         }
 
         for (const ladder of applicableLadders) {
+
             const currentRankId = viewer.ranks[ladder.id];
+
+            if (ladder.restrictedToRoleIds.length > 0) {
+                const userRoles = await roleHelpers.getAllRolesForViewer(userId);
+                if (!userRoles.some(r => ladder.restrictedToRoleIds.includes(r.id))) {
+                    if (currentRankId != null) {
+                        await this.setViewerRank(viewer, ladder.id, undefined);
+                    }
+                    continue;
+                }
+            }
+
             const highestQualifiedRankId = ladder.getHighestQualifiedRankId(viewer);
 
             if (currentRankId !== highestQualifiedRankId) {
                 await this.setViewerRank(viewer, ladder.id, highestQualifiedRankId);
             }
         }
+    }
+    async calculateAutoRanksByName(userName: string, trackByType?: RankLadder["settings"]["trackBy"]): Promise<void> {
+        if (this.isViewerDBOn() !== true) {
+            return;
+        }
+
+        const viewer = await this.getViewerByUsername(userName);
+
+        if (viewer == null) {
+            return;
+        }
+
+        await this.calculateAutoRanks(viewer._id, trackByType);
     }
 
     async recalculateRanksForAllViewers(rankLadderId: string): Promise<void> {
