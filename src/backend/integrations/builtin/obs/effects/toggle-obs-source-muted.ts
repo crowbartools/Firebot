@@ -157,7 +157,7 @@ export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
               $scope.missingSources.splice(index, 1);
           };
 
-          $scope.getMissingData = () => {
+          $scope.getStoredData = () => {
               for (const sceneName of $scope.effect.selectedSources) {
                   $scope.missingSources.push(sceneName);
               }
@@ -174,7 +174,7 @@ export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
           };
 
           $scope.getSourceList();
-          $scope.getMissingData();
+          $scope.getStoredData();
       },
       optionsValidator: () => {
           return [];

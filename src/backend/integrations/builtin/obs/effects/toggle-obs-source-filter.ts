@@ -209,7 +209,7 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
               $scope.missingSources.splice(index, 1);
           };
 
-          $scope.getMissingData = () => {
+          $scope.getStoredData = () => {
               for (const filterName of $scope.effect.selectedFilters) {
                   $scope.missingSources.push(filterName);
               }
@@ -227,7 +227,7 @@ export const ToggleSourceFilterEffectType: EffectType<EffectProperties> =
           };
 
           $scope.getSourceList();
-          $scope.getMissingData();
+          $scope.getStoredData();
       },
       optionsValidator: () => {
           return [];

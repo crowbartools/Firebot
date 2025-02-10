@@ -45,7 +45,7 @@ export const ToggleSourceVisibilityEffectType: Firebot.EffectType<EffectProperti
         <div class="pl-5">
           <span>Scene: {{sceneName.sceneName}},</span>
             <span>Name: {{sceneName.sourceName || 'Unknown'}},</span>
-            <span>Id: {{sceneName.sourceId}},</span>
+            <span ng-if="sceneName.sourceName == null">Id: {{sceneName.sourceId}},</span>
             <span>Action: {{getMissingActionDisplay(sceneName.action)}}</span>
         </div>   
         <div>
@@ -206,7 +206,7 @@ export const ToggleSourceVisibilityEffectType: Firebot.EffectType<EffectProperti
             $scope.missingSources.splice(index, 1);
         };
 
-        $scope.getMissingData = () => {
+        $scope.getStoredData = () => {
             for (const sceneName of $scope.effect.selectedSources) {
                 $scope.missingSources.push(sceneName);
             }
@@ -223,7 +223,7 @@ export const ToggleSourceVisibilityEffectType: Firebot.EffectType<EffectProperti
             );
         };
         $scope.getSourceData();
-        $scope.getMissingData();
+        $scope.getStoredData();
     },
     optionsValidator: () => {
         return [];
