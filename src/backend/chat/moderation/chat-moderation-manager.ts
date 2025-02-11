@@ -15,6 +15,19 @@ export interface ModerationTerm {
     createdAt: number;
 }
 
+export interface ModerationUser {
+    id: string;
+    username: string;
+    displayName: string;
+}
+
+export interface AllowedUser {
+    id: string;
+    username: string;
+    displayName: string;
+    createdAt: number;
+}
+
 export interface BannedWords {
     words: ModerationTerm[];
 }
@@ -25,7 +38,7 @@ export interface BannedRegularExpressions {
 
 export interface AllowList {
     urls: ModerationTerm[];
-    users: ModerationTerm[];
+    users: AllowedUser[];
 }
 
 export interface ModerationImportRequest {
@@ -133,20 +146,16 @@ class ChatModerationManager {
             return await this.importUrlAllowlist(request);
         });
 
-        frontendCommunicator.on("chat-moderation:add-allowed-users", (users: string[]): boolean => {
-            return this.addAllowedUsers(users);
+        frontendCommunicator.on("chat-moderation:add-allowed-user", (user: ModerationUser): boolean => {
+            return this.addAllowedUser(user);
         });
 
-        frontendCommunicator.on("chat-moderation:remove-allowed-user", (userText: string): boolean => {
-            return this.removeAllowedUser(userText);
+        frontendCommunicator.on("chat-moderation:remove-allowed-user", (id: string): boolean => {
+            return this.removeAllowedUser(id);
         });
 
         frontendCommunicator.on("chat-moderation:remove-all-allowed-users", (): boolean => {
             return this.removeAllAllowedUsers();
-        });
-
-        frontendCommunicator.onAsync("chat-moderation:import-user-allowlist", async (request: ModerationImportRequest) => {
-            return await this.importUserAllowlist(request);
         });
 
         frontendCommunicator.on("chat-moderation:update-chat-moderation-settings", (settings: ChatModerationSettings): boolean => {
@@ -374,58 +383,36 @@ class ChatModerationManager {
         if (!this.allowlist || !this.allowlist.users) {
             return [];
         }
-        return this.allowlist.users.map(u => u.text);
+        return this.allowlist.users.map(u => u.username);
     }
 
-    private addAllowedUsers(users: string[]): boolean {
-        this.allowlist.users = this.allowlist.users.concat(users.map((u) => {
-            return {
-                text: u,
-                createdAt: new Date().valueOf()
-            };
-        }));
+    private addAllowedUser(user: ModerationUser): boolean {
+        if (!this.allowlist.users) {
+            this.allowlist.users = [];
+        }
+
+        if (this.allowlist.users.find(u => u.id === user.id)) {
+            return;
+        }
+
+        this.allowlist.users.push({
+            id: user.id,
+            username: user.username,
+            displayName: user.displayName,
+            createdAt: new Date().valueOf()
+        });
+
         return this.saveUserAllowlist();
     }
 
-    private removeAllowedUser(userText: string): boolean {
-        this.allowlist.users = this.allowlist.users.filter(u => u.text.toLowerCase() !== userText.toLowerCase());
+    private removeAllowedUser(id: string): boolean {
+        this.allowlist.users = this.allowlist.users.filter(u => u.id !== id.toLowerCase());
         return this.saveUserAllowlist();
     }
 
     private removeAllAllowedUsers(): boolean {
         this.allowlist.users = [];
         return this.saveUserAllowlist();
-    }
-
-    private async importUserAllowlist(request: ModerationImportRequest): Promise<boolean> {
-        const { filePath, delimiter } = request;
-
-        let contents: string;
-        try {
-            contents = await fsp.readFile(filePath, { encoding: "utf8" });
-        } catch (err) {
-            logger.error("Error reading file for allowed users", err);
-            return false;
-        }
-
-        let users: string[] = [];
-        if (delimiter === 'newline') {
-            users = contents.replace(/\r\n/g, "\n").split("\n");
-        } else if (delimiter === "comma") {
-            users = contents.split(",");
-        } else if (delimiter === "space") {
-            users = contents.split(" ");
-        }
-
-        this.allowlist.users.forEach(user => {
-            users = users.filter(u => u.toLowerCase() !== user.text.toLowerCase());
-        });
-
-        if (users?.length) {
-            this.addAllowedUsers(users);
-        }
-
-        return true;
     }
 
     private saveUserAllowlist(): boolean {
@@ -666,7 +653,7 @@ class ChatModerationManager {
 
                 const settings = this.chatModerationSettings.urlModeration;
                 let outputMessage = settings.outputMessage || "";
-                let userAllowed = this.getUserAllowlist().find(u => u.toLowerCase() === chatMessage.username.toLowerCase());
+                let userAllowed = this.getUserAllowlist().find(u => u === chatMessage.username.toLowerCase());
                 let disallowedUrlFound = false;
 
                 // If the urlAllowlist is empty, ANY URL is disallowed
