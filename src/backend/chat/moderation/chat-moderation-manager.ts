@@ -406,7 +406,7 @@ class ChatModerationManager {
     }
 
     private removeAllowedUser(id: string): boolean {
-        this.allowlist.users = this.allowlist.users.filter(u => u.id !== id.toLowerCase());
+        this.allowlist.users = this.allowlist.users.filter(u => u.id !== id);
         return this.saveUserAllowlist();
     }
 
@@ -652,8 +652,9 @@ class ChatModerationManager {
                 logger.debug("URL moderation: Found URL in message");
 
                 const settings = this.chatModerationSettings.urlModeration;
+                const userAllowed = this.getUserAllowlist().find(u => u === chatMessage.username.toLowerCase());
+
                 let outputMessage = settings.outputMessage || "";
-                let userAllowed = this.getUserAllowlist().find(u => u === chatMessage.username.toLowerCase());
                 let disallowedUrlFound = false;
 
                 // If the urlAllowlist is empty, ANY URL is disallowed
