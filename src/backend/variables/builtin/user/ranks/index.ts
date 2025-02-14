@@ -2,6 +2,7 @@ import viewerRank from './viewer-rank';
 import viewerNextRank from './viewer-next-rank';
 import viewerRankValue from './rank-value';
 import viewerRankValueDescription from './rank-value-description';
+import rankLadder from './rank-ladder';
 import rankLadderMode from './rank-ladder-mode';
 import newRank from './new-rank';
 import previousRank from './previous-rank';
@@ -16,6 +17,7 @@ export default [
     viewerNextRank,
     viewerRankValue,
     viewerRankValueDescription,
+    rankLadder,
     rankLadderMode,
     viewersInRankArray,
     viewerNamesInRank,
