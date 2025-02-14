@@ -139,5 +139,7 @@ jobs:
             ./bundles/Windows/firebot-${{ needs.checkversion.outputs.version }}-full.nupkg
             ./bundles/Windows/RELEASES
             ./bundles/Linux/firebot-v${{ needs.checkversion.outputs.version }}-linux-x64.tar.gz
+            ./bundles/Linux/firebot-v${{ needs.checkversion.outputs.version }}-linux-x64.deb
+            ./bundles/Linux/firebot-v${{ needs.checkversion.outputs.version }}-linux-x64.rpm
             ./bundles/macOS/firebot-v${{ needs.checkversion.outputs.version }}-macos-x64.dmg
             ./bundles/macOS/firebot-v${{ needs.checkversion.outputs.version }}-macos-arm64.dmg
