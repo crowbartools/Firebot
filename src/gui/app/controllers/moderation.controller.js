@@ -36,5 +36,13 @@
                     resolveObj: {}
                 });
             };
+
+            $scope.showEditUserAllowlistModal = () => {
+                utilityService.showModal({
+                    component: "editUserAllowlistModal",
+                    backdrop: true,
+                    resolveObj: {}
+                });
+            };
         });
 }());

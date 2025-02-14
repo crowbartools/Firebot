@@ -39,7 +39,10 @@
                 bannedRegularExpressions: [],
 
                 /** @type {import("../../../backend/chat/moderation/chat-moderation-manager").ModerationTerm[]} */
-                urlAllowlist: []
+                urlAllowlist: [],
+
+                /** @type {import("../../../backend/chat/moderation/chat-moderation-manager").ModerationTerm[]} */
+                userAllowlist: []
             };
 
             service.loadChatModerationData = () => {
@@ -107,6 +110,18 @@
                 return await backendCommunicator.fireEventAsync("chat-moderation:import-url-allowlist", request);
             };
 
+            service.addAllowedUser = (user) => {
+                backendCommunicator.fireEvent("chat-moderation:add-allowed-user", { id: user.id, username: user.username, displayName: user.displayName });
+            };
+
+            service.removeAllowedUserById= (id) => {
+                backendCommunicator.fireEvent("chat-moderation:remove-allowed-user", id);
+            };
+
+            service.removeAllAllowedUsers = () => {
+                backendCommunicator.fireEvent("chat-moderation:remove-all-allowed-users");
+            };
+
             service.registerPermitCommand = () => {
                 backendCommunicator.fireEvent("registerPermitCommand");
             };
@@ -129,6 +144,10 @@
 
             backendCommunicator.on("chat-moderation:url-allowlist-updated", (urls) => {
                 service.chatModerationData.urlAllowlist = urls;
+            });
+
+            backendCommunicator.on("chat-moderation:user-allowlist-updated", (users) => {
+                service.chatModerationData.userAllowlist = users;
             });
 
             return service;
