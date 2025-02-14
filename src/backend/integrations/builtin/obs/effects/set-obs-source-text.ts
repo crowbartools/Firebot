@@ -80,6 +80,9 @@ export const SetOBSSourceTextEffectType: EffectType<{
         }
         return [];
     },
+    getDefaultLabel: (effect) => {
+        return effect.textSourceName;
+    },
     onTriggerEvent: async ({ effect }) => {
         await setTextSourceSettings(effect.textSourceName, {
             text: effect.textSource === "static" ? effect.text : null,

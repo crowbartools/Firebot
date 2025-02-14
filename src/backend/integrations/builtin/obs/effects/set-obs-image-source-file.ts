@@ -69,6 +69,9 @@ export const SetOBSImageSourceFileEffectType: EffectType<{
 
         return errors;
     },
+    getDefaultLabel: (effect) => {
+        return effect.imageSourceName;
+    },
     onTriggerEvent: async ({ effect }) => {
         await setImageSourceSettings(effect.imageSourceName, {
             file: effect.file

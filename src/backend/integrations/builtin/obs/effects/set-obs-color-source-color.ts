@@ -127,6 +127,9 @@ export const SetOBSColorSourceColorEffectType: EffectType<{
 
         return errors;
     },
+    getDefaultLabel: (effect) => {
+        return effect.colorSourceName;
+    },
     onTriggerEvent: async ({ effect }) => {
         const rgbRegexp = /^#?[0-9a-f]{6}$/i;
         const argbRegexp = /^#?[0-9a-f]{8}$/i;
