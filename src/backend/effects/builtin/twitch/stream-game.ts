@@ -8,6 +8,7 @@ const model: EffectType<{
     mode: "specific" | "custom" | "clear";
     gameId: string;
     gameName: string;
+    specificGameName?: string; // The cached gameName when mode === "specific"
 }> = {
     definition: {
         id: "firebot:streamgame",
@@ -84,6 +85,7 @@ const model: EffectType<{
         $scope.gameSelected = function (game) {
             if (game != null) {
                 $scope.effect.gameId = game.id;
+                $scope.effect.specificGameName = game.name;
             }
         };
     },
@@ -96,14 +98,13 @@ const model: EffectType<{
         }
         return errors;
     },
-    getDefaultLabel: async (effect, backendCommunicator) => {
+    getDefaultLabel: (effect) => {
         if (effect.mode === "custom") {
             return effect.gameName;
         } else if (effect.mode === "clear") {
             return "Clear Category";
         } else if (effect.mode === "specific") {
-            const game = await backendCommunicator.fireEventAsync("get-twitch-game", effect.gameId);
-            return game?.name ?? "";
+            return effect.specificGameName ? effect.specificGameName : "Set Specific Category";
         }
         return "";
     },
