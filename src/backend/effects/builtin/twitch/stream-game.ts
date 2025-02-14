@@ -96,6 +96,17 @@ const model: EffectType<{
         }
         return errors;
     },
+    getDefaultLabel: async (effect, backendCommunicator) => {
+        if (effect.mode === "custom") {
+            return effect.gameName;
+        } else if (effect.mode === "clear") {
+            return "Clear Category";
+        } else if (effect.mode === "specific") {
+            const game = await backendCommunicator.fireEventAsync("get-twitch-game", effect.gameId);
+            return game?.name ?? "";
+        }
+        return "";
+    },
     onTriggerEvent: async (event) => {
         if (event.effect.mode === "specific") {
             await twitchApi.channels.updateChannelInformation({
