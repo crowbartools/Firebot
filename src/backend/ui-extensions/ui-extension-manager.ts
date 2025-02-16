@@ -68,8 +68,9 @@ class UIExtensionManager {
     // eslint-disable-next-line @typescript-eslint/ban-types
     private prepareFunc(func: Function | undefined, name: string) {
         let rawFunc = func?.toString() ?? "() => {}";
-        if (rawFunc.startsWith("function(")) {
-            rawFunc = rawFunc.replace("function(", `function ${name}(`);
+        const namelessFunction = /^[\s]*function[\s]*\(/;
+        if (namelessFunction.test(rawFunc)) {
+            rawFunc = rawFunc.replace(namelessFunction, `function ${name}(`);
         }
         return rawFunc;
     }
