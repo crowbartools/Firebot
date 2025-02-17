@@ -25,7 +25,27 @@ export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
           categories: ["common"]
       },
       optionsTemplate: `
-    <eos-container header="Audio Sources">
+    <eos-container ng-show="missingSources.length > 0">
+        <div class="effect-info alert alert-warning">
+            <p><b>Warning!</b> 
+                Cannot find {{missingSources.length}} sources in this effect. Ensure the correct profile or scene collection is loaded in OBS, and OBS is running.
+            </p>
+        </div>
+    </eos-container>
+    <setting-container ng-show="missingSources.length > 0" header="Missing Audio Sources ({{missingSources.length}})" collapsed="true">
+        <div ng-repeat="sourceList in missingSources track by $index">
+          <div class="list-item" style="display: flex;border: 2px solid #3e4045;box-shadow: none;border-radius: 8px;padding: 5px 5px;">
+            <div class="pl-5">
+                <span>Source: {{sourceList.sourceName}}</span>
+            </div>   
+            <div>
+                <button class="btn btn-danger" ng-click="deleteSceneAtIndex($index)"><i class="far fa-trash"></i></button>
+            </div>
+          </div>
+        </div>
+    </setting-container>
+
+    <eos-container header="Audio Sources" pad-top="missingSources.length > 0">
       <firebot-input model="searchText" input-title="Filter" disable-variables="true"></firebot-input>
       <div>
           <button class="btn btn-link" ng-click="getSourceList()">Refresh Sources</button>
@@ -61,20 +81,22 @@ export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
 
           $scope.sourceList = null;
 
+          $scope.missingSources = [];
+
           if ($scope.effect.selectedSources == null) {
               $scope.effect.selectedSources = [];
           }
 
           $scope.sourceIsSelected = (sourceName: string) => {
               return $scope.effect.selectedSources.some(
-                  (s) => s.sourceName === sourceName
+                  s => s.sourceName === sourceName
               );
           };
 
           $scope.toggleSourceSelected = (sourceName: string) => {
               if ($scope.sourceIsSelected(sourceName)) {
                   $scope.effect.selectedSources = $scope.effect.selectedSources.filter(
-                      (s) => !(s.sourceName === sourceName)
+                      s => !(s.sourceName === sourceName)
                   );
               } else {
                   $scope.effect.selectedSources.push({
@@ -89,7 +111,7 @@ export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
               action: "toggle" | boolean
           ) => {
               const selectedSource = $scope.effect.selectedSources.find(
-                  (s) => s.sourceName === sourceName
+                  s => s.sourceName === sourceName
               );
               if (selectedSource != null) {
                   selectedSource.action = action;
@@ -98,8 +120,11 @@ export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
 
           $scope.getSourceActionDisplay = (sourceName: string) => {
               const selectedSource = $scope.effect.selectedSources.find(
-                  (s) => s.sourceName === sourceName
+                  s => s.sourceName === sourceName
               );
+
+              $scope.missingSources = $scope.missingSources.filter(item => item !== selectedSource);
+
               if (selectedSource == null) {
                   return "";
               }
@@ -117,12 +142,25 @@ export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
               input
                   .split(" ")
                   .map(
-                      (w) => w[0].toLocaleUpperCase() + w.substr(1).toLocaleLowerCase()
+                      w => w[0].toLocaleUpperCase() + w.substr(1).toLocaleLowerCase()
                   )
                   .join(" ");
 
           $scope.formatSourceType = (type: string) => {
               return capitalizeWords((type ?? "").replace(/_/, " "));
+          };
+
+          $scope.deleteSceneAtIndex = (index: number) => {
+              $scope.effect.selectedSources = $scope.effect.selectedSources.filter(
+                  item => item !== $scope.missingSources [index]
+              );
+              $scope.missingSources.splice(index, 1);
+          };
+
+          $scope.getStoredData = () => {
+              for (const sceneName of $scope.effect.selectedSources) {
+                  $scope.missingSources.push(sceneName);
+              }
           };
 
           $scope.getSourceList = () => {
@@ -136,6 +174,7 @@ export const ToggleSourceMutedEffectType: EffectType<EffectProperties> =
           };
 
           $scope.getSourceList();
+          $scope.getStoredData();
       },
       optionsValidator: () => {
           return [];
