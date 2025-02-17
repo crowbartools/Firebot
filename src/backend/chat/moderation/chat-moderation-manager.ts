@@ -15,6 +15,19 @@ export interface ModerationTerm {
     createdAt: number;
 }
 
+export interface ModerationUser {
+    id: string;
+    username: string;
+    displayName: string;
+}
+
+export interface AllowedUser {
+    id: string;
+    username: string;
+    displayName: string;
+    createdAt: number;
+}
+
 export interface BannedWords {
     words: ModerationTerm[];
 }
@@ -23,8 +36,9 @@ export interface BannedRegularExpressions {
     regularExpressions: ModerationTerm[];
 }
 
-export interface UrlAllowList {
-    urls: ModerationTerm[]
+export interface AllowList {
+    urls: ModerationTerm[];
+    users: AllowedUser[];
 }
 
 export interface ModerationImportRequest {
@@ -59,7 +73,10 @@ export interface ChatModerationSettings {
 class ChatModerationManager {
     bannedWords: BannedWords = { words: [] };
     bannedRegularExpressions: BannedRegularExpressions = { regularExpressions: [] };
-    urlAllowlist: UrlAllowList = { urls: [] };
+    allowlist: AllowList = { 
+        urls: [], 
+        users: [] 
+    };
     chatModerationSettings: ChatModerationSettings = {
         bannedWordList: {
             enabled: false,
@@ -129,6 +146,18 @@ class ChatModerationManager {
             return await this.importUrlAllowlist(request);
         });
 
+        frontendCommunicator.on("chat-moderation:add-allowed-user", (user: ModerationUser): boolean => {
+            return this.addAllowedUser(user);
+        });
+
+        frontendCommunicator.on("chat-moderation:remove-allowed-user", (id: string): boolean => {
+            return this.removeAllowedUser(id);
+        });
+
+        frontendCommunicator.on("chat-moderation:remove-all-allowed-users", (): boolean => {
+            return this.removeAllAllowedUsers();
+        });
+
         frontendCommunicator.on("chat-moderation:update-chat-moderation-settings", (settings: ChatModerationSettings): boolean => {
             return this.saveChatModerationSettings(settings);
         });
@@ -138,7 +167,8 @@ class ChatModerationManager {
                 settings: this.chatModerationSettings,
                 bannedWords: this.bannedWords.words,
                 bannedRegularExpressions: this.bannedRegularExpressions.regularExpressions,
-                urlAllowlist: this.urlAllowlist.urls
+                urlAllowlist: this.allowlist.urls,
+                userAllowlist: this.allowlist.users
             };
         });
     }
@@ -269,22 +299,22 @@ class ChatModerationManager {
         return success;
     }
 
-
-    // URL Allow List
-
-    private getUrlAllowlistDb(): JsonDB {
+    private getAllowlistDb(): JsonDB {
         return profileManager.getJsonDbInProfile("/chat/moderation/url-allowlist", false);
     }
 
+
+    // URL Allow List
+
     private getUrlAllowlist(): string[] {
-        if (!this.urlAllowlist || !this.urlAllowlist.urls) {
+        if (!this.allowlist || !this.allowlist.urls) {
             return [];
         }
-        return this.urlAllowlist.urls.map(u => u.text);
+        return this.allowlist.urls.map(u => u.text);
     }
 
     private addAllowedUrls(urls: string[]): boolean {
-        this.urlAllowlist.urls = this.urlAllowlist.urls.concat(urls.map((u) => {
+        this.allowlist.urls = this.allowlist.urls.concat(urls.map((u) => {
             return {
                 text: u,
                 createdAt: new Date().valueOf()
@@ -294,12 +324,12 @@ class ChatModerationManager {
     }
 
     private removeAllowedUrl(urlText: string): boolean {
-        this.urlAllowlist.urls = this.urlAllowlist.urls.filter(u => u.text.toLowerCase() !== urlText);
+        this.allowlist.urls = this.allowlist.urls.filter(u => u.text.toLowerCase() !== urlText);
         return this.saveUrlAllowlist();
     }
 
     private removeAllAllowedUrls(): boolean {
-        this.urlAllowlist.urls = [];
+        this.allowlist.urls = [];
         return this.saveUrlAllowlist();
     }
 
@@ -334,7 +364,7 @@ class ChatModerationManager {
         let success = false;
 
         try {
-            this.getUrlAllowlistDb().push("/", this.urlAllowlist);
+            this.getAllowlistDb().push("/", this.allowlist);
             success = true;
         } catch (error) {
             if (error.name === 'DatabaseError') {
@@ -342,11 +372,65 @@ class ChatModerationManager {
             }
         }
 
-        frontendCommunicator.send("chat-moderation:url-allowlist-updated", this.urlAllowlist.urls);
+        frontendCommunicator.send("chat-moderation:url-allowlist-updated", this.allowlist.urls);
 
         return success;
     }
 
+    // User Allowlist
+
+    private getUserAllowlist(): string[] {
+        if (!this.allowlist || !this.allowlist.users) {
+            return [];
+        }
+        return this.allowlist.users.map(u => u.username);
+    }
+
+    private addAllowedUser(user: ModerationUser): boolean {
+        if (!this.allowlist.users) {
+            this.allowlist.users = [];
+        }
+
+        if (this.allowlist.users.find(u => u.id === user.id)) {
+            return;
+        }
+
+        this.allowlist.users.push({
+            id: user.id,
+            username: user.username,
+            displayName: user.displayName,
+            createdAt: new Date().valueOf()
+        });
+
+        return this.saveUserAllowlist();
+    }
+
+    private removeAllowedUser(id: string): boolean {
+        this.allowlist.users = this.allowlist.users.filter(u => u.id !== id);
+        return this.saveUserAllowlist();
+    }
+
+    private removeAllAllowedUsers(): boolean {
+        this.allowlist.users = [];
+        return this.saveUserAllowlist();
+    }
+
+    private saveUserAllowlist(): boolean {
+        let success = false;
+
+        try {
+            this.getAllowlistDb().push("/", this.allowlist);
+            success = true;
+        } catch (error) {
+            if (error.name === 'DatabaseError') {
+                logger.error("Error saving user allowlist data", error);
+            }
+        }
+
+        frontendCommunicator.send("chat-moderation:user-allowlist-updated", this.allowlist.users);
+
+        return success;
+    }
 
     // Moderation Settings
 
@@ -496,9 +580,9 @@ class ChatModerationManager {
                 this.bannedRegularExpressions = regularExpressions;
             }
 
-            const allowlist: UrlAllowList = this.getUrlAllowlistDb().getData("/");
+            const allowlist: AllowList = this.getAllowlistDb().getData("/");
             if (allowlist && Object.keys(allowlist).length > 0) {
-                this.urlAllowlist = allowlist;
+                this.allowlist = allowlist;
             }
         } catch (error) {
             if (error.name === 'DatabaseError') {
@@ -568,12 +652,13 @@ class ChatModerationManager {
                 logger.debug("URL moderation: Found URL in message");
 
                 const settings = this.chatModerationSettings.urlModeration;
-                let outputMessage = settings.outputMessage || "";
+                const userAllowed = this.getUserAllowlist().find(u => u === chatMessage.username.toLowerCase());
 
+                let outputMessage = settings.outputMessage || "";
                 let disallowedUrlFound = false;
 
                 // If the urlAllowlist is empty, ANY URL is disallowed
-                if (this.urlAllowlist.urls.length === 0) {
+                if (this.allowlist.urls.length === 0) {
                     disallowedUrlFound = true;
                 } else {
                     const urlsFound = message.match(regex);
@@ -593,7 +678,7 @@ class ChatModerationManager {
                     }
                 }
 
-                if (disallowedUrlFound) {
+                if (disallowedUrlFound && !userAllowed) {
                     if (settings.viewTime && settings.viewTime.enabled) {
                         const viewer = await viewerDatabase.getViewerByUsername(chatMessage.username);
 
