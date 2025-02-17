@@ -15,7 +15,7 @@ import frontendCommunicator from "../common/frontend-communicator";
 import rankManager from "../ranks/rank-manager";
 import util, { wait } from "../utility";
 import { Rank, RankLadder } from "../../types/ranks";
-import twitchChat from "../chat/twitch-chat";
+
 import { userIsActive } from "../chat/chat-listeners/active-user-handler";
 import roleHelpers from "../roles/role-helpers";
 
@@ -495,8 +495,8 @@ class ViewerDatabase extends EventEmitter {
                 .replace(/{user}/g, viewer.displayName)
                 .replace(/{rank}/g, newRank?.name)
                 .replace(/{rankDescription}/g, rankValueDescription);
-
-            twitchChat.sendChatMessage(promotionMessage);
+            const twitchChat = require("../chat/twitch-chat");
+            await twitchChat.sendChatMessage(promotionMessage);
         }
 
         const newRank = ladder.getRank(newRankId);
