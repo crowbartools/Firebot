@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AnimatePresence, Variants, motion } from "framer-motion";
-import { createContext, useCallback, useContext, useState } from "react";
+import { AnimatePresence, Variants, motion, useAnimate } from "framer-motion";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useRef,
+  useState,
+} from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { createPortal } from "react-dom";
 import { ChevronLeftIcon } from "@heroicons/react/20/solid";
@@ -79,6 +85,10 @@ export const FbSlideOverProvider: React.FC<{ children: React.ReactNode }> = ({
     Array<{ id: string; config: FbSlideOverConfig }>
   >([]);
 
+  const slideOverRef = useRef<HTMLDivElement>(null);
+
+  const [slideOverAnimationScope, animateSlideOver] = useAnimate();
+
   const [direction, setDirection] = useState<AnimationDirection>("forward");
 
   const showSlideOver = useCallback(
@@ -135,6 +145,19 @@ export const FbSlideOverProvider: React.FC<{ children: React.ReactNode }> = ({
     setSlideOverConfigs([]);
   }, [slideOverConfigs, setSlideOverConfigs]);
 
+  const shakeSlideOver = useCallback(() => {
+    const controls = animateSlideOver([
+      [slideOverAnimationScope.current, { x: "-2%" }],
+      [slideOverAnimationScope.current, { x: "2%" }],
+      [slideOverAnimationScope.current, { x: "-2%" }],
+      [slideOverAnimationScope.current, { x: "0%" }],
+    ]);
+
+    controls.speed = 3.0;
+
+    controls.play();
+  }, [slideOverAnimationScope, animateSlideOver]);
+
   return (
     <FbSlideOverContext.Provider
       value={{
@@ -163,11 +186,26 @@ export const FbSlideOverProvider: React.FC<{ children: React.ReactNode }> = ({
                 }}
               />
 
-              <div className="fixed inset-0 overflow-hidden">
+              <div
+                className="fixed inset-0 overflow-hidden"
+                onClick={(event) => {
+                  if (!slideOverRef.current?.contains(event.target as Node)) {
+                    if (!currentSlideOver.config.disableClickAway) {
+                      dismissEverything();
+                    } else {
+                      shakeSlideOver();
+                    }
+                  }
+                }}
+              >
                 <div className="absolute inset-0 overflow-hidden">
                   <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
-                    <div className="pointer-events-auto w-screen max-w-md">
+                    <div
+                      ref={slideOverRef}
+                      className="pointer-events-auto w-screen max-w-md"
+                    >
                       <motion.div
+                        ref={slideOverAnimationScope}
                         initial={{
                           x: "100%",
                         }}

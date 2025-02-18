@@ -19,6 +19,7 @@ export const useDcfInfoSlideOver = () => {
     content: DcfInfoSlideOverContent,
     title: "Login Info",
     showDismissButton: true,
+    disableClickAway: true,
   });
 };
 
