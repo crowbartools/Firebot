@@ -1,6 +1,67 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@plugin 'tailwind-scrollbar';
+
+@theme {
+  --font-sans: InterVariable, sans-serif;
+  
+  /* Firebot brand colors */
+  --color-firebot-maximum-blue-green: #4BBABC;
+  --color-firebot-fire-opal: #D63837;
+  --color-firebot-pear: #D2D50D;
+  --color-firebot-sunglow: #FFBE00;
+  --color-firebot-aero: #5FA1D9;
+  --color-firebot-honolulu: #005B9F;
+  --color-firebot-rich-black: #071018;
+
+  /* Default theme colors */
+  --color-primary-bg: #0A0A0C;
+  --color-secondary-bg: #18181B;
+  --color-tertiary-bg: #313137;
+  --color-primary-text: #D4D4D8;
+  --color-muted-text: #bdbdbf;
+}
+
+@layer theme {
+  [data-theme='slate'] {
+    --color-primary-bg: #27272A;
+    --color-secondary-bg: #36393F;
+    --color-primary-text: #D4D4D8;
+    --color-muted-text: #bdbdbf;
+  }
+
+  [data-theme='storm'] {
+    --color-primary-bg: #1F2433;
+    --color-secondary-bg: #293042;
+    --color-primary-text: #D4D4D8;
+    --color-muted-text: #7E8492;
+  }
+
+  [data-theme='snow'] {
+    --color-primary-bg: #FFFFFF;
+    --color-secondary-bg: #D4D4D8;
+    --color-primary-text: black;
+    --color-muted-text: #374151;
+  }
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
 
 html, body, #__next {
   height: 100%;

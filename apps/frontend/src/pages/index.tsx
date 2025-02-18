@@ -1,11 +1,8 @@
 import Head from "next/head";
-import { useEffect, useState } from "react";
-import { getServerUri } from "@/utils";
 
-import favIcon from 'assets/images/favIcon.ico'
+import favIcon from "assets/images/favIcon.ico";
 import { PageWrapper } from "@/components/PageWrapper";
 import { PageTitle } from "@/components/PageTitle";
-
 
 export default function Home() {
   return (

@@ -116,7 +116,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ index, isOpen, menuItem }) => {
     <li key={menuItem.route} className={clsx("mb-1.5 px-2")}>
       <Link
         href={menuItem.route}
-        className={clsx("focus:outline-none", {
+        className={clsx("focus:outline-hidden", {
           "pointer-events-none": menuItem.disabled,
         })}
       >
@@ -125,7 +125,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ index, isOpen, menuItem }) => {
           className={clsx(
             {
               "bg-secondary-bg rounded-xl": isActive,
-              "hover:bg-secondary-bg hover:bg-opacity-75 rounded-xl": !isActive,
+              "hover:bg-secondary-bg/75 rounded-xl": !isActive,
             },
             "transition duration-150 ease-in-out",
             "flex items-center h-14 relative",
@@ -134,7 +134,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ index, isOpen, menuItem }) => {
         >
           <div
             className={clsx("w-24 pl-4 flex items-center text-xl", {
-              "text-primary-text text-opacity-75": !isActive,
+              "text-primary-text/75": !isActive,
               "text-firebot-sunglow": isActive,
             })}
           >
@@ -216,7 +216,7 @@ const headerVariants: Variants = {
 const SidebarHeader = (isOpen: boolean) => (
   <div
     className={clsx(
-      "flex items-center h-16 relative flex-shrink-0 border-b border-tertiary-bg"
+      "flex items-center h-16 relative shrink-0 border-b border-tertiary-bg"
     )}
   >
     <div className="w-24 pl-5 flex items-center">
@@ -228,7 +228,7 @@ const SidebarHeader = (isOpen: boolean) => (
       className={clsx("absolute inset-0 ml-24 w-64 flex items-center")}
     >
       <span
-        className="bg-firebot-sunglow bg-gradient-to-br from-firebot-sunglow to-amber-400 text-2xl font-bold bg-clip-text"
+        className="bg-firebot-sunglow bg-linear-to-br from-firebot-sunglow to-amber-400 text-2xl font-bold bg-clip-text"
         style={{
           WebkitTextFillColor: "transparent",
         }}
@@ -289,7 +289,7 @@ const SidebarFooter = (isOpen: boolean) => {
   return (
     <div
       className={clsx(
-        "flex items-center justify-between h-16 relative flex-shrink-0 border-t border-tertiary-bg"
+        "flex items-center justify-between h-16 relative shrink-0 border-t border-tertiary-bg"
       )}
     >
       <div className="w-24 pl-4 flex items-center">

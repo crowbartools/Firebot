@@ -41,7 +41,7 @@ const DcfInfoSlideOverContent: FbSlideOverContent<DcfInfoSlideOverParams> = ({
         Please copy the below URL into your browser to connect your{" "}
         {params.streamingPlatformName} {params.accountType} account.
       </p>
-      <div className="rounded bg-secondary-bg overflow-hidden text-primary-text">
+      <div className="rounded-sm bg-secondary-bg overflow-hidden text-primary-text">
         <div className="bg-[#54545d] text-sm h-12 flex items-center px-2">
           <a
             href={params.dcfCodeDetails.verificationUri}

@@ -13,12 +13,12 @@ export const SlideOver: React.FC<{
       {open && (
         <Dialog
           as="div"
-          className="relative z-[9999999999]"
+          className="relative z-9999999999"
           onClose={onClose}
           open={open}
         >
           <motion.div
-            className="fixed inset-0 bg-primary-bg bg-opacity-75"
+            className="fixed inset-0 bg-primary-bg/75"
             initial={{
               opacity: 0,
             }}
@@ -59,7 +59,7 @@ export const SlideOver: React.FC<{
                         <div className="ml-3 flex h-7 items-center">
                           <button
                             type="button"
-                            className="relative rounded-md bg-tertiary-bg text-gray-300 hover:text-gray-400 border-none outline-none focus:text-white"
+                            className="relative rounded-md bg-tertiary-bg text-gray-300 hover:text-gray-400 border-none outline-hidden focus:text-white"
                             onClick={onClose}
                           >
                             <span className="absolute -inset-2.5" />

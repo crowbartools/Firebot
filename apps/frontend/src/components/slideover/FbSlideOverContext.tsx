@@ -170,11 +170,11 @@ export const FbSlideOverProvider: React.FC<{ children: React.ReactNode }> = ({
       {createPortal(
         <AnimatePresence>
           {hasSlideOvers && (
-            <div className="relative z-[9999999999]">
+            <div className="relative z-9999999999">
               <motion.div
                 id="slideover-bg"
                 key="slideover-bg"
-                className="fixed inset-0 bg-primary-bg bg-opacity-75"
+                className="fixed inset-0 bg-primary-bg/75"
                 initial={{
                   opacity: 0,
                 }}
@@ -228,7 +228,7 @@ export const FbSlideOverProvider: React.FC<{ children: React.ReactNode }> = ({
                               {slideOverConfigs.length > 1 && (
                                 <button
                                   type="button"
-                                  className="relative rounded-md bg-tertiary-bg text-gray-300 hover:text-gray-400 border-none outline-none focus:text-white"
+                                  className="relative rounded-md bg-tertiary-bg text-gray-300 hover:text-gray-400 border-none outline-hidden focus:text-white"
                                   onClick={() => onDismiss(currentSlideOver.id)}
                                 >
                                   <span className="sr-only">Go back</span>
@@ -245,7 +245,7 @@ export const FbSlideOverProvider: React.FC<{ children: React.ReactNode }> = ({
                               <div className="ml-3 flex h-7 items-center">
                                 <button
                                   type="button"
-                                  className="relative rounded-md bg-tertiary-bg text-gray-300 hover:text-gray-400 border-none outline-none focus:text-white"
+                                  className="relative rounded-md bg-tertiary-bg text-gray-300 hover:text-gray-400 border-none outline-hidden focus:text-white"
                                   onClick={dismissEverything}
                                 >
                                   <span className="absolute -inset-2.5" />

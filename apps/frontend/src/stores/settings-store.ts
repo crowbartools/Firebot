@@ -21,7 +21,7 @@ class SettingsStore {
         if(document) {
             const root = document.getElementById("root");
             if(root) {
-                root.className = theme;
+                root.setAttribute("data-theme", theme);
             }
         }
     }

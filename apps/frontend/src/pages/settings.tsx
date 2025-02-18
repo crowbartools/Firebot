@@ -13,18 +13,20 @@ const themes: SelectItem<FirebotTheme>[] = [
 ];
 
 export const SettingsPage: React.FC = observer(() => {
-    const { settingsStore } = useStores();
-    return <PageWrapper>
-        <PageTitle title="Settings" />
-        <div className="w-1/4">
-        <SelectMenu 
-            label="Theme"
-            items={themes} 
-            selected={settingsStore.theme} 
-            setSelected={settingsStore.setTheme} 
+  const { settingsStore } = useStores();
+  return (
+    <PageWrapper>
+      <PageTitle title="Settings" />
+      <div className="w-1/4">
+        <SelectMenu
+          label="Theme"
+          items={themes}
+          selected={settingsStore.theme}
+          setSelected={settingsStore.setTheme}
         />
-        </div>
+      </div>
     </PageWrapper>
-})
+  );
+});
 
 export default SettingsPage;

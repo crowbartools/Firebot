@@ -10,13 +10,13 @@ export const Modal: React.FC<{
   return (
     <Dialog
       as="div"
-      className="relative z-[99999]"
+      className="relative z-99999"
       onClose={onClose}
       open={open}
       initialFocus={initialFocusRef}
     >
       <motion.div
-        className="fixed inset-0 bg-primary-bg bg-opacity-75"
+        className="fixed inset-0 bg-primary-bg/75"
         initial={{
           opacity: 0,
         }}
