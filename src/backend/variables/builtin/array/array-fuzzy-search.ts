@@ -6,7 +6,7 @@ const model: ReplaceVariable = {
     definition: {
         handle: "arrayFuzzySearch",
         usage: "arrayFuzzySearch[array, search, propertyPaths?, threshold?, defaultValue?]",
-        description: "Finds the first element in an array that is closest to the given search value. Can optionally include a threshold between 0.0 and 1.0 to filter results where 0.0 is strict and 1.0 is loose",
+        description: "Finds the first element in an array that is closest to the given search value. You can optionally include a threshold between 0.0 and 1.0 to filter results where 0.0 is strict and 1.0 is loose",
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER],
         examples: [
