@@ -1,4 +1,4 @@
-import { Firebot } from "@crowbartools/firebot-custom-scripts-types";
+import { EffectType } from "../../../../../types/effects";
 import {
     getSourceVisibility,
     setSourceVisibility,
@@ -22,7 +22,7 @@ type Scope = {
     [x: string]: any;
 };
 
-export const ToggleSourceVisibilityEffectType: Firebot.EffectType<EffectProperties> =
+export const ToggleSourceVisibilityEffectType: EffectType<EffectProperties> =
 {
     definition: {
         id: "ebiggz:obs-toggle-source-visibility",

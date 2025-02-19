@@ -45,7 +45,7 @@
             <label class="control-fb control--checkbox" style="font-weight: 600;">
               <span ng-if="$ctrl.title" ng-bind-html="$ctrl.title" class="markdown-container"></span>
               <span ng-if="!$ctrl.title">{{$ctrl.name}}</span>
-              <tooltip ng-if="$ctrl.description" text="$ctrl.description"></tooltip>
+              <tooltip ng-if="$ctrl.metadata.description" text="$ctrl.metadata.description"></tooltip>
               <input type="checkbox" ng-click="$ctrl.metadata.value = !$ctrl.metadata.value" ng-checked="$ctrl.metadata.value" aria-label="...">
               <div class="control__indicator"></div>
             </label>
@@ -189,8 +189,6 @@
                         }
                     }
                 }
-
-                console.log(ctrl.metadata);
 
                 if (ctrl.metadata.title) {
                     ctrl.title = parseMarkdown(ctrl.metadata.title);
