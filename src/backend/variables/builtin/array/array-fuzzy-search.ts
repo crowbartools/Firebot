@@ -5,8 +5,8 @@ import { ReplaceVariable } from "../../../../types/variables";
 const model: ReplaceVariable = {
     definition: {
         handle: "arrayFuzzySearch",
-        usage: "arrayFuzzySearch[array, search, propertyPaths?]",
-        description: "Finds the first element in an array that is closest to the given search value",
+        usage: "arrayFuzzySearch[array, search, propertyPaths?, threshold?, defaultValue?]",
+        description: "Finds the first element in an array that is closest to the given search value. Can optionally include a threshold between 0.0 and 1.0 to filter results where 0.0 is strict and 1.0 is loose",
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER],
         examples: [
@@ -21,25 +21,44 @@ const model: ReplaceVariable = {
             {
                 usage: 'arrayFuzzySearch["[{\\"username\\": \\"ebiggz\\",\\"id\\": 1234567},{\\"username\\": \\"Oceanity\\",\\"id\\": 9876543}]", 2455678, "[\\"username\\",\\"id\\"]"]',
                 description: 'Searches objects using multiple properties for a match'
+            },
+            {
+                usage: 'arrayFuzzySearch["[\\"apple\\", \\"banana\\", \\"cherry\\"]", apfl, null, 0.2]',
+                description: 'Returns the text "null" as the search is outside the threshold (lower is more strict)'
+            },
+            {
+                usage: 'arrayFuzzySearch["[\\"apple\\", \\"banana\\", \\"cherry\\"]", apfl, null, 0.2, nothing]',
+                description: 'Returns the custom default text "nothing" as the search is outside the threshold'
             }
         ]
     },
-    evaluator: async (_trigger, subject: string | unknown[], search: string, propertyPaths?: string | unknown[]) => {
+    evaluator: async (
+        _trigger,
+        subject: string | unknown[],
+        search: string,
+        propertyPaths?: string | unknown[],
+        threshold?: string | number,
+        defaultValue?: unknown
+    ) => {
+        if (defaultValue === undefined) {
+            defaultValue = "null";
+        }
+
         if (typeof subject === "string" || subject instanceof String) {
             try {
                 subject = JSON.parse(`${subject}`);
             } catch (error) {
-                return "null";
+                return defaultValue;
             }
         }
 
         if (!Array.isArray(subject)) {
-            return "null";
+            return defaultValue;
         }
 
         const options: IFuseOptions<unknown> = {};
 
-        if (propertyPaths) {
+        if (propertyPaths != null && propertyPaths !== "null" && propertyPaths !== '') {
             if (typeof propertyPaths === "string" || propertyPaths instanceof String) {
                 try {
                     propertyPaths = JSON.parse(`${propertyPaths}`);
@@ -50,12 +69,24 @@ const model: ReplaceVariable = {
             options.keys = propertyPaths as Array<string>;
         }
 
+        if (threshold != null && threshold !== "null" && threshold !== '') {
+            try {
+                threshold = parseFloat(`${threshold}`);
+
+                if (!isNaN(threshold)) {
+                    options.threshold = threshold;
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
         const fuse = new Fuse(subject, options);
 
         const result = fuse.search(search);
 
         if (!result.length) {
-            return "null";
+            return defaultValue;
         }
 
         return result[0].item;
