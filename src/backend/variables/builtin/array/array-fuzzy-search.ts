@@ -5,8 +5,8 @@ import { ReplaceVariable } from "../../../../types/variables";
 const model: ReplaceVariable = {
     definition: {
         handle: "arrayFuzzySearch",
-        usage: "arrayFuzzySearch[array, search, propertyPaths?, threshold?, defaultValue?]",
-        description: "Finds the first element in an array that is closest to the given search value. You can optionally include a threshold between 0.0 and 1.0 to filter results where 0.0 is strict and 1.0 is loose",
+        usage: "arrayFuzzySearch[array, search, propertyPaths?, defaultValue?, threshold?, ignoreDiacritics?]",
+        description: "Finds the first element in an array that is closest to the given search. You can optionally include a threshold between 0.0 and 1.0 to filter results where 0.0 is strict and 1.0 is loose, and ignore diacritics on characters (ie é, à, ç, ñ)",
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER],
         examples: [
@@ -23,12 +23,12 @@ const model: ReplaceVariable = {
                 description: 'Searches objects using multiple properties for a match'
             },
             {
-                usage: 'arrayFuzzySearch["[\\"apple\\", \\"banana\\", \\"cherry\\"]", apfl, null, 0.2]',
-                description: 'Returns the text "null" as the search is outside the threshold (lower is more strict)'
+                usage: 'arrayFuzzySearch["[\\"apple\\", \\"banana\\", \\"cherry\\"]", apfl, nothing, null, 0.2]',
+                description: 'Returns the default text "nothing" as the search results are all outside the threshold'
             },
             {
-                usage: 'arrayFuzzySearch["[\\"apple\\", \\"banana\\", \\"cherry\\"]", apfl, null, 0.2, nothing]',
-                description: 'Returns the custom default text "nothing" as the search is outside the threshold'
+                usage: 'arrayFuzzySearch["[\\"piñata\\"]", pinata, null, nothing, 0.0, true]',
+                description: 'Returns the text "piñata" with threshold set to find only exact matches because diacritics are ignored'
             }
         ]
     },
@@ -37,8 +37,9 @@ const model: ReplaceVariable = {
         subject: string | unknown[],
         search: string,
         propertyPaths?: string | unknown[],
+        defaultValue?: unknown,
         threshold?: string | number,
-        defaultValue?: unknown
+        ignoreDiacritics?: string | boolean
     ) => {
         if (defaultValue === undefined) {
             defaultValue = "null";
@@ -79,6 +80,10 @@ const model: ReplaceVariable = {
             } catch (error) {
                 console.error(error);
             }
+        }
+
+        if (ignoreDiacritics && ignoreDiacritics !== "false") {
+            options.ignoreDiacritics = true;
         }
 
         const fuse = new Fuse(subject, options);
