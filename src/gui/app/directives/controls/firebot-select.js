@@ -12,7 +12,8 @@
             onUpdate: '&',
             isDisabled: '<',
             rightJustify: "<?",
-            ariaLabel: "@?"
+            ariaLabel: "@?",
+            valueMode: "@?"
         },
         template: `
         <div class="btn-group" uib-dropdown>
@@ -73,8 +74,12 @@
             };
 
             function loadOptions() {
+                if (ctrl.valueMode === "string") {
+                    ctrl.objectMode = false;
+                    return;
+                }
                 const options = ctrl.options;
-                if (!Array.isArray(options) && options instanceof Object) {
+                if (ctrl.valueMode === "object" || !Array.isArray(options) && options instanceof Object) {
                     ctrl.objectMode = true;
                 }
             }

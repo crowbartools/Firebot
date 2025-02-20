@@ -12,6 +12,7 @@ import fileRead from './file-read';
 import filesInDirectory from './files-in-directory';
 import loopCount from './loop-count';
 import loopItem from './loop-item';
+import overlayResourcesPath from './overlay-resources-path';
 import quickstore from './quick-store';
 import randomUUID from './random-uuid';
 import runEffect from './run-effect';
@@ -32,6 +33,7 @@ export default [
     filesInDirectory,
     loopCount,
     loopItem,
+    overlayResourcesPath,
     quickstore,
     randomUUID,
     runEffect,
