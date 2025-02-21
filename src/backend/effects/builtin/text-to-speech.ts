@@ -10,7 +10,7 @@ const effect: EffectType<{
     definition: {
         id: "firebot:text-to-speech",
         name: "Text-To-Speech",
-        description: "Have Firebot read out some text.",
+        description: "Have Firebot read some text out loud with TTS.",
         icon: "fad fa-microphone-alt",
         categories: [EffectCategory.FUN],
         dependencies: []
@@ -21,16 +21,12 @@ const effect: EffectType<{
         </eos-container>
 
         <eos-container header="Voice" pad-top="true">
-            <div class="dropdown">
-                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    <span class="dropdown-text">{{getSelectedVoiceName()}}</span>
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a href ng-click="effect.voiceId = 'default'">Default <tooltip text="'The default voice set in Settings > TTS'"></tooltip></a></li>
-                    <li ng-repeat="voice in ttsVoices"><a href ng-click="effect.voiceId = voice.id">{{voice.name}}</a></li>
-                </ul>
-            </div>
+            <ui-select ng-model="effect.voiceId" theme="bootstrap">
+                <ui-select-match placeholder="Select or search for a voice…">{{$select.selected.name}}</ui-select-match>
+                <ui-select-choices style="position: relative;" repeat="voice.id as voice in ttsVoices | filter: { name: $select.search }">
+                    <div ng-bind-html="voice.name | highlight: $select.search"></div>
+                </ui-select-choices>
+            </ui-select>
         </eos-container>
 
         <eos-container header="Wait" pad-top="true">
@@ -50,7 +46,11 @@ const effect: EffectType<{
             $scope.effect.wait = false;
         }
 
-        $scope.ttsVoices = ttsService.getVoices();
+        $scope.ttsVoices = [{
+            id: "default",
+            name: "Default (adjustable in settings)"
+        }];
+        $scope.ttsVoices.push(...ttsService.getVoices());
 
         $scope.getSelectedVoiceName = () => {
             const voiceId = $scope.effect.voiceId;
