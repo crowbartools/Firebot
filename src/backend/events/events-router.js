@@ -95,7 +95,7 @@ async function onEventTriggered(event, source, meta, isManual = false, isRetrigg
             }
         }
 
-        if (!isRetrigger && (isSimulation || !isManual) && (eventSetting.customCooldown || event.cached)) {
+        if (!isRetrigger && !isSimulation && !isManual && (eventSetting.customCooldown || event.cached)) {
             let cacheTtlInSecs;
             let cacheMetaKey;
 
