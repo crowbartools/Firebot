@@ -17,7 +17,8 @@
                 disableInteractions: "<?",
                 updateChatInput: "&?",
                 onReplyClicked: "&?",
-                chatSizeStyle: "@?"
+                chatSizeStyle: "@?",
+                fontFamilyStyle: "@?"
             },
             template: `
                 <div class="chat-message-wrapper">
@@ -137,7 +138,7 @@
                             <div class="chatContent">
                                 <span ng-repeat="part in $ctrl.message.parts" class="chat-content-wrap">
 
-                                    <span ng-if="part.type === 'text'" style="{{$ctrl.chatSizeStyle}}" ng-class="{ highlightText: part.flagged }">{{part.text}}</span>
+                                    <span ng-if="part.type === 'text'" style="{{$ctrl.chatSizeStyle}}{{$ctrl.fontFamilyStyle}}" ng-class="{ highlightText: part.flagged }">{{part.text}}</span>
 
                                     <a ng-if="part.type === 'link'" style="{{$ctrl.chatSizeStyle}}" ng-href="{{part.url}}" target="_blank">{{part.text}}</a>
 
@@ -150,7 +151,7 @@
                                         <img ng-if="part.animatedUrl != '' && part.animatedUrl != null" ng-src="{{part.animatedUrl}}" style="height: 100%;">
                                         <img ng-if="part.animatedUrl == '' || part.animatedUrl == null" ng-src="{{part.url}}" style="height: 100%;">
                                     </span>
-                                    <span ng-if="part.type === 'cheer'" style="{{$ctrl.chatSizeStyle}}; font-weight: bold;" ng-style="{ color: part.color }" >{{part.amount}}</span>
+                                    <span ng-if="part.type === 'cheer'" style="{{$ctrl.chatSizeStyle}}{{$ctrl.fontFamilyStyle}}; font-weight: bold;" ng-style="{ color: part.color }" >{{part.amount}}</span>
 
                                     <span
                                         ng-if="part.type === 'emote'"
@@ -171,7 +172,7 @@
                                     >
                                         <img ng-src="{{part.url}}" style="height: 100%;" />
                                     </span>
-                                    <span ng-if="part.origin === 'BTTV' && !$ctrl.showBttvEmotes" style="{{$ctrl.chatSizeStyle}}">{{part.name}}</span>
+                                    <span ng-if="part.origin === 'BTTV' && !$ctrl.showBttvEmotes" style="{{$ctrl.chatSizeStyle}}{{$ctrl.fontFamilyStyle}}">{{part.name}}</span>
 
                                     <span
                                         ng-if="part.origin === 'FFZ' && $ctrl.showFfzEmotes"
@@ -182,7 +183,7 @@
                                     >
                                         <img ng-src="{{part.url}}" style="height: 100%;" />
                                     </span>
-                                    <span ng-if="part.origin === 'FFZ' && !$ctrl.showFfzEmotes" style="{{$ctrl.chatSizeStyle}}">{{part.name}}</span>
+                                    <span ng-if="part.origin === 'FFZ' && !$ctrl.showFfzEmotes" style="{{$ctrl.chatSizeStyle}}{{$ctrl.fontFamilyStyle}}">{{part.name}}</span>
 
                                     <span
                                         ng-if="part.origin === '7TV' && $ctrl.showSevenTvEmotes"
@@ -193,7 +194,7 @@
                                     >
                                         <img ng-src="{{part.url}}" style="height: 100%;" />
                                     </span>
-                                    <span ng-if="part.origin === '7TV' && !$ctrl.showSevenTvEmotes" style="{{$ctrl.chatSizeStyle}}">{{part.name}}</span>
+                                    <span ng-if="part.origin === '7TV' && !$ctrl.showSevenTvEmotes" style="{{$ctrl.chatSizeStyle}}{{$ctrl.fontFamilyStyle}}">{{part.name}}</span>
                                 </span>
                             </div>
                             <div ng-show="$ctrl.message.whisper" class="muted">(Whispered to {{ $ctrl.message.whisperTarget }})</div>
