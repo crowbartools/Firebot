@@ -140,7 +140,7 @@
 
                                     <span ng-if="part.type === 'text'" style="{{$ctrl.chatSizeStyle}}{{$ctrl.fontFamilyStyle}}" ng-class="{ highlightText: part.flagged }">{{part.text}}</span>
 
-                                    <a ng-if="part.type === 'link'" style="{{$ctrl.chatSizeStyle}}" ng-href="{{part.url}}" target="_blank">{{part.text}}</a>
+                                    <a ng-if="part.type === 'link'" style="{{$ctrl.chatSizeStyle}}{{$ctrl.fontFamilyStyle}}" ng-href="{{part.url}}" target="_blank">{{part.text}}</a>
 
                                     <span
                                         ng-if="part.type === 'cheer'"
