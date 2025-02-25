@@ -29,6 +29,8 @@ export type FirebotSettingsTypes = {
     ChatAlternateBackgrounds: boolean;
     ChatAvatars: boolean;
     ChatCompactMode: boolean;
+    ChatCustomFontFamily: string;
+    ChatCustomFontFamilyEnabled: boolean;
     ChatCustomFontSize: number;
     ChatCustomFontSizeEnabled: boolean;
     ChatHideBotAccountMessages: boolean;
@@ -136,6 +138,8 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     ChatAlternateBackgrounds: true,
     ChatAvatars: true,
     ChatCompactMode: false,
+    ChatCustomFontFamily: "Open Sans",
+    ChatCustomFontFamilyEnabled: false,
     ChatCustomFontSize: 17,
     ChatCustomFontSizeEnabled: false,
     ChatHideBotAccountMessages: false,

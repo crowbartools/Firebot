@@ -3,7 +3,9 @@ import path from "path";
 import logger from "./logwrapper";
 import frontendCommunicator from "./common/frontend-communicator";
 import profileManager from "./common/profile-manager";
+import { SettingsManager } from "./common/settings-manager";
 import webServer from "../server/http-server-manager";
+import { FirebotSettingsDefaults } from "../types/settings";
 
 export enum FontFormat {
     TrueType = "truetype",
@@ -133,6 +135,11 @@ class FontManager {
         const font = this.cachedFonts.find(f => f.name === name);
 
         if (font != null) {
+            if (SettingsManager.getSetting("ChatCustomFontFamily") === name) {
+                SettingsManager.saveSetting("ChatCustomFontFamily", FirebotSettingsDefaults.ChatCustomFontFamily);
+                SettingsManager.saveSetting("ChatCustomFontFamilyEnabled", false);
+            }
+
             try {
                 await fsp.unlink(font.path);
                 this.cachedFonts.splice(this.cachedFonts.indexOf(font), 1);

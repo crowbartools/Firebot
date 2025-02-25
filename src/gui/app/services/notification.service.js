@@ -67,7 +67,7 @@
                         break;
 
                     case NotificationType.UPDATE:
-                        toastClass = "warn";
+                        toastClass = "warning";
                         break;
 
                     case NotificationType.TIP:
