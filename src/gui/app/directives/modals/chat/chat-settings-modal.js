@@ -107,17 +107,6 @@
                         ></chat-settings-toggle>
 
                         <chat-settings-toggle
-                            setting="settings.getSetting('ChatCustomFontSizeEnabled')"
-                            title="Show Custom Font Size"
-                            input-id="showCustomFontSize"
-                            on-update="toggleCustomFontEnabled()"
-                        ></chat-settings-toggle>
-
-                        <div class="volume-slider-wrapper" ng-show="settings.getSetting('ChatCustomFontSizeEnabled')">
-                            <rzslider rz-slider-model="customFontSize" rz-slider-options="fontSliderOptions"></rzslider>
-                        </div>
-
-                        <chat-settings-toggle
                             setting="settings.getSetting('ChatCustomFontFamilyEnabled')"
                             title="Use Custom Font"
                             input-id="showCustomFontFamily"
@@ -136,6 +125,17 @@
                                 </ui-select-choices>
                             </ui-select>
                             <p class="muted mt-1"><small>You can add or remove custom fonts via Settings > Overlay > Manage Fonts.</small></p>
+                        </div>
+
+                        <chat-settings-toggle
+                            setting="settings.getSetting('ChatCustomFontSizeEnabled')"
+                            title="Show Custom Font Size"
+                            input-id="showCustomFontSize"
+                            on-update="toggleCustomFontEnabled()"
+                        ></chat-settings-toggle>
+
+                        <div class="volume-slider-wrapper" ng-show="settings.getSetting('ChatCustomFontSizeEnabled')">
+                            <rzslider rz-slider-model="customFontSize" rz-slider-options="fontSliderOptions"></rzslider>
                         </div>
                     </div>
 
