@@ -40,6 +40,9 @@ const fileWriter = {
         const errors = [];
         return errors;
     },
+    getDefaultLabel: (effect) => {
+        return effect.scriptName ?? "No Script Selected";
+    },
     onTriggerEvent: (event) => {
         return new Promise((resolve) => {
 

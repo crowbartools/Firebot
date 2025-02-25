@@ -87,6 +87,19 @@ const model = {
         }
         return errors;
     },
+    getDefaultLabel: (effect, commandsService) => {
+        let command;
+        if (effect.commandType === "system") {
+            command = commandsService.getSystemCommands()
+                .find(cmd => cmd.id === effect.commandId);
+        }
+        if (effect.commandType === "custom") {
+            command = commandsService.getCustomCommands()
+                .find(cmd => cmd.id === effect.commandId);
+        }
+        // TODO review: should this include args?
+        return command?.trigger ?? "Unknown Command";
+    },
     /**
    * When the effect is triggered by something
    */
