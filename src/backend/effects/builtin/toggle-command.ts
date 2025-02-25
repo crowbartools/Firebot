@@ -92,6 +92,25 @@ const effect: EffectType<{
         }
         return errors;
     },
+    getDefaultLabel: (effect, commandsService, sortTagsService) => {
+        const action = effect.toggleType === "toggle" ? "Toggle"
+            : effect.toggleType === "enable" ? "Activate" : "Deactivate";
+        if (effect.commandType === "tag") {
+            const sortTag = sortTagsService.getSortTags('commands')
+                .find(tag => tag.id === effect.sortTagId);
+            return `${action} tag: ${sortTag?.name ?? "Unknown"}`;
+        }
+        let command;
+        if (effect.commandType === "system") {
+            command = commandsService.getSystemCommands()
+                .find(cmd => cmd.id === effect.commandId);
+        }
+        if (effect.commandType === "custom") {
+            command = commandsService.getCustomCommands()
+                .find(cmd => cmd.id === effect.commandId);
+        }
+        return `${action} ${command?.trigger ?? "Unknown Command"}`;
+    },
     onTriggerEvent: async (event) => {
         const { commandId, commandType, toggleType, sortTagId } = event.effect;
 

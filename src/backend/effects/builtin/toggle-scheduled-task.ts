@@ -92,6 +92,18 @@ const model: EffectType<{
         }
         return errors;
     },
+    getDefaultLabel: (effect, scheduledTaskService, sortTagsService) => {
+        const action = effect.toggleType === "toggle" ? "Toggle"
+            : effect.toggleType === "enable" ? "Enable" : "Disable";
+        if (effect.useTag) {
+            const sortTag = sortTagsService.getSortTags('scheduled effect lists')
+                .find(tag => tag.id === effect.sortTagId);
+            return `${action} tag: ${sortTag?.name ?? "Unknown"}`;
+        }
+
+        const scheduledTask = scheduledTaskService.getScheduledTasks().find(task => task.id === effect.scheduledTaskId);
+        return `${action} ${scheduledTask?.name ?? "Unknown Scheduled Effect List"}`;
+    },
     onTriggerEvent: async (event) => {
         const { effect } = event;
         if (!effect.useTag) {
