@@ -2,6 +2,7 @@ import { SystemCommand } from "../../types/commands";
 import currencyAccess, { Currency } from "./currency-access";
 import currencyManager from "./currency-manager";
 import commandManager from "../chat/commands/command-manager";
+import viewerDatabase from "../viewers/viewer-database";
 import logger from "../logwrapper";
 import util from "../utility";
 
@@ -122,6 +123,26 @@ class CurrencyCommandManager {
                 },
                 subCommands: [
                     {
+                        id: "viewer-currency",
+                        arg: "@\\w+",
+                        regex: true,
+                        usage: "@username",
+                        description: "Gets the currency of the specified user",
+                        restrictionData: {
+                            restrictions: [
+                                {
+                                    id: "sys-cmd-mods-only-perms",
+                                    type: "firebot:permissions",
+                                    mode: "roles",
+                                    roleIds: [
+                                        "mod",
+                                        "broadcaster"
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    {
                         arg: "add",
                         usage: "add [@user] [amount]",
                         description: "Adds currency for a given user.",
@@ -227,6 +248,7 @@ class CurrencyCommandManager {
 
                 const { commandOptions } = event;
                 const triggeredArg = event.userCommand.triggeredArg;
+                const triggeredSubcmd = event.userCommand.triggeredSubcmd;
                 const args = event.userCommand.args;
                 const currencyName = event.command.currency.name;
 
@@ -409,16 +431,31 @@ class CurrencyCommandManager {
                         break;
                     }
                     default: {
-                        const amount = await currencyManager.getViewerCurrencyAmount(event.userCommand.commandSender, currencyId);
-                        if (!isNaN(amount)) {
-                            const balanceMessage = commandOptions.currencyBalanceMessageTemplate
-                                .replace("{user}", event.userCommand.commandSender)
-                                .replace("{currency}", currencyName)
-                                .replace("{amount}", util.commafy(amount));
+                        if (triggeredSubcmd.id === "viewer-currency") {
+                            const username = args[0].replace("@", "");
+                            const amount = await currencyManager.getViewerCurrencyAmount(username, currencyId);
+                            if (!isNaN(amount)) {
+                                const balanceMessage = commandOptions.currencyBalanceMessageTemplate
+                                    .replace("{user}", username)
+                                    .replace("{currency}", currencyName)
+                                    .replace("{amount}", util.commafy(amount));
 
-                            await twitchChat.sendChatMessage(balanceMessage, commandOptions.whisperCurrencyBalanceMessage ? event.userCommand.commandSender : null);
+                                await twitchChat.sendChatMessage(balanceMessage, commandOptions.whisperCurrencyBalanceMessage ? username : null);
+                            } else {
+                                logger.error('Error while trying to show currency amount to user via chat command.');
+                            }
                         } else {
-                            logger.error('Error while trying to show currency amount to user via chat command.');
+                            const amount = await currencyManager.getViewerCurrencyAmount(event.userCommand.commandSender, currencyId);
+                            if (!isNaN(amount)) {
+                                const balanceMessage = commandOptions.currencyBalanceMessageTemplate
+                                    .replace("{user}", event.userCommand.commandSender)
+                                    .replace("{currency}", currencyName)
+                                    .replace("{amount}", util.commafy(amount));
+
+                                await twitchChat.sendChatMessage(balanceMessage, commandOptions.whisperCurrencyBalanceMessage ? event.userCommand.commandSender : null);
+                            } else {
+                                logger.error('Error while trying to show currency amount to user via chat command.');
+                            }
                         }
                     }
                 }
