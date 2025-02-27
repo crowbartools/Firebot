@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 import currencyAccess from "../../../currency/currency-access";
@@ -18,8 +18,8 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.USER, VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
-    evaluator: async (_, currencyName: string, username: string) => {
-        if (currencyName == null || username == null) {
+    evaluator: async (trigger: Trigger, currencyName: string, username: string) => {
+        if (currencyName == null) {
             return 0;
         }
 
@@ -29,7 +29,7 @@ const model : ReplaceVariable = {
             return 0;
         }
 
-        return await currencyManager.getViewerCurrencyAmount(username, currency.id);
+        return await currencyManager.getViewerCurrencyAmount(username ?? trigger.metadata.username, currency.id);
     }
 };
 
