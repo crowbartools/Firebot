@@ -18,8 +18,9 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.USER, VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
-    evaluator: async (trigger: Trigger, currencyName: string, username: string) => {
-        if (currencyName == null) {
+    evaluator: async (trigger: Trigger, currencyName: string, username?: string) => {
+        username ??= trigger.metadata.username;
+        if (currencyName == null || username == null) {
             return 0;
         }
 
@@ -29,7 +30,7 @@ const model : ReplaceVariable = {
             return 0;
         }
 
-        return await currencyManager.getViewerCurrencyAmount(username ?? trigger.metadata.username, currency.id);
+        return await currencyManager.getViewerCurrencyAmount(username, currency.id);
     }
 };
 
