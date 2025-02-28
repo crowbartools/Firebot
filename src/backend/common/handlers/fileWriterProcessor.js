@@ -66,7 +66,9 @@ exports.run = async (effect) => {
     }
 
     let text = effect.text || "";
+    text = text.replace(/\\\\n/g, "␚");
     text = effect.writeMode === "suffix" ? text.replace(/\\n/g, "\n") : text.replace(/\\n/g, "\n").trim();
+    text = text.replace(/␚/g, "\\n");
 
     try {
         if (effect.writeMode === "suffix") {
