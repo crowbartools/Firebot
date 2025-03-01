@@ -3,6 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 const logger = require("../../logwrapper");
+const uuid = require("uuid").v4;
 
 function doesTextExistInFile(filepath, text) {
     const contents = fs.readFileSync(filepath, { encoding: "utf8" });
@@ -66,9 +67,13 @@ exports.run = async (effect) => {
     }
 
     let text = effect.text || "";
-    text = text.replace(/\\\\n/g, "␚");
+    let escapedNewline = "␚";
+    while (text.includes(escapedNewline)) {
+        escapedNewline = `␚${uuid()}␚`;
+    }
+    text = text.replace(/\\\\n/g, escapedNewline);
     text = effect.writeMode === "suffix" ? text.replace(/\\n/g, "\n") : text.replace(/\\n/g, "\n").trim();
-    text = text.replace(/␚/g, "\\n");
+    text = text.replaceAll(escapedNewline, "\\n");
 
     try {
         if (effect.writeMode === "suffix") {
