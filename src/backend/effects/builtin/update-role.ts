@@ -113,6 +113,24 @@ const model: EffectType<{
             return role ? role.name : "Select one";
         };
     },
+    // TODO in codereview: determine if we should show multiple cases, or prioritize specific cases
+    getDefaultLabel: (effect, viewerRolesService) => {
+        const viewer = effect.viewerType === "current" ? "Associated Viewer" : effect.customViewer;
+
+        if (effect.addRoleId) {
+            return `Add ${viewer} to ${viewerRolesService.getRoleById(effect.addRoleId)?.name ?? "Unknown Role"}`;
+        }
+
+        if (effect.removeRoleId) {
+            return `Remove ${viewer} from ${viewerRolesService.getRoleById(effect.removeRoleId)?.name ?? "Unknown Role"}`;
+        }
+
+        if (effect.removeAllRoleId) {
+            return `Clear Role ${viewerRolesService.getRoleById(effect.removeAllRoleId)?.name ?? "Unknown Role"}`;
+        }
+
+        return "";
+    },
     /**
    * When the effect is triggered by something
    */

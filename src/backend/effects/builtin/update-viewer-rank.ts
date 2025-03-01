@@ -91,6 +91,24 @@ const model: EffectType<{
         }
         return errors;
     },
+    getDefaultLabel: (effect, viewerRanksService) => {
+        const ladder = viewerRanksService.getRankLadder(effect.rankLadderId);
+        if (!ladder) {
+            return "";
+        }
+        switch (effect.action) {
+            case "promote":
+                return `Promote Viewer in ${ladder.name}`;
+            case "demote":
+                return `Demote Viewer in ${ladder.name}`;
+            case "set-specific-rank": {
+                const rank = ladder.ranks.find(r => r.id === effect.rankId);
+                return `${ladder.name} - ${rank?.name ?? "Unknown Rank"}`;
+            }
+            case "set-variable-rank":
+                return `${ladder.name} - ${effect.variableRankName}`;
+        }
+    },
     onTriggerEvent: async ({ effect, trigger }) => {
         const ladder = viewerRanksService.getRankLadderHelpers().find(ladder =>
             ladder.id === effect.rankLadderId

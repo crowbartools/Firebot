@@ -60,7 +60,7 @@ const fileWriter = {
             $scope.effect.ttl = 0;
         }
 
-        $scope.openVariableInspector = function() {
+        $scope.openVariableInspector = function () {
             backendCommunicator.fireEvent("show-variable-inspector");
         };
 
@@ -77,7 +77,7 @@ const fileWriter = {
                 inputType: "codemirror",
                 menuPosition: "under",
                 codeMirrorOptions: {
-                    mode: {name: "javascript", json: true},
+                    mode: { name: "javascript", json: true },
                     theme: 'blackboard',
                     lineNumbers: true,
                     autoRefresh: true,
@@ -94,6 +94,10 @@ const fileWriter = {
             errors.push("Please provide a variable name.");
         }
         return errors;
+    },
+    // TODO codereview: should this expose the property path?
+    getDefaultLabel: (effect) => {
+        return effect.name;
     },
     onTriggerEvent: async (event) => {
         const { effect } = event;

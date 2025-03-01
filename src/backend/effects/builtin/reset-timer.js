@@ -49,6 +49,11 @@ const chat = {
         }
         return errors;
     },
+    getDefaultLabel: (effect, timerService) => {
+        const timer = timerService.getTimers()
+            .find(timer => timer.id === effect.selectedTimerId);
+        return timer?.name ?? "Unknown Timer";
+    },
     onTriggerEvent: async event => {
         const { effect } = event;
 

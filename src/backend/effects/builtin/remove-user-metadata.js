@@ -22,7 +22,7 @@ const effect = {
             <input ng-model="effect.key" type="text" class="form-control" id="chat-text-setting" placeholder="Enter key name" replace-variables>
         </eos-container>
     `,
-    optionsController: () => {},
+    optionsController: () => { },
     optionsValidator: (effect) => {
         const errors = [];
         if (effect.username == null || effect.username === "") {
@@ -32,6 +32,9 @@ const effect = {
             errors.push("Please provide a key name.");
         }
         return errors;
+    },
+    getDefaultLabel: (effect) => {
+        return `${effect.username} - ${effect.key}`;
     },
     onTriggerEvent: async (event) => {
         const { effect } = event;
