@@ -228,7 +228,7 @@ const effect = {
             $scope.effect.lastGameText = "Last seen streaming";
         }
 
-        $scope.showOverlayInfoModal = function(overlayInstance) {
+        $scope.showOverlayInfoModal = function (overlayInstance) {
             utilityService.showOverlayInfoModal(overlayInstance);
         };
     },
@@ -239,7 +239,9 @@ const effect = {
         }
         return errors;
     },
-
+    getDefaultLabel: (effect) => {
+        return effect.username;
+    },
     onTriggerEvent: async (event) => {
         // What should this do when triggered.
         const { effect } = event;
