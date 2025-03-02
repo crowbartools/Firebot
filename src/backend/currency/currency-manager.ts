@@ -409,7 +409,8 @@ class CurrencyManager {
             const viewers = await db.findAsync({ online: true, _id: { $in: userIdsInRoles } });
 
             for (const viewer of viewers) {
-                if (viewer != null && (ignoreDisable || !viewer.disableAutoStatAccrual)) {
+                if (viewer != null && viewer.disableActiveUserList !== true &&
+                     (ignoreDisable || !viewer.disableAutoStatAccrual)) {
                     await this.adjustCurrency(viewer, currencyId, value, adjustType);
                 }
             }
