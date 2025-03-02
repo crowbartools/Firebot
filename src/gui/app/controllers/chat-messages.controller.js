@@ -85,6 +85,10 @@
                 $scope.customFontSize = settingsService.getSetting("ChatCustomFontSize");
                 $scope.customFontSizeStyle = $scope.customFontSizeEnabled ?
                     `font-size: ${$scope.customFontSize}px !important;` : "";
+                $scope.customFontFamilyEnabled = settingsService.getSetting("ChatCustomFontFamilyEnabled");
+                $scope.customFontFamily = settingsService.getSetting("ChatCustomFontFamily");
+                $scope.customFontFamilyStyle = $scope.customFontFamilyEnabled ?
+                    `font-family: '${$scope.customFontFamily}', 'Open Sans', sans-serif !important;` : "";
             }
             getUpdatedChatSettings();
 

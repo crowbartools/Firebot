@@ -75,6 +75,7 @@
             update-chat-input="updateChatInput(text)"
             on-reply-clicked="onReplyClicked(threadOrReplyMessageId)"
             chat-size-style="{{customFontSizeStyle}}"
+            font-family-style="{{customFontFamilyStyle}}"
           />
           <reward-redemption
             ng-if="chatItem.type === 'redemption'"
@@ -110,6 +111,7 @@
               hide-reply-banner="true"
               disable-interactions="true"
               chat-size-style="{{customFontSizeStyle}}"
+              font-family-style="{{customFontFamilyStyle}}"
             />
         </div>
         <div class="thread-replying-to" ng-if="cms.threadDetails.replyToMessageId != cms.threadDetails.threadParentMessageId">
