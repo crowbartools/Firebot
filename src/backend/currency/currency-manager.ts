@@ -409,7 +409,6 @@ class CurrencyManager {
             const viewers = await db.findAsync({ online: true, _id: { $in: userIdsInRoles } });
 
             for (const viewer of viewers) {
-                console.log(viewer);
                 if (
                     viewer != null && viewer.disableActiveUserList !== true &&
                     (ignoreDisable || viewer.disableAutoStatAccrual !== true)
