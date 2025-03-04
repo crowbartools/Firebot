@@ -409,8 +409,9 @@ class CurrencyManager {
             const viewers = await db.findAsync({ online: true, _id: { $in: userIdsInRoles } });
 
             for (const viewer of viewers) {
-                if (viewer != null && viewer.disableActiveUserList !== true &&
-                     (ignoreDisable || !viewer.disableAutoStatAccrual)) {
+                console.log(viewer);
+                if (viewer != null &&
+                     (ignoreDisable || viewer.disableAutoStatAccrual !== true)) {
                     await this.adjustCurrency(viewer, currencyId, value, adjustType);
                 }
             }
@@ -444,8 +445,11 @@ class CurrencyManager {
         const viewers = await db.findAsync({ online: true });
 
         for (const viewer of viewers) {
-            if (viewer != null && viewer.disableActiveUserList !== true &&
-                (ignoreDisable || !viewer.disableAutoStatAccrual)) {
+            if (
+                viewer != null &&
+                viewer.disableActiveUserList !== true &&
+                (ignoreDisable || viewer.disableAutoStatAccrual !== true)
+            ) {
                 await this.adjustCurrency(viewer, currencyId, value, adjustType);
             }
         }
@@ -478,8 +482,10 @@ class CurrencyManager {
 
         // Do the loop!
         for (const viewer of viewers) {
-            if (viewer != null && viewer.disableActiveUserList !== true &&
-                    (ignoreDisable || !viewer.disableAutoStatAccrual)) {
+            if (
+                viewer != null &&
+                (ignoreDisable || viewer.disableAutoStatAccrual !== true)
+            ) {
                 await this.adjustCurrency(viewer, currencyId, value, adjustType);
             }
         }
