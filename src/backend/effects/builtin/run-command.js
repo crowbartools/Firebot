@@ -91,7 +91,7 @@ const model = {
         let command;
         if (effect.commandType === "system") {
             command = commandsService.getSystemCommands()
-                .find(cmd => cmd.id === effect.commandId);
+                .find(cmd => cmd.id === effect.systemCommandId);
         }
         if (effect.commandType === "custom") {
             command = commandsService.getCustomCommands()
