@@ -82,7 +82,7 @@ const model: EffectType<{
     },
     getDefaultLabel: (effect, countersService) => {
         const counterName = countersService.getCounter(effect.counterId)?.name ?? "Unknown Counter";
-        return `Update ${counterName} ${effect.mode === "increment" ? "by" : "to"} ${effect.value}`;
+        return `${effect.mode === "increment" ? "Update" : "Set"} ${counterName} ${effect.mode === "increment" ? "by" : "to"} ${effect.value}`;
     },
     onTriggerEvent: async (event) => {
         const { effect } = event;
