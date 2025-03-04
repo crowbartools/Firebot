@@ -410,7 +410,8 @@ class CurrencyManager {
 
             for (const viewer of viewers) {
                 if (
-                    viewer != null && viewer.disableActiveUserList !== true &&
+                    viewer != null &&
+                    viewer.disableActiveUserList !== true &&
                     (ignoreDisable || viewer.disableAutoStatAccrual !== true)
                 ) {
                     await this.adjustCurrency(viewer, currencyId, value, adjustType);
