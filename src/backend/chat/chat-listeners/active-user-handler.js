@@ -87,7 +87,7 @@ exports.getRandomActiveUser = (ignoreUser = "") => {
 exports.getAllActiveUsers = () => {
     return activeUsers.keys().filter(v => !isNaN(v)).map((id) => {
         return {
-            id: parseInt(id),
+            id: id,
             username: activeUsers.get(id)
         };
     });

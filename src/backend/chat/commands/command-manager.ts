@@ -534,4 +534,13 @@ frontendCommunicator.on("get-all-commands", () => {
     };
 });
 
+frontendCommunicator.onAsync("get-firebot-profile-token", () => {
+    const cloudSync = require('../../cloud-sync/profile-sync');
+    return cloudSync.syncProfileData({
+        username: undefined,
+        userRoles: [],
+        profilePage: "commands"
+    });
+});
+
 export = manager;
