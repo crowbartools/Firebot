@@ -97,14 +97,17 @@
                 };
 
                 $ctrl.addSortTag = (sortTag) => {
-                    if (!$ctrl.item.sortTags.some(id => id === sortTag.id)) {
+                    if (!$ctrl.item.sortTags?.some(id => id === sortTag.id)) {
+                        if ($ctrl.item.sortTags == null) {
+                            $ctrl.item.sortTags = [];
+                        }
                         $ctrl.item.sortTags.push(sortTag.id);
                         $ctrl.onUpdate();
                     }
                 };
 
                 $ctrl.toggleSortTag = (sortTag) => {
-                    if ($ctrl.item.sortTags.some(id => id === sortTag.id)) {
+                    if ($ctrl.item.sortTags?.some(id => id === sortTag.id)) {
                         $ctrl.removeSortTag(sortTag.id);
                     } else {
                         $ctrl.addSortTag(sortTag);
