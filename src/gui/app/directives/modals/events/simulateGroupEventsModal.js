@@ -1,7 +1,5 @@
 "use strict";
 
-// Basic template for a modal component, copy this and rename to build a modal.
-
 (function() {
     angular.module("firebotApp")
         .component("simulateGroupEventsModal", {
@@ -21,13 +19,6 @@
                         ></searchable-event-dropdown>
                     </div>
 
-                    <div>
-                        <label class="control-fb control--checkbox"> Force event to run <tooltip text="'This will ensure that the simulated event will run, even if a similar event was recently triggered.'"></tooltip>
-                            <input type="checkbox" ng-model="$ctrl.eventData.forceRetrigger">
-                            <div class="control__indicator"></div>
-                        </label>
-                    </div>
-
                     <div ng-if="$ctrl.metadata">
                         <command-option
                             ng-repeat="data in $ctrl.metadata"
@@ -36,9 +27,18 @@
                             on-update="$ctrl.isAnon(value)"
                         ></command-option>
                     </div>
+
+                    <div ng-show="$ctrl.eventData.eventId != null">
+                        <hr class="divider" />
+                        <label class="control-fb control--checkbox"> Force event to run <tooltip text="'This will ensure that the simulated event will run, even if a similar event was recently triggered.'"></tooltip>
+                            <input type="checkbox" ng-model="$ctrl.eventData.forceRetrigger">
+                            <div class="control__indicator"></div>
+                        </label>
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" ng-click="$ctrl.simulate()">Simulate</button>
+                    <button ng-if="$ctrl.hasPreviousProperties" type="button" class="btn btn-default pull-left" ng-click="$ctrl.loadPrevious()">Load Previous</button>
+                    <button type="button" ng-disabled="$ctrl.eventData.eventId == null" class="btn btn-primary" ng-click="$ctrl.simulate()">Simulate</button>
                 </div>
             `,
             bindings: {
@@ -46,7 +46,7 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function(backendCommunicator, ngToast) {
+            controller: function(backendCommunicator, ngToast, simulatedEventsCache) {
                 const $ctrl = this;
 
                 $ctrl.metadata = [];
@@ -58,6 +58,8 @@
                     forceRetrigger: false
                 };
                 $ctrl.eventError = false;
+
+                $ctrl.hasPreviousProperties = false;
 
                 $ctrl.changeUsername = (key, usernameType, isAnon) => {
                     const username = $ctrl.metadata.find(md => md.key === key);
@@ -97,6 +99,11 @@
                     $ctrl.eventData.sourceId = event.sourceId;
                     $ctrl.eventData.metadata = {};
 
+                    $ctrl.hasPreviousProperties = simulatedEventsCache.hasPreviouslySimulatedEvent(
+                        event.sourceId,
+                        event.eventId
+                    );
+
                     const eventSource = await backendCommunicator.fireEventAsync("getEventSource", event);
                     if (eventSource.manualMetadata) {
                         $ctrl.manualMetadata = eventSource.manualMetadata;
@@ -118,6 +125,27 @@
                     }
                 };
 
+                $ctrl.loadPrevious = () => {
+                    if (!simulatedEventsCache.hasPreviouslySimulatedEvent(
+                        $ctrl.eventData.sourceId,
+                        $ctrl.eventData.eventId
+                    )) {
+                        return;
+                    }
+
+                    const previousProperties = simulatedEventsCache.getPreviouslySimulatedEventProperties(
+                        $ctrl.eventData.sourceId,
+                        $ctrl.eventData.eventId
+                    );
+
+                    $ctrl.metadata.forEach((md) => {
+                        const previousValue = previousProperties[md.key];
+                        if (previousValue != null) {
+                            md.value = previousValue;
+                        }
+                    });
+                };
+
                 $ctrl.simulate = () => {
                     $ctrl.eventError = false;
 
@@ -129,6 +157,12 @@
                     if ($ctrl.metadata.length > 0) {
                         $ctrl.metadata.forEach(md => $ctrl.eventData.metadata[md.key] = md.value);
                     }
+
+                    simulatedEventsCache.setSimulatedEventProperties(
+                        $ctrl.eventData.sourceId,
+                        $ctrl.eventData.eventId,
+                        $ctrl.eventData.metadata
+                    );
 
                     backendCommunicator.fireEventSync("simulateEvent", $ctrl.eventData);
                     ngToast.create({

@@ -29,7 +29,7 @@
 
         // Purged a currency through the modal.
         service.purgeCurrency = function(currency) {
-            backendCommunicator.send("currencies:purge-currency", currency.id);
+            backendCommunicator.send("currencies:purge-currency", currency);
         };
 
         // Deleted a currency through the modal.

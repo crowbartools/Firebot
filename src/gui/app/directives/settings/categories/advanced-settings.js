@@ -68,11 +68,11 @@
                     >
                         <firebot-select
                             options="{ true: 'On', false: 'Off' }"
-                            ng-init="persistVariables = settings.getSettings('PersistCustomVariables')"
+                            ng-init="persistVariables = settings.getSetting('PersistCustomVariables')"
                             selected="persistVariables"
                             on-update="settings.saveSetting('PersistCustomVariables', option === 'true')"
                             right-justify="true"
-                            aria-label="enable or disabel persistent Custom Variables"
+                            aria-label="enable or disable persistent Custom Variables"
                         />
                     </firebot-setting>
 
