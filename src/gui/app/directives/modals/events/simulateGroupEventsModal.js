@@ -28,13 +28,6 @@
                         ></command-option>
                     </div>
 
-                    <div ng-show="$ctrl.eventData.eventId != null">
-                        <hr class="divider" />
-                        <label class="control-fb control--checkbox"> Force event to run <tooltip text="'This will ensure that the simulated event will run, even if a similar event was recently triggered.'"></tooltip>
-                            <input type="checkbox" ng-model="$ctrl.eventData.forceRetrigger">
-                            <div class="control__indicator"></div>
-                        </label>
-                    </div>
                 </div>
                 <div class="modal-footer">
                     <button ng-if="$ctrl.hasPreviousProperties" type="button" class="btn btn-default pull-left" ng-click="$ctrl.loadPrevious()">Load Previous</button>
