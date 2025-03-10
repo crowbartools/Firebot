@@ -11,11 +11,7 @@ interface KnownBot {
     username: string;
     channels: number;
 }
-interface vipUser {
-    userId?: string;
-    userName: string;
-    userDisplayName: string;
-}
+
 interface KnownBotServiceResponse {
     bots: Array<[string, number, number]>
 }
@@ -89,13 +85,8 @@ class ChatRolesManager extends TypedEmitter<Events> {
         }));
     }
 
-    async getVips(): Promise<vipUser[]> {
-        const users = this._vips.map(v => ({
-            userId: v.id,
-            userName: v.username,
-            userDisplayName: v.displayName
-        }));
-        return users;
+    async getVips(): Promise<BasicViewer[]> {
+        return this._vips;
     }
 
     addVipToVipList(viewer: BasicViewer): void {

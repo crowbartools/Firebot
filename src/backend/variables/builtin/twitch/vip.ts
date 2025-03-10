@@ -12,11 +12,15 @@ const model : ReplaceVariable = {
     },
     evaluator: async () => {
         try {
-            return await roleManager.getVips();
+            const vips = await roleManager.getVips();
+            return vips.map(v => ({
+                userId: v.id,
+                userName: v.username,
+                userDisplayName: v.displayName
+            }));
         } catch {
             // Silently fail
         }
-
         return [];
     }
 };
