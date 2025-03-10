@@ -38,7 +38,7 @@ class TwitchChatterPoll {
                 await activeChatUserHandler.addOnlineUser(chatter);
             }
         } catch (error) {
-            logger.error("There was an error getting connected chat users", error.messge);
+            logger.error("There was an error getting connected chat users", error.message);
         }
     }
 
