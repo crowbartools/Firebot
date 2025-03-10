@@ -4,11 +4,13 @@
         .module("firebotApp")
         .controller("commandsController", function(
             $scope,
+            $rootScope,
             commandsService,
             utilityService,
             backendCommunicator,
             objectCopyHelper,
-            sortTagsService
+            sortTagsService,
+            ngToast
         ) {
             // Cache commands on app load.
             commandsService.refreshCommands();
@@ -90,6 +92,17 @@
                         }
                     }
                 });
+            };
+
+            $scope.openFirebotProfilePage = async () => {
+                ngToast.create({
+                    className: "info",
+                    content: "Opening Firebot profile page..."
+                });
+                const profileToken = await backendCommunicator.fireEventAsync("get-firebot-profile-token");
+                if (profileToken) {
+                    $rootScope.openLinkExternally(`https://firebot.app/profile?id=${profileToken}`);
+                }
             };
 
             $scope.resetActiveCooldowns = () => {
