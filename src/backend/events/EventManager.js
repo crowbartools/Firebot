@@ -146,9 +146,9 @@ ipcMain.on("triggerManualEvent", function(_, data) {
 
 frontendCommunicator.on("simulateEvent", (eventData) => {
     if (Object.keys(eventData.metadata).length > 0) {
-        manager.triggerEvent(eventData.sourceId, eventData.eventId, eventData.metadata, true, eventData.forceRetrigger, true);
+        manager.triggerEvent(eventData.sourceId, eventData.eventId, eventData.metadata, true, false, true);
     } else {
-        manager.triggerEvent(eventData.sourceId, eventData.eventId, null, true, eventData.forceRetrigger, true);
+        manager.triggerEvent(eventData.sourceId, eventData.eventId, null, true, false, true);
     }
 });
 

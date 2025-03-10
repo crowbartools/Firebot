@@ -54,8 +54,7 @@
                 $ctrl.eventData = {
                     eventId: null,
                     sourceId: null,
-                    metadata: {},
-                    forceRetrigger: false
+                    metadata: {}
                 };
                 $ctrl.eventError = false;
 
