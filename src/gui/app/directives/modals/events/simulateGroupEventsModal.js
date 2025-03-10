@@ -38,7 +38,7 @@
                 </div>
                 <div class="modal-footer">
                     <button ng-if="$ctrl.hasPreviousProperties" type="button" class="btn btn-default pull-left" ng-click="$ctrl.loadPrevious()">Load Previous</button>
-                    <button type="button" class="btn btn-primary" ng-click="$ctrl.simulate()">Simulate</button>
+                    <button type="button" ng-disabled="$ctrl.eventData.eventId == null" class="btn btn-primary" ng-click="$ctrl.simulate()">Simulate</button>
                 </div>
             `,
             bindings: {
