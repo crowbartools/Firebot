@@ -17,7 +17,7 @@ import followCount from './follow-count';
 import predictionWinningOutcomeName from './prediction-winning-outcome-name';
 import twitchChannelUrl from './twitch-channel-url';
 import viewerCount from './viewer-count';
-
+import vip from './vip';
 
 export default [
     ...adVariables,
@@ -38,5 +38,6 @@ export default [
     followCount,
     predictionWinningOutcomeName,
     twitchChannelUrl,
-    viewerCount
+    viewerCount,
+    vip
 ];
