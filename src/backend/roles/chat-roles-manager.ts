@@ -85,6 +85,10 @@ class ChatRolesManager extends TypedEmitter<Events> {
         }));
     }
 
+    async getVips(): Promise<BasicViewer[]> {
+        return this._vips;
+    }
+
     addVipToVipList(viewer: BasicViewer): void {
         if (!this._vips.some(v => v.id === viewer.id)) {
             this._vips.push(viewer);
