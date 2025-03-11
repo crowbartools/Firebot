@@ -5,10 +5,8 @@
 
     angular
         .module("firebotApp")
-        .factory("soundService", function(logger, settingsService, $q, backendCommunicator) {
+        .factory("soundService", function(logger, settingsService, $q, backendCommunicator, audioPool) {
             const service = {};
-            /** @type {HTMLAudioElement[]} */
-            const sounds = [];
 
             // Connection Sounds
             service.connectSound = function(type) {
@@ -104,15 +102,21 @@
 
                 $q.when(service.getSound(path, volume, outputDevice, fileType))
                     .then(/** @param {HTMLAudioElement} sound */ (sound) => {
-                        let maxSoundLengthTimeout;
-                        sounds.push(sound);
+
+                        if (sound == null) {
+                            return;
+                        }
+
+                        let maxSoundLengthTimeoutId;
 
                         const soundEndEventHandler = function() {
                             // Clear listener after first call.
                             sound.removeEventListener("ended", soundEndEventHandler);
-                            sound.srcObject = null;
-                            sounds.splice(sounds.indexOf(sound), 1);
-                            clearInterval(maxSoundLengthTimeout);
+                            sound.removeEventListener("error", soundEndEventHandler);
+
+                            audioPool.returnAudioToPool(sound);
+
+                            clearTimeout(maxSoundLengthTimeoutId);
                         };
 
                         const soundLoadEventHandler = function() {
@@ -122,7 +126,7 @@
 
                             const intMaxSoundLength = parseInt(maxSoundLength);
                             if (intMaxSoundLength > 0) {
-                                maxSoundLengthTimeout = setTimeout(function() {
+                                maxSoundLengthTimeoutId = setTimeout(function() {
                                     sound.pause();
                                     soundEndEventHandler();
                                 }, maxSoundLength * 1000);
@@ -133,6 +137,7 @@
 
                         // Fires when the sound finishes playing.
                         sound.addEventListener("ended", soundEndEventHandler);
+                        sound.addEventListener("error", soundEndEventHandler);
 
                         sound.load();
                     });
@@ -144,9 +149,21 @@
                 const filteredDevice = deviceList.find(d => d.label === outputDevice.label
                     || d.deviceId === outputDevice.deviceId);
 
-                const sound = new Audio(path);
-                sound.volume = volume;
-                await sound.setSinkId(filteredDevice?.deviceId ?? 'default');
+                let sound;
+                try {
+                    sound = audioPool.obtainAudioFromPool();
+
+                    sound.src = path;
+                    sound.volume = volume;
+
+                    await sound.setSinkId(filteredDevice?.deviceId ?? 'default');
+
+                } catch (e) {
+                    if (sound) {
+                        audioPool.returnAudioToPool(sound);
+                    }
+                    logger.error("Error obtaining audio from pool, skipping play sound...", e);
+                }
 
                 return sound;
             };
@@ -193,14 +210,7 @@
 
             service.stopAllSounds = function() {
                 logger.info("Stopping all sounds...");
-                while (sounds.length > 0) {
-                    let sound = sounds.pop();
-                    if (sound) {
-                        sound.pause();
-                        sound.srcObject = null;
-                        sound = null;
-                    }
-                }
+                audioPool.returnAllAudioToPool();
             };
 
             backendCommunicator.on("stop-all-sounds", () => {
