@@ -33,6 +33,7 @@
                             <label for="value" class="control-label">Data</label>
                             <selectable-input-editors
                                 editors="editors"
+                                initial-editor-label="initialEditorLabel"
                                 model="$ctrl.metadata.value"
                             />
                         </div>
@@ -109,12 +110,12 @@
 
                         const valueType = typeof $ctrl.metadata.value;
                         if (valueType === "number") {
-                            $scope.editors = $scope.editors.filter(e => e.inputType !== "number");
+                            $scope.initialEditorLabel = "Number";
                         } else if (valueType === "object") {
                             $ctrl.metadata.value = JSON.stringify($ctrl.metadata.value, null, 4);
-                            $scope.editors = $scope.editors.filter(e => e.inputType !== "codemirror");
+                            $scope.initialEditorLabel = "JSON";
                         } else {
-                            $scope.editors = $scope.editors.filter(e => e.inputType !== "text");
+                            $scope.initialEditorLabel = "Text";
                         }
                     }
                 };

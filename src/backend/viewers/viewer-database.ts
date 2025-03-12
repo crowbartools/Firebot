@@ -10,12 +10,12 @@ import accountAccess from "../common/account-access";
 import userAccess from "../common/user-access";
 import currencyAccess from "../currency/currency-access";
 import eventManager from "../events/EventManager";
-import backupManager from "../backup-manager";
+import { BackupManager } from "../backup-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import rankManager from "../ranks/rank-manager";
 import util, { wait } from "../utility";
 import { Rank, RankLadder } from "../../types/ranks";
-import twitchChat from "../chat/twitch-chat";
+
 import { userIsActive } from "../chat/chat-listeners/active-user-handler";
 import roleHelpers from "../roles/role-helpers";
 
@@ -449,7 +449,7 @@ class ViewerDatabase extends EventEmitter {
     }
 
     async purgeViewers(options: ViewerPurgeOptions): Promise<void> {
-        await backupManager.startBackup(false, async () => {
+        await BackupManager.startBackup(false, async () => {
             try {
                 const numRemoved = await this._db
                     .removeAsync({ $where: this.getPurgeWherePredicate(options)}, {multi: true});
@@ -495,8 +495,8 @@ class ViewerDatabase extends EventEmitter {
                 .replace(/{user}/g, viewer.displayName)
                 .replace(/{rank}/g, newRank?.name)
                 .replace(/{rankDescription}/g, rankValueDescription);
-
-            twitchChat.sendChatMessage(promotionMessage);
+            const twitchChat = require("../chat/twitch-chat");
+            await twitchChat.sendChatMessage(promotionMessage);
         }
 
         const newRank = ladder.getRank(newRankId);

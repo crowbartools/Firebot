@@ -13,6 +13,7 @@ export type FirebotAudioDevice = {
 
 export type FirebotSettingsTypes = {
     ActiveChatUserListTimeout: number;
+    ActiveProfiles: string[];
     AllowCommandsInSharedChat: boolean;
     AllowQuoteCSVDownloads: boolean;
     AllowedActivityEvents: string[];
@@ -28,6 +29,8 @@ export type FirebotSettingsTypes = {
     ChatAlternateBackgrounds: boolean;
     ChatAvatars: boolean;
     ChatCompactMode: boolean;
+    ChatCustomFontFamily: string;
+    ChatCustomFontFamilyEnabled: boolean;
     ChatCustomFontSize: number;
     ChatCustomFontSizeEnabled: boolean;
     ChatHideBotAccountMessages: boolean;
@@ -47,6 +50,7 @@ export type FirebotSettingsTypes = {
     DebugMode: boolean;
     DefaultToAdvancedCommandMode: boolean;
     DefaultTtsVoiceId: string;
+    DeleteProfile: string;
     EventSettings: object; //TODO
     FirstTimeUse: boolean;
     ForceOverlayEffectsToContinueOnRefresh: boolean;
@@ -54,6 +58,7 @@ export type FirebotSettingsTypes = {
     JustUpdated: boolean;
     LastBackupDate: Date;
     LegacySortTagsImported: boolean;
+    LoggedInProfile: string;
     MaxBackupCount: number | "All";
     MinimizeToTray: boolean;
     NotifyOnBeta: boolean;
@@ -86,11 +91,23 @@ export type FirebotSettingsTypes = {
 }
 
 export const FirebotGlobalSettings: Partial<Record<keyof FirebotSettingsTypes, boolean>> = {
-    DebugMode: true
+    ActiveProfiles: true,
+    BackupBeforeUpdates: true,
+    BackupIgnoreResources: true,
+    BackupKeepAll: true,
+    BackupLocation: true,
+    BackupOnceADay: true,
+    BackupOnExit: true,
+    DebugMode: true,
+    DeleteProfile: true,
+    LastBackupDate: true,
+    LoggedInProfile: true,
+    MaxBackupCount: true
 };
 
 export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     ActiveChatUserListTimeout: 5,
+    ActiveProfiles: [],
     AllowCommandsInSharedChat: false,
     AllowQuoteCSVDownloads: true,
     AllowedActivityEvents: [
@@ -120,6 +137,8 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     ChatAlternateBackgrounds: true,
     ChatAvatars: true,
     ChatCompactMode: false,
+    ChatCustomFontFamily: "Open Sans",
+    ChatCustomFontFamilyEnabled: false,
     ChatCustomFontSize: 17,
     ChatCustomFontSizeEnabled: false,
     ChatHideBotAccountMessages: false,
@@ -139,13 +158,15 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     DebugMode: false,
     DefaultToAdvancedCommandMode: false,
     DefaultTtsVoiceId: undefined,
+    DeleteProfile: undefined,
     EventSettings: {},
     FirstTimeUse: true,
     ForceOverlayEffectsToContinueOnRefresh: true,
     IgnoreSubsequentSubEventsAfterCommunitySub: true,
     JustUpdated: false,
     LegacySortTagsImported: false,
-    LastBackupDate: null,
+    LastBackupDate: undefined,
+    LoggedInProfile: undefined,
     MaxBackupCount: 25,
     MinimizeToTray: false,
     NotifyOnBeta: false,
@@ -180,12 +201,15 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
 /** Anything in `SettingsTypes` not listed here will resolve to "/settings/settingName" (e.g. "/settings/autoFlagBots") */
 export const FirebotSettingsPaths: Partial<Record<keyof FirebotSettingsTypes, string>> = {
     ActiveChatUserListTimeout: "/settings/activeChatUsers/inactiveTimer",
+    ActiveProfiles: "/profiles/activeProfiles",
     ChatShowBttvEmotes: "/settings/chat/emotes/bttv",
     ChatShowFfzEmotes: "/settings/chat/emotes/ffz",
     ChatShowSevenTvEmotes: "/settings/chat/emotes/seventv",
     ChatTaggedNotificationSound: "/settings/chat/tagged/sound",
     ChatTaggedNotificationVolume: "/settings/chat/tagged/volume",
     DashboardLayout: "/settings/dashboard/layout",
+    DeleteProfile: "/profiles/deleteProfile",
+    LoggedInProfile: "/profiles/loggedInProfile",
     ShowActivityFeed: "/settings/activityFeed",
     ShowChatViewerList: "/settings/chatUsersList",
     SoundsEnabled: "/settings/sounds",

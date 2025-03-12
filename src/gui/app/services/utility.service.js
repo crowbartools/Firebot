@@ -2,8 +2,8 @@
 (function() {
     // This contains utility functions
     // Just inject "utilityService" into any controller that you want access to these
-    const _ = require("underscore")._;
 
+    const { v4: uuid } = require("uuid");
     const dataAccess = require("../../backend/common/data-access.js");
 
     angular
@@ -11,7 +11,6 @@
         .factory("utilityService", function(
             $rootScope,
             $uibModal,
-            listenerService,
             logger,
             $timeout,
             backendCommunicator,
@@ -155,7 +154,7 @@
                 let dismissCallback = showModalContext.dismissCallback;
                 const windowClass = showModalContext.windowClass ? showModalContext.windowClass : "";
 
-                const modalId = `modal${_.uniqueId().toString()}`;
+                const modalId = `modal-${uuid()}`;
                 resolveObj.modalId = () => {
                     return modalId;
                 };
@@ -514,7 +513,6 @@
                         $scope,
                         $uibModalInstance,
                         $timeout,
-                        listenerService,
                         updatesService
                     ) => {
                         $scope.downloadHasError = false;
@@ -522,44 +520,19 @@
 
                         $scope.downloadComplete = false;
 
-                        // Update error listener
-                        const registerRequest = {
-                            type: listenerService.ListenerType.UPDATE_ERROR,
-                            runOnce: true
-                        };
-                        listenerService.registerListener(registerRequest, (errorMessage) => {
-                            // the autoupdater had an error
-                            $scope.downloadHasError = true;
-                            $scope.errorMessage = errorMessage;
+                        // Update downloaded listener
+                        backendCommunicator.on("updateDownloaded", () => {
+                            // the autoupdater has downloaded the update
+                            $scope.downloadComplete = true;
+                            updatesService.updateIsDownloaded = true;
                         });
 
-                        // Update downloaded listener
-                        const updateDownloadedListenerRequest = {
-                            type: listenerService.ListenerType.UPDATE_DOWNLOADED,
-                            runOnce: true
-                        };
-                        listenerService.registerListener(
-                            updateDownloadedListenerRequest,
-                            () => {
-                                // the autoupdater has downloaded the update
-                                $scope.downloadComplete = true;
-                                updatesService.updateIsDownloaded = true;
-                            }
-                        );
-
                         // Install update listener
-                        const installUpdateListenerRequest = {
-                            type: listenerService.ListenerType.INSTALLING_UPDATE,
-                            runOnce: true
-                        };
-                        listenerService.registerListener(
-                            installUpdateListenerRequest,
-                            () => {
-                                // the autoupdater is installing the update
-                                $scope.downloadComplete = true;
-                                $scope.installing = true;
-                            }
-                        );
+                        backendCommunicator.on("installingUpdate", () => {
+                            // the autoupdater is installing the update
+                            $scope.downloadComplete = true;
+                            $scope.installing = true;
+                        });
 
                         // Start timer for if the download seems to take longer than normal,
                         // we want to allow user to close modal.
@@ -1158,14 +1131,9 @@
             };
 
             // Watches for an event from main process
-            listenerService.registerListener(
-                {
-                    type: listenerService.ListenerType.INFO
-                },
-                (infoMessage) => {
-                    service.showInfoModal(infoMessage);
-                }
-            );
+            backendCommunicator.on("info", (infoMessage) => {
+                service.showInfoModal(infoMessage);
+            });
 
             backendCommunicator.on("error", (errorMessage) => {
                 service.showErrorModal(errorMessage);

@@ -41,12 +41,11 @@ const model: EffectType<{
         </eos-container>
 
         <eos-container ng-show="hasTags && effect.useTag" header="Tag" pad-top="true">
-            <ui-select ng-model="effect.sortTagId" theme="bootstrap">
-                <ui-select-match placeholder="Select or search for a tag... ">{{$select.selected.name}}</ui-select-match>
-                <ui-select-choices repeat="sortTag.id as sortTag in sortTags | filter: { name: $select.search }" style="position:relative;">
-                    <div ng-bind-html="sortTag.name | highlight: $select.search"></div>
-                </ui-select-choices>
-            </ui-select>
+            <firebot-searchable-select
+                ng-model="effect.sortTagId"
+                placeholder="Select or search for a tag..."
+                items="sortTags"
+            />
         </eos-container>
 
         <eos-container ng-show="hasScheduledTasks || (hasTags && effect.useTag)" header="Toggle Action" pad-top="true">

@@ -37,7 +37,7 @@
             dismiss: "&",
             modalInstance: "<"
         },
-        controller: function($timeout, $q, logger, backupService, listenerService) {
+        controller: function($timeout, $q, logger, backupService, backendCommunicator) {
             const $ctrl = this;
 
             $ctrl.restoreComplete = false;
@@ -47,7 +47,7 @@
 
             $ctrl.exit = function() {
                 if ($ctrl.restoreComplete) {
-                    listenerService.fireEvent(listenerService.EventType.RESTART_APP);
+                    backendCommunicator.send("restartApp");
                 } else {
                     $ctrl.modalInstance.dismiss("cancel");
                 }
@@ -68,6 +68,8 @@
 
                         if (restoreResult.success) {
                             $ctrl.restoreComplete = true;
+                            $ctrl.restoreHasError = false;
+                            $ctrl.errorMessage = undefined;
                         } else {
                             $ctrl.restoreHasError = true;
                             $ctrl.errorMessage = restoreResult.reason;
@@ -91,7 +93,7 @@
                         $ctrl.restoreHasError = true;
                         $ctrl.errorMessage = "Restore is taking longer than it should. There is likely an issue. You can close and try again. If you continue having issues, please reach out on Discord or Bluesky. We are happy to help!";
                     }
-                }, 30 * 1000);
+                }, 60 * 1000);
             };
         }
     });

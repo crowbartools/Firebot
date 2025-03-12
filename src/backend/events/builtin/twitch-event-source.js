@@ -627,7 +627,7 @@ module.exports = {
                         subscribers: "Subscribers Only",
                         followers: "Followers",
                         slow: "Slow",
-                        r9kbeta: "Unique Chat"
+                        uniquechat: "Unique Chat"
                     },
                     value: "emoteonly"
                 },
@@ -867,7 +867,8 @@ module.exports = {
                 total: "150",
                 progress: "150",
                 goal: "500",
-                level: "1"
+                level: "1",
+                isGoldenKappaTrain: false
             },
             activityFeed: {
                 icon: "fad fa-train",
@@ -886,7 +887,8 @@ module.exports = {
                 total: "150",
                 progress: "150",
                 goal: "500",
-                level: "1"
+                level: "1",
+                isGoldenKappaTrain: false
             },
             activityFeed: {
                 icon: "fad fa-train",
@@ -905,7 +907,8 @@ module.exports = {
             queued: false,
             manualMetadata: {
                 total: "150",
-                level: "1"
+                level: "1",
+                isGoldenKappaTrain: false
             },
             activityFeed: {
                 icon: "fad fa-train",

@@ -100,12 +100,12 @@
                         }
                     }
 
-                    soundService.getSound($ctrl.path, volume, $ctrl.outputDevice)
+                    soundService.getSound($ctrl.path, volume, $ctrl.outputDevice, false)
                         .then((s) => {
                             sound = s;
 
                             const soundLoadEventHandler = function() {
-                                sound.removeEventListener("load", soundLoadEventHandler);
+                                sound.removeEventListener("canplay", soundLoadEventHandler);
                                 $scope.controlsEnabled = true;
                                 $scope.durationDisplay = getDurationDisplay(sound.duration);
                             };

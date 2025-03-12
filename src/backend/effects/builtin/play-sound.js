@@ -1,7 +1,7 @@
 "use strict";
 
 const { SettingsManager } = require("../../common/settings-manager");
-const resourceTokenManager = require("../../resourceTokenManager");
+const { ResourceTokenManager } = require("../../resource-token-manager");
 const webServer = require("../../../server/http-server-manager");
 const fs = require('fs/promises');
 const logger = require("../../logwrapper");
@@ -140,7 +140,7 @@ const playSound = {
         // Generate token if going to overlay, otherwise send to gui.
         if (selectedOutputDevice.deviceId === "overlay") {
             if (effect.soundType !== "url") {
-                const resourceToken = resourceTokenManager.storeResourcePath(
+                const resourceToken = ResourceTokenManager.storeResourcePath(
                     data.filepath,
                     30
                 );
@@ -151,7 +151,7 @@ const playSound = {
             webServer.sendToOverlay("sound", data);
         } else {
             // Send data back to media.js in the gui.
-            renderWindow.webContents.send("playsound", data);
+            frontendCommunicator.send("playsound", data);
         }
 
         if (effect.waitForSound) {

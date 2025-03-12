@@ -1,41 +1,11 @@
 "use strict";
 
-const { ipcMain, dialog } = require("electron");
 const { SettingsManager } = require("../settings-manager");
-const resourceTokenManager = require("../../resourceTokenManager.js");
+const { ResourceTokenManager } = require("../../resource-token-manager");
 const util = require("../../utility");
 const logger = require("../../logwrapper");
 const webServer = require("../../../server/http-server-manager");
-
-// Get Sound File Path
-// This listens for an event from the render media.js file to open a dialog to get a filepath.
-ipcMain.on("getSoundPath", function(event, uniqueid) {
-    const path = dialog.showOpenDialogSync({
-        properties: ["openFile"],
-        filters: [{ name: "Audio", extensions: ["mp3", "ogg", "oga", "wav", "flac"] }]
-    });
-    event.sender.send("gotSoundFilePath", { path: path, id: uniqueid });
-});
-
-// Get Video File Path
-// This listens for an event from the render media.js file to open a dialog to get a filepath.
-ipcMain.on("getVideoPath", function(event, uniqueid) {
-    const path = dialog.showOpenDialogSync({
-        properties: ["openFile"],
-        filters: [{ name: "Video", extensions: ["mp4", "webm", "ogv"] }]
-    });
-    event.sender.send("gotVideoFilePath", { path: path, id: uniqueid });
-});
-
-// Get Image File Path
-// This listens for an event from the render media.js file to open a dialog to get a filepath.
-ipcMain.on("getImagePath", function(event, uniqueid) {
-    const path = dialog.showOpenDialogSync({
-        properties: ["openFile"],
-        filters: [{ name: "Image", extensions: ["jpg", "gif", "png", "jpeg"] }]
-    });
-    event.sender.send("gotImageFilePath", { path: path, id: uniqueid });
-});
+const frontendCommunicator = require("../frontend-communicator");
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -78,7 +48,7 @@ function soundProcessor(effect) {
     data.audioOutputDevice = selectedOutputDevice;
 
     if (selectedOutputDevice.deviceId === "overlay") {
-        const resourceToken = resourceTokenManager.storeResourcePath(effect.file, 30);
+        const resourceToken = ResourceTokenManager.storeResourcePath(effect.file, 30);
         data.resourceToken = resourceToken;
     }
 
@@ -91,7 +61,7 @@ function soundProcessor(effect) {
     }
 
     // Send data back to media.js in the gui.
-    renderWindow.webContents.send("playsound", data);
+    frontendCommunicator.send("playsound", data);
 }
 
 // Image Processor
@@ -138,7 +108,7 @@ async function imageProcessor(effect, trigger) {
     }
 
     if (effect.imageType === "local") {
-        const resourceToken = resourceTokenManager.storeResourcePath(
+        const resourceToken = ResourceTokenManager.storeResourcePath(
             effect.file,
             effect.length
         );
@@ -189,7 +159,7 @@ function videoProcessor(effect) {
         }
     }
 
-    const resourceToken = resourceTokenManager.storeResourcePath(
+    const resourceToken = ResourceTokenManager.storeResourcePath(
         effect.file,
         effect.length
     );

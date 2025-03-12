@@ -19,7 +19,7 @@
                         <ui-select-choices repeat="item.id as item in $ctrl.settings.options | filter: {name: $select.search}">
                             <div style="padding: 10px;" ng-bind-html="item.name | highlight: $select.search"></div>
                         </ui-select-choices>
-                    </ui-select>         
+                    </ui-select>
                 </div>
             `,
             controller: function() {
@@ -36,8 +36,6 @@
                     } else {
                         $ctrl.settings = deepmerge(defaultSettings, $ctrl.settings);
                     }
-
-                    console.log($ctrl.settings);
 
                     if ($ctrl.model == null) {
                         $ctrl.model = [];

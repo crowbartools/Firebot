@@ -29,27 +29,29 @@ const filter: EventFilter = {
                 display: "Slow"
             },
             {
-                value: "r9kbeta",
+                value: "uniquechat",
                 display: "Unique Chat"
             }
         ];
     },
     getSelectedValueDisplay: async (filterSettings) => {
         return (await filter.presetValues())
-            .find(pv => pv.value === filterSettings.value)?.display ?? "[Not Set]";
+            .find(pv => pv.value === filterSettings.value || (filterSettings.value === "r9kbeta" && pv.value === "uniquechat"))?.display ?? "[Not Set]";
     },
     predicate: async (filterSettings, eventData) => {
 
         const { comparisonType, value } = filterSettings;
         const { eventMeta } = eventData;
+        // Unique chat previously used 'r9kbeta' on PubSub; became 'uniquechat' on EventSub.
+        const ucValue = value === "r9kbeta" ? "uniquechat" : value;
 
         const chatModes = eventMeta.chatMode as string;
 
         switch (comparisonType) {
             case ComparisonType.IS:
-                return chatModes.includes(value);
+                return chatModes.includes(ucValue);
             case ComparisonType.IS_NOT:
-                return !chatModes.includes(value);
+                return !chatModes.includes(ucValue);
             default:
                 return false;
         }

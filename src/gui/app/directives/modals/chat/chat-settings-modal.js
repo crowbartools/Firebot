@@ -107,6 +107,27 @@
                         ></chat-settings-toggle>
 
                         <chat-settings-toggle
+                            setting="settings.getSetting('ChatCustomFontFamilyEnabled')"
+                            title="Use Custom Font"
+                            input-id="showCustomFontFamily"
+                            on-update="toggleCustomFontFamilyEnabled()"
+                        ></chat-settings-toggle>
+
+                        <div ng-show="settings.getSetting('ChatCustomFontFamilyEnabled')">
+                            <ui-select ng-model="customFontFamily" on-select="fontFamilyUpdated($item)" class="mt-3" theme="bootstrap">
+                                <ui-select-match placeholder="Select or search for a font…">{{customFontFamily}}</ui-select-match>
+                                <ui-select-choices style="position; relative;" repeat="fontName in fontFamilies | filter: $select.search">
+                                    <div style="display: flex; align-items: center;">
+                                        <span class="mr-2" ng-bind-html="fontName | highlight: $select.search"></span>
+                                        &mdash;
+                                        <span class="ml-2" style="{{chatFontSampleStyle(fontName)}}">{{fontName}}</span>
+                                    </div>
+                                </ui-select-choices>
+                            </ui-select>
+                            <p class="muted mt-1"><small>You can add or remove custom fonts via Settings > Overlay > Manage Fonts.</small></p>
+                        </div>
+
+                        <chat-settings-toggle
                             setting="settings.getSetting('ChatCustomFontSizeEnabled')"
                             title="Show Custom Font Size"
                             input-id="showCustomFontSize"
@@ -191,7 +212,7 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function($scope, $rootScope, $timeout, settingsService, soundService, chatMessagesService) {
+            controller: function($scope, $rootScope, $timeout, settingsService, soundService, chatMessagesService, fontManager) {
                 const $ctrl = this;
 
                 $scope.settings = settingsService;
@@ -285,6 +306,23 @@
                     ceil: 30,
                     translate: value => `${value}px`,
                     onChange: $scope.fontSizeUpdated
+                };
+
+                $scope.fontFamilies = ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Helvetica', 'Impact', 'Inter', 'Open Sans', 'Roboto', 'Tahoma', 'Times New Roman', 'Verdana']
+                    .concat(fontManager.getInstalledFonts().map(f => f.name))
+                    .sort((a, b) => a.localeCompare(b));
+                $scope.customFontFamily = settingsService.getSetting("ChatCustomFontFamily");
+                $scope.toggleCustomFontFamilyEnabled = function () {
+                    settingsService.saveSetting("ChatCustomFontFamilyEnabled", !settingsService.getSetting("ChatCustomFontFamilyEnabled"));
+                };
+                $scope.chatFontSampleStyle = function (fontName) {
+                    const fontStyle = `font-family: '${fontName}', 'Open Sans', sans-serif !important;`;
+                    const sizeStyle = settingsService.getSetting('ChatCustomFontSizeEnabled')
+                        ? `font-size: ${$scope.customFontSize}px !important;` : "";
+                    return `${fontStyle}${sizeStyle}`;
+                };
+                $scope.fontFamilyUpdated = function(fontName) {
+                    settingsService.saveSetting("ChatCustomFontFamily", fontName);
                 };
 
                 $ctrl.$onInit = () => {

@@ -6,9 +6,9 @@ import viewerMetadataManager from "../../../viewers/viewer-metadata-manager";
 const model : ReplaceVariable = {
     definition: {
         handle: "rawTopMetadata",
-        description: "Returns a raw array of users with the most of a given metadata key. Items contain 'username', 'place' and 'amount' properties",
+        description: "Returns a raw array of users with the most of a given metadata key. Items contain `username`, `place` and `amount` properties.",
         usage: "rawTopMetadata[metadataKey]",
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.ARRAY, OutputDataType.TEXT]
     },
 
     // eslint-disable-next-line @typescript-eslint/no-inferrable-types

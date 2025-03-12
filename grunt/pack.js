@@ -55,7 +55,6 @@ module.exports = function (grunt) {
         '--out="./dist/pack"',
         '--arch=x64',
         `--electronVersion=${version}`,
-        '--asar.unpack="moderation-service.js"',
         '--prune',
         '--overwrite',
         '--version-string.ProductName="Firebot v5"',
@@ -79,7 +78,7 @@ module.exports = function (grunt) {
                 command: `npx --no-install @electron/packager . Firebot --platform=win32 ${flags} --app-version=${windowsAppVersion}`
             },
             packdarwin: {
-                command: `npx --no-install @electron/packager . Firebot --platform=darwin ${flags} --extend-info="extra.plist" --extra-resource="./src/resources/firebot-setup-file-icon.icns"`
+                command: `npx --no-install @electron/packager . Firebot --platform=darwin ${flags} --arch=arm64 --extend-info="extra.plist" --extra-resource="./src/resources/firebot-setup-file-icon.icns"`
             },
             packlinux: {
                 command: `npx --no-install @electron/packager . Firebot --platform=linux ${flags}`

@@ -1,7 +1,7 @@
 "use strict";
 
 const logger = require("../../logwrapper");
-const axios = require("axios");
+const frontendCommunicator = require("../frontend-communicator");
 
 function postPicker(posts) {
     while (posts.length) {
@@ -10,7 +10,9 @@ function postPicker(posts) {
 
         // Tests
         const over18 = item['over_18'];
-        const image = item['preview']['images'][0]['source']['url'];
+        const image = item.preview?.images?.length
+            ? item['preview']['images'][0]['source']['url']
+            : null;
         const ups = item['ups'];
         const downs = item['downs'];
         if (over18 !== true && image != null && ups > downs) {
@@ -28,13 +30,12 @@ async function getSubredditData(subName) {
     const normalizedSubName = subName.replace("/r/", '').replace("r/", '');
     const url = `https://www.reddit.com/r/${normalizedSubName}/hot.json?count=15&raw_json=1`;
 
-    return await axios.get(url)
-        .then(function(response) {
-            return response.data.data.children;
-        })
-        .catch(function(err) {
-            logger.warn(`Error getting subreddit ${subName}`, err);
-        });
+    try {
+        const response = await fetch(url);
+        return (await response.json()).data.children;
+    } catch (error) {
+        logger.warn(`Error getting subreddit ${subName}`, error);
+    }
 }
 
 // Pulls a random image from a subreddit.
@@ -43,7 +44,7 @@ async function randomImageFromSubReddit(subreddit) {
 
     if (subData == null) {
         logger.error("Couldn't find any valid posts in the subreddit.");
-        renderWindow.webContents.send(
+        frontendCommunicator.send(
             "error",
             "Couldn't find any valid posts in the subreddit."
         );
@@ -54,7 +55,7 @@ async function randomImageFromSubReddit(subreddit) {
     const imageUrl = postPicker(subData);
     if (imageUrl === false) {
         logger.error("Couldn't find any valid posts in the subreddit.");
-        renderWindow.webContents.send(
+        frontendCommunicator.send(
             "error",
             "Couldn't find any valid posts in the subreddit."
         );

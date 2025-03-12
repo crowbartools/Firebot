@@ -3,7 +3,6 @@ const logger = require("../../logwrapper");
 const accountAccess = require("../../common/account-access");
 const frontendCommunicator = require("../../common/frontend-communicator");
 const firebotDeviceAuthProvider = require("../../auth/firebot-device-auth-provider");
-const chatRolesManager = require("../../roles/chat-roles-manager");
 const { PubSubClient } = require("@twurple/pubsub");
 const chatCommandHandler = require("../../chat/commands/chat-command-handler");
 
@@ -115,49 +114,6 @@ async function createClient() {
             }
         });
         listeners.push(autoModListener);
-
-        const modListener = pubSubClient.onModAction(streamer.userId, streamer.userId, (message) => {
-            const frontendCommunicator = require("../../common/frontend-communicator");
-
-            switch (message.type) {
-                case "vip_added":
-                    chatRolesManager.addVipToVipList({
-                        id: message.targetUserId,
-                        username: message.targetUserName
-                    });
-                    break;
-                default:
-                    switch (message.action) {
-                        case "clear": {
-                            const { userName, userId } = message;
-                            frontendCommunicator.send("twitch:chat:clear-feed", userName);
-                            twitchEventsHandler.chat.triggerChatCleared(userName, userId);
-                            break;
-                        }
-                        case "emoteonly":
-                        case "emoteonlyoff":
-                        case "subscribers":
-                        case "subscribersoff":
-                        case "followers":
-                        case "followersoff":
-                        case "slow":
-                        case "slowoff":
-                        case "r9kbeta": // Unique Chat
-                        case "r9kbetaoff":
-                            twitchEventsHandler.chatModeChanged.triggerChatModeChanged(
-                                message.action,
-                                message.action.includes("off") ? "disabled" : "enabled",
-                                message.userName,
-                                message.args ? parseInt(message.args[0]) : null
-                            );
-                            break;
-                        default:
-                            return;
-                    }
-                    break;
-            }
-        });
-        listeners.push(modListener);
 
         const chatRoomListener = pubSubClient.onCustomTopic(streamer.userId, "stream-chat-room-v1", async (event) => {
             const message = event?.data;

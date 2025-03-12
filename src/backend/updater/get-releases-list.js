@@ -3,7 +3,6 @@
 // Change to more recent version once tested
 const minimumTag = 'v5.50.0';
 
-const axios = require('axios');
 const {
     processVersion,
     compareVersions
@@ -28,23 +27,23 @@ module.exports = async (version) => {
 
     // github limits release listing to latest 1000 releases
     while (!found && page < 11) {
-        const result = await axios({
+        const result = await fetch(`https://api.github.com/repos/crowbartools/Firebot/releases?page=${page}&per_page=100`, {
             method: 'GET',
-            url: `https://api.github.com/repos/crowbartools/Firebot/releases?page=${page}&per_page=100`,
             headers: {
                 'Accept': 'application/vnd.github+json',
-                'X-Github-Api-Version': '2022-11-28'
-            },
-            responseType: 'json'
+                'X-Github-Api-Version': '2022-11-28',
+                "Response-Type": "application/json"
+            }
         });
-        if (result.status !== 200) {
+        if (!result.ok) {
             return {status: "error", message: "failed to get releases list"};
         }
-        if (result.data == null || result.data.length === 0) {
+        const data = await result.json();
+        if (data == null || data.length === 0) {
             break;
         }
 
-        result.data.find(value => {
+        data.find((value) => {
             if (value.draft) {
                 return;
             }

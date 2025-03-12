@@ -1,15 +1,13 @@
 "use strict";
 
 (function() {
-
-    const moment = require("moment");
-
     angular
         .module("firebotApp")
         .factory("chatModerationService", function(backendCommunicator) {
             const service = {};
 
             service.chatModerationData = {
+                /** @type {import("../../../backend/chat/moderation/chat-moderation-manager").ChatModerationSettings} */
                 settings: {
                     bannedWordList: {
                         enabled: false,
@@ -33,124 +31,62 @@
                     },
                     exemptRoles: []
                 },
+
+                /** @type {import("../../../backend/chat/moderation/chat-moderation-manager").ModerationTerm[]} */
                 bannedWords: [],
+
+                /** @type {import("../../../backend/chat/moderation/chat-moderation-manager").ModerationTerm[]} */
                 bannedRegularExpressions: [],
-                urlAllowlist: []
+
+                /** @type {import("../../../backend/chat/moderation/chat-moderation-manager").ModerationTerm[]} */
+                urlAllowlist: [],
+
+                /** @type {import("../../../backend/chat/moderation/chat-moderation-manager").ModerationTerm[]} */
+                userAllowlist: []
             };
 
             service.loadChatModerationData = () => {
-                const data = backendCommunicator.fireEventSync("getChatModerationData");
+                const data = backendCommunicator.fireEventSync("chat-moderation:get-chat-moderation-data");
                 if (data != null) {
                     service.chatModerationData = data;
-                    if (service.chatModerationData.settings.exemptRoles == null) {
-                        service.chatModerationData.settings.exemptRoles = [];
-                    }
-
-                    if (service.chatModerationData.settings.bannedWordList.exemptRoles == null) {
-                        service.chatModerationData.settings.bannedWordList.exemptRoles = [];
-                    }
-
-                    if (service.chatModerationData.settings.bannedWordList.outputMessage == null) {
-                        service.chatModerationData.settings.bannedWordList.outputMessage = "";
-                    }
-
-                    if (service.chatModerationData.settings.emoteLimit == null) {
-                        service.chatModerationData.settings.emoteLimit = {
-                            enabled: false,
-                            exemptRoles: [],
-                            max: 10,
-                            outputMessage: ""
-                        };
-                    }
-                    if (service.chatModerationData.settings.emoteLimit.exemptRoles == null) {
-                        service.chatModerationData.settings.emoteLimit.exemptRoles = [];
-                    }
-
-                    if (service.chatModerationData.settings.emoteLimit.outputMessage == null) {
-                        service.chatModerationData.settings.emoteLimit.outputMessage = "";
-                    }
-
-                    if (service.chatModerationData.settings.urlModeration.exemptRoles == null) {
-                        service.chatModerationData.settings.urlModeration.exemptRoles = [];
-                    }
-
-                    if (service.chatModerationData.urlAllowlist == null) {
-                        service.chatModerationData.urlAllowlist = [];
-                    }
                 }
             };
 
             service.saveChatModerationSettings = () => {
-                backendCommunicator.fireEvent("chatMessageSettingsUpdate", service.chatModerationData.settings);
+                backendCommunicator.fireEvent("chat-moderation:update-chat-moderation-settings", service.chatModerationData.settings);
             };
 
             service.addBannedWords = (words) => {
-
                 const normalizedWords = words
                     .filter(w => w != null && w.trim().length > 0 && w.trim().length < 360)
                     .map(w => w.trim().toLowerCase());
 
-                const mapped = [...new Set(normalizedWords)].map(w => {
-                    return {
-                        text: w,
-                        createdAt: moment().valueOf()
-                    };
-                });
-
-                service.chatModerationData.bannedWords = service.chatModerationData.bannedWords.concat(mapped);
-
-                backendCommunicator.fireEvent("addBannedWords", mapped);
+                backendCommunicator.send("chat-moderation:add-banned-words", normalizedWords);
             };
 
             service.addBannedRegex = (text) => {
-                const mapped = {
-                    text,
-                    createdAt: moment().valueOf()
-                };
-
-                service.chatModerationData.bannedRegularExpressions.push(mapped);
-
-                backendCommunicator.fireEvent("addBannedRegularExpression", mapped);
-            };
-
-            service.removeBannedWordAtIndex = (index) => {
-                const word = service.chatModerationData.bannedWords[index];
-                if (word) {
-                    backendCommunicator.fireEvent("removeBannedWord", word.text);
-                    service.chatModerationData.bannedWords.splice(index, 1);
-                }
+                backendCommunicator.fireEvent("chat-moderation:add-banned-regular-expression", text);
             };
 
             service.removeBannedWordByText = (text) => {
-                const index = service.chatModerationData.bannedWords.findIndex(w => w.text === text);
-                if (index > -1) {
-                    service.removeBannedWordAtIndex(index);
-                }
+                backendCommunicator.send("chat-moderation:remove-banned-word", text);
             };
 
             service.removeAllBannedWords = () => {
-                service.chatModerationData.bannedWords = [];
-                backendCommunicator.fireEvent("removeAllBannedWords");
+                backendCommunicator.send("chat-moderation:remove-all-banned-words");
             };
 
-            service.removeRegexAtIndex = (index) => {
-                const regex = service.chatModerationData.bannedRegularExpressions[index];
-                if (regex) {
-                    backendCommunicator.fireEvent("removeBannedRegularExpression", regex);
-                    service.chatModerationData.bannedRegularExpressions.splice(index, 1);
-                }
+            /** @param {import("../../../backend/chat/moderation/chat-moderation-manager").BannedWordImportRequest} request */
+            service.importBannedWords = async (request) => {
+                return await backendCommunicator.fireEventAsync("chat-moderation:import-banned-words", request);
             };
 
             service.removeRegex = (text) => {
-                const index = service.chatModerationData.bannedRegularExpressions.findIndex(r => r.text === text);
-                if (index > -1) {
-                    service.removeRegexAtIndex(index);
-                }
+                backendCommunicator.fireEvent("chat-moderation:remove-banned-regular-expression", text);
             };
 
             service.removeAllBannedRegularExpressions = () => {
-                service.chatModerationData.bannedRegularExpressions = [];
-                backendCommunicator.fireEvent("removeAllBannedRegularExpressions");
+                backendCommunicator.fireEvent("chat-moderation:remove-all-banned-regular-expressions");
             };
 
             service.addAllowedUrls = (urls) => {
@@ -158,37 +94,32 @@
                     .filter(u => u != null && u.trim().length > 0 && u.trim().length < 360)
                     .map(u => u.trim().toLowerCase());
 
-                const mapped = [...new Set(normalizedUrls)].map(u => {
-                    return {
-                        text: u,
-                        createdAt: moment().valueOf()
-                    };
-                });
-
-                service.chatModerationData.urlAllowlist =
-                    service.chatModerationData.urlAllowlist.concat(mapped);
-
-                backendCommunicator.fireEvent("addAllowedUrls", mapped);
-            };
-
-            service.removeAllowedUrlAtIndex = (index) => {
-                const word = service.chatModerationData.urlAllowlist[index];
-                if (word) {
-                    backendCommunicator.fireEvent("removeAllowedUrl", word.text);
-                    service.chatModerationData.urlAllowlist.splice(index, 1);
-                }
+                backendCommunicator.fireEvent("chat-moderation:add-allowed-urls", normalizedUrls);
             };
 
             service.removeAllowedUrlByText = (text) => {
-                const index = service.chatModerationData.urlAllowlist.findIndex(u => u.text === text);
-                if (index > -1) {
-                    service.removeAllowedUrlAtIndex(index);
-                }
+                backendCommunicator.fireEvent("chat-moderation:remove-allowed-url", text);
             };
 
             service.removeAllAllowedUrls = () => {
-                service.chatModerationData.urlAllowlist = [];
-                backendCommunicator.fireEvent("removeAllAllowedUrls");
+                backendCommunicator.fireEvent("chat-moderation:remove-all-allowed-urls");
+            };
+
+            /** @param {import("../../../backend/chat/moderation/chat-moderation-manager").BannedWordImportRequest} request */
+            service.importUrlAllowlist = async (request) => {
+                return await backendCommunicator.fireEventAsync("chat-moderation:import-url-allowlist", request);
+            };
+
+            service.addAllowedUser = (user) => {
+                backendCommunicator.fireEvent("chat-moderation:add-allowed-user", { id: user.id, username: user.username, displayName: user.displayName });
+            };
+
+            service.removeAllowedUserById= (id) => {
+                backendCommunicator.fireEvent("chat-moderation:remove-allowed-user", id);
+            };
+
+            service.removeAllAllowedUsers = () => {
+                backendCommunicator.fireEvent("chat-moderation:remove-all-allowed-users");
             };
 
             service.registerPermitCommand = () => {
@@ -198,6 +129,26 @@
             service.unregisterPermitCommand = () => {
                 backendCommunicator.fireEvent("unregisterPermitCommand");
             };
+
+            backendCommunicator.on("chat-moderation:chat-moderation-settings-updated", (settings) => {
+                service.chatModerationData.settings = settings;
+            });
+
+            backendCommunicator.on("chat-moderation:banned-word-list-updated", (terms) => {
+                service.chatModerationData.bannedWords = terms;
+            });
+
+            backendCommunicator.on("chat-moderation:banned-regex-list-updated", (terms) => {
+                service.chatModerationData.bannedRegularExpressions = terms;
+            });
+
+            backendCommunicator.on("chat-moderation:url-allowlist-updated", (urls) => {
+                service.chatModerationData.urlAllowlist = urls;
+            });
+
+            backendCommunicator.on("chat-moderation:user-allowlist-updated", (users) => {
+                service.chatModerationData.userAllowlist = users;
+            });
 
             return service;
         });

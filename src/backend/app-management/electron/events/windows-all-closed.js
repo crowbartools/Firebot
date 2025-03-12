@@ -8,7 +8,7 @@ exports.windowsAllClosed = async () => {
     logger.debug("All windows closed triggered");
 
     const { SettingsManager } = require("../../../common/settings-manager");
-    const backupManager = require("../../../backup-manager");
+    const { BackupManager } = require("../../../backup-manager");
 
     // Stop all scheduled tasks
     const scheduledTaskManager = require("../../../timers/scheduled-task-manager");
@@ -19,12 +19,8 @@ exports.windowsAllClosed = async () => {
     await customScriptRunner.stopAllScripts();
 
     // Unregister all shortcuts.
-    const hotkeyManager = require("../../../hotkeys/hotkey-manager");
-    hotkeyManager.unregisterAllHotkeys();
-
-    // Stop the chat moderation service
-    const chatModerationManager = require("../../../chat/moderation/chat-moderation-manager");
-    chatModerationManager.stopService();
+    const { HotkeyManager } = require("../../../hotkeys/hotkey-manager");
+    HotkeyManager.unregisterAllHotkeys();
 
     // Persist custom variables
     if (SettingsManager.getSetting("PersistCustomVariables")) {
@@ -38,7 +34,7 @@ exports.windowsAllClosed = async () => {
 
     if (SettingsManager.getSetting("BackupOnExit")) {
         // Make a backup
-        await backupManager.startBackup(false, app.quit);
+        await BackupManager.startBackup(false, app.quit);
     } else {
         app.quit();
     }

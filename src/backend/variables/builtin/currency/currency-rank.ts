@@ -1,4 +1,4 @@
-import { ReplaceVariable } from "../../../../types/variables";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
 import currencyAccess from "../../../currency/currency-access";
@@ -18,7 +18,8 @@ const model : ReplaceVariable = {
         categories: [VariableCategory.USER, VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
-    evaluator: async (_, currencyName: string, username: string) => {
+    evaluator: async (trigger: Trigger, currencyName: string, username?: string) => {
+        username ??= trigger.metadata.username;
         if (currencyName == null || username == null) {
             return 0;
         }

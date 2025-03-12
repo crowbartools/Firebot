@@ -127,8 +127,8 @@
                     `I'm sorry, ${streamerName}. I'm afraid I can't do that.`
                 ];
 
-                $scope.testTTS = () => {
-                    ttsService.readText(testTTSMessages[Math.floor(Math.random() * testTTSMessages.length)], "default");
+                $scope.testTTS = async () => {
+                    await ttsService.readText(testTTSMessages[Math.floor(Math.random() * testTTSMessages.length)], "default", false);
                 };
 
                 $scope.refreshSliders = function() {

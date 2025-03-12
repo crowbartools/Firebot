@@ -11,49 +11,6 @@ const {
 
 const accountAccess = require('../../account-access');
 
-//v4 effect types are keys, supported v5 types are values
-const v4EffectTypeMap = {
-    "API Button": "firebot:api",
-    "Celebration": "firebot:celebration",
-    "Change Group": null,
-    "Change Scene": null,
-    "Chat": "firebot:chat",
-    "Cooldown": null,
-    "Custom Script": "firebot:customscript",
-    "Run Command": null,
-    "Delay": "firebot:delay",
-    "Dice": "firebot:dice",
-    "Game Control": "firebot:controlemulation",
-    "HTML": "firebot:html",
-    "Show Event": null,
-    "Play Sound": "firebot:playsound",
-    "Random Effect": "firebot:randomeffect",
-    "Effect Group": "firebot:run-effect-list",
-    "Show Image": "firebot:showImage",
-    "Create Clip": "firebot:clip",
-    "Show Video": "firebot:playvideo",
-    "Clear Effects": null,
-    "Write Text To File": "firebot:filewriter",
-    "Group List": null,
-    "Scene List": null,
-    "Command List": null,
-    "Change User Scene": null,
-    "Change Group Scene": null,
-    "Update Button": null,
-    "Toggle Connection": "firebot:toggleconnection",
-    "Show Text": "firebot:showtext"
-};
-
-function mapV4EffectToV5(effect) {
-    if (effect && effect.type) {
-        const mappedType = v4EffectTypeMap[effect.type];
-        if (mappedType != null) {
-            effect.type = mappedType;
-        }
-    }
-    return effect;
-}
-
 function buildModules(scriptManifest) {
     const streamerName = accountAccess.getAccounts().streamer.username || "Unknown Streamer";
     const appVersion = app.getVersion();
@@ -131,9 +88,9 @@ function buildModules(scriptManifest) {
 
         quotesManager: require("../../../quotes/quotes-manager"),
         frontendCommunicator: require("../../frontend-communicator"),
-        counterManager: require("../../../counters/counter-manager"),
+        counterManager: require("../../../counters/counter-manager").CounterManager,
         utils: require("../../../utility"),
-        resourceTokenManager: require("../../../resourceTokenManager"),
+        resourceTokenManager: require("../../../resource-token-manager").ResourceTokenManager,
 
         notificationManager: {
             addNotification: (notificationBase, permanentlySave = true) => {
@@ -212,4 +169,3 @@ function mapParameters(parameterData) {
 exports.mapParameters = mapParameters;
 exports.getScriptPath = getScriptPath;
 exports.buildRunRequest = buildRunRequest;
-exports.mapV4EffectToV5 = mapV4EffectToV5;

@@ -12,6 +12,7 @@ const { setupTitlebar, attachTitlebarToWindow } = require("custom-electron-title
 const screenHelpers = require("./screen-helpers");
 const frontendCommunicator = require("../../common/frontend-communicator");
 const { SettingsManager } = require("../../common/settings-manager");
+const { BackupManager } = require("../../backup-manager");
 
 const argv = require('../../common/argv-parser');
 
@@ -253,9 +254,7 @@ async function createMainWindow() {
                     toolTip: "Open the folder where backups are stored",
                     sublabel: "Open the folder where backups are stored",
                     click: () => {
-                        const backupFolder = path.resolve(
-                            dataAccess.getPathInUserData("/backups/")
-                        );
+                        const backupFolder = BackupManager.backupFolderPath;
                         shell.openPath(backupFolder);
                     },
                     icon: await createIconImage("../../../gui/images/icons/mdi/folder-refresh-outline.png")
@@ -330,7 +329,7 @@ async function createMainWindow() {
                     toolTip: "Restores Firebot from a backup",
                     sublabel: "Restores Firebot from a backup",
                     click: async () => {
-                        frontendCommunicator.send("restore-backup");
+                        frontendCommunicator.send("backups:start-restore-backup");
                     },
                     icon: await createIconImage("../../../gui/images/icons/mdi/backup-restore.png")
                 },

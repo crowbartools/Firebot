@@ -1,39 +1,36 @@
 import { SystemCommand } from "../../types/commands";
-
-import currencyAccess from "./currency-access";
+import currencyAccess, { Currency } from "./currency-access";
 import currencyManager from "./currency-manager";
 import commandManager from "../chat/commands/command-manager";
+import viewerDatabase from "../viewers/viewer-database";
 import logger from "../logwrapper";
-import frontendCommunicator from "../common/frontend-communicator";
 import util from "../utility";
-
-interface BasicCurrency {
-    id: string;
-    name: string;
-}
 
 type CurrencyCommandRefreshRequestAction = "create" | "update" | "delete";
 
-interface CurrencyCommandRefreshRequest {
-    action: CurrencyCommandRefreshRequestAction;
-    currency: BasicCurrency;
-}
-
 class CurrencyCommandManager {
     constructor() {
-        // Refresh our currency commands.
-        frontendCommunicator.on("refreshCurrencyCommands", (request: CurrencyCommandRefreshRequest) => {
-            this.refreshCurrencyCommands(request.action, request.currency);
+        currencyAccess.on("currencies:currency-created", (currency: Currency) => {
+            this.refreshCurrencyCommands("create", currency);
+        });
+
+        currencyAccess.on("currencies:currency-updated", (currency: Currency) => {
+            this.refreshCurrencyCommands("update", currency);
+        });
+
+        currencyAccess.on("currencies:currency-deleted", (currency: Currency) => {
+            this.refreshCurrencyCommands("delete", currency);
         });
     }
 
     /**
      * Creates a command definition when given a currency name.
      */
-    createCurrencyCommandDefinition(currency: BasicCurrency): SystemCommand<{
+    createCurrencyCommandDefinition(currency: Partial<Currency>): SystemCommand<{
         currencyBalanceMessageTemplate: string;
         whisperCurrencyBalanceMessage: boolean;
         addMessageTemplate: string;
+        setMessageTemplate: string;
         removeMessageTemplate: string;
         addAllMessageTemplate: string;
         removeAllMessageTemplate: string;
@@ -47,6 +44,7 @@ class CurrencyCommandManager {
             currencyBalanceMessageTemplate: string;
             whisperCurrencyBalanceMessage: boolean;
             addMessageTemplate: string;
+            setMessageTemplate: string;
             removeMessageTemplate: string;
             addAllMessageTemplate: string;
             removeAllMessageTemplate: string;
@@ -113,9 +111,37 @@ class CurrencyCommandManager {
                         tip: "Variables: {currency}, {amount}",
                         default: `Removed {amount} {currency} from everyone!`,
                         useTextArea: true
+                    },
+                    setMessageTemplate: {
+                        type: "string",
+                        title: "Set Currency Message Template",
+                        description: "How the !currency set message appears in chat.",
+                        tip: "Variables: {user}, {currency}, {amount}",
+                        default: `Set {user}'s {currency} to {amount} !`,
+                        useTextArea: true
                     }
                 },
                 subCommands: [
+                    {
+                        id: "viewer-currency",
+                        arg: "@\\w+",
+                        regex: true,
+                        usage: "@username",
+                        description: "Gets the currency of the specified user",
+                        restrictionData: {
+                            restrictions: [
+                                {
+                                    id: "sys-cmd-mods-only-perms",
+                                    type: "firebot:permissions",
+                                    mode: "roles",
+                                    roleIds: [
+                                        "mod",
+                                        "broadcaster"
+                                    ]
+                                }
+                            ]
+                        }
+                    },
                     {
                         arg: "add",
                         usage: "add [@user] [amount]",
@@ -156,6 +182,24 @@ class CurrencyCommandManager {
                         arg: "give",
                         usage: "give [@user] [amount]",
                         description: "Gives currency from one user to another user."
+                    },
+                    {
+                        arg: "set",
+                        usage: "set [@user] [amount]",
+                        description: "Sets currency to the amount.",
+                        restrictionData: {
+                            restrictions: [
+                                {
+                                    id: "sys-cmd-mods-only-perms",
+                                    type: "firebot:permissions",
+                                    mode: "roles",
+                                    roleIds: [
+                                        "mod",
+                                        "broadcaster"
+                                    ]
+                                }
+                            ]
+                        }
                     },
                     {
                         arg: "addall",
@@ -204,6 +248,7 @@ class CurrencyCommandManager {
 
                 const { commandOptions } = event;
                 const triggeredArg = event.userCommand.triggeredArg;
+                const triggeredSubcmd = event.userCommand.triggeredSubcmd;
                 const args = event.userCommand.args;
                 const currencyName = event.command.currency.name;
 
@@ -265,6 +310,28 @@ class CurrencyCommandManager {
                             // Error removing currency.
                             await twitchChat.sendChatMessage(`Error: Could not remove currency from user.`);
                             logger.error(`Error removing currency for user (${username}) via chat command. Currency: ${currencyId}. Value: ${currencyAdjust}`);
+                        }
+
+                        break;
+                    }
+                    case "set": {
+                        // Get username and make sure our currency amount is a positive integer.
+                        const username = args[1].replace(/^@/, ''),
+                            currencyAdjust = Math.abs(parseInt(args[2]));
+
+                        // Adjust currency, it will return true on success and false on failure.
+                        const status = await currencyManager.adjustCurrencyForViewer(username, currencyId, currencyAdjust, "set");
+
+                        if (status) {
+                            const setMessageTemplate = commandOptions.setMessageTemplate
+                                .replace("{user}", username)
+                                .replace("{currency}", currencyName)
+                                .replace("{amount}", util.commafy(currencyAdjust));
+                            await twitchChat.sendChatMessage(setMessageTemplate);
+                        } else {
+                            // Error removing currency.
+                            await twitchChat.sendChatMessage(`Error: Could not set currency for user.`);
+                            logger.error(`Error setting currency for user (${username}) via chat command. Currency: ${currencyId}. Value: ${currencyAdjust}`);
                         }
 
                         break;
@@ -364,16 +431,31 @@ class CurrencyCommandManager {
                         break;
                     }
                     default: {
-                        const amount = await currencyManager.getViewerCurrencyAmount(event.userCommand.commandSender, currencyId);
-                        if (!isNaN(amount)) {
-                            const balanceMessage = commandOptions.currencyBalanceMessageTemplate
-                                .replace("{user}", event.userCommand.commandSender)
-                                .replace("{currency}", currencyName)
-                                .replace("{amount}", util.commafy(amount));
+                        if (triggeredSubcmd.id === "viewer-currency") {
+                            const username = args[0].replace("@", "");
+                            const amount = await currencyManager.getViewerCurrencyAmount(username, currencyId);
+                            if (!isNaN(amount)) {
+                                const balanceMessage = commandOptions.currencyBalanceMessageTemplate
+                                    .replace("{user}", username)
+                                    .replace("{currency}", currencyName)
+                                    .replace("{amount}", util.commafy(amount));
 
-                            await twitchChat.sendChatMessage(balanceMessage, commandOptions.whisperCurrencyBalanceMessage ? event.userCommand.commandSender : null);
+                                await twitchChat.sendChatMessage(balanceMessage, commandOptions.whisperCurrencyBalanceMessage ? username : null);
+                            } else {
+                                logger.error('Error while trying to show currency amount to user via chat command.');
+                            }
                         } else {
-                            logger.error('Error while trying to show currency amount to user via chat command.');
+                            const amount = await currencyManager.getViewerCurrencyAmount(event.userCommand.commandSender, currencyId);
+                            if (!isNaN(amount)) {
+                                const balanceMessage = commandOptions.currencyBalanceMessageTemplate
+                                    .replace("{user}", event.userCommand.commandSender)
+                                    .replace("{currency}", currencyName)
+                                    .replace("{amount}", util.commafy(amount));
+
+                                await twitchChat.sendChatMessage(balanceMessage, commandOptions.whisperCurrencyBalanceMessage ? event.userCommand.commandSender : null);
+                            } else {
+                                logger.error('Error while trying to show currency amount to user via chat command.');
+                            }
                         }
                     }
                 }
@@ -388,7 +470,7 @@ class CurrencyCommandManager {
      */
     refreshCurrencyCommands(
         action: CurrencyCommandRefreshRequestAction = null,
-        currency: BasicCurrency = null
+        currency: Partial<Currency> = null
     ): void {
     // If we don't get currency stop here.
         if (currency == null) {

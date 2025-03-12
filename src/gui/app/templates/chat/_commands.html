@@ -37,13 +37,16 @@
     custom-filter-name="triggerSearch"
   >
     <fb-item-table-toolbar>
-      <button
-          ng-click="resetActiveCooldowns()"
-          class="btn btn-default hvr-icon-grow"
-        >
-          <i class="iconify hvr-icon mr-2" data-icon="mdi:clock-fast"></i>
-          Clear All Cooldowns
-      </button>
+      <div class="btn-group" uib-dropdown>
+        <button id="tools-dropdown" type="button" class="btn btn-default" uib-dropdown-toggle>
+          Tools <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="tools-dropdown">
+          <li role="menuitem"><a href ng-click="resetActiveCooldowns()"><i class="iconify mr-2" data-icon="mdi:clock-fast"></i> Clear All Cooldowns</a></li>
+          <li class="divider"></li>
+          <li role="menuitem"><a href ng-click="openFirebotProfilePage()"><i class="iconify mr-2" data-icon="mdi:open-in-new"></i> Open Firebot Profile Page</a></li>
+        </ul>
+      </div>
     </fb-item-table-toolbar>
   </firebot-item-table>
   <div ng-if="activeCmdTab === 1" style="height: 100%; overflow-y: scroll;">

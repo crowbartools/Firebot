@@ -15,10 +15,10 @@ const isDev = !app.isPackaged;
 
 // This is the path to folder the app is currently living in. IE: C:\Users\<user>\AppData\Local\Firebot\app-4.0.0\
 // This will change after every update.
-const workingDirectoryRoot = process.platform === 'darwin' ? process.resourcesPath : process.cwd();
+const workingDirectoryRoot = process.platform === 'darwin' ? process.resourcesPath : path.dirname(process.execPath);
 const workingDirectoryPath = isDev ? path.join(app.getAppPath(), "build") : workingDirectoryRoot;
 
-const getWorkingDirectoryPath = function() {
+const getWorkingDirectoryPath = function () {
     return workingDirectoryPath;
 };
 
@@ -38,29 +38,29 @@ if (Object.hasOwn(argv, 'fbuser-data-directory') && argv['fbuser-data-directory'
     tmpDirectoryPath = path.join(rootUserDataPath, "tmp");
 }
 
-const getPathInUserData = function(filePath) {
+const getPathInUserData = function (filePath) {
     return path.join(userDataPath, filePath);
 };
 
-const getPathInWorkingDir = function(filePath) {
+const getPathInWorkingDir = function (filePath) {
     return path.join(workingDirectoryPath, filePath);
 };
 
-const getPathInTmpDir = function(filePath) {
+const getPathInTmpDir = function (filePath) {
     return path.join(tmpDirectoryPath, filePath);
 };
 
-const deletePathInTmpDir = function(filePath) {
+const deletePathInTmpDir = function (filePath) {
     fs.unlinkSync(path.join(tmpDirectoryPath, filePath));
 };
 
-const deletePathInUserData = function(filePath) {
+const deletePathInUserData = function (filePath) {
     fs.unlinkSync(path.join(userDataPath, filePath));
 };
 
-const deleteFolderRecursive = function(pathname) {
+const deleteFolderRecursive = function (pathname) {
     if (fs.existsSync(pathname)) {
-        fs.readdirSync(pathname).forEach(function(file) {
+        fs.readdirSync(pathname).forEach(function (file) {
             const curPath = path.join(pathname, file);
             if (fs.statSync(curPath).isDirectory()) {
                 // recurse
@@ -74,7 +74,7 @@ const deleteFolderRecursive = function(pathname) {
     }
 };
 
-const getUserDataPath = function() {
+const getUserDataPath = function () {
     return userDataPath;
 };
 
@@ -98,7 +98,7 @@ function pathExists(path) {
     });
 }
 
-const createFirebotDataDir = function() {
+const createFirebotDataDir = function () {
     if (!pathExists(userDataPath)) {
         const logger = require("../logwrapper");
         logger.info("Creating firebot-data folder...");
@@ -106,12 +106,12 @@ const createFirebotDataDir = function() {
     }
 };
 
-const getJsonDbInUserData = function(filePath) {
+const getJsonDbInUserData = function (filePath) {
     const jsonDbPath = path.join(userDataPath, filePath);
     return new JsonDB(jsonDbPath, true, true);
 };
 
-const makeDirInUserData = async function(filePath) {
+const makeDirInUserData = async function (filePath) {
     new Promise((resolve) => {
         const joinedPath = path.join(userDataPath, filePath);
         fs.mkdir(joinedPath, () => {
@@ -120,7 +120,7 @@ const makeDirInUserData = async function(filePath) {
     });
 };
 
-const makeDirInUserDataSync = function(filePath) {
+const makeDirInUserDataSync = function (filePath) {
     try {
         const joinedPath = path.join(userDataPath, filePath);
         fs.mkdirSync(joinedPath);
@@ -132,17 +132,17 @@ const makeDirInUserDataSync = function(filePath) {
     }
 };
 
-const writeFileInWorkingDir = function(filePath, data, callback) {
+const writeFileInWorkingDir = function (filePath, data, callback) {
     const joinedPath = path.join(workingDirectoryPath, filePath);
     fs.writeFile(joinedPath, data, { encoding: "utf8" }, callback);
 };
 
-const writeFileInUserData = function(filePath, data, callback) {
+const writeFileInUserData = function (filePath, data, callback) {
     const joinedPath = path.join(userDataPath, filePath);
     fs.writeFile(joinedPath, data, { encoding: "utf8" }, callback);
 };
 
-const copyDefaultConfigToUserData = function(
+const copyDefaultConfigToUserData = function (
     configFileName,
     userDataDestination
 ) {
@@ -155,7 +155,7 @@ const copyDefaultConfigToUserData = function(
     fs.writeFileSync(destination, fs.readFileSync(source));
 };
 
-const copyResourceToUserData = function(
+const copyResourceToUserData = function (
     resourcePath = "",
     resourceName,
     userDataDestination = ""
@@ -177,12 +177,12 @@ const copyResourceToUserData = function(
     }
 };
 
-const workingDirPathExists = function(filePath) {
+const workingDirPathExists = function (filePath) {
     const joinedPath = path.join(workingDirectoryPath, filePath);
     return pathExists(joinedPath);
 };
 
-const userDataPathExists = function(filePath) {
+const userDataPathExists = function (filePath) {
     const joinedPath = path.join(userDataPath, filePath);
     return pathExists(joinedPath);
 };
@@ -191,7 +191,7 @@ function pathExistsSync(path) {
     return fs.existsSync(path);
 }
 
-const userDataPathExistsSync = function(filePath) {
+const userDataPathExistsSync = function (filePath) {
     const joinedPath = path.join(userDataPath, filePath);
     return pathExistsSync(joinedPath);
 };

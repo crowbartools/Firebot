@@ -1,12 +1,7 @@
 "use strict";
 const FormData = require('form-data');
 
-const axiosDefault = require("axios").default;
-
-const axios = axiosDefault.create();
-
 const integrationManager = require("../../integration-manager");
-
 const logger = require("../../../logwrapper");
 
 /**
@@ -82,8 +77,8 @@ async function sendDiscordMessage(discordChannelId, content, embed, files = null
                 }
                 //resolve(response);
                 const chunks = [];
-                response.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
-                response.on('error', (err) => reject(err));
+                response.on('data', chunk => chunks.push(Buffer.from(chunk)));
+                response.on('error', err => reject(err));
                 response.on('end', () => {
                     const result = Buffer.concat(chunks).toString('utf8');
                     if (response.statusCode !== 200) {
@@ -96,8 +91,14 @@ async function sendDiscordMessage(discordChannelId, content, embed, files = null
         });
     }
 
-    const response = await axios.post(`${channel.webhookUrl}?wait=true`, payload);
-    return JSON.stringify(response.data);
+    const response = await fetch(`${channel.webhookUrl}?wait=true`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+    });
+    return await response.text();
 }
 
 exports.sendDiscordMessage = sendDiscordMessage;
