@@ -3,7 +3,7 @@
 (function() {
 
     /**
-     * @typedef {HTMLAudioElement & { _inUse: boolean }} AugmentedAudioElement
+     * @typedef {HTMLAudioElement & { _inUse: boolean, _inUseAt?: number }} AugmentedAudioElement
      */
 
     const INITIAL_POOL_SIZE = 10;
@@ -36,13 +36,28 @@
 
                 if (!audio) {
                     if (audioPool.length >= MAX_POOL_SIZE) {
-                        throw new Error("Hit maximum active audio nodes");
+                        // find the oldest audio element in use
+                        const oldestAudio = audioPool
+                            .filter(audio => audio._inUse)
+                            .reduce((oldest, current) => {
+                                if (!oldest) {
+                                    return current;
+                                }
+                                return (current._inUseAt < oldest._inUseAt) ? current : oldest;
+                            });
+
+                        service.returnAudioToPool(oldestAudio);
+
+                        audio = oldestAudio;
+                    } else {
+                        audio = createPoolableAudio();
+                        audioPool.push(audio);
                     }
-                    audio = createPoolableAudio();
-                    audioPool.push(audio);
                 }
 
                 audio._inUse = true;
+                audio._inUseAt = Date.now();
+
                 return audio;
             };
 
@@ -51,6 +66,8 @@
              * @param {AugmentedAudioElement} audio
              */
             service.returnAudioToPool = (audio) => {
+                audio.dispatchEvent(new Event("ended"));
+
                 audio.pause();
 
                 // Set the source to a 0-second silence to stop any downloading

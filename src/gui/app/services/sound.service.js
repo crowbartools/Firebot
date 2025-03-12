@@ -95,12 +95,12 @@
             };
 
 
-            service.playSound = function(path, volume, outputDevice, fileType = null, maxSoundLength = null) {
+            service.playSound = function(path, volume, outputDevice, maxSoundLength = null) {
                 if (outputDevice == null) {
                     outputDevice = settingsService.getSetting("AudioOutputDevice");
                 }
 
-                $q.when(service.getSound(path, volume, outputDevice, fileType))
+                $q.when(service.getSound(path, volume, outputDevice))
                     .then(/** @param {HTMLAudioElement} sound */ (sound) => {
 
                         if (sound == null) {
@@ -143,7 +143,7 @@
                     });
             };
 
-            service.getSound = async function(path, volume, outputDevice = settingsService.getSetting("AudioOutputDevice")) {
+            service.getSound = async function(path, volume, outputDevice = settingsService.getSetting("AudioOutputDevice"), usePool = true) {
                 const deviceList = await navigator.mediaDevices.enumerateDevices();
 
                 const filteredDevice = deviceList.find(d => d.label === outputDevice.label
@@ -151,7 +151,7 @@
 
                 let sound;
                 try {
-                    sound = audioPool.obtainAudioFromPool();
+                    sound = usePool ? audioPool.obtainAudioFromPool() : new Audio();
 
                     sound.src = path;
                     sound.volume = volume;
@@ -159,7 +159,7 @@
                     await sound.setSinkId(filteredDevice?.deviceId ?? 'default');
 
                 } catch (e) {
-                    if (sound) {
+                    if (sound && usePool) {
                         audioPool.returnAudioToPool(sound);
                     }
                     logger.error("Error obtaining audio from pool, skipping play sound...", e);
@@ -204,7 +204,7 @@
                 }
 
                 if (selectedOutputDevice.deviceId !== 'overlay') {
-                    service.playSound(data.isUrl ? data.url : data.filepath, volume, selectedOutputDevice, data.format, data.maxSoundLength);
+                    service.playSound(data.isUrl ? data.url : data.filepath, volume, selectedOutputDevice, data.maxSoundLength);
                 }
             });
 

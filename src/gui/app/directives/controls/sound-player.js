@@ -100,7 +100,7 @@
                         }
                     }
 
-                    soundService.getSound($ctrl.path, volume, $ctrl.outputDevice)
+                    soundService.getSound($ctrl.path, volume, $ctrl.outputDevice, false)
                         .then((s) => {
                             sound = s;
 
