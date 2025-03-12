@@ -26,30 +26,29 @@ const effect: EffectType<{
         </eos-container>
 
         <eos-container ng-show="effect.commandType === 'system'" header="System Commands" pad-top="true">
-            <ui-select ng-model="effect.commandId" theme="bootstrap">
-                <ui-select-match placeholder="Select or search for a command... ">{{$select.selected.trigger}}</ui-select-match>
-                <ui-select-choices repeat="command.id as command in systemCommands | filter: { trigger: $select.search }" style="position:relative;">
-                    <div ng-bind-html="command.trigger | highlight: $select.search"></div>
-                </ui-select-choices>
-            </ui-select>
+            <firebot-searchable-select
+                ng-model="effect.commandId"
+                items="systemCommands"
+                item-name="trigger"
+                placeholder="Select or search for a command..."
+            />
         </eos-container>
 
         <eos-container ng-show="effect.commandType === 'custom'" header="Custom Commands" pad-top="true">
-            <ui-select ng-model="effect.commandId" theme="bootstrap">
-                <ui-select-match placeholder="Select or search for a command... ">{{$select.selected.trigger}}</ui-select-match>
-                <ui-select-choices repeat="command.id as command in customCommands | filter: { trigger: $select.search }" style="position:relative;">
-                    <div ng-bind-html="command.trigger | highlight: $select.search"></div>
-                </ui-select-choices>
-            </ui-select>
+            <firebot-searchable-select
+                ng-model="effect.commandId"
+                items="customCommands"
+                item-name="trigger"
+                placeholder="Select or search for a command..."
+            />
         </eos-container>
 
         <eos-container ng-show="effect.commandType === 'tag'" header="Custom Command Tags" pad-top="true">
-            <ui-select ng-model="effect.sortTagId" theme="bootstrap">
-                <ui-select-match placeholder="Select or search for a tag... ">{{$select.selected.name}}</ui-select-match>
-                <ui-select-choices repeat="sortTag.id as sortTag in sortTags | filter: { name: $select.search }" style="position:relative;">
-                    <div ng-bind-html="sortTag.name | highlight: $select.search"></div>
-                </ui-select-choices>
-            </ui-select>
+            <firebot-searchable-select
+                ng-model="effect.sortTagId"
+                items="sortTags"
+                placeholder="Select or search for a tag..."
+            />
         </eos-container>
 
         <eos-container header="Toggle Action" pad-top="true">

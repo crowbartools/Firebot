@@ -21,12 +21,11 @@ const effect: EffectType<{
         </eos-container>
 
         <eos-container header="Voice" pad-top="true">
-            <ui-select ng-model="effect.voiceId" theme="bootstrap">
-                <ui-select-match placeholder="Select or search for a voice…">{{$select.selected.name}}</ui-select-match>
-                <ui-select-choices style="position: relative;" repeat="voice.id as voice in ttsVoices | filter: { name: $select.search }">
-                    <div ng-bind-html="voice.name | highlight: $select.search"></div>
-                </ui-select-choices>
-            </ui-select>
+            <firebot-searchable-select
+                ng-model="effect.voiceId"
+                items="ttsVoices"
+                placeholder="Select or search for a voice…"
+            />
         </eos-container>
 
         <eos-container header="Wait" pad-top="true">
@@ -48,9 +47,12 @@ const effect: EffectType<{
 
         $scope.ttsVoices = [{
             id: "default",
-            name: "Default (adjustable in settings)"
-        }];
-        $scope.ttsVoices.push(...ttsService.getVoices());
+            name: "Default",
+            description: "The default voice set in Settings > TTS"
+        },
+        ...ttsService.getVoices()
+        ];
+
 
         $scope.getSelectedVoiceName = () => {
             const voiceId = $scope.effect.voiceId;

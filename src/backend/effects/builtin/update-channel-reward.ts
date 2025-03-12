@@ -56,21 +56,19 @@ const model: EffectType<EffectMeta> = {
         </eos-container>
 
         <eos-container ng-if="effect.rewardSelectMode == 'dropdown'" header="Channel Reward">
-            <ui-select ng-model="effect.channelRewardId" theme="bootstrap">
-                <ui-select-match placeholder="Select or search for a channel reward... ">{{$select.selected.name}}</ui-select-match>
-                <ui-select-choices repeat="reward.id as reward in manageableRewards | filter: { name: $select.search }" style="position:relative;">
-                    <div ng-bind-html="reward.name | highlight: $select.search"></div>
-                </ui-select-choices>
-            </ui-select>
+            <firebot-searchable-select
+                ng-model="effect.channelRewardId"
+                items="manageableRewards"
+                placeholder="Select or search for a channel reward..."
+            />
         </eos-container>
 
         <eos-container ng-if="effect.rewardSelectMode == 'sortTag'" header="Channel Reward Tags">
-            <ui-select ng-model="effect.sortTagId" theme="bootstrap">
-                <ui-select-match placeholder="Select or search for a tag... ">{{$select.selected.name}}</ui-select-match>
-                <ui-select-choices repeat="sortTag.id as sortTag in sortTags | filter: { name: $select.search }" style="position:relative;">
-                    <div ng-bind-html="sortTag.name | highlight: $select.search"></div>
-                </ui-select-choices>
-            </ui-select>
+            <firebot-searchable-select
+                ng-model="effect.sortTagId"
+                items="sortTags"
+                placeholder="Select or search for a tag..."
+            />
         </eos-container>
 
         <eos-container ng-if="effect.rewardSelectMode == 'custom'" header="Channel Reward Name/ID">
