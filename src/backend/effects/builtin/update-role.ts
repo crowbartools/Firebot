@@ -113,8 +113,10 @@ const model: EffectType<{
             return role ? role.name : "Select one";
         };
     },
-    // TODO in codereview: determine if we should show multiple cases, or prioritize specific cases
     getDefaultLabel: (effect, viewerRolesService) => {
+        if (effect.addRoleId && effect.removeRoleId || effect.addRoleId && effect.removeAllRoleId || effect.removeRoleId && effect.removeAllRoleId) {
+            return "Multiple actions";
+        }
         const viewer = effect.viewerType === "current" ? "Associated Viewer" : effect.customViewer;
 
         if (effect.addRoleId) {
