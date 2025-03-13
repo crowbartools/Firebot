@@ -99,7 +99,6 @@ const model = {
             command = commandsService.getCustomCommands()
                 .find(cmd => cmd.id === effect.commandId);
         }
-        // TODO review: should this include args?
         return command?.trigger ?? "Unknown Command";
     },
     /**

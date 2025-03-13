@@ -95,7 +95,6 @@ const fileWriter = {
         }
         return errors;
     },
-    // TODO codereview: should this expose the property path?
     getDefaultLabel: (effect) => {
         return effect.name;
     },

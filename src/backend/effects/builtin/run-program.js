@@ -97,7 +97,6 @@ const model = {
         return errors;
     },
     getDefaultLabel: (effect) => {
-        // TODO review: should this include args?
         return effect.programPath ?? "No Program Selected";
     },
     onTriggerEvent: (event) => {
