@@ -20,12 +20,12 @@ const effectGroup = {
         </eos-container>
 
         <eos-container ng-show="effect.listType === 'preset'" header="Preset Effect List" pad-top="true">
-            <ui-select ng-model="effect.presetListId" theme="bootstrap" on-select="presetListSelected($item)" title="{{selectedPresetList ? selectedPresetList.name : 'Select or search for a preset effect list... '}}">
-                <ui-select-match placeholder="Select or search for a preset effect list... ">{{$select.selected.name}}</ui-select-match>
-                <ui-select-choices repeat="presetList.id as presetList in presetEffectLists | filter: { name: $select.search }" style="position:relative;">
-                    <div ng-bind-html="presetList.name | highlight: $select.search"></div>
-                </ui-select-choices>
-            </ui-select>
+            <firebot-searchable-select
+                ng-model="effect.presetListId"
+                placeholder="Select or search for a preset effect list..."
+                items="presetEffectLists"
+                on-select="presetListSelected(item)"
+            />
 
             <div style="margin-top: 15px">
                 <button class="btn btn-default"

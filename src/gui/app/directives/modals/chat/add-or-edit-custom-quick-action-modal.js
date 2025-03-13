@@ -24,12 +24,12 @@
                         <p class="muted">The effect list that will be run when the Quick Action is triggered.</p>
                         <dropdown-select options="{ custom: 'Custom', preset: 'Preset'}" selected="$ctrl.listType"></dropdown-select>
                         <div ng-if="$ctrl.listType === 'preset'" class="mt-8">
-                            <ui-select ng-model="$ctrl.quickAction.presetListId" theme="bootstrap" on-select="$ctrl.presetListSelected($item)">
-                                <ui-select-match placeholder="Select or search for a preset effect list... ">{{$select.selected.name}}</ui-select-match>
-                                <ui-select-choices repeat="presetList.id as presetList in $ctrl.presetEffectLists | filter: { name: $select.search }" style="position:relative;">
-                                    <div ng-bind-html="presetList.name | highlight: $select.search"></div>
-                                </ui-select-choices>
-                            </ui-select>
+                            <firebot-searchable-select
+                                ng-model="$ctrl.quickAction.presetListId"
+                                items="$ctrl.presetEffectLists"
+                                placeholder="Select or search for a preset effect list..."
+                                on-select="$ctrl.presetListSelected(item)"
+                            />
                         </div>
                         <div ng-if="$ctrl.listType === 'custom'" class="mt-8">
                             <effect-list effects="$ctrl.quickAction.effectList"
