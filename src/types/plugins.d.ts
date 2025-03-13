@@ -13,13 +13,14 @@ import { FrontendCommunicatorModule } from "./script-modules";
 import EffectManager from "../backend/effects/effectManager";
 import ReplaceVariableManager from "../backend/variables/replace-variable-manager";
 
+type GenericParameters = Record<string, Record<string, unknown>>;
 
-export type InstalledPluginConfig = {
+export type InstalledPluginConfig<Params extends GenericParameters = GenericParameters> = {
     id: string,
     fileName: string,
     enabled?: boolean,
     legacyImport?: boolean,
-    parameters: Record<string, Record<string, unknown>>
+    parameters: Params
 };
 
 type ScriptContext = {
@@ -61,19 +62,6 @@ export interface Manifest {
     maximumFirebotVersion?: ManifestFirebotVersion;
 
     type: ScriptType;
-}
-
-interface ScriptParameter {
-    name: string;
-    description: string;
-    type: ParameterType; // input, select, toggle/checkbox, etc
-    validate?: (value: unknown) => boolean;
-
-    placeholder?: string; // hint-text; only viable only for specific types
-
-    // If value is a function, call said function to get definition
-    // If definition is or evaluates to promise, await promise
-    default: NoFunctionValue | (() => Awaitable<unknown>);
 }
 
 type EffectScriptResult = {
@@ -186,7 +174,7 @@ export type LegacyScriptData = {
 
 export type LegacyCustomScript = {
     getScriptManifest(): Awaitable<LegacyCustomScriptManifest>;
-    getDefaultParameters(): LegacyScriptParameters;
+    getDefaultParameters?: () => LegacyScriptParameters;
     run(
         runRequest: LegacyRunRequest
     ): Awaitable<void | LegacyScriptReturnObject>;

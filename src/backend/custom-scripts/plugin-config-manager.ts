@@ -29,23 +29,27 @@ class PluginConfigManager extends JsonDbManager<InstalledPluginConfig> {
             id: string;
             name: string;
             scriptName: string;
-            parameters: Record<string, { value: string }>
+            parameters?: Record<string, { value: string }>
         }> | undefined = startUpScriptsDb.getData("/");
 
         logger.info("Migrating start up scripts to plugins");
 
         if (startupScriptsData) {
             for (const script of Object.values(startupScriptsData)) {
-                this.saveItem({
-                    id: script.id,
-                    fileName: script.scriptName,
-                    enabled: true,
-                    legacyImport: true,
-                    parameters: Object.entries(script.parameters).reduce((acc, [key, value]) => {
-                        acc.legacyParams[key] = value.value;
-                        return acc;
-                    }, { legacyParams: {} })
-                });
+                try {
+                    this.saveItem({
+                        id: script.id,
+                        fileName: script.scriptName,
+                        enabled: true,
+                        legacyImport: true,
+                        parameters: Object.entries(script.parameters ?? {}).reduce((acc, [paramKey, param]) => {
+                            acc.legacyParams[paramKey] = param?.value;
+                            return acc;
+                        }, { legacyParams: {} })
+                    });
+                } catch (error) {
+                    logger.error(`Failed to migrate start up script ${script.id}: ${error}`);
+                }
             }
         }
 

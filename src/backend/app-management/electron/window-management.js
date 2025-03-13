@@ -453,7 +453,6 @@ async function createMainWindow() {
     // wait for the main window's content to load, then show it
     mainWindow.webContents.on("did-finish-load", async () => {
 
-
         createTray(mainWindow);
 
         // mainWindow.webContents.openDevTools();
@@ -464,8 +463,10 @@ async function createMainWindow() {
             splashscreenWindow.destroy();
         }
 
-        const startupScriptsManager = require("../../common/handlers/custom-scripts/startup-scripts-manager");
-        await startupScriptsManager.runStartupScripts();
+        // const startupScriptsManager = require("../../common/handlers/custom-scripts/startup-scripts-manager");
+        // await startupScriptsManager.runStartupScripts();
+        const scriptRunner = require("../../custom-scripts/script-runner").default;
+        await scriptRunner.startPlugins();
 
         const eventManager = require("../../events/EventManager");
         eventManager.triggerEvent("firebot", "firebot-started", {

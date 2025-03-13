@@ -1,7 +1,8 @@
 import { ScriptBase, LegacyCustomScript, InstalledPluginConfig, LegacyScriptReturnObject } from "../../../types/plugins";
-import { IPluginExecutor, ScriptExecutionResult } from "./script-executor.interface";
+import { IPluginExecutor, ScriptDetails, ScriptExecutionResult } from "./script-executor.interface";
 import { buildRunRequest } from "../../common/handlers/custom-scripts/custom-script-helpers";
 import utils from "../../utility";
+import { Awaitable } from "../../../types/util-types";
 
 export class LegacyStartUpScript extends IPluginExecutor {
     constructor() {
@@ -23,10 +24,10 @@ export class LegacyStartUpScript extends IPluginExecutor {
             return false;
         }
 
-        return manifest.startupOnly === true;
+        return true;
     }
 
-    async executePlugin(script: ScriptBase | LegacyCustomScript, config: InstalledPluginConfig): Promise<ScriptExecutionResult> {
+    async executePlugin(script: ScriptBase | LegacyCustomScript, config: InstalledPluginConfig<{ legacyParams: Record<string, unknown> }>): Promise<ScriptExecutionResult> {
         // this is mainly for type checking
         if (!this.isLegacyScript(script)) {
             return {
@@ -45,10 +46,10 @@ export class LegacyStartUpScript extends IPluginExecutor {
 
         const manifest = await script.getScriptManifest();
 
-        const parametersDefinition = script.getDefaultParameters();
+        const parametersDefinition = script.getDefaultParameters?.() ?? {};
 
         const parameters = Object.entries(parametersDefinition).reduce((acc, [key, value]) => {
-            acc[key] = config.parameters?.[key] ?? value?.default;
+            acc[key] = config.parameters?.legacyParams?.[key] ?? value?.default;
             return acc;
         }, {} as Record<string, unknown>);
 
@@ -93,6 +94,34 @@ export class LegacyStartUpScript extends IPluginExecutor {
 
         if (script.stop != null && typeof script.stop === "function") {
             await script.stop();
+        }
+    }
+
+    async getScriptDetails(script: ScriptBase | LegacyCustomScript): Promise<ScriptDetails> {
+        // this is mainly for type checking
+        if (!this.isLegacyScript(script)) {
+            return null;
+        }
+
+        const manifest = await script.getScriptManifest();
+
+        const settings = script.getDefaultParameters?.() ?? {};
+
+        return {
+            manifest: {
+                version: manifest.version,
+                author: manifest.author,
+                name: manifest.name,
+                description: manifest.description,
+                website: manifest.website,
+                type: "plugin"
+            },
+            parameters: {
+                legacyParams: {
+                    title: "Parameters",
+                    settings:
+                }
+            }
         }
     }
 

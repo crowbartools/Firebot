@@ -157,8 +157,8 @@ exports.whenReady = async () => {
     require("../../../ui-extensions/ui-extension-manager");
 
     windowManagement.updateSplashScreenStatus("Loading plugins...");
-    const pluginManager = require("../../../custom-scripts/plugin-manager");
-    pluginManager.loadItems();
+    const pluginConfigManager = require("../../../custom-scripts/plugin-config-manager");
+    pluginConfigManager.loadItems();
 
     windowManagement.updateSplashScreenStatus("Starting chat moderation manager...");
     const { ChatModerationManager } = require("../../../chat/moderation/chat-moderation-manager");

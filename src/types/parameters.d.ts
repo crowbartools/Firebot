@@ -22,6 +22,7 @@ export type BaseParameter = {
     validation?: {
         required?: boolean;
     };
+    default?: unknown;
 };
 
 export type StringParameter = BaseParameter & {
@@ -232,6 +233,9 @@ export type ParametersConfig<P> = {
 
 type FirebotParamCategory<ParamConfig extends Record<string, unknown>> = {
     title: string;
+    /**
+     * Used to order categories in the UI.
+     */
     sortRank?: number;
     settings: ParametersConfig<ParamConfig>;
 };

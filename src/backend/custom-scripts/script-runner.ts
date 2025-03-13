@@ -1,13 +1,14 @@
 import { InstalledPluginConfig, LegacyCustomScript, Plugin, ScriptBase, ScriptContext } from "../../types/plugins";
 import profileManager from "../common/profile-manager";
 import path from "path";
-import { settings } from "../common/settings-access";
 import logger from "../logwrapper";
 import frontendCommunicator from "../common/frontend-communicator";
 import { PluginExecutor } from "./executors/plugin-executor";
 import { LegacyStartUpScript } from "./executors/legacy-startup-script-executor";
 import { IEffectScriptExecutor, IPluginExecutor, ScriptExecutionResult } from "./executors/script-executor.interface";
 import { buildScriptApi } from "./script-api-factory";
+import { SettingsManager } from "../common/settings-manager";
+import pluginConfigManager from "./plugin-config-manager";
 
 class ScriptRunner {
     private activePlugins: Record<string, Plugin | LegacyCustomScript> = {};
@@ -17,8 +18,7 @@ class ScriptRunner {
         new LegacyStartUpScript()
     ];
 
-    private effectScriptExecutors: IEffectScriptExecutor[] = [
-    ];
+    private effectScriptExecutors: IEffectScriptExecutor[] = [];
 
     constructor() {
         this.installRequireInterceptor();
@@ -43,7 +43,7 @@ class ScriptRunner {
         };
 
         if (!checkIsCorrectType(script)) {
-            logger.warning(`Script ${pluginConfig.fileName} is not a valid plugin.`);
+            logger.warn(`Script ${pluginConfig.fileName} is not a valid plugin.`);
             delete require.cache[require.resolve(scriptFilePath)];
             return;
         }
@@ -67,12 +67,23 @@ class ScriptRunner {
             this.activePlugins[pluginConfig.id] = script;
         } else {
             if (!result) {
-                logger.warning(`No executor found for script ${pluginConfig.fileName}.`);
+                logger.warn(`No executor found for script ${pluginConfig.fileName}.`);
             } else if (result?.success === false) {
-                logger.warning(`Could not start plugin ${pluginConfig.fileName}: ${result.error}`);
+                logger.warn(`Could not start plugin ${pluginConfig.fileName}: ${result.error}`);
             }
             delete require.cache[require.resolve(scriptFilePath)];
         }
+    }
+
+    async startPlugins(): Promise<void> {
+        const pluginConfigs = pluginConfigManager.getAllItems();
+        for (const pluginConfig of pluginConfigs) {
+            if (pluginConfig.enabled) {
+                logger.info(`Starting plugin ${pluginConfig.fileName}`);
+                await this.startPlugin(pluginConfig, true);
+            }
+        }
+        logger.info("All plugins started");
     }
 
     private installRequireInterceptor() {
@@ -101,7 +112,7 @@ class ScriptRunner {
         let customScript: ScriptBase | LegacyCustomScript | undefined = undefined;
         try {
             // Make sure we first remove the cached version, incase there was any changes
-            if (settings.getClearCustomScriptCache()) {
+            if (SettingsManager.getSetting("ClearCustomScriptCache")) {
                 delete require.cache[require.resolve(scriptFilePath)];
             }
 

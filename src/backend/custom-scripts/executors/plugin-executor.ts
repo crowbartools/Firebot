@@ -78,10 +78,13 @@ export class PluginExecutor extends IPluginExecutor {
     }
 
     private buildParameters(script: Plugin, config: InstalledPluginConfig) {
-        return Object.entries(script.parameters).reduce((acc, [key, value]) => {
-            acc[key] = config.parameters?.[key] ?? value?.default;
+        return Object.entries(script.parameters).reduce((acc, [categoryKey, category]) => {
+            acc[categoryKey] = Object.entries(category.settings).reduce((subAcc, [paramKey, param]) => {
+                subAcc[paramKey] = config.parameters?.[categoryKey]?.[paramKey] ?? param?.default;
+                return subAcc;
+            }, {} as Record<string, unknown>);
             return acc;
-        }, {} as Record<string, unknown>);
+        }, {} as Record<string, Record<string, unknown>>);
     }
 
     private isPlugin(script: ScriptBase | LegacyCustomScript): script is Plugin {
