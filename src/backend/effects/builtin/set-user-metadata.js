@@ -61,7 +61,7 @@ const effect = {
                 inputType: "codemirror",
                 placeholderText: "Enter text/data",
                 codeMirrorOptions: {
-                    mode: {name: "javascript", json: true},
+                    mode: { name: "javascript", json: true },
                     theme: 'blackboard',
                     lineNumbers: true,
                     autoRefresh: true,
@@ -81,6 +81,9 @@ const effect = {
             errors.push("Please provide a key name.");
         }
         return errors;
+    },
+    getDefaultLabel: (effect) => {
+        return `${effect.username} - ${effect.key}`;
     },
     onTriggerEvent: async (event) => {
         const { effect } = event;

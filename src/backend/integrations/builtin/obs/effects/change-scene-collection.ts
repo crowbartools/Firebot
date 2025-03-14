@@ -74,6 +74,9 @@ export const ChangeSceneCollectionEffectType: EffectType<{
         }
         return [];
     },
+    getDefaultLabel: (effect) => {
+        return `${effect.sceneCollectionName}`;
+    },
     onTriggerEvent: async ({ effect }) => {
         await setCurrentSceneCollection(effect.sceneCollectionName);
         return true;

@@ -67,6 +67,9 @@ const model: EffectType<{
         }
         return errors;
     },
+    getDefaultLabel: (effect) => {
+        return effect.eventName;
+    },
     onTriggerEvent: async ({ effect }) => {
         try {
             let data: unknown = effect.eventData ?? {};

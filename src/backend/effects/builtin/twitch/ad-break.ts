@@ -62,6 +62,9 @@ const model: EffectType<{
 
         await twitchApi.channels.triggerAdBreak(adLength);
         return true;
+    },
+    getDefaultLabel: (effect) => {
+        return effect.adLength != null ? `${effect.adLength} seconds` : undefined;
     }
 };
 

@@ -64,7 +64,7 @@ const celebration = {
             $scope.effect.length = 5;
         }
 
-        $scope.showOverlayInfoModal = function(overlayInstance) {
+        $scope.showOverlayInfoModal = function (overlayInstance) {
             utilityService.showOverlayInfoModal(overlayInstance);
         };
     },
@@ -78,6 +78,9 @@ const celebration = {
             errors.push("Please select how you'd like to celebrate.");
         }
         return errors;
+    },
+    getDefaultLabel: (effect) => {
+        return `${effect.celebration} - ${effect.length} seconds`;
     },
     /**
    * When the effect is triggered by something
@@ -139,14 +142,14 @@ const celebration = {
 
                     const stage = fireworks(); // eslint-disable-line no-undef
 
-                    setTimeout(function(stage) {
+                    setTimeout(function (stage) {
 
                         stage.removeAllChildren();
                         stage.removeAllEventListeners();
                         stage.canvas = null;
                         stage._eventListeners = null;
 
-                        $(`.${divClass}-fireworks`).fadeOut('fast', function() {
+                        $(`.${divClass}-fireworks`).fadeOut('fast', function () {
                             $(`.${divClass}-fireworks`).remove();
                         });
                     }, duration, stage);
@@ -164,7 +167,7 @@ const celebration = {
                         useWorker: true
                     });
 
-                    const confettiParty = setInterval(function() {
+                    const confettiParty = setInterval(function () {
                         // launch a few confetti from the left edge
                         confettiStage({ // eslint-disable-line no-undef
                             particleCount: 10,
@@ -173,7 +176,7 @@ const celebration = {
                             startVelocity: 90,
                             shapes: ['circle', 'circle', 'square'],
                             scalar: 1.65,
-                            origin: { x: 0, y: 0.9}
+                            origin: { x: 0, y: 0.9 }
                         });
                         // and launch a few from the right edge
                         confettiStage({ // eslint-disable-line no-undef
@@ -183,12 +186,12 @@ const celebration = {
                             startVelocity: 90,
                             shapes: ['circle', 'circle', 'square'],
                             scalar: 1.65,
-                            origin: { x: 1, y: 0.9}
+                            origin: { x: 1, y: 0.9 }
                         });
                     }, 250);
 
-                    setTimeout(function(confettiStage) {
-                        $(`.${divClass}-confetti`).fadeOut('slow', function() {
+                    setTimeout(function (confettiStage) {
+                        $(`.${divClass}-confetti`).fadeOut('slow', function () {
                             $(`.${divClass}-confetti`).remove();
                             confettiStage.reset();
                             clearInterval(confettiParty);

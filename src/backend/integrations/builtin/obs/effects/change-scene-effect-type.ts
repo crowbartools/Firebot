@@ -73,6 +73,9 @@ export const ChangeSceneEffectType: EffectType<{
         }
         return [];
     },
+    getDefaultLabel: (effect) => {
+        return effect.sceneName;
+    },
     onTriggerEvent: async ({ effect }) => {
         await setCurrentScene(effect.sceneName);
         return true;

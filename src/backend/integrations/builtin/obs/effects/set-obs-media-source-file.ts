@@ -67,6 +67,9 @@ export const SetOBSMediaSourceFileEffectType: EffectType<{
 
         return errors;
     },
+    getDefaultLabel: (effect) => {
+        return effect.mediaSourceName;
+    },
     onTriggerEvent: async ({ effect }) => {
         await setMediaSourceSettings(effect.mediaSourceName, {
             isLocalFile: true,

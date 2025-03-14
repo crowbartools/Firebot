@@ -7,6 +7,17 @@
         .factory("effectHelperService", function(backendCommunicator) {
             const service = {};
 
+            const mapEffectDef = function(effectDef) {
+                return {
+                    definition: effectDef.definition,
+                    optionsTemplate: effectDef.optionsTemplate,
+                    optionsTemplateUrl: effectDef.optionsTemplateUrl,
+                    optionsController: eval(effectDef.optionsControllerRaw), // eslint-disable-line no-eval
+                    optionsValidator: eval(effectDef.optionsValidatorRaw), // eslint-disable-line no-eval
+                    getDefaultLabel: effectDef.getDefaultLabelRaw ? eval(effectDef.getDefaultLabelRaw) : undefined // eslint-disable-line no-eval
+                };
+            };
+
             service.getEffectDefinition = function(id) {
                 if (id == null) {
                     return null;
@@ -18,21 +29,21 @@
                     return null;
                 }
 
-                const def = {
-                    definition: effectDef.definition,
-                    optionsTemplate: effectDef.optionsTemplate,
-                    optionsTemplateUrl: effectDef.optionsTemplateUrl,
-                    optionsController: eval(effectDef.optionsControllerRaw), // eslint-disable-line no-eval
-                    optionsValidator: eval(effectDef.optionsValidatorRaw) // eslint-disable-line no-eval
-                };
-
-                return def;
+                return mapEffectDef(effectDef);
             };
 
             service.getAllEffectDefinitions = async function() {
                 const effectDefs = (await backendCommunicator
                     .fireEventAsync("getAllEffectDefinitions")
                 ).map(e => e.definition);
+
+                return effectDefs;
+            };
+
+            service.getAllEffectTypes = async function() {
+                const effectDefs = (await backendCommunicator
+                    .fireEventAsync("getAllEffectDefinitions")
+                ).map(mapEffectDef);
 
                 return effectDefs;
             };

@@ -1,11 +1,13 @@
-"use strict";
+import { EffectType } from '../../../../types/effects';
+import { EffectCategory, EffectDependency } from '../../../../shared/effect-constants';
+import logger from '../../../logwrapper';
+import twitchApi from "../../../twitch-api/api";
+import chatRolesManager from "../../../roles/chat-roles-manager";
 
-const { EffectCategory, EffectDependency } = require('../../../shared/effect-constants');
-const logger = require('../../logwrapper');
-const twitchApi = require("../../twitch-api/api");
-const chatRolesManager = require("../../roles/chat-roles-manager");
-
-const model = {
+const model: EffectType<{
+    action: "Add VIP" | "Remove VIP";
+    username: string;
+}> = {
     definition: {
         id: "firebot:update-vip-role",
         name: "VIP",
@@ -47,6 +49,9 @@ const model = {
             errors.push("Please put in a username.");
         }
         return errors;
+    },
+    getDefaultLabel: (effect) => {
+        return `${effect.action} for ${effect.username}`;
     },
     onTriggerEvent: async (event) => {
         if (event.effect.action === "Add VIP") {

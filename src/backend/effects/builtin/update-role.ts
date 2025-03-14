@@ -113,6 +113,26 @@ const model: EffectType<{
             return role ? role.name : "Select one";
         };
     },
+    getDefaultLabel: (effect, viewerRolesService) => {
+        if (effect.addRoleId && effect.removeRoleId || effect.addRoleId && effect.removeAllRoleId || effect.removeRoleId && effect.removeAllRoleId) {
+            return "Multiple actions";
+        }
+        const viewer = effect.viewerType === "current" ? "Associated Viewer" : effect.customViewer;
+
+        if (effect.addRoleId) {
+            return `Add ${viewer} to ${viewerRolesService.getRoleById(effect.addRoleId)?.name ?? "Unknown Role"}`;
+        }
+
+        if (effect.removeRoleId) {
+            return `Remove ${viewer} from ${viewerRolesService.getRoleById(effect.removeRoleId)?.name ?? "Unknown Role"}`;
+        }
+
+        if (effect.removeAllRoleId) {
+            return `Clear Role ${viewerRolesService.getRoleById(effect.removeAllRoleId)?.name ?? "Unknown Role"}`;
+        }
+
+        return "";
+    },
     /**
    * When the effect is triggered by something
    */

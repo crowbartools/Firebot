@@ -48,6 +48,7 @@ export type FirebotSettingsTypes = {
     CopiedOverlayVersion: string;
     DashboardLayout: object; //TODO
     DebugMode: boolean;
+    DefaultEffectLabelsEnabled: boolean;
     DefaultToAdvancedCommandMode: boolean;
     DefaultTtsVoiceId: string;
     DeleteProfile: string;
@@ -156,6 +157,7 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     CopiedOverlayVersion: "",
     DashboardLayout: {},
     DebugMode: false,
+    DefaultEffectLabelsEnabled: true,
     DefaultToAdvancedCommandMode: false,
     DefaultTtsVoiceId: undefined,
     DeleteProfile: undefined,

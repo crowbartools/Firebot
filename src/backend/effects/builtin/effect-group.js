@@ -99,7 +99,7 @@ const effectGroup = {
             return $scope.selectedPresetList ? $scope.selectedPresetList.name : "";
         };
 
-        $scope.effectListUpdated = function(effects) {
+        $scope.effectListUpdated = function (effects) {
             $scope.effect.effectList = effects;
         };
 
@@ -129,6 +129,14 @@ const effectGroup = {
             errors.push("Please select a preset list");
         }
         return errors;
+    },
+    getDefaultLabel: (effect, presetEffectListsService) => {
+        if (effect.listType === 'preset') {
+            const presetList = presetEffectListsService.getPresetEffectList(effect.presetListId);
+            return effect.presetListId ? presetList?.name : "Unknown Preset Effect List";
+        }
+        const length = effect.effectList?.list?.length ?? 0;
+        return `${length} Custom Effect${length === 1 ? "" : "s"}`;
     },
     onTriggerEvent: (event) => {
         return new Promise((resolve) => {

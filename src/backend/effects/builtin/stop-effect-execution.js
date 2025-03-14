@@ -100,6 +100,23 @@ const model = {
 
         return errors;
     },
+    getDefaultLabel: (effect, effectQueuesService) => {
+        switch (effect.target) {
+            case "currentList":
+                return "Current effect list";
+            case "specificList":
+                return `Specific effect list)`;
+            case "specificEffect":
+                return `Specific effect`;
+            case "queueActiveEffectLists":
+                if (effect.queueId === "all") {
+                    return "Active Effect Lists for All Queues";
+                }
+                return `Active Effect Lists for Queue ${effectQueuesService.getEffectQueue(effect.queueId)?.name ?? "Unknown Queue"}`;
+            case "allActiveEffectLists":
+                return "All active effect lists";
+        }
+    },
     onTriggerEvent: async event => {
         const { effect } = event;
 

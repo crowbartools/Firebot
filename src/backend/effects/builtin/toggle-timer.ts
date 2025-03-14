@@ -91,6 +91,18 @@ const model: EffectType<{
         }
         return errors;
     },
+    getDefaultLabel: (effect, timerService, sortTagsService) => {
+        const action = effect.toggleType === "toggle" ? "Toggle"
+            : effect.toggleType === "enable" ? "Activate" : "Deactivate";
+        if (effect.useTag) {
+            const sortTag = sortTagsService.getSortTags('timers')
+                .find(tag => tag.id === effect.sortTagId);
+            return `${action} tag: ${sortTag?.name ?? "Unknown"}`;
+        }
+
+        const timer = timerService.getTimers().find(timer => timer.id === effect.selectedTimerId);
+        return `${action} ${timer?.name ?? "Unknown Timer"}`;
+    },
     onTriggerEvent: async (event) => {
         const { effect } = event;
         if (!effect.useTag) {

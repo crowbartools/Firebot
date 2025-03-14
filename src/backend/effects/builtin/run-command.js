@@ -89,6 +89,18 @@ const model = {
         }
         return errors;
     },
+    getDefaultLabel: (effect, commandsService) => {
+        let command;
+        if (effect.commandType === "system") {
+            command = commandsService.getSystemCommands()
+                .find(cmd => cmd.id === effect.systemCommandId);
+        }
+        if (effect.commandType === "custom") {
+            command = commandsService.getCustomCommands()
+                .find(cmd => cmd.id === effect.commandId);
+        }
+        return command?.trigger ?? "Unknown Command";
+    },
     /**
    * When the effect is triggered by something
    */

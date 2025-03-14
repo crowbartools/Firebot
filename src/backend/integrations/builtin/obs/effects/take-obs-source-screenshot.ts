@@ -149,6 +149,9 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
         }
         return errors;
     },
+    getDefaultLabel: (effect) => {
+        return effect.useActiveScene ? "Active Scene" : effect.source;
+    },
     onTriggerEvent: async ({ effect }) => {
         // Compatibility for effects made before 5.60
         const isLegacyEffect = !(effect.saveLocally || effect.overwriteExisting || effect.postInDiscord || effect.showInOverlay) && effect.file;

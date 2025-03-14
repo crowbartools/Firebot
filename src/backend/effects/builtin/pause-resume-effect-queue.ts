@@ -80,6 +80,10 @@ const model: EffectType<{
 
         return errors;
     },
+    getDefaultLabel: (effect, effectQueuesService) => {
+        const queue = effectQueuesService.getEffectQueue(effect.effectQueue);
+        return `${effect.action} ${queue?.name ?? "Unknown Queue"}`;
+    },
     onTriggerEvent: async ({ effect }) => {
         const queue = effectQueueManager.getItem(effect.effectQueue);
 

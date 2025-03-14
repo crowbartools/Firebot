@@ -75,6 +75,12 @@ const chat = {
         }
         return errors;
     },
+    getDefaultLabel: (effect, eventsService) => {
+        const event = eventsService.getAllEvents().find(ev => ev.id === effect.selectedEventId);
+        const action = effect.toggleType === "toggle" ? "Toggle"
+            : effect.toggleType === "enable" ? "Activate" : "Deactivate";
+        return `${action} ${event?.name ?? "Unknown Event"}`;
+    },
     onTriggerEvent: async (event) => {
         const { effect } = event;
         const selectedEvent = eventAccess.getEvent(effect.selectedEventId);

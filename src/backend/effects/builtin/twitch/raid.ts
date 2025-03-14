@@ -51,6 +51,12 @@ const model: EffectType<{
         return errors;
     },
     optionsController: () => {},
+    getDefaultLabel: (effect) => {
+        if (effect.action === "Cancel Raid") {
+            return "Cancel Raid";
+        }
+        return effect.username;
+    },
     onTriggerEvent: async ({ effect }) => {
         if (effect.action === "Raid Channel") {
             const targetUserId = (await twitchApi.users.getUserByName(effect.username))?.id;

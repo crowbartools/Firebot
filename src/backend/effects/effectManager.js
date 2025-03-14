@@ -92,7 +92,10 @@ class EffectManager extends EventEmitter {
                 : "() => {}",
             optionsValidatorRaw: e.optionsValidator
                 ? e.optionsValidator.toString()
-                : "() => {return [];}"
+                : "() => {return [];}",
+            getDefaultLabelRaw: e.getDefaultLabel
+                ? e.getDefaultLabel.toString()
+                : undefined
         };
     }
 

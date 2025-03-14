@@ -122,7 +122,7 @@ const api = {
    * The controller for the front end Options
    */
     optionsController: ($scope) => {
-    // The name of the api and if it has images available to show or not.
+        // The name of the api and if it has images available to show or not.
         $scope.apiTypes = [
             { name: "Advice", image: false },
             { name: "Cat Fact", image: false },
@@ -133,7 +133,7 @@ const api = {
         ];
 
         // When an api is clicked in the dropdown save its name and if it has images available.
-        $scope.effectClick = function(api) {
+        $scope.effectClick = function (api) {
             $scope.effect.api = api.name;
             $scope.effect.imageAvailable = api.image;
         };
@@ -151,6 +151,9 @@ const api = {
             errors.push("Please select a places to show the API results.");
         }
         return errors;
+    },
+    getDefaultLabel: effect => {
+        return effect.api;
     },
     /**
    * When the effect is triggered by something

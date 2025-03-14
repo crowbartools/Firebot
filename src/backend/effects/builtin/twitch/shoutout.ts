@@ -39,6 +39,9 @@ const model: EffectType<{
         return errors;
     },
     optionsController: () => {},
+    getDefaultLabel: (effect) => {
+        return effect.username;
+    },
     onTriggerEvent: async ({ effect }) => {
         const targetUserId = (await twitchApi.users.getUserByName(effect.username))?.id;
 

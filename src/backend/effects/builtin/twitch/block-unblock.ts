@@ -1,10 +1,12 @@
-"use strict";
+import { EffectType } from "../../../../types/effects";
+import { EffectCategory } from '../../../../shared/effect-constants';
+import logger from '../../../logwrapper';
+import twitchApi from "../../../twitch-api/api";
 
-const { EffectCategory } = require('../../../shared/effect-constants');
-const logger = require('../../logwrapper');
-const twitchApi = require("../../twitch-api/api");
-
-const model = {
+const model: EffectType<{
+    action: "Block" | "Unblock";
+    username: string;
+}> = {
     definition: {
         id: "firebot:block",
         name: "Block User",
@@ -37,7 +39,7 @@ const model = {
         </eos-container>
     `,
     optionsController: () => {},
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.action == null) {
             errors.push("Please choose a block action.");
@@ -47,7 +49,10 @@ const model = {
         }
         return errors;
     },
-    onTriggerEvent: async event => {
+    getDefaultLabel: (effect) => {
+        return `${effect.action} ${effect.username}`;
+    },
+    onTriggerEvent: async (event) => {
         if (event.effect.action === "Block") {
             const user = await twitchApi.users.getUserByName(event.effect.username);
 
