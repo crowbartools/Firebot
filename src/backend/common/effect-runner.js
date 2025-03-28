@@ -106,16 +106,20 @@ function triggerEffect(effect, trigger, outputs, manualAbortSignal, listAbortSig
 
         logger.debug(`Running ${effect.type}(${effect.id}) effect...`);
 
-        const result = await effectDef.onTriggerEvent({
-            effect,
-            trigger,
-            sendDataToOverlay,
-            outputs,
-            abortSignal: AbortSignal.any([signal, listAbortSignal])
-        });
+        try {
+            const result = await effectDef.onTriggerEvent({
+                effect,
+                trigger,
+                sendDataToOverlay,
+                outputs,
+                abortSignal: AbortSignal.any([signal, listAbortSignal])
+            });
 
-        if (!signal.aborted) {
-            return resolve(result);
+            if (!signal.aborted) {
+                return resolve(result);
+            }
+        } catch (error) {
+            return reject(error);
         }
     });
 }
