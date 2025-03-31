@@ -6,7 +6,6 @@ const frontendCommunicator = require("./frontend-communicator");
 const { SettingsManager } = require("./settings-manager");
 const twitchApi = require("../twitch-api/api");
 const twitchChat = require("../chat/twitch-chat");
-const twitchPubSubClient = require("../twitch-api/pubsub/pubsub-client");
 const TwitchEventSubClient = require("../twitch-api/eventsub/eventsub-client");
 const integrationManager = require("../integrations/integration-manager");
 const accountAccess = require("../common/account-access");
@@ -105,11 +104,9 @@ class ConnectionManager extends EventEmitter {
     updateChatConnection(shouldConnect) {
         if (shouldConnect) {
             twitchChat.connect();
-            twitchPubSubClient.createClient();
             TwitchEventSubClient.createClient();
         } else {
             twitchChat.disconnect();
-            twitchPubSubClient.disconnectPubSub();
             TwitchEventSubClient.disconnectEventSub();
         }
         return true;

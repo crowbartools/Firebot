@@ -50,7 +50,6 @@
         "@twurple/auth": "^7.2.1",
         "@twurple/chat": "^7.2.1",
         "@twurple/eventsub-ws": "^7.2.1",
-        "@twurple/pubsub": "^7.2.1",
         "@types/tinycolor2": "^1.4.6",
         "@zunderscore/elgato-light-control": "^1.2.0",
         "angular": "^1.8.0",

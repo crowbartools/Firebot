@@ -332,20 +332,14 @@
             });
 
             backendCommunicator.on("twitch:chat:automod-update", ({messageId, newStatus, resolverName, flaggedPhrases}) => {
-                if (newStatus === "ALLOWED") {
-                    service.chatQueue = service.chatQueue.filter(i => i?.data?.id !== messageId);
-                    service.chatAlertMessage(`${resolverName} approved a message that contains: ${flaggedPhrases.join(", ")}`);
-                } else {
-                    const messageItem = service.chatQueue.find(i => i.type === "message" && i.data.id === messageId);
+                const messageItem = service.chatQueue.find(i => i.type === "message" && i.data.id === messageId);
 
-                    if (messageItem == null) {
-                        return;
-                    }
-
-                    messageItem.data.autoModStatus = newStatus;
-                    messageItem.data.autoModResolvedBy = resolverName;
+                if (messageItem == null) {
+                    return;
                 }
 
+                messageItem.data.autoModStatus = newStatus;
+                messageItem.data.autoModResolvedBy = resolverName;
             });
 
             backendCommunicator.on("twitch:chat:automod-update-error", ({messageId, likelyExpired}) => {
