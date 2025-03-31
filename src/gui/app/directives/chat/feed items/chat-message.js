@@ -168,7 +168,6 @@
                                         class="chatEmoticon"
                                         uib-tooltip="{{part.origin}}: {{part.name}}"
                                         tooltip-append-to-body="true"
-                                        style="width: unset;"
                                     >
                                         <img ng-src="{{part.url}}" style="height: 100%;" />
                                     </span>
@@ -179,7 +178,6 @@
                                         class="chatEmoticon"
                                         uib-tooltip="{{part.origin}}: {{part.name}}"
                                         tooltip-append-to-body="true"
-                                        style="width: unset;"
                                     >
                                         <img ng-src="{{part.url}}" style="height: 100%;" />
                                     </span>
@@ -190,7 +188,6 @@
                                         class="chatEmoticon"
                                         uib-tooltip="{{part.origin}}: {{part.name}}"
                                         tooltip-append-to-body="true"
-                                        style="width: unset;"
                                     >
                                         <img ng-src="{{part.url}}" style="height: 100%;" />
                                     </span>
