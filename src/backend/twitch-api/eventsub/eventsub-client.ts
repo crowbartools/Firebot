@@ -9,6 +9,8 @@ import twitchApi from "../api";
 import twitchStreamInfoPoll from "../stream-info-manager";
 import rewardManager from "../../channel-rewards/channel-reward-manager";
 import chatRolesManager from "../../roles/chat-roles-manager";
+import { EventSubAutoModMessageHoldV2Subscription } from "./custom-subscriptions/automod-v2/automod-message-hold-v2-subscription";
+import { EventSubAutoModMessageUpdateV2Subscription } from "./custom-subscriptions/automod-v2/automod-message-update-v2-subscription";
 
 class TwitchEventSubClient {
     private _eventSubListener: EventSubWsListener;
@@ -64,6 +66,32 @@ class TwitchEventSubClient {
             );
         });
         this._subscriptions.push(bitsSubscription);
+
+        // AutoMod message hold v2
+        // @ts-ignore
+        const autoModMessageHoldSub = this._eventSubListener._genericSubscribe(
+            EventSubAutoModMessageHoldV2Subscription,
+            (data) => {
+                console.log("auto mod message hold v2", data);
+            },
+            this._eventSubListener,
+            streamer.userId,
+            streamer.userId
+        );
+        this._subscriptions.push(autoModMessageHoldSub);
+
+        // AutoMod message update v2
+        // @ts-ignore
+        const autoModMessageUpdateSub = this._eventSubListener._genericSubscribe(
+            EventSubAutoModMessageUpdateV2Subscription,
+            (data) => {
+                console.log("auto mod message update v2", data);
+            },
+            this._eventSubListener,
+            streamer.userId,
+            streamer.userId
+        );
+        this._subscriptions.push(autoModMessageUpdateSub);
 
         // Channel custom reward
         const customRewardRedemptionSubscription = this._eventSubListener.onChannelRedemptionAdd(streamer.userId, async (event) => {
