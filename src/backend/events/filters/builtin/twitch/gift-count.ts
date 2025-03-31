@@ -6,7 +6,7 @@ const filter = createNumberFilter({
     description: "Filter by the number of subs gifted",
     eventMetaKey: "subCount",
     events: [
-        { eventSourceId: "twitch", eventId: "subs-gifted" }
+        { eventSourceId: "twitch", eventId: "community-subs-gifted" }
     ]
 });
 

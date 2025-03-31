@@ -12,6 +12,7 @@ const filter = createPresetFilter({
         { eventSourceId: "twitch", eventId: "gift-sub-upgraded" }
     ],
     eventMetaKey: "subPlan",
+    allowIsNot: true,
     presetValues: () => [
         {
             value: "Prime",
