@@ -199,6 +199,7 @@
                     </div>
                     <div class="automod-tag" ng-show="$ctrl.message.isAutoModHeld">
                         <div ng-if="$ctrl.message.autoModStatus === 'pending' && !$ctrl.message.autoModErrorMessage">
+                            <i class="fal fa-question-circle pending"></i>
                             <span>Flagged by AutoMod ({{$ctrl.message.autoModReason}}): </span>
                             <span ng-if="!$ctrl.respondedToAutoMod">
                                 <a href style="font-weight: 700;" ng-click="$ctrl.allowAutoModMessage()">Allow</a>

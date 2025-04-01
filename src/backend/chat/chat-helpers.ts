@@ -239,7 +239,20 @@ class FirebotChatHelpers {
                     }
                 }
 
-                return subParts;
+                // move trailing spaces to separate parts so flagged parts look nicer
+                return subParts.flatMap((sp): FirebotParsedMessagePart | FirebotParsedMessagePart[] => {
+                    if (sp.type === "text" && sp.flagged && sp.text?.endsWith(" ")) {
+                        return [{
+                            type: "text",
+                            text: sp.text.trimEnd(),
+                            flagged: true
+                        }, {
+                            type: "text",
+                            text: " "
+                        }];
+                    }
+                    return sp;
+                });
             }
 
             const part: FirebotParsedMessagePart = {
@@ -530,6 +543,13 @@ class FirebotChatHelpers {
             autoModReason: (msg.reason === "automod" ? msg.automod?.category : msg.reason === "blocked_term" ? "blocked term" : null) ?? "(unknown)",
             isSharedChatMessage: false // todo: check if automod messages have a way to associate them with shared chat
         };
+
+        const { streamer, bot } = accountAccess.getAccounts();
+        if ((streamer.loggedIn && (msg.message.text.includes(streamer.username) || msg.message.text.includes(streamer.displayName)))
+            || (bot.loggedIn && (msg.message.text.includes(bot.username) || msg.message.text.includes(streamer.username)))
+        ) {
+            viewerFirebotChatMessage.tagged = true;
+        }
 
         const flaggedPhrases = (
             msg.reason === "automod"
