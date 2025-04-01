@@ -1,20 +1,22 @@
 "use strict";
-const Datastore = require("nedb");
+const Datastore = require("@seald-io/nedb");
 const profileManager = require("../common/profile-manager");
 const logger = require("../logwrapper");
 const { app } = require("electron");
 
 let db;
 
-function connectStatsDatabase() {
+async function connectStatsDatabase() {
     const path = profileManager.getPathInProfile("db/stats.db");
+
     db = new Datastore({ filename: path });
-    db.loadDatabase(err => {
-        if (err) {
-            logger.error("Error Loading Database: ", err.message);
-            logger.debug("Failed Database Path: ", path);
-        }
-    });
+
+    try {
+        await db.loadDatabaseAsync();
+    } catch (err) {
+        logger.error("Error Loading Database: ", err.message);
+        logger.debug("Failed Database Path: ", path);
+    }
 }
 
 const EventType = {

@@ -217,12 +217,12 @@ exports.whenReady = async () => {
     windowManagement.updateSplashScreenStatus("Loading stats...");
     logger.info("Creating or connecting stats database");
     const statsdb = require("../../../database/statsDatabase");
-    statsdb.connectStatsDatabase();
+    await statsdb.connectStatsDatabase();
 
     windowManagement.updateSplashScreenStatus("Loading quotes...");
     logger.info("Creating or connecting quotes database");
     const quotesdb = require("../../../quotes/quotes-manager");
-    quotesdb.loadQuoteDatabase();
+    await quotesdb.loadQuoteDatabase();
 
     // These are defined globally for Custom Scripts.
     // We will probably want to handle these differently but we shouldn't
