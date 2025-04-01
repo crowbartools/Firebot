@@ -1,13 +1,14 @@
 import { app } from "electron";
 import path from "path";
 import fsp from "fs/promises";
-import { glob } from "glob";
-import { DeflateOptions, Zip, ZipDeflate, unzipSync } from "fflate";
+import fs from "fs";
 import logger from "./logwrapper";
 import utils from "./utility";
 import { SettingsManager } from "./common/settings-manager";
 import dataAccess from "./common/data-access.js";
 import frontendCommunicator from "./common/frontend-communicator";
+import unzipper from "unzipper";
+import archiver from "archiver";
 
 const RESTORE_FOLDER_PATH = dataAccess.getPathInTmpDir("/restore");
 const PROFILES_FOLDER_PATH = dataAccess.getPathInUserData("/profiles");
@@ -182,34 +183,35 @@ class BackupManager {
             manualActivation ? "_manual" : ""
         }.${fileExtension}`;
 
-        await fsp.mkdir(this._backupFolderPath, { recursive: true });
-        const output = await fsp.open(path.join(this._backupFolderPath, filename), "w");
+        const output = fs.createWriteStream(path.join(this._backupFolderPath, filename));
+        const archive = archiver(fileExtension, {
+            zlib: { level: 9 }
+        });
 
-        const archive = new Zip(async (err, data, final) => {
-            if (err) {
-                // throw error
+        output.on("close", async () => {
+            SettingsManager.saveSetting("LastBackupDate", new Date());
+            await this.cleanUpOldBackups(callback);
+        });
+
+        archive.on("warning", function(err) {
+            if (err.code === "ENOENT") {
+                logger.warn("Error during backup: ", err);
+            } else {
                 if (manualActivation) {
                     frontendCommunicator.send(
                         "error",
                         "Something bad happened, please check your logs."
                     );
                 }
-                frontendCommunicator.send("error", err);
                 throw err;
-            } else {
-                await output.write(data);
-
-                if (final) {
-                    await output.close();
-                    SettingsManager.saveSetting("LastBackupDate", new Date());
-                    await this.cleanUpOldBackups(callback);
-                }
             }
         });
 
-        // Add directory to package
-        const folderPath = path.resolve(dataAccess.getPathInUserData("/"));
-        //archive.directory(folderPath, "profiles");
+        archive.on("error", function(err) {
+            throw err;
+        });
+
+        archive.pipe(output);
 
         const varIgnoreInArchive = ["backups/**", "clips/**", "logs/**", "overlay.html"];
         const ignoreResources = SettingsManager.getSetting("BackupIgnoreResources");
@@ -219,36 +221,12 @@ class BackupManager {
             varIgnoreInArchive.push("overlay-resources/**");
         }
 
-        const fileList = await glob("**/*", {
+        archive.glob('**/*', {
             ignore: varIgnoreInArchive,
-            cwd: folderPath,
-            posix: true
+            cwd: path.resolve(dataAccess.getPathInUserData("/"))
         });
 
-        const zipOptions: DeflateOptions = {
-            level: 9
-        };
-
-        try {
-            for (const file of fileList) {
-                const fullPath = path.join(folderPath, file);
-
-                if ((await fsp.stat(fullPath)).isFile() === true) {
-                    const newFile = new ZipDeflate(file, zipOptions);
-
-                    archive.add(newFile);
-
-                    const fileContents = await fsp.readFile(path.join(folderPath, file));
-                    newFile.push(new Uint8Array(fileContents), true);
-                }
-            }
-        } catch (err) {
-            logger.error(`Error creating backup file: ${err}`);
-            throw err;
-        }
-
-        // finalize the archive (ie we are done appending files but streams have to finish yet)
-        archive.end();
+        archive.finalize();
     }
 
     async onceADayBackUpCheck() {
@@ -327,37 +305,27 @@ class BackupManager {
         let hasProfilesDir = false;
         let hasGlobalSettings = false;
 
-        const unzippedData = unzipSync(await fsp.readFile(backupFilePath));
+        await fs.createReadStream(backupFilePath)
+            .pipe(unzipper.Parse() //eslint-disable-line new-cap
+                .on('entry', (entry) => {
+                    if (entry.path.includes("profiles")) {
+                        hasProfilesDir = true;
+                    } else if (entry.path.includes("global-settings")) {
+                        hasGlobalSettings = true;
+                    }
+                    entry.autodrain();
+                }))
+            .promise();
 
-        for (const [filepath] of Object.entries(unzippedData)) {
-            if (filepath.includes("profiles")) {
-                if (hasGlobalSettings) {
-                    return true;
-                }
-                hasProfilesDir = true;
-            } else if (path.basename(filepath).toLowerCase() === "global-settings.json") {
-                if (hasProfilesDir) {
-                    return true;
-                }
-                hasGlobalSettings = true;
-            }
-        }
-        return false;
+        return hasProfilesDir && hasGlobalSettings;
     }
 
-    private async extractBackupZip(backupFilePath) {
+    private async extractBackupZip(backupFilePath: string) {
         await fsp.mkdir(RESTORE_FOLDER_PATH, { recursive: true });
 
-        const unzippedData = unzipSync(await fsp.readFile(backupFilePath));
-        for (const [filepath, bytes] of Object.entries(unzippedData)) {
-            if (filepath.endsWith("/")) {
-                continue;
-            }
+        const backupZip = await unzipper.Open.file(backupFilePath);
 
-            const writeFilePath = path.resolve(RESTORE_FOLDER_PATH, filepath);
-            await fsp.mkdir(path.dirname(writeFilePath), { recursive: true });
-            await fsp.writeFile(writeFilePath, bytes);
-        }
+        await backupZip.extract({ path: RESTORE_FOLDER_PATH });
     }
 
     private async copyRestoreFilesToUserData() {
