@@ -349,7 +349,7 @@
                     return;
                 }
 
-                messageItem.data.autoModErrorMessage = `There was an error acting on this message. ${likelyExpired ? "The time to act likely have expired." : "You may need to reauth your Streamer account."}`;
+                messageItem.data.autoModErrorMessage = `There was an error acting on this message. ${likelyExpired ? "The time to act has likely expired." : "You may need to reauth your Streamer account."}`;
             });
 
             backendCommunicator.on("twitch:chat:clear-feed", (modUsername) => {
@@ -387,6 +387,13 @@
 
                 if (chatMessage.tagged) {
                     soundService.playChatNotification();
+                }
+                if (chatMessage.isAutoModHeld === true) {
+                    setTimeout(() => {
+                        if (chatMessage.autoModStatus === "pending") {
+                            chatMessage.autoModStatus = "expired";
+                        }
+                    }, 5 * 60 * 1000);
                 }
 
                 pronounsService.getUserPronoun(chatMessage.username);

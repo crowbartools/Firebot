@@ -223,7 +223,7 @@
                         </div>
                         <div ng-if="$ctrl.message.autoModStatus === 'expired'">
                             <i class="far fa-clock expired"></i>
-                            <span>Expired</span>
+                            <span>Flagged by AutoMod ({{$ctrl.message.autoModReason}}): Expired</span>
                         </div>
                     </div>
                     <div ng-if="$ctrl.message.isAnnouncement || $ctrl.message.isFirstChat || $ctrl.message.isReturningChatter || $ctrl.message.isRaider || $ctrl.message.isSuspiciousUser" style="margin-bottom:5px">
