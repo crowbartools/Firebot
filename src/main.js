@@ -58,6 +58,14 @@ if (process.platform === "linux") {
     app.commandLine.appendSwitch('enable-speech-dispatcher');
 }
 
+// attempt to get logged in profile
+// if not found, stop app start up as app will be restarted
+const profileManager = require("./backend/common/profile-manager");
+const loggedInProfile = profileManager.getLoggedInProfile();
+if (loggedInProfile == null) {
+    return;
+}
+
 // Setup app listeners
 app.on('second-instance', secondInstance);
 app.on("open-file", openFile);
