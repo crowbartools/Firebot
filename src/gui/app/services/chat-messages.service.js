@@ -332,20 +332,14 @@
             });
 
             backendCommunicator.on("twitch:chat:automod-update", ({messageId, newStatus, resolverName, flaggedPhrases}) => {
-                if (newStatus === "ALLOWED") {
-                    service.chatQueue = service.chatQueue.filter(i => i?.data?.id !== messageId);
-                    service.chatAlertMessage(`${resolverName} approved a message that contains: ${flaggedPhrases.join(", ")}`);
-                } else {
-                    const messageItem = service.chatQueue.find(i => i.type === "message" && i.data.id === messageId);
+                const messageItem = service.chatQueue.find(i => i.type === "message" && i.data.id === messageId);
 
-                    if (messageItem == null) {
-                        return;
-                    }
-
-                    messageItem.data.autoModStatus = newStatus;
-                    messageItem.data.autoModResolvedBy = resolverName;
+                if (messageItem == null) {
+                    return;
                 }
 
+                messageItem.data.autoModStatus = newStatus;
+                messageItem.data.autoModResolvedBy = resolverName;
             });
 
             backendCommunicator.on("twitch:chat:automod-update-error", ({messageId, likelyExpired}) => {
@@ -355,7 +349,7 @@
                     return;
                 }
 
-                messageItem.data.autoModErrorMessage = `There was an error acting on this message. ${likelyExpired ? "The time to act likely have expired." : "You may need to reauth your Streamer account."}`;
+                messageItem.data.autoModErrorMessage = `There was an error acting on this message. ${likelyExpired ? "The time to act has likely expired." : "You may need to reauth your Streamer account."}`;
             });
 
             backendCommunicator.on("twitch:chat:clear-feed", (modUsername) => {
@@ -393,6 +387,13 @@
 
                 if (chatMessage.tagged) {
                     soundService.playChatNotification();
+                }
+                if (chatMessage.isAutoModHeld === true) {
+                    setTimeout(() => {
+                        if (chatMessage.autoModStatus === "pending") {
+                            chatMessage.autoModStatus = "expired";
+                        }
+                    }, 5 * 60 * 1000);
                 }
 
                 pronounsService.getUserPronoun(chatMessage.username);

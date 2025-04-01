@@ -9,6 +9,8 @@ import twitchApi from "../api";
 import twitchStreamInfoPoll from "../stream-info-manager";
 import rewardManager from "../../channel-rewards/channel-reward-manager";
 import chatRolesManager from "../../roles/chat-roles-manager";
+import { EventSubAutoModMessageHoldV2Subscription } from "./custom-subscriptions/automod-v2/automod-message-hold-v2-subscription";
+import { EventSubAutoModMessageUpdateV2Subscription } from "./custom-subscriptions/automod-v2/automod-message-update-v2-subscription";
 
 class TwitchEventSubClient {
     private _eventSubListener: EventSubWsListener;
@@ -64,6 +66,45 @@ class TwitchEventSubClient {
             );
         });
         this._subscriptions.push(bitsSubscription);
+
+        // AutoMod message hold v2
+        // @ts-ignore
+        const autoModMessageHoldSub = this._eventSubListener._genericSubscribe(
+            EventSubAutoModMessageHoldV2Subscription,
+            async (data) => {
+                const chatHelpers = require("../../chat/chat-helpers");
+                const firebotChatMessage = await chatHelpers.buildViewerFirebotChatMessageFromAutoModMessage(data, "pending");
+                frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
+            },
+            this._eventSubListener,
+            streamer.userId,
+            streamer.userId
+        );
+        this._subscriptions.push(autoModMessageHoldSub);
+
+        // AutoMod message update v2
+        // @ts-ignore
+        const autoModMessageUpdateSub = this._eventSubListener._genericSubscribe(
+            EventSubAutoModMessageUpdateV2Subscription,
+            (data) => {
+                frontendCommunicator.send("twitch:chat:automod-update", {
+                    messageId: data.message_id,
+                    newStatus: data.status,
+                    resolverName: data.moderator_user_login,
+                    resolverId: data.moderator_user_id,
+                    flaggedPhrases: (data.reason === "automod"
+                        ? data.automod?.boundaries ?? []
+                        : data.blocked_term?.terms_found?.map(t => t.boundary) ?? []
+                    ).map((boundary) => {
+                        return data.message.text.substring(boundary.start_pos, boundary.end_pos + 1);
+                    })
+                });
+            },
+            this._eventSubListener,
+            streamer.userId,
+            streamer.userId
+        );
+        this._subscriptions.push(autoModMessageUpdateSub);
 
         // Channel custom reward
         const customRewardRedemptionSubscription = this._eventSubListener.onChannelRedemptionAdd(streamer.userId, async (event) => {
@@ -570,6 +611,38 @@ class TwitchEventSubClient {
             }
         });
         this._subscriptions.push(channelModerateSubscription);
+
+        // Chat notification
+        const chatNotificationSubscription = this._eventSubListener.onChannelChatNotification(streamer.userId, streamer.userId, (event) => {
+            switch (event.type) {
+                case "bits_badge_tier":
+                    twitchEventsHandler.cheer.triggerBitsBadgeUnlock(
+                        event.chatterName ?? "ananonymouscheerer",
+                        event.chatterId,
+                        event.chatterDisplayName ?? "An Anonymous Cheerer",
+                        event.messageText ?? "",
+                        event.newTier
+                    );
+                    break;
+                case "resub":
+                case "sub":
+                    twitchEventsHandler.sub.triggerSub(
+                        event.chatterName,
+                        event.chatterId,
+                        event.chatterDisplayName,
+                        event.isPrime ? "Prime" : event.tier,
+                        event.type === "resub" ? event.cumulativeMonths : 1,
+                        event.messageText ?? "",
+                        event.type === "resub" ? event.streakMonths : 1,
+                        event.isPrime,
+                        event.type === "resub"
+                    );
+                    break;
+                default:
+                    break;
+            }
+        });
+        this._subscriptions.push(chatNotificationSubscription);
     }
 
     async createClient(): Promise<void> {
