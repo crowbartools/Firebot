@@ -165,65 +165,64 @@ class BackupManager {
         }
     }
 
-    startBackup(manualActivation = false) {
-        return new Promise<void>(async (resolve) => {
-            logger.info(`Backup manualActivation: ${manualActivation}`);
+    async startBackup(manualActivation = false) {
+        logger.info(`Backup manualActivation: ${manualActivation}`);
 
-            const version = app.getVersion(),
-                milliseconds = Date.now(),
-                fileExtension = "zip";
+        const version = app.getVersion(),
+            milliseconds = Date.now(),
+            fileExtension = "zip";
 
-            const filename = `backup_${milliseconds}_v${version}${
-                manualActivation ? "_manual" : ""
-            }.${fileExtension}`;
+        const filename = `backup_${milliseconds}_v${version}${
+            manualActivation ? "_manual" : ""
+        }.${fileExtension}`;
 
-            const output = fs.createWriteStream(path.join(this._backupFolderPath, filename));
-            const archive = archiver(fileExtension, {
-                zlib: { level: 9 }
-            });
-
-            output.on("close", async () => {
-                SettingsManager.saveSetting("LastBackupDate", new Date());
-                await this.cleanUpOldBackups();
-
-                resolve();
-            });
-
-            archive.on("warning", function(err) {
-                if (err.code === "ENOENT") {
-                    logger.warn("Error during backup: ", err);
-                } else {
-                    if (manualActivation) {
-                        frontendCommunicator.send(
-                            "error",
-                            "Something bad happened, please check your logs."
-                        );
-                    }
-                    throw err;
-                }
-            });
-
-            archive.on("error", function(err) {
-                throw err;
-            });
-
-            archive.pipe(output);
-
-            const varIgnoreInArchive = ["backups/**", "clips/**", "logs/**", "overlay.html", "profiles/*/db/*.db~"];
-            const ignoreResources = SettingsManager.getSetting("BackupIgnoreResources");
-
-            if (ignoreResources && !manualActivation) {
-                logger.info("Ignoring overlay-resources folder");
-                varIgnoreInArchive.push("overlay-resources/**");
-            }
-
-            archive.glob('**/*', {
-                ignore: varIgnoreInArchive,
-                cwd: path.resolve(dataAccess.getPathInUserData("/"))
-            });
-
-            archive.finalize();
+        const output = fs.createWriteStream(path.join(this._backupFolderPath, filename));
+        const archive = archiver(fileExtension, {
+            zlib: { level: 9 }
         });
+
+        archive.on("warning", function(err) {
+            if (err.code === "ENOENT") {
+                logger.warn("Error during backup: ", err);
+            } else {
+                if (manualActivation) {
+                    frontendCommunicator.send(
+                        "error",
+                        "Something bad happened, please check your logs."
+                    );
+                }
+                throw err;
+            }
+        });
+
+        archive.on("error", function(err) {
+            throw err;
+        });
+
+        archive.pipe(output);
+
+        const varIgnoreInArchive = ["backups/**", "clips/**", "logs/**", "overlay.html", "profiles/*/db/*.db~"];
+        const ignoreResources = SettingsManager.getSetting("BackupIgnoreResources");
+
+        if (ignoreResources && !manualActivation) {
+            logger.info("Ignoring overlay-resources folder");
+            varIgnoreInArchive.push("overlay-resources/**");
+        }
+
+        archive.glob('**/*', {
+            ignore: varIgnoreInArchive,
+            cwd: path.resolve(dataAccess.getPathInUserData("/"))
+        });
+
+        try {
+            await archive.finalize();
+
+            SettingsManager.saveSetting("LastBackupDate", new Date());
+
+            await this.cleanUpOldBackups();
+        } catch (error) {
+            logger.error("Error finalizing backup archive", error);
+        }
     }
 
     async onceADayBackUpCheck() {
