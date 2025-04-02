@@ -38,10 +38,10 @@ const playSound = {
 
             <div ng-if="effect.soundType === 'local'">
                 <div style="margin-bottom: 10px">
-                    <file-chooser model="effect.filepath" options="{ filters: [ {name: 'Audio', extensions: ['mp3', 'ogg', 'oga', 'wav', 'flac']} ]}" on-update="soundFileUpdated(filepath)"></file-chooser>
+                    <file-chooser model="effect.filepath" options="{ filters: [ {name: 'Audio', extensions: ['mp3', 'ogg', 'oga', 'wav', 'flac']} ]}"></file-chooser>
                 </div>
                 <div>
-                    <sound-player path="effect.filepath" volume="effect.volume" output-device="effect.audioOutputDevice"></sound-player>
+                    <sound-player path="encodeFilePath(effect.filepath)" volume="effect.volume" output-device="effect.audioOutputDevice"></sound-player>
                 </div>
             </div>
 
@@ -78,6 +78,10 @@ const playSound = {
         if ($scope.effect.volume == null) {
             $scope.effect.volume = 5;
         }
+
+        $scope.encodeFilePath = (/** @type {string} */ filepath) => {
+            return filepath?.replaceAll("%", "%25").replaceAll("#", "%23");
+        };
     },
     optionsValidator: (effect) => {
         const errors = [];
@@ -121,12 +125,12 @@ const playSound = {
             }
 
             const filteredFiles = files.filter(i => (/\.(mp3|ogg|oga|wav|flac)$/i).test(i));
-            const chosenFile = filteredFiles[Math.floor(Math.random() * filteredFiles.length)];
-
             if (filteredFiles.length === 0) {
                 logger.error('No sounds were found in the select sound folder.');
+                return true;
             }
 
+            const chosenFile = filteredFiles[Math.floor(Math.random() * filteredFiles.length)];
             data.filepath = path.join(effect.folder, chosenFile);
         }
 
@@ -150,6 +154,7 @@ const playSound = {
             // send event to the overlay
             webServer.sendToOverlay("sound", data);
         } else {
+            data.filepath = data.filepath?.replaceAll("%", "%25").replaceAll("#", "%23");
             // Send data back to media.js in the gui.
             frontendCommunicator.send("playsound", data);
         }
