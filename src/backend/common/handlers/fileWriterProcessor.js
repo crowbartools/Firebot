@@ -3,6 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 const logger = require("../../logwrapper");
+const uuid = require("uuid").v4;
 
 function doesTextExistInFile(filepath, text) {
     const contents = fs.readFileSync(filepath, { encoding: "utf8" });
@@ -15,7 +16,6 @@ const doesFileExist = (filepath) => {
 
 function removeLines(filepath, lines = []) {
     const contents = fs.readFileSync(filepath, { encoding: "utf8" });
-
     return `${contents
         .split('\n')
         .filter(l => l != null && l.trim() !== "")
@@ -27,7 +27,7 @@ function removeLinesWithText(filepath, text) {
     const contents = fs.readFileSync(filepath, { encoding: "utf8" });
     return `${contents
         .split('\n')
-        .map(l => {
+        .map((l) => {
             return l.replace('\r', "");
         })
         .filter(l => l != null && l.trim() !== "")
@@ -51,20 +51,29 @@ function replaceLinesWithText(filepath, text, replacement) {
     const contents = fs.readFileSync(filepath, { encoding: "utf8" });
     return `${contents
         .split('\n')
+        .map((l) => {
+            return l.replace('\r', "");
+        })
         .filter(l => l != null && l.trim() !== "")
-        .map(l => {
+        .map((l) => {
             return l === text ? replacement : l;
         })
         .join('\n')}\n`;
 }
 
-exports.run = async effect => {
+exports.run = async (effect) => {
     if (effect == null || effect.filepath == null) {
         return;
     }
 
     let text = effect.text || "";
+    let escapedNewline = "␚";
+    while (text.includes(escapedNewline)) {
+        escapedNewline = `␚${uuid()}␚`;
+    }
+    text = text.replace(/\\\\n/g, escapedNewline);
     text = effect.writeMode === "suffix" ? text.replace(/\\n/g, "\n") : text.replace(/\\n/g, "\n").trim();
+    text = text.replaceAll(escapedNewline, "\\n");
 
     try {
         if (effect.writeMode === "suffix") {

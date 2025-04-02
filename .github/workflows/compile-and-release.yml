@@ -106,7 +106,7 @@ jobs:
         run: grunt build
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ runner.os }}
           path: ./dist/install/${{ runner.os == 'macOS' && 'darwin' || runner.os }}/
@@ -118,7 +118,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download Compilation Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: ./bundles/
 
@@ -139,4 +139,7 @@ jobs:
             ./bundles/Windows/firebot-${{ needs.checkversion.outputs.version }}-full.nupkg
             ./bundles/Windows/RELEASES
             ./bundles/Linux/firebot-v${{ needs.checkversion.outputs.version }}-linux-x64.tar.gz
+            ./bundles/Linux/firebot-v${{ needs.checkversion.outputs.version }}-linux-x64.deb
+            ./bundles/Linux/firebot-v${{ needs.checkversion.outputs.version }}-linux-x64.rpm
             ./bundles/macOS/firebot-v${{ needs.checkversion.outputs.version }}-macos-x64.dmg
+            ./bundles/macOS/firebot-v${{ needs.checkversion.outputs.version }}-macos-arm64.dmg

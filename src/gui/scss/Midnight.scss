@@ -6,12 +6,16 @@ $dark-background-color: #141828;
 $dark-background-border: #2e3240;
 $dark-background-box-shadow: adjust-color($dark-background-color, $red: 7, $green: 7, $blue: 7);
 
-$content-text-color: #ffffff;
 
 $bad-color: #ff0000;
 $good-color: #90ee90;
-$info-color: #30a6ce;
+$info-color: #30a7ce40;
 $highlight-color: #ebb11f;
+
+
+$content-text-color: #ffffff;
+$content-background-color: $light-background-color;
+$chat-alert-background-color: $info-color;
 
 // Scrollbar
 $scrollbar-background-color: rgba(97, 97, 105, 0.58);
@@ -41,7 +45,6 @@ $board-settings-btn-color: #a9a9a9;
 $change-board-dropdown-color: #a9a9a9;
 $downarrow-color: #a9a9a9;
 $sort-tags-bg: #808080;
-
 $toggle-button-off-bg-color: #ffffff;
 
 $change-note-palette-title-color: orange;
@@ -123,6 +126,19 @@ $integration-row-bg: $light-background-color;
 $settings-sidebar-bg: #313644;
 $settings-category-selected-bg: #2a2f3a;
 $settings-category-hover-bg: #303643;
+
+/* effect & variable choosers */
+$effect-category-bg: $dark-background-color;
+$effect-category-hover-bg: $medium-background-color;
+$effect-category-selected-bg: $light-background-color;
+$effect-def-bg: #515357;
+$effect-def-hover-bg: #3e4356;
+$effect-def-selected-border: #767a81;
+$effect-def-selected-check: #2df92d;
+$effect-dialog-bg: #43454a;
+$variable-category-bg: #18191b;
+$variable-magic-tooltip-fg: white;
+$variable-menu-bg: #060707;
 
 // Import Core Styles
 @import './core/$importer';

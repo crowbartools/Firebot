@@ -3,10 +3,9 @@ const { EventEmitter } = require("events");
 const util = require("../utility");
 const logger = require("../logwrapper");
 const frontendCommunicator = require("./frontend-communicator");
-const { settings } = require("./settings-access");
+const { SettingsManager } = require("./settings-manager");
 const twitchApi = require("../twitch-api/api");
 const twitchChat = require("../chat/twitch-chat");
-const twitchPubSubClient = require("../twitch-api/pubsub/pubsub-client");
 const TwitchEventSubClient = require("../twitch-api/eventsub/eventsub-client");
 const integrationManager = require("../integrations/integration-manager");
 const accountAccess = require("../common/account-access");
@@ -105,11 +104,9 @@ class ConnectionManager extends EventEmitter {
     updateChatConnection(shouldConnect) {
         if (shouldConnect) {
             twitchChat.connect();
-            twitchPubSubClient.createClient();
             TwitchEventSubClient.createClient();
         } else {
             twitchChat.disconnect();
-            twitchPubSubClient.disconnectPubSub();
             TwitchEventSubClient.disconnectEventSub();
         }
         return true;
@@ -153,7 +150,7 @@ class ConnectionManager extends EventEmitter {
 
         const accountAccess = require("./account-access");
         if (!accountAccess.getAccounts().streamer.loggedIn) {
-            renderWindow.webContents.send("error", "You must sign into your Streamer Twitch account before connecting.");
+            frontendCommunicator.send("error", "You must sign into your Streamer Twitch account before connecting.");
         } else if (accountAccess.streamerTokenIssue()) {
             const botTokenIssue = accountAccess.getAccounts().bot.loggedIn && accountAccess.botTokenIssue();
 
@@ -224,7 +221,7 @@ manager.on("service-connection-update", (data) => {
 });
 
 frontendCommunicator.onAsync("connect-sidebar-controlled-services", async () => {
-    const serviceIds = settings.getSidebarControlledServices();
+    const serviceIds = SettingsManager.getSetting("SidebarControlledServices");
 
     await manager.updateConnectionForServices(serviceIds.map(id => ({
         id,
@@ -233,7 +230,7 @@ frontendCommunicator.onAsync("connect-sidebar-controlled-services", async () => 
 });
 
 frontendCommunicator.on("disconnect-sidebar-controlled-services", () => {
-    const serviceIds = settings.getSidebarControlledServices();
+    const serviceIds = SettingsManager.getSetting("SidebarControlledServices");
     for (const id of serviceIds) {
         manager.updateServiceConnection(id, false);
     }

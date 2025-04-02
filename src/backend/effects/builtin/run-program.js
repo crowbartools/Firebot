@@ -96,6 +96,9 @@ const model = {
         }
         return errors;
     },
+    getDefaultLabel: (effect) => {
+        return effect.programPath ?? "No Program Selected";
+    },
     onTriggerEvent: (event) => {
         return new Promise((resolve) => {
             const { effect } = event;

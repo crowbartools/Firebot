@@ -1,23 +1,6 @@
 "use strict";
 
-const { EffectCategory } = require('../../../shared/effect-constants');
-const axiosDefault = require("axios").default;
-
-const axios = axiosDefault.create({
-    headers: {
-        'User-Agent': 'Firebot v5 - HTTP Request Effect'
-    }
-});
-
-axios.interceptors.request.use(request => {
-    //logger.debug('HTTP Request Effect [Request]: ', JSON.parse(JSON.stringify(request)));
-    return request;
-});
-
-axios.interceptors.response.use(response => {
-    //logger.debug('HTTP Request Effect [Response]: ', JSON.parse(JSON.stringify(response)));
-    return response;
-});
+const { EffectCategory } = require("../../../shared/effect-constants");
 
 const effect = {
     definition: {
@@ -130,7 +113,7 @@ const effect = {
 
         $scope.editorSettings = {
             mode: {name: "javascript", json: true},
-            theme: 'blackboard',
+            theme: "blackboard",
             lineNumbers: true,
             autoRefresh: true,
             showGutter: true
@@ -159,7 +142,7 @@ const effect = {
                 resolveObj: {
                     header: () => header
                 },
-                closeCallback: newHeader => {
+                closeCallback: (newHeader) => {
                     console.log(newHeader);
                     $scope.effect.headers = $scope.effect.headers.filter(h => h.key !== newHeader.key);
                     $scope.effect.headers.push(newHeader);
@@ -222,7 +205,7 @@ const effect = {
         }
         return errors;
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
 
         const logger = require("../../logwrapper");
         const twitchAuth = require("../../auth/twitch-auth");
@@ -232,45 +215,57 @@ const effect = {
 
         const { effect, trigger, outputs, abortSignal } = event;
 
-        let headers = effect.headers.reduce((acc, next) => {
-            acc[next.key] = next.value;
-            return acc;
-        }, {});
+        let headers = {
+            "User-Agent": "Firebot v5 - HTTP Request Effect",
+            ...effect.headers.reduce((acc, next) => {
+                acc[next.key] = next.value;
+                return acc;
+            }, {})
+        };
 
         if (effect.options.useTwitchAuth && effect.url.startsWith("https://api.twitch.tv")) {
             const accessToken = accountAccess.getAccounts().streamer.auth.access_token;
             headers = {
                 ...headers,
-                'Authorization': `Bearer ${accessToken}`,
-                'Client-ID': twitchAuth.twitchClientId
+                "Authorization": `Bearer ${accessToken}`,
+                "Client-ID": twitchAuth.twitchClientId
             };
-        }
-
-        let bodyData = effect.body;
-        if (effect.body != null) {
-            try {
-                bodyData = JSON.parse(effect.body);
-            } catch (error) {
-                logger.debug("Failed to parse body json for request", error);
-            }
         }
 
         const sendBodyData = effect.method.toLowerCase() === "post" ||
             effect.method.toLowerCase() === "put" ||
             effect.method.toLowerCase() === "patch";
 
+        if (sendBodyData) {
+            try {
+                // Add the JSON header if the body is valid JSON
+                JSON.parse(effect.body);
+                headers = {
+                    ...headers,
+                    "Content-Type": "application/json"
+                };
+            } catch { }
+        }
+
         let responseData;
 
         try {
-            const response = await axios({
-                method: effect.method.toLowerCase(),
-                url: effect.url,
+            const response = await fetch(effect.url, {
+                method: effect.method.toUpperCase(),
                 headers,
-                timeout: effect.options.timeout && effect.options.timeout > 0 ? effect.options.timeout : undefined,
-                data: sendBodyData === true ? bodyData : null
+                timeout: effect.options.timeout && effect.options.timeout > 0
+                    ? AbortSignal.timeout(effect.options.timeout)
+                    : undefined,
+                body: sendBodyData === true ? effect.body : null
             });
 
-            responseData = response.data;
+            responseData = await response.text();
+
+            if (!response.ok) {
+                const error = new Error(`Request failed with status ${response.status}`);
+                error.responseData = responseData;
+                throw error;
+            }
 
             /**
              * Deprecated
@@ -278,13 +273,18 @@ const effect = {
             if (effect.options.putResponseInVariable) {
                 customVariableManager.addCustomVariable(
                     effect.options.variableName,
-                    response.data,
+                    responseData,
                     effect.options.variableTtl || 0,
                     effect.options.variablePropertyPath || null
                 );
             }
         } catch (error) {
-            logger.error("Error running http request", error.message);
+            const message = {
+                errorMessage: error.message,
+                responseData: error.responseData
+            };
+
+            logger.error("Error running http request", message);
 
             if (effect.options.runEffectsOnError && !abortSignal?.aborted) {
                 const processEffectsRequest = {

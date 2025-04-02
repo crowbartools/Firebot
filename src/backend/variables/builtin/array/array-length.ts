@@ -6,6 +6,16 @@ const model : ReplaceVariable = {
         handle: "arrayLength",
         usage: "arrayLength[array]",
         description: "Returns the length of the input array.",
+        examples: [
+            {
+                usage: `arrayLength["[1,2,3]"]`,
+                description: "Returns 3."
+            },
+            {
+                usage: "arrayLength[rawArray]",
+                description: "Returns the length of the raw array."
+            }
+        ],
         categories: [VariableCategory.ADVANCED, VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },

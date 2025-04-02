@@ -1,6 +1,5 @@
 import { JsonDB } from "node-json-db";
-import axios from "axios";
-import uuid from "uuid/v4";
+import { v4 as uuid } from "uuid";
 
 import logger from "../logwrapper";
 import profileManager from "../common/profile-manager";
@@ -61,16 +60,20 @@ class NotificationManager {
     };
 
     constructor() {
-        frontendCommunicator.on("get-all-notifications", () => {
+        frontendCommunicator.on("notifications:get-all-notifications", () => {
             return this.getNotifications();
         });
 
-        frontendCommunicator.on("mark-notification-as-read", (id: string) => {
+        frontendCommunicator.on("notifications:mark-notification-as-read", (id: string) => {
             this.markNotificationAsRead(id);
         });
 
-        frontendCommunicator.on("delete-notification", (id: string) => {
+        frontendCommunicator.on("notifications:delete-notification", (id: string) => {
             this.deleteNotification(id);
+        });
+
+        frontendCommunicator.on("notifications:start-external-notification-check", () => {
+            this.startExternalNotificationCheck();
         });
     }
 
@@ -113,7 +116,7 @@ class NotificationManager {
         };
 
         this. _notificationCache.notifications.push(newNotification);
-        frontendCommunicator.send("new-notification", newNotification);
+        frontendCommunicator.send("notifications:new-notification", newNotification);
         this.saveNotifications();
 
         return newNotification;
@@ -134,7 +137,7 @@ class NotificationManager {
 
         this.saveNotifications();
 
-        frontendCommunicator.send("notification-deleted", id);
+        frontendCommunicator.send("notifications:notification-deleted", id);
     }
 
     markNotificationAsRead(id: string): void {
@@ -145,7 +148,7 @@ class NotificationManager {
             this.saveNotifications();
         }
 
-        frontendCommunicator.send("notification-marked-as-read", id);
+        frontendCommunicator.send("notifications:notification-marked-as-read", id);
     }
 
     getNotification(id: string): Notification | null {
@@ -163,8 +166,8 @@ class NotificationManager {
 
     private async loadExternalNotifications(): Promise<void> {
         try {
-            const response = await axios.get<ExternalNotification[]>(EXTERNAL_NOTIFICATION_SOURCE_URL);
-            const externalNotifications = response.data;
+            const response = await fetch(EXTERNAL_NOTIFICATION_SOURCE_URL);
+            const externalNotifications = await response.json() as ExternalNotification[];
 
             const knownExtNotis = this.getKnownExternalNotifications();
 
@@ -191,13 +194,10 @@ class NotificationManager {
         }
     }
 
-    async loadAllNotifications(): Promise<void> {
-        this.loadNotificationCache();
-        await this.loadExternalNotifications();
-    }
-
     startExternalNotificationCheck(): void {
         if (this._externalCheckInterval == null) {
+            this.loadExternalNotifications();
+
             this._externalCheckInterval = setInterval(
                 () => this.loadExternalNotifications(), 5 * 60 * 1000);
         }

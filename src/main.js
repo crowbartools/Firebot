@@ -3,7 +3,7 @@ const { app } = require("electron");
 const path = require('node:path');
 
 const logger = require("./backend/logwrapper");
-const secretsManager = require("./backend/secrets-manager");
+const { SecretsManager } = require("./backend/secrets-manager");
 const { handleSquirrelEvents } = require("./backend/app-management/squirrel-events");
 const {
     whenReady,
@@ -16,7 +16,7 @@ const {
 
 logger.info("Starting Firebot...");
 
-if (!secretsManager.testSecrets()) {
+if (!SecretsManager.testSecrets()) {
     logger.debug("...Testing for secrets failed");
     app.quit();
     return;
@@ -56,6 +56,14 @@ logger.debug("...Single instance lock acquired");
 // Enable Text-To-Speech on Linux through speech-dispatcher
 if (process.platform === "linux") {
     app.commandLine.appendSwitch('enable-speech-dispatcher');
+}
+
+// attempt to get logged in profile
+// if not found, stop app start up as app will be restarted
+const profileManager = require("./backend/common/profile-manager");
+const loggedInProfile = profileManager.getLoggedInProfile();
+if (loggedInProfile == null) {
+    return;
 }
 
 // Setup app listeners

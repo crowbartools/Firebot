@@ -124,7 +124,13 @@ ipcMain.on("triggerManualEvent", function(_, data) {
         return;
     }
 
-    const meta = event.manualMetadata || {};
+    const meta = structuredClone(event.manualMetadata || {});
+    for (const [key, value] of Object.entries(meta)) {
+        if (typeof value !== 'object' || value == null || Array.isArray(value) || value.type == null || value.value == null) {
+            continue;
+        }
+        meta[key] = value.value;
+    }
     if (meta.username == null) {
         const accountAccess = require("../common/account-access");
         meta.username = accountAccess.getAccounts().streamer.username;
@@ -140,9 +146,9 @@ ipcMain.on("triggerManualEvent", function(_, data) {
 
 frontendCommunicator.on("simulateEvent", (eventData) => {
     if (Object.keys(eventData.metadata).length > 0) {
-        manager.triggerEvent(eventData.sourceId, eventData.eventId, eventData.metadata, true, eventData.forceRetrigger, true);
+        manager.triggerEvent(eventData.sourceId, eventData.eventId, eventData.metadata, true, false, true);
     } else {
-        manager.triggerEvent(eventData.sourceId, eventData.eventId, null, true, eventData.forceRetrigger, true);
+        manager.triggerEvent(eventData.sourceId, eventData.eventId, null, true, false, true);
     }
 });
 

@@ -11,6 +11,7 @@ import commandManager from "./command-manager";
 import commandCooldownManager from "./command-cooldown-manager";
 import twitchApi from "../../twitch-api/api";
 import commandRunner from "./command-runner";
+import { SettingsManager } from "../../common/settings-manager";
 
 const DEFAULT_COOLDOWN_MESSAGE = "This command is still on cooldown for: {timeLeft}";
 const DEFAULT_RESTRICTION_MESSAGE = "Sorry, you cannot use this command because: {reason}";
@@ -118,6 +119,20 @@ class CommandHandler {
         // command wasn't found
         if (command == null) {
             return false;
+        }
+
+        // Check whether or not chat message is from shared chat
+        // And whether or not shared chat is allowed globally
+        // And by the specific command.
+        if (firebotChatMessage.isSharedChatMessage) {
+            if (command.allowTriggerBySharedChat === false) {
+                return false;
+            }
+
+            // 'inherit' or undefined = inherit app settings
+            if (command.allowTriggerBySharedChat !== true && !SettingsManager.getSetting("AllowCommandsInSharedChat")) {
+                return false;
+            }
         }
 
         const { streamer, bot } = accountAccess.getAccounts();
@@ -243,7 +258,7 @@ class CommandHandler {
                             .replace("{reason}", reason),
                         null,
                         null,
-                        firebotChatMessage.id
+                        restrictionData.sendAsReply === true ? firebotChatMessage.id : undefined
                     );
                 }
 

@@ -14,9 +14,9 @@
                     >
                         <firebot-select
                             options="{ true: 'On', false: 'Off' }"
-                            ng-init="viewerDb = settings.getViewerDB()"
+                            ng-init="viewerDb = settings.getSetting('ViewerDB')"
                             selected="viewerDb"
-                            on-update="settings.setViewerDB(option === 'true')"
+                            on-update="settings.saveSetting('ViewerDB', option === 'true')"
                             right-justify="true"
                             aria-label="enable or disable Viewer Database"
                         />
@@ -28,9 +28,9 @@
                     >
                         <firebot-select
                             options="{ true: 'On', false: 'Off' }"
-                            ng-init="autoFlagBots = settings.getAutoFlagBots()"
+                            ng-init="autoFlagBots = settings.getSetting('AutoFlagBots')"
                             selected="autoFlagBots"
-                            on-update="settings.setAutoFlagBots(option === 'true')"
+                            on-update="settings.saveSetting('AutoFlagBots', option === 'true')"
                             right-justify="true"
                             aria-label="enable or disable Auto Flag Bots"
                         />
@@ -42,9 +42,9 @@
                     >
                         <firebot-select
                             options="[5,10,15,20,25,30,35,40,45,50,55,60]"
-                            ng-init="viewerListPageSize = settings.getViewerListPageSize()"
+                            ng-init="viewerListPageSize = settings.getSetting('ViewerListPageSize')"
                             selected="viewerListPageSize"
-                            on-update="settings.setViewerListPageSize(option)"
+                            on-update="settings.saveSetting('ViewerListPageSize', option)"
                             right-justify="true"
                             aria-label="enable or disable Viewers Table Page Size"
                         />

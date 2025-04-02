@@ -1,6 +1,6 @@
 import { EffectType } from "../../../types/effects";
 import { EffectCategory } from '../../../shared/effect-constants';
-import counterManager from "../../counters/counter-manager";
+import { CounterManager } from "../../counters/counter-manager";
 import logger from "../../logwrapper";
 
 const model: EffectType<{
@@ -80,6 +80,10 @@ const model: EffectType<{
 
         return errors;
     },
+    getDefaultLabel: (effect, countersService) => {
+        const counterName = countersService.getCounter(effect.counterId)?.name ?? "Unknown Counter";
+        return `${effect.mode === "increment" ? "Update" : "Set"} ${counterName} ${effect.mode === "increment" ? "by" : "to"} ${effect.value}`;
+    },
     onTriggerEvent: async (event) => {
         const { effect } = event;
 
@@ -94,7 +98,7 @@ const model: EffectType<{
             return false;
         }
 
-        await counterManager.updateCounterValue(effect.counterId, value, effect.mode === "set");
+        await CounterManager.updateCounterValue(effect.counterId, value, effect.mode === "set");
 
         return true;
     }

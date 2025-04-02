@@ -48,7 +48,7 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
             <div>
                 <button class="btn btn-link" ng-click="getSources()">Refresh Source Data</button>
             </div>
-            <ui-select ng-if="sources != null" ng-hide="effect.useActiveScene" ng-model="effect.source" theme="bootstrap">
+                <ui-select ng-if="sources != null" ng-hide="effect.useActiveScene" ng-model="effect.source" theme="bootstrap">
                     <ui-select-match>{{$select.selected.name}} ({{$select.selected.type}})</ui-select-match>
                     <ui-select-choices repeat="item.name as item in sources | filter: $select.search">
                         <div ng-bind-html="item.name | highlight: $select.search"></div>
@@ -148,6 +148,9 @@ export const TakeOBSSourceScreenshotEffectType: EffectType<{
             errors.push("Discord Embed Color must be in RGB format (#0066FF)");
         }
         return errors;
+    },
+    getDefaultLabel: (effect) => {
+        return effect.useActiveScene ? "Active Scene" : effect.source;
     },
     onTriggerEvent: async ({ effect }) => {
         // Compatibility for effects made before 5.60

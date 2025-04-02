@@ -6,7 +6,7 @@ const logger = require("../../../backend/logwrapper");
 
 router.use(function log(req, res, next) {
     // here we could do stuff for every request if we wanted
-    logger.info(`API Request from: ${req.socket.remoteAddress}, for path: ${req.originalUrl}`);
+    logger.debug(`API Request from: ${req.socket.remoteAddress}, for path: ${req.originalUrl}`);
     next();
 });
 
@@ -72,6 +72,11 @@ router
     .get(customVariables.getCustomVariable)
     .post(customVariables.setCustomVariable);
 
+// builtin variables
+const variableManager = require("./controllers/variableApiController");
+
+router.route("/variables").get(variableManager.getReplaceVariables);
+
 // viewers
 const viewers = require("./controllers/viewersApiController");
 
@@ -80,6 +85,11 @@ router.route("/viewers").get(viewers.getAllUsers);
 router.route("/viewers/export").get(viewers.getAllUserDataAsJSON);
 
 router.route("/viewers/:userId").get(viewers.getUserMetadata);
+
+router.route("/viewers/:userId/metadata/:metadataKey")
+    .post(viewers.updateUserMetadataKey)
+    .put(viewers.updateUserMetadataKey)
+    .delete(viewers.removeUserMetadataKey);
 
 router.route("/viewers/:userId/currency").get(viewers.getUserCurrency);
 
@@ -98,6 +108,8 @@ const customRoles = require("./controllers/customRolesApiController");
 router.route("/customRoles").get(customRoles.getCustomRoles);
 
 router.route("/customRoles/:customRoleId").get(customRoles.getCustomRoleById);
+
+router.route("/customRoles/:customRoleId/clear").get(customRoles.removeAllViewersFromRole);
 
 router
     .route("/customRoles/:customRoleId/viewer/:userId")

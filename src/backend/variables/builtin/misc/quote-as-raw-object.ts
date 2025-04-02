@@ -25,7 +25,8 @@ const model : ReplaceVariable = {
             }
         ],
         categories: [VariableCategory.TEXT],
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.TEXT],
+        hidden: true
     },
     evaluator: async (_, quoteId: number, property) => {
         const quoteCommand = commandManager.getSystemCommandById("firebot:quotesmanagement");

@@ -3,19 +3,19 @@ import Datastore from "@seald-io/nedb";
 import { DateTime } from "luxon";
 
 import { BasicViewer, FirebotViewer } from "../../types/viewers";
-import { settings } from "../common/settings-access";
+import { SettingsManager } from "../common/settings-manager";
 import logger from "../logwrapper";
 import profileManager from "../common/profile-manager";
 import accountAccess from "../common/account-access";
 import userAccess from "../common/user-access";
 import currencyAccess from "../currency/currency-access";
 import eventManager from "../events/EventManager";
-import backupManager from "../backup-manager";
+import { BackupManager } from "../backup-manager";
 import frontendCommunicator from "../common/frontend-communicator";
 import rankManager from "../ranks/rank-manager";
 import util, { wait } from "../utility";
 import { Rank, RankLadder } from "../../types/ranks";
-import twitchChat from "../chat/twitch-chat";
+
 import { userIsActive } from "../chat/chat-listeners/active-user-handler";
 import roleHelpers from "../roles/role-helpers";
 
@@ -138,7 +138,7 @@ class ViewerDatabase extends EventEmitter {
      * @returns `true` if the viewer database is enabled, or `false` otherwise
      */
     isViewerDBOn(): boolean {
-        return settings.getViewerDbStatus();
+        return SettingsManager.getSetting("ViewerDB");
     }
 
     async connectViewerDatabase(): Promise<void> {
@@ -448,17 +448,17 @@ class ViewerDatabase extends EventEmitter {
         }
     }
 
-    async purgeViewers(options: ViewerPurgeOptions): Promise<void> {
-        await backupManager.startBackup(false, async () => {
-            try {
-                const numRemoved = await this._db
-                    .removeAsync({ $where: this.getPurgeWherePredicate(options)}, {multi: true});
+    async purgeViewers(options: ViewerPurgeOptions): Promise<number> {
+        await BackupManager.startBackup(false);
 
-                return numRemoved;
-            } catch (error) {
-                return 0;
-            }
-        });
+        try {
+            const numRemoved = await this._db
+                .removeAsync({ $where: this.getPurgeWherePredicate(options)}, {multi: true});
+
+            return numRemoved;
+        } catch (error) {
+            return 0;
+        }
     }
 
     async setViewerRank(viewer: FirebotViewer, ladderId: string, newRankId?: string): Promise<void> {
@@ -495,8 +495,8 @@ class ViewerDatabase extends EventEmitter {
                 .replace(/{user}/g, viewer.displayName)
                 .replace(/{rank}/g, newRank?.name)
                 .replace(/{rankDescription}/g, rankValueDescription);
-
-            twitchChat.sendChatMessage(promotionMessage);
+            const twitchChat = require("../chat/twitch-chat");
+            await twitchChat.sendChatMessage(promotionMessage);
         }
 
         const newRank = ladder.getRank(newRankId);

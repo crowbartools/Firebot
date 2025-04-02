@@ -4,14 +4,13 @@
         .module("firebotApp")
         .controller("commandsController", function(
             $scope,
-            triggerSearchFilter,
-            sortTagSearchFilter,
+            $rootScope,
             commandsService,
             utilityService,
-            listenerService,
-            viewerRolesService,
+            backendCommunicator,
             objectCopyHelper,
-            sortTagsService
+            sortTagsService,
+            ngToast
         ) {
             // Cache commands on app load.
             commandsService.refreshCommands();
@@ -22,10 +21,7 @@
             $scope.sts = sortTagsService;
 
             $scope.manuallyTriggerCommand = (id) => {
-                listenerService.fireEvent(
-                    listenerService.EventType.COMMAND_MANUAL_TRIGGER,
-                    id
-                );
+                backendCommunicator.send("command-manual-trigger", id);
             };
 
             $scope.toggleCustomCommandActiveState = (command) => {
@@ -96,6 +92,17 @@
                         }
                     }
                 });
+            };
+
+            $scope.openFirebotProfilePage = async () => {
+                ngToast.create({
+                    className: "info",
+                    content: "Opening Firebot profile page..."
+                });
+                const profileToken = await backendCommunicator.fireEventAsync("get-firebot-profile-token");
+                if (profileToken) {
+                    $rootScope.openLinkExternally(`https://firebot.app/profile?id=${profileToken}`);
+                }
             };
 
             $scope.resetActiveCooldowns = () => {

@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: Firebot Discord
-    url: https://discord.gg/crowbartools
+    url: https://discord.gg/crowbartools-372817064034959370
     about: Feel free to drop by our Discord to get support with an issue or ask a question!
-  - name: Firebot Twitter
-    url: https://twitter.com/firebotapp
-    about: Send us a tweet!
+  - name: Firebot Bluesky
+    url: https://bsky.app/profile/firebot.app
+    about: Send us a post!

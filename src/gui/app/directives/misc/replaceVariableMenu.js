@@ -202,7 +202,7 @@
                             </div>
 
                             <div style="display: flex; flex-direction: row;">
-                                <div style="width: 125px;display:flex;flex-direction:column;flex-shrink: 0;background: #18191b;padding-top: 5px;">
+                                <div class="effect-categories dark">
                                     <div
                                         class="effect-category-wrapper dark"
                                         ng-class="{'selected': activeCategory === 'macros'}"
@@ -218,15 +218,21 @@
                                     >
                                         <div class="category-text"><i class="far fa-magic"></i> Magic</div>
                                     </div>
-                                    <div class="effect-category-header" style="padding-top:5px;">Categories</div>
+                                    <div class="effect-category-header muted" style="padding-top:5px;">Categories</div>
                                     <div class="effect-category-wrapper dark" ng-class="{'selected': activeCategory == null}" ng-click="setActiveCategory(null);">
                                         <div class="category-text">All</div>
                                     </div>
                                     <div class="effect-category-wrapper dark" ng-repeat="category in categories" ng-class="{'selected': activeCategory === category}" ng-click="setActiveCategory(category);">
-                                        <div class="category-text">{{category}}</div>
+                                        <div class="category-text">{{category}}
+                                            <tooltip
+                                                style="margin-left: 5px"
+                                                ng-if="category === 'integrations' || category === 'obs'"
+                                                text="'Integrations need to be linked / configured in Settings -> Integrations in order for the variables to work.'"
+                                            ></tooltip>
+                                        </div>
                                     </div>
                                 </div>
-                                <div style="overflow-y: auto;width: 100%;" ng-style="{ height: hasMagicVariables ? '315px': '280px', padding: activeCategory === 'macros' ? '10px 0' : '10px' }">
+                                <div style="overflow-y: auto;width: 100%;" ng-style="{ height: hasMagicVariables ? '408px': '375px', padding: activeCategory === 'macros' ? '10px 0' : '10px' }">
                                     <div ng-hide="activeCategory === 'magic' || activeCategory === 'macros'" ng-repeat="variable in variables | orderBy:'handle' | variableCategoryFilter:activeCategory | variableSearch:variableSearchText" style="margin-bottom: 8px;">
                                         <div style="font-weight: 900;">\${{variable.usage ? variable.usage : variable.handle}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="addVariable(variable)"></i></div>
                                         <div ng-if="variable.aliases && variable.aliases.length > 0">
@@ -256,7 +262,7 @@
                                     <div ng-show="activeCategory === 'magic'" style="position: relative;">
                                         <div style="position: absolute; right: 0;">
                                             <a
-                                                style="text-decoration: underline;color: white;"
+                                                class="magic-tooltip"
                                                 uib-tooltip="These are custom variables, effect outputs, and preset list arg variables that Firebot thinks might be relevant to this effect. This is not an exhaustive list and the variables that are listed may or may not be available at the time of effect execution. Treat these as a helpful hint rather than a guarantee."
                                                 tooltip-append-to-body="true"
                                                 tooltip-placement="auto top"

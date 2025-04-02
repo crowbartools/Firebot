@@ -1,4 +1,5 @@
 import activeChatUserCount from './active-chat-user-count';
+import color from './color';
 import date from './date';
 import discordTimestamp from './discord-timestamp';
 import profilePageByteBinToken from './profile-page-bytebin-token';
@@ -18,6 +19,7 @@ import viewTime from './view-time';
 
 export default [
     activeChatUserCount,
+    color,
     date,
     discordTimestamp,
     profilePageByteBinToken,

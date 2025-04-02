@@ -6,6 +6,7 @@ import {
     OBS_SCENE_TRANSITION_ENDED_EVENT_ID,
     OBS_SCENE_TRANSITION_STARTED_EVENT_ID
 } from "../constants";
+import { VariableCategory } from "../../../../../shared/variable-constants";
 
 const triggers = {};
 triggers[TriggerType.EVENT] = [
@@ -20,6 +21,7 @@ export const TransitionNameVariable: ReplaceVariable = {
         description:
       "The name of the OBS transition that triggered the event.",
         possibleDataOutput: ["text"],
+        categories: [VariableCategory.ADVANCED, VariableCategory.INTEGRATION, VariableCategory.OBS],
         triggers: triggers
     },
     evaluator: async (trigger) => {

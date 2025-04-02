@@ -4,6 +4,7 @@ import {
     OBS_EVENT_SOURCE_ID,
     OBS_INPUT_ACTIVE_STATE_CHANGED_EVENT_ID
 } from "../constants";
+import { VariableCategory } from "../../../../../shared/variable-constants";
 
 const triggers = {};
 triggers[TriggerType.EVENT] = [
@@ -15,7 +16,8 @@ export const InputActiveVariable: ReplaceVariable = {
     definition: {
         handle: "obsInputActive",
         description: "Returns `true` if the OBS input is active or `false` if it is not.",
-        possibleDataOutput: ["bool"]
+        possibleDataOutput: ["bool"],
+        categories: [VariableCategory.ADVANCED, VariableCategory.INTEGRATION, VariableCategory.OBS]
     },
     evaluator: async (trigger) => {
         const inputActive = trigger.metadata?.eventData?.inputActive;

@@ -13,7 +13,7 @@ const model : ReplaceVariable = {
             },
             {
                 usage: "unixTimestamp[07/28/2024, MM/DD/YYYY]",
-                description: "Unix timestamp for provided date with specified format"
+                description: 'Unix timestamp for provided date with specified format.  Format uses <a href="https://momentjs.com/docs/#/displaying/format/">moment.js</a> formatting rules.'
             },
             {
                 usage: "unixTimestamp[$accountCreationDate]",

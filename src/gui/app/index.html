@@ -156,7 +156,6 @@
     <script type="text/javascript" src="./services/utility.service.js"></script>
     <script type="text/javascript" src="./services/viewer-roles.service.js"></script>
     <script type="text/javascript" src="./services/viewers.service.js"></script>
-    <script type="text/javascript" src="./services/websocket.service.js"></script>
     <!-- /include -->
 
     <!-- include: "type": "js", "files": "directives/**/*.js" -->
@@ -187,7 +186,7 @@
     <script type="text/javascript" src="./directives/controls/firebot-radios.js"></script>
     <script type="text/javascript" src="./directives/controls/firebot-select.js"></script>
     <script type="text/javascript" src="./directives/controls/multiselect.js"></script>
-    <script type="text/javascript" src="./directives/controls/notificationCenter.js"></script>
+    <script type="text/javascript" src="./directives/controls/notification-center.js"></script>
     <script type="text/javascript" src="./directives/controls/role-based/role-number.js"></script>
     <script type="text/javascript" src="./directives/controls/role-based/role-numbers.js"></script>
     <script type="text/javascript" src="./directives/controls/role-based/role-percentage.js"></script>
@@ -199,7 +198,7 @@
     <script type="text/javascript" src="./directives/controls/sort-tag-dropdown.component.js"></script>
     <script type="text/javascript" src="./directives/controls/sort-tag-list.js"></script>
     <script type="text/javascript" src="./directives/controls/sort-tags-row.js"></script>
-    <script type="text/javascript" src="./directives/controls/soundPlayer.js"></script>
+    <script type="text/javascript" src="./directives/controls/sound-player.js"></script>
     <script type="text/javascript" src="./directives/controls/specialized/discord-channel-webhooks.js"></script>
     <script type="text/javascript" src="./directives/controls/specialized/discord-file-upload-list.js"></script>
     <script type="text/javascript" src="./directives/controls/specialized/gift-receivers-list.js"></script>
@@ -283,10 +282,10 @@
     <script type="text/javascript" src="./directives/modals/misc/dateModal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/edit-overlay-instances-modal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/edit-stream-info-modal.js"></script>
-    <script type="text/javascript" src="./directives/modals/misc/editBannedWordsModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/misc/editUrlAllowlistModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/misc/edit-banned-words-modal.js"></script>
+    <script type="text/javascript" src="./directives/modals/misc/edit-url-allowlist-modal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/errorDetailModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/misc/fontManagementModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/misc/font-management-modal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/give-currency-modal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/idEntryModal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/inputModal.js"></script>
@@ -448,11 +447,11 @@
         </div>
         <div
           class="tab-body-wrapper"
-          ng-class="{ 'no-scroll': sbm.currentTabShouldntScroll() }"
+          ng-class="{ 'no-scroll': sbm.disableScroll }"
         >
           <div
             class="tab-body"
-            ng-class="{ 'fullpage-tab': sbm.currentTabIsFullScreen() }"
+            ng-class="{ 'fullpage-tab': sbm.fullPage }"
             role="main"
           >
             <!-- angular templating -->

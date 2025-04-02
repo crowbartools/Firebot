@@ -11,15 +11,11 @@
             utilityService,
             activityFeedService
         ) {
+            $scope.afs = activityFeedService;
+            $scope.cms = chatMessagesService;
             $scope.settings = settingsService;
 
-            $scope.afs = activityFeedService;
-
-            $scope.chatMessage = "";
-            $scope.chatSender = "Streamer";
             $scope.disabledMessage = "";
-
-            $scope.cms = chatMessagesService;
 
             $scope.selectedUserData = {};
 
@@ -34,8 +30,6 @@
                 $scope.hideEventLabel = () => ((parseInt(settings.dashboardActivityFeed.replace("%", "") / 100 * $parent.width())) < 180 ? true : false);
             };
 
-            $scope.threadDetails = null;
-
             function getThreadMessages(threadOrReplyMessageId) {
                 return chatMessagesService.chatQueue.filter((chatItem) => {
                     return chatItem.type === "message" && (chatItem.data.id === threadOrReplyMessageId || chatItem.data.replyParentMessageId === threadOrReplyMessageId || chatItem.data.threadParentMessageId === threadOrReplyMessageId);
@@ -43,14 +37,14 @@
             }
 
             $scope.currentThreadMessages = () => {
-                if (!$scope.threadDetails?.threadParentMessageId) {
+                if (!chatMessagesService.threadDetails?.threadParentMessageId) {
                     return [];
                 }
-                return getThreadMessages($scope.threadDetails.threadParentMessageId);
+                return getThreadMessages(chatMessagesService.threadDetails.threadParentMessageId);
             };
 
             $scope.updateLayoutSettings = (updatedSettings) => {
-                let settings = settingsService.getDashboardLayoutSettings();
+                let settings = settingsService.getSetting("DashboardLayout");
 
                 if (settings == null) {
                     settings = {
@@ -59,7 +53,7 @@
                         dashboardActivityFeed: "275px"
                     };
 
-                    settingsService.setDashboardLayoutSettings(settings);
+                    settingsService.saveSetting("DashboardLayout", settings);
                 }
 
                 if (updatedSettings) {
@@ -67,7 +61,7 @@
                         settings[key] = value;
                     });
 
-                    settingsService.setDashboardLayoutSettings(settings);
+                    settingsService.saveSetting("DashboardLayout", settings);
                 }
 
                 $scope.layout = settings;
@@ -78,19 +72,23 @@
             function getUpdatedChatSettings() {
                 $scope.updateLayoutSettings();
 
-                $scope.compactDisplay = settingsService.isChatCompactMode();
-                $scope.alternateBackgrounds = settingsService.chatAlternateBackgrounds();
-                $scope.hideDeletedMessages = settingsService.chatHideDeletedMessages();
-                $scope.showAvatars = settingsService.getShowAvatars();
-                $scope.showTimestamps = settingsService.getShowTimestamps();
-                $scope.showBttvEmotes = settingsService.getShowBttvEmotes();
-                $scope.showFfzEmotes = settingsService.getShowFfzEmotes();
-                $scope.showSevenTvEmotes = settingsService.getShowSevenTvEmotes();
-                $scope.showPronouns = settingsService.getShowPronouns();
-                $scope.customFontSizeEnabled = settingsService.getChatCustomFontSizeEnabled();
-                $scope.customFontSize = settingsService.getChatCustomFontSize();
+                $scope.compactDisplay = settingsService.getSetting("ChatCompactMode");
+                $scope.alternateBackgrounds = settingsService.getSetting("ChatAlternateBackgrounds");
+                $scope.hideDeletedMessages = settingsService.getSetting("ChatHideDeletedMessages");
+                $scope.showAvatars = settingsService.getSetting("ChatAvatars");
+                $scope.showTimestamps = settingsService.getSetting("ChatTimestamps");
+                $scope.showBttvEmotes = settingsService.getSetting("ChatShowBttvEmotes");
+                $scope.showFfzEmotes = settingsService.getSetting("ChatShowFfzEmotes");
+                $scope.showSevenTvEmotes = settingsService.getSetting("ChatShowSevenTvEmotes");
+                $scope.showPronouns = settingsService.getSetting("ChatPronouns");
+                $scope.customFontSizeEnabled = settingsService.getSetting("ChatCustomFontSizeEnabled");
+                $scope.customFontSize = settingsService.getSetting("ChatCustomFontSize");
                 $scope.customFontSizeStyle = $scope.customFontSizeEnabled ?
                     `font-size: ${$scope.customFontSize}px !important;` : "";
+                $scope.customFontFamilyEnabled = settingsService.getSetting("ChatCustomFontFamilyEnabled");
+                $scope.customFontFamily = settingsService.getSetting("ChatCustomFontFamily");
+                $scope.customFontFamilyStyle = $scope.customFontFamilyEnabled ?
+                    `font-family: '${$scope.customFontFamily}', 'Open Sans', sans-serif !important;` : "";
             }
             getUpdatedChatSettings();
 
@@ -126,7 +124,7 @@
             };
 
             $scope.updateChatInput = function(text) {
-                $scope.chatMessage = text;
+                chatMessagesService.chatMessage = text;
                 focusMessageInput();
             };
 
@@ -138,7 +136,7 @@
 
                 const threadParentId = parentReplyMessage.threadParentMessageId || parentReplyMessage.replyParentMessageId || parentReplyMessage.id;
 
-                $scope.threadDetails = {
+                chatMessagesService.threadDetails = {
                     threadParentMessageId: threadParentId,
                     replyToMessageId: threadOrReplyMessageId,
                     replyToUserDisplayName: parentReplyMessage.username
@@ -146,7 +144,7 @@
             };
 
             $scope.closeThreadPanel = () => {
-                $scope.threadDetails = null;
+                chatMessagesService.threadDetails = null;
             };
 
             $scope.onReplyClicked = function(threadOrReplyMessageId) {
@@ -169,14 +167,14 @@
             const chatHistory = [];
             let currrentHistoryIndex = -1;
             $scope.submitChat = function() {
-                if ($scope.chatMessage == null || $scope.chatMessage.length < 1) {
+                if (chatMessagesService.chatMessage == null || chatMessagesService.chatMessage.length < 1) {
                     return;
                 }
-                chatMessagesService.submitChat($scope.chatSender, $scope.chatMessage, $scope.threadDetails?.replyToMessageId);
-                chatHistory.unshift($scope.chatMessage);
+                chatMessagesService.submitChat(chatMessagesService.chatSender, chatMessagesService.chatMessage, chatMessagesService.threadDetails?.replyToMessageId);
+                chatHistory.unshift(chatMessagesService.chatMessage);
                 currrentHistoryIndex = -1;
-                $scope.chatMessage = "";
-                $scope.threadDetails = null;
+                chatMessagesService.chatMessage = "";
+                chatMessagesService.threadDetails = null;
             };
 
             $scope.onMessageFieldUpdate = () => {
@@ -188,23 +186,23 @@
                 if (keyCode === 38) {
                     //up arrow
                     if (
-                        $scope.chatMessage.length < 1 ||
-            $scope.chatMessage === chatHistory[currrentHistoryIndex]
+                        chatMessagesService.chatMessage.length < 1 ||
+                        chatMessagesService.chatMessage === chatHistory[currrentHistoryIndex]
                     ) {
                         if (currrentHistoryIndex + 1 < chatHistory.length) {
                             currrentHistoryIndex++;
-                            $scope.chatMessage = chatHistory[currrentHistoryIndex];
+                            chatMessagesService.chatMessage = chatHistory[currrentHistoryIndex];
                         }
                     }
                 } else if (keyCode === 40) {
                     //down arrow
                     if (
-                        $scope.chatMessage.length > 0 ||
-            $scope.chatMessage === chatHistory[currrentHistoryIndex]
+                        chatMessagesService.chatMessage.length > 0 ||
+                        chatMessagesService.chatMessage === chatHistory[currrentHistoryIndex]
                     ) {
                         if (currrentHistoryIndex - 1 >= 0) {
                             currrentHistoryIndex--;
-                            $scope.chatMessage = chatHistory[currrentHistoryIndex];
+                            chatMessagesService.chatMessage = chatHistory[currrentHistoryIndex];
                         }
                     }
                 } else if (keyCode === 13) {

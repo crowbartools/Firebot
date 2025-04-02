@@ -174,7 +174,7 @@ function updateAccount(accountType, account, emitUpdate = true) {
     const otherAccount = accountType === "streamer" ? cache.bot : cache.streamer;
     if (otherAccount != null && otherAccount.loggedIn) {
         if (otherAccount.userId === account.userId) {
-            renderWindow.webContents.send("error", "You cannot sign into the same user for both Streamer and Bot accounts. The bot account should be a separate Twitch user. If you don't have a separate user, simply don't use the Bot account feature as it is not required.");
+            frontendCommunicator.send("error", "You cannot sign into the same user for both Streamer and Bot accounts. The bot account should be a separate Twitch user. If you don't have a separate user, simply don't use the Bot account feature as it is not required.");
             return;
         }
     }

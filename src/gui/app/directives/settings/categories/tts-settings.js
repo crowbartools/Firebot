@@ -16,7 +16,7 @@
                             options="ttsVoiceOptions"
                             ng-init="ttsVoice = getSelectedVoiceName()"
                             selected="ttsVoice"
-                            on-update="settings.setDefaultTtsVoiceId(option)"
+                            on-update="settings.saveSetting('DefaultTtsVoiceId', option)"
                             right-justify="true"
                             aria-label="Choose your Text to Speech voice"
                         />
@@ -67,7 +67,7 @@
                 $scope.settings = settingsService;
 
                 $scope.getSelectedVoiceName = () => {
-                    const selectedVoiceId = settingsService.getDefaultTtsVoiceId();
+                    const selectedVoiceId = settingsService.getSetting("DefaultTtsVoiceId");
                     const voice = ttsService.getVoiceById(selectedVoiceId);
                     return voice ? voice.name : "Unknown Voice";
                 };
@@ -75,7 +75,7 @@
                 $scope.ttsVoices = ttsService.getVoices();
 
                 $scope.getSelectedVoiceName = () => {
-                    const selectedVoiceId = settingsService.getDefaultTtsVoiceId();
+                    const selectedVoiceId = settingsService.getSetting("DefaultTtsVoiceId");
                     const voice = ttsService.getVoiceById(selectedVoiceId);
                     return voice ? voice.name : "Unknown Voice";
                 };
@@ -86,7 +86,7 @@
                 }, {});
 
                 $scope.ttsVolumeSlider = {
-                    value: settingsService.getTtsVoiceVolume(),
+                    value: settingsService.getSetting("TtsVoiceVolume"),
                     options: {
                         floor: 0,
                         ceil: 1,
@@ -97,13 +97,13 @@
                             return Math.floor(value * 10);
                         },
                         onChange: (_, value) => {
-                            settingsService.setTtsVoiceVolume(value);
+                            settingsService.saveSetting("TtsVoiceVolume", value);
                         }
                     }
                 };
 
                 $scope.ttsRateSlider = {
-                    value: settingsService.getTtsVoiceRate(),
+                    value: settingsService.getSetting("TtsVoiceRate"),
                     options: {
                         floor: 0.1,
                         ceil: 10,
@@ -111,7 +111,7 @@
                         precision: 1,
                         ariaLabel: "Text to speech rate ",
                         onChange: (_, value) => {
-                            settingsService.setTtsVoiceRate(value);
+                            settingsService.saveSetting("TtsVoiceRate", value);
                         }
                     }
                 };
@@ -127,8 +127,8 @@
                     `I'm sorry, ${streamerName}. I'm afraid I can't do that.`
                 ];
 
-                $scope.testTTS = () => {
-                    ttsService.readText(testTTSMessages[Math.floor(Math.random() * testTTSMessages.length)], "default");
+                $scope.testTTS = async () => {
+                    await ttsService.readText(testTTSMessages[Math.floor(Math.random() * testTTSMessages.length)], "default", false);
                 };
 
                 $scope.refreshSliders = function() {

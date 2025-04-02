@@ -23,7 +23,7 @@ const chat = {
         </eos-container>
 
         <eos-container header="Event" pad-top="true" ng-show="effect.selectedGroupName">
-            <dropdown-select options="eventOptions[effect.selectedGroupName]" selected="effect.selectedEventId"></dropdown-select>
+            <dropdown-select options="eventOptions[effect.selectedGroupName]" selected="effect.selectedEventId" value-mode="object"></dropdown-select>
         </eos-container>
 
         <eos-container header="Toggle Action" pad-top="true">
@@ -48,6 +48,11 @@ const chat = {
 
             for (const groupEvent of groups[groupId].events) {
                 $scope.eventOptions[group.name][groupEvent.id] = groupEvent.name;
+
+                // Update the effect should the event set have been renamed
+                if ($scope.effect.selectedEventId === groupEvent.id) {
+                    $scope.effect.selectedGroupName = group.name;
+                }
             }
         }
 
@@ -63,14 +68,20 @@ const chat = {
             $scope.effect.toggleType = "disable";
         }
     },
-    optionsValidator: effect => {
+    optionsValidator: (effect) => {
         const errors = [];
         if (effect.selectedEventId == null) {
             errors.push("Please select an event.");
         }
         return errors;
     },
-    onTriggerEvent: async event => {
+    getDefaultLabel: (effect, eventsService) => {
+        const event = eventsService.getAllEvents().find(ev => ev.id === effect.selectedEventId);
+        const action = effect.toggleType === "toggle" ? "Toggle"
+            : effect.toggleType === "enable" ? "Activate" : "Deactivate";
+        return `${action} ${event?.name ?? "Unknown Event"}`;
+    },
+    onTriggerEvent: async (event) => {
         const { effect } = event;
         const selectedEvent = eventAccess.getEvent(effect.selectedEventId);
         const isActive = effect.toggleType === "toggle" ? !selectedEvent.active : effect.toggleType === "enable";

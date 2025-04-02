@@ -29,14 +29,20 @@ class CurrencyManager {
     private _currencyInterval: NodeJS.Timeout;
 
     constructor() {
-        // Create Currency Event
-        // This gets a message from front end when a currency needs to be created.
-        frontendCommunicator.onAsync("create-currency", async (currencyId: string) => {
+        currencyAccess.on("currencies:currency-created", async (currency: Currency) => {
             if (currencyAccess.isViewerDBOn() !== true) {
                 return;
             }
-            logger.info(`Creating a new currency with id ${currencyId}`);
-            await this.addCurrencyToAllViewers(currencyId, 0);
+            logger.info(`Creating a new currency with id ${currency.id}`);
+            await this.addCurrencyToAllViewers(currency.id, 0);
+        });
+
+        currencyAccess.on("currencies:currency-deleted", async (currency: Currency) => {
+            if (currencyAccess.isViewerDBOn() !== true) {
+                return;
+            }
+            logger.info(`Deleting currency with id ${currency.id}`);
+            await this.deleteCurrencyById(currency.id);
         });
 
         frontendCommunicator.onAsync("give-currency", async ({
@@ -81,29 +87,12 @@ class CurrencyManager {
 
         // Purge Currency Event
         // This gets a message from front end when a currency needs to be purged.
-        frontendCommunicator.onAsync("purge-currency", async (currencyId: string) => {
+        frontendCommunicator.onAsync("currencies:purge-currency", async (currencyId: string) => {
             if (currencyAccess.isViewerDBOn() !== true) {
                 return;
             }
             logger.info(`Purging currency with id ${currencyId}`);
             await this.purgeCurrencyById(currencyId);
-        });
-
-        // Delete Currency Event
-        // This gets a message from front end when a currency needs to be deleted
-        frontendCommunicator.onAsync("delete-currency", async (currencyId: string) => {
-            if (currencyAccess.isViewerDBOn() !== true) {
-                return;
-            }
-            logger.info(`Deleting currency with id ${currencyId}`);
-            await this.deleteCurrencyById(currencyId);
-        });
-
-
-        // Start up our currency timers.
-        // Also fired in currency-access.
-        frontendCommunicator.on("refresh-currency-cache", () => {
-            this.startTimer();
         });
     }
 
@@ -263,11 +252,11 @@ class CurrencyManager {
         for (const currency of currencies) {
             let basePayout = currency.payout;
             if (!connectionManager.streamerIsOnline()) {
-                if (currency.offline == null || currency.offline === 0) {
-                    return;
+                if (!currency.offline) {
+                    continue;
                 }
 
-                basePayout = currency.offline;
+                basePayout = currency.offline as number;
             }
 
             const currentMinutes = DateTime.utc().minute;
@@ -420,7 +409,11 @@ class CurrencyManager {
             const viewers = await db.findAsync({ online: true, _id: { $in: userIdsInRoles } });
 
             for (const viewer of viewers) {
-                if (viewer != null && (ignoreDisable || !viewer.disableAutoStatAccrual)) {
+                if (
+                    viewer != null &&
+                    viewer.disableActiveUserList !== true &&
+                    (ignoreDisable || viewer.disableAutoStatAccrual !== true)
+                ) {
                     await this.adjustCurrency(viewer, currencyId, value, adjustType);
                 }
             }
@@ -454,8 +447,11 @@ class CurrencyManager {
         const viewers = await db.findAsync({ online: true });
 
         for (const viewer of viewers) {
-            if (viewer != null && viewer.disableActiveUserList !== true &&
-                (ignoreDisable || !viewer.disableAutoStatAccrual)) {
+            if (
+                viewer != null &&
+                viewer.disableActiveUserList !== true &&
+                (ignoreDisable || viewer.disableAutoStatAccrual !== true)
+            ) {
                 await this.adjustCurrency(viewer, currencyId, value, adjustType);
             }
         }
@@ -488,8 +484,10 @@ class CurrencyManager {
 
         // Do the loop!
         for (const viewer of viewers) {
-            if (viewer != null &&
-                    (ignoreDisable || !viewer.disableAutoStatAccrual)) {
+            if (
+                viewer != null &&
+                (ignoreDisable || viewer.disableAutoStatAccrual !== true)
+            ) {
                 await this.adjustCurrency(viewer, currencyId, value, adjustType);
             }
         }

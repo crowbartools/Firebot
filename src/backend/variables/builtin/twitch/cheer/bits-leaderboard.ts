@@ -23,7 +23,7 @@ const model : ReplaceVariable = {
             }
         ],
         categories: [VariableCategory.COMMON, VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.ARRAY]
     },
     argsCheck: (
         count: null | number = 1,

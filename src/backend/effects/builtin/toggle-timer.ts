@@ -41,12 +41,11 @@ const model: EffectType<{
         </eos-container>
 
         <eos-container ng-show="hasTags && effect.useTag" header="Tag" pad-top="true">
-            <ui-select ng-model="effect.sortTagId" theme="bootstrap">
-                <ui-select-match placeholder="Select or search for a tag... ">{{$select.selected.name}}</ui-select-match>
-                <ui-select-choices repeat="sortTag.id as sortTag in sortTags | filter: { name: $select.search }" style="position:relative;">
-                    <div ng-bind-html="sortTag.name | highlight: $select.search"></div>
-                </ui-select-choices>
-            </ui-select>
+            <firebot-searchable-select
+                ng-model="effect.sortTagId"
+                placeholder="Select or search for a tag..."
+                items="sortTags"
+            />
         </eos-container>
 
         <eos-container ng-show="hasTimers || (hasTags && effect.useTag)" header="Toggle Action" pad-top="true">
@@ -92,6 +91,18 @@ const model: EffectType<{
         }
         return errors;
     },
+    getDefaultLabel: (effect, timerService, sortTagsService) => {
+        const action = effect.toggleType === "toggle" ? "Toggle"
+            : effect.toggleType === "enable" ? "Activate" : "Deactivate";
+        if (effect.useTag) {
+            const sortTag = sortTagsService.getSortTags('timers')
+                .find(tag => tag.id === effect.sortTagId);
+            return `${action} tag: ${sortTag?.name ?? "Unknown"}`;
+        }
+
+        const timer = timerService.getTimers().find(timer => timer.id === effect.selectedTimerId);
+        return `${action} ${timer?.name ?? "Unknown Timer"}`;
+    },
     onTriggerEvent: async (event) => {
         const { effect } = event;
         if (!effect.useTag) {
@@ -102,7 +113,7 @@ const model: EffectType<{
 
             return true;
         }
-        const timers = timerManager.getAllItems().filter(timer => timer.sortTags.includes(effect.sortTagId));
+        const timers = timerManager.getAllItems().filter(timer => timer.sortTags?.includes(effect.sortTagId));
         timers.forEach((timer) => {
             const isActive = effect.toggleType === "toggle" ? !timer.active : effect.toggleType === "enable";
             timerManager.updateTimerActiveStatus(timer.id, isActive);

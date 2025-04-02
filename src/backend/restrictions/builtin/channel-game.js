@@ -32,7 +32,7 @@ const model = {
         const restriction = $scope.restriction;
 
         $scope.games = [];
-        $scope.searchGames = function(gameQuery) {
+        $scope.searchGames = function (gameQuery) {
             $q.when(backendCommunicator.fireEventAsync("search-twitch-games", gameQuery))
                 .then(games => {
                     if (games != null) {
@@ -48,7 +48,7 @@ const model = {
                 }
             });
 
-        $scope.gameSelected = function(game) {
+        $scope.gameSelected = function (game) {
             if (game != null) {
                 restriction.gameId = game.id;
                 restriction.name = game.name;
@@ -66,7 +66,6 @@ const model = {
     },
     predicate: (triggerData, restrictionData) => {
         return new Promise(async (resolve, reject) => {
-
             const expectedGameId = restrictionData.gameId;
             if (expectedGameId == null) {
                 return resolve();
@@ -92,7 +91,10 @@ const model = {
             if (passed) {
                 resolve();
             } else {
-                reject(`Channel category/game isn't set to the correct category/game.`);
+                const expectedGame = await TwitchApi.categories.getCategoryById(expectedGameId);
+                reject(
+                    `Channel category/game isn't set to ${expectedGame?.name ?? "the correct category/game"}.`
+                );
             }
         });
     }

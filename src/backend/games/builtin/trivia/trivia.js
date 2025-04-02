@@ -311,6 +311,16 @@ module.exports = {
                     validation: {
                         required: true
                     }
+                },
+                postCorrectAnswer: {
+                    type: "boolean",
+                    title: "Post Correct Answer",
+                    tip: "Post the correct answer in chat if the viewer answered incorrectly.",
+                    default: false,
+                    sortRank: 3,
+                    validation: {
+                        required: true
+                    }
                 }
             }
         }

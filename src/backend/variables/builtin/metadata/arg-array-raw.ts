@@ -10,10 +10,11 @@ triggers[EffectTrigger.MANUAL] = true;
 const model : ReplaceVariable = {
     definition: {
         handle: "rawArgArray",
-        description: "(Deprecated; use $argArray) Returns the raw array of command arguments",
+        description: "(Deprecated: use $argArray) Returns the raw array of command arguments",
         triggers: triggers,
         categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.ARRAY]
+        possibleDataOutput: [OutputDataType.ARRAY],
+        hidden: true
     },
     evaluator: (trigger: Trigger) : string[] => {
         return trigger.metadata.userCommand ? trigger.metadata.userCommand.args : [];

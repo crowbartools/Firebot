@@ -17,7 +17,8 @@
                 disableInteractions: "<?",
                 updateChatInput: "&?",
                 onReplyClicked: "&?",
-                chatSizeStyle: "@?"
+                chatSizeStyle: "@?",
+                fontFamilyStyle: "@?"
             },
             template: `
                 <div class="chat-message-wrapper">
@@ -137,9 +138,9 @@
                             <div class="chatContent">
                                 <span ng-repeat="part in $ctrl.message.parts" class="chat-content-wrap">
 
-                                    <span ng-if="part.type === 'text'" style="{{$ctrl.chatSizeStyle}}" ng-class="{ highlightText: part.flagged }">{{part.text}}</span>
+                                    <span ng-if="part.type === 'text'" style="{{$ctrl.chatSizeStyle}}{{$ctrl.fontFamilyStyle}}" ng-class="{ highlightText: part.flagged }">{{part.text}}</span>
 
-                                    <a ng-if="part.type === 'link'" style="{{$ctrl.chatSizeStyle}}" ng-href="{{part.url}}" target="_blank">{{part.text}}</a>
+                                    <a ng-if="part.type === 'link'" style="{{$ctrl.chatSizeStyle}}{{$ctrl.fontFamilyStyle}}" ng-href="{{part.url}}" target="_blank">{{part.text}}</a>
 
                                     <span
                                         ng-if="part.type === 'cheer'"
@@ -150,7 +151,7 @@
                                         <img ng-if="part.animatedUrl != '' && part.animatedUrl != null" ng-src="{{part.animatedUrl}}" style="height: 100%;">
                                         <img ng-if="part.animatedUrl == '' || part.animatedUrl == null" ng-src="{{part.url}}" style="height: 100%;">
                                     </span>
-                                    <span ng-if="part.type === 'cheer'" style="{{$ctrl.chatSizeStyle}}; font-weight: bold;" ng-style="{ color: part.color }" >{{part.amount}}</span>
+                                    <span ng-if="part.type === 'cheer'" style="{{$ctrl.chatSizeStyle}}{{$ctrl.fontFamilyStyle}}; font-weight: bold;" ng-style="{ color: part.color }" >{{part.amount}}</span>
 
                                     <span
                                         ng-if="part.type === 'emote'"
@@ -167,11 +168,10 @@
                                         class="chatEmoticon"
                                         uib-tooltip="{{part.origin}}: {{part.name}}"
                                         tooltip-append-to-body="true"
-                                        style="width: unset;"
                                     >
                                         <img ng-src="{{part.url}}" style="height: 100%;" />
                                     </span>
-                                    <span ng-if="part.origin === 'BTTV' && !$ctrl.showBttvEmotes" style="{{$ctrl.chatSizeStyle}}">{{part.name}}</span>
+                                    <span ng-if="part.origin === 'BTTV' && !$ctrl.showBttvEmotes" style="{{$ctrl.chatSizeStyle}}{{$ctrl.fontFamilyStyle}}">{{part.name}}</span>
 
                                     <span
                                         ng-if="part.origin === 'FFZ' && $ctrl.showFfzEmotes"
@@ -181,7 +181,7 @@
                                     >
                                         <img ng-src="{{part.url}}" style="height: 100%;" />
                                     </span>
-                                    <span ng-if="part.origin === 'FFZ' && !$ctrl.showFfzEmotes" style="{{$ctrl.chatSizeStyle}}">{{part.name}}</span>
+                                    <span ng-if="part.origin === 'FFZ' && !$ctrl.showFfzEmotes" style="{{$ctrl.chatSizeStyle}}{{$ctrl.fontFamilyStyle}}">{{part.name}}</span>
 
                                     <span
                                         ng-if="part.origin === '7TV' && $ctrl.showSevenTvEmotes"
@@ -191,14 +191,15 @@
                                     >
                                         <img ng-src="{{part.url}}" style="height: 100%;" />
                                     </span>
-                                    <span ng-if="part.origin === '7TV' && !$ctrl.showSevenTvEmotes" style="{{$ctrl.chatSizeStyle}}">{{part.name}}</span>
+                                    <span ng-if="part.origin === '7TV' && !$ctrl.showSevenTvEmotes" style="{{$ctrl.chatSizeStyle}}{{$ctrl.fontFamilyStyle}}">{{part.name}}</span>
                                 </span>
                             </div>
                             <div ng-show="$ctrl.message.whisper" class="muted">(Whispered to {{ $ctrl.message.whisperTarget }})</div>
                         </div>
                     </div>
                     <div class="automod-tag" ng-show="$ctrl.message.isAutoModHeld">
-                        <div ng-if="$ctrl.message.autoModStatus === 'PENDING' && !$ctrl.message.autoModErrorMessage">
+                        <div ng-if="$ctrl.message.autoModStatus === 'pending' && !$ctrl.message.autoModErrorMessage">
+                            <i class="fal fa-question-circle pending"></i>
                             <span>Flagged by AutoMod ({{$ctrl.message.autoModReason}}): </span>
                             <span ng-if="!$ctrl.respondedToAutoMod">
                                 <a href style="font-weight: 700;" ng-click="$ctrl.allowAutoModMessage()">Allow</a>
@@ -209,14 +210,20 @@
                                 Sending...
                             </span>
                         </div>
-                        <div ng-if="$ctrl.message.autoModStatus === 'PENDING' && $ctrl.message.autoModErrorMessage">
+                        <div ng-if="$ctrl.message.autoModStatus === 'pending' && $ctrl.message.autoModErrorMessage">
                             <span style="color: rgb(255 149 149)">{{$ctrl.message.autoModErrorMessage}}</span>
                         </div>
-                        <div ng-if="['ALLOWED', 'DENIED'].includes($ctrl.message.autoModStatus)">
-                            <span>{{$ctrl.message.autoModStatus === 'ALLOWED' ? 'Allowed' : 'Denied'}} by {{$ctrl.message.autoModResolvedBy}}</span>
+                        <div ng-if="$ctrl.message.autoModStatus === 'approved'">
+                            <i class="far fa-check approved"></i>
+                            <span>Allowed by {{$ctrl.message.autoModResolvedBy}}</span>
                         </div>
-                        <div ng-if="$ctrl.message.autoModStatus === 'EXPIRED'">
-                            <span>Expired</span>
+                        <div ng-if="$ctrl.message.autoModStatus === 'denied'">
+                            <i class="far fa-times denied"></i>
+                            <span>Denied by {{$ctrl.message.autoModResolvedBy}}</span>
+                        </div>
+                        <div ng-if="$ctrl.message.autoModStatus === 'expired'">
+                            <i class="far fa-clock expired"></i>
+                            <span>Flagged by AutoMod ({{$ctrl.message.autoModReason}}): Expired</span>
                         </div>
                     </div>
                     <div ng-if="$ctrl.message.isAnnouncement || $ctrl.message.isFirstChat || $ctrl.message.isReturningChatter || $ctrl.message.isRaider || $ctrl.message.isSuspiciousUser" style="margin-bottom:5px">

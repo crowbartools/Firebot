@@ -266,14 +266,18 @@ class TwitchChat extends EventEmitter {
                 message,
                 accountType === "bot"
             );
-            if (slashCommandResult === true) {
-                return;
+            if (!slashCommandResult) {
+                frontendCommunicator.send("chatUpdate", {
+                    fbEvent: "ChatAlert",
+                    message: `Failed to execute "${message}"`
+                });
             }
+            return;
         }
         if (slashCommandValidationResult != null &&
             slashCommandValidationResult.success === false &&
             slashCommandValidationResult.foundCommand !== false) {
-            global.renderWindow.webContents.send("chatUpdate", {
+            frontendCommunicator.send("chatUpdate", {
                 fbEvent: "ChatAlert",
                 message: slashCommandValidationResult.errorMessage
             });

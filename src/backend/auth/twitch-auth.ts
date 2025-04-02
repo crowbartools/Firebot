@@ -1,8 +1,7 @@
-import axios from "axios";
 import authManager from "./auth-manager";
 import accountAccess, { FirebotAccount } from "../common/account-access";
 import logger from "../logwrapper";
-import { secrets } from "../secrets-manager";
+import { SecretsManager } from "../secrets-manager";
 import { AuthProviderDefinition } from "./auth";
 import { getExpiryDateOfAccessToken } from "@twurple/auth";
 
@@ -14,7 +13,7 @@ class TwitchAuthProviders {
     readonly streamerAccountProviderId = "twitch:streamer-account";
     readonly botAccountProviderId = "twitch:bot-account";
 
-    readonly twitchClientId = secrets.twitchClientId;
+    readonly twitchClientId = SecretsManager.secrets.twitchClientId;
 
     readonly streamerAccountProvider: AuthProviderDefinition = {
         id: this.streamerAccountProviderId,
@@ -29,66 +28,70 @@ class TwitchAuthProviders {
             type: "device"
         },
         scopes: [
-            'bits:read',
-            'channel:edit:commercial',
-            'channel:manage:ads',
-            'channel:manage:broadcast',
-            'channel:manage:moderators',
-            'channel:manage:polls',
-            'channel:manage:predictions',
-            'channel:manage:raids',
-            'channel:manage:redemptions',
-            'channel:manage:schedule',
-            'channel:manage:videos',
-            'channel:manage:vips',
-            'channel:moderate',
-            'channel:read:ads',
-            'channel:read:charity',
-            'channel:read:editors',
-            'channel:read:goals',
-            'channel:read:hype_train',
-            'channel:read:polls',
-            'channel:read:predictions',
-            'channel:read:redemptions',
-            'channel:read:stream_key',
-            'channel:read:subscriptions',
-            'channel:read:vips',
-            'chat:edit',
-            'chat:read',
-            'clips:edit',
-            'moderation:read',
-            'moderator:manage:announcements',
-            'moderator:manage:automod',
-            'moderator:manage:automod_settings',
-            'moderator:manage:banned_users',
-            'moderator:manage:blocked_terms',
-            'moderator:manage:chat_messages',
-            'moderator:manage:chat_settings',
-            'moderator:manage:shield_mode',
-            'moderator:manage:shoutouts',
-            'moderator:manage:unban_requests',
-            'moderator:read:automod_settings',
-            'moderator:read:blocked_terms',
-            'moderator:read:chat_settings',
-            'moderator:read:chatters',
-            'moderator:read:followers',
-            'moderator:read:moderators',
-            'moderator:read:shield_mode',
-            'moderator:read:shoutouts',
-            'moderator:read:unban_requests',
-            'moderator:read:vips',
-            'user:edit:broadcast',
-            'user:manage:blocked_users',
-            'user:manage:whispers',
-            'user:read:blocked_users',
-            'user:read:broadcast',
-            'user:read:chat',
-            'user:read:emotes',
-            'user:read:follows',
-            'user:read:subscriptions',
-            'user:write:chat',
-            'whispers:edit',
-            'whispers:read'
+            "bits:read",
+            "channel:edit:commercial",
+            "channel:manage:ads",
+            "channel:manage:broadcast",
+            "channel:manage:moderators",
+            "channel:manage:polls",
+            "channel:manage:predictions",
+            "channel:manage:raids",
+            "channel:manage:redemptions",
+            "channel:manage:schedule",
+            "channel:manage:videos",
+            "channel:manage:vips",
+            "channel:moderate",
+            "channel:read:ads",
+            "channel:read:charity",
+            "channel:read:editors",
+            "channel:read:goals",
+            "channel:read:hype_train",
+            "channel:read:polls",
+            "channel:read:predictions",
+            "channel:read:redemptions",
+            "channel:read:stream_key",
+            "channel:read:subscriptions",
+            "channel:read:vips",
+            "chat:edit",
+            "chat:read",
+            "clips:edit",
+            "moderation:read",
+            "moderator:manage:announcements",
+            "moderator:manage:automod",
+            "moderator:manage:automod_settings",
+            "moderator:manage:banned_users",
+            "moderator:manage:blocked_terms",
+            "moderator:manage:chat_messages",
+            "moderator:manage:chat_settings",
+            "moderator:manage:shield_mode",
+            "moderator:manage:shoutouts",
+            "moderator:manage:unban_requests",
+            "moderator:manage:warnings",
+            "moderator:read:automod_settings",
+            "moderator:read:banned_users",
+            "moderator:read:blocked_terms",
+            "moderator:read:chat_messages",
+            "moderator:read:chat_settings",
+            "moderator:read:chatters",
+            "moderator:read:followers",
+            "moderator:read:moderators",
+            "moderator:read:shield_mode",
+            "moderator:read:shoutouts",
+            "moderator:read:unban_requests",
+            "moderator:read:vips",
+            "moderator:read:warnings",
+            "user:edit:broadcast",
+            "user:manage:blocked_users",
+            "user:manage:whispers",
+            "user:read:blocked_users",
+            "user:read:broadcast",
+            "user:read:chat",
+            "user:read:emotes",
+            "user:read:follows",
+            "user:read:subscriptions",
+            "user:write:chat",
+            "whispers:edit",
+            "whispers:read"
         ]
     };
 
@@ -105,16 +108,16 @@ class TwitchAuthProviders {
             type: "device"
         },
         scopes: [
-            'channel:moderate',
-            'chat:edit',
-            'chat:read',
-            'moderator:manage:announcements',
-            'user:manage:whispers',
-            'user:read:chat',
-            'user:read:emotes',
-            'user:write:chat',
-            'whispers:edit',
-            'whispers:read'
+            "channel:moderate",
+            "chat:edit",
+            "chat:read",
+            "moderator:manage:announcements",
+            "user:manage:whispers",
+            "user:read:chat",
+            "user:read:emotes",
+            "user:write:chat",
+            "whispers:edit",
+            "whispers:read"
         ]
     };
 
@@ -128,17 +131,17 @@ const twitchAuthProviders = new TwitchAuthProviders();
 
 async function getUserCurrent(accessToken: string) {
     try {
-        const response = await axios.get('https://api.twitch.tv/helix/users', {
+        const response = await fetch("https://api.twitch.tv/helix/users", {
             headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'User-Agent': 'Firebot v5',
-                'Client-ID': twitchAuthProviders.twitchClientId
-            },
-            responseType: "json"
+                "Authorization": `Bearer ${accessToken}`,
+                "User-Agent": "Firebot v5",
+                "Client-ID": twitchAuthProviders.twitchClientId,
+                "Response-Type": "json"
+            }
         });
 
-        if (response.status >= 200 && response.status <= 204) {
-            const userData = response.data;
+        if (response.ok) {
+            const userData = await response.json();
             if (userData.data && userData.data.length > 0) {
                 return userData.data[0];
             }

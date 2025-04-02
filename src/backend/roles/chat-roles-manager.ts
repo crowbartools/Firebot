@@ -1,5 +1,3 @@
-import axios from "axios";
-
 import { BasicViewer } from "../../types/viewers";
 import logger from "../logwrapper";
 import accountAccess from "../common/account-access";
@@ -37,9 +35,9 @@ class ChatRolesManager extends TypedEmitter<Events> {
         }
 
         try {
-            const responseData = (await axios.get<KnownBotServiceResponse>(VIEWLIST_BOTS_URL, {
-                timeout: 30000
-            })).data;
+            const responseData = await (await fetch(VIEWLIST_BOTS_URL, {
+                signal: AbortSignal.timeout(30_000)
+            })).json() as KnownBotServiceResponse;
             if (responseData?.bots != null) {
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 this._knownBots = responseData.bots.map(([username, channels, _lastSeen]) => {
@@ -85,6 +83,10 @@ class ChatRolesManager extends TypedEmitter<Events> {
             username: u.name,
             displayName: u.displayName
         }));
+    }
+
+    async getVips(): Promise<BasicViewer[]> {
+        return this._vips;
     }
 
     addVipToVipList(viewer: BasicViewer): void {

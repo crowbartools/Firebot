@@ -13,17 +13,17 @@
                     <div class="chat-settings-header">Main Settings</div>
                     <div class="mt-4 mb-8 px-8">
                         <chat-settings-toggle
-                            setting="settings.getShowChatViewerList()"
+                            setting="settings.getSetting('ShowChatViewerList')"
                             title="Show Chat User List"
                             input-id="chatUserList"
-                            on-update="settings.setShowChatViewerList(setting)"
+                            on-update="settings.saveSetting('ShowChatViewerList', setting)"
                         ></chat-settings-toggle>
 
                         <chat-settings-toggle
-                            setting="settings.showActivityFeed()"
+                            setting="settings.getSetting('ShowActivityFeed')"
                             title="Show Activity Feed"
                             input-id="activityFeed"
-                            on-update="settings.setShowActivityFeed(setting)"
+                            on-update="settings.saveSetting('ShowActivityFeed', setting)"
                         ></chat-settings-toggle>
                     </div>
 
@@ -51,7 +51,7 @@
                         </div>
                         <file-chooser ng-show="selectedNotificationSound.name === 'Custom'"
                             model="selectedNotificationSound.path"
-                            options="{title: 'Select Sound File', filters: [{name: 'Audio', extensions: ['mp3', 'ogg', 'wav', 'flac']}]}"
+                            options="{title: 'Select Sound File', filters: [{name: 'Audio', extensions: ['mp3', 'ogg', 'oga', 'wav', 'flac']}]}"
                             on-update="setCustomNotiPath(filepath)"></file-chooser>
                         <div class="volume-slider-wrapper" ng-hide="selectedNotificationSound.name === 'None'">
                             <i class="fal fa-volume-down volume-low pb-2 text-4xl"></i>
@@ -78,42 +78,63 @@
                         </div>
 
                         <chat-settings-toggle
-                            setting="settings.chatAlternateBackgrounds()"
+                            setting="settings.getSetting('ChatAlternateBackgrounds')"
                             title="Alternate Backgrounds"
                             input-id="alternateBackgrounds"
-                            on-update="settings.setChatAlternateBackgrounds(setting)"
+                            on-update="settings.saveSetting('ChatAlternateBackgrounds', setting)"
                         ></chat-settings-toggle>
 
                         <chat-settings-toggle
-                            setting="settings.getShowAvatars()"
+                            setting="settings.getSetting('ChatAvatars')"
                             title="Show Avatars"
                             input-id="showAvatars"
-                            on-update="settings.setShowAvatars(setting)"
+                            on-update="settings.saveSetting('ChatAvatars', setting)"
                         ></chat-settings-toggle>
 
                         <chat-settings-toggle
-                            setting="settings.getShowTimestamps()"
+                            setting="settings.getSetting('ChatTimestamps')"
                             title="Show Timestamps"
                             input-id="showTimestamps"
-                            on-update="settings.setShowTimestamps(setting)"
+                            on-update="settings.saveSetting('ChatTimestamps', setting)"
                         ></chat-settings-toggle>
 
                         <chat-settings-toggle
-                            setting="settings.getShowPronouns()"
+                            setting="settings.getSetting('ChatPronouns')"
                             title="Show Pronouns"
                             external-link="https://pronouns.alejo.io/"
                             input-id="showPronouns"
-                            on-update="settings.setShowPronouns(setting)"
+                            on-update="settings.saveSetting('ChatPronouns', setting)"
                         ></chat-settings-toggle>
 
                         <chat-settings-toggle
-                            setting="settings.getChatCustomFontSizeEnabled()"
+                            setting="settings.getSetting('ChatCustomFontFamilyEnabled')"
+                            title="Use Custom Font"
+                            input-id="showCustomFontFamily"
+                            on-update="toggleCustomFontFamilyEnabled()"
+                        ></chat-settings-toggle>
+
+                        <div ng-show="settings.getSetting('ChatCustomFontFamilyEnabled')">
+                            <ui-select ng-model="customFontFamily" on-select="fontFamilyUpdated($item)" class="mt-3" theme="bootstrap">
+                                <ui-select-match placeholder="Select or search for a font…">{{customFontFamily}}</ui-select-match>
+                                <ui-select-choices style="position; relative;" repeat="fontName in fontFamilies | filter: $select.search">
+                                    <div style="display: flex; align-items: center;">
+                                        <span class="mr-2" ng-bind-html="fontName | highlight: $select.search"></span>
+                                        &mdash;
+                                        <span class="ml-2" style="{{chatFontSampleStyle(fontName)}}">{{fontName}}</span>
+                                    </div>
+                                </ui-select-choices>
+                            </ui-select>
+                            <p class="muted mt-1"><small>You can add or remove custom fonts via Settings > Overlay > Manage Fonts.</small></p>
+                        </div>
+
+                        <chat-settings-toggle
+                            setting="settings.getSetting('ChatCustomFontSizeEnabled')"
                             title="Show Custom Font Size"
                             input-id="showCustomFontSize"
                             on-update="toggleCustomFontEnabled()"
                         ></chat-settings-toggle>
 
-                        <div class="volume-slider-wrapper" ng-show="settings.getChatCustomFontSizeEnabled()">
+                        <div class="volume-slider-wrapper" ng-show="settings.getSetting('ChatCustomFontSizeEnabled')">
                             <rzslider rz-slider-model="customFontSize" rz-slider-options="fontSliderOptions"></rzslider>
                         </div>
                     </div>
@@ -122,7 +143,7 @@
                     <div class="chat-settings-header">Emote Settings</div>
                     <div class="mt-4 mb-8 px-8">
                         <chat-settings-toggle
-                            setting="settings.getShowBttvEmotes()"
+                            setting="settings.getSetting('ChatShowBttvEmotes')"
                             title="Show BTTV Emotes"
                             external-link="https://betterttv.com/"
                             input-id="bttvEmotes"
@@ -130,7 +151,7 @@
                         ></chat-settings-toggle>
 
                         <chat-settings-toggle
-                            setting="settings.getShowFfzEmotes()"
+                            setting="settings.getSetting('ChatShowFfzEmotes')"
                             title="Show FFZ Emotes"
                             external-link="https://frankerfacez.com/"
                             input-id="ffzEmotes"
@@ -138,7 +159,7 @@
                         ></chat-settings-toggle>
 
                         <chat-settings-toggle
-                            setting="settings.getShowSevenTvEmotes()"
+                            setting="settings.getSetting('ChatShowSevenTvEmotes')"
                             title="Show 7TV Emotes"
                             external-link="https://7tv.app/"
                             input-id="sevenTvEmotes"
@@ -159,25 +180,25 @@
                         </div>
 
                         <chat-settings-toggle
-                            setting="settings.chatHideDeletedMessages()"
+                            setting="settings.getSetting('ChatHideDeletedMessages')"
                             title="Hide Deleted Messages"
                             tooltip="'Turning this on will cover deleted messages with a blackbox. Hovering over the message will reveal it. Great for letting your mods hide spoilers!'"
                             input-id="hideDeletedMessages"
-                            on-update="settings.setChatHideDeletedMessages(setting)"
+                            on-update="settings.saveSetting('ChatHideDeletedMessages', setting)"
                         ></chat-settings-toggle>
 
                         <chat-settings-toggle
-                            setting="settings.chatHideBotAccountMessages()"
+                            setting="settings.getSetting('ChatHideBotAccountMessages')"
                             title="Hide messages from Bot account"
                             input-id="hideBotMessages"
-                            on-update="settings.setChatHideBotAccountMessages(setting)"
+                            on-update="settings.saveSetting('ChatHideBotAccountMessages', setting)"
                         ></chat-settings-toggle>
 
                         <chat-settings-toggle
-                            setting="settings.getChatHideWhispers()"
+                            setting="settings.getSetting('ChatHideWhispers')"
                             title="Hide whispers in chat feed"
                             input-id="chatHideWhispers"
-                            on-update="settings.setChatHideWhispers(setting)"
+                            on-update="settings.saveSetting('ChatHideWhispers', setting)"
                         ></chat-settings-toggle>
                     </div>
 
@@ -191,7 +212,7 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function($scope, $rootScope, $timeout, settingsService, soundService, chatMessagesService) {
+            controller: function($scope, $rootScope, $timeout, settingsService, soundService, chatMessagesService, fontManager) {
                 const $ctrl = this;
 
                 $scope.settings = settingsService;
@@ -201,25 +222,25 @@
                     onlyStreamer: "Only when I /clear",
                     always: "When I or mods /clear"
                 };
-                $scope.chatFeedMode = settingsService.getClearChatFeedMode();
-                $scope.setChatFeedMode = mode => settingsService.setClearChatFeedMode(mode);
+                $scope.chatFeedMode = settingsService.getSetting("ClearChatFeedMode");
+                $scope.setChatFeedMode = mode => settingsService.saveSetting("ClearChatFeedMode", mode);
 
-                $scope.compactMode = settingsService.isChatCompactMode();
+                $scope.compactMode = settingsService.getSetting("ChatCompactMode");
                 $scope.toggleCompactMode = function() {
                     $scope.compactMode = !$scope.compactMode;
-                    settingsService.setChatCompactMode($scope.compactMode);
+                    settingsService.saveSetting("ChatCompactMode", $scope.compactMode);
                 };
 
                 $scope.playNotification = function() {
                     soundService.playChatNotification();
                 };
 
-                $scope.selectedNotificationSound = settingsService.getTaggedNotificationSound();
+                $scope.selectedNotificationSound = settingsService.getSetting("ChatTaggedNotificationSound");
 
-                $scope.notificationVolume = settingsService.getTaggedNotificationVolume();
+                $scope.notificationVolume = settingsService.getSetting("ChatTaggedNotificationVolume");
 
                 $scope.volumeUpdated = function() {
-                    settingsService.setTaggedNotificationVolume($scope.notificationVolume);
+                    settingsService.saveSetting("ChatTaggedNotificationVolume", $scope.notificationVolume);
                 };
 
                 $scope.sliderOptions = {
@@ -248,7 +269,7 @@
                         $rootScope.$broadcast("rzSliderForceRender");
                     }, 50);
 
-                    settingsService.setTaggedNotificationSound({
+                    settingsService.saveSetting("ChatTaggedNotificationSound", {
                         name: sound.name,
                         path: sound.name === "Custom" ? sound.path : undefined
                     });
@@ -257,34 +278,51 @@
                 $scope.setShowThirdPartyEmotes = (party) => {
                     switch (party) {
                         case "bttv":
-                            settingsService.setShowBttvEmotes(!settingsService.getShowBttvEmotes());
+                            settingsService.saveSetting("ChatShowBttvEmotes", !settingsService.getSetting("ChatShowBttvEmotes"));
                             break;
                         case "ffz":
-                            settingsService.setShowFfzEmotes(!settingsService.getShowFfzEmotes());
+                            settingsService.saveSetting("ChatShowFfzEmotes", !settingsService.getSetting("ChatShowFfzEmotes"));
                             break;
                         case "7tv":
-                            settingsService.setShowSevenTvEmotes(!settingsService.getShowSevenTvEmotes());
+                            settingsService.saveSetting("ChatShowSevenTvEmotes", !settingsService.getSetting("ChatShowSevenTvEmotes"));
                     }
 
                     chatMessagesService.refreshEmotes();
                 };
 
                 $scope.toggleCustomFontEnabled = () => {
-                    settingsService.setChatCustomFontSizeEnabled(!settingsService.getChatCustomFontSizeEnabled());
+                    settingsService.saveSetting("ChatCustomFontSizeEnabled", !settingsService.getSetting("ChatCustomFontSizeEnabled"));
                     $timeout(() => {
                         $rootScope.$broadcast("rzSliderForceRender");
                     }, 50);
                 };
 
-                $scope.customFontSize = settingsService.getChatCustomFontSize();
+                $scope.customFontSize = settingsService.getSetting("ChatCustomFontSize");
                 $scope.fontSizeUpdated = function() {
-                    settingsService.setChatCustomFontSize($scope.customFontSize);
+                    settingsService.saveSetting("ChatCustomFontSize", $scope.customFontSize);
                 };
                 $scope.fontSliderOptions = {
                     floor: 10,
                     ceil: 30,
                     translate: value => `${value}px`,
                     onChange: $scope.fontSizeUpdated
+                };
+
+                $scope.fontFamilies = ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Helvetica', 'Impact', 'Inter', 'Open Sans', 'Roboto', 'Tahoma', 'Times New Roman', 'Verdana']
+                    .concat(fontManager.getInstalledFonts().map(f => f.name))
+                    .sort((a, b) => a.localeCompare(b));
+                $scope.customFontFamily = settingsService.getSetting("ChatCustomFontFamily");
+                $scope.toggleCustomFontFamilyEnabled = function () {
+                    settingsService.saveSetting("ChatCustomFontFamilyEnabled", !settingsService.getSetting("ChatCustomFontFamilyEnabled"));
+                };
+                $scope.chatFontSampleStyle = function (fontName) {
+                    const fontStyle = `font-family: '${fontName}', 'Open Sans', sans-serif !important;`;
+                    const sizeStyle = settingsService.getSetting('ChatCustomFontSizeEnabled')
+                        ? `font-size: ${$scope.customFontSize}px !important;` : "";
+                    return `${fontStyle}${sizeStyle}`;
+                };
+                $scope.fontFamilyUpdated = function(fontName) {
+                    settingsService.saveSetting("ChatCustomFontFamily", fontName);
                 };
 
                 $ctrl.$onInit = () => {

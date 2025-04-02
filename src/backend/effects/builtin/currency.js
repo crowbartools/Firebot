@@ -187,8 +187,8 @@ const currency = {
 
         $scope.currencies = currencyService.getCurrencies();
 
-        $scope.getCurrencyName = function(currencyId) {
-            const currency = currencyService.getCurrencies(currencyId);
+        $scope.getCurrencyName = function (currencyId) {
+            const currency = currencyService.getCurrency(currencyId);
             return currency.name;
         };
 
@@ -199,11 +199,11 @@ const currency = {
         $scope.getTwitchRoles = viewerRolesService.getTwitchRoles;
         $scope.getTeamRoles = viewerRolesService.getTeamRoles;
 
-        $scope.isRoleChecked = function(role) {
+        $scope.isRoleChecked = function (role) {
             return $scope.effect.roleIds.includes(role.id);
         };
 
-        $scope.toggleRole = function(role) {
+        $scope.toggleRole = function (role) {
             if ($scope.isRoleChecked(role)) {
                 $scope.effect.roleIds = $scope.effect.roleIds.filter(id => id !== role.id);
             } else {
@@ -221,6 +221,36 @@ const currency = {
             errors.push("Please select a currency to use.");
         }
         return errors;
+    },
+    getDefaultLabel: (effect, currencyService) => {
+        if (effect.action == null || effect.target == null || effect.amount == null || String(effect.amount).trim() === "") {
+            return "";
+        }
+        const currencyName = currencyService.getCurrency(effect.currency)?.name ?? "Unknown Currency";
+        let subject;
+        switch (effect.target) {
+            case "individual":
+                subject = effect.userTarget;
+                break;
+            case "group":
+                subject = `Online Viewers in ${effect.roleIds?.length ?? 0} Role${(effect.roleIds?.length ?? 0) === 1 ? "" : "s"}`;
+                break;
+            case "allOnline":
+                subject = "All Online Viewers";
+                break;
+            case "allViewers":
+                subject = "All Viewers";
+                break;
+        }
+
+        switch (effect.action) {
+            case "Add":
+                return `Give ${effect.amount} ${currencyName} to ${subject}`;
+            case "Remove":
+                return `Remove ${effect.amount} ${currencyName} from ${subject}`;
+            case "Set":
+                return `Set ${currencyName} to ${effect.amount} for ${subject}`;
+        }
     },
     /**
    * When the effect is triggered by something
@@ -251,7 +281,7 @@ const currency = {
             try {
                 switch (event.effect.target) {
                     case "individual":
-                    // Give currency to one person.
+                        // Give currency to one person.
                         await currencyManager.adjustCurrencyForViewer(
                             userTarget,
                             event.effect.currency,
@@ -260,7 +290,7 @@ const currency = {
                         );
                         break;
                     case "allOnline":
-                    // Give currency to all online.
+                        // Give currency to all online.
                         await currencyManager.addCurrencyToOnlineViewers(
                             event.effect.currency,
                             currency,
@@ -269,7 +299,7 @@ const currency = {
                         );
                         break;
                     case "allViewers":
-                    // Give currency to all viewers.
+                        // Give currency to all viewers.
                         await currencyManager.adjustCurrencyForAllViewers(
                             event.effect.currency,
                             currency,
@@ -278,7 +308,7 @@ const currency = {
                         );
                         break;
                     case "group":
-                    // Give currency to group.
+                        // Give currency to group.
                         await currencyManager.addCurrencyToViewerGroupOnlineViewers(
                             event.effect.roleIds,
                             event.effect.currency,

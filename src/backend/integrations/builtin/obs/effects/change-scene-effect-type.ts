@@ -27,7 +27,7 @@ export const ChangeSceneEffectType: EffectType<{
         </ui-select>
 
         <div ng-show="effect.custom === true" style="margin-top:10px;">
-            <firebot-input input-title="Custom Scene" model="effect.sceneName"></firebot-input>
+            <firebot-input input-title="Custom Scene" model="effect.sceneName" menu-position="under"></firebot-input>
         </div>
     </eos-container>
   `,
@@ -52,7 +52,7 @@ export const ChangeSceneEffectType: EffectType<{
                 (scenes: string[]) => {
                     $scope.scenes = [];
                     if (scenes != null) {
-                        scenes.forEach(scene => {
+                        scenes.forEach((scene) => {
                             $scope.scenes.push({name: scene, custom: false});
                         });
                     }
@@ -72,6 +72,9 @@ export const ChangeSceneEffectType: EffectType<{
             return ["Please select a scene."];
         }
         return [];
+    },
+    getDefaultLabel: (effect) => {
+        return effect.sceneName;
     },
     onTriggerEvent: async ({ effect }) => {
         await setCurrentScene(effect.sceneName);

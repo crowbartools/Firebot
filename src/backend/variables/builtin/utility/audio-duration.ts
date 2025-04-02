@@ -8,8 +8,18 @@ const model : ReplaceVariable = {
         handle: "audioDuration",
         usage: "audioDuration[filePathOrUrl]",
         description: "Attempts to retrieve audio duration.",
+        examples: [
+            {
+                usage: `audioDuration["path/to/audio.mp3"]`,
+                description: "Returns the duration of the audio file in seconds."
+            },
+            {
+                usage: `audioDuration["https://example.com/audio.mp3"]`,
+                description: "Returns the duration of the audio file from a URL in seconds."
+            }
+        ],
         categories: [VariableCategory.ADVANCED],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
     },
     evaluator: async (trigger, url) => {
         if (url == null) {

@@ -38,6 +38,9 @@ const model: EffectType<{
         return errors;
     },
     optionsController: () => {},
+    getDefaultLabel: (effect) => {
+        return `Outcome #${effect.outcome}`;
+    },
     onTriggerEvent: async ({ effect }) => {
         const latestPrediction = await twitchApi.predictions.getMostRecentPrediction();
 

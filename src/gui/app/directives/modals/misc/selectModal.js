@@ -13,17 +13,11 @@
             </div>
             <div class="modal-body">
                 <div ng-class="{'has-error': $ctrl.hasValidationError}">
-                    <ui-select ng-model="$ctrl.model" theme="bootstrap" class="control-type-list">
-                        <ui-select-match placeholder="{{$ctrl.selectPlaceholder}}">{{$select.selected.name}}</ui-select-match>
-                        <ui-select-choices repeat="option.id as option in $ctrl.options | filter: { name: $select.search }" style="position:relative;">
-                            <div class="flex-row-center">
-                                <div style="padding-left: 10px;">
-                                    <div ng-bind-html="option.name | highlight: $select.search"></div>
-                                    <small class="muted" ng-show="option.description">{{option.description}}</small>
-                                </div>                 
-                            </div>                  
-                        </ui-select-choices>
-                    </ui-select>
+                    <firebot-searchable-select
+                        ng-model="$ctrl.model"
+                        items="$ctrl.options"
+                        placeholder="{{$ctrl.selectPlaceholder}}"
+                    />
                     <div id="helpBlock2" class="help-block" ng-show="$ctrl.hasValidationError">{{$ctrl.validationText}}</div>
                 </div>
             </div>

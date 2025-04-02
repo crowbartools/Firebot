@@ -28,6 +28,9 @@ const model = {
         }
         return errors;
     },
+    getDefaultLabel: (effect) => {
+        return effect.delay != null ? `${effect.delay} second${effect.delay > 1 ? "s" : ""}` : undefined;
+    },
     onTriggerEvent: event => {
         return new Promise(resolve => {
             const { effect } = event;

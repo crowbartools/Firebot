@@ -42,7 +42,7 @@
         >
       </div>
       <button
-        ng-hide="scrollGlued || threadDetails != null"
+        ng-hide="scrollGlued || cms.threadDetails != null"
         ng-click="scrollGlued = true"
         class="chat-scroll-paused-btn btn-sm clickable mb-4"
       >
@@ -75,6 +75,7 @@
             update-chat-input="updateChatInput(text)"
             on-reply-clicked="onReplyClicked(threadOrReplyMessageId)"
             chat-size-style="{{customFontSizeStyle}}"
+            font-family-style="{{customFontFamilyStyle}}"
           />
           <reward-redemption
             ng-if="chatItem.type === 'redemption'"
@@ -89,7 +90,7 @@
       <div class="chat-autodisconnected" ng-show="cms.autodisconnected">
         Disconnected from chat, trying to reconnect...
       </div>
-      <div ng-if="threadDetails != null" class="thread-wrapper" ng-class="{ 'mt-5': alternateBackgrounds}">
+      <div ng-if="cms.threadDetails != null" class="thread-wrapper" ng-class="{ 'mt-5': alternateBackgrounds}">
         <div class="thread-header">
           <h4><i class="fas" ng-class="currentThreadMessages().length < 2 ? 'fa-reply' : 'fa-comment-alt-lines'" style="margin-right: 10px;"></i>{{currentThreadMessages().length < 2 ? "Reply to" : "Thread"}}</h4>
           <button type="button" class="thread-close-btn clickable" aria-label="Close" ng-click="closeThreadPanel()"><i class="far fa-times"></i></button>
@@ -110,11 +111,12 @@
               hide-reply-banner="true"
               disable-interactions="true"
               chat-size-style="{{customFontSizeStyle}}"
+              font-family-style="{{customFontFamilyStyle}}"
             />
         </div>
-        <div class="thread-replying-to" ng-if="threadDetails.replyToMessageId != threadDetails.threadParentMessageId">
-          <span>Replying to <span style="font-weight: 800">@{{threadDetails.replyToUserDisplayName}}</span></span>
-          <button class="btn btn-link" ng-click="threadDetails.replyToMessageId = threadDetails.threadParentMessageId">Cancel</button>
+        <div class="thread-replying-to" ng-if="cms.threadDetails.replyToMessageId != cms.threadDetails.threadParentMessageId">
+          <span>Replying to <span style="font-weight: 800">@{{cms.threadDetails.replyToUserDisplayName}}</span></span>
+          <button class="btn btn-link" ng-click="cms.threadDetails.replyToMessageId = cms.threadDetails.threadParentMessageId">Cancel</button>
         </div>
       </div>
     </div>
@@ -122,26 +124,24 @@
       <div
         class="text-input"
         chat-auto-complete-menu
-        ng-model="chatMessage"
+        ng-model="cms.chatMessage"
         input-id="chatMessageInput"
       >
         <div class="dropup">
-          <span
+          <div
             class="dropdown-toggle chatter-dropdown"
             data-toggle="dropdown"
             uib-tooltip="Chat as"
             tooltip-placement="left"
             tooltip-append-to-body="true"
           >
-            <span class="ml-4" style="width: 100%; text-align: center"
-              >{{chatSender}}</span
-            >
+            <span class="ml-4" style="width: 100%; text-align: center">{{cms.chatSender}}</span>
             <div class="fb-arrow down mx-4 mb-1"></div>
-          </span>
+          </div>
           <ul class="dropdown-menu">
-            <li ng-click="chatSender = 'Streamer'"><a href>Streamer</a></li>
-            <li ng-click="chatSender = 'Bot'" ng-show="botLoggedIn">
-              <a href>Bot</a>
+            <li ng-click="cms.chatSender = 'Streamer'"><a>Streamer</a></li>
+            <li ng-click="cms.chatSender = 'Bot'" ng-show="botLoggedIn">
+              <a>Bot</a>
             </li>
           </ul>
         </div>
@@ -153,7 +153,7 @@
           class="text-input-field"
           style="height: 100%"
           ng-maxlength="360"
-          ng-model="chatMessage"
+          ng-model="cms.chatMessage"
           ng-change="onMessageFieldUpdate()"
           ng-keydown="onMessageFieldKeypress($event)"
           ng-trim="false"
@@ -174,13 +174,13 @@
 
   <column-resizer
     on-update="updateLayoutSettings(updatedSettings)"
-    ng-show="settings.showActivityFeed()"
+    ng-show="settings.getSetting('ShowActivityFeed')"
   ></column-resizer>
 
   <div
     id="dashboardActivityFeed"
     class="activity-feed-column"
-    ng-show="settings.showActivityFeed()"
+    ng-show="settings.getSetting('ShowActivityFeed')"
     ng-style="{'width': layout.dashboardActivityFeed }"
   >
     <div class="activity-feed-header">
@@ -206,7 +206,6 @@
       </div>
       <div uib-dropdown>
         <a
-          href
           uib-dropdown-toggle
           class="clickable"
           style="color: white; font-size: 20px; line-height: 1"
@@ -216,7 +215,7 @@
         </a>
         <ul class="dropdown-menu right-justified-dropdown" uib-dropdown-menu>
           <li ng-class="{'disabled': afs.activities.length < 1}">
-            <a href ng-click="afs.toggleMarkAllAcknowledged()"
+            <a ng-click="afs.toggleMarkAllAcknowledged()"
               ><i
                 class="far fa-check-square mr-4"
                 aria-label="Mark all events as acknowledged"
@@ -226,7 +225,7 @@
             >
           </li>
           <li>
-            <a href ng-click="afs.showEditActivityFeedEventsModal()"
+            <a ng-click="afs.showEditActivityFeedEventsModal()"
               ><i class="far fa-toggle-off mr-4" aria-label="Edit events"></i>
               Edit events</a
             >

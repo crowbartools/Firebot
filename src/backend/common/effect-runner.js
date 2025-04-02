@@ -9,7 +9,7 @@ const effectQueueManager = require("../effects/queues/effect-queue-manager");
 const effectQueueRunner = require("../effects/queues/effect-queue-runner");
 const webServer = require("../../server/http-server-manager");
 const util = require("../utility");
-const uuid = require("uuid/v4");
+const { v4: uuid } = require("uuid");
 const {
     addEffectAbortController,
     removeEffectAbortController
@@ -106,16 +106,20 @@ function triggerEffect(effect, trigger, outputs, manualAbortSignal, listAbortSig
 
         logger.debug(`Running ${effect.type}(${effect.id}) effect...`);
 
-        const result = await effectDef.onTriggerEvent({
-            effect,
-            trigger,
-            sendDataToOverlay,
-            outputs,
-            abortSignal: AbortSignal.any([signal, listAbortSignal])
-        });
+        try {
+            const result = await effectDef.onTriggerEvent({
+                effect,
+                trigger,
+                sendDataToOverlay,
+                outputs,
+                abortSignal: AbortSignal.any([signal, listAbortSignal])
+            });
 
-        if (!signal.aborted) {
-            return resolve(result);
+            if (!signal.aborted) {
+                return resolve(result);
+            }
+        } catch (error) {
+            return reject(error);
         }
     });
 }

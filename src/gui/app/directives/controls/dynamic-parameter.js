@@ -45,7 +45,7 @@
             <label class="control-fb control--checkbox" style="font-weight: 600;">
               <span ng-if="$ctrl.title" ng-bind-html="$ctrl.title" class="markdown-container"></span>
               <span ng-if="!$ctrl.title">{{$ctrl.name}}</span>
-              <tooltip ng-if="$ctrl.description" text="$ctrl.description"></tooltip>
+              <tooltip ng-if="$ctrl.metadata.description" text="$ctrl.metadata.description"></tooltip>
               <input type="checkbox" ng-click="$ctrl.metadata.value = !$ctrl.metadata.value" ng-checked="$ctrl.metadata.value" aria-label="...">
               <div class="control__indicator"></div>
             </label>
@@ -100,6 +100,10 @@
 
           <div ng-switch-when="gift-receivers-list" class="pt-5">
             <gift-receivers-list model="$ctrl.metadata.value"></gift-receivers-list>
+          </div>
+
+          <div ng-switch-when="poll-choice-list" class="pt-5">
+            <poll-choice-list model="$ctrl.metadata.value" options="$ctrl.metadata.options"></poll-choice-list>
           </div>
 
           <div ng-switch-when="effectlist">
@@ -177,9 +181,14 @@
                             ctrl.metadata.value = ctrl.metadata.options[0];
                         }
                     }
-                }
 
-                console.log(ctrl.metadata);
+                    // If it is a boolean and no default is supplied, set to false
+                    if (ctrl.metadata.type === "boolean") {
+                        if (ctrl.metadata.default == null) {
+                            ctrl.metadata.value = false;
+                        }
+                    }
+                }
 
                 if (ctrl.metadata.title) {
                     ctrl.title = parseMarkdown(ctrl.metadata.title);

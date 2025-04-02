@@ -1,7 +1,7 @@
 "use strict";
 
 const chatHelpers = require("../chat-helpers");
-const { settings } = require("../../common/settings-access");
+const { SettingsManager } = require("../../common/settings-manager");
 const frontendCommunicator = require("../../common/frontend-communicator");
 const utils = require("../../utility");
 const chatRolesManager = require("../../roles/chat-roles-manager");
@@ -87,7 +87,7 @@ exports.getRandomActiveUser = (ignoreUser = "") => {
 exports.getAllActiveUsers = () => {
     return activeUsers.keys().filter(v => !isNaN(v)).map((id) => {
         return {
-            id: parseInt(id),
+            id: id,
             username: activeUsers.get(id)
         };
     });
@@ -187,11 +187,13 @@ exports.addOnlineUser = async (viewer) => {
                 return;
             }
 
+            const roles = await chatRolesManager.getUsersChatRoles(twitchUser.id);
+
             const userDetails = {
                 id: twitchUser.id,
                 username: twitchUser.name,
                 displayName: twitchUser.displayName,
-                twitchRoles: [],
+                twitchRoles: roles,
                 profilePicUrl: twitchUser.profilePictureUrl,
                 disableViewerList: false
             };
@@ -233,7 +235,7 @@ exports.addActiveUser = async (chatUser, includeInOnline = false, forceActive = 
 
     const viewerDatabase = require("../../viewers/viewer-database");
 
-    const ttl = settings.getActiveChatUserListTimeout() * 60;
+    const ttl = SettingsManager.getSetting("ActiveChatUserListTimeout") * 60;
 
     let user = await viewerDatabase.getViewerById(chatUser.userId);
 

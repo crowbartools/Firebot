@@ -32,19 +32,21 @@ const model = {
     </eos-container>
 
         <eos-container header="Command To Run" pad-top="true">
-            <ui-select ng-model="effect.systemCommandId" theme="bootstrap" ng-show="effect.commandType === 'system'">
-                <ui-select-match placeholder="Select or search for a command... ">{{$select.selected.trigger}}</ui-select-match>
-                <ui-select-choices repeat="command.id as command in systemCommands | filter: { trigger: $select.search }" style="position:relative;">
-                    <div ng-bind-html="command.trigger | highlight: $select.search"></div>
-                </ui-select-choices>
-            </ui-select>
+            <firebot-searchable-select
+                ng-show="effect.commandType === 'system'"
+                ng-model="effect.systemCommandId"
+                placeholder="Select or search for a command..."
+                items="systemCommands"
+                item-name="trigger"
+            />
 
-            <ui-select ng-model="effect.commandId" theme="bootstrap" ng-show="effect.commandType === 'custom'">
-                <ui-select-match placeholder="Select or search for a command... ">{{$select.selected.trigger}}</ui-select-match>
-                <ui-select-choices repeat="command.id as command in customCommands | filter: { trigger: $select.search }" style="position:relative;">
-                    <div ng-bind-html="command.trigger | highlight: $select.search"></div>
-                </ui-select-choices>
-            </ui-select>
+            <firebot-searchable-select
+                ng-show="effect.commandType === 'custom'"
+                ng-model="effect.commandId"
+                placeholder="Select or search for a command..."
+                items="customCommands"
+                item-name="trigger"
+            />
         </eos-container>
 
         <eos-container header="Arguments (optional)" pad-top="true">
@@ -86,6 +88,18 @@ const model = {
             errors.push("Please select a system command to run.");
         }
         return errors;
+    },
+    getDefaultLabel: (effect, commandsService) => {
+        let command;
+        if (effect.commandType === "system") {
+            command = commandsService.getSystemCommands()
+                .find(cmd => cmd.id === effect.systemCommandId);
+        }
+        if (effect.commandType === "custom") {
+            command = commandsService.getCustomCommands()
+                .find(cmd => cmd.id === effect.commandId);
+        }
+        return command?.trigger ?? "Unknown Command";
     },
     /**
    * When the effect is triggered by something

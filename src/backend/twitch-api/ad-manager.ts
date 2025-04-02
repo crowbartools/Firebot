@@ -4,7 +4,7 @@ import logger from "../logwrapper";
 import accountAccess from "../common/account-access";
 import twitchApi from "./api";
 import frontendCommunicator from "../common/frontend-communicator";
-import { settings } from "../common/settings-access";
+import { SettingsManager } from "../common/settings-manager";
 import eventManager from "../events/EventManager";
 
 class AdManager {
@@ -59,7 +59,7 @@ class AdManager {
                 duration: adSchedule.duration
             });
 
-            const upcomingTriggerMinutes = Number(settings.getTriggerUpcomingAdBreakMinutes());
+            const upcomingTriggerMinutes = Number(SettingsManager.getSetting("TriggerUpcomingAdBreakMinutes"));
             const minutesUntilNextAdBreak = this.secondsUntilNextAdBreak / 60;
 
             if (upcomingTriggerMinutes > 0

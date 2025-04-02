@@ -5,8 +5,7 @@ const { ElgatoKeyLightController, ElgatoLightStripController } = require("@zunde
 const effectManager = require("../../../effects/effectManager");
 const frontendCommunicator = require("../../../common/frontend-communicator");
 const logger = require("../../../logwrapper");
-const colorConvert = require('color-convert');
-
+const tinycolor = require("tinycolor2");
 const integrationDefinition = {
     id: "elgato",
     name: "Elgato",
@@ -41,7 +40,7 @@ class ElgatoIntegration extends EventEmitter {
     }
 
     async updateKeyLights(selectedKeyLights) {
-        selectedKeyLights.forEach(keyLight => {
+        selectedKeyLights.forEach((keyLight) => {
             const light = this.keyLightController.keyLights.find(kl => kl.name === keyLight.light.name);
             const settings = {};
 
@@ -81,7 +80,7 @@ class ElgatoIntegration extends EventEmitter {
     }
 
     async updateLightStrips(selectedLightStrips) {
-        selectedLightStrips.forEach(lightStrip => {
+        selectedLightStrips.forEach((lightStrip) => {
             const light = this.lightStripController.lightStrips.find(ls => ls.name === lightStrip.light.name);
             const settings = {};
 
@@ -98,35 +97,11 @@ class ElgatoIntegration extends EventEmitter {
             }
 
             if (lightStrip.options.color) {
-                let colorValue;
+                const color = tinycolor(lightStrip.options.color).setAlpha(1).toHsv();
 
-                // Strip out the # for #RRGGBB values
-                if (lightStrip.options.color.startsWith("#")) {
-                    colorValue = lightStrip.options.color.slice(1);
-                } else {
-                    colorValue = lightStrip.options.color;
-                }
-
-                const hexCodeRegEx = /^[0-9a-fA-F]{6}$/;
-                let hsvColor = [];
-
-                // If the color value is a hex RRGGBB value, convert from that hex value
-                if (hexCodeRegEx.test(colorValue) === true) {
-                    hsvColor = colorConvert.hex.hsv(colorValue);
-
-                // Otherwise, convert from the color name
-                } else {
-                    try {
-                        hsvColor = colorConvert.keyword.hsv(colorValue.toLowerCase());
-                    } catch {
-                        logger.debug(`Unable to convert "${colorValue}" to HSV color`);
-                        return;
-                    }
-                }
-
-                settings.hue = parseInt(hsvColor[0]);
-                settings.saturation = parseInt(hsvColor[1]);
-                settings.brightness = parseInt(hsvColor[2]);
+                settings.hue = color.h;
+                settings.saturation = color.s * 100;
+                settings.brightness = color.v * 100;
             }
 
             /** @type {import("@zunderscore/elgato-light-control").LightStripOptions} */

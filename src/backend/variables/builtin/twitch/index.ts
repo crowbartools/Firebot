@@ -5,19 +5,19 @@ import charityVariables from './charity';
 import cheerVariables from './cheer';
 import cheermoteVariables from './cheermote';
 import hypetrainVariables from './hype-train';
+import pollVariables from './polls';
+import raidVariables from './raid';
 import rewardVariables from './reward';
 import streamVariables from './stream';
 import subVariables from './subs';
 
+import accountCreationDate from './account-creation-date';
 import followAge from './follow-age';
 import followCount from './follow-count';
-import pollWinningChoiceName from './poll-winning-choice-name';
-import pollWinningChoiceVotes from './poll-winning-choice-votes';
 import predictionWinningOutcomeName from './prediction-winning-outcome-name';
-import raidViewerCounter from './raid-viewer-count';
 import twitchChannelUrl from './twitch-channel-url';
 import viewerCount from './viewer-count';
-
+import vip from './vip';
 
 export default [
     ...adVariables,
@@ -27,16 +27,17 @@ export default [
     ...cheerVariables,
     ...cheermoteVariables,
     ...hypetrainVariables,
+    ...pollVariables,
+    ...raidVariables,
     ...rewardVariables,
     ...streamVariables,
     ...subVariables,
 
+    accountCreationDate,
     followAge,
     followCount,
-    pollWinningChoiceName,
-    pollWinningChoiceVotes,
     predictionWinningOutcomeName,
-    raidViewerCounter,
     twitchChannelUrl,
-    viewerCount
+    viewerCount,
+    vip
 ];

@@ -2,6 +2,7 @@ import { EffectType } from "../../../../types/effects";
 import { EffectCategory } from "../../../../shared/effect-constants";
 import logger from "../../../logwrapper";
 import twitchApi from "../../../twitch-api/api";
+import frontendCommunicator from "../../../common/frontend-communicator";
 
 const model: EffectType<{
     username: string;
@@ -38,6 +39,9 @@ const model: EffectType<{
         return errors;
     },
     optionsController: () => {},
+    getDefaultLabel: (effect) => {
+        return effect.username;
+    },
     onTriggerEvent: async ({ effect }) => {
         const targetUserId = (await twitchApi.users.getUserByName(effect.username))?.id;
 
@@ -47,7 +51,7 @@ const model: EffectType<{
         }
         const result = await twitchApi.chat.sendShoutout(targetUserId);
         if (!result.success) {
-            global.renderWindow.webContents.send("chatUpdate", {
+            frontendCommunicator.send("chatUpdate", {
                 fbEvent: "ChatAlert",
                 message: result.error
             });

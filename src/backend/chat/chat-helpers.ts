@@ -1,6 +1,5 @@
 import { HelixChatBadgeSet, HelixCheermoteList, HelixEmote } from "@twurple/api";
 import { ChatMessage, ParsedMessageCheerPart, ParsedMessagePart, findCheermotePositions, parseChatMessage } from "@twurple/chat";
-import { PubSubAutoModQueueMessage } from "@twurple/pubsub";
 import { ThirdPartyEmote, ThirdPartyEmoteProvider } from "./third-party/third-party-emote-provider";
 import { BTTVEmoteProvider } from "./third-party/bttv";
 import { FFZEmoteProvider } from "./third-party/ffz";
@@ -9,6 +8,7 @@ import { FirebotChatMessage, FirebotCheermoteInstance, FirebotParsedMessagePart 
 import logger from "../logwrapper";
 import accountAccess, { FirebotAccount } from "../common/account-access";
 import twitchApi from "../twitch-api/api";
+import { EventSubAutoModMessageHoldV2EventData } from "../twitch-api/eventsub/custom-subscriptions/automod-v2/automod-message-event-data";
 import frontendCommunicator from "../common/frontend-communicator";
 import utils from "../utility";
 
@@ -233,12 +233,26 @@ class FirebotChatHelpers {
                     } else {
                         subParts.push({
                             type: "text",
-                            text: `${word} `
+                            text: `${word} `,
+                            flagged: p.flagged
                         });
                     }
                 }
 
-                return subParts;
+                // move trailing spaces to separate parts so flagged parts look nicer
+                return subParts.flatMap((sp): FirebotParsedMessagePart | FirebotParsedMessagePart[] => {
+                    if (sp.type === "text" && sp.flagged && sp.text?.endsWith(" ")) {
+                        return [{
+                            type: "text",
+                            text: sp.text.trimEnd(),
+                            flagged: true
+                        }, {
+                            type: "text",
+                            text: " "
+                        }];
+                    }
+                    return sp;
+                });
             }
 
             const part: FirebotParsedMessagePart = {
@@ -354,11 +368,14 @@ class FirebotChatHelpers {
             tagged: false,
             badges: [],
             parts: [],
-            roles: []
+            roles: [],
+            isSharedChatMessage: false
         };
     }
 
     async buildFirebotChatMessage(msg: ChatMessage, msgText: string, whisper = false, action = false) {
+        const sharedChatRoomId = msg.tags.get("source-room-id");
+        const isSharedChatMessage = sharedChatRoomId != null && sharedChatRoomId !== accountAccess.getAccounts().streamer.userId;
         const firebotChatMessage: FirebotChatMessage = {
             id: msg.tags.get("id"),
             username: msg.userInfo.userName,
@@ -391,7 +408,9 @@ class FirebotChatHelpers {
             isCheer: msg.isCheer,
             badges: [],
             parts: [],
-            roles: []
+            roles: [],
+            isSharedChatMessage,
+            sharedChatRoomId: isSharedChatMessage ? sharedChatRoomId : null
         };
 
         const profilePicUrl = await this.getUserProfilePicUrl(firebotChatMessage.userId);
@@ -493,7 +512,8 @@ class FirebotChatHelpers {
                 })
             )) : [],
             parts: this._getMessageParts(text),
-            roles: []
+            roles: [],
+            isSharedChatMessage: false // todo: check if extension messages pass through Shared Chat, and if we can listen for it
         };
 
         firebotChatMessage.parts = this._parseMessageParts(firebotChatMessage, firebotChatMessage.parts);
@@ -501,34 +521,78 @@ class FirebotChatHelpers {
         return firebotChatMessage;
     }
 
-    async buildViewerFirebotChatMessageFromAutoModMessage(msg: PubSubAutoModQueueMessage) {
-        const profilePicUrl = await this.getUserProfilePicUrl(msg.senderId);
-
-        const parts = msg.foundMessageFragments.map(f => ({
-            type: "text",
-            text: f.text,
-            flagged: f.automod != null
-        }));
+    async buildViewerFirebotChatMessageFromAutoModMessage(msg: EventSubAutoModMessageHoldV2EventData) {
+        const profilePicUrl = await this.getUserProfilePicUrl(msg.user_id);
 
         const viewerFirebotChatMessage: FirebotChatMessage = {
-            id: msg.messageId,
-            username: msg.senderName,
-            userId: msg.senderId,
-            userDisplayName: msg.senderDisplayName,
-            rawText: msg.messageContent,
+            id: msg.message_id,
+            username: msg.user_login,
+            userId: msg.user_id,
+            userDisplayName: msg.user_name,
+            rawText: msg.message.text,
             profilePicUrl: profilePicUrl,
             whisper: false,
             action: false,
             tagged: false,
             isBroadcaster: false,
-            color: msg.senderColor,
             badges: [],
-            parts: parts,
+            parts: [],
             roles: [],
             isAutoModHeld: true,
-            autoModStatus: msg.status,
-            autoModReason: msg.contentClassification.category
+            autoModStatus: "pending",
+            autoModReason: (msg.reason === "automod" ? msg.automod?.category : msg.reason === "blocked_term" ? "blocked term" : null) ?? "unknown",
+            isSharedChatMessage: false // todo: check if automod messages have a way to associate them with shared chat
         };
+
+        const { streamer, bot } = accountAccess.getAccounts();
+        if ((streamer.loggedIn && (msg.message.text.includes(streamer.username) || msg.message.text.includes(streamer.displayName)))
+            || (bot.loggedIn && (msg.message.text.includes(bot.username) || msg.message.text.includes(streamer.username)))
+        ) {
+            viewerFirebotChatMessage.tagged = true;
+        }
+
+        const flaggedPhrases = (
+            msg.reason === "automod"
+                ? msg.automod?.boundaries ?? []
+                : msg.blocked_term?.terms_found?.map(t => t.boundary) ?? []
+        ).map((boundary) => {
+            return msg.message.text.substring(boundary.start_pos, boundary.end_pos + 1);
+        });
+
+        const flaggedPhrasesRegex = new RegExp(`(${flaggedPhrases.join("|")})`, "g");
+
+        const parts = this._parseMessageParts(viewerFirebotChatMessage, msg.message.fragments.flatMap((f): FirebotParsedMessagePart | FirebotParsedMessagePart[] => {
+            if (f.type === "text") {
+                const splitText = f.text?.split(flaggedPhrasesRegex)
+                    // sometimes we get empty strings in the split
+                    .filter(t => t.length > 0);
+
+                return splitText.map((text) => {
+                    const isFlagged = flaggedPhrases.some(phrase => text.includes(phrase));
+                    return {
+                        type: "text",
+                        text: text,
+                        flagged: isFlagged
+                    };
+                });
+            }
+            if (f.type === "cheermote") {
+                return {
+                    type: "cheer",
+                    amount: f.cheermote.bits,
+                    name: f.text
+                };
+            }
+            if (f.type === "emote") {
+                return {
+                    type: "emote",
+                    id: f.emote.id,
+                    name: f.text
+                };
+            }
+        }));
+
+        viewerFirebotChatMessage.parts = parts;
 
         return viewerFirebotChatMessage;
     }

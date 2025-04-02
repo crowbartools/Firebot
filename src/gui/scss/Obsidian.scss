@@ -6,12 +6,14 @@ $dark-background-color: #1e2023; //sidebar 1
 $dark-background-border: #2e2f30; //sidebar 2
 $dark-background-box-shadow: adjust-color(#2d2b2b, $red: 7, $green: 7, $blue: 7);
 
-$content-text-color: #ffffff;
-
 $bad-color: #ff0000;
 $good-color: #90ee90;
-$info-color: #30a6ce;
+$info-color: #30a6ce40;
 $highlight-color: #ebb11f;
+
+$content-text-color: #ffffff;
+$content-background-color: $light-background-color;
+$chat-alert-background-color: $info-color;
 
 // Scrollbar
 $scrollbar-background-color: #3e3e40;
@@ -41,7 +43,6 @@ $board-settings-btn-color: #a9a9a9;
 $change-board-dropdown-color: #a9a9a9;
 $downarrow-color: #a9a9a9;
 $sort-tags-bg: #808080;
-
 $toggle-button-off-bg-color: #ffffff;
 
 $change-note-palette-title-color: orange;
@@ -123,6 +124,19 @@ $integration-row-bg: #3e4046;
 $settings-sidebar-bg: #383a40;
 $settings-category-selected-bg: #2d3135;
 $settings-category-hover-bg: #33373c;
+
+/* effect & variable choosers */
+$effect-category-bg: $medium-background-color;
+$effect-category-hover-bg: #484a4d;
+$effect-category-selected-bg: #181a1d;
+$effect-def-bg: #43454a;
+$effect-def-hover-bg: #515357;
+$effect-def-selected-border: #767a81;
+$effect-def-selected-check: #2df92d;
+$effect-dialog-bg: #43454a;
+$variable-category-bg: #202124;
+$variable-magic-tooltip-fg: white;
+$variable-menu-bg: #18191b;
 
 // Import Core Styles
 @import './core/$importer';

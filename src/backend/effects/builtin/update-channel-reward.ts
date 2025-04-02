@@ -1,8 +1,9 @@
-import { EffectType } from "../../../types/effects";
+import { validate } from "uuid";
 import { EffectCategory } from '../../../shared/effect-constants';
+import { SavedChannelReward } from "../../../types/channel-rewards";
+import { EffectType } from "../../../types/effects";
 import channelRewardsManager from "../../channel-rewards/channel-reward-manager";
 import logger from "../../logwrapper";
-import {SavedChannelReward} from "../../../types/channel-rewards";
 
 type StringUpdatable = { update: boolean, newValue: string };
 type StatusUpdatable = { update: boolean, newValue: 'toggle' | boolean };
@@ -17,7 +18,9 @@ type EffectMeta = {
         enabled: StatusUpdatable;
         paused: StatusUpdatable;
     };
+    rewardSelectMode: "dropdown" | "associated" | "sortTag" | "custom";
     channelRewardId: string;
+    customId: string;
     useTag?: boolean;
     sortTagId?: string;
 }
@@ -45,38 +48,40 @@ const model: EffectType<EffectMeta> = {
         dependencies: []
     },
     optionsTemplate: `
-        <eos-container ng-hide="!hasTags">
-            <label class="control-fb control--checkbox"> Use Sort Tags</tooltip>
-                <input type="checkbox" ng-model="effect.useTag">
-                <div class="control__indicator"></div>
-            </label>
+        <eos-container>
+            <firebot-radios
+                options="selectRewardOptions"
+                model="effect.rewardSelectMode">
+            </firebot-radios>
         </eos-container>
 
-
-        <eos-container ng-hide="effect.useTag" header="Channel Reward">
-            <ui-select ng-model="effect.channelRewardId" theme="bootstrap">
-                <ui-select-match placeholder="Select or search for a channel reward... ">{{$select.selected.name}}</ui-select-match>
-                <ui-select-choices repeat="reward.id as reward in manageableRewards | filter: { name: $select.search }" style="position:relative;">
-                    <div ng-bind-html="reward.name | highlight: $select.search"></div>
-                </ui-select-choices>
-            </ui-select>
+        <eos-container ng-if="effect.rewardSelectMode == 'dropdown'" header="Channel Reward">
+            <firebot-searchable-select
+                ng-model="effect.channelRewardId"
+                items="manageableRewards"
+                placeholder="Select or search for a channel reward..."
+            />
         </eos-container>
 
-        <eos-container ng-show="effect.useTag" header="Channel Reward Tags">
-            <ui-select ng-model="effect.sortTagId" theme="bootstrap">
-                <ui-select-match placeholder="Select or search for a tag... ">{{$select.selected.name}}</ui-select-match>
-                <ui-select-choices repeat="sortTag.id as sortTag in sortTags | filter: { name: $select.search }" style="position:relative;">
-                    <div ng-bind-html="sortTag.name | highlight: $select.search"></div>
-                </ui-select-choices>
-            </ui-select>
+        <eos-container ng-if="effect.rewardSelectMode == 'sortTag'" header="Channel Reward Tags">
+            <firebot-searchable-select
+                ng-model="effect.sortTagId"
+                items="sortTags"
+                placeholder="Select or search for a tag..."
+            />
         </eos-container>
 
-        <eos-container ng-show="effect.channelRewardId != null || (effect.useTag && effect.sortTagId != null)" header="Reward Settings" pad-top="true">
+        <eos-container ng-if="effect.rewardSelectMode == 'custom'" header="Channel Reward Name/ID">
+            <firebot-input placeholder="Channel Reward Name/ID" model="effect.customId" menu-position="under" />
+        </eos-container>
 
-            <label class="control-fb control--checkbox">Update Enabled
-                <input type="checkbox" ng-click="effect.rewardSettings.enabled.update = !effect.rewardSettings.enabled.update" ng-checked="effect.rewardSettings.enabled.update"  aria-label="Toggle enabled" >
-                <div class="control__indicator"></div>
-            </label>
+        <eos-container ng-show="showRewardSettings()" header="Reward Settings" pad-top="true">
+
+            <firebot-checkbox
+                label="Update Enabled"
+                model="effect.rewardSettings.enabled.update"
+                aria-label="Toggle enabled"
+            />
             <div ng-show="effect.rewardSettings.enabled.update" style="margin-bottom: 15px;">
                 <div class="btn-group" uib-dropdown>
                     <button id="single-button" type="button" class="btn btn-default" uib-dropdown-toggle>
@@ -90,10 +95,11 @@ const model: EffectType<EffectMeta> = {
                 </div>
             </div>
 
-            <label class="control-fb control--checkbox">Update Paused
-                <input type="checkbox" ng-click="effect.rewardSettings.paused.update = !effect.rewardSettings.paused.update" ng-checked="effect.rewardSettings.paused.update"  aria-label="Toggle paused" >
-                <div class="control__indicator"></div>
-            </label>
+            <firebot-checkbox
+                label="Update Paused"
+                model="effect.rewardSettings.paused.update"
+                aria-label="Toggle paused"
+            />
             <div ng-show="effect.rewardSettings.paused.update" style="margin-bottom: 15px;">
                 <div class="btn-group" uib-dropdown>
                     <button id="single-button" type="button" class="btn btn-default" uib-dropdown-toggle>
@@ -107,42 +113,30 @@ const model: EffectType<EffectMeta> = {
                 </div>
             </div>
 
-            <div ng-hide="effect.useTag">
-                <label class="control-fb control--checkbox">Update Name
-                    <input
-                        type="checkbox"
-                        ng-click="effect.rewardSettings.name.update = !effect.rewardSettings.name.update"
-                        ng-checked="effect.rewardSettings.name.update"
-                        aria-label="Update name"
-                    />
-                    <div class="control__indicator"></div>
-                </label>
+            <div ng-hide="effect.rewardSelectMode === 'sortTag'">
+                <firebot-checkbox
+                    label="Update Name"
+                    model="effect.rewardSettings.name.update"
+                    aria-label="Update name"
+                />
                 <div ng-show="effect.rewardSettings.name.update" style="margin-bottom: 15px;">
                     <firebot-input model="effect.rewardSettings.name.newValue" placeholder-text="Enter text" />
                 </div>
 
-                <label class="control-fb control--checkbox">Update Description
-                    <input
-                        type="checkbox"
-                        ng-click="effect.rewardSettings.description.update = !effect.rewardSettings.description.update"
-                        ng-checked="effect.rewardSettings.description.update"
-                        aria-label="Update description"
-                    />
-                    <div class="control__indicator"></div>
-                </label>
+                <firebot-checkbox
+                    label="Update Description"
+                    model="effect.rewardSettings.description.update"
+                    aria-label="Update description"
+                />
                 <div ng-show="effect.rewardSettings.description.update" style="margin-bottom: 15px;">
                     <firebot-input model="effect.rewardSettings.description.newValue" use-text-area="true" placeholder-text="Enter text" />
                 </div>
 
-                <label class="control-fb control--checkbox">Update Cost
-                    <input
-                        type="checkbox"
-                        ng-click="effect.rewardSettings.cost.update = !effect.rewardSettings.cost.update"
-                        ng-checked="effect.rewardSettings.cost.update"
-                        aria-label="Update cost"
-                    />
-                    <div class="control__indicator"></div>
-                </label>
+                <firebot-checkbox
+                    label="Update Cost"
+                    model="effect.rewardSettings.cost.update"
+                    aria-label="Update cost"
+                />
                 <div ng-show="effect.rewardSettings.cost.update" style="margin-bottom: 15px;">
                     <firebot-input model="effect.rewardSettings.cost.newValue" placeholder-text="Enter new cost" />
                 </div>
@@ -156,9 +150,46 @@ const model: EffectType<EffectMeta> = {
             .channelRewards.filter(r => r.manageable)
             .map(r => ({ id: r.twitchData.id, name: r.twitchData.title }));
 
-        $scope.sortTags = sortTagsService.getSortTags('channel rewards');
+        $scope.sortTags = sortTagsService.getSortTags("channel rewards");
 
         $scope.hasTags = $scope.sortTags != null && $scope.sortTags.length > 0;
+
+        $scope.selectRewardOptions = {
+            dropdown: {
+                text: "Select Reward",
+                description: "Pick the Channel Reward from a dropdown list"
+            },
+            associated: {
+                text: "Associated Reward",
+                description: "Use the Channel Reward associated with the current Event",
+                hide: !($scope.trigger === "channel_reward" || $scope.triggerMeta?.triggerId?.startsWith("twitch:channel-reward-redemption"))
+            },
+            sortTag: {
+                text: "Sort Tag",
+                description: "Updates Channel Rewards with the specified Sort Tag",
+                hide: !$scope.hasTags
+            },
+            custom: {
+                text: "Custom",
+                description: "Manually specify a Channel Reward Name/ID"
+            }
+        };
+
+        if ($scope.effect.rewardSelectMode == null) {
+            // Support legacy bool useTag
+            $scope.effect.rewardSelectMode = $scope.effect.useTag ? "sortTag" : "dropdown";
+        }
+
+        if (!$scope.hasTags && $scope.effect.rewardSelectMode === "sortTag") {
+            $scope.effect.rewardSelectMode = "dropdown";
+        }
+
+        $scope.showRewardSettings = () => (
+            ($scope.effect.rewardSelectMode === "dropdown" && $scope.effect.channelRewardId != null && $scope.effect.channelRewardId !== "") ||
+            ($scope.effect.rewardSelectMode === "sortTag" && $scope.effect.sortTagId != null && $scope.effect.sortTagId !== "") ||
+            ($scope.effect.rewardSelectMode === "custom" && $scope.effect.customId != null && $scope.effect.customId !== "") ||
+            ($scope.effect.rewardSelectMode === "associated")
+        );
 
         $scope.getToggleEnabledDisplay = (action) => {
             if (action === "toggle") {
@@ -207,38 +238,116 @@ const model: EffectType<EffectMeta> = {
     },
     optionsValidator: (effect) => {
         const errors = [];
-        if (!effect.useTag && effect.channelRewardId == null) {
-            errors.push("Please select a channel reward to update.");
-        } else if (effect.useTag &&
-            !effect.rewardSettings.paused.update &&
-            !effect.rewardSettings.enabled.update) {
-            errors.push("Please select a channel reward tag to update.");
-        } else if ((!effect.useTag &&
-            !effect.rewardSettings.paused.update &&
-            !effect.rewardSettings.enabled.update &&
-            !effect.rewardSettings.cost.update &&
-            !effect.rewardSettings.name.update &&
-            !effect.rewardSettings.description.update) ||
-            (effect.useTag &&
-            !effect.rewardSettings.paused.update &&
-            !effect.rewardSettings.enabled.update)) {
+
+        if (
+            effect.rewardSelectMode === null
+            || (
+                effect.rewardSelectMode === "dropdown" &&
+                effect.channelRewardId == null
+            ) || (
+                effect.rewardSelectMode === "sortTag" &&
+                effect.sortTagId == null
+            ) || (
+                effect.rewardSelectMode === "custom" &&
+                effect.customId == null
+            )
+        ) {
+            errors.push("Please specify a channel reward to update.");
+        }
+
+        if (
+            (
+                effect.rewardSelectMode !== "sortTag" &&
+                !effect.rewardSettings.paused.update &&
+                !effect.rewardSettings.enabled.update &&
+                !effect.rewardSettings.cost.update &&
+                !effect.rewardSettings.name.update &&
+                !effect.rewardSettings.description.update
+            ) ||
+            (
+                effect.rewardSelectMode === "sortTag" &&
+                !effect.rewardSettings.paused.update &&
+                !effect.rewardSettings.enabled.update
+            )
+        ) {
             errors.push("Please select at least one property to update.");
-        } else if (effect.rewardSettings.name.update &&
+        }
+
+        if (effect.rewardSettings.name.update &&
             (effect.rewardSettings.name.newValue == null ||
-                effect.rewardSettings.name.newValue === "")) {
+            effect.rewardSettings.name.newValue === "")
+        ) {
             errors.push("Please provide a new name for the reward.");
-        } else if (effect.rewardSettings.description.update &&
+        }
+
+        if (effect.rewardSettings.description.update &&
             (effect.rewardSettings.description.newValue == null ||
-                effect.rewardSettings.description.newValue === "")) {
+            effect.rewardSettings.description.newValue === "")
+        ) {
             errors.push("Please provide a new description for the reward.");
-        } else if (effect.rewardSettings.cost.update &&
-            !effect.rewardSettings.cost.newValue?.length) {
+        }
+
+        if (effect.rewardSettings.cost.update &&
+            (effect.rewardSettings.cost.newValue == null ||
+            effect.rewardSettings.cost.newValue === "")
+        ) {
             errors.push("Please provide a new cost for the reward.");
         }
 
         return errors;
     },
-    onTriggerEvent: async ({ effect }) => {
+    getDefaultLabel: (effect, channelRewardsService, sortTagsService) => {
+        if (!effect.rewardSettings.paused.update &&
+            !effect.rewardSettings.enabled.update &&
+            !effect.rewardSettings.cost.update &&
+            !effect.rewardSettings.name.update &&
+            !effect.rewardSettings.description.update) {
+            return "";
+        }
+        // support legacy bool useTag
+        let selectMode = effect.rewardSelectMode;
+        selectMode ??= effect.useTag ? "sortTag" : "dropdown";
+
+        let rewardName = "";
+        let action = "";
+
+        switch (selectMode) {
+            case "dropdown":
+                rewardName = channelRewardsService.channelRewards.find(r => r.twitchData.id === effect.channelRewardId)?.twitchData.title ?? "Unknown Reward";
+                break;
+            case "associated":
+                rewardName = "Associated Reward";
+                break;
+            case "sortTag":
+                rewardName = `Tag: ${sortTagsService.getSortTags("channel rewards").find(t => t.id === effect.sortTagId)?.name ?? "Unknown Tag"}`;
+                break;
+            case "custom":
+                rewardName = effect.customId;
+                break;
+        }
+
+        if (effect.rewardSettings.enabled.update && effect.rewardSettings.paused.update) {
+            if (effect.rewardSettings.enabled.newValue === "toggle" && effect.rewardSettings.paused.newValue === "toggle") {
+                action = "Toggle Enabled & Paused";
+            } else {
+                const enableAction = effect.rewardSettings.enabled.newValue === "toggle" ? "Toggle Enabled" : effect.rewardSettings.enabled.newValue ? "Enable" : "Disable";
+                const pauseAction = effect.rewardSettings.paused.newValue === "toggle" ? "Toggle Paused" : effect.rewardSettings.paused.newValue ? "Pause" : "Unpause";
+                action = `${enableAction} & ${pauseAction}`;
+            }
+        } else if (effect.rewardSettings.enabled.update) {
+            action = effect.rewardSettings.enabled.newValue === "toggle" ? "Toggle Enabled" : effect.rewardSettings.enabled.newValue ? "Enable" : "Disable";
+        } else if (effect.rewardSettings.paused.update) {
+            action = effect.rewardSettings.paused.newValue === "toggle" ? "Toggle Paused" : effect.rewardSettings.paused.newValue ? "Pause" : "Unpause";
+        } else if (effect.rewardSettings.name.update) {
+            return `Rename ${rewardName} to ${effect.rewardSettings.name.newValue}`;
+        } else if (effect.rewardSettings.description.update) {
+            action = `Update Description for`;
+        } else if (effect.rewardSettings.cost.update) {
+            action = `Set Cost to ${effect.rewardSettings.cost.newValue} for`;
+        }
+        return `${action} ${rewardName}`;
+    },
+    onTriggerEvent: async ({ trigger, effect }) => {
         if (!effect.rewardSettings.paused.update &&
             !effect.rewardSettings.enabled.update &&
             !effect.rewardSettings.cost.update &&
@@ -247,7 +356,10 @@ const model: EffectType<EffectMeta> = {
             logger.error("Update Channel Reward: No updates selected. Skipping effect.");
             return false;
         }
-        if (!effect.useTag) {
+        if (!effect.rewardSelectMode) {
+            effect.rewardSelectMode = effect.useTag ? "sortTag" : "dropdown";
+        }
+        if (effect.rewardSelectMode !== "sortTag") {
             if (effect.rewardSettings.name.update && (effect.rewardSettings.name.newValue == null ||
                 effect.rewardSettings.name.newValue === "" ||
                 effect.rewardSettings.name.newValue.length > 45)) {
@@ -269,9 +381,24 @@ const model: EffectType<EffectMeta> = {
                 return;
             }
 
-            const channelReward = channelRewardsManager.getChannelReward(effect.channelRewardId);
+            let rewardId;
+            switch (effect.rewardSelectMode) {
+                case "dropdown":
+                    rewardId = effect.channelRewardId;
+                    break;
+                case "associated":
+                    rewardId = trigger.metadata.eventData?.rewardId ?? trigger.metadata.rewardId;
+                    break;
+                case "custom":
+                    rewardId = validate(effect.customId)
+                        ? effect.customId
+                        : channelRewardsManager.getChannelRewardIdByName(effect.customId);
+                    break;
+            }
 
+            const channelReward = channelRewardsManager.getChannelReward(rewardId);
             if (channelReward == null) {
+                logger.error(`Update Channel Reward: Invalid Channel Reward ID: ${rewardId}`);
                 return;
             }
 
@@ -295,7 +422,7 @@ const model: EffectType<EffectMeta> = {
         }
 
         const rewards = Object.values(channelRewardsManager.channelRewards as Record<string, RewardWithTags>)
-            .filter(reward => reward.sortTags.includes(effect.sortTagId) && reward.manageable);
+            .filter(reward => reward.sortTags?.includes(effect.sortTagId) && reward.manageable);
 
         const promises: Promise<SavedChannelReward>[] = [];
 

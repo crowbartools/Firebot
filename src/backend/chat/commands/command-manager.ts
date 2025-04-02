@@ -154,14 +154,15 @@ class CommandManager extends TypedEmitter<Events> {
             const override = this._commandCache.systemCommandOverrides[c.definition.id];
             if (override != null) {
                 if (c.definition.options) {
-                    override.options = Object.assign(c.definition.options, override.options);
-
-                    //remove now nonexistent options
-                    for (const overrideOptionName of Object.keys(override.options)) {
-                        if (c.definition.options[overrideOptionName] == null) {
-                            delete override.options[overrideOptionName];
+                    const options = structuredClone(c.definition.options);
+                    if (override.options) {
+                        for (const key of Object.keys(options)) {
+                            if (override.options[key]?.value) {
+                                options[key].value = override.options[key].value;
+                            }
                         }
                     }
+                    override.options = options;
                 } else {
                     override.options = null;
                 }
@@ -334,8 +335,8 @@ class CommandManager extends TypedEmitter<Events> {
         if (command.id == null || command.id === "") {
             eventType = "created-item";
             // generate id for new command
-            const uuidv1 = require("uuid/v1");
-            command.id = uuidv1();
+            const { v4: uuid } = require("uuid");
+            command.id = uuid();
 
             command.createdBy = user
                 ? user
@@ -531,6 +532,15 @@ frontendCommunicator.on("get-all-commands", () => {
         customCommands: manager.getAllCustomCommands(),
         systemCommands: manager.getAllSystemCommandDefinitions()
     };
+});
+
+frontendCommunicator.onAsync("get-firebot-profile-token", () => {
+    const cloudSync = require('../../cloud-sync/profile-sync');
+    return cloudSync.syncProfileData({
+        username: undefined,
+        userRoles: [],
+        profilePage: "commands"
+    });
 });
 
 export = manager;

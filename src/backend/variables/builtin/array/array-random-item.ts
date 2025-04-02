@@ -6,6 +6,16 @@ const model : ReplaceVariable = {
         handle: "arrayRandomItem",
         usage: "arrayRandomItem[array]",
         description: "Returns a random item from the given array",
+        examples: [
+            {
+                usage: `arrayRandomItem["[1,2,3]"]`,
+                description: "Returns a random item from the array [1,2,3]."
+            },
+            {
+                usage: "arrayRandomItem[rawArray]",
+                description: "Returns a random item from the raw array."
+            }
+        ],
         categories: [VariableCategory.ADVANCED, VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },

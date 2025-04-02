@@ -6,7 +6,7 @@ const effectRunner = require("../common/effect-runner");
 const presetEffectListManager = require("../effects/preset-lists/preset-effect-list-manager");
 const { EffectTrigger } = require("../../shared/effect-constants");
 const accountAccess = require("../common/account-access");
-const { settings } = require("../common/settings-access");
+const { SettingsManager } = require("../common/settings-manager");
 
 /** @typedef {import("../../shared/types").QuickActionDefinition} QuickActionDefinition */
 
@@ -51,25 +51,26 @@ class QuickActionManager extends JsonDbManager {
     }
 
     saveQuickAction(quickAction, notify = true) {
-        if (!super.saveItem(quickAction)) {
+        const savedQuickAction = super.saveItem(quickAction);
+        if (!savedQuickAction) {
             return;
         }
-        const quickActionSettings = settings.getQuickActionSettings();
+        const quickActionSettings = SettingsManager.getSetting("QuickActions");
         if (!Object.keys(quickActionSettings).includes(quickAction.id)) {
             quickActionSettings[quickAction.id] = { enabled: true, position: Object.keys(quickActionSettings).length };
-            settings.setQuickActionSettings(quickActionSettings);
+            SettingsManager.saveSetting("QuickActions", quickActionSettings);
         }
         if (notify) {
             this.triggerUiRefresh();
         }
-        return true;
+        return savedQuickAction;
     }
 
     deleteQuickAction(customQuickActionId) {
         if (super.deleteItem(customQuickActionId)) {
-            const quickActionSettings = settings.getQuickActionSettings();
+            const quickActionSettings = SettingsManager.getSetting("QuickActions");
             delete quickActionSettings[customQuickActionId];
-            settings.setQuickActionSettings(quickActionSettings);
+            SettingsManager.saveSetting("QuickActions", quickActionSettings);
         }
     }
 

@@ -1,7 +1,7 @@
 "use strict";
 
 (function() {
-    const uuid = require("uuid/v4");
+    const { v4: uuid } = require("uuid");
     angular.module("firebotApp")
         .component("addOrEditSubcommandModal", {
             template: `
@@ -15,15 +15,14 @@
                         Arg Type
                     </div>
                     <div ng-class="{'has-error': $ctrl.kindError}">
-                        <ui-select ng-model="$ctrl.arg.type" ng-change="$ctrl.onTypeChange()" theme="bootstrap" class="control-type-list">
-                            <ui-select-match placeholder="Select arg type">{{$select.selected.type}}</ui-select-match>
-                            <ui-select-choices repeat="arg.type as arg in $ctrl.argTypes | filter: { type: $select.search }" style="position:relative;">
-                                <div style="padding: 5px;">
-                                    <div ng-bind-html="arg.type | highlight: $select.search"></div>
-                                    <small class="muted">{{arg.description}}</small>
-                                </div>
-                            </ui-select-choices>
-                        </ui-select>
+                        <firebot-searchable-select
+                            ng-model="$ctrl.arg.type"
+                            ng-change="$ctrl.onTypeChange()"
+                            items="$ctrl.argTypes"
+                            item-id="type"
+                            item-name="type"
+                            placeholder="Select arg type"
+                        />
                         <div id="helpBlock2" class="help-block" ng-show="$ctrl.kindError">{{$ctrl.kindErrorText}}</div>
                     </div>
                 </div>

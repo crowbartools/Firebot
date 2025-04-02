@@ -121,7 +121,7 @@ const heistCommand = {
 
         // make sure wager doesnt violate min or max values
         const minWager = heistSettings.settings.currencySettings.minWager || 1;
-        if (minWager != null & minWager > 0) {
+        if (minWager != null && minWager > 0) {
             if (wagerAmount < minWager) {
                 if (heistSettings.settings.entryMessages.wagerAmountTooLow) {
                     const wagerAmountTooLowMsg = heistSettings.settings.entryMessages.wagerAmountTooLow
@@ -135,7 +135,7 @@ const heistCommand = {
             }
         }
         const maxWager = heistSettings.settings.currencySettings.maxWager;
-        if (maxWager != null & maxWager > 0) {
+        if (maxWager != null && maxWager > 0) {
             if (wagerAmount > maxWager) {
                 if (heistSettings.settings.entryMessages.wagerAmountTooHigh) {
                     const wagerAmountTooHighMsg = heistSettings.settings.entryMessages.wagerAmountTooHigh

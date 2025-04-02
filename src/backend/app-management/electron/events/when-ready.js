@@ -58,9 +58,6 @@ exports.whenReady = async () => {
     windowManagement.updateSplashScreenStatus("Refreshing Twitch account data...");
     await accountAccess.refreshTwitchData();
 
-    const twitchFrontendListeners = require("../../../twitch-api/frontend-twitch-listeners");
-    twitchFrontendListeners.setupListeners();
-
     windowManagement.updateSplashScreenStatus("Starting stream status poll...");
     connectionManager.startOnlineCheckInterval();
 
@@ -72,7 +69,7 @@ exports.whenReady = async () => {
 
     windowManagement.updateSplashScreenStatus("Loading currencies...");
     const currencyAccess = require("../../../currency/currency-access").default;
-    currencyAccess.refreshCurrencyCache();
+    currencyAccess.loadCurrencies();
 
     windowManagement.updateSplashScreenStatus("Loading ranks...");
     const viewerRanksManager = require("../../../ranks/rank-manager");
@@ -118,8 +115,9 @@ exports.whenReady = async () => {
     const { loadRestrictions } = require("../../../restrictions/builtin-restrictions-loader");
     loadRestrictions();
 
-    const fontManager = require("../../../fontManager");
-    fontManager.generateAppFontCssFile();
+    windowManagement.updateSplashScreenStatus("Loading fonts...");
+    const { FontManager } = require("../../../font-manager");
+    await FontManager.loadInstalledFonts();
 
     windowManagement.updateSplashScreenStatus("Loading events...");
     const eventsAccess = require("../../../events/events-access");
@@ -161,12 +159,12 @@ exports.whenReady = async () => {
     startupScriptsManager.loadStartupConfig();
 
     windowManagement.updateSplashScreenStatus("Starting chat moderation manager...");
-    const chatModerationManager = require("../../../chat/moderation/chat-moderation-manager");
-    chatModerationManager.load();
+    const { ChatModerationManager } = require("../../../chat/moderation/chat-moderation-manager");
+    ChatModerationManager.load();
 
     windowManagement.updateSplashScreenStatus("Loading counters...");
-    const countersManager = require("../../../counters/counter-manager");
-    countersManager.loadItems();
+    const { CounterManager } = require("../../../counters/counter-manager");
+    CounterManager.loadItems();
 
     windowManagement.updateSplashScreenStatus("Loading games...");
     const gamesManager = require("../../../games/game-manager");
@@ -176,16 +174,18 @@ exports.whenReady = async () => {
     builtinGameLoader.loadGames();
 
     windowManagement.updateSplashScreenStatus("Loading custom variables...");
-    const {settings} = require("../../../common/settings-access");
-    if (settings.getPersistCustomVariables()) {
+    const { SettingsManager } = require("../../../common/settings-manager");
+    if (SettingsManager.getSetting("PersistCustomVariables")) {
         const customVariableManager = require("../../../common/custom-variable-manager");
         customVariableManager.loadVariablesFromFile();
     }
 
+    windowManagement.updateSplashScreenStatus("Loading sort tags...");
+    const { SortTagManager } = require("../../../sort-tags/sort-tag-manager");
+    SortTagManager.loadSortTags();
+
     // get importer in memory
     windowManagement.updateSplashScreenStatus("Loading importers...");
-    const v4Importer = require("../../../import/v4/v4-importer");
-    v4Importer.setupListeners();
 
     const setupImporter = require("../../../import/setups/setup-importer");
     setupImporter.setupListeners();
@@ -197,8 +197,8 @@ exports.whenReady = async () => {
     setupCommonListeners();
 
     windowManagement.updateSplashScreenStatus("Loading hotkeys...");
-    const hotkeyManager = require("../../../hotkeys/hotkey-manager");
-    hotkeyManager.refreshHotkeyCache();
+    const { HotkeyManager } = require("../../../hotkeys/hotkey-manager");
+    HotkeyManager.loadHotkeys();
 
     windowManagement.updateSplashScreenStatus("Starting currency timer...");
     const currencyManager = require("../../../currency/currency-manager");
@@ -217,12 +217,12 @@ exports.whenReady = async () => {
     windowManagement.updateSplashScreenStatus("Loading stats...");
     logger.info("Creating or connecting stats database");
     const statsdb = require("../../../database/statsDatabase");
-    statsdb.connectStatsDatabase();
+    await statsdb.connectStatsDatabase();
 
     windowManagement.updateSplashScreenStatus("Loading quotes...");
     logger.info("Creating or connecting quotes database");
     const quotesdb = require("../../../quotes/quotes-manager");
-    quotesdb.loadQuoteDatabase();
+    await quotesdb.loadQuoteDatabase();
 
     // These are defined globally for Custom Scripts.
     // We will probably want to handle these differently but we shouldn't
@@ -233,8 +233,8 @@ exports.whenReady = async () => {
     global.SCRIPTS_DIR = profileManager.getPathInProfile("/scripts/");
 
     windowManagement.updateSplashScreenStatus("Running daily backup...");
-    const backupManager = require("../../../backup-manager");
-    await backupManager.onceADayBackUpCheck();
+    const { BackupManager } = require("../../../backup-manager");
+    await BackupManager.onceADayBackUpCheck();
 
     // start the REST api server
     windowManagement.updateSplashScreenStatus("Starting internal web server...");
@@ -252,8 +252,8 @@ exports.whenReady = async () => {
     // load activity feed manager
     require("../../../events/activity-feed-manager");
 
-    const iconManager = require("../../../common/icon-manager");
-    iconManager.loadFontAwesomeIcons();
+    const { IconManager } = require("../../../common/icon-manager");
+    await IconManager.loadFontAwesomeIcons();
 
     windowManagement.updateSplashScreenStatus("Starting stream info poll...");
     const streamInfoPoll = require("../../../twitch-api/stream-info-manager");
@@ -261,8 +261,10 @@ exports.whenReady = async () => {
 
     windowManagement.updateSplashScreenStatus("Starting notification manager...");
     const notificationManager = require("../../../notifications/notification-manager").default;
-    await notificationManager.loadAllNotifications();
-    notificationManager.startExternalNotificationCheck();
+    notificationManager.loadNotificationCache();
+
+    // get ui extension manager in memory
+    require("../../../ui-extensions/ui-extension-manager");
 
     logger.debug('...loading main window');
     windowManagement.updateSplashScreenStatus("Here we go!");

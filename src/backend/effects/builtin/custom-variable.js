@@ -21,7 +21,11 @@ const fileWriter = {
 
         <eos-container header="Variable Data" pad-top="true">
             <p class="muted">This is the data that will be saved to the variable. Can be text or another replace phrase.</p>
-            <textarea ng-model="effect.variableData" rows="3" class="form-control" id="chat-text-setting" placeholder="Enter text/data" replace-variables></textarea>
+            <selectable-input-editors
+                editors="editors"
+                initial-editor-label="initialEditorLabel"
+                model="effect.variableData"
+            />
             <p class="muted" style="font-size: 11px;"><b>Note:</b> If variable data is a valid JSON string, it will be parsed into an object or array.</p>
         </eos-container>
 
@@ -56,9 +60,33 @@ const fileWriter = {
             $scope.effect.ttl = 0;
         }
 
-        $scope.openVariableInspector = function() {
+        $scope.openVariableInspector = function () {
             backendCommunicator.fireEvent("show-variable-inspector");
         };
+
+        $scope.editors = [
+            {
+                label: "Basic",
+                inputType: "text",
+                useTextArea: true,
+                placeholderText: "Enter variable data",
+                menuPosition: "under"
+            },
+            {
+                label: "JSON",
+                inputType: "codemirror",
+                menuPosition: "under",
+                codeMirrorOptions: {
+                    mode: { name: "javascript", json: true },
+                    theme: 'blackboard',
+                    lineNumbers: true,
+                    autoRefresh: true,
+                    showGutter: true
+                }
+            }
+        ];
+
+        $scope.initialEditorLabel = $scope.effect?.variableData?.startsWith("{") || $scope.effect?.variableData?.startsWith("[") ? "JSON" : "Basic";
     },
     optionsValidator: (effect) => {
         const errors = [];
@@ -66,6 +94,9 @@ const fileWriter = {
             errors.push("Please provide a variable name.");
         }
         return errors;
+    },
+    getDefaultLabel: (effect) => {
+        return effect.name;
     },
     onTriggerEvent: async (event) => {
         const { effect } = event;

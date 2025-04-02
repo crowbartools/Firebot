@@ -2,11 +2,11 @@
 (function() {
     const moment = require('moment');
 
-    const uuid = require("uuid/v4");
+    const { v4: uuid } = require("uuid");
 
     angular
         .module('firebotApp')
-        .factory('chatMessagesService', function (logger, listenerService, settingsService,
+        .factory('chatMessagesService', function (logger, settingsService,
             soundService, backendCommunicator, pronounsService, accountAccess, ngToast) {
             const service = {};
 
@@ -21,10 +21,12 @@
 
             service.autodisconnected = false;
 
-            // Tells us if we should process in app chat or not.
-            service.getChatFeed = function() {
-                return settingsService.getRealChatFeed();
-            };
+            // The active chat sender identifier, either "Streamer" or "Bot"
+            service.chatSender = "Streamer";
+            // The pending but unsent outgoing chat message text
+            service.messageText = "";
+            // The message/thread currently being replied to
+            service.threadDetails = null;
 
             // Return the chat queue.
             service.getChatQueue = function() {
@@ -236,17 +238,8 @@
             };
 
             // Gets view count setting for ui.
-            service.getChatViewCountSetting = function() {
-                const viewCount = settingsService.getChatViewCount();
-                if (viewCount === "On") {
-                    return true;
-                }
-                return false;
-            };
-
-            // Gets view count setting for ui.
             service.getChatViewerListSetting = function() {
-                return settingsService.getShowChatViewerList();
+                return settingsService.getSetting("ShowChatViewerList");
             };
 
             function markMessageAsDeleted(messageId) {
@@ -300,29 +293,26 @@
             // }, 250);
 
             backendCommunicator.on("twitch:chat:rewardredemption", (redemption) => {
-                if (settingsService.getRealChatFeed()) {
+                const redemptionItem = {
+                    id: uuid(),
+                    type: "redemption",
+                    data: redemption
+                };
 
-                    const redemptionItem = {
-                        id: uuid(),
-                        type: "redemption",
-                        data: redemption
-                    };
-
-                    if (service.chatQueue && service.chatQueue.length > 0) {
-                        const lastQueueItem = service.chatQueue[service.chatQueue.length - 1];
-                        if (!lastQueueItem.rewardMatched &&
+                if (service.chatQueue && service.chatQueue.length > 0) {
+                    const lastQueueItem = service.chatQueue[service.chatQueue.length - 1];
+                    if (!lastQueueItem.rewardMatched &&
                             lastQueueItem.type === "message" &&
                             lastQueueItem.data.customRewardId != null &&
                             lastQueueItem.data.customRewardId === redemption.reward.id &&
                             lastQueueItem.data.userId === redemption.user.id) {
-                            lastQueueItem.rewardMatched = true;
-                            service.chatQueue.splice(-1, 0, redemptionItem);
-                            return;
-                        }
+                        lastQueueItem.rewardMatched = true;
+                        service.chatQueue.splice(-1, 0, redemptionItem);
+                        return;
                     }
-
-                    service.chatQueue.push(redemptionItem);
                 }
+
+                service.chatQueue.push(redemptionItem);
             });
 
             backendCommunicator.on("twitch:chat:user-joined", (user) => {
@@ -341,35 +331,34 @@
                 service.clearUserList();
             });
 
-            backendCommunicator.on("twitch:chat:automod-update", ({messageId, newStatus, resolverName, flaggedPhrases}) => {
-                if (newStatus === "ALLOWED") {
-                    service.chatQueue = service.chatQueue.filter(i => i?.data?.id !== messageId);
-                    service.chatAlertMessage(`${resolverName} approved a message that contains: ${flaggedPhrases.join(", ")}`);
-                } else {
-                    const messageItem = service.chatQueue.find(i => i.type === "message" && i.data.id === messageId);
+            backendCommunicator.on("twitch:chat:automod-update", ({messageId, newStatus, resolverName }) => {
 
-                    if (messageItem == null) {
-                        return;
-                    }
-
-                    messageItem.data.autoModStatus = newStatus;
-                    messageItem.data.autoModResolvedBy = resolverName;
-                }
-
-            });
-
-            backendCommunicator.on("twitch:chat:automod-update-error", ({messageId, likelyExpired}) => {
-                const messageItem = service.chatQueue.find(i => i.type === "message" && i.data.id === messageId);
+                const messageItem = service.chatQueue.find(i => i.type === "message" &&
+                    (i.data.id === messageId || i.data.autoModHeldMessageId === messageId)
+                );
 
                 if (messageItem == null) {
                     return;
                 }
 
-                messageItem.data.autoModErrorMessage = `There was an error acting on this message. ${likelyExpired ? "The time to act likely have expired." : "You may need to reauth your Streamer account."}`;
+                messageItem.data.autoModStatus = newStatus;
+                messageItem.data.autoModResolvedBy = resolverName;
+            });
+
+            backendCommunicator.on("twitch:chat:automod-update-error", ({messageId, likelyExpired}) => {
+                const messageItem = service.chatQueue.find(i => i.type === "message" &&
+                    (i.data.id === messageId || i.data.autoModHeldMessageId === messageId)
+                );
+
+                if (messageItem == null) {
+                    return;
+                }
+
+                messageItem.data.autoModErrorMessage = `There was an error acting on this message. ${likelyExpired ? "The time to act has likely expired." : "You may need to reauth your Streamer account."}`;
             });
 
             backendCommunicator.on("twitch:chat:clear-feed", (modUsername) => {
-                const clearMode = settingsService.getClearChatFeedMode();
+                const clearMode = settingsService.getSetting("ClearChatFeedMode");
 
                 const isStreamer = accountAccess.accounts.streamer.username.toLowerCase()
                     === modUsername.toLowerCase();
@@ -404,6 +393,13 @@
                 if (chatMessage.tagged) {
                     soundService.playChatNotification();
                 }
+                if (chatMessage.isAutoModHeld === true) {
+                    setTimeout(() => {
+                        if (chatMessage.autoModStatus === "pending") {
+                            chatMessage.autoModStatus = "expired";
+                        }
+                    }, 5 * 60 * 1000);
+                }
 
                 pronounsService.getUserPronoun(chatMessage.username);
 
@@ -421,37 +417,61 @@
                     service.chatUserUpdated(user);
                 }
 
-                if (settingsService.getRealChatFeed()) {
-                    // Push new message to queue.
-                    const messageItem = {
-                        id: uuid(),
-                        type: "message",
-                        data: chatMessage
+                // when an automod held message is approved, the message is sent again,
+                // attempt to merge it with the existing message
+                const existingAutoModMessageIndex = service.chatQueue.findIndex(i =>
+                    i.type === "message" &&
+                    i.data.isAutoModHeld &&
+                    i.data.autoModHeldMessageId == null &&
+                    i.data.rawText === chatMessage.rawText &&
+                    i.data.userId === chatMessage.userId &&
+                    moment().diff(i.data.timestamp, "minutes") <= 5
+                );
+                const existingAutoModMessage = service.chatQueue[existingAutoModMessageIndex]?.data;
+                if (existingAutoModMessage != null) {
+                    // merge the new message with the existing one
+                    chatMessage = {
+                        ...existingAutoModMessage,
+                        ...chatMessage,
+                        autoModHeldMessageId: existingAutoModMessage.id,
+                        isAutoModHeld: existingAutoModMessage.isAutoModHeld,
+                        autoModStatus: existingAutoModMessage.autoModStatus,
+                        autoModResolvedBy: existingAutoModMessage.autoModResolvedBy,
+                        autoModErrorMessage: existingAutoModMessage.autoModErrorMessage
                     };
+                    // remove the existing automod message from the queue
+                    service.chatQueue.splice(existingAutoModMessageIndex, 1);
+                }
 
-                    if (chatMessage.customRewardId != null &&
+                // Push new message to queue.
+                const messageItem = {
+                    id: uuid(),
+                    type: "message",
+                    data: chatMessage
+                };
+
+                if (chatMessage.customRewardId != null &&
                         service.chatQueue &&
                         service.chatQueue.length > 0) {
-                        const lastQueueItem = service.chatQueue[service.chatQueue.length - 1];
-                        if (lastQueueItem.type === "redemption" &&
+                    const lastQueueItem = service.chatQueue[service.chatQueue.length - 1];
+                    if (lastQueueItem.type === "redemption" &&
                             lastQueueItem.data.reward.id === chatMessage.customRewardId &&
                             lastQueueItem.data.user.id === chatMessage.userId) {
-                            messageItem.rewardMatched = true;
-                        }
+                        messageItem.rewardMatched = true;
                     }
-
-                    service.chatQueue.push(messageItem);
-
-                    service.pruneChatQueue();
                 }
+
+                service.chatQueue.push(messageItem);
+
+                service.pruneChatQueue();
             });
 
             service.allEmotes = [];
             service.filteredEmotes = [];
             service.refreshEmotes = () => {
-                const showBttvEmotes = settingsService.getShowBttvEmotes();
-                const showFfzEmotes = settingsService.getShowFfzEmotes();
-                const showSevenTvEmotes = settingsService.getShowSevenTvEmotes();
+                const showBttvEmotes = settingsService.getSetting("ChatShowBttvEmotes");
+                const showFfzEmotes = settingsService.getSetting("ChatShowFfzEmotes");
+                const showSevenTvEmotes = settingsService.getSetting("ChatShowSevenTvEmotes");
 
                 service.filteredEmotes = service.allEmotes.filter((e) => {
                     if (showBttvEmotes !== true && e.origin === "BTTV") {
@@ -477,25 +497,7 @@
 
             // Watches for an chat update from main process
             // This handles clears, deletions, timeouts, etc... Anything that isn't a message.
-            listenerService.registerListener(
-                { type: listenerService.ListenerType.CHAT_UPDATE },
-                (data) => {
-                    if (settingsService.getRealChatFeed() === true) {
-                        service.chatUpdateHandler(data);
-                    }
-                }
-            );
-
-            // Connection Monitor
-            // Receives event from main process that connection has been established or disconnected.
-            listenerService.registerListener(
-                { type: listenerService.ListenerType.CHAT_CONNECTION_STATUS },
-                (isChatConnected) => {
-                    if (isChatConnected) {
-                        service.chatQueue = [];
-                    }
-                }
-            );
+            backendCommunicator.on("chatUpdate", service.chatUpdateHandler);
 
             return service;
         });

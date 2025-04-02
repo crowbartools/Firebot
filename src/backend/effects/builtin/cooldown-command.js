@@ -25,19 +25,23 @@ const model = {
                 </label>
             </div>
 
-            <ui-select ng-if="effect.selectionType && effect.selectionType === 'command'" ng-model="effect.commandId" theme="bootstrap" on-select="commandSelected($item, $model)">
-                <ui-select-match placeholder="Select or search for a command... ">{{$select.selected.trigger}}</ui-select-match>
-                <ui-select-choices repeat="command.id as command in commands | filter: { trigger: ($select.search.startsWith('!') ? $select.search.slice(1) : $select.search) }" style="position:relative;">
-                    <div ng-bind-html="command.trigger | highlight: $select.search"></div>
-                </ui-select-choices>
-            </ui-select>
+            <div ng-if="effect.selectionType && effect.selectionType === 'command'">
+                <firebot-searchable-select
+                    ng-model="effect.commandId"
+                    placeholder="Select or search for a command..."
+                    items="commands"
+                    item-name="trigger"
+                    on-select="commandSelected(item)"
+                />
+            </div>
 
-            <ui-select ng-if="effect.selectionType && effect.selectionType === 'sortTag'" ng-model="effect.sortTagId" theme="bootstrap">
-                <ui-select-match placeholder="Select or search for a tag... ">{{$select.selected.name}}</ui-select-match>
-                <ui-select-choices repeat="sortTag.id as sortTag in sortTags | filter: { name: $select.search }" style="position:relative;">
-                    <div ng-bind-html="sortTag.name | highlight: $select.search"></div>
-                </ui-select-choices>
-            </ui-select>
+            <div ng-if="effect.selectionType && effect.selectionType === 'sortTag'">
+                <firebot-searchable-select
+                    ng-model="effect.sortTagId"
+                    placeholder="Select or search for a tag..."
+                    items="sortTags"
+                />
+            </div>
 
             <div ng-show="subcommands && !!subcommands.length" class="mt-4 pl-4">
                 <label class="control-fb control--radio">Cooldown base command
@@ -215,7 +219,7 @@ const model = {
 
         if (effect.sortTagId != null && effect.selectionType === "sortTag") {
             const commandManager = require("../../chat/commands/command-manager");
-            const commands = commandManager.getAllCustomCommands().filter(c => c.sortTags.includes(effect.sortTagId));
+            const commands = commandManager.getAllCustomCommands().filter(c => c.sortTags?.includes(effect.sortTagId));
             commands.forEach(c => commandIds.push(c.id));
         }
 
