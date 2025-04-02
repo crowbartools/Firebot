@@ -41,14 +41,11 @@ const playVideo = {
     optionsTemplate: `
     <eos-container header="Video">
         <div style="padding-bottom: 10px">
-            <div ng-if="shouldShowVideoPlaceholder()" >
-                <img src="../images/placeholders/video.png" style="width: 350px;object-fit: scale-down;background: #d7d7d7">
-            </div>
-            <div ng-if="effect.videoType == 'Local Video' && !shouldShowVideoPlaceholder()">
-                <video width="350" controls ng-src="{{effect.file}}">
+            <div ng-if="effect.videoType == 'Local Video'">
+                <video width="350" controls ng-src="{{encodeFilePath(effect.file)}}">
                 </video>
             </div>
-            <div ng-if="effect.videoType == 'YouTube Video' && !shouldShowVideoPlaceholder()">
+            <div ng-if="effect.videoType == 'YouTube Video'">
                 <!--<ng-youtube-embed
                     video="effect.youtube"
                     color="white"
@@ -321,6 +318,10 @@ const playVideo = {
                 $scope.effect.height = "";
                 $scope.effect.width = "";
             }
+        };
+
+        $scope.encodeFilePath = function (/** @type {string} */ filepath) {
+            return filepath?.replaceAll("%", "%25").replaceAll("#", "%23");
         };
     },
     /**
