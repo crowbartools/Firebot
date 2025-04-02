@@ -73,7 +73,7 @@ class TwitchEventSubClient {
             EventSubAutoModMessageHoldV2Subscription,
             async (data) => {
                 const chatHelpers = require("../../chat/chat-helpers");
-                const firebotChatMessage = await chatHelpers.buildViewerFirebotChatMessageFromAutoModMessage(data, "pending");
+                const firebotChatMessage = await chatHelpers.buildViewerFirebotChatMessageFromAutoModMessage(data);
                 frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
             },
             this._eventSubListener,
