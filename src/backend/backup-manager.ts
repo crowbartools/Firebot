@@ -42,11 +42,12 @@ class BackupManager {
             return await this.getBackupList();
         });
 
-        frontendCommunicator.on("backups:start-backup", (manualActivation: boolean) => {
-            this.startBackup(manualActivation, () => {
-                logger.info("backup complete");
-                frontendCommunicator.send("backups:backup-complete", manualActivation);
-            });
+        frontendCommunicator.on("backups:start-backup", async (manualActivation: boolean) => {
+            await this.startBackup(manualActivation);
+
+            logger.info("backup complete");
+
+            frontendCommunicator.send("backups:backup-complete", manualActivation);
         });
 
         frontendCommunicator.onAsync("backups:restore-backup", async (backupFilePath: string): Promise<{ success: boolean; reason?: string; }> => {
@@ -140,7 +141,7 @@ class BackupManager {
         );
     }
 
-    private async cleanUpOldBackups(callback: () => void) {
+    private async cleanUpOldBackups() {
         const maxBackups = SettingsManager.getSetting("MaxBackupCount");
 
         if (maxBackups !== "All") {
@@ -161,72 +162,68 @@ class BackupManager {
                 logger.info(`Deleting old backup: ${f}`);
                 await fsp.unlink(path.join(this._backupFolderPath, f));
             }
-
-            if (callback instanceof Function) {
-                callback();
-            }
-        } else {
-            if (callback instanceof Function) {
-                callback();
-            }
         }
     }
 
-    async startBackup(manualActivation = false, callback?: () => void) {
-        logger.info(`Backup manualActivation: ${manualActivation}`);
+    startBackup(manualActivation = false) {
+        return new Promise<void>(async (resolve) => {
+            logger.info(`Backup manualActivation: ${manualActivation}`);
 
-        const version = app.getVersion(),
-            milliseconds = Date.now(),
-            fileExtension = "zip";
+            const version = app.getVersion(),
+                milliseconds = Date.now(),
+                fileExtension = "zip";
 
-        const filename = `backup_${milliseconds}_v${version}${
-            manualActivation ? "_manual" : ""
-        }.${fileExtension}`;
+            const filename = `backup_${milliseconds}_v${version}${
+                manualActivation ? "_manual" : ""
+            }.${fileExtension}`;
 
-        const output = fs.createWriteStream(path.join(this._backupFolderPath, filename));
-        const archive = archiver(fileExtension, {
-            zlib: { level: 9 }
-        });
+            const output = fs.createWriteStream(path.join(this._backupFolderPath, filename));
+            const archive = archiver(fileExtension, {
+                zlib: { level: 9 }
+            });
 
-        output.on("close", async () => {
-            SettingsManager.saveSetting("LastBackupDate", new Date());
-            await this.cleanUpOldBackups(callback);
-        });
+            output.on("close", async () => {
+                SettingsManager.saveSetting("LastBackupDate", new Date());
+                await this.cleanUpOldBackups();
 
-        archive.on("warning", function(err) {
-            if (err.code === "ENOENT") {
-                logger.warn("Error during backup: ", err);
-            } else {
-                if (manualActivation) {
-                    frontendCommunicator.send(
-                        "error",
-                        "Something bad happened, please check your logs."
-                    );
+                resolve();
+            });
+
+            archive.on("warning", function(err) {
+                if (err.code === "ENOENT") {
+                    logger.warn("Error during backup: ", err);
+                } else {
+                    if (manualActivation) {
+                        frontendCommunicator.send(
+                            "error",
+                            "Something bad happened, please check your logs."
+                        );
+                    }
+                    throw err;
                 }
+            });
+
+            archive.on("error", function(err) {
                 throw err;
+            });
+
+            archive.pipe(output);
+
+            const varIgnoreInArchive = ["backups/**", "clips/**", "logs/**", "overlay.html", "profiles/*/db/*.db~"];
+            const ignoreResources = SettingsManager.getSetting("BackupIgnoreResources");
+
+            if (ignoreResources && !manualActivation) {
+                logger.info("Ignoring overlay-resources folder");
+                varIgnoreInArchive.push("overlay-resources/**");
             }
+
+            archive.glob('**/*', {
+                ignore: varIgnoreInArchive,
+                cwd: path.resolve(dataAccess.getPathInUserData("/"))
+            });
+
+            archive.finalize();
         });
-
-        archive.on("error", function(err) {
-            throw err;
-        });
-
-        archive.pipe(output);
-
-        const varIgnoreInArchive = ["backups/**", "clips/**", "logs/**", "overlay.html"];
-        const ignoreResources = SettingsManager.getSetting("BackupIgnoreResources");
-
-        if (ignoreResources && !manualActivation) {
-            logger.info("Ignoring overlay-resources folder");
-            varIgnoreInArchive.push("overlay-resources/**");
-        }
-
-        archive.glob('**/*', {
-            ignore: varIgnoreInArchive,
-            cwd: path.resolve(dataAccess.getPathInUserData("/"))
-        });
-
-        archive.finalize();
     }
 
     async onceADayBackUpCheck() {

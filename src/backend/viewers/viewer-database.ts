@@ -448,17 +448,17 @@ class ViewerDatabase extends EventEmitter {
         }
     }
 
-    async purgeViewers(options: ViewerPurgeOptions): Promise<void> {
-        await BackupManager.startBackup(false, async () => {
-            try {
-                const numRemoved = await this._db
-                    .removeAsync({ $where: this.getPurgeWherePredicate(options)}, {multi: true});
+    async purgeViewers(options: ViewerPurgeOptions): Promise<number> {
+        await BackupManager.startBackup(false);
 
-                return numRemoved;
-            } catch (error) {
-                return 0;
-            }
-        });
+        try {
+            const numRemoved = await this._db
+                .removeAsync({ $where: this.getPurgeWherePredicate(options)}, {multi: true});
+
+            return numRemoved;
+        } catch (error) {
+            return 0;
+        }
     }
 
     async setViewerRank(viewer: FirebotViewer, ladderId: string, newRankId?: string): Promise<void> {
