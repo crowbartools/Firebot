@@ -331,8 +331,11 @@
                 service.clearUserList();
             });
 
-            backendCommunicator.on("twitch:chat:automod-update", ({messageId, newStatus, resolverName, flaggedPhrases}) => {
-                const messageItem = service.chatQueue.find(i => i.type === "message" && i.data.id === messageId);
+            backendCommunicator.on("twitch:chat:automod-update", ({messageId, newStatus, resolverName }) => {
+
+                const messageItem = service.chatQueue.find(i => i.type === "message" &&
+                    (i.data.id === messageId || i.data.autoModHeldMessageId === messageId)
+                );
 
                 if (messageItem == null) {
                     return;
@@ -343,7 +346,9 @@
             });
 
             backendCommunicator.on("twitch:chat:automod-update-error", ({messageId, likelyExpired}) => {
-                const messageItem = service.chatQueue.find(i => i.type === "message" && i.data.id === messageId);
+                const messageItem = service.chatQueue.find(i => i.type === "message" &&
+                    (i.data.id === messageId || i.data.autoModHeldMessageId === messageId)
+                );
 
                 if (messageItem == null) {
                     return;
@@ -410,6 +415,32 @@
                 if (user && user.roles.length !== chatMessage.roles.length) {
                     user.roles = chatMessage.roles;
                     service.chatUserUpdated(user);
+                }
+
+                // when an automod held message is approved, the message is sent again,
+                // attempt to merge it with the existing message
+                const existingAutoModMessageIndex = service.chatQueue.findIndex(i =>
+                    i.type === "message" &&
+                    i.data.isAutoModHeld &&
+                    i.data.autoModHeldMessageId == null &&
+                    i.data.rawText === chatMessage.rawText &&
+                    i.data.userId === chatMessage.userId &&
+                    moment().diff(i.data.timestamp, "minutes") <= 5
+                );
+                const existingAutoModMessage = service.chatQueue[existingAutoModMessageIndex]?.data;
+                if (existingAutoModMessage != null) {
+                    // merge the new message with the existing one
+                    chatMessage = {
+                        ...existingAutoModMessage,
+                        ...chatMessage,
+                        autoModHeldMessageId: existingAutoModMessage.id,
+                        isAutoModHeld: existingAutoModMessage.isAutoModHeld,
+                        autoModStatus: existingAutoModMessage.autoModStatus,
+                        autoModResolvedBy: existingAutoModMessage.autoModResolvedBy,
+                        autoModErrorMessage: existingAutoModMessage.autoModErrorMessage
+                    };
+                    // remove the existing automod message from the queue
+                    service.chatQueue.splice(existingAutoModMessageIndex, 1);
                 }
 
                 // Push new message to queue.
