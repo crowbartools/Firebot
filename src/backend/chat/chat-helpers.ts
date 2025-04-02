@@ -540,7 +540,7 @@ class FirebotChatHelpers {
             roles: [],
             isAutoModHeld: true,
             autoModStatus: "pending",
-            autoModReason: (msg.reason === "automod" ? msg.automod?.category : msg.reason === "blocked_term" ? "blocked term" : null) ?? "(unknown)",
+            autoModReason: (msg.reason === "automod" ? msg.automod?.category : msg.reason === "blocked_term" ? "blocked term" : null) ?? "unknown",
             isSharedChatMessage: false // todo: check if automod messages have a way to associate them with shared chat
         };
 
