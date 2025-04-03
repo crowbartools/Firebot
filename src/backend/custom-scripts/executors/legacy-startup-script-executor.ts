@@ -3,6 +3,7 @@ import { IPluginExecutor, ScriptDetails, ScriptExecutionResult } from "./script-
 import { buildRunRequest } from "../../common/handlers/custom-scripts/custom-script-helpers";
 import utils from "../../utility";
 import { Awaitable } from "../../../types/util-types";
+import { ParametersConfig } from "../../../types/parameters";
 
 export class LegacyStartUpScript extends IPluginExecutor {
     constructor() {
@@ -97,7 +98,10 @@ export class LegacyStartUpScript extends IPluginExecutor {
         }
     }
 
-    async getScriptDetails(script: ScriptBase | LegacyCustomScript): Promise<ScriptDetails> {
+    async getScriptDetails(
+        script: ScriptBase | LegacyCustomScript,
+        config: InstalledPluginConfig<{ legacyParams: Record<string, unknown> }>
+    ): Promise<ScriptDetails> {
         // this is mainly for type checking
         if (!this.isLegacyScript(script)) {
             return null;
@@ -106,6 +110,22 @@ export class LegacyStartUpScript extends IPluginExecutor {
         const manifest = await script.getScriptManifest();
 
         const settings = script.getDefaultParameters?.() ?? {};
+
+        const mappedSettings = Object.entries(settings).reduce((acc, [key, setting]) => {
+            acc[key] = {
+                ...setting,
+                title: setting.title ?? setting.description,
+                description: !setting.title ? setting.secondaryDescription : setting.description
+
+            };
+            return acc;
+        }, {} as ParametersConfig<Record<string, unknown>>);
+        for (const [settingKey, setting] of Object.entries(settings)) {
+            const settingValue = config.parameters?.legacyParams?.[settingKey];
+            if (settingValue != null) {
+                setting.value = settingValue;
+            }
+        }
 
         return {
             manifest: {
@@ -119,7 +139,11 @@ export class LegacyStartUpScript extends IPluginExecutor {
             parameters: {
                 legacyParams: {
                     title: "Parameters",
-                    settings:
+                    settings: {
+                        "test": {
+                            type: "number",
+                        }
+                    }
                 }
             }
         }

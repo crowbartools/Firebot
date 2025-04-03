@@ -124,11 +124,17 @@ interface Plugin<Params extends FirebotParams = Record<string, Record<string, un
 type LegacyScriptParameters = Record<
 string,
 {
-    type: string;
-    description: string;
-    secondaryDescription: string;
-    value: unknown;
-    default: unknown;
+    type: any;
+    title?: string;
+    description?: string;
+    secondaryDescription?: string;
+    tip?: string;
+    showBottomHr?: boolean;
+    validation?: {
+        required?: boolean;
+    },
+    value?: unknown;
+    default?: unknown;
 }
 >;
 

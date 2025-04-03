@@ -246,6 +246,16 @@ export type FirebotParameterCategories<Config extends FirebotParams> = {
     [Category in keyof Config]: FirebotParamCategory<Config[Category]>;
 };
 
+export type WithValues<Categories extends FirebotParameterCategories> = {
+    [Category in keyof Categories]: Categories[Category] & {
+        settings: {
+            [Setting in keyof Categories[Category]["settings"]]: Categories[Category]["settings"][Setting] & {
+                value?: Categories[Category]["settings"][Setting]["default"];
+            };
+        };
+    }
+};
+
 type ValidParamKeys<T> = {
     [P in keyof T]: Exclude<T[P], undefined> extends void | undefined | null
         ? never
