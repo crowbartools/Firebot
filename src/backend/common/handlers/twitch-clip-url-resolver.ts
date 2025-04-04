@@ -2,12 +2,26 @@ import { HelixClip } from '@twurple/api';
 import { BrowserWindow } from 'electron';
 import { SettingsManager } from '../settings-manager';
 
+
+const window = new BrowserWindow({
+    show: false,
+    title: 'Firebot - Twitch Clip URL Resolver',
+    webPreferences: {
+        sandbox: true,
+        nodeIntegration: false,
+        contextIsolation: true
+    }
+});
+
+// Prevent the window from doing various naughty things
+window.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
+window.webContents.on('will-navigate', event => event.preventDefault());
+
 function attemptToAcquireDirectUrl(clipId: string): Promise<string | null> {
     return new Promise((resolve) => {
         const sandbox: {
             finished: boolean,
             timeout?: ReturnType<typeof setTimeout>,
-            window?: Electron.BrowserWindow,
             resolve?: (url?: string | null) => void,
         } = {
             finished: false
@@ -23,44 +37,26 @@ function attemptToAcquireDirectUrl(clipId: string): Promise<string | null> {
                 }
 
                 try {
-                    sandbox.window.webContents.removeAllListeners();
+                    window.removeAllListeners();
                 } catch (err) {}
-                try {
-                    sandbox.window.removeAllListeners();
-                    sandbox.window.destroy();
-                } catch (err) {}
-                sandbox.window = null;
 
                 resolve(result);
             }
         };
 
-        sandbox.window = new BrowserWindow({
-            show: false,
-            title: 'Firebot - Twitch Clip URL Resolver',
-            webPreferences: {
-                sandbox: true,
-                nodeIntegration: false,
-                contextIsolation: true
-            }
-        });
-
-        // Prevent the window from doing various naughty things
-        sandbox.window.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
-        sandbox.window.webContents.on('will-navigate', event => event.preventDefault());
 
         // Just in case the window hangs
-        sandbox.window.on('unresponsive', () => sandbox.resolve);
-        sandbox.window.on('closed', sandbox.resolve);
+        window.on('unresponsive', () => sandbox.resolve);
+        window.on('closed', sandbox.resolve);
 
-        sandbox.window.on('ready-to-show', () => {
+        window.on('ready-to-show', () => {
             // Give window 2s to resolve url
             sandbox.timeout = setTimeout(sandbox.resolve, 2000);
         });
 
-        sandbox.window.loadURL(`https://clips.twitch.tv/embed?clip=${clipId}&parent=firebot&muted=true&autoplay=false`)
+        window.loadURL(`https://clips.twitch.tv/embed?clip=${clipId}&parent=firebot&muted=true&autoplay=false`)
             .then(() => {
-                sandbox.window.webContents.executeJavaScript(`
+                window.webContents.executeJavaScript(`
                 new Promise(async (resolve) => {
                     const findVideoElement = async () => {
                         const videoElement = document.querySelector("video");
@@ -81,6 +77,41 @@ function attemptToAcquireDirectUrl(clipId: string): Promise<string | null> {
                     .then(sandbox.resolve)
                     .catch(sandbox.resolve);
             });
+    });
+}
+
+const resolveUrlRequestQueue: Array<{
+    clipId: string;
+    resolve: (url: string | null) => void;
+}> = [];
+
+let processingResolveUrlRequestQueue = false;
+
+async function processResolveUrlRequestQueue() {
+    if (resolveUrlRequestQueue.length === 0) {
+        processingResolveUrlRequestQueue = false;
+        return;
+    }
+
+    processingResolveUrlRequestQueue = true;
+
+    const { clipId, resolve } = resolveUrlRequestQueue.shift();
+
+    const url = await attemptToAcquireDirectUrl(clipId);
+
+    resolve(url);
+
+    process.nextTick(processResolveUrlRequestQueue);
+}
+
+async function addResolveUrlRequest(clipId: string): Promise<string | null> {
+    return new Promise((resolve) => {
+        resolveUrlRequestQueue.push({ clipId, resolve });
+        if (processingResolveUrlRequestQueue) {
+            return;
+        }
+        processingResolveUrlRequestQueue = true;
+        process.nextTick(processResolveUrlRequestQueue);
     });
 }
 
@@ -105,7 +136,7 @@ export const resolveTwitchClipVideoUrl = async (clip: HelixClip): Promise<{ url:
     }
 
     let useIframe = false;
-    let url = await attemptToAcquireDirectUrl(clip.id);
+    let url = await addResolveUrlRequest(clip.id);
 
     if (!url || !isValidTwitchUrl(url)) {
         url = clip.embedUrl;
