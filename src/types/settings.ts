@@ -192,7 +192,7 @@ export const FirebotSettingsDefaults: FirebotSettingsTypes = {
     TriggerUpcomingAdBreakMinutes: 0,
     TtsVoiceRate: 1,
     TtsVoiceVolume: 0.5,
-    UseExperimentalTwitchClipUrlResolver: false,
+    UseExperimentalTwitchClipUrlResolver: true,
     UseOverlayInstances: false,
     ViewerDB: true,
     ViewerListPageSize: 10,
