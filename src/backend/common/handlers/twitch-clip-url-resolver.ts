@@ -1,12 +1,5 @@
 import { BrowserWindow } from 'electron';
 
-interface Sandbox {
-    finished: boolean,
-    timeout?: ReturnType<typeof setTimeout>,
-    window?: Electron.BrowserWindow,
-    resolve?: (url?: string | null) => void,
-}
-
 export const resolveTwitchClipVideoUrl = async (clipId: string): Promise<string | null> => {
 
     if (typeof clipId !== 'string' || clipId === '') {
@@ -15,37 +8,37 @@ export const resolveTwitchClipVideoUrl = async (clipId: string): Promise<string 
 
     return new Promise((resolve) => {
 
-        const sandbox : Sandbox = {
+        const sandbox: {
+            finished: boolean,
+            timeout?: ReturnType<typeof setTimeout>,
+            window?: Electron.BrowserWindow,
+            resolve?: (url?: string | null) => void,
+        } = {
             finished: false
         };
 
-        const cleanup = () => {
-            sandbox.finished = true;
-
-            if (sandbox.timeout) {
-                clearTimeout(sandbox.timeout);
-                sandbox.timeout = null;
-            }
-
-            try {
-                sandbox.window.webContents.removeAllListeners();
-            } catch (err) {}
-            try {
-                sandbox.window.removeAllListeners();
-                sandbox.window.destroy();
-            } catch (err) {}
-            sandbox.window = null;
-        };
-
-        // Called when the sandbox successfully returns a result
         sandbox.resolve = (result: string | null) => {
             if (!sandbox.finished) {
-                cleanup();
+                sandbox.finished = true;
+
+                if (sandbox.timeout) {
+                    clearTimeout(sandbox.timeout);
+                    sandbox.timeout = null;
+                }
+
+                try {
+                    sandbox.window.webContents.removeAllListeners();
+                } catch (err) {}
+                try {
+                    sandbox.window.removeAllListeners();
+                    sandbox.window.destroy();
+                } catch (err) {}
+                sandbox.window = null;
+
                 resolve(result);
             }
         };
 
-        // Create a new, hidden, browser window
         sandbox.window = new BrowserWindow({
             show: false,
             title: 'Firebot - Twitch Clip URL Resolver',
@@ -56,22 +49,22 @@ export const resolveTwitchClipVideoUrl = async (clipId: string): Promise<string 
             }
         });
 
-        // Prevent sandbox js from opening windows
+        // Prevent the window from doing various naughty things
         sandbox.window.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
         sandbox.window.webContents.on('will-navigate', event => event.preventDefault());
-        sandbox.window.on('unresponsive', () => sandbox.resolve(null));
-        sandbox.window.on('closed', () => sandbox.resolve(null));
 
-        // Wait for the contents of the sandbox window to be ready
+        // Just in case the window hangs
+        sandbox.window.on('unresponsive', () => sandbox.resolve);
+        sandbox.window.on('closed', sandbox.resolve);
+
         sandbox.window.on('ready-to-show', () => {
-
-            // Give evaluation 2s to resolve
-            sandbox.timeout = setTimeout(() => sandbox.resolve(null), 2000);
+            // Give window 2s to resolve url
+            sandbox.timeout = setTimeout(sandbox.resolve, 2000);
         });
 
-        //StupidDepressedFerretCoolStoryBro-hGPAxHQmseHMcuJR
-        sandbox.window.loadURL(`https://clips.twitch.tv/embed?clip=${clipId}&parent=firebot`).then(() => {
-            sandbox.window.webContents.executeJavaScript(`
+        sandbox.window.loadURL(`https://clips.twitch.tv/embed?clip=${clipId}&parent=firebot&muted=true&autoplay=false`)
+            .then(() => {
+                sandbox.window.webContents.executeJavaScript(`
                 new Promise(async (resolve) => {
                     const findVideoElement = async () => {
                         const videoElement = document.querySelector("video");
@@ -89,12 +82,8 @@ export const resolveTwitchClipVideoUrl = async (clipId: string): Promise<string 
                     resolve(videoElement?.src ?? null);
                 });
             `)
-                .then((url: string | null) => {
-                    sandbox.resolve(url);
-                })
-                .catch(() => {
-                    sandbox.resolve(null);
-                });
-        });
+                    .then(sandbox.resolve)
+                    .catch(sandbox.resolve);
+            });
     });
 };
