@@ -7,6 +7,7 @@ const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/http-server-manager");
 const utils = require("../../utility");
 const customVariableManager = require("../../common/custom-variable-manager");
+const { resolveTwitchClipVideoUrl } = require("../../common/handlers/twitch-clip-url-resolver");
 
 const clip = {
     definition: {
@@ -210,8 +211,10 @@ const clip = {
                     }
                 }
 
+                const videoUrl = await resolveTwitchClipVideoUrl(clip.id);
+
                 webServer.sendToOverlay("playTwitchClip", {
-                    clipVideoUrl: clip.embedUrl,
+                    clipVideoUrl: videoUrl,
                     width: effect.width,
                     height: effect.height,
                     duration: clipDuration,
@@ -278,18 +281,18 @@ const clip = {
                 } = event;
 
                 // eslint-disable-next-line prefer-template
-                const styles = `width: ${width || screen.width}px;
-                 height: ${height || screen.height}px;
-                 transform: rotate(${rotation || 0});`;
+                const styles = (width ? `width: ${width}px;` : '') +
+                    (height ? `height: ${height}px;` : '') +
+                    (rotation ? `transform: rotate(${rotation});` : '');
 
                 const videoElement = `
-                    <iframe style="border: none; ${styles}"
-                        src="${clipVideoUrl}&parent=${window.location.hostname}&autoplay=true"
-                        height="${height || screen.height}"
-                        width="${width || screen.width}"
-                        frameBorder=0
-                        allowfullscreen>
-                    </iframe>
+                    <video autoplay
+                        src="${clipVideoUrl}"
+                        height="${height || ""}"
+                        width="${width || ""}"
+                        style="border: none;${styles}"
+                        onloadstart="this.volume=${volume}"
+                        allowfullscreen="false" />
                 `;
 
                 const positionData = {

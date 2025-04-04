@@ -14,6 +14,7 @@ const frontendCommunicator = require('../../common/frontend-communicator');
 const { wait } = require("../../utility");
 const { parseYoutubeId } = require("../../../shared/youtube-url-parser");
 const { v4: uuid } = require("uuid");
+const { resolveTwitchClipVideoUrl } = require("../../common/handlers/twitch-clip-url-resolver");
 
 /**
  * The Play Video effect
@@ -487,8 +488,8 @@ const playVideo = {
                 }
             }
 
-            //const clipVideoUrl = `${clip.thumbnailUrl.split("-preview-")[0]}.mp4`;
-            const clipVideoUrl = clip.embedUrl;
+            const clipVideoUrl = await resolveTwitchClipVideoUrl(clip.id);
+            // const clipVideoUrl = clip.embedUrl;
             const clipDuration = clip.duration;
             const volume = parseInt(effect.volume) / 10;
 
