@@ -1,5 +1,5 @@
-import { ReplaceVariable, Trigger } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
+import { ReplaceVariable, Trigger } from "../../../../types/variables";
 
 const model : ReplaceVariable = {
     definition: {
@@ -15,7 +15,7 @@ const model : ReplaceVariable = {
         start?: string | number,
         end?: string | number
     ) : unknown[] => {
-        if (typeof subject === 'string' || subject instanceof String) {
+        if (typeof subject === "string" || subject instanceof String) {
             try {
                 subject = JSON.parse(`${subject}`);
             } catch (ignore) {
@@ -26,12 +26,12 @@ const model : ReplaceVariable = {
             return [];
         }
 
-        start = start ? Number(start) : 0;
+        start = start !== "" ? Number(start) : 0;
         if (Number.isNaN(start)) {
             start = 0;
         }
 
-        end = end ? Number(end) : subject.length;
+        end = end !== "" ? Number(end) : subject.length;
         if (Number.isNaN(end)) {
             end = subject.length;
         }
