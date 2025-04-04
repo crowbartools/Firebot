@@ -1,13 +1,9 @@
+import { HelixClip } from '@twurple/api';
 import { BrowserWindow } from 'electron';
+import { SettingsManager } from '../settings-manager';
 
-export const resolveTwitchClipVideoUrl = async (clipId: string): Promise<string | null> => {
-
-    if (typeof clipId !== 'string' || clipId === '') {
-        return null;
-    }
-
+function attemptToAcquireDirectUrl(clipId: string): Promise<string | null> {
     return new Promise((resolve) => {
-
         const sandbox: {
             finished: boolean,
             timeout?: ReturnType<typeof setTimeout>,
@@ -86,4 +82,38 @@ export const resolveTwitchClipVideoUrl = async (clipId: string): Promise<string 
                     .catch(sandbox.resolve);
             });
     });
+}
+
+function isValidTwitchUrl(url: string): boolean {
+    try {
+        const urlObj = new URL(url);
+        return urlObj.hostname.endsWith('twitchcdn.net')
+            && urlObj.pathname.endsWith('.mp4');
+    } catch {
+        return false;
+    }
+}
+
+export const resolveTwitchClipVideoUrl = async (clip: HelixClip): Promise<{ url: string; useIframe: boolean; }> => {
+    const useExperimentalTwitchClipUrlResolver = SettingsManager.getSetting("UseExperimentalTwitchClipUrlResolver");
+
+    if (!useExperimentalTwitchClipUrlResolver) {
+        return {
+            url: clip.embedUrl,
+            useIframe: true
+        };
+    }
+
+    let useIframe = false;
+    let url = await attemptToAcquireDirectUrl(clip.id);
+
+    if (!url || !isValidTwitchUrl(url)) {
+        url = clip.embedUrl;
+        useIframe = true;
+    }
+
+    return {
+        url,
+        useIframe
+    };
 };
