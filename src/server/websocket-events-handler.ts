@@ -6,8 +6,8 @@ import commandManager from "../backend/chat/commands/command-manager";
 import { CounterManager } from "../backend/counters/counter-manager";
 import customRolesManager from "../backend/roles/custom-roles-manager";
 import { events as customVariablesEvents } from "../backend/common/custom-variable-manager";
-import effectQueueManager from "../backend/effects/queues/effect-queue-manager";
-import { events as effectQueueRunnerEvents } from "../backend/effects/queues/effect-queue-runner";
+import effectQueueManager from "../backend/effects/queues/effect-queue-config-manager";
+import effectQueueRunner from "../backend/effects/queues/effect-queue-runner";
 import presetEffectListManager from "../backend/effects/preset-lists/preset-effect-list-manager";
 import { events as quotesEvents } from "../backend/quotes/quotes-manager";
 import timerManager from "../backend/timers/timer-manager";
@@ -54,7 +54,7 @@ const FIREBOT_COMPONENT_MANAGERS: Array<ComponentManager> = [
     },
     {
         componentName: "effect-queue",
-        manager: effectQueueRunnerEvents,
+        manager: effectQueueRunner,
         eventNameOverrides: [
             ["length-updated", "length-updated"]
         ]

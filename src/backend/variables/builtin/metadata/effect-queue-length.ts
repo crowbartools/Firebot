@@ -1,7 +1,7 @@
 import { ReplaceVariable } from "../../../../types/variables";
 import { OutputDataType, VariableCategory } from "../../../../shared/variable-constants";
 
-import effectQueueManager from "../../../effects/queues/effect-queue-manager";
+import effectQueueManager from "../../../effects/queues/effect-queue-config-manager";
 
 const model : ReplaceVariable = {
     definition: {

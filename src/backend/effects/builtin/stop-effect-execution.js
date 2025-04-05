@@ -4,7 +4,7 @@ const { EffectCategory } = require('../../../shared/effect-constants');
 
 const { abortEffectList, abortEffect, abortAllEffectLists } = require("../../common/effect-abort-helpers");
 
-const { abortActiveEffectListsForQueue, abortActiveEffectListsForAllQueues } = require("../queues/effect-queue-runner");
+const effectQueueRunner = require("../queues/effect-queue-runner").default;
 
 const model = {
     definition: {
@@ -117,7 +117,7 @@ const model = {
                 return "All active effect lists";
         }
     },
-    onTriggerEvent: async event => {
+    onTriggerEvent: async (event) => {
         const { effect } = event;
 
         if (effect.target == null || effect.target === "currentList") {
@@ -136,9 +136,9 @@ const model = {
             abortEffect(effect.effectId);
         } else if (effect.target === "queueActiveEffectLists") {
             if (effect.queueId === "all") {
-                abortActiveEffectListsForAllQueues(effect.bubbleStop === true);
+                effectQueueRunner.abortActiveEffectListsForAllQueues(effect.bubbleStop === true);
             } else {
-                abortActiveEffectListsForQueue(effect.queueId, effect.bubbleStop === true);
+                effectQueueRunner.abortActiveEffectListsForQueue(effect.queueId, effect.bubbleStop === true);
             }
         } else if (effect.target === "allActiveEffectLists") {
             abortAllEffectLists(effect.bubbleStop === true);

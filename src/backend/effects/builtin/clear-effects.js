@@ -2,7 +2,7 @@
 
 const webServer = require("../../../server/http-server-manager");
 const frontendCommunicator = require("../../common/frontend-communicator");
-const effectQueueRunner = require("../../effects/queues/effect-queue-runner");
+const effectQueueRunner = require("../../effects/queues/effect-queue-runner").default;
 const { EffectCategory } = require('../../../shared/effect-constants');
 const { SettingsManager } = require("../../common/settings-manager");
 const { abortAllEffectLists } = require("../../common/effect-abort-helpers");
