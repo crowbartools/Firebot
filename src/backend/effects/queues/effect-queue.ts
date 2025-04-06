@@ -1,14 +1,12 @@
 import { TypedEmitter } from "tiny-typed-emitter";
 import logger from "../../logwrapper";
-import frontendCommunicator from "../../common/frontend-communicator";
 import effectRunner from "../../common/effect-runner";
 import { timeout } from "../../utils";
 import eventManager from "../../events/EventManager";
 import { abortEffectList } from "../../common/effect-abort-helpers";
+import { EffectQueueConfig } from "./effect-queue-config-manager";
 
-type Events = {
-    "length-updated": (queueData: { id: string, length: number }) => void;
-};
+export type QueueStatus = "running" | "paused" | "idle" | "canceled";
 
 export type RunEffectsContext = {
     effects?: {
@@ -18,183 +16,212 @@ export type RunEffectsContext = {
     [key: string]: unknown;
 }
 
-type QueueEntry = {
+type QueueItem = {
     runEffectsContext: RunEffectsContext
     duration?: number;
     priority?: "none" | "high";
 }
+
+type QueueState = {
+    status: QueueStatus;
+    queue: QueueItem[];
+    activeItems: QueueItem[];
+    interval: number;
+    mode: string;
+}
+
+type Events = {
+    "queue-state-updated": (updatedState: QueueState, newState: Partial<QueueState>) => void;
+};
+
 export class EffectQueue extends TypedEmitter<Events> {
 
-    private _paused = false;
-    private _running = false;
-    private _canceled = false;
+    public id: string;
 
-    private _activeEffectListIds: string[] = [];
-    private _queue: QueueEntry[] = [];
+    private _state: QueueState;
 
-    constructor(public id: string, public mode: string, public interval = 0, active = true) {
+    constructor(config: EffectQueueConfig) {
         super();
 
-        this._paused = !active;
+        this.id = config.id;
+
+        this._setState({
+            status: config.active ? "idle" : "paused",
+            interval: config.interval,
+            mode: config.mode,
+            queue: [],
+            activeItems: []
+        });
     }
 
-    get status() {
-        if (this._canceled) {
-            return "canceled";
-        }
+    private _setState(newState: Partial<QueueState>) {
+        const updatedState = {
+            ...this._state,
+            ...newState
+        };
 
-        if (this._paused) {
-            return this._queue.length > 0 ? "paused" : "idle";
-        }
+        this._state = updatedState;
 
-        if (this._running) {
-            return "running";
-        }
-
-        return "unknown";
+        this.emit("queue-state-updated", updatedState, newState);
     }
 
     get queueLength() {
-        return this._queue.length;
+        return this._state.queue.length;
     }
 
-    private _sendQueueLengthUpdate(lengthOverride = null) {
-        const queue = {
-            id: this.id,
-            length: lengthOverride ?? this._queue.length
-        };
+    private async _runEffects(queueItem: QueueItem) {
 
-        frontendCommunicator.send("updateQueueLength", queue);
-
-        this.emit("length-updated", queue);
-    }
-
-    private async _runEffects(context: RunEffectsContext) {
-        if (context.effects?.id) {
-            this._activeEffectListIds.push(context.effects.id);
+        if (!queueItem.runEffectsContext.effects.id) {
+            logger.warn(`No effect list id provided for queue ${this.id}.`,
+                queueItem.runEffectsContext
+            );
+            return;
         }
 
-        await effectRunner.runEffects(context)
+        this._setState({
+            activeItems: [...this._state.activeItems, queueItem]
+        });
+
+        await effectRunner.runEffects(queueItem.runEffectsContext)
             .catch((err) => {
                 logger.warn(`Error while processing effects for queue ${this.id}`, err);
             });
 
-        if (context.effects?.id) {
-            const index = this._activeEffectListIds.indexOf(context.effects.id);
-            if (index > -1) {
-                this._activeEffectListIds.splice(index, 1);
-            }
-        }
+        const filteredActiveItems = this._state.activeItems.filter(item => item.runEffectsContext.effects.id !== queueItem.runEffectsContext.effects.id);
+        this._setState({
+            activeItems: filteredActiveItems
+        });
     }
 
     private async _runQueue(): Promise<void> {
-        if (this._queue.length === 0 || this._canceled || this._paused === true) {
+        if (this._state.queue.length === 0 || this._state.status === "canceled" || this._state.status === "paused") {
             return;
         }
-        const { runEffectsContext, duration } = this._queue.shift();
+        const [nextQueueEntry, ...restOfQueue] = this._state.queue;
 
-        if (runEffectsContext == null) {
+        this._setState({
+            queue: restOfQueue
+        });
+
+        if (nextQueueEntry.runEffectsContext == null) {
             return;
         }
 
-        logger.debug(`Running next effects for queue ${this.id}. Mode=${this.mode}, Interval?=${this.interval}, Remaining queue length=${this._queue.length}`);
+        logger.debug(`Running next effects for queue ${this.id}. Mode=${this._state.mode}, Interval?=${this._state.interval}, Remaining queue length=${this._state.queue.length}`);
 
-        this._sendQueueLengthUpdate();
 
-        if (this.mode === "interval") {
-            this._runEffects(runEffectsContext);
+        if (this._state.mode === "interval") {
+            this._runEffects(nextQueueEntry);
 
-            await timeout(this.interval * 1000);
+            await timeout(this._state.interval * 1000);
 
             return this._runQueue();
         }
 
-        if (this.mode === "auto") {
-            await this._runEffects(runEffectsContext);
+        if (this._state.mode === "auto") {
+            await this._runEffects(nextQueueEntry);
 
-            await timeout((this.interval ?? 0) * 1000);
+            await timeout((this._state.interval ?? 0) * 1000);
 
             return this._runQueue();
         }
 
-        if (this.mode === "custom") {
-            this._runEffects(runEffectsContext);
+        if (this._state.mode === "custom") {
+            this._runEffects(nextQueueEntry);
 
-            await timeout((duration || 0) * 1000);
+            await timeout((nextQueueEntry.duration ?? 0) * 1000);
 
             return this._runQueue();
         }
     }
 
     addEffects(runEffectsContext: RunEffectsContext, duration?: number, priority: "none" | "high" = "none") {
-        const queueEntry: QueueEntry = {
+        const queueEntry: QueueItem = {
             runEffectsContext,
             duration,
             priority
         };
 
+        const queue = [...this._state.queue];
+
         if (priority === "high") {
-            const firstNonPriority = this._queue.findIndex(entry => entry.priority !== "high");
+            const firstNonPriority = queue.findIndex(entry => entry.priority !== "high");
             if (firstNonPriority > -1) {
-                this._queue.splice(firstNonPriority, 0, queueEntry);
+                queue.splice(firstNonPriority, 0, queueEntry);
             } else {
-                this._queue.push(queueEntry);
+                queue.push(queueEntry);
             }
         } else {
-            this._queue.push(queueEntry);
+            queue.push(queueEntry);
         }
 
-        logger.debug(`Added more effects to queue ${this.id}. Current length=${this._queue.length}`);
+        this._setState({
+            queue
+        });
+
+
+        logger.debug(`Added more effects to queue ${this.id}. Current length=${queue.length}`);
 
         eventManager.triggerEvent("firebot", "effect-queue-added", {
             effectQueueId: this.id
         });
 
-        this._sendQueueLengthUpdate();
-
         this.processEffectQueue();
     }
 
     processEffectQueue() {
-        if (this._paused) {
+        if (this._state.status === "canceled") {
+            return;
+        }
+        if (this._state.status === "paused") {
             logger.debug(`Queue ${this.id} is paused. Will run effects once queue is resumed.`);
-        } else {
-            if (!this._running && this._queue.length > 0) {
-                logger.debug(`Queue ${this.id} is idle... spinning up.`);
-                this._running = true;
-                this._runQueue().then(() => {
-                    logger.debug(`Queue ${this.id} is ${this._paused && this._queue.length > 0 ? "paused" : "cleared"}... going idle.`);
-                    this._running = false;
-                    if (this._queue.length === 0) {
-                        eventManager.triggerEvent("firebot", "effect-queue-cleared", {
-                            effectQueueId: this.id
-                        });
-                    }
-                });
-            }
+            return;
+        }
+
+        if (this._state.status === "idle" && this._state.queue.length > 0) {
+            logger.debug(`Queue ${this.id} is idle... spinning up.`);
+            this._setState({
+                status: "running"
+            });
+            this._runQueue().then(() => {
+                logger.debug(`Queue ${this.id} is ${this._state.status === "paused" && this._state.queue.length > 0 ? "paused" : "cleared"}... going idle.`);
+                if (this._state.status === "running") {
+                    this._setState({
+                        status: "idle"
+                    });
+                }
+                if (this._state.queue.length === 0) {
+                    eventManager.triggerEvent("firebot", "effect-queue-cleared", {
+                        effectQueueId: this.id
+                    });
+                }
+            });
         }
     }
 
     abortActiveEffectLists(bubbleStop = true) {
-        if (this._activeEffectListIds.length === 0) {
+        if (this._state.activeItems.length === 0) {
             return;
         }
 
         logger.debug(`Aborting active effect lists for queue ${this.id}...`);
-        for (const id of this._activeEffectListIds) {
-            abortEffectList(id, bubbleStop);
+
+        for (const queueItem of this._state.activeItems) {
+            abortEffectList(queueItem.runEffectsContext.effects.id, bubbleStop);
         }
-        this._activeEffectListIds = [];
+
+        this._setState({
+            activeItems: []
+        });
     }
 
     cancelQueue(abortActiveEffectLists: boolean) {
         logger.debug(`Cancelling queue ${this.id}...`);
 
-        this._sendQueueLengthUpdate(0);
-
-        this._canceled = true;
-
-        this._queue = [];
+        this._setState({
+            status: "canceled",
+            queue: []
+        });
 
         if (abortActiveEffectLists) {
             this.abortActiveEffectLists();
@@ -208,7 +235,9 @@ export class EffectQueue extends TypedEmitter<Events> {
             effectQueueId: this.id
         });
 
-        this._paused = true;
+        this._setState({
+            status: "paused"
+        });
     }
 
     resumeQueue() {
@@ -218,8 +247,26 @@ export class EffectQueue extends TypedEmitter<Events> {
             effectQueueId: this.id
         });
 
-        this._paused = false;
+        this._setState({
+            status: "idle"
+        });
 
         this.processEffectQueue();
+    }
+
+    updateConfig(config: EffectQueueConfig) {
+        this._setState({
+            mode: config.mode,
+            interval: config.interval
+        });
+
+        logger.debug(`Updated queue ${this.id} config. Mode=${config.mode}, Interval=${config.interval}`);
+    }
+
+    toJSON() {
+        return {
+            id: this.id,
+            ...this._state
+        };
     }
 }

@@ -19,10 +19,15 @@ class EffectQueueRunner extends TypedEmitter<Events> {
         if (queue == null) {
             logger.debug(`Creating queue ${queueConfig.id}...`);
 
-            queue = new EffectQueue(queueConfig.id, queueConfig.mode, queueConfig.interval, queueConfig.active);
+            queue = new EffectQueue(queueConfig);
 
-            queue.on("length-updated", (queueData) => {
-                this.emit("length-updated", queueData);
+            queue.on("queue-state-updated", (_, newState) => {
+                if (newState.queue) {
+                    this.emit("length-updated", {
+                        id: queue.id,
+                        length: newState.queue.length
+                    });
+                }
             });
 
             this._queues[queueConfig.id] = queue;
@@ -50,8 +55,7 @@ class EffectQueueRunner extends TypedEmitter<Events> {
             return;
         }
 
-        queue.mode = queueConfig.mode;
-        queue.interval = queueConfig.interval;
+        queue.updateConfig(queueConfig);
 
         if (queueConfig.active) {
             queue.resumeQueue();
